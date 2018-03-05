@@ -279,7 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // AjustableView():Activate()
+   AjustableView():Activate()
 
 RETURN nil
 

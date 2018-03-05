@@ -146,7 +146,7 @@ METHOD AddPanel( cName, cBmpName, nBodyHeight ) CLASS TExplorerBar
 
    local oPanel
 
-   oPanel := AAdd( ::aPanels, TTaskPanel():New( cName, Self, Len( ::aPanels ), cBmpName, nBodyHeight ) )
+   oPanel := aadd( ::aPanels, TTaskPanel():New( cName, Self, len( ::aPanels ), cBmpName, nBodyHeight ) )
 
    ::CheckScroll( oPanel )
 
@@ -158,26 +158,34 @@ METHOD CheckScroll() CLASS TExplorerBar
 
    local nLastRow
    local oLastItem
-   local nPos
 
-   oLastItem = ATail( ::aPanels )
+   oLastItem   := atail( ::aPanels )
 
-   nLastRow = ::nVirtualTop + oLastItem:nTop + ;
-              If( ! oLastItem:lCollapsed, oLastItem:nTotalHeight,;
-                  oLastItem:nTitleHeight )
+   nLastRow    := ::nVirtualTop + oLastItem:nTop 
+
+   if oLastItem:lCollapsed
+      nLastRow += oLastItem:nTitleHeight
+   else
+      nLastRow += oLastItem:nTotalHeight
+   endif  
 
    if nLastRow > ::nHeight - ::nVirtualTop
-      ::nVirtualHeight = nLastRow
+      
+      ::nVirtualHeight  := nLastRow
+
       SetScrollRangeX( ::hWnd, 1, 0, ::nVirtualHeight - 1 )
 
-      ::oVScroll:SetPage( ::nHeight, .F. )
+      // ::oVScroll:SetPage( ::nHeight, .F. )
       ::oVScroll:SetPos( ::nVirtualTop )
-      ::lSBVisible = .T.
+      
+      ::lSBVisible      := .T.
    else
-      ::nVirtualTop = 0
-      ::nVirtualHeight = ::nHeight
+      ::nVirtualTop     := 0
+      ::nVirtualHeight  := ::nHeight
+      
       SetScrollRangeX( ::hWnd, 1, 0, 0 )
-      ::lSBVisible = .F.
+      
+      ::lSBVisible      := .F.
    endif
 
 RETURN nil
@@ -233,21 +241,22 @@ METHOD ReSize( nSizeType, nWidth, nHeight ) CLASS TExplorerBar
    ::CoorsUpdate()
 
    if nHeight > ::nVirtualHeight
-      ::nVirtualHeight = nHeight
-      for each oPanel in ::aPanels
-         oPanel:nWidth = nWidth - oPanel:nLeftMargin - ;
-                                 oPanel:nRightMargin // - GetSysMetrics( 2 )
+      
+      ::nVirtualHeight  := nHeight
 
-         oPanel:nTop += ::nVirtualTop
+      for each oPanel in ::aPanels
+         oPanel:nWidth  := nWidth - oPanel:nLeftMargin - oPanel:nRightMargin // - GetSysMetrics( 2 )
+
+         oPanel:nTop    += ::nVirtualTop
          oPanel:CoorsUpdate()
          oPanel:UpdateRegion()
       next
+      
       ::nVirtualTop = 0
 
    else
       for each oPanel in ::aPanels
-         oPanel:nWidth = nWidth - oPanel:nLeftMargin - ;
-                                 oPanel:nRightMargin // - GetSysMetrics( 2 )
+         oPanel:nWidth  := nWidth - oPanel:nLeftMargin - oPanel:nRightMargin // - GetSysMetrics( 2 )
 
          if nHeight + ::nVirtualTop > ::nVirtualHeight .and. ::nVirtualTop > 0
             oPanel:nTop += nHeight + ::nVirtualTop - ::nVirtualHeight
@@ -260,9 +269,9 @@ METHOD ReSize( nSizeType, nWidth, nHeight ) CLASS TExplorerBar
          ::nVirtualTop -= ( nHeight + ::nVirtualTop - ::nVirtualHeight )
       endif
    endif
+
    ::CheckScroll()
 
-//   ::oWnd:cTitle = Time() + Str( nHeight )
 RETURN ::Super:ReSize( nSizeType, nWidth, nHeight )
 
 //----------------------------------------------------------------------------//
@@ -418,7 +427,9 @@ METHOD getTopControl()
 
    local nTop := ::nTitleHeight + 10
 
-   aeval( ::aControls, {|oControl| if( oControl:ClassName() != "TSAY", nTop += oControl:nHeight + 7, ) } )
+   aeval( ::aControls, {|oControl| if( oControl:nBottom > nTop, nTop := oControl:nBottom, ) } )
+
+   nTop        += 3
 
 RETURN ( nTop )
 
@@ -466,7 +477,6 @@ RETURN nil
 
 //----------------------------------------------------------------------------//
 
-
 METHOD Destroy() CLASS TTaskPanel
 
    AEval( ::aBitmaps,;
@@ -493,17 +503,22 @@ RETURN ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
 METHOD KeyDown( nKey, nFlags ) CLASS TTaskPanel
 
-   if nKey == VK_TAB
-      if GetKeyState( VK_SHIFT )
-         ::oWnd:GoPrevCtrl()
-      else
-         ::oWnd:GoNextCtrl()
-      endif
-      SysRefresh()
-      ::Refresh()
-      if GetParent( GetFocus() ) == ::oWnd:hWnd
-         oWndFromHwnd( GetFocus() ):Refresh()
-      endif
+   if nKey != VK_TAB
+      RETURN nil
+   end if 
+      
+   if GetKeyState( VK_SHIFT )
+      ::oWnd:GoPrevCtrl()
+   else
+      ::oWnd:GoNextCtrl()
+   endif
+
+   sysrefresh()
+
+   ::Refresh()
+
+   if GetParent( GetFocus() ) == ::oWnd:hWnd
+      oWndFromHwnd( GetFocus() ):Refresh()
    endif
 
 RETURN nil
@@ -530,7 +545,8 @@ METHOD LButtonUp( nRow, nCol, nFlags ) CLASS TTaskPanel
          SetFocus( ::hWnd )
       endif
       ::oWnd:Refresh()
-      AEval( ::oWnd:aPanels, { | o | o:Refresh() } )
+
+      aeval( ::oWnd:aPanels, { | o | o:Refresh() } )
 
       ::oWnd:CheckScroll()
    endif
