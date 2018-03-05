@@ -158,26 +158,34 @@ METHOD CheckScroll() CLASS TExplorerBar
 
    local nLastRow
    local oLastItem
-   local nPos
 
-   oLastItem = ATail( ::aPanels )
+   oLastItem   := atail( ::aPanels )
 
-   nLastRow = ::nVirtualTop + oLastItem:nTop + ;
-              If( ! oLastItem:lCollapsed, oLastItem:nTotalHeight,;
-                  oLastItem:nTitleHeight )
+   nLastRow    := ::nVirtualTop + oLastItem:nTop 
+
+   if oLastItem:lCollapsed
+      nLastRow += oLastItem:nTitleHeight
+   else
+      nLastRow += oLastItem:nTotalHeight
+   endif  
 
    if nLastRow > ::nHeight - ::nVirtualTop
-      ::nVirtualHeight = nLastRow
+      
+      ::nVirtualHeight  := nLastRow
+
       SetScrollRangeX( ::hWnd, 1, 0, ::nVirtualHeight - 1 )
 
-      ::oVScroll:SetPage( ::nHeight, .F. )
+      // ::oVScroll:SetPage( ::nHeight, .F. )
       ::oVScroll:SetPos( ::nVirtualTop )
-      ::lSBVisible = .T.
+      
+      ::lSBVisible      := .T.
    else
-      ::nVirtualTop = 0
-      ::nVirtualHeight = ::nHeight
+      ::nVirtualTop     := 0
+      ::nVirtualHeight  := ::nHeight
+      
       SetScrollRangeX( ::hWnd, 1, 0, 0 )
-      ::lSBVisible = .F.
+      
+      ::lSBVisible      := .F.
    endif
 
 RETURN nil
@@ -537,7 +545,7 @@ METHOD LButtonUp( nRow, nCol, nFlags ) CLASS TTaskPanel
          SetFocus( ::hWnd )
       endif
       ::oWnd:Refresh()
-      
+
       aeval( ::oWnd:aPanels, { | o | o:Refresh() } )
 
       ::oWnd:CheckScroll()
