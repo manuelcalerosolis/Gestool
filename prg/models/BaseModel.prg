@@ -165,7 +165,7 @@ RETURN ( cStatement )
 METHOD createFromHash( hFields )
 
    local cStm
-   local cSql  := ::getInsertStatement( hFields )
+   local cSql           := ::getInsertStatement( hFields )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( .t. )

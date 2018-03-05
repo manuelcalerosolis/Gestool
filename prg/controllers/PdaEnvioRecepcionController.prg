@@ -429,7 +429,7 @@ METHOD buildTicketLineHash( hLine )
    hset( hTicketLine, "cTipTil", "1" )
    hset( hTicketLine, "cCbaTil", idArticulo )
    hset( hTicketLine, "nUntTil", hget( hLine, "unidades" ) )
-   hset( hTicketLine, "nPvpTil", hget( hLine, "precio" ) )
+   hset( hTicketLine, "nPvpTil", hget( hLine, "precio" ) / hget( hLine, "unidades" ) )
    hset( hTicketLine, "uuid",    hget( hLine, "uuid" ) )
 
    if !empty( hArticulo )
