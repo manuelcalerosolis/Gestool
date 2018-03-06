@@ -279,7 +279,11 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
    UsuariosController():New():ActivateNavigatorView()
+=======
+   //AjustableView():Activate()
+>>>>>>> eaf04b9f5347434bc1ad4191ca38f32aeb2fe686
 
 RETURN nil
 

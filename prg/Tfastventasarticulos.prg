@@ -657,7 +657,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cCodPrv",     "C", 12, 0, {|| "@!" }, "Código proveedor lineas"                 )
    ::AddField( "cNomPrv",     "C", 80, 0, {|| "@!" }, "Nombre proveedor lineas"                 )
 
-   ::AddField( "nBultos",     "N", 16, 0, {|| "" },   "Numero de bultos en líneas"              )
+   ::AddField( "nBultos",     "N", 16, 6, {|| "" },   "Numero de bultos en líneas"              )
    ::AddField( "cFormato",    "C",100, 0, {|| "" },   "Formato de compra/venta en líneas"       )
    ::AddField( "nCajas",      "N", 16, 6, {|| "" },   "Cajas en líneas"                         )
    ::AddField( "nPeso",       "N", 16, 6, {|| "" },   "Peso en líneas"                          )
@@ -4528,10 +4528,18 @@ Return ( getCustomExtraField( cField, "Albaranes a clientes", D():AlbaranesClien
 
 METHOD isFechaHoraConsolidacion( cCodArt, cCodAlm )
 
-   local cTimestamp           := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( ::oDbf:cCodArt, ::oDbf:cCodAlm )
-   local fechaConsolidacion   := dtoc( hb_ttod( cTimestamp ) ) + substr( hb_tstostr( cTimestamp ), 12, 8 )
+   local cTimestamp           
+   local fechaConsolidacion
 
-RETURN ( dtoc( ::oDbf:dFecDoc ) + ::oDbf:cTimDoc >= fechaConsolidacion )
+   cTimestamp           := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( ::oDbf:cCodArt, ::oDbf:cCodAlm )
+
+   if Empty( cTimestamp )
+      Return .t.
+   end if
+
+   fechaConsolidacion   := substr( hb_ttos( cTimestamp ), 1, 14 )
+
+RETURN ( dtos( ::oDbf:dFecDoc ) + strtran( ::oDbf:cTimDoc, ":", "" ) >= fechaConsolidacion )
 
 //---------------------------------------------------------------------------//
 
