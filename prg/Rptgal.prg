@@ -2347,6 +2347,9 @@ Return nil
 FUNCTION UsuariosController
 Return nil
 
+FUNCTION AjustableView
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

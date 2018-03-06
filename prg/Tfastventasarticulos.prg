@@ -657,7 +657,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cCodPrv",     "C", 12, 0, {|| "@!" }, "Código proveedor lineas"                 )
    ::AddField( "cNomPrv",     "C", 80, 0, {|| "@!" }, "Nombre proveedor lineas"                 )
 
-   ::AddField( "nBultos",     "N", 16, 0, {|| "" },   "Numero de bultos en líneas"              )
+   ::AddField( "nBultos",     "N", 16, 6, {|| "" },   "Numero de bultos en líneas"              )
    ::AddField( "cFormato",    "C",100, 0, {|| "" },   "Formato de compra/venta en líneas"       )
    ::AddField( "nCajas",      "N", 16, 6, {|| "" },   "Cajas en líneas"                         )
    ::AddField( "nPeso",       "N", 16, 6, {|| "" },   "Peso en líneas"                          )
