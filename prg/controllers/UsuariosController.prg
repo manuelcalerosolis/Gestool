@@ -9,11 +9,19 @@ CLASS UsuariosController FROM SQLNavigatorController
    
    DATA oAjustableController 
 
+   DATA aEmpresas
+
+   DATA cUuidEmpresaExclusiva
+
+   DATA cNombreEmpresaExclusiva
+
    METHOD New()
 
    METHOD End()
 
    METHOD setConfig()
+
+   METHOD startingActivate()
 
 END CLASS
 
@@ -83,47 +91,37 @@ RETURN ( nil )
 
 METHOD setConfig()
 
-   local aItems   := {}
-   local cUuid    := ::getRowSet():fieldGet( 'uuid' )
+   local aItems                  := {}
+   local cUuid                   := ::getRowSet():fieldGet( 'uuid' )
 
    if empty( cUuid )
-      msgalert( cUuid, "cUuid" )
       RETURN ( self )
    end if 
 
-   msgalert( hb_valtoexp( EmpresasModel():aNombres() ), "EmpresasModel():aNombres()stock" )
-
-   aadd( aItems,  {  'clave'  => 'Empresa en uso',;
-                     'valor'  => ::oAjustableController:oRepository:getValue( cUuid, 'usuarios', 'empresa_en_uso', space( 3 ) ) ,;
-                     'tipo'   => "B",;
-                     'lista'  => EmpresasModel():aNombres() } )
-
-   msgalert( hb_valtoexp( aItems ), "aItems" )
-
-   ::oAjustableController:oDialogView:setItems( aItems )
+   ::cUuidEmpresaExclusiva     := ::oAjustableController:oModel:getValue( cUuid, 'usuarios', 'empresa_exclusiva', space( 40 ) )
+   ::aEmpresas                 := EmpresasModel():aNombres()
+   ::cNombreEmpresaExclusiva   := EmpresasModel():getNombreFromUuid( ::cUuidEmpresaExclusiva )
 
    ::oAjustableController:DialogViewActivate()
+
+   ::cUuidEmpresaExclusiva     := EmpresasModel():getUuidFromNombre( ::cNombreEmpresaExclusiva )
+ 
+   ::oAjustableController:oModel:setValue( cUuid, ::cUuidEmpresaExclusiva, 'usuarios', 'empresa_exclusiva' )
+
+   msgalert( ::cUuidEmpresaExclusiva, "cUuidEmpresaExclusiva" )
    
-/*
-   ::aItems    := {}
+RETURN ( self )
 
-   aadd( ::aItems, { 'clave'  => 'empresa_en_uso',;
-                     'valor'  => ::getValue( 'usuarios', 'empresa_en_uso', '' ),;
-                     'tipo'   => "B",;
-                     'lista'  => {"uno", "dos", "tres"} } )
+//---------------------------------------------------------------------------//
 
-   aadd( ::aItems, { 'clave'  => 'caja_en_uso',;
-                     'valor'  => ::getValue( 'usuarios', 'caja_en_uso', '' ),;
-                     'tipo'   => "C" } )
+METHOD startingActivate()
 
-   aadd( ::aItems, { 'clave'  => 'almacen_en_uso',;
-                     'valor'  => ::getValue( 'usuarios', 'almacen_en_uso', '' ),;
-                     'tipo'   => "B",;
-                     'lista'  => {"uno", "dos", "tres"} } )
+   local oPanel
 
-   ::oAjustableController:Edit()
-*/
+   oPanel            := ::oAjustableController:oDialogView:oExplorerBar:AddPanel( "Propiedades usuario", nil, 1 ) 
 
+   oPanel:addComboBox( "Empresa Exclusiva", @::cNombreEmpresaExclusiva, ::aEmpresas )
+   
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

@@ -1818,6 +1818,7 @@ METHOD BuildData()
    oDataTable:cDescription := "Empresa"
    oDataTable:bCreateFile  := {| cPath | mkEmpresa( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxEmpresa( cPath ) }
+   oDataTable:bSyncFile    := {|| synEmpresa( cPathDatos() ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable():New( "Delega", cPathDatos() )

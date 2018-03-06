@@ -721,7 +721,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD CreateView( cDriver ) CLASS D
+METHOD CreateView( cDriver ) CLASS D
 
    local hView
 
@@ -731,25 +731,23 @@ ENDCLASS
 
    hset( ::hViews, ++::nView, hView )
 
-Return ( ::nView )
+RETURN ( ::nView )
 
 //---------------------------------------------------------------------------//
 
-   METHOD AssertView( nView ) CLASS D
+METHOD AssertView( nView ) CLASS D
 
-      DEFAULT nView  := ::nView
+   DEFAULT nView  := ::nView
 
-      if empty( nView )
-         msgStop( "No hay vistas disponibles." )
-         Return ( .f. )
-      end if
+   if empty( nView )
+      RETURN ( .f. )
+   end if
 
-      if !hhaskey( ::hViews, nView )
-         msgStop( "Vista " + alltrim( str( nView ) ) + " no encontrada." / 2  )
-         Return ( .f. )
-      end if 
+   if !hhaskey( ::hViews, nView )
+      RETURN ( .f. )
+   end if 
 
-   Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -782,7 +780,7 @@ Return ( ::nView )
          
       end if 
 
-   Return ( Self )
+   RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -806,7 +804,7 @@ Return ( ::nView )
          cHandle     := ::OpenObject( cName, nView )
       end if
 
-   Return ( cHandle )
+   RETURN ( cHandle )
 
 //---------------------------------------------------------------------------//
 
@@ -1008,7 +1006,7 @@ Return ( ::nView )
 
       ErrorBlock( oBlock )*/
 
-   Return ( uHandle )
+   RETURN ( uHandle )
 
    //---------------------------------------------------------------------------//
 
@@ -1025,12 +1023,12 @@ Return ( ::nView )
 
       if empty( oDataTable )
          msgStop( "No puedo encontrar la tabla " + cDataTable, "Creado temporales" )   
-         Return ( .f. )
+         RETURN ( .f. )
       end if 
 
       if empty( oDataTable:aStruct )
          msgStop( "La tabla " + cDataTable + " no contiene estructura.", "Creado temporales" )   
-         Return ( .f. )
+         RETURN ( .f. )
       end if 
 
       dbCreate( cFile, aSqlStruct( oDataTable:aStruct ), cLocalDriver() )
@@ -1052,7 +1050,7 @@ Return ( ::nView )
 
       end if 
 
-   Return ( lOpen )
+   RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
@@ -1081,7 +1079,7 @@ Return ( ::nView )
          end if 
       end if 
 
-   Return ( .t. )
+   RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1093,7 +1091,7 @@ Return ( ::nView )
 
          msgStop( "No puedo encontrar el objeto " + cObject )   
 
-         Return ( nil )
+         RETURN ( nil )
 
       end if 
 
@@ -1105,11 +1103,11 @@ Return ( ::nView )
 
          msgStop( "No puedo abrir la base de datos del objeto " + cObject )   
 
-         Return ( nil )
+         RETURN ( nil )
 
       end if 
 
-   Return ( oObject )
+   RETURN ( oObject )
 
 //---------------------------------------------------------------------------//
 
@@ -1206,7 +1204,7 @@ METHOD getSQL( cDataTable, cSelect, nView ) CLASS D
       cHandle        := ::openSQL( cDataTable, cSelect, nView )
    end if 
 
-Return ( cHandle )
+RETURN ( cHandle )
 
 //---------------------------------------------------------------------------//
 
@@ -1223,7 +1221,7 @@ Return ( cHandle )
    
    uHandle        := ::GetView( cDataTable, nView ) 
 
-Return ( uHandle )*/
+RETURN ( uHandle )*/
 
 //---------------------------------------------------------------------------//
 
@@ -1240,7 +1238,7 @@ METHOD openSQL( cDataTable, cSelect, nView ) CLASS D
    
    uHandle        := ::GetView( cDataTable, nView ) 
 
-Return ( uHandle )
+RETURN ( uHandle )
 
 //---------------------------------------------------------------------------//
 
@@ -1269,7 +1267,7 @@ METHOD getFieldDictionary( cField, cDataTable, nView ) CLASS D
    local value       := hGet( aDictionary, cField )
 
    if !empty( value )
-      Return ( ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) )
+      RETURN ( ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) )
    endif
 
 RETURN ( nil )
@@ -1283,7 +1281,7 @@ METHOD getFieldFromAliasDictionary( cField, cAlias, hDictionary, uDefault ) CLAS
    if hhaskey( hDictionary, cField )
       value          := hGet( hDictionary, cField )
       if !empty( value )
-         Return ( ( cAlias )->( fieldget( ( cAlias )->( fieldPos( value ) ) ) ) )
+         RETURN ( ( cAlias )->( fieldget( ( cAlias )->( fieldPos( value ) ) ) ) )
       endif
    end if 
 
@@ -1323,7 +1321,7 @@ METHOD appendHashRecord( hTable, cDataTable, nView ) CLASS D
    local workArea    := ::Get( cDataTable, nView )   
 
    if empty( workArea )
-      return ( .f. )
+      RETURN ( .f. )
    end if
 
 RETURN ( ::appendHashRecordInWorkarea( hTable, cDataTable, workArea ) )
@@ -1336,7 +1334,7 @@ METHOD appendHashRecordInWorkarea( hTable, cDataTable, workArea ) CLASS D
    local hDictionary := ::getDictionary( cDataTable )
 
    if empty( hDictionary )
-      return ( lAppend )
+      RETURN ( lAppend )
    end if
 
    ( workArea )->( dbappend() )
@@ -1369,11 +1367,11 @@ METHOD editHashRecord( hTable, cDataTable, nView ) CLASS D
    hDictionary       := ::getDictionary( cDataTable, nView )
 
    if empty( workArea )
-      return ( lEdit )
+      RETURN ( lEdit )
    end if
       
    if empty( hDictionary )
-      return ( lEdit )
+      RETURN ( lEdit )
    end if
 
    if ( workArea )->( dbrlock() )
@@ -1425,7 +1423,7 @@ METHOD getFieldFromDictionary( cKeyDictionary, hDictionary ) CLASS D
       cField   := hgetValueAt( hDictionary, nScan )
    end if 
 
-Return ( cField )
+RETURN ( cField )
 
 //---------------------------------------------------------------------------//
 
@@ -1435,7 +1433,7 @@ METHOD setDefaultValue( hash, cDataTable, nView ) CLASS D
    local aDefaultValue
 
    if !isHash( hash )
-      Return .f.
+      RETURN .f.
    end if
 
    workArea          := ::Get( cDataTable, nView )   
@@ -1455,7 +1453,7 @@ METHOD deleteRecord( cDataTable, nView ) CLASS D
    local workArea    := ::Get( cDataTable, nView )   
 
    if empty( workArea )
-      return ( lDelete )
+      RETURN ( lDelete )
    end if
 
    nRecord           := ( workArea )->( ordKeyNo() )
@@ -1496,7 +1494,7 @@ METHOD getArticuloTablaPropiedades( id, nView ) CLASS D
    local aPropiedadesArticulo2   
 
    if !::gotoArticulos( id, nView )
-      Return ( aPropertiesTable )
+      RETURN ( aPropertiesTable )
    end if 
       
    idPrimeraPropiedad            := ( ::Articulos( nView ) )->cCodPrp1
@@ -1512,7 +1510,7 @@ METHOD getArticuloTablaPropiedades( id, nView ) CLASS D
       if nTotalRow != 0
          aPropiedadesArticulo2   := aPropiedadesGeneral( idSegundaPropiedad, nView )
       else
-         Return nil
+         RETURN nil
       end if 
    end if
 
@@ -1581,7 +1579,7 @@ METHOD getArticuloTablaPropiedades( id, nView ) CLASS D
 
    end if
 
-Return ( aPropertiesTable )
+RETURN ( aPropertiesTable )
 
 //---------------------------------------------------------------------------//
 
@@ -1608,6 +1606,6 @@ METHOD setArticuloTablaPropiedades( id, idCodigoPrimeraPropiedad, idCodigoSegund
    
    next 
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//

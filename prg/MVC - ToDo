@@ -6,6 +6,10 @@ MVC - ToDo
 
 - Mas configuraciones.
 
+- No guarda configuracion de columnas en factura proveedor.
+
+- No muestra el importe de IVA en factura proveedores.
+
 - (HDO) Busqueda de fechas.
 
 - (HDO) Copias de seguridad SQL.

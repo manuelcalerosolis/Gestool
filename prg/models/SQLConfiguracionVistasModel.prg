@@ -15,9 +15,13 @@ CLASS SQLConfiguracionVistasModel FROM SQLBaseModel
 
    METHOD get( cViewType, cViewName )
 
+   METHOD getNavigator( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
+                                                         INLINE ( ::get( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
+
    METHOD getFieldName( cViewName )
    
    METHOD getState( cViewType, cViewName )
+   METHOD getStateNavigator( cViewName )                 INLINE ( ::getState( "navigator", cViewName ) )   
 
    METHOD getColumnOrder( cViewType, cViewName )         INLINE ( ::getFieldName( cViewType, cViewName, "column_order" ) )
    
@@ -27,6 +31,11 @@ CLASS SQLConfiguracionVistasModel FROM SQLBaseModel
    METHOD setId( cViewType, cViewName, nId )             INLINE ( ::set( cViewType, cViewName, nil, nil, nil, nId ) ) 
 
    METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
+
+   METHOD setNavigator( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
+                                                         INLINE ( ::set( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ))
+   METHOD setSelector( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
+                                                         INLINE ( ::set( "selector", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ))
    
    METHOD setColumnOrder( cViewType, cViewName, cColumnOrder ) ;
                                                          INLINE ( ::set( cViewType, cViewName, nil, cColumnOrder ) ) 
@@ -112,7 +121,7 @@ RETURN ( cState )
 
 METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
-   local cSentence      
+   local cSentence  
 
    if empty( cCodEmp() )
       RETURN ( Self )

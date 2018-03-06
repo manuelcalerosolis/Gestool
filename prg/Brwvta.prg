@@ -1242,8 +1242,8 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    CursorWait()
    
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
    oMeter:Show()
    oMeter:SetTotal( 18 )
@@ -1460,10 +1460,10 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    oMeter:Hide()
 
-   RECOVER USING oError
-      msgStop( "Imposible cargar datos" + CRLF + ErrorMessage( oError ) )
-   END SEQUENCE
-   ErrorBlock( oBlock )
+   // RECOVER USING oError
+   //    msgStop( "Imposible cargar datos" + CRLF + ErrorMessage( oError ) )
+   // END SEQUENCE
+   // ErrorBlock( oBlock )
 
    CursorWE()
 
@@ -1497,7 +1497,9 @@ Static function nCompras( cCodArt, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrv
 Return ( nil )
 
 //---------------------------------------------------------------------------//
-/*Calculamos cajas, unidades e importe de albarán de proveedor del mes*/
+/*
+Calculamos cajas, unidades e importe de albarán de proveedor del mes
+*/
 
 static function nTotAlbCom( cCodArt, dbfAlbPrvT, dbfAlbPrvL, nYear )
 

@@ -5,7 +5,7 @@
 
 CLASS EmpresasModel FROM ADSBaseModel
 
-   METHOD getEmpresaTableName()                       INLINE ::getDatosTableName( "Empresa" )
+   METHOD getTableName()                              INLINE ::getDatosTableName( "Empresa" )
 
    METHOD UpdateEmpresaCodigoEmpresa()
 
@@ -33,6 +33,10 @@ CLASS EmpresasModel FROM ADSBaseModel
 
    METHOD aNombres()
 
+   METHOD getUuidFromNombre( cNombre )                INLINE ( ::getField( "Uuid", "cNombre", cNombre ) )
+
+   METHOD getNombreFromUuid( cUuid )                  INLINE ( ::getField( "cNombre", "Uuid", cUuid ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -40,7 +44,7 @@ END CLASS
 METHOD UpdateEmpresaCodigoEmpresa()
 
    local cStm
-   local cSql  := "UPDATE " + ::getEmpresaTableName() + " " + ;
+   local cSql  := "UPDATE " + ::getTableName() + " " + ;
                   "SET CodEmp = CONCAT( '00', TRIM( CodEmp ) ) WHERE ( LENGTH( CodEmp ) < 4 )"
 
 RETURN ( ::ExecuteSqlStatement( cSql, @cStm ) )
@@ -50,7 +54,7 @@ RETURN ( ::ExecuteSqlStatement( cSql, @cStm ) )
 METHOD getCodigoGrupo( cCodigoEmpresa )
 
    local cStm
-   local cSql  := "SELECT cCodGrp FROM " + ::getEmpresaTableName() + " WHERE CodEmp = '" + alltrim( cCodigoEmpresa ) + "'"
+   local cSql  := "SELECT cCodGrp FROM " + ::getTableName() + " WHERE CodEmp = '" + alltrim( cCodigoEmpresa ) + "'"
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( ( cStm )->cCodGrp )
@@ -63,7 +67,7 @@ RETURN ( "" )
 METHOD getCodigoActiva()
 
    local cStm
-   local cSql  := "SELECT CodEmp FROM " + ::getEmpresaTableName() + " WHERE lActiva"
+   local cSql  := "SELECT CodEmp FROM " + ::getTableName() + " WHERE lActiva"
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( ( cStm )->CodEmp )
@@ -76,7 +80,7 @@ RETURN ( "" )
 METHOD getRegistrosActivos()
 
    local cStm
-   local cSql  := "SELECT Count(*) AS Counter FROM " + ::getEmpresaTableName() 
+   local cSql  := "SELECT Count(*) AS Counter FROM " + ::getTableName() 
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( ( cStm )->Counter )
@@ -89,7 +93,7 @@ RETURN ( 0 )
 METHOD getPrimera()
 
    local cStm
-   local cSql  := "SELECT TOP 1 CodEmp FROM " + ::getEmpresaTableName() + " WHERE NOT lGrupo"
+   local cSql  := "SELECT TOP 1 CodEmp FROM " + ::getTableName() + " WHERE NOT lGrupo"
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( ( cStm )->CodEmp )
@@ -102,7 +106,7 @@ RETURN ( "" )
 METHOD getCodigoGrupoCampoLogico( cCodigoEmpresa, cCampoLogico )
 
    local cStm
-   local cSql              := "SELECT cCodGrp FROM " + ::getEmpresaTableName()   + " " + ;
+   local cSql              := "SELECT cCodGrp FROM " + ::getTableName()   + " " + ;
                                  "WHERE CodEmp = " + quoted( cCodigoEmpresa )    + " " + ;
                                  "AND " + cCampoLogico + " = TRUE"
 
@@ -119,7 +123,7 @@ RETURN ( cCodigoEmpresa )
 METHOD scatter( cCodigoEmpresa )
 
    local cStm
-   local cSql  := "SELECT TOP 1 * FROM " + ::getEmpresaTableName() + " WHERE CodEmp = " + quoted( cCodigoEmpresa )
+   local cSql  := "SELECT TOP 1 * FROM " + ::getTableName() + " WHERE CodEmp = " + quoted( cCodigoEmpresa )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( dbScatter( cStm ) )
@@ -132,8 +136,8 @@ RETURN ( {} )
 METHOD DeleteEmpresa( cCodigoEmpresa )
 
    local cStm
-   local cSql  := "DELETE FROM " + ::getEmpresaTableName() + " " + ;
-                  "WHERE CodEmp = " + quoted( cCodigoEmpresa )
+   local cSql  := "DELETE FROM " + ::getTableName() + " " + ;
+                     "WHERE CodEmp = " + quoted( cCodigoEmpresa )
 
 RETURN ( ::ExecuteSqlStatement( cSql, @cStm ) )
 
@@ -143,17 +147,18 @@ METHOD aNombres()
 
    local cStm
    local aEmp  := {}
-   local cSql  := "SELECT * FROM " + ::getEmpresaTableName() 
+   local cSql  := "SELECT * FROM " + ::getTableName() 
 
    if !::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( aEmp )
    endif 
 
    while !( cStm )->( eof() ) 
-      aadd( aEmp, ( cStm )->cNombre )
+      aadd( aEmp, alltrim( ( cStm )->cNombre ) )
       ( cStm )->( dbskip() )
    end while
 
 RETURN ( aEmp )
 
 //---------------------------------------------------------------------------//
+

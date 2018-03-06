@@ -134,9 +134,11 @@ RETURN ( Self )
 METHOD getField( cField, cBy, cId )
 
    local cStm  
-   local cSql  := "SELECT " + cField + " "                              + ;
-                     "FROM " + ::getTableName() + " "                   + ;
-                     "WHERE " + cBy + " = " + quoted( cId ) 
+   local cSql
+
+   cSql        := "SELECT " + cField + " "                              
+   cSql        +=    "FROM " + ::getTableName() + " "                   
+   cSql        +=    "WHERE " + cBy + " = " + quoted( cId ) 
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( ( cStm )->( fieldget( fieldpos( cField ) ) ) )

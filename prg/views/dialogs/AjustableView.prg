@@ -9,48 +9,15 @@ CLASS AjustableView FROM SQLBaseView
 
    DATA oExplorerBar
 
-   DATA oCol
-   
    DATA oDialog
-
-   DATA aItemSelected
-
-   DATA comboDocumentCounter
-
-   DATA getDocumentCounter
-
-   DATA hFormatoColumnas
-
-   DATA aItems                                  INIT {}
-
-   METHOD New( oController )
-
-   METHOD changeDocumentCounter()               INLINE ( .t. )
 
    METHOD Activate()
 
-   METHOD StartActivate()
+   METHOD startActivate()
 
-   METHOD ChangeBrowse()
-
-   METHOD setItems( aItems )                    INLINE ( ::aItems := aItems )
-   METHOD getItems()                            INLINE ( ::aItems )
-
-   METHOD setColType( uValue )                  INLINE ( ::oCol:nEditType := uValue )
-
-   METHOD setColPicture( uValue )               INLINE ( ::oCol:cEditPicture := uValue )
-
-   METHOD setColListTxt( aValue )               INLINE ( ::oCol:aEditListTxt := aValue )
+   METHOD endActivate()
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD New( oController )
-
-   ::oController        := oController
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -89,7 +56,7 @@ METHOD Activate()
 
       ::oDialog:AddFastKey( VK_F5, {|| oBtnAceptar:Click() } )
 
-      ::oDialog:bStart        := {|| ::StartActivate() }
+      ::oDialog:bStart  := {|| ::StartActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -101,65 +68,28 @@ RETURN ( ::oDialog:nResult == IDOK )
 
 METHOD StartActivate()
 
-   local oPanelTop
-   local oPanelBottom
+   ::fireEvent( 'startingActivate' )     
 
-   oPanelTop            := ::oExplorerBar:AddPanel( "Propiedades usuario", nil, 1 ) 
-   oPanelTop:SetColor( nRGB( 255, 255, 255 ), nRGB( 255, 255, 255 ) )
+   if !empty( ::oExplorerBar )
+      ::oExplorerBar:checkScroll()
+   end if 
 
-   oPanelTop:AddLink( "First item", nil, "adddbf" )
-   oPanelTop:AddLink( "Second item", nil, "delete" )
-
-   oPanelTop:AddGet( "Población", "la palma del condado" )
-
-   oPanelTop:AddGet( "Provincia", "huelva" )
-
-   oPanelTop:AddGet( "Región", "andalucia" )
-
-   oPanelTop:AddComboBox()
-
-   // @ 34, 10 SAY "This a say" OF oPanelTop PIXEL COLOR RGB( 0,0,0), RGB(255,255,255)
-   // @ 34, 120 GET cName SIZE 200, 18 OF oPanelTop PIXEL
-
-   // @ 64, 10 SAY "This a say" OF oPanelTop PIXEL COLOR RGB( 0,0,0), RGB(255,255,255)
-   // @ 64, 120 GET cName SIZE 200, 18 OF oPanelTop PIXEL
-
-   oPanelBottom            := ::oExplorerBar:AddPanel( "Bottom" )
-   oPanelBottom:SetColor( nRGB( 255, 255, 255 ), nRGB( 255, 255, 255 ) )
-
-   oPanelBottom:AddLink( "First item", nil, "adddbf" )
-   oPanelBottom:AddLink( "Second item", nil, "delete" )
-
-   oPanelBottom:AddGet( "Población", "la palma del condado" )
-
-   oPanelBottom:AddGet( "Provincia", "huelva" )
-
-   oPanelBottom:AddGet( "Región", "andalucia" )
-
-   oPanelBottom:AddGet( "Población", "la palma del condado" )
-
-   oPanelBottom:AddGet( "Provincia", "huelva" )
-
-   oPanelBottom:AddGet( "Región", "andalucia" )
-
-   oPanelBottom:AddGet( "Población", "la palma del condado" )
-
-   oPanelBottom:AddGet( "Provincia", "huelva" )
-
-   oPanelBottom:AddGet( "Región", "andalucia" )
-
-   ::oExplorerBar:checkScroll()
+   ::fireEvent( 'startedActivate' )     
 
 RETURN ( self )
 
 //--------------------------------------------------------------------------//
 
-METHOD ChangeBrowse()
+METHOD EndActivate()
 
-   eval( hget( ::hFormatoColumnas, hget( ::oExplorerBar:aArrayData[ ::oExplorerBar:nArrayAt ], "tipo" ) ) )
+   if !empty( ::oDialog )
+      ::oDialog:End()
+   end if 
 
-   ::oCol:bOnPostEdit            := {|o,x,n| hset( ::oExplorerBar:aArrayData[ ::oExplorerBar:nArrayAt ], "valor", x ) }
+   ::oDialog   := nil
 
-RETURN ( self )
+RETURN ( nil )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+

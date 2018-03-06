@@ -61,7 +61,9 @@ CLASS SQLAjustesModel FROM SQLBaseModel
 
    METHOD getInsertAjustesSentence()
 
-   METHOD getAjusteUuid()
+   METHOD getAjusteUuidSentence( cAjuste )
+
+   METHOD getAjusteUuid( cAjuste )
 
 END CLASS
 
@@ -101,8 +103,8 @@ METHOD getInsertAjustesSentence()
    cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
    cSentence  +=    "( uuid, ajuste, sistema, tipo_dato, valor_minimo, valor_maximo ) "
    cSentence  += "VALUES "
-   cSentence  +=    "( UUID(), 'empresa_en_uso',            '1',  'alphanumeric', NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'caja_en_uso',               '1',  'alphanumeric', NULL, NULL ), "
+   cSentence  +=    "( UUID(), 'empresa_exclusiva',         '1',  'alphanumeric', NULL, NULL ), "
+   cSentence  +=    "( UUID(), 'caja_exclusiva',            '1',  'alphanumeric', NULL, NULL ), "
    cSentence  +=    "( UUID(), 'almacen_en_uso',            '1',  'alphanumeric', NULL, NULL ), "
    cSentence  +=    "( UUID(), 'mostrar_rentabilidad',      '1',  'boolean',      NULL, NULL ), "
    cSentence  +=    "( UUID(), 'cambiar_precios',           '1',  'boolean',      NULL, NULL ), "
@@ -114,7 +116,7 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getAjusteUuid( cAjuste )
+METHOD getAjusteUuidSentence( cAjuste )
 
    local cSentence
 
@@ -123,6 +125,13 @@ METHOD getAjusteUuid( cAjuste )
 
 RETURN ( cSentence )
 
+//---------------------------------------------------------------------------//
+
+METHOD getAjusteUuid( cAjuste )
+
+RETURN ( ::getDatabase():selectValue( ::getAjusteUuidSentence( cAjuste ) ) )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

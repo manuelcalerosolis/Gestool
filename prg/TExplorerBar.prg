@@ -161,6 +161,10 @@ METHOD CheckScroll() CLASS TExplorerBar
    local nLastRow
    local oLastItem
 
+   if empty( ::aPanels )
+      RETURN nil
+   end if 
+
    oLastItem   := atail( ::aPanels )
 
    nLastRow    := ::nVirtualTop + oLastItem:nTop 
@@ -376,7 +380,10 @@ CLASS TTaskPanel FROM TControl
    METHOD MouseMove( nRow, nCol, nFlags )
    METHOD MouseLeave( nRow, nCol, nFlags )
    METHOD UpdateRegion()
+
+
    METHOD SetPanelBitmap( cnBmp )
+   METHOD setHeight( nHeight )
 
    METHOD getTopControl()
 
@@ -408,7 +415,7 @@ METHOD New( cTitle, oWnd, nIndex, cBmpPanel, nBodyHeight ) CLASS TTaskPanel
    ::oWnd    = oWnd
    ::nStyle  = nOr( WS_CHILD, WS_VISIBLE, WS_CLIPCHILDREN, WS_TABSTOP )
    ::lDrag   = .F.
-   ::nClrPane = nRGB( 214, 223, 247 )
+   ::nClrPane = nRGB( 255, 255, 255 )
    ::nClrText = nRGB( 0, 0, 0 )
    ::nIndex  = nIndex + 1
    ::LoadBitmaps()
@@ -445,6 +452,19 @@ RETURN ( nTop )
 
 //----------------------------------------------------------------------------//
 
+METHOD setHeight( oItem )
+
+   local nTop        := oItem:nTop
+
+   if nTop + oItem:nHeight > ::nHeight
+      ::nHeight      := nTop + oItem:nHeight 
+      ::nBodyHeight  := ::nHeight - ::nTitleHeight
+   endif
+
+RETURN Self
+
+//----------------------------------------------------------------------------//
+
 METHOD AddLink( cPrompt, bAction, cBitmap ) CLASS TTaskPanel
 
    local oUrlLink
@@ -459,10 +479,7 @@ METHOD AddLink( cPrompt, bAction, cBitmap ) CLASS TTaskPanel
       oUrlLink:hBmp  := LoadBitmap( GetResources(), cBitmap )
    endif
 
-   if oUrlLink:nTop + oUrlLink:nHeight > ::nHeight
-      ::nHeight      := oUrlLink:nTop + oUrlLink:nHeight + 10
-      ::nBodyHeight  := ::nHeight - ::nTitleHeight
-   endif
+   ::setHeight( oUrlLink )
 
 RETURN nil
 
@@ -474,14 +491,11 @@ METHOD AddGet( cPrompt, cGet ) CLASS TTaskPanel
    local oGet
    local nTop        := ::getTopControl()
 
-   @ nTop, 10  SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
+   @ nTop + 3, 10  SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
 
    @ nTop, 120 GET oGet VAR cGet SIZE 400, 20 OF Self PIXEL
 
-   if nTop + oGet:nHeight > ::nHeight
-      ::nHeight      := nTop + oGet:nHeight 
-      ::nBodyHeight  := ::nHeight - ::nTitleHeight
-   endif
+   ::setHeight( oGet )
 
 RETURN ( oGet )
 
@@ -493,18 +507,11 @@ METHOD AddComboBox( cPrompt, cItem, aItems ) CLASS TTaskPanel
    local oCbx
    local nTop        := ::getTopControl()
 
-   DEFAULT cPrompt   := "Testing"
-   DEFAULT cItem     := "Testing"
-   DEFAULT aItems    := { "Testing", "this", "ComboBox" }
-
-   @ nTop, 10  SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
+   @ nTop + 6, 10  SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
 
    @ nTop, 120 COMBOBOX oCbx VAR cItem ITEMS aItems SIZE 400, 460 OF Self PIXEL HEIGHTGET 20 
 
-   if nTop + oCbx:nHeight > ::nHeight
-      ::nHeight      := nTop + oCbx:nHeight 
-      ::nBodyHeight  := ::nHeight - ::nTitleHeight
-   endif
+   ::setHeight( oCbx )
 
 RETURN ( oCbx )
 
