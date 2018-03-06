@@ -51,6 +51,15 @@ Function afterSaveLine( nView, nMode, aTmpPed, dbfTmpLin )
          case ( dbfTmpLin )->cUnidad == "82"
             nDestare             += 82
 
+	 case ( dbfTmpLin )->cUnidad == "24"
+            nDestare             += 24
+
+	case ( dbfTmpLin )->cUnidad == "21"
+            nDestare             += 21
+
+	case ( dbfTmpLin )->cUnidad == "22"
+            nDestare             += 22
+
       end case
 
    end if

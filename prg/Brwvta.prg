@@ -2573,7 +2573,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
 
       oDbfTmp:Append()
       oDbfTmp:nTypDoc   := MOV_ALM
-      oDbfTmp:cNumDoc   := AllTrim( oRowSet:fieldget( 'numero' ) )
+      oDbfTmp:cNumDoc   := AllTrim( cValToChar( oRowSet:fieldget( 'numero' ) ) )
       oDbfTmp:cSufDoc   := oRowSet:fieldget( 'delegacion' )
       oDbfTmp:cEstDoc   := "Movimiento"
       oDbfTmp:dFecDoc   := oRowSet:fieldget( 'fecha' )

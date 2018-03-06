@@ -4537,11 +4537,8 @@ CLASS SStock
    
    METHOD New()
 
-   METHOD Documento()         INLINE ( cTextDocument( ::cTipoDocumento ) + space(1) + ;
-                                       alltrim( ::cNumeroDocumento ) + space(1) + ;
-                                       "de fecha " + dtoc( ::dFechaDocumento ) + ;
-                                       if( empty(::tFechaDocumento), "", " a las " + trans( ::tFechaDocumento, "@R 99:99:99" ) ) )
-
+   METHOD Documento()
+   
    METHOD Say()
 
    METHOD Save( oDbfStock )
@@ -4576,6 +4573,23 @@ METHOD New() CLASS SStock
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
+
+METHOD Documento() CLASS SStock
+
+   local cDocumento     := ""
+
+   cDocumento           += cTextDocument( ::cTipoDocumento ) + space(1)
+
+   if !Empty( ::cNumeroDocumento )
+      cDocumento           += alltrim( ::cNumeroDocumento ) + space(1)
+   end if
+
+   cDocumento           += "de fecha " + dtoc( ::dFechaDocumento )
+   cDocumento           += if( empty(::tFechaDocumento), "", " a las " + trans( ::tFechaDocumento, "@R 99:99:99" ) )
+
+RETURN ( cDocumento )
+
+//------------------------------------------------------------------------//                                       
 
 METHOD Say() CLASS SStock
 

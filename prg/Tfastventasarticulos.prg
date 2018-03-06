@@ -4528,10 +4528,18 @@ Return ( getCustomExtraField( cField, "Albaranes a clientes", D():AlbaranesClien
 
 METHOD isFechaHoraConsolidacion( cCodArt, cCodAlm )
 
-   local cTimestamp           := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( ::oDbf:cCodArt, ::oDbf:cCodAlm )
-   local fechaConsolidacion   := dtoc( hb_ttod( cTimestamp ) ) + substr( hb_tstostr( cTimestamp ), 12, 8 )
+   local cTimestamp           
+   local fechaConsolidacion
 
-RETURN ( dtoc( ::oDbf:dFecDoc ) + ::oDbf:cTimDoc >= fechaConsolidacion )
+   cTimestamp           := MovimientosAlmacenLineasRepository():getFechaHoraConsolidacion( ::oDbf:cCodArt, ::oDbf:cCodAlm )
+
+   if Empty( cTimestamp )
+      Return .t.
+   end if
+
+   fechaConsolidacion   := substr( hb_ttos( cTimestamp ), 1, 14 )
+
+RETURN ( dtos( ::oDbf:dFecDoc ) + strtran( ::oDbf:cTimDoc, ":", "" ) >= fechaConsolidacion )
 
 //---------------------------------------------------------------------------//
 
