@@ -116,6 +116,8 @@ METHOD StartActivate()
 
    oPanelTop:AddGet( "Región", "andalucia" )
 
+   oPanelTop:AddComboBox()
+
    // @ 34, 10 SAY "This a say" OF oPanelTop PIXEL COLOR RGB( 0,0,0), RGB(255,255,255)
    // @ 34, 120 GET cName SIZE 200, 18 OF oPanelTop PIXEL
 

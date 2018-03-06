@@ -133,8 +133,10 @@ METHOD newVerticalScroll()
 
    ::oVScroll:bGoUp     = {|| ::VScrollSkip( - 10 ) }
    ::oVScroll:bGoDown   = {|| ::VScrollSkip( 10 ) }
-   ::oVScroll:bPageUp   = {|| ::VScrollSkip( - ::oVScroll:nPgStep ) }
-   ::oVScroll:bPageDown = {|| ::VScrollSkip( ::oVScroll:nPgStep ) }
+   // ::oVScroll:bPageUp   = {|| ::VScrollSkip( - ::oVScroll:nPgStep ) }
+   // ::oVScroll:bPageDown = {|| ::VScrollSkip( ::oVScroll:nPgStep ) }
+   ::oVScroll:bPageUp   = {|| ::VScrollSkip( - 10 ) }
+   ::oVScroll:bPageDown = {|| ::VScrollSkip( 10 ) }
    ::oVScroll:bPos      = {|nPos| ::VScrollSetPos( nPos ) }
    ::oVScroll:bTrack    = {|nPos| ::VScrollSetPos( nPos ) }
 
@@ -170,22 +172,21 @@ METHOD CheckScroll() CLASS TExplorerBar
    endif  
 
    if nLastRow > ::nHeight - ::nVirtualTop
-      
       ::nVirtualHeight  := nLastRow
 
       SetScrollRangeX( ::hWnd, 1, 0, ::nVirtualHeight - 1 )
 
-      // ::oVScroll:SetPage( ::nHeight, .F. )
-      ::oVScroll:SetPos( ::nVirtualTop )
+      ::oVScroll:SetPage( ::nHeight, .f. )
+      ::oVScroll:setPos( ::nVirtualTop )
       
-      ::lSBVisible      := .T.
+      ::lSBVisible      := .t.
    else
       ::nVirtualTop     := 0
       ::nVirtualHeight  := ::nHeight
       
       SetScrollRangeX( ::hWnd, 1, 0, 0 )
       
-      ::lSBVisible      := .F.
+      ::lSBVisible      := .f.
    endif
 
 RETURN nil
@@ -196,7 +197,7 @@ METHOD Initiate( hDlg ) CLASS TExplorerBar
 
    local uValue := ::Super:Initiate( hDlg )
 
-   __ChangeStyleWindow( ::hWnd, WS_CLIPCHILDREN, GWL_STYLE, .T. )
+   __ChangeStyleWindow( ::hWnd, WS_CLIPCHILDREN, GWL_STYLE, .t. )
 
 RETURN uValue
 
@@ -206,7 +207,7 @@ METHOD Paint() CLASS TExplorerBar
 
    local aInfo := ::DispBegin(), n, hBmpPanel
 
-   Gradient( ::hDC, { 0, 0, ::nHeight(), ::nWidth() }, ::nTopColor, ::nBottomColor, .T. )
+   Gradient( ::hDC, { 0, 0, ::nHeight(), ::nWidth() }, ::nTopColor, ::nBottomColor, .t. )
 
    if ! Empty( ::aPanels )
       for n = 1 to Len( ::aPanels )
@@ -252,7 +253,7 @@ METHOD ReSize( nSizeType, nWidth, nHeight ) CLASS TExplorerBar
          oPanel:UpdateRegion()
       next
       
-      ::nVirtualTop = 0
+      ::nVirtualTop     := 0
 
    else
       for each oPanel in ::aPanels
@@ -278,24 +279,29 @@ RETURN ::Super:ReSize( nSizeType, nWidth, nHeight )
 
 METHOD VScrollSetPos( nPos ) CLASS TExplorerBar
 
-   LOCAL nHeight := ( ::nVirtualHeight - ::nHeight )
-   LOCAL oPanel
-   LOCAL nAdvance := ::nVirtualTop - nPos
-   LOCAL nTop
+   local nTop
+   local oPanel
+   local nHeight     := ( ::nVirtualHeight - ::nHeight )
+   local nAdvance    := ( ::nVirtualTop - nPos )
 
-   ::nVirtualTop = nPos
+   ::nVirtualTop     := nPos
 
-   IF ::nVirtualTop < 0
-      ::nVirtualTop := 0
-   ELSEIF ::nVirtualTop > nHeight
-      ::nVirtualTop := nHeight
-   ENDIF
+   if ::nVirtualTop < 0
+      ::nVirtualTop  := 0
+   elseif ::nVirtualTop > nHeight
+      ::nVirtualTop  := nHeight
+   endif
+
    ::oVScroll:SetPos( ::nVirtualTop )
 
    for each oPanel in ::aPanels
-      nTop := oPanel:nTop + nAdvance
+      nTop           := oPanel:nTop + nAdvance
       oPanel:Move( nTop )
    next
+
+   logwrite(  "nHeight VScrollSetPos : " + str( nHeight ) )
+   logwrite(  "nAdvance VScrollSetPos" + str( nAdvance ) )
+   logwrite(  "nVirtualTop VScrollSetPos" + str( ::nVirtualTop ) )
 
    ::Refresh()
 
@@ -306,25 +312,27 @@ RETURN nil
 METHOD VScrollSkip( nSkip ) CLASS TExplorerBar
 
    LOCAL oPanel
-   LOCAL nHeight := ( ::nVirtualHeight - ::nHeight )
+   LOCAL nHeight     := ( ::nVirtualHeight - ::nHeight )
 
-   IF (::nVirtualTop == 0 .And. nSkip < 0) .Or. ;
-      (::nVirtualTop == nHeight .And. nSkip > 0)
+   if ( ::nVirtualTop == 0 .and. nSkip < 0 ) .or. ( ::nVirtualTop == nHeight .and. nSkip > 0 )
       RETURN nil
-   ENDIF
+   endif
 
-   ::nVirtualTop += nSkip
+   ::nVirtualTop     += nSkip
 
-   IF ::nVirtualTop < 0
-      ::nVirtualTop := 0
-   ELSEIF ::nVirtualTop > nHeight
-      ::nVirtualTop := nHeight
-   ENDIF
+   if ::nVirtualTop < 0
+      ::nVirtualTop  := 0
+   elseif ::nVirtualTop > nHeight
+      ::nVirtualTop  := nHeight
+   endif
+
    ::oVScroll:SetPos( ::nVirtualTop )
 
    for each oPanel in ::aPanels
       oPanel:Move( oPanel:nTop - nSkip )
    next
+
+   logwrite( "VScrollSkip " + str( nSkip ) )
 
    ::Refresh()
 
@@ -353,6 +361,8 @@ CLASS TTaskPanel FROM TControl
    METHOD New( cTitle, oWnd, nIndex, cBmpPanel )
    METHOD AddLink( cPrompt, bAction, cBitmap )
    METHOD AddGet( cPrompt, bAction, cBitmap )
+   METHOD AddComboBox( cPrompt, cItem, aItems )
+
    METHOD Display() INLINE ::BeginPaint(), ::Paint(), ::EndPaint(), 0
    METHOD Destroy()
    METHOD End()       INLINE ::Destroy()
@@ -439,7 +449,7 @@ METHOD AddLink( cPrompt, bAction, cBitmap ) CLASS TTaskPanel
 
    local oUrlLink
 
-   oUrlLink          := TUrlLink():New( ::getTopControl(), 33, Self, .T., .F., ::oFont, "", cPrompt )
+   oUrlLink          := TUrlLink():New( ::getTopControl(), 33, Self, .t., .F., ::oFont, "", cPrompt )
 
    oUrlLink:SetColor( ::nClrHover, ::nClrPane )
    oUrlLink:nClrOver := ::nClrHover
@@ -458,7 +468,7 @@ RETURN nil
 
 //----------------------------------------------------------------------------//
 
-METHOD AddGet( cPrompt, cGet, cBitmap ) CLASS TTaskPanel
+METHOD AddGet( cPrompt, cGet ) CLASS TTaskPanel
 
    local oSay
    local oGet
@@ -473,13 +483,37 @@ METHOD AddGet( cPrompt, cGet, cBitmap ) CLASS TTaskPanel
       ::nBodyHeight  := ::nHeight - ::nTitleHeight
    endif
 
-RETURN nil
+RETURN ( oGet )
 
 //----------------------------------------------------------------------------//
 
+METHOD AddComboBox( cPrompt, cItem, aItems ) CLASS TTaskPanel
+
+   local oSay
+   local oCbx
+   local nTop        := ::getTopControl()
+
+   DEFAULT cPrompt   := "Testing"
+   DEFAULT cItem     := "Testing"
+   DEFAULT aItems    := { "Testing", "this", "ComboBox" }
+
+   @ nTop, 10  SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
+
+   @ nTop, 120 COMBOBOX oCbx VAR cItem ITEMS aItems SIZE 400, 460 OF Self PIXEL HEIGHTGET 20 
+
+   if nTop + oCbx:nHeight > ::nHeight
+      ::nHeight      := nTop + oCbx:nHeight 
+      ::nBodyHeight  := ::nHeight - ::nTitleHeight
+   endif
+
+RETURN ( oCbx )
+
+//----------------------------------------------------------------------------//
+
+
 METHOD Destroy() CLASS TTaskPanel
 
-   AEval( ::aBitmaps,;
+   aeval( ::aBitmaps,;
           { | aItem | DeleteObject( aItem[ BMP_HANDLE ] ),;
                       DeleteObject( aItem[ BMP_BRIGHT ] ) } )
 

@@ -6,7 +6,15 @@ MVC - ToDo
 
 - Mas configuraciones.
 
-- Copias de seguridad SQL.
+- (HDO) Busqueda de fechas.
+
+- (HDO) Copias de seguridad SQL.
+
+- (HDO) FetchDirect por nombres.
+
+- (HDO) Sentencias precompiladas con hashtable.
+
+- (HDO) HashList no funciona bien.
 
 - Posicinarse en el ultimo registro usado. (done)
 
