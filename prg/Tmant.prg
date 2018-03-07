@@ -893,7 +893,7 @@ METHOD Existe( uValue, oGetTxt, uField, lMessage, lFill, cFillChar, uOrder ) CLA
    else
 
       if lMessage
-         msgStop( ::cMessageNotFound, "" )
+         msgStop( ::cMessageNotFound, ::oDbf:ClassName )
       end if
 
    end if

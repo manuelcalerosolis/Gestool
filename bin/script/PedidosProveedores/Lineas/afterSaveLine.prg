@@ -25,6 +25,12 @@ Function afterSaveLine( nView, nMode, aTmpPed, dbfTmpLin )
 
    D():CamposExtraLine( nView ):selectItem( if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) )
 
+   if Empty( D():CamposExtraLine( nView ):aItemSelected )
+      MsgStop( "No guardo el kilo real", "viene vacio" )
+   end if
+
+   msginfo( Hb_ValToExp( D():CamposExtraLine( nView ):aItemSelected ), "aItemSelected" )
+
    for each hSelect in D():CamposExtraLine( nView ):aItemSelected
 
       if AllTrim( hGet( hSelect, "código" ) ) == "009"

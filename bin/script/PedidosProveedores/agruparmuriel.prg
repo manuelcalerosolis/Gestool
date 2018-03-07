@@ -332,7 +332,8 @@ METHOD AddCabeceraAlbaran() CLASS TImportarPedidosProveedor
    Tomo valores para el número del albarán a crear
    */
 
-   ::cSerieAlbaran      := ( ::cSelectHead )->cSerPed
+   //::cSerieAlbaran      := ( ::cSelectHead )->cSerPed
+   ::cSerieAlbaran      := RetFld( ::cCodigoProveedor, D():Proveedores( ::nView ), "Serie" )
    ::nNumeroAlbaran     := nNewDoc( ( ::cSelectHead )->cSerPed, D():AlbaranesProveedores( ::nView ), "nAlbPrv", , D():Contadores( ::nView ) )
    ::cSufijoAlbaran     := ( ::cSelectHead )->cSufPed
 
