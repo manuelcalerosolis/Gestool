@@ -35,6 +35,7 @@ CLASS TImpEstudio
    DATA oColpVenta
    DATA oColGFamilia
    DATA oColFamilia
+   DATA oColTipoIva
    DATA cColCodArt
    DATA cColNomArt
    DATA cColCodBar
@@ -43,6 +44,7 @@ CLASS TImpEstudio
    DATA cColpVenta
    DATA cColGFamilia
    DATA cColFamilia
+   DATA cColTipoIva
 
    METHOD New()
 
@@ -274,6 +276,16 @@ METHOD Activate( oWnd )
          VALID    ( ::cColFamilia == Space( 1 ) .or. ( ::cColFamilia >= "A" .AND. ::cColFamilia <= "Z"  ) );
          OF       ::oFld:aDialogs[1]
 
+      REDEFINE GET ::oColTipoIva VAR ::cColTipoIva ;
+         ID       220 ;
+         PICTURE  "@!" ;
+         COLOR    CLR_GET ;
+         SPINNER ;
+         ON UP    ( UpSerie( ::oColTipoIva ) );
+         ON DOWN  ( DwSerie( ::oColTipoIva ) );
+         VALID    ( ::cColTipoIva == Space( 1 ) .or. ( ::cColTipoIva >= "A" .AND. ::cColTipoIva <= "Z"  ) );
+         OF       ::oFld:aDialogs[1]
+
       ::oTree     := TTreeView():Redefine( 100, ::oFld:aDialogs[ 2 ] )
 
 REDEFINE APOLOMETER ::oMtrProceso ;
@@ -358,6 +370,8 @@ METHOD ImportaHoja()
    local nLinesBlank := 0
    local cNewFam     := Space( 8 )
    local cNewGrpFam  := Space( 3 )
+   local nTipoIva
+   local cCodIva
 
    /*
    Ponemos el boton de cancelar------------------------------------------------
@@ -417,8 +431,9 @@ METHOD ImportaHoja()
 
          if !Empty( ::cColCodArt )
             cCodArt     := Padr( oOleExcel:oExcel:ActiveSheet:Range( ::cColCodArt + lTrim( Str( n ) ) ):Value, 18 )
+            cCodArt     := SubStr( cCodArt, 1, at( ".", cCodArt ) - 1 )
          end if
-         cCodArt        := Alltrim( cValToChar( cCodArt ) )
+         cCodArt        := Alltrim( cValToChar( cCodArt) )
 
          if !Empty( ::cColNomArt )
             cNomArt     := oOleExcel:oExcel:ActiveSheet:Range( ::cColNomArt + lTrim( Str( n ) ) ):Value
@@ -433,7 +448,6 @@ METHOD ImportaHoja()
             cCodBar     := oOleExcel:oExcel:ActiveSheet:Range( ::cColCodBar + lTrim( Str( n ) ) ):Value
          end if
          cCodBar        := AllTrim( cValToChar( cCodBar ) )
-
 
          if !Empty( ::cColpVenta )
             pVenta      := oOleExcel:oExcel:ActiveSheet:Range( ::cColpVenta + lTrim( Str( n ) ) ):Value
@@ -502,7 +516,17 @@ METHOD ImportaHoja()
 
          cFamilia       := Alltrim( cValToChar( cFamilia ) )
 
-         nIva           := nIva( ::oDbfIva, cDefIva() ) / 100
+         if !Empty( ::cColTipoIva )
+            nTipoIva    := oOleExcel:oExcel:ActiveSheet:Range( ::cColTipoIva + lTrim( Str( n ) ) ):Value
+         end if
+
+         if Valtype( nTipoIva ) == "N" .and. nTipoIva != 0
+            nIva           := nTipoIva / 100
+            cCodIva        := cCodigoIva( ::oDbfIva:cAlias, nTipoIva )
+         else
+            nIva           := nIva( ::oDbfIva, cDefIva() ) / 100
+            cCodIva        := cDefIva()
+         end if
 
          if !Empty( cCodArt )
 
@@ -586,7 +610,7 @@ METHOD ImportaHoja()
                Marcamos como obsoleto si lo tenemos creado con código de barras
                */
 
-               if !Empty( cCodBar )
+               /*if !Empty( cCodBar )
 
                   ::oDbfArt:Gotop()
 
@@ -609,7 +633,7 @@ METHOD ImportaHoja()
 
                   end if
 
-               end if
+               end if*/
 
                if !::oDbfArt:Seek( cCodArt )
 
@@ -625,7 +649,7 @@ METHOD ImportaHoja()
                   ::oDbfArt:nLabel     := 1
                   ::oDbfArt:nCtlStock  := 1
                   ::oDbfArt:lLote      := .f.
-                  ::oDbfArt:TipoIva    := cDefIva()
+                  ::oDbfArt:TipoIva    := cCodIva
 
                   if ValType( nUniCaja ) != "N"
                      ::oDbfArt:nUniCaja   := Val( nUniCaja )
@@ -676,11 +700,10 @@ METHOD ImportaHoja()
                            if nCosto != 0
                               ::oDbfArt:Benef1  := ( Div( pVenta, nCosto ) - 1 ) * 100
                            end if
-
                            ::oDbfArt:lBnf1      := .f.
                            ::oDbfArt:nBnfSbr1   := 1
                            ::oDbfArt:pVenta1    := pVenta
-                           ::oDbfArt:pVtaIva1   := ( ::oDbfArt:pVenta1 * nIva ) + ::oDbfArt:pVenta1
+                           ::oDbfArt:pVtaIva1   := Round( ( pVenta * nIva ) + pVenta, 0 )
 
                      case ::oCmbTar:nAt == 2
 
@@ -691,7 +714,7 @@ METHOD ImportaHoja()
                            ::oDbfArt:lBnf2      := .f.
                            ::oDbfArt:nBnfSbr2   := 1
                            ::oDbfArt:pVenta2    := pVenta
-                           ::oDbfArt:pVtaIva2   := ( ::oDbfArt:pVenta2 * nIva ) + ::oDbfArt:pVenta2
+                           ::oDbfArt:pVtaIva2   := ( pVenta * nIva ) + pVenta
 
                      case ::oCmbTar:nAt == 3
 
@@ -702,7 +725,7 @@ METHOD ImportaHoja()
                            ::oDbfArt:lBnf3      := .f.
                            ::oDbfArt:nBnfSbr3   := 1
                            ::oDbfArt:pVenta3    := pVenta
-                           ::oDbfArt:pVtaIva3   := ( ::oDbfArt:pVenta3 * nIva ) + ::oDbfArt:pVenta3
+                           ::oDbfArt:pVtaIva3   := ( pVenta * nIva ) + pVenta
 
                      case ::oCmbTar:nAt == 4
 
@@ -713,7 +736,7 @@ METHOD ImportaHoja()
                            ::oDbfArt:lBnf4      := .f.
                            ::oDbfArt:nBnfSbr4   := 1
                            ::oDbfArt:pVenta4    := pVenta
-                           ::oDbfArt:pVtaIva4   := ( ::oDbfArt:pVenta4 * nIva ) + ::oDbfArt:pVenta4
+                           ::oDbfArt:pVtaIva4   := ( pVenta * nIva ) + pVenta
 
                      case ::oCmbTar:nAt == 5
 
@@ -724,7 +747,7 @@ METHOD ImportaHoja()
                            ::oDbfArt:lBnf5      := .f.
                            ::oDbfArt:nBnfSbr5   := 1
                            ::oDbfArt:pVenta5    := pVenta
-                           ::oDbfArt:pVtaIva5   := ( ::oDbfArt:pVenta5 * nIva ) + ::oDbfArt:pVenta5
+                           ::oDbfArt:pVtaIva5   := ( pVenta * nIva ) + pVenta
 
                      case ::oCmbTar:nAt == 6
 
@@ -735,7 +758,7 @@ METHOD ImportaHoja()
                            ::oDbfArt:lBnf6      := .f.
                            ::oDbfArt:nBnfSbr6   := 1
                            ::oDbfArt:pVenta6    := pVenta
-                           ::oDbfArt:pVtaIva6   := ( ::oDbfArt:pVenta6 * nIva ) + ::oDbfArt:pVenta6
+                           ::oDbfArt:pVtaIva6   := ( pVenta * nIva ) + pVenta
 
                   end case
 
@@ -959,6 +982,7 @@ METHOD GuardarValoresIni()
       SET SECTION  "Importacion" ENTRY "pVenta"      TO ::cColpVenta    OF oIniApp
       SET SECTION  "Importacion" ENTRY "GFamilia"    TO ::cColGFamilia  OF oIniApp
       SET SECTION  "Importacion" ENTRY "Familia"     TO ::cColFamilia   OF oIniApp
+      SET SECTION  "Importacion" ENTRY "TipoIva"     TO ::cColTipoIva   OF oIniApp
 
    ENDINI
 
@@ -985,6 +1009,7 @@ METHOD CargarValoresIni()
       GET ::cColpVenta     SECTION  "Importacion" ENTRY "pVenta"     OF oIniApp DEFAULT "D"
       GET ::cColGFamilia   SECTION  "Importacion" ENTRY "GFamilia"   OF oIniApp DEFAULT "O"
       GET ::cColFamilia    SECTION  "Importacion" ENTRY "Familia"    OF oIniApp DEFAULT "P"
+      GET ::cColTipoIva    SECTION  "Importacion" ENTRY "TipoIva"    OF oIniApp DEFAULT "Q"
 
    ENDINI
 
