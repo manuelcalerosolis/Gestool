@@ -29,12 +29,12 @@ Function afterSaveLine( nView, nMode, aTmpPed, dbfTmpLin )
       MsgStop( "No guardo el kilo real", "viene vacio" )
    end if
 
+   msginfo( Hb_ValToExp( D():CamposExtraLine( nView ):aItemSelected ), "aItemSelected" )
+
    for each hSelect in D():CamposExtraLine( nView ):aItemSelected
 
       if AllTrim( hGet( hSelect, "código" ) ) == "009"
          hSet( hSelect, "valor", ( dbfTmpLin )->nUniCaja )
-      else
-         MsgStop( "No guardo el kilo real", "No encuentro el campo extra" )
       end if
 
    next
