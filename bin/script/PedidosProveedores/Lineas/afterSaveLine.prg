@@ -25,10 +25,16 @@ Function afterSaveLine( nView, nMode, aTmpPed, dbfTmpLin )
 
    D():CamposExtraLine( nView ):selectItem( if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) )
 
+   if Empty( D():CamposExtraLine( nView ):aItemSelected )
+      MsgStop( "No guardo el kilo real", "viene vacio" )
+   end if
+
    for each hSelect in D():CamposExtraLine( nView ):aItemSelected
 
       if AllTrim( hGet( hSelect, "código" ) ) == "009"
          hSet( hSelect, "valor", ( dbfTmpLin )->nUniCaja )
+      else
+         MsgStop( "No guardo el kilo real", "No encuentro el campo extra" )
       end if
 
    next
