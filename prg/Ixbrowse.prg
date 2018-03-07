@@ -121,7 +121,7 @@ METHOD Load()
 
    ::getOriginal()
 
-   cBrowseState         := SQLConfiguracionVistasModel():getState( ::cName )
+   cBrowseState         := SQLConfiguracionVistasModel():getStateNavigator( ::cName )
 
    if !empty( cBrowseState )
       ::restoreState( cBrowseState )
@@ -137,7 +137,7 @@ METHOD LoadRecnoAndOrder()
    local nOrder
    local hBrowseInformation
 
-   hBrowseInformation   := SQLConfiguracionVistasModel():get( ::cName )
+   hBrowseInformation   := SQLConfiguracionVistasModel():getNavigator( ::cName )
 
    if empty( hBrowseInformation )
       RETURN ( Self )
@@ -172,7 +172,7 @@ METHOD Save( lMessage, nBrowseRecno, nBrowseOrder )
    oBlock                   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      SQLConfiguracionVistasModel():set( ::cName, ::saveState() ) //, nBrowseRecno, nBrowseOrder )
+      SQLConfiguracionVistasModel():setNavigator( ::cName, ::saveState() ) //, nBrowseRecno, nBrowseOrder )
 
       if lMessage
          msgInfo( "Configuración de columnas guardada", "Información" )

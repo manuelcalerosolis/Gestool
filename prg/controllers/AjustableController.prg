@@ -21,7 +21,7 @@ METHOD New( oController )
 
    ::oDialogView           := AjustableView():New( self )
 
-   ::oRepository           := AjustableRepository():New( self )
+   ::oDialogView:setEvent( 'startingActivate', {|| oController:startingActivate() } )
 
 RETURN ( Self )
 

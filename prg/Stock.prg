@@ -3615,7 +3615,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, cCodEmp )
 
    SysRefresh()
 
-   if empty( oRowSet:get() )
+   if empty( oRowSet ) .or. empty( oRowSet:get() )
       RETURN ( nil )
    end if 
 

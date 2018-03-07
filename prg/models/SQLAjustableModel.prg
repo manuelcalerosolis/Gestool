@@ -3,18 +3,24 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLajustableModel FROM SQLBaseModel
+CLASS SQLAjustableModel FROM SQLBaseModel
 
    DATA cTableName               INIT "ajustables"
 
-   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
+   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( ajustable_tipo, ajustable_uuid )"
 
    METHOD getColumns()
 
-   METHOD set( ajusteUuid, ajusteValue, ajustableTipo, ajustableUuid )
+   METHOD set( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid )
 
-   METHOD setUsuario( ajusteUuid, ajusteValue, ajustableUuid ) ;
-            INLINE ( ::set( ajusteUuid, ajusteValue, 'usuarios', ajustableUuid ) )
+   METHOD setValue( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid )
+
+   METHOD setUsuario( cAjusteUuid, cAjusteValue, cAjustableUuid ) ;
+                                 INLINE ( ::set( cAjusteUuid, cAjusteValue, 'usuarios', cAjustableUuid ) )
+
+   METHOD getValue()
+
+   METHOD getLogic( cUuid, cTipo, cAjuste, lDefault ) 
 
 END CLASS
 
@@ -25,51 +31,45 @@ METHOD getColumns() CLASS SQLajustableModel
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                           "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "ajuste_uuid",    {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
+   hset( ::hColumns, "ajuste_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "ajuste_valor",   {  "create"    => "VARCHAR(10)"                             ,;
+   hset( ::hColumns, "ajuste_valor",   {  "create"    => "VARCHAR( 100 )"                          ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "ajustable_tipo", {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "ajustable_uuid", {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
+   hset( ::hColumns, "ajustable_uuid", {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD set( ajusteUuid, ajusteValue, ajustableTipo, ajustableUuid )
+METHOD set( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid )
 
    local hBuffer  := ::loadBlankBuffer()
 
-   hset( hBuffer, "ajuste_uuid", ajusteUuid )
-   hset( hBuffer, "ajuste_valor", ajusteValue )
-   hset( hBuffer, "ajustable_tipo", ajustableTipo )
-   hset( hBuffer, "ajustable_uuid", ajustableUuid )
+   hset( hBuffer, "ajuste_uuid", cAjusteUuid )
+   hset( hBuffer, "ajuste_valor", cAjusteValue )
+   hset( hBuffer, "ajustable_tipo", cAjustableTipo )
+   hset( hBuffer, "ajustable_uuid", cAjustableUuid )
 
 RETURN ( ::insertOnDuplicate( hBuffer ) )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS AjustableRepository FROM SQLBaseRepository
+METHOD setValue( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableDescripcion )
 
-   METHOD getTableName()      INLINE ( SQLAjustableModel():getTableName() ) 
+   local cAjustableUuid
 
-   METHOD getValue()
+   cAjustableUuid    := SQLAjustesModel():getAjusteUuid( cAjustableDescripcion )
 
-   METHOD getLogic( cUuid, cTipo, cajuste, lDefault ) 
-
-END CLASS
+RETURN ( ::set( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid ) )
 
 //---------------------------------------------------------------------------//
 
@@ -78,15 +78,18 @@ METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    local uValue
    local cSentence   
 
-   default cTipo     := 'usuarios'
-   default cAjuste   := 'mostrar_rentabilidad'
+   if empty( cUuid ) .or. empty( cTipo ) .or. empty( cAjuste )
+      RETURN ( uDefault )
+   end if 
 
    cSentence         := "SELECT ajustables.ajuste_valor "
    cSentence         +=    "FROM ajustables AS ajustables "
    cSentence         += "INNER JOIN ajustes AS ajustes ON ajustes.uuid = ajustables.ajuste_uuid "
-   cSentence         += "WHERE ajustes.ajuste = " + quoted( cajuste ) + " "
+   cSentence         += "WHERE ajustes.ajuste = " + quoted( cAjuste ) + " "
    cSentence         +=    "AND ajustables.ajustable_tipo = " + quoted( cTipo ) + " "
    cSentence         +=    "AND ajustables.ajustable_uuid = " + quoted( cUuid ) 
+
+   logwrite( cSentence )
 
    uValue            := ::getDatabase():selectValue( cSentence )
 
@@ -109,3 +112,16 @@ METHOD getLogic( cUuid, cTipo, cajuste, lDefault )
 RETURN ( lDefault )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS AjustableRepository FROM SQLBaseRepository
+
+   METHOD getTableName()      INLINE ( SQLAjustableModel():getTableName() ) 
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+

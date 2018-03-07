@@ -4852,16 +4852,16 @@ STATIC FUNCTION cGetInfo( uVal )
 
    do case
       case cType == "C"
-           RETURN uVal
+         RETURN uVal
 
       case cType == "O"
-           RETURN "Class: " + uVal:ClassName()
+         RETURN "Class: " + uVal:ClassName()
 
       case cType == "A"
-           RETURN "Len: " + Str( Len( uVal ), 4 )
+         RETURN "Len: " + Str( Len( uVal ), 4 )
 
       otherwise
-           RETURN cValToChar( uVal )
+         RETURN cValToChar( uVal )
    endcase
 
 RETURN nil
@@ -6633,13 +6633,14 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cCcoMai",    "C",250, 0, "Enviar con copia oculta de mail a cuenta de correo",    "", "", "aEmp()", "" } )
    aAdd( aDbf, {"lRecEnt",    "L",  1, 0, "Lógico para recibir albaranes como entregados",         "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"cSeriePre",  "C",  1, 0, "Serie para presupuestos de internet",                   "", "", "aEmp()", "A" } )
-   aAdd( aDbf, {"lServicio",  "L",  1, 0, "Lógico Fecha servicio",                                 "", "", "aEmp()" } )
+   aAdd( aDbf, {"lServicio",  "L",  1, 0, "Lógico fecha servicio",                                 "", "", "aEmp()" } )
    aAdd( aDbf, {"cCeeRptCom", "C", 12, 0, "Cuenta en contaplus de impuestos repercutido en compras", "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCeeSptCom", "C", 12, 0, "Cuenta en contaplus de impuestos devengado en compras",   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lOpenTik",   "L",  1, 0, "Lógico permitir tickets abiertos en sesiones",          "", "", "aEmp()", .t. } )
    aAdd( aDbf, {"lContRec",   "L",  1, 0, "Lógico permitir contabilizar recibos con factura sin contabilizar", "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lStockAlm",  "L",  1, 0, "Lógico mostrar stock por almacén en ventas",            "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lBrFamTre",  "L",  1, 0, "Mostrar browse de familias tree",                       "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"Uuid",       "C", 40, 0, "Uuid",                                                  "", "", "aEmp()", .f. } )
 
 RETURN ( aDbf )
 
@@ -6727,6 +6728,52 @@ FUNCTION rxEmpresa( cPath, cDriver )
 RETURN NIL
 
 //--------------------------------------------------------------------------//
+
+function SynEmpresa( cPath )
+
+   local oBlock
+   local oError
+   local dbfEmpresa
+
+   DEFAULT cPath        := cPatDat()
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      USE ( cPath + "Empresa.Dbf" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "Empresa", @dbfEmpresa ) )
+      SET ADSINDEX TO ( cPath + "Empresa.Cdx" ) ADDITIVE
+
+      ( dbfEmpresa )->( dbGoTop() )
+      while !( dbfEmpresa )->( eof() )
+
+         if empty( ( dbfEmpresa )->Uuid )
+            ( dbfEmpresa )->Uuid := win_uuidcreatestring()
+         end if
+
+         ( dbfEmpresa )->( dbSkip() )
+
+         SysRefresh()
+
+      end while
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de empresa." )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   /*
+   Cerramos todas las tablas---------------------------------------------------
+   */
+
+   CLOSE ( dbfEmpresa )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
 /*
 Valida la fecha del documento que estamos haciendo para que estén en el rango marcado en la empresa
 */

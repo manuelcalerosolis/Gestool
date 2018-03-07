@@ -8,6 +8,8 @@ CLASS SQLBaseView
   
    DATA oController
 
+   DATA oEvents 
+
    DATA oDialog
 
    DATA oBtnOk
@@ -24,7 +26,7 @@ CLASS SQLBaseView
                                                                __duplicate_mode__   => "Duplicando " }
 
    METHOD New()
-   METHOD End()                                       VIRTUAL
+   METHOD End()                                       
 
    METHOD lblTitle()                                  INLINE ( iif(  hhaskey( ::hTextMode, ::oController:getMode() ),;
                                                                      hget( ::hTextMode, ::oController:getMode() ),;
@@ -43,14 +45,34 @@ CLASS SQLBaseView
 
    METHOD getComboBoxOrder()                          VIRTUAL
 
+   // Events-------------------------------------------------------------------
+
+   METHOD setEvent( cEvent, bEvent )                  INLINE ( iif( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
+   METHOD fireEvent( cEvent )                         INLINE ( iif( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oController )
 
-   ::oController  := oController
+   ::oController                                      := oController
+
+   ::oEvents                                          := Events():New()
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD End()
+
+   if !empty( ::oEvents )
+      ::oEvents:End()
+   end if 
+
+   ::oEvents   := nil
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+

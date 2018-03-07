@@ -110,7 +110,8 @@ CLASS SQLBaseController
    // Dialogo------------------------------------------------------------------
 
    METHOD getDialogView()                             INLINE ( ::oDialogView )
-   METHOD DialogViewActivate()                     
+   METHOD DialogViewActivate()  
+   METHOD DialogViewEnd()                   
 
    METHOD isContinuousAppend()                        INLINE ( hb_isnumeric( ::uDialogResult ) .and. ::uDialogResult == IDOKANDNEW )
 
@@ -574,6 +575,16 @@ METHOD DialogViewActivate()
 
    if hb_isnumeric( ::uDialogResult ) .and. ( ::uDialogResult != IDCANCEL )
       RETURN ( .t. )
+   end if 
+
+RETURN ( .f. )
+
+//----------------------------------------------------------------------------//
+
+METHOD DialogViewEnd()
+
+   if !empty( ::oDialogView )
+      ::oDialogView:EndActivate()
    end if 
 
 RETURN ( .f. )
