@@ -6729,7 +6729,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-function SynEmpresa( cPath )
+FUNCTION SynEmpresa( cPath )
 
    local oBlock
    local oError
@@ -6764,13 +6764,9 @@ function SynEmpresa( cPath )
 
    ErrorBlock( oBlock )
 
-   /*
-   Cerramos todas las tablas---------------------------------------------------
-   */
-
    CLOSE ( dbfEmpresa )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 

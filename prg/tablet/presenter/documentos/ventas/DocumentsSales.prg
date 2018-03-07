@@ -749,6 +749,11 @@ RETURN( self )
 
 METHOD saveEditDocumento() CLASS DocumentsSales 
 
+   local oDlgWait
+
+   oDlgWait          := TWaitMeter():New( "Espere...", "Archivando documento" )
+   oDlgWait:Run()
+
    ::Super:saveEditDocumento()
 
    ::deleteLinesDocument()
@@ -757,17 +762,26 @@ METHOD saveEditDocumento() CLASS DocumentsSales
 
    ::setLinesDocument()
 
+   oDlgWait:End()
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD saveAppendDocumento() CLASS DocumentsSales
 
+   local oDlgWait
+
+   oDlgWait          := TWaitMeter():New( "Espere...", "Archivando documento" )
+   oDlgWait:Run()
+
    ::Super:saveAppendDocumento()
 
    ::assignLinesDocument()
 
    ::setLinesDocument()
+
+   oDlgWait:End()
 
 RETURN ( .t. )
 

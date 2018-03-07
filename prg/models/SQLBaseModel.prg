@@ -865,8 +865,6 @@ METHOD insertOnDuplicate( hBuffer )
 
    ::fireEvent( 'insertingOnDuplicatingBuffer' )
 
-   msgalert( ::getInsertOnDuplicateSentence( hBuffer ), "getInsertOnDuplicateSentence" )
-
    ::getDatabase():Execs( ::getInsertOnDuplicateSentence( hBuffer ) )
 
    ::fireEvent( 'insertedOnDuplicatedBuffer' )

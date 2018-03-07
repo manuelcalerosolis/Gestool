@@ -366,6 +366,7 @@ CLASS TTaskPanel FROM TControl
    METHOD AddLink( cPrompt, bAction, cBitmap )
    METHOD AddGet( cPrompt, bAction, cBitmap )
    METHOD AddComboBox( cPrompt, cItem, aItems )
+   METHOD AddCheckBox( cPrompt, lCheckBox )
 
    METHOD Display() INLINE ::BeginPaint(), ::Paint(), ::EndPaint(), 0
    METHOD Destroy()
@@ -442,22 +443,14 @@ RETURN Self
 
 METHOD getTopControl()
 
-   local nTop := ::nTitleHeight + 10
-
-   aeval( ::aControls, {|oControl| if( oControl:nBottom > nTop, nTop := oControl:nBottom, ) } )
-
-   nTop        += 3
-
-RETURN ( nTop )
+RETURN ( ::nHeight + 3 )
 
 //----------------------------------------------------------------------------//
 
-METHOD setHeight( oItem )
+METHOD setHeight( nTop, nHeight )
 
-   local nTop        := oItem:nTop
-
-   if nTop + oItem:nHeight > ::nHeight
-      ::nHeight      := nTop + oItem:nHeight 
+   if nTop + nHeight > ::nHeight
+      ::nHeight      := nTop + nHeight 
       ::nBodyHeight  := ::nHeight - ::nTitleHeight
    endif
 
@@ -479,7 +472,7 @@ METHOD AddLink( cPrompt, bAction, cBitmap ) CLASS TTaskPanel
       oUrlLink:hBmp  := LoadBitmap( GetResources(), cBitmap )
    endif
 
-   ::setHeight( oUrlLink )
+   ::setHeight( oUrlLink:nTop, oUrlLink:nHeight )
 
 RETURN nil
 
@@ -495,7 +488,7 @@ METHOD AddGet( cPrompt, cGet ) CLASS TTaskPanel
 
    @ nTop, 120 GET oGet VAR cGet SIZE 400, 20 OF Self PIXEL
 
-   ::setHeight( oGet )
+   ::setHeight( oGet:nTop, oGet:nHeight )
 
 RETURN ( oGet )
 
@@ -511,12 +504,24 @@ METHOD AddComboBox( cPrompt, cItem, aItems ) CLASS TTaskPanel
 
    @ nTop, 120 COMBOBOX oCbx VAR cItem ITEMS aItems SIZE 400, 460 OF Self PIXEL HEIGHTGET 20 
 
-   ::setHeight( oCbx )
+   ::setHeight( oCbx:nTop, oCbx:nHeight )
 
 RETURN ( oCbx )
 
 //----------------------------------------------------------------------------//
 
+METHOD AddCheckBox( cPrompt, lCheckBox, aItems ) CLASS TTaskPanel
+
+   local nTop        := ::getTopControl()
+   local oCheckBox
+
+   @ nTop, 120 CHECKBOX oCheckBox VAR lCheckBox PROMPT cPrompt SIZE 400, 12 OF Self PIXEL 
+
+   ::setHeight( oCheckBox:nTop, oCheckBox:nHeight )
+
+RETURN ( oCheckBox )
+
+//----------------------------------------------------------------------------//
 
 METHOD Destroy() CLASS TTaskPanel
 

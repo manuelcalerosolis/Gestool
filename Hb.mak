@@ -570,6 +570,7 @@ MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
 TagsController.prg 															\
 UsuariosController.prg														\
+RolesController.prg															\
 AjustesController.prg														\
 AjustableController.prg														\
 AjustableView.prg																\
@@ -587,6 +588,7 @@ ColumnasUsuariosModel.prg 													\
 SQLConfiguracionVistasModel.prg                      				\
 PedidosClientesLineasModel.prg 											\
 EmpresasModel.prg 															\
+CajasModel.prg 																\
 ClientesModel.prg 															\
 RecibosClientesModel.prg 													\
 TicketsClientesModel.prg 													\
@@ -1155,6 +1157,7 @@ SQLBrowseController.obj 													\
 SQLHeaderController.obj														\
 SQLBaseLineasModel.Obj 														\
 EmpresasModel.obj 															\
+CajasModel.obj 																\
 ClientesModel.obj 															\
 AgentesModel.obj 																\
 DivisasModel.obj 																\
@@ -1177,6 +1180,7 @@ DelegacionesModel.obj														\
 TiposImpresorasController.obj 											\
 TagsController.obj 															\
 UsuariosController.obj														\
+RolesController.obj 															\
 AjustesController.obj														\
 AjustableController.obj														\
 AjustableView.obj																\
@@ -1742,6 +1746,7 @@ $(OBJ)\SQLBrowseController.obj											+
 $(OBJ)\SQLHeaderController.obj 											+
 $(OBJ)\SQLBaseLineasModel.obj 											+
 $(OBJ)\EmpresasModel.obj 													+
+$(OBJ)\CajasModel.obj 														+
 $(OBJ)\ClientesModel.obj 													+
 $(OBJ)\AgentesModel.obj 													+
 $(OBJ)\DivisasModel.obj 													+
@@ -1770,6 +1775,7 @@ $(OBJ)\DelegacionesModel.obj 												+
 $(OBJ)\TiposImpresorasController.obj               				+
 $(OBJ)\TagsController.obj                 							+
 $(OBJ)\UsuariosController.obj               							+
+$(OBJ)\RolesController.obj               								+
 $(OBJ)\AjustesController.obj               							+
 $(OBJ)\AjustableController.obj              							+
 $(OBJ)\AjustableView.obj              									+

@@ -5,20 +5,16 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosController FROM SQLNavigatorController
-   
+CLASS RolesController FROM SQLNavigatorController
+
    DATA oAjustableController 
 
-   DATA cUuidUsuario
+   DATA cUuidRol
 
-   DATA aCajas
-   DATA cUuidCajaExclusiva
-   DATA cNombreCajaExclusiva
-
-   DATA aEmpresas
-   DATA cUuidEmpresaExclusiva
-   DATA cNombreEmpresaExclusiva
-
+   DATA lMostrarRentabilidad  AS LOGIC INIT .t.
+   DATA lCambiarPrecios       AS LOGIC INIT .t.
+   DATA lVerPreciosCosto      AS LOGIC INIT .t.
+   
    METHOD New()
 
    METHOD End()
@@ -35,13 +31,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS UsuariosController
+METHOD New() CLASS RolesController
 
    ::Super:New()
 
-   ::cTitle                := "Usuarios"
+   ::cTitle                := "Roles"
 
-   ::setName( "usuarios" )
+   ::setName( "Roles" )
 
    ::lTransactional        := .t.
 
@@ -51,15 +47,15 @@ METHOD New() CLASS UsuariosController
 
    ::nLevel                := nLevelUsr( "01052" )
 
-   ::oModel                := SQLUsuariosModel():New( self )
+   ::oModel                := SQLRolesModel():New( self )
 
-   ::oRepository           := UsuariosRepository():New( self )
+   ::oRepository           := RolesRepository():New( self )
 
-   ::oBrowseView           := UsuariosBrowseView():New( self )
+   ::oBrowseView           := RolesBrowseView():New( self )
 
-   ::oDialogView           := UsuariosView():New( self )
+   ::oDialogView           := RolesView():New( self )
 
-   ::oValidator            := UsuariosValidator():New( self )
+   ::oValidator            := RolesValidator():New( self )
 
    ::oAjustableController  := AjustableController():New( self )
 
@@ -87,10 +83,6 @@ METHOD End()
       ::oValidator:End()
    endif
 
-   if !empty( ::oAjustableController )
-      ::oAjustableController:End()
-   end if 
-
    ::Super:End()
 
 RETURN ( nil )
@@ -112,19 +104,17 @@ RETURN ( self )
 
 METHOD loadConfig()
 
-   ::cUuidUsuario             := ::getRowSet():fieldGet( 'uuid' )
+   ::cUuidRol              := ::getRowSet():fieldGet( 'uuid' )
 
-   if empty( ::cUuidUsuario )
+   if empty( ::cUuidRol )
       RETURN ( .f. )
    end if 
 
-   ::aEmpresas                := EmpresasModel():aNombresSeleccionables()
-   ::cUuidEmpresaExclusiva    := ::oAjustableController:oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
-   ::cNombreEmpresaExclusiva  := EmpresasModel():getNombreFromUuid( ::cUuidEmpresaExclusiva )
-   
-   ::aCajas                   := CajasModel():aNombresSeleccionables()
-   ::cUuidCajaExclusiva       := ::oAjustableController:oModel:getUsuarioCajaExclusiva( ::cUuidUsuario )
-   ::cNombreCajaExclusiva     := CajasModel():getNombreFromUuid( ::cUuidCajaExclusiva )
+   ::lMostrarRentabilidad  := ::oAjustableController:oModel:getRolMostrarRentabilidad( ::cUuidRol )
+
+   ::lCambiarPrecios       := ::oAjustableController:oModel:getRolCambiarPrecios( ::cUuidRol )
+
+   ::lVerPreciosCosto      := ::oAjustableController:oModel:getRolVerPreciosCosto( ::cUuidRol )
 
 RETURN ( .t. )
 
@@ -132,11 +122,11 @@ RETURN ( .t. )
 
 METHOD saveConfig()
 
-   ::cUuidEmpresaExclusiva    := EmpresasModel():getUuidFromNombre( ::cNombreEmpresaExclusiva )
-   ::cUuidCajaExclusiva       := CajasModel():getUuidFromNombre( ::cNombreCajaExclusiva )
- 
-   ::oAjustableController:oModel:setUsuarioEmpresaExclusiva( ::cUuidEmpresaExclusiva, ::cUuidUsuario )
-   ::oAjustableController:oModel:setUsuarioCajaExclusiva( ::cUuidCajaExclusiva, ::cUuidUsuario )
+   ::oAjustableController:oModel:setRolMostrarRentabilidad( ::lMostrarRentabilidad, ::cUuidRol )
+
+   ::oAjustableController:oModel:setRolCambiarPrecios( ::lCambiarPrecios, ::cUuidRol )
+
+   ::oAjustableController:oModel:setRolVerPreciosCosto( ::lVerPreciosCosto, ::cUuidRol )
 
 RETURN ( self )
 
@@ -144,12 +134,14 @@ RETURN ( self )
 
 METHOD startingActivate()
 
-   local oPanel               := ::oAjustableController:oDialogView:oExplorerBar:AddPanel( "Propiedades usuario", nil, 1 ) 
-
-   oPanel:addComboBox( "Empresa exclusiva", @::cNombreEmpresaExclusiva, ::aEmpresas )
-
-   oPanel:addComboBox( "Caja exclusiva", @::cNombreCajaExclusiva, ::aCajas )
+   local oPanel            := ::oAjustableController:oDialogView:oExplorerBar:AddPanel( "Propiedades roles", nil, 1 ) 
    
+   oPanel:addCheckBox( "Mostrar rentabilidad", @::lMostrarRentabilidad )
+
+   oPanel:addCheckBox( "Cambiar precios", @::lCambiarPrecios )
+
+   oPanel:addCheckBox( "Ver precios de costo", @::lVerPreciosCosto )
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -158,42 +150,30 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLUsuariosModel FROM SQLBaseModel
+CLASS SQLRolesModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "usuarios"
+   DATA cTableName               INIT "Roles"
 
    DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
 
    METHOD getColumns()
 
-   METHOD getInsertUsuariosSentence()
-
-   METHOD Crypt( cPassword )     INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
-   METHOD Decrypt( cPassword )   INLINE ( hb_decrypt( alltrim( cPassword ), __encryption_key__ ) )
+   METHOD getInsertRolesSentence()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLUsuariosModel
+METHOD getColumns() CLASS SQLRolesModel
 
-   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
-                                          "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
+                                    "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                          "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+                                    "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"                         ,;
-                                          "default"   => {|| space( 100 ) } }                      )
-
-   hset( ::hColumns, "email",          {  "create"    => "VARCHAR ( 100 ) NOT NULL"                         ,;
-                                          "default"   => {|| space( 100 ) } }                      )
-
-   hset( ::hColumns, "password",       {  "create"    => "VARCHAR ( 100 )"                         ,;
-                                          "default"   => {|| space( 100 ) } }                      )
-
-   hset( ::hColumns, "remember_token", {  "create"    => "VARCHAR ( 100 )"                         ,;
-                                          "default"   => {|| "" } }                                )
+   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
+                                    "default"   => {|| space( 100 ) } }                      )
 
    ::getTimeStampColumns()   
 
@@ -201,14 +181,14 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertUsuariosSentence()
+METHOD getInsertRolesSentence()
 
    local cStatement 
 
    cStatement  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cStatement  +=    "( uuid, nombre, email, password ) "
+   cStatement  +=    "( uuid, nombre ) "
    cStatement  += "VALUES "
-   cStatement  +=    "( UUID(), 'administrador', 'admin@admin.com', " + quoted( ::Crypt( '12345678' ) ) + " )"
+   cStatement  +=    "( UUID(), 'Administrador' )"
 
 RETURN ( cStatement )
 
@@ -218,7 +198,7 @@ RETURN ( cStatement )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosBrowseView FROM SQLBrowseView
+CLASS RolesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -226,7 +206,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS UsuariosBrowseView
+METHOD addColumns() CLASS RolesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -250,22 +230,6 @@ METHOD addColumns() CLASS UsuariosBrowseView
       :cHeader             := 'Nombre'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'email'
-      :cHeader             := 'Email'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'email' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'password'
-      :cHeader             := 'Contraseña'
-      :nWidth              := 180
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'password' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -301,33 +265,25 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosView FROM SQLBaseView
-
-   DATA oGetPassword
-   DATA cGetPassword          INIT space( 100 )
-   DATA oGetRepeatPassword
-   DATA cGetRepeatPassword    INIT space( 100 )   
+CLASS RolesView FROM SQLBaseView
 
    METHOD Activate()
    
-   METHOD saveView( oDlg )
+   METHOD Save( oDlg )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS UsuariosView
+METHOD Activate() CLASS RolesView
 
    local oDlg
    local oBtnOk
    local oBmpGeneral
 
-   ::cGetPassword          := space( 100 )
-   ::cGetRepeatPassword    := space( 100 )
-
    DEFINE DIALOG  oDlg ;
-      RESOURCE    "USUARIO" ;
-      TITLE       ::lblTitle() + "usuario" 
+      RESOURCE    "ROL" ;
+      TITLE       ::lblTitle() + "Rol" 
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
@@ -346,33 +302,11 @@ METHOD Activate() CLASS UsuariosView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::getModel():hBuffer[ "email" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "email" ) ) ;
-      OF          oDlg
-
-   REDEFINE GET   ::oGetPassword ;
-      VAR         ::cGetPassword ;
-      ID          130 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          oDlg
-   
-   ::oGetPassword:bValid         := {|| ::oController:validate( "password", ::cGetPassword ) }
-
-   REDEFINE GET   ::oGetRepeatPassword ;
-      VAR         ::cGetRepeatPassword ;
-      ID          131 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          oDlg
-
-   ::oGetRepeatPassword:bValid   := {|| ::oController:validate( "repeatPassword", ::cGetRepeatPassword ) }
-
    REDEFINE BUTTON oBtnOk ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( ::saveView( oDlg ) )
+      ACTION      ( ::Save( oDlg ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -390,14 +324,10 @@ RETURN ( oDlg:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveView( oDlg )
+METHOD Save( oDlg )
 
    if !( validateDialog( oDlg ) )
       RETURN ( .f. )
-   end if 
-
-   if !empty( ::cGetPassword )
-      ::getModel():setBuffer( "password", ::oModel:Crypt( ::cGetPassword ) )
    end if 
 
    oDlg:end( IDOK )
@@ -410,66 +340,31 @@ RETURN ( oDlg:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosValidator FROM SQLBaseValidator
+CLASS RolesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
-
-   METHOD Password()
-
-   METHOD RepeatPassword()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS UsuariosValidator
+METHOD getValidators() CLASS RolesValidator
 
    ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido",;
-                                                "unique"          => "El nombre ya existe" },; 
-                        "email" =>           {  "required"        => "El email es un dato requerido",;
-                                                "mail"            => "El email no es valido" },;
-                        "password" =>        {  "password"        => "- Contraseña debe de tener al menos ocho caracteres y un máximo de dieciseis" + CRLF + ;
-                                                                     "- No puede contener espacios"  },;
-                        "repeatPassword" =>  {  "repeatPassword"  => "Las contraseñas no coinciden" } }
+                                                "unique"          => "El nombre ya existe" } }
 
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
-
-METHOD Password( uValue )
-
-   uValue         := alltrim( uValue )
-
-   if ::oController:isAppendMode()
-      RETURN ( ::Super:Password( uValue ) )
-   end if 
-
-   if ::oController:isEditMode() .and. !empty( uValue )
-      RETURN ( ::Super:Password( uValue ) )
-   end if       
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD RepeatPassword( uValue )
-
-   if empty( ::oController:oDialogView:cGetPassword ) 
-      RETURN ( .t. )
-   end if 
-      
-RETURN ( alltrim( ::oController:oDialogView:cGetPassword ) == alltrim( uValue ) )
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosRepository FROM SQLBaseRepository
+CLASS RolesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()      INLINE ( SQLUsuariosModel():getTableName() ) 
+   METHOD getTableName()      INLINE ( SQLRolesModel():getTableName() ) 
 
 END CLASS
 

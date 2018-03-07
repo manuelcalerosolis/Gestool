@@ -1741,6 +1741,7 @@ METHOD BuildData()
    oDataTable:aStruct      := aItmCaja()
    oDataTable:bCreateFile  := {| cPath | mkCajas( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxCajas( cPath ) }
+   oDataTable:bSyncFile    := {|| synCajas( cPathDatos() ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable():New( "CajasL", cPathDatos() )
