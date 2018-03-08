@@ -140,7 +140,7 @@ METHOD Find( cFind, cColumn )
    if empty( cFind )
       RETURN ( .f. )
    end if 
-      
+
    ::saveRecno()
 
    nRecno               := ::oRowSet:find( cFind, cColumn, .t. )
@@ -185,11 +185,12 @@ METHOD getFindValue( uFind, cColumn )
       case ( cType ) == "C" .and. right( uFind, 1 ) != "*"
          uFind          += "*"
       case ( cType ) == "T" 
-         if !empty( ctot( uFind ) )
-            uFind       := ctot( uFind )
-         else
-            uFind       := nil
-         end if 
+         uFind          += "*"
+         // if !empty( ctot( uFind ) )
+         //    uFind       := ctot( uFind )
+         // else
+         //    uFind       := nil
+         // end if 
    end case 
 
 RETURN ( uFind )

@@ -7,20 +7,31 @@ CLASS SQLAjustableModel FROM SQLBaseModel
 
    DATA cTableName               INIT "ajustables"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( ajustable_tipo, ajustable_uuid )"
+   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( ajuste_uuid, ajustable_tipo, ajustable_uuid )"
 
    METHOD getColumns()
 
    METHOD set( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid )
 
    METHOD setValue( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid )
+   METHOD setLogic( cAjusteUuid, lAjusteValue, cAjustableTipo, cAjustableUuid )
 
-   METHOD setUsuario( cAjusteUuid, cAjusteValue, cAjustableUuid ) ;
-                                 INLINE ( ::set( cAjusteUuid, cAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioEmpresaExclusiva( cAjusteValue, cAjustableUuid )    INLINE ( ::setValue( 'empresa_exclusiva', cAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioCajaExclusiva( cAjusteValue, cAjustableUuid )       INLINE ( ::setValue( 'caja_exclusiva', cAjusteValue, 'usuarios', cAjustableUuid ) )
 
-   METHOD getValue()
+   METHOD setRolMostrarRentabilidad( cAjusteValue, cAjustableUuid )     INLINE ( ::setLogic( 'mostrar_rentabilidad', cAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolCambiarPrecios( cAjusteValue, cAjustableUuid )          INLINE ( ::setLogic( 'cambiar_precios', cAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolVerPreciosCosto( cAjusteValue, cAjustableUuid )         INLINE ( ::setLogic( 'ver_precios_costo', cAjusteValue, 'roles', cAjustableUuid ) )
 
+   METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    METHOD getLogic( cUuid, cTipo, cAjuste, lDefault ) 
+
+   METHOD getUsuarioEmpresaExclusiva( cUuid )                           INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_exclusiva', space( 40 ) ) )   
+   METHOD getUsuarioCajaExclusiva( cUuid )                              INLINE ( ::getValue( cUuid, 'usuarios', 'caja_exclusiva', space( 40 ) ) )   
+   
+   METHOD getRolMostrarRentabilidad( cUuid )                            INLINE ( ::getLogic( cUuid, 'roles', 'mostrar_rentabilidad', .t. ) )   
+   METHOD getRolCambiarPrecios( cUuid )                                 INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_precios', .t. ) )   
+   METHOD getRolVerPreciosCosto( cUuid )                                INLINE ( ::getLogic( cUuid, 'roles', 'ver_precios_costo', .t. ) )   
 
 END CLASS
 
@@ -63,11 +74,28 @@ RETURN ( ::insertOnDuplicate( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD setValue( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableDescripcion )
+METHOD setValue( cAjusteDescripcion, cAjusteValue, cAjustableTipo, cAjustableUuid )
 
-   local cAjustableUuid
+   local cAjusteUuid := SQLAjustesModel():getAjusteUuid( cAjusteDescripcion )
 
-   cAjustableUuid    := SQLAjustesModel():getAjusteUuid( cAjustableDescripcion )
+   if empty( cAjusteUuid )
+      RETURN ( nil )
+   endif
+
+RETURN ( ::set( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD setLogic( cAjusteDescripcion, lAjusteValue, cAjustableTipo, cAjustableUuid )
+
+   local cAjusteValue    
+   local cAjusteUuid    := SQLAjustesModel():getAjusteUuid( cAjusteDescripcion )
+
+   if empty( cAjusteUuid )
+      RETURN ( nil )
+   endif
+
+   cAjusteValue         := if( lAjusteValue, '1', '0' )
 
 RETURN ( ::set( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid ) )
 
@@ -123,5 +151,9 @@ CLASS AjustableRepository FROM SQLBaseRepository
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 

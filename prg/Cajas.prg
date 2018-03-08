@@ -2360,6 +2360,7 @@ Function aItmCaja()
    aAdd( aBase, { "cNumTur",   "C",  6,   0, "Número del turno" } )
    aAdd( aBase, { "cCajPrt",   "C",  3,   0, "Caja padre" } )
    aAdd( aBase, { "cPrnCut",   "C",  3,   0, "Formato corte" } )
+   aAdd( aBase, { "Uuid",      "C", 40,   0, "Uuid" } )
 
 Return ( aBase )
 
@@ -3563,5 +3564,47 @@ Return ( cNumeroSesion )
 
 //---------------------------------------------------------------------------//
 
+//--------------------------------------------------------------------------//
+
+FUNCTION SynCajas( cPath )
+
+   local oBlock
+   local oError
+   local dbfCajas
+
+   DEFAULT cPath        := cPatDat()
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      USE ( cPath + "Cajas.Dbf" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "Cajas", @dbfCajas ) )
+      SET ADSINDEX TO ( cPath + "Cajas.Cdx" ) ADDITIVE
+
+      ( dbfCajas )->( dbGoTop() )
+      while !( dbfCajas )->( eof() )
+
+         if empty( ( dbfCajas )->Uuid )
+            ( dbfCajas )->Uuid := win_uuidcreatestring()
+         end if
+
+         ( dbfCajas )->( dbSkip() )
+
+         SysRefresh()
+
+      end while
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de cajas." )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( dbfCajas )
+
+RETURN nil
+
+//---------------------------------------------------------------------------//
 
 

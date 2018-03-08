@@ -32,9 +32,9 @@ CLASS EmpresasModel FROM ADSBaseModel
    METHOD DeleteEmpresa( cCodigoEmpresa )
 
    METHOD aNombres()
+   METHOD aNombresSeleccionables()                    INLINE ( ains( ::aNombres(), 1, "", .t. ) )
 
    METHOD getUuidFromNombre( cNombre )                INLINE ( ::getField( "Uuid", "cNombre", cNombre ) )
-
    METHOD getNombreFromUuid( cUuid )                  INLINE ( ::getField( "cNombre", "Uuid", cUuid ) )
 
 END CLASS
