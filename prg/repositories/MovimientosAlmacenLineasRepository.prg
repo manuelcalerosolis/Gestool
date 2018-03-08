@@ -23,7 +23,7 @@ CLASS MovimientosAlmacenLineasRepository FROM SQLBaseRepository
 
    METHOD getSQLSentenceIdByUuid( uuid ) 
 
-   METHOD getIdByUuid( nNumber )  INLINE ( getSQLDataBase():selectValue( ::getSqlSentenceIdByUuid( nNumber ) ) )
+   METHOD getIdByUuid( nNumber )  INLINE ( getSQLDataBase():getValue( ::getSqlSentenceIdByUuid( nNumber ) ) )
 
    METHOD getSQLSentenceTotalUnidades()
 
@@ -213,7 +213,7 @@ METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropie
 
    cSentence   := ::getSqlSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2, cLote )
 
-RETURN ( ::getDatabase():selectValue( cSentence ) )
+RETURN ( ::getDatabase():getValue( cSentence ) )
 
 //---------------------------------------------------------------------------//
 

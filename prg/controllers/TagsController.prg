@@ -319,7 +319,7 @@ METHOD getUuidWhereName( cTag ) CLASS TagsRepository
                         "WHERE nombre = " + quoted( cTag )           + " " + ;
                         "LIMIT 1"
 
-RETURN ( ::getDatabase():selectValue( cSql ) ) 
+RETURN ( ::getDatabase():getValue( cSql ) ) 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

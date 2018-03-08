@@ -141,7 +141,7 @@ RETURN ( ctod( "" ) )
 METHOD getSQLFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
 
    local cSql     := MovimientosAlmacenLineasRepository():getSQLSentenceFechaCaducidad( cCodigoArticulo, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
-   local uValue   := getSQLDatabase():selectValue( cSql )
+   local uValue   := getSQLDatabase():getValue( cSql )
 
    if !empty( uValue ) .and. hb_isdate( uValue )
       RETURN ( uValue )

@@ -100,7 +100,6 @@ CLASS Editable
    METHOD saveEditDocumento()                   INLINE ( D():editHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
       METHOD saveDocumento()        
 
-   //METHOD getWorkArea()                         INLINE ( D():Get( ::cDataTable, ::nView ) )
    METHOD getWorkArea()                         INLINE ( D():getSQL( ::cDataTable, ::getSentenceTable(), ::nView ) )
 
    METHOD addDetail( oDetail )                  INLINE ( aAdd( ::aDetails, oDetail ) )
@@ -149,9 +148,7 @@ METHOD Append() CLASS Editable
 
    ::onPostGetDocumento()
 
-   if ::Resource()
-      lAppend     := ::saveAppend()
-   end if
+   msgRun( "Archivando documento", "Espere por favor...", {|| iif( ::Resource(), lAppend := ::saveAppend(), ) } )
 
    ::onPreEnd()
 
@@ -190,10 +187,8 @@ METHOD Edit() CLASS Editable
    if ::getEditDocumento()
 
       ::onPostGetDocumento()
-
-      if ::Resource()
-         lEdit    := ::saveEdit()
-      end if
+      
+      msgRun( "Archivando documento", "Espere por favor...", {|| iif( ::Resource(), lEdit := ::saveEdit(), ) } )
 
       ::onPreEnd()
 

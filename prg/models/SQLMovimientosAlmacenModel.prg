@@ -88,6 +88,7 @@ METHOD getInitialSelect()
                   "movimientos_almacen.tipo_movimiento            AS tipo_movimiento, "   + ;
                   ::getColumnMovimiento( "movimientos_almacen" )                          + ;
                   "movimientos_almacen.fecha_hora                 AS fecha_hora, "        + ;
+                  "movimientos_almacen.usuario                    AS usuario, "           + ;
                   "movimientos_almacen.almacen_origen             AS almacen_origen, "    + ;
                   "movimientos_almacen.almacen_destino            AS almacen_destino, "   + ;
                   "movimientos_almacen.grupo_movimiento           AS grupo_movimiento, "  + ;
@@ -192,14 +193,14 @@ RETURN ( .t. )
 
 METHOD assingNumber( hBuffer )
 
-   local cNumero  := hget( hBuffer, "numero" )
+   local cNumero     := hget( hBuffer, "numero" )
 
    if empty( cNumero )
       RETURN ( .f. )
    end if 
 
    while !empty( MovimientosAlmacenRepository():getIdByNumber( cNumero ) )
-      cNumero     := nextDocumentNumber( cNumero )
+      cNumero        := nextDocumentNumber( cNumero )
    end while
 
    hset( hBuffer, "numero", cNumero )

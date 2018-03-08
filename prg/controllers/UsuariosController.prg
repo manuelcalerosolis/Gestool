@@ -9,6 +9,8 @@ CLASS UsuariosController FROM SQLNavigatorController
    
    DATA oAjustableController 
 
+   DATA oRolesController
+
    DATA cUuidUsuario
 
    DATA aCajas
@@ -63,7 +65,12 @@ METHOD New() CLASS UsuariosController
 
    ::oAjustableController  := AjustableController():New( self )
 
+   ::oRolesController      := RolesController():New( self )
+
    ::oFilterController:setTableToFilter( ::getName() )
+
+   ::setEvent( 'openingDialog', {|| ::oDialogView:openingDialog() } )  
+   ::setEvent( 'closedDialog', {|| ::oDialogView:closedDialog() } )  
 
 RETURN ( Self )
 
@@ -89,6 +96,10 @@ METHOD End()
 
    if !empty( ::oAjustableController )
       ::oAjustableController:End()
+   end if 
+
+   if !empty( ::oRolesController )
+      ::oRolesController:End()
    end if 
 
    ::Super:End()
@@ -183,10 +194,10 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"                         ,;
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "email",          {  "create"    => "VARCHAR ( 100 ) NOT NULL"                         ,;
+   hset( ::hColumns, "email",          {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
    hset( ::hColumns, "password",       {  "create"    => "VARCHAR ( 100 )"                         ,;
@@ -194,6 +205,9 @@ METHOD getColumns() CLASS SQLUsuariosModel
 
    hset( ::hColumns, "remember_token", {  "create"    => "VARCHAR ( 100 )"                         ,;
                                           "default"   => {|| "" } }                                )
+
+   hset( ::hColumns, "rol_uuid",       {  "create"    => "VARCHAR(40)"                             ,;
+                                          "default"   => {|| space( 40 ) } }                       )
 
    ::getTimeStampColumns()   
 
@@ -308,6 +322,14 @@ CLASS UsuariosView FROM SQLBaseView
    DATA oGetRepeatPassword
    DATA cGetRepeatPassword    INIT space( 100 )   
 
+   DATA oComboRol 
+   DATA cComboRol   
+   DATA aComboRoles           
+
+   METHOD openingDialog()
+
+   METHOD closedDialog()
+
    METHOD Activate()
    
    METHOD saveView( oDlg )
@@ -316,14 +338,32 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD openingDialog() CLASS UsuariosView
+
+   ::cGetPassword          := space( 100 )
+
+   ::cGetRepeatPassword    := space( 100 )
+
+   ::cComboRol             := ::oController:oRolesController:oRepository:getNombre( ::getModel():getBuffer( "rol_uuid" ) )
+   ::aComboRoles           := ::oController:oRolesController:oRepository:getNombres()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD closedDialog() CLASS UsuariosView
+
+   ::getModel():setBuffer( "rol_uuid", ::oController:oRolesController:oRepository:getUuid( ::cComboRol ) )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD Activate() CLASS UsuariosView
 
    local oDlg
    local oBtnOk
    local oBmpGeneral
-
-   ::cGetPassword          := space( 100 )
-   ::cGetRepeatPassword    := space( 100 )
 
    DEFINE DIALOG  oDlg ;
       RESOURCE    "USUARIO" ;
@@ -367,6 +407,12 @@ METHOD Activate() CLASS UsuariosView
       OF          oDlg
 
    ::oGetRepeatPassword:bValid   := {|| ::oController:validate( "repeatPassword", ::cGetRepeatPassword ) }
+
+   REDEFINE COMBOBOX ::oComboRol ;
+      VAR         ::cComboRol ;
+      ID          140 ;
+      ITEMS       ::aComboRoles ;
+      OF          oDlg
 
    REDEFINE BUTTON oBtnOk ;
       ID          IDOK ;

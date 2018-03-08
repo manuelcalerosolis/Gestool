@@ -22,6 +22,9 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD setRolMostrarRentabilidad( cAjusteValue, cAjustableUuid )     INLINE ( ::setLogic( 'mostrar_rentabilidad', cAjusteValue, 'roles', cAjustableUuid ) )
    METHOD setRolCambiarPrecios( cAjusteValue, cAjustableUuid )          INLINE ( ::setLogic( 'cambiar_precios', cAjusteValue, 'roles', cAjustableUuid ) )
    METHOD setRolVerPreciosCosto( cAjusteValue, cAjustableUuid )         INLINE ( ::setLogic( 'ver_precios_costo', cAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolConfirmacionEliminacion( cAjusteValue, cAjustableUuid ) INLINE ( ::setLogic( 'confirmacion_eliminacion', cAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolFiltrarVentas( cAjusteValue, cAjustableUuid )           INLINE ( ::setLogic( 'fitrar_ventas_por_usuario', cAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolAbrirCajonPortamonedas( cAjusteValue, cAjustableUuid )  INLINE ( ::setLogic( 'abrir_cajon_portamonedas', cAjusteValue, 'roles', cAjustableUuid ) )
 
    METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    METHOD getLogic( cUuid, cTipo, cAjuste, lDefault ) 
@@ -32,6 +35,9 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD getRolMostrarRentabilidad( cUuid )                            INLINE ( ::getLogic( cUuid, 'roles', 'mostrar_rentabilidad', .t. ) )   
    METHOD getRolCambiarPrecios( cUuid )                                 INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_precios', .t. ) )   
    METHOD getRolVerPreciosCosto( cUuid )                                INLINE ( ::getLogic( cUuid, 'roles', 'ver_precios_costo', .t. ) )   
+   METHOD getRolConfirmacionEliminacion( cUuid )                        INLINE ( ::getLogic( cUuid, 'roles', 'confirmacion_eliminacion', .t. ) )   
+   METHOD getRolFiltrarVentas( cUuid )                                  INLINE ( ::getLogic( cUuid, 'roles', 'fitrar_ventas_por_usuario', .t. ) )   
+   METHOD getRolAbrirCajonPortamonedas( cUuid )                         INLINE ( ::getLogic( cUuid, 'roles', 'abrir_cajon_portamonedas', .t. ) )   
 
 END CLASS
 
@@ -119,7 +125,7 @@ METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
 
    logwrite( cSentence )
 
-   uValue            := ::getDatabase():selectValue( cSentence )
+   uValue            := ::getDatabase():getValue( cSentence )
 
    if hb_ischar( uValue ) 
       RETURN ( uValue ) 

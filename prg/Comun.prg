@@ -2747,8 +2747,8 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Usuarios [ Beta * ]'
-   oItem:cMessage       := 'Usuarios [ Beta * ]'
+   oItem:cPrompt        := 'Usuarios [Beta*]'
+   oItem:cMessage       := 'Usuarios [Beta*]'
    oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
    oItem:cId            := "99999"
    oItem:cBmp           := "gc_user_headset_16"
@@ -2757,8 +2757,8 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Roles [ Beta * ]'
-   oItem:cMessage       := 'Roles [ Beta * ]'
+   oItem:cPrompt        := 'Roles [Beta*]'
+   oItem:cMessage       := 'Roles [Beta*]'
    oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
    oItem:cId            := "99999"
    oItem:cBmp           := "gc_user_headset_16"

@@ -248,6 +248,8 @@ CLASS TWaitMeter
    METHOD setMeter( nPosition )        INLINE   ( ::oProgress:set( nPosition ) )
    METHOD refreshMeter( nPosition )    INLINE   ( ::oProgress:set( nPosition ) )
 
+   METHOD setStart( bStart )           INLINE   ( ::oDlgWait:bStart := bStart )
+
    METHOD Run()
    METHOD End()
 

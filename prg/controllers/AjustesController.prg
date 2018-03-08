@@ -109,7 +109,8 @@ METHOD getInsertAjustesSentence()
    cSentence  +=    "( UUID(), 'cambiar_precios',           '1',  'boolean',      NULL, NULL ), "
    cSentence  +=    "( UUID(), 'ver_precios_costo',         '1',  'boolean',      NULL, NULL ), "
    cSentence  +=    "( UUID(), 'confirmacion_eliminacion',  '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'fitrar_ventas_por_usuario', '1',  'boolean',      NULL, NULL )"
+   cSentence  +=    "( UUID(), 'fitrar_ventas_por_usuario', '1',  'boolean',      NULL, NULL ),"
+   cSentence  +=    "( UUID(), 'abrir_cajon_portamonedas',  '1',  'boolean',      NULL, NULL )"
 
 RETURN ( cSentence )
 
@@ -128,7 +129,7 @@ RETURN ( cSentence )
 
 METHOD getAjusteUuid( cAjuste )
 
-RETURN ( ::getDatabase():selectValue( ::getAjusteUuidSentence( cAjuste ) ) )
+RETURN ( ::getDatabase():getValue( ::getAjusteUuidSentence( cAjuste ) ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

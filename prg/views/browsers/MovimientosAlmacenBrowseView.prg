@@ -58,6 +58,15 @@ METHOD addColumns()
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'usuario'
+      :cHeader             := 'Usuario'
+      :nWidth              := 80
+      :lHide               := .t.
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'usuario' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'almacen_origen'
       :cHeader             := 'Almacén origen'
       :nWidth              := 80
@@ -93,6 +102,7 @@ METHOD addColumns()
       :cSortOrder          := 'divisa'
       :cHeader             := 'Divisa'
       :nWidth              := 80
+      :lHide               := .t.
       :bEditValue          := {|| ::getRowSet():fieldGet( 'divisa' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
