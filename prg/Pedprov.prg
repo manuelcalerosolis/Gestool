@@ -2527,8 +2527,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
       cTipoCtrCoste     := "Centro de coste"
 
-      D():CamposExtraLine( nView ):setTemporalAppend()
-
    else
 
       nGetStk           := D():Stocks( nView ):nPutStockActual( aTmp[ _CREFPRV ], aTmp[ _CALMLIN ], , , , aTmp[ _LKITART ], aTmp[ _NCTLSTK ] )
@@ -3116,6 +3114,8 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, aTmpPed, nMode, oSayPr1, oSayPr2, oSayVp
       if !empty( aGet[ __CCENTROCOSTE ] )
          aGet[ __CCENTROCOSTE ]:lValid()
       endif
+
+      D():CamposExtraLine( nView ):setTemporalAppend()
    
    case nMode != APPD_MODE .AND. empty( cCodArt )
 
@@ -5647,6 +5647,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( nView ):Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( nView ):oDbf ) )
 
+   oFr:SetWorkArea(     "Centro de coste",  D():CentroCoste( nView ):Select() )
+   oFr:SetFieldAliases( "Centro de coste",  cObjectsToReport( D():CentroCoste( nView ):oDbf ) )
+
    oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",        {|| ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",   {|| ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Documentos de pedidos",    {|| ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed } )
@@ -5656,6 +5659,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Pedidos", "Usuarios",                 {|| ( D():PedidosProveedores( nView ) )->cCodUsr } )
    oFr:SetMasterDetail( "Pedidos", "Empresa",                  {|| cCodigoEmpresaEnUso() } )
    oFr:SetMasterDetail( "Pedidos", "Clientes",                 {|| GetCodCli( ( D():PedidosProveedores( nView ) )->cNumPedCli ) } )
+   oFr:SetMasterDetail( "Pedidos", "Centro de coste",          {|| ( D():PedidosProveedores( nView ) )->cCtrCoste } )
 
    oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {|| ( D():PedidosProveedoresLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Familias",                {|| ( D():PedidosProveedoresLineas( nView ) )->cCodFam } )
@@ -5672,6 +5676,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Pedidos", "Formas de pago" )
    oFr:SetResyncPair(   "Pedidos", "Usuarios" )
    oFr:SetResyncPair(   "Pedidos", "Clientes" )
+   oFr:SetResyncPair(   "Pedidos", "Centro de coste" )
 
    oFr:SetResyncPair(   "Lineas de pedidos", "Artículos" )
    oFr:SetResyncPair(   "Lineas de pedidos", "Familias" )

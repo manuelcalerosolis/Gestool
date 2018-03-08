@@ -8379,6 +8379,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Bancos", ( D():BancosProveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aPrvBnc() ) )
 
+   oFr:SetWorkArea(     "Centro de coste",  D():CentroCoste( nView ):Select() )
+   oFr:SetFieldAliases( "Centro de coste",  cObjectsToReport( D():CentroCoste( nView ):oDbf ) )
+
    oFr:SetMasterDetail( "Facturas", "Lineas de facturas",      {|| ( D():FacturasProveedores( nView ) )->cSerFac + Str( ( D():FacturasProveedores( nView ) )->nNumFac ) + ( D():FacturasProveedores( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas", "Incidencias de facturas", {|| ( D():FacturasProveedores( nView ) )->cSerFac + Str( ( D():FacturasProveedores( nView ) )->nNumFac ) + ( D():FacturasProveedores( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas", "Documentos de facturas",  {|| ( D():FacturasProveedores( nView ) )->cSerFac + Str( ( D():FacturasProveedores( nView ) )->nNumFac ) + ( D():FacturasProveedores( nView ) )->cSufFac } )
@@ -8387,6 +8390,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas", "Formas de pago",          {|| ( D():FacturasProveedores( nView ) )->cCodPago} )
    oFr:SetMasterDetail( "Facturas", "Bancos",                  {|| ( D():FacturasProveedores( nView ) )->cCodPrv } )
    oFr:SetMasterDetail( "Facturas", "Empresa",                 {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Facturas", "Centro de coste",         {|| ( D():FacturasProveedores( nView ) )->cCtrCoste } )
 
    oFr:SetMasterDetail( "Lineas de facturas", "Artículos",               {|| ( D():FacturasProveedoresLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de facturas", "Código de proveedores",   {|| ( D():FacturasProveedores( nView ) )->cCodPrv + ( D():FacturasProveedoresLineas( nView ) )->cRef } )
