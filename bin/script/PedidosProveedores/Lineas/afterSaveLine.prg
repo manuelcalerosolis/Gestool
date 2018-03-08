@@ -23,13 +23,15 @@ Function afterSaveLine( nView, nMode, aTmpPed, dbfTmpLin )
    Hacemos una foto de los kilos que hay en un campo extra---------------------
    */
 
+   //MsgInfo( hb_valToExp( D():CamposExtraLine( nView ):aCamposExtra ), "aCamposExtra antes" )
+   
    D():CamposExtraLine( nView ):selectItem( if( nMode == APPD_MODE, "", Str( ( dbfTmpLin )->( OrdKeyNo() ) ) ) )
 
    if Empty( D():CamposExtraLine( nView ):aItemSelected )
       MsgStop( "No guardo el kilo real", "viene vacio" )
    end if
 
-   msginfo( Hb_ValToExp( D():CamposExtraLine( nView ):aItemSelected ), "aItemSelected" )
+   //msginfo( Hb_ValToExp( D():CamposExtraLine( nView ):aItemSelected ), "aItemSelected antes" )
 
    for each hSelect in D():CamposExtraLine( nView ):aItemSelected
 
@@ -38,6 +40,10 @@ Function afterSaveLine( nView, nMode, aTmpPed, dbfTmpLin )
       end if
 
    next
+
+   //msginfo( Hb_ValToExp( D():CamposExtraLine( nView ):aItemSelected ), "aItemSelected despues" )
+
+   //MsgInfo( hb_valToExp( D():CamposExtraLine( nView ):aCamposExtra ), "aCamposExtra despues" )
 
    /*
    Hacemos los calculos del destare--------------------------------------------
