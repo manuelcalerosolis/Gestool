@@ -2710,7 +2710,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 5
+   oGrupo:nBigItems     := 6
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2760,6 +2760,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Roles [Beta*]'
    oItem:cMessage       := 'Roles [Beta*]'
    oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
+   oItem:cId            := "99999"
+   oItem:cBmp           := "gc_user_headset_16"
+   oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Permisos [Beta*]'
+   oItem:cMessage       := 'Permisos [Beta*]'
+   oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
    oItem:cId            := "99999"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"

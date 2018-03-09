@@ -174,6 +174,7 @@ DivisasView.prg 													\
 PropertyControlView.prg											\
 SQLFiltrosView.prg												\
 SQLFiltrosModel.prg												\
+PermisosController.prg											\
 SQLFiltrosValidator.prg											\
 SQLFiltrosController.prg										\
 Rfile.prg               										\
@@ -764,6 +765,7 @@ DivisasView.obj 																\
 PropertyControlView.obj														\
 SQLFiltrosView.obj															\
 SQLFiltrosModel.obj															\
+PermisosController.obj														\
 SQLFiltrosValidator.obj 													\
 SQLFiltrosController.obj													\
 RpreviewC3.obj 																\
@@ -1369,6 +1371,7 @@ $(OBJ)\DivisasView.obj 														+
 $(OBJ)\PropertyControlView.obj											+
 $(OBJ)\SQLFiltrosView.obj													+
 $(OBJ)\SQLFiltrosModel.obj													+
+$(OBJ)\PermisosController.obj												+
 $(OBJ)\SQLFiltrosValidator.obj											+
 $(OBJ)\SQLFiltrosController.obj											+
 $(OBJ)\RocolumnC3.obj            										+

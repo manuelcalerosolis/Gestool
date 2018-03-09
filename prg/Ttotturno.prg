@@ -1504,20 +1504,20 @@ function TreeAddItem( cPrompt, cResName1, cResName2, cBmpOpen, cBmpClose, lOpene
       hBmpClose   := ReadBitmap( 0, cBmpClose )
    endif
 
-return ( ATail( aTrees ):Add( cPrompt, nLevel, hBmpOpen, hBmpClose, lOpened ) )
+return ( atail( aTrees ):Add( cPrompt, nLevel, hBmpOpen, hBmpClose, lOpened ) )
 
 //----------------------------------------------------------------------------//
 
 function TreeEnd()
 
    local oItem
-   local oTree    := ATail( aTrees )
+   local oTree    := atail( aTrees )
 
-   if Len( aTrees ) > 1
+   if len( aTrees ) > 1
 
-      ASize( aTrees, Len( aTrees ) - 1 )
+      asize( aTrees, len( aTrees ) - 1 )
 
-      oItem       := ATail( aTrees ):oLast
+      oItem       := atail( aTrees ):oLast
       oItem:oTree := oTree
 
       if oItem:hBmpOpen == nil
@@ -1528,7 +1528,7 @@ function TreeEnd()
          oItem:hBmpClose := hBmpClose
       endif
 
-      oTree:oFirst:oPrev := ATail( aTrees ):oLast
+      oTree:oFirst:oPrev := atail( aTrees ):oLast
 
    else
 

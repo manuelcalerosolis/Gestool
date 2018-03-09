@@ -207,7 +207,7 @@ FUNCTION Usuarios( oMenuItem, oWnd )
       MRU      "gc_businesspeople_16";
       BITMAP   "WebTopGreen" ;
 		ALIAS		( dbfUser ) ;
-      LEVEL    nLevel ;
+      LEVEL    ( nLevel ) ;
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfUser ) );
       DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfUser ) );
       EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdit, dbfUser ) );
@@ -655,13 +655,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
 
       oImgLst        := TImageList():New()
 
-      aAdd( aBmp, TBitmap():Define( "gc_folder_open_16"  , , oDlg ) )
-      aAdd( aBmp, TBitmap():Define( "gc_sign_forbidden_16"   , , oDlg ) )
-      aAdd( aBmp, TBitmap():Define( "new16"     , , oDlg ) )
-      aAdd( aBmp, TBitmap():Define( "edit16"    , , oDlg ) )
-      aAdd( aBmp, TBitmap():Define( "gc_lock2_16"    , , oDlg ) )
-      aAdd( aBmp, TBitmap():Define( "del16"     , , oDlg ) )
-      aAdd( aBmp, TBitmap():Define( "gc_printer2_16"     , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "gc_folder_open_16", , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "gc_sign_forbidden_16", , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "new16", , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "edit16", , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "gc_lock2_16", , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "del16", , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "gc_printer2_16", , oDlg ) )
 
       aEval( aBmp, {| oBmp | oImgLst:AddMasked( oBmp, Rgb( 255, 0, 255 ) ) } )
 
@@ -757,7 +757,7 @@ Static Function InitEdtRec( aTmp, aGet, oTree, oImgLst, bmpImage )
 
    oMenuTree( aTmp[ _CCODUSE ], oTree, oTree:aItems )
 
-   if !Empty( aGet[ _CIMAGEN ] )
+   if !empty( aGet[ _CIMAGEN ] )
       ChgBmp( aGet[ _CIMAGEN ], bmpImage )
    end if
 
@@ -1123,8 +1123,6 @@ Function lFreeAllUser( dbfUser )
 Return ( nil )
 
 //---------------------------------------------------------------------------//
-
-
 
 FUNCTION cUser( oGet, dbfUsr, oGet2 )
 
