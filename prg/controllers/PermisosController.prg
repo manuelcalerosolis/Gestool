@@ -7,9 +7,16 @@ CLASS PermisosController FROM SQLNavigatorController
    
    DATA cUuidRoles
 
+   DATA oOpcionesModel
+
    METHOD New()
 
    METHOD End()
+
+   METHOD saveOptions()
+      METHOD saveOption()
+
+   METHOD loadOption()
 
 END CLASS
 
@@ -32,6 +39,8 @@ METHOD New() CLASS PermisosController
    ::nLevel                := nLevelUsr( "01052" )
 
    ::oModel                := SQLPermisosModel():New( self )
+   
+   ::oOpcionesModel        := SQLPermisosOpcionesModel():New( self )
 
    ::oRepository           := PermisosRepository():New( self )
 
@@ -41,8 +50,8 @@ METHOD New() CLASS PermisosController
 
    ::oValidator            := PermisosValidator():New( self )
 
-   ::setEvent( 'openingDialog', {|| ::oDialogView:openingDialog() } )  
-   ::setEvent( 'closedDialog', {|| ::oDialogView:closedDialog() } )  
+   ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } )  
+   ::setEvent( 'closedDialog',   {|| ::oDialogView:closedDialog() } )  
 
 RETURN ( Self )
 
@@ -54,11 +63,48 @@ METHOD End()
       ::oModel:End()
    endif
 
+   if !empty( ::oOpcionesModel )
+      ::oOpcionesModel:End()
+   endif
+
    if !empty( ::oDialogView )
       ::oDialogView:End()
    endif
 
    ::Super:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveOptions( cUuid, oTree )
+
+   oTree:eval( {|oItem| iif( !empty( hget( oItem:Cargo, "Id" ) ), ::saveOption( cUuid, oItem ), ) } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveOption( cUuid, oTree )
+
+   local hBuffer  := {=>}
+
+   hset( hBuffer, "uuid",           win_uuidcreatestring() )
+   hset( hBuffer, "permiso_uuid",   cUuid )
+   hset( hBuffer, "nombre",         hget( oTree:Cargo, "Id" ) )
+   hset( hBuffer, "nivel",          nPermiso( oTree:Cargo ) )
+
+   ::oOpcionesModel:insertOnDuplicate( hBuffer )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadOption( cPermisoUuid, cNombre )
+
+   local hBuffer  := {=>}
+
+   msgalert( PermisosRepository():getNivel( cPermisoUuid, cNombre ), "loadOption" )
 
 RETURN ( nil )
 
@@ -128,7 +174,6 @@ METHOD addColumns() CLASS PermisosBrowseView
    end with
 
 RETURN ( self )
-
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -202,18 +247,30 @@ RETURN ( self )
 
 METHOD addTreeItem( oAcceso )
 
+   local cUuid     
    local oItem    
 
+   if empty( oAcceso:cId ) 
+      RETURN ( self )
+   end if 
+
+   cUuid          := ::getModel():hBuffer[ "uuid" ]  
    oItem          := TreeAddItem( oAcceso:cPrompt )
-   oItem:Cargo    := { "Access" => .t., "Append" => .t., "Edit" => .t., "Zoom" => .t., "Delete" => .t., "Print" => .t.  }
+   oItem:Cargo    := {  "Id"     => oAcceso:cId,;
+                        "Access" => .t.,;
+                        "Append" => .t.,;
+                        "Edit"   => .t.,;
+                        "Zoom"   => .t.,;
+                        "Delete" => .t.,;
+                        "Print"  => .t. }
+
+   ::oController:loadOption( cUuid, oAcceso:cId )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD getTreeItem( cKey )
-
-   default cKey := "Access"
 
    if !empty( ::oBrowse:oTreeItem )
       RETURN ( hget( ::oBrowse:oTreeItem:Cargo, cKey ) )
@@ -225,15 +282,14 @@ RETURN ( "" )
 
 METHOD setTreeItem( cKey, uValue )
 
-   default cKey := "Access"
-
    if !empty( ::oBrowse:oTreeItem )
 
       if !empty( ::oBrowse:oTreeItem:oTree )
-         msgalert( hb_valtoexp( ::oBrowse:oTreeItem:oTree ), "tiene nodos")
+         msgalert( "tiene nodos")
       end if 
 
       hset( ::oBrowse:oTreeItem:Cargo, cKey, uValue ) 
+
    endif 
 
 RETURN ( uValue )
@@ -241,6 +297,8 @@ RETURN ( uValue )
 //---------------------------------------------------------------------------//
 
 METHOD closedDialog() CLASS PermisosView
+
+   ::oController:saveOptions( ::getModel():hBuffer[ "uuid" ], ::oBrowse:oTree )
 
 RETURN ( self )
 
@@ -387,8 +445,8 @@ END CLASS
 
 METHOD getValidators() CLASS PermisosValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido",;
-                                                "unique"          => "El nombre ya existe" } }
+   ::hValidators  := {  "nombre" => {  "required"  => "El nombre es un dato requerido",;
+                                       "unique"    => "El nombre ya existe" } }
 
 RETURN ( ::hValidators )
 
@@ -420,11 +478,6 @@ METHOD getColumns() CLASS SQLPermisosModel
 
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
                                     "default"   => {|| space( 100 ) } }                      )
-
-   /*
-   hset( ::hColumns, "nivel",    {  "create"    => "TINYINT UNSIGNED"                        ,;
-                                    "default"   => {|| 0 } }                                 )
-   */
 
    ::getTimeStampColumns()   
 
@@ -469,4 +522,19 @@ RETURN ( ::getDatabase():getValue( cSentence ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+FUNCTION nPermiso( hPermisos )
+
+   local nPermiso    := 0
+
+   if hget( hPermisos, "Access" )   ; nPermiso := nOr( nPermiso, __permission_access__ )  ; endif
+   if hget( hPermisos, "Append" )   ; nPermiso := nOr( nPermiso, __permission_append__ )  ; endif
+   if hget( hPermisos, "Edit" )     ; nPermiso := nOr( nPermiso, __permission_edit__ )    ; endif
+   if hget( hPermisos, "Zoom" )     ; nPermiso := nOr( nPermiso, __permission_zoom__ )    ; endif
+   if hget( hPermisos, "Delete" )   ; nPermiso := nOr( nPermiso, __permission_delete__ )  ; endif
+   if hget( hPermisos, "Print" )    ; nPermiso := nOr( nPermiso, __permission_print__ )   ; endif
+
+RETURN ( nPermiso )
+
 //---------------------------------------------------------------------------//

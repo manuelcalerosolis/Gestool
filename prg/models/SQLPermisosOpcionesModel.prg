@@ -7,7 +7,7 @@ CLASS SQLPermisosOpcionesModel FROM SQLBaseModel
 
    DATA cTableName               INIT "permisos_opciones"
 
-   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
+   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid), UNIQUE KEY ( permiso_uuid, nombre )"
 
    METHOD getColumns()
 
@@ -20,19 +20,17 @@ METHOD getColumns() CLASS SQLPermisosOpcionesModel
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                           "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "permiso_uuid",   {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "permiso_uuid",   {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
    hset( ::hColumns, "nivel",          {  "create"    => "TINYINT UNSIGNED"                        ,;
                                           "default"   => {|| 0 } }                                 )
-
-   ::getTimeStampColumns()   
 
 RETURN ( ::hColumns )
 
@@ -46,30 +44,19 @@ CLASS PermisosRepository FROM SQLBaseRepository
 
    METHOD getTableName()      INLINE ( SQLPermisosOpcionesModel():getTableName() ) 
 
-   METHOD getNombres() 
-
-   METHOD getNombre( uuid )   INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) ) 
-
-   METHOD getUuid()
+   METHOD getNivel( cPermisoUuid, cNombre )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getNombres() CLASS PermisosRepository
+METHOD getNivel( cPermisoUuid, cNombre ) CLASS PermisosRepository
 
-   local cSentence            := "SELECT nombre FROM " + ::getTableName()
+   local cSQL  := "SELECT nivel FROM " + ::getTableName()               + " " + ;
+                     "WHERE permiso_uuid = " + quoted( cPermisoUuid )   + " " + ;
+                        "nombre = " + quoted( cNombre )
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSentence ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getUuid( cNombre ) CLASS PermisosRepository
-
-   local cSentence            := "SELECT uuid FROM " + ::getTableName() + " " + ;
-                                    "WHERE nombre = " + quoted( cNombre )
-
-RETURN ( ::getDatabase():getValue( cSentence ) )
+RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

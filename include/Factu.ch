@@ -211,12 +211,12 @@ Defines para ficheros INI
 #define ACC_DELE                16       // Acceso eliminar
 #define ACC_IMPR                32       // Acceso imprimir
 
-#define __permiso_acceso__      1        // Acceso
-#define __permiso_append__      2        // Acceso añadir
-#define __permiso_modificar__   4        // Solo modificar
-#define __permiso_ver__         8        // Solo visualizar
-#define __permiso_borrar__      16       // Acceso eliminar
-#define __permiso_imprimir__    32       // Acceso imprimir
+#define __permission_access__   1        // Acceso
+#define __permission_append__   2        // Acceso añadir
+#define __permission_edit__     4        // Solo modificar
+#define __permission_zoom__     8        // Solo visualizar
+#define __permission_delete__   16       // Acceso eliminar
+#define __permission_print__    32       // Acceso imprimir
 
 #define IS_PRINTER              1
 #define IS_SCREEN               2

@@ -143,7 +143,7 @@ METHOD Find( cFind, cColumn )
 
    ::saveRecno()
 
-   nRecno               := ::oRowSet:find( cFind, cColumn, .t. )
+   nRecno               := ::oRowSet:findString( cFind, cColumn )
 
    if nRecno == 0
       ::restoreRecno()
@@ -177,6 +177,13 @@ METHOD getFindValue( uFind, cColumn )
       RETURN ( uFind )
    end if 
 
+   if right( uFind, 1 ) != "*"
+      uFind       += "*"
+   end if 
+
+   /*
+   uFind          += "*"
+
    cType                := ::oRowSet:fieldType( cColumn )
 
    do case
@@ -186,12 +193,8 @@ METHOD getFindValue( uFind, cColumn )
          uFind          += "*"
       case ( cType ) == "T" 
          uFind          += "*"
-         // if !empty( ctot( uFind ) )
-         //    uFind       := ctot( uFind )
-         // else
-         //    uFind       := nil
-         // end if 
    end case 
+   */
 
 RETURN ( uFind )
 

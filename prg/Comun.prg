@@ -1106,8 +1106,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Gestión de cartera'
    oItem:cMessage       := 'Gestión de cartera'
-   oItem:bAction        := {|| PageIni( "01004", oWnd() ) }
-   oItem:cId            := "01004"
+   oItem:bAction        := {|| PageIni( "gestion_de_cartera", oWnd() ) }
+   oItem:cId            := "gestion_de_cartera"
    oItem:cBmp           := "gc_briefcase_16"
    oItem:cBmpBig        := "gc_briefcase_32"
 
@@ -1115,8 +1115,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Iniciar sesión'
    oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
-   oItem:bAction        := {|| ChkTurno( "01000", oWnd() ) }
-   oItem:cId            := "01000"
+   oItem:bAction        := {|| ChkTurno( "iniciar_sesion", oWnd() ) }
+   oItem:cId            := "iniciar_sesion"
    oItem:cBmp           := "gc_clock_play_16"
    oItem:cBmpBig        := "gc_clock_play_32"
    oItem:lLittle        := .t.
@@ -1125,8 +1125,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Arqueo parcial (X)'
    oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
-   oItem:bAction        := {|| CloseTurno( "01001", oWnd(), .t. ) }
-   oItem:cId            := "01001"
+   oItem:bAction        := {|| CloseTurno( "arqueo_parcial", oWnd(), .t. ) }
+   oItem:cId            := "arqueo_parcial"
    oItem:cBmp           := "gc_clock_refresh_16"
    oItem:cBmpBig        := "gc_clock_refresh_32"
    oItem:lLittle        := .t.

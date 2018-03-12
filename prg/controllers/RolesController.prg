@@ -372,8 +372,8 @@ END CLASS
 
 METHOD getValidators() CLASS RolesValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido",;
-                                                "unique"          => "El nombre ya existe" } }
+   ::hValidators  := {  "nombre" => {  "required"  => "El nombre es un dato requerido",;
+                                       "unique"    => "El nombre ya existe" } }
 
 RETURN ( ::hValidators )
 

@@ -440,7 +440,7 @@ METHOD buildTicketLineHash( hLine )
 
    aadd( ::aTicketLines, hTicketLine )
 
-   ::nTotalTicket    += hget( hLine, "unidades" ) * hget( hLine, "precio" )
+   ::nTotalTicket    += hget( hLine, "precio" )
 
 RETURN ( .t. )
 

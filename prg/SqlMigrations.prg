@@ -135,6 +135,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLPermisosModel():New() )
 
+   aadd( ::aModels, SQLPermisosOpcionesModel():New() )
+
    aadd( ::aModels, SQLAjustesModel():New() )
 
    aadd( ::aModels, SQLAjustableModel():New() )
