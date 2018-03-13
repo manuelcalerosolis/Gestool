@@ -63,6 +63,14 @@ METHOD addColumns() CLASS SituacionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Uuid'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
       :nWidth              := 300
