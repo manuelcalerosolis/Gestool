@@ -19,11 +19,7 @@ METHOD New() CLASS SituacionesController
 
    ::cName                 := "situaciones"
 
-<<<<<<< HEAD
-   ::cImage                := "gc_document_attachment_16"
-=======
    ::hImage                := { "16" => "gc_document_attachment_16" }
->>>>>>> 39f0d65fbec83f98e042b637065367f608d9980f
 
    ::nLevel                := nLevelUsr( ::cName )
 
