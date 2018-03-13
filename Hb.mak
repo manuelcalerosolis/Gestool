@@ -336,9 +336,6 @@ TInfAtp.prg             													\
 ConfVisor.prg           													\
 ConfCajPorta.prg        													\
 ConfImpTiket.prg        													\
-SituacionesView.prg         												\
-SituacionesModel.prg       												\
-SituacionesRepository.prg 													\
 MovimientosAlmacenRepository.prg											\
 MovimientosAlmacenLineasRepository.prg									\
 MovimientosAlmacenesLineasModel.prg 									\
@@ -449,7 +446,6 @@ TiposVentasView.prg    														\
 SQLBaseValidator.prg 														\
 TiposVentasValidator.prg 													\
 EtiquetasValidator.prg 														\
-SituacionesValidator.prg 													\
 MovimientosAlmacenValidator.prg 											\
 MovimientosAlmacenLineasValidator.prg 									\
 SQLBaseRepository.prg 														\
@@ -944,9 +940,6 @@ TInfAtp.obj             													\
 ConfImpTiket.obj        													\
 ConfVisor.obj           													\
 ConfCajPorta.obj        													\
-SituacionesView.obj         												\
-SituacionesModel.obj       												\
-SituacionesRepository.obj 													\
 MovimientosAlmacenRepository.obj 										\
 MovimientosAlmacenLineasRepository.obj 								\
 AlmacenesModel.obj 															\
@@ -1056,7 +1049,6 @@ SQLBaseView.obj 																\
 SQLBaseValidator.obj 														\
 TiposVentasValidator.obj 													\
 EtiquetasValidator.obj 														\
-SituacionesValidator.obj 													\
 MovimientosAlmacenValidator.obj 											\
 MovimientosAlmacenLineasValidator.obj 									\
 SQLBaseRepository.obj 														\
@@ -1530,9 +1522,6 @@ $(OBJ)\TInfAtp.obj              											+
 $(OBJ)\ConfImpTiket.obj         											+
 $(OBJ)\ConfVisor.obj            											+
 $(OBJ)\ConfCajPorta.obj         											+
-$(OBJ)\SituacionesView.obj          									+
-$(OBJ)\SituacionesModel.obj          									+
-$(OBJ)\SituacionesRepository.obj      									+
 $(OBJ)\MovimientosAlmacenRepository.obj 								+
 $(OBJ)\MovimientosAlmacenLineasRepository.obj 						+
 $(OBJ)\AlmacenesModel.obj 													+
@@ -1646,7 +1635,6 @@ $(OBJ)\SQLBaseView.obj 														+
 $(OBJ)\SQLBaseValidator.obj 												+
 $(OBJ)\TiposVentasValidator.obj											+
 $(OBJ)\EtiquetasValidator.obj												+
-$(OBJ)\SituacionesValidator.obj											+
 $(OBJ)\MovimientosAlmacenValidator.obj									+
 $(OBJ)\MovimientosAlmacenLineasValidator.obj							+
 $(OBJ)\SQLBaseRepository.obj 												+

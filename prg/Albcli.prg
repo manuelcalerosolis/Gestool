@@ -5697,11 +5697,11 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
       while ( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cPedido )
 
-         nTotRet                 := nTotNPedCli( dbfPedCliL )     // -> nUniCaja
+         nTotRet                 := nTotNPedCli( dbfPedCliL )
          nTotRet                 -= nUnidadesRecibidasAlbaranesClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "AlbCliL", nView ) )
          nTotRet                 -= nUnidadesRecibidasFacturasClientes( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cValPr1, ( dbfPedCliL )->cValPr2, D():Get( "FacCliL", nView ) )
 
-         if ( nTotRet > 0 ) .or. nTotNPedCli( dbfPedCliL ) == 0
+         //if ( nTotRet > 0 ) .or. nTotNPedCli( dbfPedCliL ) == 0 Pidió quitar esto Inma de Pepsi y Instalaciones corumbel
 
             (dbfTmpLin)->( dbAppend() )
 
@@ -5814,7 +5814,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
             end if
 
-         end if
+         //end if
 
          ( dbfPedCliL )->( dbSkip( 1 ) )
 

@@ -119,7 +119,6 @@ END CLASS
 METHOD Activate() CLASS TiposImpresorasView
 
    local oDlg
-   local oBtnOk
    local oGetNombre
 
    DEFINE DIALOG  oDlg ;
@@ -134,11 +133,11 @@ METHOD Activate() CLASS TiposImpresorasView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
-   REDEFINE BUTTON oBtnOk ;
+   REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( oDlg:end( IDOK ) )
+      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -149,7 +148,7 @@ METHOD Activate() CLASS TiposImpresorasView
    // Teclas rapidas----------------------------------------------------------
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oBtnOk:Click(), ) } )
+      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) } )
    end if 
 
    // evento bstart-----------------------------------------------------------
