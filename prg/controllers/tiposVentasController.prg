@@ -16,9 +16,11 @@ METHOD New()
 
    ::cTitle                := "Tipos de ventas"
 
+   ::cName                 := "tipos_de_impresoras"
+
    ::hImage                := { "16" => "gc_wallet_16" }
 
-   ::nLevel                := nLevelUsr( "01043" )
+   ::nLevel                := nLevelUsr( ::cName )
 
    ::oModel                := SQLTiposVentasModel():New( self )
 

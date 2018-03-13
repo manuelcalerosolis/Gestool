@@ -100,7 +100,7 @@ METHOD New()
 
    ::cTitle                      := "Movimientos de almacén" 
 
-   ::setName( "movimientos_almacen" )
+   ::setName( "movimientos_de_almacen" )
 
    ::cDirectory                  := cPatDocuments( "Movimientos almacen" ) 
 
@@ -108,7 +108,7 @@ METHOD New()
                                        "48"  => "gc_package_48",;
                                        "64"  => "gc_package_64" }
 
-   ::nLevel                      := nLevelUsr( "01050" )
+   ::nLevel                      := nLevelUsr( ::getName() )
 
    ::lTransactional              := .t.
 

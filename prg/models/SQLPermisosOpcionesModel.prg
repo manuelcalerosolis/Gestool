@@ -54,7 +54,7 @@ METHOD getNivel( cPermisoUuid, cNombre ) CLASS PermisosRepository
 
    local cSQL  := "SELECT nivel FROM " + ::getTableName()               + " " + ;
                      "WHERE permiso_uuid = " + quoted( cPermisoUuid )   + " " + ;
-                        "nombre = " + quoted( cNombre )
+                        "AND nombre = " + quoted( cNombre )
 
 RETURN ( ::getDatabase():getValue( cSQL ) )
 

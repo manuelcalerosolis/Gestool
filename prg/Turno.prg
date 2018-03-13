@@ -11485,7 +11485,7 @@ FUNCTION Turnos( oMenuItem, oWnd )
 
    local oTurno
 
-   DEFAULT  oMenuItem   := "01002"
+   DEFAULT  oMenuItem   := "turnos"
    DEFAULT  oWnd        := oWnd()
 
    // Cerramos todas las ventanas----------------------------------------------

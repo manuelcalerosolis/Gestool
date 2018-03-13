@@ -13,7 +13,7 @@ Function StartTCobAge()
 
    local oTCobAge
 
-   oTCobAge := TCobAge():New( cPatEmp(), cDriver(), oWnd(), "01061" )
+   oTCobAge := TCobAge():New( cPatEmp(), cDriver(), oWnd(), "liquidacion_de_agentes" )
 
    if !Empty( oTCobAge )
       oTCobAge:Activate()

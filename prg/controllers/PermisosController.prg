@@ -102,11 +102,15 @@ RETURN ( nil )
 
 METHOD loadOption( cPermisoUuid, cNombre )
 
-   local hBuffer  := {=>}
+   local nPermiso
 
-   msgalert( PermisosRepository():getNivel( cPermisoUuid, cNombre ), "loadOption" )
+   nPermiso       := PermisosRepository():getNivel( cPermisoUuid, cNombre )
 
-RETURN ( nil )
+   if hb_isnil( nPermiso )
+      RETURN ( __permission_full__ )
+   end if 
+
+RETURN ( nPermiso )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -248,23 +252,16 @@ RETURN ( self )
 METHOD addTreeItem( oAcceso )
 
    local cUuid     
-   local oItem    
-
-   if empty( oAcceso:cId ) 
-      RETURN ( self )
-   end if 
+   local oItem  
 
    cUuid          := ::getModel():hBuffer[ "uuid" ]  
-   oItem          := TreeAddItem( oAcceso:cPrompt )
-   oItem:Cargo    := {  "Id"     => oAcceso:cId,;
-                        "Access" => .t.,;
-                        "Append" => .t.,;
-                        "Edit"   => .t.,;
-                        "Zoom"   => .t.,;
-                        "Delete" => .t.,;
-                        "Print"  => .t. }
+   oItem          := treeAddItem( oAcceso:cPrompt )
 
-   ::oController:loadOption( cUuid, oAcceso:cId )
+   if empty( oAcceso:cId )
+      oItem:Cargo := hPermiso()
+   else
+      oItem:Cargo := hPermiso( oAcceso:cId, ::oController:loadOption( cUuid, oAcceso:cId ) )
+   end if 
 
 RETURN ( self )
 
@@ -282,15 +279,19 @@ RETURN ( "" )
 
 METHOD setTreeItem( cKey, uValue )
 
-   if !empty( ::oBrowse:oTreeItem )
-
-      if !empty( ::oBrowse:oTreeItem:oTree )
-         msgalert( "tiene nodos")
-      end if 
-
+   if empty( ::oBrowse:oTreeItem )
+      RETURN ( uValue )
+   end if 
+   
+   if empty( ::oBrowse:oTreeItem:oTree )
       hset( ::oBrowse:oTreeItem:Cargo, cKey, uValue ) 
+      RETURN ( uValue )
+   end if 
 
-   endif 
+   if msgyesno( "¿Desea cambiar los valores de los nodos inferiores?", "Seleccione una opción" )
+      hset( ::oBrowse:oTreeItem:Cargo, cKey, uValue ) 
+      ::oBrowse:oTreeItem:oTree:eval( {|oItem| hset( oItem:Cargo, cKey, uValue ) } )
+   end if 
 
 RETURN ( uValue )
 
@@ -538,3 +539,23 @@ FUNCTION nPermiso( hPermisos )
 RETURN ( nPermiso )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION hPermiso( cId, nPermiso )
+
+   local hPermiso    := {=>}
+
+   DEFAULT cId       := ""
+   DEFAULT nPermiso  := __permission_full__ 
+
+   hset( hPermiso, "Id",      cId )
+   hset( hPermiso, "Access",  nAnd( nPermiso, __permission_access__  ) != 0 )
+   hset( hPermiso, "Append",  nAnd( nPermiso, __permission_append__  ) != 0 )
+   hset( hPermiso, "Edit",    nAnd( nPermiso, __permission_edit__    ) != 0 )
+   hset( hPermiso, "Zoom",    nAnd( nPermiso, __permission_zoom__    ) != 0 )
+   hset( hPermiso, "Delete",  nAnd( nPermiso, __permission_delete__  ) != 0 )
+   hset( hPermiso, "Print",   nAnd( nPermiso, __permission_print__   ) != 0 )
+
+RETURN ( hPermiso )
+
+//---------------------------------------------------------------------------//
+

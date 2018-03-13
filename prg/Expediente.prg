@@ -39,7 +39,7 @@ Function StartTExpediente()
 
    local oExpediente
 
-   oExpediente    := TExpediente():New( cPatEmp(), oWnd(), "04010" )
+   oExpediente    := TExpediente():New( cPatEmp(), oWnd(), "expedientes" )
    if !Empty( oExpediente )
       oExpediente:Activate()
    end if

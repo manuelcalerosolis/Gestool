@@ -5266,12 +5266,12 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-FUNCTION ConfEmpresa( oWnd, oMenuItem, nSelFolder )
+FUNCTION ConfEmpresa( oMenuItem, oWnd, nSelFolder )
 
    local nLevel         := 0
 
-   DEFAULT  oWnd        := oWnd()
    DEFAULT  oMenuItem   := _MENUITEM_
+   DEFAULT  oWnd        := oWnd()
    DEFAULT  nSelFolder  := 1
 
    /*
