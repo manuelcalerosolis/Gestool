@@ -9,7 +9,7 @@ Function StartTTipoExpediente()
 
    local oExpediente
 
-   oExpediente    := TTipoExpediente():New( cPatEmp(), cDriver(), oWnd(), "04011" )
+   oExpediente    := TTipoExpediente():New( cPatEmp(), cDriver(), oWnd(), "tipo_expediente" )
 
    if !Empty( oExpediente )
       oExpediente:Activate()

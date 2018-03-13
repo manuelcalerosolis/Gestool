@@ -91,7 +91,7 @@ END CLASS
 METHOD New( cPath, oWndParent, nLevel )
 
    DEFAULT oWndParent   := GetWndFrame()
-   DEFAULT nLevel       := "01200"
+   DEFAULT nLevel       := "menus"
 
    ::Create( cPath )
 

@@ -181,21 +181,6 @@ METHOD getFindValue( uFind, cColumn )
       uFind       += "*"
    end if 
 
-   /*
-   uFind          += "*"
-
-   cType                := ::oRowSet:fieldType( cColumn )
-
-   do case
-      case ( cType ) == "N"
-         uFind          := val( alltrim( uFind ) )
-      case ( cType ) == "C" .and. right( uFind, 1 ) != "*"
-         uFind          += "*"
-      case ( cType ) == "T" 
-         uFind          += "*"
-   end case 
-   */
-
 RETURN ( uFind )
 
 //---------------------------------------------------------------------------//

@@ -289,11 +289,36 @@ RETURN ( self )
 
 CLASS RolesView FROM SQLBaseView
 
+   DATA oComboPermiso
+   DATA cComboPermiso      INIT "test"
+   DATA aComboPermisos     INIT { "test", "demo", "work" }
+
+   METHOD openingDialog() 
+
+   METHOD closedDialog() 
+
    METHOD Activate()
    
    METHOD Save( oDlg )
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD openingDialog() CLASS RolesView
+
+   ::cComboPermiso      := "test" // ::oController:oRolesController:oRepository:getNombre( ::getModel():getBuffer( "rol_uuid" ) )
+   ::aComboPermisos     := { "test", "demo", "work" } // ::oController:oRolesController:oRepository:getNombres()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD closedDialog() CLASS RolesView
+
+   // ::getModel():setBuffer( "rol_uuid", ::oController:oRolesController:oRepository:getUuid( ::cComboRol ) )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -322,6 +347,12 @@ METHOD Activate() CLASS RolesView
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
+      OF          oDlg
+
+   REDEFINE COMBOBOX ::oComboPermiso ;
+      VAR         ::cComboPermiso ;
+      ID          120 ;
+      ITEMS       ::aComboPermisos ;
       OF          oDlg
 
    REDEFINE BUTTON oBtnOk ;

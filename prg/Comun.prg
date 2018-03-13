@@ -1285,8 +1285,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := getConfigTraslation( 'Temporadas' )
    oItem:cMessage       := 'Acceso al fichero de ' + getConfigTraslation( 'temporadas' )
-   oItem:bAction        := {|| Temporada( "Temporadas", oWnd() ) }
-   oItem:cId            := "Temporadas"
+   oItem:bAction        := {|| Temporada( "temporadas", oWnd() ) }
+   oItem:cId            := "temporadas"
    oItem:cBmp           := "gc_cloud_sun_16"
    oItem:cBmpBig        := "gc_cloud_sun_32"
    oItem:lShow          := .f.
@@ -1912,7 +1912,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Tipo expediente'
    oItem:cMessage       := 'Acceso a los tipos de expedientes'
    oItem:bAction        := {|| StartTTipoExpediente() }
-   oItem:cId            := "04011"
+   oItem:cId            := "tipo_expediente"
    oItem:cBmp           := "gc_folders_16"
    oItem:cBmpBig        := "gc_folders_32"
    oItem:lShow          := .f.
@@ -2239,8 +2239,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Entradas y salidas'
    oItem:cMessage       := 'Acceso a las entradas y salidas de caja'
-   oItem:bAction        := {|| EntSal( "01065", oWnd ) }
-   oItem:cId            := "01065"
+   oItem:bAction        := {|| EntSal( "entradas_y_salidas", oWnd ) }
+   oItem:cId            := "entradas_y_salidas"
    oItem:cBmp           := "gc_cash_register_refresh_16"
    oItem:cBmpBig        := "gc_cash_register_refresh_32"
    oItem:lShow          := .f.
@@ -2249,8 +2249,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Sala de ventas'
    oItem:cMessage       := 'Sala de ventas'
-   oItem:bAction        := {|| TTpvRestaurante():New( cPatEmp(), cDriver(), oWnd, "01105" ):Activate() }
-   oItem:cId            := "01105"
+   oItem:bAction        := {|| TTpvRestaurante():New( cPatEmp(), cDriver(), oWnd, "sala_de_ventas" ):Activate() }
+   oItem:cId            := "sala_de_ventas"
    oItem:cBmp           := "gc_cup_16"
    oItem:cBmpBig        := "gc_cup_32"
    oItem:lShow          := .f.
@@ -2259,8 +2259,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Invitaciones'
    oItem:cMessage       := 'Acceso a los tipos de invitaciones'
-   oItem:bAction        := {|| TInvitacion():New( cPatEmp(), oWnd, "01107" ):Activate() }
-   oItem:cId            := "01107"
+   oItem:bAction        := {|| TInvitacion():New( cPatEmp(), oWnd, "invitaciones" ):Activate() }
+   oItem:cId            := "invitaciones"
    oItem:cBmp           := "gc_masks_16"
    oItem:cBmpBig        := "gc_masks_32"
    oItem:lShow          := .f.
@@ -2269,8 +2269,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Ordenes de comanda'
    oItem:cMessage       := 'Acceso a los comentarios de los artículos'
-   oItem:bAction        := {|| TOrdenComanda():New( cPatArt(), oWnd, "01093" ):Activate() }
-   oItem:cId            := "01093"
+   oItem:bAction        := {|| TOrdenComanda():New( cPatArt(), oWnd, "ordenes_de_comanda" ):Activate() }
+   oItem:cId            := "ordenes_de_comanda"
    oItem:cBmp           := "gc_sort_az_descending_16"
    oItem:cBmpBig        := "gc_sort_az_descending_32"
    oItem:lShow          := .f.
@@ -2279,8 +2279,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Menús'
    oItem:cMessage       := 'Acceso a los menús'
-   oItem:bAction        := {|| TpvMenu():New( cPatEmp(), oWnd ):Activate() }
-   oItem:cId            := "01200"
+   oItem:bAction        := {|| TpvMenu():New( cPatEmp(), oWnd, "menus" ):Activate() }
+   oItem:cId            := "menus"
    oItem:cBmp           := "gc_clipboard_empty_16"
    oItem:cBmpBig        := "gc_clipboard_empty_32"
    oItem:lShow          := .f.
@@ -2296,8 +2296,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Capturas T.P.V.'
    oItem:cMessage       := 'Capturas T.P.V.'
-   oItem:bAction        := {|| TCaptura():New( cPatDat(), oWnd, "01083" ):Activate() }
-   oItem:cId            := "01083"
+   oItem:bAction        := {|| TCaptura():New( cPatDat(), oWnd, "capturas" ):Activate() }
+   oItem:cId            := "capturas"
    oItem:cBmp           := "gc_window_pencil_16"
    oItem:cBmpBig        := "gc_window_pencil_32"
    oItem:lShow          := .f.
@@ -2306,8 +2306,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Balanzas'
    oItem:cMessage       := 'Balanzas'
-   oItem:bAction        := {|| ConfImpTiket( "01090", oWnd ) }
-   oItem:cId            := "01090"
+   oItem:bAction        := {|| ConfImpTiket( "balanzas", oWnd ) }
+   oItem:cId            := "balanzas"
    oItem:cBmp           := "gc_balance_16"
    oItem:cBmpBig        := "gc_balance_32"
    oItem:lShow          := .f.
@@ -2317,8 +2317,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Configurar visor'
    oItem:cMessage       := 'Configurar visor'
-   oItem:bAction        := {|| ConfVisor( "01092", oWnd ) }
-   oItem:cId            := "01092"
+   oItem:bAction        := {|| ConfVisor( "visor", oWnd ) }
+   oItem:cId            := "visor"
    oItem:cBmp           := "gc_odometer_screw_16"
    oItem:cBmpBig        := "gc_odometer_screw_32"
    oItem:lShow          := .f.
@@ -2328,8 +2328,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cajón portamonedas'
    oItem:cMessage       := 'Cajón portamonedas'
-   oItem:bAction        := {|| ConfCajPorta( "01091", oWnd ) }
-   oItem:cId            := "01091"
+   oItem:bAction        := {|| ConfCajPorta( "cajon_portamonedas", oWnd ) }
+   oItem:cId            := "cajon_portamonedas"
    oItem:cBmp           := "gc_modem_screw_16"
    oItem:cBmpBig        := "gc_modem_screw_32"
    oItem:lShow          := .f.
@@ -2362,8 +2362,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Usuarios y grupos'
    oItem:cMessage       := 'Acceso a los usuarios del programa'
-   oItem:bAction        := {|| Usuarios( "01074", oWnd ) }
-   oItem:cId            := "01074"
+   oItem:bAction        := {|| Usuarios( "usuarios", oWnd ) }
+   oItem:cId            := "usuarios"
    oItem:cBmp           := "gc_businesspeople_16"
    oItem:cBmpBig        := "gc_businesspeople_32"
    oItem:lShow          := .f.
@@ -2372,8 +2372,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Documentos y etiquetas'
    oItem:cMessage       := 'Configurar documentos y etiquetas'
-   oItem:bAction        := {|| CfgDocs( "01068", oWnd ) }
-   oItem:cId            := "01068"
+   oItem:bAction        := {|| CfgDocs( "documentos_y_etiquetas", oWnd ) }
+   oItem:cId            := "documentos_y_etiquetas"
    oItem:cBmp           := "gc_document_text_screw_16"
    oItem:cBmpBig        := "gc_document_text_screw_32"
    oItem:lShow          := .f.
@@ -2383,7 +2383,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Especificar impresora'
    oItem:cMessage       := 'Especificar impresora por defecto'
    oItem:bAction        := {|| PrinterSetup() }
-   oItem:cId            := "01082"
+   oItem:cId            := "especificar_impresora"
    oItem:cBmp           := "gc_printer2_check_16"
    oItem:cBmpBig        := "gc_printer2_check_32"
    oItem:lShow          := .f.
@@ -2394,8 +2394,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Centro de contabilización'
    oItem:cMessage       := 'Centro de contabilización'
-   oItem:bAction        := {|| TTurno():Build( cPatEmp(), cDriver(), oWnd, "01086" ) }
-   oItem:cId            := "01086"
+   oItem:bAction        := {|| TTurno():Build( cPatEmp(), cDriver(), oWnd, "centro_de_contabilizacion" ) }
+   oItem:cId            := "centro_de_contabilizacion"
    oItem:cBmp           := "gc_folders2_16"
    oItem:cBmpBig        := "gc_folders2_32"
    oItem:lShow          := .f.
@@ -2412,8 +2412,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Campos extra'
    oItem:cMessage       := 'Acceso a los campos extra'
-   oItem:bAction        := {|| CamposExtra( "01127", oWnd ) } 
-   oItem:cId            := "01127"
+   oItem:bAction        := {|| CamposExtra( "campos_extra", oWnd ) } 
+   oItem:cId            := "campos_extra"
    oItem:cBmp           := "gc_form_plus2_16"
    oItem:cBmpBig        := "gc_form_plus2_32"
    oItem:lShow          := .f.
@@ -2422,8 +2422,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Agenda/ CRM'
    oItem:cMessage       := 'Acceso a la agenda del usuario'
-   oItem:bAction        := {|| TNotas():New( cPatDat(), , oWnd, "01075" ):Activate() }
-   oItem:cId            := "01075"
+   oItem:bAction        := {|| TNotas():New( cPatDat(), , oWnd, "agenda" ):Activate() }
+   oItem:cId            := "agenda"
    oItem:cBmp           := "gc_notebook2_16"
    oItem:cBmpBig        := "gc_notebook2_32"
    oItem:lShow          := .f.
@@ -2432,8 +2432,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Listín telefónico'
    oItem:cMessage       := 'Acceso al listín telefónico'
-   oItem:bAction        := {|| TAgenda():New( cPatDat(), , oWnd, "01076" ):Activate() }
-   oItem:cId            := "01076"
+   oItem:bAction        := {|| TAgenda():New( cPatDat(), , oWnd, "listin_telefonico" ):Activate() }
+   oItem:cId            := "listin_telefonico"
    oItem:cBmp           := "gc_book_telephone_16"
    oItem:cBmpBig        := "gc_book_telephone_32"
    oItem:lShow          := .f.
@@ -2442,8 +2442,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Scripts'
    oItem:cMessage       := 'Ejecutar scripts'
-   oItem:bAction        := {|| TScripts():New( cPatEmp(), , oWnd, "01117" ):Activate() }
-   oItem:cId            := "01117"
+   oItem:bAction        := {|| TScripts():New( cPatEmp(), , oWnd, "scripts" ):Activate() }
+   oItem:cId            := "scripts"
    oItem:cBmp           := "gc_code_line_16"
    oItem:cBmpBig        := "gc_code_line_32"
    oItem:lShow          := .f.
@@ -2459,7 +2459,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Regenerar índices'
    oItem:cMessage       := 'Regenerar índices'
    oItem:bAction        := {|| Reindexa() }
-   oItem:cId            := "01067"
+   oItem:cId            := "regenerar_indices"
    oItem:cBmp           := "gc_recycle_16"
    oItem:cBmpBig        := "gc_recycle_32"
    oItem:lShow          := .t.
@@ -2468,8 +2468,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Copia seguridad'
    oItem:cMessage       := 'Copia seguridad'
-   oItem:bAction        := {|| TBackup():New( "01077", oWnd ) }
-   oItem:cId            := "01077"
+   oItem:bAction        := {|| TBackup():New( "copia_seguridad", oWnd ) }
+   oItem:cId            := "copia_seguridad"
    oItem:cBmp           := "gc_shield_16"
    oItem:cBmpBig        := "gc_shield_32"
    oItem:lShow          := .t.
@@ -2487,8 +2487,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Envío y recepción'
    oItem:cMessage       := 'Envío y recepción de información a las delegaciones'
-   oItem:bAction        := {|| TSndRecInf():New( "01078", oWnd ):Activate() }
-   oItem:cId            := "01078"
+   oItem:bAction        := {|| TSndRecInf():New( "envio_y_recepcion", oWnd ):Activate() }
+   oItem:cId            := "envio_y_recepcion"
    oItem:cBmp           := "gc_satellite_dish2_16"
    oItem:cBmpBig        := "gc_satellite_dish2_32"
    oItem:lShow          := .f.
@@ -2497,8 +2497,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Terminales'
    oItem:cMessage       := 'Exportar e importar datos a terminales'
-   oItem:bAction        := {|| TEdm():Activate( "01079", oWnd ) }
-   oItem:cId            := "01079"
+   oItem:bAction        := {|| TEdm():Activate( "terminales", oWnd ) }
+   oItem:cId            := "terminales"
    oItem:cBmp           := "gc_pda_16"
    oItem:cBmpBig        := "gc_pda_32"
    oItem:lShow          := .f.
@@ -2506,9 +2506,9 @@ FUNCTION CreateAcceso( oWnd )
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Pda'
-   oItem:cMessage       := 'Exportar e importar datos a terminales'
+   oItem:cMessage       := 'Exportar e importar datos a pda'
    oItem:bAction        := {|| PdaEnvioRecepcionController():getInstance():Activate() }
-   oItem:cId            := "01079"
+   oItem:cId            := "pda"
    oItem:cBmp           := "gc_pda_16"
    oItem:cBmpBig        := "portable_barcode_scanner_yellow_32"
    oItem:lShow          := .f.
@@ -2517,8 +2517,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Factuplus®'
    oItem:cMessage       := 'Imp. factuplus®'
-   oItem:bAction        := {|| ImpFactu( "01080", oWnd ) }
-   oItem:cId            := "01080"
+   oItem:bAction        := {|| ImpFactu( "factuplus", oWnd ) }
+   oItem:cId            := "factuplus"
    oItem:cBmp           := "gc_inbox_into_16"
    oItem:cBmpBig        := "gc_inbox_into_32"
    oItem:lShow          := .f.
@@ -2528,8 +2528,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Factucont®'
    oItem:cMessage       := 'Imp. factucont®'
-   oItem:bAction        := {|| ImpFacCom( "01100", oWnd ) }
-   oItem:cId            := "01100"
+   oItem:bAction        := {|| ImpFacCom( "factucont", oWnd ) }
+   oItem:cId            := "factucont"
    oItem:cBmp           := "gc_inbox_into_16"
    oItem:cBmpBig        := "gc_inbox_into_32"
    oItem:lShow          := .f.
@@ -2539,8 +2539,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Tarifas artículos'
    oItem:cMessage       := 'Importa tarifa de artículos desde Excel'
-   oItem:bAction        := {|| TImpEstudio():New( "01102", oWnd ):Activate() }
-   oItem:cId            := "01102"
+   oItem:bAction        := {|| TImpEstudio():New( "tarifa_articulos_excel", oWnd ):Activate() }
+   oItem:cId            := "tarifa_articulos_excel"
    oItem:cBmp           := "gc_inbox_into_16"
    oItem:cBmpBig        := "gc_inbox_into_32"
    oItem:lShow          := .f.
@@ -2559,8 +2559,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Actualizar precios'
    oItem:cMessage       := 'Actualizar precios de tarifas'
-   oItem:bAction        := {|| ChgTarifa( "01081", oWnd ) }
-   oItem:cId            := "01081"
+   oItem:bAction        := {|| ChgTarifa( "actualizar_precios", oWnd ) }
+   oItem:cId            := "actualizar_precios"
    oItem:cBmp           := "gc_table_selection_column_refresh_16"
    oItem:cBmpBig        := "gc_table_selection_column_refresh_32"
    oItem:lShow          := .f.
@@ -2569,8 +2569,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Configurar botones'
    oItem:cMessage       := 'Configurar barra de botones'
-   oItem:bAction        := {|| oWndBar():EditButtonBar( oWnd, "01085" ) }
-   oItem:cId            := "01085"
+   oItem:bAction        := {|| oWndBar():EditButtonBar( oWnd, "configurar_botones" ) }
+   oItem:cId            := "configurar_botones"
    oItem:cBmp           := "gc_magic_wand_16"
    oItem:cBmpBig        := "gc_magic_wand_32"
    oItem:lShow          := .f.
@@ -2581,7 +2581,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Calculadora'
    oItem:cMessage       := 'Ejecuta la calculadora de windows'
    oItem:bAction        := {|| WinExec( "Calc" ) }
-   oItem:cId            := "01083"
+   oItem:cId            := "calculadora"
    oItem:cBmp           := "gc_calculator_16"
    oItem:cBmpBig        := "gc_calculator_32"
    oItem:lShow          := .f.
@@ -2590,8 +2590,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Fecha trabajo'
    oItem:cMessage       := 'Selecciona la fecha de trabajo'
-   oItem:bAction        := {|| SelSysDate( "01084" ) }
-   oItem:cId            := "01084"
+   oItem:bAction        := {|| SelSysDate( "fecha_trabajo" ) }
+   oItem:cId            := "fecha_trabajo"
    oItem:cBmp           := "gc_calendar_16"
    oItem:cBmpBig        := "gc_calendar_32"
    oItem:lShow          := .f.
@@ -2602,8 +2602,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cambiar códigos'
    oItem:cMessage       := 'Cambia códigos'
-   oItem:bAction        := {|| TChgCode():New( "01080", oWnd ):Resource() }
-   oItem:cId            := "01080"
+   oItem:bAction        := {|| TChgCode():New( "cambiar_codigos", oWnd ):Resource() }
+   oItem:cId            := "cambiar_codigos"
    oItem:cBmp           := "gc_calendar_16"
    oItem:cBmpBig        := "gc_calendar_32"
    oItem:lShow          := .f.
@@ -2629,7 +2629,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Galería de informes'
    oItem:cMessage       := 'Galería de informes'
    oItem:bAction        := {|| RunReportGalery() }
-   oItem:cId            := "01119"
+   oItem:cId            := "galeria_de_informes"
    oItem:cBmp           := "gc_cabinet_open_16"
    oItem:cBmpBig        := "gc_cabinet_open_32"
    oItem:lShow          := .f.
@@ -2645,7 +2645,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Artículos'
    oItem:cMessage       := 'Informes realacionados con articulos'
    oItem:bAction        := {|| runFastGallery( "Articulos" ) }
-   oItem:cId            := "01118"
+   oItem:cId            := "reporting_articulos"
    oItem:cBmp           := "gc_object_cube_print_16"
    oItem:cBmpBig        := "gc_object_cube_print_32"
    oItem:lShow          := .f.
@@ -2655,7 +2655,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Clientes'
    oItem:cMessage       := 'Informes realacionados con clientes'
    oItem:bAction        := {|| runFastGallery( "Clientes" ) }
-   oItem:cId            := "01120"
+   oItem:cId            := "reporting_clientes"
    oItem:cBmp           := "gc_user_print_16"
    oItem:cBmpBig        := "gc_user_print_32"
    oItem:lShow          := .f.
@@ -2665,7 +2665,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Proveedores'
    oItem:cMessage       := 'Informes realacionados con proveedores'
    oItem:bAction        := {|| runFastGallery( "Proveedores" ) }
-   oItem:cId            := "01121"
+   oItem:cId            := "reporting_proveedores"
    oItem:cBmp           := "gc_businessman_print_16"
    oItem:cBmpBig        := "gc_businessman_print_32"
    oItem:lShow          := .f.
@@ -2675,7 +2675,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Producción'
    oItem:cMessage       := 'Informes realacionados con la producción'
    oItem:bAction        := {|| runFastGallery( "Produccion" ) }
-   oItem:cId            := "01123"
+   oItem:cId            := "reporting_produccion"
    oItem:cBmp           := "gc_worker2_print_16"
    oItem:cBmpBig        := "gc_worker2_print_32"
    oItem:lShow          := .f.
@@ -2720,7 +2720,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Visitar web'
    oItem:cMessage       := 'Visitar web'
    oItem:bAction        := {|| goWeb( __GSTWEB__ ) }
-   oItem:cId            := "01094"
+   oItem:cId            := "visitar_web"
    oItem:cBmp           := "gc_earth_16"
    oItem:cBmpBig        := "gc_earth_32"
    oItem:lShow          := .f.
@@ -2730,7 +2730,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Acerca de...'
    oItem:cMessage       := 'Datos sobre el autor'
    oItem:bAction        := {|| About() }
-   oItem:cId            := "01096"
+   oItem:cId            := "acerca_de"
    oItem:cBmp           := "gc_question_16"
    oItem:cBmpBig        := "gc_question_32"
    oItem:lShow          := .f.
@@ -2740,7 +2740,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Asistencia remota'
    oItem:cMessage       := 'Solicitar asistencia remota'
    oItem:bAction        := {|| RunAsistenciaRemota() }
-   oItem:cId            := "01095"
+   oItem:cId            := "asistencia_remota"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
@@ -2750,7 +2750,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Usuarios [Beta*]'
    oItem:cMessage       := 'Usuarios [Beta*]'
    oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
-   oItem:cId            := "99999"
+   oItem:cId            := "usuarios_beta"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
@@ -2760,7 +2760,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Roles [Beta*]'
    oItem:cMessage       := 'Roles [Beta*]'
    oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
-   oItem:cId            := "99999"
+   oItem:cId            := "usuarios_beta"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
@@ -2770,7 +2770,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Permisos [Beta*]'
    oItem:cMessage       := 'Permisos [Beta*]'
    oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
-   oItem:cId            := "99999"
+   oItem:cId            := "usuarios_beta"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
@@ -5480,7 +5480,7 @@ RETURN ( .t. )
 
 FUNCTION runReportGalery( cFastReport )
 
-   local nLevel         := nLevelUsr( "01119" )
+   local nLevel         := nLevelUsr( "galeria_de_informes" )
 
    DEFAULT cFastReport  := ""
 

@@ -8,9 +8,9 @@
 FUNCTION Reindexa()
 
    if lAIS()
-      TDataCenter():Resource( "01067" )
+      TDataCenter():Resource( "regenerar_indices" )
    else
-      TReindex():New( oWnd(), "01067" ):Resource()
+      TReindex():New( oWnd(), "regenerar_indices" ):Resource()
    end if
 
 RETURN .t.
