@@ -1106,8 +1106,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Gestión de cartera'
    oItem:cMessage       := 'Gestión de cartera'
-   oItem:bAction        := {|| PageIni( "01004", oWnd() ) }
-   oItem:cId            := "01004"
+   oItem:bAction        := {|| PageIni( "gestion_de_cartera", oWnd() ) }
+   oItem:cId            := "gestion_de_cartera"
    oItem:cBmp           := "gc_briefcase_16"
    oItem:cBmpBig        := "gc_briefcase_32"
 
@@ -1115,8 +1115,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Iniciar sesión'
    oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
-   oItem:bAction        := {|| ChkTurno( "01000", oWnd() ) }
-   oItem:cId            := "01000"
+   oItem:bAction        := {|| ChkTurno( "iniciar_sesion", oWnd() ) }
+   oItem:cId            := "iniciar_sesion"
    oItem:cBmp           := "gc_clock_play_16"
    oItem:cBmpBig        := "gc_clock_play_32"
    oItem:lLittle        := .t.
@@ -1125,8 +1125,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Arqueo parcial (X)'
    oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
-   oItem:bAction        := {|| CloseTurno( "01001", oWnd(), .t. ) }
-   oItem:cId            := "01001"
+   oItem:bAction        := {|| CloseTurno( "arqueo_parcial", oWnd(), .t. ) }
+   oItem:cId            := "arqueo_parcial"
    oItem:cBmp           := "gc_clock_refresh_16"
    oItem:cBmpBig        := "gc_clock_refresh_32"
    oItem:lLittle        := .t.
@@ -2710,7 +2710,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 5
+   oGrupo:nBigItems     := 6
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2747,8 +2747,8 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Usuarios [ Beta * ]'
-   oItem:cMessage       := 'Usuarios [ Beta * ]'
+   oItem:cPrompt        := 'Usuarios [Beta*]'
+   oItem:cMessage       := 'Usuarios [Beta*]'
    oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
    oItem:cId            := "99999"
    oItem:cBmp           := "gc_user_headset_16"
@@ -2757,9 +2757,19 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Roles [ Beta * ]'
-   oItem:cMessage       := 'Roles [ Beta * ]'
+   oItem:cPrompt        := 'Roles [Beta*]'
+   oItem:cMessage       := 'Roles [Beta*]'
    oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
+   oItem:cId            := "99999"
+   oItem:cBmp           := "gc_user_headset_16"
+   oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Permisos [Beta*]'
+   oItem:cMessage       := 'Permisos [Beta*]'
+   oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
    oItem:cId            := "99999"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"

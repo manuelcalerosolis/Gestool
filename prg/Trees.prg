@@ -59,7 +59,6 @@ function _TreeItem( cPrompt, cResName1, cResName2, cBmpOpen, cBmpClose, lOpened,
       hBmpOpen  = nHndName2
    endif
 
-
 return ATail( aTrees ):Add( cPrompt, nLevel, hBmpOpen, hBmpClose, lOpened )
 
 //----------------------------------------------------------------------------//

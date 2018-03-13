@@ -37,7 +37,7 @@ METHOD uniqueFilter( uValue )
       cSQLSentence   +=    "AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )
    end if 
 
-   nCount            := ::oDatabase:SelectValue( cSQLSentence )
+   nCount            := ::oDatabase:getValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount == 0 )
 

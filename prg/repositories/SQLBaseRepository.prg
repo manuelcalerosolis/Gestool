@@ -22,7 +22,9 @@ CLASS SQLBaseRepository
    METHOD getModelTableName()    INLINE ( ::getController():getModelTableName()  )
    
    METHOD getAll()
+   
    METHOD getColumnWhereId()
+   METHOD getColumnWhereUuid( uuid, cColumn ) 
 
 END CLASS
 
@@ -48,19 +50,27 @@ RETURN ( hResult )
 METHOD getColumnWhereId( id, cColumn ) 
 
    local cSentence               
-   local hResult
 
-   default cColumn               := "nombre"
+   DEFAULT cColumn               := "nombre"
 
    cSentence                     := "SELECT " + cColumn + " FROM " + ::getTableName()  + space( 1 ) + ;
                                        "WHERE id = " + quoted( id )                    + space( 1 ) + ;
                                        "LIMIT 1"
-   hResult                       := ::getDatabase():selectFetchHash( cSentence )
 
-   if !empty( hResult )
-      RETURN ( hget( atail( hResult ), cColumn ) )
-   end if 
+RETURN ( ::getDatabase():getValue( cSentence ) )
 
-RETURN ( "" )
+//---------------------------------------------------------------------------//
+
+METHOD getColumnWhereUuid( uuid, cColumn ) 
+
+   local cSentence               
+
+   DEFAULT cColumn               := "nombre"
+
+   cSentence                     := "SELECT " + cColumn + " FROM " + ::getTableName()  + space( 1 ) + ;
+                                       "WHERE uuid = " + quoted( uuid )                + space( 1 ) + ;
+                                       "LIMIT 1"
+
+RETURN ( ::getDatabase():getValue( cSentence ) )
 
 //---------------------------------------------------------------------------//

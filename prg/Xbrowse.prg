@@ -5442,7 +5442,7 @@ METHOD SetTree( oTree, aResource, bOnSkip, aCols ) CLASS TXBrowse
    ::bBookMark := ::bKeyNo
    ::bSkip     := { |n| If( n == nil, n := 1, ), ;
                      ::oTreeItem := ::oTreeItem:Skip( @n ),  ;
-                     Eval( bOnSkip, ::oTreeITem ), ;
+                     Eval( bOnSkip, ::oTreeItem ), ;
                      n }
 
    if Empty( ::aCols )

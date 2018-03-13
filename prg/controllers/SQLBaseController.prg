@@ -70,7 +70,7 @@ CLASS SQLBaseController
    METHOD setModelBufferPadr( cColumn, uValue )       INLINE ( iif( !empty( ::oModel ), ::oModel:setBufferPadr( cColumn, uValue ), ) )
 
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
-   METHOD getModelSelectValue( cSentence )            INLINE ( iif( !empty( ::oModel ), ::oModel:SelectValue( cSentence ), ) )
+   METHOD getModelgetValue( cSentence )            INLINE ( iif( !empty( ::oModel ), ::oModel:getValue( cSentence ), ) )
 
    METHOD findInModel()
 

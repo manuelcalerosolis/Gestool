@@ -61,7 +61,7 @@ CLASS SQLDatabase
 
    METHOD selectHashList( cSentence )
 
-   METHOD selectValue( cSql )
+   METHOD getValue( cSql )
 
    METHOD fetchRowSet( cSentence )
 
@@ -313,7 +313,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectValue( cSentence )
+METHOD getValue( cSentence )
 
    local oError
    local uValue

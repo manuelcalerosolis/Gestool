@@ -12,11 +12,11 @@ CLASS MovimientosAlmacenRepository FROM SQLBaseRepository
 
    METHOD getSQLSentenceIdByNumber( nNumber ) 
 
-   METHOD getIdByNumber( nNumber )  INLINE ( getSQLDataBase():selectValue( ::getSQLSentenceIdByNumber( nNumber ) ) )
+   METHOD getIdByNumber( nNumber )  INLINE ( getSQLDataBase():getValue( ::getSQLSentenceIdByNumber( nNumber ) ) )
 
    METHOD getSQLSentenceIdByUuid( uuid ) 
 
-   METHOD getIdByUuid( uuid )       INLINE ( getSQLDataBase():selectValue( ::getSQLSentenceIdByUuid( uuid ) ) )
+   METHOD getIdByUuid( uuid )       INLINE ( getSQLDataBase():getValue( ::getSQLSentenceIdByUuid( uuid ) ) )
 
    METHOD getNextNumber( cUser )
 
@@ -96,10 +96,10 @@ METHOD getLastNumber( cUser )
 
    DEFAULT cUser  := cCurUsr()
 
-   cNumero        := getSqlDataBase():selectValue( ::getLastNumberByUser( cUser ) )
+   cNumero        := getSqlDataBase():getValue( ::getLastNumberByUser( cUser ) )
 
    if empty( cNumero )
-      cNumero     := getSqlDataBase():selectValue( ::getLastNumberByUser() )
+      cNumero     := getSqlDataBase():getValue( ::getLastNumberByUser() )
    end if 
 
 RETURN ( cNumero )

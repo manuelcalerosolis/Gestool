@@ -227,7 +227,7 @@ METHOD New() CLASS TAcceso
       aAdd( ::aYearComboBox, Str( n, 4 ) )
    next
 
-return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
@@ -237,7 +237,7 @@ METHOD Add() CLASS TAcceso
 
    aAdd( ::aAccesos, oAcceso )
 
-return oAcceso
+RETURN oAcceso
 
 //----------------------------------------------------------------------------//
 
@@ -248,7 +248,7 @@ METHOD CreateImageList()
 
    ::AddImageList( ::aAccesos )
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -262,7 +262,7 @@ METHOD SetImageList( oTree )
 
    oTree:SetImagelist( ::oImageList )
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -279,7 +279,7 @@ METHOD AddImageList( aAccesos )
       end if
    next
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -300,7 +300,7 @@ METHOD CreateTree( oTree, aAccesos )
 
    next
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -313,7 +313,7 @@ METHOD AddTree( oTree, oAcceso )
       ::oTree:SetCheck( oItemTree, oAcceso:lShow ) 
    end if
 
-Return ( oItemTree )
+RETURN ( oItemTree )
 
 //----------------------------------------------------------------------------//
 
@@ -324,7 +324,7 @@ METHOD AddBitmapMasked( oAcceso )
 
    oAcceso:nImageList   := len( ::oImageList:aBitmaps ) - 1
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -343,7 +343,7 @@ METHOD EditButtonBar( oWnd, oMenuItem )
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
-      return nil
+      RETURN nil
    end if
 
    DEFINE DIALOG oDlg RESOURCE "ButtonBar"
@@ -380,7 +380,7 @@ METHOD EditButtonBar( oWnd, oMenuItem )
       oBmpGeneral:End()
    end if
 
-Return ( oDlg:nResult == IDOK )
+RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
@@ -390,7 +390,7 @@ METHOD InitButtonBar()
    ::CreateTree()
    ::Load()
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -407,7 +407,7 @@ METHOD Save()
 
    oUser():Save( cCurUsr )
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -441,7 +441,7 @@ METHOD SaveTree( aItems, cCurUsr, cDbf )
 
    next
 
-Return Self
+RETURN Self
 
 //--------------------------------------------------------------------------//
 
@@ -467,7 +467,7 @@ METHOD Load()
 
    ::CloseDatabase()
 
-Return Self
+RETURN Self
 
 //--------------------------------------------------------------------------//
 
@@ -476,7 +476,7 @@ METHOD LoadTree( aItems, cOpcion, lShow )
    local n
 
    if empty( cOpcion )
-      return nil
+      RETURN nil
    end if
 
    for n := 1 to Len( aItems )
@@ -503,7 +503,7 @@ METHOD LoadTree( aItems, cOpcion, lShow )
 
    next
 
-return nil
+RETURN nil
 
 //--------------------------------------------------------------------------//
 
@@ -555,7 +555,7 @@ METHOD ReindexDatabase( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de usuarios" )
    end if
 
-Return Self
+RETURN Self
 
 //--------------------------------------------------------------------------//
 
@@ -574,7 +574,7 @@ METHOD CreateButtonBar( oWnd, lCreateButtonBar )
       ::HideSearchBar()
    end if
 
-Return Self
+RETURN Self
 
 //--------------------------------------------------------------------------//
 
@@ -615,7 +615,7 @@ METHOD CreateToolbar( aAccesos )
 
    next
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -700,7 +700,7 @@ METHOD CreateSearchBar( oWnd )
             FONT     oFontLittelTitle() ;
             PIXEL    SIZE 60, 30
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -738,7 +738,7 @@ METHOD EndSearchBar( oWnd )
       ::oYearComboBox:End()
    end if 
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -759,7 +759,7 @@ METHOD CreateLogo()
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -775,7 +775,7 @@ METHOD AddToolBar( oAcceso, cCurUsr )
       end if
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -785,7 +785,7 @@ METHOD lOpenDatabase()
    local oError
 
    if ::lOpenFiles
-      Return ( ::lOpenFiles )
+      RETURN ( ::lOpenFiles )
    end if
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -808,7 +808,7 @@ METHOD lOpenDatabase()
 
    ErrorBlock( oBlock )
 
-Return ( ::lOpenFiles )
+RETURN ( ::lOpenFiles )
 
 //----------------------------------------------------------------------------//
 
@@ -824,7 +824,7 @@ METHOD lGetShowToolBar( oAcceso, cCurUsr )
       lShow          := oAcceso:lShow
    end if
 
-Return ( lShow )
+RETURN ( lShow )
 
 //----------------------------------------------------------------------------//
 
@@ -838,7 +838,7 @@ METHOD lHideCarpeta( oAcceso, cCurUsr )
       lHide          := !( ::cDbf )->lShow
    end if
 
-Return ( lHide )
+RETURN ( lHide )
 
 //----------------------------------------------------------------------------//
 
@@ -850,7 +850,7 @@ METHOD CloseDatabase()
 
    ::lOpenFiles      := .f.
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -862,7 +862,7 @@ METHOD DeleteTree( cCurUsr )
       if( ( ::cDbf )->( dbRLock() ), ( ( ::cDbf )->( dbDelete() ), ( ::cDbf )->( dbUnLock() ) ), )
    end while
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -901,7 +901,7 @@ METHOD CreateOfficeBar( oWnd )
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -932,7 +932,7 @@ METHOD ReCreateOfficeBar( oWnd )
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -945,7 +945,7 @@ METHOD CreateCarpetaOfficeBar( oAcceso )
 
    ::CreateBotonesOfficeBar( oAcceso:aAccesos, oCarpeta )
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -1001,7 +1001,7 @@ METHOD CreateBotonesOfficeBar( aAcceso, oCarpeta )
 
    next
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1017,7 +1017,7 @@ METHOD CreateFavoritosOfficeBar()
    local aColor                  := { RGB( 237, 71, 0 ), RGB( 237, 71, 0 ), , Rgb( 237, 71, 0 ), CLR_WHITE }
 
    if ( "TCT" $ appParamsMain() ) .or. ( "TPV" $ appParamsMain() )
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    // Creamos los favoritos-----------------------------------------------------
@@ -1071,7 +1071,7 @@ METHOD CreateFavoritosOfficeBar()
    
    oBoton   := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32", "Salir", 1, {|| if ( !empty( oWnd() ), oWnd():End(), ) }, , , .f., .f., .f. )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1099,7 +1099,7 @@ METHOD EnableComboFilter( aItems )
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1147,7 +1147,7 @@ METHOD End()
    ::oComboBox             := nil 
    ::oComboFilter          := nil
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1156,18 +1156,18 @@ METHOD setYearComboBox( nYear )
    DEFAULT nYear  := year( date() )
 
    if empty( ::oYearComboBox )
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    ::oYearComboBox:set( str( nYear ) )
 
    if empty( ::oYearComboBox:bChange )
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    eval( ::oYearComboBox:bChange )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -1187,7 +1187,7 @@ Static Function lEndApp()
 
    ErrorBlock( oBlock )
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

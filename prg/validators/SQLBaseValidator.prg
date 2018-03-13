@@ -156,7 +156,7 @@ METHOD Unique( uValue )
       msgInfo( cSQLSentence, "Unique validator" )
    end if 
 
-   nCount            := ::oDatabase:SelectValue( cSQLSentence )
+   nCount            := ::oDatabase:getValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount == 0 )
 
@@ -170,7 +170,7 @@ METHOD Exist( uValue )
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
-   nCount            := ::oDatabase:SelectValue( cSQLSentence )
+   nCount            := ::oDatabase:getValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 
@@ -188,7 +188,7 @@ METHOD EmptyOrExist( uValue )
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
-   nCount            := ::oDatabase:SelectValue( cSQLSentence )
+   nCount            := ::oDatabase:getValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 

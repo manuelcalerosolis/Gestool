@@ -88,7 +88,7 @@ METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    cSentence         +=    "AND ajustables.ajustable_tipo = " + quoted( cTipo ) + " "
    cSentence         +=    "AND ajustables.ajustable_uuid = " + quoted( cUuid ) 
 
-   uValue            := ::getDatabase():selectValue( cSentence )
+   uValue            := ::getDatabase():getValue( cSentence )
 
 RETURN ( uValue )
 

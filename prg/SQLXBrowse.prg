@@ -31,7 +31,9 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD selectCurrent()                       INLINE ( ::Select( 0 ), ::Select( 1 ) )
 
    METHOD getColumnByHeaders()
+   
    METHOD changeColumnOrder( oCol )
+   METHOD selectColumnOrder( oCol )             INLINE ( ::changeColumnOrder( oCol ), ::Refresh() )
    
    METHOD getColumnByHeader( cHeader )
    METHOD getColumnOrder( cSortOrder )

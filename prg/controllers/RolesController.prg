@@ -11,9 +11,12 @@ CLASS RolesController FROM SQLNavigatorController
 
    DATA cUuidRol
 
-   DATA lMostrarRentabilidad  AS LOGIC INIT .t.
-   DATA lCambiarPrecios       AS LOGIC INIT .t.
-   DATA lVerPreciosCosto      AS LOGIC INIT .t.
+   DATA lMostrarRentabilidad        AS LOGIC INIT .t.
+   DATA lCambiarPrecios             AS LOGIC INIT .t.
+   DATA lVerPreciosCosto            AS LOGIC INIT .t.
+   DATA lConfirmacionEliminacion    AS LOGIC INIT .t.
+   DATA lFiltrarVentas              AS LOGIC INIT .t.
+   DATA lAbrirCajonPortamonedas     AS LOGIC INIT .t.
    
    METHOD New()
 
@@ -104,17 +107,23 @@ RETURN ( self )
 
 METHOD loadConfig()
 
-   ::cUuidRol              := ::getRowSet():fieldGet( 'uuid' )
+   ::cUuidRol                 := ::getRowSet():fieldGet( 'uuid' )
 
    if empty( ::cUuidRol )
       RETURN ( .f. )
    end if 
 
-   ::lMostrarRentabilidad  := ::oAjustableController:oModel:getRolMostrarRentabilidad( ::cUuidRol )
+   ::lMostrarRentabilidad     := ::oAjustableController:oModel:getRolMostrarRentabilidad( ::cUuidRol )
 
-   ::lCambiarPrecios       := ::oAjustableController:oModel:getRolCambiarPrecios( ::cUuidRol )
+   ::lCambiarPrecios          := ::oAjustableController:oModel:getRolCambiarPrecios( ::cUuidRol )
 
-   ::lVerPreciosCosto      := ::oAjustableController:oModel:getRolVerPreciosCosto( ::cUuidRol )
+   ::lVerPreciosCosto         := ::oAjustableController:oModel:getRolVerPreciosCosto( ::cUuidRol )
+
+   ::lConfirmacionEliminacion := ::oAjustableController:oModel:getRolConfirmacionEliminacion( ::cUuidRol )
+
+   ::lFiltrarVentas           := ::oAjustableController:oModel:getRolFiltrarVentas( ::cUuidRol )
+
+   ::lAbrirCajonPortamonedas  := ::oAjustableController:oModel:getRolAbrirCajonPortamonedas( ::cUuidRol )
 
 RETURN ( .t. )
 
@@ -127,6 +136,12 @@ METHOD saveConfig()
    ::oAjustableController:oModel:setRolCambiarPrecios( ::lCambiarPrecios, ::cUuidRol )
 
    ::oAjustableController:oModel:setRolVerPreciosCosto( ::lVerPreciosCosto, ::cUuidRol )
+
+   ::oAjustableController:oModel:setRolConfirmacionEliminacion( ::lConfirmacionEliminacion, ::cUuidRol )
+
+   ::oAjustableController:oModel:setRolFiltrarVentas( ::lFiltrarVentas, ::cUuidRol )
+
+   ::oAjustableController:oModel:setRolAbrirCajonPortamonedas( ::lAbrirCajonPortamonedas, ::cUuidRol )
 
 RETURN ( self )
 
@@ -141,6 +156,12 @@ METHOD startingActivate()
    oPanel:addCheckBox( "Cambiar precios", @::lCambiarPrecios )
 
    oPanel:addCheckBox( "Ver precios de costo", @::lVerPreciosCosto )
+
+   oPanel:addCheckBox( "Confirmar eliminacions", @::lConfirmacionEliminacion )
+
+   oPanel:addCheckBox( "Filtrar ventas por usuario", @::lFiltrarVentas )
+
+   oPanel:addCheckBox( "Abrir cajón portamonedas", @::lAbrirCajonPortamonedas )
 
 RETURN ( self )
 
@@ -159,6 +180,7 @@ CLASS SQLRolesModel FROM SQLBaseModel
    METHOD getColumns()
 
    METHOD getInsertRolesSentence()
+
 
 END CLASS
 
@@ -350,8 +372,8 @@ END CLASS
 
 METHOD getValidators() CLASS RolesValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido",;
-                                                "unique"          => "El nombre ya existe" } }
+   ::hValidators  := {  "nombre" => {  "required"  => "El nombre es un dato requerido",;
+                                       "unique"    => "El nombre ya existe" } }
 
 RETURN ( ::hValidators )
 
@@ -366,7 +388,30 @@ CLASS RolesRepository FROM SQLBaseRepository
 
    METHOD getTableName()      INLINE ( SQLRolesModel():getTableName() ) 
 
+   METHOD getNombres() 
+
+   METHOD getNombre( uuid )   INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) ) 
+
+   METHOD getUuid()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getNombres() CLASS RolesRepository
+
+   local cSentence            := "SELECT nombre FROM " + ::getTableName()
+
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUuid( cNombre ) CLASS RolesRepository
+
+   local cSentence            := "SELECT uuid FROM " + ::getTableName() + " " + ;
+                                    "WHERE nombre = " + quoted( cNombre )
+
+RETURN ( ::getDatabase():getValue( cSentence ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
