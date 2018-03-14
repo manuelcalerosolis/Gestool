@@ -1,7 +1,5 @@
 MVC - ToDo
 
-- No deja guardar precios cero en importe de almacen, con propiedades
-
 - Guardar configuracón de columnas en Selector
 
 - Eliminar una empresa, eliminar de SQL.
@@ -11,6 +9,8 @@ MVC - ToDo
 - No guarda configuracion de columnas en factura proveedor.
 
 - No muestra el importe de IVA en factura proveedores.
+
+- No deja guardar precios cero en importe de almacen, con propiedades (done)
 
 - El posicionamiento en el browse al añadir, no va bien en lineas de movimientos de almacen. (done)
 
