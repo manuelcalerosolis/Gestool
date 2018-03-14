@@ -4909,7 +4909,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       REDEFINE GET aGet[ _NPOSPRINT ] VAR aTmp[ _NPOSPRINT ] ;
          ID       100 ;
          SPINNER ;
-         WHEN     ( nMode == APPD_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "9999" ;
          OF       oFld:aDialogs[2]
 

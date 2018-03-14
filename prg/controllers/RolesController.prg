@@ -9,6 +9,8 @@ CLASS RolesController FROM SQLNavigatorController
 
    DATA oAjustableController 
 
+   DATA oPermisosController
+
    DATA cUuidRol
 
    DATA lMostrarRentabilidad        AS LOGIC INIT .t.
@@ -60,9 +62,14 @@ METHOD New() CLASS RolesController
 
    ::oValidator            := RolesValidator():New( self )
 
+   ::oPermisosController   := PermisosController():New( self )
+
    ::oAjustableController  := AjustableController():New( self )
 
    ::oFilterController:setTableToFilter( ::getName() )
+
+   ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } )  
+   ::setEvent( 'closedDialog',   {|| ::oDialogView:closedDialog() } )  
 
 RETURN ( Self )
 
@@ -188,14 +195,17 @@ END CLASS
 
 METHOD getColumns() CLASS SQLRolesModel
 
-   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
-                                    "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                    "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
-                                    "default"   => {|| space( 100 ) } }                      )
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
+                                          "default"   => {|| space( 100 ) } }                      )
+
+   hset( ::hColumns, "permiso_uuid",   {  "create"    => "VARCHAR( 40 )"                           ,;
+                                          "default"   => {|| space( 40 ) } }                       )
 
    ::getTimeStampColumns()   
 
@@ -289,9 +299,8 @@ RETURN ( self )
 
 CLASS RolesView FROM SQLBaseView
 
-   DATA oComboPermiso
-   DATA cComboPermiso      INIT "test"
-   DATA aComboPermisos     INIT { "test", "demo", "work" }
+   DATA cComboPermiso      
+   DATA aComboPermisos     
 
    METHOD openingDialog() 
 
@@ -307,8 +316,8 @@ END CLASS
 
 METHOD openingDialog() CLASS RolesView
 
-   ::cComboPermiso      := "test" // ::oController:oRolesController:oRepository:getNombre( ::getModel():getBuffer( "rol_uuid" ) )
-   ::aComboPermisos     := { "test", "demo", "work" } // ::oController:oRolesController:oRepository:getNombres()
+   ::cComboPermiso      := ::oController:oPermisosController:oRepository:getNombre( ::getModel():getBuffer( "permiso_uuid" ) )
+   ::aComboPermisos     := ::oController:oPermisosController:oRepository:getNombres()
 
 RETURN ( self )
 
@@ -316,7 +325,7 @@ RETURN ( self )
 
 METHOD closedDialog() CLASS RolesView
 
-   // ::getModel():setBuffer( "rol_uuid", ::oController:oRolesController:oRepository:getUuid( ::cComboRol ) )
+   ::getModel():setBuffer( "permiso_uuid", ::oController:oPermisosController:oRepository:getUuid( ::cComboPermiso ) )
 
 RETURN ( self )
 
@@ -325,7 +334,6 @@ RETURN ( self )
 METHOD Activate() CLASS RolesView
 
    local oDlg
-   local oBtnOk
    local oBmpGeneral
 
    DEFINE DIALOG  oDlg ;
@@ -349,13 +357,12 @@ METHOD Activate() CLASS RolesView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
-   REDEFINE COMBOBOX ::oComboPermiso ;
-      VAR         ::cComboPermiso ;
+   REDEFINE COMBOBOX ::cComboPermiso ;
       ID          120 ;
       ITEMS       ::aComboPermisos ;
       OF          oDlg
 
-   REDEFINE BUTTON oBtnOk ;
+   REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -367,7 +374,7 @@ METHOD Activate() CLASS RolesView
       CANCEL ;
       ACTION      ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
+   oDlg:AddFastKey( VK_F5, {|| ::Save( oDlg ) } )
 
    oDlg:Activate( , , , .t. )
 

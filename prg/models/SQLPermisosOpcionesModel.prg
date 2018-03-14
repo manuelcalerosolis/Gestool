@@ -40,7 +40,7 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PermisosRepository FROM SQLBaseRepository
+CLASS PermisosOpcionesRepository FROM SQLBaseRepository
 
    METHOD getTableName()      INLINE ( SQLPermisosOpcionesModel():getTableName() ) 
 
@@ -50,7 +50,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getNivel( cPermisoUuid, cNombre ) CLASS PermisosRepository
+METHOD getNivel( cPermisoUuid, cNombre ) CLASS PermisosOpcionesRepository
 
    local cSQL  := "SELECT nivel FROM " + ::getTableName()               + " " + ;
                      "WHERE permiso_uuid = " + quoted( cPermisoUuid )   + " " + ;
@@ -58,8 +58,4 @@ METHOD getNivel( cPermisoUuid, cNombre ) CLASS PermisosRepository
 
 RETURN ( ::getDatabase():getValue( cSQL ) )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
