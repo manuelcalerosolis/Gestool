@@ -132,7 +132,7 @@ METHOD loadConfig()
    ::aEmpresas                := EmpresasModel():aNombresSeleccionables()
    ::cUuidEmpresaExclusiva    := ::oAjustableController:oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
    ::cNombreEmpresaExclusiva  := EmpresasModel():getNombreFromUuid( ::cUuidEmpresaExclusiva )
-   
+
    ::aCajas                   := CajasModel():aNombresSeleccionables()
    ::cUuidCajaExclusiva       := ::oAjustableController:oModel:getUsuarioCajaExclusiva( ::cUuidUsuario )
    ::cNombreCajaExclusiva     := CajasModel():getNombreFromUuid( ::cUuidCajaExclusiva )
@@ -145,7 +145,7 @@ METHOD saveConfig()
 
    ::cUuidEmpresaExclusiva    := EmpresasModel():getUuidFromNombre( ::cNombreEmpresaExclusiva )
    ::cUuidCajaExclusiva       := CajasModel():getUuidFromNombre( ::cNombreCajaExclusiva )
- 
+
    ::oAjustableController:oModel:setUsuarioEmpresaExclusiva( ::cUuidEmpresaExclusiva, ::cUuidUsuario )
    ::oAjustableController:oModel:setUsuarioCajaExclusiva( ::cUuidCajaExclusiva, ::cUuidUsuario )
 

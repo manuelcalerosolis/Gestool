@@ -94,7 +94,7 @@ CLASS SQLBaseController
                                                                      ::oRowSet:gotoRecno( nRecno ), ) )
    METHOD findRowSet( nId )                           INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:find( nId ), ) )
    METHOD refreshRowSet()                             INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refresh(), ) )
-   METHOD refreshRowSetAndFind( nId )                 INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refreshAndFind( nId ), ) )
+   METHOD refreshRowSetAndFindId( nId )               INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refreshAndFindId( nId ), ) )
    METHOD goDownRowSet()                              INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:goDown(), ) )
    METHOD goUpRowSet()                                INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:goUp(), ) )
 
@@ -348,7 +348,7 @@ METHOD Append()
          ::commitTransactionalMode()
 
          if !empty( nId )
-            ::refreshRowSetAndFind( nId )
+            ::refreshRowSetAndFindId( nId )
          else 
             ::refreshRowSet()
          end if 
@@ -423,7 +423,7 @@ METHOD Duplicate( nId )
       ::commitTransactionalMode()
       
       if !empty( nId )
-         ::refreshRowSetAndFind( nId )
+         ::refreshRowSetAndFindId( nId )
       end if 
       
       ::fireEvent( 'duplicated' ) 
@@ -509,7 +509,7 @@ METHOD postEdit()
 
    do case
       case ::dialgOkAndGoTo()
-         if ::refreshRowSetAndFind( ::oDialogView:idGoTo )
+         if ::refreshRowSetAndFindId( ::oDialogView:idGoTo )
             ::Edit()
          else 
             msgStop( "El identificador " + alltrim( str( ::oDialogView:idGoTo ) ) + " no puede ser localizado" )
@@ -675,7 +675,7 @@ METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
 
    ::oRowSet:build( ::oModel:getSelectSentence() )
 
-   ::oRowSet:find( nId )
+   ::oRowSet:findId( nId )
 
 RETURN ( self )
 
@@ -697,7 +697,7 @@ METHOD findInRowSet( uValue, cColumn )
       RETURN ( .f. )
    end if 
 
-RETURN ( ::oRowSet:find( uValue, cColumn ) )
+RETURN ( ::oRowSet:findString( uValue, cColumn ) )
 
 //----------------------------------------------------------------------------//
 

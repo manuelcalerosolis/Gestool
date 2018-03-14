@@ -49,7 +49,8 @@ CLASS SQLBrowseView
 
    METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick := bLDblClick )
 
-   METHOD Refresh()                          INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
+   METHOD Refresh()                          INLINE ( ::oBrowse:makeTotals(), ::oBrowse:Refresh() )
+   METHOD goTop()                            INLINE ( ::oBrowse:goTop() )
 
    METHOD setViewTypeToNavigator()           INLINE ( ::oBrowse:setViewType( "navigator" ) )
    METHOD setViewTypeToSelector()            INLINE ( ::oBrowse:setViewType( "selector" ) )
@@ -280,7 +281,7 @@ METHOD gotoIdFromModel()
       RETURN ( Self )
    end if 
 
-   ::getRowSet():find( nId )
+   ::getRowSet():findId( nId )
 
    ::oBrowse:SelectCurrent()
 

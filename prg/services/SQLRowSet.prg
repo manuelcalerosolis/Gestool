@@ -36,12 +36,16 @@ CLASS SQLRowSet
    METHOD goDown()                                    INLINE ( if( !empty( ::oRowSet ), ::oRowSet:skip(1), ) ) 
    METHOD goUp()                                      INLINE ( if( !empty( ::oRowSet ), ::oRowSet:skip(-1), ) ) 
 
-   METHOD Find( nId )
+   METHOD FindString( nId )
+   METHOD FindId( nId )
 
    METHOD Build( cSentence )                    
 
-   METHOD refreshAndFind( nId )                       INLINE ( ::Refresh(), ::Find( nId ) )
-   METHOD buildAndFind( nId )                         INLINE ( ::Build(), ::Find( nId ) )
+   METHOD refreshAndFindId( nId )                     INLINE ( ::Refresh(), ::FindId( nId ) )
+   METHOD buildAndFindId( nId )                       INLINE ( ::Build(), ::FindId( nId ) )
+
+   METHOD refreshAndFindString( cFind, cColumn )      INLINE ( ::Refresh(), ::FindString( cFind, cColumn ) )
+   METHOD buildAndFindString( cFind, cColumn )        INLINE ( ::Build(), ::FindString( cFind, cColumn ) )
 
    METHOD freeRowSet()                                INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
 
@@ -120,7 +124,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Find( cFind, cColumn )
+METHOD FindString( cFind, cColumn )
 
    local cType
    local nRecno         := 0
@@ -144,6 +148,30 @@ METHOD Find( cFind, cColumn )
    ::saveRecno()
 
    nRecno               := ::oRowSet:findString( cFind, cColumn )
+
+   if nRecno == 0
+      ::restoreRecno()
+   end if
+
+RETURN ( nRecno != 0 )
+
+//---------------------------------------------------------------------------//
+
+METHOD FindId( nId )
+
+   local nRecno         := 0
+
+   if empty( ::oRowSet )
+      RETURN ( .f. )
+   end if 
+
+   if empty( nId )
+      RETURN ( .f. )
+   end if 
+
+   ::saveRecno()
+
+   nRecno               := ::oRowSet:find( nId, 'id' )
 
    if nRecno == 0
       ::restoreRecno()

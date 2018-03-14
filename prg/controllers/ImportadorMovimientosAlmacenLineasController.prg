@@ -27,6 +27,10 @@ CLASS ImportadorMovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD stampArticuloNombre( oArticulo )   INLINE ( oArticulo:oHelpText:cText( ArticulosModel():getNombre( oArticulo:varGet() ) ), .t. )
 
+   METHOD isConsolidacion()                  INLINE ( ::oSenderController:oDialogView:oRadioTipoMovimento:nOption() == __tipo_movimiento_consolidacion__ )
+
+   METHOD getUnidadesStock( sStockArticulo ) INLINE ( iif( ::isConsolidacion(), 0, sStockArticulo:nUnidades ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -63,7 +67,7 @@ METHOD Activate()
       msgStop( "Es necesario cumplimentar el almacén destino" )
       RETURN ( Self )      
    end if 
-      
+
 RETURN ( ::oDialogView:Activate() )
 
 //---------------------------------------------------------------------------//
@@ -87,6 +91,9 @@ METHOD importarAlmacen()
    end while
 
    CLOSE ( cArea )
+
+   ::oSenderController:oLineasController:oBrowseView:goTop()
+   ::oSenderController:oLineasController:oBrowseView:Refresh()
 
 RETURN ( Self )
 
@@ -120,12 +127,13 @@ METHOD creaRegistro( cArea, sStockArticulo )
    hBuffer[ "codigo_segunda_propiedad" ]  := sStockArticulo:cCodigoPropiedad2
    hBuffer[ "valor_segunda_propiedad" ]   := sStockArticulo:cValorPropiedad2
    hBuffer[ "lote" ]                      := sStockArticulo:cLote
-   hBuffer[ "unidades_articulo" ]         := sStockArticulo:nUnidades
+
+   hBuffer[ "unidades_articulo" ]         := ::getUnidadesStock( sStockArticulo )
 
    nId                                    := ::oSenderController:oLineasController:oModel:insertBuffer( hBuffer )
 
    if !empty( nId )
-      ::oSenderController:oLineasController:refreshRowSetAndFind( nId )
+      ::oSenderController:oLineasController:refreshRowSetAndFindId( nId )
       ::oSenderController:oLineasController:oBrowseView:Refresh()
    end if 
 

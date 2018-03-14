@@ -46,6 +46,8 @@ CLASS PermisosOpcionesRepository FROM SQLBaseRepository
 
    METHOD getNivel( cPermisoUuid, cNombre )
 
+   METHOD getNivelUsuario( cUuidUser, cNombreOpcion )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -55,6 +57,20 @@ METHOD getNivel( cPermisoUuid, cNombre ) CLASS PermisosOpcionesRepository
    local cSQL  := "SELECT nivel FROM " + ::getTableName()               + " " + ;
                      "WHERE permiso_uuid = " + quoted( cPermisoUuid )   + " " + ;
                         "AND nombre = " + quoted( cNombre )
+
+RETURN ( ::getDatabase():getValue( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNivelUsuario( cUuidUser, cNombreOpcion ) CLASS PermisosOpcionesRepository
+
+   local cSQL  := "SELECT permisos_opciones.nivel FROM " + ::getTableName()         + " " +  ;
+                     "INNER JOIN roles "                                            + " " +  ;
+                        "ON roles.permiso_uuid = permisos_opciones.permiso_uuid "   + " " +  ;
+                     "INNER JOIN usuarios "                                         + " " +  ;
+                        "ON usuarios.rol_uuid = roles.uuid "                        + " " +  ;
+                     "WHERE usuarios.uuid = " + quoted( cUuidUser )                 + " " +  ; 
+                        "AND permisos_opciones.nombre = " + quoted( cNombreOpcion )  
 
 RETURN ( ::getDatabase():getValue( cSQL ) )
 

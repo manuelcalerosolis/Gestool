@@ -111,7 +111,7 @@ METHOD processLine( cLine )
    nId   := ::getModel():insertBuffer( hBuffer )
 
    if !empty( nId )
-      ::oSenderController:oLineasController:refreshRowSetAndFind( nId )
+      ::oSenderController:oLineasController:refreshRowSetAndFindId( nId )
       ::oSenderController:oLineasController:refreshBrowse()
    end if 
 

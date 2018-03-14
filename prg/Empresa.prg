@@ -649,8 +649,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
    if ( nMode == DUPL_MODE )
       cOldCodigoEmpresa    := aTmp[ _CODEMP ]
-      aTmp[ _DINIOPE ]     := Ctod( "01/01/" + Str( Year( Date() ), 4 ) )
-      aTmp[ _DFINOPE ]     := Ctod( "31/12/" + Str( Year( Date() ), 4 ) )
    end if 
 
    if ( nMode == APPD_MODE )
@@ -679,9 +677,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
       aTmp[ _CTXTTAR5 ]    := "Precio 5"
       aTmp[ _CTXTTAR6 ]    := "Precio 6"
       aTmp[ _CNOMIMP  ]    := "IVA"
+   end if
+
+   if ( lAppendMode )
       aTmp[ _DINIOPE ]     := Ctod( "01/01/" + Str( Year( Date() ), 4 ) )
       aTmp[ _DFINOPE ]     := Ctod( "31/12/" + Str( Year( Date() ), 4 ) )
-   end if
+      aTmp[ _UUID    ]     := win_uuidcreatestring()
+   end if 
 
    cSayGrp                 := RetFld( aTmp[ _CCODGRP ], dbfEmp )
 

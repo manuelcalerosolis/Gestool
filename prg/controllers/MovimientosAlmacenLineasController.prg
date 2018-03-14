@@ -562,7 +562,7 @@ METHOD insertingBuffer()
       RETURN ( self )
    end if 
 
-   aeval( ::aProperties, {| oProperty | ::oModel:addInsertSentence( aSQLInsert, oProperty ) } )
+   aeval( ::aProperties, {|oProperty| ::oModel:addInsertSentence( aSQLInsert, oProperty ) } )
 
    if !empty( aSQLInsert )
       ::oModel:setSQLInsert( aSQLInsert )

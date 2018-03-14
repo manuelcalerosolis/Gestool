@@ -1,6 +1,6 @@
 MVC - ToDo
 
-- Unidades y precios en tickets de hermandad matriz
+- No deja guardar precios cero en importe de almacen, con propiedades
 
 - Guardar configuracón de columnas en Selector
 
@@ -11,6 +11,10 @@ MVC - ToDo
 - No guarda configuracion de columnas en factura proveedor.
 
 - No muestra el importe de IVA en factura proveedores.
+
+- El posicionamiento en el browse al añadir, no va bien en lineas de movimientos de almacen. (done)
+
+- Unidades y precios en tickets de hermandad matriz (done)
 
 - (HDO) Busqueda de fechas.
 
