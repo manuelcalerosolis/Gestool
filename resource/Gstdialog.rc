@@ -8423,7 +8423,7 @@ FONT 8, "Ms Sans Serif"
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
 
-IMPORTAR_ALMACEN DIALOG DISCARDABLE 185, 67, 392, 207
+IMPORTAR_ALMACEN DIALOG DISCARDABLE 185, 67, 392, 235
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Asistente para importacion de artículos"
 FONT 8, "Ms Sans Serif"
@@ -8443,9 +8443,10 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 142, 141, 240, 11
   CONTROL "", 330, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 47, 153, 94, 11
   CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 142, 153, 240, 11
-  CONTROL "", 400, "msctls_progress32", 0x00000000, 4, 176, 381, 4
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 281, 186, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 336, 186, 50, 14
+  CONTROL "Incluir productos sin stock", 380, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 11, 185, 95, 10
+  CONTROL "", 400, "msctls_progress32", 0x00000000, 4, 206, 381, 4
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 281, 216, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 336, 216, 50, 14
   CONTROL "Desde", 211, "Static", WS_GROUP, 11, 33, 26, 8
   CONTROL "Hasta", 231, "Static", WS_GROUP, 11, 45, 24, 8
   CONTROL "Desde", -1, "Static", WS_GROUP, 11, 144, 26, 8
@@ -8455,6 +8456,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Desde", -1, "Static", WS_GROUP, 11, 87, 26, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 11, 99, 24, 8
   CONTROL "Seleccionar tipo de artículos", -1, "Button", BS_GROUPBOX, 4, 60, 382, 54
+  CONTROL "Opciones", -1, "Button", BS_GROUPBOX, 4, 173, 382, 28
 }
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US

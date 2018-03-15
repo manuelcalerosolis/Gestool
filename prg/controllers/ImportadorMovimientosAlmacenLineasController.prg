@@ -16,6 +16,7 @@ CLASS ImportadorMovimientosAlmacenLineasController FROM SQLBaseController
    METHOD importarAlmacen()
 
    METHOD calculaStock( cArea )
+      METHOD procesaStock( sStockArticulo )
 
    METHOD creaRegistro()
 
@@ -105,7 +106,17 @@ METHOD calculaStock( cArea )
 
    aStockArticulo       := ::oStock:aStockArticulo( ( cArea )->Codigo, ::oSenderController:oDialogView:oGetAlmacenDestino:varGet() )
 
-   aeval( aStockArticulo, {|sStockArticulo| if( sStockArticulo:nUnidades != 0, ::creaRegistro( cArea, sStockArticulo ), ) } )
+   aeval( aStockArticulo, {|sStockArticulo| ::procesaStock( sStockArticulo, cArea ) } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD procesaStock( sStockArticulo, cArea )
+
+   if sStockArticulo:nUnidades != 0 .or. ::oDialogView:lStockCero
+      ::creaRegistro( cArea, sStockArticulo )
+   end if 
 
 RETURN ( Self )
 

@@ -279,7 +279,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   msgalert( PermisosOpcionesRepository():getNivelUsuario( '6fd9cdbe-1ad6-11e8-8710-54ee75aa9616', 'gestion_de_cartera' ) )
+   // msgalert( PermisosOpcionesRepository():getNivelUsuario( '6fd9cdbe-1ad6-11e8-8710-54ee75aa9616', 'gestion_de_cartera' ) )
 
    // UsuariosController():New():ActivateNavigatorView()
 
