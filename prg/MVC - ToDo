@@ -2,6 +2,8 @@ MVC - ToDo
 
 - Guardar configuracón de columnas en Selector
 
+- No guarda configuracion de columnas en movilientos de almacen lineas.
+
 - Eliminar una empresa, eliminar de SQL.
 
 - Mas configuraciones.

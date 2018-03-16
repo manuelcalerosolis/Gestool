@@ -15,6 +15,9 @@ CLASS Seeders
 
    METHOD getInsertStatement( hCampos, cDataBaseName )
 
+   METHOD SeederUsuarios()
+   METHOD getStatementSeederUsuarios()
+
    METHOD SeederSituaciones()
    METHOD getStatementSituaciones( dbfSitua )
 
@@ -46,6 +49,9 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD runSeederDatos()
+
+   ::oMsg:SetText( "Datos: Ejecutando seeder de usuarios" )
+   ::SeederUsuarios()
 
    ::oMsg:SetText( "Datos: Ejecutando seeder de situaciones" )
    ::SeederSituaciones()
@@ -129,6 +135,36 @@ METHOD SeederSituaciones() CLASS Seeders
    end if
 
    frename( cPath + "Situa.dbf", cPath + "Situa.old" )
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederUsuarios() CLASS Seeders
+
+   local dbf
+   local cPath       := cPatDat( .t. )
+
+   if !( file( cPath + "Users.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Users.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "Users.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Users", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbgotop() )
+   while !( dbf )->( eof() )
+
+      getSQLDatabase():Exec( ::getStatementSeederUsuarios( dbf ) )
+
+      ( dbf )->( dbSkip() )
+
+   end while
+
+   if !empty( dbf )
+      ( dbf )->( dbCloseArea() )
+   end if
    
 RETURN ( Self )
 
@@ -269,32 +305,7 @@ METHOD SeederMovimientosAlmacen()
       ( dbf )->( dbCloseArea() )
    end if
 
-   //frename( cPath + "RemMovT.dbf", cPath + "RemMovT.old" )
-
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
-
-   local hCampos
-
-   hCampos        := {  "empresa" =>            quoted( cCodEmp() ),;
-                        "delegacion" =>         if( !empty( ( dbfRemMov )->cCodDlg ), quoted( ( dbfRemMov )->cCodDlg ), '00' ),;
-                        "usuario" =>            quoted( ( dbfRemMov )->cCodUsr ),;
-                        "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
-                        "numero" =>             quoted( rjust( ( dbfRemMov )->nNumRem, "0", 6 ) ),;
-                        "tipo_movimiento" =>    quoted( ( dbfRemMov )->nTipMov ),;
-                        "fecha_hora" =>         quoted( DateTimeFormatTimestamp( ( dbfRemMov )->dFecRem, ( dbfRemMov )->cTimRem ) ),;
-                        "almacen_origen" =>     quoted( ( dbfRemMov )->cAlmOrg ),;
-                        "almacen_destino" =>    quoted( ( dbfRemMov )->cAlmDes ),;
-                        "grupo_movimiento" =>   quoted( ( dbfRemMov )->cCodMov ),;
-                        "agente" =>             quoted( ( dbfRemMov )->cCodAge ),;
-                        "divisa" =>             quoted( ( dbfRemMov )->cCodDiv ),;
-                        "divisa_cambio" =>      quoted( ( dbfRemMov )->nVdvDiv ),;
-                        "comentarios" =>        quoted( ( dbfRemMov )->cComMov ) }
-
-RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -336,9 +347,42 @@ METHOD SeederMovimientosAlmacenLineas()
       ( dbf )->( dbCloseArea() )
    end if
 
-   //frename( cPath + "HisMov.dbf", cPath + "HisMov.old" )
-
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementSeederUsuarios( dbf )
+
+   local hCampos
+
+   hCampos        := {  "uuid" =>               quoted( ( dbf )->Uuid ),;
+                        "nombre" =>             quoted( capitalize( ( dbf )->cNbrUse ) ),;
+                        "password" =>           quoted( SQLUsuariosModel():Crypt( ( dbf )->cClvUse ) ) }
+
+RETURN ( ::getInsertStatement( hCampos, "usuarios" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
+
+   local hCampos
+
+   hCampos        := {  "empresa" =>            quoted( cCodEmp() ),;
+                        "delegacion" =>         if( !empty( ( dbfRemMov )->cCodDlg ), quoted( ( dbfRemMov )->cCodDlg ), '00' ),;
+                        "usuario" =>            quoted( ( dbfRemMov )->cCodUsr ),;
+                        "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
+                        "numero" =>             quoted( rjust( ( dbfRemMov )->nNumRem, "0", 6 ) ),;
+                        "tipo_movimiento" =>    quoted( ( dbfRemMov )->nTipMov ),;
+                        "fecha_hora" =>         quoted( DateTimeFormatTimestamp( ( dbfRemMov )->dFecRem, ( dbfRemMov )->cTimRem ) ),;
+                        "almacen_origen" =>     quoted( ( dbfRemMov )->cAlmOrg ),;
+                        "almacen_destino" =>    quoted( ( dbfRemMov )->cAlmDes ),;
+                        "grupo_movimiento" =>   quoted( ( dbfRemMov )->cCodMov ),;
+                        "agente" =>             quoted( ( dbfRemMov )->cCodAge ),;
+                        "divisa" =>             quoted( ( dbfRemMov )->cCodDiv ),;
+                        "divisa_cambio" =>      quoted( ( dbfRemMov )->nVdvDiv ),;
+                        "comentarios" =>        quoted( ( dbfRemMov )->cComMov ) }
+
+RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen" ) )
 
 //---------------------------------------------------------------------------//
 

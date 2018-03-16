@@ -433,7 +433,7 @@ METHOD selectFetchArrayOneColumn( cSentence )
    local aFetch   
    local aResult  
 
-   aFetch         := ::selectFetchArray( cSentence )
+   aFetch         := ::selectFetchArray( cSentence, .f. )
 
    if !hb_isarray( aFetch )
       RETURN ( nil )

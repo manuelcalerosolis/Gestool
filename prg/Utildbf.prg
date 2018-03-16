@@ -7,6 +7,7 @@
 #include "RichEdit.ch" 
 #include "hbzebra.ch"
 #include "hbwin.ch"
+#include "FileIO.ch"
 
 //----------------------------------------------------------------------------//
 
@@ -4010,59 +4011,36 @@ RETURN ( cMemo )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION MsgCombo( cTitle, cText, aItems, uVar, cBmpFile, cResName )
+FUNCTION assertUserActive( cNombre )
 
-   local oDlg, oBmp, oCbx
-   local lOk      := .f.
-   local cItem
+   local nHandle
 
-   DEFAULT cTitle := "Title"
-   DEFAULT cText  := "Valor"
-   DEFAULT aItems := { "One", "Two", "Three" }
+   if file( cPatUsr() + cNombre + ".usr" )
+      RETURN ( .t. )
+   end if 
+   
+   nHandle        := fcreate( cPatUsr() + cNombre + ".usr", FC_NORMAL )
+   if ( nHandle != -1 )
+      fClose( nHandle )
+   end if
 
-   cItem          := aItems[1]
+RETURN ( .t. )
 
-   DEFINE DIALOG oDlg FROM 10, 20 TO 18, 59.5 TITLE cTitle
+//----------------------------------------------------------------------------//
 
-   if ! empty( cBmpFile ) .or. ! empty( cResName )
+FUNCTION isUserActive( cNombre )
 
-      if ! empty( cBmpFile )
-         @ 1, 1 BITMAP oBmp FILENAME cBmpFile SIZE 20, 20 NO BORDER OF oDlg
-      endif
+   local nHandle
 
-      if ! empty( cResName )
-         @ 1, 1 BITMAP oBmp RESOURCE cResName SIZE 20, 20 NO BORDER OF oDlg
-      endif
+   assertUserActive( cNombre )
 
-      @ 0.5, 6 SAY cText OF oDlg SIZE 250, 10
-      
-      @ 1.6, 4 COMBOBOX oCbx VAR cItem ;
-      SIZE 120, 12 ;
-      ITEMS aItems ;
+   nHandle        := fopen( cPatUsr() + cNombre + ".usr", FO_EXCLUSIVE ) ) != -1
+   if ( nHandle != -1 )
+      fClose( nHandle )
+      RETURN ( .t. )
+   end if 
 
-   else   
-      
-      @ 0.5, 3.3 SAY cText OF oDlg SIZE 250, 10
-
-      @ 1.6, 2.3 COMBOBOX oCbx VAR cItem ;
-      SIZE 120, 12 ;
-      ITEMS aItems ;
-
-   endif   
-
-   @ 2.25, 7.5 - If( oBmp == nil, 2, 0 ) BUTTON "&Ok"  OF oDlg SIZE 35, 12 ;
-      ACTION ( oDlg:End(), lOk := .t. ) DEFAULT
-
-   @ 2.25, 16.5 - If( oBmp == nil, 2, 0 ) BUTTON "&Cancel" OF oDlg SIZE 35, 12 ;
-      ACTION ( oDlg:End(), lOk := .f. )
-
-   ACTIVATE DIALOG oDlg CENTERED
-
-   if lOk
-      uVar := cItem
-   endif
-
-RETURN lOk
+RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
