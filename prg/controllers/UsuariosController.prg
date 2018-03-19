@@ -686,21 +686,15 @@ RETURN ( ::oDlg:nResult )
 
 METHOD sayNo()
 
-   local nTop  
-   local nLeft 
-
    ::oDlg:coorsUpdate()
-   nTop           := ::oDlg:nTop + 23
-   nLeft          := ::oDlg:nLeft
-
-   ::oDlg:Move( nTop, nLeft - 100 )  ; SysWait(.05)
-   ::oDlg:Move( nTop, nLeft )        ; SysWait(.05)
-   ::oDlg:Move( nTop, nLeft + 100 )  ; SysWait(.05)
-   ::oDlg:Move( nTop, nLeft )        ; SysWait(.05)
-   ::oDlg:Move( nTop, nLeft - 50 )   ; SysWait(.1)
-   ::oDlg:Move( nTop, nLeft  )       ; SysWait(.1)
-   ::oDlg:Move( nTop, nLeft + 50 )   ; SysWait(.1)
-   ::oDlg:Move( nTop, nLeft )
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft - 100 )  ; SysWait(.05)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft )        ; SysWait(.05)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft + 100 )  ; SysWait(.05)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft )        ; SysWait(.05)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft - 50 )   ; SysWait(.1)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft  )       ; SysWait(.1)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft + 50 )   ; SysWait(.1)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft )
 
 RETURN ( .f. )
 

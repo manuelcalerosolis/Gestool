@@ -3328,7 +3328,7 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
    Colocamos la empresa actual a usuario actual--------------------------------
    */
 
-   UsuariosModel():UpdateEmpresaEnUso( cCurUsr(), cCodEmp )
+   SQLAjustableModel():setUsuarioEmpresaEnUso( cCodEmp, Auth():uuid() )
 
    /*
    Refresh---------------------------------------------------------------------

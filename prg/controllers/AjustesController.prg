@@ -106,6 +106,7 @@ METHOD getInsertAjustesSentence()
    cSentence  +=    "( UUID(), 'empresa_exclusiva',         '1',  'alphanumeric', NULL, NULL ), "
    cSentence  +=    "( UUID(), 'caja_exclusiva',            '1',  'alphanumeric', NULL, NULL ), "
    cSentence  +=    "( UUID(), 'pc_en_uso',                 '1',  'alphanumeric', NULL, NULL ), "
+   cSentence  +=    "( UUID(), 'empresa_en_uso',            '1',  'alphanumeric', NULL, NULL ), "
    cSentence  +=    "( UUID(), 'mostrar_rentabilidad',      '1',  'boolean',      NULL, NULL ), "
    cSentence  +=    "( UUID(), 'cambiar_precios',           '1',  'boolean',      NULL, NULL ), "
    cSentence  +=    "( UUID(), 'ver_precios_costo',         '1',  'boolean',      NULL, NULL ), "
