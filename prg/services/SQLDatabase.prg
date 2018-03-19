@@ -51,6 +51,7 @@ CLASS SQLDatabase
 
    METHOD selectFetchHash( cSentence, attributePad )  INLINE ::selectFetch( cSentence, FETCH_HASH, attributePad )
    METHOD selectTrimedFetchHash( cSentence )          INLINE ::selectFetchHash( cSentence, .f. )
+   METHOD firstTrimedFetchHash( cSentence )           
 
    METHOD selectFetchArray( cSentence, attributePad ) INLINE ::selectFetch( cSentence, FETCH_ARRAY, attributePad )
    METHOD selectTrimedFetchArray( cSentence )         INLINE ::selectFetchArray( cSentence, .f. )
@@ -261,6 +262,18 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD firstTrimedFetchHash( cSentence )
+
+   local aSelect              := ::selectTrimedFetchHash( cSentence )
+
+   if hb_isarray( aSelect )
+      RETURN ( afirst( aSelect ) )
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD selectFetchToJson( cSentence, attributePad )
 
    local aFetch
@@ -442,7 +455,7 @@ METHOD selectFetchArrayOneColumn( cSentence )
    aResult        := array( len( aFetch ) )
 
    for each uFetch in aFetch 
-      aResult[ hb_enumindex() ]  := uFetch[ 1 ] 
+      aResult[ hb_enumindex() ]  := afirst( uFetch ) 
    next
 
 RETURN ( aResult )

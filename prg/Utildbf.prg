@@ -1,4 +1,5 @@
 #include "Ads.ch"
+#include "FileIO.ch"
 #include "FiveWin.Ch"
 #include "Error.ch"
 #include "DbStruct.ch"
@@ -7,7 +8,6 @@
 #include "RichEdit.ch" 
 #include "hbzebra.ch"
 #include "hbwin.ch"
-#include "FileIO.ch"
 
 //----------------------------------------------------------------------------//
 
@@ -2621,19 +2621,19 @@ FUNCTION dbfErase( cFileName )
    end if
 
    if file( databaseFileName( cFileName ) )
-      if ferase( databaseFileName( cFileName ) ) == -1
+      if ferase( databaseFileName( cFileName ) ) == F_ERROR
          RETURN .f.
       end if
    end if
 
    if file( databaseFileIndex( cFileName ) )
-      if fErase( databaseFileIndex( cFileName ) ) == -1
+      if fErase( databaseFileIndex( cFileName ) ) == F_ERROR
          RETURN .f.
       end if
    end if
 
    if file( databaseFileMemo( cFileName ) )
-      if fErase( databaseFileMemo( cFileName ) ) == -1
+      if fErase( databaseFileMemo( cFileName ) ) == F_ERROR
          RETURN .f.
       end if
    end if
@@ -2645,21 +2645,21 @@ RETURN .t.
 FUNCTION dbfRename( cFileNameOld, cFileNameNew )
 
    if file( cFileNameOld + ".Dbf" )
-      if fRename( cFileNameOld + ".Dbf", cFileNameNew + ".Dbf" ) == -1
+      if fRename( cFileNameOld + ".Dbf", cFileNameNew + ".Dbf" ) == F_ERROR
          //MsgStop( "No se pudo renombrar el fichero " + cFileNameOld + ".Dbf" )
          RETURN .f.
       end if
    end if
 
    if file( cFileNameOld + ".Cdx" )
-      if fRename( cFileNameOld + ".Cdx", cFileNameNew + ".Cdx" ) == -1
+      if fRename( cFileNameOld + ".Cdx", cFileNameNew + ".Cdx" ) == F_ERROR
          //MsgStop( "No se pudo renombrar el fichero " + cFileNameOld + ".Cdx" )
          RETURN .f.
       end if
    end if
 
    if file( cFileNameOld + ".Fpt" )
-      if fRename( cFileNameOld + ".Fpt", cFileNameNew + ".Fpt" ) == -1
+      if fRename( cFileNameOld + ".Fpt", cFileNameNew + ".Fpt" ) == F_ERROR
          MsgStop( "No se pudo renombrar el fichero " + cFileNameOld + ".Fpt" )
          RETURN .f.
       end if
@@ -4020,7 +4020,7 @@ FUNCTION assertUserActive( cNombre )
    end if 
    
    nHandle        := fcreate( cPatUsr() + cNombre + ".usr", FC_NORMAL )
-   if ( nHandle != -1 )
+   if ( nHandle != F_ERROR )
       fClose( nHandle )
    end if
 
@@ -4028,19 +4028,30 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION isUserActive( cNombre )
+FUNCTION isUserActive( cNombre, lClose )
 
    local nHandle
 
+   DEFAULT lClose := .t.   
+
    assertUserActive( cNombre )
 
-   nHandle        := fopen( cPatUsr() + cNombre + ".usr", FO_EXCLUSIVE ) ) != -1
-   if ( nHandle != -1 )
-      fClose( nHandle )
-      RETURN ( .t. )
+   nHandle        := fopen( cPatUsr() + cNombre + ".usr", FO_EXCLUSIVE )  
+   if ( nHandle == F_ERROR )
+      RETURN ( .f. )
    end if 
 
-RETURN ( .f. )
+   if lClose
+      fClose( nHandle )
+   end if 
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION setUserActive( cNombre )
+
+RETURN ( isUserActive( cNombre, .f. ) )
 
 //----------------------------------------------------------------------------//
 

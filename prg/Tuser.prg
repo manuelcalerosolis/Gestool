@@ -12,189 +12,189 @@ Static oUser
 
 CLASS TUser
 
-   Data     oDbf
-   Data     oDbfCajas
-   Data     oDbfCajon
-   Data     lCloseFiles                INIT .f.
-   Data     lCreated                   INIT .f.
-   Data     oCajon
+   DATA     oDbf
+   DATA     oDbfCajas
+   DATA     oDbfCajon
+   DATA     lCloseFiles                INIT .f.
+   DATA     lCreated                   INIT .f.
+   DATA     oCajon
 
-   Data     cCodigoUsuario
+   DATA     cCodigoUsuario
 
    METHOD   New()
 
-   Method   Create( cCodUsr, cDbf )
-   Method   Save( cCodUsr, cDbf )
+   METHOD   Create( cCodUsr, cDbf )
+   METHOD   Save( cCodUsr, cDbf )
 
-   Method   createHandle( cCodUsr )
-   Method   quitUser( cOldUsr )
-   Method   setUser( cCodUsr )
+   METHOD   createHandle( cCodUsr )
+   METHOD   quitUser( cOldUsr )
+   METHOD   setUser( cCodUsr )
 
-   Method   OpenFiles( cDbf )
-   Method   CloseFiles()
+   METHOD   OpenFiles( cDbf )
+   METHOD   CloseFiles()
 
-   Data     _Codigo                    INIT ""
-   Method   cCodigo( cNewVal )         INLINE if( cNewVal != nil, ::_Codigo := cNewVal, ::_Codigo )
+   DATA     _Codigo                    INIT ""
+   METHOD   cCodigo( cNewVal )         INLINE if( cNewVal != nil, ::_Codigo := cNewVal, ::_Codigo )
 
-   Data     _Nombre                    INIT ""
-   Method   cNombre( cNewVal )         INLINE if( cNewVal != nil, ( ::_Nombre := cNewVal, cNbrUsr( cNewVal ) ), ::_Nombre )
+   DATA     _Nombre                    INIT ""
+   METHOD   cNombre( cNewVal )         INLINE if( cNewVal != nil, ( ::_Nombre := cNewVal, cNbrUsr( cNewVal ) ), ::_Nombre )
 
-   Data     _Caja                      INIT "000"
-   Method   cCaja( cNewVal )           INLINE if( !Empty( cNewVal ), ( ::_Caja := cNewVal, cCajUsr( cNewVal ) ), ::_Caja )
+   DATA     _Caja                      INIT "000"
+   METHOD   cCaja( cNewVal )           INLINE if( !Empty( cNewVal ), ( ::_Caja := cNewVal, cCajUsr( cNewVal ) ), ::_Caja )
 
-   Data     _Almacen                   INIT "000"
-   Method   cAlmacen( cNewVal )        INLINE if( !Empty( cNewVal ), ( ::_Almacen := cNewVal, cAlmUsr( cNewVal ) ), ::_Almacen )
+   DATA     _Almacen                   INIT "000"
+   METHOD   cAlmacen( cNewVal )        INLINE if( !Empty( cNewVal ), ( ::_Almacen := cNewVal, cAlmUsr( cNewVal ) ), ::_Almacen )
 
-   Data     _Imagen                    INIT ""
-   Method   cImagen( cNewVal )         INLINE if( cNewVal != nil, ::_Imagen := cNewVal, ::_Imagen )
+   DATA     _Imagen                    INIT ""
+   METHOD   cImagen( cNewVal )         INLINE if( cNewVal != nil, ::_Imagen := cNewVal, ::_Imagen )
 
-   Data     _SelectorFamilia           INIT .f.
-   Method   lSelectorFamilia( lNewVal )INLINE if( isLogic( lNewVal ), ::_SelectorFamilia := lNewVal, ::_SelectorFamilia )
+   DATA     _SelectorFamilia           INIT .f.
+   METHOD   lSelectorFamilia( lNewVal )INLINE if( isLogic( lNewVal ), ::_SelectorFamilia := lNewVal, ::_SelectorFamilia )
 
-   Data     _GrupoUsuario              INIT 1
-   Method   nGrupoUsuario( nNewVal )   INLINE if( nNewVal != nil, ::_GrupoUsuario := nNewVal, ::_GrupoUsuario )
+   DATA     _GrupoUsuario              INIT 1
+   METHOD   nGrupoUsuario( nNewVal )   INLINE if( nNewVal != nil, ::_GrupoUsuario := nNewVal, ::_GrupoUsuario )
 
-   ClassData _Handle                   INIT 0
-   Method   nHandle( nNewVal )         INLINE if( nNewVal != nil, ::_Handle := nNewVal, ::_Handle )
+   ClassDATA _Handle                   INIT 0
+   METHOD   nHandle( nNewVal )         INLINE if( nNewVal != nil, ::_Handle := nNewVal, ::_Handle )
 
-   Data     _Master                    INIT .f.
-   Method   lMaster( lNewVal )         INLINE if( isLogic( lNewVal ), ::_Master := lNewVal, ::_Master )
+   DATA     _Master                    INIT .f.
+   METHOD   lMaster( lNewVal )         INLINE if( isLogic( lNewVal ), ::_Master := lNewVal, ::_Master )
 
-   Data     _Administrador             INIT .f.
-   Method   lAdministrador( lNewVal )  INLINE if( isLogic( lNewVal ), ::_Administrador := lNewVal, ::_Administrador )
+   DATA     _Administrador             INIT .f.
+   METHOD   lAdministrador( lNewVal )  INLINE if( isLogic( lNewVal ), ::_Administrador := lNewVal, ::_Administrador )
 
    METHOD   lNotAllowSales( lNoPermitirVentaSinStock ) ;
                                        INLINE ( !::lAdministrador() .and. lNoPermitirVentaSinStock )
 
-   Data     _NotBitmap                 INIT .f.
-   Method   lNotBitmap( lNewVal )
+   DATA     _NotBitmap                 INIT .f.
+   METHOD   lNotBitmap( lNewVal )
 
-   Data     _NotBitmapGrupo
-   Method   lNotBitmapGrupo( lNewVal )    INLINE ( if( isLogic( lNewVal ), ::_NotBitmapGrupo := lNewVal, ::_NotBitmapGrupo ) )
+   DATA     _NotBitmapGrupo
+   METHOD   lNotBitmapGrupo( lNewVal )    INLINE ( if( isLogic( lNewVal ), ::_NotBitmapGrupo := lNewVal, ::_NotBitmapGrupo ) )
 
-   Data     _NotCambiarPrecio             INIT .f.
-   Method   lNotCambiarPrecio( lNewVal )
-   Method   lCambiarPrecio()              INLINE ( !::lNotCambiarPrecio() )
-   Method   nEditarPrecio()               INLINE ( if( ::lCambiarPrecio(), 1, 0 ) )
+   DATA     _NotCambiarPrecio             INIT .f.
+   METHOD   lNotCambiarPrecio( lNewVal )
+   METHOD   lCambiarPrecio()              INLINE ( !::lNotCambiarPrecio() )
+   METHOD   nEditarPrecio()               INLINE ( if( ::lCambiarPrecio(), 1, 0 ) )
 
-   Data     _NotCambiarPrecioGrupo
-   Method   lNotCambiarPrecioGrupo( lNewVal )   INLINE if( isLogic( lNewVal ), ::_NotCambiarPrecioGrupo := lNewVal, ::_NotCambiarPrecioGrupo )
-   Method   lCambiarPrecioGrupo()               INLINE ( !::_NotCambiarPrecioGrupo )
+   DATA     _NotCambiarPrecioGrupo
+   METHOD   lNotCambiarPrecioGrupo( lNewVal )   INLINE if( isLogic( lNewVal ), ::_NotCambiarPrecioGrupo := lNewVal, ::_NotCambiarPrecioGrupo )
+   METHOD   lCambiarPrecioGrupo()               INLINE ( !::_NotCambiarPrecioGrupo )
 
-   Data     _NotRentabilidad           INIT .f.
-   Method   lNotRentabilidad( lNewVal )
+   DATA     _NotRentabilidad           INIT .f.
+   METHOD   lNotRentabilidad( lNewVal )
 
-   Data     _NotRentabilidadGrupo
-   Method   lNotRentabilidadGrupo( lNewVal ) INLINE if( isLogic( lNewVal ), ::_NotRentabilidadGrupo := lNewVal, ::_NotRentabilidadGrupo )
+   DATA     _NotRentabilidadGrupo
+   METHOD   lNotRentabilidadGrupo( lNewVal ) INLINE if( isLogic( lNewVal ), ::_NotRentabilidadGrupo := lNewVal, ::_NotRentabilidadGrupo )
 
-   Data     _SerieDefecto
-   Method   SerieDefecto( cNewVal )    INLINE if( !Empty( cNewVal ), ::_SerieDefecto := cNewVal, ::_SerieDefecto )
+   DATA     _SerieDefecto
+   METHOD   SerieDefecto( cNewVal )    INLINE if( !Empty( cNewVal ), ::_SerieDefecto := cNewVal, ::_SerieDefecto )
 
-   Data     _NotInicio                 INIT .f.
-   Method   lNotInicio( lNewVal )
+   DATA     _NotInicio                 INIT .f.
+   METHOD   lNotInicio( lNewVal )
 
-   Data     _DocAuto                   INIT .f.
-   Method   lDocAuto( lNewVal )
+   DATA     _DocAuto                   INIT .f.
+   METHOD   lDocAuto( lNewVal )
 
-   Data     _UltAuto                   INIT cTod( "" )
-   Method   dUltAuto( lNewVal )
+   DATA     _UltAuto                   INIT cTod( "" )
+   METHOD   dUltAuto( lNewVal )
 
-   Data     _lNoOpenCajon              INIT ".f."
-   Method   lNoOpenCajon( cNewVal )    INLINE if( cNewVal != nil, ::_lNoOpenCajon := cNewVal, ::_lNoOpenCajon )
+   DATA     _lNoOpenCajon              INIT ".f."
+   METHOD   lNoOpenCajon( cNewVal )    INLINE if( cNewVal != nil, ::_lNoOpenCajon := cNewVal, ::_lNoOpenCajon )
 
-   Data     _NotInicioGrupo
-   Method   lNotInicioGrupo( lNewVal ) INLINE if( isLogic( lNewVal ), ::_NotInicioGrupo := lNewVal, ::_NotInicioGrupo )
+   DATA     _NotInicioGrupo
+   METHOD   lNotInicioGrupo( lNewVal ) INLINE if( isLogic( lNewVal ), ::_NotInicioGrupo := lNewVal, ::_NotInicioGrupo )
 
-   Data     _FiltroVentas              INIT     .f.
-   Method   lFiltroVentas( lNewVal )   INLINE   ( if( isLogic( lNewVal ), ::_FiltroVentas := lNewVal, ::_FiltroVentas ) )
+   DATA     _FiltroVentas              INIT     .f.
+   METHOD   lFiltroVentas( lNewVal )   INLINE   ( if( isLogic( lNewVal ), ::_FiltroVentas := lNewVal, ::_FiltroVentas ) )
 
-   Data     _PcName                    INIT     ""
-   Method   cPcName( cNewVal )         INLINE   ( if( cNewVal != nil, ::_PcName := cNewVal, ::_PcName ) )
+   DATA     _PcName                    INIT     ""
+   METHOD   cPcName( cNewVal )         INLINE   ( if( cNewVal != nil, ::_PcName := cNewVal, ::_PcName ) )
 
-   Data     _EnUso                     INIT     .f.
-   Method   lEnUso( lNewVal )          INLINE   ( if( isLogic( lNewVal ), ::_EnUso := lNewVal, ::_EnUso ) )
+   DATA     _EnUso                     INIT     .f.
+   METHOD   lEnUso( lNewVal )          INLINE   ( if( isLogic( lNewVal ), ::_EnUso := lNewVal, ::_EnUso ) )
 
-   Data     _CodigoSala                INIT ""
-   Method   SalaVenta( cNewVal )       INLINE if( cNewVal != nil, ::_CodigoSala := cNewVal, ::_CodigoSala )
+   DATA     _CodigoSala                INIT ""
+   METHOD   SalaVenta( cNewVal )       INLINE if( cNewVal != nil, ::_CodigoSala := cNewVal, ::_CodigoSala )
 
-   Data     _DelegacionUsuario         INIT ""
-   Method   DelegacionUsuario( cNewVal ) INLINE if( cNewVal != nil, ::_DelegacionUsuario := cNewVal, ::_DelegacionUsuario )
-
-   //------------------------------------------------------------------------//
-
-   Data     _Delegacion                INIT space( 2 )
-   Method   cDelegacion( cNewVal )
+   DATA     _DelegacionUsuario         INIT ""
+   METHOD   DelegacionUsuario( cNewVal ) INLINE if( cNewVal != nil, ::_DelegacionUsuario := cNewVal, ::_DelegacionUsuario )
 
    //------------------------------------------------------------------------//
 
-   Data     _NotCostos                 INIT .f.
-   Method   lNotCostos( lNewVal )
-   Method   lCostos( lNewVal )         INLINE ( ! ::lNotCostos( lNewVal ) )
+   DATA     _Delegacion                INIT space( 2 )
+   METHOD   cDelegacion( cNewVal )
 
-   Data     _NotCostosGrupo
-   Method   lNotCostosGrupo( lNewVal ) INLINE if( lNewVal != nil, ::_NotCostosGrupo := lNewVal, ::_NotCostosGrupo )
+   //------------------------------------------------------------------------//
 
-   Data     _UsrZur                    INIT .f.
-   Method   lUsrZur( lNewVal )         INLINE if( lNewVal != nil, ::_UsrZur := lNewVal, ::_UsrZur )
+   DATA     _NotCostos                 INIT .f.
+   METHOD   lNotCostos( lNewVal )
+   METHOD   lCostos( lNewVal )         INLINE ( ! ::lNotCostos( lNewVal ) )
 
-   Data     _ArqueoCiego               INIT .f.
-   Method   lArqueoCiego( lNewVal )    INLINE if( lNewVal != nil, ::_ArqueoCiego := lNewVal, ::_ArqueoCiego )
+   DATA     _NotCostosGrupo
+   METHOD   lNotCostosGrupo( lNewVal ) INLINE if( lNewVal != nil, ::_NotCostosGrupo := lNewVal, ::_NotCostosGrupo )
 
-   Data     _Alerta                    INIT .f.
-   Method   lAlerta( lNewVal )         INLINE if( lNewVal != nil, ::_Alerta := lNewVal, ::_Alerta )
+   DATA     _UsrZur                    INIT .f.
+   METHOD   lUsrZur( lNewVal )         INLINE if( lNewVal != nil, ::_UsrZur := lNewVal, ::_UsrZur )
 
-   Data     _Grupo                     INIT ""
-   Method   cGrupo( cNewVal )          INLINE if( cNewVal != nil, ::_Grupo := cNewVal, ::_Grupo )
+   DATA     _ArqueoCiego               INIT .f.
+   METHOD   lArqueoCiego( lNewVal )    INLINE if( lNewVal != nil, ::_ArqueoCiego := lNewVal, ::_ArqueoCiego )
 
-   Data     _NotConfirmDelete
-   Method   lNotConfirmDelete( lNewVal )  INLINE ( if( lNewVal != nil, ::_NotConfirmDelete := lNewVal, ::_NotConfirmDelete ) )
+   DATA     _Alerta                    INIT .f.
+   METHOD   lAlerta( lNewVal )         INLINE if( lNewVal != nil, ::_Alerta := lNewVal, ::_Alerta )
 
-   Data     _Operario                  INIT Space( 3 )
-   Method   cOperario( cNewVal )       INLINE if( !Empty( cNewVal ), ( ::_Operario := cNewVal ), ::_Operario )
+   DATA     _Grupo                     INIT ""
+   METHOD   cGrupo( cNewVal )          INLINE if( cNewVal != nil, ::_Grupo := cNewVal, ::_Grupo )
 
-   Data     _lNotUnidades              INIT .f.
-   Method   lNotUnidades( lNewVal )    INLINE if( lNewVal != nil, ::_lNotUnidades := lNewVal, ::_lNotUnidades )
-   Method   lModificaUnidades()        INLINE ( ::lMaster() .or. !::lNotUnidades() )
+   DATA     _NotConfirmDelete
+   METHOD   lNotConfirmDelete( lNewVal )  INLINE ( if( lNewVal != nil, ::_NotConfirmDelete := lNewVal, ::_NotConfirmDelete ) )
 
-   Data     _lNotCobrarTPV             INIT .f.
-   Method   lNotCobrarTPV( lNewVal )   INLINE if( lNewVal != nil, ::_lNotCobrarTPV := lNewVal, ::_lNotCobrarTPV )
+   DATA     _Operario                  INIT Space( 3 )
+   METHOD   cOperario( cNewVal )       INLINE if( !Empty( cNewVal ), ( ::_Operario := cNewVal ), ::_Operario )
 
-   Data     _lNotNotasTPV              INIT .f.
-   Method   lNotNotasTPV( lNewVal )    INLINE if( lNewVal != nil, ::_lNotNotasTPV := lNewVal, ::_lNotNotasTPV )
+   DATA     _lNotUnidades              INIT .f.
+   METHOD   lNotUnidades( lNewVal )    INLINE if( lNewVal != nil, ::_lNotUnidades := lNewVal, ::_lNotUnidades )
+   METHOD   lModificaUnidades()        INLINE ( ::lMaster() .or. !::lNotUnidades() )
 
-   Data     _lNotImprimirComandas            INIT .f.
-   Method   lNotImprimirComandas( lNewVal )  INLINE if( lNewVal != nil, ::_lNotImprimirComandas := lNewVal, ::_lNotImprimirComandas )
+   DATA     _lNotCobrarTPV             INIT .f.
+   METHOD   lNotCobrarTPV( lNewVal )   INLINE if( lNewVal != nil, ::_lNotCobrarTPV := lNewVal, ::_lNotCobrarTPV )
+
+   DATA     _lNotNotasTPV              INIT .f.
+   METHOD   lNotNotasTPV( lNewVal )    INLINE if( lNewVal != nil, ::_lNotNotasTPV := lNewVal, ::_lNotNotasTPV )
+
+   DATA     _lNotImprimirComandas            INIT .f.
+   METHOD   lNotImprimirComandas( lNewVal )  INLINE if( lNewVal != nil, ::_lNotImprimirComandas := lNewVal, ::_lNotImprimirComandas )
 
    /*
    Puede cambiar empresa si el codigo de empresa esta vacio--------------------
    */
 
-   Data     _EmpresaFija               INIT ""
-   Method   cEmpresaFija( cNewVal )    INLINE if( !Empty( cNewVal ), ( ::_EmpresaFija := cNewVal ), ::_EmpresaFija )
-   Method   lCambiarEmpresa()          INLINE ( Empty( ::_EmpresaFija ) )
+   DATA     _EmpresaFija               INIT ""
+   METHOD   cEmpresaFija( cNewVal )    INLINE if( !Empty( cNewVal ), ( ::_EmpresaFija := cNewVal ), ::_EmpresaFija )
+   METHOD   lCambiarEmpresa()          INLINE ( Empty( ::_EmpresaFija ) )
 
-   Method   MixPermisosGrupo()
+   METHOD   MixPermisosGrupo()
 
-   Method   OpenCajon( nView )         INLINE if( !Empty( ::oCajon ) .and. !::lNoOpenCajon(), ::oCajon:Open( nView ), )
-   Method   OpenCajonDirect( nView )   INLINE if( !Empty( ::oCajon ), ::oCajon:Open( nView ), )
-   Method   OpenCajonTest()            INLINE if( !Empty( ::oCajon ) .and. !::lNoOpenCajon(), ::oCajon:Open(), )
+   METHOD   OpenCajon( nView )         INLINE if( !Empty( ::oCajon ) .and. !::lNoOpenCajon(), ::oCajon:Open( nView ), )
+   METHOD   OpenCajonDirect( nView )   INLINE if( !Empty( ::oCajon ), ::oCajon:Open( nView ), )
+   METHOD   OpenCajonTest()            INLINE if( !Empty( ::oCajon ) .and. !::lNoOpenCajon(), ::oCajon:Open(), )
 
-   Method   lMasterLike()
+   METHOD   lMasterLike()
 
-   Method   lValidMasterLike( cClave )
+   METHOD   lValidMasterLike( cClave )
 
    /*
    Empresa del usuario solo se selecciona si no lo pasan como parametro de inicio--------
    */
 
-   Data     _Empresa                   INIT ""
-   Method   cEmpresa( cNewVal )
+   DATA     _Empresa                   INIT ""
+   METHOD   cEmpresa( cNewVal )
 
 END CLASS
 
 //--------------------------------------------------------------------------//
 
-Method OpenFiles( dbfUser, dbfCajas )
+METHOD OpenFiles( dbfUser, dbfCajas )
 
    if !empty( ::oDbf ) .and. ( ::oDbf )->( Used() )
       Return ( Self )
@@ -223,7 +223,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method CloseFiles()
+METHOD CloseFiles()
 
    if ::lCloseFiles
 
@@ -244,7 +244,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method New()
+METHOD New()
 
    ::_NotCambiarPrecioGrupo   := nil
    ::_NotRentabilidadGrupo    := nil
@@ -257,15 +257,15 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method Create( cCodUsr, lCreateHandle )
+METHOD Create( cCodUsr, lCreateHandle )
 
-   msgStop( "Please don`t use this method" )
+   msgStop( "Please don`t use this METHOD" )
 
 Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method setUser( cCodigoUsuario, lCreateHandle )
+METHOD setUser( cCodigoUsuario, lCreateHandle )
 
    local nOrd              
 
@@ -359,7 +359,7 @@ Return ( ::lCreated )
 
 //--------------------------------------------------------------------------//
 
-Method Save()
+METHOD Save()
 
    local oError
    local oBlock
@@ -421,7 +421,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method CreateHandle( cCodUsr )
+METHOD CreateHandle( cCodUsr )
 
    local nHandle
 
@@ -441,7 +441,7 @@ Return ( ::nHandle() )
 
 //---------------------------------------------------------------------------//
 
-Method quitUser( cOldUsr )
+METHOD quitUser( cOldUsr )
 
    local nOldRec
 
@@ -463,7 +463,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Method MixPermisosGrupo( cCodGrp )
+METHOD MixPermisosGrupo( cCodGrp )
 
    local nRecno
 
@@ -502,7 +502,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method lNotCambiarPrecio( lNewVal )
+METHOD lNotCambiarPrecio( lNewVal )
 
    if lNewVal != nil
       ::_NotCambiarPrecio  := lNewVal
@@ -516,7 +516,7 @@ Return ( ::_NotCambiarPrecio )
 
 //--------------------------------------------------------------------------//
 
-Method lNotRentabilidad( lNewVal )
+METHOD lNotRentabilidad( lNewVal )
 
    if lNewVal != nil
       ::_NotRentabilidad   := lNewVal
@@ -530,7 +530,7 @@ Return ( ::_NotRentabilidad )
 
 //--------------------------------------------------------------------------//
 
-Method lNotCostos( lNewVal )
+METHOD lNotCostos( lNewVal )
 
    if lNewVal != nil
       ::_NotCostos         := lNewVal
@@ -544,7 +544,7 @@ Return ( ::_NotCostos )
 
 //--------------------------------------------------------------------------//
 
-Method lNotBitmap( lNewVal )
+METHOD lNotBitmap( lNewVal )
 
    if lNewVal != nil
       ::_NotBitmap         := lNewVal
@@ -558,7 +558,7 @@ Return ( ::_NotBitmap )
 
 //--------------------------------------------------------------------------//
 
-Method lNotInicio( lNewVal )
+METHOD lNotInicio( lNewVal )
 
    if lNewVal != nil
       ::_NotInicio         := lNewVal
@@ -572,7 +572,7 @@ Return ( ::_NotInicio )
 
 //--------------------------------------------------------------------------//
 
-Method lDocAuto( lNewVal )
+METHOD lDocAuto( lNewVal )
 
    if lNewVal != nil
       ::_DocAuto         := lNewVal
@@ -582,7 +582,7 @@ Return ( ::_DocAuto )
 
 //--------------------------------------------------------------------------//
 
-Method dUltAuto( lNewVal )
+METHOD dUltAuto( lNewVal )
 
    if lNewVal != nil
       ::_UltAuto         := lNewVal
@@ -592,7 +592,7 @@ Return ( ::_UltAuto )
 
 //---------------------------------------------------------------------------//
 
-Method lMasterLike()
+METHOD lMasterLike()
 
    local oDlg
    local oBmp
@@ -633,7 +633,7 @@ Return ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Method lValidMasterLike( oClave, cClave )
+METHOD lValidMasterLike( oClave, cClave )
 
    if Empty( cClave )
       msgstop( "La clave no puede estar vacia" )
@@ -679,7 +679,7 @@ RETURN ::_Delegacion
 
 //---------------------------------------------------------------------------//
 
-Method cEmpresa( cNewVal )
+METHOD cEmpresa( cNewVal )
 
    if cNewVal != nil
 

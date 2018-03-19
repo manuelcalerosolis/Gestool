@@ -592,6 +592,12 @@ METHOD lAdministratorTask()
       msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
       RETURN ( nil )
    end if
+
+   TstEmpresa()
+
+   TstDivisas()
+   
+   TstCajas()
  
    ::configDatabaseCDXLocal()
 

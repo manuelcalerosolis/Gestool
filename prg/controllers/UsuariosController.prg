@@ -27,6 +27,8 @@ CLASS UsuariosController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD isLogin()
+
    METHOD setConfig()
 
    METHOD loadConfig()
@@ -173,15 +175,37 @@ RETURN ( self )
 
 METHOD validUserPassword()
 
-   if ( ::oRepository:validUserPassword( ::oLoginView:cComboUsuario, ::oLoginView:cGetPassword ) == nil )
+   local hUsuario
+
+   hUsuario                   := ::oRepository:validUserPassword( ::oLoginView:cComboUsuario, ::oLoginView:cGetPassword )
+
+   if empty( hUsuario )
       ::oLoginView:sayError( "Usuario y contraseña con coinciden" )            
       ::oLoginView:sayNo()
       RETURN ( .f. )
    end if 
 
-   
+   if !( setUserActive( hget( hUsuario, "nombre" ) ) )
+      ::oLoginView:sayError( "Usuario actualmente en uso" )            
+      ::oLoginView:sayNo()
+      RETURN ( .f. )
+   end if 
+
+   Auth( hUsuario )
 
    ::oLoginView:oDlg:end( IDOK )      
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD isLogin()
+
+   if ( ::oLoginView:Activate() != IDOK )
+      RETURN ( .f. )
+   end if 
+
+   ::oAjustableController:oModel:setUsuarioPcEnUso( rtrim( netname() ), Auth():uuid() )
 
 RETURN ( .t. )
 
@@ -544,13 +568,15 @@ CLASS UsuariosRepository FROM SQLBaseRepository
 
    METHOD Crypt( cPassword )     INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
 
+   METHOD getNombreUsuarioWhereNetName( cNetName )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD validUserPassword( cNombre, cPassword ) CLASS UsuariosRepository
 
-   local cSQL  := "SELECT Uuid FROM " + ::getTableName()                      + " "    
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
    cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
 
    if ( alltrim( cPassword ) != __encryption_key__ )
@@ -558,6 +584,17 @@ METHOD validUserPassword( cNombre, cPassword ) CLASS UsuariosRepository
    end if 
 
    cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNombreUsuarioWhereNetName( cNetName )
+
+   local cSQL  := "SELECT usuarios.nombre FROM " + ::getTableName() + " "   
+   cSQL        +=    "INNER JOIN ajustables ON usuarios.uuid = ajustables.ajustable_uuid "
+   cSQL        +=    "WHERE ajustables.ajuste_valor = " + quoted( cNetName ) + " "    
+   cSQL        +=       "AND ajustables.ajustable_tipo = 'usuarios'"
 
 RETURN ( ::getDatabase():getValue( cSQL ) )
 
@@ -595,6 +632,7 @@ METHOD onActivate() CLASS UsuariosLoginView
 
    ::cGetPassword          := space( 100 )
    ::aComboUsuarios        := ::oController:oRepository:getNombres()
+   ::cComboUsuario         := ::oController:oRepository:getNombreUsuarioWhereNetName( netname() )
 
 RETURN ( self )
 

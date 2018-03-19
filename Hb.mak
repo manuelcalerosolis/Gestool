@@ -146,6 +146,7 @@ Cajas.prg               										\
 Entsal.prg              										\
 Usuario.prg             										\
 Tuser.prg               										\
+AuthManager.prg           										\
 Oferta.prg              										\
 Internet.prg            										\
 Intitem.prg             										\
@@ -734,6 +735,7 @@ Cajas.obj                                          				\
 Entsal.obj                                         				\
 Usuario.obj                                        				\
 Tuser.obj                                          				\
+AuthManager.obj                                          		\
 Oferta.obj                                         				\
 Internet.obj                                       				\
 Intitem.obj                                        				\
@@ -1337,6 +1339,7 @@ $(OBJ)\Cajas.obj                 										+
 $(OBJ)\Entsal.obj                										+
 $(OBJ)\Usuario.obj               										+
 $(OBJ)\Tuser.obj                 										+
+$(OBJ)\AuthManager.obj             										+
 $(OBJ)\Oferta.obj                										+
 $(OBJ)\Internet.obj              										+
 $(OBJ)\Intitem.obj               										+

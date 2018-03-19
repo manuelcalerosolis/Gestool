@@ -3331,11 +3331,6 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
    UsuariosModel():UpdateEmpresaEnUso( cCurUsr(), cCodEmp )
 
    /*
-   Colocamos los timers para la recepcion de informacion desde la pda----------
-   */
-
-
-   /*
    Refresh---------------------------------------------------------------------
    */
 

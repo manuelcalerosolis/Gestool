@@ -120,15 +120,19 @@ FUNCTION oWndBar() ; RETURN oWndBar
 
 FUNCTION CreateMainWindow( oIconApp )
 
+   if !( lInitCheck() )
+      RETURN nil
+   end if 
+
    // Carga o no la imagen de fondo--------------------------------------------
 
    DEFINE WINDOW oWnd ;
-      FROM     0, 0 TO 26, 82;
-      TITLE    __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
+      FROM                    0, 0 TO 26, 82;
+      TITLE                   __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
       MDI ;
-      COLORS   Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
-      ICON     oIconApp ;
-      MENU     ( BuildMenu() )
+      COLORS                  Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
+      ICON                    oIconApp ;
+      MENU                    ( BuildMenu() )
 
    oWndBar                    := CreateAcceso( oWnd )
    oWndBar:CreateButtonBar( oWnd )
@@ -165,10 +169,10 @@ FUNCTION CreateMainWindow( oIconApp )
 
    ACTIVATE WINDOW oWnd ;
       MAXIMIZED ;
-      ON PAINT    ( WndPaint( hDC, oWnd ) ); 
-      ON RESIZE   ( WndResize( oWnd ) );
-      ON INIT     ( lStartCheck() );
-      VALID       ( EndApp() ) 
+      ON PAINT                ( WndPaint( hDC, oWnd ) ); 
+      ON RESIZE               ( WndResize( oWnd ) );
+      ON INIT                 ( lStartCheck() );
+      VALID                   ( EndApp() ) 
 
    SysRefresh()
 
@@ -278,13 +282,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-
    
-   with object UsuariosController():New()
-      :oLoginView:Activate()
-   end 
-   
-
 RETURN nil
 
 //----------------------------------------------------------------------------//
@@ -3105,7 +3103,7 @@ FUNCTION lInitCheck( oMessage, oProgress )
    CursorWait()
 
    if !empty( oProgress )
-      oProgress:SetTotal( 6  )
+      oProgress:SetTotal( 4 )
    end if
 
    if !empty( oMessage )
@@ -3119,48 +3117,6 @@ FUNCTION lInitCheck( oMessage, oProgress )
    // Comprobamos que exista los directorios necesarios------------------------
 
    appCheckDirectory()
-
-   // Cargamos los datos de la empresa-----------------------------------------
-
-   if !empty( oMessage )
-      oMessage:SetText( 'Control de tablas de empresa' )
-   end if
-
-   if !empty( oProgress )
-      oProgress:AutoInc()
-   end if
-
-   if ( nUsrInUse() == 1 )
-      TstEmpresa()
-   end if 
-
-   // Cargamos los datos de la divisa------------------------------------------
-
-   if !empty( oMessage )
-      oMessage:SetText( 'Control de tablas de divisas' )
-   end if
-
-   if !empty( oProgress )
-      oProgress:AutoInc()
-   end if
-
-   if ( nUsrInUse() == 1 )
-      TstDivisas()
-   end if 
-
-   // Cargamos los datos de la cajas-------------------------------------------
-
-   if !empty( oMessage )
-      oMessage:SetText( 'Control de tablas de cajas' )
-   end if
-
-   if !empty( oProgress )
-      oProgress:AutoInc()
-   end if
-
-   if ( nUsrInUse() == 1 )
-      TstCajas()
-   end if 
 
    // Inicializamos classes----------------------------------------------------
 

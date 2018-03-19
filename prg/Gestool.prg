@@ -185,12 +185,6 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
             InitMainTactilWindow( oIconApp )
          end if
 
-      case ( "PDA" $ appParamsMain() )
-         
-         if AccessCode():Resource()
-            CreateMainPdaWindow( oIconApp )
-         end if
-
       case ( "TABLET" $ appParamsMain() ) 
 
          if AccessCode():loadTableConfiguration()
@@ -199,7 +193,9 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
       otherwise
 
-         if AccessCode():Resource()
+//         if AccessCode():Resource()
+
+         if UsuariosController():New():isLogin()
             CreateMainWindow( oIconApp )
          end if
 
