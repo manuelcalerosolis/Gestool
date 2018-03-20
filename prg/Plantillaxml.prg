@@ -3125,7 +3125,7 @@ METHOD DeleteConfig() CLASS TPlantillaXML
 
    if ::oSav:Seek( Upper( ::cNameConfig ) )
 
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿ Desea eliminar la configuración " + CRLF + Rtrim( ::cNameConfig ) + " ?", "Confirme supresión" )
+      if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes("¿ Desea eliminar la configuración " + CRLF + Rtrim( ::cNameConfig ) + " ?", "Confirme supresión" )
 
          ::oSav:Delete()
 

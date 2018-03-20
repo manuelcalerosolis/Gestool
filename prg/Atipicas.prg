@@ -1063,7 +1063,7 @@ METHOD ButtonAppend( Id, oDialog )
    REDEFINE BUTTON  ;
       ID       ( Id ) ;
       OF       ( oDialog ) ;
-      WHEN     ( oUser():lCambiarPrecio() ) ;
+      WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) ) ;
       ACTION   ( ::Append( ::oBrwAtipica ) )
 
 RETURN ( Self )
@@ -1075,7 +1075,7 @@ METHOD ButtonEdit( Id, oDialog )
    REDEFINE BUTTON  ;
       ID       ( Id ) ;
       OF       ( oDialog ) ;
-      WHEN     ( oUser():lCambiarPrecio() ) ;
+      WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) ) ;
       ACTION   ( ::Edit( ::oBrwAtipica ) )
 
 RETURN ( Self )
@@ -1087,7 +1087,7 @@ METHOD ButtonDel( Id, oDialog )
    REDEFINE BUTTON  ;
       ID       ( Id ) ;
       OF       ( oDialog ) ;
-      WHEN     ( oUser():lCambiarPrecio() ) ;
+      WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) ) ;
       ACTION   ( ::Del( ::oBrwAtipica ) )
 
 RETURN ( Self )
@@ -1238,7 +1238,7 @@ METHOD Browse( Id, oDialog )
       :nWidth           := 80
    end with
 
-   if oUser():lCambiarPrecio() 
+   if ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) 
       ::oBrwAtipica:bLDblClick   := {|| ::Edit( ::oBrwAtipica ) }
    end if
 

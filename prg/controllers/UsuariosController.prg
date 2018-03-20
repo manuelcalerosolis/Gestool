@@ -18,7 +18,7 @@ CLASS UsuariosController FROM SQLNavigatorController
    DATA cNombreCajaExclusiva
 
    DATA aEmpresas
-   DATA cUuidEmpresaExclusiva
+   DATA cCodigoEmpresaExclusiva
    DATA cNombreEmpresaExclusiva
 
    DATA oLoginView
@@ -138,8 +138,8 @@ METHOD loadConfig()
    end if 
 
    ::aEmpresas                := EmpresasModel():aNombresSeleccionables()
-   ::cUuidEmpresaExclusiva    := ::oAjustableController:oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
-   ::cNombreEmpresaExclusiva  := EmpresasModel():getNombreFromUuid( ::cUuidEmpresaExclusiva )
+   ::cCodigoEmpresaExclusiva  := ::oAjustableController:oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
+   ::cNombreEmpresaExclusiva  := EmpresasModel():getNombreFromCodigo( ::cCodigoEmpresaExclusiva )
 
    ::aCajas                   := CajasModel():aNombresSeleccionables()
    ::cUuidCajaExclusiva       := ::oAjustableController:oModel:getUsuarioCajaExclusiva( ::cUuidUsuario )
@@ -151,10 +151,10 @@ RETURN ( .t. )
 
 METHOD saveConfig()
 
-   ::cUuidEmpresaExclusiva    := EmpresasModel():getUuidFromNombre( ::cNombreEmpresaExclusiva )
+   ::cCodigoEmpresaExclusiva  := EmpresasModel():getCodigoFromNombre( ::cNombreEmpresaExclusiva )
    ::cUuidCajaExclusiva       := CajasModel():getUuidFromNombre( ::cNombreCajaExclusiva )
 
-   ::oAjustableController:oModel:setUsuarioEmpresaExclusiva( ::cUuidEmpresaExclusiva, ::cUuidUsuario )
+   ::oAjustableController:oModel:setUsuarioEmpresaExclusiva( ::cCodigoEmpresaExclusiva, ::cUuidUsuario )
    ::oAjustableController:oModel:setUsuarioCajaExclusiva( ::cUuidCajaExclusiva, ::cUuidUsuario )
 
 RETURN ( self )
@@ -253,6 +253,9 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "remember_token", {  "create"    => "VARCHAR ( 100 )"                         ,;
                                           "default"   => {|| "" } }                                )
 
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 3 )"                            ,;
+                                          "default"   => {|| space( 3 ) } }                        )
+
    hset( ::hColumns, "rol_uuid",       {  "create"    => "VARCHAR(40)"                             ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
@@ -264,14 +267,12 @@ RETURN ( ::hColumns )
 
 METHOD getInsertUsuariosSentence()
 
-   local cStatement 
+   local cSQL  := "INSERT IGNORE INTO " + ::cTableName + " "
+   cSQL        +=    "( uuid, nombre, email, password ) "
+   cSQL        += "VALUES "
+   cSQL        +=    "( UUID(), 'Administrador', 'admin@admin.com', " + quoted( ::Crypt( '12345678' ) ) + " )"
 
-   cStatement  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cStatement  +=    "( uuid, nombre, email, password ) "
-   cStatement  += "VALUES "
-   cStatement  +=    "( UUID(), 'Administrador', 'admin@admin.com', " + quoted( ::Crypt( '12345678' ) ) + " )"
-
-RETURN ( cStatement )
+RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -295,6 +296,7 @@ METHOD addColumns() CLASS UsuariosBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -304,6 +306,14 @@ METHOD addColumns() CLASS UsuariosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -422,9 +432,9 @@ METHOD Activate() CLASS UsuariosView
       TRANSPARENT ;
       OF          oDlg
 
-   REDEFINE GET   ::getModel():hBuffer[ "id" ] ;
+   REDEFINE GET   ::getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
-      WHEN        ( .f. ) ;
+      WHEN        ( ::oController:isAppendMode() ) ;
       OF          oDlg
 
    REDEFINE GET   ::getModel():hBuffer[ "nombre" ] ;
@@ -517,7 +527,9 @@ END CLASS
 
 METHOD getValidators() CLASS UsuariosValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido",;
+   ::hValidators  := {  "codigo" =>          {  "required"        => "El código es un dato requerido",;
+                                                "unique"          => "El código ya existe" },; 
+                        "nombre" =>          {  "required"        => "El nombre es un dato requerido",;
                                                 "unique"          => "El nombre ya existe" },; 
                         "email" =>           {  "required"        => "El email es un dato requerido",;
                                                 "mail"            => "El email no es valido" },;
@@ -579,7 +591,7 @@ METHOD validUserPassword( cNombre, cPassword ) CLASS UsuariosRepository
    local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
    cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
 
-   if ( alltrim( cPassword ) != __encryption_key__ )
+   if ( alltrim( cPassword ) != __encryption_key__ ) .and. !( "NOPASSWORD" $ appParamsMain() )
       cSQL     +=     "AND password = " + quoted( ::Crypt( cPassword ) )      + " " 
    end if 
 
@@ -592,7 +604,8 @@ RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 METHOD getNombreUsuarioWhereNetName( cNetName )
 
    local cSQL  := "SELECT usuarios.nombre FROM " + ::getTableName() + " "   
-   cSQL        +=    "INNER JOIN ajustables ON usuarios.uuid = ajustables.ajustable_uuid "
+   cSQL        +=    "INNER JOIN ajustables "
+   cSQL        +=       "ON usuarios.uuid = ajustables.ajustable_uuid "
    cSQL        +=    "WHERE ajustables.ajuste_valor = " + quoted( cNetName ) + " "    
    cSQL        +=       "AND ajustables.ajustable_tipo = 'usuarios'"
 

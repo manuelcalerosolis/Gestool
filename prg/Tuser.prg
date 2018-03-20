@@ -54,7 +54,7 @@ CLASS TUser
    DATA     _GrupoUsuario              INIT 1
    METHOD   nGrupoUsuario( nNewVal )   INLINE if( nNewVal != nil, ::_GrupoUsuario := nNewVal, ::_GrupoUsuario )
 
-   ClassDATA _Handle                   INIT 0
+   CLASSDATA _Handle                   INIT 0
    METHOD   nHandle( nNewVal )         INLINE if( nNewVal != nil, ::_Handle := nNewVal, ::_Handle )
 
    DATA     _Master                    INIT .f.

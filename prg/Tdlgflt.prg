@@ -1206,7 +1206,7 @@ Return ( .t. )
 
 METHOD DeleteFilter( oDlg )
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿ Desea eliminar el filtro : " + Alltrim( ( ::cDbfFilter)->cTexFlt ) + " ?", "Confirme supresión" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( "¿ Desea eliminar el filtro : " + Alltrim( ( ::cDbfFilter)->cTexFlt ) + " ?", "Confirme supresión" )
 
       if !empty( ::oWndBrw )
          ::oWndBrw:EnableComboFilter( ::aFilter )

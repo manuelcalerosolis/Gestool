@@ -231,7 +231,7 @@ METHOD deleteFilter()
       RETURN ( Self )    
    end if 
       
-   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar el registro en curso?", "Confirme eliminación" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿Desea eliminar el registro en curso?", "Confirme eliminación" )
       ::oWindowsBar:setComboFilterItem( "" )
       ::oWindowsBar:evalComboFilterChange()
       ::oFilterController:oModel:deleteById( { nId } )
@@ -264,7 +264,7 @@ METHOD setFilter()
    
    ::oRowSet:build( ::oModel:getSelectSentence() )
 
-   ::oRowSet:find( nId )
+   ::oRowSet:findString( nId )
       
    ::getBrowse():Refresh()
 

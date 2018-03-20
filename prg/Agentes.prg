@@ -580,19 +580,19 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
       REDEFINE BUTTON  ;
          ID       501 ;
          OF       fldTarifas ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE );
          ACTION   ( externalAppendAtipica( oBrwAgentesTarifas, tmpAgentesTarifas, nView ) )
 
       REDEFINE BUTTON  ;
          ID       502 ;
          OF       fldTarifas ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE );
          ACTION   ( externalEditAtipica( oBrwAgentesTarifas, tmpAgentesTarifas, nView ) )
 
       REDEFINE BUTTON  ;
          ID       503 ;
          OF       fldTarifas ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE );
          ACTION   ( winDelRec( oBrwAgentesTarifas, tmpAgentesTarifas ) )
 
       oBrwAgentesTarifas                 := IXBrowse():New( fldTarifas )
@@ -729,7 +729,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          :nWidth           := 80
       end with
 
-      if oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE
+      if ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE
          oBrwAgentesTarifas:bLDblClick   := {|| externalEditAtipica( oBrwAgentesTarifas, tmpAgentesTarifas, nView ) }
       end if
       oBrwAgentesTarifas:bRClicked       := {| nRow, nCol, nFlags | oBrwAgentesTarifas:RButtonDown( nRow, nCol, nFlags ) }

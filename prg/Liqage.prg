@@ -734,7 +734,7 @@ RETURN ( oDlg:nResult )
 
 METHOD Del()
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
 
       ::oFacCliT:GetStatus()
       ::oFacCliT:OrdSetFocus( "NNUMLIQ" )
@@ -762,7 +762,7 @@ RETURN ( .t. )
 
 METHOD DelLiqAge()
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" )
 
       ::oFacCliT:GetStatus()
       ::oFacCliT:OrdSetFocus( "nNumFac" )

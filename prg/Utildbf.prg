@@ -2043,7 +2043,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
    DEFAULT lMaster   := .f.
    DEFAULT lTactil   := .f.
 
-   if select( cAlias ) == 0 .or. ( cAlias )->( LastRec() ) == 0
+   if select( cAlias ) == 0 .or. ( cAlias )->( lastrec() ) == 0
       RETURN ( .f. )
    end if
 
@@ -2053,10 +2053,10 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
       nMarked        := len( oBrw:aselected )
       if nMarked > 1
-         cTxt        := "¿ Desea eliminar definitivamente " + AllTrim( Trans( nMarked, "999999" ) ) + " registros ?"
+         cTxt        := "¿ Desea eliminar definitivamente " + alltrim( Trans( nMarked, "999999" ) ) + " registros ?"
       end if
 
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supresión", lTactil )
+      if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. apoloMsgNoYes( cTxt, "Confirme supresión", lTactil )
 
          oWaitMeter        := TWaitMeter():New( "Eliminando registros", "Espere por favor..." )
          oWaitMeter:run()
@@ -2090,7 +2090,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
    else
 
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supersión", lTactil )
+      if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( cTxt, "Confirme supersión", lTactil )
 
          if !empty( bPreBlock )
             lTrigger    := CheckEval( bPreBlock )
@@ -2152,7 +2152,7 @@ FUNCTION dbDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lDelMarked, lBig )
          cTxt           := "¿ Desea eliminar definitivamente " + AllTrim( Str( nMarked, 3 ) ) + " registros ?"
       end if
 
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supersión", lBig )
+      if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( cTxt, "Confirme supersión", lBig )
          for each nRec in oBrw:aselected
 
             ( cAlias )->( dbGoTo( nRec ) )
@@ -2170,7 +2170,7 @@ FUNCTION dbDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lDelMarked, lBig )
       end if
 
    else
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supersión" )
+      if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( cTxt, "Confirme supersión" )
 
          CheckEval( bPreBlock )
 

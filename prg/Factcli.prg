@@ -2704,13 +2704,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oGetTarifa  := comboTarifa():Build( { "idCombo" => 171, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( fldGeneral )
 
+      if ( nMode == ZOOM_MODE )
+         oGetTarifa:disable()
+      end if 
+
       REDEFINE BTNBMP oBtnPrecio ;
          ID       174 ;
          OF       fldGeneral ;
          RESOURCE "gc_arrow_down_16" ;
          NOBORDER ;
          ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )
+         WHEN     ( nMode != ZOOM_MODE .and. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) )
 
       /*
       Codigo de Divisas______________________________________________________________
@@ -4655,7 +4659,7 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
    Muestra y oculta las rentabilidades-----------------------------------------
    */
 
-   if oGetRnt != nil .and. oUser():lNotRentabilidad()
+   if oGetRnt != nil .and. SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
       oGetRnt:Hide()
    end if
 
@@ -5178,7 +5182,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          MAX      6 ;
          PICTURE  "9" ;
          VALID    ( aTmp[ _NTARLIN ] >= 1 .AND. aTmp[ _NTARLIN ] <= 6 );
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) );
          ON CHANGE(  changeTarifa( aTmp, aGet, aTmpFac ),;
                      loadComisionAgente( aTmp, aGet, aTmpFac ),;
                      lCalcDeta( aTmp, aTmpFac ) );
@@ -10101,7 +10105,7 @@ STATIC FUNCTION SetDialog( aGet, oSayDias, oSayGetRnt, oGetRnt )
 
    end if
 
-   if !lAccArticulo() .or. oUser():lNotRentabilidad()
+   if !lAccArticulo() .or. SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
 
       if !empty( oSayGetRnt )
          oSayGetRnt:Hide()
@@ -11822,7 +11826,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
    end if 
 
-   if oRentLin != nil .and. oUser():lNotRentabilidad()
+   if oRentLin != nil .and. SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
       oRentLin:Hide()
    end if
 
@@ -12150,7 +12154,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
    Solo pueden modificar los precios los administradores-----------------------
    */
 
-   if ( empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. nMode != ZOOM_MODE
+   if ( empty( aTmp[ _NPREUNIT ] ) .or. SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE
 
       if !empty( aGet ) .and. !empty( aGet[ _NPREUNIT ] )
          aGet[ _NPREUNIT ]:HardEnable()
@@ -13207,7 +13211,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       Solo pueden modificar los precios los administradores--------------
       */
 
-      if empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
+      if empty( aTmp[ _NPREUNIT ] ) .or. SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() )
 
          if !empty( aGet ) .and. !empty( aGet[ _NPREUNIT ] )
             aGet[ _NPREUNIT ]:HardEnable()
@@ -17724,11 +17728,11 @@ Function ShowKit( dbfMaster, dbfTmpLin, oBrw, lSet, dbfTmpInc, cCodCli, cClient,
 
    end if
 
-   if oGetRnt != nil .and. oUser():lNotRentabilidad()
+   if oGetRnt != nil .and. SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
       oGetRnt:Hide()
    end if
 
-   if oSayGetRnt != nil .and. oUser():lNotRentabilidad()
+   if oSayGetRnt != nil .and. SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
       oSayGetRnt:Hide()
    end if
 

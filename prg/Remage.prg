@@ -1011,7 +1011,7 @@ RETURN ( if( lPic, Trans( nTot, ::cPorDiv ), nTot ) )
 
 METHOD Del()
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
       while ::oDbfDet:Seek( Str( ::oDbf:nNumCob, 9 ) + ::oDbf:cSufCob )
          ::DelItem()
       end while

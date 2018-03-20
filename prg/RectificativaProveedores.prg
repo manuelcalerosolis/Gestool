@@ -3003,7 +3003,7 @@ Static Function DelCobPrv( oBrw, cRctPrvP )
       return .f.
    end if
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" )
       DelRecno( D():FacturasProveedoresPagos( nView ), oBrw, .f. )
    end if
 
@@ -7266,7 +7266,7 @@ static function ShowKitRctPrv( dbfMaster, oBrw, cCodPrv, dbfTmpInc, aGet, aTmp, 
 
    if !empty( aGet )
 
-      if lUsrMaster() .or. oUser():lCambiarPrecio()
+      if ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) )
          aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:HardEnable()
       else
          aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:HardDisable()

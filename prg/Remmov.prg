@@ -2273,7 +2273,7 @@ METHOD DeleteDet() CLASS TRemMovAlm
       cTxtDel        := "¿ Desea eliminar el registro en curso ?"
    end if
 
-   if oUser():lNotConfirmDelete() .or.  ApoloMsgNoYes(cTxtDel, "Confirme supersión" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or.  ApoloMsgNoYes(cTxtDel, "Confirme supersión" )
 
       for each nNum in ( ::oBrwDet:aSelected )
 

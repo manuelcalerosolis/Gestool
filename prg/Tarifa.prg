@@ -1,8 +1,8 @@
-   #include "FiveWin.Ch"
-   #include "Font.ch"
-   #include "Report.ch"
-   #include "Factu.ch" 
-   #include "Xbrowse.ch"
+#include "FiveWin.Ch"
+#include "Font.ch"
+#include "Report.ch"
+#include "Factu.ch" 
+#include "Xbrowse.ch"
 
 static oWndBrw
 static cNewFile
@@ -413,19 +413,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTarPreT, oBrw, bWhen, bValid, nMode )
       REDEFINE BUTTON;
 			ID 		500 ;
 			OF 		oDlg ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE );
          ACTION   ( AppDeta( oBrwDet, bEdit2, aTmp ) )
 
       REDEFINE BUTTON;
 			ID 		501 ;
 			OF 		oDlg ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE );
          ACTION   ( EdtDeta( oBrwDet, bEdit2, aTmp ) )
 
       REDEFINE BUTTON;
 			ID 		502 ;
 			OF 		oDlg ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE );
          ACTION   ( DelDeta( oBrwDet, aTmp ) )
 
       REDEFINE BUTTON ;
@@ -455,7 +455,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTarPreT, oBrw, bWhen, bValid, nMode )
 			OF 		oDlg ;
          ACTION   ( ChmHelp( "Tarifas" ) )
 
-      if oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE
+      if ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F2, {|| AppDeta(oBrwDet, bEdit2, aTmp) } )
          oDlg:AddFastKey( VK_F3, {|| EdtDeta(oBrwDet, bEdit2, aTmp ) } )
          oDlg:AddFastKey( VK_F4, {|| DelDeta( oBrwDet, aTmp ) } )

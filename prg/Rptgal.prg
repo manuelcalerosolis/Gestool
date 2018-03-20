@@ -1408,7 +1408,7 @@ Static Function DelFavorito( oTrvArbolGaleria )
    cNombre     := oItem:cPrompt
    cCarpeta    := oItem:Cargo:Carpeta
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿ Desea eliminar el informe " + AllTrim( cNombre ) +"?", "Selecciona una opción" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( "¿ Desea eliminar el informe " + AllTrim( cNombre ) +"?", "Selecciona una opción" )
 
       if ( dbfFavorito )->( dbSeek( cCodUsr + cCarpeta + cNombre ) )
          if dbLock( dbfFavorito )

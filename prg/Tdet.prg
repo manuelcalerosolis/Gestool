@@ -388,7 +388,7 @@ METHOD Del( oBrw ) CLASS TDet
       RETURN ( Self )
    end if
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" )
 
       if ::bOnPreDelete != nil
          Eval( ::bOnPreDelete, Self )
