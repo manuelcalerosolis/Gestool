@@ -316,6 +316,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfCajT )->( FieldPos( "nCopEna" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopCie" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ]     := str( 1, 6 )
+   else 
+      cComboCajonPortamonedas                            := CajonesPortamonedasRepository():getNombreWhereUuid( aTmp[ ( dbfCajT )->( FieldPos( "cajon_uuid" ) ) ] )
    end if
 
    if BeginTrans( aTmp )
@@ -1013,7 +1015,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       REDEFINE COMBOBOX oComboCajonPortamonedas ;
          VAR      cComboCajonPortamonedas ;
          ID       310 ;
-         ITEMS    CajonesPortamonedasRepository():getNombres() ;
+         UPDATE ;
+         ITEMS    CajonesPortamonedasRepository():getNombresWithBlank() ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -1071,7 +1074,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ID       500 ;
 			OF 		oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( if( nMode == DUPL_MODE, if( aGet[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ]:lValid(), SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode ), ), SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode ) ) )
+         ACTION   ( SavRec( aTmp, aGet, oComboCajonPortamonedas, oBrw, oDlg, nMode ) )
 
 		REDEFINE BUTTON ;
          ID       550 ;
@@ -1080,7 +1083,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
 			ACTION 	( oDlg:end() )
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| if( nMode == DUPL_MODE, if( aGet[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ]:lValid(), SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode ), ), SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode ) ) } )
+      oDlg:AddFastKey( VK_F5, {|| SavRec( aTmp, aGet, oComboCajonPortamonedas, oBrw, oDlg, nMode ) } )
    end if
 
    oDlg:bStart    := {|| StartRec( aGet, aTmp ) }
@@ -1102,7 +1105,6 @@ Static Function StartRec( aGet, aTmp )
 
    aGet[ ( dbfCajT )->( FieldPos( "cCapCaj" ) ) ]:oHelpText:cText( oRetFld(aTmp[ ( dbfCajT )->( FieldPos( "cCapCaj" ) ) ], oCaptura:oDbf ) )
    aGet[ ( dbfCajT )->( FieldPos( "cCodVis" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cCodVis" ) ) ], dbfVisor ) )
-   aGet[ ( dbfCajT )->( FieldPos( "cCajon"  ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cCajon"  ) ) ], dbfCajPorta, "cNomCaj", "cCodCaj" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cCodBal" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cCodBal" ) ) ], dbfImpTik ) )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnTik" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCom" ) ) ], dbfDoc, "cDescrip" ) )
@@ -1123,21 +1125,29 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-Static Function SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode )
+Static Function SavRec( aTmp, aGet, oComboCajonPortamonedas, oBrw, oDlg, nMode )
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
       if dbSeekInOrd( aTmp[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ], "CCODCAJ", dbfCajT )
          MsgStop( "Código ya existe " + Rtrim( aTmp[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ] ) )
-         return nil
+         RETURN ( .f. )
       end if
 
    end if
 
+   if nMode == DUPL_MODE
+
+      if !( aGet[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ]:lValid() )
+         RETURN ( .f. )
+      endif
+
+   end if 
+
    if empty( aTmp[ ( dbfCajT )->( FieldPos( "cNomCaj" ) ) ] )
-      MsgStop( "Nombre de caja no puede estar vacío" )
+      msgStop( "Nombre de caja no puede estar vacío" )
       aGet[ ( dbfCajT )->( FieldPos( "cNomCaj" ) ) ]:SetFocus()
-      Return nil
+      RETURN ( .f. )
    end if
 
    //Eliminamos lo que tiene las lineas----------------------------------------
@@ -1171,13 +1181,14 @@ Static Function SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode )
 
    // Asignacin a la variable de texto----------------------------------------
 
-   aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ]  := Str( nNumTur, 6 )
+   aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ]     := Str( nNumTur, 6 )
+   aTmp[ ( dbfCajT )->( FieldPos( "cajon_uuid" ) ) ]  := CajonesPortamonedasRepository():getUuidWhereNombre( oComboCajonPortamonedas:varGet() )
 
    // Guardamos el registro definitivo-----------------------------------------
 
    WinGather( aTmp, aGet, dbfCajT, oBrw, nMode )
 
-Return ( oDlg:end( IDOK ) )
+RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
 
