@@ -282,7 +282,11 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
+<<<<<<< HEAD
+
+=======
    
+>>>>>>> 29a2b39212c81a3422bc63af864741e5f8cf8f7d
 RETURN nil
 
 //----------------------------------------------------------------------------//
@@ -2712,7 +2716,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 6
+   oGrupo:nBigItems     := 7
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"

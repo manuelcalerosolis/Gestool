@@ -15,6 +15,7 @@
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
       
    DATA oBtnSerie
+   DATA oBtnRelaciones
    DATA oBtnOk
    DATA oBtnOkAndNew
 
@@ -257,6 +258,12 @@ METHOD Activate()
          OF          ::oDialog ;
          WHEN        ( ::getController():isEditMode() ) ;
          ACTION      ( ::oController:runDialogSeries() )
+
+      REDEFINE BUTTON ::oBtnRelaciones ;
+         ID          5 ;
+         OF          ::oDialog ;
+         WHEN        ( ::getController():isNotZoomMode() ) ;
+         ACTION      ( ::oController:oRelacionesEntidades:Edit() )
 
       REDEFINE BUTTON ::oBtnOk ; 
          ID          9 ; 

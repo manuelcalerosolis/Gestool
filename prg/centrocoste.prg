@@ -112,6 +112,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "dFecIni"   TYPE "D" LEN   8  DEC 0  COMMENT "Fecha de inicio"                              OF ::oDbf
       FIELD NAME "dFecFin"   TYPE "D" LEN   8  DEC 0  COMMENT "Fecha de fin"                                 OF ::oDbf
       FIELD NAME "cComent"   TYPE "C" LEN 200  DEC 0  COMMENT "Comentario"                                   OF ::oDbf
+      FIELD NAME "uuid"      TYPE "C" LEN  40  DEC 0  COMMENT "Identificador UUID"                     HIDE  OF ::oDbf
 
    	INDEX TO "CCoste.CDX" TAG "cCodigo" ON "cCodigo" COMMENT "Código" NODELETED OF ::oDbf
    	INDEX TO "CCoste.CDX" TAG "cNombre" ON "cNombre" COMMENT "Nombre" NODELETED OF ::oDbf
@@ -123,6 +124,7 @@ RETURN ( ::oDbf )
 //----------------------------------------------------------------------------//
 
 METHOD Activate() CLASS TCentroCoste
+
 
    local oScript
 
@@ -412,5 +414,54 @@ METHOD clearGet()
    ::oGetDocument:oHelpText:cText( Space( 200 ) )
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+Function SynCentroCoste()
+
+   local oBlock
+   local oError
+   local dbfCentroCoste
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatDat() + "CCoste.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "CCoste", @dbfCentroCoste ) )
+   SET ADSINDEX TO ( cPatDat() + "CCoste.CDX" ) ADDITIVE
+
+   /*
+   Cabeceras-------------------------------------------------------------------
+   */
+
+   ( dbfCentroCoste )->( dbGoTop() )
+
+   while !( dbfCentroCoste )->( eof() )
+
+      if empty( ( dbfCentroCoste )->uuid )
+         ( dbfCentroCoste )->uuid          := win_uuidcreatestring()
+      end if
+
+      ( dbfCentroCoste )->( dbSkip() )
+
+   end while
+
+   RECOVER USING oError
+
+      msgstop( "Imposible abrir todas las bases de datos de centros de coste" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( dbfCentroCoste )
+
+return nil
 
 //---------------------------------------------------------------------------//

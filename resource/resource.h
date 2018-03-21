@@ -4,5 +4,6 @@
 
 #define IDOKNOTFOCUS    9
 #define IDSERIES        4
+#define IDRELACIONES    5
 
 #define MANIFEST       24

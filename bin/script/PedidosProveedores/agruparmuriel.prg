@@ -334,7 +334,7 @@ METHOD AddCabeceraAlbaran() CLASS TImportarPedidosProveedor
 
    //::cSerieAlbaran      := ( ::cSelectHead )->cSerPed
    ::cSerieAlbaran      := RetFld( ::cCodigoProveedor, D():Proveedores( ::nView ), "Serie" )
-   ::nNumeroAlbaran     := nNewDoc( ( ::cSelectHead )->cSerPed, D():AlbaranesProveedores( ::nView ), "nAlbPrv", , D():Contadores( ::nView ) )
+   ::nNumeroAlbaran     := nNewDoc( ::cSerieAlbaran, D():AlbaranesProveedores( ::nView ), "nAlbPrv", , D():Contadores( ::nView ) )
    ::cSufijoAlbaran     := ( ::cSelectHead )->cSufPed
 
    /*

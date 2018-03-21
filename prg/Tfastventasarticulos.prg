@@ -3512,7 +3512,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
          ::oDbf:cDesUbi    := RetFld( ( D():AlbaranesProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cDesUbi", "Codigo" )
          ::oDbf:cCodEnv    := RetFld( ( D():AlbaranesProveedoresLineas( ::nView ) )->cRef, ( D():Articulos( ::nView ) ), "cCodFra", "Codigo" )
 
-         ::oDBf:cCtrCoste  := ( D():AlbaranesProveedoresLineas( ::nView ) )->cCtrCoste
+         ::oDbf:cCtrCoste  := ( D():AlbaranesProveedoresLineas( ::nView ) )->cCtrCoste
          ::oDbf:cTipCtr    := ( D():AlbaranesProveedoresLineas( ::nView ) )->cTipCtr
          ::oDbf:cCodTerCtr := ( D():AlbaranesProveedoresLineas( ::nView ) )->cTerCtr
          ::oDbf:cNomTerCtr := NombreTerceroCentroCoste( ( D():AlbaranesProveedoresLineas( ::nView ) )->cTipCtr, ( D():AlbaranesProveedoresLineas( ::nView ) )->cTerCtr, ::nView )

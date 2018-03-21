@@ -12,6 +12,8 @@ CLASS SQLBaseView
 
    DATA oDialog
 
+   DATA oBmpDialog
+
    DATA oBtnOk
 
    DATA oBtnOkAndNew
