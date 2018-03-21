@@ -196,8 +196,6 @@ METHOD UpdateRelacionEntidad( id, uNewValue, cCampo ) CLASS SQLRelacionesEntidad
    cSentence      += "SET " + cCampo + " = " + toSqlString( uNewValue )
    cSentence      += "WHERE id = " + toSqlString( id )
 
-   MsgInfo( cSentence )
-
 Return ( ::getDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
