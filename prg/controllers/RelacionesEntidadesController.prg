@@ -184,7 +184,7 @@ RETURN ( ::hColumns )
 
    ::insertBuffer( hBuffer )
 
-RETURN ( ::hColumns )
+RETURN ( ::hColumns )   
 
 //---------------------------------------------------------------------------//
 
