@@ -18,11 +18,11 @@ METHOD New() CLASS TiposImpresorasController
 
    ::cTitle                := "Tipos de impresoras"
 
-   ::cName                 := "tipos_impresoras"
+   ::cName                 := "tipos_de_impresoras"
 
    ::hImage                := { "16" => "gc_printer2_16" }
 
-   ::nLevel                := nLevelUsr( "01115" )
+   ::nLevel                := nLevelUsr( ::cName )
 
    ::oModel                := SQLTiposImpresorasModel():New( self )
 

@@ -1,4 +1,5 @@
 #include "Ads.ch"
+#include "FileIO.ch"
 #include "FiveWin.Ch"
 #include "Error.ch"
 #include "DbStruct.ch"
@@ -2042,7 +2043,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
    DEFAULT lMaster   := .f.
    DEFAULT lTactil   := .f.
 
-   if select( cAlias ) == 0 .or. ( cAlias )->( LastRec() ) == 0
+   if select( cAlias ) == 0 .or. ( cAlias )->( lastrec() ) == 0
       RETURN ( .f. )
    end if
 
@@ -2052,10 +2053,10 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
       nMarked        := len( oBrw:aselected )
       if nMarked > 1
-         cTxt        := "¿ Desea eliminar definitivamente " + AllTrim( Trans( nMarked, "999999" ) ) + " registros ?"
+         cTxt        := "¿ Desea eliminar definitivamente " + alltrim( Trans( nMarked, "999999" ) ) + " registros ?"
       end if
 
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supresión", lTactil )
+      if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. apoloMsgNoYes( cTxt, "Confirme supresión", lTactil )
 
          oWaitMeter        := TWaitMeter():New( "Eliminando registros", "Espere por favor..." )
          oWaitMeter:run()
@@ -2089,7 +2090,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
    else
 
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supersión", lTactil )
+      if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( cTxt, "Confirme supersión", lTactil )
 
          if !empty( bPreBlock )
             lTrigger    := CheckEval( bPreBlock )
@@ -2151,7 +2152,7 @@ FUNCTION dbDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lDelMarked, lBig )
          cTxt           := "¿ Desea eliminar definitivamente " + AllTrim( Str( nMarked, 3 ) ) + " registros ?"
       end if
 
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supersión", lBig )
+      if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( cTxt, "Confirme supersión", lBig )
          for each nRec in oBrw:aselected
 
             ( cAlias )->( dbGoTo( nRec ) )
@@ -2169,7 +2170,7 @@ FUNCTION dbDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lDelMarked, lBig )
       end if
 
    else
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supersión" )
+      if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( cTxt, "Confirme supersión" )
 
          CheckEval( bPreBlock )
 
@@ -2620,19 +2621,19 @@ FUNCTION dbfErase( cFileName )
    end if
 
    if file( databaseFileName( cFileName ) )
-      if ferase( databaseFileName( cFileName ) ) == -1
+      if ferase( databaseFileName( cFileName ) ) == F_ERROR
          RETURN .f.
       end if
    end if
 
    if file( databaseFileIndex( cFileName ) )
-      if fErase( databaseFileIndex( cFileName ) ) == -1
+      if fErase( databaseFileIndex( cFileName ) ) == F_ERROR
          RETURN .f.
       end if
    end if
 
    if file( databaseFileMemo( cFileName ) )
-      if fErase( databaseFileMemo( cFileName ) ) == -1
+      if fErase( databaseFileMemo( cFileName ) ) == F_ERROR
          RETURN .f.
       end if
    end if
@@ -2644,21 +2645,21 @@ RETURN .t.
 FUNCTION dbfRename( cFileNameOld, cFileNameNew )
 
    if file( cFileNameOld + ".Dbf" )
-      if fRename( cFileNameOld + ".Dbf", cFileNameNew + ".Dbf" ) == -1
+      if fRename( cFileNameOld + ".Dbf", cFileNameNew + ".Dbf" ) == F_ERROR
          //MsgStop( "No se pudo renombrar el fichero " + cFileNameOld + ".Dbf" )
          RETURN .f.
       end if
    end if
 
    if file( cFileNameOld + ".Cdx" )
-      if fRename( cFileNameOld + ".Cdx", cFileNameNew + ".Cdx" ) == -1
+      if fRename( cFileNameOld + ".Cdx", cFileNameNew + ".Cdx" ) == F_ERROR
          //MsgStop( "No se pudo renombrar el fichero " + cFileNameOld + ".Cdx" )
          RETURN .f.
       end if
    end if
 
    if file( cFileNameOld + ".Fpt" )
-      if fRename( cFileNameOld + ".Fpt", cFileNameNew + ".Fpt" ) == -1
+      if fRename( cFileNameOld + ".Fpt", cFileNameNew + ".Fpt" ) == F_ERROR
          MsgStop( "No se pudo renombrar el fichero " + cFileNameOld + ".Fpt" )
          RETURN .f.
       end if
@@ -4010,59 +4011,47 @@ RETURN ( cMemo )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION MsgCombo( cTitle, cText, aItems, uVar, cBmpFile, cResName )
+FUNCTION assertUserActive( cNombre )
 
-   local oDlg, oBmp, oCbx
-   local lOk      := .f.
-   local cItem
+   local nHandle
 
-   DEFAULT cTitle := "Title"
-   DEFAULT cText  := "Valor"
-   DEFAULT aItems := { "One", "Two", "Three" }
+   if file( cPatUsr() + cNombre + ".usr" )
+      RETURN ( .t. )
+   end if 
+   
+   nHandle        := fcreate( cPatUsr() + cNombre + ".usr", FC_NORMAL )
+   if ( nHandle != F_ERROR )
+      fClose( nHandle )
+   end if
 
-   cItem          := aItems[1]
+RETURN ( .t. )
 
-   DEFINE DIALOG oDlg FROM 10, 20 TO 18, 59.5 TITLE cTitle
+//----------------------------------------------------------------------------//
 
-   if ! empty( cBmpFile ) .or. ! empty( cResName )
+FUNCTION isUserActive( cNombre, lClose )
 
-      if ! empty( cBmpFile )
-         @ 1, 1 BITMAP oBmp FILENAME cBmpFile SIZE 20, 20 NO BORDER OF oDlg
-      endif
+   local nHandle
 
-      if ! empty( cResName )
-         @ 1, 1 BITMAP oBmp RESOURCE cResName SIZE 20, 20 NO BORDER OF oDlg
-      endif
+   DEFAULT lClose := .t.   
 
-      @ 0.5, 6 SAY cText OF oDlg SIZE 250, 10
-      
-      @ 1.6, 4 COMBOBOX oCbx VAR cItem ;
-      SIZE 120, 12 ;
-      ITEMS aItems ;
+   assertUserActive( cNombre )
 
-   else   
-      
-      @ 0.5, 3.3 SAY cText OF oDlg SIZE 250, 10
+   nHandle        := fopen( cPatUsr() + cNombre + ".usr", FO_EXCLUSIVE )  
+   if ( nHandle == F_ERROR )
+      RETURN ( .f. )
+   end if 
 
-      @ 1.6, 2.3 COMBOBOX oCbx VAR cItem ;
-      SIZE 120, 12 ;
-      ITEMS aItems ;
+   if lClose
+      fClose( nHandle )
+   end if 
 
-   endif   
+RETURN ( .t. )
 
-   @ 2.25, 7.5 - If( oBmp == nil, 2, 0 ) BUTTON "&Ok"  OF oDlg SIZE 35, 12 ;
-      ACTION ( oDlg:End(), lOk := .t. ) DEFAULT
+//----------------------------------------------------------------------------//
 
-   @ 2.25, 16.5 - If( oBmp == nil, 2, 0 ) BUTTON "&Cancel" OF oDlg SIZE 35, 12 ;
-      ACTION ( oDlg:End(), lOk := .f. )
+FUNCTION setUserActive( cNombre )
 
-   ACTIVATE DIALOG oDlg CENTERED
-
-   if lOk
-      uVar := cItem
-   endif
-
-RETURN lOk
+RETURN ( isUserActive( cNombre, .f. ) )
 
 //----------------------------------------------------------------------------//
 

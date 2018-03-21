@@ -425,7 +425,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
          :nFootStrAlign             := 1
       end with
 
-      if !oUser():lNotRentabilidad()
+      if !SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
 
       with object ( oBrwVta:AddCol() )
          :cHeader                   := "Rentabilidad"

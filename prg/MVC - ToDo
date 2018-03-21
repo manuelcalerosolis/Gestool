@@ -1,8 +1,15 @@
 MVC - ToDo
 
-- Unidades y precios en tickets de hermandad matriz
+<<<<<<< HEAD
+- Meter codigo en la ficha de usuario
+
+=======
+>>>>>>> 17390ca69c7d7f3ab9c40a15a97e00bf424ade61
+- lUsrMaster() revisar esta funcion
 
 - Guardar configuracón de columnas en Selector
+
+- No guarda configuracion de columnas en movilientos de almacen lineas.
 
 - Eliminar una empresa, eliminar de SQL.
 
@@ -10,7 +17,15 @@ MVC - ToDo
 
 - No guarda configuracion de columnas en factura proveedor.
 
-- No muestra el importe de IVA en factura proveedores.
+- No muestra el importe de IVA en factura proveedores. 
+
+- Meter codigo en la ficha de usuario (done)
+
+- No deja guardar precios cero en importe de almacen, con propiedades (done)
+
+- El posicionamiento en el browse al añadir, no va bien en lineas de movimientos de almacen. (done)
+
+- Unidades y precios en tickets de hermandad matriz (done)
 
 - (HDO) Busqueda de fechas.
 

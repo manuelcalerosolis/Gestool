@@ -178,8 +178,9 @@ RETURN ( nil )
 
 METHOD addUpdateSentence( aSQLUpdate, oProperty )
 
-   aadd( aSQLUpdate, "UPDATE " + ::cTableName + " " +                                        ;
-                        "SET unidades_articulo = " + toSqlString( oProperty:Value ) + " " +  ;
+   aadd( aSQLUpdate, "UPDATE " + ::cTableName + " " +                                                       ;
+                        "SET unidades_articulo = " + toSqlString( oProperty:Value )                + ", " + ;
+                        "precio_articulo = " + toSqlString( hget( ::hBuffer, "precio_articulo" ) ) + " " +  ;
                         "WHERE uuid = " + quoted( oProperty:Uuid ) +  "; " )
 
 RETURN ( nil )

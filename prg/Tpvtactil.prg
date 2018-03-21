@@ -9667,7 +9667,7 @@ METHOD OnClickEliminarLinea()
       Return ( .t. )
    end if
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
       ::disableDialog()
       ::eliminarLinea()
       ::enableDialog()

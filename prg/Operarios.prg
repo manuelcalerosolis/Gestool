@@ -510,7 +510,7 @@ METHOD DelRecHora( oBrw )
       RETURN ( Self )
    end if
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" )
 
       if ::oDetHoras:oDbfVir:lDefHor
          lDefHora := .t.

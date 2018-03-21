@@ -7,7 +7,7 @@
 
 Function StartTMaquina()
 
-   local oMaquina := TMaquina():New( cPatEmp(), oWnd(), "04006" )
+   local oMaquina := TMaquina():New( cPatEmp(), oWnd(), "maquinaria" )
 
    if !Empty( oMaquina )
       oMaquina:Activate()

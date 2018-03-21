@@ -131,14 +131,20 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getField( cField, cBy, cId )
+METHOD getField( cField, cBy, cId, lDebug )
 
    local cStm  
    local cSql
 
-   cSql        := "SELECT " + cField + " "                              
-   cSql        +=    "FROM " + ::getTableName() + " "                   
-   cSql        +=    "WHERE " + cBy + " = " + quoted( cId ) 
+   DEFAULT lDebug    := .f.
+
+   cSql              := "SELECT " + cField + " "                              
+   cSql              +=    "FROM " + ::getTableName() + " "                   
+   cSql              +=    "WHERE " + cBy + " = " + quoted( cId ) 
+
+   if lDebug
+      msgInfo( cSql, "debug" )
+   endif
 
    if ::ExecuteSqlStatement( cSql, @cStm )
       RETURN ( ( cStm )->( fieldget( fieldpos( cField ) ) ) )

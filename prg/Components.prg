@@ -827,8 +827,8 @@ Return ( Self )
 CLASS comboTarifa FROM GetCombo
 
    DATA idCombo
-   DATA uValue                   INIT "Combo" 
-   DATA aValues                  INIT {"Combo"}
+   DATA uValue                         INIT "Combo" 
+   DATA aValues                        INIT {"Combo"}
    DATA oControl
 
    METHOD Build( hBuilder ) 
@@ -864,7 +864,6 @@ METHOD getTarifa()
    local n
 
    for n := 1 to NUMERO_TARIFAS
-
       if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) )
          if !empty( alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ))
             if alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == ::VarGet()

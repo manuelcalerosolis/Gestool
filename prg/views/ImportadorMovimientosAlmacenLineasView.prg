@@ -23,6 +23,8 @@ CLASS ImportadorMovimientosAlmacenLineasView FROM SQLBaseView
    DATA oArticuloFin
    DATA cArticuloFin                INIT replicate( 'Z', 18 )
 
+   DATA lStockCero                  INIT .f.
+
    DATA oMtrStock
    DATA nMtrStock
 
@@ -126,6 +128,10 @@ METHOD Activate()
 
       ::oArticuloFin:bValid            := {|| ::oController:validate( "codigo_articulo_fin", ::cArticuloFin ) }
       ::oArticuloFin:bHelp             := {|| brwArticulo( ::oArticuloFin, ::oArticuloFin:oHelpText ) }
+
+      REDEFINE CHECKBOX ::lStockCero ;
+         ID       380 ;
+         OF       oDialog ;
 
       REDEFINE APOLOMETER ::oMtrStock ;
          VAR      ::nMtrStock ;

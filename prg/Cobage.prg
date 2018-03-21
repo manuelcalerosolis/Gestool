@@ -13,7 +13,7 @@ Function StartTCobAge()
 
    local oTCobAge
 
-   oTCobAge := TCobAge():New( cPatEmp(), cDriver(), oWnd(), "01061" )
+   oTCobAge := TCobAge():New( cPatEmp(), cDriver(), oWnd(), "liquidacion_de_agentes" )
 
    if !Empty( oTCobAge )
       oTCobAge:Activate()
@@ -1376,7 +1376,7 @@ RETURN ( nil )
 
 METHOD Del() CLASS TCobAge
 
-   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿ Desea eliminar el registro en curso ?", "Confirme supresión" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿ Desea eliminar el registro en curso ?", "Confirme supresión" )
 
       while ::oDetCobAge:oDbf:SeekInOrd( Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob, "nNumCob" )
          ::oDetCobAge:oDbf:Delete(.f.)

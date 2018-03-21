@@ -532,7 +532,7 @@ METHOD SetDlgMode( aGet, nMode )
    Solo pueden modificar los precios los administradores-----------------------
    */
 
-   if ( Empty( ::oDbfVir:nPreUnit ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. nMode != ZOOM_MODE
+   if ( Empty( ::oDbfVir:nPreUnit ) .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) ) .and. nMode != ZOOM_MODE
       aGet[ _NPREUNIT ]:HardEnable()
    else
       aGet[ _NPREUNIT ]:HardDisable()

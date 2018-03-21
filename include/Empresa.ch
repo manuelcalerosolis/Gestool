@@ -314,3 +314,4 @@
 #define _LCONTREC   314
 #define _LSTOCKALM  315
 #define _LBRFAMTRE  316
+#define _UUID       317

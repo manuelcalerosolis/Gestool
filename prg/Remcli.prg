@@ -1788,7 +1788,7 @@ METHOD Del()
 
    local lEstadoAnterior   := .f.
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿ Desea eliminar el registro en curso ?", "Confirme supresión" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes("¿ Desea eliminar el registro en curso ?", "Confirme supresión" )
 
       lEstadoAnterior   := ApoloMsgNoYes("¿ Desea volver los recibos a su estado original ?", "Confirmación" )
 
@@ -2638,7 +2638,7 @@ METHOD DeleteDet( lMessage )
       RETURN ( Self )
    end if
 
-   if oUser():lNotConfirmDelete() .or. if( lMessage, ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" ), .t. )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. if( lMessage, ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" ), .t. )
 
       if ::gotoRecibo()
          ::setEstadoRecibo( .f., .t. )

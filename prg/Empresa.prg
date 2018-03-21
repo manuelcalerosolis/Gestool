@@ -649,8 +649,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
    if ( nMode == DUPL_MODE )
       cOldCodigoEmpresa    := aTmp[ _CODEMP ]
-      aTmp[ _DINIOPE ]     := Ctod( "01/01/" + Str( Year( Date() ), 4 ) )
-      aTmp[ _DFINOPE ]     := Ctod( "31/12/" + Str( Year( Date() ), 4 ) )
    end if 
 
    if ( nMode == APPD_MODE )
@@ -679,9 +677,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
       aTmp[ _CTXTTAR5 ]    := "Precio 5"
       aTmp[ _CTXTTAR6 ]    := "Precio 6"
       aTmp[ _CNOMIMP  ]    := "IVA"
+   end if
+
+   if ( lAppendMode )
       aTmp[ _DINIOPE ]     := Ctod( "01/01/" + Str( Year( Date() ), 4 ) )
       aTmp[ _DFINOPE ]     := Ctod( "31/12/" + Str( Year( Date() ), 4 ) )
-   end if
+      aTmp[ _UUID    ]     := win_uuidcreatestring()
+   end if 
 
    cSayGrp                 := RetFld( aTmp[ _CCODGRP ], dbfEmp )
 
@@ -3326,12 +3328,7 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
    Colocamos la empresa actual a usuario actual--------------------------------
    */
 
-   UsuariosModel():UpdateEmpresaEnUso( cCurUsr(), cCodEmp )
-
-   /*
-   Colocamos los timers para la recepcion de informacion desde la pda----------
-   */
-
+   SQLAjustableModel():setUsuarioEmpresaEnUso( cCodEmp, Auth():uuid() )
 
    /*
    Refresh---------------------------------------------------------------------
@@ -5266,12 +5263,12 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-FUNCTION ConfEmpresa( oWnd, oMenuItem, nSelFolder )
+FUNCTION ConfEmpresa( oMenuItem, oWnd, nSelFolder )
 
    local nLevel         := 0
 
-   DEFAULT  oWnd        := oWnd()
    DEFAULT  oMenuItem   := _MENUITEM_
+   DEFAULT  oWnd        := oWnd()
    DEFAULT  nSelFolder  := 1
 
    /*

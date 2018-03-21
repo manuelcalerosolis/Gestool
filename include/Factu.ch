@@ -217,6 +217,7 @@ Defines para ficheros INI
 #define __permission_zoom__     8        // Solo visualizar
 #define __permission_delete__   16       // Acceso eliminar
 #define __permission_print__    32       // Acceso imprimir
+#define __permission_full__     63       // Acceso completo
 
 #define IS_PRINTER              1
 #define IS_SCREEN               2

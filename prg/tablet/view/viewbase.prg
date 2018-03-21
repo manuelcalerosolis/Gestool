@@ -52,7 +52,7 @@ CLASS ViewBase
 
    METHOD getView()                                      INLINE ( ::oSender:nView )
    METHOD getMode()                                      INLINE ( ::oSender:nMode )
-   METHOD getChangePrecio()                              INLINE ( oUser():lCambiarPrecio() )
+   METHOD getChangePrecio()                              INLINE ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) 
 
    METHOD defineTitulo()
    METHOD defineAceptarCancelar()

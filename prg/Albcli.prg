@@ -1250,7 +1250,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       Datos para el filtro-----------------------------------------------------
       */
 
-   if !oUser():lFiltroVentas()
+   if !oUser():lFiltroVentas() // getRolFiltrarVentas( Auth():uuidRol() )
       oWndBrw:oActiveFilter:SetFields( aItmAlbCli() )
       oWndBrw:oActiveFilter:SetFilterType( ALB_CLI )
    end if
@@ -2434,7 +2434,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          MAX      6 ;
          PICTURE  "9" ;
          VALID    ( ChangeTarifaCabecera( aTmp[ _NTARIFA ], dbfTmpLin, oBrwLin ) ) ;
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) ) );
          OF       oFld:aDialogs[1]
       */
 
@@ -2451,7 +2451,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          RESOURCE "gc_arrow_down_16" ;
          NOBORDER ;
          ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )
+         WHEN     ( nMode != ZOOM_MODE .and. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) )
 
       REDEFINE GET oRieCli VAR nRieCli;
          ID       173 ;
@@ -4152,7 +4152,7 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
    Muestra y oculta las rentabilidades-----------------------------------------
    */
 
-   if oGetRnt != nil .and. oUser():lNotRentabilidad()
+   if oGetRnt != nil .and. SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
       oGetRnt:Hide()
    end if
 
@@ -4669,7 +4669,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          MAX      6 ;
          PICTURE  "9" ;
          VALID    ( aTmp[ _NTARLIN ] >= 1 .and. aTmp[ _NTARLIN ] <= 6 );
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) ) ;
          ON CHANGE(  ChangeTarifa( aTmp, aGet, aTmpAlb ),;
                      loadComisionAgente( aTmp, aGet, aTmpAlb ),;
                      lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
@@ -4909,7 +4909,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       REDEFINE GET aGet[ _NPOSPRINT ] VAR aTmp[ _NPOSPRINT ] ;
          ID       100 ;
          SPINNER ;
-         WHEN     ( nMode == APPD_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "9999" ;
          OF       oFld:aDialogs[2]
 
@@ -8458,7 +8458,7 @@ STATIC FUNCTION SetDialog( aGet, oSayDias, oSayTxtDias )
 
    end if
 
-   if !lAccArticulo() .or. oUser():lNotRentabilidad()
+   if !lAccArticulo() .or. SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
 
       if !empty( oGetRnt )
          oGetRnt:Hide()
@@ -9801,7 +9801,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
 
    end if 
 
-   if oRentLin != nil .and. oUser():lNotRentabilidad()
+   if oRentLin != nil .and. SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
       oRentLin:Hide()
    end if
 
@@ -9957,7 +9957,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
 
       // Solo pueden modificar los precios los administradores-----------------------
 
-      if ( empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. ( nMode != ZOOM_MODE )
+      if ( empty( aTmp[ _NPREUNIT ] ) .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) ) .and. ( nMode != ZOOM_MODE )
 
          aGet[ _NPREUNIT ]:HardEnable()
          aGet[ _NIMPTRN  ]:HardEnable()
@@ -11011,7 +11011,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
          if !empty(aGet)
 
-            if ( empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. ( nMode != ZOOM_MODE )
+            if ( empty( aTmp[ _NPREUNIT ] ) .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) ) .and. ( nMode != ZOOM_MODE )
                aGet[ _NPREUNIT ]:HardEnable()
                aGet[ _NIMPTRN  ]:HardEnable()
                aGet[ _NPNTVER  ]:HardEnable()

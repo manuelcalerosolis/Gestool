@@ -28,7 +28,9 @@ CLASS SQLBaseView
                                                                __duplicate_mode__   => "Duplicando " }
 
    METHOD New()
-   METHOD End()                                       
+   METHOD End()      
+
+   METHOD Activate()                                  VIRTUAL
 
    METHOD lblTitle()                                  INLINE ( iif(  hhaskey( ::hTextMode, ::oController:getMode() ),;
                                                                      hget( ::hTextMode, ::oController:getMode() ),;

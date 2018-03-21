@@ -21,7 +21,7 @@ METHOD New() CLASS SituacionesController
 
    ::hImage                := { "16" => "gc_document_attachment_16" }
 
-   ::nLevel                := nLevelUsr( "01096" )
+   ::nLevel                := nLevelUsr( ::cName )
 
    ::oModel                := SQLSituacionesModel():New( self )
 

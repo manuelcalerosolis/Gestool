@@ -9,7 +9,7 @@ Function StartTFideliza()
 
    local oFideliza
 
-   oFideliza      := TFideliza():New( cPatArt(), cDriver(), oWnd(), "04006" )
+   oFideliza      := TFideliza():New( cPatArt(), cDriver(), oWnd(), "programa_de_fidelizacion" )
 
    if !Empty( oFideliza )
       oFideliza:Activate()

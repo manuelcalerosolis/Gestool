@@ -37,6 +37,9 @@ CLASS EmpresasModel FROM ADSBaseModel
    METHOD getUuidFromNombre( cNombre )                INLINE ( ::getField( "Uuid", "cNombre", cNombre ) )
    METHOD getNombreFromUuid( cUuid )                  INLINE ( ::getField( "cNombre", "Uuid", cUuid ) )
 
+   METHOD getCodigoFromNombre( cNombre )              INLINE ( ::getField( "CodEmp", "cNombre", cNombre ) )
+   METHOD getNombreFromCodigo( cCodigo )              INLINE ( ::getField( "cNombre", "CodEmp", cCodigo ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

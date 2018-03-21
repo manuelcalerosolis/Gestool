@@ -81,7 +81,7 @@ CLASS MovimientosAlmacenLineasController FROM SQLBrowseController
 
    METHOD onActivateDialog()
 
-   METHOD onClosedDialog() 
+   METHOD closedDialog() 
 
    METHOD Search()
 
@@ -133,7 +133,7 @@ METHOD New( oController )
 
    ::setEvent( 'activating',           {|| ::oModel:setColumnOrder( "id" ), ::oModel:setColumnOrientation( "D" ) } )
 
-   ::setEvent( 'closedDialog',         {|| ::onClosedDialog() } )
+   ::setEvent( 'closedDialog',         {|| ::closedDialog() } )
 
    ::setEvent( 'appended',             {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',               {|| ::oBrowseView:Refresh() } )
@@ -476,7 +476,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD onClosedDialog()
+METHOD closedDialog()
 
    ::aProperties     := {}
 
@@ -566,7 +566,7 @@ METHOD insertingBuffer()
       RETURN ( self )
    end if 
 
-   aeval( ::aProperties, {| oProperty | ::oModel:addInsertSentence( aSQLInsert, oProperty ) } )
+   aeval( ::aProperties, {|oProperty| ::oModel:addInsertSentence( aSQLInsert, oProperty ) } )
 
    if !empty( aSQLInsert )
       ::oModel:setSQLInsert( aSQLInsert )

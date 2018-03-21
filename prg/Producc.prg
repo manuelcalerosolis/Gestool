@@ -33,7 +33,7 @@ static oThis
 
 Function StartTProduccion( cDriver )
 
-   local oProduccion := TProduccion():New( cPatEmp(), cDriver(), oWnd(), "04008" )
+   local oProduccion := TProduccion():New( cPatEmp(), cDriver(), oWnd(), "partes_de_produccion" )
 
    if !Empty( oProduccion )
       oProduccion:Activate( cDriver )

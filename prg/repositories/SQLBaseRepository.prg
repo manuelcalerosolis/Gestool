@@ -26,6 +26,8 @@ CLASS SQLBaseRepository
    METHOD getColumnWhereId()
    METHOD getColumnWhereUuid( uuid, cColumn ) 
 
+   METHOD getNombres( cColumn )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -40,8 +42,8 @@ Return ( Self )
 
 METHOD getAll() 
 
-   local cSentence               := "SELECT * FROM " + ::getTableName()
-   local hResult                 := ::getDatabase():selectFetchHash( cSentence )
+   local cSQL                    := "SELECT * FROM " + ::getTableName()
+   local hResult                 := ::getDatabase():selectFetchHash( cSQL )
 
 RETURN ( hResult )
 
@@ -49,28 +51,40 @@ RETURN ( hResult )
 
 METHOD getColumnWhereId( id, cColumn ) 
 
-   local cSentence               
+   local cSQL               
 
    DEFAULT cColumn               := "nombre"
 
-   cSentence                     := "SELECT " + cColumn + " FROM " + ::getTableName()  + space( 1 ) + ;
+   cSQL                          := "SELECT " + cColumn + " FROM " + ::getTableName()  + space( 1 ) + ;
                                        "WHERE id = " + quoted( id )                    + space( 1 ) + ;
                                        "LIMIT 1"
 
-RETURN ( ::getDatabase():getValue( cSentence ) )
+RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getColumnWhereUuid( uuid, cColumn ) 
 
-   local cSentence               
+   local cSQL               
 
    DEFAULT cColumn               := "nombre"
 
-   cSentence                     := "SELECT " + cColumn + " FROM " + ::getTableName()  + space( 1 ) + ;
+   cSQL                          := "SELECT " + cColumn + " FROM " + ::getTableName()  + space( 1 ) + ;
                                        "WHERE uuid = " + quoted( uuid )                + space( 1 ) + ;
                                        "LIMIT 1"
 
-RETURN ( ::getDatabase():getValue( cSentence ) )
+RETURN ( ::getDatabase():getValue( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNombres( cColumn ) 
+
+   local cSQL                    
+   
+   DEFAULT cColumn               := "nombre"
+   
+   cSQL                          := "SELECT " + cColumn + "  FROM " + ::getTableName()
+
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
 
 //---------------------------------------------------------------------------//

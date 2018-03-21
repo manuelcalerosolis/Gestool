@@ -25,7 +25,7 @@ METHOD New() CLASS TagsController
 
    ::hImage                := { "16" => "gc_bookmarks_16" }
 
-   ::nLevel                := nLevelUsr( "01101" )
+   ::nLevel                := nLevelUsr( "marcadores" )
 
    ::oModel                := SQLTagsModel():New( self )
 

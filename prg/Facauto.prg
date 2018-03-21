@@ -47,7 +47,7 @@ Function StartTFacAutomatica()
 
    local oTFacAutomatica
 
-   oTFacAutomatica   := TFacAutomatica():New( cPatEmp(), oWnd(), "04015" )
+   oTFacAutomatica   := TFacAutomatica():New( cPatEmp(), oWnd(), "plantillas_automaticas" )
 
    if !Empty( oTFacAutomatica )
       oTFacAutomatica:Activate()

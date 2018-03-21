@@ -16,8 +16,10 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD setValue( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid )
    METHOD setLogic( cAjusteUuid, lAjusteValue, cAjustableTipo, cAjustableUuid )
 
-   METHOD setUsuarioEmpresaExclusiva( cAjusteValue, cAjustableUuid )    INLINE ( ::setValue( 'empresa_exclusiva', cAjusteValue, 'usuarios', cAjustableUuid ) )
    METHOD setUsuarioCajaExclusiva( cAjusteValue, cAjustableUuid )       INLINE ( ::setValue( 'caja_exclusiva', cAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioPcEnUso( cAjusteValue, cAjustableUuid )             INLINE ( ::setValue( 'pc_en_uso', cAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioEmpresaEnUso( cAjusteValue, cAjustableUuid )        INLINE ( ::setValue( 'empresa_en_uso', cAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioEmpresaExclusiva( cAjusteValue, cAjustableUuid )    INLINE ( ::setValue( 'empresa_exclusiva', cAjusteValue, 'usuarios', cAjustableUuid ) )
 
    METHOD setRolMostrarRentabilidad( cAjusteValue, cAjustableUuid )     INLINE ( ::setLogic( 'mostrar_rentabilidad', cAjusteValue, 'roles', cAjustableUuid ) )
    METHOD setRolCambiarPrecios( cAjusteValue, cAjustableUuid )          INLINE ( ::setLogic( 'cambiar_precios', cAjusteValue, 'roles', cAjustableUuid ) )
@@ -29,14 +31,27 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    METHOD getLogic( cUuid, cTipo, cAjuste, lDefault ) 
 
-   METHOD getUsuarioEmpresaExclusiva( cUuid )                           INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_exclusiva', space( 40 ) ) )   
    METHOD getUsuarioCajaExclusiva( cUuid )                              INLINE ( ::getValue( cUuid, 'usuarios', 'caja_exclusiva', space( 40 ) ) )   
-   
+   METHOD getUsuarioPcEnUso( cUuid )                                    INLINE ( ::getValue( cUuid, 'usuarios', 'pc_en_uso', '' ) )
+   METHOD getUsuarioEmpresaEnUso( cUuid )                               INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_en_uso', '' ) )
+   METHOD getUsuarioEmpresaExclusiva( cUuid )                           INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_exclusiva', space( 40 ) ) )   
+   METHOD getUsuarioEmpresa( cUuid )                                    
+
    METHOD getRolMostrarRentabilidad( cUuid )                            INLINE ( ::getLogic( cUuid, 'roles', 'mostrar_rentabilidad', .t. ) )   
+   METHOD getRolNoMostrarRentabilidad( cUuid )                          INLINE ( !::getRolMostrarRentabilidad( cUuid ) )   
+   
    METHOD getRolCambiarPrecios( cUuid )                                 INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_precios', .t. ) )   
+   METHOD getRolNoCambiarPrecios( cUuid )                               INLINE ( !::getRolCambiarPrecios( cUuid ) )   
+   
    METHOD getRolVerPreciosCosto( cUuid )                                INLINE ( ::getLogic( cUuid, 'roles', 'ver_precios_costo', .t. ) )   
+   METHOD getRolNoVerPreciosCosto( cUuid )                              INLINE ( !::getRolVerPreciosCosto( cUuid ) )   
+   
    METHOD getRolConfirmacionEliminacion( cUuid )                        INLINE ( ::getLogic( cUuid, 'roles', 'confirmacion_eliminacion', .t. ) )   
+   METHOD getRolNoConfirmacionEliminacion( cUuid )                      INLINE ( !::getRolConfirmacionEliminacion( cUuid ) )   
+   
    METHOD getRolFiltrarVentas( cUuid )                                  INLINE ( ::getLogic( cUuid, 'roles', 'fitrar_ventas_por_usuario', .t. ) )   
+   METHOD getRolNoFiltrarVentas( cUuid )                                INLINE ( !::getRolFiltrarVentas( cUuid ) )   
+   
    METHOD getRolAbrirCajonPortamonedas( cUuid )                         INLINE ( ::getLogic( cUuid, 'roles', 'abrir_cajon_portamonedas', .t. ) )   
 
 END CLASS
@@ -82,7 +97,13 @@ RETURN ( ::insertOnDuplicate( hBuffer ) )
 
 METHOD setValue( cAjusteDescripcion, cAjusteValue, cAjustableTipo, cAjustableUuid )
 
-   local cAjusteUuid := SQLAjustesModel():getAjusteUuid( cAjusteDescripcion )
+   local cAjusteUuid
+
+   if empty( cAjusteDescripcion ) .or. empty( cAjusteValue ) .or. empty( cAjustableTipo ) .or. empty( cAjustableUuid )
+      RETURN ( nil )
+   endif
+
+   cAjusteUuid := SQLAjustesModel():getAjusteUuid( cAjusteDescripcion )
 
    if empty( cAjusteUuid )
       RETURN ( nil )
@@ -146,6 +167,17 @@ METHOD getLogic( cUuid, cTipo, cajuste, lDefault )
 RETURN ( lDefault )
 
 //---------------------------------------------------------------------------//
+
+METHOD getUsuarioEmpresa( cUuid )
+
+   local cCodigoEmpresa := ::getUsuarioEmpresaExclusiva( cUuid )
+
+   if !empty( cCodigoEmpresa )                                    
+      RETURN ( cCodigoEmpresa )
+   end if 
+
+RETURN ( ::getUsuarioEmpresaEnUso( cUuid ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -18,12 +18,16 @@ CLASS UsuariosController FROM SQLNavigatorController
    DATA cNombreCajaExclusiva
 
    DATA aEmpresas
-   DATA cUuidEmpresaExclusiva
+   DATA cCodigoEmpresaExclusiva
    DATA cNombreEmpresaExclusiva
+
+   DATA oLoginView
 
    METHOD New()
 
    METHOD End()
+
+   METHOD isLogin()
 
    METHOD setConfig()
 
@@ -32,6 +36,8 @@ CLASS UsuariosController FROM SQLNavigatorController
    METHOD saveConfig()
 
    METHOD startingActivate()
+
+   METHOD validUserPassword()
 
 END CLASS
 
@@ -61,6 +67,8 @@ METHOD New() CLASS UsuariosController
 
    ::oDialogView           := UsuariosView():New( self )
 
+   ::oLoginView            := UsuariosLoginView():New( self )
+
    ::oValidator            := UsuariosValidator():New( self )
 
    ::oAjustableController  := AjustableController():New( self )
@@ -69,8 +77,8 @@ METHOD New() CLASS UsuariosController
 
    ::oFilterController:setTableToFilter( ::getName() )
 
-   ::setEvent( 'openingDialog', {|| ::oDialogView:openingDialog() } )  
-   ::setEvent( 'closedDialog', {|| ::oDialogView:closedDialog() } )  
+   ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } )  
+   ::setEvent( 'closedDialog',   {|| ::oDialogView:closedDialog() } )  
 
 RETURN ( Self )
 
@@ -130,9 +138,9 @@ METHOD loadConfig()
    end if 
 
    ::aEmpresas                := EmpresasModel():aNombresSeleccionables()
-   ::cUuidEmpresaExclusiva    := ::oAjustableController:oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
-   ::cNombreEmpresaExclusiva  := EmpresasModel():getNombreFromUuid( ::cUuidEmpresaExclusiva )
-   
+   ::cCodigoEmpresaExclusiva  := ::oAjustableController:oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
+   ::cNombreEmpresaExclusiva  := EmpresasModel():getNombreFromCodigo( ::cCodigoEmpresaExclusiva )
+
    ::aCajas                   := CajasModel():aNombresSeleccionables()
    ::cUuidCajaExclusiva       := ::oAjustableController:oModel:getUsuarioCajaExclusiva( ::cUuidUsuario )
    ::cNombreCajaExclusiva     := CajasModel():getNombreFromUuid( ::cUuidCajaExclusiva )
@@ -143,10 +151,10 @@ RETURN ( .t. )
 
 METHOD saveConfig()
 
-   ::cUuidEmpresaExclusiva    := EmpresasModel():getUuidFromNombre( ::cNombreEmpresaExclusiva )
+   ::cCodigoEmpresaExclusiva  := EmpresasModel():getCodigoFromNombre( ::cNombreEmpresaExclusiva )
    ::cUuidCajaExclusiva       := CajasModel():getUuidFromNombre( ::cNombreCajaExclusiva )
- 
-   ::oAjustableController:oModel:setUsuarioEmpresaExclusiva( ::cUuidEmpresaExclusiva, ::cUuidUsuario )
+
+   ::oAjustableController:oModel:setUsuarioEmpresaExclusiva( ::cCodigoEmpresaExclusiva, ::cUuidUsuario )
    ::oAjustableController:oModel:setUsuarioCajaExclusiva( ::cUuidCajaExclusiva, ::cUuidUsuario )
 
 RETURN ( self )
@@ -163,6 +171,45 @@ METHOD startingActivate()
    
 RETURN ( self )
 
+//---------------------------------------------------------------------------//
+
+METHOD validUserPassword()
+
+   local hUsuario
+
+   hUsuario                   := ::oRepository:validUserPassword( ::oLoginView:cComboUsuario, ::oLoginView:cGetPassword )
+
+   if empty( hUsuario )
+      ::oLoginView:sayError( "Usuario y contraseña con coinciden" )            
+      ::oLoginView:sayNo()
+      RETURN ( .f. )
+   end if 
+
+   if !( setUserActive( hget( hUsuario, "nombre" ) ) )
+      ::oLoginView:sayError( "Usuario actualmente en uso" )            
+      ::oLoginView:sayNo()
+      RETURN ( .f. )
+   end if 
+
+   Auth( hUsuario )
+
+   ::oLoginView:oDlg:end( IDOK )      
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD isLogin()
+
+   if ( ::oLoginView:Activate() != IDOK )
+      RETURN ( .f. )
+   end if 
+
+   ::oAjustableController:oModel:setUsuarioPcEnUso( rtrim( netname() ), Auth():uuid() )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -206,6 +253,9 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "remember_token", {  "create"    => "VARCHAR ( 100 )"                         ,;
                                           "default"   => {|| "" } }                                )
 
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 3 )"                            ,;
+                                          "default"   => {|| space( 3 ) } }                        )
+
    hset( ::hColumns, "rol_uuid",       {  "create"    => "VARCHAR(40)"                             ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
@@ -217,14 +267,12 @@ RETURN ( ::hColumns )
 
 METHOD getInsertUsuariosSentence()
 
-   local cStatement 
+   local cSQL  := "INSERT IGNORE INTO " + ::cTableName + " "
+   cSQL        +=    "( uuid, nombre, email, password ) "
+   cSQL        += "VALUES "
+   cSQL        +=    "( UUID(), 'Administrador', 'admin@admin.com', " + quoted( ::Crypt( '12345678' ) ) + " )"
 
-   cStatement  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cStatement  +=    "( uuid, nombre, email, password ) "
-   cStatement  += "VALUES "
-   cStatement  +=    "( UUID(), 'administrador', 'admin@admin.com', " + quoted( ::Crypt( '12345678' ) ) + " )"
-
-RETURN ( cStatement )
+RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -248,6 +296,7 @@ METHOD addColumns() CLASS UsuariosBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -257,6 +306,14 @@ METHOD addColumns() CLASS UsuariosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -375,9 +432,10 @@ METHOD Activate() CLASS UsuariosView
       TRANSPARENT ;
       OF          oDlg
 
-   REDEFINE GET   ::getModel():hBuffer[ "id" ] ;
+   REDEFINE GET   ::getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
-      WHEN        ( .f. ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          oDlg
 
    REDEFINE GET   ::getModel():hBuffer[ "nombre" ] ;
@@ -443,7 +501,7 @@ METHOD saveView( oDlg )
    end if 
 
    if !empty( ::cGetPassword )
-      ::getModel():setBuffer( "password", ::oModel:Crypt( ::cGetPassword ) )
+      ::getModel():setBuffer( "password", ::getModel():Crypt( ::cGetPassword ) )
    end if 
 
    oDlg:end( IDOK )
@@ -470,7 +528,9 @@ END CLASS
 
 METHOD getValidators() CLASS UsuariosValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido",;
+   ::hValidators  := {  "codigo" =>          {  "required"        => "El código es un dato requerido",;
+                                                "unique"          => "El código ya existe" },; 
+                        "nombre" =>          {  "required"        => "El nombre es un dato requerido",;
                                                 "unique"          => "El nombre ya existe" },; 
                         "email" =>           {  "required"        => "El email es un dato requerido",;
                                                 "mail"            => "El email no es valido" },;
@@ -515,12 +575,141 @@ RETURN ( alltrim( ::oController:oDialogView:cGetPassword ) == alltrim( uValue ) 
 
 CLASS UsuariosRepository FROM SQLBaseRepository
 
-   METHOD getTableName()      INLINE ( SQLUsuariosModel():getTableName() ) 
+   METHOD getTableName()         INLINE ( SQLUsuariosModel():getTableName() ) 
+
+   METHOD validUserPassword() 
+
+   METHOD Crypt( cPassword )     INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
+
+   METHOD getNombreUsuarioWhereNetName( cNetName )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
+
+METHOD validUserPassword( cNombre, cPassword ) CLASS UsuariosRepository
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
+
+   if ( alltrim( cPassword ) != __encryption_key__ ) .and. !( "NOPASSWORD" $ appParamsMain() )
+      cSQL     +=     "AND password = " + quoted( ::Crypt( cPassword ) )      + " " 
+   end if 
+
+   cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNombreUsuarioWhereNetName( cNetName )
+
+   local cSQL  := "SELECT usuarios.nombre FROM " + ::getTableName() + " "   
+   cSQL        +=    "INNER JOIN ajustables "
+   cSQL        +=       "ON usuarios.uuid = ajustables.ajustable_uuid "
+   cSQL        +=    "WHERE ajustables.ajuste_valor = " + quoted( cNetName ) + " "    
+   cSQL        +=       "AND ajustables.ajustable_tipo = 'usuarios'"
+
+RETURN ( ::getDatabase():getValue( cSQL ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS UsuariosLoginView FROM SQLBaseView
+
+   DATA oDlg
+
+   DATA oSayError
+   DATA cSayError
+
+   DATA oGetPassword
+   DATA cGetPassword
+
+   DATA oComboUsuario
+   DATA cComboUsuario   
+   DATA aComboUsuarios           
+
+   METHOD Activate()
+      METHOD onActivate()
+
+   METHOD sayNo()
+   METHOD sayError( cError )  INLINE ( ::oSayError:setText( cError ), ::oSayError:Show() )
+   
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD onActivate() CLASS UsuariosLoginView
+
+   ::cGetPassword          := space( 100 )
+   ::aComboUsuarios        := ::oController:oRepository:getNombres()
+   ::cComboUsuario         := ::oController:oRepository:getNombreUsuarioWhereNetName( netname() )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS UsuariosLoginView
+
+   local oBmpGeneral
+
+   ::onActivate()
+
+   DEFINE DIALOG  ::oDlg ;
+      RESOURCE    "LOGIN" 
+
+   REDEFINE BITMAP oBmpGeneral ;
+      ID          900 ;
+      RESOURCE    "gestool_logo" ;
+      TRANSPARENT ;
+      OF          ::oDlg
+
+   REDEFINE COMBOBOX ::oComboUsuario ;
+      VAR         ::cComboUsuario ;
+      ID          100 ;
+      ITEMS       ::aComboUsuarios ;
+      OF          ::oDlg
+
+   REDEFINE GET   ::oGetPassword ;
+      VAR         ::cGetPassword ;
+      ID          110 ;
+      OF          ::oDlg
+
+   REDEFINE SAY   ::oSayError ;
+      ID          120 ;
+      COLOR       Rgb( 183, 28, 28 ) ;
+      OF          ::oDlg
+
+   REDEFINE BUTTON ;
+      ID          IDOK ;
+      OF          ::oDlg ;
+      ACTION      ( ::oController:validUserPassword() )
+
+   ::oDlg:AddFastKey( VK_F5, {|| ::oController:validUserPassword() } )
+
+   ::oDlg:Activate( , , , .t. )
+
+   oBmpGeneral:end()
+
+RETURN ( ::oDlg:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD sayNo()
+
+   ::oDlg:coorsUpdate()
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft - 100 )  ; SysWait(.05)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft )        ; SysWait(.05)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft + 100 )  ; SysWait(.05)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft )        ; SysWait(.05)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft - 50 )   ; SysWait(.1)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft  )       ; SysWait(.1)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft + 50 )   ; SysWait(.1)
+   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft )
+
+RETURN ( .f. )
+
 //---------------------------------------------------------------------------//

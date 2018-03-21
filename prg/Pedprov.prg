@@ -9034,7 +9034,7 @@ function ShowKitCom( dbfMaster, dbfTmpLin, oBrw, cCodPrv, dbfTmpInc, aGet )
 
    if !empty( aGet )
 
-      if lUsrMaster() .or. oUser():lCambiarPrecio()
+      if ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) )
          aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:HardEnable()
       else
          aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:HardDisable()

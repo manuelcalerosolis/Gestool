@@ -3244,7 +3244,7 @@ return ( aColAntCli )
 Static Function nRecTot( aTmp, aGet )
 
    if !Empty( aGet )
-      if ( lUsrMaster() .or. oUser():lCambiarPrecio() )
+      if ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) )
          aGet[ _LRECARGO ]:HardEnable()
       else
          aGet[ _LRECARGO ]:HardDisable()
