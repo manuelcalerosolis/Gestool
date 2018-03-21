@@ -434,7 +434,12 @@ METHOD Activate() CLASS UsuariosView
 
    REDEFINE GET   ::getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
+<<<<<<< HEAD
       WHEN        ( ::oController:isAppendMode() ) ;
+=======
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
+>>>>>>> 17390ca69c7d7f3ab9c40a15a97e00bf424ade61
       OF          oDlg
 
    REDEFINE GET   ::getModel():hBuffer[ "nombre" ] ;
@@ -500,7 +505,7 @@ METHOD saveView( oDlg )
    end if 
 
    if !empty( ::cGetPassword )
-      ::getModel():setBuffer( "password", ::oModel:Crypt( ::cGetPassword ) )
+      ::getModel():setBuffer( "password", ::getModel():Crypt( ::cGetPassword ) )
    end if 
 
    oDlg:end( IDOK )
