@@ -143,6 +143,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLSituacionesModel():New() )
 
+   aadd( ::aModels, SQLCajonesPortamonedasModel():New() )
+
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
    aadd( ::aModels, SQLTageableModel():New() )

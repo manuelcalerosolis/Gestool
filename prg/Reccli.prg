@@ -726,7 +726,7 @@ end if
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if !oUser():lFiltroVentas()
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmrecCli() )
       oWndBrw:oActiveFilter:SetFilterType( REC_CLI )
    end if
@@ -5699,7 +5699,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, cFacCliP, oBrw, oDlg, nMode, nSpecialMode 
                ( cFacCliP )->nImpGas    := aTabla[ _NIMPGAS ]
                ( cFacCliP )->dFecCre    := GetSysDate()
                ( cFacCliP )->cHorCre    := Time()
-               ( cFacCliP )->cCodUsr    := oUser():cCodigo()
+               ( cFacCliP )->cCodUsr    := Auth():Codigo() 
                ( cFacCliP )->cRecDev    := cNumRec
                ( cFacCliP )->cBncEmp    := aTabla[ _CBNCEMP    ]
                ( cFacCliP )->cBncCli    := aTabla[ _CBNCCLI    ]

@@ -344,8 +344,8 @@ METHOD oSatCliT() CLASS TDataCenter
 	/*if lAIS() .and. !oUser():lAdministrador()
 
 		cFilter     := "Field->cSufSat == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-		if oUser():lFiltroVentas()         
-		   cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+		if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
+		   cFilter  += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
 		end if 
 
 		( oSatCliT:cAlias )->( AdsSetAOF( cFilter ) )
@@ -374,8 +374,8 @@ METHOD OpenSatCliT( dbf ) CLASS TDataCenter
          /*if lAIS() .and. !oUser():lAdministrador()
       
             cFilter     := "Field->cSufSat == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-            if oUser():lFiltroVentas()         
-               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
+               cFilter  += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
             end if 
 
             ( dbf )->( AdsSetAOF( cFilter ) )
@@ -398,8 +398,8 @@ METHOD oPreCliT() CLASS TDataCenter
 	/*if lAIS() .and. !oUser():lAdministrador()
 
 		cFilter     := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-		if oUser():lFiltroVentas()         
-		   cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+		if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
+		   cFilter  += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
 		end if 
 
 		( oPreCliT:cAlias )->( AdsSetAOF( cFilter ) )
@@ -428,8 +428,8 @@ METHOD OpenPreCliT( dbf ) CLASS TDataCenter
 		/*if lAIS() .and. !oUser():lAdministrador()
 
 		cFilter     := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-		if oUser():lFiltroVentas()         
-		   cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+		if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
+		   cFilter  += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
 		end if 
 
 		( dbf )->( AdsSetAOF( cFilter ) )
@@ -516,8 +516,8 @@ METHOD oFacCliT() CLASS TDataCenter
       if lAIS() .and. !oUser():lAdministrador()
       
          cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-         if oUser():lFiltroVentas()         
-            cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
+            cFilter  += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
 
          ( oFacCliT:cAlias )->( AdsSetAOF( cFilter ) )
@@ -544,8 +544,8 @@ METHOD OpenFacCliT( dbf )
       if lAIS() .and. !oUser():lAdministrador()
    
          cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-         if oUser():lFiltroVentas()         
-            cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
+            cFilter  += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
 
          ( dbf )->( AdsSetAOF( cFilter ) )

@@ -2330,7 +2330,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cajón portamonedas'
    oItem:cMessage       := 'Cajón portamonedas'
-   oItem:bAction        := {|| ConfCajPorta( "cajon_portamonedas", oWnd ) }
+   oItem:bAction        := {|| CajonesPortamonedasController():New():ActivateNavigatorView() }
    oItem:cId            := "cajon_portamonedas"
    oItem:cBmp           := "gc_modem_screw_16"
    oItem:cBmpBig        := "gc_modem_screw_32"

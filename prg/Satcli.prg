@@ -799,8 +799,8 @@ STATIC FUNCTION OpenFiles( lExt )
       if lAIS() .and. !oUser():lAdministrador()
       
          cFiltroUsuario    := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-         if oUser():lFiltroVentas()         
-            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
 
          ( D():SatClientes( nView ) )->( AdsSetAOF( cFiltroUsuario ) )
@@ -1207,7 +1207,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
      oWndBrw:lFechado     := .t.
 
-     oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, D():SatClientes( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", D():SatClientes( nView ), .f. ) ) }
+     oWndBrw:bChgIndex    := {|| if( SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() ), CreateFastFilter( cFiltroUsuario, D():SatClientes( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", D():SatClientes( nView ), .f. ) ) }
 
      oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
@@ -1715,7 +1715,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if !oUser():lFiltroVentas()
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmSatCli() )
       oWndBrw:oActiveFilter:SetFilterType( SAT_CLI )
    end if

@@ -294,11 +294,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
    local oBrwLin
    local oBmpGeneral
    local oBmpFormatos
-
-   if !lUsrMaster()
-      msgStop( "Solo el usuario administrador puede modificar las cajas.")
-      Return .f.
-   end if 
+   local oComboCajonPortamonedas
+   local cComboCajonPortamonedas
 
    if nMode == APPD_MODE
       aTmp[ ( dbfCajT )->( FieldPos( "cPrnWin" ) ) ]     := PrnGetName()
@@ -1013,15 +1010,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       -------------------------------------------------------------------------
       */
 
-      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "CCAJON" ) ) ];
-         VAR      aTmp[ ( dbfCajT )->( FieldPos( "CCAJON" ) ) ];
+      REDEFINE COMBOBOX oComboCajonPortamonedas ;
+         VAR      cComboCajonPortamonedas ;
          ID       310 ;
-         IDTEXT   311 ;
-         PICTURE  "@!" ;
-         VALID    ( cCajPorta( aGet[ ( dbfCajT )->( FieldPos( "CCAJON" ) ) ], dbfCajPorta, aGet[ ( dbfCajT )->( FieldPos( "CCAJON" ) ) ]:oHelpText ) );
-         ON HELP  ( BrwSelCajPorta( aGet[ ( dbfCajT )->( FieldPos( "CCAJON" ) ) ], dbfCajPorta, aGet[ ( dbfCajT )->( FieldPos( "CCAJON" ) ) ]:oHelpText ) ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
+         ITEMS    CajonesPortamonedasRepository():getNombres() ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -2230,7 +2222,7 @@ Function lSetCaja( cCajUsr, cCodUsr, oWndBrw )
    local cFilCaj
 
    DEFAULT cCajUsr   := oUser():cCaja()
-   DEFAULT cCodUsr   := oUser():cCodigo()
+   DEFAULT cCodUsr   := Auth():Codigo() 
 
    cFilCaj           := cCajUsr + cCodUsr
 
@@ -2361,6 +2353,7 @@ Function aItmCaja()
    aAdd( aBase, { "cCajPrt",   "C",  3,   0, "Caja padre" } )
    aAdd( aBase, { "cPrnCut",   "C",  3,   0, "Formato corte" } )
    aAdd( aBase, { "Uuid",      "C", 40,   0, "Uuid" } )
+   aAdd( aBase, { "cajon_uuid","C", 40,   0, "Cajón portamonedas uuid" } )
 
 Return ( aBase )
 
@@ -3238,7 +3231,7 @@ Static Function SelBrwBigCaj( nOpt, oLstCaj, oDlg, dbfCaj )
 
    if ( dbfCaj )->( OrdKeyGoTo( nOpt ) )
       
-      lChgCaja( ( dbfCaj )->cCodCaj, oUser():cCodigo() )
+      lChgCaja( ( dbfCaj )->cCodCaj, Auth():Codigo()  )
       oDlg:end( IDOK )
    else
       MsgStop( "La caja no existe" )
