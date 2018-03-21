@@ -929,8 +929,8 @@ STATIC FUNCTION cOpenStatement()
 
       cStatement        := "SELECT * FROM " + cPatEmp() + "TikeT WHERE cSufTik='" + oUser():cDelegacion() + "' AND cNcjTik='" + oUser():cCaja() + "'"
 
-      if oUser():lFiltroVentas()         
-         cStatement     += " AND cCcjTik='" + oUser():cCodigo() + "'"
+      if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
+         cStatement     += " AND cCcjTik = '" + Auth():Codigo()  + "'"
       end if 
          
    end if
@@ -1705,7 +1705,7 @@ else
 
    end if
 
-   if !( oUser():lFiltroVentas() )
+   if !( SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() ) )
       oWndBrw:oActiveFilter:SetFields( aItmTik() )
       oWndBrw:oActiveFilter:SetFilterType( TIK_CLI )
    end if
@@ -3784,7 +3784,7 @@ Static Function EndBrwApartados( oDlg )
       Return .f.
    end if       
    
-   if ( D():Tikets( nView ) )->cCcjTik == oUser():cCodigo()
+   if ( D():Tikets( nView ) )->cCcjTik == Auth():Codigo() 
       msgStop( "El usuario que realizo el docuemnto no coincide." )
       Return .f.
    end if       
@@ -12836,7 +12836,7 @@ Return .f.
 
 Static Function SetBigUser( aTmp, aGet )
 
-   aTmp[ _CCCJTIK ]  := oUser():cCodigo()
+   aTmp[ _CCCJTIK ]  := Auth():Codigo() 
 
    if !empty( oUser():cImagen() )
       oBtnUsuario:cBmp( cFileBmpName( oUser():cImagen() ) )

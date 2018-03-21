@@ -485,7 +485,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       OF       oWnd
 
 	oWndBrw:lFechado     := .t.
-      oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, D():PedidosProveedores( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", D():PedidosProveedores( nView ), .f. ) ) }
+      oWndBrw:bChgIndex    := {|| if( SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() ), CreateFastFilter( cFiltroUsuario, D():PedidosProveedores( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", D():PedidosProveedores( nView ), .f. ) ) }
 	oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
@@ -922,7 +922,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if !oUser():lFiltroVentas()
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmPedPrv() )
       oWndBrw:oActiveFilter:SetFilterType( PED_PRV )
    end if

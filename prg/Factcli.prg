@@ -1394,7 +1394,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       HOTKEY   "S" ;
       ALLOW EXIT ;
 
-   if !oUser():lFiltroVentas()
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmFacCli() )
       oWndBrw:oActiveFilter:SetFilterType( FAC_CLI )
    end if

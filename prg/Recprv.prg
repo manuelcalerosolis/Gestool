@@ -148,8 +148,8 @@ STATIC FUNCTION OpenFiles( cPatEmp )
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      if oUser():lFiltroVentas()
-         cFiltroUsuario := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+      if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
+         cFiltroUsuario := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
       end if
 
       oCentroCoste            := TCentroCoste():Create( cPatDat() )
@@ -267,7 +267,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       OF       oWnd
 
    oWndBrw:lFechado     := .t.
-   oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, D():FacturasProveedoresPagos( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", D():FacturasProveedoresPagos( nView ), .f. ) ) }
+   oWndBrw:bChgIndex    := {|| if( SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() ), CreateFastFilter( cFiltroUsuario, D():FacturasProveedoresPagos( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", D():FacturasProveedoresPagos( nView ), .f. ) ) }
 
    oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
@@ -567,7 +567,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
 
    end if
 
-   if !oUser():lFiltroVentas()
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
 
    end if
 
@@ -624,7 +624,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if !oUser():lFiltroVentas()
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmRecPrv() )
       oWndBrw:oActiveFilter:SetFilterType( REC_PRV )
    end if
@@ -1180,7 +1180,7 @@ Static Function EndTrans( aTmp, aGet, dbf, oBrw, oDlg, nDinDiv, nMode )
             ( dbf )->cDivPgo     := aTabla[ _CDIVPGO ]
             ( dbf )->nVdvPgo     := aTabla[ _NVDVPGO ]
             ( dbf )->dFecVto     := GetSysDate()
-            ( dbf )->cCodUsr     := oUser():cCodigo()
+            ( dbf )->cCodUsr     := Auth():Codigo() 
             ( dbf )->dFecChg     := GetSysDate()
             ( dbf )->cTimChg     := Time()
             ( dbf )->cTurRec     := cCurSesion()

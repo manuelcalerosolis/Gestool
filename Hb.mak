@@ -345,6 +345,7 @@ AlbaranesClientesLineasModel.prg 										\
 RectificativasClientesLineasModel.prg 									\
 StocksModel.prg 																\
 SituacionesController.prg       											\
+CajonesPortamonedasController.prg 										\
 MovimientosAlmacenView.prg													\
 MovimientosAlmacenBrowseView.prg											\
 MovimientosAlmacenLineasBrowseView.prg									\
@@ -948,6 +949,7 @@ MovimientosAlmacenLineasRepository.obj 								\
 AlmacenesModel.obj 															\
 GruposMovimientosModel.obj 												\
 SituacionesController.obj       											\
+CajonesPortamonedasController.obj       								\
 MovimientosAlmacenesLineasModel.obj 									\
 FacturasClientesLineasModel.obj 											\
 AlbaranesClientesLineasModel.obj 										\
@@ -1537,6 +1539,7 @@ $(OBJ)\AlbaranesClientesLineasModel.obj 								+
 $(OBJ)\RectificativasClientesLineasModel.obj 						+
 $(OBJ)\StocksModel.obj 														+
 $(OBJ)\SituacionesController.obj          							+
+$(OBJ)\CajonesPortamonedasController.obj    							+
 $(OBJ)\MovimientosAlmacenView.obj 										+
 $(OBJ)\MovimientosAlmacenBrowseView.obj								+
 $(OBJ)\MovimientosAlmacenLineasBrowseView.obj						+

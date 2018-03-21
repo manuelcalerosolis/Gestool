@@ -883,8 +883,8 @@ STATIC FUNCTION OpenFiles( lExt )
       if lAIS() .and. !oUser():lAdministrador()
       
          cFiltroUsuario    := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-         if oUser():lFiltroVentas()         
-            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
 
          ( D():FacturasRectificativas( nView ) )->( AdsSetAOF( cFiltroUsuario ) )
@@ -1857,7 +1857,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
    Datos para el filtro-----------------------------------------------------
    */
 
-   if !oUser():lFiltroVentas()
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmFacRec() )
       oWndBrw:oActiveFilter:SetFilterType( FAC_REC )
    end if

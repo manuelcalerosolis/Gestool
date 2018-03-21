@@ -876,8 +876,8 @@ STATIC FUNCTION OpenFiles( lExt )
       if lAIS() .and. !oUser():lAdministrador()
       
          cFiltroUsuario    := "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-         if oUser():lFiltroVentas()         
-            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
 
          ( D():PedidosClientes( nView ) )->( AdsSetAOF( cFiltroUsuario ) )
@@ -1715,7 +1715,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if !oUser():lFiltroVentas()
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmPedCli() ) 
       oWndBrw:oActiveFilter:SetFilterType( PED_CLI )
    end if

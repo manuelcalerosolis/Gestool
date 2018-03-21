@@ -184,7 +184,7 @@ RETURN ( ::hColumns )
 
    ::insertBuffer( hBuffer )
 
-RETURN ( ::hColumns )
+RETURN ( ::hColumns )   
 
 //---------------------------------------------------------------------------//
 
@@ -195,8 +195,6 @@ METHOD UpdateRelacionEntidad( id, uNewValue, cCampo ) CLASS SQLRelacionesEntidad
    cSentence      += "UPDATE " + ::cTableName + " "
    cSentence      += "SET " + cCampo + " = " + toSqlString( uNewValue )
    cSentence      += "WHERE id = " + toSqlString( id )
-
-   MsgInfo( cSentence )
 
 Return ( ::getDatabase():Exec( cSentence ) )
 
