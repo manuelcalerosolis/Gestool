@@ -1,5 +1,10 @@
 MVC - ToDo
 
+<<<<<<< HEAD
+- Meter codigo en la ficha de usuario
+
+=======
+>>>>>>> 17390ca69c7d7f3ab9c40a15a97e00bf424ade61
 - lUsrMaster() revisar esta funcion
 
 - Guardar configuracón de columnas en Selector

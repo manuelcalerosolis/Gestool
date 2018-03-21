@@ -70,8 +70,11 @@ RETURN ( Self )
 
 METHOD checkValues()
 
+<<<<<<< HEAD
    getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() ) 
 
+=======
+>>>>>>> 47a84ab0d76f5aeffdadc7ee201fb3b0e335da12
    getSQLDatabase():Exec( SQLRolesModel():getInsertRolesSentence() )
 
    getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
