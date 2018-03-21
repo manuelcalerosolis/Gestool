@@ -1581,7 +1581,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Transportistas"
    oItem:cMessage       := "Acceso a los transportistas"
-   oItem:bAction        := {|| TTrans():New( cPatCli(), oWnd, "transportistas" ):Activate() }
+   oItem:bAction        := {|| TransportistasController():New():ActivateNavigatorView() }
    oItem:cId            := "transportistas"
    oItem:cBmp           := "gc_small_truck_16"
    oItem:cBmpBig        := "gc_small_truck_32"
