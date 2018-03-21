@@ -330,3 +330,13 @@ GC_MAP_LOCATION_48 BITMAP "..\\bmp\\gc_map_location_48.bmp"
 GC_MORE_16 BITMAP "..\\bmp\\gc_more_16.bmp" 
 GC_MAIL2_DELETE_16 BITMAP "..\\bmp\\gc_mail2_delete_16.bmp" 
 GC_MAIL2_CHECK_16 BITMAP "..\\bmp\\gc_mail2_check_16.bmp"
+
+GC_BOX_OPEN_16 BITMAP "..\\bmp\\gc_box_open_16.bmp"
+GC_BOX_OPEN_32 BITMAP "..\\bmp\\gc_box_open_32.bmp"
+GC_BOX_OPEN_48 BITMAP "..\\bmp\\gc_box_open_48.bmp"
+
+GC_GRAPH_CLAW_48 BITMAP "..\\bmp\\gc_graph_claw_48.bmp"
+
+GC_MODEM_16 BITMAP "..\\bmp\\gc_modem_16.bmp"
+GC_MODEM_32 BITMAP "..\\bmp\\gc_modem_32.bmp"
+GC_MODEM_48 BITMAP "..\\bmp\\gc_modem_48.bmp"

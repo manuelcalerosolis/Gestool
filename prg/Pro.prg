@@ -1550,6 +1550,10 @@ FUNCTION lPrpAct( cVal, oSay, cPrp, dbfTblPro )
 
    local lRet     := .f.
 
+   if isObject( cVal ) .and. Empty( cVal:VarGet() )
+      return .t.
+   end if
+
    if Empty( cPrp )
       return .t.
    end if

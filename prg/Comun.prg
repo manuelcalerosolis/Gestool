@@ -279,8 +279,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // UsuariosController():New():ActivateNavigatorView()
-
 RETURN nil
 
 //----------------------------------------------------------------------------//
@@ -2710,7 +2708,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 6
+   oGrupo:nBigItems     := 7
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"

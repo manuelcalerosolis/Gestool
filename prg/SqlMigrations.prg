@@ -159,7 +159,9 @@ METHOD addModels()
 
    aadd( ::aModels, SQLMovimientosAlmacenLineasNumerosSeriesModel():New() )
 
-   aadd( ::aModels, SQLFiltrosModel():New() )   
+   aadd( ::aModels, SQLFiltrosModel():New() )
+
+   aadd( ::aModels, SQLRelacionesEntidadesModel():New() )
 
 RETURN ( ::aModels )
  

@@ -380,6 +380,8 @@ METHOD Sincroniza()
    ::SetText( "Sincroniza líneas de ordenes de carga", ::aProgress[ 6 ]  )             ; SynOrdCar( ::cPathEmp )
    ::SetText( "Sincroniza unidades de medición", ::aProgress[ 6 ]  )                   ; UniMedicion():Create():Syncronize()
    ::SetText( "Sincroniza fabricantes", ::aProgress[ 6 ]  )                            ; TFabricantes():Create():Syncronize()
+   ::SetText( "Sincroniza centros de coste", ::aProgress[ 6 ]  )                       ; SynCentroCoste()
+   
 
 RETURN ( Self )
 

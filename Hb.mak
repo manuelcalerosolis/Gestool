@@ -619,6 +619,7 @@ ExportableController.prg													\
 SQLRowSet.prg 																	\
 PdaEnvioRecepcionController.prg 											\
 PdaEnvioRecepcionView.prg 													\
+RelacionesEntidadesController.prg 										\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1213,6 +1214,7 @@ SQLRowSet.obj 																	\
 PdaEnvioRecepcionController.obj 											\
 PdaEnvioRecepcionView.obj 													\
 PedidosProveedoresLineasModel.obj 										\
+RelacionesEntidadesController.obj 										\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1797,6 +1799,7 @@ $(OBJ)\ExportableController.obj											+
 $(OBJ)\PdaEnvioRecepcionController.obj 								+
 $(OBJ)\PdaEnvioRecepcionView.obj 										+
 $(OBJ)\PedidosProveedoresLineasModel.obj 							   +
+$(OBJ)\RelacionesEntidadesController.obj 							   +
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

@@ -1911,6 +1911,7 @@ METHOD BuildData()
    oDataTable              := TDataTable():New( "CCoste", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "CCoste.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "CCoste.Cdx"
+   oDataTable:bSyncFile    := {|| SynCentroCoste() }
    oDataTable:cDescription := "Centro de coste"
    oDataTable:bCreateFile  := {| cPath | TCentroCoste():BuildFiles( cPath ) }
    ::AddDataTable( oDataTable )

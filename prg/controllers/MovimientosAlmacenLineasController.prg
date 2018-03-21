@@ -9,6 +9,8 @@ CLASS MovimientosAlmacenLineasController FROM SQLBrowseController
 
    DATA oSeriesControler
 
+   DATA oRelacionesEntidades
+
    DATA oSearchView
 
    DATA aProperties                    INIT {}
@@ -126,6 +128,8 @@ METHOD New( oController )
    ::oSearchView                       := SQLSearchView():New( self )
 
    ::oSeriesControler                  := NumerosSeriesController():New( self )
+
+   ::oRelacionesEntidades              := RelacionesEntidadesController():New( self )
 
    ::setEvent( 'activating',           {|| ::oModel:setColumnOrder( "id" ), ::oModel:setColumnOrientation( "D" ) } )
 
