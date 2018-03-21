@@ -112,11 +112,12 @@ RETURN ( nil )
 
 METHOD UpdateLine( uNewValue, cCampo ) CLASS RelacionesEntidadesController
 
-   msginfo( uNewValue, "UpdateLine" )
-   MsgInfo( ::oRowSet:fieldGet( 'id' ), "Id a actualizar" )
-   MsgInfo(  cCampo, "cCampo" )
-
    ::oModel:UpdateRelacionEntidad( ::oRowSet:fieldGet( 'id' ), uNewValue, cCampo )
+   
+   ::oRowSet:Refresh()
+
+   ::oBrowseView:oBrowse:Refresh()
+   ::oBrowseView:oBrowse:GoBottom()
 
 RETURN ( nil )
 
@@ -138,7 +139,7 @@ CLASS SQLRelacionesEntidadesModel FROM SQLBaseModel
    METHOD insertBlankRelacionEntidad( entidad, uuid )
 
    METHOD UpdateRelacionEntidad( id, uNewValue, cCampo )
-   
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -189,17 +190,15 @@ RETURN ( ::hColumns )
 
 METHOD UpdateRelacionEntidad( id, uNewValue, cCampo ) CLASS SQLRelacionesEntidadesModel
 
-   local cSentence   := "UPDATE " + ::cTableName + " " +                                        ;
-                        "SET " + cCampo + " = " + toSqlString( uNewValue ) + " " +  ;
-                        "WHERE id = " + id
+   local cSentence   := ""
+      
+   cSentence      += "UPDATE " + ::cTableName + " "
+   cSentence      += "SET " + cCampo + " = " + toSqlString( uNewValue )
+   cSentence      += "WHERE id = " + toSqlString( id )
 
+   MsgInfo( cSentence )
 
-
-   MsgInfo( cSentence, "Update" )
-
-
-
-Return ( nil )
+Return ( ::getDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
