@@ -21,7 +21,9 @@ METHOD New() CLASS CajonesPortamonedasController
 
    ::cName                 := "cajon_portamonedas"
 
-   ::hImage                := { "16" => "gc_modem_screw_16" }
+   ::hImage                := {  "16" => "gc_modem_16",;
+                                 "32" => "gc_modem_32",;
+                                 "48" => "gc_modem_48" }
 
    ::nLevel                := nLevelUsr( ::cName )
 
@@ -145,7 +147,7 @@ METHOD Activate() CLASS CajonPortamonedaView
    REDEFINE GET   oGetCodigoApertura ;
       VAR         ::oController:oModel:hBuffer[ "codigo_apertura" ] ;
       ID          120 ;
-      BITMAP      "gc_modem_screw_16" ;
+      BITMAP      "gc_modem_16" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo_apertura" ) ) ;
       OF          oDlg
