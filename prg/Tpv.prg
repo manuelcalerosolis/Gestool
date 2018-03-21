@@ -2342,7 +2342,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, hDocum
          MAX      6 ;
          PICTURE  "9" ;
          VALID    ( aTmp[ _NTARIFA ] >= 1 .and. aTmp[ _NTARIFA ] <= 6 ) ;
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) );
          OF       oDlgTpv
 
       REDEFINE GET oRieCli VAR nRieCli;
@@ -2847,12 +2847,16 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, hDocumen
       oBmpVis:Hide()
    end if
 
-   if oGetRnt != nil .and. oUser():lNotRentabilidad()
-      oGetRnt:Hide()
-   end if
+   if SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
 
-   if oSayGetRnt != nil .and. oUser():lNotRentabilidad()
-      oSayGetRnt:Hide()
+      if oGetRnt != nil  
+         oGetRnt:Hide()
+      end if
+
+      if oSayGetRnt != nil 
+         oSayGetRnt:Hide()
+      end if
+
    end if
 
    /*
@@ -7784,7 +7788,7 @@ Static Function SetDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn ) // , nTop, nLe
 
    oBtn:Move( nRow, nGWidth, nHeight + 4, nHeight + 4, .t. )
 
-   if empty( aTmp[ _NPVPTIL ] ) .or. oUser():lAdministrador() .or. oUser():lCambiarPrecio()
+   if empty( aTmp[ _NPVPTIL ] ) .or. oUser():lAdministrador() .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) )
       if( !empty( aGet[ _NPVPTIL ] ), aGet[ _NPVPTIL ]:HardEnable(), )
       if( !empty( aGet[ _NDTODIV ] ), aGet[ _NDTODIV ]:HardEnable(), )
       if( !empty( aGet[ _NDTOLIN ] ), aGet[ _NDTOLIN ]:HardEnable(), )
@@ -9039,7 +9043,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
       cOldCodArt  := cCodArt
       cOldPrpArt  := cPrpArt
 
-      if empty( aTmp[ _NPVPTIL ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
+      if empty( aTmp[ _NPVPTIL ] ) .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) )
          if( !empty( aGet[ _NPVPTIL ] ), aGet[ _NPVPTIL ]:HardEnable(), )
          if( !empty( aGet[ _NDTODIV ] ), aGet[ _NDTODIV ]:HardEnable(), )
          if( !empty( aGet[ _NDTOLIN ] ), aGet[ _NDTOLIN ]:HardEnable(), )

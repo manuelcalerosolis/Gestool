@@ -1245,7 +1245,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :lHide            := .t.
    end with
 
-   if ( oUser():lCostos() )
+   if ( SQLAjustableModel():getRolVerPreciosCosto( Auth():rolUuid() ) )
 
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Costo"
@@ -5075,7 +5075,7 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
 
          // Comportamiento del dialogo-----------------------------------------------
 
-         if !oUser():lCambiarPrecio()
+         if ( SQLAjustableModel():getRolNoCambiarPrecios( Auth():rolUuid() ) )
 
             aGet[ ( D():Articulos( nView ) )->( FieldPos( "pVenta1" ) ) ]:HardDisable()
             aGet[ ( D():Articulos( nView ) )->( FieldPos( "pVtaIva1") ) ]:HardDisable()
@@ -5097,7 +5097,7 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
 
          end if
 
-         if oUser():lNotRentabilidad()
+         if ( SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() ) )
 
             aGet[ ( D():Articulos( nView ) )->( fieldpos( "Benef1"  ) ) ]:Hide()
             aGet[ ( D():Articulos( nView ) )->( fieldpos( "Benef2"  ) ) ]:Hide()
@@ -5126,7 +5126,7 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
 
    end if
 
-   if oUser():lNotCostos()
+   if ( SQLAjustableModel():getRolNoVerPreciosCosto( Auth():rolUuid() ) )
       aGet[ ( D():Articulos( nView ) )->( fieldpos( "pCosto" ) ) ]:Hide()
       oCosto:Hide()
    end if
@@ -6173,7 +6173,7 @@ Static Function StartEdtDet( aTmp, aGet, oTotal, oBmpDiv )
       aGet[ ( dbfTmpPrv )->( fieldPos( "lDefPrv" ) ) ]:Enable()
    end if 
 
-   if !oUser():lCostos()
+   if SQLAjustableModel():getRolNoVerPreciosCosto( Auth():rolUuid() )
       oTotal:hide()
       oBmpDiv:hide()
       aGet[ ( dbfTmpPrv )->( fieldPos( "NDTOPRV" ) ) ]:hide()
@@ -9001,7 +9001,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
          :lHide            := .t.
       end with
 
-      if oUser():lCostos()
+      if SQLAjustableModel():getRolVerPreciosCosto( Auth():rolUuid() )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Costo"
@@ -15922,7 +15922,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
          :lHide            := .t.
       end with
 
-      if ( oUser():lCostos() )
+      if ( SQLAjustableModel():getRolVerPreciosCosto( Auth():rolUuid() ) )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Costo"

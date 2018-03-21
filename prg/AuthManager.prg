@@ -10,8 +10,10 @@ CLASS AuthManager
    DATA id
    DATA uuid
    DATA nombre
+   DATA codigo
    DATA email
    DATA password
+   DATA rolUuid
 
    METHOD New()
 
@@ -50,12 +52,20 @@ METHOD guard( hUser )
       ::nombre    := hget( hUser, "nombre" ) 
    end if 
 
+   if hhaskey( hUser, "codigo" )
+      ::codigo    := hget( hUser, "codigo" ) 
+   end if 
+
    if hhaskey( hUser, "email" )
       ::email     := hget( hUser, "email" ) 
    end if 
 
    if hhaskey( hUser, "password" )
       ::password  := hget( hUser, "password" ) 
+   end if 
+
+   if hhaskey( hUser, "rol_uuid" )
+      ::rolUuid   := hget( hUser, "rol_uuid" ) 
    end if 
 
 RETURN ( self )

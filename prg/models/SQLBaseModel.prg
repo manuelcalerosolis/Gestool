@@ -259,25 +259,37 @@ RETURN ( ::hColumns )
 
 METHOD getEmpresaColumns()
 
-   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
-                                       "text"      => "Identificador"                           ,;
-                                       "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
+                                          "text"      => "Identificador"                           ,;
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                       "text"      => "Uuid"                                    ,;
-                                       "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                          "text"      => "Uuid"                                    ,;
+                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "empresa",     {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
-                                       "text"      => "Empresa"                                 ,;
-                                       "default"   => {|| cCodEmp() } }                         )
+   hset( ::hColumns, "empresa",        {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
+                                          "text"      => "Empresa"                                 ,;
+                                          "default"   => {|| cCodEmp() } }                         )
 
-   hset( ::hColumns, "delegacion",  {  "create"    => "VARCHAR(2) NOT NULL"                     ,;
-                                       "text"      => "Delegación"                              ,;
-                                       "default"   => {|| retSufEmp() } }                       )
+   hset( ::hColumns, "empresa_uuid",   {  "create"    => "CHAR ( 40 ) NOT NULL"                    ,;
+                                          "text"      => "Empresa"                                 ,;
+                                          "default"   => {|| cCodEmp() } }                         )
 
-   hset( ::hColumns, "usuario",     {  "create"    => "VARCHAR(3) NOT NULL"                     ,;
-                                       "text"      => "Usuario"                                 ,;
-                                       "default"   => {|| cCurUsr() } }                         )
+   hset( ::hColumns, "delegacion",     {  "create"    => "VARCHAR( 2 ) NOT NULL"                   ,;
+                                          "text"      => "Delegación"                              ,;
+                                          "default"   => {|| retSufEmp() } }                       )
+
+   hset( ::hColumns, "delegacion_uuid",{  "create"    => "CHAR ( 40 ) NOT NULL"                    ,;
+                                          "text"      => "Delegación uuid"                         ,;
+                                          "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "usuario",        {  "create"    => "VARCHAR( 3 ) NOT NULL"                   ,;
+                                          "text"      => "Usuario"                                 ,;
+                                          "default"   => {|| Auth():Codigo() } }                   )
+
+   hset( ::hColumns, "usuario_uuid",   {  "create"    => "CHAR ( 40 ) NOT NULL"                    ,;
+                                          "text"      => "Usuario uuid"                            ,;
+                                          "default"   => {|| Auth():Uuid() } }                     )
 
 RETURN ( ::hColumns )
 

@@ -1,5 +1,9 @@
 MVC - ToDo
 
+- Meter codigo en la ficha de usuario
+
+- lUsrMaster() revisar esta funcion
+
 - Guardar configuracón de columnas en Selector
 
 - No guarda configuracion de columnas en movilientos de almacen lineas.

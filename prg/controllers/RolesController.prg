@@ -164,7 +164,7 @@ METHOD startingActivate()
 
    oPanel:addCheckBox( "Ver precios de costo", @::lVerPreciosCosto )
 
-   oPanel:addCheckBox( "Confirmar eliminacions", @::lConfirmacionEliminacion )
+   oPanel:addCheckBox( "Confirmar eliminación", @::lConfirmacionEliminacion )
 
    oPanel:addCheckBox( "Filtrar ventas por usuario", @::lFiltrarVentas )
 

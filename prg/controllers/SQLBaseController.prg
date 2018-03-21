@@ -625,7 +625,7 @@ METHOD Delete( aSelectedRecno )
 
    ::fireEvent( 'openingConfirmDelete' )
 
-   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
       
       ::fireEvent( 'deletingSelection' ) 
 

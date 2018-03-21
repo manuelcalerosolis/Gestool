@@ -3140,7 +3140,7 @@ FUNCTION lInitCheck( oMessage, oProgress )
       oProgress:AutoInc()
    end if
 
-   setEmpresa( SQLAjustableModel():getUsuarioEmpresaEnUso( Auth():Uuid() ) )
+   setEmpresa( SQLAjustableModel():getUsuarioEmpresa( Auth():Uuid() ) )
 
    // Eventos del inicio---------------------------------
 

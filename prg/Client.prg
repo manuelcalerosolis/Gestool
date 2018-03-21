@@ -1706,7 +1706,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          SPINNER ;
          MIN      1 ;
          MAX      6 ;
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) );
          VALID    ( aTmp[ _NTARCMB ] >= 1 .and. aTmp[ _NTARCMB ] <= 6 );
          OF       fldGeneral   
 
@@ -1716,7 +1716,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          SPINNER ;
          MIN      0 ;
          MAX      6 ;
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) );
          VALID    ( aTmp[ _NDTOART ] >= 0 .and. aTmp[ _NDTOART ] <= 6 );
          OF       fldGeneral
 
@@ -3074,31 +3074,31 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE BUTTON  ;
          ID       500 ;
          OF       fldTarifa ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE );
          ACTION   ( WinAppRec( oBrwAtp, bEdtAtp, dbfTmpAtp, aTmp, aGet ) )
 
       REDEFINE BUTTON  ;
          ID       501 ;
          OF       fldTarifa ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE );
          ACTION   ( WinEdtRec( oBrwAtp, bEdtAtp, dbfTmpAtp, aTmp, aGet ) )
 
       REDEFINE BUTTON ;
          ID       503 ;
          OF       fldTarifa ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE );
          ACTION   ( WinZooRec( oBrwAtp, bEdtAtp, dbfTmpAtp, aTmp, aGet ) )
 
       REDEFINE BUTTON  ;
          ID       502 ;
          OF       fldTarifa ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE );
          ACTION   ( WinDelRec( oBrwAtp, dbfTmpAtp ) )
 
       REDEFINE BUTTON ;
          ID       504 ;
          OF       fldTarifa ;
-         WHEN     ( oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE );
+         WHEN     ( ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE );
          ACTION   ( AddFamilia( oBrwAtp, dbfTmpAtp, aTmp[_COD] ) )
 
       REDEFINE BUTTON ;
@@ -3266,7 +3266,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          :nWidth           := 80
       end with
 
-      if oUser():lCambiarPrecio() .and. nMode != ZOOM_MODE
+      if ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE
          oBrwAtp:bLDblClick   := {|| WinEdtRec( oBrwAtp, bEdtAtp, dbfTmpAtp, aTmp, aGet ) }
       end if
       oBrwAtp:bRClicked       := {| nRow, nCol, nFlags | oBrwAtp:RButtonDown( nRow, nCol, nFlags ) }
@@ -4106,7 +4106,7 @@ Static Function delEntidadesArray( nArray, oBrw )
 
    local cTxt  := "¿Desea eliminar el registro en curso?"
 
-   if oUser():lNotConfirmDelete() .or. apoloMsgNoYes( cTxt, "Confirme supersión")
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. apoloMsgNoYes( cTxt, "Confirme supersión")
 
       aDel( aEntidades, nArray, .t. )
 

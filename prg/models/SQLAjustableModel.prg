@@ -38,10 +38,20 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD getUsuarioEmpresa( cUuid )                                    
 
    METHOD getRolMostrarRentabilidad( cUuid )                            INLINE ( ::getLogic( cUuid, 'roles', 'mostrar_rentabilidad', .t. ) )   
+   METHOD getRolNoMostrarRentabilidad( cUuid )                          INLINE ( !::getRolMostrarRentabilidad( cUuid ) )   
+   
    METHOD getRolCambiarPrecios( cUuid )                                 INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_precios', .t. ) )   
+   METHOD getRolNoCambiarPrecios( cUuid )                               INLINE ( !::getRolCambiarPrecios( cUuid ) )   
+   
    METHOD getRolVerPreciosCosto( cUuid )                                INLINE ( ::getLogic( cUuid, 'roles', 'ver_precios_costo', .t. ) )   
+   METHOD getRolNoVerPreciosCosto( cUuid )                              INLINE ( !::getRolVerPreciosCosto( cUuid ) )   
+   
    METHOD getRolConfirmacionEliminacion( cUuid )                        INLINE ( ::getLogic( cUuid, 'roles', 'confirmacion_eliminacion', .t. ) )   
+   METHOD getRolNoConfirmacionEliminacion( cUuid )                      INLINE ( !::getRolConfirmacionEliminacion( cUuid ) )   
+   
    METHOD getRolFiltrarVentas( cUuid )                                  INLINE ( ::getLogic( cUuid, 'roles', 'fitrar_ventas_por_usuario', .t. ) )   
+   METHOD getRolNoFiltrarVentas( cUuid )                                INLINE ( !::getRolFiltrarVentas( cUuid ) )   
+   
    METHOD getRolAbrirCajonPortamonedas( cUuid )                         INLINE ( ::getLogic( cUuid, 'roles', 'abrir_cajon_portamonedas', .t. ) )   
 
 END CLASS
@@ -87,7 +97,13 @@ RETURN ( ::insertOnDuplicate( hBuffer ) )
 
 METHOD setValue( cAjusteDescripcion, cAjusteValue, cAjustableTipo, cAjustableUuid )
 
-   local cAjusteUuid := SQLAjustesModel():getAjusteUuid( cAjusteDescripcion )
+   local cAjusteUuid
+
+   if empty( cAjusteDescripcion ) .or. empty( cAjusteValue ) .or. empty( cAjustableTipo ) .or. empty( cAjustableUuid )
+      RETURN ( nil )
+   endif
+
+   cAjusteUuid := SQLAjustesModel():getAjusteUuid( cAjusteDescripcion )
 
    if empty( cAjusteUuid )
       RETURN ( nil )
@@ -154,10 +170,10 @@ RETURN ( lDefault )
 
 METHOD getUsuarioEmpresa( cUuid )
 
-   local cUuidEmpresa   := ::getUsuarioEmpresaExclusiva( cUuid )
+   local cCodigoEmpresa := ::getUsuarioEmpresaExclusiva( cUuid )
 
-   if !empty( cUuidEmpresa )                                    
-      RETURN ( cUuidEmpresa )
+   if !empty( cCodigoEmpresa )                                    
+      RETURN ( cCodigoEmpresa )
    end if 
 
 RETURN ( ::getUsuarioEmpresaEnUso( cUuid ) )

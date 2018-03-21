@@ -772,7 +772,7 @@ METHOD Del( lHead, lDetail ) CLASS TMasDet
 
       cTxt           := "¿ Desea eliminar definitivamente " + AllTrim( Trans( len( ::oWndBrw:oBrw:aSelected ), "999999" ) ) + " registros ?"
 
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supresión" )
+      if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( cTxt, "Confirme supresión" )
 
          CursorWait()
 
@@ -798,7 +798,7 @@ METHOD Del( lHead, lDetail ) CLASS TMasDet
 
    else
    
-      if oUser():lNotConfirmDelete() .or. apoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
+      if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. apoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
    
          CursorWait()
 
@@ -1105,7 +1105,7 @@ METHOD DeleteDet( lMessage ) CLASS TMasDet
       RETURN ( Self )
    end if
 
-   if oUser():lNotConfirmDelete() .or. if( lMessage, ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" ), .t. )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. if( lMessage, ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" ), .t. )
 
       ::oDbfVir:Delete( .t. )
 
@@ -1126,7 +1126,7 @@ METHOD MultiDeleteDet() CLASS TMasDet
    local nSelected
    local aSelected  := ::oBrwDet:aSelected
 
-   if oUser():lNotConfirmDelete() .or. ;
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ;
       ApoloMsgNoYes( "¿ Desea eliminar definitivamente " + alltrim( str( len( aSelected ) ) ) + " registro(s) ?", "Confirme supersión" )
 
       for each nSelected in aSelected

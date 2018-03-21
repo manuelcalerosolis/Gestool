@@ -616,7 +616,7 @@ Return .t.
 
 Static Function DelDet()
 
-   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión" )
 
       if dbLock( dbfTmpUbiL )
          ( dbfTmpUbiL )->( dbDelete() )

@@ -283,7 +283,7 @@ METHOD Delete( oBrowse )
       cNumbersOfDeletes := "el registro en curso?"
    end if
 
-   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿Desea eliminar " + cNumbersOfDeletes, "Confirme eliminación" )
       ::oModel:deleteSelection( oBrowse:aSelected )
    end if 
 

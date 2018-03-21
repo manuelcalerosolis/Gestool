@@ -1376,7 +1376,7 @@ RETURN ( nil )
 
 METHOD Del() CLASS TCobAge
 
-   if oUser():lNotConfirmDelete() .or. msgNoYes( "¿ Desea eliminar el registro en curso ?", "Confirme supresión" )
+   if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿ Desea eliminar el registro en curso ?", "Confirme supresión" )
 
       while ::oDetCobAge:oDbf:SeekInOrd( Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob, "nNumCob" )
          ::oDetCobAge:oDbf:Delete(.f.)

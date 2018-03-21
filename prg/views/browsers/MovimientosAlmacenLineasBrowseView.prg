@@ -166,7 +166,7 @@ METHOD addColumns()
       :cDataType           := "N"
    end with
 
-   if ( oUser():lCostos() )
+   if ( SQLAjustableModel():getRolVerPreciosCosto( Auth():rolUuid() ) )
 
       with object ( ::oBrowse:AddCol() )
          :cSortOrder       := 'precio_articulo'

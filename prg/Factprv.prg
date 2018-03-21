@@ -8036,7 +8036,7 @@ static function ShowKitFacPrv( dbfMaster, oBrw, cCodPrv, dbfTmpInc, aGet, aTmp, 
 
    if !empty( aGet )
 
-      if lUsrMaster() .or. oUser():lCambiarPrecio() 
+      if ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) 
          aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:Enable()
       else
          aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:Disable()

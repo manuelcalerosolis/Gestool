@@ -1244,7 +1244,7 @@ METHOD Del() CLASS TMant
 
       cTxt        := "¿ Desea eliminar definitivamente " + AllTrim( Trans( len( oBrw:aSelected ), "999999" ) ) + " registros ?"
 
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supresión" )
+      if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( cTxt, "Confirme supresión" )
 
          CursorWait()
 
@@ -1288,7 +1288,7 @@ METHOD Del() CLASS TMant
    
       if ::oDbf:RecLock()
    
-         if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión" )
+         if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión" )
             CursorWait()
             lDel     := ::oDbf:Delete()
             CursorWE()

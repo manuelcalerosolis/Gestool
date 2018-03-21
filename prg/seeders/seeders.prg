@@ -353,10 +353,9 @@ RETURN ( Self )
 
 METHOD getStatementSeederUsuarios( dbf )
 
-   local hCampos
-
-   hCampos        := {  "uuid" =>               quoted( ( dbf )->Uuid ),;
+   local hCampos  := {  "uuid" =>               quoted( ( dbf )->Uuid ),;
                         "nombre" =>             quoted( capitalize( ( dbf )->cNbrUse ) ),;
+                        "codigo" =>             quoted( ( dbf )->cCodUse ),;
                         "password" =>           quoted( SQLUsuariosModel():Crypt( ( dbf )->cClvUse ) ) }
 
 RETURN ( ::getInsertStatement( hCampos, "usuarios" ) )
@@ -365,9 +364,7 @@ RETURN ( ::getInsertStatement( hCampos, "usuarios" ) )
 
 METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
 
-   local hCampos
-
-   hCampos        := {  "empresa" =>            quoted( cCodEmp() ),;
+   local hCampos  := {  "empresa" =>            quoted( cCodEmp() ),;
                         "delegacion" =>         if( !empty( ( dbfRemMov )->cCodDlg ), quoted( ( dbfRemMov )->cCodDlg ), '00' ),;
                         "usuario" =>            quoted( ( dbfRemMov )->cCodUsr ),;
                         "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;

@@ -2198,7 +2198,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
       oGetTarifa 		:= comboTarifa():Build( { "idCombo" => 171, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( oFld:aDialogs[1] )
-      oGetTarifa:setWhen( {|| nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) } )
+      oGetTarifa:setWhen( {|| nMode != ZOOM_MODE .and. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) } )
 
       REDEFINE BTNBMP oBtnPrecio ;
          ID       174 ;
@@ -2206,7 +2206,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          RESOURCE "gc_arrow_down_16" ;
          NOBORDER ;
          ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )
+         WHEN     ( nMode != ZOOM_MODE .and. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) )
 
       /*
       Bancos-------------------------------------------------------------------
@@ -3702,7 +3702,7 @@ return( .t. )
 
 STATIC FUNCTION SetDialog( oSayGetRnt, oGetRnt )
 
-   if !lAccArticulo() .or. oUser():lNotRentabilidad()
+   if !lAccArticulo() .or. SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
 
       if !empty( oSayGetRnt )
          oSayGetRnt:Hide()
@@ -4048,7 +4048,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          MAX      6 ;
          PICTURE  "9" ;
          VALID    ( aTmp[ _NTARLIN ] >= 1 .AND. aTmp[ _NTARLIN ] <= 6 );
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) );
          ON CHANGE(  changeTarifa( aTmp, aGet, aTmpFac ),;
                      loadComisionAgente( aTmp, aGet, aTmpFac ),;
                      lCalcDeta( aTmp, aTmpFac ) );
@@ -4742,7 +4742,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
 
    //Solo pueden modificar los precios los administradores-----------------------
 
-   if ( empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. nMode != ZOOM_MODE
+   if ( empty( aTmp[ _NPREUNIT ] ) .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) ) .and. nMode != ZOOM_MODE
       aGet[ _NPREUNIT ]:HardEnable()
       aGet[ _NIMPTRN  ]:HardEnable()
       aGet[ _NPNTVER  ]:HardEnable()
@@ -6814,7 +6814,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       Solo pueden modificar los precios los administradores--------------
       */
 
-      if empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
+      if empty( aTmp[ _NPREUNIT ] ) .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) )
          aGet[ _NPREUNIT ]:HardEnable()
          aGet[ _NIMPTRN  ]:HardEnable()
          aGet[ _NPNTVER  ]:HardEnable()

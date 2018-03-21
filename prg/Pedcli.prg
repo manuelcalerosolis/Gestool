@@ -2035,7 +2035,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          RESOURCE "gc_arrow_down_16" ;
          NOBORDER ;
          ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )
+         WHEN     ( nMode != ZOOM_MODE .and. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) )
 
       REDEFINE GET oRieCli VAR nRieCli;
          ID       133 ;
@@ -4622,7 +4622,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          MAX      6 ;
          PICTURE  "9" ;
          VALID    ( aTmp[ _NTARLIN ] >= 1 .and. aTmp[ _NTARLIN ] <= 6 );
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) ) ;
          ON CHANGE(  changeTarifa( aTmp, aGet, aTmpPed ),;
                      loadComisionAgente( aTmp, aGet, aTmpPed ),;
                      recalculaLinea( aTmp, aTmpPed, nDouDiv, oTotal, oTot, oRentLin, cCodDiv ) );
@@ -7039,7 +7039,7 @@ STATIC FUNCTION SetDialog( aGet, oSayGetRnt, oGetRnt )
 
    aGet[ _NESTADO ]:Refresh()
 
-   if !lAccArticulo() .or. oUser():lNotRentabilidad()
+   if !lAccArticulo() .or. SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
 
       if !Empty( oSayGetRnt )
          oSayGetRnt:Hide()
@@ -9024,7 +9024,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       end if
    end if
 
-   if oRentLin != nil .and. oUser():lNotRentabilidad()
+   if oRentLin != nil .and. SQLAjustableModel():getRolNoMostrarRentabilidad( Auth():rolUuid() )
       oRentLin:Hide()
    end if
 
@@ -9251,7 +9251,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
    Solo pueden modificar los precios los administradores--------------
    */
 
-   if ( Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. nMode != ZOOM_MODE
+   if ( empty( aTmp[ _NPREDIV ] ) .or. SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) .and. nMode != ZOOM_MODE
 
       aGet[ _NPREDIV ]:HardEnable()
       aGet[ _NIMPTRN ]:HardEnable()
@@ -10615,7 +10615,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
          Solo pueden modificar los precios los administradores--------------
          */
 
-         if Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
+         if Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) )
 
             aGet[ _NPREDIV ]:HardEnable()
             aGet[ _NIMPTRN ]:HardEnable()
