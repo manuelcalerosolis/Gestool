@@ -561,8 +561,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       // Limitaciones de cajero y cajas--------------------------------------------------------
 
-      if oUser():lFiltroVentas()
-         cFiltroUsuario       := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+      if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
+         cFiltroUsuario       := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
       end if
 
       EnableAcceso()
@@ -726,7 +726,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
 
      oWndBrw:lFechado     := .t.
 
-     oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, D():FacturasProveedores( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", D():FacturasProveedores( nView ), .f. ) ) }
+     oWndBrw:bChgIndex    := {|| if( SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() ), CreateFastFilter( cFiltroUsuario, D():FacturasProveedores( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", D():FacturasProveedores( nView ), .f. ) ) }
 
       oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
@@ -1202,7 +1202,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       TOOLTIP  "(S)alir" ;
       HOTKEY   "S"
 
-   if !oUser():lFiltroVentas()
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmFacPrv() )
       oWndBrw:oActiveFilter:SetFilterType( FAC_PRV )
    end if

@@ -1658,7 +1658,7 @@ Method SaveToDisk( Resultado )
    ::mResultado   := "Este informe quedará guardado en el fichero " + Alltrim( ::cFile ) + " de acuerdo con la Ley Orgánica 15/1999, de 13 de Diciembre, de protección de datos de carácter personal." + CRLF + CRLF
    ::mResultado   += "El proceso de copia de seguridad ha finalizado." + CRLF
    ::mResultado   += "A continuación se muestra un resumen de las operaciones realizadas." + CRLF + CRLF
-   ::mResultado   += "Usuario que realizó la copia: " + oUser():cCodigo() + Space( 1 ) + oUser():cNombre() + CRLF
+   ::mResultado   += "Usuario que realizó la copia: " + Auth():Codigo()  + Space( 1 ) + oUser():cNombre() + CRLF
    ::mResultado   += "Número de discos: " + AllTrim( str( ::bk_DiskNum ) ) + CRLF
    ::mResultado   += "Número de ficheros: " + AllTrim( str( ::bk_NumFiles ) ) + CRLF
    ::mResultado   += "Fecha: " + dtoc( Date() ) + " - " + hora + CRLF

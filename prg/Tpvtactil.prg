@@ -7108,7 +7108,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
    ::oAlbaranClienteCabecera:dFecCre      := GetSysDate()
    ::oAlbaranClienteCabecera:cTimCre      := Time()
    ::oAlbaranClienteCabecera:dFecAlb      := GetSysDate()
-   ::oAlbaranClienteCabecera:cCodUsr      := oUser():cCodigo()
+   ::oAlbaranClienteCabecera:cCodUsr      := Auth():Codigo() 
    ::oAlbaranClienteCabecera:cTurAlb      := cCurSesion()
    ::oAlbaranClienteCabecera:lFacturado   := .f.
    ::oAlbaranClienteCabecera:nFacturado   := 1
@@ -7398,7 +7398,7 @@ METHOD CargaValoresDefecto( nUbicacion ) CLASS TpvTactil
    */
 
    if Empty( ::oTiketCabecera:cCcjTik )
-      ::oTiketCabecera:cCcjTik   := oUser():cCodigo()
+      ::oTiketCabecera:cCcjTik   := Auth():Codigo() 
    end if
 
    /*
@@ -9728,7 +9728,7 @@ METHOD mailEliminarLinea()
    cMensajeMail         += "<p>" + "Descripción : " +  alltrim( ::oTemporalLinea:cNomTil )      + "</p>" + CRLF  
    cMensajeMail         += "<p>" + "Unidades : " + ::nUnidadesLinea( ::oTemporalLinea, .t. )    + "</p>" + CRLF  
    cMensajeMail         += "<p>" + "Importe : " + ::nTotalLinea( ::oTemporalLinea, .t. )        + "</p>" + CRLF  
-   cMensajeMail         += "<p>" + "Cajero : " + oUser():cCodigo() + " - " + oUser():cNombre()  + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Cajero : " + Auth():Codigo()  + " - " + oUser():cNombre()  + "</p>" + CRLF  
    cMensajeMail         += "<p>" + "Fecha y hora : " + dtoc( date() ) + " - " + time()          + "</p>" + CRLF  
 
    hSet( hMail, "mail", cDireccionMail ) 

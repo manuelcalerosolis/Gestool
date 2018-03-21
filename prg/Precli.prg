@@ -770,8 +770,8 @@ STATIC FUNCTION OpenFiles( lExt )
       if lAIS() .and. !oUser():lAdministrador()
       
          cFiltroUsuario    := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-         if oUser():lFiltroVentas()         
-            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
 
          ( D():PresupuestosClientes( nView ) )->( AdsSetAOF( cFiltroUsuario ) )
@@ -1688,7 +1688,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if !oUser():lFiltroVentas()
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmPreCli() )
       oWndBrw:oActiveFilter:SetFilterType( PRE_CLI )
    end if

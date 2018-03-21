@@ -1250,7 +1250,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       Datos para el filtro-----------------------------------------------------
       */
 
-   if !oUser():lFiltroVentas() // getRolFiltrarVentas( Auth():uuidRol() )
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() ) // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmAlbCli() )
       oWndBrw:oActiveFilter:SetFilterType( ALB_CLI )
    end if
@@ -1672,8 +1672,9 @@ STATIC FUNCTION OpenFiles()
       if lAIS() .and. !oUser():lAdministrador()
       
          cFiltroUsuario    := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-         if oUser():lFiltroVentas()         
-            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         
+         if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
 
          ( D():Get( "AlbCliT", nView ) )->( AdsSetAOF( cFiltroUsuario ) )
@@ -1696,7 +1697,7 @@ STATIC FUNCTION OpenFiles()
 
    RECOVER USING oError
 
-      lOpenFiles        := .f.
+      lOpenFiles           := .f.
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 

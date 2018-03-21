@@ -427,7 +427,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
      oWndBrw:lFechado     := .t.
 
-     oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, D():AlbaranesProveedores( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", D():AlbaranesProveedores( nView ), .f. ) ) }
+     oWndBrw:bChgIndex    := {|| if( SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() ), CreateFastFilter( cFiltroUsuario, D():AlbaranesProveedores( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", D():AlbaranesProveedores( nView ), .f. ) ) }
 
      oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
@@ -880,7 +880,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if !oUser():lFiltroVentas()
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmAlbPrv() )
       oWndBrw:oActiveFilter:SetFilterType( ALB_PRV )
    end if

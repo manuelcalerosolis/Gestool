@@ -470,8 +470,8 @@ STATIC FUNCTION OpenFiles( lExt )
    Limitaciones de cajero y cajas--------------------------------------------------------
    */
 
-   if oUser():lFiltroVentas()
-      cFiltroUsuario    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+   if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
+      cFiltroUsuario    := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
    end if
 
    /*
@@ -681,7 +681,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
 
 	  oWndBrw:lFechado     := .t.
 
-	  oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfAntCliT, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfAntCliT, .f. ) ) }
+	  oWndBrw:bChgIndex    := {|| if( SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() ), CreateFastFilter( cFiltroUsuario, dbfAntCliT, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfAntCliT, .f. ) ) }
 
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
@@ -1138,7 +1138,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if !oUser():lFiltroVentas()
+   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmAntCli() )
       oWndBrw:oActiveFilter:SetFilterType( ANT_CLI )
    end if
