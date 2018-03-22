@@ -128,7 +128,7 @@ METHOD lGenerate() CLASS OAcuGPed
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oPedPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvT:cFile ), ::oPedPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oPedPrvT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPedPrvT:cFile ), ::oPedPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oPedPrvT:OrdKeyCount() )
 
@@ -138,7 +138,7 @@ METHOD lGenerate() CLASS OAcuGPed
       cExpLine       := '.t.'
    end if
 
-   ::oPedPrvL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvL:cFile ), ::oPedPrvL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oPedPrvL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPedPrvL:cFile ), ::oPedPrvL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    ::oPedPrvT:GoTop()
 
@@ -172,8 +172,8 @@ METHOD lGenerate() CLASS OAcuGPed
 
    ::oMtrInf:AutoInc( ::oPedPrvT:Lastrec() )
 
-   ::oPedPrvT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedPrvT:cFile ) )
-   ::oPedPrvL:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedPrvL:cFile ) )
+   ::oPedPrvT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPedPrvT:cFile ) )
+   ::oPedPrvL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPedPrvL:cFile ) )
 
    ::IncluyeCero()
 

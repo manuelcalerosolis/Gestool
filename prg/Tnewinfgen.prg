@@ -4012,9 +4012,9 @@ METHOD InitDialog() CLASS TNewInfGen
       next
    end if
 
-   if ::oDbfGrp:Seek( cCurUsr() + ::cSubTitle )
+   if ::oDbfGrp:Seek( Auth():Codigo() + ::cSubTitle )
 
-      while Rtrim( cCurUsr() + ::cSubTitle ) == Rtrim( ::oDbfGrp:cCodUse + ::oDbfGrp:cNomInf ) .and. !::oDbfGrp:eof()
+      while Rtrim( Auth():Codigo() + ::cSubTitle ) == Rtrim( ::oDbfGrp:cCodUse + ::oDbfGrp:cNomInf ) .and. !::oDbfGrp:eof()
 
          nPos     := aScan( ::aSelectionGroup, {|o| Rtrim( o:Cargo:Nombre ) == Rtrim( ::oDbfGrp:cNomGrp ) } )
          if nPos  != 0
@@ -4476,14 +4476,14 @@ Return ( Self )
 
 Method SaveReport() CLASS TNewInfGen
 
-   if ::oDbfInf:Seek( cCurUsr() + Upper( ::cSubTitle ) )
+   if ::oDbfInf:Seek( Auth():Codigo() + Upper( ::cSubTitle ) )
       ::oDbfInf:Load()
-      ::oDbfInf:cCodUse := cCurUsr()
+      ::oDbfInf:cCodUse := Auth():Codigo()
       ::oDbfInf:cNomInf := ::cSubTitle
       ::oDbfInf:Save()
    else
       ::oDbfInf:Append()
-      ::oDbfInf:cCodUse := cCurUsr()
+      ::oDbfInf:cCodUse := Auth():Codigo()
       ::oDbfInf:cNomInf := ::cSubTitle
       ::oDbfInf:Save()
    end if
@@ -4494,7 +4494,7 @@ RETURN ( ::oFastReport:SaveToBlob( ::oDbfInf:nArea, "mModInf" ) )
 
 Method MoveReport() CLASS TNewInfGen
 
-   if ::oDbfInf:Seek( cCurUsr() + Upper( ::cSubTitle ) )
+   if ::oDbfInf:Seek( Auth():Codigo() + Upper( ::cSubTitle ) )
 
       ::oDbfInf:Load()
 
@@ -4505,7 +4505,7 @@ Method MoveReport() CLASS TNewInfGen
 
    else
 
-      msgStop( cCurUsr() + Upper( ::cSubTitle ), "No encontrado" )
+      msgStop( Auth():Codigo() + Upper( ::cSubTitle ), "No encontrado" )
 
    end if
 

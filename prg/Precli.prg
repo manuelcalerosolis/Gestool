@@ -1768,7 +1768,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       aTmp[ _CDIVPRE ]  := cDivEmp()
       aTmp[ _CCODCAJ ]  := oUser():cCaja()
       aTmp[ _CCODPGO ]  := cDefFpg()
-      aTmp[ _CCODUSR ]  := cCurUsr()
+      aTmp[ _CCODUSR ]  := Auth():Codigo()
       aTmp[ _NVDVPRE ]  := nChgDiv( aTmp[ _CDIVPRE ], dbfDiv )
       aTmp[ _LESTADO ]  := .f.
       aTmp[ _CSUFPRE ]  := RetSufEmp()
@@ -1808,7 +1808,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       aTmp[ _CTURPRE ]  := cCurSesion()
       aTmp[ _LESTADO ]  := .f.
       aTmp[ _LCLOPRE ]  := .f.
-      aTmp[ _CCODUSR ]  := cCurUsr()
+      aTmp[ _CCODUSR ]  := Auth():Codigo()
 
    end case
 
@@ -7694,7 +7694,7 @@ STATIC FUNCTION PreRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       aTabla[ _CNUMALB     ]  := Space( 12 )
       aTabla[ _LSNDDOC     ]  := .t.
       aTabla[ _LCLOPRE     ]  := .f.
-      aTabla[ _CCODUSR     ]  := cCurUsr()
+      aTabla[ _CCODUSR     ]  := Auth():Codigo()
       aTabla[ _DFECCRE     ]  := GetSysDate()
       aTabla[ _CTIMCRE     ]  := Time()
       aTabla[ _LIMPRIMIDO  ]  := .f.

@@ -430,7 +430,7 @@ METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    oMsgProgress():Deltapos( 1 )
 
-   ::oTreeAgenda:Add( "No volver a mostrar página de inicio",  21, {|| SetNotIni( cCurUsr() ) } )
+   ::oTreeAgenda:Add( "No volver a mostrar página de inicio",  21, {|| SetNotIni( Auth():Codigo() ) } )
    ::oTreeAgenda:Add( "Salir de página de inicio",             22, {|| ::End() } )
 
    oMsgText( "Cargando gráfico" )
@@ -588,8 +588,8 @@ Method LoadNotas() CLASS TInitShell
 
       oTree             := ::oTreeAgenda:Add( "Añadir nota", 19, {|| AppendNotas() } )
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cUsrNot == cCurUsr() .and. !( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cUsrNot == Auth():Codigo() .and. !( dbf )->( bof() )
             if !( dbf )->lVisNot
                oTree:Add( Dtoc( ( dbf )->dFecNot ) + Space( 1 ) + Rtrim( ( dbf )->cTexNot ), if( ( dbf )->lAlrNot, 20, 19 ), { {| x | EditNotas( x ) }, ( dbf )->( Recno() ) } )
             end if
@@ -838,8 +838,8 @@ Method LoadDocuments() CLASS TInitShell
       Añadimos la rama principal -------------------------------------------------
       */
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCodUsr == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCodUsr == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { ( dbf )->cSerPed + "/" + Alltrim( Str( ( dbf )->nNumPed ) ) + "/" + ( dbf )->cSufPed + " - " + Alltrim( ( dbf )->cCodPrv ) + " - " + Alltrim( ( dbf )->cNomPrv ), Dtos( ( dbf )->dFecChg ) + ( dbf )->cTimChg, 3, { {| x | EdtPedPrv( x, .t. ) }, ( dbf )->cSerPed + Str( ( dbf )->nNumPed ) + ( dbf )->cSufPed } } )
             ( dbf )->( dbSkip( -1 ) )
@@ -873,8 +873,8 @@ Method LoadDocuments() CLASS TInitShell
 
       oMsgText( "Albaranes de proveedor" )
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCodUsr == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCodUsr == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { ( dbf )->cSerAlb + "/" + Alltrim( Str( ( dbf )->nNumAlb ) ) + "/" + ( dbf )->cSufAlb + " - " + Alltrim( ( dbf )->cCodPrv ) + " - " + Alltrim( ( dbf )->cNomPrv ), Dtos( ( dbf )->dFecChg ) + ( dbf )->cTimChg, 4, { {| x | EdtAlbPrv( x, .t. ) }, ( dbf )->cSerAlb + Str( ( dbf )->nNumAlb ) + ( dbf )->cSufAlb } } )
             ( dbf )->( dbSkip( -1 ) )
@@ -908,8 +908,8 @@ Method LoadDocuments() CLASS TInitShell
 
       oMsgText( "Facturas de proveedor" )
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCodUsr == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCodUsr == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { ( dbf )->cSerFac + "/" + Alltrim( Str( ( dbf )->nNumFac ) ) + "/" + ( dbf )->cSufFac + " - " + Alltrim( ( dbf )->cCodPrv ) + " - " + Alltrim( ( dbf )->cNomPrv ), Dtos( ( dbf )->dFecChg ) + ( dbf )->cTimChg, 5, { {| x | EdtFacPrv( x, .t. ) }, ( dbf )->cSerFac + Str( ( dbf )->nNumFac ) + ( dbf )->cSufFac } } )
             ( dbf )->( dbSkip( -1 ) )
@@ -943,8 +943,8 @@ Method LoadDocuments() CLASS TInitShell
 
       oMsgText( "Presupuestos a clientes" )
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCodUsr == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCodUsr == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { ( dbf )->cSerPre + "/" + Alltrim( Str( ( dbf )->nNumPre ) ) + "/" + ( dbf )->cSufPre + " - " + Alltrim( ( dbf )->cCodCli ) + " - " + Alltrim( ( dbf )->cNomCli ), Dtos( ( dbf )->dFecCre ) + ( dbf )->cTimCre, 7, { {| x | EdtPreCli( x, .t. ) }, ( dbf )->cSerPre + Str( ( dbf )->nNumPre ) + ( dbf )->cSufPre } } )
             ( dbf )->( dbSkip( -1 ) )
@@ -978,8 +978,8 @@ Method LoadDocuments() CLASS TInitShell
 
       oMsgText( "Pedido a clientes" )
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCodUsr == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCodUsr == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { ( dbf )->cSerPed + "/" + Alltrim( Str( ( dbf )->nNumPed ) ) + "/" + ( dbf )->cSufPed + " - " + Alltrim( ( dbf )->cCodCli ) + " - " + Alltrim( ( dbf )->cNomCli ), Dtos( ( dbf )->dFecCre ) + ( dbf )->cTimCre, 8, { {| x | EdtPedCli( x, .t. ) }, ( dbf )->cSerPed + Str( ( dbf )->nNumPed ) + ( dbf )->cSufPed } } )
             ( dbf )->( dbSkip( -1 ) )
@@ -1017,8 +1017,8 @@ Method LoadDocuments() CLASS TInitShell
       Añadimos la rama principal -------------------------------------------------
       */
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCodUsr == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCodUsr == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { ( dbf )->cSerAlb + "/" + Alltrim( Str( ( dbf )->nNumAlb ) ) + "/" + ( dbf )->cSufAlb + " - " + Alltrim( ( dbf )->cCodCli ) + " - " + Alltrim( ( dbf )->cNomCli ), Dtos( ( dbf )->dFecCre ) + ( dbf )->cTimCre, 9, { {| x | EdtAlbCli( x, .t. ) }, ( dbf )->cSerAlb + Str( ( dbf )->nNumAlb ) + ( dbf )->cSufAlb } } )
             ( dbf )->( dbSkip( -1 ) )
@@ -1052,8 +1052,8 @@ Method LoadDocuments() CLASS TInitShell
 
       oMsgText( "Facturas a clientes" )
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCodUsr == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and. !( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCodUsr == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and. !( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { ( dbf )->cSerie + "/" + Alltrim( Str( ( dbf )->nNumFac ) ) + "/" + ( dbf )->cSufFac + " - " + Alltrim( ( dbf )->cCodCli ) + " - " + Alltrim( ( dbf )->cNomCli ), Dtos( ( dbf )->dFecCre ) + ( dbf )->cTimCre, 10, { {| x | EdtFacCli( x, .t. ) }, ( dbf )->cSerie + Str( ( dbf )->nNumFac ) + ( dbf )->cSufFac } } )
             ( dbf )->( dbSkip( -1 ) )
@@ -1087,8 +1087,8 @@ Method LoadDocuments() CLASS TInitShell
 
       oMsgText( "Anticipos a clientes" )
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCodUsr == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and. !( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCodUsr == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and. !( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { ( dbf )->cSerAnt + "/" + Alltrim( Str( ( dbf )->nNumAnt ) ) + "/" + ( dbf )->cSufAnt + " - " + Alltrim( ( dbf )->cCodCli ) + " - " + Alltrim( ( dbf )->cNomCli ), Dtos( ( dbf )->dFecCre ) + ( dbf )->cTimCre, 11, { {| x | EdtAntCli( x, .t. ) }, ( dbf )->cSerAnt + Str( ( dbf )->nNumAnt ) + ( dbf )->cSufAnt } } )
             ( dbf )->( dbSkip( -1 ) )
@@ -1122,8 +1122,8 @@ Method LoadDocuments() CLASS TInitShell
 
       oMsgText( "Rectificativas a clientes" )
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCodUsr == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and. !( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCodUsr == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and. !( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { ( dbf )->cSerie + "/" + Alltrim( Str( ( dbf )->nNumFac ) ) + "/" + ( dbf )->cSufFac + " - " + Alltrim( ( dbf )->cCodCli ) + " - " + Alltrim( ( dbf )->cNomCli ), Dtos( ( dbf )->dFecCre ) + ( dbf )->cTimCre, 12, { {| x | EdtFacRec( x, .t. ) }, ( dbf )->cSerie + Str( ( dbf )->nNumFac ) + ( dbf )->cSufFac } } )
             ( dbf )->( dbSkip( -1 ) )
@@ -1157,8 +1157,8 @@ Method LoadDocuments() CLASS TInitShell
 
       oMsgText( "Rectificativas a clientes" )
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCcjTik == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and. !( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCcjTik == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and. !( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { ( dbf )->cSerTik + "/" + AllTrim( ( dbf )->cNumTik ) + "/" + ( dbf )->cSufTik + " - " + Alltrim( ( dbf )->cCliTik ) + " - " + Alltrim( ( dbf )->cNomTik ), Dtos( ( dbf )->dFecCre ) + ( dbf )->cTimCre, 14, { {| x | EdtTikCli( x, .t. ) }, ( dbf )->cSerTik + ( dbf )->cNumTik + ( dbf )->cSufTik } } )
             ( dbf )->( dbSkip( -1 ) )
@@ -1310,8 +1310,8 @@ Method LoadArticulos() CLASS TInitShell
       SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
       ( dbf )->( OrdSetFocus( "cCodUsr" ) )
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCodUsr == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCodUsr == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { Alltrim( ( dbf )->Codigo ) + " - " + Alltrim( ( dbf )->Nombre ), Dtos( ( dbf )->dFecChg ) + ( dbf )->cTimChg, 0, { {| x | EdtArticulo( x, .t. ) }, ( dbf )->Codigo } } )
             ( dbf )->( dbSkip( -1 ) )
@@ -1350,8 +1350,8 @@ Method LoadClientes() CLASS TInitShell
 
       oMsgText( "Clientes recientes" )
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCodUsr == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCodUsr == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { Alltrim( ( dbf )->Cod ) + " - " + Alltrim( ( dbf )->Titulo ), Dtos( ( dbf )->dFecChg ) + ( dbf )->cTimChg, 1, { {| x | EdtCli( x, .t. ) }, ( dbf )->Cod } } )
             ( dbf )->( dbSkip( -1 ) )
@@ -1390,8 +1390,8 @@ Method LoadProveedores() CLASS TInitShell
 
       oMsgText( "Proveedor recientes" )
 
-      if ( dbf )->( dbSeek( cCurUsr(), .f., .t. ) )
-         while ( dbf )->cCodUsr == cCurUsr() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
+      if ( dbf )->( dbSeek( Auth():Codigo(), .f., .t. ) )
+         while ( dbf )->cCodUsr == Auth():Codigo() .and. nDocumentos <= NUMERO_DOCUMENTOS .and.!( dbf )->( bof() )
             nDocumentos ++
             aAdd( ::aDocuments, { Alltrim( ( dbf )->Cod ) + " - " + Alltrim( ( dbf )->Titulo ), Dtos( ( dbf )->dFecChg ) + ( dbf )->cTimChg, 2, { {| x | EdtPrv( x, .t. ) }, ( dbf )->Cod } } )
             ( dbf )->( dbSkip( -1 ) )

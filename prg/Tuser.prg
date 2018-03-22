@@ -723,17 +723,6 @@ Return ( oUser )
 
 //--------------------------------------------------------------------------//
 
-Function cCurUsr()
-
-   if empty( oUser )
-      // msgStop( "Objeto de usuario no creado" )
-      Return ( "" )
-   end if
-
-Return ( oUser:cCodigo() )
-
-//--------------------------------------------------------------------------//
-
 Function cCurGrp()
 
    if empty( oUser )

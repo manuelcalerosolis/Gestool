@@ -5749,7 +5749,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cPrvHab" ) ) ]       := cProvHab
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lLabel"  ) ) ]       := .t.
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "lSndDoc" ) ) ]       := .t.
-      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodUsr" ) ) ]       := cCurUsr()
+      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodUsr" ) ) ]       := Auth():Codigo()
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "dFecChg" ) ) ]       := GetSysDate()
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cTimChg" ) ) ]       := Time()
       aTmp[ ( D():Articulos( nView ) )->( fieldpos( "nBnfSbr1") ) ]       := oSay[ 11 ]:nAt

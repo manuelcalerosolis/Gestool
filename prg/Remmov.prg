@@ -337,7 +337,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
       FIELD NAME "cSufRem"             TYPE "C" LEN  2  DEC 0 PICTURE "@!"                DEFAULT  RetSufEmp()                                  COMMENT "Delegación"       COLSIZE 40                 OF ::oDbf
       FIELD NAME "nTipMov"             TYPE "N" LEN  1  DEC 0                                                                                   COMMENT "Tipo del movimiento"             HIDE        OF ::oDbf
       FIELD CALCULATE NAME "cTipMov"            LEN 12  DEC 0                             VAL ( ::cTextoMovimiento() )                          COMMENT "Tipo"             COLSIZE 90                 OF ::oDbf
-      FIELD NAME "cCodUsr"             TYPE "C" LEN  3  DEC 0                             DEFAULT  cCurUsr()                                    COMMENT "Código usuario"                  HIDE        OF ::oDbf
+      FIELD NAME "cCodUsr"             TYPE "C" LEN  3  DEC 0                             DEFAULT  Auth():Codigo()                                    COMMENT "Código usuario"                  HIDE        OF ::oDbf
       FIELD NAME "cCodDlg"             TYPE "C" LEN  2  DEC 0                                                                                   COMMENT ""                                HIDE        OF ::oDbf
       FIELD NAME "cCodAge"             TYPE "C" LEN  3  DEC 0                                                                                   COMMENT "Código agente"                   HIDE        OF ::oDbf
       FIELD NAME "cCodMov"             TYPE "C" LEN  2  DEC 0                                                                                   COMMENT "Tipo de movimiento"              HIDE        OF ::oDbf
@@ -1033,8 +1033,8 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
 
    if nMode == APPD_MODE
       ::oDbf:lSelDoc := .t.
-      ::oDbf:cCodUsr := cCurUsr()
-      ::oDbf:cCodDlg := oRetFld( cCurUsr(), ::oUsr, "cCodDlg" )
+      ::oDbf:cCodUsr := Auth():Codigo()
+      ::oDbf:cCodDlg := oRetFld( Auth():Codigo(), ::oUsr, "cCodDlg" )
    end if
 
    cSay[ 1 ]         := oRetFld( ::oDbf:cAlmOrg, ::oAlmacenOrigen )

@@ -338,7 +338,7 @@ METHOD lGenerate()
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oAlqCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlqCliT:cFile ), ::oAlqCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oAlqCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oAlqCliT:cFile ), ::oAlqCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oAlqCliT:OrdKeyCount() )
 
@@ -368,7 +368,7 @@ METHOD lGenerate()
       cExpLine       += ' .and. cAlmLin >= "' + Rtrim( ::oGrupoAlmacen:Cargo:Desde ) + '" .and. cAlmLin <= "' + Rtrim( ::oGrupoAlmacen:Cargo:Hasta ) + '"'
    end if
 
-   ::oAlqCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlqCliL:cFile ), ::oAlqCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oAlqCliL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oAlqCliL:cFile ), ::oAlqCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    /*
    Tomamos las condiciones-----------------------------------------------------
@@ -453,9 +453,9 @@ METHOD lGenerate()
    Destruimos los filtros------------------------------------------------------
    */
 
-   ::oAlqCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlqCliT:cFile ) )
+   ::oAlqCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oAlqCliT:cFile ) )
 
-   ::oAlqCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlqCliL:cFile ) )
+   ::oAlqCliL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oAlqCliL:cFile ) )
 
    ::oMtrInf:AutoInc( ::oAlqCliT:LastRec() )
 

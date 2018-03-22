@@ -163,7 +163,7 @@ METHOD lGenerate()
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacRecT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
 
@@ -175,7 +175,7 @@ METHOD lGenerate()
       cExpLine       += '.and. cCodFam >= "' + Rtrim( ::cFamOrg ) + '" .and. cCodFam <= "' + Rtrim( ::cFamDes ) + '"'
    end if
 
-   ::oFacRecL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oFacRecL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    ::oFacRecT:GoTop()
 
@@ -215,7 +215,7 @@ METHOD lGenerate()
 
    end while
 
-   ::oFacRecL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ) )
+   ::oFacRecL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacRecL:cFile ) )
 
    ::oMtrInf:AutoInc( ::oFacRecT:LastRec() )
 

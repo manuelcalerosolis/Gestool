@@ -2025,7 +2025,7 @@ METHOD DialogCreateTurno()
    cCaja                := ::GetCurrentCaja()
    cPicImp              := cPorDiv( cDivEmp(), ::oDbfDiv )
    cDivisa              := cDivEmp()
-   cSayUsr              := Capitalize( oRetFld( cCurUsr(), ::oUser ) )
+   cSayUsr              := Capitalize( oRetFld( Auth():Codigo(), ::oUser ) )
    cDivObjetivo         := cDivEmp()
    cNombreCaja          := Alltrim( oRetFld( ::GetCurrentCaja(), ::oCaja ) )
    cResource            := "ApTurnoTCT"
@@ -2036,7 +2036,7 @@ METHOD DialogCreateTurno()
 
    ::dOpenTurno         := GetSysDate()
    ::cHoraTurno         := SubStr( Time(), 1, 5 )
-   ::cCajeroTurno       := cCurUsr()
+   ::cCajeroTurno       := Auth():Codigo()
    ::nObjetivoTurno     := 0
    ::nImporteTurno      := ::GetLastEfectivo()
    ::cDescripcionTurno  := "Apertura de sesión " + cNombreCaja
@@ -2985,7 +2985,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       end if
 
       if empty( ::cCajTur )
-         ::cCajTur      := cCurUsr()
+         ::cCajTur      := Auth():Codigo()
       end if
 
    end if

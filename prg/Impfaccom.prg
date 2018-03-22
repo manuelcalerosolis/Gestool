@@ -563,7 +563,7 @@ METHOD ImportaProveedores()
       ::oDbfPrvGst:cMeiInt     := ::oDbfPrvFac:Correoe
       ::oDbfPrvGst:cWebInt     := ::oDbfPrvFac:Url
       ::oDbfPrvGst:nCopiasf    := 1
-      ::oDbfPrvGst:cCodUsr     := cCurUsr()
+      ::oDbfPrvGst:cCodUsr     := Auth():Codigo()
       ::oDbfPrvGst:dFecChg     := GetSysDate()
       ::oDbfPrvGst:cTimChg     := Time()
       ::oDbfPrvGst:lBlqPrv     := .f.     
@@ -649,7 +649,7 @@ METHOD ImportaClientes()
       ::oDbfCliGst:cMeiInt    := ::oDbfCliFac:Correoe
       ::oDbfCliGst:cWebInt    := ::oDbfCliFac:Url
       ::oDbfCliGst:cPerCto    := ::oDbfCliFac:Contacto
-      ::oDbfCliGst:cCodUsr    := cCurUsr()
+      ::oDbfCliGst:cCodUsr    := Auth():Codigo()
       ::oDbfCliGst:dFecChg    := GetSysDate()
       ::oDbfCliGst:cTimChg    := Time()
       ::oDbfCliGst:cDtoEsp    := Padr( "General", 50 )
@@ -793,7 +793,7 @@ METHOD ImportaArticulos()
       ::oDbfArtGst:nCajEnt          := 1
       ::oDbfArtGst:nUniCaja         := 1
       ::oDbfArtGst:LastChg          := GetSysDate()
-      ::oDbfArtGst:cCodUsr          := cCurUsr()
+      ::oDbfArtGst:cCodUsr          := Auth():Codigo()
       ::oDbfArtGst:cTimChg          := Time()
       ::oDbfArtGst:nCtlStock        := 1
 
@@ -915,7 +915,7 @@ METHOD ImportaAlbaranesClientes()
       ::oDbfAlbTGst:nTarifa         := 1
       ::oDbfAlbTGst:cDivAlb         := cDivEmp()
       ::oDbfAlbTGst:lIvaInc         := ::oDbfAlbTFac:IvaIncl
-      ::oDbfAlbTGst:cCodUsr         := cCurUsr()
+      ::oDbfAlbTGst:cCodUsr         := Auth():Codigo()
       ::oDbfAlbTGst:dFecCre         := GetSysDate()
       ::oDbfAlbTGst:cTimCre         := Time()
       ::oDbfAlbTGst:dFecEnv         := Ctod( "" )
@@ -1108,7 +1108,7 @@ METHOD ImportaFacturasClientes()
 
             ::oDbfFacTGst:lIvaInc     := ::oDbfFacTFac:IvaIncl
             ::oDbfFacTGst:cDivFac     := cDivEmp()
-            ::oDbfFacTGst:cCodUsr     := cCurUsr()
+            ::oDbfFacTGst:cCodUsr     := Auth():Codigo()
             ::oDbfFacTGst:dFecCre     := GetSysDate()
             ::oDbfFacTGst:cTimCre     := Time()
 
@@ -1308,7 +1308,7 @@ METHOD ImportaReciboClientes()
       ::oDbfFacPGst:nVdvPgo      := 1
       ::oDbfFacPGst:dFecVto      := ::oDbfFacTFac:Fecha
 
-      ::oDbfFacPGst:cCodUsr      := cCurUsr()
+      ::oDbfFacPGst:cCodUsr      := Auth():Codigo()
 
       if ::oDbfFacTGst:SeekInOrd( cSerie + Str( nNumero, 9 ) + cSufijo, "nNumFac" )
          ::oDbfFacPGst:cCodCli   := ::oDbfFacTGst:cCodCli
@@ -1401,7 +1401,7 @@ METHOD ImportaFacturasProveedores()
       end if 
 
       ::oDbfFacPrvTGst:cDivFac         := cDivEmp()
-      ::oDbfFacPrvTGst:cCodUsr         := cCurUsr()
+      ::oDbfFacPrvTGst:cCodUsr         := Auth():Codigo()
       ::oDbfFacPrvTGst:dFecChg         := GetSysDate()
       ::oDbfFacPrvTGst:cTimChg         := Time()
 
@@ -1600,7 +1600,7 @@ METHOD ImportaPedidosProveedores()
          
          ::oDbfPedPrvTGst:cDtoEsp      := Padr( "General", 50 )
          ::oDbfPedPrvTGst:cDpp         := Padr( "Pronto pago", 50 )
-         ::oDbfPedPrvTGst:cCodUsr      := cCurUsr()
+         ::oDbfPedPrvTGst:cCodUsr      := Auth():Codigo()
          ::oDbfFacPrvTGst:dFecChg      := GetSysDate()
          ::oDbfFacPrvTGst:cTimChg      := Time()
 

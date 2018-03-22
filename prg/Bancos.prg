@@ -1214,7 +1214,7 @@ METHOD AddPedidosClientes() CLASS TFastCuentasBancarias
    cExp                 := '!lPasado .and. dEntrega >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrega <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. '
    cExp                 += 'cCodCli >= "' + ::oGrupoCliente:Cargo:Desde + '" .and. cCodCli <= "' + ::oGrupoCliente:Cargo:Hasta + '"'
 
-   ::oPedCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliP:cFile ), ::oPedCliP:OrdKey(), ( cExp ), , , , , , , , .t. )
+   ::oPedCliP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPedCliP:cFile ), ::oPedCliP:OrdKey(), ( cExp ), , , , , , , , .t. )
 
    ::oMtrInf:cText      := "Procesando recibos de clientes"
    ::oMtrInf:SetTotal( ::oPedCliP:OrdKeyCount() )
@@ -1253,7 +1253,7 @@ METHOD AddPedidosClientes() CLASS TFastCuentasBancarias
 
    end while
 
-   ::oPedCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliP:cFile ) )
+   ::oPedCliP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPedCliP:cFile ) )
 
 RETURN ( Self )
 
@@ -1269,7 +1269,7 @@ METHOD AddAlbaranesClientes() CLASS TFastCuentasBancarias
    cExp                 := '!lPasado .and. dEntrega >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrega <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. '
    cExp                 += 'cCodCli >= "' + ::oGrupoCliente:Cargo:Desde + '" .and. cCodCli <= "' + ::oGrupoCliente:Cargo:Hasta + '"'
 
-   ::oAlbCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliP:cFile ), ::oAlbCliP:OrdKey(), ( cExp ), , , , , , , , .t. )
+   ::oAlbCliP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oAlbCliP:cFile ), ::oAlbCliP:OrdKey(), ( cExp ), , , , , , , , .t. )
 
    ::oMtrInf:cText      := "Procesando recibos de clientes"
    ::oMtrInf:SetTotal( ::oAlbCliP:OrdKeyCount() )
@@ -1308,7 +1308,7 @@ METHOD AddAlbaranesClientes() CLASS TFastCuentasBancarias
 
    end while
 
-   ::oAlbCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliP:cFile ) )
+   ::oAlbCliP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oAlbCliP:cFile ) )
 
 RETURN ( Self )
 
@@ -1324,7 +1324,7 @@ METHOD AddRecibosClientes() CLASS TFastCuentasBancarias
    cExp                 := 'lCobrado .and. dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. '
    cExp                 += 'cCodCli >= "' + ::oGrupoCliente:Cargo:Desde + '" .and. cCodCli <= "' + ::oGrupoCliente:Cargo:Hasta + '"'
 
-   ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExp ), , , , , , , , .t. )
+   ::oFacCliP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExp ), , , , , , , , .t. )
 
    ::oMtrInf:cText      := "Procesando recibos de clientes"
    ::oMtrInf:SetTotal( ::oFacCliP:OrdKeyCount() )
@@ -1363,7 +1363,7 @@ METHOD AddRecibosClientes() CLASS TFastCuentasBancarias
 
    end while
 
-   ::oFacCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ) )
+   ::oFacCliP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ) )
 
 RETURN ( Self )
 
@@ -1379,7 +1379,7 @@ METHOD AddRecibosProveedores() CLASS TFastCuentasBancarias
    cExp                 := 'lCobrado .and. dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. '
    cExp                 += 'cCodPrv >= "' + ::oGrupoCliente:Cargo:Desde + '" .and. cCodPrv <= "' + ::oGrupoCliente:Cargo:Hasta + '"'
 
-   ::oFacPrvP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvP:cFile ), ::oFacPrvP:OrdKey(), ( cExp ), , , , , , , , .t. )
+   ::oFacPrvP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacPrvP:cFile ), ::oFacPrvP:OrdKey(), ( cExp ), , , , , , , , .t. )
 
    ::oMtrInf:cText      := "Procesando recibos de proveedores"
    ::oMtrInf:SetTotal( ::oFacPrvP:OrdKeyCount() )
@@ -1418,7 +1418,7 @@ METHOD AddRecibosProveedores() CLASS TFastCuentasBancarias
 
    end while
 
-   ::oFacPrvP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacPrvP:cFile ) )
+   ::oFacPrvP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacPrvP:cFile ) )
 
 RETURN ( Self )
 

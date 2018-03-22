@@ -215,7 +215,7 @@ METHOD lGenerate()
       cExpresion     += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpresion ), , , , , , , , .t. )
+   ::oPreCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpresion ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oPreCliT:OrdKeyCount() )
 
@@ -283,7 +283,7 @@ METHOD lGenerate()
 
    ::oMtrInf:AutoInc( ::oPreCliT:LastRec() )
 
-   ::oPreCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ) )
+   ::oPreCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPreCliT:cFile ) )
 
    ::oDbf:OrdSetFocus( ::oOrden:nAt )
 

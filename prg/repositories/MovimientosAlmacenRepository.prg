@@ -94,7 +94,7 @@ METHOD getLastNumber( cUser )
 
    local cNumero  
 
-   DEFAULT cUser  := cCurUsr()
+   DEFAULT cUser  := Auth():Codigo()
 
    cNumero        := getSqlDataBase():getValue( ::getLastNumberByUser( cUser ) )
 

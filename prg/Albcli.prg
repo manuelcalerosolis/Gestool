@@ -2195,7 +2195,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _CDIVALB   ]   := cDivEmp()
          aTmp[ _CCODPAGO  ]   := cDefFpg()
          aTmp[ _CCODCAJ   ]   := oUser():cCaja()
-         aTmp[ _CCODUSR   ]   := cCurUsr()
+         aTmp[ _CCODUSR   ]   := Auth():Codigo()
          aTmp[ _NVDVALB   ]   := nChgDiv( aTmp[ _CDIVALB ], D():Get( "Divisas", nView ) )
          aTmp[ _LFACTURADO]   := .f.
          aTmp[ _LSNDDOC   ]   := .t.
@@ -2231,7 +2231,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _CNUMPED   ]   := ""
          aTmp[ _LCLOALB   ]   := .f.
          aTmp[ _NFACTURADO]   := 1
-         aTmp[ _CCODUSR   ]   := cCurUsr()
+         aTmp[ _CCODUSR   ]   := Auth():Codigo()
 
       case nMode == EDIT_MODE
 
@@ -8357,7 +8357,7 @@ STATIC FUNCTION AlbRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       aTabla[ _LSNDDOC     ]  := .t.
       aTabla[ _LCLOALB     ]  := .f.
       aTabla[ _DFECENV     ]  := GetSysDate()
-      aTabla[ _CCODUSR     ]  := cCurUsr()
+      aTabla[ _CCODUSR     ]  := Auth():Codigo()
       aTabla[ _DFECCRE     ]  := GetSysDate()
       aTabla[ _CTIMCRE     ]  := Time()
       aTabla[ _LIMPRIMIDO  ]  := .f.
@@ -17107,7 +17107,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "cCodTrn"   ,"C",  9, 0, "Código del transportista" ,                                "Transportista",                 "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nKgsTrn"   ,"N", 16, 6, "TARA del transportista" ,                                  "TaraTransportista",             "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "lCloAlb"   ,"L",  1, 0, "" ,                                                        "DocumentoCerrado",              "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cCodUsr"   ,"C",  3, 0, "Código de usuario",                                        "Usuario",                       "", "( cDbf )", {|| cCurUsr() } } )
+   aAdd( aItmAlbCli, { "cCodUsr"   ,"C",  3, 0, "Código de usuario",                                        "Usuario",                       "", "( cDbf )", {|| Auth():Codigo() } } )
    aAdd( aItmAlbCli, { "dFecCre"   ,"D",  8, 0, "Fecha de creación/modificación del documento",             "FechaCreacion",                 "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cTimCre"   ,"C",  5, 0, "Hora de creación/modificación del documento",              "HoraCreacion",                  "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "dFecEnv"   ,"D",  8, 0, "Fecha de envio",                                           "FechaEnvio",                    "", "( cDbf )", {|| cTod( "" ) } } )

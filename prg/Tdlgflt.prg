@@ -969,7 +969,7 @@ METHOD AplyFilter()
                   end if
 
                   if empty( ::cNamAnterior )
-                     ::cNamAnterior := "OrdTmp" + cCurUsr()
+                     ::cNamAnterior := "OrdTmp" + Auth():Codigo()
                   end if
 
                   if !empty( ::oMtrReplace )
@@ -1040,7 +1040,7 @@ METHOD AplyFilter()
                   end if
 
                   if empty( ::cNamAnterior )
-                     ::cNamAnterior := "OrdTmp" + cCurUsr()
+                     ::cNamAnterior := "OrdTmp" + Auth():Codigo()
                   end if
 
                   if !empty( ::oMtrReplace )
@@ -1183,7 +1183,7 @@ METHOD SaveFilter()
 
       if dbDialogLock( ::cDbfFilter, !lExiste )
 
-         ( ::cDbfFilter )->cCodUsr     := if( !::lAllUser, cCurUsr(), Space( 3 ) )
+         ( ::cDbfFilter )->cCodUsr     := if( !::lAllUser, Auth():Codigo(), Space( 3 ) )
          ( ::cDbfFilter )->cTipDoc     := ::cTipFilter
          ( ::cDbfFilter )->cTexFlt     := ::cTexFilter
          ( ::cDbfFilter )->cExpFlt     := ::cExpresionFilter

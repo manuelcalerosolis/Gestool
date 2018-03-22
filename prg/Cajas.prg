@@ -1074,7 +1074,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          ID       500 ;
 			OF 		oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( SavRec( aTmp, aGet, oComboCajonPortamonedas, oBrw, oDlg, nMode ) )
+         ACTION   ( SavRec( aTmp, aGet, cComboCajonPortamonedas, oBrw, oDlg, nMode ) )
 
 		REDEFINE BUTTON ;
          ID       550 ;
@@ -1083,7 +1083,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
 			ACTION 	( oDlg:end() )
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| SavRec( aTmp, aGet, oComboCajonPortamonedas, oBrw, oDlg, nMode ) } )
+      oDlg:AddFastKey( VK_F5, {|| SavRec( aTmp, aGet, cComboCajonPortamonedas, oBrw, oDlg, nMode ) } )
    end if
 
    oDlg:bStart    := {|| StartRec( aGet, aTmp ) }
@@ -1125,7 +1125,7 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-Static Function SavRec( aTmp, aGet, oComboCajonPortamonedas, oBrw, oDlg, nMode )
+Static Function SavRec( aTmp, aGet, cComboCajonPortamonedas, oBrw, oDlg, nMode )
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
@@ -1182,7 +1182,7 @@ Static Function SavRec( aTmp, aGet, oComboCajonPortamonedas, oBrw, oDlg, nMode )
    // Asignacin a la variable de texto----------------------------------------
 
    aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ]     := Str( nNumTur, 6 )
-   aTmp[ ( dbfCajT )->( FieldPos( "cajon_uuid" ) ) ]  := CajonesPortamonedasRepository():getUuidWhereNombre( oComboCajonPortamonedas:varGet() )
+   aTmp[ ( dbfCajT )->( FieldPos( "cajon_uuid" ) ) ]  := CajonesPortamonedasRepository():getUuidWhereNombre( cComboCajonPortamonedas )
 
    // Guardamos el registro definitivo-----------------------------------------
 
@@ -2177,7 +2177,7 @@ FUNCTION lFreeCaja( cCajUsr, cCodUsr )
    local nHandle
 
    DEFAULT cCajUsr   := oUser():cCaja()
-   DEFAULT cCodUsr   := cCurUsr()
+   DEFAULT cCodUsr   := Auth():Codigo()
 
    if !file( cPatUsr() + cCajUsr + cCodUsr + ".caj" )
       if ( nHandle := fCreate( cPatUsr() + cCajUsr + cCodUsr + ".caj", 0 ) ) != -1

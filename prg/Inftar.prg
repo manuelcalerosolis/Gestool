@@ -222,7 +222,7 @@ METHOD lGenerate()
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oDbfTarT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfTarT:cFile ), ::oDbfTarT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oDbfTarT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oDbfTarT:cFile ), ::oDbfTarT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oDbfTarT:GoTop()
 
@@ -258,7 +258,7 @@ METHOD lGenerate()
 
    end while
 
-   ::oDbfTarT:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfTarT:cFile ) )
+   ::oDbfTarT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oDbfTarT:cFile ) )
 
    ::oMtrInf:AutoInc( ::oDbfTarT:LastRec() )
 

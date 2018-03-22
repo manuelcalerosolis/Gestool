@@ -146,7 +146,7 @@ METHOD lGenerate()
       cExpHead       := '.t.'
    end if
 
-   ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacRecT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
 
@@ -156,7 +156,7 @@ METHOD lGenerate()
 
    cExpLine          := '!lTotLin .and. !lControl'
 
-   ::oFacRecL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oFacRecL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    /*
    Nos movemos por las cabeceras de los presupuestos a proveedores
@@ -205,9 +205,9 @@ METHOD lGenerate()
 
    end while
 
-   ::oFacRecT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ) )
+   ::oFacRecT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ) )
 
-   ::oFacRecL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ) )
+   ::oFacRecL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacRecL:cFile ) )
 
    ::oMtrInf:AutoInc( ::oFacRecT:Lastrec() )
 

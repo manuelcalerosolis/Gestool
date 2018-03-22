@@ -235,7 +235,7 @@ METHOD lGenerate() CLASS TDiaCaducidad
       cExpArt     += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oDbfArt:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpArt ), , , , , , , , .t. )
+   ::oDbfArt:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpArt ), , , , , , , , .t. )
 
    /*
    Cargamos los valores en un array--------------------------------------------
@@ -289,7 +289,7 @@ METHOD lGenerate() CLASS TDiaCaducidad
 
    end while
 
-   ::oDbfArt:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ) )
+   ::oDbfArt:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oDbfArt:cFile ) )
 
    ::oMtrInf:AutoInc( ::oDbfArt:Lastrec() )
 

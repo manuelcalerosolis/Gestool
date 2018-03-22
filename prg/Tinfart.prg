@@ -268,7 +268,7 @@ METHOD lGenerate() CLASS TInfArtPre
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oDbfArt:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oDbfArt:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
 
@@ -322,7 +322,7 @@ METHOD lGenerate() CLASS TInfArtPre
 
    end while
 
-   ::oDbfArt:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ) )
+   ::oDbfArt:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oDbfArt:cFile ) )
 
    ::oMtrInf:AutoInc( ::oDbfArt:LastRec() )
 

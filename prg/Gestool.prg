@@ -86,7 +86,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    // Motor de bases de datos--------------------------------------------------
 
-   if ( "ADMINISTRADOR" $ appParamsMain() )
+   if ( "ADMINISTRADOR" $ upper( appParamsMain() ) )
       TDataCenter():lAdministratorTask()
       RETURN ( nil )
    end if
@@ -148,9 +148,9 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
             cEmpUsr( Right( appParamsMain(), 2 ) )
          end if
 
-      case ( !empty( appParamsSecond() ) .and. !empty( appParamsThird() ) )
+      case ( !empty( appParamsMain() ) .and. !empty( appParamsSecond() ) .and. !empty( appParamsThird() ) )
 
-         oUser( appParamsMain(), .f. )
+         Auth():getWhereUuid( appParamsMain() )
 
          setEmpresa( appParamsSecond() )
 
@@ -193,8 +193,6 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
       otherwise
 
-//         if AccessCode():Resource()
-
          if UsuariosController():New():isLogin()
             CreateMainWindow( oIconApp )
          end if
@@ -218,25 +216,25 @@ STATIC FUNCTION controllerReportGallery( cInitOptions )
    local hReportGallery    
 
    do case
-      case cInitOptions == "ARTICULOS"
+      case upper( cInitOptions ) == "ARTICULOS"
 
          if validRunReport( "01118" )
             TFastVentasArticulos():New():Play()
          end if 
 
-      case cInitOptions == "CLIENTES"
+      case upper( cInitOptions ) == "CLIENTES"
 
          if validRunReport( "01120" )
             TFastVentasClientes():New():Play()
          end if 
 
-      case cInitOptions == "PROVEEDORES"
+      case upper( cInitOptions ) == "PROVEEDORES"
 
          if validRunReport( "01121" )
             TFastComprasProveedores():New():Play()
          end if 
 
-      case cInitOptions == "PRODUCCION"
+      case upper( cInitOptions ) == "PRODUCCION"
 
          if validRunReport( "01123" )
             TFastProduccion():New():Play()

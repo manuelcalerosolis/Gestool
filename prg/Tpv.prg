@@ -3902,7 +3902,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    end if
 
    if !empty( aGet[ _CCCJTIK ] ) .and. empty( aTmp[ _CCCJTIK ] )
-      aGet[ _CCCJTIK ]:cText( cCurUsr() )
+      aGet[ _CCCJTIK ]:cText( Auth():Codigo() )
    end if
 
    if lRecogerAgentes() .and. !empty( aGet[ _CCODAGE ] ) .and.  empty( aTmp[ _CCODAGE ] )
@@ -4039,7 +4039,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    */
 
    if empty( aTmp[ _CCCJTIK ] )
-      aTmp[ _CCCJTIK ]  := cCurUsr()
+      aTmp[ _CCCJTIK ]  := Auth():Codigo()
    end if
 
    /*
@@ -6745,9 +6745,9 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       end if
 
       if !empty( aGet[ _CCCJTIK ] )
-         aGet[ _CCCJTIK ]:cText( cCurUsr() )
+         aGet[ _CCCJTIK ]:cText( Auth():Codigo() )
       else
-         aTmp[ _CCCJTIK ]     := cCurUsr()
+         aTmp[ _CCCJTIK ]     := Auth():Codigo()
       end if
 
       if !empty( aGet[ _CCODPRO ] )
@@ -6757,9 +6757,9 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       end if
 
       if !empty( aGet[ _CCODDLG ] )
-         aGet[ _CCODDLG ]:cText( RetFld( cCurUsr(), dbfUsr, "cCodDlg" ) )
+         aGet[ _CCODDLG ]:cText( RetFld( Auth():Codigo(), dbfUsr, "cCodDlg" ) )
       else
-         aTmp[ _CCODDLG ]     := RetFld( cCurUsr(), dbfUsr, "cCodDlg" )
+         aTmp[ _CCODDLG ]     := RetFld( Auth():Codigo(), dbfUsr, "cCodDlg" )
       end if
 
       aTmp[ _NNUMCOM    ]     := 0
@@ -18715,7 +18715,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    aTmp[ _CDIVTIK ]     := cDivEmp()
    aTmp[ _NVDVTIK ]     := nValDiv( cDivEmp(), dbfDiv )
    aTmp[ _CTURTIK ]     := cCurSesion()
-   aTmp[ _CCCJTIK ]     := cCurUsr()
+   aTmp[ _CCCJTIK ]     := Auth():Codigo()
    aTmp[ _CNCJTIK ]     := oUser():cCaja()
    aTmp[ _NTARIFA ]     := Max( uFieldEmpresa( "nPreVta" ), 1 )
    aTmp[ _DFECCRE ]     := Date()

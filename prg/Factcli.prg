@@ -2459,7 +2459,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _LSNDDOC    ]  := .t.
       aTmp[ _LMAIL      ]  := .t.
       aTmp[ _CCODPRO    ]  := cProCnt()
-      aTmp[ _CCODUSR    ]  := cCurUsr()
+      aTmp[ _CCODUSR    ]  := Auth():Codigo()
       aTmp[ _DFECIMP    ]  := Ctod("")
       aTmp[ _CCODDLG    ]  := oUser():cDelegacion()
       aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
@@ -2493,7 +2493,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _LSNDDOC    ]  := .t.
       aTmp[ _LMAIL      ]  := .t.
       aTmp[ _LRECC      ]  := lRECCEmpresa()
-      aTmp[ _CCODUSR    ]  := cCurUsr()
+      aTmp[ _CCODUSR    ]  := Auth():Codigo()
 
    case nMode == EDIT_MODE
 
@@ -9972,7 +9972,7 @@ STATIC FUNCTION FacRecDup( cDbf, xField1, xField2, xField3, lCab, lPag, lActual,
       aTabla[ _LSNDDOC     ]  := .t.
       aTabla[ _CDOCORG     ]  := Space( 10 )
       aTabla[ _LCLOFAC     ]  := .f.
-      aTabla[ _CCODUSR     ]  := cCurUsr()
+      aTabla[ _CCODUSR     ]  := Auth():Codigo()
       aTabla[ _DFECCRE     ]  := Date()
       aTabla[ _CTIMCRE     ]  := Time()
       aTabla[ _LIMPRIMIDO  ]  := .f.
@@ -15793,10 +15793,10 @@ static function FacturaImportacion( oTreeImportacion )
             ( D():FacturasClientes( nView ) )->dFecFac    := s:dFecha
             ( D():FacturasClientes( nView ) )->cTurFac    := cCurSesion()
             ( D():FacturasClientes( nView ) )->cCodAlm    := oUser():cAlmacen()
-            ( D():FacturasClientes( nView ) )->cCodUsr    := cCurUsr()
+            ( D():FacturasClientes( nView ) )->cCodUsr    := Auth():Codigo()
             ( D():FacturasClientes( nView ) )->dFecCre    := Date()
             ( D():FacturasClientes( nView ) )->cTimCre    := Time()
-            ( D():FacturasClientes( nView ) )->cCodDlg    := RetFld( cCurUsr(), dbfUsr, "cCodDlg" )
+            ( D():FacturasClientes( nView ) )->cCodDlg    := RetFld( Auth():Codigo(), dbfUsr, "cCodDlg" )
             ( D():FacturasClientes( nView ) )->cCodCaj    := oUser():cCaja()
 
             lAppendFactura             := .t.
@@ -18246,7 +18246,7 @@ Function ExcelIsra()
                ( D():FacturasClientes( nView ) )->cCodPago   := cDefFpg()
                ( D():FacturasClientes( nView ) )->cDivFac    := cDivEmp()
                ( D():FacturasClientes( nView ) )->nVdvFac    := nChgDiv( cDivEmp(), dbfDiv )
-               ( D():FacturasClientes( nView ) )->cCodUsr    := cCurUsr()
+               ( D():FacturasClientes( nView ) )->cCodUsr    := Auth():Codigo()
                ( D():FacturasClientes( nView ) )->cTurFac    := cCurSesion()
                ( D():FacturasClientes( nView ) )->( dbUnLock() )
             end if
@@ -19734,7 +19734,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"cAntFac"     ,"C", 12, 0, "Factura de anticipo" ,                                       "",                            "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"nTipRet"     ,"N",  1, 0, "Tipo de retención ( 1. Base / 2. Base+IVA )",                "TipoRetencion",               "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"nPctRet"     ,"N",  6, 2, "Porcentaje de retención",                                    "PorcentajeRetencion",         "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"cCodUsr"     ,"C",  3, 0, "Código de usuario",                                          "Usuario",                     "", "( cDbf )", {|| cCurUsr() } } )
+   aAdd( aItmFacCli, {"cCodUsr"     ,"C",  3, 0, "Código de usuario",                                          "Usuario",                     "", "( cDbf )", {|| Auth():Codigo() } } )
    aAdd( aItmFacCli, {"dFecCre"     ,"D",  8, 0, "Fecha de creación/modificación del documento",               "FechaCreacion",               "", "( cDbf )", {|| Date() } } )
    aAdd( aItmFacCli, {"cTimCre"     ,"C",  5, 0, "Hora de creación/modificación del documento",                "HoraCreacion",                "", "( cDbf )", {|| Time() } } )
    aAdd( aItmFacCli, {"cCodGrp"     ,"C",  4, 0, "Código de grupo de cliente" ,                                "GrupoCliente",                "", "( cDbf )", nil } )

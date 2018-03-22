@@ -181,7 +181,7 @@ METHOD lGenerate()
       cExpHead       := '.t.'
    end if
 
-   ::oOrdCarT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oOrdCarT:cFile ), ::oOrdCarT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oOrdCarT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oOrdCarT:cFile ), ::oOrdCarT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    if ::oOrdCarT:Seek( Str( ::nOrdDes ) + ::cSufDes )
 
@@ -234,7 +234,7 @@ METHOD lGenerate()
 
    end if
 
-   ::oOrdCarT:IdxDelete( cCurUsr(), GetFileNoExt( ::oOrdCarT:cFile ) )
+   ::oOrdCarT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oOrdCarT:cFile ) )
 
    ::oMtrInf:AutoInc( ::oOrdCarT:LastRec() )
 

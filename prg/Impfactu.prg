@@ -3025,7 +3025,7 @@ METHOD Importar()
             ::oDbfAlpTGst:cDivAlb      := ::oDbfAlpTFac:cCodDiv
             ::oDbfAlpTGst:nVdvAlb      := ::oDbfAlpTFac:nValDiv
             ::oDbfAlpTGst:lSndDoc      := .f.
-            ::oDbfAlpTGst:cCodUsr      := cCurUsr()
+            ::oDbfAlpTGst:cCodUsr      := Auth():Codigo()
             ::oDbfAlpTGst:dFecChg      := GetSysDate()
             ::oDbfAlpTGst:cTimChg      := Time()
 
@@ -3177,7 +3177,7 @@ METHOD Importar()
             ::oDbfFapTGst:cDivFac    := ::oDbfFapTFac:cCodDiv
             ::oDbfFapTGst:nVdvFac    := ::oDbfFapTFac:nValDiv
             ::oDbfFapTGst:lSndDoc    := .f.
-            ::oDbfFapTGst:cCodUsr    := cCurUsr()
+            ::oDbfFapTGst:cCodUsr    := Auth():Codigo()
             ::oDbfFapTGst:dFecChg    := GetSysDate()
             ::oDbfFapTGst:cTimChg    := Time()
 
@@ -3212,7 +3212,7 @@ METHOD Importar()
             ::oDbfFapPGst:cDivPgo   := ::oDbfFapPFac:cCodDiv
             ::oDbfFapPGst:nVdvPgo   := ::oDbfFapPFac:nValDiv
             ::oDbfFapPGst:dFecVto   := ::oDbfFapPFac:dFecVcto
-            ::oDbfFapPGst:cCodUsr   := cCurUsr()
+            ::oDbfFapPGst:cCodUsr   := Auth():Codigo()
             ::oDbfFapPGst:dFecChg   := GetSysDate()
             ::oDbfFapPGst:cTimChg   := Time()
 

@@ -180,14 +180,14 @@ METHOD lGenerate() CLASS TAcuXVta
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oAlbCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:cText   := "Procesando albaranes"
    ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
 
    cExpLine          := '!lControl .and. !lTotLin'
 
-   ::oAlbCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oAlbCliL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    ::oAlbCliT:GoTop()
 
@@ -217,8 +217,8 @@ METHOD lGenerate() CLASS TAcuXVta
 
    end while
 
-   ::oAlbCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ) )
-   ::oAlbCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ) )
+   ::oAlbCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oAlbCliT:cFile ) )
+   ::oAlbCliL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oAlbCliL:cFile ) )
 
    ::oFacCliT:OrdSetFocus( "dFecFac" )
    ::oFacCliL:OrdSetFocus( "nNumFac" )
@@ -229,14 +229,14 @@ METHOD lGenerate() CLASS TAcuXVta
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:cText   := "Procesando facturas"
    ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
 
    cExpLine          := '!lControl .and. !lTotLin'
 
-   ::oFacCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oFacCliL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    ::oFacCliT:GoTop()
 
@@ -266,8 +266,8 @@ METHOD lGenerate() CLASS TAcuXVta
 
    end while
 
-   ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
-   ::oFacCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ) )
+   ::oFacCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliT:cFile ) )
+   ::oFacCliL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliL:cFile ) )
 
    ::oFacRecT:OrdSetFocus( "dFecFac" )
    ::oFacRecL:OrdSetFocus( "nNumFac" )
@@ -278,14 +278,14 @@ METHOD lGenerate() CLASS TAcuXVta
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter 
    end if
 
-   ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacRecT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:cText   := "Procesando fac. rec."
    ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
 
    cExpLine          := '!lControl .and. !lTotLin'
 
-   ::oFacRecL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oFacRecL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    ::oFacRecT:GoTop()
 
@@ -315,8 +315,8 @@ METHOD lGenerate() CLASS TAcuXVta
 
    end while
 
-   ::oFacRecT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ) )
-   ::oFacRecL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ) )
+   ::oFacRecT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ) )
+   ::oFacRecL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacRecL:cFile ) )
 
    cExpHead          := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
@@ -326,14 +326,14 @@ METHOD lGenerate() CLASS TAcuXVta
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter 
    end if
 
-   ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oTikCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:cText   := "Procesando tikets"
    ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
 
    cExpLine          := '!lControl'
 
-   ::oTikCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oTikCliL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    ::oTikCliT:GoTop()
 
@@ -376,8 +376,8 @@ METHOD lGenerate() CLASS TAcuXVta
 
    ::oMtrInf:AutoInc( ::oTikCliT:Lastrec() )
 
-   ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
-   ::oTikCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ) )
+   ::oTikCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oTikCliT:cFile ) )
+   ::oTikCliL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oTikCliL:cFile ) )
 
    if !::lExcCero
       ::IncluyeCero()

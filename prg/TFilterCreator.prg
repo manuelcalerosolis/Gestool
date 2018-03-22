@@ -1308,7 +1308,7 @@ METHOD Save( cFilterName ) CLASS TFilterDatabase
       ::oDbf:lDefFlt    := ::lDefault
 
       if !::lAllUser
-         ::oDbf:cCodUsr := cCurUsr()
+         ::oDbf:cCodUsr := Auth():Codigo()
       end if  
       
       ::oDbf:Insert()
@@ -1408,7 +1408,7 @@ METHOD defaultFilterByUser( cFilterType, cFilterUser ) CLASS TFilterDatabase
    local cFilter        := ""
    
    DEFAULT cFilterType  := ::oFilterCreator:GetFilterType()
-   DEFAULT cFilterUser  := cCurUsr()
+   DEFAULT cFilterUser  := Auth():Codigo()
 
    if empty( ::oDbf )
       RETURN ( cFilter )

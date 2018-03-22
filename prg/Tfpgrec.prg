@@ -186,7 +186,7 @@ METHOD lGenerate()
       cExpHead       := '.t.'
    end if
 
-   ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacCliP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oFacCliP:GoTop()
 
@@ -248,7 +248,7 @@ METHOD lGenerate()
 
    ::oMtrInf:SetTotal( ::oFacCliP:Lastrec() )
 
-   ::oFacCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ) )
+   ::oFacCliP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ) )
 
    ::oDlg:Enable()
 

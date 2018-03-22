@@ -173,7 +173,7 @@ METHOD lGenerate() CLASS TAcuGPed
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oPedCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oPedCLiT:OrdKeyCount() )
 
@@ -187,7 +187,7 @@ METHOD lGenerate() CLASS TAcuGPed
       cExpLine       += ' .and. cRef >= "' + ::cArtOrg + '" .and. cRef <= "' + ::cArtDes + '"'
    end if
 
-   ::oPedCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliL:cFile ), ::oPedCliL:OrdKey(), ( cExpLine ), , , , , , , , .t. )
+   ::oPedCliL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPedCliL:cFile ), ::oPedCliL:OrdKey(), ( cExpLine ), , , , , , , , .t. )
 
    /*Recorremos las cabeceras y líneas*/
 
@@ -221,8 +221,8 @@ METHOD lGenerate() CLASS TAcuGPed
 
    /*Destruimos los filtros creados anteriormente*/
 
-   ::oPedCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ) )
-   ::oPedCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliL:cFile ) )
+   ::oPedCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPedCliT:cFile ) )
+   ::oPedCliL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPedCliL:cFile ) )
 
    ::oMtrInf:AutoInc( ::oPedCliT:Lastrec() )
 

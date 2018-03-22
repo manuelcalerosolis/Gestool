@@ -167,7 +167,7 @@ METHOD lGenerate() CLASS TdAgeTik
       cExpHead       := '.t.'
    end if
 
-   ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oTikCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oTikCliT:GoTop()
 
@@ -213,7 +213,7 @@ METHOD lGenerate() CLASS TdAgeTik
 
    end while
 
-   ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
+   ::oTikCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oTikCliT:cFile ) )
 
    ::oMtrInf:AutoInc( ::oTikCliT:LastRec() )
 

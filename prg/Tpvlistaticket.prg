@@ -702,7 +702,7 @@ METHOD OnAceptarFiltro() CLASS TpvListaTicket
 
       CursorWait()
 
-      ::oSender:oTiketCabecera:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSender:oTiketCabecera:cFile ), ::oSender:oTiketCabecera:OrdKey(), ( cFiltro ), , , , , , , , .t. )
+      ::oSender:oTiketCabecera:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oSender:oTiketCabecera:cFile ), ::oSender:oTiketCabecera:OrdKey(), ( cFiltro ), , , , , , , , .t. )
       ::oSender:oTiketCabecera:GoTop()
 
       ::oBtnAbiertos:UnSelected()
@@ -733,7 +733,7 @@ METHOD OnClickTodos() CLASS TpvListaTicket
    ::oBtnTodos:Selected()
 
    if file( ::oSender:oTiketCabecera:cFile )
-      ::oSender:oTiketCabecera:IdxDelete( cCurUsr(), GetFileNoExt( ::oSender:oTiketCabecera:cFile ) )
+      ::oSender:oTiketCabecera:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oSender:oTiketCabecera:cFile ) )
    end if 
 
    ::oSender:oTiketCabecera:OrdSetFocus( "dFecTik" )

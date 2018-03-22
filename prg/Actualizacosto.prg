@@ -179,7 +179,7 @@ METHOD Search( cCodArt, oDlg )
 
    cExpHead       := 'dFecOrd >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFin <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
-   ::oProduccT:oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProduccT:oDbf:cFile ), ::oProduccT:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oProduccT:oDbf:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oProduccT:oDbf:cFile ), ::oProduccT:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMetMsg:SetTotal( ::oProduccT:oDbf:OrdKeyCount() )
 
@@ -207,7 +207,7 @@ METHOD Search( cCodArt, oDlg )
 
    end while
 
-   ::oProduccT:oDbf:IdxDelete( cCurUsr(), GetFileNoExt( ::oProduccT:oDbf:cFile ) )
+   ::oProduccT:oDbf:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oProduccT:oDbf:cFile ) )
 
    ::oMetMsg:Set( ::oProduccT:oDbf:Lastrec() )
 

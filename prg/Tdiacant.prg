@@ -163,7 +163,7 @@ METHOD lGenerate() CLASS TDiaCAnt
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oAntCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAntCliT:cFile ), ( ::oAntCliT:OrdKey() ), ( cExpHead ), , , , , , , , .t. )
+   ::oAntCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oAntCliT:cFile ), ( ::oAntCliT:OrdKey() ), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oAntCliT:OrdKeyCount() )
 
@@ -210,7 +210,7 @@ METHOD lGenerate() CLASS TDiaCAnt
 
    end while
 
-   ::oAntCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAntCliT:cFile ) )
+   ::oAntCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oAntCliT:cFile ) )
 
    ::oDlg:Enable()
 

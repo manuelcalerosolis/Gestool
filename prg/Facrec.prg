@@ -1937,7 +1937,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       aTmp[ _CSUFFAC    ]  := RetSufEmp()
       aTmp[ _LSNDDOC    ]  := .t.
       aTmp[ _CCODPRO    ]  := cProCnt()
-      aTmp[ _CCODUSR    ]  := cCurUsr()
+      aTmp[ _CCODUSR    ]  := Auth():Codigo()
       aTmp[ _CTIPMOV    ]  := cDefVta()
       aTmp[ _CCODDLG    ]  := oUser():cDelegacion()
       aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
@@ -1968,7 +1968,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       aTmp[ _LCLOFAC  ]    := .f.
       aTmp[ _LCONTAB  ]    := .f.
       aTmp[ _LSNDDOC  ]    := .t.
-      aTmp[ _CCODUSR    ]  := cCurUsr()
+      aTmp[ _CCODUSR    ]  := Auth():Codigo()
 
    case nMode == EDIT_MODE
 
@@ -9747,7 +9747,7 @@ STATIC FUNCTION FacRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc, lPag 
       aTabla[ _LCLOFAC     ]  := .f.
       aTabla[ _CABNFAC     ]  := Space( 12 )
       aTabla[ _CANTFAC     ]  := Space( 12 )
-      aTabla[ _CCODUSR     ]  := cCurUsr()
+      aTabla[ _CCODUSR     ]  := Auth():Codigo()
       aTabla[ _DFECCRE     ]  := GetSysDate()
       aTabla[ _CTIMCRE     ]  := Time()
       aTabla[ _LIMPRIMIDO  ]  := .f.

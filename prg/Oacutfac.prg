@@ -154,7 +154,7 @@ METHOD lGenerate() CLASS OAcuTFac
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oFacPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ), ::oFacPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacPrvT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacPrvT:cFile ), ::oFacPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oFacPrvT:OrdKeyCount() )
 
@@ -228,7 +228,7 @@ METHOD lGenerate() CLASS OAcuTFac
 
    ::oMtrInf:AutoInc( ::oFacPrvT:Lastrec() )
 
-   ::oFacPrvT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ) )
+   ::oFacPrvT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacPrvT:cFile ) )
 
    ::IncluyeCero()
 

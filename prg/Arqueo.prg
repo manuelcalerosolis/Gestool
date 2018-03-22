@@ -321,7 +321,7 @@ FUNCTION Arqueo( oMenuItem, oWnd )
 
    dFecTur        := Date()
    cHorTur        := Substr( Time(), 1, 5 )
-   cCajTur        := cCurUsr()
+   cCajTur        := Auth():Codigo()
 
    if nLevel == nil
       nLevel      := nLevelUsr( oMenuItem )
@@ -445,7 +445,7 @@ STATIC FUNCTION lGetArqueo( lZoom )
 
    end if
 
-   cCajTur        := if( Empty( cCurUsr() ), oTurno:oDbf:cCajTur, cCurUsr() )
+   cCajTur        := if( Empty( Auth():Codigo() ), oTurno:oDbf:cCajTur, Auth():Codigo() )
    aTotSay        := Array( 20 )
 
    GetDlg()

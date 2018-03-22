@@ -209,7 +209,7 @@ METHOD lGenerate() CLASS TDiaXAlb
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oAlbCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
 

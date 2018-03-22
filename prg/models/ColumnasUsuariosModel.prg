@@ -70,7 +70,7 @@ METHOD get( cBrowseName )
    local cStm
    local cSql  := "SELECT * " + ;
                      "FROM " + ::getHeaderTableName() + " "             + ;
-                     "WHERE cCodUse = " + quoted( cCurUsr() ) + " AND " + ;
+                     "WHERE cCodUse = " + quoted( Auth():Codigo() ) + " AND " + ;
                            "cNomCfg = " + quoted( cBrowseName )
 
    msgalert( cSql, "get ColumnasUsuariosModel" )
@@ -103,7 +103,7 @@ METHOD exist( cBrowseName )
    local cStm
    local cSql  := "SELECT cBrwCfg " + ;
                      "FROM " + ::getHeaderTableName() + " "             + ;
-                     "WHERE cCodUse = " + quoted( cCurUsr() ) + " AND " + ;
+                     "WHERE cCodUse = " + quoted( Auth():Codigo() ) + " AND " + ;
                            "cNomCfg = " + quoted( cBrowseName )
 
    if ::ExecuteSqlStatement( cSql, @cStm )
@@ -131,7 +131,7 @@ METHOD insert( cBrowseName, cBrowseState, nBrowseRecno, nBrowseOrder )
    cSql                    +=       "nRecCfg, "                                  
    cSql                    +=       "nTabCfg ) "                                 
    cSql                    += "VALUES "                                          
-   cSql                    +=    "( " + quoted( cCurUsr() ) + ", "
+   cSql                    +=    "( " + quoted( Auth():Codigo() ) + ", "
    cSql                    +=       quoted( cBrowseName ) + ", "
    if !empty( cBrowseState )                               
       cSql                 +=       quoted( cBrowseState ) + ", "
@@ -158,7 +158,7 @@ METHOD update( cBrowseName, cBrowseState, nBrowseRecno, nBrowseOrder )
    end if 
    cSql                    +=       "nRecCfg = " + alltrim( str( nBrowseRecno ) ) + ", " 
    cSql                    +=       "nTabCfg = " + alltrim( str( nBrowseOrder ) ) + " "  
-   cSql                    +=    "WHERE cCodUse = " + quoted( cCurUsr() ) + " AND " 
+   cSql                    +=    "WHERE cCodUse = " + quoted( Auth():Codigo() ) + " AND " 
    cSql                    +=        "cNomCfg = " + quoted( cBrowseName )
 
 RETURN ( ::ExecuteSqlStatement( cSql, @cStm ) )
@@ -169,7 +169,7 @@ METHOD delete( cBrowseName )
 
    local cStm
    local cSql  := "DELETE FROM " + ::getHeaderTableName() + " "         + ;
-                     "WHERE cCodUse = " + quoted( cCurUsr() ) + " AND " + ;
+                     "WHERE cCodUse = " + quoted( Auth():Codigo() ) + " AND " + ;
                            "cNomCfg = " + quoted( cBrowseName )
 
 RETURN ( ::ExecuteSqlStatement( cSql, @cStm ) )

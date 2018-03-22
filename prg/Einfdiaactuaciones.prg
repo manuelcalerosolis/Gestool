@@ -203,7 +203,7 @@ METHOD lGenerate()
       cExpHead    += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oExpediente:oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oExpediente:oDbf:cFile ), ::oExpediente:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oExpediente:oDbf:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oExpediente:oDbf:cFile ), ::oExpediente:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oExpediente:oDbf:OrdKeyCount() )
 
@@ -242,7 +242,7 @@ METHOD lGenerate()
 
    end while
 
-   ::oExpediente:oDbf:IdxDelete( cCurUsr(), GetFileNoExt( ::oExpediente:oDbf:cFile ) )
+   ::oExpediente:oDbf:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oExpediente:oDbf:cFile ) )
 
    ::oMtrInf:AutoInc( ::oExpediente:oDbf:Lastrec() )
 

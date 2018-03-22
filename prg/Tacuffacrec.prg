@@ -150,7 +150,7 @@ METHOD lGenerate() CLASS TAcuFFacRec
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacRecT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
 
@@ -162,7 +162,7 @@ METHOD lGenerate() CLASS TAcuFFacRec
       cExpLine       += ' .and. cRef >= "' + ::cArtOrg + '" .and. cRef <= "' + ::cArtDes + '"'
    end if
 
-   ::oFacRecL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), ( cExpLine ), , , , , , , , .t. )
+   ::oFacRecL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), ( cExpLine ), , , , , , , , .t. )
 
    /*Recorremos las cabeceras y líneas*/
 
@@ -201,8 +201,8 @@ METHOD lGenerate() CLASS TAcuFFacRec
 
    /*Destruimos los filtros creados anteriormente*/
 
-   ::oFacRecT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ) )
-   ::oFacRecL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ) )
+   ::oFacRecT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ) )
+   ::oFacRecL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacRecL:cFile ) )
 
    ::oMtrInf:AutoInc( ::oFacRecT:Lastrec() )
 

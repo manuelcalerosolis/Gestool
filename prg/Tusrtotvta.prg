@@ -173,7 +173,7 @@ METHOD lGenerate() CLASS TUsrTotVta
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oAlbCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:cText := "Procesando albaranes"
    ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
@@ -204,7 +204,7 @@ METHOD lGenerate() CLASS TUsrTotVta
 
    end while
 
-   ::oAlbCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ) )
+   ::oAlbCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oAlbCliT:cFile ) )
 
    /*
    Facturas--------------------------------------------------------------------
@@ -222,7 +222,7 @@ METHOD lGenerate() CLASS TUsrTotVta
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:cText := "Procesando facturas"
    ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
@@ -253,7 +253,7 @@ METHOD lGenerate() CLASS TUsrTotVta
 
    end while
 
-   ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
+   ::oFacCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliT:cFile ) )
 
    /*
    Facturas rectificativas-----------------------------------------------------
@@ -271,7 +271,7 @@ METHOD lGenerate() CLASS TUsrTotVta
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter 
    end if
 
-   ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacRecT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:cText := "Procesando fac. rec."
    ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
@@ -302,7 +302,7 @@ METHOD lGenerate() CLASS TUsrTotVta
 
    end while
 
-   ::oFacRecT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ) )
+   ::oFacRecT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ) )
 
    ::oTikCliT:OrdSetFocus( "dFecTik" )
 
@@ -317,7 +317,7 @@ METHOD lGenerate() CLASS TUsrTotVta
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter 
    end if
 
-   ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oTikCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
 
@@ -343,7 +343,7 @@ METHOD lGenerate() CLASS TUsrTotVta
 
    end while
 
-   ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
+   ::oTikCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oTikCliT:cFile ) )
 
    ::oMtrInf:AutoInc( ::oTikCliT:Lastrec() )
 

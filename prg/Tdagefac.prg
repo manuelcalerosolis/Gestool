@@ -214,7 +214,7 @@ METHOD lGenerate() CLASS TddAgeFac
       cExpHead       := '.t.'
    end if
 
-   ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oFacCliT:GoTop()
 
@@ -253,7 +253,7 @@ METHOD lGenerate() CLASS TddAgeFac
 
    end while
 
-   ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
+   ::oFacCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliT:cFile ) )
    ::oMtrInf:AutoInc( ::oFacCliT:LastRec() )
 
    /*
@@ -268,7 +268,7 @@ METHOD lGenerate() CLASS TddAgeFac
       cExpHead       := '.t.'
    end if
 
-   ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacRecT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oFacRecT:GoTop()
 
@@ -307,7 +307,7 @@ METHOD lGenerate() CLASS TddAgeFac
 
    end while
 
-   ::oFacRecT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ) )
+   ::oFacRecT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ) )
    ::oMtrInf:AutoInc( ::oFacRecT:LastRec() )
 
    do case

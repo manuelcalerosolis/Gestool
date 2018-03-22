@@ -169,7 +169,7 @@ METHOD lGenerate() CLASS TInfPgoPob
       cExpHead       := '.t.'
    end if
 
-   ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacCliP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oFacCliP:GoTop()
 
@@ -219,7 +219,7 @@ METHOD lGenerate() CLASS TInfPgoPob
 
    end while
 
-   ::oFacCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ) )
+   ::oFacCliP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ) )
 
    ::oMtrInf:AutoInc( ::oFacCliP:Lastrec() )
 
