@@ -455,7 +455,7 @@ METHOD StartTimer()
       ::oDbf:GoTop()
       while !::oDbf:Eof()
 
-         if ( ::oDbf:nMinScr != 0 ) .and. ( Empty( ::oDbf:cCodUsr ) .or. ( ::oDbf:cCodUsr == cCurUsr() ) )
+         if ( ::oDbf:nMinScr != 0 ) .and. ( Empty( ::oDbf:cCodUsr ) .or. ( ::oDbf:cCodUsr == Auth():Codigo() ) )
             
             cCodScr  := by( ::oDbf:cCodScr )
 

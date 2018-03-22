@@ -397,7 +397,7 @@ RETURN nil
 METHOD Save()
 
    local cDbf
-   local cCurUsr  := cCurUsr()
+   local cCurUsr  := Auth():Codigo()
 
    if ::lOpenDatabase()
       ::DeleteTree( cCurUsr )
@@ -447,7 +447,7 @@ RETURN Self
 
 METHOD Load()
 
-   local cCurUsr  := cCurUsr()
+   local cCurUsr  := Auth():Codigo()
 
    if ::lOpenDatabase()
 
@@ -581,7 +581,7 @@ RETURN Self
 METHOD CreateToolbar( aAccesos )
 
    local n
-   local cCurUsr              := cCurUsr()
+   local cCurUsr              := Auth():Codigo()
 
    DEFAULT aAccesos           := ::aAccesos
 
@@ -816,7 +816,7 @@ METHOD lGetShowToolBar( oAcceso, cCurUsr )
 
    local lShow       := .f.
 
-   DEFAULT cCurUsr   := cCurUsr()
+   DEFAULT cCurUsr   := Auth():Codigo()
 
    if ::lOpenFiles .and. dbSeekInOrd( cCurUsr + oAcceso:cId, "cOpcion", ::cDbf )
       lShow          := ( ::cDbf )->lShow
@@ -832,7 +832,7 @@ METHOD lHideCarpeta( oAcceso, cCurUsr )
 
    local lHide       := .f.
 
-   DEFAULT cCurUsr   := cCurUsr()
+   DEFAULT cCurUsr   := Auth():Codigo()
 
    if ::lOpenFiles .and. dbSeekInOrd( cCurUsr + oAcceso:cPrompt, "cOpcion", ::cDbf )
       lHide          := !( ::cDbf )->lShow
@@ -856,7 +856,7 @@ RETURN ( Self )
 
 METHOD DeleteTree( cCurUsr )
 
-   DEFAULT cCurUsr   := cCurUsr()
+   DEFAULT cCurUsr   := Auth():Codigo()
 
    while ( ::cDbf )->( dbSeek( cCurUsr ) )
       if( ( ::cDbf )->( dbRLock() ), ( ( ::cDbf )->( dbDelete() ), ( ::cDbf )->( dbUnLock() ) ), )

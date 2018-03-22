@@ -190,7 +190,7 @@ METHOD lGenerate() CLASS PInfDiaMPrimas
       cExpHead    += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oProduccT:oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProduccT:oDbf:cFile ), ::oProduccT:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oProduccT:oDbf:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oProduccT:oDbf:cFile ), ::oProduccT:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oProduccT:oDbf:OrdKeyCount() )
 
@@ -204,7 +204,7 @@ METHOD lGenerate() CLASS PInfDiaMPrimas
       cExpLine    += ' .and. cCodArt >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cCodArt <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
    end if
 
-   ::oProduccT:oDetMaterial:oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProduccT:oDetMaterial:oDbf:cFile ), ::oProduccT:oDetMaterial:oDbf:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oProduccT:oDetMaterial:oDbf:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oProduccT:oDetMaterial:oDbf:cFile ), ::oProduccT:oDetMaterial:oDbf:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    ::oProduccT:oDbf:GoTop()
 
@@ -260,8 +260,8 @@ METHOD lGenerate() CLASS PInfDiaMPrimas
 
    end while
 
-   ::oProduccT:oDbf:IdxDelete( cCurUsr(), GetFileNoExt( ::oProduccT:oDbf:cFile ) )
-   ::oProduccT:oDetMaterial:oDbf:IdxDelete( cCurUsr(), GetFileNoExt( ::oProduccT:oDetMaterial:oDbf:cFile ) )
+   ::oProduccT:oDbf:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oProduccT:oDbf:cFile ) )
+   ::oProduccT:oDetMaterial:oDbf:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oProduccT:oDetMaterial:oDbf:cFile ) )
 
    ::oMtrInf:AutoInc( ::oProduccT:oDbf:Lastrec() )
 

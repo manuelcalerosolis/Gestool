@@ -122,7 +122,7 @@ METHOD lGenerate()
       cExpFam      += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oDbfFam:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfFam:cFile ), ::oDbfFam:OrdKey(), ( cExpFam ), , , , , , , , .t. )
+   ::oDbfFam:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oDbfFam:cFile ), ::oDbfFam:OrdKey(), ( cExpFam ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oDbfFam:OrdKeyCount() )
 
@@ -149,7 +149,7 @@ METHOD lGenerate()
 
    end while
 
-   ::oDbfFam:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfFam:cFile ) )
+   ::oDbfFam:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oDbfFam:cFile ) )
 
    ::oMtrInf:AutoInc( ::oDbfFam:Lastrec() )
 

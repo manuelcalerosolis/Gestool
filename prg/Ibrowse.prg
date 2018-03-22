@@ -138,7 +138,7 @@ METHOD SaveData() CLASS IWBrowse
             ( ::dbfCfgCol )->( dbAppend() )
             if !( ::dbfCfgCol )->( NetErr() )
                ( ::dbfCfgCol )->nNumCol   := n
-               ( ::dbfCfgCol )->cCodUse   := cCurUsr()
+               ( ::dbfCfgCol )->cCodUse   := Auth():Codigo()
                ( ::dbfCfgCol )->cNomCfg   := ::cWndName
                ( ::dbfCfgCol )->nPosCol   := ::aIntColPos   [ n ]
                ( ::dbfCfgCol )->lSelCol   := ::aIntColSelect[ n ]
@@ -171,7 +171,7 @@ Method CleanData()
    Vamos a borrar las columnas ------------------------------------------------
    */
 
-   while ( ::dbfCfgCol )->( dbSeek( cCurUsr() + ::cWndName ) )
+   while ( ::dbfCfgCol )->( dbSeek( Auth():Codigo() + ::cWndName ) )
       dbDel( ::dbfCfgCol )
    end while
 
@@ -200,7 +200,7 @@ Method LoadData() CLASS IWBrowse
 
    ::cWndName                 := Padr( Rtrim( ::cWndName ), 40 )
 
-   if ( ::dbfCfgCol )->( dbSeek( cCurUsr() + ::cWndName ) )
+   if ( ::dbfCfgCol )->( dbSeek( Auth():Codigo() + ::cWndName ) )
 
       // Número de campos---------------------------------------------------------
 
@@ -212,7 +212,7 @@ Method LoadData() CLASS IWBrowse
       aEval( ::aIntColPos, {| x, n | ::aIntColPos[ n ] := n } )
 
       for n := 1 to ::nFlds
-         if ( ::dbfCfgCol )->( dbSeek( cCurUsr() + ::cWndName + Str( n, 2 ) ) ) .and. n <= len( ::aIntColPos )
+         if ( ::dbfCfgCol )->( dbSeek( Auth():Codigo() + ::cWndName + Str( n, 2 ) ) ) .and. n <= len( ::aIntColPos )
             ::aIntColPos   [ n ] := ( ::dbfCfgCol )->nPosCol
             ::aIntColSelect[ n ] := ( ::dbfCfgCol )->lSelCol
             ::aIntColSizes [ n ] := ( ::dbfCfgCol )->nSizCol

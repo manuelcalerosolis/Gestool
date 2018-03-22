@@ -1164,7 +1164,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
       aTmp[ _LSNDDOC ]  := .t.
       aTmp[ _CCODPRO ]  := cProCnt()
       aTmp[ _DFECENT ]  := Ctod( "" )
-      aTmp[ _CCODUSR ]  := cCurUsr()
+      aTmp[ _CCODUSR ]  := Auth():Codigo()
       aTmp[ _CCODDLG ]  := oUser():cDelegacion()
       aTmp[ _DFECIMP ]  := Ctod( "" )
       aTmp[ _TFECFAC ]  := getSysTime()

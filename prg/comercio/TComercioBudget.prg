@@ -111,7 +111,7 @@ METHOD insertHeaderDocumentGestool( oQuery ) CLASS TComercioDocument
    ( ::oDocumentHeaderDatabase() )->cManObr      := Padr( "Gastos envio", 250 )
    ( ::oDocumentHeaderDatabase() )->nManObr      := oQuery:FieldGetByName( "total_shipping_tax_excl" )
    ( ::oDocumentHeaderDatabase() )->nIvaMan      := oQuery:FieldGetByName( "carrier_tax_rate" )
-   ( ::oDocumentHeaderDatabase() )->cCodUsr      := cCurUsr()
+   ( ::oDocumentHeaderDatabase() )->cCodUsr      := Auth():Codigo()
    ( ::oDocumentHeaderDatabase() )->dFecCre      := GetSysDate()
    ( ::oDocumentHeaderDatabase() )->cTimCre      := Time()
    ( ::oDocumentHeaderDatabase() )->cCodDlg      := oUser():cDelegacion()

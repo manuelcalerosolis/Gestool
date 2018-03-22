@@ -178,7 +178,7 @@ METHOD lGenerate()
       cExpHead       += ::oFilter:cExpresionFilter
    end if
 
-   ::oCobAgeT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oCobAgeT:cFile ), ::oCobAgeT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oCobAgeT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oCobAgeT:cFile ), ::oCobAgeT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    if ::oCobAgeT:Seek( Str( ::nAgeDes ) + ::cSufDes )
 
@@ -224,7 +224,7 @@ METHOD lGenerate()
 
    end if
 
-   ::oCobAgeT:IdxDelete( cCurUsr(), GetFileNoExt( ::oCobAgeT:cFile ) )
+   ::oCobAgeT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oCobAgeT:cFile ) )
 
    ::oMtrInf:AutoInc( ::oCobAgeT:LastRec() )
 

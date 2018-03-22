@@ -9835,7 +9835,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    if !Empty( cUsrTik() )
       aTmp[ _CCODUSR ]  := cUsrTik()
    else
-      aTmp[ _CCODUSR ]  := cCurUsr()
+      aTmp[ _CCODUSR ]  := Auth():Codigo()
    end if
 
    aTmp[ _DFECCHG ]     := GetSysDate()

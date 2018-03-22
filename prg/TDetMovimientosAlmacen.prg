@@ -1894,8 +1894,8 @@ METHOD processPropertiesGrid() CLASS TDetMovimientos
             ::oDbfVir:cValPr1    := ::oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
             ::oDbfVir:cValPr2    := ::oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
             ::oDbfVir:nUndMov    := ::oBrwPrp:Cargo[ n, i ]:Value
-            ::oDbfVir:cCodUsr    := cCurUsr()
-            ::oDbfVir:cCodDlg    := oRetFld( cCurUsr(), ::oParent:oUsr, "cCodDlg" )
+            ::oDbfVir:cCodUsr    := Auth():Codigo()
+            ::oDbfVir:cCodDlg    := oRetFld( Auth():Codigo(), ::oParent:oUsr, "cCodDlg" )
             ::oDbfVir:lSelDoc    := .t.
             ::oDbfVir:lSndDoc    := .t.
             ::oDbfVir:nNumLin    := nLastNum( ::oDbfVir:cAlias )

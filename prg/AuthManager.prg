@@ -17,8 +17,10 @@ CLASS AuthManager
 
    METHOD New()
 
-   METHOD set( hUser )        INLINE ( ::guard( hUser ) )
+   METHOD set( hUser )           INLINE ( ::guard( hUser ) )
    METHOD guard( hUser )
+
+   METHOD getWhereUuid( uuid )
 
 END CLASS
 
@@ -71,14 +73,26 @@ METHOD guard( hUser )
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD getWhereUuid( uuid )
+
+   local hUser    := UsuariosRepository():getWhereUuid( Uuid )
+
+   if hb_ishash( hUser )
+      ::guard( hUser )
+   endif 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 FUNCTION Auth( hUser )
 
-   if oAuth == nil
-      oAuth := AuthManager():New( hUser )
+   if empty( oAuth )
+      oAuth       := AuthManager():New( hUser )
    end if
 
 RETURN ( oAuth )

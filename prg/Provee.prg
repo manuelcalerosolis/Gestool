@@ -1902,7 +1902,7 @@ STATIC FUNCTION lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg 
       end if
 
       aTmp[ _LSNDINT ]     := .t.
-      aTmp[ _CCODUSR ]     := cCurUsr()
+      aTmp[ _CCODUSR ]     := Auth():Codigo()
       aTmp[ _DFECCHG ]     := GetSysDate()
       aTmp[ _CTIMCHG ]     := Time()
       aTmp[ _MOBSERV ]     := oRTF:SaveAsRTF()

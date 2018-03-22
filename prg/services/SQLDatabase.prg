@@ -405,40 +405,6 @@ METHOD fetchRowSet( cSentence )
 RETURN ( oRowSet )
 
 //---------------------------------------------------------------------------//
-/*
-METHOD prepare( cSentence )
-
-   local oError
-   local oRowSet
-   local oStatement
-
-   // if ::isParseError( cSentence )
-   //    RETURN ( nil )  
-   // end if  
-
-   try 
-
-      oStatement     := ::oConexion:Query( cSentence )
-
-      oRowSet        := oStatement:fetchRowSet()
-
-   catch oError
-
-      eval( errorBlock(), oError )
-   
-   finally
-
-      logwrite( "antes de liberar oStatement" )
-
-      if !empty( oStatement )
-         oStatement:Free()
-      end if 
-
-   end
-
-RETURN ( oRowSet )
-*/
-//---------------------------------------------------------------------------//
 
 METHOD selectFetchArrayOneColumn( cSentence )
 

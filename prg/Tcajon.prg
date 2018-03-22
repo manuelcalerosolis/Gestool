@@ -108,7 +108,7 @@ METHOD LogCajon( nView )
       ( D():Get( "LogPorta", nView ) )->cNumTur   := cCurSesion()
       ( D():Get( "LogPorta", nView ) )->cSufTur   := RetSufEmp()
       ( D():Get( "LogPorta", nView ) )->cCodCaj   := oUser():cCaja()
-      ( D():Get( "LogPorta", nView ) )->cCodUse   := cCurUsr()
+      ( D():Get( "LogPorta", nView ) )->cCodUse   := Auth():Codigo()
       ( D():Get( "LogPorta", nView ) )->dFecApt   := GetSysDate()
       ( D():Get( "LogPorta", nView ) )->cHorApt   := Substr( Time(), 1, 5 )
 

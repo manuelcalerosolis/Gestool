@@ -1806,7 +1806,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          aTmp[ _NVDVPED ]     := nChgDiv( aTmp[ _CDIVPED ], D():Divisas( nView ) )
          aTmp[ _CSUFPED ]     := RetSufEmp()
          aTmp[ _NESTADO ]     := 1
-         aTmp[ _CCODUSR ]     := cCurUsr()
+         aTmp[ _CCODUSR ]     := Auth():Codigo()
          aTmp[ _CCODDLG ]     := oUser():cDelegacion()
          aTmp[ _LIVAINC ]     := uFieldEmpresa( "lIvaInc" )
          aTmp[ _CMANOBR ]     := padr( getConfigTraslation( "Gastos" ), 250 )
@@ -6961,7 +6961,7 @@ STATIC FUNCTION PedRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       aTabla[ _CNUMPRE     ]  := Space( 12 )
       aTabla[ _LSNDDOC     ]  := .t.
       aTabla[ _LCLOPED     ]  := .f.
-      aTabla[ _CCODUSR     ]  := cCurUsr()
+      aTabla[ _CCODUSR     ]  := Auth():Codigo()
       aTabla[ _DFECCRE     ]  := GetSysDate()
       aTabla[ _CTIMCRE     ]  := Time()
       aTabla[ _LIMPRIMIDO  ]  := .f.
@@ -14654,7 +14654,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "cCodTrn", "C",    9,  0, "Código de transportista" ,                                "Transportista",           "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nKgsTrn", "N",   16,  6, "TARA del transportista" ,                                 "TaraTransportista",       "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "lCloPed", "L",    1,  0, "Lógico de pedido cerrado" ,                               "DocumentoCerrado",        "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "cCodUsr", "C",    3,  0, "Código de usuario",                                       "Usuario",                 "", "( cDbf )", {|| cCurUsr() } } )
+   aAdd( aItmPedCli, { "cCodUsr", "C",    3,  0, "Código de usuario",                                       "Usuario",                 "", "( cDbf )", {|| Auth():Codigo() } } )
    aAdd( aItmPedCli, { "dFecCre", "D",    8,  0, "Fecha de creación del documento",                         "FechaCreacion",           "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cTimCre", "C",    5,  0, "Hora de creación del documento",                          "HoraCreacion",            "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cRetMat", "C",   20,  0, "Matricula",                                               "Matricula",               "", "( cDbf )", nil } )

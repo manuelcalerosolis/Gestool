@@ -646,7 +646,8 @@ METHOD dialogEmpresas()
       Return ( self )
    end if
 
-   DEFINE DIALOG ::oDlg RESOURCE "AdsAdmin" TITLE "Creación de diccionario de datos para " + ::getDataDictionaryFile()
+   DEFINE DIALOG ::oDlg RESOURCE "AdsAdmin" ;
+      TITLE    "Creación de diccionario de datos para " + ::getDataDictionaryFile()
 
    ::oBrwEmpresas                         := TXBrowse():New( ::oDlg )
 
@@ -761,14 +762,6 @@ METHOD StartAdministratorTask()
       oSeeder  := Seeders():New( ::oMsg )
    end if
 
-   // Alteracion de tablas de SQLite------------------------------------------
-
-   // ::AlterTableSQLite()
-
-   // Conversion de tablas a SQLite-------------------------------------------
-
-   // ::ConvertDatosToSQL()
-   
    // Recorremos el array de las empresas par actualizarlas--------------------
 
    if ::lActualizaBaseDatos
@@ -808,14 +801,15 @@ METHOD StartAdministratorTask()
 
    // Conectamos de nuevo con ADS------------------------------------------------
 
-   lCdx( .f. )
-   lAIS( .t. )
+   SetIndexToADS()
 
    ::oMsg:SetText( "Comprabamos la existencia de la base de datos" )
+   msgalert( "Comprabamos la existencia de la base de datos" )
 
    ::CreateDataDictionary()
 
    ::oMsg:SetText( "Intentando conectar con la base de datos" )
+   msgalert( "Intentando conectar con la base de datos" )
 
    if ::ConnectDataDictionary()
 
@@ -853,8 +847,6 @@ METHOD StartAdministratorTask()
             
             else 
 
-               ::Syncronize()
-
                ::oMsg:SetText( "Creando diccionario de empresa " + Rtrim( aEmpresa[ 1 ] ) + " - " + Rtrim( aEmpresa[ 2 ] ) )
 
                if !empty( ::oMtrActualiza )
@@ -885,17 +877,7 @@ METHOD StartAdministratorTask()
       if !empty(::oMtrDiccionario)
      		::oMtrDiccionario:Set( 2 )
      	end if 
-
-      // Creamos las tablas de operacioens-------------------------------------
-
-      // ::oMsg:SetText( "Creando tablas de operaciones" )
-
-      // ::CreateOperationLogTable()
-
-      // ::CreateColumnLogTable()
-
-      // ::CreateAllLocksTablesUsers() 
-      
+     
       if !empty(::oMtrDiccionario)
 	      ::oMtrDiccionario:Set( 3 )
 	   end if

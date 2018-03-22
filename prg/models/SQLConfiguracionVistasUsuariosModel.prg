@@ -59,7 +59,7 @@ METHOD get( cViewType, cViewName )
                            "FROM " + ::cTableName + " "                                            + ;
                            "WHERE "                                                                + ;
                               "empresa = " + quoted( cCodEmp() ) + " AND "                         + ; 
-                              "usuario = " + quoted( cCurUsr() ) + " AND "                         + ;
+                              "usuario = " + quoted( Auth():Codigo() ) + " AND "                         + ;
                               "view_type = " + quoted( cViewType ) + " AND "                       + ;
                               "view_name = " + quoted( cViewName ) + " "                           + ;
                            "LIMIT 1"
@@ -114,7 +114,7 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
       RETURN ( Self )
    end if 
 
-   if empty( cCurUsr() )
+   if empty( Auth():Codigo() )
       RETURN ( Self )
    end if 
 
@@ -157,7 +157,7 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
 
    cSentence            += "VALUES ( "                                                    
    cSentence            +=       quoted( cCodEmp() ) + ", "                          
-   cSentence            +=       quoted( cCurUsr() ) + ", "                          
+   cSentence            +=       quoted( Auth():Codigo() ) + ", "                          
    cSentence            +=       quoted( cViewType ) + ", "                          
    cSentence            +=       quoted( cViewName ) + ", "                                  
 
@@ -212,7 +212,7 @@ METHOD delete( cViewType, cViewName )
    local cSentence   := "DELETE FROM " + ::cTableName + " "                                  + ;
                            "WHERE "                                                          + ;
                               "empresa = " + quoted( cCodEmp() ) + " AND "                   + ; 
-                              "usuario = " + quoted( cCurUsr() ) + " AND "                   + ;
+                              "usuario = " + quoted( Auth():Codigo() ) + " AND "                   + ;
                               "view_type = " + quoted( cViewType ) + " AND "                 + ;
                               "view_name = " + quoted( cViewName ) + " "         
 

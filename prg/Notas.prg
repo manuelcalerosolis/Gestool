@@ -149,7 +149,7 @@ METHOD OpenFiles( lExclusive, lCloseNotas ) CLASS TNotas
    end if
 
    ::oDbf:Activate( .f., !( lExclusive ) )
-   ::oDbf:OrdScope( cCurUsr() )
+   ::oDbf:OrdScope( Auth():Codigo() )
 
    DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "Client.DBF"   VIA ( ::cDriver ) SHARED INDEX "CLIENT.CDX"
 
@@ -335,7 +335,7 @@ METHOD Dialog()
          BITMAP   "FIND" ;
          OF       oDlg
 
-      oGetBuscar:bChange   := {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetBuscar, ::oWndBrw, ::oDbf:nArea, .t., cCurUsr() ) }
+      oGetBuscar:bChange   := {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetBuscar, ::oWndBrw, ::oDbf:nArea, .t., Auth():Codigo() ) }
 
       REDEFINE COMBOBOX oCbxOrden ;
          VAR      cCbxOrden ;
@@ -556,7 +556,7 @@ METHOD Resource( nMode, aInit ) CLASS TNotas
       case nMode == ESPE_MODE
          ::oDbf:dFecNot    := GetSysDate()
          ::oDbf:cHorNot    := SubStr( Time(), 1, 2 ) + SubStr( Time(), 4, 2 )
-         ::oDbf:cUsrNot    := cCurUsr()
+         ::oDbf:cUsrNot    := Auth():Codigo()
          cCmbInteresado    := ::aCmbInteresado[ 1 ]
          ::oDbf:cTexNot    := aInit[ 1 ]
          ::oDbf:cTipDoc    := aInit[ 2 ]
@@ -568,7 +568,7 @@ METHOD Resource( nMode, aInit ) CLASS TNotas
       case nMode == APPD_MODE
          ::oDbf:dFecNot    := GetSysDate()
          ::oDbf:cHorNot    := SubStr( Time(), 1, 2 ) + SubStr( Time(), 4, 2 )
-         ::oDbf:cUsrNot    := cCurUsr()
+         ::oDbf:cUsrNot    := Auth():Codigo()
          cCmbInteresado    := ::aCmbInteresado[ 1 ]
 
       otherwise
@@ -1019,8 +1019,8 @@ FUNCTION SetNotas()
    USE ( cPatDat() + "AgendaUsr.dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NOTAS", @dbfNotas ) )
    SET ADSINDEX TO ( cPatDat() + "AgendaUsr.cdx" ) ADDITIVE
 
-   ( dbfNotas )->( OrdScope( 0, cCurUsr() ) )
-   ( dbfNotas )->( OrdScope( 1, cCurUsr() ) )
+   ( dbfNotas )->( OrdScope( 0, Auth():Codigo() ) )
+   ( dbfNotas )->( OrdScope( 1, Auth():Codigo() ) )
 
    oTimer      := TTimer():New( 6000, {|| ChkNotas() } ):Activate()
 

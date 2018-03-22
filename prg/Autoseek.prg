@@ -481,7 +481,7 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
       nRecAnterior         := ( cAlias )->( Recno() )
       cOldIndexName        := ( cAlias )->( OrdSetFocus() )
       cBagAnterior         := ( cAlias )->( dbOrderInfo( DBOI_FULLPATH ) )
-      cNamAnterior         := "OrdTmp" + cCurUsr()
+      cNamAnterior         := "OrdTmp" + Auth():Codigo()
       cCondAnterior        := ( cAlias )->( dbOrderInfo( DBOI_CONDITION ) )
 
       cOrdKey              := ( cAlias )->( OrdKey() )

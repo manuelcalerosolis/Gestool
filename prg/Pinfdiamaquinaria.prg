@@ -186,7 +186,7 @@ METHOD lGenerate() CLASS PInfDiaMaquinaria
       cExpHead    += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oProduccT:oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProduccT:oDbf:cFile ), ::oProduccT:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oProduccT:oDbf:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oProduccT:oDbf:cFile ), ::oProduccT:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oProduccT:oDbf:OrdKeyCount() )
 
@@ -204,7 +204,7 @@ METHOD lGenerate() CLASS PInfDiaMaquinaria
       cExpLine    += ' .and. cCodMaq >= "' + ::oGrupoMaquina:Cargo:Desde + '" .and. cCodMaq <= "' + ::oGrupoMaquina:Cargo:Hasta + '"'
    end if
 
-   ::oProduccT:oDetMaquina:oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProduccT:oDetMaquina:oDbf:cFile ), ::oProduccT:oDetMaquina:oDbf:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oProduccT:oDetMaquina:oDbf:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oProduccT:oDetMaquina:oDbf:cFile ), ::oProduccT:oDetMaquina:oDbf:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    ::oProduccT:oDbf:GoTop()
 
@@ -257,8 +257,8 @@ METHOD lGenerate() CLASS PInfDiaMaquinaria
 
    end while
 
-   ::oProduccT:oDbf:IdxDelete( cCurUsr(), GetFileNoExt( ::oProduccT:oDbf:cFile ) )
-   ::oProduccT:oDetMaquina:oDbf:IdxDelete( cCurUsr(), GetFileNoExt( ::oProduccT:oDetMaquina:oDbf:cFile ) )
+   ::oProduccT:oDbf:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oProduccT:oDbf:cFile ) )
+   ::oProduccT:oDetMaquina:oDbf:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oProduccT:oDetMaquina:oDbf:cFile ) )
 
    ::oMtrInf:AutoInc( ::oProduccT:oDbf:Lastrec() )
 

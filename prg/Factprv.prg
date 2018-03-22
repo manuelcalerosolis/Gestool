@@ -1278,7 +1278,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       aTmp[ _CCODCAJ ]     := oUser():cCaja()
       aTmp[ _LSNDDOC ]     := .t.
       aTmp[ _CCODPRO ]     := cProCnt()
-      aTmp[ _CCODUSR ]     := cCurUsr()
+      aTmp[ _CCODUSR ]     := Auth():Codigo()
       aTmp[ _CCODDLG ]     := oUser():cDelegacion()
       aTmp[ _DFECENT ]     := Ctod( "" )
       aTmp[ _DFECIMP ]     := Ctod( "" )
@@ -11392,7 +11392,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                      ( cFacPrvT)->CDTODOS     := ( tmpFacPrvT )->cDtoDos
                      ( cFacPrvT)->NDTODOS     := ( tmpFacPrvT )->nDtoDos
                      ( cFacPrvT)->LCLOFAC     := .f.
-                     ( cFacPrvT)->CCODUSR     := cCurUsr()
+                     ( cFacPrvT)->CCODUSR     := Auth():Codigo()
                      ( cFacPrvT)->nTipRet     := ( tmpFacPrvT )->nTipRet
                      ( cFacPrvT)->nPctRet     := ( tmpFacPrvT )->nPctRet
                      ( cFacPrvT)->dFecChg     := GetSysDate()
@@ -11496,7 +11496,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                            ( cFacPrvP )->CDIVPGO    := ( tmpFacPrvP )->cDivPgo
                            ( cFacPrvP )->NVDVPGO    := ( tmpFacPrvP )->nVdvPgo
                            ( cFacPrvP )->DFECVTO    := ( tmpFacPrvP )->dFecVto
-                           ( cFacPrvP )->cCodUsr    := cCurUsr()
+                           ( cFacPrvP )->cCodUsr    := Auth():Codigo()
                            ( cFacPrvP )->dFecChg    := GetSysDate()
                            ( cFacPrvP )->cTimChg    := Time()
                            ( cFacPrvP )->cTurRec    := cCurSesion()

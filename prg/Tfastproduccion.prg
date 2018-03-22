@@ -470,7 +470,7 @@ METHOD AddParteProducccion() CLASS TFastProduccion
    
       ::oMtrInf:cText   := "Procesando partes de producción"
 
-      ::oParteProduccion:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oParteProduccion:cFile ), ::oParteProduccion:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+      ::oParteProduccion:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oParteProduccion:cFile ), ::oParteProduccion:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::oMtrInf:SetTotal( ::oParteProduccion:OrdKeyCount() )
 
@@ -516,7 +516,7 @@ METHOD AddParteProducccion() CLASS TFastProduccion
 
       end while
 
-      ::oParteProduccion:IdxDelete( cCurUsr(), GetFileNoExt( ::oParteProduccion:cFile ) )
+      ::oParteProduccion:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oParteProduccion:cFile ) )
    
    RECOVER USING oError
 

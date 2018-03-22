@@ -754,11 +754,11 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlq, lUniPgo,
             ( dbfFacCliT )->cSufFac    := cSufEmp
             ( dbfFacCliT )->cTurFac    := cCurSesion()
             ( dbfFacCliT )->cCodAlm    := ( dbfAlqCliT )->cCodAlm
-            ( dbfFacCliT )->cCodUsr    := cCurUsr()
+            ( dbfFacCliT )->cCodUsr    := Auth():Codigo()
             ( dbfFacCliT )->dFecCre    := Date()
             ( dbfFacCliT )->cTimCre    := Time()
             ( dbfFacCliT )->lImpAlq    := .t.
-            ( dbfFacCliT )->cCodDlg    := RetFld( cCurUsr(), dbfUsr, "cCodDlg" )
+            ( dbfFacCliT )->cCodDlg    := RetFld( Auth():Codigo(), dbfUsr, "cCodDlg" )
 
             if nRadFec == 1
                ( dbfFacCliT )->dFecFac := dFecFac

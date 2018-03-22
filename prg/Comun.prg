@@ -1581,7 +1581,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Transportistas"
    oItem:cMessage       := "Acceso a los transportistas"
-   oItem:bAction        := {|| TTrans():New( cPatCli(), oWnd, "transportistas" ):Activate() }
+   oItem:bAction        := {|| TransportistasController():New():ActivateNavigatorView() }
    oItem:cId            := "transportistas"
    oItem:cBmp           := "gc_small_truck_16"
    oItem:cBmpBig        := "gc_small_truck_32"
@@ -5374,7 +5374,7 @@ RETURN ( if( lFull, fullCurDir(), "" ) + cPatEmp + "\" )
 FUNCTION appParamsMain( paramsMain )
 
    if !empty( paramsMain )
-      appParamsMain   := upper( paramsMain )
+      appParamsMain   := paramsMain
    end if 
 
 RETURN ( appParamsMain )
@@ -5384,7 +5384,7 @@ RETURN ( appParamsMain )
 FUNCTION appParamsSecond( paramsSecond )
 
    if !empty( paramsSecond )
-      appParamsSecond   := upper( paramsSecond )
+      appParamsSecond   := paramsSecond
    end if 
 
 RETURN ( appParamsSecond )
@@ -5394,7 +5394,7 @@ RETURN ( appParamsSecond )
 FUNCTION appParamsThird( paramsThird )
 
    if !empty( paramsThird )
-      appParamsThird   := upper( paramsThird )
+      appParamsThird   := paramsThird
    end if 
 
 RETURN ( appParamsThird )
@@ -5456,7 +5456,7 @@ FUNCTION runReportGalery( cFastReport )
 
    if file( fullCurDir() + "RptApolo.Exe" )
 
-      nHndReport        := winExec( fullCurDir() + "RptApolo.Exe " + cCodEmp() + " " + cCurUsr() + " " + cFastReport, 1 )
+      nHndReport        := winExec( fullCurDir() + "RptApolo.Exe " + cCodEmp() + " " + Auth():Codigo() + " " + cFastReport, 1 )
 
 
       if !( nHndReport > 21 .or. nHndReport < 0 )
@@ -5485,8 +5485,8 @@ FUNCTION runFastGallery( cFastReport )
       RETURN nil
    end if
 
-   if file( fullCurDir() + "GesTool.Exe" )
-      nHndReport        := winExec( fullCurDir() + "GesTool.Exe " + cCurUsr() + " " + cCodEmp() + " " + cFastReport, 1 )
+   if file( fullCurDir() + "gestool.exe" )
+      nHndReport        := winExec( fullCurDir() + "gestool.exe " + Auth():Uuid() + " " + cCodEmp() + " " + cFastReport, 1 )
 
       if !( nHndReport > 21 .or. nHndReport < 0 )
          msgStop( "Error en la ejecución de la galeria de informes" )
@@ -5573,7 +5573,7 @@ RETURN ( "" )
 
 FUNCTION lUsrMaster()
 
-RETURN ( cCurUsr() == "000" )
+RETURN ( Auth():Codigo() == "000" )
 
 //---------------------------------------------------------------------------//
 

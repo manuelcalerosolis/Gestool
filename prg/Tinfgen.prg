@@ -1706,9 +1706,9 @@ METHOD Default() CLASS TInfGen
    Orden de las columnas-------------------------------------------------------
    */
 
-   if ::oDbfInf:Seek( cCurUsr() + ::cSubTitle )
+   if ::oDbfInf:Seek( Auth():Codigo() + ::cSubTitle )
 
-      while Rtrim( cCurUsr() + ::cSubTitle ) == Rtrim( ::oDbfInf:cCodUse + ::oDbfInf:cNomInf ) .and. !::oDbfInf:eof()
+      while Rtrim( Auth():Codigo() + ::cSubTitle ) == Rtrim( ::oDbfInf:cCodUse + ::oDbfInf:cNomInf ) .and. !::oDbfInf:eof()
 
          ++n
 
@@ -1739,7 +1739,7 @@ METHOD Default() CLASS TInfGen
    Cargamos las fuentes del informe--------------------------------------------
    */
 
-   if ::oDbfFnt:Seek( cCurUsr() + ::cSubTitle )
+   if ::oDbfFnt:Seek( Auth():Codigo() + ::cSubTitle )
       ::acFont  [ 1 ]            := ::oDbfFnt:cFntIn1
       ::acSizes [ 1 ]            := Str( ::oDbfFnt:nSizIn1, 3 )
       ::acEstilo[ 1 ]            := ::oDbfFnt:cStyIn1
@@ -1789,7 +1789,7 @@ METHOD Save() CLASS TInfGen
 
    local n
    local nCols
-   local cCurUsr        := cCurUsr()
+   local cCurUsr        := Auth():Codigo()
 
    if !Empty( ::oDbfInf ) .and. ::oDbfInf:Used()
 

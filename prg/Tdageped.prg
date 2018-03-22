@@ -185,7 +185,7 @@ METHOD lGenerate() CLASS TdAgePed
       cExpHead       := '.t.'
    end if
 
-   ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oPedCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oPedCliT:GoTop()
 
@@ -227,7 +227,7 @@ METHOD lGenerate() CLASS TdAgePed
 
    end while
 
-   ::oPedCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ) )
+   ::oPedCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPedCliT:cFile ) )
 
    ::oMtrInf:AutoInc( ::oPedCliT:LastRec() )
 

@@ -482,7 +482,7 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
 
    // Uauario en curso---------------------------------------------------------
 
-   ::cCodigoUsuario     := cCurUsr()
+   ::cCodigoUsuario     := Auth():Codigo()
 
    // Nivel de Acceso----------------------------------------------------------
 

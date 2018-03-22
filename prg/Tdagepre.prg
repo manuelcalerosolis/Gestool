@@ -184,7 +184,7 @@ METHOD lGenerate()
       cExpHead       := '.t.'
    end if
 
-   ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oPreCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oPreCliT:GoTop()
 
@@ -218,7 +218,7 @@ METHOD lGenerate()
 
    end while
 
-   ::oPreCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ) )
+   ::oPreCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPreCliT:cFile ) )
 
    ::oMtrInf:AutoInc( ::oPreCliT:LastRec() )
 

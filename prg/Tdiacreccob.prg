@@ -152,7 +152,7 @@ METHOD lGenerate() CLASS TDiaCRecCob
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if 
 
-   ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacCliP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oFacCliP:OrdKeyCount() )
 
@@ -192,7 +192,7 @@ METHOD lGenerate() CLASS TDiaCRecCob
 
    end while
 
-   ::oFacCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ) )
+   ::oFacCliP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ) )
 
    /*
    Ahora sobre los tikets------------------------------------------------------
@@ -204,7 +204,7 @@ METHOD lGenerate() CLASS TDiaCRecCob
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if 
 
-   ::oTikCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliP:cFile ), ::oTikCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oTikCliP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oTikCliP:cFile ), ::oTikCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oTikCliP:OrdKeyCount() )
 
@@ -242,7 +242,7 @@ METHOD lGenerate() CLASS TDiaCRecCob
 
    end while
 
-   ::oTikCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliP:cFile ) )
+   ::oTikCliP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oTikCliP:cFile ) )
 
    ::oMtrInf:AutoInc( ::oTikCliP:Lastrec() )
 

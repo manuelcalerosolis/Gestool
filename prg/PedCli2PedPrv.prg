@@ -1086,7 +1086,7 @@ METHOD GeneraPedidoProveedor() CLASS PedCliente2PedProveedor
             ( D():PedidosProveedores( ::nView ) )->nEstado    := 1
             ( D():PedidosProveedores( ::nView ) )->cDivPed    := cDivEmp()
             ( D():PedidosProveedores( ::nView ) )->lSndDoc    := .t.
-            ( D():PedidosProveedores( ::nView ) )->cCodUsr    := cCurUsr()
+            ( D():PedidosProveedores( ::nView ) )->cCodUsr    := Auth():Codigo()
             ( D():PedidosProveedores( ::nView ) )->cNumPedCli := ::cSerieOrder + Str( ::nNumeroOrder ) + ::cSufijoOrder
             
             if ( D():Proveedores( ::nView ) )->( dbSeek( ( ::dbfTemporal )->cCodPrv ) )
