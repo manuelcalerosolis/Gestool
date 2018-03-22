@@ -15,9 +15,10 @@
 CLASS MovimientosAlmacenLineasView FROM SQLBaseView
       
    DATA oBtnSerie
-   DATA oBtnRelaciones
    DATA oBtnOk
    DATA oBtnOkAndNew
+
+   DATA oMenu
 
    DATA oGetCodigoArticulo
    DATA oGetNombreArticulo
@@ -81,6 +82,8 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
    METHOD verticalHide()
 
    METHOD verticalShow()
+
+   METHOD EdtRecMenu()
 
 END CLASS
 
@@ -259,12 +262,6 @@ METHOD Activate()
          WHEN        ( ::getController():isEditMode() ) ;
          ACTION      ( ::oController:runDialogSeries() )
 
-      REDEFINE BUTTON ::oBtnRelaciones ;
-         ID          5 ;
-         OF          ::oDialog ;
-         WHEN        ( ::getController():isNotZoomMode() ) ;
-         ACTION      ( ::oController:oRelacionesEntidades:Edit() )
-
       REDEFINE BUTTON ::oBtnOk ; 
          ID          9 ; 
          OF          ::oDialog ;
@@ -298,6 +295,8 @@ METHOD initActivate()
    ::oDialog:AddFastKey( VK_F6, {|| eval( ::oBtnOkAndNew:bAction ) } )
 
    ::oDialog:AddFastKey( VK_F7, {|| eval( ::oBtnSerie:bAction ) } )
+
+   ::EdtRecMenu()
 
 RETURN ( Self )
 
@@ -421,6 +420,41 @@ METHOD verticalShow( oControl )
          oControl:move( oControl:nTop + nHeight, oControl:nLeft, oControl:nWidth, oControl:nHeight ), ) } )
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD EdtRecMenu()
+
+   MENU ::oMenu
+
+      MENUITEM    "&1. Rotor"
+
+         MENU
+
+            MENUITEM    "&1. Relaciones";
+               MESSAGE  "Mostramos y rellenamos relaciones" ;
+               RESOURCE "gc_graph_claw_16" ;
+               ACTION   ( if( ::getController():isNotZoomMode(), ::oController:oRelacionesEntidades:Edit(), ) )
+
+         SEPARATOR
+
+         MENUITEM    "&1. Modificar artículo";
+               MESSAGE  "Modificar la ficha del artículo" ;
+               RESOURCE "gc_object_cube_16";
+               ACTION   ( if( ::getController():isNotZoomMode(), EdtArticulo( ::oController:oModel:hBuffer[ "codigo_articulo" ] ), ) );
+
+         MENUITEM    "&2. Informe de artículo";
+               MESSAGE  "Abrir el informe del artículo" ;
+               RESOURCE "Info16";
+               ACTION   ( if( ::getController():isNotZoomMode(), InfArticulo( ::oController:oModel:hBuffer[ "codigo_articulo" ] ), ) );
+
+         ENDMENU
+
+   ENDMENU
+
+   ::oDialog:SetMenu( ::oMenu )
+
+Return ( ::oMenu )
 
 //---------------------------------------------------------------------------//
 
