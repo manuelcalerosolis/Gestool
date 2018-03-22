@@ -5,6 +5,8 @@
 
 CLASS RelacionesEntidadesController FROM SQLNavigatorController
 
+   DATA aRelacionables
+
    METHOD New()
 
    METHOD Edit()
@@ -14,6 +16,8 @@ CLASS RelacionesEntidadesController FROM SQLNavigatorController
    METHOD UpdateLine( uNewValue )
 
    METHOD DeleteLine()
+
+   METHOD SearchEntidad()
 
 END CLASS
 
@@ -30,6 +34,8 @@ METHOD New( oSenderController ) CLASS RelacionesEntidadesController
    ::hImage                := { "16" => "gc_document_attachment_16" }
 
    ::nLevel                := nLevelUsr( "01201" )
+
+   ::aRelacionables        := { "Centro de coste" }
 
    ::oModel                := SQLRelacionesEntidadesModel():New( self )
 
@@ -91,12 +97,10 @@ RETURN ( lEdit )
 
 METHOD AppendLine() CLASS RelacionesEntidadesController
 
-   ::oModel:insertBlankRelacionEntidad( ::oSenderController:oModel:cTableName, hget( ::oSenderController:oModel:hBuffer, "uuid" ) )
+   local id    := ::oModel:insertBlankRelacionEntidad( ::oSenderController:oModel:cTableName, hget( ::oSenderController:oModel:hBuffer, "uuid" ) )
 
-   ::oRowSet:Refresh()
-
+   ::oRowSet:refreshAndFindId( id )
    ::oBrowseView:oBrowse:Refresh()
-   ::oBrowseView:oBrowse:GoBottom()
 
 RETURN ( nil )
 
@@ -104,7 +108,10 @@ RETURN ( nil )
 
 METHOD DeleteLine() CLASS RelacionesEntidadesController
 
-   msginfo( "DeleteLine" )
+   ::oModel:deleteById( ::oRowSet:fieldGet( 'id' ) )
+
+   ::oRowSet:Refresh()
+   ::oBrowseView:oBrowse:Refresh()
 
 RETURN ( nil )
 
@@ -112,12 +119,20 @@ RETURN ( nil )
 
 METHOD UpdateLine( uNewValue, cCampo ) CLASS RelacionesEntidadesController
 
-   ::oModel:UpdateRelacionEntidad( ::oRowSet:fieldGet( 'id' ), uNewValue, cCampo )
+   ::oModel:updateFieldWhereId( ::oRowSet:fieldGet( 'id' ), cCampo, uNewValue )
    
    ::oRowSet:Refresh()
-
    ::oBrowseView:oBrowse:Refresh()
-   ::oBrowseView:oBrowse:GoBottom()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD SearchEntidad() CLASS RelacionesEntidadesController
+
+   local Uuid  := TCentroCoste():Create( cPatDat() ):SearchToUuid()
+
+   ::UpdateLine( Uuid, 'uuid_destino' )
 
 RETURN ( nil )
 
@@ -137,8 +152,6 @@ CLASS SQLRelacionesEntidadesModel FROM SQLBaseModel
    METHOD getColumns()
 
    METHOD insertBlankRelacionEntidad( entidad, uuid )
-
-   METHOD UpdateRelacionEntidad( id, uNewValue, cCampo )
 
 END CLASS
 
@@ -182,21 +195,7 @@ RETURN ( ::hColumns )
    hSet( hBuffer, "entidad_origen", entidad )
    hSet( hBuffer, "uuid_origen", uuid )
 
-   ::insertBuffer( hBuffer )
-
-RETURN ( ::hColumns )   
-
-//---------------------------------------------------------------------------//
-
-METHOD UpdateRelacionEntidad( id, uNewValue, cCampo ) CLASS SQLRelacionesEntidadesModel
-
-   local cSentence   := ""
-      
-   cSentence      += "UPDATE " + ::cTableName + " "
-   cSentence      += "SET " + cCampo + " = " + toSqlString( uNewValue )
-   cSentence      += "WHERE id = " + toSqlString( id )
-
-Return ( ::getDatabase():Exec( cSentence ) )
+RETURN ( ::insertBuffer( hBuffer ) )   
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -218,8 +217,6 @@ CLASS RelacionesEntidadesView FROM SQLBaseView
    METHOD getBrowse()      INLINE ( ::oController:oBrowseView:oBrowse )
    METHOD getModel()       INLINE ( ::oController:oModel )
    METHOD getSenderModel() INLINE ( ::oController:oSenderController:oModel )
-
-   METHOD DeleteLine()
 
 END CLASS
 
@@ -243,7 +240,7 @@ METHOD Activate() CLASS RelacionesEntidadesView
       REDEFINE BUTTON ::delButton ;
          ID          501 ;
          OF          ::oDialog ;
-         ACTION      ( ::DeleteLine() )
+         ACTION      ( ::oController:DeleteLine() )
 
 
       // Buttons lineas--------------------------------------------------------
@@ -264,7 +261,7 @@ METHOD Activate() CLASS RelacionesEntidadesView
    // Teclas rápidas-----------------------------------------------------------
 
    ::oDialog:AddFastKey( VK_F2, {|| ::oController:AppendLine() } )
-   ::oDialog:AddFastKey( VK_F4, {|| ::DeleteLine() } )
+   ::oDialog:AddFastKey( VK_F4, {|| ::oController:DeleteLine() } )
    ::oDialog:AddFastKey( VK_F5, {|| ::oDialog:end( IDOK ) } )
 
    // evento bstart-----------------------------------------------------------
@@ -278,14 +275,6 @@ METHOD Activate() CLASS RelacionesEntidadesView
    end if
 
 RETURN ( ::oDialog:nResult )
-
-//--------------------------------------------------------------------------//
-
-METHOD DeleteLine() CLASS RelacionesEntidadesView
-
-   MsgInfo( "Delete" )
-
-RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -361,7 +350,7 @@ RETURN ( SQLRowSet():New():Build( cSentence ) )
 
 CLASS RelacionesEntidadesLineasBrowseView FROM SQLBrowseView
 
-   METHOD addColumns()                       
+   METHOD addColumns()
 
 ENDCLASS
 
@@ -369,12 +358,14 @@ ENDCLASS
 
 METHOD addColumns() CLASS RelacionesEntidadesLineasBrowseView
 
+   local cRelacion         := ""
+
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Id'
       :cOrder              := 'D'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -382,41 +373,48 @@ METHOD addColumns() CLASS RelacionesEntidadesLineasBrowseView
       :nWidth              := 240
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :lHide               := .t.
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Entidad origen'
       :nWidth              := 155
       :bEditValue          := {|| ::getRowSet():fieldGet( 'entidad_origen' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Clave origen'
+      :cHeader             := 'Uuid origen'
       :nWidth              := 155
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid_origen' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Entidad destino'
-      :nWidth              := 155
+      :cHeader             := 'Entidad'
+      :nWidth              := 250
       :bEditValue          := {|| ::getRowSet():fieldGet( 'entidad_destino' ) }
       :nEditType           := EDIT_LISTBOX
       :cEditPicture        := ""
-      :aEditListTxt        := { "aaa", "bbbb", "ccc" }
+      :aEditListTxt        := ::oController:aRelacionables
       :bOnPostEdit         := {| oCol, uNewValue, nKey | ::oController:UpdateLine( uNewValue, 'entidad_destino' ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Clave destino'
+      :cHeader             := 'Uuid destino'
       :nWidth              := 155
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid_destino' ) }
-      :nEditType           := EDIT_LISTBOX
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Relación'
+      :nWidth              := 250
+      :bEditValue          := {|| CentroCosteModel():getNombre( ::getRowSet():fieldGet( 'uuid_destino' ) ) }
+      :nEditType           := 5
       :cEditPicture        := ""
-      :aEditListTxt        := { "aaa", "bbbb", "ccc" }
-      :bOnPostEdit         := {| oCol, uNewValue, nKey | ::oController:UpdateLine( uNewValue, 'uuid_destino' ) }
+      :bEditBlock          := {|| ::oController:SearchEntidad() }
+      :nBtnBmp             := 1
+      :AddResource( "Lupa" )
    end with
 
 RETURN ( self )

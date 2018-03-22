@@ -17,7 +17,7 @@ CLASS D
 
    CLASSDATA   cTag
 
-   METHOD CreateView()                       
+   METHOD CreateView()
    METHOD DeleteView( nView )
 
    METHOD InfoView()                                        INLINE   ( msgStop( valtoprg( hGet( ::hViews, ::nView ) ), "Vista : " + alltrim( str( ::nView ) ) ) )
