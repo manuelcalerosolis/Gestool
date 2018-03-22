@@ -195,7 +195,7 @@ METHOD lGenerate()
       cExpHead       := '.t.'
    end if
 
-   ::oDbfArt:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oDbfArt:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oDbfArt:GoTop()
 
@@ -258,7 +258,7 @@ METHOD lGenerate()
 
    end while
 
-   ::oDbfArt:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ) )
+   ::oDbfArt:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oDbfArt:cFile ) )
 
    ::oMtrInf:AutoInc( ::oDbfArt:LastRec() )
 

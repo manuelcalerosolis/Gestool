@@ -908,7 +908,7 @@ METHOD genCabeceraFacturaProveedor()
       ( D():FacturasProveedores( ::nView ) )->cCodAlm    := oUser():cAlmacen()
       ( D():FacturasProveedores( ::nView ) )->cCodCaj    := oUser():cCaja()
       ( D():FacturasProveedores( ::nView ) )->cCodPro    := cProCnt()
-      ( D():FacturasProveedores( ::nView ) )->cCodUsr    := cCurUsr()
+      ( D():FacturasProveedores( ::nView ) )->cCodUsr    := Auth():Codigo()
       ( D():FacturasProveedores( ::nView ) )->cCodDlg    := oUser():cDelegacion()
       ( D():FacturasProveedores( ::nView ) )->cCodPrv    := ::oProveedor:Value()
 

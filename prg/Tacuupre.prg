@@ -138,7 +138,7 @@ METHOD lGenerate() CLASS TAcuUPre
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oPreCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oPreCliT:OrdKeyCount() )
 
@@ -170,9 +170,9 @@ METHOD lGenerate() CLASS TAcuUPre
 
    end while
 
-   ::oPreCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ) )
+   ::oPreCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPreCliT:cFile ) )
 
-   ::oPreCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oPreCliL:cFile ) )
+   ::oPreCliL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPreCliL:cFile ) )
 
    ::oMtrInf:AutoInc( ::oPreCliT:Lastrec() )
 

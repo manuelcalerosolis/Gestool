@@ -805,7 +805,7 @@ Static Function SaveUser( aTmp, aGet, dbfUser, oTree, oBrw, oDlg, nMode, oGet )
    Situamos las porpiedades del usuario por defecto----------------------------
    */
 
-   if ( dbfUser )->cCodUse == cCurUsr()
+   if ( dbfUser )->cCodUse == Auth():Codigo()
       oSetUsr( ( dbfUser )->cCodUse, .f. )
    end if
 
@@ -1009,7 +1009,7 @@ function nLevelUsr( uHelpId )
             nLevOpc     := ( dbfMapa )->nLevOpc
          end if
       else
-         if ( dbfMapa )->( dbSeek( cCurUsr() + cLevOpc ) )
+         if ( dbfMapa )->( dbSeek( Auth():Codigo() + cLevOpc ) )
             nLevOpc     := ( dbfMapa )->nLevOpc
          end if
       end if
@@ -1680,7 +1680,7 @@ FUNCTION changeUser( cCodUsr, dbfUsr, dbfCajas, oWndBrw )
 
    if lGetPsw( dbfUsr )
       oUser():openFiles( dbfUsr, dbfCajas )
-      oUser():quitUser( cCurUsr() )
+      oUser():quitUser( Auth():Codigo() )
       oUser():setUser( cCodUsr, .t. )
       oUser():save()
       oUser():closeFiles()
@@ -1756,7 +1756,7 @@ Function SetNotIni( cCodUsr, dbfUser )
    local oError
    local lClo        := .f.
 
-   DEFAULT cCodUsr   := cCurUsr()
+   DEFAULT cCodUsr   := Auth():Codigo()
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -2303,7 +2303,7 @@ Static Function selectBrwBigUser( nOpt, oDlg, dbfUsr, dbfCaj )
       Return nil
    end if 
 
-   if ( dbfUsr )->lUseUse .and. !( ( dbfUsr )->cCodUse == cCurUsr() )
+   if ( dbfUsr )->lUseUse .and. !( ( dbfUsr )->cCodUse == Auth():Codigo() )
       msgStop( "Usuario en uso" )
       Return nil
    end if
@@ -2311,7 +2311,7 @@ Static Function selectBrwBigUser( nOpt, oDlg, dbfUsr, dbfCaj )
    // set nuevo usuario--------------------------------------------------------
 
    oUser():openFiles( dbfUsr, dbfCaj )
-   oUser():quitUser( cCurUsr() )
+   oUser():quitUser( Auth():Codigo() )
    oUser():setUser( cCodigoUsuario )
 
    oLstUsr:nOption   := 0
@@ -2589,7 +2589,7 @@ FUNCTION lFreeUser( cCodUsr, lSetUsr, dbfUser, oWndBrw )
    local oError
    local nHandle
 
-   DEFAULT cCodUsr   := cCurUsr()
+   DEFAULT cCodUsr   := Auth():Codigo()
    DEFAULT lSetUsr   := .f.
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -2834,7 +2834,6 @@ function nLevelUsr( uHelpId )
 
    local oError
    local oBlock
-   local dbfMapa
    local cLevOpc
    local nLevOpc  := nOr( ACC_APPD, ACC_EDIT, ACC_ZOOM, ACC_DELE, ACC_IMPR )
 
@@ -2844,52 +2843,10 @@ function nLevelUsr( uHelpId )
 
    CursorWait()
 
-   if ValType( uHelpId ) == "O"
+   if hb_isobject( uHelpId ) 
       cLevOpc     := uHelpId:nHelpId
    else
       cLevOpc     := uHelpId
-   end if
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      dbUseArea( .t., ( cDriver() ), ( cPatDat() + "MAPAS.DBF" ), ( cCheckArea( "MAPAS", @dbfMapa ) ), .t. )
-
-      if !( dbfMapa )->( neterr() )
-
-         if !lAIS() 
-            ( dbfMapa )->( ordListAdd( cPatDat() + "MAPAS.CDX" ) )
-         else
-            ( dbfMapa )->( ordsetfocus( 1 ) )
-         end if 
-
-         if !Empty( cCurGrp() )
-            if ( dbfMapa )->( dbSeek( cCurGrp() + cLevOpc ) )
-               nLevOpc     := ( dbfMapa )->nLevOpc
-            end if
-         else
-            if ( dbfMapa )->( dbSeek( cCurUsr() + cLevOpc ) )
-               nLevOpc     := ( dbfMapa )->nLevOpc
-            end if
-         end if
-
-      end if
-
-      ( dbfMapa )->( dbCloseArea() )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir los mapas de usuarios" + CRLF + ErrorMessage( oError )  )
-
-      if !Empty( dbfMapa )
-         ( dbfMapa )->( dbCloseArea() )
-      end if
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-   if nLevOpc  == 0
-      nLevOpc     := nOr( ACC_APPD, ACC_EDIT, ACC_ZOOM, ACC_DELE, ACC_IMPR )
    end if
 
    CursorWE()

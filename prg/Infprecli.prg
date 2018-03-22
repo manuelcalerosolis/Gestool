@@ -180,7 +180,7 @@ METHOD lGenerate()
       cExpHead    += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacCliP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oFacCliP:OrdKeyCount() )
 
@@ -228,7 +228,7 @@ METHOD lGenerate()
 
    ::oMtrInf:AutoInc( ::oFacCliP:LastRec() )
 
-   ::oFacCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ) )
+   ::oFacCliP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ) )
 
    do case
       case ::oEstadoUno:nAt == 1

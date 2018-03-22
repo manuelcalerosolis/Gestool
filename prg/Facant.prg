@@ -1192,7 +1192,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
       aTmp[ _CTURANT  ]    := cCurSesion()
       aTmp[ _CCODALM  ]    := oUser():cAlmacen()
       aTmp[ _CCODCAJ  ]    := oUser():cCaja()
-      aTmp[ _CCODUSR  ]    := cCurUsr()
+      aTmp[ _CCODUSR  ]    := Auth():Codigo()
       aTmp[ _CCODPAGO ]    := cDefFpg()
       aTmp[ _CDIVANT  ]    := cDivEmp()
       aTmp[ _NVDVANT  ]    := nChgDiv( aTmp[ _CDIVANT ], dbfDiv )

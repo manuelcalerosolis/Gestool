@@ -148,7 +148,7 @@ METHOD OpenFiles()
 
    CursorWait()
 
-   ::cFileName    := cGetNewFileName( cPatTmp() + "LinDoc" + cCurUsr(), "Dbf", .t. )
+   ::cFileName    := cGetNewFileName( cPatTmp() + "LinDoc" + Auth():Codigo(), "Dbf", .t. )
 
    BEGIN SEQUENCE
 

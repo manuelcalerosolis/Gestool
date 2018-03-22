@@ -172,7 +172,7 @@ METHOD lGenerate()
       cExpresion     += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oPedCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliP:cFile ), ::oPedCliP:OrdKey(), ( cExpresion ), , , , , , , , .t. )
+   ::oPedCliP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPedCliP:cFile ), ::oPedCliP:OrdKey(), ( cExpresion ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oPedCliP:OrdKeyCount() )
 
@@ -214,7 +214,7 @@ METHOD lGenerate()
 
    end while
 
-   ::oPedCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliP:cFile ) )
+   ::oPedCliP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPedCliP:cFile ) )
 
    ::oMtrInf:AutoInc( ::oPedCliP:Lastrec() )
 

@@ -519,7 +519,7 @@ METHOD lCreateTempLabelEdition() CLASS TLabelGenerator
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::tmpLabelEdition       := "LblEdt" + cCurUsr()
+      ::tmpLabelEdition       := "LblEdt" + Auth():Codigo()
 
       ::cFileTmpLabel         := cGetNewFileName( cPatTmp() + "LblEdt" )
 
@@ -701,7 +701,7 @@ METHOD createTempLabelReport() CLASS TLabelGenerator
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::tmpLabelReport     := "LblRpt" + cCurUsr()
+      ::tmpLabelReport     := "LblRpt" + Auth():Codigo()
       ::fileLabelReport    := cGetNewFileName( cPatTmp() + "LblRpt" )
 
       dbCreate( ::fileLabelReport, ::aStructureField, cLocalDriver() )

@@ -1647,7 +1647,7 @@ Method SaveToDisk( Resultado )
       SET SECTION "backup" TO ::bk_Serial                      ENTRY "Serial"       OF oIni
       SET SECTION "backup" TO ::bk_Bytes                       ENTRY "Bytes"        OF oIni
       SET SECTION "backup" TO ::bk_NumFiles                    ENTRY "NumFiles"     OF oIni
-      SET SECTION "backup" TO cCurUsr()                        ENTRY "Usuario"      OF oIni
+      SET SECTION "backup" TO Auth():Codigo()                        ENTRY "Usuario"      OF oIni
       SET SECTION "backup" TO dtoc( Date() ) + " - " + hora    ENTRY "Fecha"        OF oIni
       SET SECTION "backup" TO Resultado                        ENTRY "Estado"       OF oIni
       SET SECTION "backup" TO Accion                           ENTRY "Contenido"    OF oIni
@@ -1685,7 +1685,7 @@ Method SaveToDisk( Resultado )
    ::oDbf:Append()
    ::oDbf:Fecha   := Date()
    ::oDbf:Hora    := hora
-   ::oDbf:Usuario := cCurUsr()
+   ::oDbf:Usuario := Auth():Codigo()
    ::oDbf:Resumen := ::mResultado
    ::oDbf:Save()
 

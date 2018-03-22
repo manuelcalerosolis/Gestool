@@ -183,7 +183,7 @@ METHOD lGenerate() CLASS TDiaCPed
    end if
 
    //Creamos el índice
-   ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oPedCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oPedCliT:OrdKeyCount() )
 
@@ -230,7 +230,7 @@ METHOD lGenerate() CLASS TDiaCPed
    end while
 
    //Eliminamos el índice creado anteriormente
-   ::oPedCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ) )
+   ::oPedCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPedCliT:cFile ) )
 
    ::oDlg:Enable()
 

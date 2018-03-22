@@ -365,7 +365,7 @@ METHOD lGenerate()
       cCondicionCabecera      += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cCondicionCabecera ), , , , , , , , .t. )
+   ::oPedCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cCondicionCabecera ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oPedCliT:OrdKeyCount() )
 
@@ -383,7 +383,7 @@ METHOD lGenerate()
       cCondicionLinea         += '.and. !Empty( nPreDiv )'
    end if
 
-   ::oPedCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliL:cFile ), ( ::oPedCliL:OrdKey() ), ( cCondicionLinea ), , , , , , , , .t. )
+   ::oPedCliL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPedCliL:cFile ), ( ::oPedCliL:OrdKey() ), ( cCondicionLinea ), , , , , , , , .t. )
 
    /*
    Nos movemos por las cabeceras de los pedidos a proveedores------------------
@@ -477,9 +477,9 @@ METHOD lGenerate()
 
    ::oMtrInf:AutoInc( ::oPedCliT:LastRec() )
 
-   ::oPedCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ) )
+   ::oPedCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPedCliT:cFile ) )
 
-   ::oPedCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliL:cFile ) )
+   ::oPedCliL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPedCliL:cFile ) )
 
    ::oDlg:Enable()
 

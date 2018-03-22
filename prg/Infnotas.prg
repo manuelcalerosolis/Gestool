@@ -80,7 +80,7 @@ METHOD lGenerate()
       cExpHead       := '.t.'
    end if
 
-   ::xOthers:AddTmpIndex( cCurUsr(), GetFileNoExt( ::xOthers:cFile ), ::xOthers:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::xOthers:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::xOthers:cFile ), ::xOthers:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::xOthers:GoTop()
 
@@ -128,7 +128,7 @@ METHOD lGenerate()
 
    end while
 
-   ::xOthers:IdxDelete( cCurUsr(), GetFileNoExt( ::xOthers:cFile ) )
+   ::xOthers:IdxDelete( Auth():Codigo(), GetFileNoExt( ::xOthers:cFile ) )
 
    ::oMtrInf:AutoInc( ::xOthers:Lastrec() )
 

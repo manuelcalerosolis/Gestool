@@ -997,7 +997,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::setMeterText( "Procesando SAT" )
 
-      ::oSatCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliT:cFile ), ::oSatCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+      ::oSatCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oSatCliT:cFile ), ::oSatCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::setMeterTotal( ::oSatCliT:OrdKeyCount() )
 
@@ -1082,7 +1082,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       end while
 
-      ::oSatCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oSatCliT:cFile ) ) 
+      ::oSatCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oSatCliT:cFile ) ) 
 
    RECOVER USING oError
 
@@ -1132,7 +1132,7 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::setMeterText( "Procesando presupuestos" )
       
-      ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+      ::oPreCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::setMeterTotal( ::oPreCliT:OrdKeyCount() )
 
@@ -1218,7 +1218,7 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       end while
 
-      ::oPreCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ) ) 
+      ::oPreCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPreCliT:cFile ) ) 
 
    RECOVER USING oError
 
@@ -1268,7 +1268,7 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
    
       ::setMeterText( "Procesando pedidos" )
 
-      ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+      ::oPedCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::setMeterTotal( ::oPedCliT:OrdKeyCount() )
       
@@ -1358,7 +1358,7 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       end while
 
-      ::oPedCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ) )
+      ::oPedCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oPedCliT:cFile ) )
    
    RECOVER USING oError
 
@@ -1415,7 +1415,7 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
 
       ::setMeterText( "Procesando albaranes" )
       
-      ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+      ::oAlbCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::setMeterTotal( ::oAlbCliT:OrdKeyCount() )
 
@@ -1504,7 +1504,7 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
 
       end while
 
-      ::oAlbCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ) )
+      ::oAlbCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oAlbCliT:cFile ) )
    
    RECOVER USING oError
 
@@ -1558,7 +1558,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
    
       ::setMeterText( "Procesando facturas" )
       
-      ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+      ::oFacCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::setMeterTotal( ::oFacCliT:OrdKeyCount() )
 
@@ -1638,7 +1638,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       end while
 
-      ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
+      ::oFacCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliT:cFile ) )
    
    // RECOVER USING oError
    //    msgStop( ErrorMessage( oError ), "Imposible añadir facturas de clientes" )
@@ -1685,7 +1685,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::setMeterText( "Procesando facturas rectificativas" )
       
-      ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+      ::oFacRecT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::setMeterTotal( ::oFacRecT:OrdKeyCount() )
 
@@ -1760,7 +1760,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
       end while
 
-      ::oFacRecT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ) )
+      ::oFacRecT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ) )
    
    RECOVER USING oError
 
@@ -1805,7 +1805,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
    
       ::setMeterText( "Procesando tickets" )
    
-      ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+      ::oTikCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::setMeterTotal( ::oTikCliT:OrdKeyCount() )
 
@@ -1877,7 +1877,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
 
       end while
 
-      ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
+      ::oTikCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oTikCliT:cFile ) )
    
    RECOVER USING oError
 
@@ -1928,7 +1928,7 @@ METHOD AddRecibosCliente( cFieldOrder ) CLASS TFastVentasClientes
 
       ::setMeterText( "Procesando recibos" )
 
-      ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+      ::oFacCliP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::setMeterTotal( ::oFacCliP:OrdKeyCount() )
 
@@ -1990,7 +1990,7 @@ METHOD AddRecibosCliente( cFieldOrder ) CLASS TFastVentasClientes
 
       end while
 
-      ::oFacCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ) )
+      ::oFacCliP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ) )
    
    RECOVER USING oError
 
@@ -2041,7 +2041,7 @@ METHOD insertFacturaCliente()
 
       ::setMeterText( "Procesando facturas" )
 
-      ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+      ::oFacCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::setMeterTotal( ::oFacCliT:OrdKeyCount() )
 
@@ -2128,7 +2128,7 @@ METHOD insertFacturaCliente()
 
       end while
 
-      ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
+      ::oFacCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliT:cFile ) )
    
    RECOVER USING oError
 
@@ -2179,7 +2179,7 @@ METHOD insertRectificativa()
 
       ::setMeterText( "Procesando facturas rectificativas" )
       
-      ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+      ::oFacRecT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::setMeterTotal( ::oFacRecT:OrdKeyCount() )
 
@@ -2267,7 +2267,7 @@ METHOD insertRectificativa()
 
       end while
 
-      ::oFacRecT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ) )
+      ::oFacRecT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacRecT:cFile ) )
    
    RECOVER USING oError
 
@@ -2313,7 +2313,7 @@ METHOD insertTicketCliente()
 
       ::setMeterText( "Procesando tickets" )
       
-      ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
+      ::oTikCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( ::cExpresionHeader ), , , , , , , , .t. )
 
       ::setMeterTotal( ::oTikCliT:OrdKeyCount() )
 
@@ -2400,7 +2400,7 @@ METHOD insertTicketCliente()
 
       end while
 
-      ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
+      ::oTikCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oTikCliT:cFile ) )
    
    RECOVER USING oError
 

@@ -982,11 +982,11 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
             ( dbfFacCliT )->cSufFac    := cSufEmp
             ( dbfFacCliT )->cCodCaj    := cCodCaj
             ( dbfFacCliT )->cTurFac    := cCurSesion()
-            ( dbfFacCliT )->cCodUsr    := cCurUsr()
+            ( dbfFacCliT )->cCodUsr    := Auth():Codigo()
             ( dbfFacCliT )->dFecCre    := Date()
             ( dbfFacCliT )->cTimCre    := Time()
             ( dbfFacCliT )->lImpAlb    := .t.
-            ( dbfFacCliT )->cCodDlg    := RetFld( cCurUsr(), dbfUsr, "cCodDlg" )
+            ( dbfFacCliT )->cCodDlg    := RetFld( Auth():Codigo(), dbfUsr, "cCodDlg" )
             ( dbfFacCliT )->cCodAlm    := ( dbfAlbCliT )->cCodAlm
 
             if nRadFec == 1

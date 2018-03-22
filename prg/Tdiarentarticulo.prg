@@ -227,7 +227,7 @@ METHOD lGenerate() CLASS TDiaRentArticulo
    Recorro las lineas de albaranes---------------------------------------------
    */
 
-   ::oAlbCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oAlbCliL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    ::oAlbCliL:GoTop()
 
@@ -334,7 +334,7 @@ METHOD lGenerate() CLASS TDiaRentArticulo
    Una vez terminado con la tabla elimino el filtro----------------------------
    */
 
-   ::oAlbCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ) )
+   ::oAlbCliL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oAlbCliL:cFile ) )
 
    /*
    Recorro las lineas de facturas rectificativas-------------------------------
@@ -350,7 +350,7 @@ METHOD lGenerate() CLASS TDiaRentArticulo
       cExpLine       += ' .and. cCodFam >= "' + ::oGrupoFamilia:Cargo:Desde + '" .and. cCodFam <= "' + ::oGrupoFamilia:Cargo:Hasta + '"'
    end if
 
-   ::oFacRecL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oFacRecL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    ::oFacRecL:GoTop()
 
@@ -453,7 +453,7 @@ METHOD lGenerate() CLASS TDiaRentArticulo
 
    end while
 
-   ::oFacRecL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ) )
+   ::oFacRecL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacRecL:cFile ) )
 
    /*
    Recorro las lineas de facturas----------------------------------------------
@@ -469,7 +469,7 @@ METHOD lGenerate() CLASS TDiaRentArticulo
       cExpLine       += ' .and. cCodFam >= "' + ::oGrupoFamilia:Cargo:Desde + '" .and. cCodFam <= "' + ::oGrupoFamilia:Cargo:Hasta + '"'
    end if
 
-   ::oFacCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oFacCliL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    ::oFacCliL:GoTop()
    ::oMtrInf:cText   := "Factura"
@@ -571,7 +571,7 @@ METHOD lGenerate() CLASS TDiaRentArticulo
 
    end while
 
-   ::oFacCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ) )
+   ::oFacCliL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliL:cFile ) )
 
    /*
    Recorro las lineas de tiket-------------------------------------------------
@@ -579,7 +579,7 @@ METHOD lGenerate() CLASS TDiaRentArticulo
 
    cExpLine          := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
-   ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   ::oTikCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    if !::oGrupoArticulo:Cargo:Todos
       cExpLine       := 'cCbaTil >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cCbaTil <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
@@ -588,13 +588,13 @@ METHOD lGenerate() CLASS TDiaRentArticulo
          cExpLine    += ' .and. cCodFam >= "' + ::oGrupoFamilia:Cargo:Desde + '" .and. cCodFam <= "' + ::oGrupoFamilia:Cargo:Hasta + '"'
       end if
 
-      ::oTikCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+      ::oTikCliL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
    else
 
       if !::oGrupoFamilia:Cargo:Todos
          cExpLine    := 'cCodFam >= "' + ::oGrupoFamilia:Cargo:Desde + '" .and. cCodFam <= "' + ::oGrupoFamilia:Cargo:Hasta + '"'
-         ::oTikCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+         ::oTikCliL:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
       end if
 
    end if
@@ -705,10 +705,10 @@ METHOD lGenerate() CLASS TDiaRentArticulo
 
    end while
 
-   ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
+   ::oTikCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oTikCliT:cFile ) )
 
    if !::oGrupoArticulo:Cargo:Todos
-      ::oTikCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ) )
+      ::oTikCliL:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oTikCliL:cFile ) )
    end if
 
    ::oMtrInf:AutoInc( ::oTikCliT:Lastrec() )

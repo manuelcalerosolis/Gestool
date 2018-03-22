@@ -473,7 +473,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
       aTmp[ _LSNDENT ]  := .t.
       aTmp[ _DFECCRE ]  := GetSysDate()
       aTmp[ _CTIMCRE ]  := SubStr( Time(), 1, 5 )
-      aTmp[ _CCODUSR ]  := cCurUsr()
+      aTmp[ _CCODUSR ]  := Auth():Codigo()
       aTmp[ _NTIPENT ]  := nTipoDocumento
       aTmp[ _CGUID ]    := win_uuidcreatestring()
 
@@ -538,7 +538,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
    end case
 
    if Empty( aTmp[ _CCODUSR ] )
-      aTmp[ _CCODUSR ]  := cCurUsr()
+      aTmp[ _CCODUSR ]  := Auth():Codigo()
    end if
 
    if Empty( aTmp[ _CCODCAJ ] )
@@ -730,7 +730,7 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
       aTmp[ _NVDVDIV ]  := 1
       aTmp[ _NTIPENT ]  := 1
       aTmp[ _CTIMCRE ]  := SubStr( Time(), 1, 5 )
-      aTmp[ _CCODUSR ]  := cCurUsr()
+      aTmp[ _CCODUSR ]  := Auth():Codigo()
 
    case nMode == DUPL_MODE
 
@@ -753,7 +753,7 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
    end case
 
    if Empty( aTmp[ _CCODUSR ] )
-      aTmp[ _CCODUSR ]  := cCurUsr()
+      aTmp[ _CCODUSR ]  := Auth():Codigo()
    end if
 
    if Empty( aTmp[ _CCODCAJ ] )

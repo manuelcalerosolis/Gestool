@@ -1104,7 +1104,7 @@ METHOD GeneraFacturaGastos( lExternal ) CLASS TCobAge
    ::oFacPrvT:cCodAlm         := oUser():cAlmacen()
    ::oFacPrvT:cCodCaj         := oUser():cCaja()
    ::oFacPrvT:lSndDoc         := .t.
-   ::oFacPrvT:cCodUsr         := cCurUsr()
+   ::oFacPrvT:cCodUsr         := Auth():Codigo()
    ::oFacPrvT:cCodDlg         := oUser():cDelegacion()
    ::oFacPrvT:dFecEnt         := Ctod( "" )
    ::oFacPrvT:dFecImp         := Ctod( "" )

@@ -195,7 +195,7 @@ METHOD lGenerate() CLASS TDiarioRecibos
       cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::cCliOrg ) + '" .and. cCodCli <= "' + Rtrim( ::cCliDes ) + '"'
    end if
 
-   ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacCliP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oFacCliP:OrdKeyCount() )
 
@@ -245,7 +245,7 @@ METHOD lGenerate() CLASS TDiarioRecibos
 
    end while
 
-   ::oFacCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ) )
+   ::oFacCliP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacCliP:cFile ) )
 
    /*
    Ahora sobre los tikets------------------------------------------------------
@@ -255,7 +255,7 @@ METHOD lGenerate() CLASS TDiarioRecibos
 
       cExpHead       := 'dPgoTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dPgoTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
-      ::oTikCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliP:cFile ), ::oTikCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::oTikCliP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oTikCliP:cFile ), ::oTikCliP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
       ::oMtrInf:SetTotal( ::oTikCliP:OrdKeyCount() )
 
@@ -300,7 +300,7 @@ METHOD lGenerate() CLASS TDiarioRecibos
 
       end while
 
-      ::oTikCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliP:cFile ) )
+      ::oTikCliP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oTikCliP:cFile ) )
 
    end if
 
@@ -323,7 +323,7 @@ METHOD lGenerate() CLASS TDiarioRecibos
       cExpHead       += ' .and. cCodPrv >= "' + Rtrim( ::cPrvOrg ) + '" .and. cCodPrv <= "' + Rtrim( ::cPrvDes ) + '"'
    end if
 
-   ::oFacPrvP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvP:cFile ), ::oFacPrvP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oFacPrvP:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oFacPrvP:cFile ), ::oFacPrvP:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oFacPrvP:OrdKeyCount() )
 
@@ -367,7 +367,7 @@ METHOD lGenerate() CLASS TDiarioRecibos
 
    end while
 
-   ::oFacPrvP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacPrvP:cFile ) )
+   ::oFacPrvP:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oFacPrvP:cFile ) )
 
    ::oMtrInf:AutoInc( ::oFacPrvP:LastRec() )
 

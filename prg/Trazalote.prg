@@ -103,7 +103,7 @@ METHOD OpenFiles()
    local oError
    local oBlock      
 
-   ::cFileTrazaLote  := "TrazarLote" + cCurUsr()
+   ::cFileTrazaLote  := "TrazarLote" + Auth():Codigo()
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )   
    BEGIN SEQUENCE

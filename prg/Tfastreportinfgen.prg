@@ -1542,7 +1542,7 @@ Method FastReport( nDevice ) CLASS TFastReportInfGen
             ::oFastReport:PrepareReport()
             ::oFastReport:SetProperty( "PDFExport", "ShowDialog",       .t. )
             ::oFastReport:SetProperty( "PDFExport", "DefaultPath",      cPatTmp() )
-            ::oFastReport:SetProperty( "PDFExport", "FileName",         "Informe" + cCurUsr() + ".pdf" )
+            ::oFastReport:SetProperty( "PDFExport", "FileName",         "Informe" + Auth():Codigo() + ".pdf" )
             ::oFastReport:SetProperty( "PDFExport", "EmbeddedFonts",    .t. )
             ::oFastReport:SetProperty( "PDFExport", "PrintOptimized",   .t. )
             ::oFastReport:SetProperty( "PDFExport", "Outline",          .t. )
@@ -1553,14 +1553,14 @@ Method FastReport( nDevice ) CLASS TFastReportInfGen
             ::oFastReport:PrepareReport()
             ::oFastReport:SetProperty( "HTMLExport", "ShowDialog",      .t. )
             ::oFastReport:SetProperty( "HTMLExport", "DefaultPath",     cPatTmp() )
-            ::oFastReport:SetProperty( "HTMLExport", "FileName",        "Informe" + cCurUsr() + ".html" )
+            ::oFastReport:SetProperty( "HTMLExport", "FileName",        "Informe" + Auth():Codigo() + ".html" )
             ::oFastReport:DoExport(    "HTMLExport" )
 
          case nDevice == IS_EXCEL
             ::oFastReport:PrepareReport()
             ::oFastReport:SetProperty( "XLSExport", "ShowDialog",       .t. )
             ::oFastReport:SetProperty( "XLSExport", "DefaultPath",      cPatTmp() )
-            ::oFastReport:SetProperty( "XLSExport", "FileName",         "Informe" + cCurUsr() + ".xls" )
+            ::oFastReport:SetProperty( "XLSExport", "FileName",         "Informe" + Auth():Codigo() + ".xls" )
             ::oFastReport:DoExport(    "XLSExport" )
 
       end case
@@ -1722,7 +1722,7 @@ Method MoveReport() CLASS TFastReportInfGen
 
    else
 
-      msgStop( cCurUsr() + Upper( ::cReportName ), "No encontrado" )
+      msgStop( Auth():Codigo() + Upper( ::cReportName ), "No encontrado" )
 
    end if
 
@@ -2316,7 +2316,7 @@ METHOD nRemesaAgentes()
 
    cExpHead          := 'dFecCob >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecCob <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
-   ::oRemAgeT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oRemAgeT:cFile ), ::oRemAgeT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oRemAgeT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oRemAgeT:cFile ), ::oRemAgeT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:cText   := "Procesando liquidaciones de agentes"
    ::oMtrInf:SetTotal( ::oRemAgeT:OrdKeyCount() )
@@ -2335,7 +2335,7 @@ METHOD nRemesaAgentes()
 
    end while
 
-   ::oRemAgeT:IdxDelete( cCurUsr(), GetFileNoExt( ::oRemAgeT:cFile ) )
+   ::oRemAgeT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oRemAgeT:cFile ) )
 
 RETURN ( ::nTotalRemesasAgentes )
 

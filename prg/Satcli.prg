@@ -1797,7 +1797,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       aTmp[ _CDIVSAT ]  := cDivEmp()
       aTmp[ _CCODCAJ ]  := oUser():cCaja()
       aTmp[ _CCODPGO ]  := cDefFpg()
-      aTmp[ _CCODUSR ]  := cCurUsr()
+      aTmp[ _CCODUSR ]  := Auth():Codigo()
       aTmp[ _NVDVSAT ]  := nChgDiv( aTmp[ _CDIVSAT ], dbfDiv )
       aTmp[ _LESTADO ]  := .f.
       aTmp[ _CSUFSAT ]  := RetSufEmp()
@@ -1837,7 +1837,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       aTmp[ _CTURSAT ]  := cCurSesion()
       aTmp[ _LESTADO ]  := .f.
       aTmp[ _LCLOSAT ]  := .f.
-      aTmp[ _CCODUSR ]  := cCurUsr()
+      aTmp[ _CCODUSR ]  := Auth():Codigo()
 
    end case
 
@@ -7846,7 +7846,7 @@ STATIC FUNCTION SatRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       aTabla[ _CNUMSat     ]  := Space( 12 )
       aTabla[ _LSNDDOC     ]  := .t.
       aTabla[ _LCLOSAT     ]  := .f.
-      aTabla[ _CCODUSR     ]  := cCurUsr()
+      aTabla[ _CCODUSR     ]  := Auth():Codigo()
       aTabla[ _DFECCRE     ]  := GetSysDate()
       aTabla[ _CTIMCRE     ]  := Time()
       aTabla[ _LIMPRIMIDO  ]  := .f.
@@ -10498,7 +10498,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "cCodTrn",   "C",  9,  0, "Código de transportista" ,                    "Transportista",           "", "( cDbf )", nil } )
    aAdd( aItmSatCli, { "nKgsTrn"   ,"N", 16,  6, "TARA del transportista" ,                     "TaraTransportista",       "", "( cDbf )", nil } )
    aAdd( aItmSatCli, { "lCloSat",   "L",  1,  0, "" ,                                           "DocumentoCerrado",        "", "( cDbf )", nil } )
-   aAdd( aItmSatCli, { "cCodUsr",   "C",  3,  0, "Código de usuario",                           "Usuario",                 "", "( cDbf )", {|| cCurUsr() } } )
+   aAdd( aItmSatCli, { "cCodUsr",   "C",  3,  0, "Código de usuario",                           "Usuario",                 "", "( cDbf )", {|| Auth():Codigo() } } )
    aAdd( aItmSatCli, { "dFecCre",   "D",  8,  0, "Fecha de creación del documento",             "FechaCreacion",           "", "( cDbf )", nil } )
    aAdd( aItmSatCli, { "cTimCre",   "C",  5,  0, "Hora de creación del documento",              "HoraCreacion",            "", "( cDbf )", nil } )
    aAdd( aItmSatCli, { "cSituac",   "C", 20,  0, "Situación del documento",                     "Situacion",               "", "( cDbf )", nil } )

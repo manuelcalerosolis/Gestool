@@ -128,7 +128,7 @@ METHOD lGenerate()
       cExpCli      += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oDbfCli:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfCli:cFile ), ::oDbfCli:OrdKey(), ( cExpCli ), , , , , , , , .t. )
+   ::oDbfCli:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oDbfCli:cFile ), ::oDbfCli:OrdKey(), ( cExpCli ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oDbfCli:OrdKeyCount() )
 
@@ -161,7 +161,7 @@ METHOD lGenerate()
 
    end while
 
-   ::oDbfCli:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfCli:cFile ) )
+   ::oDbfCli:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oDbfCli:cFile ) )
 
    ::oMtrInf:AutoInc( ::oDbfCli:Lastrec() )
 

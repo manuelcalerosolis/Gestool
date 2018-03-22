@@ -288,7 +288,7 @@ METHOD lGenerate()
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
-   ::oAlqCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlqCliT:cFile ), ::oAlqCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   ::oAlqCliT:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oAlqCliT:cFile ), ::oAlqCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oAlqCliT:OrdKeyCount() )
 
@@ -359,7 +359,7 @@ METHOD lGenerate()
    Destruimos los filtros------------------------------------------------------
    */
 
-   ::oAlqCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlqCliT:cFile ) )
+   ::oAlqCliT:IdxDelete( Auth():Codigo(), GetFileNoExt( ::oAlqCliT:cFile ) )
 
    ::oMtrInf:AutoInc( ::oAlqCliT:LastRec() )
 

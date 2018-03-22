@@ -1835,25 +1835,25 @@ Method PutOperarioIndex( nTypeExp, oButton )
 
          ::oWndBrw:oBtnTop:aSay[ 1, 3 ]   := "Expedientes : Operario " + oUser():cOperario + "-" + oRetFld( oUser():cOperario, ::oOperario:oDbf, "cNomTra", "cCodTra" )
 
-         ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( 'cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .t. )
+         ::oDbf:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( 'cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .t. )
 
-         ::oWndBrw:bChgIndex  := {|| ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( 'cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .t. ) }
+         ::oWndBrw:bChgIndex  := {|| ::oDbf:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( 'cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .t. ) }
 
       case ( nTypeExp == expEnd )
 
          ::oWndBrw:oBtnTop:aSay[ 1, 3 ]   := "Expedientes : Finalizados operario " + oUser():cOperario + "-" + oRetFld( oUser():cOperario, ::oOperario:oDbf, "cNomTra", "cCodTra" )
 
-         ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( 'lExpEnd .and. cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .t. )
+         ::oDbf:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( 'lExpEnd .and. cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .t. )
 
-         ::oWndBrw:bChgIndex  := {|| ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( 'lExpEnd .and. cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .t. ) }
+         ::oWndBrw:bChgIndex  := {|| ::oDbf:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( 'lExpEnd .and. cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .t. ) }
 
       case ( nTypeExp == expStand )
 
          ::oWndBrw:oBtnTop:aSay[ 1, 3 ]   := "Expedientes : Pendientes operario " + oUser():cOperario + "-" + oRetFld( oUser():cOperario, ::oOperario:oDbf, "cNomTra", "cCodTra" )
 
-         ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( '!lExpEnd .and. cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .t. )
+         ::oDbf:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( '!lExpEnd .and. cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .t. )
 
-         ::oWndBrw:bChgIndex  := {|| ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( '!lExpEnd .and. cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .t. ) }
+         ::oWndBrw:bChgIndex  := {|| ::oDbf:AddTmpIndex( Auth():Codigo(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( '!lExpEnd .and. cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .t. ) }
 
       case ( nTypeExp == expActions )
 

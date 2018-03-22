@@ -1002,7 +1002,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       aTmp[ _CSUFPED ]        := RetSufEmp()
       aTmp[ _LSNDDOC ]        := .t.
       aTmp[ _NESTADO ]        := 1
-      aTmp[ _CCODUSR ]        := cCurUsr()
+      aTmp[ _CCODUSR ]        := Auth():Codigo()
       aTmp[ _CCODDLG ]        := oUser():cDelegacion()
       if !empty( cCodPrv )
          aTmp[ _CCODPRV ]     := cCodPrv
@@ -5369,7 +5369,7 @@ Static Function CreaPedido( cCodPrv, cCodAlm )
       ( D():PedidosProveedores( nView ) )->cDivPed    := cDivEmp()
       ( D():PedidosProveedores( nView ) )->nVdvPed    := nChgDiv( cDivEmp(), D():Divisas( nView ) )
       ( D():PedidosProveedores( nView ) )->lSndDoc    := .t.
-      ( D():PedidosProveedores( nView ) )->cCodUsr    := cCurUsr()
+      ( D():PedidosProveedores( nView ) )->cCodUsr    := Auth():Codigo()
       ( D():PedidosProveedores( nView ) )->( dbRUnLock() )
 
       /*

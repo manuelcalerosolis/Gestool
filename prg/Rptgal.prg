@@ -1337,7 +1337,7 @@ Return nil
 
 Static Function SaveEditFavorito( oCarpeta, oItem, oNombre, oDlg, oTrvArbolGaleria )
 
-   local cCodUsr  := cCurUsr()
+   local cCodUsr  := Auth():Codigo()
    local cNombre  := oNombre:VarGet()
    local cOldNom  := oItem:cPrompt
    local cOldCar  := oItem:Cargo:Carpeta
@@ -1380,7 +1380,7 @@ Return nil
 
 Static Function DelFavorito( oTrvArbolGaleria )
 
-   local cCodUsr     := cCurUsr()
+   local cCodUsr     := Auth():Codigo()
    local oItem       := oTrvArbolGaleria:GetSelected()
    local cNombre     := ""
    local cCarpeta    := ""
@@ -1461,7 +1461,7 @@ return nil
 Static Function SaveFolder( oGet, oCarpeta, oDlg )
 
    local cCodigo  := oGet:VarGet()
-   local cCodUsr  := cCurUsr()
+   local cCodUsr  := Auth():Codigo()
    local nRec     := ( dbfFolder )->( Recno() )
 
    if Empty( cCodigo )
@@ -1551,7 +1551,7 @@ FUNCTION IsReportFolder()
 Function aFolder( dbfFolder )
 
    local aFolder  := {}
-   local cCodUsr  := cCurUsr()
+   local cCodUsr  := Auth():Codigo()
    local lClose   := .f.
    local nRec
 
@@ -1596,7 +1596,7 @@ Return aFolder
 
 Static Function SaveFavorito( oCarpeta, oItem, oNombre, oDlg )
 
-   local cCodUsr  := cCurUsr()
+   local cCodUsr  := Auth():Codigo()
    local cNombre  := oNombre:VarGet()
    local cNomRpt  := oItem:cPrompt
    local cCarpeta := oCarpeta:VarGet()
@@ -1636,7 +1636,7 @@ Return nil
 Static function CreateFavoritoReportGalery( oTrvArbolGaleria )
 
    local n              := 0
-   local cCodUsr        := cCurUsr()
+   local cCodUsr        := Auth():Codigo()
    local nRecAnt        := ( dbfFavorito )->( Recno() )
    local nOrdAnt        := ( dbfFavorito )->( OrdSetFocus( "CUSRCAR" ) )
    local cCarpeta       := ""
