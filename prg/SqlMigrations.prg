@@ -147,6 +147,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLTransportistasModel():New() )
 
+   aadd( ::aModels, SQLDireccionesModel():New() )
+
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
    aadd( ::aModels, SQLTageableModel():New() )

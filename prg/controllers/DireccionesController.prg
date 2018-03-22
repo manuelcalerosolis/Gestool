@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TransportistasController FROM SQLNavigatorController
+CLASS DireccionesController FROM SQLNavigatorController
 
    METHOD   New()
 
@@ -11,13 +11,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS TransportistasController
+METHOD New() CLASS DireccionesController
 
    ::Super:New()
 
-   ::cTitle                := "Transportistas"
+   ::cTitle                := "Direcciones"
 
-   ::cName                 := "transportistas"
+   ::cName                 := "Direcciones"
 
    ::hImage                := {  "16" => "gc_modem_16",;
                                  "32" => "gc_modem_32",;
@@ -25,13 +25,13 @@ METHOD New() CLASS TransportistasController
 
    ::nLevel                := nLevelUsr( ::cName )
 
-   ::oModel                := SQLTransportistasModel():New( self )
+   ::oModel                := SQLDireccionesModel():New( self )
 
-   ::oBrowseView           := TransportistasBrowseView():New( self )
+   ::oBrowseView           := DireccionesBrowseView():New( self )
 
-   ::oDialogView           := TransportistasView():New( self )
+   ::oDialogView           := DireccionesView():New( self )
 
-   ::oValidator            := TransportistasValidator():New( self )
+   ::oValidator            := DireccionesValidator():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -46,7 +46,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TransportistasBrowseView FROM SQLBrowseView
+CLASS DireccionesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -54,45 +54,62 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS TransportistasBrowseView
+METHOD addColumns() CLASS DireccionesBrowseView
+
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
+      :cSortOrder          := 'direccion'
+      :cHeader             := 'Dirección'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
+      :cSortOrder          := 'poblacion'
+      :cHeader             := 'Población'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'poblacion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'dni'
-      :cHeader             := 'DNI'
+      :cSortOrder          := 'provincia'
+      :cHeader             := 'Provincia'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'dni' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'provincia' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'matricula'
-      :cHeader             := 'Matrícula'
+      :cSortOrder          := 'codigo_postal'
+      :cHeader             := 'Código Postal'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'matricula' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_postal' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'telefono'
+      :cHeader             := 'Teléfono'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'telefono' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with   
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'movil'
+      :cHeader             := 'Móvil'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movil' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'fax'
+      :cHeader             := 'Fax'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'fax' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -106,7 +123,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TransportistasView FROM SQLBaseView
+CLASS DireccionesView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -114,13 +131,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS TransportistasView
+METHOD Activate() CLASS DireccionesView
 
    local oDlg
 
    DEFINE DIALOG  oDlg ;
-      RESOURCE    "TRANSPORTISTA" ;
-      TITLE       ::LblTitle() + "transportistas"
+      RESOURCE    "DIRECCIONES" ;
+      TITLE       ::LblTitle() + "direcciones"
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
@@ -128,16 +145,45 @@ METHOD Activate() CLASS TransportistasView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "dni" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "drieccion" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "dni" ) ) ;
+      VALID       ( ::oController:validate( "drieccion" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "matricula" ] ;
-      ID          200 ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "poblacion" ] ;
+      ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "matricula" ) ) ;
+      VALID       ( ::oController:validate( "poblacion" ) ) ;
+      OF          oDlg
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "provincia" ] ;
+      ID          130 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "provincia" ) ) ;
+      OF          oDlg
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
+      ID          140 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "codigo_postal" ) ) ;
+      OF          oDlg 
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
+      ID          150 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "telefono" ) ) ;
+      OF          oDlg
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "movil" ] ;
+      ID          160 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "movil" ) ) ;
+      OF          oDlg
+   REDEFINE GET   ::oController:oModel:hBuffer[ "fax" ] ;
+      ID          160 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "fax" ) ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;
@@ -170,7 +216,7 @@ RETURN ( oDlg:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TransportistasValidator FROM SQLBaseValidator
+CLASS DIreccionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -178,10 +224,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS TransportistasValidator
+METHOD getValidators() CLASS DireccionesValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre del transportista es un dato requerido",;
-                                                "unique"       => "El nombre del transportista introducido ya existe" } }
+   ::hValidators  := {  "nombre" =>          {  "required"        => "El Nombre de la dirección es un dato requerido",;
+                                                "unique"          => "El Nombre de la dirección ya existe" },; 
+                        "direccion" =>       {  "required"        => "La dirección es un dato requerido"}}
+                                              
+                                              
 
 RETURN ( ::hValidators )
 
@@ -194,9 +243,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLTransportistasModel FROM SQLBaseModel
+CLASS SQLDireccionesModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "transportistas"
+   DATA cTableName               INIT "direcciones"
 
    METHOD getColumns()
 
@@ -204,7 +253,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLTransportistasModel
+METHOD getColumns() CLASS SQLDireccionesModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "text"      => "Identificador"                           ,;
@@ -217,10 +266,26 @@ METHOD getColumns() CLASS SQLTransportistasModel
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
                                              "default"   => {|| space( 140 ) } }                       )
 
-   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "matricula",          {  "create"    => "VARCHAR( 15 )"                          ,;
+   hset( ::hColumns, "direccion",         {  "create"    => "VARCHAR( 150 )"                          ,;
+                                             "default"   => {|| space( 150 ) } }                       )
+
+   hset( ::hColumns, "poblacion",         {  "create"    => "VARCHAR( 100 )"                          ,;
+                                             "default"   => {|| space( 100 ) } }                       )
+
+   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 100 )"                          ,;
+                                             "default"   => {|| space( 100 ) } }                       )
+
+   hset( ::hColumns, "codigo_postal",     {  "create"    => "VARCHAR( 10 )"                          ,;
+                                             "default"   => {|| space( 10 ) } }                       )
+
+   hset( ::hColumns, "telefono",          {  "create"    => "VARCHAR( 15 )"                          ,;
+                                             "default"   => {|| space( 15 ) } }                       )
+
+   hset( ::hColumns, "movil",             {  "create"    => "VARCHAR( 15 )"                          ,;
+                                             "default"   => {|| space( 15 ) } }                       )
+
+   hset( ::hColumns, "fax",               {  "create"    => "VARCHAR( 15 )"                          ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
 RETURN ( ::hColumns )
@@ -235,9 +300,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TransportistasRepository FROM SQLBaseRepository
+CLASS DireccionesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( SQLTransportistasModel():getTableName() ) 
+   METHOD getTableName()         INLINE ( SQLDireccionesModel():getTableName() ) 
 
 END CLASS
 
