@@ -203,7 +203,7 @@ END CLASS
 METHOD getValidators() CLASS TransportistasValidator
 
    ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre del transportista es un dato requerido",;
-                                                "unique"       => "El nombre del transportista introducido ya existe" } }
+                                                "unique"       => "El nombre del transportista introducido ya existe" }}
 
 RETURN ( ::hValidators )
 

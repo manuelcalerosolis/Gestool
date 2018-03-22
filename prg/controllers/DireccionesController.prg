@@ -159,10 +159,10 @@ METHOD addColumns() CLASS DireccionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'fax'
-      :cHeader             := 'Fax'
+      :cSortOrder          := 'email'
+      :cHeader             := 'Email'
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'fax' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'email' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -241,10 +241,10 @@ METHOD Activate() CLASS DireccionesView
       VALID       ( ::oController:validate( "movil" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "fax" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "email" ] ;
       ID          170 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "fax" ) ) ;
+      VALID       ( ::oController:validate( "email" ) ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;
@@ -290,7 +290,9 @@ END CLASS
 METHOD getValidators() CLASS DireccionesValidator
 
    ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido" },; 
-                        "direccion" =>       {  "required"        => "La dirección es un dato requerido" } }
+                        "direccion" =>       {  "required"        => "La dirección es un dato requerido" },; 
+                        "email" =>           {  "mail"            => "El email no es valido" }}
+                        
 
 RETURN ( ::hValidators )
 
@@ -347,7 +349,7 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "movil",             {  "create"    => "VARCHAR( 15 )"                          ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
-   hset( ::hColumns, "fax",               {  "create"    => "VARCHAR( 15 )"                          ,;
+   hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 15 )"                          ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
 RETURN ( ::hColumns )
