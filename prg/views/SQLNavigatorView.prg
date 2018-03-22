@@ -43,7 +43,7 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    METHOD ActivateMDIChild()                 INLINE ( ::oMdiChild:Activate(   /*cShow*/, /*bLClicked*/, /*bRClicked*/, /*bMoved*/, /*bResized*/, /*bPainted*/,;
                                                                               /*bKeyDown*/, /*bInit*/, /*bUp*/, /*bDown*/, /*bPgUp*/, /*bPgDn*/,;
-                                                                              /*bLeft*/, /*bRight*/, /*bPgLeft*/, /*bPgRight*/, /*bValid*/ ) ) 
+                                                                              /*bLeft*/, /*bRight*/, /*bPgLeft*/, /*bPgRight*/, {|oSelf| oSelf:end() } ) ) 
 
    METHOD keyDown( nKey )
 
@@ -71,6 +71,8 @@ RETURN ( Self )
 
 METHOD End()
 
+   msgalert( "SQLNavigatorView end()" )
+
    if !empty( ::oMdiChild )
       ::oMdiChild:End()
    end if 
@@ -85,7 +87,7 @@ METHOD End()
    ::oMdiChild       := nil
    ::oTopWebBar      := nil
 
-RETURN ( nil )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 

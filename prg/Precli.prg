@@ -3790,20 +3790,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          OF       oFld:aDialogs[1]
 
       /*
-      Tipo de moviminto--------------------------------------------------------
-      */
-
-      TiposVentasController();
-         :Instance();
-         :getDialogView();
-         :createEditControl(  {  "idGet"  => 290,;
-                                 "idText" => 291,;
-                                 "idSay"  => 292,;
-                                 "dialog" => oFld:aDialogs[1],;
-                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) } },;
-                                 @aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
-
-      /*
       Tipo de articulo---------------------------------------------------------
       */
 
