@@ -137,8 +137,7 @@ METHOD Activate()
 
       ::oBtnTags:bAction      := {|| ::selectorAndAddMarcador() }
 
-      ::oTagsEver    := TTagEver():Redefine( 142, ::oDialog )
-
+      ::oTagsEver             := TTagEver():Redefine( 142, ::oDialog )
       ::oTagsEver:bOnDelete   := {| oTag, oTagItem | ::oController:deleteTag( oTagItem:uCargo ) }
 
       REDEFINE GET   ::oGetAgente ;

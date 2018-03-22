@@ -2712,7 +2712,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 7
+   oGrupo:nBigItems     := 8
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2772,6 +2772,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Permisos [Beta*]'
    oItem:cMessage       := 'Permisos [Beta*]'
    oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios_beta"
+   oItem:cBmp           := "gc_user_headset_16"
+   oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Direcciones [Beta*]'
+   oItem:cMessage       := 'Direcciones [Beta*]'
+   oItem:bAction        := {|| DireccionesController():New():ActivateNavigatorView() }
    oItem:cId            := "usuarios_beta"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"

@@ -244,9 +244,10 @@ METHOD showLoteCaducidad()
 
    if hget( ::hArticulo, "llote" )
       ::oDialogView:showLoteCaducidadControls()
-   else 
-      ::oDialogView:hideLoteCaducidadControls()
+      RETURN ( .t. )
    end if 
+
+   ::oDialogView:hideLoteCaducidadControls()
 
 RETURN ( .t. )
 

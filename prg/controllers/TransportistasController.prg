@@ -5,7 +5,9 @@
 
 CLASS TransportistasController FROM SQLNavigatorController
 
-   METHOD   New()
+   DATA oDireccionesController
+
+   METHOD New()
 
 END CLASS
 
@@ -15,23 +17,25 @@ METHOD New() CLASS TransportistasController
 
    ::Super:New()
 
-   ::cTitle                := "Transportistas"
+   ::cTitle                   := "Transportistas"
 
-   ::cName                 := "transportistas"
+   ::cName                    := "transportistas"
 
-   ::hImage                := {  "16" => "gc_modem_16",;
-                                 "32" => "gc_modem_32",;
-                                 "48" => "gc_modem_48" }
+   ::hImage                   := {  "16" => "gc_small_truck_16",;
+                                    "32" => "gc_small_truck_32",;
+                                    "48" => "gc_small_truck_48" }
 
-   ::nLevel                := nLevelUsr( ::cName )
+   ::nLevel                   := nLevelUsr( ::cName )
 
-   ::oModel                := SQLTransportistasModel():New( self )
+   ::oModel                   := SQLTransportistasModel():New( self )
 
-   ::oBrowseView           := TransportistasBrowseView():New( self )
+   ::oBrowseView              := TransportistasBrowseView():New( self )
 
-   ::oDialogView           := TransportistasView():New( self )
+   ::oDialogView              := TransportistasView():New( self )
 
-   ::oValidator            := TransportistasValidator():New( self )
+   ::oValidator               := TransportistasValidator():New( self )
+
+   ::oDireccionesController   := DireccionesController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -82,19 +86,11 @@ METHOD addColumns() CLASS TransportistasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'dni'
-      :cHeader             := 'DNI'
+      :cHeader             := 'DNI/CIF'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'dni' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'matricula'
-      :cHeader             := 'Matrícula'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'matricula' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
 
 RETURN ( self )
 
@@ -117,10 +113,20 @@ END CLASS
 METHOD Activate() CLASS TransportistasView
 
    local oDlg
+   local oBmpGeneral
+   local oBtnEdit
+   local oBtnAppend
+   local oBtnDelete
 
    DEFINE DIALOG  oDlg ;
       RESOURCE    "TRANSPORTISTA" ;
       TITLE       ::LblTitle() + "transportistas"
+
+   REDEFINE BITMAP oBmpGeneral ;
+      ID          900 ;
+      RESOURCE    "gc_small_truck_48" ;
+      TRANSPARENT ;
+      OF          oDlg
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
@@ -134,11 +140,28 @@ METHOD Activate() CLASS TransportistasView
       VALID       ( ::oController:validate( "dni" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "matricula" ] ;
-      ID          200 ;
+   REDEFINE BUTTON oBtnAppend ;
+      ID          120 ;
+      OF          oDlg ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "matricula" ) ) ;
-      OF          oDlg
+
+   oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
+
+   REDEFINE BUTTON oBtnEdit ;
+      ID          130 ;
+      OF          oDlg ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          140 ;
+      OF          oDlg ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
+
+   ::oController:oDireccionesController:Activate( oDlg, 150 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -158,11 +181,10 @@ METHOD Activate() CLASS TransportistasView
 
    ACTIVATE DIALOG oDlg CENTER
 
+   oBmpGeneral:end()
+
 RETURN ( oDlg:nResult )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -219,9 +241,6 @@ METHOD getColumns() CLASS SQLTransportistasModel
 
    hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                          ,;
                                              "default"   => {|| space( 20 ) } }                       )
-
-   hset( ::hColumns, "matricula",          {  "create"    => "VARCHAR( 15 )"                          ,;
-                                             "default"   => {|| space( 15 ) } }                       )
 
 RETURN ( ::hColumns )
 
