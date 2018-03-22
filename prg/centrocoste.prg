@@ -48,6 +48,8 @@ CLASS TCentroCoste FROM TMant
 
    METHOD clearGet()
 
+   METHOD SearchToUuid()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -414,6 +416,18 @@ METHOD clearGet()
    ::oGetDocument:oHelpText:cText( Space( 200 ) )
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD SearchToUuid()
+
+   local cCodigo  := ::Buscar()
+
+   if Empty( cCodigo )
+      Return ( "" )
+   end if
+
+Return ( oRetFld( cCodigo, ::oDbf, "Uuid", "cCodigo" ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

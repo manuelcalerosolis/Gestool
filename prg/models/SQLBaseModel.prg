@@ -181,6 +181,8 @@ CLASS SQLBaseModel
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
+   METHOD updateFieldWhereId( id, cField, uValue )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -983,5 +985,16 @@ METHOD setColumnOrientationFromModel( cName )
    end if 
 
 RETURN ( self )
+
+//----------------------------------------------------------------------------//
+
+METHOD updateFieldWhereId( id, cField, uValue )
+
+   local cSentence   := "UPDATE " + ::cTableName + " "
+      
+   cSentence      += "SET " + cField + " = " + toSqlString( uValue )
+   cSentence      += "WHERE id = " + toSqlString( id )
+
+Return ( ::getDatabase():Exec( cSentence ) )
 
 //----------------------------------------------------------------------------//
