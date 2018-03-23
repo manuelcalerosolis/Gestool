@@ -344,3 +344,5 @@ GC_GRAPH_CLAW_48 BITMAP "..\\bmp\\gc_graph_claw_48.bmp"
 GC_MODEM_16 BITMAP "..\\bmp\\gc_modem_16.bmp"
 GC_MODEM_32 BITMAP "..\\bmp\\gc_modem_32.bmp"
 GC_MODEM_48 BITMAP "..\\bmp\\gc_modem_48.bmp"
+
+GC_POSTAGE_STAMP_48 BITMAP "..\\bmp\\gc_postage_stamp_48.bmp"
