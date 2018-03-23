@@ -41,8 +41,6 @@ METHOD New( oSenderController ) CLASS RelacionesEntidadesController
 
    ::oDialogView           := RelacionesEntidadesView():New( self )
 
-   ::oValidator            := RelacionesEntidadesValidator():New( self )
-
    ::oRepository           := RelacionesEntidadesRepository():New( self )
 
    ::oBrowseView           := RelacionesEntidadesLineasBrowseView():New( self )
@@ -63,7 +61,7 @@ METHOD Edit() CLASS RelacionesEntidadesController
 
    ::beginTransactionalMode()
 
-   ::oRowSet      := ::oRepository:getRowRelacionesEntidades( ::oSenderController:oModel:cTableName, hget( ::oSenderController:oModel:hBuffer, "uuid" ) )
+   ::oRowSet      := ::oRepository:getRowRelacionesEntidades( hget( ::oSenderController:oModel:hBuffer, "uuid" ) )
 
    ::fireEvent( 'openingDialog' )
 
@@ -97,7 +95,7 @@ RETURN ( lEdit )
 
 METHOD AppendLine() CLASS RelacionesEntidadesController
 
-   local id    := ::oModel:insertBlankRelacionEntidad( ::oSenderController:oModel:cTableName, hget( ::oSenderController:oModel:hBuffer, "uuid" ) )
+   local id    := ::oModel:insertBlankRelacionEntidad( hget( ::oSenderController:oModel:hBuffer, "uuid" ) )
 
    ::oRowSet:refreshAndFindId( id )
    ::oBrowseView:oBrowse:Refresh()
@@ -151,7 +149,9 @@ CLASS SQLRelacionesEntidadesModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   METHOD insertBlankRelacionEntidad( entidad, uuid )
+   METHOD insertBlankRelacionEntidad( uuid )
+
+   MESSAGE getCodigo( Uuid )               INLINE ::getField( "cCodigo", "uuid", Uuid )
 
 END CLASS
 
@@ -167,9 +167,6 @@ METHOD getColumns() CLASS SQLRelacionesEntidadesModel
                                           "text"      => "Uuid"                                       ,;
                                           "default"   => {|| win_uuidcreatestring() } }               )
    
-   hset( ::hColumns, "entidad_origen", {  "create"    => "VARCHAR( 100 )"                             ,;
-                                          "default"   => {|| space( 100 ) } }                         )
-
    hset( ::hColumns, "uuid_origen",    {  "create"    => "VARCHAR(40) NOT NULL"                       ,;
                                           "text"      => "Uuid"                                       ,;
                                           "default"   => {|| space( 40 ) } }                          )
@@ -186,13 +183,12 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
- METHOD insertBlankRelacionEntidad( entidad, uuid ) CLASS SQLRelacionesEntidadesModel
+ METHOD insertBlankRelacionEntidad( uuid ) CLASS SQLRelacionesEntidadesModel
 
    local hBuffer  := {=>}
 
    hBuffer        := ::loadBlankBuffer()
 
-   hSet( hBuffer, "entidad_origen", entidad )
    hSet( hBuffer, "uuid_origen", uuid )
 
 RETURN ( ::insertBuffer( hBuffer ) )   
@@ -276,31 +272,6 @@ METHOD Activate() CLASS RelacionesEntidadesView
 
 RETURN ( ::oDialog:nResult )
 
-//--------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS RelacionesEntidadesValidator FROM SQLBaseValidator
-
-   METHOD getValidators()
- 
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD getValidators() CLASS RelacionesEntidadesValidator
-
-   ::hValidators  := {  "nombre" => {  "required"     => "El nombre de la situación es un dato requerido",;
-                                       "unique"       => "El nombre de la situación ya existe" } } 
-
-RETURN ( ::hValidators )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -317,27 +288,49 @@ CLASS RelacionesEntidadesRepository FROM SQLBaseRepository
    METHOD getSQLSentenceRelacionesEntidades()
 
    METHOD getRowRelacionesEntidades()
+
+   METHOD getSQLSentenceUuidRelacionado( uuid, entidad_destino )
+
+   METHOD getUuidRelacionadoCentroCoste( uuid, entidad_destino )
    
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceRelacionesEntidades( entidad, uuid ) CLASS RelacionesEntidadesRepository
+METHOD getSQLSentenceRelacionesEntidades( uuid ) CLASS RelacionesEntidadesRepository
 
    local cSql  := "SELECT * "                                       
       cSql     += "FROM " + ::getTableName() + " "
-      cSql     += "WHERE entidad_origen = " + quoted( entidad ) + " "                    
-      cSql     +=    "AND uuid_origen = " + quoted( uuid )
+      cSql     += "WHERE uuid_origen = " + quoted( uuid )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getRowRelacionesEntidades( entidad, uuid ) CLASS RelacionesEntidadesRepository
+METHOD getRowRelacionesEntidades( uuid ) CLASS RelacionesEntidadesRepository
 
-   local cSentence   := ::getSQLSentenceRelacionesEntidades( entidad, uuid )
+   local cSentence   := ::getSQLSentenceRelacionesEntidades( uuid )
 
 RETURN ( SQLRowSet():New():Build( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLSentenceUuidRelacionado( uuid, entidad_destino ) CLASS RelacionesEntidadesRepository
+
+   local cSql  := "SELECT uuid_destino "                                       
+      cSql     += "FROM " + ::getTableName() + " "
+      cSql     += "WHERE uuid_origen = " + quoted( uuid ) + " "                    
+      cSql     +=    "AND entidad_destino = " + quoted( entidad_destino )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUuidRelacionadoCentroCoste( uuid ) CLASS RelacionesEntidadesRepository
+
+   local cSentence   := ::getSQLSentenceUuidRelacionado( uuid, "Centro de coste" )
+
+RETURN ( getSQLDataBase():getValue( cSentence ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -372,13 +365,6 @@ METHOD addColumns() CLASS RelacionesEntidadesLineasBrowseView
       :cHeader             := 'Uuid'
       :nWidth              := 240
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Entidad origen'
-      :nWidth              := 155
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'entidad_origen' ) }
       :lHide               := .t.
    end with
 
