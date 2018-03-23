@@ -1865,6 +1865,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
          ::oDbf:nCosArt    := nTotCPedCli( D():PedidosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
          ::oDbf:nUniArt    := nTotNPedCli( D():PedidosClientesLineas( ::nView ) ) 
+         ::oDbf:nBultos    := ( D():PedidosClientesLineas( ::nView )  )->nBultos
 
          ::oDbf:cCtrCoste  := ( D():PedidosClientesLineas( ::nView ) )->cCtrCoste
          ::oDbf:cTipCtr    := ( D():PedidosClientesLineas( ::nView ) )->cTipCtr
