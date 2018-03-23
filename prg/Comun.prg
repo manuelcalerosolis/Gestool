@@ -1492,7 +1492,7 @@ FUNCTION CreateAcceso( oWnd )
    // Otros--------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso() 
-   oGrupo:nBigItems     := 12
+   oGrupo:nBigItems     := 11
    oGrupo:cPrompt       := 'Global'
    oGrupo:cLittleBitmap := "gc_folder2_16"
    oGrupo:cBigBitmap    := "gc_folder2_32"
@@ -1565,16 +1565,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "lenguajes"
    oItem:cBmp           := "gc_user_message_16"
    oItem:cBmpBig        := "gc_user_message_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Tipos de ventas"
-   oItem:cMessage       := "Acceso a los tipos de ventas"
-   oItem:bAction        := {|| TiposVentasController():New():ActivateNavigatorView() }
-   oItem:cId            := "tipos_de_ventas"
-   oItem:cBmp           := "gc_wallet_16"
-   oItem:cBmpBig        := "gc_wallet_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2712,7 +2702,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 7
+   oGrupo:nBigItems     := 8
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2772,6 +2762,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Permisos [Beta*]'
    oItem:cMessage       := 'Permisos [Beta*]'
    oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios_beta"
+   oItem:cBmp           := "gc_user_headset_16"
+   oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Direcciones [Beta*]'
+   oItem:cMessage       := 'Direcciones [Beta*]'
+   oItem:bAction        := {|| DireccionesController():New():ActivateNavigatorView() }
    oItem:cId            := "usuarios_beta"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"

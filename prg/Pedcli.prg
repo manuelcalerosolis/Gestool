@@ -4783,20 +4783,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          OF       oFld:aDialogs[1]
 
       /*
-      Tipo de moviminto--------------------------------------------------------
-      */
-
-      TiposVentasController();
-         :Instance();
-         :getDialogView();
-         :createEditControl(  {  "idGet"  => 290,;
-                                 "idText" => 291,;
-                                 "idSay"  => 292,;
-                                 "dialog" => oFld:aDialogs[1],;
-                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) } },;
-                                 @aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
-
-      /*
       Codigo de almacen--------------------------------------------------------
       */
 
@@ -7316,8 +7302,6 @@ Static Function DataReport( oFr )
       oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
    end if 
 
-   // TiposVentasController():Instance():setFastReport( oFr )
-
    oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",                 {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",            {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Documentos de pedidos",             {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
@@ -7359,8 +7343,6 @@ Return nil
 //---------------------------------------------------------------------------//
 
 Static Function SynchronizeDetails()
-
-   // TiposVentasController():Instance():findByIdInRowSet( ( D():PedidosClientesLineas( nView ) )->id_tipo_v )
 
 Return ( ( D():PedidosClientesLineas( nView ) )->cRef )
 

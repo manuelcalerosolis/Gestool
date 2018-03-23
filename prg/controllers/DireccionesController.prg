@@ -3,27 +3,27 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesController FROM SQLNavigatorController
+CLASS DireccionesController FROM SQLBrowseController
 
-   METHOD   New()
+   METHOD New()
+
+   METHOD loadedBlankBuffer()
+
+   METHOD gettingSelectSentence()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS DireccionesController
+METHOD New( oSenderController ) CLASS DireccionesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
+
+   ::lTransactional        := .t.
 
    ::cTitle                := "Direcciones"
 
-   ::cName                 := "Direcciones"
-
-   ::hImage                := {  "16" => "gc_modem_16",;
-                                 "32" => "gc_modem_32",;
-                                 "48" => "gc_modem_48" }
-
-   ::nLevel                := nLevelUsr( ::cName )
+   ::cName                 := "direcciones"
 
    ::oModel                := SQLDireccionesModel():New( self )
 
@@ -33,7 +33,36 @@ METHOD New() CLASS DireccionesController
 
    ::oValidator            := DireccionesValidator():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
+   ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
+
+   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
+   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadedBlankBuffer() CLASS DireccionesController
+
+   local uuid        := ::getSenderController():getUuid() 
+
+   if !empty( uuid )
+      hset( ::oModel:hBuffer, "parent_uuid", uuid )
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD gettingSelectSentence() CLASS DireccionesController
+
+   local uuid        := ::getSenderController():getUuid() 
+
+   if !empty( uuid )
+      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+   end if 
 
 RETURN ( Self )
 
@@ -56,6 +85,30 @@ ENDCLASS
 
 METHOD addColumns() CLASS DireccionesBrowseView
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'id'
+      :cHeader             := 'Id'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'uuid'
+      :cHeader             := 'Uuid'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direccion'
@@ -68,7 +121,7 @@ METHOD addColumns() CLASS DireccionesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'poblacion'
       :cHeader             := 'Población'
-      :nWidth              := 300
+      :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'poblacion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -76,7 +129,7 @@ METHOD addColumns() CLASS DireccionesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'provincia'
       :cHeader             := 'Provincia'
-      :nWidth              := 300
+      :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'provincia' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -84,7 +137,7 @@ METHOD addColumns() CLASS DireccionesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo_postal'
       :cHeader             := 'Código Postal'
-      :nWidth              := 300
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_postal' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -92,7 +145,7 @@ METHOD addColumns() CLASS DireccionesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'telefono'
       :cHeader             := 'Teléfono'
-      :nWidth              := 300
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'telefono' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with   
@@ -100,16 +153,16 @@ METHOD addColumns() CLASS DireccionesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'movil'
       :cHeader             := 'Móvil'
-      :nWidth              := 300
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'movil' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'fax'
-      :cHeader             := 'Fax'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'fax' ) }
+      :cSortOrder          := 'email'
+      :cHeader             := 'Email'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'email' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -134,10 +187,17 @@ END CLASS
 METHOD Activate() CLASS DireccionesView
 
    local oDlg
+   local oBmpGeneral
 
    DEFINE DIALOG  oDlg ;
-      RESOURCE    "DIRECCIONES" ;
+      RESOURCE    "DIRECCION" ;
       TITLE       ::LblTitle() + "direcciones"
+
+   REDEFINE BITMAP oBmpGeneral ;
+      ID          900 ;
+      RESOURCE    "gc_signpost3_48" ;
+      TRANSPARENT ;
+      OF          oDlg
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
@@ -145,29 +205,29 @@ METHOD Activate() CLASS DireccionesView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "drieccion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "direccion" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "drieccion" ) ) ;
+      VALID       ( ::oController:validate( "direccion" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "poblacion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
       ID          120 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "codigo_postal" ) ) ;
+      OF          oDlg 
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "poblacion" ] ;
+      ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "poblacion" ) ) ;
       OF          oDlg
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "provincia" ] ;
-      ID          130 ;
+      ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "provincia" ) ) ;
       OF          oDlg
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
-      ID          140 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo_postal" ) ) ;
-      OF          oDlg 
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
       ID          150 ;
@@ -180,10 +240,11 @@ METHOD Activate() CLASS DireccionesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "movil" ) ) ;
       OF          oDlg
-   REDEFINE GET   ::oController:oModel:hBuffer[ "fax" ] ;
-      ID          160 ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "email" ] ;
+      ID          170 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "fax" ) ) ;
+      VALID       ( ::oController:validate( "email" ) ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;
@@ -203,6 +264,8 @@ METHOD Activate() CLASS DireccionesView
    end if
 
    ACTIVATE DIALOG oDlg CENTER
+
+   oBmpGeneral:end()
 
 RETURN ( oDlg:nResult )
 
@@ -226,11 +289,10 @@ END CLASS
 
 METHOD getValidators() CLASS DireccionesValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"        => "El Nombre de la dirección es un dato requerido",;
-                                                "unique"          => "El Nombre de la dirección ya existe" },; 
-                        "direccion" =>       {  "required"        => "La dirección es un dato requerido"}}
-                                              
-                                              
+   ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido" },; 
+                        "direccion" =>       {  "required"        => "La dirección es un dato requerido" },; 
+                        "email" =>           {  "mail"            => "El email no es valido" }}
+                        
 
 RETURN ( ::hValidators )
 
@@ -263,29 +325,31 @@ METHOD getColumns() CLASS SQLDireccionesModel
                                              "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
-                                             "default"   => {|| space( 140 ) } }                       )
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL "                   ,;
+                                             "default"   => {|| space( 40 ) } }                       )
 
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
+                                             "default"   => {|| space( 140 ) } }                      )
 
    hset( ::hColumns, "direccion",         {  "create"    => "VARCHAR( 150 )"                          ,;
-                                             "default"   => {|| space( 150 ) } }                       )
+                                             "default"   => {|| space( 150 ) } }                      )
 
    hset( ::hColumns, "poblacion",         {  "create"    => "VARCHAR( 100 )"                          ,;
-                                             "default"   => {|| space( 100 ) } }                       )
+                                             "default"   => {|| space( 100 ) } }                      )
 
    hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 100 )"                          ,;
-                                             "default"   => {|| space( 100 ) } }                       )
+                                             "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "codigo_postal",     {  "create"    => "VARCHAR( 10 )"                          ,;
+   hset( ::hColumns, "codigo_postal",     {  "create"    => "VARCHAR( 10 )"                           ,;
                                              "default"   => {|| space( 10 ) } }                       )
 
-   hset( ::hColumns, "telefono",          {  "create"    => "VARCHAR( 15 )"                          ,;
+   hset( ::hColumns, "telefono",          {  "create"    => "VARCHAR( 15 )"                           ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
    hset( ::hColumns, "movil",             {  "create"    => "VARCHAR( 15 )"                          ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
-   hset( ::hColumns, "fax",               {  "create"    => "VARCHAR( 15 )"                          ,;
+   hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 15 )"                          ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
 RETURN ( ::hColumns )

@@ -3874,20 +3874,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          OF       oFld:aDialogs[1]
 
       /*
-      Tipo de moviminto--------------------------------------------------------
-      */
-
-      TiposVentasController();
-         :Instance();
-         :getDialogView();
-         :createEditControl(  {  "idGet"  => 290,;
-                                 "idText" => 291,;
-                                 "idSay"  => 292,;
-                                 "dialog" => oFld:aDialogs[1],;
-                                 "when"   => {|| ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) } },;
-                                 @aTmp[ ( D():SatClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
-
-      /*
       Tipo de articulo---------------------------------------------------------
       */
 
@@ -8176,8 +8162,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
-   // TiposVentasController():Instance():setFastReport( oFr )
-
    oFr:SetMasterDetail( "SAT", "Lineas de SAT",                   {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
    oFr:SetMasterDetail( "SAT", "Series de lineas de SAT",         {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
    oFr:SetMasterDetail( "SAT", "Incidencias de SAT",              {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
@@ -8221,8 +8205,6 @@ Return nil
 //---------------------------------------------------------------------------//
 
 Static Function SynchronizeDetails()
-
-   // TiposVentasController():Instance():findByIdInRowSet( ( D():SatClientesLineas( nView ) )->id_tipo_v )
 
 Return ( ( D():SatClientesLineas( nView ) )->cRef )
 

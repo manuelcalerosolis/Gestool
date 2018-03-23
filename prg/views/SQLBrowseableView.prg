@@ -79,8 +79,11 @@ RETURN ( Self )
 
 METHOD End()
 
+   msgalert( "::end()" )
+
    if !empty( ::oMenuTreeView )
       ::oMenuTreeView:end()
+      msgalert( "::oMenuTreeView:end()" )
    end if 
 
    ::oMenuTreeView         := nil
