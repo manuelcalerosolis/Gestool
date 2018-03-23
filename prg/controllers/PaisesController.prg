@@ -120,9 +120,6 @@ METHOD Activate() CLASS PaisesView
 
    local oDlg
    local oBmpGeneral
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
 
    DEFINE DIALOG  oDlg ;
       RESOURCE    "PAIS" ;

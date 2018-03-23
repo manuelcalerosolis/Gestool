@@ -344,3 +344,10 @@ GC_GRAPH_CLAW_48 BITMAP "..\\bmp\\gc_graph_claw_48.bmp"
 GC_MODEM_16 BITMAP "..\\bmp\\gc_modem_16.bmp"
 GC_MODEM_32 BITMAP "..\\bmp\\gc_modem_32.bmp"
 GC_MODEM_48 BITMAP "..\\bmp\\gc_modem_48.bmp"
+
+GC_POSTAGE_STAMP_48 BITMAP "..\\bmp\\gc_postage_stamp_48.bmp"
+
+GC_FLAG_SPAIN_48 BITMAP "..\\bmp\\gc_flag_spain_48.bmp"
+
+GC_GLOBE_48 BITMAP "..\\bmp\\gc_globe_48.bmp"
+GC_BOOK_TELEPHONE_48 BITMAP "..\\bmp\\gc_book_telephone_48.bmp"

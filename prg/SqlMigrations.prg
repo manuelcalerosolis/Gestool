@@ -147,6 +147,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLTransportistasModel():New() )
 
+   aadd( ::aModels, SQLListinModel():New() )
+
    aadd( ::aModels, SQLCodigosPostalesModel():New() )
 
    aadd( ::aModels, SQLProvinciasModel():New() )

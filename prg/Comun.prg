@@ -2424,7 +2424,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Listín telefónico'
    oItem:cMessage       := 'Acceso al listín telefónico'
-   oItem:bAction        := {|| TAgenda():New( cPatDat(), , oWnd, "listin_telefonico" ):Activate() }
+   oItem:bAction        := {|| ListinController():New():ActivateNavigatorView() }
    oItem:cId            := "listin_telefonico"
    oItem:cBmp           := "gc_book_telephone_16"
    oItem:cBmpBig        := "gc_book_telephone_32"

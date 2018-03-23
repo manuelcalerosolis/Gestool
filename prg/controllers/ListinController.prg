@@ -3,8 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ProvinciasController FROM SQLNavigatorController
+CLASS ListinController FROM SQLNavigatorController
 
+   DATA oDireccionesController
 
    METHOD New()
 
@@ -12,27 +13,29 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ProvinciasController
+METHOD New() CLASS ListinController
 
    ::Super:New()
 
-   ::cTitle                   := "Provincias"
+   ::cTitle                   := "Listín"
 
-   ::cName                    := "provincias"
+   ::cName                    := "listin"
 
-   ::hImage                   := {  "16" => "gc_flag_spain_16",;
-                                    "32" => "gc_flag_spain_32",;
-                                    "48" => "gc_flag_spain_48" }
+   ::hImage                   := {  "16" => "gc_book_telephone_16",;
+                                    "32" => "gc_book_telephone_32",;
+                                    "48" => "gc_book_telephone_48" }
 
-   ::nLevel                   := Auth():Level( ::cName )
+   ::nLevel                   := nLevelUsr( ::cName )
 
-   ::oModel                   := SQLProvinciasModel():New( self )
+   ::oModel                   := SQLListinModel():New( self )
 
-   ::oBrowseView              := ProvinciasBrowseView():New( self )
+   ::oBrowseView              := ListinBrowseView():New( self )
 
-   ::oDialogView              := ProvinciasView():New( self )
+   ::oDialogView              := ListinView():New( self )
 
-   ::oValidator               := ProvinciasValidator():New( self )
+   ::oValidator               := ListinValidator():New( self )
+
+   ::oDireccionesController   := DireccionesController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -47,7 +50,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ProvinciasBrowseView FROM SQLBrowseView
+CLASS ListinBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -55,7 +58,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ProvinciasBrowseView
+METHOD addColumns() CLASS ListinBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -67,25 +70,25 @@ METHOD addColumns() CLASS ProvinciasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Uuid'
-      :nWidth              := 200
+      :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'provincia'
-      :cHeader             := 'Provincia'
-      :nWidth              := 150
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'provincia' ) }
+      :cSortOrder          := 'dni'
+      :cHeader             := 'DNI/CIF'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'dni' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -99,7 +102,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ProvinciasView FROM SQLBaseView
+CLASS ListinView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -107,7 +110,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ProvinciasView
+METHOD Activate() CLASS ListinView
 
    local oDlg
    local oBmpGeneral
@@ -116,26 +119,49 @@ METHOD Activate() CLASS ProvinciasView
    local oBtnDelete
 
    DEFINE DIALOG  oDlg ;
-      RESOURCE    "PROVINCIA" ;
-      TITLE       ::LblTitle() + "provincia"
+      RESOURCE    "LISTIN" ;
+      TITLE       ::LblTitle() + "Contacto"
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
-      RESOURCE    "gc_flag_spain_48" ;
+      RESOURCE    "gc_book_telephone_48" ;
       TRANSPARENT ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode()  ) ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "provincia" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "dni" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "provincia" ) ) ;
+      VALID       ( ::oController:validate( "dni" ) ) ;
       OF          oDlg
+
+   REDEFINE BUTTON oBtnAppend ;
+      ID          120 ;
+      OF          oDlg ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
+
+   REDEFINE BUTTON oBtnEdit ;
+      ID          130 ;
+      OF          oDlg ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          140 ;
+      OF          oDlg ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
+
+   ::oController:oDireccionesController:Activate( oDlg, 150 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -166,7 +192,7 @@ RETURN ( oDlg:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ProvinciasValidator FROM SQLBaseValidator
+CLASS ListinValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -174,13 +200,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ProvinciasValidator
+METHOD getValidators() CLASS ListinValidator
 
-   ::hValidators  := {     "codigo"    =>       {  "required"     => "El código es un dato requerido",;
-                                                   "unique"       => "El código introducido ya existe" },;
-                           "provincia" =>       {  "required"     => "La provincia es un datos requerido",;
-                                                   "unique"       => "La provincia introducida ya existe" } }                      
-
+   ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre es un dato requerido",;
+                                                "unique"       => "El nombre introducido ya existe" }}
 
 RETURN ( ::hValidators )
 
@@ -193,9 +216,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLProvinciasModel FROM SQLBaseModel
+CLASS SQLListinModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "provincias"
+   DATA cTableName               INIT "listin"
 
    METHOD getColumns()
 
@@ -203,7 +226,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLProvinciasModel
+METHOD getColumns() CLASS SQLListinModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "text"      => "Identificador"                           ,;
@@ -213,10 +236,10 @@ METHOD getColumns() CLASS SQLProvinciasModel
                                              "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 10 )"                          ,;
-                                             "default"   => {|| space( 10 ) } }                       )
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
+                                             "default"   => {|| space( 140 ) } }                       )
 
-   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 20 )"                          ,;
+   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                          ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
 RETURN ( ::hColumns )
@@ -231,9 +254,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ProvinciasRepository FROM SQLBaseRepository
+CLASS ListinRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( SQLProvinciasModel():getTableName() ) 
+   METHOD getTableName()         INLINE ( SQLListinModel():getTableName() ) 
 
 END CLASS
 
