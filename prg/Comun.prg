@@ -1531,7 +1531,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Codigos postales'
    oItem:cMessage       := 'Acceso al fichero de codigos postales'
-   oItem:bAction        := {|| CodigosPostales():New( cPatDat(), cDriver(), oWnd, "codigos_postales" ):Activate() }
+   oItem:bAction        := {|| CodigosPostalesController():New():ActivateNavigatorView() }
    oItem:cId            := "codigos_postales"
    oItem:cBmp           := "gc_postage_stamp_16"
    oItem:cBmpBig        := "gc_postage_stamp_32"
@@ -1541,7 +1541,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Provincias'
    oItem:cMessage       := 'Acceso al fichero de grupos de provincias'
-   oItem:bAction        := {|| Provincias():New( cPatDat(), cDriver(), oWnd, "provincias" ):Activate() }
+   oItem:bAction        := {|| ProvinciasController():New():ActivateNavigatorView() }
    oItem:cId            := "provincias"
    oItem:cBmp           := "gc_flag_spain_16"
    oItem:cBmpBig        := "gc_flag_spain_32"
@@ -1551,7 +1551,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Paises"
    oItem:cMessage       := "Acceso a los paises"
-   oItem:bAction        := {|| TPais():New( cPatDat(), cDriver(), oWnd, "paises" ):Activate() }
+   oItem:bAction        := {|| PaisesController():New():ActivateNavigatorView() }
    oItem:cId            := "paises"
    oItem:cBmp           := "gc_globe_16"
    oItem:cBmpBig        := "gc_globe_32"
@@ -1561,7 +1561,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Lenguajes"
    oItem:cMessage       := "Acceso a los lenguajes"
-   oItem:bAction        := {|| TLenguaje():New( cPatDat(), cDriver(), oWnd, "lenguajes" ):Activate() }
+   oItem:bAction        := {|| LenguajesController():New():ActivateNavigatorView() }
    oItem:cId            := "lenguajes"
    oItem:cBmp           := "gc_user_message_16"
    oItem:cBmpBig        := "gc_user_message_32"
