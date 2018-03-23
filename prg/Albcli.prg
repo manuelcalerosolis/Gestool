@@ -4831,20 +4831,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          OF       oFld:aDialogs[1]
 
       /*
-      Tipo de moviminto--------------------------------------------------------
-      */
-
-      TiposVentasController();
-         :Instance();
-         :getDialogView();
-         :createEditControl(  {  "idGet"  => 290,;
-                                 "idText" => 291,;
-                                 "idSay"  => 292,;
-                                 "dialog" => oFld:aDialogs[1],;
-                                 "when"   => {|| ( nMode != ZOOM_MODE .and. !lTotLin ) } },;
-                                 @aTmp[ ( D():AlbaranesClientesLineas( nView ) )->( fieldpos( "id_tipo_v" ) ) ] )
-
-      /*
       Tipo de articulo---------------------------------------------------------
       */
 
@@ -8712,8 +8698,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
-   // TiposVentasController():Instance():setFastReport( oFr )
-
    oFr:SetMasterDetail( "Albaranes", "Lineas de albaranes",                      {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Incidencias de albaranes",                 {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Documentos de albaranes",                  {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } )
@@ -8766,8 +8750,6 @@ Return nil
 //---------------------------------------------------------------------------//
 
 Static Function SynchronizeDetails()
-
-   // TiposVentasController():Instance():findByIdInRowSet( ( D():AlbaranesClientesLineas( nView ) )->id_tipo_v )
 
 Return ( ( D():AlbaranesClientesLineas( nView ) )->cRef )
 

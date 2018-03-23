@@ -59,9 +59,6 @@ METHOD runSeederDatos()
    ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de impresoras" )
    ::SeederTiposImpresoras()
 
-   ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de ventas" )
-   ::SeederTiposVentas()
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

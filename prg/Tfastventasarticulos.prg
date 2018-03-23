@@ -3298,6 +3298,8 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
       ::oDbf:cSecDoc    := SubStr( oRowSet:fieldget( 'hora' ), 7, 2 )
       ::oDbf:cTimDoc    := oRowSet:fieldget( 'hora' )
 
+      ::oDbf:cCtrCoste  := CentroCosteModel():getCodigo( RelacionesEntidadesRepository():getUuidRelacionadoCentroCoste( oRowSet:fieldget( 'uuid' ) ) )
+
       ::insertIfValid()
 
       ::setMeterAutoIncremental()

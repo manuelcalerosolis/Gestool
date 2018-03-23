@@ -745,12 +745,6 @@ Method InitialCheck() CLASS AccessCode
          ::oMessage:SetText( "Comprobando tipos de impresoras..." )
       end if
  
-      // Comprobamos q exista al menos un tipo de ventas--------------------------
-
-      if !Empty( ::oMessage )
-         ::oMessage:SetText( "Comprobando tipos de ventas..." )
-      end if
-
       // Comprobamos q exista al menos una caja-----------------------------------
 
       if !Empty( ::oMessage )
