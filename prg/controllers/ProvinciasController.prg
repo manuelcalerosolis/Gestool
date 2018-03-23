@@ -121,7 +121,7 @@ METHOD Activate() CLASS ProvinciasView
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
-      RESOURCE    "gc_flag_spain" ;
+      RESOURCE    "gc_flag_spain_48" ;
       TRANSPARENT ;
       OF          oDlg
 

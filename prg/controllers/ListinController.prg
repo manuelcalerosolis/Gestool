@@ -3,8 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PaisesController FROM SQLNavigatorController
+CLASS ListinController FROM SQLNavigatorController
 
+   DATA oDireccionesController
 
    METHOD New()
 
@@ -12,28 +13,29 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS PaisesController
+METHOD New() CLASS ListinController
 
    ::Super:New()
 
-   ::cTitle                   := "Paises"
+   ::cTitle                   := "Listín"
 
-   ::cName                    := "paises"
+   ::cName                    := "listin"
 
-   ::hImage                   := {  "16" => "gc_globe_16",;
-                                    "32" => "gc_globe_32",;
-                                    "48" => "gc_globe_48" }
+   ::hImage                   := {  "16" => "gc_book_telephone_16",;
+                                    "32" => "gc_book_telephone_32",;
+                                    "48" => "gc_book_telephone_48" }
 
    ::nLevel                   := nLevelUsr( ::cName )
 
-   ::oModel                   := SQLPaisesModel():New( self )
+   ::oModel                   := SQLListinModel():New( self )
 
-   ::oBrowseView              := PaisesBrowseView():New( self )
+   ::oBrowseView              := ListinBrowseView():New( self )
 
-   ::oDialogView              := PaisesView():New( self )
+   ::oDialogView              := ListinView():New( self )
 
-   ::oValidator               := PaisesValidator():New( self )
+   ::oValidator               := ListinValidator():New( self )
 
+   ::oDireccionesController   := DireccionesController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -48,7 +50,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PaisesBrowseView FROM SQLBrowseView
+CLASS ListinBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -56,7 +58,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS PaisesBrowseView
+METHOD addColumns() CLASS ListinBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -68,33 +70,25 @@ METHOD addColumns() CLASS PaisesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Uuid'
-      :nWidth              := 200
+      :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
-      :nWidth              := 150
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'iso'
-      :cHeader             := 'ISO'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'iso' ) }
+      :cSortOrder          := 'dni'
+      :cHeader             := 'DNI/CIF'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'dni' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -108,7 +102,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PaisesView FROM SQLBaseView
+CLASS ListinView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -116,39 +110,58 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS PaisesView
+METHOD Activate() CLASS ListinView
 
    local oDlg
    local oBmpGeneral
+   local oBtnEdit
+   local oBtnAppend
+   local oBtnDelete
 
    DEFINE DIALOG  oDlg ;
-      RESOURCE    "PAIS" ;
-      TITLE       ::LblTitle() + "país"
+      RESOURCE    "LISTIN" ;
+      TITLE       ::LblTitle() + "Contacto"
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
-      RESOURCE    "gc_globe_48" ;
+      RESOURCE    "gc_book_telephone_48" ;
       TRANSPARENT ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
-      ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          oDlg
-
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          110 ;
+      ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "iso" ] ;
-      ID          120 ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "dni" ] ;
+      ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "iso" ) ) ;
+      VALID       ( ::oController:validate( "dni" ) ) ;
       OF          oDlg
 
+   REDEFINE BUTTON oBtnAppend ;
+      ID          120 ;
+      OF          oDlg ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
+
+   REDEFINE BUTTON oBtnEdit ;
+      ID          130 ;
+      OF          oDlg ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          140 ;
+      OF          oDlg ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
+
+   ::oController:oDireccionesController:Activate( oDlg, 150 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -179,7 +192,7 @@ RETURN ( oDlg:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PaisesValidator FROM SQLBaseValidator
+CLASS ListinValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -187,14 +200,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS PaisesValidator
+METHOD getValidators() CLASS ListinValidator
 
-   ::hValidators  := {     "codigo" =>          {  "required"     => "El código es un dato requerido",;
-                                                   "unique"       => "El código introducido ya existe" },;
-                           "nombre" =>          {  "required"     => "El nombre es un datos requerido",;
-                                                   "unique"       => "El nombre introducido ya existe" },;
-                           "iso"    =>          {  "required"     => "El iso es un campo requerido",;
-                                                   "unique"       => "El iso introducido ya existe"} } 
+   ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre es un dato requerido",;
+                                                "unique"       => "El nombre introducido ya existe" }}
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -206,9 +216,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLPaisesModel FROM SQLBaseModel
+CLASS SQLListinModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "paises"
+   DATA cTableName               INIT "listin"
 
    METHOD getColumns()
 
@@ -216,7 +226,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLPaisesModel
+METHOD getColumns() CLASS SQLListinModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "text"      => "Identificador"                           ,;
@@ -226,14 +236,11 @@ METHOD getColumns() CLASS SQLPaisesModel
                                              "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 10 )"                          ,;
-                                             "default"   => {|| space( 10 ) } }                       )
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
+                                             "default"   => {|| space( 140 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 20 )"                          ,;
+   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                          ,;
                                              "default"   => {|| space( 20 ) } }                       )
-
-   hset( ::hColumns, "iso",               {  "create"    => "VARCHAR( 5 )"                          ,;
-                                             "default"   => {|| space( 5 ) } }                       )
 
 RETURN ( ::hColumns )
 
@@ -247,9 +254,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PaisesRepository FROM SQLBaseRepository
+CLASS ListinRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( SQLPaisesModel():getTableName() ) 
+   METHOD getTableName()         INLINE ( SQLListinModel():getTableName() ) 
 
 END CLASS
 
