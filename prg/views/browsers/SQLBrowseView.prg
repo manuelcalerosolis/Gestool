@@ -125,7 +125,10 @@ METHOD End()
 
    if !empty( ::oBrowse )
       ::oBrowse:End()
+      ::oBrowse               := nil
    end if 
+
+   Self                       := nil
 
 RETURN ( nil )
 
@@ -260,6 +263,14 @@ RETURN ( self )
 METHOD saveIdToModel()
 
    local nId   
+
+   if empty( ::getRowSet() )
+      RETURN ( self )
+   end if 
+
+   if empty( ::getModel() )
+      RETURN ( self )
+   end if 
 
    nId               := ::getRowSet():fieldGet( ::getModel():cColumnKey )
 

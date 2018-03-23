@@ -79,16 +79,14 @@ RETURN ( Self )
 
 METHOD End()
 
-   msgalert( "::end()" )
-
    if !empty( ::oMenuTreeView )
       ::oMenuTreeView:end()
-      msgalert( "::oMenuTreeView:end()" )
+      ::oMenuTreeView         := nil
    end if 
 
-   ::oMenuTreeView         := nil
+   Self                       := nil
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

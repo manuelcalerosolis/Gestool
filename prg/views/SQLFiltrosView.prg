@@ -30,6 +30,7 @@ CLASS SQLFilterView
    DATA oMemo
 
    METHOD New( oController ) 
+   METHOD End()      VIRTUAL
    
    METHOD Activate()
 

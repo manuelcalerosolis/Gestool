@@ -24,7 +24,6 @@ CLASS SQLNavigatorController FROM SQLBaseController
    DATA oWindowsBar
 
    METHOD New()
-
    METHOD End()
 
    METHOD setName( cName )                            INLINE ( ::Super:setName( cName ), if( !empty( ::oFilterController ), ::oFilterController:setTableToFilter( cName ), ) ) 
@@ -90,24 +89,27 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD End()
-   
+
    ::DisableWindowsBar()
 
-   if !empty( ::oNavigatorView )
-      ::oNavigatorView:End()
-   end if 
+   // if !empty( ::oNavigatorView )
+   //    ::oNavigatorView:End()
+   //    ::oNavigatorView        := nil
+   // end if 
 
    if !empty( ::oSelectorView )
       ::oSelectorView:End()
+      ::oSelectorView         := nil
    end if 
 
    if !empty( ::oFilterController )
       ::oFilterController:End() 
+      ::oFilterController     := nil
    end if 
 
-   ::oNavigatorView        := nil
-   ::oSelectorView         := nil
-   ::oFilterController     := nil
+   ::Super():End()
+
+   Self                       := nil
 
 RETURN ( nil )
 
@@ -353,6 +355,10 @@ METHOD onChangeCombo( oColumn )
    local oComboBox   := ::getComboBoxOrder()
 
    if empty( oComboBox )
+      RETURN ( Self )
+   end if 
+
+   if empty( ::getBrowse() )
       RETURN ( Self )
    end if 
 

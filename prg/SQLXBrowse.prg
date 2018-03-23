@@ -142,6 +142,10 @@ RETURN {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 
 METHOD setRowSet( oRowSet )
 
+   if empty( oRowSet )
+      RETURN ( nil )
+   end if       
+
    ::lAutoSort       := .f.
    ::nDataType       := DATATYPE_USER
    ::nRowHeight      := 20

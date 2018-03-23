@@ -43,7 +43,7 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    METHOD ActivateMDIChild()                 INLINE ( ::oMdiChild:Activate(   /*cShow*/, /*bLClicked*/, /*bRClicked*/, /*bMoved*/, /*bResized*/, /*bPainted*/,;
                                                                               /*bKeyDown*/, /*bInit*/, /*bUp*/, /*bDown*/, /*bPgUp*/, /*bPgDn*/,;
-                                                                              /*bLeft*/, /*bRight*/, /*bPgLeft*/, /*bPgRight*/, {|oSelf| oSelf:end() } ) ) 
+                                                                              /*bLeft*/, /*bRight*/, /*bPgLeft*/, /*bPgRight*/, /*bValid*/ ) ) 
 
    METHOD keyDown( nKey )
 
@@ -71,21 +71,19 @@ RETURN ( Self )
 
 METHOD End()
 
-   msgalert( "SQLNavigatorView end()" )
-
-   if !empty( ::oMdiChild )
-      ::oMdiChild:End()
+   if !empty( ::oController )
+      ::oController:End()
+      ::oController     := nil
    end if 
 
    if !empty( ::oTopWebBar )
       ::oTopWebBar:End()
+      ::oTopWebBar      := nil
    end if 
 
    ::Super():End()
 
-   ::oController     := nil
-   ::oMdiChild       := nil
-   ::oTopWebBar      := nil
+   Self                 := nil 
 
 RETURN ( .t. )
 
@@ -122,6 +120,7 @@ METHOD Activate()
    // Eventos------------------------------------------------------------------
 
    ::oMdiChild:bKeyDown    := {|nKey, nFlags| ::keyDown( nKey, nFlags ) }
+   ::oMdiChild:bPostEnd    := {|| ::End() }
 
 RETURN ( Self )
 
@@ -142,7 +141,7 @@ METHOD CreateSplitters()
    ::oHorizontalSplitter   := TSplitter():New(  /*nRow*/ dfnSplitterHeight, /*nCol*/ dfnTreeViewWidth, /*lVertical*/ .f.,;
                                                 /*aPrevCtrols*/ { ::oTopWebBar }, /*lAdjPrev*/ .t.,;
                                                 /*aHindCtrols*/ { ::getBrowse() }, /*lAdjHind*/ .t.,;
-                                                /*bMargin1*/ {|| 0}, /*bMargin2*/ {|| 0}, /*oWnd*/ ::oMdiChild,;
+                                                /*bMargin1*/ {|| 0 }, /*bMargin2*/ {|| 0 }, /*oWnd*/ ::oMdiChild,;
                                                 /*bChange*/, /*nWidth*/ ::aRect[ 4 ], /*nHeight*/ dfnSplitterWidth, /*lPixel*/ .t.,;
                                                 /*l3D*/ .t., /*nClrBack*/ rgb( 255, 255, 255 ), /*lDesign*/ .f.,;
                                                 /*lUpdate*/ .f., /*lStyle*/ .f., /*aGradient*/, /*aGradientOver*/ )
@@ -150,10 +149,9 @@ METHOD CreateSplitters()
 
    ::oVerticalSplitter     := TSplitter():New(  /*nRow*/ 0, /*nCol*/ dfnTreeViewWidth, /*lVertical*/ .t.,;
                                                 /*aPrevCtrols*/ { ::oMenuTreeView:oTreeView }, /*lAdjPrev*/ .t., /*aHindCtrols*/ { ::oTopWebBar, ::oHorizontalSplitter, ::getBrowse() },;
-                                                /*lAdjHind*/ .t., /*bMargin1*/ {|| 0}, /*bMargin2*/ {|| 0}, /*oWnd*/ ::oMdiChild,;
+                                                /*lAdjHind*/ .t., /*bMargin1*/ {|| 0 }, /*bMargin2*/ {|| 0 }, /*oWnd*/ ::oMdiChild,;
                                                 /*bChange*/, /*nWidth*/ dfnSplitterWidth, /*nHeight*/ ::aRect[ 3 ] - dfnSplitterHeight, /*lPixel*/ .t., /*l3D*/.t.,;
                                                 /*nClrBack*/ , /*lDesign*/ .f., /*lUpdate*/ .t., /*lStyle*/ .t. )  
-
 
 RETURN ( Self )
 
@@ -163,13 +161,13 @@ METHOD keyDown( nKey, nFlags )
 
    do case
       case nKey == VK_ESCAPE
-         ::oController:End()
+         if ( !empty( ::oMdiChild ), ( ::oMdiChild:End(), ::oMdiChild := nil ), )
       case nKey == VK_INSERT 
-         ::oController:Append() 
+         if( !empty( ::oController ), ::oController:Append(), )
       case nKey == VK_RETURN 
-         ::oController:Edit() 
+         if( !empty( ::oController ), ::oController:Edit(), )
       case nKey == VK_DELETE 
-         ::oController:Delete( ::getBrowse():aSelected )
+         if( !empty( ::oController ), ::oController:Delete( ::getBrowse():aSelected ), )
       case nKey == VK_F5
          ::RefreshRowSet()
    end case

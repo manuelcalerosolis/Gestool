@@ -2767,16 +2767,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Direcciones [Beta*]'
-   oItem:cMessage       := 'Direcciones [Beta*]'
-   oItem:bAction        := {|| DireccionesController():New():ActivateNavigatorView() }
-   oItem:cId            := "usuarios_beta"
-   oItem:cBmp           := "gc_user_headset_16"
-   oItem:cBmpBig        := "gc_user_headset_32"
-   oItem:lShow          := .f.
-
 RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//

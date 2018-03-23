@@ -24,7 +24,6 @@ CLASS UsuariosController FROM SQLNavigatorController
    DATA oLoginView
 
    METHOD New()
-
    METHOD End()
 
    METHOD isLogin()
@@ -88,29 +87,37 @@ METHOD End()
 
    if !empty( ::oModel )
       ::oModel:End()
+      ::oModel                := nil
    endif
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
+      ::oBrowseView           := nil
    endif
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
+      ::oDialogView           := nil
    endif
 
    if !empty( ::oValidator )
       ::oValidator:End()
+      ::oValidator            := nil
    endif
 
    if !empty( ::oAjustableController )
       ::oAjustableController:End()
+      ::oAjustableController  := nil
    end if 
 
    if !empty( ::oRolesController )
       ::oRolesController:End()
+      ::oRolesController      := nil
    end if 
 
    ::Super:End()
+
+   Self                       := nil
 
 RETURN ( nil )
 
