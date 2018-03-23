@@ -1865,6 +1865,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
          ::oDbf:nCosArt    := nTotCPedCli( D():PedidosClientesLineas( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv )
          ::oDbf:nUniArt    := nTotNPedCli( D():PedidosClientesLineas( ::nView ) ) 
+         ::oDbf:nBultos    := ( D():PedidosClientesLineas( ::nView )  )->nBultos
 
          ::oDbf:cCtrCoste  := ( D():PedidosClientesLineas( ::nView ) )->cCtrCoste
          ::oDbf:cTipCtr    := ( D():PedidosClientesLineas( ::nView ) )->cTipCtr
@@ -3297,6 +3298,8 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
       ::oDbf:cMinDoc    := SubStr( oRowSet:fieldget( 'hora' ), 4, 2 )
       ::oDbf:cSecDoc    := SubStr( oRowSet:fieldget( 'hora' ), 7, 2 )
       ::oDbf:cTimDoc    := oRowSet:fieldget( 'hora' )
+
+      ::oDbf:cCtrCoste  := CentroCosteModel():getCodigo( RelacionesEntidadesRepository():getUuidRelacionadoCentroCoste( oRowSet:fieldget( 'uuid' ) ) )
 
       ::insertIfValid()
 

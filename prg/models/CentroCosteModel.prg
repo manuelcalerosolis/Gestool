@@ -10,6 +10,8 @@ CLASS CentroCosteModel FROM ADSBaseModel
 
    MESSAGE getNombre( Uuid )               INLINE ::getField( "cNombre", "uuid", Uuid )
 
+   MESSAGE getCodigo( Uuid )               INLINE ::getField( "cCodigo", "uuid", Uuid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

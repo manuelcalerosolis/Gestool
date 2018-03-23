@@ -316,6 +316,7 @@ METHOD getSQLSentenceMovimientosAlmacenForReport( oReporting )
    cSentence         +=    SQLMovimientosAlmacenModel():getColumnMovimiento( 'movimientos_almacen' ) 
    cSentence         +=    "movimientos_almacen.almacen_destino, "
    cSentence         +=    "movimientos_almacen.almacen_origen, "
+   cSentence         +=    "movimientos_almacen_lineas.uuid AS uuid, "
    cSentence         +=    "movimientos_almacen_lineas.parent_uuid, "
    cSentence         +=    "movimientos_almacen_lineas.codigo_articulo, "
    cSentence         +=    "movimientos_almacen_lineas.codigo_primera_propiedad, "

@@ -346,7 +346,11 @@ RectificativasClientesLineasModel.prg 									\
 StocksModel.prg 																\
 SituacionesController.prg       											\
 CajonesPortamonedasController.prg 										\
-TransportistasController.prg 												\
+TransportistasController.prg												\
+CodigosPostalesController.prg												\
+ProvinciasController.prg													\
+PaisesController.prg															\
+LenguajesController.prg														\
 DireccionesController.prg 													\
 MovimientosAlmacenView.prg													\
 MovimientosAlmacenBrowseView.prg											\
@@ -955,6 +959,10 @@ GruposMovimientosModel.obj 												\
 SituacionesController.obj       											\
 CajonesPortamonedasController.obj       								\
 TransportistasController.obj       										\
+CodigosPostalesController.obj       									\
+ProvinciasController.obj       											\
+PaisesController.obj       												\
+LenguajesController.obj  		     										\
 DireccionesController.obj       											\
 MovimientosAlmacenesLineasModel.obj 									\
 FacturasClientesLineasModel.obj 											\
@@ -1549,6 +1557,10 @@ $(OBJ)\StocksModel.obj 														+
 $(OBJ)\SituacionesController.obj          							+
 $(OBJ)\CajonesPortamonedasController.obj    							+
 $(OBJ)\TransportistasController.obj    								+
+$(OBJ)\CodigosPostalesController.obj    								+
+$(OBJ)\ProvinciasController.obj    										+
+$(OBJ)\PaisesController.obj    											+
+$(OBJ)\LenguajesController.obj    										+
 $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\MovimientosAlmacenView.obj 										+
 $(OBJ)\MovimientosAlmacenBrowseView.obj								+
