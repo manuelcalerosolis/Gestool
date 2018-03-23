@@ -40,6 +40,8 @@ CLASS MenuTreeView
 
    METHOD End()
 
+   METHOD Exit()
+
    METHOD ActivateMDI()
    METHOD ActivateDialog()
 
@@ -201,6 +203,18 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
+METHOD Exit()
+
+   if empty( ::oSender ) 
+      RETURN ( nil )
+   end if 
+
+   ::oSender:getWindow():End()
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
 METHOD AddButton( cText, cResource, bAction, uKey, nLevel, oGroup, lAllowExit ) 
 
    local oTreeButton
@@ -353,7 +367,7 @@ METHOD AddExitButton()
 
    ::fireEvent( 'addingExitButton' )
 
-   ::AddButton( "Salir [ESC]", "End16", {|| ::getController():End() }, "S" ) 
+   ::AddButton( "Salir [ESC]", "End16", {|| ::Exit() }, "S" ) 
 
    ::fireEvent( 'addedExitButton' )
 
