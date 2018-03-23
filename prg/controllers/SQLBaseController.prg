@@ -70,7 +70,7 @@ CLASS SQLBaseController
    METHOD setModelBufferPadr( cColumn, uValue )       INLINE ( iif( !empty( ::oModel ), ::oModel:setBufferPadr( cColumn, uValue ), ) )
 
    METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
-   METHOD getModelgetValue( cSentence )            INLINE ( iif( !empty( ::oModel ), ::oModel:getValue( cSentence ), ) )
+   METHOD getModelgetValue( cSentence )               INLINE ( iif( !empty( ::oModel ), ::oModel:getValue( cSentence ), ) )
 
    METHOD findInModel()
 
@@ -127,7 +127,7 @@ CLASS SQLBaseController
    // Browse------------------------------------------------------------------
 
    METHOD getBrowseView()                             INLINE ( ::oBrowseView )
-   METHOD getBrowse()                                 INLINE ( ::oBrowseView:getBrowse() )
+   METHOD getBrowse()                                 INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:getBrowse(), ) )
 
    METHOD startBrowse( oCombobox )
    METHOD restoreBrowseState()
@@ -255,16 +255,16 @@ METHOD End()
 
    if !empty( ::oEvents )
       ::oEvents:End()
+      ::oEvents   := nil
    end if 
 
    if !empty( ::oRowSet )
       ::oRowSet:End()
+      ::oRowSet   := nil
    end if 
 
-   ::oEvents   := nil
+   Self           := nil
 
-   ::oRowSet   := nil
-   
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

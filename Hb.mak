@@ -629,6 +629,7 @@ PdaEnvioRecepcionController.prg 											\
 PdaEnvioRecepcionView.prg 													\
 RelacionesEntidadesController.prg 										\
 CentroCosteModel.prg 														\
+MdiChild.prg 																	\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1233,6 +1234,7 @@ PdaEnvioRecepcionView.obj 													\
 PedidosProveedoresLineasModel.obj 										\
 RelacionesEntidadesController.obj 										\
 CentroCosteModel.obj 														\
+MdiChild.obj 																	\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1827,6 +1829,7 @@ $(OBJ)\PdaEnvioRecepcionView.obj 										+
 $(OBJ)\PedidosProveedoresLineasModel.obj 							   +
 $(OBJ)\RelacionesEntidadesController.obj 							   +
 $(OBJ)\CentroCosteModel.obj 												+
+$(OBJ)\MdiChild.obj 															+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

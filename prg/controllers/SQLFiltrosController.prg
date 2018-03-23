@@ -13,6 +13,7 @@ CLASS SQLFiltrosController FROM SQLBaseController
    DATA cName
 
    METHOD New()
+   METHOD End()
 
    METHOD Dialog()                           INLINE ( ::oDialogView:Dialog() )
 
@@ -47,6 +48,30 @@ METHOD New( oSender )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD End( oSender )
+
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+      ::oDialogView                    := nil
+   end if 
+
+   if !empty( ::oModel )
+      ::oModel:End()
+      ::oModel                         := nil
+   end if 
+   
+   if !empty( ::oValidator )
+      ::oValidator:End()
+      ::oValidator                     := nil
+   end if 
+
+   Self                                := nil
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD setColumns( hColumns )
 

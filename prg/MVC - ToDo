@@ -1,7 +1,5 @@
 MVC - ToDo
 
-- Quitar tipo de ventas
-
 - nLevelUsr debe funcionar con SQL
 
 - Meter codigo en la ficha de usuario
@@ -21,6 +19,8 @@ MVC - ToDo
 - No guarda configuracion de columnas en factura proveedor.
 
 - No muestra el importe de IVA en factura proveedores. 
+
+- Quitar tipo de ventas (done)
 
 - Meter codigo en la ficha de usuario (done)
 
