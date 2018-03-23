@@ -36,7 +36,7 @@ FUNCTION Promocion( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -1235,7 +1235,7 @@ FUNCTION BrwPromo( oGet, dbfPromoT, oGet2 )
    local aCbxOrd     := { "Código", "Nombre" }
    local cCbxOrd
    local lClose      := .f.
-   local nLevelUsr   := nLevelUsr( "01021" )
+   local nLevelUsr   := Auth():Level( "01021" )
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]

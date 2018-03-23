@@ -222,7 +222,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
    Obtenemos el nivel de acceso
    */
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return .f.
@@ -2718,7 +2718,7 @@ return ( aCalRecPrv )
 
 Function EdtRecPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -2756,7 +2756,7 @@ RETURN NIL
 
 Function ZooRecPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -2794,7 +2794,7 @@ RETURN NIL
 
 Function DelRecPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -2832,7 +2832,7 @@ Return nil
 
 Function PrnRecPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -2870,7 +2870,7 @@ RETURN NIL
 
 Function VisRecPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -3266,7 +3266,7 @@ return .t.
 
 FUNCTION ExtEdtRecPrv( cFacPrvP, nExternalView, lRectificativa, oCtrCoste )
 
-   local nLevel            := nLevelUsr( _MENUITEM_ )
+   local nLevel            := Auth():Level( _MENUITEM_ )
 
    DEFAULT lRectificativa  := .f.
 
@@ -3287,7 +3287,7 @@ Return .t.
 
 FUNCTION ExtDelRecPrv( cFacPrvP )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_DELE ) == 0
       msgStop( 'Acceso no permitido.' )

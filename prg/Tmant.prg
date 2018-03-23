@@ -192,7 +192,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TMant
    ::oWndParent         := oWndParent
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    end if
 
    ::oDbf               := nil

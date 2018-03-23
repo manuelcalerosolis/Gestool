@@ -183,7 +183,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TCobAge
    DEFAULT cDriver         := cDriver()
 
    if oMenuItem != nil
-      ::nLevel             := nLevelUsr( oMenuItem )
+      ::nLevel             := Auth():Level( oMenuItem )
    else
       ::nLevel             := 1
    end if

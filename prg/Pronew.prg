@@ -28,7 +28,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil .and. ::nLevel == nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
       ::nLevel          := 1
    end if
@@ -412,7 +412,7 @@ FUNCTION brwProp( oGet, oSay )
    Obtenemos el nivel de acceso
 
    if nLevel == nil
-      nLevel := nLevelUsr( "01016" )
+      nLevel := Auth():Level( "01016" )
    end if
 
    OpenFiles()
@@ -611,7 +611,7 @@ FUNCTION Prop( oMenuItem, oWnd )
    DEFAULT  oWnd        := oWnd()
 
    if nLevel == nil
-      nLevel := nLevelUsr( oMenuItem )
+      nLevel := Auth():Level( oMenuItem )
    end if
 
    if nAnd( nLevel, 1 ) != 0

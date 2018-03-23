@@ -67,7 +67,7 @@ FUNCTION InfDetPreCli( oMenuItem, oWnd )
    DEFAULT oMenuitem := "01041"
    DEFAULT oWnd      := oWnd()
 
-   if nLevelUsr( oMenuItem ) != 1
+   if Auth():Level( oMenuItem ) != 1
       msgStop( "Acceso no permitido." )
       return nil
    end if

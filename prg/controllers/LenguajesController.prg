@@ -24,7 +24,7 @@ METHOD New() CLASS LenguajesController
                                     "32" => "gc_user_message_32",;
                                     "48" => "gc_user_message_48" }
 
-   ::nLevel                   := nLevelUsr( ::cName )
+   ::nLevel                   := Auth():Level( ::cName )
 
    ::oModel                   := SQLLenguajesModel():New( self )
 

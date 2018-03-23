@@ -639,7 +639,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       Obtenemos el nivel de acceso---------------------------------------------
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -6174,7 +6174,7 @@ RETURN nVal2Change
 
 FUNCTION AppCli( lOpenBrowse )
 
-   local nLevel         := nLevelUsr( "01032" )
+   local nLevel         := Auth():Level( "01032" )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -6207,7 +6207,7 @@ RETURN .t.
 
 FUNCTION EdtCli( cCodCli, lOpenBrowse, nTabInicio )
 
-   local nLevel         := nLevelUsr( "01032" )
+   local nLevel         := Auth():Level( "01032" )
 
    DEFAULT lOpenBrowse  := .f.
    DEFAULT nTabInicio   := 1
@@ -6247,7 +6247,7 @@ RETURN .t.
 
 Function InfCliente( cCodCli, oBrw, lSatCli )
 
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local cArticulo   := ""
 
    DEFAULT lSatCli   := .f.
@@ -8035,7 +8035,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
    local oCbxOrd
    local aCbxOrd     := { "Código", "Nombre", "NIF/CIF", "Población", "Provincia", "Código postal", "Teléfono", "Establecimiento", "Correo electrónico" }
    local cCbxOrd
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local oSayText
    local cSayText    := "Listado de clientes"
 
@@ -8316,7 +8316,7 @@ FUNCTION BrwEntidad( cCodCli, oDbf )
    local oCbxOrd
    local aCbxOrd     := { "Descripción del organismo" }
    local cCbxOrd
-   local nLevel      := nLevelUsr( "04012" )
+   local nLevel      := Auth():Level( "04012" )
    local oSayText
    local cSayText    := "Listado de entidades"
    local hash        := {}
@@ -11976,7 +11976,7 @@ FUNCTION BrwBncCli( oGet, oPaisIBAN, oControlIBAN, oEntBnc, oSucBnc, oDigBnc, oC
    local oCbxOrd
    local aCbxOrd     := { "Nombre", "Cuenta" }
    local cCbxOrd     := "Nombre"
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local lClose      := .f.
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )

@@ -51,7 +51,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
    DEFAULT oWndParent   := oWnd()
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
       ::nLevel          := 1
    end if

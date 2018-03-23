@@ -216,7 +216,7 @@ Function CfgTikItems( oMenuItem, oWnd )
 
    if oWndBrw == nil
 
-   nLevel   := nLevelUsr( oMenuItem )
+   nLevel   := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return nil
@@ -1429,7 +1429,7 @@ Function BrwTikItems( oGet, oGet2 )
 	local oCbxOrd
    local aCbxOrd     := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevel      := nLevelUsr( "01086" )
+   local nLevel      := Auth():Level( "01086" )
    local nRec
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )

@@ -168,7 +168,7 @@ METHOD Activate() CLASS TCamposExtra
    local oDel
    local oImp
    local oPrv
-   local nLevel   := nLevelUsr( ::oMenuItem )
+   local nLevel   := Auth():Level( ::oMenuItem )
 
    if nAnd( nLevel, 1 ) == 0
 

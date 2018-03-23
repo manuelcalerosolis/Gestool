@@ -436,7 +436,7 @@ METHOD Resource( lAutoInit )
 
    DEFAULT lAutoInit       := .f.
 
-   nLevel                  := nLevelUsr( "01067" )
+   nLevel                  := Auth():Level( "01067" )
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )

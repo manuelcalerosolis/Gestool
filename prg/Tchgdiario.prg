@@ -10,7 +10,7 @@ function ChgDiario( oMenuItem, oWnd )
    local oChgDia
    local nLevel
 
-   nLevel   := nLevelUsr( oMenuItem )
+   nLevel   := Auth():Level( oMenuItem )
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )

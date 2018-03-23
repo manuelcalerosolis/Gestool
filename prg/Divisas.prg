@@ -72,7 +72,7 @@ FUNCTION Divisas( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -739,7 +739,7 @@ FUNCTION BrwDiv( oGet, oBmp, oGetDiv, dbfDiv, oBan, lBigStyle )
 	local oCbxOrd
    local aCbxOrd     := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevel      := nLevelUsr( "01039" )
+   local nLevel      := Auth():Level( "01039" )
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]
@@ -903,7 +903,7 @@ FUNCTION BrwNbrDiv( oGet, oGetDiv, dbfDiv, oBan )
 	local oCbxOrd
    local aCbxOrd     := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevel      := nLevelUsr( "01039" )
+   local nLevel      := Auth():Level( "01039" )
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]

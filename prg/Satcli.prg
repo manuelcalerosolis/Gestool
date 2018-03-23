@@ -1155,7 +1155,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
    DEFAULT cCodCli      := ""
    DEFAULT cCodArt      := ""
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return .f.
@@ -11413,7 +11413,7 @@ Return ( .t. )
 
 Function AppSatCli( cCodCli, cCodArt, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -11443,7 +11443,7 @@ RETURN .t.
 
 FUNCTION EdtSatCli( cNumSat, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -11482,7 +11482,7 @@ Return .t.
 
 FUNCTION ZooSatCli( cNumSat, lOpenBrowse, lPda )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
    DEFAULT lPda         := .f.
@@ -11522,7 +11522,7 @@ Return .t.
 
 FUNCTION DelSatCli( cNumSat, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -11561,7 +11561,7 @@ Return .t.
 
 FUNCTION PrnSatCli( cNumSat, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -11599,7 +11599,7 @@ Return .t.
 
 FUNCTION VisSatCli( cNumSat, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 

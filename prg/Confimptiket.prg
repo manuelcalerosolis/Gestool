@@ -90,7 +90,7 @@ FUNCTION ConfImpTiket( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -592,7 +592,7 @@ FUNCTION BrwBalanza( oGet, oGet2 )
 	local oCbxOrd
    local aCbxOrd        := { "Código" }
    local cCbxOrd        := "Código"
-   local nLevel         := nLevelUsr( "01090" )
+   local nLevel         := Auth():Level( "01090" )
 
    if !OpenFiles()
       Return .f.

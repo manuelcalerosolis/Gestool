@@ -295,7 +295,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -1220,7 +1220,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    Obtenemos el nivel de acceso------------------------------------------------
    */
 
-   if nAnd( nLevelUsr( _MENUITEM_ ), ACC_EDIT ) == 0
+   if nAnd( Auth():Level( _MENUITEM_ ), ACC_EDIT ) == 0
       msgStop( "Acceso no permitido." )
       RETURN .f.
    end if
@@ -5275,7 +5275,7 @@ FUNCTION ConfEmpresa( oMenuItem, oWnd, nSelFolder )
    Obtenemos el nivel de acceso------------------------------------------------
    */
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
@@ -6042,7 +6042,7 @@ FUNCTION NextEmpresa()
    Obtenemos el nivel de acceso------------------------------------------------
    */
 
-   if nAnd( nLevelUsr( _MENUITEM_ ), 1 ) != 0
+   if nAnd( Auth():Level( _MENUITEM_ ), 1 ) != 0
       msgStop( "Acceso no permitido." )
       RETURN .f.
    end if
@@ -6098,7 +6098,7 @@ FUNCTION PriorEmpresa()
    Obtenemos el nivel de acceso------------------------------------------------
    */
 
-   if nAnd( nLevelUsr( _MENUITEM_ ), 1 ) != 0
+   if nAnd( Auth():Level( _MENUITEM_ ), 1 ) != 0
       msgStop( "Acceso no permitido." )
       RETURN .f.
    end if
@@ -7022,7 +7022,7 @@ FUNCTION BrwBncEmp( oGet, oGetPaisIBAN, oGetControlIBAN, oGetEntidad, oGetSucurs
 	local oCbxOrd
    local aCbxOrd     := { "Nombre", "Cuenta" }
    local cCbxOrd     := "Nombre"
-   local nLevel      := nLevelUsr( "01003" )
+   local nLevel      := Auth():Level( "01003" )
    local lClose      := .f.
    local nOrdAnt
 

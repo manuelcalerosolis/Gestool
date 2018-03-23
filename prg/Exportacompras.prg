@@ -97,7 +97,7 @@ METHOD New( oMenuItem, oWndParent ) CLASS TExportaCompras
    DEFAULT oMenuItem    := "01112"
    DEFAULT oWndParent   := GetWndFrame()
 
-   ::nLevel          := nLevelUsr( oMenuItem )
+   ::nLevel          := Auth():Level( oMenuItem )
 
    if oWndParent != nil
       oWndParent:CloseAll()

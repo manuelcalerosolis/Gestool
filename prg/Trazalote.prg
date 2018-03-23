@@ -352,7 +352,7 @@ METHOD Activate( oMenuItem, oWnd )
 
    // Nivel de usuario---------------------------------------------------------
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )

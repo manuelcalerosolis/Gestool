@@ -80,7 +80,7 @@ Function GrpVenta( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
          return nil
@@ -384,7 +384,7 @@ FUNCTION BrwGrpVenta( oGet, dbfGrp, oGet2 )
 	local oCbxOrd
    local aCbxOrd  := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevel   := nLevelUsr( "01018" )
+   local nLevel   := Auth():Level( "01018" )
    local lClose   := .f.
 
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )

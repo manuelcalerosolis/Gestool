@@ -68,7 +68,7 @@ METHOD New()
 
    ::hImage                := { "16" => "gc_bookmarks_16" }
 
-   ::nLevel                := nLevelUsr( "01101" )
+   ::nLevel                := Auth():Level( "01101" )
 
    ::oModel                := SQLEtiquetasModel():New( self )
 

@@ -48,6 +48,8 @@ CLASS PermisosOpcionesRepository FROM SQLBaseRepository
 
    METHOD getNivelUsuario( cUuidUser, cNombreOpcion )
 
+   METHOD getNivelRol( cUuidRol, cOpcion )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -65,13 +67,26 @@ RETURN ( ::getDatabase():getValue( cSQL ) )
 METHOD getNivelUsuario( cUuidUser, cNombreOpcion ) CLASS PermisosOpcionesRepository
 
    local cSQL  := "SELECT permisos_opciones.nivel FROM " + ::getTableName()         + " " +  ;
-                     "INNER JOIN roles "                                            + " " +  ;
-                        "ON roles.permiso_uuid = permisos_opciones.permiso_uuid "   + " " +  ;
-                     "INNER JOIN usuarios "                                         + " " +  ;
-                        "ON usuarios.rol_uuid = roles.uuid "                        + " " +  ;
+                     "INNER JOIN roles "                                                  +  ;
+                        "ON roles.permiso_uuid = permisos_opciones.permiso_uuid "         +  ;
+                     "INNER JOIN usuarios "                                               +  ;
+                        "ON usuarios.rol_uuid = roles.uuid "                              +  ;
                      "WHERE usuarios.uuid = " + quoted( cUuidUser )                 + " " +  ; 
                         "AND permisos_opciones.nombre = " + quoted( cNombreOpcion )  
 
 RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD getNivelRol( cUuidRol, cOption ) CLASS PermisosOpcionesRepository
+
+   local cSQL  := "SELECT nivel FROM " + ::getTableName()                                    + " " +  ;
+                     "INNER JOIN permisos ON permisos.uuid = permisos_opciones.permiso_uuid" + " " +  ;
+                     "INNER JOIN roles ON roles.permiso_uuid = permisos.uuid"                + " " +  ;
+                     "WHERE roles.uuid = " + quoted( cUuidRol )                              + " " +  ;
+                        "AND permisos_opciones.nombre = " + quoted( cOption )
+
+RETURN ( ::getDatabase():getValue( cSQL ) )
+
+//---------------------------------------------------------------------------//
+

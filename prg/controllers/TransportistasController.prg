@@ -25,7 +25,7 @@ METHOD New() CLASS TransportistasController
                                     "32" => "gc_small_truck_32",;
                                     "48" => "gc_small_truck_48" }
 
-   ::nLevel                   := nLevelUsr( ::cName )
+   ::nLevel                   := Auth():Level( ::cName )
 
    ::oModel                   := SQLTransportistasModel():New( self )
 

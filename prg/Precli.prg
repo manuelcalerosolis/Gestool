@@ -1138,7 +1138,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
    DEFAULT cCodCli      := ""
    DEFAULT cCodArt      := ""
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return .f.
@@ -11486,7 +11486,7 @@ Return Self
 
 Function AppPreCli( cCodCli, cCodArt, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -11516,7 +11516,7 @@ RETURN .t.
 
 FUNCTION EdtPreCli( cNumPre, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -11555,7 +11555,7 @@ Return .t.
 
 FUNCTION ZooPreCli( cNumPre, lOpenBrowse, lPda )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
    DEFAULT lPda         := .f.
@@ -11595,7 +11595,7 @@ Return .t.
 
 FUNCTION DelPreCli( cNumPre, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -11634,7 +11634,7 @@ Return .t.
 
 FUNCTION PrnPreCli( cNumPre, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -11674,7 +11674,7 @@ Return .t.
 
 FUNCTION VisPreCli( cNumPre, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 

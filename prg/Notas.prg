@@ -76,7 +76,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TNotas
    DEFAULT oWndParent   := oWnd()
    DEFAULT oMenuItem    := "01075"
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
    /*
    Cerramos todas las ventanas

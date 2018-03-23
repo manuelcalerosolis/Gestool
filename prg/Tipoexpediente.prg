@@ -56,7 +56,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    ::oWndParent         := oWndParent
 
    if oMenuItem != nil .and. ::nLevel == nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
       ::nLevel          := 1
    end if

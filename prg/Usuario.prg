@@ -179,7 +179,7 @@ FUNCTION Usuarios( oMenuItem, oWnd )
    DEFAULT  oMenuItem   := "01052"
    DEFAULT  oWnd        := oWnd()
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return nil
@@ -980,7 +980,7 @@ return nil
 
 //----------------------------------------------------------------------------//
 /*
-function nLevelUsr( uHelpId )
+function Auth():Level( uHelpId )
 
    local oError
    local oBlock

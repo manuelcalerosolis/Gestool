@@ -753,7 +753,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    Obtenemos el nivel de acceso---------------------------------------------
    */
 
-   nLevel            := nLevelUsr( oMenuItem )
+   nLevel            := Auth():Level( oMenuItem )
    
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
@@ -8798,7 +8798,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
    local oCbxOrd
    local cCbxOrd     := 'Familia + Código'
    local aCbxOrd     := { 'Código', 'Nombre', 'Familia + Código', 'Familia + Nombre' }
-   local nLevel      := nLevelUsr( "01014" )
+   local nLevel      := Auth():Level( "01014" )
 
    DEFAULT lCodeBar  := .f.
 
@@ -11430,7 +11430,7 @@ Function EdtArticulo( cCodArt, lOpenBrowse )
 
    local oBlock
    local oError
-   local nLevel         := nLevelUsr( "01014" )
+   local nLevel         := Auth():Level( "01014" )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -11481,7 +11481,7 @@ Function AppArticulo( lOpenBrowse )
 
    local oBlock
    local oError
-   local nLevel         := nLevelUsr( "01014" )
+   local nLevel         := Auth():Level( "01014" )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -11522,7 +11522,7 @@ RETURN .t.
 
 FUNCTION InfArticulo( cCodArt, oBrw )
 
-   local nLevel   := nLevelUsr( "01014" )
+   local nLevel   := Auth():Level( "01014" )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -15651,7 +15651,7 @@ Return nil
 
 Function lAccArticulo()
 
-Return ( nAnd( nLevelUsr( "01014" ), 1 ) == 0 )
+Return ( nAnd( Auth():Level( "01014" ), 1 ) == 0 )
 
 //---------------------------------------------------------------------------//
 
@@ -15677,7 +15677,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 	local aGet1
 	local cGet1
    local nOrd           := GetBrwOpt( "BrwArticulo" )
-   local nLevel         := nLevelUsr( "01014" )
+   local nLevel         := Auth():Level( "01014" )
    local oCbxOrd
    local cCbxOrd
    local aCbxOrd        := { "Código", "Nombre", "Proveedor" }

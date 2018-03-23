@@ -75,7 +75,7 @@ FUNCTION ConfCajPorta( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -439,7 +439,7 @@ FUNCTION BrwSelCajPorta( oGet, dbfCajPorta, oGet2 )
    local oCbxOrd
    local aCbxOrd        := { "Código", "Descripción" }
    local cCbxOrd
-   local nLevel         := nLevelUsr( "01091" )
+   local nLevel         := Auth():Level( "01091" )
 
    nOrdAnt              := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
    cCbxOrd              := aCbxOrd[ nOrdAnt ]

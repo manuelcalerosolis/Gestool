@@ -76,7 +76,7 @@ FUNCTION Ruta( oMenuItem, oWnd )
 
 	IF oWndBrw == NIL
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
@@ -349,7 +349,7 @@ function pdaVentas()
 	local oCbxOrd
    local aCbxOrd     := { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo", "Todos los clientes" }
    local cCbxOrd     := "Lunes"
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local dbfClient
    local oOrden
    local aOrden      := { "Código", "Nombre", "NIF/CIF", "Población", "Provincia", "Código postal", "Teléfono", "Establecimiento" }
@@ -564,7 +564,7 @@ FUNCTION pdaBrwRuta( oGet, dbfRuta, oGet2 )
    local aCbxOrd     := { 'Código', 'Nombre' }
    local cCbxOrd     := "Código"
    local lClose      := .f.
-   local nLevel      := nLevelUsr( "01031" )
+   local nLevel      := Auth():Level( "01031" )
    local oSayText
    local cSayText    := "Listado de rutas"
 
@@ -840,7 +840,7 @@ FUNCTION BrwRuta( oGet, dbfRuta, oGet2 )
    local aCbxOrd     := { 'Código', 'Nombre' }
    local cCbxOrd     := "Código"
    local lClose      := .f.
-   local nLevel      := nLevelUsr( "01031" )
+   local nLevel      := Auth():Level( "01031" )
    local oSayText
    local cSayText    := "Listado de rutas"
    local cReturn     := ""

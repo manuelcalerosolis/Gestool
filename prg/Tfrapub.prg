@@ -57,7 +57,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    ::cPath              := cPath
    ::cDriver            := cDriver   
    ::oWndParent         := oWndParent
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
    ::oDbf               := nil
    ::cMru               := "gc_box_closed_16"

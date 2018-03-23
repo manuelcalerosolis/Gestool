@@ -53,9 +53,9 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TBancos
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
-      ::nLevel          := nLevelUsr( "01106" )
+      ::nLevel          := Auth():Level( "01106" )
    end if
 
    ::cPath              := cPath
@@ -322,9 +322,9 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TCuentasBancarias
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
-      ::nLevel          := nLevelUsr( "01106" )
+      ::nLevel          := Auth():Level( "01106" )
    end if
 
    ::cPath              := cPath

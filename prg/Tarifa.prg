@@ -107,7 +107,7 @@ FUNCTION Tarifa( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
          return nil
@@ -1630,7 +1630,7 @@ FUNCTION BrwTarifa( oGet, oGet2 )
    local lClose      := .f.
    local aCbxOrd     := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevelUsr   := nLevelUsr( "01019" )
+   local nLevelUsr   := Auth():Level( "01019" )
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]

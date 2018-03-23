@@ -117,7 +117,7 @@ METHOD New( oMenuItem, oWnd ) CLASS TSpecialSearchArticulo
 
    // Nivel de usuario---------------------------------------------------------
 
-   nLevel            := nLevelUsr( oMenuItem )
+   nLevel            := Auth():Level( oMenuItem )
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )

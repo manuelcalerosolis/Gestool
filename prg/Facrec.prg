@@ -1295,7 +1295,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
    DEFAULT  cCodArt     := ""
    DEFAULT  cCodPed     := ""
 
-   nLevel            := nLevelUsr( oMenuItem )
+   nLevel            := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       Return Nil
@@ -13152,7 +13152,7 @@ return ( nTot )
 
 Function AppFacRec( cCodCli, cCodArt, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13182,7 +13182,7 @@ RETURN .t.
 
 Function EdtFacRec( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13221,7 +13221,7 @@ Return .t.
 
 FUNCTION ZooFacRec( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13257,7 +13257,7 @@ Return .t.
 
 FUNCTION DelFacRec( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13296,7 +13296,7 @@ Return .t.
 
 FUNCTION PrnFacRec( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13335,7 +13335,7 @@ Return .t.
 
 FUNCTION VisFacRec( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 

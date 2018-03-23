@@ -2779,7 +2779,7 @@ RETURN ( .f. )
 
 FUNCTION validRunReport( nLevel )
 
-   if nAnd( nLevelUsr( nLevel ), 1 ) != 0
+   if nAnd( Auth():Level( nLevel ), 1 ) != 0
       msgStop( "Acceso no permitido." )
       RETURN .f.
    end if
@@ -3756,7 +3756,7 @@ FUNCTION SelSysDate( oMenuItem )
    Obtenemos el nivel de acceso
    */
 
-   if nAnd( nLevelUsr( oMenuItem ), 1 ) != 0
+   if nAnd( Auth():Level( oMenuItem ), 1 ) != 0
       msgStop( "Acceso no permitido." )
    else
       dSysDate       := Calendario( dSysDate, "Fecha de trabajo" )
@@ -5430,7 +5430,7 @@ RETURN ( .t. )
 
 FUNCTION runReportGalery( cFastReport )
 
-   local nLevel         := nLevelUsr( "galeria_de_informes" )
+   local nLevel         := Auth():Level( "galeria_de_informes" )
 
    DEFAULT cFastReport  := ""
 
@@ -5461,7 +5461,7 @@ RETURN nil
 
 FUNCTION runFastGallery( cFastReport )
 
-   local nLevel         := nLevelUsr( "01119" )
+   local nLevel         := Auth():Level( "01119" )
 
    DEFAULT cFastReport  := ""
 

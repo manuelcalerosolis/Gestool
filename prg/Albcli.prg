@@ -528,7 +528,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
    DEFAULT  oMenuItem   := _MENUITEM_
    DEFAULT  oWnd        := oWnd()
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return .f.
@@ -2098,7 +2098,7 @@ Return nil
 
 FUNCTION imprimeAlbaranCliente( cNumeroAlbaran, cFormatoDocumento )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -13590,7 +13590,7 @@ return ( Max( nEstado, 1 ) )
 
 Function AppAlbCli( hHash, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13621,7 +13621,7 @@ RETURN .t.
 
 Function EdtAlbCli( cNumAlb, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13661,7 +13661,7 @@ Return .t.
 
 FUNCTION ZooAlbCli( cNumAlb, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13701,7 +13701,7 @@ Return .t.
 
 FUNCTION DelAlbCli( cNumAlb, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13741,7 +13741,7 @@ Return .t.
 
 FUNCTION PrnAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13781,7 +13781,7 @@ Return .t.
 
 FUNCTION PrnSerieAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13821,7 +13821,7 @@ Return .t.
 
 FUNCTION VisAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -15383,7 +15383,7 @@ return nil
 
 FUNCTION PrnEntAlb( cNumEnt, lPrint )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -15594,7 +15594,7 @@ Return .t.
 
 FUNCTION PrnEntAlbCli( cNumDoc, lPrint, dbfTmpEnt )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )

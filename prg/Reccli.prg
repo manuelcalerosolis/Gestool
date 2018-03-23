@@ -280,7 +280,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
    DEFAULT  oWnd        := oWnd()
    DEFAULT  aNumRec     := Array( 1 )
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       RETURN nil
@@ -3338,7 +3338,7 @@ RETURN( oMenu:End() )
 Function EdtRecCli( cNumFac, lOpenBrowse, lRectificativa )
 
    local lEdit             := .f.
-   local nLevel            := nLevelUsr( _MENUITEM_ )
+   local nLevel            := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse     := .f.
    DEFAULT lRectificativa  := .f.
@@ -3380,7 +3380,7 @@ RETURN ( lEdit )
 
 FUNCTION ZooRecCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -3416,7 +3416,7 @@ RETURN .t.
 
 FUNCTION DelRecCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -3455,7 +3455,7 @@ RETURN .t.
 
 FUNCTION PrnRecCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -3494,7 +3494,7 @@ RETURN .t.
 
 FUNCTION VisRecCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -3533,7 +3533,7 @@ RETURN .t.
 
 FUNCTION IntEdtRecCli( cNumFac )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -3552,7 +3552,7 @@ RETURN .t.
 
 FUNCTION ExtEdtRecCli( cFacCliP, nVista, lRectificativa, oCta, oCtrCoste )
 
-   local nLevel               := nLevelUsr( _MENUITEM_ )
+   local nLevel               := Auth():Level( _MENUITEM_ )
 
    lActualizarEstadoFactura   := .f.
 
@@ -3577,7 +3577,7 @@ RETURN .t.
 
 FUNCTION ExtDelRecCli( cFacCliP )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_DELE ) == 0
       msgStop( 'Acceso no permitido.' )

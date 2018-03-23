@@ -940,7 +940,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
    DEFAULT  cCodPre     := ""
    DEFAULT  lPedWeb     := .f.
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return .f.
@@ -13339,7 +13339,7 @@ RETURN oDlg:nResult == IDOK
 
 Function AppPedCli( cCodCli, cCodArt, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13370,7 +13370,7 @@ RETURN .t.
 
 Function EdtPedCli( cNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13410,7 +13410,7 @@ Return .t.
 
 FUNCTION ZooPedCli( cNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13450,7 +13450,7 @@ Return .t.
 
 FUNCTION DelPedCli( cNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13490,7 +13490,7 @@ Return .t.
 
 FUNCTION PrnPedCli( cNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13532,7 +13532,7 @@ Return .t.
 
 FUNCTION VisPedCli( cNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13574,7 +13574,7 @@ Return .t.
 
 FUNCTION visualizaPedidoCliente( cNumeroPedido, cFormatoDocumento )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -13600,7 +13600,7 @@ Return .t.
 
 FUNCTION imprimePedidoCliente( cNumeroPedido, cFormatoDocumento )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -13631,7 +13631,7 @@ Return .t.
 
 FUNCTION PrnEntPed( cNumEnt, lPrint, dbfPedCliP )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )

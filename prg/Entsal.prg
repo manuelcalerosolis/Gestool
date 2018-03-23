@@ -90,7 +90,7 @@ FUNCTION EntSal( oMenuItem, oWnd )
 
    if oWndBrw == nil
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
          return nil
@@ -1155,7 +1155,7 @@ Function AppEntSal( oMenuItem )
 
    DEFAULT  oMenuItem   := _MENUITEM_
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -1173,7 +1173,7 @@ RETURN .t.
 
 Function EdtEntSal( nRecEntradaSalida )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )

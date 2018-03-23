@@ -307,7 +307,7 @@ FUNCTION Provee( oMenuItem, oWnd )
    Obtenemos el nivel de acceso
    */
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return .f.
@@ -2468,7 +2468,7 @@ Return nil
 
 FUNCTION EdtPrv( cCodPrv, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( "01032" )
+   local nLevel         := Auth():Level( "01032" )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -2502,7 +2502,7 @@ RETURN .t.
 
 FUNCTION AppPrv( lOpenBrowse )
 
-   local nLevel         := nLevelUsr( "01032" )
+   local nLevel         := Auth():Level( "01032" )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -2532,7 +2532,7 @@ RETURN .t.
 
 Function InfProveedor( cCodPrv, oBrw )
 
-   local nLevel   := nLevelUsr( "01034" )
+   local nLevel   := Auth():Level( "01034" )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -4917,7 +4917,7 @@ FUNCTION BrwProvee( oGet, oGet2, lApp )
    local cCbxOrd
    local cTxtOrigen
    local cReturn     := Space( 12 )
-   local nLevelUsr   := nLevelUsr( "01034" )
+   local nLevelUsr   := Auth():Level( "01034" )
    local aCbxOrd     := {  "Código", "Nombre", "NIF/CIF", "Población", "Teléfono", "Fax", "Domicilio", "Población", "Código postal", "Provincia", "Correo electrónico", "Contacto" }
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
@@ -5179,7 +5179,7 @@ FUNCTION BrwPrv( oGet, oGet2, dbfProvee )
    local cCbxOrd
    local cTxtOrigen
    local cReturn     := Space( 12 )
-   local nLevelUsr   := nLevelUsr( "01034" )
+   local nLevelUsr   := Auth():Level( "01034" )
    local aCbxOrd     := {  "Código", "Nombre", "NIF/CIF", "Población", "Teléfono", "Fax", "Domicilio", "Población", "Código postal", "Provincia", "Correo electrónico", "Contacto" }
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
@@ -5523,7 +5523,7 @@ FUNCTION BrwBncPrv( oGet, oPaisIBAN, oCtrlIBAN, oEntBnc, oSucBnc, oDigBnc, oCtaB
 	local oCbxOrd
    local aCbxOrd     := { "Cuenta" }
    local cCbxOrd     := "Cuenta"
-   local nLevel      := nLevelUsr( "01110" )
+   local nLevel      := Auth():Level( "01110" )
    local lClose      := .f.
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )

@@ -75,7 +75,7 @@ METHOD New( oMenuItem, oWnd )
 
    DEFAULT oMenuItem    := "01102"
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
    if oWnd != nil
       SysRefresh(); oWnd:CloseAll(); SysRefresh()

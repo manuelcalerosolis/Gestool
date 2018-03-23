@@ -102,7 +102,7 @@ FUNCTION ArtCodebar( oMenuItem, oWnd )
       Obtenemos el nivel de acceso---------------------------------------------
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -626,7 +626,7 @@ RETURN NIL
 
 Function EdtArtCodeBar( cCodArt, oBrw )
 
-   local nLevel   := nLevelUsr( "01024" )
+   local nLevel   := Auth():Level( "01024" )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )

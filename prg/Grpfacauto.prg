@@ -60,7 +60,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
    DEFAULT oMenuItem    := "04018"
 
    if Empty( ::nLevel )
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    end if
 
    /*

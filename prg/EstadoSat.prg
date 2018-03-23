@@ -178,7 +178,7 @@ FUNCTION EstadoSat( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -541,7 +541,7 @@ Function BrwEstadoArticulo( oGet, oGet2, oBmpEstado )
 
    ( dbfEstadoSat )->( dbGoTop() )
 
-   nLevelUsr            := nLevelUsr( MENUITEM )
+   nLevelUsr            := Auth():Level( MENUITEM )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Estado artículos"
 

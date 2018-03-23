@@ -299,7 +299,7 @@ RETURN NIL
 
 FUNCTION EdtObras( cCodCli, cCodObr, dbfObrasT, oBrw, lControl )
 
-   local nLevel   := nLevelUsr( "01032" )
+   local nLevel   := Auth():Level( "01032" )
 
    DEFAULT cCodObr   := ( dbfObrasT )->cCodObr
    DEFAULT lControl  := .f.
@@ -579,7 +579,7 @@ FUNCTION BrwObrasOLD( oGet, oGet2, cCodigoCliente, dbfObrasT )
    local aCbxOrd     := { "Código", "Nombre" }
    local aIndOrd     := { "cCodigo", "cNombre" }
    local cCbxOrd     := "Código"
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local lClose      := .f.
    local oSayText
    local cSayText    := "Listado de obras"
@@ -768,7 +768,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
    local aCbxOrd     := { "Código", "Nombre" }
    local aIndOrd     := { "cCodigo", "cNombre" }
    local cCbxOrd     := "Código"
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local lClose      := .f.
    local oSayText
    local cSayText    := "Listado de obras"

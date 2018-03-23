@@ -1765,7 +1765,7 @@ RETURN ( self )
 FUNCTION ImpFacCom( oMenuItem, oWnd )
 
    local oImpFacCom
-   local nLevel   := nLevelUsr( oMenuItem )
+   local nLevel   := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return ( nil )

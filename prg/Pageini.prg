@@ -125,7 +125,7 @@ FUNCTION PageIni( oMenuItem, oWnd )
 
    // Obtenemos el nivel de acceso
 
-   nLevel                  := nLevelUsr( oMenuItem )
+   nLevel                  := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return nil
@@ -236,7 +236,7 @@ FUNCTION PageIniClient( View )
 
    // Obtenemos el nivel de acceso---------------------------------------------
 
-   nLevel                  := nLevelUsr( "01004" )
+   nLevel                  := Auth():Level( "01004" )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return nil

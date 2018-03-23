@@ -33,7 +33,7 @@ METHOD New( oSenderController ) CLASS RelacionesEntidadesController
 
    ::hImage                := { "16" => "gc_document_attachment_16" }
 
-   ::nLevel                := nLevelUsr( "01201" )
+   ::nLevel                := Auth():Level( "01201" )
 
    ::aRelacionables        := { "Centro de coste" }
 

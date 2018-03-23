@@ -94,7 +94,7 @@ METHOD New( cPath, oMenuItem, oWndParent )
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT oMenuItem    := "01037"
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
    ::cPath              := cPath
    ::oWndParent         := oWndParent

@@ -302,7 +302,7 @@ FUNCTION ExtAge( oMenuItem, oWnd )
       */
 
       if nLevel == nil
-         nLevel := nLevelUsr( oMenuItem )
+         nLevel := Auth():Level( oMenuItem )
       end if
 
       if nAnd( nLevel, 1 ) != 0

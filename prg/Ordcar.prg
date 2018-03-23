@@ -109,7 +109,7 @@ METHOD New( cPath, oMenuItem, oWndParent )
    DEFAULT cPath           := cPatEmp()
    DEFAULT oWndParent      := oWnd()
 
-   ::nLevel                := nLevelUsr( oMenuItem )
+   ::nLevel                := Auth():Level( oMenuItem )
 
    ::cPath                 := cPath
    ::oWndParent            := oWndParent
@@ -679,7 +679,7 @@ FUNCTION OrdCar( oMenuItem, oWnd )
    DEFAULT  oMenuItem   := "01039"
    DEFAULT  oWnd        := oWnd()
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return nil

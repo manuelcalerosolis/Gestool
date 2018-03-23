@@ -1178,7 +1178,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, hDocumen
    DEFAULT  lEntCon     := lEntCon()
    DEFAULT  lExtTpv     := .f.
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return .f.
@@ -13281,7 +13281,7 @@ RETURN NIL
 
 FUNCTION AppTikCli( cCodCli, cCodArt, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13311,7 +13311,7 @@ Return .t.
 
 FUNCTION InitTikCli( nNumTik )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -13334,7 +13334,7 @@ Edita tikets de clientes desde fuera
 
 FUNCTION EdtTikCli( nNumTik, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13381,7 +13381,7 @@ Visualiza factura de clientes desde fuera
 
 FUNCTION ZooTikCli( nNumTik, lOpenBrowse  )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13423,7 +13423,7 @@ Elimina factura de clientes desde fuera
 
 FUNCTION DelTikCli( nNumTik, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13465,7 +13465,7 @@ Imprime Tiktura de clientes desde fuera
 
 FUNCTION PrnTikCli( nNumTik, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13520,7 +13520,7 @@ Imprime Tiktura de clientes desde fuera
 
 FUNCTION VisTikCli( nNumTik, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -13559,7 +13559,7 @@ RETURN NIL
 
 Function EdtCobTikCli( nNumTik, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 

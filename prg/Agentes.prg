@@ -77,7 +77,7 @@ FUNCTION Agentes( oMenuItem, oWnd )
 
    if oWndBrw == NIL
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return nil
@@ -1200,7 +1200,7 @@ FUNCTION BrwAgentes( oGet, oGet2, lRelacionado, cCodigoAgente )
 
    cCbxOrd              := aCbxOrd[ nOrdAnt ]
 
-   nLevelUsr            := nLevelUsr( "01033" )
+   nLevelUsr            := Auth():Level( "01033" )
 
    DEFAULT lRelacionado := .f.
 
@@ -1866,7 +1866,7 @@ Funcion para editar un agente desde cualquier parte del programa
 
 FUNCTION EdtAge( cCodAge )
 
-   local nLevel         := nLevelUsr( "01033" )
+   local nLevel         := Auth():Level( "01033" )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )

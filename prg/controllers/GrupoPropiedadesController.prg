@@ -21,7 +21,7 @@ METHOD New() CLASS GrupoPropiedadesController
 
    ::hImage                := { "16" => "gc_box_open_16" }
 
-   ::nLevel                := nLevelUsr( "01128" )
+   ::nLevel                := Auth():Level( "01128" )
 
    ::oModel                := SQLGrupoPropiedadesModel():New( self )
 

@@ -279,7 +279,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TTpvRestaurante
    DEFAULT oWndParent      := GetWndFrame()
 
    if oMenuItem != nil .and. ::nLevel == nil
-      ::nLevel             := nLevelUsr( oMenuItem )
+      ::nLevel             := Auth():Level( oMenuItem )
    else
       ::nLevel             := 0
    end if

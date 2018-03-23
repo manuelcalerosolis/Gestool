@@ -324,7 +324,7 @@ FUNCTION Arqueo( oMenuItem, oWnd )
    cCajTur        := Auth():Codigo()
 
    if nLevel == nil
-      nLevel      := nLevelUsr( oMenuItem )
+      nLevel      := Auth():Level( oMenuItem )
    end if
 
    if nLevel != 1

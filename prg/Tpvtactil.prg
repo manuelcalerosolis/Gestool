@@ -949,7 +949,7 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    ::oWnd                     := oWnd
 
    if oMenuItem != nil
-      ::nLevel                := nLevelUsr( oMenuItem )
+      ::nLevel                := Auth():Level( oMenuItem )
    else
       ::nLevel                := 0
    end if

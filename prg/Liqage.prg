@@ -89,7 +89,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
       ::nLevel          := 1
    end if
@@ -1155,7 +1155,7 @@ FUNCTION LiqAge( oMenuItem, oWnd )
    DEFAULT  oMenuItem   := "01038"
    DEFAULT  oWnd        := oWnd()
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return nil

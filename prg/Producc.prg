@@ -323,7 +323,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    if !Empty( oMenuItem )
 
       if ::nLevel == nil
-         ::nLevel          := nLevelUsr( oMenuItem )
+         ::nLevel          := Auth():Level( oMenuItem )
       else
          ::nLevel          := 0
       end if

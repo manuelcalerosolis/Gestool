@@ -134,7 +134,7 @@ FUNCTION Cajas( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -1406,7 +1406,7 @@ FUNCTION BrwCajas( oGet, oGet2, lBigStyle )
 	local oCbxOrd
    local aCbxOrd     := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevel      := nLevelUsr( "01040" )
+   local nLevel      := Auth():Level( "01040" )
 
    DEFAULT lBigStyle := .f.
 
@@ -3480,7 +3480,7 @@ Return ( nCajas )
 
 Function EdtCajas( cCodigoCaja, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( "01040" )
+   local nLevel         := Auth():Level( "01040" )
 
    DEFAULT cCodigoCaja  := oUser():cCaja()
    DEFAULT lOpenBrowse  := .f.

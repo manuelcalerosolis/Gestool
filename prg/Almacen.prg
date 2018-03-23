@@ -56,7 +56,7 @@ FUNCTION Almacen( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
          RETURN nil
@@ -1240,7 +1240,7 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
 	local oCbxOrd
    local aCbxOrd        := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevel         := nLevelUsr( "01035" )
+   local nLevel         := Auth():Level( "01035" )
    local oSayText
    local cSayText       := "Listado de almacenes"
    local cRETURN        := ""
@@ -1463,7 +1463,7 @@ Funcion para editar un almacén desde cualquier parte del programa
 
 FUNCTION EdtAlm( cCodAlm )
 
-   local nLevel         := nLevelUsr( "01035" )
+   local nLevel         := Auth():Level( "01035" )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )

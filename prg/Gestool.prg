@@ -150,7 +150,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
       case ( !empty( appParamsMain() ) .and. !empty( appParamsSecond() ) .and. !empty( appParamsThird() ) )
 
-         Auth():getWhereUuid( appParamsMain() )
+         Auth():guardWhereUuid( appParamsMain() )
 
          setEmpresa( appParamsSecond() )
 

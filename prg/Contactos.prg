@@ -210,7 +210,7 @@ RETURN NIL
 
 FUNCTION EdtContactos( dbfContactos, oBrw )
 
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -294,7 +294,7 @@ FUNCTION BrwContactos( oGet, oGet2, cCodCli, dbfContactos )
 	local oCbxOrd
    local aCbxOrd     := { "Nombre", "Código postal", "Teléfono", "Movil", "Correo electrónico" }
    local cCbxOrd     := "Nombre"
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local lClose      := .f.
    local oSayText
    local cSayText    := "Listado de obras"

@@ -186,7 +186,7 @@ FUNCTION Categoria( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -516,7 +516,7 @@ Function BrwCategoria( oGet, oGet2, oBmpCategoria )
 
    ( dbfCategoria )->( dbGoTop() )
 
-   nLevelUsr            := nLevelUsr( MENUITEM )
+   nLevelUsr            := Auth():Level( MENUITEM )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Categorías" )
 
@@ -658,7 +658,7 @@ Function BrwInternalCategoria( oGet, dbfArticulo, oGet2 )
 
    ( dbfCategoria )->( dbGoTop() )
 
-   nLevelUsr            := nLevelUsr( MENUITEM )
+   nLevelUsr            := Auth():Level( MENUITEM )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Categorías" )
 

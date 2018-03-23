@@ -22,7 +22,7 @@ METHOD New() CLASS TiposImpresorasController
 
    ::hImage                := { "16" => "gc_printer2_16" }
 
-   ::nLevel                := nLevelUsr( ::cName )
+   ::nLevel                := Auth():Level( ::cName )
 
    ::oModel                := SQLTiposImpresorasModel():New( self )
 

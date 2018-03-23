@@ -84,9 +84,9 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    ::oWndParent         := oWndParent
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
-      ::nLevel          := nLevelUsr( "01013" )
+      ::nLevel          := Auth():Level( "01013" )
    end if
 
    ::oDbf               := nil

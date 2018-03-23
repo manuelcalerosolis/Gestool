@@ -17,10 +17,11 @@ CLASS AuthManager
 
    METHOD New()
 
-   METHOD set( hUser )           INLINE ( ::guard( hUser ) )
-   METHOD guard( hUser )
+   METHOD Set( hUser )           INLINE ( ::guard( hUser ) )
+   METHOD Guard( hUser )
+   METHOD Level( nOption )
 
-   METHOD getWhereUuid( uuid )
+   METHOD guardWhereUuid( uuid )
 
 END CLASS
 
@@ -74,7 +75,28 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getWhereUuid( uuid )
+METHOD Level( cOption )
+
+   local nLevel   
+
+   if empty( cOption )
+      RETURN ( __permission_full__ ) 
+   end if 
+
+   if empty( ::rolUuid ) 
+      RETURN ( __permission_full__ ) 
+   end if 
+
+   nLevel         := PermisosOpcionesRepository():getNivelRol( ::rolUuid, cOption )
+   if !empty( nLevel )
+      RETURN ( nLevel )
+   end if 
+
+RETURN ( __permission_full__ ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD guardWhereUuid( uuid )
 
    local hUser    := UsuariosRepository():getWhereUuid( Uuid )
 
@@ -88,6 +110,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 FUNCTION Auth( hUser )
 
@@ -97,5 +120,9 @@ FUNCTION Auth( hUser )
 
 RETURN ( oAuth )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 

@@ -35,7 +35,7 @@ FUNCTION InfValor( oMenuItem, oWnd )
    DEFAULT oMenuitem := "01045"
    DEFAULT oWnd      := oWnd()
 
-   if nLevelUsr( oMenuItem ) != 1
+   if Auth():Level( oMenuItem ) != 1
       msgStop( "Acceso no permitido." )
       return nil
    end if
@@ -378,7 +378,7 @@ FUNCTION InfStocks( oMenuItem, oWnd )
    DEFAULT oMenuitem := "01044"
    DEFAULT oWnd      := oWnd()
 
-   if nLevelUsr( oMenuItem ) != 1
+   if Auth():Level( oMenuItem ) != 1
       msgStop( "Acceso no permitido." )
       return nil
    end if

@@ -35,7 +35,7 @@ FUNCTION Prop( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -861,7 +861,7 @@ FUNCTION brwProp( oGet, oSay )
    local cCbxOrd
    local nOrd     := GetBrwOpt( "BrwProp" )
    local aCbxOrd  := { "Código", "Nombre" }
-   local nLevel   := nLevelUsr( "01015" )
+   local nLevel   := Auth():Level( "01015" )
 
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd        := aCbxOrd[ nOrd ]

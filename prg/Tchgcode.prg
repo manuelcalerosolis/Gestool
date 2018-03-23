@@ -157,7 +157,7 @@ METHOD New( oMenuItem, oWnd ) CLASS TChgCode
    DEFAULT  oMenuItem   := "01080"
    DEFAULT  oWnd        := oWnd()
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return ( Self )

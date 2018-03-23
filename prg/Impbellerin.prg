@@ -30,7 +30,7 @@ METHOD New( oMenuItem, oWnd )
 
    DEFAULT oMenuItem    := "01102"
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
    if nAnd( ::nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )

@@ -9,7 +9,7 @@ function ChgTarifa( oMenuItem, oWnd )
 
    local nLevel
 
-   nLevel   := nLevelUsr( oMenuItem )
+   nLevel   := Auth():Level( oMenuItem )
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )

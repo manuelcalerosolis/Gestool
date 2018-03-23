@@ -445,7 +445,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
    Obtenemos el nivel de acceso------------------------------------------------
    */
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return .f.
@@ -7332,7 +7332,7 @@ Return nil
 
 Function AppPedPrv( cCodPrv, cCodArt, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -7362,7 +7362,7 @@ RETURN .t.
 
 FUNCTION EdtPedPrv( nNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -7400,7 +7400,7 @@ RETURN NIL
 
 FUNCTION ZooPedPrv( nNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -7438,7 +7438,7 @@ RETURN NIL
 
 FUNCTION DelPedPrv( nNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -7476,7 +7476,7 @@ Return nil
 
 FUNCTION PrnPedPrv( nNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -7514,7 +7514,7 @@ RETURN NIL
 
 FUNCTION VisPedPrv( nNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 

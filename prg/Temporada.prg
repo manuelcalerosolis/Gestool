@@ -167,7 +167,7 @@ FUNCTION Temporada( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -544,7 +544,7 @@ Function BrwTemporada( oGet, oGet2, oBmpTemporada )
 
    ( dbfTemporada )->( dbGoTop() )
 
-   nLevelUsr            := nLevelUsr( MENUITEM )
+   nLevelUsr            := Auth():Level( MENUITEM )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Temporadas de artículos" )
 
@@ -686,7 +686,7 @@ Function BrwInternalTemporada( oGet, dbfArticulo, oGet2 )
 
    ( dbfTemporada )->( dbGoTop() )
 
-   nLevelUsr            := nLevelUsr( MENUITEM )
+   nLevelUsr            := Auth():Level( MENUITEM )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Temporadas de artículos" )
 

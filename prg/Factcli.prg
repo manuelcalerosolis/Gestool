@@ -628,7 +628,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
    DEFAULT  oMenuItem   := _MENUITEM_
    DEFAULT  oWnd        := oWnd()
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       Return .f.
@@ -1465,7 +1465,7 @@ Return ( nil )
 
 FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -17957,7 +17957,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 Function AppFacCli( cCodCli, cCodArt, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -17988,7 +17988,7 @@ RETURN .t.
 
 Function EdtFacCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -18028,7 +18028,7 @@ Return .t.
 
 FUNCTION ZooFacCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -18065,7 +18065,7 @@ Return .t.
 
 FUNCTION DelFacCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -18105,7 +18105,7 @@ Return .t.
 
 FUNCTION PrnFacCli( cNumFac, lOpenBrowse, cCaption, cFormato, cPrinter )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -18146,7 +18146,7 @@ Return .t.
 
 FUNCTION VisFacCli( cNumFac, lOpenBrowse, cCaption, cFormato, cPrinter )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 

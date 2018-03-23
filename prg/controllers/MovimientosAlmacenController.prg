@@ -108,7 +108,7 @@ METHOD New()
                                        "48"  => "gc_package_48",;
                                        "64"  => "gc_package_64" }
 
-   ::nLevel                      := nLevelUsr( ::getName() )
+   ::nLevel                      := Auth():Level( ::getName() )
 
    ::lTransactional              := .t.
 

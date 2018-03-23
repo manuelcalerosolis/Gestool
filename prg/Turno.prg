@@ -696,7 +696,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    DEFAULT oWndParent         := GetWndFrame()
 
    if oMenuItem != nil
-      ::nLevel                := nLevelUsr( oMenuItem )
+      ::nLevel                := Auth():Level( oMenuItem )
    end if
 
    if IsNum( ::nLevel ) .and. nAnd( ::nLevel, 1 ) != 0
@@ -777,7 +777,7 @@ METHOD Build( cPath, cDriver, oWnd, oMenuItem )
    end if
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
       ::nLevel          := 0
    end if

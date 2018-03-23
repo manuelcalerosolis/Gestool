@@ -115,7 +115,7 @@ FUNCTION BrwFamilia( oGet, oGet2, lAdd )
 	local oCbxOrd
    local aCbxOrd  := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevel   := nLevelUsr( MENUOPTION )
+   local nLevel   := Auth():Level( MENUOPTION )
    local lOpen    := .f.
 
    DEFAULT lAdd   := .t.
@@ -371,7 +371,7 @@ FUNCTION Familia( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
       if nAnd( nLevel, 1 ) != 0
          msgStop( "Acceso no permitido." )
@@ -1755,7 +1755,7 @@ RETURN ( lSeek )
 FUNCTION EdtFamilia( cCodFam, lOpenBrowse )
 
    local lEdit          := .f.
-   local nLevel         := nLevelUsr( MENUOPTION )
+   local nLevel         := Auth():Level( MENUOPTION )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -3071,7 +3071,7 @@ FUNCTION AppFamilia( lOpenBrowse )
 
    local oBlock
    local oError
-   local nLevel         := nLevelUsr( MENUOPTION )
+   local nLevel         := Auth():Level( MENUOPTION )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -3124,7 +3124,7 @@ FUNCTION BrwFamiliaCombinada( oGet, cFamilia, oGet2 )
    local oCbxOrd
    local aCbxOrd  := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevel   := nLevelUsr( MENUOPTION )
+   local nLevel   := Auth():Level( MENUOPTION )
    local lOpen    := .f.
 
    nRec           := ( cFamilia )->( RecNo() )

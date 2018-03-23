@@ -337,7 +337,7 @@ METHOD EditButtonBar( oWnd, oMenuItem )
    DEFAULT oWnd      := oWnd()
    DEFAULT oMenuItem := "01085"
 
-   nLevel            := nLevelUsr( oMenuItem )
+   nLevel            := Auth():Level( oMenuItem )
 
    // Obtenemos el nivel de acceso
 

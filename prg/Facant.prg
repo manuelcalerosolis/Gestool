@@ -643,7 +643,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
    DEFAULT  oWnd        := oWnd()
    DEFAULT  cCodCli     := nil
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       Return Nil
@@ -2820,7 +2820,7 @@ RETURN NIL
 
 Function AppAntCli( cCodCli, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -2850,7 +2850,7 @@ RETURN .t.
 
 Function EdtAntCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -2889,7 +2889,7 @@ Return .t.
 
 FUNCTION ZooAntCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -2925,7 +2925,7 @@ Return .t.
 
 FUNCTION DelAntCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -2964,7 +2964,7 @@ Return .t.
 
 FUNCTION PrnAntCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -3003,7 +3003,7 @@ Return .t.
 
 FUNCTION VisAntCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -4329,7 +4329,7 @@ Return nil
 
 Function CreateAntCli( cCodCli )
 
-   local nLevel   := nLevelUsr( _MENUITEM_ )
+   local nLevel   := Auth():Level( _MENUITEM_ )
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )

@@ -57,9 +57,9 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS Provincias
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
-      ::nLevel          := nLevelUsr( "01011" )
+      ::nLevel          := Auth():Level( "01011" )
    end if
 
    if oWndParent != nil

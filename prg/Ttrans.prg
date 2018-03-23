@@ -56,7 +56,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
    DEFAULT oWndParent   := oWnd()
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
       ::nLevel          := 1
    end if
@@ -346,7 +346,7 @@ Funcion para editar un almacén desde cualquier parte del programa
 
 FUNCTION EdtTrans( cCodTrans )
 
-   local nLevel         := nLevelUsr( "01045" )
+   local nLevel         := Auth():Level( "01045" )
    local oTrans
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0

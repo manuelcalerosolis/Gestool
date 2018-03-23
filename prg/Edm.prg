@@ -90,7 +90,7 @@ Method Activate( oMenuItem, oWnd )
    local cSayPgo
    local oStru
 
-   local nLevel      := nLevelUsr( oMenuItem )
+   local nLevel      := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return ( nil )

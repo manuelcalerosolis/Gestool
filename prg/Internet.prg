@@ -154,7 +154,7 @@ METHOD New( oMenuItem, oWnd ) CLASS TSndRecInf
    DEFAULT oMenuItem    := "01073"
    DEFAULT oWnd         := oWnd()
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
    // Cerramos todas las ventanas----------------------------------------------
 

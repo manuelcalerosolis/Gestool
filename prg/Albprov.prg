@@ -382,7 +382,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
    Obtenemos el nivel de acceso
    */
 
-   nLevel            := nLevelUsr( oMenuItem )
+   nLevel            := Auth():Level( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       RETURN .f.
@@ -9780,7 +9780,7 @@ RETURN nil
 
 FUNCTION AppAlbPrv( cCodPrv, cCodArt, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -9810,7 +9810,7 @@ RETURN .t.
 
 FUNCTION EdtAlbPrv( nNumAlb, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -9848,7 +9848,7 @@ RETURN NIL
 
 FUNCTION ZooAlbPrv( nNumAlb, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -9886,7 +9886,7 @@ RETURN NIL
 
 FUNCTION DelAlbPrv( nNumAlb, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -9924,7 +9924,7 @@ RETURN nil
 
 FUNCTION PrnAlbPrv( nNumAlb, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
@@ -9962,7 +9962,7 @@ RETURN NIL
 
 FUNCTION VisAlbPrv( nNumAlb, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 

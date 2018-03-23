@@ -24,7 +24,7 @@ METHOD New() CLASS ProvinciasController
                                     "32" => "gc_flag_spain_32",;
                                     "48" => "gc_flag_spain_48" }
 
-   ::nLevel                   := nLevelUsr( ::cName )
+   ::nLevel                   := Auth():Level( ::cName )
 
    ::oModel                   := SQLProvinciasModel():New( self )
 
