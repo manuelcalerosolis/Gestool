@@ -54,6 +54,8 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    
    METHOD getRolAbrirCajonPortamonedas( cUuid )                         INLINE ( ::getLogic( cUuid, 'roles', 'abrir_cajon_portamonedas', .t. ) )   
 
+   // METHOD assertUsuarioFavoritos( cUuid )                               INLINE ( ::getValue( cUuid, 'favoritos', cAjusteValue, 'usuarios', cAjustableUuid ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

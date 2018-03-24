@@ -74,17 +74,24 @@ METHOD getNivelUsuario( cUuidUser, cNombreOpcion ) CLASS PermisosOpcionesReposit
                      "WHERE usuarios.uuid = " + quoted( cUuidUser )                 + " " +  ; 
                         "AND permisos_opciones.nombre = " + quoted( cNombreOpcion )  
 
+
+
 RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getNivelRol( cUuidRol, cOption ) CLASS PermisosOpcionesRepository
 
-   local cSQL  := "SELECT nivel FROM " + ::getTableName()                                    + " " +  ;
-                     "INNER JOIN permisos ON permisos.uuid = permisos_opciones.permiso_uuid" + " " +  ;
-                     "INNER JOIN roles ON roles.permiso_uuid = permisos.uuid"                + " " +  ;
-                     "WHERE roles.uuid = " + quoted( cUuidRol )                              + " " +  ;
+   local cSQL  := "SELECT nivel FROM " + ::getTableName()                     + " " +  ;
+                     "INNER JOIN permisos"                                    + " " +  ;
+                        "ON permisos.uuid = permisos_opciones.permiso_uuid"   + " " +  ;
+                     "INNER JOIN roles"                                       + " " +  ;
+                        "ON roles.permiso_uuid = permisos.uuid"               + " " +  ;
+                     "WHERE roles.uuid = " + quoted( cUuidRol )               + " " +  ;
                         "AND permisos_opciones.nombre = " + quoted( cOption )
+
+   msgalert( cSQL, "cSQL" ) 
+   msgalert( ::getDatabase():getValue( cSQL ), "::getDatabase():getValue( cSQL )" )                       
 
 RETURN ( ::getDatabase():getValue( cSQL ) )
 

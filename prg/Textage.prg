@@ -305,7 +305,7 @@ FUNCTION ExtAge( oMenuItem, oWnd )
          nLevel := Auth():Level( oMenuItem )
       end if
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if

@@ -104,7 +104,7 @@ FUNCTION ArtCodebar( oMenuItem, oWnd )
 
       nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -628,7 +628,7 @@ Function EdtArtCodeBar( cCodArt, oBrw )
 
    local nLevel   := Auth():Level( "01024" )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if

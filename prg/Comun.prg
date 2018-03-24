@@ -5434,7 +5434,7 @@ FUNCTION runReportGalery( cFastReport )
 
    DEFAULT cFastReport  := ""
 
-   if nAnd( nLevel, 1 ) != 0
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       RETURN nil
    end if
@@ -5465,7 +5465,7 @@ FUNCTION runFastGallery( cFastReport )
 
    DEFAULT cFastReport  := ""
 
-   if nAnd( nLevel, 1 ) != 0
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       RETURN nil
    end if

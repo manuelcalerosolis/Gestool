@@ -136,7 +136,7 @@ FUNCTION Cajas( oMenuItem, oWnd )
 
       nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -3485,7 +3485,7 @@ Function EdtCajas( cCodigoCaja, lOpenBrowse )
    DEFAULT cCodigoCaja  := oUser():cCaja()
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if

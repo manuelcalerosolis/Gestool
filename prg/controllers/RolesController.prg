@@ -50,8 +50,6 @@ METHOD New() CLASS RolesController
 
    ::hImage                := { "16" => "gc_businesspeople_16" }
 
-   ::nLevel                := Auth():Level( "01052" )
-
    ::oModel                := SQLRolesModel():New( self )
 
    ::oRepository           := RolesRepository():New( self )

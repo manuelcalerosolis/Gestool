@@ -990,11 +990,10 @@ RETURN ( self )
 
 METHOD updateFieldWhereId( id, cField, uValue )
 
-   local cSentence   := "UPDATE " + ::cTableName + " "
-      
-   cSentence      += "SET " + cField + " = " + toSqlString( uValue )
-   cSentence      += "WHERE id = " + toSqlString( id )
+   local cSql  := "UPDATE " + ::cTableName + " "
+   cSql        +=    "SET " + cField + " = " + toSqlString( uValue )
+   cSql        +=    "WHERE id = " + toSqlString( id )
 
-Return ( ::getDatabase():Exec( cSentence ) )
+Return ( ::getDatabase():Exec( cSql ) )
 
 //----------------------------------------------------------------------------//

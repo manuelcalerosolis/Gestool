@@ -36,8 +36,6 @@ METHOD New() CLASS PermisosController
 
    ::hImage                := { "16" => "gc_businesspeople_16" }
 
-   ::nLevel                := Auth():Level( "01052" )
-
    ::oModel                := SQLPermisosModel():New( self )
    
    ::oOpcionesModel        := SQLPermisosOpcionesModel():New( self )

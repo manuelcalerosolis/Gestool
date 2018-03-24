@@ -56,8 +56,6 @@ METHOD New() CLASS UsuariosController
 
    ::hImage                := { "16" => "gc_businesspeople_16" }
 
-   ::nLevel                := Auth():Level( "01052" )
-
    ::oModel                := SQLUsuariosModel():New( self )
 
    ::oRepository           := UsuariosRepository():New( self )

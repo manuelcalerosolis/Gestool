@@ -176,6 +176,8 @@ METHOD addModels()
    aadd( ::aModels, SQLMovimientosAlmacenLineasNumerosSeriesModel():New() )
 
    aadd( ::aModels, SQLFiltrosModel():New() )
+   
+   aadd( ::aModels, SQLUsuarioFavoritosModel():New() )
 
    aadd( ::aModels, SQLRelacionesEntidadesModel():New() )
 

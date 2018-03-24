@@ -57,7 +57,7 @@ FUNCTION Almacen( oMenuItem, oWnd )
       */
 
       nLevel            := Auth():Level( oMenuItem )
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          RETURN nil
       end if
@@ -1465,7 +1465,7 @@ FUNCTION EdtAlm( cCodAlm )
 
    local nLevel         := Auth():Level( "01035" )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       RETURN .t.
    end if

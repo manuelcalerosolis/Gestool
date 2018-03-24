@@ -438,7 +438,7 @@ METHOD Resource( lAutoInit )
 
    nLevel                  := Auth():Level( "01067" )
 
-   if nAnd( nLevel, 1 ) != 0
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       RETURN nil
    end if

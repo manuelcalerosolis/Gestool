@@ -349,7 +349,7 @@ FUNCTION EdtTrans( cCodTrans )
    local nLevel         := Auth():Level( "01045" )
    local oTrans
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if

@@ -212,7 +212,7 @@ FUNCTION EdtContactos( dbfContactos, oBrw )
 
    local nLevel      := Auth():Level( "01032" )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if

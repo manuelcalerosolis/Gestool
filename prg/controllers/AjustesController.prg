@@ -25,8 +25,6 @@ METHOD New() CLASS AjustesController
 
    ::hImage                := { "16" => "gc_businesspeople_16" }
 
-   ::nLevel                := Auth():Level( "01052" )
-
    ::oModel                := SQLAjustesModel():New( self )
 
    ::oRepository           := AjustesRepository():New( self )

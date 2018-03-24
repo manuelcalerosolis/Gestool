@@ -304,7 +304,7 @@ FUNCTION EdtObras( cCodCli, cCodObr, dbfObrasT, oBrw, lControl )
    DEFAULT cCodObr   := ( dbfObrasT )->cCodObr
    DEFAULT lControl  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if

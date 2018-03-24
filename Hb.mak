@@ -624,6 +624,7 @@ SQLMovimientosAlmacenLineasNumerosSeriesModel.prg 					\
 NumerosSeriesController.prg 								  				\
 NumerosSeriesView.prg 														\
 SQLExportableModel.prg 														\
+SQLUsuarioFavoritosModel.prg 												\
 ExportableController.prg													\
 SQLRowSet.prg 																	\
 PdaEnvioRecepcionController.prg 											\
@@ -1229,6 +1230,7 @@ SQLMovimientosAlmacenLineasNumerosSeriesModel.obj 					\
 NumerosSeriesController.obj 												\
 NumerosSeriesView.obj 														\
 SQLExportableModel.obj 														\
+SQLUsuarioFavoritosModel.obj												\
 ExportableController.obj 													\
 SQLRowSet.obj 																	\
 PdaEnvioRecepcionController.obj 											\
@@ -1826,6 +1828,7 @@ $(OBJ)\NumerosSeriesController.obj 										+
 $(OBJ)\NumerosSeriesView.obj 												+
 $(OBJ)\SQLRowSet.obj 														+
 $(OBJ)\SQLExportableModel.obj 											+
+$(OBJ)\SQLUsuarioFavoritosModel.obj										+
 $(OBJ)\ExportableController.obj											+
 $(OBJ)\PdaEnvioRecepcionController.obj 								+
 $(OBJ)\PdaEnvioRecepcionView.obj 										+

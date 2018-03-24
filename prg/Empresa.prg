@@ -297,7 +297,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
 
       nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          RETURN nil
       end if
@@ -5277,7 +5277,7 @@ FUNCTION ConfEmpresa( oMenuItem, oWnd, nSelFolder )
 
    nLevel               := Auth():Level( oMenuItem )
 
-   if nAnd( nLevel, 1 ) != 0
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       RETURN nil
    end if

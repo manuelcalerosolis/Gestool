@@ -115,8 +115,12 @@ RETURN ( self )
 FUNCTION Auth( hUser )
 
    if empty( oAuth )
-      oAuth       := AuthManager():New( hUser )
+      oAuth       := AuthManager():New() 
    end if
+
+   if !empty( hUser )
+      oAuth:Guard( hUser )
+   end if 
 
 RETURN ( oAuth )
 
