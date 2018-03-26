@@ -330,6 +330,7 @@ METHOD Activate() CLASS PermisosView
       OF          oDlg
 
    ::oBrowse                  := IXBrowse():New( oDlg )
+   ::oBrowse:bWhen            := {|| ::oController:isNotZoomMode() }
 
    ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -399,6 +400,7 @@ METHOD Activate() CLASS PermisosView
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       ACTION      ( ::saveView( oDlg ) )
 
    REDEFINE BUTTON ;
@@ -410,6 +412,10 @@ METHOD Activate() CLASS PermisosView
    oDlg:AddFastKey( VK_F5, {|| ::saveView( oDlg ) } )
 
    oDlg:Activate( , , , .t. )
+
+   ::oBrowse:End()
+
+   ::oTree:End()
 
    oBmpGeneral:end()
 

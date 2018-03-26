@@ -15,6 +15,8 @@ CLASS SQLUsuarioFavoritosModel FROM SQLBaseModel
 
    METHOD get( cUsuarioUuid, cFavorito )
 
+   METHOD getVisible( cUsuarioUuid, cFavorito, lDefault )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -54,10 +56,26 @@ RETURN ( ::insertOnDuplicate( hBuffer ) )
 
 METHOD get( cUsuarioUuid, cFavorito ) CLASS SQLUsuarioFavoritosModel
 
-   local cSql     := "SELECT visible FROM " + ::cTableName + " "
+   local cSql     := "SELECT * FROM " + ::cTableName + " "
    cSql           +=    "WHERE usuario_uuid = " + quoted( cUsuarioUuid ) + " "
    cSql           +=    "AND favorito = " + quoted( cFavorito ) + " "
 
 RETURN ( getSQLDataBase():getValue( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getVisible( cUsuarioUuid, cFavorito, lDefault ) CLASS SQLUsuarioFavoritosModel
+
+   local nVisible
+   local cSql     := "SELECT visible FROM " + ::cTableName + " "
+   cSql           +=    "WHERE usuario_uuid = " + quoted( cUsuarioUuid ) + " "
+   cSql           +=    "AND favorito = " + quoted( cFavorito ) + " "
+
+   nVisible       := getSQLDataBase():getValue( cSql )
+   if hb_isnil( nVisible )
+      RETURN ( lDefault )
+   end if 
+
+RETURN ( nVisible == 1 )
 
 //---------------------------------------------------------------------------//

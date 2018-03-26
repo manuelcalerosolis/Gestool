@@ -735,6 +735,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
 
    oBmpGeneral:End()
 
+   aeval( aBmp, {|oBmp| oBmp:End() } )
+
 Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//

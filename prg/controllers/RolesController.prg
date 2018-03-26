@@ -358,6 +358,7 @@ METHOD Activate() CLASS RolesView
    REDEFINE COMBOBOX ::cComboPermiso ;
       ID          120 ;
       ITEMS       ::aComboPermisos ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;

@@ -146,8 +146,6 @@ METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    cSentence         +=    "AND ajustables.ajustable_tipo = " + quoted( cTipo ) + " "
    cSentence         +=    "AND ajustables.ajustable_uuid = " + quoted( cUuid ) 
 
-   logwrite( cSentence )
-
    uValue            := ::getDatabase():getValue( cSentence )
 
    if hb_ischar( uValue ) 

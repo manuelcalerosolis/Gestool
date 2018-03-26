@@ -727,24 +727,18 @@ METHOD ReCreateOfficeBar( oWnd )
    Creamos la carpeta de favoritos---------------------------------------------
    */
 
-   if ::lOpenDatabase()
+   ::CreateFavoritosOfficeBar()
 
-      ::CreateFavoritosOfficeBar()
+   /*
+   Resto de carpetas-----------------------------------------------------------
+   */
 
-      /*
-      Resto de carpetas-----------------------------------------------------------
-      */
+   for each oCarpeta in ::oOfficeBar:aCarpetas
+      oCarpeta:lHide    := ::lHideCarpeta( oCarpeta )
+   next
 
-      for each oCarpeta in ::oOfficeBar:aCarpetas
-         oCarpeta:lHide    := ::lHideCarpeta( oCarpeta )
-      next
-
-      ::oOfficeBar:GetCoords()
-      ::oOfficeBar:Refresh()
-
-      ::CloseDatabase()
-
-   end if
+   ::oOfficeBar:GetCoords()
+   ::oOfficeBar:Refresh()
 
 RETURN ( Self )
 
@@ -826,18 +820,22 @@ METHOD CreateFavoritosOfficeBar()
    local oAcceso
    local oBoton
    local oGrupo
-   local nBoton                  := 0
-   local aGrupo                  := {}
-   local aColor                  := { RGB( 237, 71, 0 ), RGB( 237, 71, 0 ), , Rgb( 237, 71, 0 ), CLR_WHITE }
+   local nBoton                     
+   local aGrupo                  
+   local cUsuarioUuid            
 
    if ( "TCT" $ appParamsMain() ) .or. ( "TPV" $ appParamsMain() )
       RETURN ( Self )
    end if
+   
+   nBoton                        := 0
+   aGrupo                        := {}
+   cUsuarioUuid                  := Auth():Uuid()
 
    // Creamos los favoritos-----------------------------------------------------
 
    if empty( ::oFavoritosBar )
-      ::oFavoritosBar            := TCarpeta():New( ::oOfficeBar, "FAVORITOS", , , aColor )
+      ::oFavoritosBar            := TCarpeta():New( ::oOfficeBar, "FAVORITOS", , , { RGB( 237, 71, 0 ), RGB( 237, 71, 0 ), , Rgb( 237, 71, 0 ), CLR_WHITE } )
    else
       ::oFavoritosBar:aGrupos    := {}
    end if
@@ -848,20 +846,20 @@ METHOD CreateFavoritosOfficeBar()
 
          for each oItem in oAcceso:aAccesos
 
-            if .f. //  SQLUsuarioFavoritosModel():get( cUsuarioUuid, cFavorito )
+            if SQLUsuarioFavoritosModel():getVisible( cUsuarioUuid, oItem:cId, oItem:lShow )
 
                if !empty( oItem:oGroup )
 
-                  nScan          := aScan( aGrupo, oItem:oGroup:cPrompt )
+                  nScan                := aScan( aGrupo, oItem:oGroup:cPrompt )
                   if nScan == 0
                      aAdd( aGrupo, oItem:oGroup:cPrompt )
-                     oGrupo      := TDotNetGroup():New( ::oFavoritosBar, 6, oItem:oGroup:cPrompt, .f., , oItem:oGroup:cBigBitmap )
-                     nBoton      := 0
+                     oGrupo            := TDotNetGroup():New( ::oFavoritosBar, 6, oItem:oGroup:cPrompt, .f., , oItem:oGroup:cBigBitmap )
+                     nBoton            := 0
                   end if
 
                   if !empty( oGrupo )
 
-                     oBoton      := TDotNetButton():New( 60, oGrupo, oItem:cBmpBig, oItem:cPrompt, ++nBoton, oItem:bAction, , , .f., .f., .f. )
+                     oBoton            := TDotNetButton():New( 60, oGrupo, oItem:cBmpBig, oItem:cPrompt, ++nBoton, oItem:bAction, , , .f., .f., .f. )
 
                      oGrupo:nWidth     += 60
                      oGrupo:aSize[ 1 ] := oGrupo:nWidth

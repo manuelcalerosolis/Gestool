@@ -304,7 +304,7 @@ METHOD selectHashList( cSentence )
 
       oStatement     := ::oConexion:Query( cSentence )
 
-      oHashList      := TMemList():new( oStatement:fetchAllArray(), oStatement:listColNames( AS_ARRAY_TYPE ) )
+      oHashList      := THashList():new( oStatement:fetchAll( FETCH_HASH ) ) 
    
    catch oError
 

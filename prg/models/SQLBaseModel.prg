@@ -315,8 +315,6 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addGroupBy( cSQLSelect )
 
-   // msgAlert( cSQLSelect, "cSQLSelect" )
-
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//

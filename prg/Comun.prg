@@ -155,7 +155,7 @@ FUNCTION CreateMainWindow( oIconApp )
    oWnd:oMsgBar:oDate:bMsg    := {|| GetSysDate() }
    oWnd:oMsgBar:CheckTimer()
 
-   oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( oUser():cNombre() ), 200,,,, .t. )
+   oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( Auth():Nombre() ), 200,,,, .t. )
 
    oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( oUser():cDelegacion() ), 200,,,, .t., {|| if( oUser():lCambiarEmpresa, SelectDelegacion( oMsgDelegacion ), ) } )
 

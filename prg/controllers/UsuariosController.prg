@@ -301,7 +301,6 @@ METHOD addColumns() CLASS UsuariosBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -424,7 +423,6 @@ RETURN ( self )
 METHOD Activate() CLASS UsuariosView
 
    local oDlg
-   local oBtnOk
    local oBmpGeneral
 
    DEFINE DIALOG  oDlg ;
@@ -475,9 +473,10 @@ METHOD Activate() CLASS UsuariosView
       VAR         ::cComboRol ;
       ID          140 ;
       ITEMS       ::aComboRoles ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          oDlg
 
-   REDEFINE BUTTON oBtnOk ;
+   REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -489,7 +488,7 @@ METHOD Activate() CLASS UsuariosView
       CANCEL ;
       ACTION      ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
+   oDlg:AddFastKey( VK_F5, {|| ::saveView( oDlg ) } )
 
    oDlg:Activate( , , , .t. )
 

@@ -29,7 +29,7 @@ CLASS SQLBaseController
 
    DATA lTransactional                                INIT .f.
 
-   DATA nLevel                                        INIT nOr( ACC_APPD, ACC_EDIT, ACC_ZOOM, ACC_DELE, ACC_IMPR )
+   DATA nLevel                                        INIT __permission_full__ 
 
    DATA nMode                                         AS NUMERIC
 
@@ -134,17 +134,17 @@ CLASS SQLBaseController
 
    // Access -----------------------------------------------------------------
 
-   METHOD isUserAccess()                              INLINE ( nAnd( ::nLevel, ACC_ACCE ) == 0 )
+   METHOD isUserAccess()                              INLINE ( nAnd( ::nLevel, __permission_access__ ) != 0 )
    METHOD notUserAccess()                             INLINE ( !::isUserAccess() )
-   METHOD isUserAppend()                              INLINE ( nAnd( ::nLevel, ACC_APPD ) != 0 )
+   METHOD isUserAppend()                              INLINE ( nAnd( ::nLevel, __permission_append__ ) != 0 )
    METHOD notUserAppend()                             INLINE ( !::isUserAppend() )
-   METHOD isUserDuplicate()                           INLINE ( nAnd( ::nLevel, ACC_APPD ) != 0 )
+   METHOD isUserDuplicate()                           INLINE ( nAnd( ::nLevel, __permission_append__ ) != 0 )
    METHOD notUserDuplicate()                          INLINE ( !::isUserDuplicate() )
-   METHOD isUserEdit()                                INLINE ( nAnd( ::nLevel, ACC_EDIT ) != 0 )
+   METHOD isUserEdit()                                INLINE ( nAnd( ::nLevel, __permission_edit__ ) != 0 )
    METHOD notUserEdit()                               INLINE ( !::isUserEdit() )
-   METHOD isUserDelete()                              INLINE ( nAnd( ::nLevel, ACC_DELE ) != 0 )
+   METHOD isUserDelete()                              INLINE ( nAnd( ::nLevel, __permission_delete__ ) != 0 )
    METHOD notUserDelete()                             INLINE ( !::isUserDelete() )
-   METHOD isUserZoom()                                INLINE ( nAnd( ::nLevel, ACC_ZOOM ) != 0 )
+   METHOD isUserZoom()                                INLINE ( nAnd( ::nLevel, __permission_zoom__ ) != 0 )
    METHOD notUserZoom()                               INLINE ( !::isUserZoom() )
 
    // Image--------------------------------------------------------------------
