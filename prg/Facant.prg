@@ -471,7 +471,7 @@ STATIC FUNCTION OpenFiles( lExt )
    */
 
    if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
-      cFiltroUsuario    := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+      cFiltroUsuario    := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
    end if
 
    /*
@@ -1184,14 +1184,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
          Return .f.
       end if
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURANT  ]    := cCurSesion()
       aTmp[ _CCODALM  ]    := oUser():cAlmacen()
-      aTmp[ _CCODCAJ  ]    := oUser():cCaja()
+      aTmp[ _CCODCAJ  ]    := Application():CodigoCaja()
       aTmp[ _CCODUSR  ]    := Auth():Codigo()
       aTmp[ _CCODPAGO ]    := cDefFpg()
       aTmp[ _CDIVANT  ]    := cDivEmp()
@@ -1215,8 +1215,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
          Return .f.
       end if
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 

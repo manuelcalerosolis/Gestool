@@ -445,7 +445,7 @@ CLASS TTurno FROM TMasDet
    METHOD GetCurrentTurno()                        INLINE   ( ::GetLastOpen() )
    METHOD GoCurrentTurno()
 
-   METHOD GetCurrentCaja()                         INLINE   ( ::cCurCaja   := oUser():cCaja() )
+   METHOD GetCurrentCaja()                         INLINE   ( ::cCurCaja   := Application():CodigoCaja() )
 
    METHOD GetFullTurno()                           INLINE   ( ::cCurTurno + ::cCurCaja )
 
@@ -2437,7 +2437,7 @@ METHOD lInvCierre()
       Return .f.
    end if
 
-   if nUserCaja( oUser():cCaja() ) > 1
+   if nUserCaja( Application():CodigoCaja() ) > 1
       msgStop( "Hay más de un usuario conectado a la caja", "Atención" )
       return .f.
    end if
@@ -11535,7 +11535,7 @@ FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
 
-   if !lParcial .and. nUserCaja( oUser():cCaja() ) > 1
+   if !lParcial .and. nUserCaja( Application():CodigoCaja() ) > 1
       msgStop( "Hay más de un usuario conectado a la caja", "Atención" )
       return .f.
    end if
@@ -11677,7 +11677,7 @@ Function lCurSesion( cDbfCaj )
       lOpen          := .t.
    end if
 
-   lCurSesion        := !empty( TTurno():cCurTurno ) .or. RetFld( oUser():cCaja(), cDbfCaj, "lNoArq" )
+   lCurSesion        := !empty( TTurno():cCurTurno ) .or. RetFld( Application():CodigoCaja(), cDbfCaj, "lNoArq" )
 
    if lOpen
 

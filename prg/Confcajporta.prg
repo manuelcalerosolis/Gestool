@@ -615,7 +615,7 @@ Function OpnCaj()
    USE ( cPatDat() + "CAJAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajon ) )
    SET ADSINDEX TO ( cPatDat() + "CAJAS.CDX" ) ADDITIVE
 
-   cCajon            := cCajonEnCaja( oUser():cCaja(), dbfCajon )
+   cCajon            := cCajonEnCaja( Application():CodigoCaja(), dbfCajon )
 
    if !Empty( cCajon )
 

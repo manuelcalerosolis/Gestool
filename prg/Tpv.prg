@@ -800,7 +800,7 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          lOpenFiles        := .f.
       end if
 
-      cVisor               := cVisorEnCaja( oUser():cCaja(), dbfCajT )
+      cVisor               := cVisorEnCaja( Application():CodigoCaja(), dbfCajT )
       if !empty( cVisor )
          oVisor            := TVisor():Create( cVisor )
          if !empty( oVisor )
@@ -927,7 +927,7 @@ STATIC FUNCTION cOpenStatement()
 
    if lAIS() .and. !oUser():lAdministrador()
 
-      cStatement        := "SELECT * FROM " + cPatEmp() + "TikeT WHERE cSufTik = '" + Application():CodigoDelegacion() + "' AND cNcjTik='" + oUser():cCaja() + "'"
+      cStatement        := "SELECT * FROM " + cPatEmp() + "TikeT WHERE cSufTik = '" + Application():CodigoDelegacion() + "' AND cNcjTik='" + Application():CodigoCaja() + "'"
 
       if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
          cStatement     += " AND cCcjTik = '" + Auth():Codigo()  + "'"
@@ -2219,8 +2219,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, hDocum
    Comprobamos que la caja este abierta----------------------------------------
    */
 
-   if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lMaster()
-      msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+   if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lMaster()
+      msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
       Return .f.
    end if
 
@@ -2228,7 +2228,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, hDocum
    Valores por defecto---------------------------------------------------------
    */
 
-   cCapCaj                 := cCapturaCaja( oUser():cCaja(), dbfCajT )
+   cCapCaj                 := cCapturaCaja( Application():CodigoCaja(), dbfCajT )
 
    if empty( aTmp[ _CTLFCLI ] )
       aTmp[ _CTLFCLI ]     := RetFld( aTmp[ _CCLITIK ], dbfClient, "Telefono" )
@@ -2256,7 +2256,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, hDocum
       Return .f.
    end if
 
-   nCopTik                 := nCopiasTicketsEnCaja( oUser():cCaja(), dbfCajT )
+   nCopTik                 := nCopiasTicketsEnCaja( Application():CodigoCaja(), dbfCajT )
    lCopTik                 := .t.
 
    /*
@@ -3789,7 +3789,7 @@ Static Function EndBrwApartados( oDlg )
       Return .f.
    end if       
 
-   if ( D():Tikets( nView ) )->cNcjTik == oUser():cCaja() 
+   if ( D():Tikets( nView ) )->cNcjTik == Application():CodigoCaja() 
       msgStop( "El documento no se realizo en esta caja." )
       Return .f.
    end if
@@ -4047,7 +4047,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    */
 
    if empty( aTmp[ _CNCJTIK ] )
-      aTmp[ _CNCJTIK ]  := oUser():cCaja()
+      aTmp[ _CNCJTIK ]  := Application():CodigoCaja()
    end if
 
    /*
@@ -4251,7 +4251,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
                   ( dbfTmpP )->cTurPgo    := cCurSesion()
                   ( dbfTmpP )->dPgoTik    := GetSysDate()
                   ( dbfTmpP )->cTimTik    := SubStr( Time(), 1, 5 )
-                  ( dbfTmpP )->cCodCaj    := oUser():cCaja()
+                  ( dbfTmpP )->cCodCaj    := Application():CodigoCaja()
                   ( dbfTmpP )->cFpgPgo    := aTmp[ _CFPGTIK ]
                   ( dbfTmpP )->cSerTik    := aTmp[ _CSERTIK ]
                   ( dbfTmpP )->cNumTik    := if( ValType( aTmp[ _CNUMTIK ] ) != "C", Str( aTmp[ _CNUMTIK ], 10 ), aTmp[ _CNUMTIK ] )
@@ -4436,7 +4436,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
                   ( dbfAntCliT )->lLiquidada := .t.
                   ( dbfAntCliT )->dLiquidada := GetSysDate()
                   ( dbfAntCliT )->cTurLiq    := cCurSesion()
-                  ( dbfAntCliT )->cCajLiq    := oUser():cCaja()
+                  ( dbfAntCliT )->cCajLiq    := Application():CodigoCaja()
                   ( dbfAntCliT )->( dbUnLock() )
                end if
             end if
@@ -5081,7 +5081,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
    cNumDoc           := ( D():Tikets( nView ) )->cNumDoc
    nOrdAnt           := ( D():Tikets( nView ) )->( ordsetfocus( "cNumTik" ) )
 
-   nCopTik           := nCopiasTicketsEnCaja( oUser():cCaja(), dbfCajT )
+   nCopTik           := nCopiasTicketsEnCaja( Application():CodigoCaja(), dbfCajT )
 
    /*
    Objeto de totales-----------------------------------------------------------
@@ -5247,7 +5247,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
                ( dbfTmpP )->cTurPgo    := cCurSesion()
                ( dbfTmpP )->dPgoTik    := GetSysDate()
                ( dbfTmpP )->cTimTik    := SubStr( Time(), 1, 5 )
-               ( dbfTmpP )->cCodCaj    := oUser():cCaja()
+               ( dbfTmpP )->cCodCaj    := Application():CodigoCaja()
                ( dbfTmpP )->cFpgPgo    := aTmp[ _CFPGTIK ]
                ( dbfTmpP )->cSerTik    := aTmp[ _CSERTIK ]
                ( dbfTmpP )->cNumTik    := aTmp[ _CNUMTIK ]
@@ -5355,7 +5355,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
                ( dbfFacCliP )->nNumFac    := cNumAlb
                ( dbfFacCliP )->cSufFac    := cSufAlb
                ( dbfFacCliP )->lCobrado   := .t.
-               ( dbfFacCliP )->cCodCaj    := oUser():cCaja()
+               ( dbfFacCliP )->cCodCaj    := Application():CodigoCaja()
                ( dbfFacCliP )->cCodCli    := cCodCli
                ( dbfFacCliP )->dPreCob    := GetSysDate()
                ( dbfFacCliP )->nNumRec    := ( dbfTmpP )->( Recno() )
@@ -5405,7 +5405,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
                   ( dbfAntCliT )->cNumDoc    := cNumDoc
                   ( dbfAntCliT )->dLiquidada := GetSysDate()
                   ( dbfAntCliT )->cTurLiq    := cCurSesion()
-                  ( dbfAntCliT )->cCajLiq    := oUser():cCaja()
+                  ( dbfAntCliT )->cCajLiq    := Application():CodigoCaja()
                   ( dbfAntCliT )->( dbUnLock() )
                end if
             end if
@@ -6727,9 +6727,9 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       end if
 
       if !empty( aGet[ _CNCJTIK ] )
-         aGet[ _CNCJTIK ]:cText( oUser():cCaja() )
+         aGet[ _CNCJTIK ]:cText( Application():CodigoCaja() )
       else
-         aTmp[ _CNCJTIK ]     := oUser():cCaja()
+         aTmp[ _CNCJTIK ]     := Application():CodigoCaja()
       end if
 
       if !empty( aGet[ _CFPGTIK ] )
@@ -11245,7 +11245,7 @@ Static Function EdtCob( aTmp, aGet, cTikP, oBrw, bWhen, bValid, nMode, aTmpTik )
       aTmp[ _CDIVPGO ]  := cDivEmp()
       aTmp[ _CFPGPGO ]  := cDefFpg()
       aTmp[ _CTURPGO ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
    end if
 
    cImpDiv              := cPorDiv( aTmp[ _CDIVPGO ], dbfDiv )
@@ -12299,7 +12299,7 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
       ( dbfFacCliP )->nNumRec    := ++nNumRec
       ( dbfFacCliP )->cCodCli    := cCliFacCli
       ( dbfFacCliP )->cNomCli    := cNomFacCli
-      ( dbfFacCliP )->cCodCaj    := oUser():cCaja()
+      ( dbfFacCliP )->cCodCaj    := Application():CodigoCaja()
       ( dbfFacCliP )->dFecCre    := GetSysDate()
       ( dbfFacCliP )->cHorCre    := SubStr( Time(), 1, 5 )
       ( dbfFacCliP )->dPreCob    := aTik[ _DFECTIK ]
@@ -12715,27 +12715,27 @@ static function nCopiasTipoTicket( cTipTik, lEntrega, dbfCajT )
 
         do case
             case ( lRegalo == .t. )
-               nCopies := nCopiasTicketsRegaloEnCaja( oUser():cCaja(), dbfCajT )
+               nCopies := nCopiasTicketsRegaloEnCaja( Application():CodigoCaja(), dbfCajT )
 
             case ( lEntrega == .t. )
-               nCopies := nCopiasEntregasEnCaja( oUser():cCaja(), dbfCajT )
+               nCopies := nCopiasEntregasEnCaja( Application():CodigoCaja(), dbfCajT )
 
             otherwise
-               nCopies := nCopiasTicketsEnCaja( oUser():cCaja(), dbfCajT )
+               nCopies := nCopiasTicketsEnCaja( Application():CodigoCaja(), dbfCajT )
 
          end case
 
       case cTipTik == SAVVAL
-         nCopies := nCopiasValesEnCaja( oUser():cCaja(), dbfCajT )
+         nCopies := nCopiasValesEnCaja( Application():CodigoCaja(), dbfCajT )
 
       case cTipTik == SAVDEV
-         nCopies := nCopiasDevolucionesEnCaja( oUser():cCaja(), dbfCajT )
+         nCopies := nCopiasDevolucionesEnCaja( Application():CodigoCaja(), dbfCajT )
 
       case cTipTik == SAVALB
-         nCopies := nCopiasAlbaranesEnCaja( oUser():cCaja(), dbfCajT )
+         nCopies := nCopiasAlbaranesEnCaja( Application():CodigoCaja(), dbfCajT )
 
       case cTipTik == SAVFAC
-         nCopies := nCopiasFacturasEnCaja( oUser():cCaja(), dbfCajT )
+         nCopies := nCopiasFacturasEnCaja( Application():CodigoCaja(), dbfCajT )
 
    end case
 
@@ -14280,15 +14280,15 @@ Static Function GenTikCli( nDevice, cCaption, cCodDoc, cPrinter )
 
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo tickets a clientes"
-   DEFAULT cCodDoc      := cFormatoTicketEnCaja( oUser():cCaja(), dbfCajT )
-   DEFAULT cPrinter     := cWindowsPrinterEnCaja( oUser():cCaja(), dbfCajT )
+   DEFAULT cCodDoc      := cFormatoTicketEnCaja( Application():CodigoCaja(), dbfCajT )
+   DEFAULT cPrinter     := cWindowsPrinterEnCaja( Application():CodigoCaja(), dbfCajT )
 
    if Empty( cPrinter ) 
       cPrinter          := PrnGetName()
    end if
 
    if empty( cCodDoc )
-      cCodDoc           := cFormatoTicketEnCaja( oUser():cCaja(), dbfCajT )
+      cCodDoc           := cFormatoTicketEnCaja( Application():CodigoCaja(), dbfCajT )
    end if
 
    if !lExisteDocumento( cCodDoc, dbfDoc )
@@ -14305,7 +14305,7 @@ Static Function GenTikCli( nDevice, cCaption, cCodDoc, cPrinter )
    Codigo de corte de papel----------------------------------------------------
    */
 
-   cCortePapelEnCaja( oUser():cCaja(), dbfCajT, dbfCajL )
+   cCortePapelEnCaja( Application():CodigoCaja(), dbfCajT, dbfCajL )
 
 Return .f.
 
@@ -15122,7 +15122,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpE, oBrw, bWhen, bValid, nMode, aTmpTik
       case nMode == APPD_MODE
 
          aTmp[ ( dbfTmpE )->( FieldPos( "cTurRec" ) ) ]   := cCurSesion()
-         aTmp[ ( dbfTmpE )->( FieldPos( "cCodCaj" ) ) ]   := oUser():cCaja()
+         aTmp[ ( dbfTmpE )->( FieldPos( "cCodCaj" ) ) ]   := Application():CodigoCaja()
          aTmp[ ( dbfTmpE )->( FieldPos( "cCodCli" ) ) ]   := aTmpTik[ _CCLITIK ]
          aTmp[ ( dbfTmpE )->( FieldPos( "cCodAge" ) ) ]   := aTmpTik[ _CCODAGE ]
          aTmp[ ( dbfTmpE )->( FieldPos( "cDivPgo" ) ) ]   := aTmpTik[ _CDIVTIK ]
@@ -15502,7 +15502,7 @@ Static Function GetPesoBalanza( aGet, oBtn )
    local oBal
    local nGetFocus   := GetFocus()
 
-   oBal   := TCommPort():Create( cBalanzaEnCaja( oUser():cCaja(), dbfCajT ) )
+   oBal   := TCommPort():Create( cBalanzaEnCaja( Application():CodigoCaja(), dbfCajT ) )
 
    if oBal:OpenPort()
 
@@ -15651,7 +15651,7 @@ Function SynTikCli( cPath )
       end if
 
       if empty( ( dbfTikP )->cCodCaj )
-         ( dbfTikP )->cCodCaj := oUser():cCaja()
+         ( dbfTikP )->cCodCaj := Application():CodigoCaja()
       end if
 
       ( dbfTikP )->( dbSkip() )
@@ -18716,7 +18716,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    aTmp[ _NVDVTIK ]     := nValDiv( cDivEmp(), dbfDiv )
    aTmp[ _CTURTIK ]     := cCurSesion()
    aTmp[ _CCCJTIK ]     := Auth():Codigo()
-   aTmp[ _CNCJTIK ]     := oUser():cCaja()
+   aTmp[ _CNCJTIK ]     := Application():CodigoCaja()
    aTmp[ _NTARIFA ]     := Max( uFieldEmpresa( "nPreVta" ), 1 )
    aTmp[ _DFECCRE ]     := Date()
    aTmp[ _CTIMCRE ]     := SubStr( Time(), 1, 5 )
@@ -18782,7 +18782,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
          ( dbfTikP )->cTurPgo    := cCurSesion()
          ( dbfTikP )->dPgoTik    := getSysDate()
          ( dbfTikP )->cTimTik    := substr( Time(), 1, 5 )
-         ( dbfTikP )->cCodCaj    := oUser():cCaja()
+         ( dbfTikP )->cCodCaj    := Application():CodigoCaja()
          ( dbfTikP )->cFpgPgo    := oBtn:Cargo
          ( dbfTikP )->cDivPgo    := cDivEmp()
          ( dbfTikP )->nVdvPgo    := nValDiv( cDivEmp(), dbfDiv )
@@ -19436,7 +19436,7 @@ END CLASS
 
 METHOD Load( dbfCajT )
 
-   local cCodCaj     := oUser():cCaja()
+   local cCodCaj     := Application():CodigoCaja()
 
    ::cFormatoTiket   := cFormatoTicketEnCaja(   cCodCaj, dbfCajT )
    ::cFmtVal         := cFormatoValeEnCaja(     cCodCaj, dbfCajT )
@@ -19591,8 +19591,8 @@ Function ImpresionAnulaciones( cNumTik )
 
       if dbSeekInOrd( cNumTik, "cNumTik", D():tikets( nView ) )
 
-         cPrinter := cNombreImpresoraComanda( oUser():cCaja(), aImp[ nPos ], dbfCajL )
-         cFormato := cFormatoAnulacionEnCaja( oUser():cCaja(), aImp[ nPos ], dbfCajT, dbfCajL )
+         cPrinter := cNombreImpresoraComanda( Application():CodigoCaja(), aImp[ nPos ], dbfCajL )
+         cFormato := cFormatoAnulacionEnCaja( Application():CodigoCaja(), aImp[ nPos ], dbfCajT, dbfCajL )
 
          if !empty( cPrinter )
             GenTikCli( IS_PRINTER, "Imprimiendo anulacion", cFormato, AllTrim( cPrinter ), .f., .t., aImp[ nPos ] )
@@ -19610,7 +19610,7 @@ Function ImpresionAnulaciones( cNumTik )
       Reproducimos el archivo Wav----------------------------------------------
       */
 
-      cWav        := AllTrim( cWavImpresoraComanda( oUser():cCaja(), aImp[ nPos ], dbfCajL ) )
+      cWav        := AllTrim( cWavImpresoraComanda( Application():CodigoCaja(), aImp[ nPos ], dbfCajL ) )
 
       if !empty( cWav ) .and. File( cWav )
 
@@ -19837,7 +19837,7 @@ Static Function lAddCobro( aTmp, oTotDiv, oBrwPgo )
          ( dbfTmpP )->cTurPgo    := cCurSesion()
          ( dbfTmpP )->dPgoTik    := GetSysDate()
          ( dbfTmpP )->cTimTik    := SubStr( Time(), 1, 5 )
-         ( dbfTmpP )->cCodCaj    := oUser():cCaja()
+         ( dbfTmpP )->cCodCaj    := Application():CodigoCaja()
          ( dbfTmpP )->nImpTik    := oTotDiv:nCobrado
          ( dbfTmpP )->cFpgPgo    := aTmp[ _CFPGTIK ]
          ( dbfTmpP )->cSerTik    := aTmp[ _CSERTIK ]

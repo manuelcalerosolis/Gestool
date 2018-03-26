@@ -1302,7 +1302,7 @@ METHOD AppendFacturaCabecera( oItem ) CLASS GeneraFacturasClientes
    ( D():FacturasClientes( ::nView ) )->dFecCre       := date()
    ( D():FacturasClientes( ::nView ) )->cTimCre       := time()
    ( D():FacturasClientes( ::nView ) )->lImpAlb       := .t.
-   ( D():FacturasClientes( ::nView ) )->cCodCaj       := oUser():cCaja()
+   ( D():FacturasClientes( ::nView ) )->cCodCaj       := Application():CodigoCaja()
    ( D():FacturasClientes( ::nView ) )->cCodDlg       := Application():CodigoDelegacion()
    ( D():FacturasClientes( ::nView ) )->cCodAlm       := oUser():cAlmacen()
    ( D():FacturasClientes( ::nView ) )->cCodObr       := ::getDireccion( oItem )

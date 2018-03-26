@@ -505,7 +505,7 @@ STATIC FUNCTION OpenFiles( lExt )
       */
 
       if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
-         cFiltroUsuario := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
       end if
 
       /*
@@ -1149,8 +1149,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
    do case
    case nMode == APPD_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
@@ -1158,7 +1158,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
       aTmp[ _CTURFAC ]  := cCurSesion()
       aTmp[ _CDIVFAC ]  := cDivEmp()
       aTmp[ _CCODALM ]  := oUser():cAlmacen()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _NVDVFAC ]  := nChgDiv( aTmp[ _CDIVFAC ], D():Divisas( nView ) )
       aTmp[ _CSUFFAC ]  := RetSufEmp()
       aTmp[ _LSNDDOC ]  := .t.
@@ -1179,13 +1179,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
 
    case nMode == DUPL_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURFAC ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _LSNDDOC ]  := .t.
       aTmp[ _DFECENT ]  := Ctod( "" )
       aTmp[ _DFECIMP ]  := Ctod( "" )
@@ -2696,7 +2696,7 @@ Static Function EdtPgo( aTmp, aGet, dbfTmpPgo, oBrw, cDiv, oBandera, nMode, aTmp
    local nImpOld        := Abs( aTmp[ ( dbfTmpPgo )->( FieldPos( "NIMPORTE" ) ) ] )
 
    if empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ] )
-      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ]   := oUser():cCaja()
+      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ]   := Application():CodigoCaja()
    end if
 
    DEFINE DIALOG oDlg RESOURCE "PGO_PRV" TITLE LblTitle( nMode ) + "recibos de proveedores"

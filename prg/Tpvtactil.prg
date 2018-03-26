@@ -1181,8 +1181,8 @@ METHOD Activate( lAlone ) CLASS TpvTactil
       Return .f.
    end if
 
-   if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lMaster()
-      msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+   if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lMaster()
+      msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
       Return .f.
    end if
 
@@ -1434,7 +1434,7 @@ METHOD OpenFiles() CLASS TpvTactil
          ::lOpenFiles         := .f.
    end if
 
-   ::cVisor                   := cVisorEnCaja( oUser():cCaja(), ::oCajaCabecera )
+   ::cVisor                   := cVisorEnCaja( Application():CodigoCaja(), ::oCajaCabecera )
    if !Empty( ::cVisor )
    ::oVisor                   := TVisor():Create( ::cVisor )
       if !Empty( ::oVisor )
@@ -1442,7 +1442,7 @@ METHOD OpenFiles() CLASS TpvTactil
       end if
    end if
 
-   ::cImpresora               := cImpresoraTicketEnCaja( oUser():cCaja(), ::oCajaCabecera )
+   ::cImpresora               := cImpresoraTicketEnCaja( Application():CodigoCaja(), ::oCajaCabecera )
 
    ::oUndMedicion             := UniMedicion():Create( cPatEmp() )
    if !::oUndMedicion:OpenFiles()
@@ -1529,7 +1529,7 @@ METHOD OpenFiles() CLASS TpvTactil
    Visor-----------------------------------------------------------------------
    */
 
-   cVisor                     := cVisorEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias )
+   cVisor                     := cVisorEnCaja( Application():CodigoCaja(), ::oCajaCabecera:cAlias )
    if !Empty( cVisor )
       ::oVisor                := TVisor():Create( cVisor )
       if !Empty( ::oVisor )
@@ -7114,7 +7114,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
    ::oAlbaranClienteCabecera:nFacturado   := 1
    ::oAlbaranClienteCabecera:lSndDoc      := .t.
    ::oAlbaranClienteCabecera:lIvaInc      := .t.
-   ::oAlbaranClienteCabecera:cCodCaj      := oUser():cCaja()
+   ::oAlbaranClienteCabecera:cCodCaj      := Application():CodigoCaja()
    ::oAlbaranClienteCabecera:cCodPago     := cDefFpg()
    ::oAlbaranClienteCabecera:cCodAlm      := oUser():cAlmacen()
    ::oAlbaranClienteCabecera:nTarifa      := Max( uFieldEmpresa( "nPreVta" ), 1 )
@@ -7204,7 +7204,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
          ::oAlbaranClientePago:nNumAlb    := nNumAlb
          ::oAlbaranClientePago:cSufAlb    := cSufAlb
          ::oAlbaranClientePago:nNumRec    := n
-         ::oAlbaranClientePago:cCodCaj    := oUser():cCaja()
+         ::oAlbaranClientePago:cCodCaj    := Application():CodigoCaja()
          ::oAlbaranClientePago:cTurRec    := cCurSesion()
          ::oAlbaranClientePago:cCodCli    := ::oTiketCabecera:cCliTik
          ::oAlbaranClientePago:dEntrega   := GetSysDate()
@@ -7406,7 +7406,7 @@ METHOD CargaValoresDefecto( nUbicacion ) CLASS TpvTactil
    */
 
    if Empty( ::oTiketCabecera:cNcjTik )
-      ::oTiketCabecera:cNcjTik   := oUser():cCaja()
+      ::oTiketCabecera:cNcjTik   := Application():CodigoCaja()
    end if
 
    /*
@@ -8316,10 +8316,10 @@ RETURN ( Self )
 
 METHOD ImprimeComanda( cImpresora )
 
-   ::cFormato        := cFormatoComandaEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
-   ::cImpresora      := alltrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
+   ::cFormato        := cFormatoComandaEnCaja( Application():CodigoCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
+   ::cImpresora      := alltrim( cNombreImpresoraComanda( Application():CodigoCaja(), cImpresora, ::oCajaLinea:cAlias ) )
    ::nDispositivo    := IS_PRINTER
-   ::nCopias         := max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
+   ::nCopias         := max( nCopiasComandasEnCaja( Application():CodigoCaja(), ::oCajaCabecera:cAlias ), 1 )
    ::lComanda        := .t.
 
    ::ImprimeDocumento()
@@ -8330,10 +8330,10 @@ RETURN ( Self )
 
 METHOD ImprimeAnulacion( cImpresora )
 
-  ::cFormato        := cFormatoAnulacionEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
-  ::cImpresora      := AllTrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
+  ::cFormato        := cFormatoAnulacionEnCaja( Application():CodigoCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
+  ::cImpresora      := AllTrim( cNombreImpresoraComanda( Application():CodigoCaja(), cImpresora, ::oCajaLinea:cAlias ) )
   ::nDispositivo    := IS_PRINTER
-  ::nCopias         := Max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
+  ::nCopias         := Max( nCopiasComandasEnCaja( Application():CodigoCaja(), ::oCajaCabecera:cAlias ), 1 )
   ::lComanda        := .t.
 
   ::ImprimeDocumento()
@@ -8480,7 +8480,7 @@ RETURN ( Self )
 
 METHOD SonidoComanda( cImpresora )
 
-  local cWav        := AllTrim( cWavImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
+  local cWav        := AllTrim( cWavImpresoraComanda( Application():CodigoCaja(), cImpresora, ::oCajaLinea:cAlias ) )
 
   if !Empty( cWav ) .and. File( cWav )
      SndPlaySound( cWav )
@@ -9573,7 +9573,7 @@ METHOD GetPesoBalanza() CLASS TpvTactil
    local oBalanza
    local cBalanza 
 
-   cBalanza                :=  cBalanzaEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias )
+   cBalanza                :=  cBalanzaEnCaja( Application():CodigoCaja(), ::oCajaCabecera:cAlias )
 
    if empty( cBalanza )
       return ( Self )
@@ -10518,8 +10518,8 @@ METHOD lValidTurno()
       Return .f.
    end if
 
-   if !lCajaOpen( oUser():cCaja() )
-      msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+   if !lCajaOpen( Application():CodigoCaja() )
+      msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
       Return .f.
    end if
 

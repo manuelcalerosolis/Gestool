@@ -159,7 +159,7 @@ FUNCTION CreateMainWindow( oIconApp )
 
    oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():CodigoDelegacion() ), 200,,,, .t., {|| if( oUser():lCambiarEmpresa, SelectDelegacion( oMsgDelegacion ), ) } )
 
-   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + oUser():cCaja(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
+   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Application():CodigoCaja(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
 
    oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( oUser():cAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
 
@@ -4073,7 +4073,7 @@ FUNCTION aEmpresa( cCodigoEmpresa )
 
    if !( isReport() )
 
-      if empty( oUser():cCaja() )
+      if empty( Application():CodigoCaja() )
          oUser():cCaja( cCajUsr( uFieldEmpresa( "cDefCaj" ) ) )
       end if
 

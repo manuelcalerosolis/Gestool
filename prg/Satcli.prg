@@ -798,7 +798,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       if lAIS() .and. !oUser():lAdministrador()
       
-         cFiltroUsuario    := "Field->cSufPre == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario    := "Field->cSufPre == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
@@ -1787,15 +1787,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          Return .f.
       end if
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURSAT ]  := cCurSesion()
       aTmp[ _CCODALM ]  := oUser():cAlmacen()
       aTmp[ _CDIVSAT ]  := cDivEmp()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _CCODPGO ]  := cDefFpg()
       aTmp[ _CCODUSR ]  := Auth():Codigo()
       aTmp[ _NVDVSAT ]  := nChgDiv( aTmp[ _CDIVSAT ], dbfDiv )
@@ -1828,8 +1828,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          Return .f.
       end if
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
@@ -7827,7 +7827,7 @@ STATIC FUNCTION SatRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       if !Empty( cFecDoc )
          aTabla[ _DFECSAT  ]  := cFecDoc
       end if
-      aTabla[ _CCODCAJ     ]  := oUser():cCaja()
+      aTabla[ _CCODCAJ     ]  := Application():CodigoCaja()
       aTabla[ _DFECENT     ]  := Ctod("")
       aTabla[ _CNUMSat     ]  := Space( 12 )
       aTabla[ _LSNDDOC     ]  := .t.
@@ -10440,7 +10440,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "CCODOBR",   "C", 10,  0, "Código de dirección",                         "Direccion",               "", "( cDbf )", nil } )
    aAdd( aItmSatCli, { "CCODTAR",   "C",  5,  0, "Código de tarifa",                            "Tarifa",                  "", "( cDbf )", nil } )
    aAdd( aItmSatCli, { "CCODALM",   "C", 16,  0, "Código del almacen",                          "Almacen",                 "", "( cDbf )", {|| oUser():cAlmacen() } } )
-   aAdd( aItmSatCli, { "CCODCAJ",   "C",  3,  0, "Código de caja",                              "Caja",                    "", "( cDbf )", {|| oUser():cCaja() } } )
+   aAdd( aItmSatCli, { "CCODCAJ",   "C",  3,  0, "Código de caja",                              "Caja",                    "", "( cDbf )", {|| Application():CodigoCaja() } } )
    aAdd( aItmSatCli, { "CCODPGO",   "C",  2,  0, "Código de pago",                              "Pago",                    "", "( cDbf )", {|| cDefFpg() } } )
    aAdd( aItmSatCli, { "CCODRUT",   "C",  4,  0, "Código de la ruta",                           "Ruta",                    "", "( cDbf )", nil } )
    aAdd( aItmSatCli, { "DFECENT",   "D",  8,  0, "Fecha de entrada",                            "FechaEntrada",            "", "( cDbf )", nil } )

@@ -15,9 +15,9 @@ CLASS ApplicationManager
 
    METHOD New()
 
-   METHOD setDelegacion()
+   METHOD getDelegacion()
 
-   METHOD setCaja()
+   METHOD getCaja()
 
 END CLASS
 
@@ -25,17 +25,22 @@ END CLASS
 
 METHOD New()
 
-   ::setDelegacion()
+   ::getDelegacion()
 
-   ::setCaja()
+   ::getCaja()
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setDelegacion()
+METHOD getDelegacion()
 
-   local delegacion        := SQLAjustableModel():getUsuarioDelegacionExclusiva( Auth():Uuid() )
+   local delegacion        
+
+   ::uuidDelegacion        := ""
+   ::codigoDelegacion      := ""
+   
+   delegacion              := SQLAjustableModel():getUsuarioDelegacionExclusiva( Auth():Uuid() )
 
    if !empty( delegacion )
       ::uuidDelegacion     := delegacion
@@ -54,27 +59,31 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setCaja()
+METHOD getCaja()
 
-   local cajas             := SQLAjustableModel():getUsuarioCajaExclusiva( Auth():Uuid() )
+   local caja
 
-   if !empty( cajas )
-      ::uuidCajas          := cajas
-      ::codigoCajas        := CajasModel():getField( "cCodCaj", "Uuid", cajas )
+   ::uuidCaja              := ""
+   ::codigoCaja            := ""
+   
+   caja                   := SQLAjustableModel():getUsuarioCajaExclusiva( Auth():Uuid() )
+
+   if !empty( caja )
+      ::uuidCaja           := caja
+      ::codigoCaja         := CajasModel():getField( "cCodCaj", "Uuid", caja )
       RETURN ( self )
    end if 
 
-   cajas                   := uFieldEmpresa( "cDefCaj" )
-   if !empty( Cajas )
-      ::codigoCajas        := cajas
-      ::uuidCajas          := CajasesModel():getField( "Uuid", "cCodCaj", cajas )
+   caja                    := uFieldEmpresa( "cDefCaj" )
+   if !empty( caja )
+      ::codigoCaja         := caja
+      ::uuidCaja           := CajasModel():getField( "Uuid", "cCodCaj", caja )
       RETURN ( self )
    end if 
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -99,6 +108,7 @@ FUNCTION ApplicationLoad()
 
 RETURN ( Application() )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

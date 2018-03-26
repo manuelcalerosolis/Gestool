@@ -176,7 +176,7 @@ FUNCTION Cajas( oMenuItem, oWnd )
          :cHeader          := "Seleccionada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfCajT )->cCodCaj == oUser():cCaja() }
+         :bEditValue       := {|| ( dbfCajT )->cCodCaj == Application():CodigoCaja() }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "gc_cash_register_16" )
@@ -2176,7 +2176,7 @@ FUNCTION lFreeCaja( cCajUsr, cCodUsr )
    local lFree       := .f.
    local nHandle
 
-   DEFAULT cCajUsr   := oUser():cCaja()
+   DEFAULT cCajUsr   := Application():CodigoCaja()
    DEFAULT cCodUsr   := Auth():Codigo()
 
    if !file( cPatUsr() + cCajUsr + cCodUsr + ".caj" )
@@ -2204,7 +2204,7 @@ FUNCTION nUserCaja( cCajUsr )
    local aDirCaj
    local nUsrCaj     := 0
 
-   DEFAULT cCajUsr   := oUser():cCaja()
+   DEFAULT cCajUsr   := Application():CodigoCaja()
 
    aDirCaj           := Directory( cPatUsr() + cCajUsr + "*.caj" )
 
@@ -2232,7 +2232,7 @@ Function lSetCaja( cCajUsr, cCodUsr, oWndBrw )
    local nHndCaj
    local cFilCaj
 
-   DEFAULT cCajUsr   := oUser():cCaja()
+   DEFAULT cCajUsr   := Application():CodigoCaja()
    DEFAULT cCodUsr   := Auth():Codigo() 
 
    cFilCaj           := cCajUsr + cCodUsr
@@ -3158,7 +3158,7 @@ Function SelCajTactil( oWnd, lInicio )
    Si el usuario ya tiene elegida una caja y estamos al inicio de la app pasamos
    */
 
-   if lInicio .and. !empty( oUser():cCaja() )
+   if lInicio .and. !empty( Application():CodigoCaja() )
       Return ( nil )
    end if
 
@@ -3347,7 +3347,7 @@ Function SelectCajas()
    else
 
       msgInfo( "No selecciono ninguna caja, se establecerá la caja por defecto." + CRLF + ;
-               "Caja actual, " + oUser():cCaja() )
+               "Caja actual, " + Application():CodigoCaja() )
    end if
 
    CloseFiles()
@@ -3366,8 +3366,8 @@ Function SelectCajon()
       Return .f.
    end if
 
-   if !empty( cCajonEnCaja( oUser():cCaja(), dbfCajT ) )
-      oUser():oCajon      := TCajon():Create( cCajonEnCaja( oUser():cCaja(), dbfCajT ) )
+   if !empty( cCajonEnCaja( Application():CodigoCaja(), dbfCajT ) )
+      oUser():oCajon      := TCajon():Create( cCajonEnCaja( Application():CodigoCaja(), dbfCajT ) )
    end if
 
    SetKey( VK_F12, {|| oUser():OpenCajonTest() } )
@@ -3482,7 +3482,7 @@ Function EdtCajas( cCodigoCaja, lOpenBrowse )
 
    local nLevel         := Auth():Level( "01040" )
 
-   DEFAULT cCodigoCaja  := oUser():cCaja()
+   DEFAULT cCodigoCaja  := Application():CodigoCaja()
    DEFAULT lOpenBrowse  := .f.
 
    if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0

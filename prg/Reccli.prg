@@ -859,7 +859,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
    end case
 
    if empty( aTmp[ _CCODCAJ ] )
-      aTmp[ _CCODCAJ ]     := oUser():cCaja()
+      aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
    end if
 
    lOldDevuelto            := aTmp[ _LDEVUELTO ]
@@ -4672,7 +4672,7 @@ FUNCTION aItmRecCli()
    aAdd( aBasRecCli, {"cGuid"       ,"C", 40, 0, "Guid de recibo",                                       "GUID",                 "", "( cDbfRec )", {|| win_uuidcreatestring() } } )
    aAdd( aBasRecCli, {"cTipRec"     ,"C",  1, 0, "Tipo de recibo",                                       "TipoRecibo",           "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"cCodPgo"     ,"C",  2, 0, "Código de forma de pago",                              "Pago",                 "", "( cDbfRec )", nil } )
-   aAdd( aBasRecCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja",                                       "Caja",                 "", "( cDbfRec )", {|| oUser():cCaja() } } )
+   aAdd( aBasRecCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja",                                       "Caja",                 "", "( cDbfRec )", {|| Application():CodigoCaja() } } )
    aAdd( aBasRecCli, {"cTurRec"     ,"C",  6, 0, "Sesión del recibo",                                    "Turno",                "", "( cDbfRec )", {|| cCurSesion( nil, .f.) } } )
    aAdd( aBasRecCli, {"cCodCli"     ,"C", 12, 0, "Código de cliente",                                    "Cliente",              "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"cNomCli"     ,"C", 80, 0, "Nombre de cliente",                                    "NombreCliente",        "", "( cDbfRec )", nil } )
@@ -5230,7 +5230,7 @@ Function ValCheck( aGet, aTmp )
 
       aGet[ _DENTRADA ]:cText( GetSysDate() )
       aGet[ _CTURREC  ]:cText( cCurSesion( nil, .f. ) )
-      aGet[ _CCODCAJ  ]:cText( oUser():cCaja() )
+      aGet[ _CCODCAJ  ]:cText( Application():CodigoCaja() )
       aGet[ _CCODCAJ  ]:lValid()
 
       if aTmp[ _NIMPCOB ] == 0

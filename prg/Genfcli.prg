@@ -974,7 +974,7 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
             nNewFac                    := nNewDoc( cSerAlb, dbfFacCliT, "NFACCLI", , dbfCount )
             nNumLin                    := 0
             cLinObr                    := Space( 1 )
-            cCodCaj                    := oUser():cCaja()
+            cCodCaj                    := Application():CodigoCaja()
 
             ( dbfFacCliT )->( dbAppend() )
             ( dbfFacCliT )->cSerie     := cSerAlb

@@ -1082,7 +1082,7 @@ METHOD GeneraPedidoProveedor() CLASS PedCliente2PedProveedor
             ( D():PedidosProveedores( ::nView ) )->dFecPed    := GetSysDate()
             ( D():PedidosProveedores( ::nView ) )->cCodPrv    := ( ::dbfTemporal )->cCodPrv
             ( D():PedidosProveedores( ::nView ) )->cCodAlm    := oUser():cAlmacen()
-            ( D():PedidosProveedores( ::nView ) )->cCodCaj    := oUser():cCaja()
+            ( D():PedidosProveedores( ::nView ) )->cCodCaj    := Application():CodigoCaja()
             ( D():PedidosProveedores( ::nView ) )->nEstado    := 1
             ( D():PedidosProveedores( ::nView ) )->cDivPed    := cDivEmp()
             ( D():PedidosProveedores( ::nView ) )->lSndDoc    := .t.

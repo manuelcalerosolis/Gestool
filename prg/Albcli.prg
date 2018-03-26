@@ -1671,7 +1671,7 @@ STATIC FUNCTION OpenFiles()
 
       if lAIS() .and. !oUser():lAdministrador()
       
-         cFiltroUsuario    := "Field->cSufAlb == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario    := "Field->cSufAlb == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
          
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
@@ -2048,7 +2048,7 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopie
    DEFAULT nDevice            := IS_PRINTER
    DEFAULT cCaption           := "Imprimiendo albaranes a clientes"
    DEFAULT cCodigoDocumento   := cFormatoAlbaranesClientes()
-   DEFAULT cPrinter           := cPrinterAlbaran( oUser():cCaja(), dbfCajT )
+   DEFAULT cPrinter           := cPrinterAlbaran( Application():CodigoCaja(), dbfCajT )
 
    nOrdAnt                    := ( D():AlbaranesClientes( nView ) )->( OrdSetFocus() )
 
@@ -2185,8 +2185,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
             Return .f.
          end if
 
-         if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-            msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+         if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+            msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
             Return .f.
          end if
 
@@ -2194,7 +2194,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _CCODALM   ]   := oUser():cAlmacen()
          aTmp[ _CDIVALB   ]   := cDivEmp()
          aTmp[ _CCODPAGO  ]   := cDefFpg()
-         aTmp[ _CCODCAJ   ]   := oUser():cCaja()
+         aTmp[ _CCODCAJ   ]   := Application():CodigoCaja()
          aTmp[ _CCODUSR   ]   := Auth():Codigo()
          aTmp[ _NVDVALB   ]   := nChgDiv( aTmp[ _CDIVALB ], D():Get( "Divisas", nView ) )
          aTmp[ _LFACTURADO]   := .f.
@@ -2217,15 +2217,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
             Return .f.
          end if
 
-         if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-            msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+         if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+            msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
             Return .f.
          end if
 
          aTmp[ _DFECALB   ]   := GetSysDate()
          aTmp[ _TFECALB   ]   := GetSysTime()
          aTmp[ _CTURALB   ]   := cCurSesion()
-         aTmp[ _CCODCAJ   ]   := oUser():cCaja()
+         aTmp[ _CCODCAJ   ]   := Application():CodigoCaja()
          aTmp[ _LFACTURADO]   := .f.
          aTmp[ _LSNDDOC   ]   := .t.
          aTmp[ _CNUMPED   ]   := ""
@@ -6738,7 +6738,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpA
       case nMode == APPD_MODE
 
          aTmp[ ( dbfTmpPgo )->( FieldPos( "cTurRec" ) ) ]      := cCurSesion()
-         aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCaj" ) ) ]      := oUser():cCaja()
+         aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCaj" ) ) ]      := Application():CodigoCaja()
 
          aTmp[ ( dbfTmpPgo )->( FieldPos( "cSerAlb" ) ) ]      := aTmpAlb[ _CSERALB ]
          aTmp[ ( dbfTmpPgo )->( FieldPos( "nNumAlb" ) ) ]      := aTmpAlb[ _NNUMALB ]
@@ -7951,9 +7951,9 @@ STATIC FUNCTION PrnEntregas( lPrint, cAlbCliP, lTicket )
    DEFAULT lTicket   := .f.
 
    if lTicket
-      cFmtEnt        := cFormatoEntregasCuentaEnCaja( oUser():cCaja(), dbfCajT )
-      cPrinter       := cPrinterEntregasCuenta( oUser():cCaja(), dbfCajT )
-      nCopPrn        := nCopiasEntregasCuentaEnCaja( oUser():cCaja(), dbfCajT )
+      cFmtEnt        := cFormatoEntregasCuentaEnCaja( Application():CodigoCaja(), dbfCajT )
+      cPrinter       := cPrinterEntregasCuenta( Application():CodigoCaja(), dbfCajT )
+      nCopPrn        := nCopiasEntregasCuentaEnCaja( Application():CodigoCaja(), dbfCajT )
    else
       cFmtEnt        := cFormatoDocumento( nil, "NENTALB", D():Get( "NCount", nView ) )
       cPrinter       := PrnGetName()
@@ -8335,7 +8335,7 @@ STATIC FUNCTION AlbRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       if !empty( cFecDoc )
          aTabla[ _DFECALB  ]  := cFecDoc
       end if
-      aTabla[ _CCODCAJ     ]  := oUser():cCaja()
+      aTabla[ _CCODCAJ     ]  := Application():CodigoCaja()
       aTabla[ _LENTREGADO  ]  = .f.
       aTabla[ _DFECENT     ]  := Ctod("")
       aTabla[ _CNUMPED     ]  := Space( 12 )
@@ -13359,7 +13359,7 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
    local aStatus
    local cFormato 
    local oPrinter  
-   local cPrinterAlbaran   := cPrinterAlbaran( oUser():cCaja(), dbfCajT )
+   local cPrinterAlbaran   := cPrinterAlbaran( Application():CodigoCaja(), dbfCajT )
 
    DEFAULT nDevice         := IS_PRINTER
    DEFAULT lExternal       := .f.
@@ -17027,7 +17027,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "DFECALB"   ,"D",  8, 0, "Fecha del albarán" ,                                       "Fecha",                         "", "( cDbf )", {|| GetSysDate() } } )
    aAdd( aItmAlbCli, { "CCODCLI"   ,"C", 12, 0, "Código del cliente" ,                                      "Cliente",                       "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CCODALM"   ,"C", 16, 0, "Código de almacén" ,                                       "Almacen",                       "", "( cDbf )", {|| oUser():cAlmacen() } } )
-   aAdd( aItmAlbCli, { "CCODCAJ"   ,"C",  3, 0, "Código de caja" ,                                          "Caja",                          "", "( cDbf )", {|| oUser():cCaja() } } )
+   aAdd( aItmAlbCli, { "CCODCAJ"   ,"C",  3, 0, "Código de caja" ,                                          "Caja",                          "", "( cDbf )", {|| Application():CodigoCaja() } } )
    aAdd( aItmAlbCli, { "CNOMCLI"   ,"C", 80, 0, "Nombre del cliente" ,                                      "NombreCliente",                 "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CDIRCLI"   ,"C",200, 0, "Domicilio del cliente" ,                                   "DomicilioCliente",              "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CPOBCLI"   ,"C",200, 0, "Población del cliente" ,                                   "PoblacionCliente",              "", "( cDbf )", nil } )

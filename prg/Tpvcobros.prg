@@ -811,7 +811,7 @@ METHOD GuardaCobros() CLASS TpvCobros
          ::oSender:oTiketCobro:cCtaRec    := cCtaCob()
          ::oSender:oTiketCobro:dPgoTik    := GetSysDate()
          ::oSender:oTiketCobro:cTimTik    := SubStr( Time(), 1, 5 )
-         ::oSender:oTiketCobro:cCodCaj    := oUser():cCaja()
+         ::oSender:oTiketCobro:cCodCaj    := Application():CodigoCaja()
 
          ::oSender:oTiketCobro:cDivPgo    := cDivEmp()
          ::oSender:oTiketCobro:nVdvPgo    := nChgDiv( cDivEmp(), ::oSender:oDivisas:cAlias )

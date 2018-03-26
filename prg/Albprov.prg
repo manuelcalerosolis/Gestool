@@ -1178,15 +1178,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 	DO CASE
    CASE nMode == APPD_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          RETURN .f.
       end if
 
       aTmp[ _CSERALB ]     := cNewSer( "NALBPRV", D():Contadores( nView ) )
       aTmp[ _CTURALB ]     := cCurSesion()
       aTmp[ _CCODALM ]     := oUser():cAlmacen()
-      aTmp[ _CCODCAJ ]     := oUser():cCaja()
+      aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
       aTmp[ _CDIVALB ]     := cDivEmp()
       aTmp[ _NVDVALB ]     := nChgDiv( aTmp[ _CDIVALB ], D():Divisas( nView ) )
       aTmp[ _CSUFALB ]     := RetSufEmp()
@@ -1208,13 +1208,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 
    CASE nMode == DUPL_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          RETURN .f.
       end if
 
       aTmp[ _CTURALB ]     := cCurSesion()
-      aTmp[ _CCODCAJ ]     := oUser():cCaja()
+      aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
       aTmp[ _LSNDDOC ]     := .t.
       aTmp[ _DFECIMP ]     := Ctod( "" )
       aTmp[ _LCLOALB ]     := .f.
@@ -7048,7 +7048,7 @@ Static FUNCTION IcgCabAlbPrv( cSerDoc, nNumDoc, cSufDoc, dFecDoc )
       ( D():AlbaranesProveedores( nView ) )->cSuAlb     := cSerDoc + nNumDoc + cSufDoc
       ( D():AlbaranesProveedores( nView ) )->cCodUsr    := Auth():Codigo()
       ( D():AlbaranesProveedores( nView ) )->cCodDlg    := Application():CodigoDelegacion()
-      ( D():AlbaranesProveedores( nView ) )->cCodCaj    := oUser():cCaja()
+      ( D():AlbaranesProveedores( nView ) )->cCodCaj    := Application():CodigoCaja()
       ( D():AlbaranesProveedores( nView ) )->cTurAlb    := cCurSesion()
 
       ( D():AlbaranesProveedores( nView ) )->cCodPrv    := cCodPrv

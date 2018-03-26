@@ -64,16 +64,11 @@ CLASS SQLDatabase
 
    METHOD getValue( cSql )
 
-   METHOD fetchRowSet( cSentence )
-
    METHOD lastInsertId()                  INLINE ( if( !empty( ::oConexion ), ::oConexion:lastInsertId(), msgstop( "No ha conexiones disponibles" ) ) )
 
    METHOD beginTransaction()              INLINE ( if( !empty( ::oConexion ), ::oConexion:beginTransaction(),  msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Commit()                        INLINE ( if( !empty( ::oConexion ), ::oConexion:commit(), msgstop( "No ha conexiones disponibles" ) ) )
    METHOD rollBack()                      INLINE ( if( !empty( ::oConexion ), ::oConexion:rollback(),  msgstop( "No ha conexiones disponibles" ) ) )
-
-   METHOD startForeignKey()               VIRTUAL // INLINE ( ::Query( "pragma foreign_keys = ON" ) )
-   METHOD endForeignKey()                 VIRTUAL // INLINE ( ::Query( "pragma foreign_keys = OFF" ) )
 
    METHOD errorInfo()                     INLINE ( if( !empty( ::oConexion ), ::oConexion:errorInfo(), ) )
 
@@ -92,9 +87,6 @@ ENDCLASS
 //----------------------------------------------------------------------------//
 
 METHOD New() 
-
-   local aOptions             := { "GESTOOL", "--defaults-file=./my.cnf" }             
-   local aGroup               := { "server", "client" }                                 
 
    ::cPathDatabaseMySQL       := fullCurDir() + "Database\" 
 
@@ -264,7 +256,7 @@ RETURN ( nil )
 
 METHOD firstTrimedFetchHash( cSentence )
 
-   local aSelect              := ::selectTrimedFetchHash( cSentence )
+   local aSelect        := ::selectTrimedFetchHash( cSentence )
 
    if hb_isarray( aSelect )
       RETURN ( afirst( aSelect ) )
@@ -357,54 +349,6 @@ METHOD getValue( cSentence )
 RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
-/*
-METHOD fetchDirect( cSentence )
-
-   local oError
-   local oStatement
-
-   try 
-
-      oStatement     := ::oConexion:Query( cSentence )
-      
-   catch oError
-
-      eval( errorBlock(), oError )
-
-   end
-
-RETURN ( if( hb_isobject( oStatement ), oStatement, nil ) )
-*/
-//---------------------------------------------------------------------------//
-
-METHOD fetchRowSet( cSentence )
-
-   local oError
-   local oRowSet
-   
-   if ::isParseError( cSentence )
-      RETURN ( nil )  
-   end if  
-
-   try 
-
-      if !empty( ::oStatement )
-         ::oStatement:Free()
-      end if 
-
-      ::oStatement   := ::oConexion:Query( cSentence )
-
-      oRowSet        := ::oStatement:fetchRowSet()
-
-   catch oError
-
-      eval( errorBlock(), oError )
-
-   end
-
-RETURN ( oRowSet )
-
-//---------------------------------------------------------------------------//
 
 METHOD selectFetchArrayOneColumn( cSentence )
 
@@ -455,8 +399,8 @@ METHOD getSchemaColumns( oModel )
    local oStatement
    local aSchemaColumns
 
-   cSentence               := "SELECT COLUMN_NAME "                              +;
-                                 "FROM INFORMATION_SCHEMA.COLUMNS "              +;
+   cSentence               := "SELECT COLUMN_NAME "                                 +;
+                                 "FROM INFORMATION_SCHEMA.COLUMNS "                 +;
                                  "WHERE table_name = " + quoted( oModel:cTableName )
 
    if ::isParseError( cSentence )

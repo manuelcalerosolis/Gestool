@@ -2344,7 +2344,7 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
    ::oAlbCliT:cTurAlb      := cCurSesion()
    ::oAlbCliT:dFecAlb      := ::dFecDocumento
    ::oAlbCliT:cCodCli      := ::oDbfCli:Cod
-   ::oAlbCliT:cCodCaj      := oUser():cCaja()
+   ::oAlbCliT:cCodCaj      := Application():CodigoCaja()
    ::oAlbCliT:cNomCli      := ::oDbfCli:Titulo
    ::oAlbCliT:cDirCli      := ::oDbfCli:Domicilio
    ::oAlbCliT:cPobCli      := ::oDbfCli:Poblacion
@@ -2658,7 +2658,7 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    ::oFacCliT:cTurFac      := cCurSesion()
    ::oFacCliT:dFecFac      := ::dFecDocumento
    ::oFacCliT:cCodCli      := ::oDbfCli:Cod
-   ::oFacCliT:cCodCaj      := oUser():cCaja()
+   ::oFacCliT:cCodCaj      := Application():CodigoCaja()
    ::oFacCliT:cNomCli      := ::oDbfCli:Titulo
    ::oFacCliT:cDirCli      := ::oDbfCli:Domicilio
    ::oFacCliT:cPobCli      := ::oDbfCli:Poblacion

@@ -875,7 +875,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       if lAIS() .and. !oUser():lAdministrador()
       
-         cFiltroUsuario    := "Field->cSufPed == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario    := "Field->cSufPed == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
@@ -1793,14 +1793,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
             Return .f.
          end if
 
-         if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-            msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+         if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+            msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
             Return .f.
          end if
 
          aTmp[ _CTURPED ]     := cCurSesion()
          aTmp[ _CCODALM ]     := oUser():cAlmacen()
-         aTmp[ _CCODCAJ ]     := oUser():cCaja()
+         aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
          aTmp[ _CDIVPED ]     := cDivEmp()
          aTmp[ _CCODPGO ]     := cDefFpg()
          aTmp[ _NVDVPED ]     := nChgDiv( aTmp[ _CDIVPED ], D():Divisas( nView ) )
@@ -1825,8 +1825,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
             Return .f.
          end if
 
-         if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-            msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+         if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+            msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
             Return .f.
          end if
 
@@ -3740,7 +3740,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
       case nMode == APPD_MODE
 
          aTmp[ ( dbfTmpPgo )->( FieldPos( "cTurRec" ) ) ]      	:= cCurSesion()
-         aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCaj" ) ) ]      	:= oUser():cCaja()
+         aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCaj" ) ) ]      	:= Application():CodigoCaja()
 
          aTmp[ ( dbfTmpPgo )->( FieldPos( "cSerPed" ) ) ]      	:= aTmpPed[ _CSERPED ]
          aTmp[ ( dbfTmpPgo )->( FieldPos( "nNumPed" ) ) ]      	:= aTmpPed[ _NNUMPED ]
@@ -6942,7 +6942,7 @@ STATIC FUNCTION PedRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       if !Empty( cFecDoc )
          aTabla[ _DFECPED  ]  := cFecDoc
       end if
-      aTabla[ _CCODCAJ     ]  := oUser():cCaja()
+      aTabla[ _CCODCAJ     ]  := Application():CodigoCaja()
       aTabla[ _DFECENT     ]  := Ctod("")
       aTabla[ _CNUMPRE     ]  := Space( 12 )
       aTabla[ _LSNDDOC     ]  := .t.
@@ -14597,7 +14597,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "cCodObr", "C",   10,  0, "Código de dirección",                                     "Direccion",               "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cCodTar", "C",    5,  0, "Código de tarifa",                                        "Tarifa",                  "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cCodAlm", "C",   16,  0, "Código del almacen",                                      "Almacen",                 "", "( cDbf )", {|| oUser():cAlmacen() } } )
-   aAdd( aItmPedCli, { "cCodCaj", "C",    3,  0, "Código de caja",                                          "Caja",                    "", "( cDbf )", {|| oUser():cCaja() } } )
+   aAdd( aItmPedCli, { "cCodCaj", "C",    3,  0, "Código de caja",                                          "Caja",                    "", "( cDbf )", {|| Application():CodigoCaja() } } )
    aAdd( aItmPedCli, { "cCodPgo", "C",    2,  0, "Código de pago",                                          "Pago",                    "", "( cDbf )", {|| cDefFpg() } } )
    aAdd( aItmPedCli, { "cCodRut", "C",    4,  0, "Código de la ruta",                                       "Ruta",                    "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "dFecEnt", "D",    8,  0, "Fecha de salida",                                         "FechaSalida",             "", "( cDbf )", nil } )

@@ -562,7 +562,7 @@ STATIC FUNCTION OpenFiles( lExt )
       // Limitaciones de cajero y cajas--------------------------------------------------------
 
       if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
-         cFiltroUsuario       := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario       := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
       end if
 
       EnableAcceso()
@@ -1264,8 +1264,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    do case
    case nMode == APPD_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
@@ -1275,7 +1275,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       aTmp[ _CDIVFAC ]     := cDivEmp()
       aTmp[ _NVDVFAC ]     := nChgDiv( aTmp[ _CDIVFAC ], D():Divisas( nView ) )
       aTmp[ _CCODALM ]     := oUser():cAlmacen()
-      aTmp[ _CCODCAJ ]     := oUser():cCaja()
+      aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
       aTmp[ _LSNDDOC ]     := .t.
       aTmp[ _CCODPRO ]     := cProCnt()
       aTmp[ _CCODUSR ]     := Auth():Codigo()
@@ -1294,13 +1294,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
    case nMode == DUPL_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURFAC ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _LSNDDOC ]  := .t.
       aTmp[ _DFECENT ]  := Ctod( "" )
       aTmp[ _DFECIMP ]  := Ctod( "" )
@@ -11365,7 +11365,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                      ( cFacPrvT)->DFECFAC     := ( tmpFacPrvT )->dFecFac
                      ( cFacPrvT)->CCODPRV     := ( tmpFacPrvT )->cCodCli
                      ( cFacPrvT)->CCODALM     := oUser():cAlmacen()
-                     ( cFacPrvT)->CCODCAJ     := oUser():cCaja()
+                     ( cFacPrvT)->CCODCAJ     := Application():CodigoCaja()
                      ( cFacPrvT)->CNOMPRV     := ( tmpFacPrvT )->cNomCli
                      ( cFacPrvT)->CDIRPRV     := ( tmpFacPrvT )->cDirCli
                      ( cFacPrvT)->CPOBPRV     := ( tmpFacPrvT )->cPobCli
@@ -11484,7 +11484,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                            ( cFacPrvP )->cSufFac    := cSufijo
                            ( cFacPrvP )->nNumRec    := ( tmpFacPrvP )->nNumRec
                            ( cFacPrvP )->cTipRec    := ( tmpFacPrvP )->cTipRec
-                           ( cFacPrvP )->CCODCAJ    := oUser():cCaja()
+                           ( cFacPrvP )->CCODCAJ    := Application():CodigoCaja()
                            ( cFacPrvP )->CCODPRV    := ( tmpFacPrvT )->cCodCli
                            ( cFacPrvP )->cNomPrv    := ( tmpFacPrvP )->cNomCli
                            ( cFacPrvP )->DENTRADA   := ( tmpFacPrvP )->dEntrada

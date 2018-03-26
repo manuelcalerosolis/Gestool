@@ -149,7 +149,7 @@ STATIC FUNCTION OpenFiles( cPatEmp )
       */
 
       if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
-         cFiltroUsuario := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
       end if
 
       oCentroCoste            := TCentroCoste():Create( cPatDat() )
@@ -671,7 +671,7 @@ Static Function lValCheck( aGet, aTmp )
    if aTmp[ _LCOBRADO ]
       aGet[ _DENTRADA ]:cText( GetSysDate() )
       aGet[ _CTURREC  ]:cText( cCurSesion( nil, .f. ) )
-      aGet[ _CCODCAJ  ]:cText( oUser():cCaja() )      
+      aGet[ _CCODCAJ  ]:cText( Application():CodigoCaja() )      
       aGet[ _CCODCAJ  ]:lValid()
    else
       aGet[ _DENTRADA ]:cText( Ctod( "" ) )
@@ -697,7 +697,7 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
    local oBmpBancos
 
    if empty( aTmp[ _CCODCAJ ] )
-      aTmp[ _CCODCAJ ]     := oUser():cCaja()
+      aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
    end if
 
    if empty( aTmp[ _CPAISIBAN ] )

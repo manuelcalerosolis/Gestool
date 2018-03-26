@@ -1781,7 +1781,7 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
             aCampos[ ::oAlbPrvT:FieldPos( "cTurAlb" ) ]     := cCurSesion()
             aCampos[ ::oAlbPrvT:FieldPos( "cDivAlb" ) ]     := cDivEmp()
             aCampos[ ::oAlbPrvT:FieldPos( "cCodAlm" ) ]     := oUser():cAlmacen()
-            aCampos[ ::oAlbPrvT:FieldPos( "cCodCaj" ) ]     := oUser():cCaja()
+            aCampos[ ::oAlbPrvT:FieldPos( "cCodCaj" ) ]     := Application():CodigoCaja()
             aCampos[ ::oAlbPrvT:FieldPos( "nVdvAlb" ) ]     := nChgDiv( aPlantilla[ ::oAlbPrvT:FieldPos( "cDivAlb" ) ], ::oDbfDiv:cAlias )
             aCampos[ ::oAlbPrvT:FieldPos( "lSndDoc" ) ]     := .t.
             aCampos[ ::oAlbPrvT:FieldPos( "cCodPro" ) ]     := cProCnt()
@@ -1987,7 +1987,7 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ) ] )
-            aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ) ]     := oUser():cCaja()
+            aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ) ]     := Application():CodigoCaja()
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "nVdvFac" ) ] )
@@ -2458,7 +2458,7 @@ METHOD CreateRegister() CLASS TPlantillaXML
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ), 9 ] )
-                  aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ), 9 ]     := oUser():cCaja()
+                  aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ), 9 ]     := Application():CodigoCaja()
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "lSndDoc" ), 9 ] )
