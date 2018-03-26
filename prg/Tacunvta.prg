@@ -69,7 +69,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt  PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    DATABASE NEW ::oIva PATH ( cPatDat () )    FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 

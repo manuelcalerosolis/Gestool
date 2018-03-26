@@ -570,7 +570,7 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oDbfEmp     PATH ( cPatDat() )   FILE "Empresa.Dbf"   VIA ( cDriver() ) SHARED INDEX "Empresa.Cdx"
 
-      DATABASE NEW ::oCli        PATH ( cPatCli() )   FILE "Client.Dbf"    VIA ( cDriver() ) SHARED INDEX "Client.Cdx"
+      DATABASE NEW ::oCli        PATH ( cPatEmp() )   FILE "Client.Dbf"    VIA ( cDriver() ) SHARED INDEX "Client.Cdx"
 
       DATABASE NEW ::oDbfDoc     PATH ( cPatEmp() )   FILE "rDocumen.Dbf"  VIA ( cDriver() ) SHARED INDEX "rDocumen.Cdx"
       ::oDbfDoc:OrdSetFocus( "cTipo" )

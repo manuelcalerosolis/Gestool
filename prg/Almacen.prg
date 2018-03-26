@@ -704,8 +704,8 @@ FUNCTION RetAlmacen( cCodAlm, dbfAlmT )
    BEGIN SEQUENCE
 
 	IF dbfAlmT == NIL
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
       lClose         := .t.
 	END IF
 
@@ -754,8 +754,8 @@ FUNCTION RetCliAlm( cCodAlm, dbfAlmT )
    BEGIN SEQUENCE
 
    if dbfAlmT == nil
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
       lClose         := .t.
    end if
 
@@ -967,8 +967,8 @@ Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaAlmacenSender
    local cFileName
    local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
 
-   USE ( cPatAlm() + "Almacen.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Almacen", @dbfAlm ) )
-   SET ADSINDEX TO ( cPatAlm() + "Almacen.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "Almacen.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Almacen", @dbfAlm ) )
+   SET ADSINDEX TO ( cPatEmp() + "Almacen.Cdx" ) ADDITIVE
 
    dbUseArea( .t., cDriver(), cPatPc + "Almacen.Dbf", cCheckArea( "Almacen", @tmpAlm ), .t. )
    ( tmpAlm )->( ordListAdd( cPatPc + "Almacen.Cdx" ) )
@@ -1015,7 +1015,7 @@ function IsAlmacen( cPatEmp )
    local dbfAlmT
    local lIsAlmacen  := .f.
 
-   DEFAULT cPatEmp   := cPatAlm()
+   DEFAULT cPatEmp   := cPatEmp()
 
    if !lExistTable( cPatEmp + "Almacen.Dbf" ) .or. !lExistTable( cPatEmp + "AlmacenL.Dbf" )
       mkAlmacen()
@@ -1056,7 +1056,7 @@ RETURN ( lIsAlmacen )
 
 FUNCTION mkAlmacen( cPath, lAppend, cPathOld, oMeter )
 
-   DEFAULT cPath     := cPatAlm()
+   DEFAULT cPath     := cPatEmp()
 	DEFAULT lAppend	:= .F.
 
 	IF oMeter != NIL
@@ -1091,7 +1091,7 @@ FUNCTION rxAlmacen( cPath, oMeter )
 	local dbfAlmT
 	local dbfAlmL
 
-   DEFAULT cPath  := cPatAlm()
+   DEFAULT cPath  := cPatEmp()
 
    IF !lExistTable( cPath + "ALMACEN.DBF" )
       dbCreate( cPath + "ALMACEN.DBF", aSqlStruct( aItmAlm() ), cDriver() )
@@ -1181,8 +1181,8 @@ FUNCTION cAlmacen( oGet, dbfAlmT, oGet2 )
    BEGIN SEQUENCE
 
    if dbfAlmT == nil
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -1417,19 +1417,19 @@ STATIC FUNCTION lOpenFiles()
 
    BEGIN SEQUENCE
 
-      IF !lExistTable( cPatAlm() + "ALMACEN.DBF" ) .OR.;
-         !lExistTable( cPatAlm() + "ALMACENL.DBF" )
+      IF !lExistTable( cPatEmp() + "ALMACEN.DBF" ) .OR.;
+         !lExistTable( cPatEmp() + "ALMACENL.DBF" )
 			mkAlmacen()
 		END IF
 
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
 
-      USE ( cPatAlm() + "ALMACENL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACENL", @dbfAlmL ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACENL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALMACENL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACENL", @dbfAlmL ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALMACENL.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
-      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGENTES.CDX" ) ADDITIVE
 
    RECOVER
 

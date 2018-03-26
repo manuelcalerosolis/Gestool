@@ -638,7 +638,7 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oAntCliT    FILE "AntCliT.DBF"   PATH ( ::cPath )    VIA ( cDriver() ) SHARED INDEX "AntCliT.CDX"
 
-      DATABASE NEW ::oClientes   FILE "CLIENT.DBF"    PATH ( cPatCli() )  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oClientes   FILE "CLIENT.DBF"    PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
       DATABASE NEW ::oIva        FILE "TIVA.DBF"      PATH ( cPatDat() )  VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
@@ -654,7 +654,7 @@ METHOD OpenFiles( lExclusive )
 
       ::oBandera        := TBandera():New()
 
-      ::oCtaRem         := TCtaRem():Create( cPatCli() )
+      ::oCtaRem         := TCtaRem():Create( cPatEmp() )
       ::oCtaRem:OpenFiles()
 
    RECOVER USING oError

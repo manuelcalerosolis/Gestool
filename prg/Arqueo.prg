@@ -114,11 +114,11 @@ D():Get( "LogPorta", nView )
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
-   SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
+   SET ADSINDEX TO ( cPatEmp() + "FAMILIAS.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArt ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArt ) )
+   SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
@@ -129,8 +129,8 @@ D():Get( "LogPorta", nView )
    USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+   SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
    SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE

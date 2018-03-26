@@ -709,26 +709,26 @@ STATIC FUNCTION OpenFiles()
 
    BEGIN SEQUENCE
 
-   USE ( cPatArt() + "PROMOT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOT", @dbfPromoT ) )
-   SET ADSINDEX TO ( cPatArt() + "PROMOT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PROMOT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOT", @dbfPromoT ) )
+   SET ADSINDEX TO ( cPatEmp() + "PROMOT.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "PROMOL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOL", @dbfPromoL ) )
-   SET ADSINDEX TO ( cPatArt() + "PROMOL.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PROMOL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOL", @dbfPromoL ) )
+   SET ADSINDEX TO ( cPatEmp() + "PROMOL.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "PROMOC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOL", @dbfPromoC ) )
-   SET ADSINDEX TO ( cPatArt() + "PROMOC.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PROMOC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOL", @dbfPromoC ) )
+   SET ADSINDEX TO ( cPatEmp() + "PROMOC.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+   SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE
 
-   USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgentes ) )
-   SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgentes ) )
+   SET ADSINDEX TO ( cPatEmp() + "AGENTES.CDX" ) ADDITIVE
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+   SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "TARPRET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPRET", @dbfTarPreT ) )
-   SET ADSINDEX TO ( cPatArt() + "TARPRET.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "TARPRET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPRET", @dbfTarPreT ) )
+   SET ADSINDEX TO ( cPatEmp() + "TARPRET.CDX" ) ADDITIVE
 
    RECOVER
 
@@ -792,7 +792,7 @@ FUNCTION mkPromo( cPath, lAppend, cPathOld, oMeter )
    local oldPrm
 
    DEFAULT lAppend   := .f.
-   DEFAULT cPath     := cPatArt()
+   DEFAULT cPath     := cPatEmp()
 
    if !lExistTable( cPath + "PROMOT.DBF" )
       dbCreate( cPath + "PROMOT.DBF", aSqlStruct( aItmPrm() ), cDriver() )
@@ -864,7 +864,7 @@ RETURN ( nil )
 
 FUNCTION rxPromo( cPath, oMeter )
 
-   DEFAULT cPath := cPatArt()
+   DEFAULT cPath := cPatEmp()
 
    if !lExistTable( cPath + "PROMOT.DBF" )
       dbCreate( cPath + "PROMOT.DBF", aSqlStruct( aItmPrm() ), cDriver() )

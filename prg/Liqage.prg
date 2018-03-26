@@ -189,7 +189,7 @@ METHOD OpenFiles( cPath )
 
    DATABASE NEW ::oAgentes ;
          FILE  "AGENTES.DBF" ;
-         PATH  ( cPatCli() ) ;
+         PATH  ( cPatEmp() ) ;
          VIA   cDriver() ;
          SHARED ;
          INDEX "AGENTES.CDX"

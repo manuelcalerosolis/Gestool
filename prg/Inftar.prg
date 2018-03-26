@@ -75,11 +75,11 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-      DATABASE NEW ::oDbfTarT PATH ( cPatArt() )   FILE "TARPRET.DBF"   VIA ( cDriver() ) SHARED INDEX "TARPRET.CDX"
+      DATABASE NEW ::oDbfTarT PATH ( cPatEmp() )   FILE "TARPRET.DBF"   VIA ( cDriver() ) SHARED INDEX "TARPRET.CDX"
 
-      DATABASE NEW ::oDbfTarL PATH ( cPatArt() )   FILE "TARPREL.DBF"   VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
+      DATABASE NEW ::oDbfTarL PATH ( cPatEmp() )   FILE "TARPREL.DBF"   VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
 
-      DATABASE NEW ::oDbfArt  PATH ( cPatArt() )   FILE "ARTICULO.DBF"  VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArt  PATH ( cPatEmp() )   FILE "ARTICULO.DBF"  VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
 

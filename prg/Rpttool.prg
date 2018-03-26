@@ -51,10 +51,10 @@ Function Main( cCodEmp, cCodUsr, cInitOptions )
    // Ponemos el directorio para los ficheros----------------------------------
 
    cPatEmp( cCodEmp )
-   cPatCli( cCodEmp, nil, .t. )
-   cPatArt( cCodEmp, nil, .t. )
-   cPatPrv( cCodEmp, nil, .t. )
-   cPatAlm( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
 
    // Seleccionamos la empresa-------------------------------------------------
 

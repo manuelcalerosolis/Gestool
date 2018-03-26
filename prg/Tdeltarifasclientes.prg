@@ -74,13 +74,13 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-      DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF"    VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oDbfCli PATH ( cPatEmp() ) FILE "CLIENT.DBF"    VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-      DATABASE NEW ::oCliAtp PATH ( cPatCli() ) FILE "CLIATP.DBF"    VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
+      DATABASE NEW ::oCliAtp PATH ( cPatEmp() ) FILE "CLIATP.DBF"    VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
 
-      DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF"  VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oDbfFam PATH ( cPatEmp() ) FILE "FAMILIAS.DBF"  VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-      DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF"  VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArt PATH ( cPatEmp() ) FILE "ARTICULO.DBF"  VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
       ::nBmp      := LoadBitmap( 0, 32760 )
 

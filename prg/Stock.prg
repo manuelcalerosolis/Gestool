@@ -506,14 +506,14 @@ METHOD lOpenFiles() CLASS TStock
       USE ( cPatEmp() + "MatSer.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cProducP )
       SET ADSINDEX TO ( cPatEmp() + "MatSer.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cArticulo ) 
-      SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Articulo.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cArticulo ) 
+      SET ADSINDEX TO ( cPatEmp() + "Articulo.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "ArtKit.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cKit ) 
-      SET ADSINDEX TO ( cPatArt() + "ArtKit.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "ArtKit.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cKit ) 
+      SET ADSINDEX TO ( cPatEmp() + "ArtKit.Cdx" ) ADDITIVE
 
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cAlm ) 
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cAlm ) 
+      SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( ::cDbfDiv )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
@@ -2316,8 +2316,8 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto, cCodEmpOld, cCodEmpNew ) CL
       USE ( cPath + "NCount.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "NCount", @dbfCnt ) )
       SET ADSINDEX TO ( cPath + "NCount.Cdx" ) ADDITIVE
 
-      USE ( cPatAlm() + "Almacen.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
-      SET ADSINDEX TO ( cPatAlm() + "Almacen.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Almacen.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
+      SET ADSINDEX TO ( cPatEmp() + "Almacen.Cdx" ) ADDITIVE
 
       USE ( cPathOld + "Articulo.Dbf" ) NEW VIA ( ::cDriver ) SHARED ALIAS ( cCheckArea( "ARTICULO", @oldArt ) )
       SET ADSINDEX TO ( cPathOld + "ARTICULO.CDX" ) ADDITIVE

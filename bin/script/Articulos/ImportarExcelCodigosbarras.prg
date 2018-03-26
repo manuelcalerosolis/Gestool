@@ -20,6 +20,7 @@ Return nil
 CLASS TImportarExcelArguelles FROM TImportarExcel
    
    DATA idArticulo
+   DATA cCodigoBarras
    DATA aImagenes
    DATA cDirDescarga
 
@@ -37,10 +38,10 @@ CLASS TImportarExcelArguelles FROM TImportarExcel
 
    METHOD existeRegistro()       INLINE ( D():gotoArticulos( ::getCampoClave(), ::nView ) )
 
-   METHOD appendRegistro()       INLINE ( ( D():Articulos( ::nView ) )->( dbappend() ) )
+   METHOD appendRegistro()       INLINE ( ( D():ArticulosCodigosBarras( ::nView ) )->( dbappend() ) )
 
-   METHOD desbloqueaRegistro()   INLINE ( ( D():Articulos( ::nView ) )->( dbcommit() ),;
-                                          ( D():Articulos( ::nView ) )->( dbunlock() ) )
+   METHOD desbloqueaRegistro()   INLINE ( ( D():ArticulosCodigosBarras( ::nView ) )->( dbcommit() ),;
+                                          ( D():ArticulosCodigosBarras( ::nView ) )->( dbunlock() ) )
 
    METHOD importarCampos()
 
@@ -71,20 +72,20 @@ METHOD New( nView )
    Cambiar el nombre del fichero-----------------------------------------------
    */
 
-   ::cFicheroExcel            := "C:\ficheros\articulos.xls"
+   ::cFicheroExcel            := "C:\ficheros\barras.xls"
    ::cDirDescarga             := "C:\ficheros\fotos\"
 
    /*
    Cambiar la fila de cominezo de la importacion-------------------------------
    */
 
-   ::nFilaInicioImportacion   := 2
+   ::nFilaInicioImportacion   := 1
 
    /*
    Columna de campo clave------------------------------------------------------
    */
 
-   ::cColumnaCampoClave       := 'AF'
+   ::cColumnaCampoClave       := 'A'
 
 Return ( Self )
 
@@ -111,106 +112,48 @@ METHOD procesaFicheroExcel()
 
    while ( ::filaValida() )
 
-      if !::existeRegistro()
-      
-         ::importarCampos()
-
-      end if 
+      ::importarCampos( "B" )
+      ::importarCampos( "C" )
+      ::importarCampos( "D" )
+      ::importarCampos( "E" )
+      ::importarCampos( "F" )
+      ::importarCampos( "G" )
+      ::importarCampos( "H" )
+      ::importarCampos( "I" )
+      ::importarCampos( "J" )
+      ::importarCampos( "K" )
 
       ::siguienteLinea()
 
    end if
 
-   if Len( ::aImagenes ) != 0
-      ::descargaImagenes()
-   end if
-
    ::closeExcel()
-
-   ::descargaESP()
 
 Return nil
 
 //---------------------------------------------------------------------------//
 
-METHOD importarCampos()
+METHOD importarCampos( cFieldCodBar )
 
-   local aNameImagen                            := {}
-
-   ( D():Articulos( ::nView ) )->( dbappend() )
-
-   ::idArticulo                                 := ::getCampoClave()
-
-   ( D():Articulos( ::nView ) )->Codigo         := ::idArticulo
-
-   if !empty( ::getExcelString( "F" ) )
-      ( D():Articulos( ::nView ) )->Nombre      := ::getNombre( ::getExcelString( "F" ) )
-      ( D():Articulos( ::nView ) )->Descrip     := ::getDescripcionlarga( ::getExcelString( "G" ) )
-   end if 
-
-   if !empty( ::getExcelNumeric( "U" ) )
-      ( D():Articulos( ::nView ) )->pVenta1     := ( ::getExcelNumeric( "U" ) / ( 1 + ::getExcelNumeric( "Z" ) ) )
-      ( D():Articulos( ::nView ) )->pVtaIva1    := ::getExcelNumeric( "U" )
-      ( D():Articulos( ::nView ) )->pVtaWeb     := ( ::getExcelNumeric( "U" ) / ( 1 + ::getExcelNumeric( "Z" ) ) )
-      ( D():Articulos( ::nView ) )->nImpInt1    := ( ::getExcelNumeric( "U" ) / ( 1 + ::getExcelNumeric( "Z" ) ) )
-      ( D():Articulos( ::nView ) )->nImpIva1    := ::getExcelNumeric( "U" )
-   end if
-
-   if !empty( ::getExcelString( "I" ) )
-      ( D():Articulos( ::nView ) )->mDesTec     := ::getExcelString( "I" )
-   end if 
-
-   ( D():Articulos( ::nView ) )->TipoIva        := cCodigoIva( D():TiposIva( ::nView ), ( ::getExcelNumeric( "Z" ) * 100 ) )
+   local nOrdAnt     :=( D():ArticulosCodigosBarras( ::nView ) )->( OrdSetFocus( "cArtBar" ) )
    
-   ( D():Articulos( ::nView ) )->nCtlStock      := 1
-   ( D():Articulos( ::nView ) )->nLabel         := 1
-   ( D():Articulos( ::nView ) )->nTarWeb        := 1
-   ( D():Articulos( ::nView ) )->lPubInt        := .t.
-   ( D():Articulos( ::nView ) )->lSbrInt        := .t.
-   ( D():Articulos( ::nView ) )->cWebShop       := "Delicado"
-   ( D():Articulos( ::nView ) )->lIvaWeb        := .t.
+   ::idArticulo      := Padr( ::getCampoClave(), 18 )
+   ::cCodigoBarras   := Padr( Str( ::getExcelNumeric( cFieldCodBar ) ), 20 )
 
-   ( D():Articulos( ::nView ) )->cRefAux        := ::getExcelString( "A" )
+   MsgWait( ::idArticulo + " - " + ::cCodigoBarras, "Datos", 0.005 )
 
+   if !( D():ArticulosCodigosBarras( ::nView ) )->( dbSeek( ::idArticulo + " - " + ::cCodigoBarras ) )
 
-   ::cProveedor( ::getExcelString( "E" ) )
+      if ::appendRegistro()
 
-   ::cFamilia()
+         ( D():ArticulosCodigosBarras( ::nView ) )->cCodArt   := ::idArticulo
+         ( D():ArticulosCodigosBarras( ::nView ) )->cCodBar   := ::cCodigoBarras
 
-   /*
-   Descripción alemán----------------------------------------------------------
-   */
+         ::desbloqueaRegistro()
 
-   if !Empty( ::getExcelString( "M" ) )
-
-      ( D():ArticuloLenguaje( ::nView ) )->( dbAppend() )
-
-      ( D():ArticuloLenguaje( ::nView ) )->cCodArt    := ::idArticulo
-      ( D():ArticuloLenguaje( ::nView ) )->cCodLen    := "ENG "
-      ( D():ArticuloLenguaje( ::nView ) )->cDesTik    := ::getExcelString( "M" )
-      ( D():ArticuloLenguaje( ::nView ) )->cDesArt    := ::getExcelString( "N" )
-
-      ( D():ArticuloLenguaje( ::nView ) )->( dbcommit() )
-
-      ( D():ArticuloLenguaje( ::nView ) )->( dbunlock() )   
+      end if
 
    end if
-
-   /*
-   Introducimos las imágenes---------------------------------------------------
-   */
-
-   aNameImagen       := hb_aTokens( StrTran( ::getExcelString( "BM" ), "!ID:", "" ), "," )
-
-   aEval( aNameImagen, { |c| ::addImages( c ) } )
-
-   /*
-   Desbloqueamos la tabla de artículos-----------------------------------------
-   */
-
-   ( D():Articulos( ::nView ) )->( dbcommit() )
-
-   ( D():Articulos( ::nView ) )->( dbunlock() )
 
 Return nil
 

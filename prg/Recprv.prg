@@ -2334,8 +2334,8 @@ Function SynRecPrv( cPatEmp )
    USE ( cPatEmp + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "RctPrvT", @dbfRctPrvT ) )
    SET ADSINDEX TO ( cPatEmp + "RctPrvT.CDX" ) ADDITIVE
 
-   USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
-   SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
+   SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
 
    USE ( cPatEmp + "FPAGO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
    SET ADSINDEX TO ( cPatEmp + "FPAGO.CDX" ) ADDITIVE

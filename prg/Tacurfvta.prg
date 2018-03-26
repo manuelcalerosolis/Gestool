@@ -101,7 +101,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oDbfCodeBar PATH ( cPatArt() ) FILE "ArtCodebar.DBF"  VIA ( cDriver() ) SHARED INDEX "ArtCodebar.CDX"
+   DATABASE NEW ::oDbfCodeBar PATH ( cPatEmp() ) FILE "ArtCodebar.DBF"  VIA ( cDriver() ) SHARED INDEX "ArtCodebar.CDX"
 
    RECOVER
 

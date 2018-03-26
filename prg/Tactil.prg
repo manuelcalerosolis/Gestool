@@ -456,8 +456,8 @@ STATIC FUNCTION lOpenFiles( cPatEmp, lExt )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      USE ( cPatCli() + "CLIENT.DBF" )      NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "CLIENT.DBF" )      NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+      SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "FPAGO.DBF" )       NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
       SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE

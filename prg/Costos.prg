@@ -34,8 +34,8 @@ FUNCTION InfPdtCob( oWnd )
    USE ( cPatEmp() + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @cAliPago ) )
    SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @cAliCli ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @cAliCli ) )
+   SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
    USE "DATOS\TIVA.DBF" NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @cAliIva ) )
    SET ADSINDEX TO "DATOS\TIVA.CDX" ADDITIVE

@@ -108,7 +108,7 @@ METHOD OpenFiles()
       ::aChkIndices[ 1 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de proveedores", ::cPathFac + "PROVEEDO.DBF" )
    else
-      DATABASE NEW ::oDbfPrvGst PATH ( cPatPrv() )  FILE "PROVEE.DBF" VIA ( cDriver() )CLASS "PRVGST" INDEX "PROVEE.CDX"
+      DATABASE NEW ::oDbfPrvGst PATH ( cPatEmp() )  FILE "PROVEE.DBF" VIA ( cDriver() )CLASS "PRVGST" INDEX "PROVEE.CDX"
       DATABASE NEW ::oDbfPrvFac PATH ( ::cPathFac ) FILE "PROVEEDO.DBF" VIA ( cDriver() )CLASS "PRVFAC"
       lOpenCliPrv := .t.
    end if
@@ -117,8 +117,8 @@ METHOD OpenFiles()
       ::aChkIndices[ 2 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de clientes", ::cPathFac + "CLIENTES.DBF" )
    else
-      DATABASE NEW ::oDbfCliBnc PATH ( cPatCli() )  FILE "CLIBNC.DBF"   VIA ( cDriver() )CLASS "CLIBNCGST"  INDEX "CLIBNC.CDX"
-      DATABASE NEW ::oDbfCliGst PATH ( cPatCli() )  FILE "CLIENT.DBF"   VIA ( cDriver() )CLASS "CLIGST"  INDEX "CLIENT.CDX"
+      DATABASE NEW ::oDbfCliBnc PATH ( cPatEmp() )  FILE "CLIBNC.DBF"   VIA ( cDriver() )CLASS "CLIBNCGST"  INDEX "CLIBNC.CDX"
+      DATABASE NEW ::oDbfCliGst PATH ( cPatEmp() )  FILE "CLIENT.DBF"   VIA ( cDriver() )CLASS "CLIGST"  INDEX "CLIENT.CDX"
       DATABASE NEW ::oDbfCliFac PATH ( ::cPathFac ) FILE "CLIENTE.DBF"  VIA ( cDriver() )CLASS "CLIFAC"
       lOpenCliPrv := .t.
    end if
@@ -132,10 +132,10 @@ METHOD OpenFiles()
       ::aChkIndices[ 3 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de artículos", ::cPathFac + "ARTICULO.DBF" )
    else
-      DATABASE NEW ::oDbfArtPrv PATH ( cPatArt() )  FILE "PROVART.DBF" VIA ( cDriver() )CLASS "ARTPRVGST" INDEX "PROVART.CDX"
-      DATABASE NEW ::oDbfFamGst PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() )CLASS "FAMGST" INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oDbfArtPrv PATH ( cPatEmp() )  FILE "PROVART.DBF" VIA ( cDriver() )CLASS "ARTPRVGST" INDEX "PROVART.CDX"
+      DATABASE NEW ::oDbfFamGst PATH ( cPatEmp() )  FILE "FAMILIAS.DBF" VIA ( cDriver() )CLASS "FAMGST" INDEX "FAMILIAS.CDX"
       ::oDbfFamGst:OrdSetFocus( "CNOMFAM" )
-      DATABASE NEW ::oDbfArtGst PATH ( cPatArt() )  FILE "ARTICULO.DBF" VIA ( cDriver() )CLASS "ARTGST" INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArtGst PATH ( cPatEmp() )  FILE "ARTICULO.DBF" VIA ( cDriver() )CLASS "ARTGST" INDEX "ARTICULO.CDX"
       DATABASE NEW ::oDbfArtFac PATH ( ::cPathFac ) FILE "ARTICULO.DBF" VIA ( cDriver() )CLASS "ARTFAC"
    end if
 

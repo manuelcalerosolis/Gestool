@@ -933,8 +933,8 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
    USE ( cPath + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
    SET ADSINDEX TO ( cPath + "AntCliT.CDX" ) ADDITIVE
 
-   USE ( cPatCli() + "OBRAST.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-   SET ADSINDEX TO ( cPatCli() + "OBRAST.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "OBRAST.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+   SET ADSINDEX TO ( cPatEmp() + "OBRAST.CDX" ) ADDITIVE
 
    /*
    Meter-----------------------------------------------------------------------

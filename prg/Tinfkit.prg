@@ -49,7 +49,7 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfKit PATH ( cPatArt() ) FILE "ARTKIT.DBF" VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
+   DATABASE NEW ::oDbfKit PATH ( cPatEmp() ) FILE "ARTKIT.DBF" VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
    ::oDbfKit:OrdSetFocus( "cCodKit" )
 
    RECOVER

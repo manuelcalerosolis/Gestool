@@ -42,7 +42,7 @@ Function mkTemporada( cPath, lAppend, cPathOld )
    local dbfTemporada
 
 	DEFAULT lAppend := .f.
-   DEFAULT cPath   := cPatArt()
+   DEFAULT cPath   := cPatEmp()
 
    dbCreate( cPath + "Temporadas.Dbf", aSqlStruct( aItmTemporada() ), cDriver() )
 
@@ -70,7 +70,7 @@ Function rxTemporada( cPath )
 
    local dbfTemporada
 
-   DEFAULT cPath  := cPatArt()
+   DEFAULT cPath  := cPatEmp()
 
    if !lExistTable( cPath + "Temporadas.Dbf" )
       mkTemporada( cPath )
@@ -116,8 +116,8 @@ Static Function OpenFiles()
    end if
    */
 
-   USE ( cPatArt() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Temporada", @dbfTemporada ) )
-   SET ADSINDEX TO ( cPatArt() + "Temporadas.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Temporada", @dbfTemporada ) )
+   SET ADSINDEX TO ( cPatEmp() + "Temporadas.Cdx" ) ADDITIVE
 
    RECOVER
 
@@ -463,8 +463,8 @@ Function cTemporada( oGet, dbfTemporada, oGet2, oBmpTemporada  )
 
    if dbfTemporada == nil
 
-      USE ( cPatArt() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Temporada", @dbfTemporada ) )
-      SET ADSINDEX TO ( cPatArt() + "Temporadas.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Temporada", @dbfTemporada ) )
+      SET ADSINDEX TO ( cPatEmp() + "Temporadas.Cdx" ) ADDITIVE
 
       lOpen := .t.
 

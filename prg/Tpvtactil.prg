@@ -1283,7 +1283,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oTiketNumeroSerie                         PATH ( cPatEmp() )   FILE "TIKES.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKES.CDX"
 
-   DATABASE NEW ::oCliente                                  PATH ( cPatCli() )   FILE "CLIENT.DBF"          VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+   DATABASE NEW ::oCliente                                  PATH ( cPatEmp() )   FILE "CLIENT.DBF"          VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
    DATABASE NEW ::oCajaCabecera                             PATH ( cPatDat() )   FILE "Cajas.DBF"           VIA ( cDriver() ) SHARED INDEX "Cajas.CDX"
 
@@ -1291,21 +1291,21 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oUsuario                                  PATH ( cPatDat() )   FILE "USERS.DBF"           VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
 
-   DATABASE NEW ::oArticulo                                 PATH ( cPatArt() )   FILE "ARTICULO.DBF"        VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oArticulo                                 PATH ( cPatEmp() )   FILE "ARTICULO.DBF"        VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oCodigoBarraArticulo                      PATH ( cPatArt() )   FILE "ArtCodebar.DBF"      VIA ( cDriver() ) SHARED INDEX "ArtCodebar.CDX"
+   DATABASE NEW ::oCodigoBarraArticulo                      PATH ( cPatEmp() )   FILE "ArtCodebar.DBF"      VIA ( cDriver() ) SHARED INDEX "ArtCodebar.CDX"
 
-   DATABASE NEW ::oArticulosEscandallos                     PATH ( cPatArt() )   FILE "ARTKIT.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
+   DATABASE NEW ::oArticulosEscandallos                     PATH ( cPatEmp() )   FILE "ARTKIT.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
-   DATABASE NEW ::oArticulosLenguajes                       PATH ( cPatArt() )   FILE "ARTLENG"             VIA ( cDriver() ) SHARED INDEX "ARTLENG"
+   DATABASE NEW ::oArticulosLenguajes                       PATH ( cPatEmp() )   FILE "ARTLENG"             VIA ( cDriver() ) SHARED INDEX "ARTLENG"
 
-   DATABASE NEW ::oArticulosOfertas                         PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
+   DATABASE NEW ::oArticulosOfertas                         PATH ( cPatEmp() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
    DATABASE NEW ::oFormaPago                                PATH ( cPatEmp() )   FILE "FPAGO.DBF"           VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
    DATABASE NEW ::oPropiedadesLinea                         PATH ( cPatEmp() )   FILE "TBLPRO.DBF"          VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
 
-   DATABASE NEW ::oFamilias                                 PATH ( cPatArt() )   FILE "FAMILIAS.DBF"        VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+   DATABASE NEW ::oFamilias                                 PATH ( cPatEmp() )   FILE "FAMILIAS.DBF"        VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    DATABASE NEW ::oAlbaranClienteCabecera                   PATH ( cPatEmp() )   FILE "ALBCLIT.DBF"         VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
 
@@ -1331,21 +1331,21 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oObras                                    PATH ( cPatEmp() )   FILE "ObrasT.DBF"          VIA ( cDriver() ) SHARED INDEX "ObrasT.CDX"
 
-   DATABASE NEW ::oAgentes                                  PATH ( cPatCli() )   FILE "AGENTES.DBF"         VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+   DATABASE NEW ::oAgentes                                  PATH ( cPatEmp() )   FILE "AGENTES.DBF"         VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
    DATABASE NEW ::oRuta                                     PATH ( cPatEmp() )   FILE "RUTA.DBF"            VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
 
-   DATABASE NEW ::oAlmacen                                  PATH ( cPatAlm() )   FILE "ALMACEN.DBF"         VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+   DATABASE NEW ::oAlmacen                                  PATH ( cPatEmp() )   FILE "ALMACEN.DBF"         VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
-   DATABASE NEW ::oArticuloPropiedades                      PATH ( cPatArt() )   FILE "ARTDIV.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
+   DATABASE NEW ::oArticuloPropiedades                      PATH ( cPatEmp() )   FILE "ARTDIV.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
 
-   DATABASE NEW ::oTarifaPrecioLinea                        PATH ( cPatArt() )   FILE "TARPREL.DBF"         VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
+   DATABASE NEW ::oTarifaPrecioLinea                        PATH ( cPatEmp() )   FILE "TARPREL.DBF"         VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
 
-   DATABASE NEW ::oTarifaPrecioLineaAgente                  PATH ( cPatArt() )   FILE "TARPRES.DBF"         VIA ( cDriver() ) SHARED INDEX "TARPRES.CDX"
+   DATABASE NEW ::oTarifaPrecioLineaAgente                  PATH ( cPatEmp() )   FILE "TARPRES.DBF"         VIA ( cDriver() ) SHARED INDEX "TARPRES.CDX"
 
    DATABASE NEW ::oDocument                                 PATH ( cPatEmp() )   FILE "RDOCUMEN.DBF"        VIA ( cDriver() ) SHARED INDEX "RDOCUMEN.CDX"
 
-   DATABASE NEW ::oAtipicasCliente                          PATH ( cPatCli() )   FILE "CliAtp.DBF"          VIA ( cDriver() ) SHARED INDEX "CliAtp.CDX"
+   DATABASE NEW ::oAtipicasCliente                          PATH ( cPatEmp() )   FILE "CliAtp.DBF"          VIA ( cDriver() ) SHARED INDEX "CliAtp.CDX"
 
    DATABASE NEW ::oContadores                               PATH ( cPatEmp() )   FILE "NCOUNT.DBF"          VIA ( cDriver() ) SHARED INDEX "NCOUNT.CDX"
 
@@ -1395,11 +1395,11 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oRectificativaProveedorNumeroSerie        PATH ( cPatEmp() )   FILE "RctPrvS.DBF"         VIA ( cDriver() ) SHARED INDEX "RctPrvS.CDX"
 
-   DATABASE NEW ::oComentariosCabecera                      PATH ( cPatArt() )   FILE "COMENTARIOST.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOST.CDX"
+   DATABASE NEW ::oComentariosCabecera                      PATH ( cPatEmp() )   FILE "COMENTARIOST.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOST.CDX"
 
-   DATABASE NEW ::oComentariosLinea                         PATH ( cPatArt() )   FILE "COMENTARIOSL.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOSL.CDX"
+   DATABASE NEW ::oComentariosLinea                         PATH ( cPatEmp() )   FILE "COMENTARIOSL.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOSL.CDX"
 
-   DATABASE NEW ::oTemporadas                               PATH ( cPatArt() )   FILE "Temporadas.DBF"      VIA ( cDriver() ) SHARED INDEX "Temporadas.CDX"
+   DATABASE NEW ::oTemporadas                               PATH ( cPatEmp() )   FILE "Temporadas.DBF"      VIA ( cDriver() ) SHARED INDEX "Temporadas.CDX"
 
    DATABASE NEW ::oParteProducionLinea                      PATH ( cPatEmp() )   FILE "PROLIN.DBF"          VIA ( cDriver() ) SHARED INDEX "PROLIN.CDX"
 
@@ -1462,42 +1462,42 @@ METHOD OpenFiles() CLASS TpvTactil
       ::lOpenFiles            := .f.
    end if
 
-   ::oFideliza                := TFideliza():CreateInit( cPatArt() )
+   ::oFideliza                := TFideliza():CreateInit( cPatEmp() )
    if !::oFideliza:OpenFiles()
       ::lOpenFiles            := .f.
    end if
 
-   ::oTipArt                  := TTipArt():Create( cPatArt() )
+   ::oTipArt                  := TTipArt():Create( cPatEmp() )
    if !::oTipArt:OpenFiles()
       ::lOpenFiles            := .f.
    end if
 
-   ::oFabricante              := TFabricantes():Create( cPatArt() )
+   ::oFabricante              := TFabricantes():Create( cPatEmp() )
    if !::oFabricante:OpenFiles()
       ::lOpenFiles            := .f.
    end if
 
-   ::oTransportista           := TTrans():Create( cPatCli() )
+   ::oTransportista           := TTrans():Create( cPatEmp() )
    if !::oTransportista:OpenFiles()
       ::lOpenFiles            := .f.
    end if
 
-   ::oOrdenComanda            := TOrdenComanda():Create( cPatArt() )
+   ::oOrdenComanda            := TOrdenComanda():Create( cPatEmp() )
    if !::oOrdenComanda:OpenFiles()
       ::lOpenfiles            := .f.
    end if 
 
-   ::oTpvMenu                 := TpvMenu():Create( cPatArt(), Self )
+   ::oTpvMenu                 := TpvMenu():Create( cPatEmp(), Self )
    if !::oTpvMenu:OpenService()
       ::lOpenfiles            := .f.
    end if 
 
-   ::oTpvMenuOrdenes          := TpvMenuOrdenes():Create( cPatArt() )
+   ::oTpvMenuOrdenes          := TpvMenuOrdenes():Create( cPatEmp() )
    if !::oTpvMenuOrdenes:OpenService()
       ::lOpenfiles            := .f.
    end if 
 
-   ::oTpvMenuArticulo         := TpvMenuArticulo():Create( cPatArt() )
+   ::oTpvMenuArticulo         := TpvMenuArticulo():Create( cPatEmp() )
    if !::oTpvMenuArticulo:OpenService()
       ::lOpenfiles            := .f.
    end if 

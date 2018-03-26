@@ -894,11 +894,11 @@ METHOD OpenFiles( lExclusive )
       DATABASE NEW ::oAlbCliP    PATH ( cPatEmp() ) FILE "ALBCLIP.DBF"     VIA ( cDriver() ) SHARED INDEX "ALBCLIP.CDX"
       ::oAlbCliP:OrdSetFocus( "cTurRec" )
 
-      DATABASE NEW ::oArticulo   PATH ( cPatArt() ) FILE "ARTICULO.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oArticulo   PATH ( cPatEmp() ) FILE "ARTICULO.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-      DATABASE NEW ::oClient     PATH ( cPatCli() ) FILE "CLIENT.DBF"      VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oClient     PATH ( cPatEmp() ) FILE "CLIENT.DBF"      VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-      DATABASE NEW ::oProvee     PATH ( cPatPrv() ) FILE "Provee.Dbf"      VIA ( cDriver() ) SHARED INDEX "Provee.Cdx"
+      DATABASE NEW ::oProvee     PATH ( cPatEmp() ) FILE "Provee.Dbf"      VIA ( cDriver() ) SHARED INDEX "Provee.Cdx"
 
       DATABASE NEW ::oFPago      PATH ( cPatEmp() ) FILE "FPAGO.DBF"       VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
@@ -924,9 +924,9 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oAntCliT    PATH ( cPatEmp() ) FILE "AntCliT.Dbf"     VIA ( cDriver() ) SHARED INDEX "AntCliT.Cdx"
 
-      DATABASE NEW ::oFamilia    PATH ( cPatArt() ) FILE "Familias.Dbf"    VIA ( cDriver() ) SHARED INDEX "Familias.Cdx"
+      DATABASE NEW ::oFamilia    PATH ( cPatEmp() ) FILE "Familias.Dbf"    VIA ( cDriver() ) SHARED INDEX "Familias.Cdx"
 
-      DATABASE NEW ::oTemporada  PATH ( cPatArt() ) FILE "Temporadas.Dbf"  VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
+      DATABASE NEW ::oTemporada  PATH ( cPatEmp() ) FILE "Temporadas.Dbf"  VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
 
       DATABASE NEW ::oContador   PATH ( cPatEmp() ) FILE "nCount.Dbf"      VIA ( cDriver() ) SHARED INDEX "nCount.Cdx"
 
@@ -953,12 +953,12 @@ METHOD OpenFiles( lExclusive )
          lOpen                   := .f.
       end if
 
-      ::oTipArt                  := TTipArt():Create( cPatArt() )
+      ::oTipArt                  := TTipArt():Create( cPatEmp() )
       if !::oTipArt:OpenFiles()
          lOpen                   := .f.
       end if
 
-      ::oFabricante              := TFabricantes():Create( cPatArt() )
+      ::oFabricante              := TFabricantes():Create( cPatEmp() )
       if !::oFabricante:OpenFiles()
          lOpen                   := .f.
       end if

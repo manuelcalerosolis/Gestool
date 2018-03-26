@@ -1701,8 +1701,8 @@ FUNCTION cSalaVta( oGet, dbfSalaVta, oGet2 )
    BEGIN SEQUENCE
 
    if dbfSalaVta == nil
-      USE ( cPatAlm() + "SALAVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SALAVTA", @dbfSalaVta ) )
-      SET ADSINDEX TO ( cPatAlm() + "SALAVTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "SALAVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SALAVTA", @dbfSalaVta ) )
+      SET ADSINDEX TO ( cPatEmp() + "SALAVTA.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 

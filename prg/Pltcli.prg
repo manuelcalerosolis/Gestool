@@ -37,8 +37,8 @@ FUNCTION PltCli( oWnd )
    USE ( cPatEmp() + "PLTCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PLTCLIL", @dbfPltCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "PLTCLIL.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-   SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
+   SET ADSINDEX TO ( cPatEmp() + "FAMILIAS.CDX" ) ADDITIVE
 
    DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70;
 		TITLE 	"Plantillas de Presupuestos" ;

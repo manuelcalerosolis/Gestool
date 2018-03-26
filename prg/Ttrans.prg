@@ -41,7 +41,7 @@ END CLASS
 
 METHOD Create( cPath )
 
-   DEFAULT cPath     := cPatCli()
+   DEFAULT cPath     := cPatEmp()
 
    ::cPath           := cPath
    ::oDbf            := nil
@@ -52,7 +52,7 @@ RETURN ( Self )
 
 METHOD New( cPath, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatCli()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT oWndParent   := oWnd()
 
    if oMenuItem != nil
@@ -354,7 +354,7 @@ FUNCTION EdtTrans( cCodTrans )
       return .t.
    end if
 
-   oTrans            := TTrans():Create( cPatCli() )
+   oTrans            := TTrans():Create( cPatEmp() )
 
    if oTrans:OpenFiles()
 
@@ -390,8 +390,8 @@ Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaTransSenderRe
    local cFileName
    local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
 
-   USE ( cPatCli() + "Transpor.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Transpor", @pdaTranspor ) )
-   SET ADSINDEX TO ( cPatCli() + "Transpor.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "Transpor.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Transpor", @pdaTranspor ) )
+   SET ADSINDEX TO ( cPatEmp() + "Transpor.Cdx" ) ADDITIVE
 
    dbUseArea( .t., cDriver(), cPatPc + "Transpor.Dbf", cCheckArea( "Transpor", @pcTranspor ), .t. )
    ( pcTranspor )->( ordListAdd( cPatPc + "Transpor.Cdx" ) )
@@ -441,19 +441,19 @@ Function IsTranspor()
    local oError
    local oBlock
 
-   if !lExistTable( cPatCli() + "Transpor.Dbf" )
-      mkTranspor( cPatCli() )
+   if !lExistTable( cPatEmp() + "Transpor.Dbf" )
+      mkTranspor( cPatEmp() )
    end if
 
-   if !lExistIndex( cPatCli() + "Transpor.Cdx" )
-      rxTranspor( cPatCli() )
+   if !lExistIndex( cPatEmp() + "Transpor.Cdx" )
+      rxTranspor( cPatEmp() )
    end if
 
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      USE ( cPatCli() + "Transpor.Dbf" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Transpor", @dbfTranspor ) )
-      SET ADSINDEX TO ( cPatCli() + "Transpor.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Transpor.Dbf" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Transpor", @dbfTranspor ) )
+      SET ADSINDEX TO ( cPatEmp() + "Transpor.Cdx" ) ADDITIVE
 
    RECOVER USING oError
 
@@ -474,7 +474,7 @@ FUNCTION mkTranspor( cPath, lAppend, cPathOld, oMeter )
    local dbfTranspor
 
    DEFAULT lAppend   := .f.
-   DEFAULT cPath     := cPatCli()
+   DEFAULT cPath     := cPatEmp()
 
 	IF oMeter != NIL
 		oMeter:cText	:= "Generando Bases"
@@ -501,7 +501,7 @@ FUNCTION rxTranspor( cPath, oMeter )
 
    local dbfTranspor
 
-   DEFAULT cPath := cPatCli()
+   DEFAULT cPath := cPatEmp()
 
    if !lExistTable( cPath + "Transpor.DBF" )
       dbCreate( cPath + "Transpor.DBF", aSqlStrucT( aItmCfg() ), cDriver() )

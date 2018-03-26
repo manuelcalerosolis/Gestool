@@ -39,7 +39,7 @@ METHOD OpenFiles() CLASS TRenNFac
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt  PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    ::oFacCliT := TDataCenter():oFacCliT()
 

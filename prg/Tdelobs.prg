@@ -147,20 +147,20 @@ METHOD OpenFiles()
    DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF"       VIA ( cDriver() )  SHARED INDEX "TIKEL.CDX"
    ::oTikCliL:OrdSetFocus( "cCbaTil" )
 
-   DATABASE NEW ::oDbfFam  PATH ( cPatArt() ) FILE "FAMILIAS.DBF"    VIA ( cDriver() )  SHARED INDEX "FAMILIAS.CDX"
+   DATABASE NEW ::oDbfFam  PATH ( cPatEmp() ) FILE "FAMILIAS.DBF"    VIA ( cDriver() )  SHARED INDEX "FAMILIAS.CDX"
 
-   DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF"    VIA ( cDriver() )  SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt  PATH ( cPatEmp() ) FILE "ARTICULO.DBF"    VIA ( cDriver() )  SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oPrvArt  PATH ( cPatArt() ) FILE "PROVART.DBF"     VIA ( cDriver() )  SHARED INDEX "PROVART.CDX"
+   DATABASE NEW ::oPrvArt  PATH ( cPatEmp() ) FILE "PROVART.DBF"     VIA ( cDriver() )  SHARED INDEX "PROVART.CDX"
    ::oPrvArt:OrdSetFocus( "cCodArt" )
 
-   DATABASE NEW ::oArtDiv  PATH ( cPatArt() ) FILE "ARTDIV.DBF"      VIA ( cDriver() )  SHARED INDEX "ARTDIV.CDX"
+   DATABASE NEW ::oArtDiv  PATH ( cPatEmp() ) FILE "ARTDIV.DBF"      VIA ( cDriver() )  SHARED INDEX "ARTDIV.CDX"
    ::oArtDiv:OrdSetFocus( "cCodArt" )
 
-   DATABASE NEW ::oArtKit  PATH ( cPatArt() ) FILE "ARTKIT.DBF"      VIA ( cDriver() )  SHARED INDEX "ARTKIT.CDX"
+   DATABASE NEW ::oArtKit  PATH ( cPatEmp() ) FILE "ARTKIT.DBF"      VIA ( cDriver() )  SHARED INDEX "ARTKIT.CDX"
    ::oArtKit:OrdSetFocus( "cCodKit" )
 
-   DATABASE NEW ::oCodeBar PATH ( cPatArt() ) FILE "ARTCODEBAR.DBF"  VIA ( cDriver() )  SHARED INDEX "ARTCODEBAR.CDX"
+   DATABASE NEW ::oCodeBar PATH ( cPatEmp() ) FILE "ARTCODEBAR.DBF"  VIA ( cDriver() )  SHARED INDEX "ARTCODEBAR.CDX"
    ::oCodeBar:OrdSetFocus( "cCodArt" )
 
    DATABASE NEW ::oProLin PATH ( cPatEmp() ) FILE "PROLIN.DBF"  VIA ( cDriver() )  SHARED INDEX "PROLIN.CDX"

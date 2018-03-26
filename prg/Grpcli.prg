@@ -60,7 +60,7 @@ END CLASS
 
 METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatCli()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT oMenuItem    := "01030"
@@ -95,7 +95,7 @@ RETURN ( Self )
 
 METHOD Create( cPath, cDriver )
 
-   DEFAULT cPath        := cPatCli()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
@@ -141,7 +141,7 @@ METHOD OpenFiles( lExclusive, cPath )
 
       D():Get( "Artdiv", ::nView )
 
-      ::oEnvases           := TFrasesPublicitarias():Create( cPatArt() )
+      ::oEnvases           := TFrasesPublicitarias():Create( cPatEmp() )
       if !::oEnvases:OpenFiles()
          lOpen             := .f.
       end if

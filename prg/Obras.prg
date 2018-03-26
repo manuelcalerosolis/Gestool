@@ -233,8 +233,8 @@ STATIC FUNCTION OpenFiles()
 
    BEGIN SEQUENCE
 
-   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+   SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
 
    RECOVER
 
@@ -592,14 +592,14 @@ FUNCTION BrwObrasOLD( oGet, oGet2, cCodigoCliente, dbfObrasT )
       return .t.
    end if
 
-   if !lExistTable( cPatCli() + "ObrasT.Dbf" )
+   if !lExistTable( cPatEmp() + "ObrasT.Dbf" )
       MsgStop( 'No existe el fichero de obras' )
       Return .f.
    end if
 
    if Empty( dbfObrasT )
-      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
       lClose         := .t.
    END IF
 
@@ -784,7 +784,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
       return .t.
    end if
 
-   if !lExistTable( cPatCli() + "ObrasT.Dbf" )
+   if !lExistTable( cPatEmp() + "ObrasT.Dbf" )
       MsgStop( 'No existe el fichero de obras' )
       Return .f.
    end if
@@ -795,8 +795,8 @@ FUNCTION BrwObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
    ( dbfSql )->( dbGoTop() )  
 
    if Empty( dbfObrasT )
-      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
       lClose         := .t.
    end if
 

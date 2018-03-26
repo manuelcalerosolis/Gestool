@@ -52,11 +52,11 @@ FUNCTION InfValor( oMenuItem, oWnd )
 	Bases de datos para el informe
 	*/
 
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+   SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFami ) )
-   SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFami ) )
+   SET ADSINDEX TO ( cPatEmp() + "FAMILIAS.CDX" ) ADDITIVE
 
 	/*
 	Obtenemos los valores del primer y ultimo codigo
@@ -395,18 +395,18 @@ FUNCTION InfStocks( oMenuItem, oWnd )
 	Bases de datos para el informe
 	*/
 
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+   SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE
    ( dbfArticulo )->( ordSetFocus( "CFAMCOD" ) )
 
-   USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFami ) )
-   SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFami ) )
+   SET ADSINDEX TO ( cPatEmp() + "FAMILIAS.CDX" ) ADDITIVE
 
-   USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmacen ) )
-   SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmacen ) )
+   SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
 
-   USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-   SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+   SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "MOVALM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MOVALM", @dbfMov ) )
    SET ADSINDEX TO ( cPatEmp() + "MOVALM.CDX" ) ADDITIVE

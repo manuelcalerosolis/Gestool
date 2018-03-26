@@ -75,7 +75,7 @@ METHOD OpenFiles() CLASS TResFamPed
    DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PedCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PedCLIL.CDX"
    ::oPedCliL:SetOrder( "CREF" )
 
-   DATABASE NEW ::oDbfArt   PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt   PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
 RETURN ( Self )
 

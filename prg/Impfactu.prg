@@ -155,14 +155,14 @@ METHOD OpenFiles()
       ::aChkIndices[ 1 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de articulos", ::cPathFac + "ARTICULO.DBF" )
    else
-      DATABASE NEW ::oDbfArtGst     PATH ( cPatArt() )  FILE "ARTICULO.DBF"   VIA ( cDriver() ) CLASS "ARTGST" SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArtGst     PATH ( cPatEmp() )  FILE "ARTICULO.DBF"   VIA ( cDriver() ) CLASS "ARTGST" SHARED INDEX "ARTICULO.CDX"
       DATABASE NEW ::oDbfArtFac     PATH ( ::cPathFac ) FILE "ARTICULO.DBF"   VIA ( cLocalDriver() ) CLASS "ARTFAC"
       DATABASE NEW ::oDbfArcFac     PATH ( ::cPathFac ) FILE "ARTCOM.DBF"     VIA ( cLocalDriver() ) CLASS "ARTCOM"
-      DATABASE NEW ::oDbfPrePrvGst  PATH ( cPatArt() )  FILE "ProvArt.DBF"    VIA ( cDriver() ) CLASS "PROPRVGST" SHARED INDEX "ProvArt.CDX"
+      DATABASE NEW ::oDbfPrePrvGst  PATH ( cPatEmp() )  FILE "ProvArt.DBF"    VIA ( cDriver() ) CLASS "PROPRVGST" SHARED INDEX "ProvArt.CDX"
       DATABASE NEW ::oDbfPrePrvFac  PATH ( ::cPathFac ) FILE "PrecProv.DBF"   VIA ( cLocalDriver() ) CLASS "PROPRVFAC"
       DATABASE NEW ::oDbfProGst     PATH ( cPatEmp() )  FILE "PRO.DBF"        VIA ( cDriver() ) CLASS "PROGST" SHARED INDEX "PRO.CDX"
       DATABASE NEW ::oDbfProFac     PATH ( ::cPathFac ) FILE "Prop.DBF"       VIA ( cLocalDriver() ) CLASS "PROPFAC"
-      DATABASE NEW ::oDbfCodBarGst  PATH ( cPatArt() )  FILE "ARTCODEBAR.DBF" VIA ( cDriver() ) CLASS "CODBARGST" SHARED INDEX "ARTCODEBAR.CDX"
+      DATABASE NEW ::oDbfCodBarGst  PATH ( cPatEmp() )  FILE "ARTCODEBAR.DBF" VIA ( cDriver() ) CLASS "CODBARGST" SHARED INDEX "ARTCODEBAR.CDX"
 
    end if
 
@@ -170,7 +170,7 @@ METHOD OpenFiles()
       ::aChkIndices[ 2 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de familias", ::cPathFac + "FAMILIAS.DBF" )
    else
-      DATABASE NEW ::oDbfFamGst PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() ) CLASS "FAMGST" SHARED INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oDbfFamGst PATH ( cPatEmp() )  FILE "FAMILIAS.DBF" VIA ( cDriver() ) CLASS "FAMGST" SHARED INDEX "FAMILIAS.CDX"
       DATABASE NEW ::oDbfFamFac PATH ( ::cPathFac ) FILE "FAMILIAS.DBF" VIA ( cLocalDriver() ) CLASS "FAMFAC"
    end if
 
@@ -194,7 +194,7 @@ METHOD OpenFiles()
       ::aChkIndices[ 18 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de grupos de clientes", ::cPathFac + "GRUPCLI.DBF" )
    else
-      DATABASE NEW ::oDbfGrpCliGst PATH ( cPatCli() )  FILE "GRPCLI.DBF"   VIA ( cDriver() ) CLASS "GRPCLIGST"  SHARED INDEX "GRPCLI.CDX"
+      DATABASE NEW ::oDbfGrpCliGst PATH ( cPatEmp() )  FILE "GRPCLI.DBF"   VIA ( cDriver() ) CLASS "GRPCLIGST"  SHARED INDEX "GRPCLI.CDX"
       DATABASE NEW ::oDbfGrpCliFac PATH ( ::cPathFac ) FILE "GRUPCLI.DBF"  VIA ( cLocalDriver() ) CLASS "GRPCLIFAC"
    end if
 
@@ -202,11 +202,11 @@ METHOD OpenFiles()
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de clientes ni direcciones", ::cPathFac + "CLIENTES.DBF" + ::cPathFac + "DIRCLI.DBF" )
    else
-      DATABASE NEW ::oDbfCliGst  PATH ( cPatCli() )  FILE "CLIENT.DBF"     VIA ( cDriver() )       CLASS "Cligst"  SHARED INDEX "CLIENT.CDX"
-      DATABASE NEW ::oDbfObrGst  PATH ( cPatCli() )  FILE "OBRAST.DBF"     VIA ( cDriver() )       CLASS "Obrgst"  SHARED INDEX "OBRAST.CDX"
-      DATABASE NEW ::oDbfAtpGst  PATH ( cPatCli() )  FILE "CLIATP.DBF"     VIA ( cDriver() )       CLASS "Atpgst"  SHARED INDEX "CLIATP.CDX"
-      DATABASE NEW ::oDbfBncGst  PATH ( cPatCli() )  FILE "CliBnc.DBF"     VIA ( cDriver() )       CLASS "Clibnc"  SHARED INDEX "CliBnc.CDX"
-      DATABASE NEW ::oDbfRutGst  PATH ( cPatCli() )  FILE "Ruta.DBF"       VIA ( cDriver() )       CLASS "Ruta"    SHARED INDEX "Ruta.CDX"
+      DATABASE NEW ::oDbfCliGst  PATH ( cPatEmp() )  FILE "CLIENT.DBF"     VIA ( cDriver() )       CLASS "Cligst"  SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oDbfObrGst  PATH ( cPatEmp() )  FILE "OBRAST.DBF"     VIA ( cDriver() )       CLASS "Obrgst"  SHARED INDEX "OBRAST.CDX"
+      DATABASE NEW ::oDbfAtpGst  PATH ( cPatEmp() )  FILE "CLIATP.DBF"     VIA ( cDriver() )       CLASS "Atpgst"  SHARED INDEX "CLIATP.CDX"
+      DATABASE NEW ::oDbfBncGst  PATH ( cPatEmp() )  FILE "CliBnc.DBF"     VIA ( cDriver() )       CLASS "Clibnc"  SHARED INDEX "CliBnc.CDX"
+      DATABASE NEW ::oDbfRutGst  PATH ( cPatEmp() )  FILE "Ruta.DBF"       VIA ( cDriver() )       CLASS "Ruta"    SHARED INDEX "Ruta.CDX"
 
       DATABASE NEW ::oDbfCliFac  PATH ( ::cPathFac ) FILE "CLIENTES.DBF"   VIA ( cLocalDriver() )  CLASS "Clifac"
       DATABASE NEW ::oDbfObrFac  PATH ( ::cPathFac ) FILE "DIRCLI.DBF"     VIA ( cLocalDriver() )  CLASS "Obrfac"
@@ -238,7 +238,7 @@ METHOD OpenFiles()
       ::aChkIndices[ 7 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de proveedores", ::cPathFac + "Proveedo.DBF" )
    else
-      DATABASE NEW ::oDbfPrvGst     PATH ( cPatPrv() )  FILE "PROVEE.DBF"   VIA ( cDriver() ) CLASS "PRVGST" SHARED INDEX "Provee.CDX"
+      DATABASE NEW ::oDbfPrvGst     PATH ( cPatEmp() )  FILE "PROVEE.DBF"   VIA ( cDriver() ) CLASS "PRVGST" SHARED INDEX "Provee.CDX"
       DATABASE NEW ::oDbfPrvFac     PATH ( ::cPathFac ) FILE "PROVEEDO.DBF" VIA ( cLocalDriver() ) CLASS "PRVFAC"
    end if
 
@@ -246,7 +246,7 @@ METHOD OpenFiles()
       ::aChkIndices[ 11 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de agentes", ::cPathFac + "AGENTES.DBF" )
    else
-      DATABASE NEW ::oDbfAgeGst PATH ( cPatCli() )    FILE "AGENTES.DBF"   VIA ( cDriver() ) CLASS "AGEGST" SHARED INDEX "AGENTES.CDX"
+      DATABASE NEW ::oDbfAgeGst PATH ( cPatEmp() )    FILE "AGENTES.DBF"   VIA ( cDriver() ) CLASS "AGEGST" SHARED INDEX "AGENTES.CDX"
       DATABASE NEW ::oDbfAgeFac PATH ( ::cPathFac )   FILE "AGENTES.DBF"   VIA ( cLocalDriver() ) CLASS "AGEFAC"
    end if
 
@@ -254,7 +254,7 @@ METHOD OpenFiles()
       ::aChkIndices[ 12 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de almacenes", ::cPathFac + "ALMACEN.DBF" )
    else
-      DATABASE NEW ::oDbfAlmGst PATH ( cPatAlm() )    FILE "ALMACEN.DBF"   VIA ( cDriver() ) CLASS "ALMGST" SHARED INDEX "ALMACEN.CDX"
+      DATABASE NEW ::oDbfAlmGst PATH ( cPatEmp() )    FILE "ALMACEN.DBF"   VIA ( cDriver() ) CLASS "ALMGST" SHARED INDEX "ALMACEN.CDX"
       DATABASE NEW ::oDbfAlmFac PATH ( ::cPathFac )   FILE "ALMACEN.DBF"   VIA ( cLocalDriver() ) CLASS "ALMFAC"
    end if
 

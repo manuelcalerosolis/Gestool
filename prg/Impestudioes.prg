@@ -95,15 +95,15 @@ METHOD lOpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfArt     FILE "ARTICULO.DBF"     PATH ( cPatArt() )    VIA ( cDriver() ) SHARED INDEX  "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt     FILE "ARTICULO.DBF"     PATH ( cPatEmp() )    VIA ( cDriver() ) SHARED INDEX  "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfCodeBar FILE "ARTCODEBAR.DBF"   PATH ( cPatArt() )    VIA ( cDriver() ) SHARED INDEX  "ARTCODEBAR.CDX"
+   DATABASE NEW ::oDbfCodeBar FILE "ARTCODEBAR.DBF"   PATH ( cPatEmp() )    VIA ( cDriver() ) SHARED INDEX  "ARTCODEBAR.CDX"
 
    DATABASE NEW ::oDbfIva     FILE "TIVA.DBF"         PATH ( cPatDat() )    VIA ( cDriver() ) SHARED INDEX  "TIVA.CDX"
 
-   DATABASE NEW ::oDbfFam     FILE "FAMILIAS.DBF"     PATH ( cPatArt() )    VIA ( cDriver() ) SHARED INDEX  "FAMILIAS.CDX"
+   DATABASE NEW ::oDbfFam     FILE "FAMILIAS.DBF"     PATH ( cPatEmp() )    VIA ( cDriver() ) SHARED INDEX  "FAMILIAS.CDX"
 
-   DATABASE NEW ::oGrpFam     FILE "GRPFAM.DBF"       PATH ( cPatArt() )    VIA ( cDriver() ) SHARED INDEX  "GRPFAM.CDX"
+   DATABASE NEW ::oGrpFam     FILE "GRPFAM.DBF"       PATH ( cPatEmp() )    VIA ( cDriver() ) SHARED INDEX  "GRPFAM.CDX"
 
    RECOVER
 

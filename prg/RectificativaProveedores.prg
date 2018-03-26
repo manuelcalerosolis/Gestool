@@ -9609,8 +9609,8 @@ Function SynRctPrv( cPath )
    SET ADSINDEX TO ( cPatEmp() + "FACPRVP.CDX" ) ADDITIVE
       ( dbfRctPrvP )->( OrdSetFocus( "rNumFac" ) )
 
-   USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
-   SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
+   SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
@@ -9624,11 +9624,11 @@ Function SynRctPrv( cPath )
    USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
    SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
-   USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) 
-   SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) 
+   SET ADSINDEX TO ( cPatEmp() + "FAMILIAS.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+   SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE
 
    // Cabeceras ------------------------------------------------------------
 

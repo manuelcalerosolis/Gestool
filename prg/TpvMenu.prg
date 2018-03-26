@@ -183,7 +183,7 @@ METHOD OpenFiles( lExclusive, cPath )
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
-      DATABASE NEW ::oDbfArticulo PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArticulo PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
       ::oOrdenComandas:OpenFiles()
 

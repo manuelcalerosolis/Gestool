@@ -118,21 +118,21 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfDiv     FILE "DIVISAS.DBF"   PATH ( cPatDat() )  VIA ( cDriver() ) SHARED INDEX  "DIVISAS.CDX"
 
-   DATABASE NEW ::oDbfClient  FILE "CLIENT.DBF"    PATH ( cPatCli() )  VIA ( cDriver() ) SHARED INDEX  "CLIENT.CDX"
+   DATABASE NEW ::oDbfClient  FILE "CLIENT.DBF"    PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfArt     FILE "ARTICULO.DBF"  PATH ( cPatArt() )  VIA ( cDriver() ) SHARED INDEX  "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt     FILE "ARTICULO.DBF"  PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "ARTICULO.CDX"
 
    DATABASE NEW ::oDbfIva     FILE "TIVA.DBF"      PATH ( cPatDat() )  VIA ( cDriver() ) SHARED INDEX  "TIVA.CDX"
 
-   DATABASE NEW ::oDbfPrv     FILE "PROVEE.DBF"    PATH ( cPatPrv() )  VIA ( cDriver() ) SHARED INDEX  "PROVEE.CDX"
+   DATABASE NEW ::oDbfPrv     FILE "PROVEE.DBF"    PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "PROVEE.CDX"
 
-   DATABASE NEW ::oDbfPrvArt  FILE "PROVART.DBF"   PATH ( cPatArt() )  VIA ( cDriver() ) SHARED INDEX  "PROVART.CDX"
+   DATABASE NEW ::oDbfPrvArt  FILE "PROVART.DBF"   PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "PROVART.CDX"
 
    DATABASE NEW ::oTikCliT    FILE "TIKET.DBF"     PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "TIKET.CDX"
 
    DATABASE NEW ::oTikCliL    FILE "TIKEL.DBF"     PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "TIKEL.CDX"
 
-   DATABASE NEW ::oDbfFam     FILE "FAMILIAS.DBF"  PATH ( cPatArt() )  VIA ( cDriver() ) SHARED INDEX  "FAMILIAS.CDX"
+   DATABASE NEW ::oDbfFam     FILE "FAMILIAS.DBF"  PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "FAMILIAS.CDX"
 
    RECOVER
 

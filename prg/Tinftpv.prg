@@ -335,8 +335,8 @@ FUNCTION RepArtTik( oWnd )
 	local dDesde		:= ctod( "01/01/" + Str( Year( Date() ) ) )
 	local dHasta		:= date()
 
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+   SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE
 
 	cArtDes	:=	dbFirst( dbfArticulo, 1 )
 	cArtHas  := dbLast ( dbfArticulo, 1 )
@@ -990,8 +990,8 @@ FUNCTION InfDiaTik()
    USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikL ) )
    SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+   SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDivisa ) )
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE

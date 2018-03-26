@@ -165,8 +165,8 @@ STATIC FUNCTION OpenFiles()
 
    BEGIN SEQUENCE
 
-      USE ( cPatCli() + "CliCto.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliConta", @dbfContactos ) )
-      SET ADSINDEX TO ( cPatCli() + "CliCto.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "CliCto.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliConta", @dbfContactos ) )
+      SET ADSINDEX TO ( cPatEmp() + "CliCto.Cdx" ) ADDITIVE
 
    RECOVER
 
@@ -307,14 +307,14 @@ FUNCTION BrwContactos( oGet, oGet2, cCodCli, dbfContactos )
       return .t.
    end if
 
-   if !lExistTable( cPatCli() + "CliCto.dbf" )
+   if !lExistTable( cPatEmp() + "CliCto.dbf" )
       MsgStop( 'No existe el fichero de obras' )
       Return .f.
    end if
 
    if Empty( dbfContactos )
-      USE ( cPatCli() + "CliCto.dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliConta", @dbfContactos ) )
-      SET ADSINDEX TO ( cPatCli() + "CliCto.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "CliCto.dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliConta", @dbfContactos ) )
+      SET ADSINDEX TO ( cPatEmp() + "CliCto.Cdx" ) ADDITIVE
       lClose      := .t.
    END IF
 
