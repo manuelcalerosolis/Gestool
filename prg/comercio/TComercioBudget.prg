@@ -114,7 +114,7 @@ METHOD insertHeaderDocumentGestool( oQuery ) CLASS TComercioDocument
    ( ::oDocumentHeaderDatabase() )->cCodUsr      := Auth():Codigo()
    ( ::oDocumentHeaderDatabase() )->dFecCre      := GetSysDate()
    ( ::oDocumentHeaderDatabase() )->cTimCre      := Time()
-   ( ::oDocumentHeaderDatabase() )->cCodDlg      := oUser():cDelegacion()
+   ( ::oDocumentHeaderDatabase() )->cCodDlg      := Application():CodigoDelegacion()
    ( ::oDocumentHeaderDatabase() )->lWeb         := .t.
    ( ::oDocumentHeaderDatabase() )->lInternet    := .t.
    ( ::oDocumentHeaderDatabase() )->nTotNet      := oQuery:FieldGetByName( "total_products" )

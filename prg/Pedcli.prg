@@ -875,7 +875,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       if lAIS() .and. !oUser():lAdministrador()
       
-         cFiltroUsuario    := "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario    := "Field->cSufPed == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
@@ -1807,7 +1807,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          aTmp[ _CSUFPED ]     := RetSufEmp()
          aTmp[ _NESTADO ]     := 1
          aTmp[ _CCODUSR ]     := Auth():Codigo()
-         aTmp[ _CCODDLG ]     := oUser():cDelegacion()
+         aTmp[ _CCODDLG ]     := Application():CodigoDelegacion()
          aTmp[ _LIVAINC ]     := uFieldEmpresa( "lIvaInc" )
          aTmp[ _CMANOBR ]     := padr( getConfigTraslation( "Gastos" ), 250 )
          aTmp[ _NIVAMAN ]     := nIva( D():TiposIva( nView ), cDefIva() )
@@ -6953,7 +6953,7 @@ STATIC FUNCTION PedRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       aTabla[ _LIMPRIMIDO  ]  := .f.
       aTabla[ _DFECIMP     ]  := Ctod("")
       aTabla[ _CHORIMP     ]  := Space( 5 )
-      aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
+      aTabla[ _CCODDLG     ]  := Application():CodigoDelegacion()
       aTabla[ _NESTADO     ]  := 1
 
       nOrdAnt                 := ( cDbf )->( OrdSetFocus( "NNUMPED" ) )
@@ -14647,7 +14647,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "lImpRimido","L",  1,  0, "Lógico de imprimido",                                     "Imprimido",               "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "dFecImp", "D",    8,  0, "Última fecha de impresión",                               "FechaImpresion",          "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cHorImp", "C",    5,  0, "Hora de la última impresión",                             "HoraImpresion",           "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "cCodDlg", "C",    2,  0, "Código delegación" ,                                      "Delegacion",              "", "( cDbf )", {|| oUser():cDelegacion() } } )
+   aAdd( aItmPedCli, { "cCodDlg", "C",    2,  0, "Código delegación" ,                                      "Delegacion",              "", "( cDbf )", {|| Application():CodigoDelegacion() } } )
    aAdd( aItmPedCli, { "nDtoAtp", "N",    6,  2, "Porcentaje de descuento atípico",                         "DescuentoAtipico",        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nSbrAtp", "N",    1,  0, "Lugar donde aplicar dto atípico",                         "LugarAplicarDescuentoAtipico","", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cSituac", "C",   20,  0, "Situación del documento",                                 "Situacion",               "", "( cDbf )", nil } )

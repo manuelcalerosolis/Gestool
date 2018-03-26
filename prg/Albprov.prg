@@ -1192,7 +1192,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       aTmp[ _CSUFALB ]     := RetSufEmp()
       aTmp[ _LSNDDOC ]     := .t.
       aTmp[ _CCODUSR ]     := Auth():Codigo()
-      aTmp[ _CCODDLG ]     := oUser():cDelegacion()
+      aTmp[ _CCODDLG ]     := Application():CodigoDelegacion()
       aTmp[ _DFECIMP ]     := Ctod( "" )
       aTmp[ _DSUALB  ]     := Ctod( "" )
       aTmp[ _NFACTURADO ]  := 1
@@ -7047,7 +7047,7 @@ Static FUNCTION IcgCabAlbPrv( cSerDoc, nNumDoc, cSufDoc, dFecDoc )
       ( D():AlbaranesProveedores( nView ) )->nVdvAlb    := nChgDiv( cDivEmp(), D():Divisas( nView ) )
       ( D():AlbaranesProveedores( nView ) )->cSuAlb     := cSerDoc + nNumDoc + cSufDoc
       ( D():AlbaranesProveedores( nView ) )->cCodUsr    := Auth():Codigo()
-      ( D():AlbaranesProveedores( nView ) )->cCodDlg    := oUser():cDelegacion()
+      ( D():AlbaranesProveedores( nView ) )->cCodDlg    := Application():CodigoDelegacion()
       ( D():AlbaranesProveedores( nView ) )->cCodCaj    := oUser():cCaja()
       ( D():AlbaranesProveedores( nView ) )->cTurAlb    := cCurSesion()
 

@@ -1786,7 +1786,7 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
             aCampos[ ::oAlbPrvT:FieldPos( "lSndDoc" ) ]     := .t.
             aCampos[ ::oAlbPrvT:FieldPos( "cCodPro" ) ]     := cProCnt()
             aCampos[ ::oAlbPrvT:FieldPos( "cCodUsr" ) ]     := Auth():Codigo()
-            aCampos[ ::oAlbPrvT:FieldPos( "cCodDlg" ) ]     := oUser():cDelegacion()
+            aCampos[ ::oAlbPrvT:FieldPos( "cCodDlg" ) ]     := Application():CodigoDelegacion()
             aCampos[ ::oAlbPrvT:FieldPos( "dFecAlb" ) ]     := GetSysDate()
 
             if !Empty( aCampos[ ::oAlbPrvT:FieldPos( "cCodPrv" ) ] )    .and.;
@@ -2007,7 +2007,7 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ) ] )
-            aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ) ]     := oUser():cDelegacion()
+            aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ) ]     := Application():CodigoDelegacion()
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "dFecFac" ) ] )
@@ -2474,7 +2474,7 @@ METHOD CreateRegister() CLASS TPlantillaXML
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ), 9 ] )
-                  aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ), 9 ]     := oUser():cDelegacion()
+                  aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ), 9 ]     := Application():CodigoDelegacion()
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "dFecFac" ), 9 ] )

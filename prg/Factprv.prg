@@ -1279,7 +1279,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       aTmp[ _LSNDDOC ]     := .t.
       aTmp[ _CCODPRO ]     := cProCnt()
       aTmp[ _CCODUSR ]     := Auth():Codigo()
-      aTmp[ _CCODDLG ]     := oUser():cDelegacion()
+      aTmp[ _CCODDLG ]     := Application():CodigoDelegacion()
       aTmp[ _DFECENT ]     := Ctod( "" )
       aTmp[ _DFECIMP ]     := Ctod( "" )
       aTmp[ _TFECFAC ]     := getSysTime()
@@ -11354,7 +11354,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
 
                      cSerie      := ( tmpFacPrvT )->cSerie
                      nNumero     := nNewDoc( ( tmpFacPrvT )->cSerie, cFacPrvT, "NFACPRV", , dbfCount )
-                     cSufijo     := oUser():cDelegacion()
+                     cSufijo     := Application():CodigoDelegacion()
 
                      ( cFacPrvT)->( dbAppend() )
 
@@ -11397,7 +11397,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                      ( cFacPrvT)->nPctRet     := ( tmpFacPrvT )->nPctRet
                      ( cFacPrvT)->dFecChg     := GetSysDate()
                      ( cFacPrvT)->cTimChg     := Time()
-                     ( cFacPrvT)->cCodDlg     := oUser():cDelegacion()
+                     ( cFacPrvT)->cCodDlg     := Application():CodigoDelegacion()
                      ( cFacPrvT)->nRegIva     := ( tmpFacPrvT )->nRegIva
                      ( cFacPrvT)->nTotNet     := ( tmpFacPrvT )->nTotNet
                      ( cFacPrvT)->nTotIva     := ( tmpFacPrvT )->nTotIva

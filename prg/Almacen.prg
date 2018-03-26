@@ -794,6 +794,7 @@ FUNCTION aItmAlm()
    aAdd( aItmAlm, { "cPerAlm",  "C",     50,     0, "Persona de contacto de almacen" ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cCodCli",  "C",     12,     0, "Codigo del cliente"             ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cComAlm",  "C",     16,     0, "Código de almacen padre"        ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "Uuid",     "C",     40,     0, "Uuid"        ,  "",   "", "( cDbfAlm )" } )
 
 RETURN ( aItmAlm )
 
@@ -1111,6 +1112,8 @@ FUNCTION rxAlmacen( cPath, oMeter )
 
       ( dbfAlmT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfAlmT )->( ordCreate( cPath + "ALMACEN.CDX", "CCOMALM", "CCOMALM", {|| Field->cComAlm } ) )
+
+      ( dbfAlmT )->( dbeval( {|| Field->uuid := win_uuidcreatestring() }, {|| empty( field->uuid ) } ) )
 
       ( dbfAlmT )->( dbCloseArea() )
    else

@@ -842,7 +842,7 @@ return ( nNumCod )
 
 FUNCTION RetSufEmp()
 
-return ( oUser():cDelegacion() )
+return ( Application():CodigoDelegacion() )
 
 //--------------------------------------------------------------------------//
 

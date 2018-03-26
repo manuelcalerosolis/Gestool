@@ -798,7 +798,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       if lAIS() .and. !oUser():lAdministrador()
       
-         cFiltroUsuario    := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario    := "Field->cSufPre == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
@@ -1803,7 +1803,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       aTmp[ _CSUFSAT ]  := RetSufEmp()
       aTmp[ _NDIAVAL ]  := nDiasValidez()
       aTmp[ _LSNDDOC ]  := .t.
-      aTmp[ _CCODDLG ]  := oUser():cDelegacion()
+      aTmp[ _CCODDLG ]  := Application():CodigoDelegacion()
       aTmp[ _LIVAINC ]  := uFieldEmpresa( "lIvaInc" )
       aTmp[ _CMANOBR ]  := padr( getConfigTraslation( "Gastos" ), 250 )
       aTmp[ _NIVAMAN ]  := nIva( dbfIva, cDefIva() )
@@ -7838,7 +7838,7 @@ STATIC FUNCTION SatRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       aTabla[ _LIMPRIMIDO  ]  := .f.
       aTabla[ _DFECIMP     ]  := Ctod("")
       aTabla[ _CHORIMP     ]  := Space( 5 )
-      aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
+      aTabla[ _CCODDLG     ]  := Application():CodigoDelegacion()
       aTabla[ _LESTADO     ]  := .f.
 
       nOrdAnt                 := ( cDbf )->( OrdSetFocus( "NNUMSAT" ) )
@@ -10489,7 +10489,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "lImprimido","L",  1,  0, "Lógico de imprimido del documento",           "Imprimido",               "", "( cDbf )", nil } )      
    aAdd( aItmSatCli, { "dFecImp",   "D",  8,  0, "Última fecha de impresión del documento",     "FechaImpresion",          "", "( cDbf )", nil } )      
    aAdd( aItmSatCli, { "cHorImp",   "C",  5,  0, "Hora de la última impresión del documento",   "HoraImpresion",           "", "( cDbf )", nil } )      
-   aAdd( aItmSatCli, { "cCodDlg",   "C",  2,  0, "Código delegación" ,                          "Delegacion",              "", "( cDbf )", {|| oUser():cDelegacion() } } )      
+   aAdd( aItmSatCli, { "cCodDlg",   "C",  2,  0, "Código delegación" ,                          "Delegacion",              "", "( cDbf )", {|| Application():CodigoDelegacion() } } )      
    aAdd( aItmSatCli, { "nDtoAtp",   "N",  6,  2, "Porcentaje de descuento atípico",             "DescuentoAtipico",        "", "( cDbf )", nil } )      
    aAdd( aItmSatCli, { "nSbrAtp",   "N",  1,  0, "Lugar donde aplicar dto atípico",             "LugarAplicarDescuentoAtipico","", "( cDbf )", nil } )      
    aAdd( aItmSatCli, { "dFecEntr",  "D",  8,  0, "Fecha de entrada de alquiler",                "EntradaAlquiler",         "", "( cDbf )", nil } )      

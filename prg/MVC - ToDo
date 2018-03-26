@@ -1,8 +1,10 @@
 MVC - ToDo
 
-- nLevelUsr debe funcionar con SQL
+- Almacen por defecto en usuario
 
-- Meter codigo en la ficha de usuario
+- Delegacion por defecto en usuario
+
+- nLevelUsr debe funcionar con SQL
 
 - lUsrMaster() revisar esta funcion
 
@@ -19,6 +21,8 @@ MVC - ToDo
 - No guarda configuracion de columnas en factura proveedor.
 
 - No muestra el importe de IVA en factura proveedores. 
+
+- Meter codigo en la ficha de usuario (done)
 
 - Quitar tipo de ventas (done)
 

@@ -1202,7 +1202,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
       aTmp[ _LIVAINC  ]    := .t.
       aTmp[ _NPCTIVA  ]    := nIva( dbfIva, cDefIva() )
       aTmp[ _NREQ     ]    := nReq( dbfIva, cDefIva() )
-      aTmp[ _CCODDLG  ]    := oUser():cDelegacion()
+      aTmp[ _CCODDLG  ]    := Application():CodigoDelegacion()
 
       if !Empty( cCodCli )
          aTmp[ _CCODCLI ]  := cCodCli

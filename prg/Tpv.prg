@@ -927,7 +927,7 @@ STATIC FUNCTION cOpenStatement()
 
    if lAIS() .and. !oUser():lAdministrador()
 
-      cStatement        := "SELECT * FROM " + cPatEmp() + "TikeT WHERE cSufTik='" + oUser():cDelegacion() + "' AND cNcjTik='" + oUser():cCaja() + "'"
+      cStatement        := "SELECT * FROM " + cPatEmp() + "TikeT WHERE cSufTik = '" + Application():CodigoDelegacion() + "' AND cNcjTik='" + oUser():cCaja() + "'"
 
       if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
          cStatement     += " AND cCcjTik = '" + Auth():Codigo()  + "'"

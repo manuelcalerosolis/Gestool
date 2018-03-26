@@ -157,7 +157,7 @@ FUNCTION CreateMainWindow( oIconApp )
 
    oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( Auth():Nombre() ), 200,,,, .t. )
 
-   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( oUser():cDelegacion() ), 200,,,, .t., {|| if( oUser():lCambiarEmpresa, SelectDelegacion( oMsgDelegacion ), ) } )
+   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():CodigoDelegacion() ), 200,,,, .t., {|| if( oUser():lCambiarEmpresa, SelectDelegacion( oMsgDelegacion ), ) } )
 
    oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + oUser():cCaja(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
 
@@ -3096,6 +3096,8 @@ FUNCTION lInitCheck( oMessage, oProgress )
       oProgress:SetTotal( 4 )
    end if
 
+   // Comprobamos que exista los directorios necesarios------------------------
+
    if !empty( oMessage )
       oMessage:SetText( 'Comprobando directorios' )
    end if
@@ -3103,8 +3105,6 @@ FUNCTION lInitCheck( oMessage, oProgress )
    if !empty( oProgress )
       oProgress:AutoInc()
    end if
-
-   // Comprobamos que exista los directorios necesarios------------------------
 
    appCheckDirectory()
 
@@ -3120,7 +3120,7 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    InitClasses()
 
-   // Apertura de ficheros-----------------------------------------------------
+   // Selección de la empresa actual------------------------------------------
 
    if !empty( oMessage )
       oMessage:SetText( 'Selección de la empresa actual' ) 
@@ -3130,11 +3130,21 @@ FUNCTION lInitCheck( oMessage, oProgress )
       oProgress:AutoInc()
    end if
 
-   setEmpresa( SQLAjustableModel():getUsuarioEmpresa( Auth():Uuid() ) )
+   setEmpresa()
+
+   // Selección de los datos de la aplicacion----------------------------------
+
+   if !empty( oMessage )
+      oMessage:SetText( 'Selección de datos de la aplicación' ) 
+   end if
+
+   if !empty( oProgress )
+      oProgress:AutoInc()
+   end if
+
+   Application()
 
    // Eventos del inicio---------------------------------
-
-   runEventScript( "IniciarAplicacion" )
 
    if !empty( oMessage )
       oMessage:SetText( 'Comprobaciones finalizadas' )
@@ -3143,6 +3153,8 @@ FUNCTION lInitCheck( oMessage, oProgress )
    if !empty( oProgress )
       oProgress:AutoInc()
    end if
+
+   runEventScript( "IniciarAplicacion" )
 
    CursorWe()
 

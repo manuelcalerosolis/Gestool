@@ -154,6 +154,8 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
          setEmpresa( appParamsSecond() )
 
+         ApplicationLoad()
+
          controllerReportGallery( appParamsThird() )
 
          RETURN ( nil )
@@ -624,7 +626,7 @@ STATIC FUNCTION lTctInitCheck( lDir, oMessage, oProgress )
 
       oMsgText( 'Inicializamos las clases de la aplicación' )
 
-      InitClasses()
+      Application()
 
       // Comprobamos q exista al menos un almacen---------------------------------
 
@@ -1057,7 +1059,7 @@ FUNCTION StartMainTablet( oGridTree )
 
    oGridTree:Add( "Empresa : "      + uFieldEmpresa( "CodEmp" ) + "-" + uFieldEmpresa( "cNombre" ) )
    oGridTree:Add( "Usuario : "      + rtrim( oUser():cNombre() ) )
-   oGridTree:Add( "Delegación : "   + rtrim( oUser():cDelegacion() ) )
+   oGridTree:Add( "Delegación : "   + rtrim( Application():CodigoDelegacion() ) )
    oGridTree:Add( "Caja : "         + oUser():cCaja() )
    oGridTree:Add( "Almacén : "      + rtrim( oUser():cAlmacen() ) + "-" + RetAlmacen( oUser():cAlmacen() ) )
    oGridTree:Add( "Agente : "       + rtrim( cCodigoAgente() ) + "-" + alltrim( RetNbrAge( cCodigoAgente() ) ) )

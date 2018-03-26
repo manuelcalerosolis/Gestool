@@ -340,6 +340,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
 
       if oUser():lCambiarEmpresa 
          oWndBrw:oBrw:bLDblClick    := {||   setEmpresa( ( dbfEmp )->CodEmp ),;
+                                             ApplicationLoad(),;
                                              chkTurno( , oWnd ),;
                                              if( !empty( oWndBrw ), oWndBrw:End( .t. ), ) }
       else
@@ -526,10 +527,16 @@ STATIC FUNCTION initialProccesBuildEmpresa( cCodigoEmpresa, cNombreEmpresa )
    mkPathEmp( cCodigoEmpresa, cNombreEmpresa, cOldCodigoEmpresa, aImportacion, .t., .t., nSemillaContadores )
 
    /*
-   Establecemos la empresa como la seleccionada-----------------------------
+   Establecemos la empresa como la seleccionada--------------------------------
    */
 
    setEmpresa( cCodigoEmpresa )
+
+   /*
+   Cargamos datos de la aplicacion---------------------------------------------
+   */
+
+   ApplicationLoad()
 
    /*
    Inicio del turno------------------------------------------------------------
@@ -538,7 +545,7 @@ STATIC FUNCTION initialProccesBuildEmpresa( cCodigoEmpresa, cNombreEmpresa )
    chkTurno( , oWnd() )
 
    /*
-   Iniciamos todas los servicios---------------------------------------------
+   Iniciamos todos los servicios---------------------------------------------
    */
 
    initServices()
@@ -551,6 +558,7 @@ STATIC FUNCTION WinEdtEmp()
 
    if WinEdtRec( oWndBrw, bEdit, dbfEmp )
       setEmpresa( ( dbfEmp )->CodEmp )
+      ApplicationLoad()
       chkTurno( , oWnd() )
    end if
 
@@ -1252,6 +1260,8 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    // Seleccionamos la empresa ------------------------------------------------
 
    setEmpresa( ( dbfEmp )->CodEmp, oBrw )
+
+   ApplicationLoad()
 
    checkEmpresaTablesExistences()
 
@@ -2651,11 +2661,15 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    KillTrans()
 
    if oDlg:nResult == IDOK
+
       setEmpresa( ( dbfEmp )->CodEmp, oBrw )
+   
+      ApplicationLoad()
       
       checkEmpresaTablesExistences()
 
       chkTurno( , oWnd() )
+   
    end if
 
    // Reanudamos los servicios ---------------------------------------------------
@@ -3257,8 +3271,8 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
    Si la empresa esta vacia----------------------------------------------------
    */
 
-   if empty( cCodEmp ) .and. !empty( cEmpUsr() )
-      cCodEmp        := cEmpUsr()
+   if empty( cCodEmp ) 
+      cCodEmp        := SQLAjustableModel():getUsuarioEmpresa( Auth():Uuid() )
    end if
 
    if empty( cCodEmp )
@@ -6070,6 +6084,8 @@ FUNCTION NextEmpresa()
 
          setEmpresa( ( dbfEmp )->CodEmp )
 
+         ApplicationLoad()
+
          chkTurno()
 
          msgInfo( "Nueva empresa activa : " + ( dbfEmp )->CodEmp + " - " + Rtrim( ( dbfEmp )->cNombre ), "Cambio de empresa" )
@@ -6126,6 +6142,8 @@ FUNCTION PriorEmpresa()
 
          setEmpresa( ( dbfEmp )->CodEmp )
 
+         ApplicationLoad()
+
          chkTurno()
 
          msgInfo( "Nueva empresa activa : " + ( dbfEmp )->CodEmp + " - " + Rtrim( ( dbfEmp )->cNombre ), "Cambio de empresa" )
@@ -6149,111 +6167,113 @@ Actualiza la base de datos
 
 FUNCTION TstEmpresa( cPatDat )
 
+   local oBlock
+   local oError
    local dbfEmp
    local dbfDlg
    local cCodEmp
    local lChangeCode
    local lChangeStruct  
 
-   if !lExistTable( cPatDat() + "Empresa.Dbf" )
-      dbCreate( cPatDat() + "Empresa.Dbf", aSqlStruct( aItmEmp() ), cDriver() )
-   end if
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
-   if !lExistTable( cPatDat() + "Delega.Dbf" )
-      dbCreate( cPatDat() + "Delega.Dbf", aSqlStruct( aItmDlg() ), cDriver() )
-   end if
+      if !lExistTable( cPatDat() + "Empresa.Dbf" )
+         dbCreate( cPatDat() + "Empresa.Dbf", aSqlStruct( aItmEmp() ), cDriver() )
+      end if
 
-   if !lExistIndex( cPatDat() + "Empresa.Cdx" ) .or. !lExistIndex( cPatDat() + "Delega.Cdx" )
-      rxEmpresa( cPatDat() )
-   end if
+      if !lExistTable( cPatDat() + "Delega.Dbf" )
+         dbCreate( cPatDat() + "Delega.Dbf", aSqlStruct( aItmDlg() ), cDriver() )
+      end if
 
-   /*
-   Empresa---------------------------------------------------------------------
-   */
+      if !lExistIndex( cPatDat() + "Empresa.Cdx" ) .or. !lExistIndex( cPatDat() + "Delega.Cdx" )
+         rxEmpresa( cPatDat() )
+      end if
 
-   dbUseArea( .t., cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "Empresa", @dbfEmp ), .f. )
+      /*
+      Empresa---------------------------------------------------------------------
+      */
 
-   if ( dbfEmp )->( netErr() )
-      if( ( dbfEmp )->( Used() ), ( dbfEmp )->( dbCloseArea() ), )
-      RETURN .f.
-   end if 
+      dbUseArea( .t., cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "Empresa", @dbfEmp ), .f. )
 
-   lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() )
+      if !( dbfEmp )->( netErr() )
 
-   ( dbfEmp )->( dbCloseArea() )
+         lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() )
 
-   if lChangeStruct
-      changeStructEmpresa()
-   end if
+         ( dbfEmp )->( dbCloseArea() )
 
-   /*
-   Delegaciones----------------------------------------------------------------
-   */
+         if lChangeStruct
+            changeStructEmpresa()
+         end if
 
-   dbUseArea( .t., cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
-
-   if ( dbfDlg )->( netErr() )
-      if( ( dbfDlg )->( Used() ), ( dbfDlg )->( dbCloseArea() ), )
-      RETURN .f.
-   end if 
-
-   lChangeStruct  := lChangeStruct( dbfDlg, aItmDlg() )
-
-   ( dbfDlg )->( dbCloseArea() )
-
-   if lChangeStruct
-      changeStructDelegacion()
-   end if
-
-   CursorWait()
-
-   /*
-   Situacion especial para cambio de codigo------------------------------------
-   */
-
-   dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
-      
-   if ( dbfEmp )->( netErr() )
-      if( ( dbfEmp )->( Used() ), ( dbfEmp )->( dbCloseArea() ), )
-      RETURN .f.
-   else 
-      if( !lAIS(), ( dbfEmp )->( ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ), ordSetFocus( 1 ) )
-   end if 
-      
-   /*
-   Comprobamos la longitud del codigo------------------------------------------
-   */
-
-   ( dbfEmp )->( dbgotop() )
-   while !( dbfEmp )->( eof() )
-      
-      cCodEmp     := alltrim( ( dbfEmp )->CodEmp )
-      
-      if len( cCodEmp ) < 4
-      
-         if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
-            if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
-               msgStop( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
-            end if
-         end if 
-    
       end if 
-              
-      ( dbfEmp )->( dbskip() )
-                  
-   end while
 
-   ( dbfEmp )->( dbclosearea() )
+      /*
+      Delegaciones----------------------------------------------------------------
+      */
 
-   /*
-   Comprobamos que el campo de codigo de empresa de las delegaciones se rellenen por 0
-   */
+      dbUseArea( .t., cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
 
-   EmpresasModel():UpdateEmpresaCodigoEmpresa()
+      if !( dbfDlg )->( netErr() )
 
-   //DelegacionesModel():UpdateDelegacionCodigoEmpresa()
+         lChangeStruct  := lChangeStruct( dbfDlg, aItmDlg() )
 
-   CursorWE()
+         ( dbfDlg )->( dbCloseArea() )
+
+         if lChangeStruct
+            changeStructDelegacion()
+         end if
+         
+      end if 
+
+      CursorWait()
+
+      /*
+      Situacion especial para cambio de codigo------------------------------------
+      */
+
+      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
+         
+      if !( dbfEmp )->( netErr() )
+
+         ( dbfEmp )->( dbgotop() )
+         while !( dbfEmp )->( eof() )
+            
+            cCodEmp     := alltrim( ( dbfEmp )->CodEmp )
+            
+            if len( cCodEmp ) < 4
+            
+               if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
+                  if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
+                     msgStop( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
+                  end if
+               end if 
+          
+            end if 
+                    
+            ( dbfEmp )->( dbskip() )
+                        
+         end while
+
+         ( dbfEmp )->( dbclosearea() )
+
+      end if 
+         
+      /*
+      Comprobamos que el campo de codigo de empresa de las delegaciones se rellenen por 0
+      */
+
+      EmpresasModel():UpdateEmpresaCodigoEmpresa()
+
+      CursorWE()
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de empresa" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN ( .t. )
 
@@ -6293,7 +6313,7 @@ Trasbase a delegaciones--------------------------------------------------------
 
 STATIC FUNCTION changeStructDelegacion()
 
-   TDataCenter():DeleteTableName( "Delega" )
+   TDataCenter():deleteTableNameFromDataDictionary( "Delega" )
 
    lCdx( .t. )
    lAIS( .f. )
@@ -6647,9 +6667,10 @@ STATIC FUNCTION aItmDlg()
 
    local aItmDlg  := {}
 
-   aAdd( aItmDlg, { "CCODEMP", "C", 4, 0, "Código de empresa"    } )
-   aAdd( aItmDlg, { "CCODDLG", "C", 2, 0, "Código de delegación" } )
-   aAdd( aItmDlg, { "CNOMDLG", "C",50, 0, "Nombre de delegación" } )
+   aAdd( aItmDlg, { "cCodEmp", "C",  4, 0, "Código de empresa"    } )
+   aAdd( aItmDlg, { "cCodDlg", "C",  2, 0, "Código de delegación" } )
+   aAdd( aItmDlg, { "cNomDlg", "C", 50, 0, "Nombre de delegación" } )
+   aAdd( aItmDlg, { "Uuid",    "C", 40, 0, "Uuid" } )
 
 RETURN ( aItmDlg )
 
@@ -6715,7 +6736,9 @@ FUNCTION rxEmpresa( cPath, cDriver )
       ( dbfDlg)->( __dbPack() )
 
       ( dbfDlg )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfDlg )->( ordCreate( cPath + "DELEGA.CDX", "CCODEMP", "CCODEMP + CCODDLG", {|| Field->cCodEmp + Field->cCodDlg } ) )
+      ( dbfDlg )->( ordCreate( cPath + "DELEGA.CDX", "CCODEMP", "CCODEMP + CCODDLG", {|| field->cCodEmp + field->cCodDlg } ) )
+
+      ( dbfDlg )->( dbeval( {|| field->uuid := win_uuidcreatestring() }, {|| empty( field->uuid ) } ) )
 
       ( dbfDlg )->( dbCloseArea() )
    else

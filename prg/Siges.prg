@@ -369,7 +369,7 @@ METHOD ProccesLine( cLine )
             ::oAlbCliT:lSndDoc      := .t.
             ::oAlbCliT:dFecEnv      := Ctod( "" )
             ::oAlbCliT:dFecImp      := Ctod( "" )
-            ::oAlbCliT:cCodDlg      := oUser():cDelegacion()
+            ::oAlbCliT:cCodDlg      := Application():CodigoDelegacion()
             ::oAlbCliT:lIvaInc      := .t.
 
             if SubStr( cLine, 58, 1 )  == "J"
@@ -493,7 +493,7 @@ METHOD ProccesLine( cLine )
             ::oAlbPrvT:nVdvAlb    := nChgDiv( cDivEmp(), ::oDbfDiv )
             ::oAlbPrvT:lSndDoc    := .t.
             ::oAlbPrvT:cCodUsr    := Auth():Codigo()
-            ::oAlbPrvT:cCodDlg    := oUser():cDelegacion()
+            ::oAlbPrvT:cCodDlg    := Application():CodigoDelegacion()
             ::oAlbPrvT:cCodPgo    := cDefFpg()
             ::oAlbPrvT:lFacturado := .f.
             ::oAlbPrvT:dFecAlb    := Ctod( SubStr( cLine, 76, 2 ) + "-" + SubStr( cLine, 74, 2 ) + "-" + SubStr( cLine, 70, 4 ) )
@@ -714,7 +714,7 @@ METHOD ProccesLine( cLine )
             ::oTikCliT:cFpgTik      := cDefFpg()
             ::oTikCliT:cDivTik      := cDivEmp()
             ::oTikCliT:nVdvTik      := nChgDiv( cDivEmp(), ::oDbfDiv )
-            ::oTikCliT:cCodDlg      := oUser():cDelegacion()
+            ::oTikCliT:cCodDlg      := Application():CodigoDelegacion()
             ::oTikCliT:dFecCre      := Ctod( SubStr( cLine, 157, 2 ) + "-" + SubStr( cLine, 155, 2 ) + "-" + SubStr( cLine, 151, 4 ) )
             ::oTikCliT:cTimCre      := SubStr( cLine, 159, 2 ) + ":" + SubStr( cLine, 161, 2 )
             ::oTikCliT:nTarifa      := 1

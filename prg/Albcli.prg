@@ -1671,7 +1671,7 @@ STATIC FUNCTION OpenFiles()
 
       if lAIS() .and. !oUser():lAdministrador()
       
-         cFiltroUsuario    := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario    := "Field->cSufAlb == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
          
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
@@ -2203,7 +2203,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _CSERALB   ]   := cNewSer( "NALBCLI", D():Get( "NCount", nView ) )
          aTmp[ _DFECENV   ]   := Ctod( "" )
          aTmp[ _DFECIMP   ]   := Ctod( "" )
-         aTmp[ _CCODDLG   ]   := oUser():cDelegacion()
+         aTmp[ _CCODDLG   ]   := Application():CodigoDelegacion()
          aTmp[ _LIVAINC   ]   := uFieldEmpresa( "lIvaInc" )
          aTmp[ _NIVAMAN   ]   := nIva( D():Get( "TIva", nView ), cDefIva() )
          aTmp[ _CMANOBR   ]   := Padr( getConfigTraslation( "Gastos" ), 250 )
@@ -8349,7 +8349,7 @@ STATIC FUNCTION AlbRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       aTabla[ _LIMPRIMIDO  ]  := .f.
       aTabla[ _DFECIMP     ]  := Ctod("")
       aTabla[ _CHORIMP     ]  := Space( 5 )
-      aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
+      aTabla[ _CCODDLG     ]  := Application():CodigoDelegacion()
       aTabla[ _LFACTURADO  ]  := .f.
       aTabla[ _NFACTURADO  ]  := 1
 
@@ -17097,7 +17097,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "lImprimido","L",  1, 0, "Lógico de imprimido" ,                                     "Imprimido",                     "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "dFecImp"   ,"D",  8, 0, "Última fecha de impresión" ,                               "FechaImpresion",                "", "( cDbf )", {|| cTod( "" ) } } )
    aAdd( aItmAlbCli, { "cHorImp"   ,"C",  5, 0, "Hora de la última impresión" ,                             "HoraImpresion",                 "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cCodDlg"   ,"C",  2, 0, "Código delegación" ,                                       "Delegacion",                    "", "( cDbf )", {|| oUser():cDelegacion() } } )
+   aAdd( aItmAlbCli, { "cCodDlg"   ,"C",  2, 0, "Código delegación" ,                                       "Delegacion",                    "", "( cDbf )", {|| Application():CodigoDelegacion() } } )
    aAdd( aItmAlbCli, { "nDtoAtp"   ,"N",  6, 2, "Porcentaje de descuento atípico",                          "DescuentoAtipico",              "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nSbrAtp"   ,"N",  1, 0, "Lugar donde aplicar dto atípico",                          "LugarAplicarDescuentoAtipico",  "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nMontaje"  ,"N",  6, 2, "Horas de montaje",                                         "Montaje",                       "", "( cDbf )", nil } )

@@ -882,7 +882,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       if lAIS() .and. !oUser():lAdministrador()
       
-         cFiltroUsuario    := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario    := "Field->cSufFac == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
@@ -1939,7 +1939,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       aTmp[ _CCODPRO    ]  := cProCnt()
       aTmp[ _CCODUSR    ]  := Auth():Codigo()
       aTmp[ _CTIPMOV    ]  := cDefVta()
-      aTmp[ _CCODDLG    ]  := oUser():cDelegacion()
+      aTmp[ _CCODDLG    ]  := Application():CodigoDelegacion()
       aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
       aTmp[ _CMANOBR    ]  := padr( getConfigTraslation( "Gastos" ), 250 )
       aTmp[ _TFECFAC    ]  := getSysTime()
@@ -9739,7 +9739,7 @@ STATIC FUNCTION FacRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc, lPag 
       aTabla[ _LIMPRIMIDO  ]  := .f.
       aTabla[ _DFECIMP     ]  := Ctod("")
       aTabla[ _CHORIMP     ]  := Space( 5 )
-      aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
+      aTabla[ _CCODDLG     ]  := Application():CodigoDelegacion()
 
       nOrdAnt                 := ( cDbf )->( OrdSetFocus( "NNUMFAC" ) )
 

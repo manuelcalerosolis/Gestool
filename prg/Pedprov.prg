@@ -1003,7 +1003,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       aTmp[ _LSNDDOC ]        := .t.
       aTmp[ _NESTADO ]        := 1
       aTmp[ _CCODUSR ]        := Auth():Codigo()
-      aTmp[ _CCODDLG ]        := oUser():cDelegacion()
+      aTmp[ _CCODDLG ]        := Application():CodigoDelegacion()
       if !empty( cCodPrv )
          aTmp[ _CCODPRV ]     := cCodPrv
       end if

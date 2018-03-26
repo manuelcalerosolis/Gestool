@@ -666,7 +666,7 @@ METHOD cDelegacion( cNewVal )
       if Empty( ::DelegacionUsuario() )
 
          if !empty( uFieldEmpresa( "cSufDoc" ) )
-            ::_Delegacion  := uFieldEmpresa( "cSufDoc")
+            ::_Delegacion  := uFieldEmpresa( "cSufDoc" )
          else
             ::_Delegacion  := "00"
          end if
