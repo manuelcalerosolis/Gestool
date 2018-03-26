@@ -151,15 +151,15 @@ METHOD OpenFiles( lExclusive, lCloseNotas ) CLASS TNotas
    ::oDbf:Activate( .f., !( lExclusive ) )
    ::oDbf:OrdScope( Auth():Codigo() )
 
-   DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "Client.DBF"   VIA ( ::cDriver ) SHARED INDEX "CLIENT.CDX"
+   DATABASE NEW ::oDbfCli PATH ( cPatEmp() ) FILE "Client.DBF"   VIA ( ::cDriver ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfPrv PATH ( cPatPrv() ) FILE "Provee.DBF"   VIA ( ::cDriver ) SHARED INDEX "PROVEE.CDX"
+   DATABASE NEW ::oDbfPrv PATH ( cPatEmp() ) FILE "Provee.DBF"   VIA ( ::cDriver ) SHARED INDEX "PROVEE.CDX"
 
-   DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "Articulo.DBF" VIA ( ::cDriver ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt PATH ( cPatEmp() ) FILE "Articulo.DBF" VIA ( ::cDriver ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfAge PATH ( cPatCli() ) FILE "Agentes.Dbf"  VIA ( ::cDriver ) SHARED INDEX "Agentes.Cdx"
+   DATABASE NEW ::oDbfAge PATH ( cPatEmp() ) FILE "Agentes.Dbf"  VIA ( ::cDriver ) SHARED INDEX "Agentes.Cdx"
 
-   DATABASE NEW ::oDbfAlm PATH ( cPatAlm() ) FILE "Almacen.Dbf"  VIA ( ::cDriver ) SHARED INDEX "Almacen.Cdx"
+   DATABASE NEW ::oDbfAlm PATH ( cPatEmp() ) FILE "Almacen.Dbf"  VIA ( ::cDriver ) SHARED INDEX "Almacen.Cdx"
 
    if lCloseNotas .and. oUser():lAlerta()
       CloseNotas()

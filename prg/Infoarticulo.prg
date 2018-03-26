@@ -64,15 +64,15 @@ METHOD OpenFiles( cPath )
 
    BEGIN SEQUENCE
 
-      DATABASE NEW ::oDbfArticulo   PATH ( cPatArt() )   FILE "Articulo.Dbf"     VIA ( cDriver() ) SHARED INDEX "Articulo.Cdx"
+      DATABASE NEW ::oDbfArticulo   PATH ( cPatEmp() )   FILE "Articulo.Dbf"     VIA ( cDriver() ) SHARED INDEX "Articulo.Cdx"
 
-      DATABASE NEW ::oDbfArtCode    PATH ( cPatArt() )   FILE "ArtCodebar.Dbf"   VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
+      DATABASE NEW ::oDbfArtCode    PATH ( cPatEmp() )   FILE "ArtCodebar.Dbf"   VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
 
       DATABASE NEW ::oDbfIva        PATH ( cPatDat() )   FILE "Tiva.Dbf"         VIA ( cDriver() ) SHARED INDEX "Tiva.Cdx"
 
       DATABASE NEW ::oDbfDivisa     PATH ( cPatDat() )   FILE "Divisas.Dbf"      VIA ( cDriver() ) SHARED INDEX "Divisas.Cdx"
 
-      DATABASE NEW ::oDbfKit        PATH ( cPatArt() )   FILE "ArtKit.Dbf"       VIA ( cDriver() ) SHARED INDEX "ArtKit.Cdx"
+      DATABASE NEW ::oDbfKit        PATH ( cPatEmp() )   FILE "ArtKit.Dbf"       VIA ( cDriver() ) SHARED INDEX "ArtKit.Cdx"
 
    RECOVER
 

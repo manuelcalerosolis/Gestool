@@ -162,8 +162,8 @@ Static Function OpenFiles( cCodArt )
 
    D():PropiedadesLineas( nView )
 
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+   SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
@@ -171,8 +171,8 @@ Static Function OpenFiles( cCodArt )
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-   USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
-   SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
+   SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
@@ -254,8 +254,8 @@ Static Function OpenFiles( cCodArt )
    USE ( cPatEmp() + "TIKEP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEP", @dbfTikCliP ) )
    SET ADSINDEX TO ( cPatEmp() + "TIKEP.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfArtKit ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfArtKit ) )
+   SET ADSINDEX TO ( cPatEmp() + "ARTKIT.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "PROCAB.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROCAB", @dbfProducT ) )
    SET ADSINDEX TO ( cPatEmp() + "PROCAB.CDX" ) ADDITIVE

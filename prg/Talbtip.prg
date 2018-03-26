@@ -58,7 +58,7 @@ METHOD OpenFiles() CLASS TInfAlbTip
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "AlbCliL.DBF" VIA ( cDriver() ) SHARED INDEX "AlbCliL.CDX"
 
-   DATABASE NEW ::oArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oArt PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
 
    RECOVER USING oError

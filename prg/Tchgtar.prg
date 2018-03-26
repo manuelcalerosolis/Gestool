@@ -70,7 +70,7 @@ METHOD OpenFiles( cPatEmp ) CLASS TChgTarifa
 
       DATABASE NEW ::oFacCliL PATH ( cPatEmp ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-      DATABASE NEW ::oCliAtp  PATH ( cPatCli() ) FILE "CLIATP.DBF" VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
+      DATABASE NEW ::oCliAtp  PATH ( cPatEmp() ) FILE "CLIATP.DBF" VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
       ::oCliAtp:OrdSetFocus( "cCodArt" )
 
    RECOVER

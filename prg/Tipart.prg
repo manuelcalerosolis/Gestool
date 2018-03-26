@@ -75,7 +75,7 @@ END CLASS
 
 METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := GetWndFrame()
 
@@ -149,7 +149,7 @@ RETURN ( lOpen )
 
 METHOD DefineFiles( cPath, cDriver )
 
-   DEFAULT cPath        := if( empty( ::cPath ), cPatArt(), ::cPath )
+   DEFAULT cPath        := if( empty( ::cPath ), cPatEmp(), ::cPath )
    DEFAULT cDriver      := if( empty( ::cDriver ), cDriver(), ::cDriver )
 
    DEFINE DATABASE ::oDbf FILE "Tipart.Dbf" CLASS "Tipart" ALIAS "Tipart" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de artículos"

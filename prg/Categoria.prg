@@ -62,7 +62,7 @@ Function mkCategoria( cPath, lAppend, cPathOld )
    local dbfCategoria
 
    DEFAULT lAppend := .f.
-   DEFAULT cPath   := cPatArt()
+   DEFAULT cPath   := cPatEmp()
 
    dbCreate( cPath + "Categorias.Dbf", aSqlStruct( aItmCategoria() ), cDriver() )
 
@@ -90,7 +90,7 @@ Function rxCategoria( cPath )
 
    local dbfCategoria
 
-   DEFAULT cPath  := cPatArt()
+   DEFAULT cPath  := cPatEmp()
 
    if !lExistTable( cPath + "Categorias.Dbf" )
       mkCategoria( cPath )
@@ -135,8 +135,8 @@ Static Function OpenFiles()
    end if
    */
 
-   USE ( cPatArt() + "CATEGORIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
-   SET ADSINDEX TO ( cPatArt() + "CATEGORIAS.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CATEGORIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
+   SET ADSINDEX TO ( cPatEmp() + "CATEGORIAS.CDX" ) ADDITIVE
 
    RECOVER
 

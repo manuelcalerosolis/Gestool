@@ -427,8 +427,8 @@ Method LoadDocuments()
 
    BEGIN SEQUENCE
 
-      USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Articulo", @dbf ) )
-      SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Articulo", @dbf ) )
+      SET ADSINDEX TO ( cPatEmp() + "Articulo.Cdx" ) ADDITIVE
       ( dbf )->( OrdSetFocus( "cCodUsr" ) )
 
    RECOVER USING oError
@@ -465,8 +465,8 @@ Method LoadDocuments()
 
    BEGIN SEQUENCE
 
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Client", @dbf ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Client", @dbf ) )
+      SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
       ( dbf )->( OrdSetFocus( "cCodUsr" ) )
 
    RECOVER USING oError
@@ -503,8 +503,8 @@ Method LoadDocuments()
 
    BEGIN SEQUENCE
 
-      USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbf ) )
-      SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbf ) )
+      SET ADSINDEX TO ( cPatEmp() + "Provee.Cdx" ) ADDITIVE
       ( dbf )->( OrdSetFocus( "cCodUsr" ) )
 
    RECOVER USING oError
@@ -953,8 +953,8 @@ Method LoadRecibosProveedores()
       SET ADSINDEX TO ( cPatEmp() + "FacPrvP.Cdx" ) ADDITIVE
       ( dbf )->( OrdSetFocus( "lCobrado" ) )
 
-      USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfPrv ) )
-      SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfPrv ) )
+      SET ADSINDEX TO ( cPatEmp() + "Provee.Cdx" ) ADDITIVE
 
       USE ( cPatDat() + "Divisas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Divisas", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "Divisas.Cdx" ) ADDITIVE
@@ -1038,8 +1038,8 @@ Method LoadRecibosClientes()
       SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
       ( dbf )->( OrdSetFocus( "fNumFac" ) )
 
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Client", @dbfCli ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Client", @dbfCli ) )
+      SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "Divisas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Divisas", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "Divisas.Cdx" ) ADDITIVE

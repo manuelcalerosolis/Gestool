@@ -235,21 +235,21 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oAlbCliP    FILE "ALBCLIP.DBF"   PATH ( ::cPath )     VIA ( cDriver() ) SHARED INDEX "ALBCLIP.CDX"
 
-      DATABASE NEW ::oClientes   FILE "CLIENT.DBF"    PATH ( cPatCli() )   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oClientes   FILE "CLIENT.DBF"    PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
       DATABASE NEW ::oDbfIva     FILE "TIVA.DBF"      PATH ( cPatDat() )   VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
       DATABASE NEW ::oDbfCnt     FILE "NCOUNT.DBF"    PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "NCOUNT.CDX"
 
-      DATABASE NEW ::oDbfAge     FILE "AGENTES.DBF"   PATH ( cPatCli() )   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+      DATABASE NEW ::oDbfAge     FILE "AGENTES.DBF"   PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
-      DATABASE NEW ::oDbfArt     FILE "ARTICULO.DBF"  PATH ( cPatArt() )   VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArt     FILE "ARTICULO.DBF"  PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-      DATABASE NEW ::oTblPro     FILE "TBLPRO.DBF"    PATH ( cPatArt() )   VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
+      DATABASE NEW ::oTblPro     FILE "TBLPRO.DBF"    PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
 
-      DATABASE NEW ::oDbfPro     FILE "PRO.DBF"       PATH ( cPatArt() )   VIA ( cDriver() ) SHARED INDEX "PRO.CDX"
+      DATABASE NEW ::oDbfPro     FILE "PRO.DBF"       PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "PRO.CDX"
 
-      DATABASE NEW ::oDbfFam     FILE "FAMILIAS.DBF"  PATH ( cPatArt() )   VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oDbfFam     FILE "FAMILIAS.DBF"  PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
       ::lLoadDivisa()
 

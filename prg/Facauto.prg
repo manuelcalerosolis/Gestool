@@ -355,7 +355,7 @@ METHOD OpenFiles( lExclusive ) CLASS TFacAutomatica
 
       DATABASE NEW ::oDbfFPago   PATH ( cPatEmp() )   FILE "FPAGO.DBF"     VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
-      DATABASE NEW ::oDbfAge     PATH ( cPatCli() )   FILE "AGENTES.DBF"   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+      DATABASE NEW ::oDbfAge     PATH ( cPatEmp() )   FILE "AGENTES.DBF"   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
       DATABASE NEW ::oDbfIva     PATH ( cPatDat() )   FILE "TIVA.DBF"      VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
@@ -1817,9 +1817,9 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
 
    ::nView              := D():CreateView()
 
-   DATABASE NEW ::oDbfArt     PATH ( cPatArt() )   FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt     PATH ( cPatEmp() )   FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfCli     PATH ( cPatCli() )   FILE "CLIENT.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+   DATABASE NEW ::oDbfCli     PATH ( cPatEmp() )   FILE "CLIENT.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
    ::oAlbCliT := TDataCenter():oAlbCliT()
 
@@ -1839,9 +1839,9 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
 
    DATABASE NEW ::oDbfTblCnv  PATH ( cPatDat() )   FILE "TBLCNV.DBF"   VIA ( cDriver() ) SHARED INDEX "TBLCNV.CDX"
 
-   DATABASE NEW ::oDbfFam     PATH ( cPatArt() )   FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+   DATABASE NEW ::oDbfFam     PATH ( cPatEmp() )   FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-   DATABASE NEW ::oDbfKit     PATH ( cPatArt() )   FILE "ARTKIT.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
+   DATABASE NEW ::oDbfKit     PATH ( cPatEmp() )   FILE "ARTKIT.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
    DATABASE NEW ::oDbfIva     PATH ( cPatDat() )   FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
@@ -1849,7 +1849,7 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
 
    DATABASE NEW ::oDbfFPago   PATH ( cPatEmp() )   FILE "FPAGO.DBF"    VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
-   DATABASE NEW ::oDbfAge     PATH ( cPatCli() )   FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+   DATABASE NEW ::oDbfAge     PATH ( cPatEmp() )   FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
    D():Atipicas( ::nView )
 

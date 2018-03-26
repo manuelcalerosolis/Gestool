@@ -144,23 +144,23 @@ METHOD OpenFiles( lExclusive )
 
       ::oDbf:Activate( .f., !lExclusive )
 
-      DATABASE NEW ::oDbfArt     PATH ( cPatArt() )   FILE "ARTICULO.DBF"     VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArt     PATH ( cPatEmp() )   FILE "ARTICULO.DBF"     VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-      DATABASE NEW ::oDbfPro     PATH ( cPatArt() )   FILE "PRO.DBF"          VIA ( cDriver() ) SHARED INDEX "PRO.CDX"
+      DATABASE NEW ::oDbfPro     PATH ( cPatEmp() )   FILE "PRO.DBF"          VIA ( cDriver() ) SHARED INDEX "PRO.CDX"
 
-      DATABASE NEW ::oDbfTblPro  PATH ( cPatArt() )   FILE "TBLPRO.DBF"       VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
+      DATABASE NEW ::oDbfTblPro  PATH ( cPatEmp() )   FILE "TBLPRO.DBF"       VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
 
-      DATABASE NEW ::oDbfArtDiv  PATH ( cPatArt() )   FILE "ARTDIV.DBF"       VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
+      DATABASE NEW ::oDbfArtDiv  PATH ( cPatEmp() )   FILE "ARTDIV.DBF"       VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
 
       DATABASE NEW ::oDbfDiv     PATH ( cPatDat() )   FILE "DIVISAS.DBF"      VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-      DATABASE NEW ::oDbfKit     PATH ( cPatArt() )   FILE "ARTKIT.DBF"       VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
+      DATABASE NEW ::oDbfKit     PATH ( cPatEmp() )   FILE "ARTKIT.DBF"       VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
       DATABASE NEW ::oDbfIva     PATH ( cPatDat() )   FILE "TIVA.DBF"         VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-      DATABASE NEW ::oDbfArtPrv  PATH ( cPatArt() )   FILE "PROVART.DBF"      VIA ( cDriver() ) SHARED INDEX "PROVART.CDX"
+      DATABASE NEW ::oDbfArtPrv  PATH ( cPatEmp() )   FILE "PROVART.DBF"      VIA ( cDriver() ) SHARED INDEX "PROVART.CDX"
 
-      DATABASE NEW ::oDbfCodeBar PATH ( cPatArt() )   FILE "ARTCODEBAR.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTCODEBAR.CDX"
+      DATABASE NEW ::oDbfCodeBar PATH ( cPatEmp() )   FILE "ARTCODEBAR.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTCODEBAR.CDX"
 
       ::bOnPreSaveDetail   := {|| ::SaveDetails() }
 

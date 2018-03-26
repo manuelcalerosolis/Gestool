@@ -38,7 +38,7 @@ METHOD OpenFiles() CLASS TRenAPre
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+   DATABASE NEW ::oFamilia PATH ( cPatEmp() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    ::oPreCliT  := TDataCenter():oPreCliT()
 

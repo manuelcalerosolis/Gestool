@@ -373,11 +373,11 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    ::oStock                := TStock():Create( cPatEmp() )
 
-   ::oGrupoFamilia         := TGrpFam():Create( cPatArt() )
+   ::oGrupoFamilia         := TGrpFam():Create( cPatEmp() )
 
-   ::oTipoArticulo         := TTipArt():Create( cPatArt() )
+   ::oTipoArticulo         := TTipArt():Create( cPatEmp() )
 
-   ::oFabricante           := TFabricantes():Create( cPatArt() )
+   ::oFabricante           := TFabricantes():Create( cPatEmp() )
 
    /*::bOnPostAppend         := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
    ::bOnPostEdit           := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }*/
@@ -632,11 +632,11 @@ METHOD OpenFiles( lExclusive )
 
    ::OpenDetails()
 
-   DATABASE NEW ::oArt        PATH ( cPatArt() )   FILE "ARTICULO.DBF"  VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oArt        PATH ( cPatEmp() )   FILE "ARTICULO.DBF"  VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oAlm        PATH ( cPatAlm() )   FILE "ALMACEN.DBF"   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+   DATABASE NEW ::oAlm        PATH ( cPatEmp() )   FILE "ALMACEN.DBF"   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
-   DATABASE NEW ::oFam        PATH ( cPatArt() )   FILE "FAMILIAS.DBF"  VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+   DATABASE NEW ::oFam        PATH ( cPatEmp() )   FILE "FAMILIAS.DBF"  VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    DATABASE NEW ::oAlbPrvT    PATH ( cPatEmp() )   FILE "ALBPROVT.DBF"  VIA ( cDriver() ) SHARED INDEX "ALBPROVT.CDX"
    
@@ -673,11 +673,11 @@ METHOD OpenFiles( lExclusive )
    DATABASE NEW ::oTikCliL    PATH ( cPatEmp() )   FILE "TikeL.DBF"     VIA ( cDriver() ) SHARED INDEX  "TikeL.CDX"
    DATABASE NEW ::oTikCliS    PATH ( cPatEmp() )   FILE "TikeS.DBF"     VIA ( cDriver() ) SHARED INDEX  "TikeS.CDX"
 
-   DATABASE NEW ::oTblPro     PATH ( cPatArt() )   FILE "TblPro.DBF"    VIA ( cDriver() ) SHARED INDEX "TblPro.CDX"
+   DATABASE NEW ::oTblPro     PATH ( cPatEmp() )   FILE "TblPro.DBF"    VIA ( cDriver() ) SHARED INDEX "TblPro.CDX"
 
-   DATABASE NEW ::oPro        PATH ( cPatArt() )   FILE "Pro.DBF"       VIA ( cDriver() ) SHARED INDEX "Pro.CDX"
+   DATABASE NEW ::oPro        PATH ( cPatEmp() )   FILE "Pro.DBF"       VIA ( cDriver() ) SHARED INDEX "Pro.CDX"
 
-   DATABASE NEW ::oKitArt     PATH ( cPatArt() )   FILE "ARTKIT.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
+   DATABASE NEW ::oKitArt     PATH ( cPatEmp() )   FILE "ARTKIT.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
    DATABASE NEW ::oDbfDoc     PATH ( cPatEmp() )   FILE "RDOCUMEN.DBF"  VIA ( cDriver() ) SHARED INDEX "RDOCUMEN.CDX"
    ::oDbfDoc:OrdSetFocus( "cTipo" )

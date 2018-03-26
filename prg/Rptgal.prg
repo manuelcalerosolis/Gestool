@@ -84,10 +84,10 @@ Function Main( cCodEmp, cCodUsr, cInitOptions )
    // Ponemos el directorio para los ficheros----------------------------------
 
    cPatEmp( cCodEmp )
-   cPatCli( cCodEmp, nil, .t. )
-   cPatArt( cCodEmp, nil, .t. )
-   cPatPrv( cCodEmp, nil, .t. )
-   cPatAlm( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
 
    // Seleccionamos la empresa-------------------------------------------------
 
@@ -2348,6 +2348,84 @@ FUNCTION UsuariosController
 Return nil
 
 FUNCTION AjustableView
+Return nil
+
+FUNCTION auth
+Return nil
+
+FUNCTION sqlrolesmodel
+Return nil
+
+FUNCTION sqlpermisosmodel
+Return nil
+
+FUNCTION sqlpermisosopcionesmodel
+Return nil
+
+FUNCTION sqlcajonesportamonedasmodel
+Return nil
+
+FUNCTION sqltransportistasmodel
+Return nil
+
+FUNCTION sqllistinmodel
+Return nil
+
+FUNCTION sqlcodigospostalesmodel
+Return nil
+
+FUNCTION sqlprovinciasmodel
+Return nil
+
+FUNCTION sqlpaisesmodel
+Return nil
+
+FUNCTION sqllenguajesmodel
+Return nil
+
+FUNCTION sqldireccionesmodel
+Return nil
+
+FUNCTION sqlusuariofavoritosmodel
+Return nil
+
+FUNCTION sqlrelacionesentidadesmodel
+Return nil
+
+FUNCTION centrocostemodel
+Return nil
+
+FUNCTION relacionesentidadesrepository
+Return nil
+
+FUNCTION cajonesportamonedasrepository
+Return nil
+
+FUNCTION codigospostalescontroller
+Return nil
+
+FUNCTION provinciascontroller
+Return nil
+
+FUNCTION paisescontroller
+Return nil
+
+FUNCTION lenguajescontroller
+Return nil
+
+FUNCTION transportistascontroller
+Return nil
+
+FUNCTION cajonesportamonedascontroller
+Return nil
+
+FUNCTION listincontroller
+Return nil
+
+FUNCTION rolescontroller
+Return nil
+
+FUNCTION permisoscontroller
 Return nil
 
 //------------------------------------------------------------------//

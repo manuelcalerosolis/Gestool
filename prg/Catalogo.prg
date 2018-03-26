@@ -102,9 +102,9 @@ METHOD OpenFiles( lExclusive )
 
    BEGIN SEQUENCE
 
-      DATABASE NEW ::DbfProv PATH ( cPatPrv() ) FILE "PROVEE.DBF"   VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
+      DATABASE NEW ::DbfProv PATH ( cPatEmp() ) FILE "PROVEE.DBF"   VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
 
-      DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArt PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
       if Empty( ::oDbf )
          ::DefineFiles()

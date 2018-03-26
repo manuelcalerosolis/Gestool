@@ -49,7 +49,7 @@ END CLASS
 
 METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT oMenuItem    := "01129"

@@ -452,7 +452,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():objectGruposClientes( ::nView )
 
-      ::oGruFam               := TGrpFam():Create( cPatArt(), "GRPFAM" )
+      ::oGruFam               := TGrpFam():Create( cPatEmp(), "GRPFAM" )
       if !::oGruFam:OpenFiles()
          lOpen                := .f.
       end if
@@ -462,7 +462,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
          lOpen                := .f.
       end if
 
-      ::oDbfTrn               := TTrans():Create( cPatCli(), "Transport" )
+      ::oDbfTrn               := TTrans():Create( cPatEmp(), "Transport" )
       if !::oDbfTrn:OpenFiles()
          lOpen                := .f.
       end if
@@ -1185,7 +1185,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetFieldAliases(   "Familias",                      cItemsToReport( aItmFam() ) )
 
    ::oFastReport:SetWorkArea(       "Tipo artículos",                ( D():ArticuloTipos( ::nView ) )->( select() ) )
-   ::oFastReport:SetFieldAliases(   "Tipo artículos",                cObjectsToReport( TTipArt():DefineFiles( cPatArt(), cDriver() ) ) )
+   ::oFastReport:SetFieldAliases(   "Tipo artículos",                cObjectsToReport( TTipArt():DefineFiles( cPatEmp(), cDriver() ) ) )
 
    ::oFastReport:SetWorkArea(       "Grupos familias",               ::oGruFam:Select() )
    ::oFastReport:SetFieldAliases(   "Grupos familias",               cObjectsToReport( ::oGruFam:oDbf ) )
@@ -1254,7 +1254,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetFieldAliases(   "Atipicas de clientes",          cItemsToReport( aItmAtp() ) )
 
    ::oFastReport:SetWorkArea(       "Tipo envases",                  ( D():TiposEnvases( ::nView ) )->( select() ) )
-   ::oFastReport:SetFieldAliases(   "Tipo envases",                  cObjectsToReport( TFrasesPublicitarias():DefineFiles( cPatArt(), cDriver() ) ) )
+   ::oFastReport:SetFieldAliases(   "Tipo envases",                  cObjectsToReport( TFrasesPublicitarias():DefineFiles( cPatEmp(), cDriver() ) ) )
 
    ::oFastReport:SetWorkArea(       "Transportistas",                ::oDbfTrn:Select() )
    ::oFastReport:SetFieldAliases(   "Transportistas",                cObjectsToReport( ::oDbfTrn:oDbf ) )
@@ -4045,10 +4045,10 @@ METHOD sqlPedidoClientes() CLASS TFastVentasArticulos
    cStm           +=          "lineasDocumento." + ::getNameFieldLine( "Numero" )      + " = cabeceraDocumento." + ::getNameFieldHeader( "Numero" )  + " AND "
    cStm           +=          "lineasDocumento." + ::getNameFieldLine( "Sufijo" )      + " = cabeceraDocumento." + ::getNameFieldHeader( "Sufijo" )  + " "
    
-   cStm           += "LEFT JOIN " + cPatCli() + "Client      clientes ON cabeceraDocumento." + ::getNameFieldHeader( "Cliente" )  + " = clientes.Cod "
-   cStm           += "LEFT JOIN " + cPatPrv() + "Provee      proveedores ON lineasDocumento." + ::getNameFieldLine( "Proveedor" ) + " = proveedores.Cod "
+   cStm           += "LEFT JOIN " + cPatEmp() + "Client      clientes ON cabeceraDocumento." + ::getNameFieldHeader( "Cliente" )  + " = clientes.Cod "
+   cStm           += "LEFT JOIN " + cPatEmp() + "Provee      proveedores ON lineasDocumento." + ::getNameFieldLine( "Proveedor" ) + " = proveedores.Cod "
    cStm           += "LEFT JOIN " + cPatDat() + "Tiva        tiposIva ON lineasDocumento." + ::getNameFieldLine( "PorcentajeImpuesto" ) + " = tiposIva.tpIva "
-   cStm           += "LEFT JOIN " + cPatArt() + "Articulo    articulos ON lineasDocumento." + ::getNameFieldLine( "Articulo" )  + " = articulos.Codigo "
+   cStm           += "LEFT JOIN " + cPatEmp() + "Articulo    articulos ON lineasDocumento." + ::getNameFieldLine( "Articulo" )  + " = articulos.Codigo "
 
    cStm           += "WHERE   lineasDocumento." + ::getNameFieldLine( "Articulo" )     + " >= '" + cArticuloDesde + "' AND " 
    cStm           +=          "lineasDocumento." + ::getNameFieldLine( "Articulo" )    + " <= '" + cArticuloHasta + "' "

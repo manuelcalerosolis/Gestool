@@ -1710,38 +1710,38 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "TIKES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKES", @dbfTikS ) )
       SET ADSINDEX TO ( cPatEmp() + "TIKES.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
-      SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
+      SET ADSINDEX TO ( cPatEmp() + "CliBnc.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) ) 
-      SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) ) 
+      SET ADSINDEX TO ( cPatEmp() + "PROVART.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
-      SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
+      SET ADSINDEX TO ( cPatEmp() + "ArtCodebar.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
+      SET ADSINDEX TO ( cPatEmp() + "FAMILIAS.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
+      SET ADSINDEX TO ( cPatEmp() + "ARTKIT.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "TARPRET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPRET", @dbfTarPreT ) )
-      SET ADSINDEX TO ( cPatArt() + "TARPRET.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "TARPRET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPRET", @dbfTarPreT ) )
+      SET ADSINDEX TO ( cPatEmp() + "TARPRET.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "TARPREL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPREL", @dbfTarPreL ) )
-      SET ADSINDEX TO ( cPatArt() + "TARPREL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "TARPREL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPREL", @dbfTarPreL ) )
+      SET ADSINDEX TO ( cPatEmp() + "TARPREL.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "TARPRES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPRES", @dbfTarPreS ) )
-      SET ADSINDEX TO ( cPatArt() + "TARPRES.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "TARPRES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPRES", @dbfTarPreS ) )
+      SET ADSINDEX TO ( cPatEmp() + "TARPRES.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "PROMOT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOL", @dbfPromoT ) )
-      SET ADSINDEX TO ( cPatArt() + "PROMOT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROMOT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOL", @dbfPromoT ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROMOT.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "PROMOL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOL", @dbfPromoL ) )
-      SET ADSINDEX TO ( cPatArt() + "PROMOL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROMOL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOL", @dbfPromoL ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROMOL.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "PROMOC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOC", @dbfPromoC ) )
-      SET ADSINDEX TO ( cPatArt() + "PROMOC.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROMOC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOC", @dbfPromoC ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROMOC.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
@@ -1749,23 +1749,23 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
-      SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
+      SET ADSINDEX TO ( cPatEmp() + "OFERTA.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
-      SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
+      SET ADSINDEX TO ( cPatEmp() + "RUTA.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTDIV.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
+      SET ADSINDEX TO ( cPatEmp() + "ARTDIV.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
       SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
-      USE ( cPatAlm() + "Almacen.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Almacen", @dbfAlm ) )
-      SET ADSINDEX TO ( cPatAlm() + "Almacen.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "Almacen.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Almacen", @dbfAlm ) )
+      SET ADSINDEX TO ( cPatEmp() + "Almacen.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
       SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
@@ -1823,8 +1823,8 @@ STATIC FUNCTION OpenFiles()
       SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
       SET TAG TO "cRef"
 
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
 
       oBandera          := TBandera():New()
 
@@ -1833,7 +1833,7 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oCtaRem           := TCtaRem():Create( cPatCli() )
+      oCtaRem           := TCtaRem():Create( cPatEmp() )
       if !oCtaRem:OpenFiles()
          lOpenFiles     := .f.
       end if
@@ -1843,17 +1843,17 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oTrans            := TTrans():Create( cPatCli() )
+      oTrans            := TTrans():Create( cPatEmp() )
       if !oTrans:OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oTipArt           := TTipArt():Create( cPatArt() )
+      oTipArt           := TTipArt():Create( cPatEmp() )
       if !oTipArt:OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oGrpFam           := TGrpFam():Create( cPatArt() )
+      oGrpFam           := TGrpFam():Create( cPatEmp() )
       if !oGrpFam:OpenFiles()
          lOpenFiles     := .f.
       end if
@@ -1863,7 +1863,7 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
+      oFraPub           := TFrasesPublicitarias():Create( cPatEmp() )
       if !oFraPub:OpenFiles()
          lOpenFiles     := .f.
       end if
@@ -16397,8 +16397,8 @@ Function cFacturaClienteDireccionSAT()
    local dbfObras
    local cDireccion  := ""
 
-   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Obras", @dbfObras ) )
-   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Obras", @dbfObras ) )
+   SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
 
    if ( dbfObras )->( dbSeek( ( dbfSatCliT )->cCodCli + ( dbfSatCliT )->cCodObr ) )
       cDireccion     := ( dbfObras )->cNomObr
@@ -22219,8 +22219,8 @@ Method Process() CLASS TFacturasClientesSenderReciver
             USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
             SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
 
-            USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCliente ) )
-            SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+            USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCliente ) )
+            SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
             USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
             SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE

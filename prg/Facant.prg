@@ -384,11 +384,11 @@ STATIC FUNCTION OpenFiles( lExt )
    USE ( cPatEmp() + "AntCliD.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliD", @dbfAntCliD ) )
    SET ADSINDEX TO ( cPatEmp() + "AntCliD.CDX" ) ADDITIVE
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
+   SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
-   USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
-   SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
+   SET ADSINDEX TO ( cPatEmp() + "AGENTES.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
@@ -399,8 +399,8 @@ STATIC FUNCTION OpenFiles( lExt )
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+   SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
 
    USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
    SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
@@ -409,8 +409,8 @@ STATIC FUNCTION OpenFiles( lExt )
    USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
    SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
-   USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-   SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
+   SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
    SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE

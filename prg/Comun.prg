@@ -1191,7 +1191,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Grupos de familias'
    oItem:cMessage       := 'Acceso al fichero de grupos de familias'
-   oItem:bAction        := {|| TGrpFam():New( cPatArt(), oWnd(), 'grupos_de_familias' ):Play() }
+   oItem:bAction        := {|| TGrpFam():New( cPatEmp(), oWnd(), 'grupos_de_familias' ):Play() }
    oItem:cId            := 'grupos_de_familias'
    oItem:cBmp           := "gc_folder_cubes_16"
    oItem:cBmpBig        := "gc_folder_cubes_32"
@@ -1221,7 +1221,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Fabricantes'
    oItem:cMessage       := 'Clasificación de artículos por fabricantes'
-   oItem:bAction        := {|| TFabricantes():New( cPatArt(), oWnd, "fabricantes" ):Activate() }
+   oItem:bAction        := {|| TFabricantes():New( cPatEmp(), oWnd, "fabricantes" ):Activate() }
    oItem:cId            := "fabricantes"
    oItem:cBmp           := "gc_bolt_16"
    oItem:cBmpBig        := "gc_bolt_32"
@@ -1232,7 +1232,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Comentarios'
    oItem:cMessage       := 'Acceso a los comentarios de los artículos'
-   oItem:bAction        := {|| TComentarios():New( cPatArt(), cDriver(), oWnd, "comentarios" ):Activate() }
+   oItem:bAction        := {|| TComentarios():New( cPatEmp(), cDriver(), oWnd, "comentarios" ):Activate() }
    oItem:cId            := "comentarios"
    oItem:cBmp           := "gc_message_16"
    oItem:cBmpBig        := "gc_message_32"
@@ -1276,7 +1276,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Tipos'
    oItem:cMessage       := 'Clasificación de artículos por tipos'
-   oItem:bAction        := {|| TTipArt():New( cPatArt(), cDriver(), oWnd, "tipos" ):Activate() }
+   oItem:bAction        := {|| TTipArt():New( cPatEmp(), cDriver(), oWnd, "tipos" ):Activate() }
    oItem:cId            := "tipos"
    oItem:cBmp           := "gc_objects_16"
    oItem:cBmpBig        := "gc_objects_32"
@@ -1483,7 +1483,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Cuentas de remesas"
    oItem:cMessage       := "Acceso a las cuentas de remesas"
-   oItem:bAction        := {|| TCtaRem():New( cPatCli(), cDriver(), oWnd, "cuentas_de_remesas" ):Activate() }
+   oItem:bAction        := {|| TCtaRem():New( cPatEmp(), cDriver(), oWnd, "cuentas_de_remesas" ):Activate() }
    oItem:cId            := "cuentas_de_remesas"
    oItem:cBmp           := "gc_portfolio_folder_16"
    oItem:cBmpBig        := "gc_portfolio_folder_32"
@@ -1629,7 +1629,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Grupos'
    oItem:cMessage       := 'Acceso a los grupos de proveedores'
-   oItem:bAction        := {|| TGrpPrv():New( cPatPrv(), oWnd, "grupos" ):Activate() }
+   oItem:bAction        := {|| TGrpPrv():New( cPatEmp(), oWnd, "grupos" ):Activate() }
    oItem:cId            := "grupos"
    oItem:cBmp           := "gc_businessmen2_16"
    oItem:cBmpBig        := "gc_businessmen2_32"
@@ -1971,7 +1971,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Grupos'
    oItem:cMessage       := 'Acceso a los grupos de clientes'
-   oItem:bAction        := {|| TGrpCli():New( cPatCli(), cDriver(), oWnd, "grupos_de_clientes" ):Activate() }
+   oItem:bAction        := {|| TGrpCli():New( cPatEmp(), cDriver(), oWnd, "grupos_de_clientes" ):Activate() }
    oItem:cId            := "grupos_de_clientes"
    oItem:cBmp           := "gc_users3_16"
    oItem:cBmpBig        := "gc_users3_32"
@@ -2023,7 +2023,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Grupo de plantillas'
    oItem:cMessage       := 'Acceso a grupos de plantillas automáticas'
-   oItem:bAction        := {|| TGrpFacturasAutomaticas():New( cPatCli(), oWnd, "grupo_de_plantillas" ):Activate() }
+   oItem:bAction        := {|| TGrpFacturasAutomaticas():New( cPatEmp(), oWnd, "grupo_de_plantillas" ):Activate() }
    oItem:cId            := "grupo_de_plantillas"
    oItem:cBmp           := "gc_folder_gear_16"
    oItem:cBmpBig        := "gc_folder_gear_32"
@@ -2261,7 +2261,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Ordenes de comanda'
    oItem:cMessage       := 'Acceso a los comentarios de los artículos'
-   oItem:bAction        := {|| TOrdenComanda():New( cPatArt(), oWnd, "ordenes_de_comanda" ):Activate() }
+   oItem:bAction        := {|| TOrdenComanda():New( cPatEmp(), oWnd, "ordenes_de_comanda" ):Activate() }
    oItem:cId            := "ordenes_de_comanda"
    oItem:cBmp           := "gc_sort_az_descending_16"
    oItem:cBmpBig        := "gc_sort_az_descending_32"
@@ -4132,10 +4132,10 @@ RETURN ( cCodigoDelegacionEnUso )
 FUNCTION setPathEmpresa( cCodEmp )
 
    cPatEmp( cCodEmp )
-   cPatCli( cCodEmp, nil, .t. )
-   cPatArt( cCodEmp, nil, .t. )
-   cPatPrv( cCodEmp, nil, .t. )
-   cPatAlm( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
 
 RETURN ( nil )
 
@@ -5134,173 +5134,6 @@ FUNCTION AppDbf( cEmpOld, cEmpTmp, cFile, aStruct )
 	CLOSE ( dbfTmp )
 
 RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cPatGrp( cPath, lFull, lEmpresa )
-
-   DEFAULT lFull     := .f.
-   DEFAULT lEmpresa  := .t.
-
-   if !empty( cPath )
-      cPatGrp        := "Emp" + cPath
-   end if
-
-   if lAds()
-      RETURN ( cAdsUNC() + cPatGrp + "\" )
-   end if
-
-   if lAIS() .and. lFull
-      RETURN ( cAdsUNC() + cPatGrp + "\" )
-   end if
-
-   if lAIS() .and. !lFull
-      RETURN ( cPatGrp )
-   end if
-
-   if lCdx()
-      RETURN ( fullCurDir() + cPatGrp + "\" )
-   end if
-
-RETURN ( if( lFull, fullCurDir(), "" ) + cPatGrp + "\" )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cPatCli( cPath, lFull, lEmpresa )
-
-   DEFAULT lFull     := .f.
-   DEFAULT lEmpresa  := .t.
-
-   if !empty( cPath )
-      if lEmpresa
-         cPatCli     := "Emp" + cPath
-      else
-         cPatCli     := "Emp" + cPath
-      end if
-   end if
-
-   if lAds()
-      RETURN ( cAdsUNC() + cPatCli + "\" )
-   end if
-
-   if lAIS() .and. lFull
-      RETURN ( cAdsUNC() + cPatCli + "\" )
-   end if
-
-   if lAIS() .and. !lFull
-      RETURN ( cPatCli )
-   end if
-
-   if lCdx()
-      RETURN ( fullCurDir() + cPatCli + "\" )
-   end if
-
-RETURN ( if( lFull, fullCurDir(), "" ) + cPatCli + "\" )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cPatArt( cPath, lFull, lEmpresa )
-
-   DEFAULT lFull     := .f.
-   DEFAULT lEmpresa  := .t.
-
-   if !empty( cPath )
-
-      if lEmpresa
-         cPatArt     := "Emp" + cPath
-      else
-         cPatArt     := "Emp" + cPath
-      end if
-
-   end if
-
-   if lAds()
-      RETURN ( cAdsUNC() + cPatArt + "\" )
-   end if
-
-   if lAIS() .and. lFull
-      RETURN ( cAdsUNC() + cPatArt + "\" )
-   end if
-
-   if lAIS() .and. !lFull
-      RETURN ( cPatArt )
-   end if
-
-   if lCdx()
-      RETURN ( fullCurDir() + cPatArt + "\" )
-   end if
-
-RETURN ( if( lFull, fullCurDir(), "" ) + cPatArt + "\" )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cPatPrv( cPath, lFull, lEmpresa )
-
-   DEFAULT lFull     := .f.
-   DEFAULT lEmpresa  := .t.
-
-   if !empty( cPath )
-
-      if lEmpresa
-         cPatPrv     := "Emp" + cPath
-      else
-         cPatPrv     := "Emp" + cPath
-      end if
-
-   end if
-
-   if lAds()
-      RETURN ( cAdsUNC() + cPatPrv + "\" )
-   end if
-
-   if lAIS() .and. lFull
-      RETURN ( cAdsUNC() + cPatPrv + "\" )
-   end if
-
-   if lAIS() .and. !lFull
-      RETURN ( cPatPrv )
-   end if
-
-   if lCdx()
-      RETURN ( fullCurDir() + cPatPrv + "\" )
-   end if
-
-   RETURN ( if( !lFull, fullCurDir(), "" ) + cPatPrv + "\" )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cPatAlm( cPath, lFull, lEmpresa )
-
-   DEFAULT lFull     := .f.
-   DEFAULT lEmpresa  := .t.
-
-   if !empty( cPath )
-
-      if lEmpresa
-         cPatAlm     := "Emp" + cPath
-      else
-         cPatAlm     := "Emp" + cPath
-      end if
-
-   end if
-
-   if lAds()
-      RETURN ( cAdsUNC() + cPatAlm + "\" )
-   end if
-
-   if lAIS() .and. lFull
-      RETURN ( cAdsUNC() + cPatAlm + "\" )
-   end if
-
-   if lAIS() .and. !lFull
-      RETURN ( cPatAlm )
-   end if
-
-   if lCdx()
-      RETURN ( fullCurDir() + cPatAlm + "\" )
-   end if
-
-RETURN ( if( lFull, fullCurDir(), "" ) + cPatAlm + "\" )
 
 //---------------------------------------------------------------------------//
 

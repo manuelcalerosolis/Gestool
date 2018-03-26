@@ -71,7 +71,7 @@ METHOD OpenFiles() CLASS TConFacCli
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oArtKit     PATH ( cPatArt() ) FILE "ARTKIT.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
+   DATABASE NEW ::oArtKit     PATH ( cPatEmp() ) FILE "ARTKIT.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
    ::oFacCliT     := TDataCenter():oFacCliT()     
 
@@ -81,7 +81,7 @@ METHOD OpenFiles() CLASS TConFacCli
 
    DATABASE NEW ::oFacRecL    PATH ( cPatEmp() ) FILE "FACRECL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oDbfCliAtp  PATH ( cPatCli() ) FILE "CLIATP.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
+   DATABASE NEW ::oDbfCliAtp  PATH ( cPatEmp() ) FILE "CLIATP.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
 
    RECOVER USING oError
 

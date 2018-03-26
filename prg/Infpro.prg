@@ -54,7 +54,7 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-      DATABASE NEW ::oDbfPro PATH ( cPatArt() )   FILE "PROMOT.DBF"   VIA ( cDriver() ) SHARED INDEX "PROMOT.CDX"
+      DATABASE NEW ::oDbfPro PATH ( cPatEmp() )   FILE "PROMOT.DBF"   VIA ( cDriver() ) SHARED INDEX "PROMOT.CDX"
 
    RECOVER
 

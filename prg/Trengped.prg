@@ -38,7 +38,7 @@ METHOD OpenFiles() CLASS TRenGPed
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfFam PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+   DATABASE NEW ::oDbfFam PATH ( cPatEmp() )  FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    ::oPedCliT := TDataCenter():oPedCliT()
 

@@ -53,7 +53,7 @@ METHOD lOpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfCli     FILE "CLIENT.DBF"     PATH ( cPatCli() )  VIA ( cLocalDriver() ) SHARED INDEX  "CLIENT.CDX"
+   DATABASE NEW ::oDbfCli     FILE "CLIENT.DBF"     PATH ( cPatEmp() )  VIA ( cLocalDriver() ) SHARED INDEX  "CLIENT.CDX"
 
    RECOVER
 

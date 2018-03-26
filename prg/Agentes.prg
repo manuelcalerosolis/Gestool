@@ -226,8 +226,8 @@ Static Function OpenFiles()
 
       nView             := D():CreateView()
 
-      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAge ) )
-      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAge ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGENTES.CDX" ) ADDITIVE
 
       D():AgentesComisiones( nView )
 
@@ -1382,8 +1382,8 @@ FUNCTION RetNbrAge( cCodAge, dbfAge )
    BEGIN SEQUENCE
 
    if Empty( dbfAge )
-      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAge ) )
-      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAge ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGENTES.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -1497,19 +1497,19 @@ Function IsAgentes()
    local oBlock
    local dbfAgente
 
-   if !lExistTable( cPatCli() + "Agentes.Dbf" )
-      mkAgentes( cPatCli() )
+   if !lExistTable( cPatEmp() + "Agentes.Dbf" )
+      mkAgentes( cPatEmp() )
    end if
 
-   if !lExistIndex( cPatCli() + "Agentes.Cdx" )
-      rxAgentes( cPatCli() )
+   if !lExistIndex( cPatEmp() + "Agentes.Cdx" )
+      rxAgentes( cPatEmp() )
    end if
 
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      USE ( cPatCli() + "Agentes.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CCODAGE", @dbfAge ) )
-      SET ADSINDEX TO ( cPatCli() + "Agentes.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Agentes.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CCODAGE", @dbfAge ) )
+      SET ADSINDEX TO ( cPatEmp() + "Agentes.Cdx" ) ADDITIVE
 
    RECOVER USING oError
 
@@ -1528,7 +1528,7 @@ Return ( .t. )
 FUNCTION mkAgentes( cPath, lAppend, cPathOld, oMeter )
 
    DEFAULT lAppend   := .f.
-   DEFAULT cPath     := cPatCli()
+   DEFAULT cPath     := cPatEmp()
 
    if oMeter != nil
 		oMeter:cText	:= "Generando Bases"
@@ -1563,7 +1563,7 @@ FUNCTION rxAgentes( cPath, oMeter )
 
    local dbfAge
 
-   DEFAULT cPath  := cPatCli()
+   DEFAULT cPath  := cPatEmp()
 
    if !lExistTable( cPath + "Agentes.Dbf" ) .or. !lExistTable( cPath + "AgeCom.Dbf" ) .or. !lExistTable( cPath + "AgeRel.Dbf" )
 		mkAgentes( cPath, , , oMeter )
@@ -1714,8 +1714,8 @@ FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct )
    BEGIN SEQUENCE
 
    if Empty( dbfAge )
-      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAge ) )
-      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAge ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGENTES.CDX" ) ADDITIVE
       lClose         := .t.
    else
       nRec           := ( dbfAge )->( Recno() )

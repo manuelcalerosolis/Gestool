@@ -261,23 +261,23 @@ STATIC FUNCTION OpenFiles()
 
       D():Lenguajes( nView )
 
-      USE ( cPatArt() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
-      SET ADSINDEX TO ( cPatArt() + "FamPrv.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
+      SET ADSINDEX TO ( cPatEmp() + "FamPrv.Cdx" ) ADDITIVE
 
-      USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
-      SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
+      SET ADSINDEX TO ( cPatEmp() + "Provee.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-      SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+      SET ADSINDEX TO ( cPatEmp() + "Articulo.Cdx" ) ADDITIVE
       ( dbfArticulo )->( OrdSetFocus( "cFamCod" ) )
 
-      oGrpFam           := TGrpFam():Create( cPatArt() )
+      oGrpFam           := TGrpFam():Create( cPatEmp() )
       oGrpFam:OpenFiles()
 
-      oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
+      oFraPub           := TFrasesPublicitarias():Create( cPatEmp() )
       oFraPub:OpenFiles()
 
-      oComentarios      := TComentarios():Create( cPatArt() )
+      oComentarios      := TComentarios():Create( cPatEmp() )
       oComentarios:OpenFiles()
 
       oDetCamposExtra   := TDetCamposExtra():New()
@@ -2065,8 +2065,8 @@ Method CreateData()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
-   SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
+   SET ADSINDEX TO ( cPatEmp() + "Familias.Cdx" ) ADDITIVE
 
    mkFamilia( cPatSnd() )
 
@@ -2141,8 +2141,8 @@ Method RestoreData()
       oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-      USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @cFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @cFamilia ) )
+      SET ADSINDEX TO ( cPatEmp() + "Familias.Cdx" ) ADDITIVE
 
       while !( cFamilia )->( eof() )
          if ( cFamilia )->lSelDoc .and. ( cFamilia )->( dbRLock() )
@@ -2252,8 +2252,8 @@ Method Process()
                USE ( cPatSnd() + "Familias.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @tmpFam ) )
                SET ADSINDEX TO ( cPatSnd() + "Familias.Cdx" ) ADDITIVE
 
-               USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
-               SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
+               USE ( cPatEmp() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
+               SET ADSINDEX TO ( cPatEmp() + "Familias.Cdx" ) ADDITIVE
 
                if !empty( ::oSender:oMtr )
                   ::oSender:oMtr:nTotal := ( tmpFam )->( lastrec() )
@@ -2511,7 +2511,7 @@ FUNCTION mkFamilia( cPath, lAppend, cPathOld )
 	local cFamilia
 
 	DEFAULT lAppend := .f.
-   DEFAULT cPath   := cPatArt()
+   DEFAULT cPath   := cPatEmp()
 
    if lExistTable( cPath + "Familias.Dbf", cLocalDriver() )
       fEraseTable( cPath + "Familias.dbf" )
@@ -2565,7 +2565,7 @@ FUNCTION rxFamilia( cPath, cDriver )
 
 	local cFamilia
 
-   DEFAULT cPath     := cPatArt()
+   DEFAULT cPath     := cPatEmp()
    DEFAULT cDriver   := cDriver()
 
    if !lExistTable( cPath + "Familias.Dbf", cDriver )
@@ -2811,8 +2811,8 @@ FUNCTION retFamilia( cCodFam, uFamilia )
    BEGIN SEQUENCE
 
    if empty( uFamilia )
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @uFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @uFamilia ) )
+      SET ADSINDEX TO ( cPatEmp() + "Familias.Cdx" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -2866,8 +2866,8 @@ FUNCTION cFamilia( oGet, cFamilia, oGet2, lMessage, oGetPrp1, oGetPrp2 )
    BEGIN SEQUENCE
 
    if empty( cFamilia )
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "FAMILIAS", @cFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "FAMILIAS", @cFamilia ) )
+      SET ADSINDEX TO ( cPatEmp() + "Familias.Cdx" ) ADDITIVE
       lClose         := .t.
    else
       nRec           := ( cFamilia )->( Recno() )

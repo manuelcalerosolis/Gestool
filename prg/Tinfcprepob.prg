@@ -96,7 +96,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oPreCliL  PATH ( cPatEmp() )  FILE "PRECLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
 
-   DATABASE NEW ::oDbfArt   PATH ( cPatArt() )  FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt   PATH ( cPatEmp() )  FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
 

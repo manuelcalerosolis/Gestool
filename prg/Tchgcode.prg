@@ -192,7 +192,7 @@ METHOD New( oMenuItem, oWnd ) CLASS TChgCode
    ::cGetPr1Old         := Space( 40 )
    ::cGetPr2Old         := Space( 40 )
 
-   ::oGrpFam            := TGrpFam():Create( cPatArt() )
+   ::oGrpFam            := TGrpFam():Create( cPatEmp() )
 
    ::OpenFiles()
 
@@ -215,23 +215,23 @@ METHOD OpenFiles()
    oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfFam     PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+   DATABASE NEW ::oDbfFam     PATH ( cPatEmp() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-   DATABASE NEW ::oDbfArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt     PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfArtKit  PATH ( cPatArt() ) FILE "ArtKit.Dbf"   VIA ( cDriver() ) SHARED INDEX "ArtKit.Cdx"
+   DATABASE NEW ::oDbfArtKit  PATH ( cPatEmp() ) FILE "ArtKit.Dbf"   VIA ( cDriver() ) SHARED INDEX "ArtKit.Cdx"
 
-   DATABASE NEW ::oDbfPrv     PATH ( cPatArt() ) FILE "PROVART.DBF"  VIA ( cDriver() ) SHARED INDEX "PROVART.CDX"
+   DATABASE NEW ::oDbfPrv     PATH ( cPatEmp() ) FILE "PROVART.DBF"  VIA ( cDriver() ) SHARED INDEX "PROVART.CDX"
 
-   DATABASE NEW ::oDbfTar     PATH ( cPatArt() ) FILE "TARPREL.DBF"  VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
+   DATABASE NEW ::oDbfTar     PATH ( cPatEmp() ) FILE "TARPREL.DBF"  VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
 
-   DATABASE NEW ::oDbfOfe     PATH ( cPatArt() ) FILE "OFERTA.DBF"   VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
+   DATABASE NEW ::oDbfOfe     PATH ( cPatEmp() ) FILE "OFERTA.DBF"   VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
-   DATABASE NEW ::oDbfArd     PATH ( cPatArt() ) FILE "ARTDIV.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
+   DATABASE NEW ::oDbfArd     PATH ( cPatEmp() ) FILE "ARTDIV.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
 
-   DATABASE NEW ::oDbfKit     PATH ( cPatArt() ) FILE "ARTKIT.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
+   DATABASE NEW ::oDbfKit     PATH ( cPatEmp() ) FILE "ARTKIT.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
-   DATABASE NEW ::oDbfCliAtp  PATH ( cPatCli() ) FILE "CLIATP.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
+   DATABASE NEW ::oDbfCliAtp  PATH ( cPatEmp() ) FILE "CLIATP.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
 
    DATABASE NEW ::oDbfPedPrv  PATH ( cPatEmp() ) FILE "PEDPROVL.DBF" VIA ( cDriver() ) SHARED INDEX "PEDPROVL.CDX"
 
@@ -255,9 +255,9 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfTpvCliT PATH ( cPatEmp() ) FILE "TIKET.DBF"    VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
-   DATABASE NEW ::oDbfTblPro  PATH ( cPatArt() ) FILE "TBLPRO.DBF"   VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
+   DATABASE NEW ::oDbfTblPro  PATH ( cPatEmp() ) FILE "TBLPRO.DBF"   VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
 
-   DATABASE NEW ::oDbfAgentes PATH ( cPatCli() ) FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+   DATABASE NEW ::oDbfAgentes PATH ( cPatEmp() ) FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
    DATABASE NEW ::oDbfPreCliT PATH ( cPatEmp() ) FILE "PRECLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "PRECLIT.CDX"
 
@@ -279,7 +279,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfFacPrvT PATH ( cPatEmp() ) FILE "FACPRVT.DBF"  VIA ( cDriver() ) SHARED INDEX "FACPRVT.CDX"
 
-   DATABASE NEW ::oDbfClient  PATH ( cPatCli() ) FILE "CLIENT.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+   DATABASE NEW ::oDbfClient  PATH ( cPatEmp() ) FILE "CLIENT.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
    DATABASE NEW ::oDbfMatProd PATH ( cPatEmp() ) FILE "PROLIN.DBF"   VIA ( cDriver() ) SHARED INDEX "PROLIN.CDX"
 

@@ -500,7 +500,7 @@ METHOD oCliBnc() CLASS TDataCenter
 
  	local oCliBnc
 
- 	DATABASE NEW oCliBnc PATH ( cPatCli() ) FILE "CliBnc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliBnc.Cdx"
+ 	DATABASE NEW oCliBnc PATH ( cPatEmp() ) FILE "CliBnc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliBnc.Cdx"
 
 Return ( oCliBnc )   
 
@@ -2353,8 +2353,8 @@ METHOD BuildEmpresa()
 
    oDataTable              := TDataTable():New( "Client" )
    oDataTable:lTrigger     := ::lTriggerAuxiliares
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "Client.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "Client.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "Client.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Client.Cdx"
    oDataTable:bCreateFile  := {| cPath | mkClient( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxClient( cPath ) }
    oDataTable:bSyncFile    := {|| synClient( cPatEmp() ) }
@@ -2364,75 +2364,75 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "ClientD" )
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "ClientD.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "ClientD.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "ClientD.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ClientD.Cdx"
    oDataTable:cDescription := "Clientes documentos"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "CliAtp" )
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "CliAtp.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliAtp.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "CliAtp.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CliAtp.Cdx"
    oDataTable:cDescription := "Atípicas de clientes"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "ObrasT" )
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "ObrasT.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "ObrasT.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "ObrasT.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ObrasT.Cdx"
    oDataTable:cDescription := "Clientes direcciones"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "CliCto" )
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "CliCto.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliCto.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "CliCto.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CliCto.Cdx"
    oDataTable:cDescription := "Clientes contactos"
    ::AddEmpresaTable( oDataTable )
 
 
    oDataTable              := TDataTable():New( "CliDad" )
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "CliDad.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliDad.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "CliDad.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CliDad.Cdx"
    oDataTable:cDescription := "Clientes contactos"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "CliBnc" )
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "CliBnc.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliBnc.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "CliBnc.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CliBnc.Cdx"
    oDataTable:cDescription := "Clientes bancos"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "CliInc" )
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "CliInc.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliInc.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "CliInc.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CliInc.Cdx"
    oDataTable:cDescription := "Clientes incidencias"
    oDatatable:aDictionary  := hashDictionary( aCliInc() )
    oDatatable:aDefaultValue:= hashDefaultValue( aCliInc() )
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "GrpCli" )
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "GrpCli.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "GrpCli.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "GrpCli.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "GrpCli.Cdx"
    oDataTable:cDescription := "Grupos de clientes"
    oDataTable:bCreateFile  := {| cPath | TGrpCli():BuildFiles( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "Transpor" )
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "Transpor.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "Transpor.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "Transpor.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Transpor.Cdx"
    oDataTable:cDescription := "Transportistas"
    oDataTable:bCreateFile  := {| cPath | TTrans():BuildFiles( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "Ruta" )
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "Ruta.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "Ruta.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "Ruta.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Ruta.Cdx"
    oDataTable:cDescription := "Rutas"
    oDataTable:bCreateFile  := {| cPath | mkRuta( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxRuta( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "CtaRem" )
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "CtaRem.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CtaRem.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "CtaRem.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CtaRem.Cdx"
    oDataTable:cDescription := "Cuentas de remesas"
    oDataTable:bCreateFile  := {| cPath | TCtaRem():BuildFiles( cPath ) }
    ::AddEmpresaTable( oDataTable )
@@ -2467,8 +2467,8 @@ METHOD BuildEmpresa()
    */
 
    oDataTable              := TDataTable():New( "GrpPrv" )
-   oDataTable:cDataFile    := cPatPrv( , .t. ) + "GrpPrv.Dbf"
-   oDataTable:cIndexFile   := cPatPrv( , .t. ) + "GrpPrv.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "GrpPrv.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "GrpPrv.Cdx"
    oDataTable:bSyncFile    := {|| SynProvee( cPatEmp() ) }
    oDataTable:cDescription := "Grupos de proveedores"
    oDataTable:bCreateFile  := {| cPath | TGrpPrv():BuildFiles( cPath ) }
@@ -2476,22 +2476,22 @@ METHOD BuildEmpresa()
 
    oDataTable              := TDataTable():New( "Provee" )
    oDataTable:lTrigger     := ::lTriggerAuxiliares
-   oDataTable:cDataFile    := cPatPrv( , .t. ) + "Provee.Dbf"
-   oDataTable:cIndexFile   := cPatPrv( , .t. ) + "Provee.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "Provee.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Provee.Cdx"
    oDataTable:cDescription := "Proveedores"
    oDataTable:bCreateFile  := {| cPath | mkProvee( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxProvee( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "ProveeD" )
-   oDataTable:cDataFile    := cPatPrv( , .t. ) + "ProveeD.Dbf"
-   oDataTable:cIndexFile   := cPatPrv( , .t. ) + "ProveeD.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "ProveeD.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ProveeD.Cdx"
    oDataTable:cDescription := "Proveedores"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "PrvBnc" )
-   oDataTable:cDataFile    := cPatPrv( , .t. ) + "PrvBnc.Dbf"
-   oDataTable:cIndexFile   := cPatPrv( , .t. ) + "PrvBnc.Cdx"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "PrvBnc.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PrvBnc.Cdx"
    oDataTable:cDescription := "Bancos de proveedores"
    ::AddEmpresaTable( oDataTable )
 
@@ -3456,9 +3456,9 @@ METHOD BuildEmpresa()
 
    // Objetos -----------------------------------------------------------------
 
-   ::AddEmpresaObject( TGrpCli():Create( cPatCli() ) )
+   ::AddEmpresaObject( TGrpCli():Create( cPatEmp() ) )
 
-   ::AddEmpresaObject( TGrpPrv():Create( cPatPrv() ) )
+   ::AddEmpresaObject( TGrpPrv():Create( cPatEmp() ) )
 
    ::AddEmpresaObject( UniMedicion():Create() )
 
@@ -4780,7 +4780,7 @@ METHOD selectSATFromArticulo( cCodigoArticulo )
    cStm           += "LEFT JOIN " + cPatEmp() + "EstadoSat  estadoSat on cabeceraSat.cCodEst = estadoSat.cCodigo "
    cStm           += "LEFT JOIN " + cPatEmp() + "OpeT       operario on cabeceraSat.cCodOpe = operario.cCodTra "
    cStm           += "LEFT JOIN " + cPatEmp() + "Articulo   articulos on lineasSat.cRef = articulos.Codigo "
-   cStm           += "LEFT JOIN " + cPatCli() + "Client     clientes on cabeceraSat.cCodCli = clientes.Cod "
+   cStm           += "LEFT JOIN " + cPatEmp() + "Client     clientes on cabeceraSat.cCodCli = clientes.Cod "
 
    cStm           += "WHERE lineasSat.cRef = '" + alltrim( cCodigoArticulo ) + "' "
 

@@ -123,8 +123,8 @@ static function CnvEuro( aoMeter )
    local nDec     := nDouDiv( ( dbfEmp )->cDivChg, dbfDiv )
    local nChg     := nChgDiv( ( dbfEmp )->cDivEmp, dbfDiv )
 
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfTmp ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfTmp ) )
+   SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE
 
    aoMeter[ 1 ]:nTotal  := ( dbfTmp )->( LastRec() )
 
@@ -161,8 +161,8 @@ static function CnvEuro( aoMeter )
    Cambiamos los precios por propiedades---------------------------------------
    */
 
-   USE ( cPatArt() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfTmp ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTDIV.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfTmp ) )
+   SET ADSINDEX TO ( cPatEmp() + "ARTDIV.CDX" ) ADDITIVE
 
    aoMeter[ 2 ]:nTotal  := ( dbfTmp )->( LastRec() )
 
@@ -195,8 +195,8 @@ static function CnvEuro( aoMeter )
    Cambiamos los precios en tarifas personalizadas-----------------------------
    */
 
-   USE ( cPatArt() + "TARPREL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPREL", @dbfTmp ) )
-   SET ADSINDEX TO ( cPatArt() + "TARPREL.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "TARPREL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPREL", @dbfTmp ) )
+   SET ADSINDEX TO ( cPatEmp() + "TARPREL.CDX" ) ADDITIVE
 
    aoMeter[ 3 ]:nTotal  := ( dbfTmp )->( LastRec() )
 
@@ -224,8 +224,8 @@ static function CnvEuro( aoMeter )
    Cambio de los datos en la empresa-------------------------------------------
    */
 
-   USE ( cPatCli() + "CLIATP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfTmp ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIATP.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CLIATP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfTmp ) )
+   SET ADSINDEX TO ( cPatEmp() + "CLIATP.CDX" ) ADDITIVE
 
    aoMeter[ 4 ]:nTotal  := ( dbfTmp )->( LastRec() )
 
@@ -270,8 +270,8 @@ static function CnvEuro( aoMeter )
    Cambio de los datos en la empresa-------------------------------------------
    */
 
-   USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfTmp ) )
-   SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfTmp ) )
+   SET ADSINDEX TO ( cPatEmp() + "OFERTA.CDX" ) ADDITIVE
 
    aoMeter[ 6 ]:nTotal  := ( dbfTmp )->( LastRec() )
 
@@ -304,8 +304,8 @@ static function CnvEuro( aoMeter )
    Cambio de los datos en la empresa-------------------------------------------
    */
 
-   USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfTmp ) )
-   SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfTmp ) )
+   SET ADSINDEX TO ( cPatEmp() + "PROVART.CDX" ) ADDITIVE
 
    aoMeter[ 7 ]:nTotal  := ( dbfTmp )->( LastRec() )
 

@@ -50,7 +50,7 @@ END CLASS
 
 METHOD Create( cPath ) CLASS TGrpFam
 
-   DEFAULT cPath     := cPatArt()
+   DEFAULT cPath     := cPatEmp()
 
    ::cPath           := cPath
    ::oDbf            := nil
@@ -61,7 +61,7 @@ RETURN ( Self )
 
 METHOD New( cPath, oWndParent, oMenuItem ) CLASS TGrpFam
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil

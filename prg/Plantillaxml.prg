@@ -356,11 +356,11 @@ METHOD OpenFiles( lExclusive ) CLASS TPlantillaXML
 
       DATABASE NEW ::oDbfDiv     PATH ( cPatDat() )   FILE "DIVISAS.DBF"      VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-      DATABASE NEW ::oDbfPrv     PATH ( cPatPrv() )   FILE "PROVEE.DBF"       VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
+      DATABASE NEW ::oDbfPrv     PATH ( cPatEmp() )   FILE "PROVEE.DBF"       VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
 
-      DATABASE NEW ::oDbfArt     PATH ( cPatArt() )   FILE "ARTICULO.DBF"     VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArt     PATH ( cPatEmp() )   FILE "ARTICULO.DBF"     VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-      DATABASE NEW ::oDbfArtCod  PATH ( cPatArt() )   FILE "ArtCodebar.Dbf"   VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
+      DATABASE NEW ::oDbfArtCod  PATH ( cPatEmp() )   FILE "ArtCodebar.Dbf"   VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
 
       DATABASE NEW ::oFacPrvT    PATH ( cPatEmp() )   FILE "FACPRVT.DBF"      VIA ( cDriver() ) SHARED INDEX "FACPRVT.CDX"
 
@@ -372,13 +372,13 @@ METHOD OpenFiles( lExclusive ) CLASS TPlantillaXML
 
       DATABASE NEW ::oAlbPrvL    PATH ( cPatEmp() )   FILE "AlbProvL.DBF"     VIA ( cDriver() ) SHARED INDEX "AlbProvL.CDX"
 
-      DATABASE NEW ::oDbfFam     PATH ( cPatArt() )   FILE "FAMILIAS.DBF"     VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oDbfFam     PATH ( cPatEmp() )   FILE "FAMILIAS.DBF"     VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
       DATABASE NEW ::oDbfIva     PATH ( cPatDat() )   FILE "TIVA.DBF"         VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
       DATABASE NEW ::oDbfFPago   PATH ( cPatEmp() )   FILE "FPAGO.DBF"        VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
-      DATABASE NEW ::oArtPrv     PATH ( cPatArt() )   FILE "PROVART.DBF"      VIA ( cDriver() ) SHARED INDEX "PROVART.CDX"
+      DATABASE NEW ::oArtPrv     PATH ( cPatEmp() )   FILE "PROVART.DBF"      VIA ( cDriver() ) SHARED INDEX "PROVART.CDX"
 
       ::OpenDetails()
 

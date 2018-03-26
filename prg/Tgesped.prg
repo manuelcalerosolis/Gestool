@@ -119,7 +119,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oTikCliL  PATH ( cPatEmp() )   FILE "TIKEL.DBF"     VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
 
-   DATABASE NEW ::oObras    PATH ( cPatCli() )   FILE "OBRAST.DBF"    VIA ( cDriver() ) SHARED INDEX "OBRAST.CDX"
+   DATABASE NEW ::oObras    PATH ( cPatEmp() )   FILE "OBRAST.DBF"    VIA ( cDriver() ) SHARED INDEX "OBRAST.CDX"
 
    DATABASE NEW ::oAlbPrvL  PATH ( cPatEmp() )   FILE "ALBPROVL.DBF"  VIA ( cDriver() ) SHARED INDEX "ALBPROVL.CDX"
 

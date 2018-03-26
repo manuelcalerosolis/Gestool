@@ -623,9 +623,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    
    local oSemilla
    
-   local oSayGrp
-   local cSayGrp
-
    local oGetSemilla
    
    local oBmpGeneral
@@ -684,8 +681,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
       aTmp[ _DFINOPE ]     := Ctod( "31/12/" + Str( Year( Date() ), 4 ) )
       aTmp[ _UUID    ]     := win_uuidcreatestring()
    end if 
-
-   cSayGrp                 := RetFld( aTmp[ _CCODGRP ], dbfEmp )
 
    if BeginEdtRec( aTmp, nMode )
       RETURN .f.
@@ -812,40 +807,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    /*
    Codigo de Divisas______________________________________________________________
    */
-
-   REDEFINE GET aGet[ _CCODGRP ] VAR aTmp[ _CCODGRP ] ;
-         ID       400 ;
-         PICTURE  "@!" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( if( cEmpresa( aGet[ _CCODGRP ], dbfEmp, oSayGrp ) .and. aTmp[ _CCODGRP ] != aTmp[ _CODEMP ], .t., ( MsgStop( "Empresa martiz no valida" ), .f. ) ) );
-         BITMAP   "LUPA";
-         ON HELP  ( BrwEmpresa( aGet[ _CCODGRP ], dbfEmp, oSayGrp ) ) ;
-         OF       oFld:aDialogs[1]
-
-   REDEFINE GET oSayGrp VAR cSayGrp ;
-         ID       410 ;
-         WHEN     ( .F. ) ;
-         OF       oFld:aDialogs[1]
-
-   REDEFINE CHECKBOX aGet[ _LGRPCLI ] VAR aTmp[ _LGRPCLI ] ;
-         ID       420 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-   REDEFINE CHECKBOX aGet[ _LGRPPRV ] VAR aTmp[ _LGRPPRV ] ;
-         ID       430 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-   REDEFINE CHECKBOX aGet[ _LGRPART ] VAR aTmp[ _LGRPART ] ;
-         ID       440 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-   REDEFINE CHECKBOX aGet[ _LGRPALM ] VAR aTmp[ _LGRPALM ] ;
-         ID       450 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
 
    REDEFINE GET aGet[ _CDIVEMP ] VAR aTmp[ _CDIVEMP ];
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -3288,13 +3249,13 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
    Directorios si no tiene grupo-----------------------------------------------
    */
 
-   cPatCli( EmpresasModel():getCodigoGrupoCliente( cCodEmp ), nil, .t. )
+   cPatEmp( EmpresasModel():getCodigoGrupoCliente( cCodEmp ), nil, .t. )
 
-   cPatPrv( EmpresasModel():getCodigoGrupoProveedor( cCodEmp ), nil, .t. )
+   cPatEmp( EmpresasModel():getCodigoGrupoProveedor( cCodEmp ), nil, .t. )
 
-   cPatArt( EmpresasModel():getCodigoGrupoArticulo( cCodEmp ), nil, .t. )
+   cPatEmp( EmpresasModel():getCodigoGrupoArticulo( cCodEmp ), nil, .t. )
 
-   cPatAlm( EmpresasModel():getCodigoGrupoAlmacen( cCodEmp ), nil, .t. )
+   cPatEmp( EmpresasModel():getCodigoGrupoAlmacen( cCodEmp ), nil, .t. )
    
    /*
    Cargamos el buffer----------------------------------------------------------
@@ -3375,13 +3336,13 @@ FUNCTION SelectEmpresa( cCodEmp )
    Directorios si no tiene grupo-----------------------------------------------
    */
 
-   cPatCli( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
 
-   cPatPrv( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
 
-   cPatArt( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
 
-   cPatAlm( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
    
    /*
    Cargamos el buffer----------------------------------------------------------
@@ -4221,10 +4182,10 @@ FUNCTION ReindexaEmp( cPath, cCodigoEmpresa, oMsg )
       :lSincroniza   := .f.
       :lMessageEnd   := .f.
       :cCodEmp       := cCodigoEmpresa
-      :cPatCli       := cPatCli( cCodigoEmpresa, .f., .t. )
-      :cPatArt       := cPatArt( cCodigoEmpresa, .f., .t. )
-      :cPatPrv       := cPatPrv( cCodigoEmpresa, .f., .t. )
-      :cPatAlm       := cPatAlm( cCodigoEmpresa, .f., .t. )
+      :cPatCli       := cPatEmp( cCodigoEmpresa, .f., .t. )
+      :cPatArt       := cPatEmp( cCodigoEmpresa, .f., .t. )
+      :cPatPrv       := cPatEmp( cCodigoEmpresa, .f., .t. )
+      :cPatAlm       := cPatEmp( cCodigoEmpresa, .f., .t. )
       :GenIndices( oMsg )
    end with
 
@@ -5789,8 +5750,6 @@ CLASS AImportacion
 
    Method False()
 
-   Method Load( aTmp )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -5822,17 +5781,6 @@ Method False() Class AImportacion
    ::nCosto          := 1
    ::lScript         := .f.
    ::lEntidades      := .f.
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method Load( aTmp ) Class AImportacion
-
-   ::lArticulos      := aTmp[ _LGRPART ]
-   ::lClientes       := aTmp[ _LGRPCLI ]
-   ::lProveedor      := aTmp[ _LGRPPRV ]
-   ::lAlmacen        := aTmp[ _LGRPALM ]
 
 RETURN ( Self )
 

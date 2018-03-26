@@ -9370,14 +9370,14 @@ FUNCTION SynAlbPrv( cPath )
    dbUseArea( .t., cDriver(), cPath + "ALBPRVI.DBF", cCheckArea( "ALBPRVI", @cAlbPrvI ), .f. )
    if !lAIS(); ordListAdd( cPath + "AlbPrvI.Cdx" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @cFamilia ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @cFamilia ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @cArticulo ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @cArticulo ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "PROVART.DBF", cCheckArea( "PROVART", @cArtPrv ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "PROVART.DBF", cCheckArea( "PROVART", @cArtPrv ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @cIva ), .t. )
    if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end

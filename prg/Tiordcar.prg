@@ -69,11 +69,11 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfDiv PATH ( cPatDat() ) FILE "DIVISAS.DBF"  VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-   DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    DATABASE NEW ::oDbfAge PATH ( cPatEmp() ) FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
-   ::oTrans    := TTrans():New( cPatCli() )
+   ::oTrans    := TTrans():New( cPatEmp() )
    ::oTrans:OpenFiles()
 
 RETURN ( self )

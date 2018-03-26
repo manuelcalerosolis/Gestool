@@ -825,8 +825,8 @@ FUNCTION cProp( oGet, oSay )
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "PRO", @dbfPro ) )
-   SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "PRO", @dbfPro ) )
+   SET ADSINDEX TO ( cPatEmp() + "PRO.CDX" ) ADDITIVE
 
    if ( dbfPro )->( dbSeek( cCodPrp ) )
 
@@ -1969,11 +1969,11 @@ STATIC FUNCTION OpenFiles()
 
       nView                            := D():CreateView()
 
-      USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfProT ) )
-      SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfProT ) )
+      SET ADSINDEX TO ( cPatEmp() + "PRO.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfProL ) )
-      SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfProL ) )
+      SET ADSINDEX TO ( cPatEmp() + "TBLPRO.CDX" ) ADDITIVE
 
       oDetCamposExtra                  := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
@@ -2054,8 +2054,8 @@ FUNCTION retProp( cCodPrp, dbfPro )
    BEGIN SEQUENCE
 
    if Empty( dbfPro )
-      USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "PRO", @dbfPro ) )
-      SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "PRO", @dbfPro ) )
+      SET ADSINDEX TO ( cPatEmp() + "PRO.CDX" ) ADDITIVE
       lClo        := .t.
    end if
 
@@ -2087,14 +2087,14 @@ RETURN ( cPrp )
 
 Function IsPro()
 
-   if !lExistTable( cPatArt() + "PRO.Dbf" ) .or.;
-      !lExistTable( cPatArt() + "TBLPRO.Dbf" )
-      mkPro( cPatArt() )
+   if !lExistTable( cPatEmp() + "PRO.Dbf" ) .or.;
+      !lExistTable( cPatEmp() + "TBLPRO.Dbf" )
+      mkPro( cPatEmp() )
    end if
 
-   if !lExistIndex( cPatArt() + "PRO.Cdx" ) .or.;
-      !lExistIndex( cPatArt() + "TBLPRO.Cdx" )
-      rxPro( cPatArt() )
+   if !lExistIndex( cPatEmp() + "PRO.Cdx" ) .or.;
+      !lExistIndex( cPatEmp() + "TBLPRO.Cdx" )
+      rxPro( cPatEmp() )
    end if
 
 RETURN ( .t. )
@@ -2105,7 +2105,7 @@ Function mkPro( cPath, lAppend, cPathOld, oMeter )
 
    local cDbf
 
-   DEFAULT cPath     := cPatArt()
+   DEFAULT cPath     := cPatEmp()
    DEFAULT lAppend   := .F.
 
    if !lExistTable( cPath + "Pro.Dbf" )
@@ -2148,7 +2148,7 @@ Function rxPro( cPath, oMeter )
 
    local dbfPro
 
-   DEFAULT cPath  := cPatArt()
+   DEFAULT cPath  := cPatEmp()
 
    if !lExistTable( cPath + "PRO.DBF" ) .or. !lExistTable( cPath + "TblPro.Dbf" )
       mkPro( cPath )
@@ -2365,8 +2365,8 @@ FUNCTION retValProp( cCodPrp, dbfPro )
    BEGIN SEQUENCE
 
    if Empty( dbfPro )
-      USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "PROTBL", @dbfPro ) )
-      SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "PROTBL", @dbfPro ) )
+      SET ADSINDEX TO ( cPatEmp() + "TBLPRO.CDX" ) ADDITIVE
       lClo           := .t.
    end if
 

@@ -211,7 +211,7 @@ RETURN ( Self )
 
 METHOD Create( cPath, cDriver )
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath

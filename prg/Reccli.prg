@@ -206,7 +206,7 @@ STATIC FUNCTION OpenFiles()
       SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
       SET TAG TO "cNumMtr"
 
-      oCtaRem              := TCtaRem():Create( cPatCli() )
+      oCtaRem              := TCtaRem():Create( cPatEmp() )
       oCtaRem:OpenFiles()
 
       oCentroCoste         := TCentroCoste():Create( cPatDat() )
@@ -2241,8 +2241,8 @@ function SynRecCli( cPath )
    USE ( cPath + "FACRECL.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacRecL", @cFacRecL ) ) EXCLUSIVE
    if !lAIS() ; ( cFacRecL )->( ordListAdd( cPath + "FacRecL.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Client", @cClient ) )
-   if !lAIS() ; ( cClient )->( ordListAdd( cPatCli() + "CLIENT.CDX" ) ); else ; ordSetFocus( 1 ) ; end
+   USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Client", @cClient ) )
+   if !lAIS() ; ( cClient )->( ordListAdd( cPatEmp() + "CLIENT.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FPago", @cFPago ) )
    if !lAIS() ; ( cFPago )->( ordListAdd( cPatEmp() + "FPAGO.CDX" ) ); else ; ordSetFocus( 1 ) ; end

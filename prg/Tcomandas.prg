@@ -36,7 +36,7 @@ END CLASS
 
 METHOD Create( cPath )
 
-   DEFAULT cPath     := cPatCli()
+   DEFAULT cPath     := cPatEmp()
 
    ::cPath           := cPath
    ::oDbf            := nil
@@ -47,7 +47,7 @@ RETURN ( Self )
 
 METHOD New( cPath, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT oWndParent   := oWnd()
 
    if oMenuItem != nil

@@ -156,11 +156,11 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfIva  PATH ( cPatDat() ) FILE "TIva.Dbf" VIA ( cDriver() ) SHARED INDEX "TIva.Cdx"
 
-   DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "Articulo.Dbf" VIA ( cDriver() ) SHARED INDEX "Articulo.Cdx"
+   DATABASE NEW ::oDbfArt PATH ( cPatEmp() ) FILE "Articulo.Dbf" VIA ( cDriver() ) SHARED INDEX "Articulo.Cdx"
 
-   DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "Client.Cdx"
+   DATABASE NEW ::oDbfCli PATH ( cPatEmp() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "Client.Cdx"
 
-   DATABASE NEW ::oDbfPrv PATH ( cPatPrv() ) FILE "Provee.Dbf" VIA ( cDriver() ) SHARED INDEX "Provee.Cdx"
+   DATABASE NEW ::oDbfPrv PATH ( cPatEmp() ) FILE "Provee.Dbf" VIA ( cDriver() ) SHARED INDEX "Provee.Cdx"
 
    DATABASE NEW ::oPedPrvT PATH ( cPatEmp() ) FILE "PedProvT.Dbf" VIA ( cDriver() ) SHARED INDEX "PedProvT.Cdx"
 

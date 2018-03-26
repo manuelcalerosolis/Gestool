@@ -53,7 +53,7 @@ RETURN ( oDbf )
 
 METHOD Create( cPath )
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
 
    ::cPath              := cPath
 

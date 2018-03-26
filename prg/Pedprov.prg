@@ -8104,14 +8104,14 @@ Function SynPedPrv( cPath )
    dbUseArea( .t., cDriver(), cPath + "PedPrvI.Dbf", cCheckArea( "PedPRVI", @dbfPedPrvI ), .f. )
    if !lAIS(); ordListAdd( cPath + "PedPrvI.Cdx" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "PROVART.DBF", cCheckArea( "PROVART", @dbfArtPrv ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "PROVART.DBF", cCheckArea( "PROVART", @dbfArtPrv ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @dbfIva ), .t. )
    if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end
