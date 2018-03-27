@@ -157,11 +157,11 @@ FUNCTION CreateMainWindow( oIconApp )
 
    oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( Auth():Nombre() ), 200,,,, .t. )
 
-   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():CodigoDelegacion() ), 200,,,, .t., {|| if( oUser():lCambiarEmpresa, SelectDelegacion( oMsgDelegacion ), ) } )
+   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():codigoDelegacion() ), 100,,,, .t., {|| SelectDelegacion(), chkTurno() } )
 
-   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Application():CodigoCaja(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
-
-   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( oUser():cAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
+   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Application():codigoCaja(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
+   
+   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( Application():codigoAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
 
    oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : ", 100,,,, .t., {|| dbDialog() } ) 
 
@@ -4073,12 +4073,12 @@ FUNCTION aEmpresa( cCodigoEmpresa )
 
    if !( isReport() )
 
-      if empty( Application():CodigoCaja() )
-         oUser():cCaja( cCajUsr( uFieldEmpresa( "cDefCaj" ) ) )
+      if empty( Application():codigoCaja() )
+         Application():getCaja()
       end if
 
-      if empty( oUser():cAlmacen() )
-         oUser():cAlmacen( cAlmUsr( uFieldEmpresa( "cCodAlm" ) ) )
+      if empty( Application():codigoAlmacen() )
+         Application():getAlmacen()
       end if
 
       /*

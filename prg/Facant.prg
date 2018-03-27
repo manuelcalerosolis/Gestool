@@ -1190,7 +1190,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
       end if
 
       aTmp[ _CTURANT  ]    := cCurSesion()
-      aTmp[ _CCODALM  ]    := oUser():cAlmacen()
+      aTmp[ _CCODALM  ]    := Application():codigoAlmacen()
       aTmp[ _CCODCAJ  ]    := Application():CodigoCaja()
       aTmp[ _CCODUSR  ]    := Auth():Codigo()
       aTmp[ _CCODPAGO ]    := cDefFpg()

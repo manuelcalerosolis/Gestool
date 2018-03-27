@@ -101,7 +101,7 @@ METHOD insertHeaderDocumentGestool( oQuery ) CLASS TComercioDocument
    ::setGestoolSpecificDocument( oQuery )
 
    ( ::oDocumentHeaderDatabase() )->cCodWeb      := ::idDocumentPrestashop
-   ( ::oDocumentHeaderDatabase() )->cCodAlm      := oUser():cAlmacen()
+   ( ::oDocumentHeaderDatabase() )->cCodAlm      := Application():codigoAlmacen()
    ( ::oDocumentHeaderDatabase() )->cCodCaj      := Application():CodigoCaja()
    ( ::oDocumentHeaderDatabase() )->cCodObr      := "@" + alltrim( str( oQuery:FieldGetByName( "id_address_delivery" ) ) )
    ( ::oDocumentHeaderDatabase() )->cCodPgo      := cFPagoWeb( alltrim( oQuery:FieldGetByName( "module" ) ), D():FormasPago( ::getView() ) )

@@ -1249,7 +1249,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Costo"
-      :bStrData         := {|| if( oUser():lNotCostos(), "", nCosto( nil, D():Articulos( nView ), dbfArtKit, .t., if( lEuro, cDivChg(), cDivEmp() ), dbfDiv ) ) }
+      :bStrData         := {|| nCosto( nil, D():Articulos( nView ), dbfArtKit, .t., if( lEuro, cDivChg(), cDivEmp() ), dbfDiv ) }
       :nWidth           := 100
       :nDataStrAlign    := AL_RIGHT
       :nHeadStrAlign    := AL_RIGHT
@@ -1389,7 +1389,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          CLOSED ;
          LEVEL    ACC_IMPR
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() )
 
       DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
          NOBORDER ;

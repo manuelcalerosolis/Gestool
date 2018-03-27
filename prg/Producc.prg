@@ -1104,8 +1104,8 @@ METHOD Resource( nMode, aDatosAnterior )
          ::oDbf:cSerOrd    := "A"
       end if
 
-      ::oDbf:cAlmOrd       := oUser():cAlmacen()
-      ::oDbf:cAlmOrg       := oUser():cAlmacen()
+      ::oDbf:cAlmOrd       := Application():codigoAlmacen()
+      ::oDbf:cAlmOrg       := Application():codigoAlmacen()
       ::oDbf:cCodDiv       := cDivEmp()
       ::oDbf:nVdvDiv       := nChgDiv( cDivEmp() )
 

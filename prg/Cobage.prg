@@ -1101,7 +1101,7 @@ METHOD GeneraFacturaGastos( lExternal ) CLASS TCobAge
    ::oFacPrvT:dFecFac         := GetSysDate()
    ::oFacPrvT:cDivFac         := ::oDbf:cCodDiv
    ::oFacPrvT:nVdvFac         := ::oDbf:nVdvDiv
-   ::oFacPrvT:cCodAlm         := oUser():cAlmacen()
+   ::oFacPrvT:cCodAlm         := Application():codigoAlmacen()
    ::oFacPrvT:cCodCaj         := Application():CodigoCaja()
    ::oFacPrvT:lSndDoc         := .t.
    ::oFacPrvT:cCodUsr         := Auth():Codigo()
@@ -1148,7 +1148,7 @@ METHOD GeneraFacturaGastos( lExternal ) CLASS TCobAge
    ::oFacPrvL:nCtlStk         := oRetFld( cCodArt, ::oArticulo, "nCtlStock" )
    ::oFacPrvL:nUniCaja        := 1
    ::oFacPrvL:nPreUnit        := ::oDbf:nTotCob
-   ::oFacPrvL:cAlmLin         := oUser():cAlmacen()
+   ::oFacPrvL:cAlmLin         := Application():codigoAlmacen()
 
    ::oFacPrvL:Save()
 

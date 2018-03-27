@@ -1764,7 +1764,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       end if
 
       aTmp[ _CTURPRE ]  := cCurSesion()
-      aTmp[ _CCODALM ]  := oUser():cAlmacen()
+      aTmp[ _CCODALM ]  := Application():codigoAlmacen()
       aTmp[ _CDIVPRE ]  := cDivEmp()
       aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _CCODPGO ]  := cDefFpg()

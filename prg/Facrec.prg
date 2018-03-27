@@ -1929,7 +1929,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
       aTmp[ _CTURFAC    ]  := cCurSesion()
       aTmp[ _DFECENT    ]  := cToD("")
-      aTmp[ _CCODALM    ]  := oUser():cAlmacen()
+      aTmp[ _CCODALM    ]  := Application():codigoAlmacen()
       aTmp[ _CCODCAJ    ]  := Application():CodigoCaja()
       aTmp[ _CCODPAGO   ]  := cDefFpg()
       aTmp[ _CDIVFAC    ]  := cDivEmp()

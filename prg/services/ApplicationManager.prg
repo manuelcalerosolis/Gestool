@@ -13,11 +13,19 @@ CLASS ApplicationManager
    DATA uuidCaja           INIT ""
    DATA codigoCaja         INIT ""
 
+   DATA uuidAlmacen        INIT ""
+   DATA codigoAlmacen      INIT ""
+
    METHOD New()
 
+   METHOD setDelegacion( uuidDelegacion, codigoDelegacion )
    METHOD getDelegacion()
 
+   METHOD setCaja( uuidCaja, codigoCaja )
    METHOD getCaja()
+
+   METHOD setAlmacen( uuidAlmacen, codigoAlmacen )
+   METHOD getAlmacen()
 
 END CLASS
 
@@ -29,6 +37,17 @@ METHOD New()
 
    ::getCaja()
 
+   ::getAlmacen()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setDelegacion( uuidDelegacion, codigoDelegacion )
+
+   ::uuidDelegacion        := if( hb_isnil( uuidDelegacion ), "", uuidDelegacion )
+   ::codigoDelegacion      := if( hb_isnil( codigoDelegacion ), "", codigoDelegacion )
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -37,23 +56,30 @@ METHOD getDelegacion()
 
    local delegacion        
 
-   ::uuidDelegacion        := ""
-   ::codigoDelegacion      := ""
-   
+   ::setDelegacion()
+
    delegacion              := SQLAjustableModel():getUsuarioDelegacionExclusiva( Auth():Uuid() )
 
    if !empty( delegacion )
-      ::uuidDelegacion     := delegacion
-      ::codigoDelegacion   := DelegacionesModel():getField( "cCodDlg", "Uuid", delegacion )
+      ::setDelegacion( delegacion, DelegacionesModel():getField( "cCodDlg", "Uuid", delegacion ) )
       RETURN ( self )
    end if 
 
    delegacion              := uFieldEmpresa( "cSufDoc" )
+
    if !empty( delegacion )
-      ::codigoDelegacion   := delegacion
-      ::uuidDelegacion     := DelegacionesModel():getField( "Uuid", "cCodDlg", delegacion )
+      ::setDelegacion( DelegacionesModel():getField( "Uuid", "cCodDlg", delegacion ), delegacion )
       RETURN ( self )
    end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setCaja( uuidCaja, codigoCaja )
+
+   ::uuidCaja              := if( hb_isnil( uuidCaja ), "", uuidCaja )
+   ::codigoCaja            := if( hb_isnil( codigoCaja ), "", codigoCaja )
 
 RETURN ( self )
 
@@ -63,21 +89,50 @@ METHOD getCaja()
 
    local caja
 
-   ::uuidCaja              := ""
-   ::codigoCaja            := ""
+   ::setCaja()
    
-   caja                   := SQLAjustableModel():getUsuarioCajaExclusiva( Auth():Uuid() )
-
+   caja                    := SQLAjustableModel():getUsuarioCajaExclusiva( Auth():Uuid() )
    if !empty( caja )
-      ::uuidCaja           := caja
-      ::codigoCaja         := CajasModel():getField( "cCodCaj", "Uuid", caja )
+      ::setCaja( caja, CajasModel():getField( "cCodCaj", "Uuid", caja ) )
       RETURN ( self )
    end if 
 
    caja                    := uFieldEmpresa( "cDefCaj" )
    if !empty( caja )
-      ::codigoCaja         := caja
-      ::uuidCaja           := CajasModel():getField( "Uuid", "cCodCaj", caja )
+      ::setCaja( CajasModel():getField( "Uuid", "cCodCaj", caja ), caja )
+      RETURN ( self )
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setAlmacen( uuidAlmacen, codigoAlmacen )
+
+   ::uuidAlmacen           := if( hb_isnil( uuidAlmacen ), "", uuidAlmacen )
+   ::codigoAlmacen         := if( hb_isnil( codigoAlmacen ), "", codigoAlmacen )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getAlmacen()
+
+   local almacen
+
+   ::setAlmacen()
+   
+   almacen                 := SQLAjustableModel():getUsuarioAlmacenExclusivo( Auth():Uuid() )
+
+   if !empty( almacen )
+      ::setAlmacen( almacen, AlmacenesModel():getField( "cCodAlm", "Uuid", almacen ) )
+      RETURN ( self )
+   end if 
+
+   almacen                 := uFieldEmpresa( "cDefAlm" )
+
+   if !empty( almacen )
+      ::setAlmacen( AlmacenesModel():getField( "Uuid", "cCodAlm", almacen ), almacen )
       RETURN ( self )
    end if 
 
@@ -95,6 +150,9 @@ FUNCTION Application()
    if empty( oApplication )
       oApplication   := ApplicationManager():New() 
    end if
+
+   // msgalert( oApplication:uuidAlmacen, "uuidAlmacen" )
+   // msgalert( oApplication:codigoAlmacen, "codigoAlmacen" )
 
 RETURN ( oApplication )
 

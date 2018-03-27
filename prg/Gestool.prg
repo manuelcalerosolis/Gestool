@@ -1061,7 +1061,7 @@ FUNCTION StartMainTablet( oGridTree )
    oGridTree:Add( "Usuario : "      + rtrim( oUser():cNombre() ) )
    oGridTree:Add( "Delegación : "   + rtrim( Application():CodigoDelegacion() ) )
    oGridTree:Add( "Caja : "         + Application():CodigoCaja() )
-   oGridTree:Add( "Almacén : "      + rtrim( oUser():cAlmacen() ) + "-" + RetAlmacen( oUser():cAlmacen() ) )
+   oGridTree:Add( "Almacén : "      + rtrim( Application():codigoAlmacen() ) + "-" + RetAlmacen( Application():codigoAlmacen() ) )
    oGridTree:Add( "Agente : "       + rtrim( cCodigoAgente() ) + "-" + alltrim( RetNbrAge( cCodigoAgente() ) ) )
    oGridTree:Add( "Sesión : "       + alltrim( Transform( cCurSesion(), "######" ) ) )
 

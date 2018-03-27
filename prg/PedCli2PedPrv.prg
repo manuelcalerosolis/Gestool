@@ -1081,7 +1081,7 @@ METHOD GeneraPedidoProveedor() CLASS PedCliente2PedProveedor
             ( D():PedidosProveedores( ::nView ) )->cTurPed    := cCurSesion()
             ( D():PedidosProveedores( ::nView ) )->dFecPed    := GetSysDate()
             ( D():PedidosProveedores( ::nView ) )->cCodPrv    := ( ::dbfTemporal )->cCodPrv
-            ( D():PedidosProveedores( ::nView ) )->cCodAlm    := oUser():cAlmacen()
+            ( D():PedidosProveedores( ::nView ) )->cCodAlm    := Application():codigoAlmacen()
             ( D():PedidosProveedores( ::nView ) )->cCodCaj    := Application():CodigoCaja()
             ( D():PedidosProveedores( ::nView ) )->nEstado    := 1
             ( D():PedidosProveedores( ::nView ) )->cDivPed    := cDivEmp()
@@ -1121,7 +1121,7 @@ METHOD GeneraPedidoProveedor() CLASS PedCliente2PedProveedor
          ( D():PedidosProveedoresLineas( ::nView ) )->nNumPed          := nNumeroPedido
          ( D():PedidosProveedoresLineas( ::nView ) )->cSufPed          := cSufijoPedido
          ( D():PedidosProveedoresLineas( ::nView ) )->nNumLin          := ++nNumeroLinea
-         ( D():PedidosProveedoresLineas( ::nView ) )->cAlmLin          := oUser():cAlmacen()
+         ( D():PedidosProveedoresLineas( ::nView ) )->cAlmLin          := Application():codigoAlmacen()
          ( D():PedidosProveedoresLineas( ::nView ) )->cRef             := ( ::dbfTemporal )->cRef
          ( D():PedidosProveedoresLineas( ::nView ) )->cDetalle         := ( ::dbfTemporal )->cDetalle
          ( D():PedidosProveedoresLineas( ::nView ) )->mLngDes          := ( ::dbfTemporal )->mLngDes

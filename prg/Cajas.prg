@@ -31,7 +31,7 @@ STATIC FUNCTION lOpenFiles()
 
    if lOpen
       MsgStop( 'Imposible abrir ficheros de cajas' )
-      Return ( .f. )
+      RETURN ( .f. )
    end if
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -138,7 +138,7 @@ FUNCTION Cajas( oMenuItem, oWnd )
 
       if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
-         return nil
+         RETURN nil
       end if
 
       /*
@@ -154,7 +154,7 @@ FUNCTION Cajas( oMenuItem, oWnd )
       */
 
       if !lOpenFiles()
-         return .f.
+         RETURN .f.
       end if
 
       DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70 ;
@@ -213,7 +213,7 @@ FUNCTION Cajas( oMenuItem, oWnd )
 
       DEFINE BTNSHELL RESOURCE "SEL" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( lChgCaja( ( dbfCajT )->cCodCaj, , oWndBrw ), chkTurno( , oWndBrw ) ) ;
+         ACTION   ( lChgCaja( ( dbfCajT )->cCodCaj, ( dbfCajT )->Uuid ), chkTurno( , oWndBrw ), oWndBrw:End( .t. ) ) ;
          TOOLTIP  "Sele(c)cionar";
          HOTKEY   "C"
 
@@ -321,7 +321,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
    end if
 
    if BeginTrans( aTmp )
-      Return .f.
+      RETURN .f.
    end if
 
    DEFINE DIALOG oDlg RESOURCE "CAJAS" TITLE LblTitle( nMode ) + "cajas"
@@ -1099,7 +1099,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function StartRec( aGet, aTmp )
+Static FUNCTION StartRec( aGet, aTmp )
 
    aGet[ ( dbfCajT )->( FieldPos( "cCodCaj" ) ) ]:SetFocus()
 
@@ -1121,11 +1121,11 @@ Static Function StartRec( aGet, aTmp )
    aGet[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCut" ) ) ], dbfDoc, "cDescrip" ) )
    aGet[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ], dbfCajT ) )
 
-Return .t.
+RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-Static Function SavRec( aTmp, aGet, cComboCajonPortamonedas, oBrw, oDlg, nMode )
+Static FUNCTION SavRec( aTmp, aGet, cComboCajonPortamonedas, oBrw, oDlg, nMode )
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
@@ -1313,7 +1313,7 @@ STATIC FUNCTION EndDetalle( aTmp, aGet, dbfTmpLin, oBrw, oDlg, nMode, aTmpCaj )
 
    if !empty( cErrors )
       msgStop( cErrors, "El formulario contiene errores" )
-      return ( .f. )
+      RETURN ( .f. )
    end if 
 
    /*
@@ -1334,7 +1334,7 @@ STATIC FUNCTION EndDetalle( aTmp, aGet, dbfTmpLin, oBrw, oDlg, nMode, aTmpCaj )
 
    oDlg:end( IDOK )
 
-return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1350,7 +1350,7 @@ FUNCTION cCajas( oGet, dbfCajT, oGet2 )
       if !empty( oGet2 )
 			oGet2:cText( "" )
       end if
-      return .t.
+      RETURN .t.
    else
       xValor      := RJustObj( oGet, "0" )
    end if
@@ -1411,7 +1411,7 @@ FUNCTION BrwCajas( oGet, oGet2, lBigStyle )
    DEFAULT lBigStyle := .f.
 
    if !lOpenFiles()
-      return .f.
+      RETURN .f.
    end if
 
    if lBigStyle
@@ -1585,7 +1585,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Function BrwCajaTactil( oGet, dbfCaja, oGet2, lReturnCaja, lParaLlevar )
+FUNCTION BrwCajaTactil( oGet, dbfCaja, oGet2, lRETURNCaja, lParaLlevar )
 
    local oDlg
    local oBrw
@@ -1602,13 +1602,13 @@ Function BrwCajaTactil( oGet, dbfCaja, oGet2, lReturnCaja, lParaLlevar )
    local oBotonEditar
    local cResource         := "HelpEntryTactilCli"
 
-   DEFAULT lReturnCaja     := .f.
+   DEFAULT lRETURNCaja     := .f.
    DEFAULT lParaLlevar     := .f.
 
    if empty( dbfCaja )
 
       if !OpenFiles( .t. )
-         Return nil
+         RETURN nil
       end if
 
       dbfCaja              := dbfCajT
@@ -1758,7 +1758,7 @@ Function BrwCajaTactil( oGet, dbfCaja, oGet2, lReturnCaja, lParaLlevar )
 
    end if
 
-Return if( !lReturnCaja, oDlg:nResult == IDOK, cCajas )
+RETURN if( !lRETURNCaja, oDlg:nResult == IDOK, cCajas )
 
 //---------------------------------------------------------------------------//
 
@@ -1942,11 +1942,11 @@ STATIC FUNCTION BeginTrans( aTmp )
 
    ErrorBlock( oBlock )
 
-Return ( lErrors )
+RETURN ( lErrors )
 
 //-----------------------------------------------------------------------//
 
-Static Function KillTrans()
+Static FUNCTION KillTrans()
 
 	/*
    Borramos los ficheros-------------------------------------------------------
@@ -1964,13 +1964,13 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-Static Function ValidCajaPadre( aGet, aTmp )
+Static FUNCTION ValidCajaPadre( aGet, aTmp )
 
    local hStatus
    local lValid   := .t.
 
    if empty( aTmp[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ] )
-      Return ( lValid )
+      RETURN ( lValid )
    end if 
 
    hStatus        := hGetStatus( dbfCajT )
@@ -1997,7 +1997,7 @@ Static Function ValidCajaPadre( aGet, aTmp )
 
    hSetStatus( hStatus )
 
-Return ( lValid )
+RETURN ( lValid )
 
 //---------------------------------------------------------------------------//
 
@@ -2105,7 +2105,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-Function IsCaja()
+FUNCTION IsCaja()
 
    local oBlock
    local oError
@@ -2164,7 +2164,7 @@ Function IsCaja()
 
    CLOSE ( dbfCaja )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 /*
@@ -2185,9 +2185,9 @@ FUNCTION lFreeCaja( cCajUsr, cCodUsr )
       end if
    end if
 
-   if ( nHandle   := fOpen( cPatUsr() + cCajUsr + cCodUsr + ".caj", 16 ) ) != -1
+   if ( nHandle      := fOpen( cPatUsr() + cCajUsr + cCodUsr + ".caj", 16 ) ) != -1
       fClose( nHandle )
-      lFree       := .t.
+      lFree          := .t.
    end if
 
 RETURN ( lFree )
@@ -2227,44 +2227,41 @@ RETURN ( nUsrCaj )
 Selecciona una caja
 */
 
-Function lSetCaja( cCajUsr, cCodUsr, oWndBrw )
+FUNCTION lSetCaja( codigoCaja, uuidCaja, codigoUsuario )
 
    local nHndCaj
    local cFilCaj
 
-   DEFAULT cCajUsr   := Application():CodigoCaja()
-   DEFAULT cCodUsr   := Auth():Codigo() 
+   DEFAULT codigoCaja      := Application():CodigoCaja()
+   DEFAULT uuidCaja        := Application():UuidCaja()
+   DEFAULT codigoUsuario   := Auth():Codigo() 
 
-   cFilCaj           := cCajUsr + cCodUsr
+   cFilCaj                 := codigoCaja + codigoUsuario
 
    // Creo un fichero y lo pongo en uso asi se siempre cuando el usuario esta en la aplicacion
 
    if !file( cPatUsr() + cFilCaj + ".caj" )
-      if ( nHndCaj   := fCreate( cPatUsr() + cFilCaj + ".caj", 0 ) ) != -1
+      if ( nHndCaj         := fCreate( cPatUsr() + cFilCaj + ".caj", 0 ) ) != -1
          fClose( nHndCaj )
       end if
    end if
 
-   nHndCaj           := fOpen( cPatUsr() + cFilCaj + ".caj", 16 )
+   nHndCaj                 := fOpen( cPatUsr() + cFilCaj + ".caj", 16 )
 
    if nHndCaj != -1
       nHndCaj( nHndCaj )
-      oUser():cCaja( cCajUsr )
    end if
 
-   if !empty( oWndBrw )
-      oWndBrw:End( .t. )
-      oWndBrw        := nil
-   end if
+   Application():setCaja( uuidCaja, codigoCaja )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 /*
 Quita la caja
 */
 
-Function lQuitCaja()
+FUNCTION lQuitCaja()
 
    local lQuit := .t.
 
@@ -2272,24 +2269,26 @@ Function lQuitCaja()
       lQuit    := fClose( nHndCaj() )
    end if
 
-Return ( lQuit )
+RETURN ( lQuit )
 
 //---------------------------------------------------------------------------//
 /*
 Cambia el usuario actual por el q nos pasen
 */
 
-FUNCTION lChgCaja( cCajUsr, cCodUsr, oWndBrw )
+FUNCTION lChgCaja( codigoCaja, uuidCaja, codigoUsuario )
 
    if lQuitCaja()
-      lSetCaja( cCajUsr, cCodUsr, oWndBrw )
+      lSetCaja( codigoCaja, uuidCaja, codigoUsuario )
    end if
+
+   cCajUsr( codigoCaja )
 
 RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function aItmCaja()
+FUNCTION aItmCaja()
 
    local aBase := {}
 
@@ -2366,11 +2365,11 @@ Function aItmCaja()
    aAdd( aBase, { "Uuid",      "C", 40,   0, "Uuid" } )
    aAdd( aBase, { "cajon_uuid","C", 40,   0, "Cajón portamonedas uuid" } )
 
-Return ( aBase )
+RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
 
-Function aItmCajaL()
+FUNCTION aItmCajaL()
 
    local aBase := {}
 
@@ -2382,11 +2381,11 @@ Function aItmCajaL()
    aAdd( aBase, { "cPrnCom",   "C",     3,   0, "Formato comandas" } )
    aAdd( aBase, { "cPrnAnu",   "C",     3,   0, "Formato anulaciones" } )
 
-Return ( aBase )
+RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
 
-Function aItmCajaImpresiones()
+FUNCTION aItmCajaImpresiones()
 
    local aBase := {}
 
@@ -2397,12 +2396,12 @@ Function aItmCajaImpresiones()
    aAdd( aBase, { "cFrmDoc",   "C",     3,   0, "Formato del ducumento" } )
    aAdd( aBase, { "nCopDoc",   "N",     1,   0, "Copias documento" } )
 
-Return ( aBase )
+RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
 
 
-Function RecursiveSeekEnCaja( cCodCaj, dbfCajT, cField, uValue )
+FUNCTION RecursiveSeekEnCaja( cCodCaj, dbfCajT, cField, uValue )
 
    DEFAULT cField    := "cPrnTik"
 
@@ -2422,89 +2421,89 @@ Function RecursiveSeekEnCaja( cCodCaj, dbfCajT, cField, uValue )
 
    end if
 
-Return ( uValue )
+RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
 
-Function cFormatoTicketEnCaja( cCodCaj, dbfCajT )
+FUNCTION cFormatoTicketEnCaja( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnTik", Space( 3 ) ) )
-
-//---------------------------------------------------------------------------//
-
-Function cFormatoPagoEnCaja( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnPgo", Space( 3 ) ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnTik", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function cFormatoEntregaEnCaja( cCodCaj, dbfCajT )
+FUNCTION cFormatoPagoEnCaja( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnEnt", Space( 3 ) ) )
-
-//---------------------------------------------------------------------------//
-
-Function cFormatoAlbaranEnCaja( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnAlb", Space( 3 ) ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnPgo", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function cFormatoValeEnCaja( cCodCaj, dbfCajT )
+FUNCTION cFormatoEntregaEnCaja( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnVal", Space( 3 ) ) )
-
-//---------------------------------------------------------------------------//
-
-Function cFormatoDevolucionEnCaja( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnDev", Space( 3 ) ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnEnt", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function cFormatoArqueoEnCaja( cCodCaj, dbfCajT )
+FUNCTION cFormatoAlbaranEnCaja( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnArq", Space( 3 ) ) )
-
-//---------------------------------------------------------------------------//
-
-Function cFormatoArqueoParcialEnCaja( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnPar", Space( 3 ) ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnAlb", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function cFormatoArqueoCiegoEnCaja( cCodCaj, dbfCajT )
+FUNCTION cFormatoValeEnCaja( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnCie", Space( 3 ) ) )
-
-//---------------------------------------------------------------------------//
-
-Function cFormatoTicketRegaloEnCaja( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnReg", Space( 3 ) ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnVal", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function cFormatoChequeRegaloEnCaja( cCodCaj, dbfCajT )
+FUNCTION cFormatoDevolucionEnCaja( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnChk", Space( 3 ) ) )
-
-//---------------------------------------------------------------------------//
-
-Function cFormatoEntregasCuentaEnCaja( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnEna", Space( 3 ) ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnDev", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function cFormatoCorteEnCaja( cCodCaj, dbfCajT )
+FUNCTION cFormatoArqueoEnCaja( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnCut", Space( 3 ) ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnArq", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function cFormatoComandaEnCaja( cCodCaj, cTipImp, dbfCajT, dbfCajL )
+FUNCTION cFormatoArqueoParcialEnCaja( cCodCaj, dbfCajT )
+
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnPar", Space( 3 ) ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cFormatoArqueoCiegoEnCaja( cCodCaj, dbfCajT )
+
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnCie", Space( 3 ) ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cFormatoTicketRegaloEnCaja( cCodCaj, dbfCajT )
+
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnReg", Space( 3 ) ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cFormatoChequeRegaloEnCaja( cCodCaj, dbfCajT )
+
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnChk", Space( 3 ) ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cFormatoEntregasCuentaEnCaja( cCodCaj, dbfCajT )
+
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnEna", Space( 3 ) ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cFormatoCorteEnCaja( cCodCaj, dbfCajT )
+
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnCut", Space( 3 ) ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cFormatoComandaEnCaja( cCodCaj, cTipImp, dbfCajT, dbfCajL )
 
    local cFmt     := Space( 3 )
 
@@ -2515,14 +2514,14 @@ Function cFormatoComandaEnCaja( cCodCaj, cTipImp, dbfCajT, dbfCajL )
    end if
 
    if empty( cFmt )
-      Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnCom", Space( 3 ) ) )
+      RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnCom", Space( 3 ) ) )
    end if
 
-Return ( cFmt )
+RETURN ( cFmt )
 
 //---------------------------------------------------------------------------//
 
-Function cFormatoAnulacionEnCaja( cCodCaj, cTipImp, dbfCajT, dbfCajL )
+FUNCTION cFormatoAnulacionEnCaja( cCodCaj, cTipImp, dbfCajT, dbfCajL )
 
    local cFmt     := Space( 3 )
 
@@ -2533,95 +2532,95 @@ Function cFormatoAnulacionEnCaja( cCodCaj, cTipImp, dbfCajT, dbfCajL )
    end if
 
    if empty( cFmt )
-      Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnAnu", Space( 3 ) ) )
+      RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnAnu", Space( 3 ) ) )
    end if
 
-Return ( cFmt )
+RETURN ( cFmt )
 
 //---------------------------------------------------------------------------//
 
-Function cFormatoApartadosEnCaja( cCodCaj, dbfCajT )
+FUNCTION cFormatoApartadosEnCaja( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnApt", Space( 3 ) ) )
-
-//---------------------------------------------------------------------------//
-
-Function lImpTicketsEnImpresora( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnTik", .f. ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnApt", Space( 3 ) ) )
 
 //---------------------------------------------------------------------------//
 
-Function lImpValesEnImpresora( cCodCaj, dbfCajT )
+FUNCTION lImpTicketsEnImpresora( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnVal", .f. ) )
-
-//---------------------------------------------------------------------------//
-
-Function lImpDevolucionesEnImpresora( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnDev", .f. ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnTik", .f. ) )
 
 //---------------------------------------------------------------------------//
 
-Function lImpEntregasEnImpresora( cCodCaj, dbfCajT )
+FUNCTION lImpValesEnImpresora( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnEnt", .f. ) )
-
-//---------------------------------------------------------------------------//
-
-Function lImpAlbaranesEnImpresora( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnAlb", .f. ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnVal", .f. ) )
 
 //---------------------------------------------------------------------------//
 
-Function cCapturaCaja( cCodCaj, dbfCajT )
+FUNCTION lImpDevolucionesEnImpresora( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cCapCaj", "000" ) )
-
-//---------------------------------------------------------------------------//
-
-Function cBalanzaEnCaja( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cCodBal", "000" ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnDev", .f. ) )
 
 //---------------------------------------------------------------------------//
 
-Function cVisorEnCaja( cCodCaj, dbfCajT )
+FUNCTION lImpEntregasEnImpresora( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cCodVis", Space( 3 ) ) )
-
-//---------------------------------------------------------------------------//
-
-Function cCodigoCorteEnCaja( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cCodCut", "" ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnEnt", .f. ) )
 
 //---------------------------------------------------------------------------//
 
-Function lWindowsPrinterEnCaja( cCodCaj, dbfCajT )
+FUNCTION lImpAlbaranesEnImpresora( cCodCaj, dbfCajT )
 
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "nPrnTik", 0 ) == 2  )
-
-//---------------------------------------------------------------------------//
-
-Function cWindowsPrinterEnCaja( cCodCaj, dbfCajT )
-
-Return ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnWin", "" ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnAlb", .f. ) )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterTiket( cCodCaj, dbfCajT )
+FUNCTION cCapturaCaja( cCodCaj, dbfCajT )
 
-Return ( if( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnTik", .f. ), Rtrim( ( dbfCajT )->cPrnWin ), Rtrim( ( dbfCajT )->cWinTik ) ) )
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cCapCaj", "000" ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cBalanzaEnCaja( cCodCaj, dbfCajT )
+
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cCodBal", "000" ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cVisorEnCaja( cCodCaj, dbfCajT )
+
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cCodVis", Space( 3 ) ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cCodigoCorteEnCaja( cCodCaj, dbfCajT )
+
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cCodCut", "" ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION lWindowsPrinterEnCaja( cCodCaj, dbfCajT )
+
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "nPrnTik", 0 ) == 2  )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cWindowsPrinterEnCaja( cCodCaj, dbfCajT )
+
+RETURN ( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "cPrnWin", "" ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cPrinterTiket( cCodCaj, dbfCajT )
+
+RETURN ( if( RecursiveSeekEnCaja( cCodCaj, dbfCajT, "lPrnTik", .f. ), Rtrim( ( dbfCajT )->cPrnWin ), Rtrim( ( dbfCajT )->cWinTik ) ) )
 
 //---------------------------------------------------------------------------//
 /*
 Devolvemos la impresora de comanda---------------------------------------------
 */
 
-Function cPrinterComanda( cCodCaj, dbfCajT, nNumImp )
+FUNCTION cPrinterComanda( cCodCaj, dbfCajT, nNumImp )
 
    local cPrn        := ""
 
@@ -2637,11 +2636,11 @@ Function cPrinterComanda( cCodCaj, dbfCajT, nNumImp )
 
    end case
 
-Return ( rtrim( cPrn ) )
+RETURN ( rtrim( cPrn ) )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterVale( cCodCaj, dbfCajT )
+FUNCTION cPrinterVale( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
@@ -2651,11 +2650,11 @@ Function cPrinterVale( cCodCaj, dbfCajT )
       cPrn     := Rtrim( ( dbfCajT )->cWinTik )
    end if
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterDevolucion( cCodCaj, dbfCajT )
+FUNCTION cPrinterDevolucion( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
@@ -2665,11 +2664,11 @@ Function cPrinterDevolucion( cCodCaj, dbfCajT )
       cPrn     := Rtrim( ( dbfCajT )->cWinTik )
    end if
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterEntrega( cCodCaj, dbfCajT )
+FUNCTION cPrinterEntrega( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
@@ -2687,11 +2686,11 @@ Function cPrinterEntrega( cCodCaj, dbfCajT )
 
    end if
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterApartados( cCodCaj, dbfCajT )
+FUNCTION cPrinterApartados( cCodCaj, dbfCajT )
 
    local cPrn     := ""
 
@@ -2705,11 +2704,11 @@ Function cPrinterApartados( cCodCaj, dbfCajT )
 
    end if
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterRegalo( cCodCaj, dbfCajT )
+FUNCTION cPrinterRegalo( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
@@ -2723,11 +2722,11 @@ Function cPrinterRegalo( cCodCaj, dbfCajT )
 
    end if
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterChequeRegalo( cCodCaj, dbfCajT )
+FUNCTION cPrinterChequeRegalo( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
@@ -2741,11 +2740,11 @@ Function cPrinterChequeRegalo( cCodCaj, dbfCajT )
 
    end if
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterAlbaran( cCodCaj, dbfCajT )
+FUNCTION cPrinterAlbaran( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
@@ -2759,19 +2758,19 @@ Function cPrinterAlbaran( cCodCaj, dbfCajT )
 
    end if
 
-Return ( alltrim( cPrn ) )
+RETURN ( alltrim( cPrn ) )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterFactura( cCodCaj, dbfCajT )
+FUNCTION cPrinterFactura( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterMetaPago( cCodCaj, dbfCajT )
+FUNCTION cPrinterMetaPago( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
@@ -2785,11 +2784,11 @@ Function cPrinterMetaPago( cCodCaj, dbfCajT )
 
    end if
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterEntregasCuenta( cCodCaj, dbfCajT )
+FUNCTION cPrinterEntregasCuenta( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
@@ -2803,11 +2802,11 @@ Function cPrinterEntregasCuenta( cCodCaj, dbfCajT )
 
    end if
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterArqueo( cCodCaj, dbfCajT )
+FUNCTION cPrinterArqueo( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
@@ -2821,11 +2820,11 @@ Function cPrinterArqueo( cCodCaj, dbfCajT )
 
    end if
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterArqueoParcial( cCodCaj, dbfCajT )
+FUNCTION cPrinterArqueoParcial( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
@@ -2839,11 +2838,11 @@ Function cPrinterArqueoParcial( cCodCaj, dbfCajT )
 
    end if
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function cPrinterArqueoCiego( cCodCaj, dbfCajT )
+FUNCTION cPrinterArqueoCiego( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
@@ -2857,11 +2856,11 @@ Function cPrinterArqueoCiego( cCodCaj, dbfCajT )
 
    end if
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function lImpArqueoEnImpresora( cCodCaj, dbfCajT )
+FUNCTION lImpArqueoEnImpresora( cCodCaj, dbfCajT )
 
    local lImp  := .f.
 
@@ -2869,11 +2868,11 @@ Function lImpArqueoEnImpresora( cCodCaj, dbfCajT )
       lImp     := ( dbfCajT )->lPrnArq
    end if
 
-Return ( lImp )
+RETURN ( lImp )
 
 //---------------------------------------------------------------------------//
 
-Function cCajonEnCaja( cCodCaj, dbfCajT )
+FUNCTION cCajonEnCaja( cCodCaj, dbfCajT )
 
    local nRec     
    local cCaj     := "000"
@@ -2886,11 +2885,11 @@ Function cCajonEnCaja( cCodCaj, dbfCajT )
 
    ( dbfCajT )->( dbgoto( nRec ) )
 
-Return ( cCaj )
+RETURN ( cCaj )
 
 //---------------------------------------------------------------------------//
 
-Function lWindowsPrinterEnArqueo( cCodCaj, dbfCajT )
+FUNCTION lWindowsPrinterEnArqueo( cCodCaj, dbfCajT )
 
    local lWin  := .f.
 
@@ -2898,11 +2897,11 @@ Function lWindowsPrinterEnArqueo( cCodCaj, dbfCajT )
       lWin     := ( ( dbfCajT )->nPrnArq == 2 )
    end if
 
-Return ( lWin )
+RETURN ( lWin )
 
 //---------------------------------------------------------------------------//
 
-Function cWindowsPrinterEnArqueo( cCodCaj, dbfCajT )
+FUNCTION cWindowsPrinterEnArqueo( cCodCaj, dbfCajT )
 
    local cPrn  := ""
 
@@ -2910,11 +2909,11 @@ Function cWindowsPrinterEnArqueo( cCodCaj, dbfCajT )
       cPrn     := Rtrim( ( dbfCajT )->cWinArq )
    end if
 
-Return ( cPrn )
+RETURN ( cPrn )
 
 //---------------------------------------------------------------------------//
 
-Function cImpresoraTicketEnArqueo( cCodCaj, dbfCajT )
+FUNCTION cImpresoraTicketEnArqueo( cCodCaj, dbfCajT )
 
    local cFmt  := Space( 3 )
 
@@ -2922,11 +2921,11 @@ Function cImpresoraTicketEnArqueo( cCodCaj, dbfCajT )
       cFmt     := ( dbfCajT )->cPrnArq
    end if
 
-Return ( cFmt )
+RETURN ( cFmt )
 
 //---------------------------------------------------------------------------//
 
-Function nCopiasTicketsEnCaja( cCodCaj, dbfCajT )
+FUNCTION nCopiasTicketsEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
 
@@ -2934,11 +2933,11 @@ Function nCopiasTicketsEnCaja( cCodCaj, dbfCajT )
       nCop        := ( dbfCajT )->nCopTik
    end if
 
-Return ( nCop )
+RETURN ( nCop )
 
 //---------------------------------------------------------------------------//
 
-Function nCopiasValesEnCaja( cCodCaj, dbfCajT )
+FUNCTION nCopiasValesEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
 
@@ -2946,11 +2945,11 @@ Function nCopiasValesEnCaja( cCodCaj, dbfCajT )
       nCop        := ( dbfCajT )->nCopVal
    end if
 
-Return ( NotCero( nCop ) )
+RETURN ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
 
-Function nCopiasDevolucionesEnCaja( cCodCaj, dbfCajT )
+FUNCTION nCopiasDevolucionesEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
 
@@ -2958,11 +2957,11 @@ Function nCopiasDevolucionesEnCaja( cCodCaj, dbfCajT )
       nCop        := ( dbfCajT )->nCopDev
    end if
 
-Return ( NotCero( nCop ) )
+RETURN ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
 
-Function nCopiasEntregasEnCaja( cCodCaj, dbfCajT )
+FUNCTION nCopiasEntregasEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
 
@@ -2970,11 +2969,11 @@ Function nCopiasEntregasEnCaja( cCodCaj, dbfCajT )
       nCop        := ( dbfCajT )->nCopEnt
    end if
 
-Return ( NotCero( nCop ) )
+RETURN ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
 
-Function nCopiasTicketsRegaloEnCaja( cCodCaj, dbfCajT )
+FUNCTION nCopiasTicketsRegaloEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
 
@@ -2982,11 +2981,11 @@ Function nCopiasTicketsRegaloEnCaja( cCodCaj, dbfCajT )
       nCop        := ( dbfCajT )->nCopReg
    end if
 
-Return ( NotCero( nCop ) )
+RETURN ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
 
-Function nCopiasAlbaranesEnCaja( cCodCaj, dbfCajT )
+FUNCTION nCopiasAlbaranesEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
 
@@ -2994,19 +2993,19 @@ Function nCopiasAlbaranesEnCaja( cCodCaj, dbfCajT )
       nCop        := ( dbfCajT )->nCopAlb
    end if
 
-Return ( NotCero( nCop ) )
+RETURN ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
 
-Function nCopiasFacturasEnCaja( cCodCaj, dbfCajT )
+FUNCTION nCopiasFacturasEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
 
-Return ( NotCero( nCop ) )
+RETURN ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
 
-Function nCopiasMetaPagosEnCaja( cCodCaj, dbfCajT )
+FUNCTION nCopiasMetaPagosEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
 
@@ -3014,11 +3013,11 @@ Function nCopiasMetaPagosEnCaja( cCodCaj, dbfCajT )
       nCop        := ( dbfCajT )->nCopPgo
    end if
 
-Return ( NotCero( nCop ) )
+RETURN ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
 
-Function nCopiasArqueosEnCaja( cCodCaj, dbfCajT )
+FUNCTION nCopiasArqueosEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
 
@@ -3026,11 +3025,11 @@ Function nCopiasArqueosEnCaja( cCodCaj, dbfCajT )
       nCop        := ( dbfCajT )->nCopArq
    end if
 
-Return ( NotCero( nCop ) )
+RETURN ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
 
-Function nCopiasComandasEnCaja( cCodCaj, dbfCajT )
+FUNCTION nCopiasComandasEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
 
@@ -3038,11 +3037,11 @@ Function nCopiasComandasEnCaja( cCodCaj, dbfCajT )
       nCop        := ( dbfCajT )->nCopCom
    end if
 
-Return ( NotCero( nCop ) )
+RETURN ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
 
-Function nCopiasAnulacionEnCaja( cCodCaj, dbfCajT )
+FUNCTION nCopiasAnulacionEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
 
@@ -3050,11 +3049,11 @@ Function nCopiasAnulacionEnCaja( cCodCaj, dbfCajT )
       nCop        := ( dbfCajT )->nCopAnu
    end if
 
-Return ( NotCero( nCop ) )
+RETURN ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
 
-Function nCopiasEntregasCuentaEnCaja( cCodCaj, dbfCajT )
+FUNCTION nCopiasEntregasCuentaEnCaja( cCodCaj, dbfCajT )
 
    local nCop  := 1
 
@@ -3062,14 +3061,14 @@ Function nCopiasEntregasCuentaEnCaja( cCodCaj, dbfCajT )
       nCop        := ( dbfCajT )->nCopEna
    end if
 
-Return ( NotCero( nCop ) )
+RETURN ( NotCero( nCop ) )
 
 //---------------------------------------------------------------------------//
 /*
 Devuelve el código de la impresora de tickets que usa esta caja
 */
 
-Function cImpresoraTicketEnCaja( cCodCaj, dbfCajT )
+FUNCTION cImpresoraTicketEnCaja( cCodCaj, dbfCajT )
 
    local oBlock
    local oError
@@ -3078,7 +3077,7 @@ Function cImpresoraTicketEnCaja( cCodCaj, dbfCajT )
 
    if !lExistTable( cPatDat() + "Cajas.Dbf" ) .or. !lExistIndex( cPatDat() + "Cajas.Cdx" )
       msgInfo( "No existen ficheros de cajas." )
-      Return ( cFmt )
+      RETURN ( cFmt )
    end if
 
    oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -3106,11 +3105,11 @@ Function cImpresoraTicketEnCaja( cCodCaj, dbfCajT )
       CLOSE ( dbfCajT )
    end if
 
-Return ( cFmt )
+RETURN ( cFmt )
 
 //---------------------------------------------------------------------------//
 
-Function cCortePapelEnCaja( cCodCaj, dbfCajT, dbfCajL, lComanda, cTipImpCom, lAnulacion )
+FUNCTION cCortePapelEnCaja( cCodCaj, dbfCajT, dbfCajL, lComanda, cTipImpCom, lAnulacion )
 
    DEFAULT lComanda       := .f.
    DEFAULT lAnulacion     := .f.
@@ -3138,11 +3137,11 @@ Function cCortePapelEnCaja( cCodCaj, dbfCajT, dbfCajL, lComanda, cTipImpCom, lAn
 
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function SelCajTactil( oWnd, lInicio )
+FUNCTION SelCajTactil( oWnd, lInicio )
 
    local oBlock
    local oError
@@ -3159,7 +3158,7 @@ Function SelCajTactil( oWnd, lInicio )
    */
 
    if lInicio .and. !empty( Application():CodigoCaja() )
-      Return ( nil )
+      RETURN ( nil )
    end if
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -3171,7 +3170,7 @@ Function SelCajTactil( oWnd, lInicio )
    RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-      Return nil
+      RETURN nil
 
    END SEQUENCE
 
@@ -3179,7 +3178,7 @@ Function SelCajTactil( oWnd, lInicio )
 
    if ( dbfCaj )->( LastRec() ) <= 0
       ( dbfCaj )->( dbCloseArea() )
-      Return nil
+      RETURN nil
    end if
 
    DEFINE DIALOG oDlg ;
@@ -3209,7 +3208,7 @@ RETURN ( nil )
 // Inicializa el tree
 //
 
-Static Function InitBrwBigCaj( oDlg, oImgCaj, oLstCaj, dbfCaj )
+Static FUNCTION InitBrwBigCaj( oDlg, oImgCaj, oLstCaj, dbfCaj )
 
    ( dbfCaj )->( dbGoTop() )
    while !( dbfCaj )->( eof() )
@@ -3229,30 +3228,29 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 // Funcin que chequea la caja y nos deja pasar
 
-Static Function SelBrwBigCaj( nOpt, oLstCaj, oDlg, dbfCaj )
+Static FUNCTION SelBrwBigCaj( nOpt, oLstCaj, oDlg, dbfCaj )
 
    // Chequeamos que seleccione almenos una caja-------------------------------
 
    if nOpt == 0
       MsgStop( "Seleccione caja" )
-      Return nil
+      RETURN nil
    end if
 
    // Cambia la caja del usuario-----------------------------------------------
 
    if ( dbfCaj )->( OrdKeyGoTo( nOpt ) )
-      
-      lChgCaja( ( dbfCaj )->cCodCaj, Auth():Codigo()  )
+      lChgCaja( ( dbfCaj )->cCodCaj, ( dbfCaj )->Uuid, Auth():Codigo()  )
       oDlg:end( IDOK )
    else
       MsgStop( "La caja no existe" )
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function SelectCajas()
+FUNCTION SelectCajas()
 
    local oDlg
    local oBrw
@@ -3263,7 +3261,7 @@ Function SelectCajas()
    local cCbxOrden      := "Código"
 
    if !lOpenFiles()
-      return .f.
+      RETURN .f.
    end if
 
    DEFINE DIALOG oDlg ;
@@ -3336,7 +3334,7 @@ Function SelectCajas()
 
    if oDlg:nResult == IDOK
 
-      lChgCaja( ( dbfCajT )->cCodCaj )
+      lChgCaja( ( dbfCajT )->cCodCaj, ( dbfCajT )->Uuid )
 
       if !empty( cCajonEnCaja( ( dbfCajT )->cCodCaj, dbfCajT ) )
          oUser():oCajon    := TCajon():Create( cCajonEnCaja( ( dbfCajT )->cCodCaj, dbfCajT ) )
@@ -3360,10 +3358,10 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Function SelectCajon()
+FUNCTION SelectCajon()
 
    if !lOpenFiles()
-      Return .f.
+      RETURN .f.
    end if
 
    if !empty( cCajonEnCaja( Application():CodigoCaja(), dbfCajT ) )
@@ -3380,7 +3378,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function cNombreImpresoraComanda( cCodCaj, cTipImp, dbfCajL )
+FUNCTION cNombreImpresoraComanda( cCodCaj, cTipImp, dbfCajL )
 
    local cNombre  := ""
 
@@ -3390,11 +3388,11 @@ Function cNombreImpresoraComanda( cCodCaj, cTipImp, dbfCajL )
       cNombre     := ( dbfCajL )->cNomPrn
    end if
 
-Return ( cNombre )
+RETURN ( cNombre )
 
 //---------------------------------------------------------------------------//
 
-Function cWavImpresoraComanda( cCodCaj, cTipImp, dbfCajL )
+FUNCTION cWavImpresoraComanda( cCodCaj, cTipImp, dbfCajL )
 
    local cWav     := ""
 
@@ -3404,7 +3402,7 @@ Function cWavImpresoraComanda( cCodCaj, cTipImp, dbfCajL )
       cWav        := ( dbfCajL )->cWavFil
    end if
 
-Return ( cWav )
+RETURN ( cWav )
 
 //---------------------------------------------------------------------------//
 
@@ -3463,7 +3461,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function nCajasArqueo( oCajas )
+FUNCTION nCajasArqueo( oCajas )
 
    local nCajas   := 0
 
@@ -3474,11 +3472,11 @@ Function nCajasArqueo( oCajas )
 
    oCajas:SetStatus()
 
-Return ( nCajas )
+RETURN ( nCajas )
 
 //---------------------------------------------------------------------------//
 
-Function EdtCajas( cCodigoCaja, lOpenBrowse )
+FUNCTION EdtCajas( cCodigoCaja, lOpenBrowse )
 
    local nLevel         := Auth():Level( "01040" )
 
@@ -3487,7 +3485,7 @@ Function EdtCajas( cCodigoCaja, lOpenBrowse )
 
    if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
-      return .t.
+      RETURN .t.
    end if
 
    if lOpenBrowse
@@ -3514,11 +3512,11 @@ Function EdtCajas( cCodigoCaja, lOpenBrowse )
 
    end if
 
-Return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
-Function cNumeroSesionCaja( cCodCaj, dbfCaja, dbfTurno )
+FUNCTION cNumeroSesionCaja( cCodCaj, dbfCaja, dbfTurno )
 
    local cNumeroSesion  := space( 6 )
 
@@ -3537,7 +3535,7 @@ Function cNumeroSesionCaja( cCodCaj, dbfCaja, dbfTurno )
 
          else 
 
-            Return ( cNumeroSesion ) 
+            RETURN ( cNumeroSesion ) 
 
          end if 
       
@@ -3549,11 +3547,11 @@ Function cNumeroSesionCaja( cCodCaj, dbfCaja, dbfTurno )
 
    end if
 
-Return ( cNumeroSesion )
+RETURN ( cNumeroSesion )
 
 //---------------------------------------------------------------------------//
 
-Function SetNumeroSesionCaja( cNumeroSesion, cCodigoCaja, dbfCaja )
+FUNCTION SetNumeroSesionCaja( cNumeroSesion, cCodigoCaja, dbfCaja )
 
    if dbSeekInOrd( cCodigoCaja, "cCodCaj", dbfCaja )
 
@@ -3564,7 +3562,7 @@ Function SetNumeroSesionCaja( cNumeroSesion, cCodigoCaja, dbfCaja )
 
    end if
 
-Return ( cNumeroSesion )
+RETURN ( cNumeroSesion )
 
 //---------------------------------------------------------------------------//
 

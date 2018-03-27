@@ -6739,9 +6739,9 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       end if
 
       if !empty( aGet[ _CALMTIK ] )
-         aGet[ _CALMTIK ]:cText( oUser():cAlmacen() )
+         aGet[ _CALMTIK ]:cText( Application():codigoAlmacen() )
       else
-         aTmp[ _CALMTIK ]     := oUser():cAlmacen()
+         aTmp[ _CALMTIK ]     := Application():codigoAlmacen()
       end if
 
       if !empty( aGet[ _CCCJTIK ] )
@@ -15051,7 +15051,7 @@ Static Function AddFreeProduct()
          ( dbfTmpL )->nUntTil    := nGetUnidades
          ( dbfTmpL )->nPvpTil    := nGetImporte
          ( dbfTmpL )->nIvaTil    := nIva( dbfIva, cDefIva() )
-         ( dbfTmpL )->cAlmLin    := oUser():cAlmacen()
+         ( dbfTmpL )->cAlmLin    := Application():codigoAlmacen()
          ( dbfTmpL )->cImpCom1   := cGetImpresora
       end if
 
@@ -16412,7 +16412,7 @@ Static Function GuardarBtnLibre( oDlg, oGetNombre, oGetUnidades, oGetPrecio, oBr
          ( dbfTmpL )->nUntTil := nUnidades
          ( dbfTmpL )->nPvpTil := nPrecio
          ( dbfTmpL )->nIvaTil    := nIva( dbfIva, cDefIva() )
-         ( dbfTmpL )->cAlmLin    := oUser():cAlmacen()
+         ( dbfTmpL )->cAlmLin    := Application():codigoAlmacen()
          ( dbfTmpL )->cImpCom1   := cImpComanda
       end if
 

@@ -3547,7 +3547,7 @@ METHOD GuardarAgregarLibre() CLASS TpvTactil
    ::oTemporalLinea:nUntTil      := ::nUnidadesLibre
    ::oTemporalLinea:nPvpTil      := ::nImporteLibre
    ::oTemporalLinea:nIvaTil      := ::nIvaLibre
-   ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
+   ::oTemporalLinea:cAlmLin      := Application():codigoAlmacen()
    ::oTemporalLinea:cImpCom1     := ::cImpresoraLibre
    ::oTemporalLinea:cOrdOrd      := ::oOrdenComanda:cOrden( ::cOrdenComandaLibre ) 
    ::oTemporalLinea:Insert()
@@ -4477,7 +4477,7 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
    end if 
          
    ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
-   ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
+   ::oTemporalLinea:cAlmLin      := Application():codigoAlmacen()
    ::oTemporalLinea:cImpCom1     := ::oArticulo:cTipImp1
    ::oTemporalLinea:cImpCom2     := ::oArticulo:cTipImp2
    ::oTemporalLinea:cComent      := ""
@@ -4576,7 +4576,7 @@ METHOD AgregarAcompannamiento( cCodigoArticulo, nUnidadesMenu, cCodigoMenu, cCod
    end if 
          
    ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
-   ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
+   ::oTemporalLinea:cAlmLin      := Application():codigoAlmacen()
    ::oTemporalLinea:cImpCom1     := ::oArticulo:cTipImp1
    ::oTemporalLinea:cImpCom2     := ::oArticulo:cTipImp2
    ::oTemporalLinea:cComent      := ""
@@ -4994,7 +4994,7 @@ METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2,
             end if
 
             ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
-            ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
+            ::oTemporalLinea:cAlmLin      := Application():codigoAlmacen()
             ::oTemporalLinea:cComent      := ""
 
             ::oTemporalLinea:lInPromo     := ::oFideliza:InPrograma( ::oArticulo:Codigo, ::oTiketCabecera:dFecTik, ::oArticulo )
@@ -5172,7 +5172,7 @@ METHOD AgregarFavoritos( cNombreArticulo ) CLASS TpvTactil
       ::oTemporalLinea:nUntTil   := 1
       ::oTemporalLinea:nPvpTil   := cRetPreArt( ::oArticulo:Codigo, Max( ::oTiketCabecera:nTarifa, 1 ), cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
       ::oTemporalLinea:nIvaTil   := nIva( ::oTipoIVA, ::oArticulo:TipoIVA )
-      ::oTemporalLinea:cAlmLin   := oUser():cAlmacen()
+      ::oTemporalLinea:cAlmLin   := Application():codigoAlmacen()
       ::oTemporalLinea:cImpCom1  := ::oArticulo:cTipImp1
       ::oTemporalLinea:cImpCom2  := ::oArticulo:cTipImp2
       ::oTemporalLinea:cComent   := ""
@@ -7116,7 +7116,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
    ::oAlbaranClienteCabecera:lIvaInc      := .t.
    ::oAlbaranClienteCabecera:cCodCaj      := Application():CodigoCaja()
    ::oAlbaranClienteCabecera:cCodPago     := cDefFpg()
-   ::oAlbaranClienteCabecera:cCodAlm      := oUser():cAlmacen()
+   ::oAlbaranClienteCabecera:cCodAlm      := Application():codigoAlmacen()
    ::oAlbaranClienteCabecera:nTarifa      := Max( uFieldEmpresa( "nPreVta" ), 1 )
    ::oAlbaranClienteCabecera:cCodCli      := ::oTiketCabecera:cCliTik
    ::oAlbaranClienteCabecera:cNomCli      := ::oTiketCabecera:cNomTik
@@ -7173,7 +7173,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
       ::oAlbaranClienteLinea:lKitArt      := ::oTemporalLinea:lKitArt
       ::oAlbaranClienteLinea:lKitPrc      := ::oTemporalLinea:lKitPrc
       ::oAlbaranClienteLinea:dFecAlb      := GetSysDate()
-      ::oAlbaranClienteLinea:cAlmLin      := oUser():cAlmacen()
+      ::oAlbaranClienteLinea:cAlmLin      := Application():codigoAlmacen()
       ::oAlbaranClienteLinea:lIvaLin      := .t.
       ::oAlbaranClienteLinea:nNumLin      := ::oTemporalLinea:nNumLin
       ::oAlbaranClienteLinea:nPosPrint    := ::oTemporalLinea:nPosPrint
@@ -7438,7 +7438,7 @@ METHOD CargaValoresDefecto( nUbicacion ) CLASS TpvTactil
    */
 
    if Empty( ::oTiketCabecera:cAlmTik )
-      ::oTiketCabecera:cAlmTik   := oUser():cAlmacen()
+      ::oTiketCabecera:cAlmTik   := Application():codigoAlmacen()
    end if
 
    /*

@@ -39,7 +39,6 @@ static cNewFile
 static oTreePadre
 
 //----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
 
 #ifndef __PDA__
 
@@ -902,10 +901,10 @@ Function SelectAlmacen()
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult == IDOK
-      oUser():cAlmacen( ( dbfAlmT )->cCodAlm )
+      Application():setAlmacen( ( dbfAlmT )->cCodAlm, ( dbfAlmT )->Uuid )
    else
       MsgInfo( "No seleccionó ningún almacén, se establecerá el almacén por defecto." + CRLF + ;
-               "Almacén actual, " + oUser():cAlmacen() )
+               "Almacén actual, " + Application():codigoAlmacen() )
    end if
 
    CloseFiles()

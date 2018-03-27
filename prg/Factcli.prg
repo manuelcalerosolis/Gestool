@@ -2449,7 +2449,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       aTmp[ _CTURFAC    ]  := cCurSesion()
       aTmp[ _DFECENT    ]  := Ctod("")
-      aTmp[ _CCODALM    ]  := oUser():cAlmacen()
+      aTmp[ _CCODALM    ]  := Application():codigoAlmacen()
       aTmp[ _CCODCAJ    ]  := Application():CodigoCaja()
       aTmp[ _CCODPAGO   ]  := cDefFpg()
       aTmp[ _CDIVFAC    ]  := cDivEmp()
@@ -15773,7 +15773,7 @@ static function FacturaImportacion( oTreeImportacion )
             ( D():FacturasClientes( nView ) )->nTarifa    := Max( ( D():Clientes( nView ) )->nTarifa, 1 )
             ( D():FacturasClientes( nView ) )->dFecFac    := s:dFecha
             ( D():FacturasClientes( nView ) )->cTurFac    := cCurSesion()
-            ( D():FacturasClientes( nView ) )->cCodAlm    := oUser():cAlmacen()
+            ( D():FacturasClientes( nView ) )->cCodAlm    := Application():codigoAlmacen()
             ( D():FacturasClientes( nView ) )->cCodUsr    := Auth():Codigo()
             ( D():FacturasClientes( nView ) )->dFecCre    := Date()
             ( D():FacturasClientes( nView ) )->cTimCre    := Time()
@@ -15807,7 +15807,7 @@ static function FacturaImportacion( oTreeImportacion )
                ( D():FacturasClientesLineas( nView ) )->cDetalle   := "CLARO"
                ( D():FacturasClientesLineas( nView ) )->nUniCaja   := 1
                ( D():FacturasClientesLineas( nView ) )->nPreUnit   := s:nImporteClaro
-               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := Application():codigoAlmacen()
 
             end if
 
@@ -15826,7 +15826,7 @@ static function FacturaImportacion( oTreeImportacion )
                ( D():FacturasClientesLineas( nView ) )->cDetalle   := "ORANGE"
                ( D():FacturasClientesLineas( nView ) )->nUniCaja   := 1
                ( D():FacturasClientesLineas( nView ) )->nPreUnit   := s:nImporteOrange
-               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := Application():codigoAlmacen()
 
             end if
 
@@ -15845,7 +15845,7 @@ static function FacturaImportacion( oTreeImportacion )
                ( D():FacturasClientesLineas( nView ) )->cDetalle   := "VIVA"
                ( D():FacturasClientesLineas( nView ) )->nUniCaja   := 1
                ( D():FacturasClientesLineas( nView ) )->nPreUnit   := s:nImporteViva
-               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := Application():codigoAlmacen()
 
             end if
 
@@ -15864,7 +15864,7 @@ static function FacturaImportacion( oTreeImportacion )
                ( D():FacturasClientesLineas( nView ) )->cDetalle   := "TRICOM"
                ( D():FacturasClientesLineas( nView ) )->nUniCaja   := 1
                ( D():FacturasClientesLineas( nView ) )->nPreUnit   := s:nImporteTricom
-               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := Application():codigoAlmacen()
 
             end if
 
@@ -15883,7 +15883,7 @@ static function FacturaImportacion( oTreeImportacion )
                ( D():FacturasClientesLineas( nView ) )->cDetalle   := "LOTERIAS"
                ( D():FacturasClientesLineas( nView ) )->nUniCaja   := 1
                ( D():FacturasClientesLineas( nView ) )->nPreUnit   := s:nImporteLoterias
-               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := Application():codigoAlmacen()
 
             end if
 
@@ -18222,7 +18222,7 @@ Function ExcelIsra()
                ( D():FacturasClientes( nView ) )->cSufFac    := RetSufEmp()
                ( D():FacturasClientes( nView ) )->lLiquidada := .t.
                ( D():FacturasClientes( nView ) )->dFecFac    := dFecFac
-               ( D():FacturasClientes( nView ) )->cCodAlm    := oUser():cAlmacen()
+               ( D():FacturasClientes( nView ) )->cCodAlm    := Application():codigoAlmacen()
                ( D():FacturasClientes( nView ) )->cCodCaj    := Application():CodigoCaja()
                ( D():FacturasClientes( nView ) )->cCodPago   := cDefFpg()
                ( D():FacturasClientes( nView ) )->cDivFac    := cDivEmp()
@@ -19555,7 +19555,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "nCtlStk"    ,"N",  1, 0, "Tipo de stock de la línea"              , "TipoStock",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nCosDiv"    ,"N", 16, 6, "Costo del producto"                     , "PrecioCosto",                 "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nPvpRec"    ,"N", 16, 6, "Precio de venta recomendado"            , "PrecioVentaRecomendado",      "", "( cDbfCol )", nil } )
-   aAdd( aColFacCli, { "cAlmLin"    ,"C", 16, 0, "Código de almacén"                      , "Almacen",                     "", "( cDbfCol )", {|| oUser():cAlmacen() } } )
+   aAdd( aColFacCli, { "cAlmLin"    ,"C", 16, 0, "Código de almacén"                      , "Almacen",                     "", "( cDbfCol )", {|| Application():codigoAlmacen() } } )
    aAdd( aColFacCli, { "lIvaLin"    ,"L",  1, 0, cImp() + " incluido"                     , "LineaImpuestoIncluido",       "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cCodImp"    ,"C",  3, 0, "Código del impuesto especial"           , "ImpuestoEspecial",            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nValImp"    ,"N", 16, 6, "Importe del impuesto especial"          , "ImporteImpuestoEspecial",     "", "( cDbfCol )", nil } )
@@ -19641,7 +19641,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"cTurFac"     ,"C",  6, 0, "Sesión de la factura" ,                                      "Turno",                       "", "( cDbf )", {|| cCurSesion( nil, .f.) } } )
    aAdd( aItmFacCli, {"dFecFac"     ,"D",  8, 0, "Fecha de la factura" ,                                       "Fecha",                       "", "( cDbf )", {|| GetSysDate() } } )
    aAdd( aItmFacCli, {"cCodCli"     ,"C", 12, 0, "Código del cliente" ,                                        "Cliente",                     "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"cCodAlm"     ,"C", 16, 0, "Código de almacén" ,                                         "Almacen",                     "", "( cDbf )", {|| oUser():cAlmacen() } } )
+   aAdd( aItmFacCli, {"cCodAlm"     ,"C", 16, 0, "Código de almacén" ,                                         "Almacen",                     "", "( cDbf )", {|| Application():codigoAlmacen() } } )
    aAdd( aItmFacCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja" ,                                            "Caja",                        "", "( cDbf )", {|| Application():CodigoCaja() } } )
    aAdd( aItmFacCli, {"cNomCli"     ,"C", 80, 0, "Nombre del cliente" ,                                        "NombreCliente",               "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cDirCli"     ,"C",200, 0, "Domicilio del cliente" ,                                     "DomicilioCliente",            "", "( cDbf )", nil } )

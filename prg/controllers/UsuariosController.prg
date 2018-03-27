@@ -2,6 +2,7 @@
 #include "Factu.ch" 
 
 #define  __encryption_key__ "snorlax"
+#define  __admin_password__ "superusuario"
 
 //---------------------------------------------------------------------------//
 
@@ -12,7 +13,6 @@ CLASS UsuariosController FROM SQLNavigatorController
    DATA oRolesController
 
    DATA cUuidUsuario
-
 
    DATA aCajas
    DATA oComboCaja
@@ -313,7 +313,7 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 3 )"                            ,;
                                           "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "rol_uuid",       {  "create"    => "VARCHAR(40)"                             ,;
+   hset( ::hColumns, "rol_uuid",       {  "create"    => "VARCHAR( 40 )"                           ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
    ::getTimeStampColumns()   
@@ -324,10 +324,25 @@ RETURN ( ::hColumns )
 
 METHOD getInsertUsuariosSentence()
 
-   local cSQL  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cSQL        +=    "( uuid, nombre, email, password ) "
+   local cSQL  
+   local cUuidRol
+
+   cUuidRol    := RolesRepository():getUuidWhereNombre( "Super administrador" )
+
+   cSQL        := "INSERT IGNORE INTO " + ::cTableName + " "
+   cSQL        += "( uuid, "
+   cSQL        +=    "codigo, "
+   cSQL        +=    "nombre, "
+   cSQL        +=    "email, "
+   cSQL        +=    "password, "
+   cSQL        +=    "rol_uuid ) "
    cSQL        += "VALUES "
-   cSQL        +=    "( UUID(), 'Administrador', 'admin@admin.com', " + quoted( ::Crypt( '12345678' ) ) + " )"
+   cSQL        +=    "( UUID(), "
+   cSQL        +=    "'999', "
+   cSQL        +=    "'Super administrador', "
+   cSQL        +=    "'superadmin@admin.com', "
+   cSQL        +=    quoted( ::Crypt( __admin_password__ ) ) + ", "
+   cSQL        +=    quoted( cUuidRol ) + " )"
 
 RETURN ( cSQL )
 
@@ -438,6 +453,8 @@ CLASS UsuariosView FROM SQLBaseView
    DATA oComboRol 
    DATA cComboRol   
    DATA aComboRoles           
+
+   DATA lSuperUser            
 
    METHOD openingDialog()
 

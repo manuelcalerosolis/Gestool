@@ -1157,7 +1157,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
       aTmp[ _CSERFAC ]  := cNewSer( "nRctPrv", D():Contadores( nView ) )
       aTmp[ _CTURFAC ]  := cCurSesion()
       aTmp[ _CDIVFAC ]  := cDivEmp()
-      aTmp[ _CCODALM ]  := oUser():cAlmacen()
+      aTmp[ _CCODALM ]  := Application():codigoAlmacen()
       aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _NVDVFAC ]  := nChgDiv( aTmp[ _CDIVFAC ], D():Divisas( nView ) )
       aTmp[ _CSUFFAC ]  := RetSufEmp()

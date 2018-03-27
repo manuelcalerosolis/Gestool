@@ -1185,7 +1185,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 
       aTmp[ _CSERALB ]     := cNewSer( "NALBPRV", D():Contadores( nView ) )
       aTmp[ _CTURALB ]     := cCurSesion()
-      aTmp[ _CCODALM ]     := oUser():cAlmacen()
+      aTmp[ _CCODALM ]     := Application():codigoAlmacen()
       aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
       aTmp[ _CDIVALB ]     := cDivEmp()
       aTmp[ _NVDVALB ]     := nChgDiv( aTmp[ _CDIVALB ], D():Divisas( nView ) )
@@ -7042,7 +7042,7 @@ Static FUNCTION IcgCabAlbPrv( cSerDoc, nNumDoc, cSufDoc, dFecDoc )
       ( D():AlbaranesProveedores( nView ) )->nNumAlb    := nNumAlb
       ( D():AlbaranesProveedores( nView ) )->cSufAlb    := cSufDoc
       ( D():AlbaranesProveedores( nView ) )->dFecAlb    := Stod( dFecDoc )
-      ( D():AlbaranesProveedores( nView ) )->cCodAlm    := oUser():cAlmacen()
+      ( D():AlbaranesProveedores( nView ) )->cCodAlm    := Application():codigoAlmacen()
       ( D():AlbaranesProveedores( nView ) )->cDivAlb    := cDivEmp()
       ( D():AlbaranesProveedores( nView ) )->nVdvAlb    := nChgDiv( cDivEmp(), D():Divisas( nView ) )
       ( D():AlbaranesProveedores( nView ) )->cSuAlb     := cSerDoc + nNumDoc + cSufDoc
@@ -7084,7 +7084,7 @@ Static FUNCTION IcgDetAlbPrv( cSerDoc, cSufDoc, cDesLin, nUntLin, nPvpLin, nDtoL
    ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb    := cSerDoc
    ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb    := nNumAlb
    ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb    := cSufDoc
-   ( D():AlbaranesProveedoresLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+   ( D():AlbaranesProveedoresLineas( nView ) )->cAlmLin    := Application():codigoAlmacen()
    ( D():AlbaranesProveedoresLineas( nView ) )->cRef       := cRefLin
    ( D():AlbaranesProveedoresLineas( nView ) )->cDetalle   := cDesLin
    ( D():AlbaranesProveedoresLineas( nView ) )->mLngDes    := cDesLin

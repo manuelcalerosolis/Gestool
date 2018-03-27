@@ -556,10 +556,14 @@ RETURN ( nil )
 
 STATIC FUNCTION WinEdtEmp()
 
-   if WinEdtRec( oWndBrw, bEdit, dbfEmp )
+   if winEdtRec( oWndBrw, bEdit, dbfEmp )
+      
       setEmpresa( ( dbfEmp )->CodEmp )
-      ApplicationLoad()
-      chkTurno( , oWnd() )
+      
+      applicationLoad()
+      
+      chkTurno()
+
    end if
 
 RETURN ( nil )
@@ -7365,7 +7369,7 @@ FUNCTION SelectDelegacion()
 
       REDEFINE BITMAP oBmp ;
          ID       300 ;
-         RESOURCE "Flag_Eu_48_Alpha" ; 
+         RESOURCE "flag_eu_48_alpha" ; 
          TRANSPARENT ;
          OF       oDlg
 
@@ -7428,8 +7432,8 @@ FUNCTION SelectDelegacion()
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult == IDOK
-      oUser():cDelegacion( ( dbfDlg )->cCodDlg )
-      ChkTurno()
+      Application():setDelegacion( ( dbfDlg )->cCodDlg, ( dbfDlg )->Uuid )
+      cDlgUsr( ( dbfDlg )->cCodDlg )
    end if
 
    if !empty( dbfDlg )

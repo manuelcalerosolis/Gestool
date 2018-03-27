@@ -359,7 +359,7 @@ METHOD ProccesLine( cLine )
             ::oAlbCliT:dFecCre      := Ctod( SubStr( cLine, 157, 2 ) + "-" + SubStr( cLine, 155, 2 ) + "-" + SubStr( cLine, 151, 4 ) )
             ::oAlbCliT:cTimCre      := SubStr( cLine, 159, 2 ) + ":" + SubStr( cLine, 161, 2 )
             ::oAlbCliT:cTurAlb      := cCurSesion()
-            ::oAlbCliT:cCodAlm      := oUser():cAlmacen()
+            ::oAlbCliT:cCodAlm      := Application():codigoAlmacen()
             ::oAlbCliT:cDivAlb      := cDivEmp()
             ::oAlbCliT:cCodPago     := cDefFpg()
             ::oAlbCliT:cCodCaj      := Application():CodigoCaja()
@@ -446,7 +446,7 @@ METHOD ProccesLine( cLine )
          ::oAlbCliL:lControl     := .f.
          ::oAlbCliL:lTotLin      := .f.
          ::oAlbCliL:dFecha       := Ctod( SubStr( cLine, 157, 2 ) + "-" + SubStr( cLine, 155, 2 ) + "-" + SubStr( cLine, 151, 4 ) )
-         ::oAlbCliL:cAlmLin      := oUser():cAlmacen()
+         ::oAlbCliL:cAlmLin      := Application():codigoAlmacen()
          ::oAlbCliL:lIvaLin      := .t.
          ::oAlbCliL:nIva         := nIvaCodTer( SubStr( cLine, 57, 1 ), ::oDbfIva:cAlias )
 
@@ -487,7 +487,7 @@ METHOD ProccesLine( cLine )
             ::oAlbPrvT:nNumAlb    := cNum
             ::oAlbPrvT:cSufAlb    := RetSufEmp()
             ::oAlbPrvT:cTurAlb    := cCurSesion()
-            ::oAlbPrvT:cCodAlm    := oUser():cAlmacen()
+            ::oAlbPrvT:cCodAlm    := Application():codigoAlmacen()
             ::oAlbPrvT:cCodCaj    := Application():CodigoCaja()
             ::oAlbPrvT:cDivAlb    := cDivEmp()
             ::oAlbPrvT:nVdvAlb    := nChgDiv( cDivEmp(), ::oDbfDiv )
@@ -555,7 +555,7 @@ METHOD ProccesLine( cLine )
          ::oAlbPrvL:nCanEnt      := 1
          ::oAlbPrvL:nCanPed      := 1
          ::oAlbPrvL:lIvaLin      := .t.
-         ::oAlbPrvL:cAlmLin      := oUser():cAlmacen()
+         ::oAlbPrvL:cAlmLin      := Application():codigoAlmacen()
          ::oAlbPrvL:lControl     := .f.
          ::oAlbPrvL:cNumPed      := SubStr( cLine, 22, 10 )
          ::oAlbPrvL:nPreDiv      := Val( SubStr( cLine, 61, 6 ) + "." + SubStr( cLine, 67, 3 ) )
@@ -710,7 +710,7 @@ METHOD ProccesLine( cLine )
             ::oTikCliT:cHorTik      := SubStr( cLine, 159, 2 ) + ":" + SubStr( cLine, 161, 2 )
             ::oTikCliT:cCcjTik      := Auth():Codigo()
             ::oTikCliT:cNcjTik      := Application():CodigoCaja()
-            ::oTikCliT:cAlmTik      := oUser():cAlmacen()
+            ::oTikCliT:cAlmTik      := Application():codigoAlmacen()
             ::oTikCliT:cFpgTik      := cDefFpg()
             ::oTikCliT:cDivTik      := cDivEmp()
             ::oTikCliT:nVdvTik      := nChgDiv( cDivEmp(), ::oDbfDiv )
@@ -776,7 +776,7 @@ METHOD ProccesLine( cLine )
          ::oTikCliL:cNumTil         := SubStr( cLine, 29, 10 )
          ::oTikCliL:cSufTil         := RetSufEmp()
          ::oTikCliL:cCbaTil         := Padr( SubStr( cLine, 6, 8 ), 18 )
-         ::oTikCliL:cAlmLin         := oUser():cAlmacen()
+         ::oTikCliL:cAlmLin         := Application():codigoAlmacen()
          ::oTikCliL:lControl        := .f.
          ::oTikCliL:lOfeTil         := .f.
          ::oTikCliL:lFreTil         := .f.

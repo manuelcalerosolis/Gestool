@@ -57,7 +57,7 @@ METHOD ExecuteReportingArticulo( hInforme, oDevice ) CLASS Reporting
    oInf:lLoadDivisa()
    oInf:dIniInf            := GetSysDate()
    oInf:dFinInf            := GetSysDate()
-   oInf:cAlmacenDefecto    := oUser():cAlmacen()
+   oInf:cAlmacenDefecto    := Application():codigoAlmacen()
    oInf:BuildReportCorrespondences()
 
    oInf:PlayTablet( , oDevice )

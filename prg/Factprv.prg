@@ -1274,7 +1274,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       aTmp[ _CTURFAC ]     := cCurSesion()
       aTmp[ _CDIVFAC ]     := cDivEmp()
       aTmp[ _NVDVFAC ]     := nChgDiv( aTmp[ _CDIVFAC ], D():Divisas( nView ) )
-      aTmp[ _CCODALM ]     := oUser():cAlmacen()
+      aTmp[ _CCODALM ]     := Application():codigoAlmacen()
       aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
       aTmp[ _LSNDDOC ]     := .t.
       aTmp[ _CCODPRO ]     := cProCnt()
@@ -11364,7 +11364,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                      ( cFacPrvT)->CTURFAC     := cCurSesion()
                      ( cFacPrvT)->DFECFAC     := ( tmpFacPrvT )->dFecFac
                      ( cFacPrvT)->CCODPRV     := ( tmpFacPrvT )->cCodCli
-                     ( cFacPrvT)->CCODALM     := oUser():cAlmacen()
+                     ( cFacPrvT)->CCODALM     := Application():codigoAlmacen()
                      ( cFacPrvT)->CCODCAJ     := Application():CodigoCaja()
                      ( cFacPrvT)->CNOMPRV     := ( tmpFacPrvT )->cNomCli
                      ( cFacPrvT)->CDIRPRV     := ( tmpFacPrvT )->cDirCli
