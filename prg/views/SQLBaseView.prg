@@ -87,7 +87,7 @@ RETURN ( nil )
 METHOD ShowMessage( cMessage )
 
    if !empty( ::oBitmap )
-      ::oBitmap:setBMP( "gc_skull2_48" )
+      ::oBitmap:setBMP( "gc_cd_pirated_48" )
    end if 
 
    if empty( ::oMessage )
