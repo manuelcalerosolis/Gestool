@@ -66,14 +66,6 @@ METHOD addColumns() CLASS ProvinciasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
       :nWidth              := 80
@@ -209,11 +201,7 @@ METHOD getColumns() CLASS SQLProvinciasModel
                                              "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "text"      => "Uuid"                                    ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
-
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 10 )"                          ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 10 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| space( 10 ) } }                       )
 
    hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 20 )"                          ,;
