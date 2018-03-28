@@ -353,3 +353,6 @@ GC_GLOBE_48 BITMAP "..\\bmp\\gc_globe_48.bmp"
 GC_BOOK_TELEPHONE_48 BITMAP "..\\bmp\\gc_book_telephone_48.bmp"
 
 GC_SKULL2_48 BITMAP "..\\bmp\\gc_skull2_48.bmp"
+
+GC_CD_PIRATED_48 BITMAP "..\\bmp\\gc_cd_pirated_48.bmp"
+GC_SPY_48 BITMAP "..\\bmp\\gc_spy_48.bmp"
