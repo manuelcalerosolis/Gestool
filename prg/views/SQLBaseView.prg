@@ -12,7 +12,9 @@ CLASS SQLBaseView
 
    DATA oDialog
 
-   DATA oBmpDialog
+   DATA oMessage
+
+   DATA oBitmap
 
    DATA oBtnOk
 
@@ -54,6 +56,8 @@ CLASS SQLBaseView
    METHOD setEvent( cEvent, bEvent )                  INLINE ( iif( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                         INLINE ( iif( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
+   METHOD ShowMessage( cMessage )                     
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -64,7 +68,7 @@ METHOD New( oController )
 
    ::oEvents                                          := Events():New()
 
-RETURN ( Self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -80,3 +84,15 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD ShowMessage( cMessage )
+
+   if empty( ::oMessage )
+      RETURN ( self )
+   end if 
+
+   ::oMessage:setColor( rgb( 229, 57, 53 ), GetSysColor( COLOR_BTNFACE ) )
+   ::oMessage:setText( cMessage )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//

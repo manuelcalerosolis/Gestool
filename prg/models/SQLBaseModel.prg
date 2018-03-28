@@ -92,6 +92,7 @@ CLASS SQLBaseModel
    METHOD getInitialSelect()                          INLINE ( "SELECT * FROM " + ::getTableName() )
 
    METHOD getIdSelect( id )
+   METHOD getWhereSelect( cWhere )
    METHOD getSelectSentence()
    
    METHOD setCreatedTimeStamp( hBuffer )
@@ -153,6 +154,8 @@ CLASS SQLBaseModel
    METHOD aUuidToDelete()
 
    METHOD getSelectByOrder()
+
+   METHOD getWhere( cWhere )                          INLINE ( atail( ::getDatabase():selectFetchHash( ::getWhereSelect( cWhere ) ) ) )
 
    // Busquedas----------------------------------------------------------------
 
@@ -321,10 +324,17 @@ RETURN ( cSQLSelect )
 
 METHOD getIdSelect( id )
 
-   local cSQLSelect        := ::cGeneralSelect 
-
-   cSQLSelect              += space( 1 )
+   local cSQLSelect        := ::cGeneralSelect + " "
    cSQLSelect              += "WHERE id = " + toSQLString( id )
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereSelect( cWhere )
+
+   local cSQLSelect        := ::cGeneralSelect + " "
+   cSQLSelect              += "WHERE " + cWhere 
 
 RETURN ( cSQLSelect )
 

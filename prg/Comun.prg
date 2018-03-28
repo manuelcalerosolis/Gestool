@@ -2777,9 +2777,9 @@ RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION validRunReport( nLevel )
+FUNCTION validRunReport( cOption )
 
-   if nAnd( Auth():Level( nLevel ), 1 ) != 0
+   if nAnd( Auth():Level( cOption ), 1 ) == 0
       msgStop( "Acceso no permitido." )
       RETURN .f.
    end if

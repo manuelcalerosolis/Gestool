@@ -222,7 +222,7 @@ METHOD Activate() CLASS RelacionesEntidadesView
    
    DEFINE DIALOG ::oDialog RESOURCE "Relaciones" TITLE "Relaciones"
 
-      REDEFINE BITMAP ::oBmpDialog ;
+      REDEFINE BITMAP ::oBitmap ;
          ID          900 ;
          RESOURCE    "gc_graph_claw_48" ;
          TRANSPARENT ;
@@ -266,8 +266,8 @@ METHOD Activate() CLASS RelacionesEntidadesView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   if !empty( ::oBmpDialog )
-      ::oBmpDialog:End()
+   if !empty( ::oBitmap )
+      ::oBitmap:End()
    end if
 
 RETURN ( ::oDialog:nResult )

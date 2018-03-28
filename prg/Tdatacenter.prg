@@ -593,6 +593,11 @@ METHOD lAdministratorTask()
       RETURN ( nil )
    end if
 
+   with object ( UsuariosController():New() )
+      :checkSuperUser()
+      :end()
+   end with
+
    TstEmpresa()
 
    TstDivisas()

@@ -220,25 +220,25 @@ STATIC FUNCTION controllerReportGallery( cInitOptions )
    do case
       case upper( cInitOptions ) == "ARTICULOS"
 
-         if validRunReport( "01118" )
+         if validRunReport( "reporting_articulos" )
             TFastVentasArticulos():New():Play()
-         end if 
+         endif
 
       case upper( cInitOptions ) == "CLIENTES"
 
-         if validRunReport( "01120" )
+         if validRunReport( "reporting_clientes" )
             TFastVentasClientes():New():Play()
-         end if 
+         endif
 
       case upper( cInitOptions ) == "PROVEEDORES"
 
-         if validRunReport( "01121" )
+         if validRunReport( "reporting_proveedores" )
             TFastComprasProveedores():New():Play()
          end if 
 
       case upper( cInitOptions ) == "PRODUCCION"
 
-         if validRunReport( "01123" )
+         if validRunReport( "reporting_produccion" )
             TFastProduccion():New():Play()
          end if 
 
