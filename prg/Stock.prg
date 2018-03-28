@@ -611,7 +611,7 @@ METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
    local nUnits
 
-   DEFAULT cCodAlm      := oUser():cAlmacen()
+   DEFAULT cCodAlm      := Application():codigoAlmacen()
    DEFAULT lDelete      := .t.
    DEFAULT lIncremento  := .t.
 
@@ -752,7 +752,7 @@ METHOD FacPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
    local nUnits
 
-   DEFAULT cCodAlm      := oUser():cAlmacen()
+   DEFAULT cCodAlm      := Application():codigoAlmacen()
    DEFAULT lDelete      := .t.
    DEFAULT lIncremento  := .t.
 
@@ -820,7 +820,7 @@ METHOD RctPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
 
    local nUnits
 
-   DEFAULT cCodAlm      := oUser():cAlmacen()
+   DEFAULT cCodAlm      := Application():codigoAlmacen()
    DEFAULT lDelete      := .t.
    DEFAULT lIncremento  := .t.
 
@@ -889,7 +889,7 @@ METHOD PedCli( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
    local nUndPed
    local nUndRes
 
-   DEFAULT cCodAlm      := oUser():cAlmacen()
+   DEFAULT cCodAlm      := Application():codigoAlmacen()
    DEFAULT lDelete      := .t.
    DEFAULT lIncremento  := .t.
 
@@ -1249,7 +1249,7 @@ METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
    local nUnits
    local nPendEnt          := 0
 
-   DEFAULT cCodAlm         := oUser():cAlmacen()
+   DEFAULT cCodAlm         := Application():codigoAlmacen()
    DEFAULT lDelete         := .t.
    DEFAULT lIncremento     := .t.
    DEFAULT lActPendientes  := .f.
@@ -1318,7 +1318,7 @@ METHOD TpvCli( cNumTik, cCodAlm, lIncremento, lDevolucion, lChequea ) CLASS TSto
    local nRec
    local nUnits
 
-   DEFAULT cCodAlm      := oUser():cAlmacen()
+   DEFAULT cCodAlm      := Application():codigoAlmacen()
    DEFAULT lIncremento  := .t.
    DEFAULT lDevolucion  := ( ( ::cTikT )->cTipTik == SAVDEV .or. ( ::cTikT )->cTipTik == SAVVAL )
    DEFAULT lChequea     := .t.

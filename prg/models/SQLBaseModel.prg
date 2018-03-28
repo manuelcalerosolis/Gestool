@@ -580,12 +580,13 @@ RETURN ( ::cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertOnDuplicateSentence( hBuffer )
+METHOD getInsertOnDuplicateSentence( hBuffer, lDebug )
 
    local uValue
    local cSQLUpdate  
 
    DEFAULT hBuffer   := ::hBuffer
+   DEFAULT lDebug    := .f.
 
    hBuffer           := ::setUpdatedTimeStamp( hBuffer )
    
@@ -873,11 +874,11 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertOnDuplicate( hBuffer )
+METHOD insertOnDuplicate( hBuffer, lDebug )
 
    ::fireEvent( 'insertingOnDuplicatingBuffer' )
 
-   ::getDatabase():Execs( ::getInsertOnDuplicateSentence( hBuffer ) )
+   ::getDatabase():Execs( ::getInsertOnDuplicateSentence( hBuffer, lDebug ) )
 
    ::fireEvent( 'insertedOnDuplicatedBuffer' )
 

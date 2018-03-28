@@ -289,15 +289,15 @@ METHOD FilterTable( cTextFilter ) CLASS ReceiptInvoiceCustomer
    do case
       case cTextFilter == "Todos delegación"
 
-         ( ::getDataTable() )->( adsSetAOF( "Field->cSufFac == '" + oUser():cDelegacion() + "'" ) )
+         ( ::getDataTable() )->( adsSetAOF( "Field->cSufFac == '" + Application():CodigoDelegacion() + "'" ) )
 
       case cTextFilter == "Pendientes delegación"
 
-         ( ::getDataTable() )->( adsSetAOF( "!Field->lCobrado .and. Field->cSufFac == '" + oUser():cDelegacion() + "'" ) )
+         ( ::getDataTable() )->( adsSetAOF( "!Field->lCobrado .and. Field->cSufFac == '" + Application():CodigoDelegacion() + "'" ) )
       
       case cTextFilter == "Cobrados delegación"
          
-         ( ::getDataTable() )->( adsSetAOF( "Field->lCobrado .and. Field->cSufFac = '" + oUser():cDelegacion() + "'" ) )
+         ( ::getDataTable() )->( adsSetAOF( "Field->lCobrado .and. Field->cSufFac = '" + Application():CodigoDelegacion() + "'" ) )
       
       case cTextFilter == "Pendientes"
 

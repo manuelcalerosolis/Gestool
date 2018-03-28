@@ -898,7 +898,7 @@ METHOD ImportaAlbaranesClientes()
       ::oDbfAlbTGst:cSufAlb         := "00"
       ::oDbfAlbTGst:cTurAlb         := cCurSesion()
       ::oDbfAlbTGst:dFecAlb         := ::oDbfAlbTFac:Fecha
-      ::oDbfAlbTGst:cCodAlm         := oUser():cAlmacen()
+      ::oDbfAlbTGst:cCodAlm         := Application():codigoAlmacen()
       ::oDbfAlbTGst:cCodCaj         := cDefCaj()
       ::oDbfAlbTGst:lFacturado      := .f.
       ::oDbfAlbTGst:lEntregado      := .f.
@@ -1021,7 +1021,7 @@ METHOD ImportaAlbaranesClientes()
          ::oDbfAlbLGst:nCanEnt         := 1
          ::oDbfAlbLGst:nUniCaja        := ::oDbfAlbLFac:Cantidad
          ::oDbfAlbLGst:dFecha          := ::oDbfAlbLFac:Fecha
-         ::oDbfAlbLGst:cAlmLin         := oUser():cAlmacen()
+         ::oDbfAlbLGst:cAlmLin         := Application():codigoAlmacen()
          ::oDbfAlbLGst:nNumLin         := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 12, 6 ) ) 
 
          ::oDbfArtGst:GoTop()
@@ -1091,7 +1091,7 @@ METHOD ImportaFacturasClientes()
             ::oDbfFacTGst:cSufFac     := "00"
             ::oDbfFacTGst:cTurFac     := cCurSesion()
             ::oDbfFacTGst:dFecFac     := ::oDbfFacTFac:Fecha
-            ::oDbfFacTGst:cCodAlm     := oUser():cAlmacen()
+            ::oDbfFacTGst:cCodAlm     := Application():codigoAlmacen()
             ::oDbfFacTGst:cCodCaj     := cDefCaj()
             ::oDbfFacTGst:dFecEnt     := ::oDbfFacTFac:Fecha
             ::oDbfFacTGst:nTarifa     := 1
@@ -1204,7 +1204,7 @@ METHOD ImportaFacturasClientes()
          ::oDbfFacLGst:nCanEnt     := 1
          ::oDbfFacLGst:nUniCaja    := ::oDbfAlbLFac:Cantidad
          ::oDbfFacLGst:dFecha      := ::oDbfAlbLFac:Fecha
-         ::oDbfFacLGst:cAlmLin     := oUser():cAlmacen()
+         ::oDbfFacLGst:cAlmLin     := Application():codigoAlmacen()
          ::oDbfFacLGst:NNumLin     := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 12, 6 ) )
 
          ::oDbfArtGst:GoTop()
@@ -1385,7 +1385,7 @@ METHOD ImportaFacturasProveedores()
       ::oDbfFacPrvTGst:cSufFac         := "00"
       ::oDbfFacPrvTGst:cTurFac         := cCurSesion()
       ::oDbfFacPrvTGst:dFecFac         := ::oDbfFacPrvTFac:Fecha
-      ::oDbfFacPrvTGst:cCodAlm         := oUser():cAlmacen()
+      ::oDbfFacPrvTGst:cCodAlm         := Application():codigoAlmacen()
       ::oDbfFacPrvTGst:cCodCaj         := cDefCaj()
       ::oDbfFacPrvTGst:cSuPed          := ::oDbfFacPrvTFac:Numfactura
       ::oDbfFacPrvTGst:dFecEnt         := ::oDbfFacPrvTFac:Fecha
@@ -1491,7 +1491,7 @@ METHOD ImportaFacturasProveedores()
          ::oDbfFacPrvLGst:nUniCaja  := ::oDbfAlbLFac:Cantidad
          ::oDbfFacPrvLGst:nDtoLin   := ::oDbfAlbLFac:Descuento
          ::oDbfFacPrvLGst:nPreCom   := ::oDbfAlbLFac:Precio
-         ::oDbfFacPrvLGst:cAlmLin   := oUser():cAlmacen()
+         ::oDbfFacPrvLGst:cAlmLin   := Application():codigoAlmacen()
 
          if ::oDbfAlbLFac:Valestock 
             ::oDbfFacPrvLGst:nCtlStk := 1
@@ -1584,7 +1584,7 @@ METHOD ImportaPedidosProveedores()
             ::oDbfPedPrvTGst:cDniPrv   := ::oDbfPedPrvTFac:Cif
          end if
 
-         ::oDbfPedPrvTGst:cCodAlm      := oUser():cAlmacen()
+         ::oDbfPedPrvTGst:cCodAlm      := Application():codigoAlmacen()
          ::oDbfPedPrvTGst:cCodCaj      := cDefCaj()
          ::oDbfPedPrvTGst:cDivPed      := cDivEmp()
          ::oDbfPedPrvTGst:dFecEnt      := ::oDbfPedPrvTFac:Fecha
@@ -1694,7 +1694,7 @@ METHOD ImportaPedidosProveedores()
          ::oDbfPedPrvLGst:nUniCaja     := ::oDbfAlbLFac:Cantidad
          ::oDbfPedPrvLGst:nPreDiv      := ::oDbfAlbLFac:Precio
          ::oDbfPedPrvLGst:cUnidad      := "UD"
-         ::oDbfPedPrvLGst:cAlmLin      := oUser():cAlmacen()
+         ::oDbfPedPrvLGst:cAlmLin      := Application():codigoAlmacen()
          ::oDbfPedPrvLGst:nNumLin      := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 12 ) )
 
          if ::oDbfAlbLFac:Valestock 

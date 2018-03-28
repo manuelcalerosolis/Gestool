@@ -1178,21 +1178,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 	DO CASE
    CASE nMode == APPD_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          RETURN .f.
       end if
 
       aTmp[ _CSERALB ]     := cNewSer( "NALBPRV", D():Contadores( nView ) )
       aTmp[ _CTURALB ]     := cCurSesion()
-      aTmp[ _CCODALM ]     := oUser():cAlmacen()
-      aTmp[ _CCODCAJ ]     := oUser():cCaja()
+      aTmp[ _CCODALM ]     := Application():codigoAlmacen()
+      aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
       aTmp[ _CDIVALB ]     := cDivEmp()
       aTmp[ _NVDVALB ]     := nChgDiv( aTmp[ _CDIVALB ], D():Divisas( nView ) )
       aTmp[ _CSUFALB ]     := RetSufEmp()
       aTmp[ _LSNDDOC ]     := .t.
       aTmp[ _CCODUSR ]     := Auth():Codigo()
-      aTmp[ _CCODDLG ]     := oUser():cDelegacion()
+      aTmp[ _CCODDLG ]     := Application():CodigoDelegacion()
       aTmp[ _DFECIMP ]     := Ctod( "" )
       aTmp[ _DSUALB  ]     := Ctod( "" )
       aTmp[ _NFACTURADO ]  := 1
@@ -1208,13 +1208,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 
    CASE nMode == DUPL_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          RETURN .f.
       end if
 
       aTmp[ _CTURALB ]     := cCurSesion()
-      aTmp[ _CCODCAJ ]     := oUser():cCaja()
+      aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
       aTmp[ _LSNDDOC ]     := .t.
       aTmp[ _DFECIMP ]     := Ctod( "" )
       aTmp[ _LCLOALB ]     := .f.
@@ -7042,13 +7042,13 @@ Static FUNCTION IcgCabAlbPrv( cSerDoc, nNumDoc, cSufDoc, dFecDoc )
       ( D():AlbaranesProveedores( nView ) )->nNumAlb    := nNumAlb
       ( D():AlbaranesProveedores( nView ) )->cSufAlb    := cSufDoc
       ( D():AlbaranesProveedores( nView ) )->dFecAlb    := Stod( dFecDoc )
-      ( D():AlbaranesProveedores( nView ) )->cCodAlm    := oUser():cAlmacen()
+      ( D():AlbaranesProveedores( nView ) )->cCodAlm    := Application():codigoAlmacen()
       ( D():AlbaranesProveedores( nView ) )->cDivAlb    := cDivEmp()
       ( D():AlbaranesProveedores( nView ) )->nVdvAlb    := nChgDiv( cDivEmp(), D():Divisas( nView ) )
       ( D():AlbaranesProveedores( nView ) )->cSuAlb     := cSerDoc + nNumDoc + cSufDoc
       ( D():AlbaranesProveedores( nView ) )->cCodUsr    := Auth():Codigo()
-      ( D():AlbaranesProveedores( nView ) )->cCodDlg    := oUser():cDelegacion()
-      ( D():AlbaranesProveedores( nView ) )->cCodCaj    := oUser():cCaja()
+      ( D():AlbaranesProveedores( nView ) )->cCodDlg    := Application():CodigoDelegacion()
+      ( D():AlbaranesProveedores( nView ) )->cCodCaj    := Application():CodigoCaja()
       ( D():AlbaranesProveedores( nView ) )->cTurAlb    := cCurSesion()
 
       ( D():AlbaranesProveedores( nView ) )->cCodPrv    := cCodPrv
@@ -7084,7 +7084,7 @@ Static FUNCTION IcgDetAlbPrv( cSerDoc, cSufDoc, cDesLin, nUntLin, nPvpLin, nDtoL
    ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb    := cSerDoc
    ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb    := nNumAlb
    ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb    := cSufDoc
-   ( D():AlbaranesProveedoresLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+   ( D():AlbaranesProveedoresLineas( nView ) )->cAlmLin    := Application():codigoAlmacen()
    ( D():AlbaranesProveedoresLineas( nView ) )->cRef       := cRefLin
    ( D():AlbaranesProveedoresLineas( nView ) )->cDetalle   := cDesLin
    ( D():AlbaranesProveedoresLineas( nView ) )->mLngDes    := cDesLin

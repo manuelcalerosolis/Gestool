@@ -1429,7 +1429,7 @@ STATIC FUNCTION GenFacCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo facturas a clientes"
    DEFAULT cCodDoc      := cFormatoFacturasClientes()
-   DEFAULT cPrinter     := cPrinterFactura( oUser():cCaja(), dbfCajT )
+   DEFAULT cPrinter     := cPrinterFactura( Application():CodigoCaja(), dbfCajT )
 
    if empty( nCopies )
       nCopies           := retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" )
@@ -2442,15 +2442,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          Return .f.
       end if
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURFAC    ]  := cCurSesion()
       aTmp[ _DFECENT    ]  := Ctod("")
-      aTmp[ _CCODALM    ]  := oUser():cAlmacen()
-      aTmp[ _CCODCAJ    ]  := oUser():cCaja()
+      aTmp[ _CCODALM    ]  := Application():codigoAlmacen()
+      aTmp[ _CCODCAJ    ]  := Application():CodigoCaja()
       aTmp[ _CCODPAGO   ]  := cDefFpg()
       aTmp[ _CDIVFAC    ]  := cDivEmp()
       aTmp[ _NVDVFAC    ]  := nChgDiv( aTmp[ _CDIVFAC ], dbfDiv )
@@ -2461,7 +2461,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _CCODPRO    ]  := cProCnt()
       aTmp[ _CCODUSR    ]  := Auth():Codigo()
       aTmp[ _DFECIMP    ]  := Ctod("")
-      aTmp[ _CCODDLG    ]  := oUser():cDelegacion()
+      aTmp[ _CCODDLG    ]  := Application():CodigoDelegacion()
       aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
       aTmp[ _CMANOBR    ]  := padr( getConfigTraslation( "Gastos" ), 250 )
       aTmp[ _NIVAMAN    ]  := nIva( dbfIva, cDefIva() )
@@ -2476,8 +2476,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          Return .f.
       end if
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada" )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada" )
          Return .f.
       end if
 
@@ -9943,7 +9943,7 @@ STATIC FUNCTION FacRecDup( cDbf, xField1, xField2, xField3, lCab, lPag, lActual,
       end if
 
       aTabla[ _CTURFAC     ]  := cCurSesion()
-      aTabla[ _CCODCAJ     ]  := oUser():cCaja()
+      aTabla[ _CCODCAJ     ]  := Application():CodigoCaja()
       aTabla[ _LCONTAB     ]  := .f.
       aTabla[ _CGUID       ]  := ""
       aTabla[ _CCONGUID    ]  := ""
@@ -9963,7 +9963,7 @@ STATIC FUNCTION FacRecDup( cDbf, xField1, xField2, xField3, lCab, lPag, lActual,
       aTabla[ _LIMPRIMIDO  ]  := .f.
       aTabla[ _DFECIMP     ]  := Ctod("")
       aTabla[ _CHORIMP     ]  := Space( 5 )
-      aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
+      aTabla[ _CCODDLG     ]  := Application():CodigoDelegacion()
 
       nOrdAnt                 := ( cDbf )->( OrdSetFocus( "NNUMFAC" ) )
 
@@ -9980,7 +9980,7 @@ STATIC FUNCTION FacRecDup( cDbf, xField1, xField2, xField3, lCab, lPag, lActual,
          end if
       end if
 
-      aTabla[ ( D():FacturasClientesCobros( nView ) )->( FieldPos( "cCodCaj" ) )  ]  := oUser():cCaja()
+      aTabla[ ( D():FacturasClientesCobros( nView ) )->( FieldPos( "cCodCaj" ) )  ]  := Application():CodigoCaja()
       aTabla[ ( D():FacturasClientesCobros( nView ) )->( FieldPos( "cTurRec" ) )  ]  := cCurSesion()
 
       aTabla[ ( D():FacturasClientesCobros( nView ) )->( FieldPos( "lConPgo" ) )  ]  := .f.
@@ -15773,12 +15773,12 @@ static function FacturaImportacion( oTreeImportacion )
             ( D():FacturasClientes( nView ) )->nTarifa    := Max( ( D():Clientes( nView ) )->nTarifa, 1 )
             ( D():FacturasClientes( nView ) )->dFecFac    := s:dFecha
             ( D():FacturasClientes( nView ) )->cTurFac    := cCurSesion()
-            ( D():FacturasClientes( nView ) )->cCodAlm    := oUser():cAlmacen()
+            ( D():FacturasClientes( nView ) )->cCodAlm    := Application():codigoAlmacen()
             ( D():FacturasClientes( nView ) )->cCodUsr    := Auth():Codigo()
             ( D():FacturasClientes( nView ) )->dFecCre    := Date()
             ( D():FacturasClientes( nView ) )->cTimCre    := Time()
             ( D():FacturasClientes( nView ) )->cCodDlg    := RetFld( Auth():Codigo(), dbfUsr, "cCodDlg" )
-            ( D():FacturasClientes( nView ) )->cCodCaj    := oUser():cCaja()
+            ( D():FacturasClientes( nView ) )->cCodCaj    := Application():CodigoCaja()
 
             lAppendFactura             := .t.
 
@@ -15807,7 +15807,7 @@ static function FacturaImportacion( oTreeImportacion )
                ( D():FacturasClientesLineas( nView ) )->cDetalle   := "CLARO"
                ( D():FacturasClientesLineas( nView ) )->nUniCaja   := 1
                ( D():FacturasClientesLineas( nView ) )->nPreUnit   := s:nImporteClaro
-               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := Application():codigoAlmacen()
 
             end if
 
@@ -15826,7 +15826,7 @@ static function FacturaImportacion( oTreeImportacion )
                ( D():FacturasClientesLineas( nView ) )->cDetalle   := "ORANGE"
                ( D():FacturasClientesLineas( nView ) )->nUniCaja   := 1
                ( D():FacturasClientesLineas( nView ) )->nPreUnit   := s:nImporteOrange
-               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := Application():codigoAlmacen()
 
             end if
 
@@ -15845,7 +15845,7 @@ static function FacturaImportacion( oTreeImportacion )
                ( D():FacturasClientesLineas( nView ) )->cDetalle   := "VIVA"
                ( D():FacturasClientesLineas( nView ) )->nUniCaja   := 1
                ( D():FacturasClientesLineas( nView ) )->nPreUnit   := s:nImporteViva
-               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := Application():codigoAlmacen()
 
             end if
 
@@ -15864,7 +15864,7 @@ static function FacturaImportacion( oTreeImportacion )
                ( D():FacturasClientesLineas( nView ) )->cDetalle   := "TRICOM"
                ( D():FacturasClientesLineas( nView ) )->nUniCaja   := 1
                ( D():FacturasClientesLineas( nView ) )->nPreUnit   := s:nImporteTricom
-               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := Application():codigoAlmacen()
 
             end if
 
@@ -15883,7 +15883,7 @@ static function FacturaImportacion( oTreeImportacion )
                ( D():FacturasClientesLineas( nView ) )->cDetalle   := "LOTERIAS"
                ( D():FacturasClientesLineas( nView ) )->nUniCaja   := 1
                ( D():FacturasClientesLineas( nView ) )->nPreUnit   := s:nImporteLoterias
-               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := oUser():cAlmacen()
+               ( D():FacturasClientesLineas( nView ) )->cAlmLin    := Application():codigoAlmacen()
 
             end if
 
@@ -16758,7 +16758,7 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
 
    local aStatus
    local oPrinter   
-   local cPrinterFactura   := cPrinterFactura( oUser():cCaja(), dbfCajT )
+   local cPrinterFactura   := cPrinterFactura( Application():CodigoCaja(), dbfCajT )
 
 
    DEFAULT nDevice         := IS_PRINTER
@@ -18222,8 +18222,8 @@ Function ExcelIsra()
                ( D():FacturasClientes( nView ) )->cSufFac    := RetSufEmp()
                ( D():FacturasClientes( nView ) )->lLiquidada := .t.
                ( D():FacturasClientes( nView ) )->dFecFac    := dFecFac
-               ( D():FacturasClientes( nView ) )->cCodAlm    := oUser():cAlmacen()
-               ( D():FacturasClientes( nView ) )->cCodCaj    := oUser():cCaja()
+               ( D():FacturasClientes( nView ) )->cCodAlm    := Application():codigoAlmacen()
+               ( D():FacturasClientes( nView ) )->cCodCaj    := Application():CodigoCaja()
                ( D():FacturasClientes( nView ) )->cCodPago   := cDefFpg()
                ( D():FacturasClientes( nView ) )->cDivFac    := cDivEmp()
                ( D():FacturasClientes( nView ) )->nVdvFac    := nChgDiv( cDivEmp(), dbfDiv )
@@ -19555,7 +19555,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "nCtlStk"    ,"N",  1, 0, "Tipo de stock de la línea"              , "TipoStock",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nCosDiv"    ,"N", 16, 6, "Costo del producto"                     , "PrecioCosto",                 "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nPvpRec"    ,"N", 16, 6, "Precio de venta recomendado"            , "PrecioVentaRecomendado",      "", "( cDbfCol )", nil } )
-   aAdd( aColFacCli, { "cAlmLin"    ,"C", 16, 0, "Código de almacén"                      , "Almacen",                     "", "( cDbfCol )", {|| oUser():cAlmacen() } } )
+   aAdd( aColFacCli, { "cAlmLin"    ,"C", 16, 0, "Código de almacén"                      , "Almacen",                     "", "( cDbfCol )", {|| Application():codigoAlmacen() } } )
    aAdd( aColFacCli, { "lIvaLin"    ,"L",  1, 0, cImp() + " incluido"                     , "LineaImpuestoIncluido",       "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cCodImp"    ,"C",  3, 0, "Código del impuesto especial"           , "ImpuestoEspecial",            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nValImp"    ,"N", 16, 6, "Importe del impuesto especial"          , "ImporteImpuestoEspecial",     "", "( cDbfCol )", nil } )
@@ -19641,8 +19641,8 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"cTurFac"     ,"C",  6, 0, "Sesión de la factura" ,                                      "Turno",                       "", "( cDbf )", {|| cCurSesion( nil, .f.) } } )
    aAdd( aItmFacCli, {"dFecFac"     ,"D",  8, 0, "Fecha de la factura" ,                                       "Fecha",                       "", "( cDbf )", {|| GetSysDate() } } )
    aAdd( aItmFacCli, {"cCodCli"     ,"C", 12, 0, "Código del cliente" ,                                        "Cliente",                     "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"cCodAlm"     ,"C", 16, 0, "Código de almacén" ,                                         "Almacen",                     "", "( cDbf )", {|| oUser():cAlmacen() } } )
-   aAdd( aItmFacCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja" ,                                            "Caja",                        "", "( cDbf )", {|| oUser():cCaja() } } )
+   aAdd( aItmFacCli, {"cCodAlm"     ,"C", 16, 0, "Código de almacén" ,                                         "Almacen",                     "", "( cDbf )", {|| Application():codigoAlmacen() } } )
+   aAdd( aItmFacCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja" ,                                            "Caja",                        "", "( cDbf )", {|| Application():CodigoCaja() } } )
    aAdd( aItmFacCli, {"cNomCli"     ,"C", 80, 0, "Nombre del cliente" ,                                        "NombreCliente",               "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cDirCli"     ,"C",200, 0, "Domicilio del cliente" ,                                     "DomicilioCliente",            "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cPobCli"     ,"C",200, 0, "Población del cliente" ,                                     "PoblacionCliente",            "", "( cDbf )", nil } )
@@ -19722,7 +19722,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"lImprimido"  ,"L",  1, 0, "Lógico de imprimido" ,                                       "Imprimido",                   "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"dFecImp"     ,"D",  8, 0, "última fecha de impresión" ,                                 "FechaImpresion",              "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cHorImp"     ,"C",  5, 0, "Hora de la última impresión" ,                               "HoraImpresion",               "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"cCodDlg"     ,"C",  2, 0, "Código Delegación" ,                                         "Delegacion",                  "", "( cDbf )", {|| oUser():cDelegacion() } } )
+   aAdd( aItmFacCli, {"cCodDlg"     ,"C",  2, 0, "Código Delegación" ,                                         "Delegacion",                  "", "( cDbf )", {|| Application():CodigoDelegacion() } } )
    aAdd( aItmFacCli, {"nDtoAtp"     ,"N",  6, 2, "Porcentaje de descuento atípico",                            "DescuentoAtipico",            "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"nSbrAtp"     ,"N",  1, 0, "Lugar donde aplicar dto atípico",                            "LugarAplicarDescuentoAtipico","", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"dFecEntr"    ,"D",  8,  0, "Fecha de entrada de alquiler",                              "EntradaAlquiler",             "", "( cDbf )", nil } )
@@ -23115,7 +23115,7 @@ Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, tFec
             ( D():AnticiposClientes( nView ) )->cNumDoc    := cSerFac + str( nNumFac ) + cSufFac
             ( D():AnticiposClientes( nView ) )->dLiquidada := GetSysDate()
             ( D():AnticiposClientes( nView ) )->cTurLiq    := cCurSesion()
-            ( D():AnticiposClientes( nView ) )->cCajLiq    := oUser():cCaja()
+            ( D():AnticiposClientes( nView ) )->cCajLiq    := Application():CodigoCaja()
             ( D():AnticiposClientes( nView ) )->( dbUnLock() )
          end if
       end if

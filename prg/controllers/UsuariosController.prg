@@ -2,6 +2,7 @@
 #include "Factu.ch" 
 
 #define  __encryption_key__ "snorlax"
+#define  __admin_password__ "superusuario"
 
 //---------------------------------------------------------------------------//
 
@@ -14,12 +15,24 @@ CLASS UsuariosController FROM SQLNavigatorController
    DATA cUuidUsuario
 
    DATA aCajas
+   DATA oComboCaja
    DATA cUuidCajaExclusiva
    DATA cNombreCajaExclusiva
 
    DATA aEmpresas
+   DATA oComboEmpresa
    DATA cCodigoEmpresaExclusiva
    DATA cNombreEmpresaExclusiva
+
+   DATA aAlmacenes
+   DATA oComboAlmacen
+   DATA cUuidAlmacenExclusivo
+   DATA cNombreAlmacenExclusivo
+
+   DATA aDelegaciones
+   DATA oComboDelegacion
+   DATA cUuidDelegacionExclusiva
+   DATA cNombreDelegacionExclusiva
 
    DATA oLoginView
 
@@ -35,6 +48,8 @@ CLASS UsuariosController FROM SQLNavigatorController
    METHOD saveConfig()
 
    METHOD startingActivate()
+
+   METHOD changeComboEmpresa()
 
    METHOD validUserPassword()
 
@@ -136,19 +151,27 @@ RETURN ( self )
 
 METHOD loadConfig()
 
-   ::cUuidUsuario             := ::getRowSet():fieldGet( 'uuid' )
+   ::cUuidUsuario                := ::getRowSet():fieldGet( 'uuid' )
 
    if empty( ::cUuidUsuario )
       RETURN ( .f. )
    end if 
 
-   ::aEmpresas                := EmpresasModel():aNombresSeleccionables()
-   ::cCodigoEmpresaExclusiva  := ::oAjustableController:oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
-   ::cNombreEmpresaExclusiva  := EmpresasModel():getNombreFromCodigo( ::cCodigoEmpresaExclusiva )
+   ::aEmpresas                   := EmpresasModel():aNombresSeleccionables()
+   ::cCodigoEmpresaExclusiva     := ::oAjustableController:oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
+   ::cNombreEmpresaExclusiva     := EmpresasModel():getNombreFromCodigo( ::cCodigoEmpresaExclusiva )
 
-   ::aCajas                   := CajasModel():aNombresSeleccionables()
-   ::cUuidCajaExclusiva       := ::oAjustableController:oModel:getUsuarioCajaExclusiva( ::cUuidUsuario )
-   ::cNombreCajaExclusiva     := CajasModel():getNombreFromUuid( ::cUuidCajaExclusiva )
+   ::aCajas                      := CajasModel():aNombresSeleccionables()
+   ::cUuidCajaExclusiva          := ::oAjustableController:oModel:getUsuarioCajaExclusiva( ::cUuidUsuario )
+   ::cNombreCajaExclusiva        := CajasModel():getNombreFromUuid( ::cUuidCajaExclusiva )
+
+   ::aAlmacenes                  := AlmacenesModel():aNombresSeleccionables()
+   ::cUuidAlmacenExclusivo       := ::oAjustableController:oModel:getUsuarioAlmacenExclusivo( ::cUuidUsuario )
+   ::cNombreAlmacenExclusivo     := AlmacenesModel():getNombreFromUuid( ::cUuidAlmacenExclusivo )
+
+   ::aDelegaciones               := DelegacionesModel():aNombresSeleccionables()
+   ::cUuidDelegacionExclusiva    := ::oAjustableController:oModel:getUsuarioDelegacionExclusiva( ::cUuidUsuario )
+   ::cNombreDelegacionExclusiva  := DelegacionesModel():getNombreFromUuid( ::cUuidDelegacionExclusiva )
 
 RETURN ( .t. )
 
@@ -156,11 +179,15 @@ RETURN ( .t. )
 
 METHOD saveConfig()
 
-   ::cCodigoEmpresaExclusiva  := EmpresasModel():getCodigoFromNombre( ::cNombreEmpresaExclusiva )
-   ::cUuidCajaExclusiva       := CajasModel():getUuidFromNombre( ::cNombreCajaExclusiva )
+   ::cCodigoEmpresaExclusiva     := EmpresasModel():getCodigoFromNombre( ::cNombreEmpresaExclusiva )
+   ::cUuidCajaExclusiva          := CajasModel():getUuidFromNombre( ::cNombreCajaExclusiva )
+   ::cUuidAlmacenExclusivo       := AlmacenesModel():getUuidFromNombre( ::cNombreAlmacenExclusivo )
+   ::cUuidDelegacionExclusiva    := DelegacionesModel():getUuidFromNombre( ::cNombreDelegacionExclusiva )
 
    ::oAjustableController:oModel:setUsuarioEmpresaExclusiva( ::cCodigoEmpresaExclusiva, ::cUuidUsuario )
    ::oAjustableController:oModel:setUsuarioCajaExclusiva( ::cUuidCajaExclusiva, ::cUuidUsuario )
+   ::oAjustableController:oModel:setUsuarioAlmacenExclusivo( ::cUuidAlmacenExclusivo, ::cUuidUsuario )
+   ::oAjustableController:oModel:setUsuarioDelegacionExclusiva( ::cUuidDelegacionExclusiva, ::cUuidUsuario )
 
 RETURN ( self )
 
@@ -170,10 +197,35 @@ METHOD startingActivate()
 
    local oPanel               := ::oAjustableController:oDialogView:oExplorerBar:AddPanel( "Propiedades usuario", nil, 1 ) 
 
-   oPanel:addComboBox( "Empresa exclusiva", @::cNombreEmpresaExclusiva, ::aEmpresas )
+   ::oComboEmpresa            := oPanel:addComboBox( "Empresa exclusiva", @::cNombreEmpresaExclusiva, ::aEmpresas )
+   ::oComboEmpresa:bChange    := {|| ::changeComboEmpresa() }
 
-   oPanel:addComboBox( "Caja exclusiva", @::cNombreCajaExclusiva, ::aCajas )
+   ::oComboDelegacion         := oPanel:addComboBox( "Delegación exclusiva", @::cNombreDelegacionExclusiva, ::aDelegaciones )
+
+   ::oComboCaja               := oPanel:addComboBox( "Caja exclusiva", @::cNombreCajaExclusiva, ::aCajas )
+
+   ::oComboAlmacen            := oPanel:addComboBox( "Almacén exclusivo", @::cNombreAlmacenExclusivo, ::aAlmacenes )
+
+   ::changeComboEmpresa()
+      
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeComboEmpresa()
+
+   iif(  empty( ::cNombreEmpresaExclusiva ),;
+         ( ::oComboDelegacion:Disable(), ::oComboDelegacion:Set( "" ) ),;
+         ::oComboDelegacion:Enable() )
    
+   iif(  empty( ::cNombreEmpresaExclusiva ),;
+         ( ::oComboCaja:Disable(), ::oComboCaja:Set( "" ) ),;
+         ::oComboCaja:Enable() )
+   
+   iif(  empty( ::cNombreEmpresaExclusiva ),;
+         ( ::oComboAlmacen:Disable(), ::oComboAlmacen:Set( "" ) ),;
+         ::oComboAlmacen:Enable() )
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -261,7 +313,7 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 3 )"                            ,;
                                           "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "rol_uuid",       {  "create"    => "VARCHAR(40)"                             ,;
+   hset( ::hColumns, "rol_uuid",       {  "create"    => "VARCHAR( 40 )"                           ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
    ::getTimeStampColumns()   
@@ -272,10 +324,25 @@ RETURN ( ::hColumns )
 
 METHOD getInsertUsuariosSentence()
 
-   local cSQL  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cSQL        +=    "( uuid, nombre, email, password ) "
+   local cSQL  
+   local cUuidRol
+
+   cUuidRol    := RolesRepository():getUuidWhereNombre( "Super administrador" )
+
+   cSQL        := "INSERT IGNORE INTO " + ::cTableName + " "
+   cSQL        += "( uuid, "
+   cSQL        +=    "codigo, "
+   cSQL        +=    "nombre, "
+   cSQL        +=    "email, "
+   cSQL        +=    "password, "
+   cSQL        +=    "rol_uuid ) "
    cSQL        += "VALUES "
-   cSQL        +=    "( UUID(), 'Administrador', 'admin@admin.com', " + quoted( ::Crypt( '12345678' ) ) + " )"
+   cSQL        +=    "( UUID(), "
+   cSQL        +=    "'999', "
+   cSQL        +=    "'Super administrador', "
+   cSQL        +=    "'superadmin@admin.com', "
+   cSQL        +=    quoted( ::Crypt( __admin_password__ ) ) + ", "
+   cSQL        +=    quoted( cUuidRol ) + " )"
 
 RETURN ( cSQL )
 
@@ -386,6 +453,8 @@ CLASS UsuariosView FROM SQLBaseView
    DATA oComboRol 
    DATA cComboRol   
    DATA aComboRoles           
+
+   DATA lSuperUser            
 
    METHOD openingDialog()
 

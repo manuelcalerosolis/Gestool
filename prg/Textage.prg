@@ -483,7 +483,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfExtAgeT, oBrw, bWhen, bValid, nMode )
 
 	IF nMode == APPD_MODE
       aTmp[ _CSEREXT ]  := "A"
-      aTmp[ _CCODALM ]  := oUser():cAlmacen()
+      aTmp[ _CCODALM ]  := Application():codigoAlmacen()
       aTmp[ _CDIVEXT ]  := cDivEmp()
       aTmp[ _NVDVEXT ]  := nChgDiv( aTmp[ _CDIVEXT ], dbfDivisa )
 	END

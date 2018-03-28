@@ -218,7 +218,9 @@ METHOD getInsertRolesSentence()
    cStatement  := "INSERT IGNORE INTO " + ::cTableName + " "
    cStatement  +=    "( uuid, nombre ) "
    cStatement  += "VALUES "
-   cStatement  +=    "( UUID(), 'Administrador' )"
+   cStatement  +=    "( UUID(), 'Super administrador' ), "
+   cStatement  +=    "( UUID(), 'Administrador' ), "
+   cStatement  +=    "( UUID(), 'Usuario' )"
 
 RETURN ( cStatement )
 
@@ -423,13 +425,14 @@ RETURN ( ::hValidators )
 
 CLASS RolesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()      INLINE ( SQLRolesModel():getTableName() ) 
+   METHOD getTableName()               INLINE ( SQLRolesModel():getTableName() ) 
 
    METHOD getNombres() 
 
-   METHOD getNombre( uuid )   INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) ) 
+   METHOD getNombre( uuid )            INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) ) 
 
-   METHOD getUuid()
+   METHOD getUuid( nombre )
+   METHOD getUuidWhereNombre( nombre ) INLINE ( ::getUuid( nombre ) ) 
 
 END CLASS
 

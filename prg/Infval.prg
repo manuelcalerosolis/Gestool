@@ -26,7 +26,7 @@ FUNCTION InfValor( oMenuItem, oWnd )
    local cCodFamHasta
    local oTxtFamHasta
    local cTxtFamHasta
-   local cCodAlm     := oUser():cAlmacen()
+   local cCodAlm     := Application():codigoAlmacen()
 	local nRadCoste	:= 1
    local nMtrInf     := 0
    local cTitulo     := Padr( cCodEmp() + " - " + cNbrEmp(), 100 )

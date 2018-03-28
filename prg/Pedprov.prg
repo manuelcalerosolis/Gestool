@@ -988,35 +988,35 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
    do case
    case nMode == APPD_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CSERPED ]        := cNewSer( "nPedPrv" )
       aTmp[ _CTURPED ]        := cCurSesion()
-      aTmp[ _CCODCAJ ]        := oUser():cCaja()
-      aTmp[ _CCODALM ]        := oUser():cAlmacen()
+      aTmp[ _CCODCAJ ]        := Application():CodigoCaja()
+      aTmp[ _CCODALM ]        := Application():codigoAlmacen()
       aTmp[ _CDIVPED ]        := cDivEmp()
       aTmp[ _NVDVPED ]        := nChgDiv( aTmp[ _CDIVPED ], D():Divisas( nView ) )
       aTmp[ _CSUFPED ]        := RetSufEmp()
       aTmp[ _LSNDDOC ]        := .t.
       aTmp[ _NESTADO ]        := 1
       aTmp[ _CCODUSR ]        := Auth():Codigo()
-      aTmp[ _CCODDLG ]        := oUser():cDelegacion()
+      aTmp[ _CCODDLG ]        := Application():CodigoDelegacion()
       if !empty( cCodPrv )
          aTmp[ _CCODPRV ]     := cCodPrv
       end if
 
    case nMode == DUPL_MODE
    
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURPED ]        := cCurSesion()
-      aTmp[ _CCODCAJ ]        := oUser():cCaja()
+      aTmp[ _CCODCAJ ]        := Application():CodigoCaja()
       aTmp[ _LSNDDOC ]        := .t.
       aTmp[ _LCLOPED ]        := .f.
       aTmp[ _NESTADO ]        := 1
@@ -5357,7 +5357,7 @@ Static Function CreaPedido( cCodPrv, cCodAlm )
       else
          ( D():PedidosProveedores( nView ) )->cCodAlm := cDefAlm()
       end if
-      ( D():PedidosProveedores( nView ) )->cCodCaj    := oUser():cCaja()
+      ( D():PedidosProveedores( nView ) )->cCodCaj    := Application():CodigoCaja()
       ( D():PedidosProveedores( nView ) )->cNomPrv    := ( D():Proveedores( nView ) )->Titulo
       ( D():PedidosProveedores( nView ) )->cDirPrv    := ( D():Proveedores( nView ) )->Domicilio
       ( D():PedidosProveedores( nView ) )->cPobPrv    := ( D():Proveedores( nView ) )->Poblacion

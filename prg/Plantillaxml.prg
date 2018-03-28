@@ -1780,13 +1780,13 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
             aCampos[ ::oAlbPrvT:FieldPos( "cSufAlb" ) ]     := RetSufEmp()
             aCampos[ ::oAlbPrvT:FieldPos( "cTurAlb" ) ]     := cCurSesion()
             aCampos[ ::oAlbPrvT:FieldPos( "cDivAlb" ) ]     := cDivEmp()
-            aCampos[ ::oAlbPrvT:FieldPos( "cCodAlm" ) ]     := oUser():cAlmacen()
-            aCampos[ ::oAlbPrvT:FieldPos( "cCodCaj" ) ]     := oUser():cCaja()
+            aCampos[ ::oAlbPrvT:FieldPos( "cCodAlm" ) ]     := Application():codigoAlmacen()
+            aCampos[ ::oAlbPrvT:FieldPos( "cCodCaj" ) ]     := Application():CodigoCaja()
             aCampos[ ::oAlbPrvT:FieldPos( "nVdvAlb" ) ]     := nChgDiv( aPlantilla[ ::oAlbPrvT:FieldPos( "cDivAlb" ) ], ::oDbfDiv:cAlias )
             aCampos[ ::oAlbPrvT:FieldPos( "lSndDoc" ) ]     := .t.
             aCampos[ ::oAlbPrvT:FieldPos( "cCodPro" ) ]     := cProCnt()
             aCampos[ ::oAlbPrvT:FieldPos( "cCodUsr" ) ]     := Auth():Codigo()
-            aCampos[ ::oAlbPrvT:FieldPos( "cCodDlg" ) ]     := oUser():cDelegacion()
+            aCampos[ ::oAlbPrvT:FieldPos( "cCodDlg" ) ]     := Application():CodigoDelegacion()
             aCampos[ ::oAlbPrvT:FieldPos( "dFecAlb" ) ]     := GetSysDate()
 
             if !Empty( aCampos[ ::oAlbPrvT:FieldPos( "cCodPrv" ) ] )    .and.;
@@ -1983,11 +1983,11 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodAlm" ) ] )
-            aCampos[ ::oFacPrvT:FieldPos( "cCodAlm" ) ]     := oUser():cAlmacen()
+            aCampos[ ::oFacPrvT:FieldPos( "cCodAlm" ) ]     := Application():codigoAlmacen()
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ) ] )
-            aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ) ]     := oUser():cCaja()
+            aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ) ]     := Application():CodigoCaja()
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "nVdvFac" ) ] )
@@ -2007,7 +2007,7 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ) ] )
-            aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ) ]     := oUser():cDelegacion()
+            aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ) ]     := Application():CodigoDelegacion()
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "dFecFac" ) ] )
@@ -2122,7 +2122,7 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
             */
 
             if Empty( aCampos[ ::oFacPrvL:FieldPos( "cAlmLin" ) ] )
-               aCampos[ ::oFacPrvL:FieldPos( "cAlmLin" ) ]  := oUser():cAlmacen()
+               aCampos[ ::oFacPrvL:FieldPos( "cAlmLin" ) ]  := Application():codigoAlmacen()
             end if
 
             if Empty( aCampos[ ::oFacPrvL:FieldPos( "nIva" ) ] )
@@ -2454,11 +2454,11 @@ METHOD CreateRegister() CLASS TPlantillaXML
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodAlm" ), 9 ] )
-                  aCampos[ ::oFacPrvT:FieldPos( "cCodAlm" ), 9 ]     := oUser():cAlmacen()
+                  aCampos[ ::oFacPrvT:FieldPos( "cCodAlm" ), 9 ]     := Application():codigoAlmacen()
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ), 9 ] )
-                  aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ), 9 ]     := oUser():cCaja()
+                  aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ), 9 ]     := Application():CodigoCaja()
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "lSndDoc" ), 9 ] )
@@ -2474,7 +2474,7 @@ METHOD CreateRegister() CLASS TPlantillaXML
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ), 9 ] )
-                  aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ), 9 ]     := oUser():cDelegacion()
+                  aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ), 9 ]     := Application():CodigoDelegacion()
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "dFecFac" ), 9 ] )
@@ -2628,7 +2628,7 @@ METHOD CreateRegister() CLASS TPlantillaXML
                   if !Empty( aCampos[ ::oFacPrvL:FieldPos( "cRef" ), 9 ] ) .and. ::oDbfArt:SeekInOrd( aCampos[ ::oFacPrvL:FieldPos( "cRef" ), 9 ], "Codigo" )
 
                      if Empty( aCampos[ ::oFacPrvL:FieldPos( "cAlmLin" ), 9 ] )
-                        aCampos[ ::oFacPrvL:FieldPos( "cAlmLin" ), 9 ]  := oUser():cAlmacen()
+                        aCampos[ ::oFacPrvL:FieldPos( "cAlmLin" ), 9 ]  := Application():codigoAlmacen()
                      end if
 
                      if Empty( aCampos[ ::oFacPrvL:FieldPos( "nIva" ), 9 ] )

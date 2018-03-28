@@ -354,7 +354,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, bWhen, bValid, nMode )
 	DO CASE
 	CASE nMode 	== APPD_MODE
       aTmp[ _CSERPED ]  := "A"
-      aTmp[ _CCODALM ]  := oUser():cAlmacen()
+      aTmp[ _CCODALM ]  := Application():codigoAlmacen()
       aTmp[ _CDIVPED ]  := cDivEmp()
       aTmp[ _NVDVPED ]  := nChgDiv( aTmp[ _CDIVPED ], dbfDivisa )
 		aTmp[ _CSUFPED ]	:= retSufEmp()

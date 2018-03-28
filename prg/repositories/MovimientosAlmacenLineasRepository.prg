@@ -351,7 +351,7 @@ METHOD getRowSetMovimientosAlmacenForReport( oReporting )
 
    local cSentence   := ::getSqlSentenceMovimientosAlmacenForReport( oReporting )
 
-RETURN ( SQLRowSet():New():Build( cSentence ) ) // ::getDatabase():fetchRowSet( cSentence ) )
+RETURN ( SQLRowSet():New():Build( cSentence ) ) 
 
 //---------------------------------------------------------------------------//
 
@@ -451,6 +451,6 @@ METHOD getRowSetMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenLineas
 
    local cSentence   := ::getSqlSentenceMovimientosForArticulo( hParams )
 
-RETURN ( SQLRowSet():New():Build( cSentence ) ) // ::getDatabase():fetchRowSet( cSentence ) )
+RETURN ( SQLRowSet():New():Build( cSentence ) ) 
 
 //---------------------------------------------------------------------------//

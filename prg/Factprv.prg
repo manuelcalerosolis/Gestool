@@ -562,7 +562,7 @@ STATIC FUNCTION OpenFiles( lExt )
       // Limitaciones de cajero y cajas--------------------------------------------------------
 
       if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
-         cFiltroUsuario       := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario       := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
       end if
 
       EnableAcceso()
@@ -1264,8 +1264,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    do case
    case nMode == APPD_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
@@ -1274,12 +1274,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       aTmp[ _CTURFAC ]     := cCurSesion()
       aTmp[ _CDIVFAC ]     := cDivEmp()
       aTmp[ _NVDVFAC ]     := nChgDiv( aTmp[ _CDIVFAC ], D():Divisas( nView ) )
-      aTmp[ _CCODALM ]     := oUser():cAlmacen()
-      aTmp[ _CCODCAJ ]     := oUser():cCaja()
+      aTmp[ _CCODALM ]     := Application():codigoAlmacen()
+      aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
       aTmp[ _LSNDDOC ]     := .t.
       aTmp[ _CCODPRO ]     := cProCnt()
       aTmp[ _CCODUSR ]     := Auth():Codigo()
-      aTmp[ _CCODDLG ]     := oUser():cDelegacion()
+      aTmp[ _CCODDLG ]     := Application():CodigoDelegacion()
       aTmp[ _DFECENT ]     := Ctod( "" )
       aTmp[ _DFECIMP ]     := Ctod( "" )
       aTmp[ _TFECFAC ]     := getSysTime()
@@ -1294,13 +1294,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
    case nMode == DUPL_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURFAC ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _LSNDDOC ]  := .t.
       aTmp[ _DFECENT ]  := Ctod( "" )
       aTmp[ _DFECIMP ]  := Ctod( "" )
@@ -11354,7 +11354,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
 
                      cSerie      := ( tmpFacPrvT )->cSerie
                      nNumero     := nNewDoc( ( tmpFacPrvT )->cSerie, cFacPrvT, "NFACPRV", , dbfCount )
-                     cSufijo     := oUser():cDelegacion()
+                     cSufijo     := Application():CodigoDelegacion()
 
                      ( cFacPrvT)->( dbAppend() )
 
@@ -11364,8 +11364,8 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                      ( cFacPrvT)->CTURFAC     := cCurSesion()
                      ( cFacPrvT)->DFECFAC     := ( tmpFacPrvT )->dFecFac
                      ( cFacPrvT)->CCODPRV     := ( tmpFacPrvT )->cCodCli
-                     ( cFacPrvT)->CCODALM     := oUser():cAlmacen()
-                     ( cFacPrvT)->CCODCAJ     := oUser():cCaja()
+                     ( cFacPrvT)->CCODALM     := Application():codigoAlmacen()
+                     ( cFacPrvT)->CCODCAJ     := Application():CodigoCaja()
                      ( cFacPrvT)->CNOMPRV     := ( tmpFacPrvT )->cNomCli
                      ( cFacPrvT)->CDIRPRV     := ( tmpFacPrvT )->cDirCli
                      ( cFacPrvT)->CPOBPRV     := ( tmpFacPrvT )->cPobCli
@@ -11397,7 +11397,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                      ( cFacPrvT)->nPctRet     := ( tmpFacPrvT )->nPctRet
                      ( cFacPrvT)->dFecChg     := GetSysDate()
                      ( cFacPrvT)->cTimChg     := Time()
-                     ( cFacPrvT)->cCodDlg     := oUser():cDelegacion()
+                     ( cFacPrvT)->cCodDlg     := Application():CodigoDelegacion()
                      ( cFacPrvT)->nRegIva     := ( tmpFacPrvT )->nRegIva
                      ( cFacPrvT)->nTotNet     := ( tmpFacPrvT )->nTotNet
                      ( cFacPrvT)->nTotIva     := ( tmpFacPrvT )->nTotIva
@@ -11484,7 +11484,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                            ( cFacPrvP )->cSufFac    := cSufijo
                            ( cFacPrvP )->nNumRec    := ( tmpFacPrvP )->nNumRec
                            ( cFacPrvP )->cTipRec    := ( tmpFacPrvP )->cTipRec
-                           ( cFacPrvP )->CCODCAJ    := oUser():cCaja()
+                           ( cFacPrvP )->CCODCAJ    := Application():CodigoCaja()
                            ( cFacPrvP )->CCODPRV    := ( tmpFacPrvT )->cCodCli
                            ( cFacPrvP )->cNomPrv    := ( tmpFacPrvP )->cNomCli
                            ( cFacPrvP )->DENTRADA   := ( tmpFacPrvP )->dEntrada

@@ -72,6 +72,7 @@ METHOD Activate()
       REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
          ID          120 ;
          PICTURE     "@DT" ;
+         SPINNER ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          OF          ::oDialog
 

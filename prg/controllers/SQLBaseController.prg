@@ -485,7 +485,7 @@ METHOD Edit( nId )
 
       ::commitTransactionalMode()
 
-      ::refreshRowSet()
+      ::refreshRowSetAndFindId( nId )
 
       ::fireEvent( 'edited' ) 
 

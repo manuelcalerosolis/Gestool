@@ -875,7 +875,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       if lAIS() .and. !oUser():lAdministrador()
       
-         cFiltroUsuario    := "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario    := "Field->cSufPed == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
@@ -1793,21 +1793,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
             Return .f.
          end if
 
-         if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-            msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+         if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+            msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
             Return .f.
          end if
 
          aTmp[ _CTURPED ]     := cCurSesion()
-         aTmp[ _CCODALM ]     := oUser():cAlmacen()
-         aTmp[ _CCODCAJ ]     := oUser():cCaja()
+         aTmp[ _CCODALM ]     := Application():codigoAlmacen()
+         aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
          aTmp[ _CDIVPED ]     := cDivEmp()
          aTmp[ _CCODPGO ]     := cDefFpg()
          aTmp[ _NVDVPED ]     := nChgDiv( aTmp[ _CDIVPED ], D():Divisas( nView ) )
          aTmp[ _CSUFPED ]     := RetSufEmp()
          aTmp[ _NESTADO ]     := 1
          aTmp[ _CCODUSR ]     := Auth():Codigo()
-         aTmp[ _CCODDLG ]     := oUser():cDelegacion()
+         aTmp[ _CCODDLG ]     := Application():CodigoDelegacion()
          aTmp[ _LIVAINC ]     := uFieldEmpresa( "lIvaInc" )
          aTmp[ _CMANOBR ]     := padr( getConfigTraslation( "Gastos" ), 250 )
          aTmp[ _NIVAMAN ]     := nIva( D():TiposIva( nView ), cDefIva() )
@@ -1825,8 +1825,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
             Return .f.
          end if
 
-         if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-            msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+         if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+            msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
             Return .f.
          end if
 
@@ -3740,7 +3740,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
       case nMode == APPD_MODE
 
          aTmp[ ( dbfTmpPgo )->( FieldPos( "cTurRec" ) ) ]      	:= cCurSesion()
-         aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCaj" ) ) ]      	:= oUser():cCaja()
+         aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCaj" ) ) ]      	:= Application():CodigoCaja()
 
          aTmp[ ( dbfTmpPgo )->( FieldPos( "cSerPed" ) ) ]      	:= aTmpPed[ _CSERPED ]
          aTmp[ ( dbfTmpPgo )->( FieldPos( "nNumPed" ) ) ]      	:= aTmpPed[ _NNUMPED ]
@@ -6942,7 +6942,7 @@ STATIC FUNCTION PedRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       if !Empty( cFecDoc )
          aTabla[ _DFECPED  ]  := cFecDoc
       end if
-      aTabla[ _CCODCAJ     ]  := oUser():cCaja()
+      aTabla[ _CCODCAJ     ]  := Application():CodigoCaja()
       aTabla[ _DFECENT     ]  := Ctod("")
       aTabla[ _CNUMPRE     ]  := Space( 12 )
       aTabla[ _LSNDDOC     ]  := .t.
@@ -6953,7 +6953,7 @@ STATIC FUNCTION PedRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       aTabla[ _LIMPRIMIDO  ]  := .f.
       aTabla[ _DFECIMP     ]  := Ctod("")
       aTabla[ _CHORIMP     ]  := Space( 5 )
-      aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
+      aTabla[ _CCODDLG     ]  := Application():CodigoDelegacion()
       aTabla[ _NESTADO     ]  := 1
 
       nOrdAnt                 := ( cDbf )->( OrdSetFocus( "NNUMPED" ) )
@@ -12072,7 +12072,7 @@ FUNCTION EdmPedCli( cCodRut, cPathTo, oStru, aSucces )
          ( D():PedidosClientes( nView ) )->cSufPed    := RetSufEmp()
          ( D():PedidosClientes( nView ) )->nNumPed    := nNumPed
          ( D():PedidosClientes( nView ) )->dFecPed    := dFecPed
-         ( D():PedidosClientes( nView ) )->cCodAlm    := oUser():cAlmacen()
+         ( D():PedidosClientes( nView ) )->cCodAlm    := Application():codigoAlmacen()
          ( D():PedidosClientes( nView ) )->cDivPed    := cDivEmp()
          ( D():PedidosClientes( nView ) )->nVdvPed    := nChgDiv( ( D():PedidosClientes( nView ) )->cDivPed, D():Divisas( nView ) )
          ( D():PedidosClientes( nView ) )->nEstado    := 1
@@ -14596,8 +14596,8 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "cCodAge", "C",    3,  0, "Código del agente",                                       "Agente",                  "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cCodObr", "C",   10,  0, "Código de dirección",                                     "Direccion",               "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cCodTar", "C",    5,  0, "Código de tarifa",                                        "Tarifa",                  "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "cCodAlm", "C",   16,  0, "Código del almacen",                                      "Almacen",                 "", "( cDbf )", {|| oUser():cAlmacen() } } )
-   aAdd( aItmPedCli, { "cCodCaj", "C",    3,  0, "Código de caja",                                          "Caja",                    "", "( cDbf )", {|| oUser():cCaja() } } )
+   aAdd( aItmPedCli, { "cCodAlm", "C",   16,  0, "Código del almacen",                                      "Almacen",                 "", "( cDbf )", {|| Application():codigoAlmacen() } } )
+   aAdd( aItmPedCli, { "cCodCaj", "C",    3,  0, "Código de caja",                                          "Caja",                    "", "( cDbf )", {|| Application():CodigoCaja() } } )
    aAdd( aItmPedCli, { "cCodPgo", "C",    2,  0, "Código de pago",                                          "Pago",                    "", "( cDbf )", {|| cDefFpg() } } )
    aAdd( aItmPedCli, { "cCodRut", "C",    4,  0, "Código de la ruta",                                       "Ruta",                    "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "dFecEnt", "D",    8,  0, "Fecha de salida",                                         "FechaSalida",             "", "( cDbf )", nil } )
@@ -14647,7 +14647,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "lImpRimido","L",  1,  0, "Lógico de imprimido",                                     "Imprimido",               "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "dFecImp", "D",    8,  0, "Última fecha de impresión",                               "FechaImpresion",          "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cHorImp", "C",    5,  0, "Hora de la última impresión",                             "HoraImpresion",           "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "cCodDlg", "C",    2,  0, "Código delegación" ,                                      "Delegacion",              "", "( cDbf )", {|| oUser():cDelegacion() } } )
+   aAdd( aItmPedCli, { "cCodDlg", "C",    2,  0, "Código delegación" ,                                      "Delegacion",              "", "( cDbf )", {|| Application():CodigoDelegacion() } } )
    aAdd( aItmPedCli, { "nDtoAtp", "N",    6,  2, "Porcentaje de descuento atípico",                         "DescuentoAtipico",        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nSbrAtp", "N",    1,  0, "Lugar donde aplicar dto atípico",                         "LugarAplicarDescuentoAtipico","", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cSituac", "C",   20,  0, "Situación del documento",                                 "Situacion",               "", "( cDbf )", nil } )
@@ -14729,7 +14729,7 @@ function aColPedCli()
    aAdd( aColPedCli, { "nCtlStk",   "N",    1,  0, "Tipo de stock de la linea",                       "TipoStock",                  "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nCosDiv",   "N",   16,  6, "Costo del producto" ,                             "PrecioCosto",                "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nPvpRec",   "N",   16,  6, "Precio de venta recomendado" ,                    "PrecioVentaRecomendado",     "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cAlmLin",   "C",   16,  0, "Código de almacén" ,                              "Almacen",                    "", "( cDbfCol )", {|| oUser():cAlmacen() } } )
+   aAdd( aColPedCli, { "cAlmLin",   "C",   16,  0, "Código de almacén" ,                              "Almacen",                    "", "( cDbfCol )", {|| Application():codigoAlmacen() } } )
    aAdd( aColPedCli, { "cCodImp",   "C",    3,  0, "Código del IVMH",                                 "ImpuestoEspecial",           "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nValImp",   "N",   16,  6, "Importe de impuesto",                             "ImporteImpuestoEspecial",    "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "lIvaLin",   "L",    1,  0, "Línea con impuesto incluido",                     "LineaImpuestoIncluido",      "", "( cDbfCol )", nil } )

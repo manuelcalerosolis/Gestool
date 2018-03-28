@@ -882,7 +882,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       if lAIS() .and. !oUser():lAdministrador()
       
-         cFiltroUsuario    := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario    := "Field->cSufFac == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
@@ -1922,15 +1922,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          Return .f.
       end if
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURFAC    ]  := cCurSesion()
       aTmp[ _DFECENT    ]  := cToD("")
-      aTmp[ _CCODALM    ]  := oUser():cAlmacen()
-      aTmp[ _CCODCAJ    ]  := oUser():cCaja()
+      aTmp[ _CCODALM    ]  := Application():codigoAlmacen()
+      aTmp[ _CCODCAJ    ]  := Application():CodigoCaja()
       aTmp[ _CCODPAGO   ]  := cDefFpg()
       aTmp[ _CDIVFAC    ]  := cDivEmp()
       aTmp[ _NVDVFAC    ]  := nChgDiv( aTmp[ _CDIVFAC ], dbfDiv )
@@ -1939,7 +1939,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       aTmp[ _CCODPRO    ]  := cProCnt()
       aTmp[ _CCODUSR    ]  := Auth():Codigo()
       aTmp[ _CTIPMOV    ]  := cDefVta()
-      aTmp[ _CCODDLG    ]  := oUser():cDelegacion()
+      aTmp[ _CCODDLG    ]  := Application():CodigoDelegacion()
       aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
       aTmp[ _CMANOBR    ]  := padr( getConfigTraslation( "Gastos" ), 250 )
       aTmp[ _TFECFAC    ]  := getSysTime()
@@ -1957,8 +1957,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          Return .f.
       end if
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
@@ -9262,7 +9262,7 @@ Static Function EdtPgo( aTmp, aGet, dbfTmpPgo, oBrw, dbfDiv, oCtaRem, nMode, oBa
    end if
 
    if empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ] )
-      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ]   := oUser():cCaja()
+      aTmp[ ( dbfTmpPgo )->( FieldPos( "CCODCAJ" ) ) ]   := Application():CodigoCaja()
    end if
 
    lPgdOld              := ( dbfTmpPgo )->lCobrado .or. ( dbfTmpPgo )->lRecDto
@@ -9724,7 +9724,7 @@ STATIC FUNCTION FacRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc, lPag 
       if !empty( cFecDoc )
          aTabla[ _DFECFAC  ]  := cFecDoc
       end if
-      aTabla[ _CCODCAJ     ]  := oUser():cCaja()
+      aTabla[ _CCODCAJ     ]  := Application():CodigoCaja()
       aTabla[ _LCONTAB     ]  := .f.
       aTabla[ _DFECENT     ]  := Ctod("")
       aTabla[ _LIMPALB     ]  := .f.
@@ -9739,7 +9739,7 @@ STATIC FUNCTION FacRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc, lPag 
       aTabla[ _LIMPRIMIDO  ]  := .f.
       aTabla[ _DFECIMP     ]  := Ctod("")
       aTabla[ _CHORIMP     ]  := Space( 5 )
-      aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
+      aTabla[ _CCODDLG     ]  := Application():CodigoDelegacion()
 
       nOrdAnt                 := ( cDbf )->( OrdSetFocus( "NNUMFAC" ) )
 
@@ -9757,7 +9757,7 @@ STATIC FUNCTION FacRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc, lPag 
       aTabla[ ( dbfFacCliP )->( FieldPos( "cHorImp" ) ) ]      := Space( 5 )
       aTabla[ ( dbfFacCliP )->( FieldPos( "dFecVto" ) ) ]      := cFecDoc
       aTabla[ ( dbfFacCliP )->( FieldPos( "cTurRec" ) ) ]      := cCurSesion()
-      aTabla[ ( dbfFacCliP )->( FieldPos( "cCodCaj" ) ) ]      := oUser():cCaja()
+      aTabla[ ( dbfFacCliP )->( FieldPos( "cCodCaj" ) ) ]      := Application():CodigoCaja()
 
       if aTabla[ ( dbfFacCliP )->( FieldPos( "lCobrado" ) ) ]
          aTabla[ ( dbfFacCliP )->( FieldPos( "dEntrada" ) ) ]  := cFecDoc

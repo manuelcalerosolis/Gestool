@@ -769,7 +769,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       if lAIS() .and. !oUser():lAdministrador()
       
-         cFiltroUsuario    := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario    := "Field->cSufPre == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
@@ -1758,15 +1758,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          Return .f.
       end if
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURPRE ]  := cCurSesion()
-      aTmp[ _CCODALM ]  := oUser():cAlmacen()
+      aTmp[ _CCODALM ]  := Application():codigoAlmacen()
       aTmp[ _CDIVPRE ]  := cDivEmp()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _CCODPGO ]  := cDefFpg()
       aTmp[ _CCODUSR ]  := Auth():Codigo()
       aTmp[ _NVDVPRE ]  := nChgDiv( aTmp[ _CDIVPRE ], dbfDiv )
@@ -1774,7 +1774,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       aTmp[ _CSUFPRE ]  := RetSufEmp()
       aTmp[ _NDIAVAL ]  := nDiasValidez()
       aTmp[ _LSNDDOC ]  := .t.
-      aTmp[ _CCODDLG ]  := oUser():cDelegacion()
+      aTmp[ _CCODDLG ]  := Application():CodigoDelegacion()
       aTmp[ _LIVAINC ]  := uFieldEmpresa( "lIvaInc" )
       aTmp[ _CMANOBR ]  := padr( getConfigTraslation( "Gastos" ), 250 )
       aTmp[ _NIVAMAN ]  := nIva( dbfIva, cDefIva() )
@@ -1799,8 +1799,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          Return .f.
       end if
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
@@ -7675,7 +7675,7 @@ STATIC FUNCTION PreRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       if !Empty( cFecDoc )
          aTabla[ _DFECPRE  ]  := cFecDoc
       end if
-      aTabla[ _CCODCAJ     ]  := oUser():cCaja()
+      aTabla[ _CCODCAJ     ]  := Application():CodigoCaja()
       aTabla[ _DFECENT     ]  := Ctod("")
       aTabla[ _CNUMALB     ]  := Space( 12 )
       aTabla[ _LSNDDOC     ]  := .t.
@@ -7686,7 +7686,7 @@ STATIC FUNCTION PreRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       aTabla[ _LIMPRIMIDO  ]  := .f.
       aTabla[ _DFECIMP     ]  := Ctod("")
       aTabla[ _CHORIMP     ]  := Space( 5 )
-      aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
+      aTabla[ _CCODDLG     ]  := Application():CodigoDelegacion()
       aTabla[ _LESTADO     ]  := .f.
 
       nOrdAnt                 := ( cDbf )->( OrdSetFocus( "NNUMPRE" ) )

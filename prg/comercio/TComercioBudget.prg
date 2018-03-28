@@ -101,8 +101,8 @@ METHOD insertHeaderDocumentGestool( oQuery ) CLASS TComercioDocument
    ::setGestoolSpecificDocument( oQuery )
 
    ( ::oDocumentHeaderDatabase() )->cCodWeb      := ::idDocumentPrestashop
-   ( ::oDocumentHeaderDatabase() )->cCodAlm      := oUser():cAlmacen()
-   ( ::oDocumentHeaderDatabase() )->cCodCaj      := oUser():cCaja()
+   ( ::oDocumentHeaderDatabase() )->cCodAlm      := Application():codigoAlmacen()
+   ( ::oDocumentHeaderDatabase() )->cCodCaj      := Application():CodigoCaja()
    ( ::oDocumentHeaderDatabase() )->cCodObr      := "@" + alltrim( str( oQuery:FieldGetByName( "id_address_delivery" ) ) )
    ( ::oDocumentHeaderDatabase() )->cCodPgo      := cFPagoWeb( alltrim( oQuery:FieldGetByName( "module" ) ), D():FormasPago( ::getView() ) )
    ( ::oDocumentHeaderDatabase() )->nTarifa      := 1
@@ -114,7 +114,7 @@ METHOD insertHeaderDocumentGestool( oQuery ) CLASS TComercioDocument
    ( ::oDocumentHeaderDatabase() )->cCodUsr      := Auth():Codigo()
    ( ::oDocumentHeaderDatabase() )->dFecCre      := GetSysDate()
    ( ::oDocumentHeaderDatabase() )->cTimCre      := Time()
-   ( ::oDocumentHeaderDatabase() )->cCodDlg      := oUser():cDelegacion()
+   ( ::oDocumentHeaderDatabase() )->cCodDlg      := Application():CodigoDelegacion()
    ( ::oDocumentHeaderDatabase() )->lWeb         := .t.
    ( ::oDocumentHeaderDatabase() )->lInternet    := .t.
    ( ::oDocumentHeaderDatabase() )->nTotNet      := oQuery:FieldGetByName( "total_products" )

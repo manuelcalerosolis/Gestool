@@ -1007,7 +1007,7 @@ METHOD setClientToDocument( CodigoCliente ) CLASS DocumentsSales
             hSet( ::hDictionaryMaster, "Serie", ( D():Clientes( ::nView ) )->Serie )
          end if
 
-         hSet( ::hDictionaryMaster, "Almacen",                       ( if( empty( oUser():cAlmacen() ), ( D():Clientes( ::nView ) )->cCodAlm, oUser():cAlmacen() ) ) )
+         hSet( ::hDictionaryMaster, "Almacen",                       ( if( empty( Application():codigoAlmacen() ), ( D():Clientes( ::nView ) )->cCodAlm, Application():codigoAlmacen() ) ) )
          hSet( ::hDictionaryMaster, "Pago",                          ( if( empty( ( D():Clientes( ::nView ) )->CodPago ), cDefFpg(), ( D():Clientes( ::nView ) )->CodPago ) ) )
 
          hSet( ::hDictionaryMaster, "Agente",                        ( D():Clientes( ::nView ) )->cAgente )

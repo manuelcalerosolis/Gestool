@@ -460,13 +460,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
    do case
    case nMode == APPD_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURENT ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _CSUFENT ]  := RetSufEmp()
       aTmp[ _CCODDIV ]  := cDivEmp()
       aTmp[ _NVDVDIV ]  := 1
@@ -481,8 +481,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
 
    case nMode == DUPL_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
@@ -492,7 +492,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
       end if
 
       aTmp[ _CTURENT ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _DFECCRE ]  := GetSysDate()
       aTmp[ _CSUFENT ]  := RetSufEmp()
       aTmp[ _LSNDENT ]  := .t.
@@ -542,7 +542,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
    end if
 
    if Empty( aTmp[ _CCODCAJ ] )
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
    end if
 
    if Empty( aTmp[ _CCODDIV ] )
@@ -718,13 +718,13 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
    do case
    case nMode == APPD_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURENT ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _CSUFENT ]  := RetSufEmp()
       aTmp[ _CCODDIV ]  := cDivEmp()
       aTmp[ _NVDVDIV ]  := 1
@@ -734,13 +734,13 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
 
    case nMode == DUPL_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURENT ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _CSUFENT ]  := RetSufEmp()
 
    case nMode == EDIT_MODE
@@ -757,7 +757,7 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
    end if
 
    if Empty( aTmp[ _CCODCAJ ] )
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
    end if
 
    if Empty( aTmp[ _CCODDIV ] )
@@ -998,7 +998,7 @@ RETURN ( .t. )
 
 static function SetBigCaj( oSayUsr )
 
-   oSayUsr:cText( RetFld( oUser():cCaja(), dbfCaj, "cNomCaj" ) )
+   oSayUsr:cText( RetFld( Application():CodigoCaja(), dbfCaj, "cNomCaj" ) )
 
 RETURN ( .t. )
 

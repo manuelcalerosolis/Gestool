@@ -39,7 +39,6 @@ static cNewFile
 static oTreePadre
 
 //----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
 
 #ifndef __PDA__
 
@@ -794,6 +793,7 @@ FUNCTION aItmAlm()
    aAdd( aItmAlm, { "cPerAlm",  "C",     50,     0, "Persona de contacto de almacen" ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cCodCli",  "C",     12,     0, "Codigo del cliente"             ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cComAlm",  "C",     16,     0, "Código de almacen padre"        ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "Uuid",     "C",     40,     0, "Uuid"        ,  "",   "", "( cDbfAlm )" } )
 
 RETURN ( aItmAlm )
 
@@ -901,10 +901,10 @@ Function SelectAlmacen()
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult == IDOK
-      oUser():cAlmacen( ( dbfAlmT )->cCodAlm )
+      Application():setAlmacen( ( dbfAlmT )->cCodAlm, ( dbfAlmT )->Uuid )
    else
       MsgInfo( "No seleccionó ningún almacén, se establecerá el almacén por defecto." + CRLF + ;
-               "Almacén actual, " + oUser():cAlmacen() )
+               "Almacén actual, " + Application():codigoAlmacen() )
    end if
 
    CloseFiles()
@@ -1111,6 +1111,8 @@ FUNCTION rxAlmacen( cPath, oMeter )
 
       ( dbfAlmT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfAlmT )->( ordCreate( cPath + "ALMACEN.CDX", "CCOMALM", "CCOMALM", {|| Field->cComAlm } ) )
+
+      ( dbfAlmT )->( dbeval( {|| Field->uuid := win_uuidcreatestring() }, {|| empty( field->uuid ) } ) )
 
       ( dbfAlmT )->( dbCloseArea() )
    else

@@ -2344,7 +2344,7 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
    ::oAlbCliT:cTurAlb      := cCurSesion()
    ::oAlbCliT:dFecAlb      := ::dFecDocumento
    ::oAlbCliT:cCodCli      := ::oDbfCli:Cod
-   ::oAlbCliT:cCodCaj      := oUser():cCaja()
+   ::oAlbCliT:cCodCaj      := Application():CodigoCaja()
    ::oAlbCliT:cNomCli      := ::oDbfCli:Titulo
    ::oAlbCliT:cDirCli      := ::oDbfCli:Domicilio
    ::oAlbCliT:cPobCli      := ::oDbfCli:Poblacion
@@ -2359,7 +2359,7 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
    ::oAlbCliT:cCodUsr      := Auth():Codigo()
    ::oAlbCliT:dFecCre      := GetSysDate()
    ::oAlbCliT:cTimCre      := Time()
-   ::oAlbCliT:cCodDlg      := oUser():cDelegacion()
+   ::oAlbCliT:cCodDlg      := Application():CodigoDelegacion()
    ::oAlbCliT:nTarifa      := Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa )
    ::oAlbCliT:cDtoEsp      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:cDtoEsp, ::oFacAutT:oDbf:cDtoEsp )
    ::oAlbCliT:nDtoEsp      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:nDtoEsp, ::oFacAutT:oDbf:nDtoEsp )
@@ -2658,7 +2658,7 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    ::oFacCliT:cTurFac      := cCurSesion()
    ::oFacCliT:dFecFac      := ::dFecDocumento
    ::oFacCliT:cCodCli      := ::oDbfCli:Cod
-   ::oFacCliT:cCodCaj      := oUser():cCaja()
+   ::oFacCliT:cCodCaj      := Application():CodigoCaja()
    ::oFacCliT:cNomCli      := ::oDbfCli:Titulo
    ::oFacCliT:cDirCli      := ::oDbfCli:Domicilio
    ::oFacCliT:cPobCli      := ::oDbfCli:Poblacion
@@ -2674,7 +2674,7 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    ::oFacCliT:dFecCre      := GetSysDate()
    ::oFacCliT:cTimCre      := Time()
    ::oFacCliT:nTarifa      := Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa )
-   ::oFacCliT:cCodDlg      := oUser():cDelegacion()
+   ::oFacCliT:cCodDlg      := Application():CodigoDelegacion()
    ::oFacCliT:cDtoEsp      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:cDtoEsp, ::oFacAutT:oDbf:cDtoEsp )
    ::oFacCliT:nDtoEsp      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:nDtoEsp, ::oFacAutT:oDbf:nDtoEsp )
    ::oFacCliT:cDpp         := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:cDpp,    ::oFacAutT:oDbf:cDpp )

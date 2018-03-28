@@ -343,7 +343,7 @@ METHOD oSatCliT() CLASS TDataCenter
 
 	/*if lAIS() .and. !oUser():lAdministrador()
 
-		cFilter     := "Field->cSufSat == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+		cFilter     := "Field->cSufSat == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
 		if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
 		   cFilter  += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
 		end if 
@@ -373,7 +373,7 @@ METHOD OpenSatCliT( dbf ) CLASS TDataCenter
 
          /*if lAIS() .and. !oUser():lAdministrador()
       
-            cFilter     := "Field->cSufSat == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            cFilter     := "Field->cSufSat == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
             if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
                cFilter  += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
             end if 
@@ -397,7 +397,7 @@ METHOD oPreCliT() CLASS TDataCenter
 
 	/*if lAIS() .and. !oUser():lAdministrador()
 
-		cFilter     := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+		cFilter     := "Field->cSufPre == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
 		if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
 		   cFilter  += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
 		end if 
@@ -427,7 +427,7 @@ METHOD OpenPreCliT( dbf ) CLASS TDataCenter
 
 		/*if lAIS() .and. !oUser():lAdministrador()
 
-		cFilter     := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+		cFilter     := "Field->cSufPre == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
 		if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
 		   cFilter  += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
 		end if 
@@ -464,7 +464,7 @@ METHOD oProCab( cPath, cDriver ) CLASS TDataCenter
 
 	 if lAIS() .and. !oUser():lAdministrador()
 
-	    cFilter     := "Field->cSufOrd == '" + oUser():cDelegacion() 
+	    cFilter     := "Field->cSufOrd == '" + Application():CodigoDelegacion() 
 
 	    ( oProCab:cAlias )->( AdsSetAOF( cFilter ) )
 
@@ -486,7 +486,7 @@ METHOD oProLin( cPath, cDriver ) CLASS TDataCenter
 
     if lAIS() .and. !oUser():lAdministrador()
   
-        cFilter     := "Field->cSufOrd == '" + oUser():cDelegacion() 
+        cFilter     := "Field->cSufOrd == '" + Application():CodigoDelegacion() 
 
         ( oProLin:cAlias )->( AdsSetAOF( cFilter ) )
 
@@ -515,7 +515,7 @@ METHOD oFacCliT() CLASS TDataCenter
 
       if lAIS() .and. !oUser():lAdministrador()
       
-         cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFilter     := "Field->cSufFac == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFilter  += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
@@ -543,7 +543,7 @@ METHOD OpenFacCliT( dbf )
 
       if lAIS() .and. !oUser():lAdministrador()
    
-         cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFilter     := "Field->cSufFac == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFilter  += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
          end if 
@@ -803,13 +803,11 @@ METHOD StartAdministratorTask()
 
    SetIndexToADS()
 
-   ::oMsg:SetText( "Comprabamos la existencia de la base de datos" )
-   msgalert( "Comprabamos la existencia de la base de datos" )
+   ::oMsg:SetText( "Comprobamos la existencia de la base de datos" )
 
    ::CreateDataDictionary()
 
    ::oMsg:SetText( "Intentando conectar con la base de datos" )
-   msgalert( "Intentando conectar con la base de datos" )
 
    if ::ConnectDataDictionary()
 
