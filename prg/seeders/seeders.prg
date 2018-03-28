@@ -8,10 +8,17 @@ CLASS Seeders
 
    DATA oMsg
 
+   DATA hConfig
+   DATA cStmProvincias
+   DATA cStmCodigosPostales
+
    METHOD New()
 
    METHOD runSeederDatos()
    METHOD runSeederEmpresa()
+
+   METHOD getFullFileProvincias()            INLINE ( cPatConfig() + "insertprovincias.sql" )
+   METHOD getFullFileCodigosPostales()       INLINE ( cPatConfig() + "insertcodigospostales.sql" )
 
    METHOD getInsertStatement( hCampos, cDataBaseName )
 
@@ -36,6 +43,9 @@ CLASS Seeders
    METHOD SeederMovimientosAlmacenSeries()
    METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer )
 
+   METHOD SeederProvincias()
+   METHOD SeederCodigosPostales()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -58,6 +68,12 @@ METHOD runSeederDatos()
 
    ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de impresoras" )
    ::SeederTiposImpresoras()
+
+   ::oMsg:SetText( "Datos: Ejecutando provincias" )
+   ::SeederProvincias()
+
+   ::oMsg:SetText( "Datos: Ejecutando códigos postales" )
+   ::SeederCodigosPostales()
 
 RETURN ( self )
 
@@ -545,5 +561,53 @@ STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
    CLOSE ( dbfMovSer )
 
 RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederProvincias()
+
+   if !file( ::getFullFileProvincias() )
+      ::oMsg:SetText( "Fichero " + ::getFullFileProvincias() + " no encontrado" )
+      RETURN ( Self )
+   end if 
+
+   ::cStmProvincias                    := memoread( ::getFullFileProvincias() )
+
+   ::oMsg:SetText( "Fichero " + ::getFullFileProvincias() + " cargado correctamente" )
+
+   if Empty( ::cStmProvincias )
+      ::oMsg:SetText( "No hay provincias a importar" )
+      return ( self )
+   end if
+
+   ::oMsg:SetText( "Importando provincias" )
+
+   getSQLDatabase():Exec( ::cStmProvincias )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederCodigosPostales()
+
+   if !file( ::getFullFileCodigosPostales() )
+      ::oMsg:SetText( "Fichero " + ::getFullFileCodigosPostales() + " no encontrado" )
+      RETURN ( Self )
+   end if 
+
+   ::cStmCodigosPostales               := memoread( ::getFullFileCodigosPostales() )
+
+   ::oMsg:SetText( "Fichero " + ::getFullFileCodigosPostales() + " cargado correctamente" )
+
+   if Empty( ::cStmCodigosPostales )
+      ::oMsg:SetText( "No hay códigos postales a importar" )
+      return ( self )
+   end if
+
+   ::oMsg:SetText( "Importando códigos postales" )
+
+   getSQLDatabase():Exec( ::cStmCodigosPostales )
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
