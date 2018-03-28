@@ -186,7 +186,6 @@ CLASS SQLRolesModel FROM SQLBaseModel
 
    METHOD getInsertRolesSentence()
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//

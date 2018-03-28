@@ -86,6 +86,10 @@ RETURN ( nil )
 
 METHOD ShowMessage( cMessage )
 
+   if !empty( ::oBitmap )
+      ::oBitmap:setBMP( "gc_skull2_48" )
+   end if 
+
    if empty( ::oMessage )
       RETURN ( self )
    end if 

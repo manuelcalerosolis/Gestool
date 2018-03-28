@@ -809,19 +809,3 @@ METHOD Activate() CLASS UsuariosLoginView
 RETURN ( ::oDlg:nResult )
 
 //---------------------------------------------------------------------------//
-/*
-METHOD sayNo()
-
-   ::oDlg:coorsUpdate()
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft - 100 )  ; SysWait(.05)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft )        ; SysWait(.05)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft + 100 )  ; SysWait(.05)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft )        ; SysWait(.05)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft - 50 )   ; SysWait(.1)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft  )       ; SysWait(.1)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft + 50 )   ; SysWait(.1)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft )
-
-RETURN ( .f. )
-*/
-//---------------------------------------------------------------------------//
