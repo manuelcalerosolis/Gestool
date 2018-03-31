@@ -5,6 +5,7 @@
 #include "Xbrowse.ch"
 #include "hbzebra.ch"
 #include "hbwin.ch"
+#include "HdoCommon.ch"
 
 #define CS_DBLCLKS      8
 
@@ -283,7 +284,20 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   SuperUsuarioController():New():DialogViewActivate()
+   local oRowSet
+
+   try
+
+   // oRowSet      := TRowSet():new( getSQLDatabase():oConexion, "SELECT * FROM usuarios" )
+
+   catch
+
+
+   end 
+
+   // msgalert( oRowSet:getAttribute( ATTR_STR_PAD ) )
+
+   msgalert( SuperUsuarioController():New():DialogViewActivate() )
 
 RETURN nil
 

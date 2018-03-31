@@ -243,11 +243,10 @@ FUNCTION EntSal( oMenuItem, oWnd )
          HOTKEY   "A";
          LEVEL    ACC_APPD
 
-   if lUsrMaster()
-
       DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfEntT, _RETIRADA_EFECTIVO ) );
+         ACTION   (  iif(  SuperUsuarioController():New():isDialogViewActivate(),;
+                           WinAppRec( oWndBrw:oBrw, bEdit, dbfEntT, _RETIRADA_EFECTIVO ), ) );
          TOOLTIP  "(R)etirada efectivo";
          BEGIN GROUP;
          HOTKEY   "R";
@@ -255,13 +254,12 @@ FUNCTION EntSal( oMenuItem, oWnd )
          
       DEFINE BTNSHELL RESOURCE "gc_credit_cards_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfEntT, _RETIRADA_TARJETA ) );
+         ACTION   (  iif(  SuperUsuarioController():New():isDialogViewActivate(),;
+                           WinAppRec( oWndBrw:oBrw, bEdit, dbfEntT, _RETIRADA_TARJETA ), ) );
          TOOLTIP  "Retirada tar(j)eta";
          BEGIN GROUP;
          HOTKEY   "J";
          LEVEL    ACC_APPD
-
-   end if
 
 		DEFINE BTNSHELL RESOURCE "DUP" OF oWndBrw ;
 			NOBORDER ;
@@ -486,9 +484,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
          Return .f.
       end if
 
-      if aTmp[ _NTIPENT ] > 2 .and. !lUsrMaster()
-         MsgStop( "Sólo el administrador puede duplicar" )
-         Return .f.
+      if SuperUsuarioController():New():isNotDialogViewActivate()
+         RETURN .f.
       end if
 
       aTmp[ _CTURENT ]  := cCurSesion()
@@ -502,14 +499,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
 
    case nMode == EDIT_MODE
 
-      if aTmp[ _LCLOENT ] .AND. !oUser():lAdministrador()
-         msgStop( "Solo puede modificar las entradas cerradas los administradores." )
-         return .f.
-      end if
-
-      if aTmp[ _NTIPENT ] > 2 .and. !lUsrMaster()
-         MsgStop( "Sólo el administrador puede modificar" )
-         Return .f.
+      if SuperUsuarioController():New():isNotDialogViewActivate()
+         RETURN .f.
       end if
 
       oMoneyEfectivo:SetStream( aTmp[ _CMONEDAS ] )
@@ -595,7 +586,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
 		*/
 
       REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
-         WHEN     ( lUsrMaster() .and. nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    cCajas( aGet[ _CCODCAJ ], dbfCaj, oSay ) ;
          ID       150 ;
          BITMAP   "LUPA" ;

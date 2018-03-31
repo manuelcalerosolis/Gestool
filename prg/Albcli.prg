@@ -2428,18 +2428,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          OF       oFld:aDialogs[1]
 
       /*
-      REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ];
-         ID       172 ;
-         SPINNER ;
-         MIN      1 ;
-         MAX      6 ;
-         PICTURE  "9" ;
-         VALID    ( ChangeTarifaCabecera( aTmp[ _NTARIFA ], dbfTmpLin, oBrwLin ) ) ;
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) ) );
-         OF       oFld:aDialogs[1]
-      */
-
-      /*
       Combox tarifa
       */
 
@@ -3636,17 +3624,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE CHECKBOX aGet[ _LIMPRIMIDO ] VAR aTmp[ _LIMPRIMIDO ] ;
          ID       120 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _DFECIMP ] VAR aTmp[ _DFECIMP ] ;
          ID       121 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CHORIMP ] VAR aTmp[ _CHORIMP ] ;
          ID       122 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE SAY oGetMasDiv VAR cGetMasDiv;
@@ -5918,20 +5906,17 @@ STATIC FUNCTION SelSend( oBrw )
    local oFecEnv
    local dFecEnv  := GetSysDate()
 
+   if SuperUsuarioController():New():isNotDialogViewActivate()
+      msgStop( "Sin autorización para cambio de entrega." )
+      RETURN ( nil )
+   end if 
+
    if dbDialogLock( D():Get( "AlbCliT", nView ) )
 
       if ( D():Get( "AlbCliT", nView ) )->lEntregado
 
-         if lUsrMaster()
-
-            ( D():Get( "AlbCliT", nView ) )->lEntregado := !( D():Get( "AlbCliT", nView ) )->lEntregado
-            ( D():Get( "AlbCliT", nView ) )->dFecEnv    := Ctod( "" )
-
-         else
-
-            MsgStop( "Sin autorizacion para cambio de entrega" )
-
-         end if
+         ( D():Get( "AlbCliT", nView ) )->lEntregado := !( D():Get( "AlbCliT", nView ) )->lEntregado
+         ( D():Get( "AlbCliT", nView ) )->dFecEnv    := Ctod( "" )
 
       else
 
@@ -5958,6 +5943,7 @@ STATIC FUNCTION SelSend( oBrw )
                ACTION   ( oDlg:end() )
 
          oDlg:AddFastKey( VK_F5, {|| ( D():Get( "AlbCliT", nView ) )->lEntregado := !( D():Get( "AlbCliT", nView ) )->lEntregado , ( D():Get( "AlbCliT", nView ) )->dFecEnv    := dFecEnv , ( D():Get( "AlbCliT", nView ) )->lSndDoc    := .t. , oDlg:end() } )
+
          oDlg:bStart := { || oFecEnv:SetFocus() }
 
          ACTIVATE DIALOG oDlg CENTER
@@ -6857,7 +6843,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpA
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "cTurRec" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "cTurRec" ) ) ] ;
          ID       335 ;
          PICTURE  "999999" ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
       //Cliente

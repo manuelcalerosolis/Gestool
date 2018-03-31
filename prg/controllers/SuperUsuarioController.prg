@@ -11,6 +11,9 @@ CLASS SuperUsuarioController FROM SQLBaseController
    METHOD New()
    METHOD End()
 
+   METHOD isDialogViewActivate()    INLINE ( ::oDialogView:Activate() == IDOK ) 
+   METHOD isNotDialogViewActivate() INLINE ( ::oDialogView:Activate() != IDOK ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -58,11 +61,11 @@ RETURN ( nil )
 CLASS SuperUsuarioView FROM SQLBaseView
 
    DATA oGetPassword       
-   DATA cGetPassword       INIT space( 100 )
+   DATA cGetPassword                   INIT space( 100 )
 
    METHOD Activate()
       METHOD endActivate()
-   
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -116,7 +119,7 @@ RETURN ( ::oDialog:nResult )
 METHOD endActivate() CLASS SuperUsuarioView
 
    if !( validateDialog( ::oDialog ) )
-      RETURN ( .f. )
+      RETURN ( IDCANCEL )
    end if 
 
    ::oDialog:end( IDOK )
