@@ -1,0 +1,156 @@
+#include "FiveWin.ch"
+#include "Factu.ch" 
+
+#define  __encryption_key__ "snorlax"
+#define  __admin_password__ "superusuario"
+
+//---------------------------------------------------------------------------//
+
+CLASS SuperUsuarioController FROM SQLBaseController
+   
+   METHOD New()
+   METHOD End()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New() CLASS SuperUsuarioController
+
+   ::hImage                := { "48" => "gc_spy_48" }
+
+   ::oRepository           := UsuariosRepository():New( self )
+
+   ::oDialogView           := SuperUsuarioView():New( self )
+
+   ::oValidator            := SuperUsuarioValidator():New( self, ::oDialogView )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+ 
+METHOD End() CLASS SuperUsuarioController
+
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+      ::oDialogView           := nil
+   endif
+
+   if !empty( ::oValidator )
+      ::oValidator:End()
+      ::oValidator            := nil
+   endif
+
+   ::Super:End()
+
+   Self                       := nil
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SuperUsuarioView FROM SQLBaseView
+
+   DATA oGetPassword       
+   DATA cGetPassword       INIT space( 100 )
+
+   METHOD Activate()
+      METHOD endActivate()
+   
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS SuperUsuarioView
+
+   ::cGetPassword := space( 100 )
+   
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "SUPER_USUARIO" 
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    ::oController:getImage( "48" ) ;
+      TRANSPARENT ;
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oGetPassword ;
+      VAR         ::cGetPassword ;
+      ID          100 ;
+      OF          ::oDialog
+   
+   ::oGetPassword:bValid   := {|| ::oController:validate( "password", ::cGetPassword ) }
+
+   REDEFINE BUTTON ;
+      ID          IDOK ;
+      OF          ::oDialog ;
+      ACTION      ( ::endActivate() )
+
+   REDEFINE BUTTON ;
+      ID          IDCANCEL ;
+      OF          ::oDialog ;
+      CANCEL ;
+      ACTION      ( ::oDialog:end() )
+
+   ::oDialog:AddFastKey( VK_F5, {|| ::endActivate() } )
+
+   ::oDialog:Activate( , , , .t. )
+
+   ::oBitmap:end()
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD endActivate() CLASS SuperUsuarioView
+
+   if !( validateDialog( ::oDialog ) )
+      RETURN ( .f. )
+   end if 
+
+   ::oDialog:end( IDOK )
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SuperUsuarioValidator FROM SQLBaseValidator
+
+   METHOD getValidators()
+
+   METHOD Password( cPassword )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getValidators() CLASS SuperUsuarioValidator
+
+   ::hValidators  := {  "password" =>  {  "password"  => "Contraseña de super usuario ¡incorrecta!" } }
+
+RETURN ( ::hValidators )
+
+//---------------------------------------------------------------------------//
+
+METHOD Password( cPassword )
+
+   local hUsuario := ::oController:oRepository:validSuperUserPassword( cPassword )
+
+RETURN ( hb_ishash( hUsuario ) )
+
+//---------------------------------------------------------------------------//

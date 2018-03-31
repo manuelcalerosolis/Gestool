@@ -56,7 +56,7 @@ CLASS SQLBaseView
    METHOD setEvent( cEvent, bEvent )                  INLINE ( iif( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                         INLINE ( iif( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
-   METHOD ShowMessage( cMessage )                     
+   METHOD ShowMessage( cMessage )        
 
 END CLASS
 
@@ -87,7 +87,7 @@ RETURN ( nil )
 METHOD ShowMessage( cMessage )
 
    if !empty( ::oBitmap )
-      ::oBitmap:setBMP( "gc_cd_pirated_48" )
+      ::oBitmap:setBMP( "gc_sign_warning_48" )
    end if 
 
    if empty( ::oMessage )

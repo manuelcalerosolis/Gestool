@@ -680,6 +680,8 @@ CLASS UsuariosRepository FROM SQLBaseRepository
 
    METHOD validUserPassword() 
 
+   METHOD validSuperUserPassword( cPassword )
+
    METHOD getWhereUuid( uuid ) 
 
    METHOD Crypt( cPassword )     INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
@@ -699,6 +701,19 @@ METHOD validUserPassword( cNombre, cPassword ) CLASS UsuariosRepository
       cSQL     +=     "AND password = " + quoted( ::Crypt( cPassword ) )      + " " 
    end if 
 
+   cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD validSuperUserPassword( cPassword ) CLASS UsuariosRepository
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE super_user = 1"                                   + " "    
+   if ( alltrim( cPassword ) != __encryption_key__ ) 
+      cSQL     +=       "AND password = " + quoted( ::Crypt( cPassword ) )    + " " 
+   end if 
    cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
@@ -764,7 +779,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS UsuariosLoginView
+METHOD Activate() CLASS UsuariosLoginView 
 
    local oBmpGeneral
 

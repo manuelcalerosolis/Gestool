@@ -21905,6 +21905,6 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Contraseña", -1, "Static", WS_GROUP, 50, 44, 41, 8
   CONTROL "Contraseña para super usuario", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 353, 28
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
-  CONTROL "Usuarios", 800, "Static", WS_GROUP, 44, 3, 353, 24
+  CONTROL "Para realizar algunas acciones en Gestool, necesita proporcionar la contraseña de super usuario.", 800, "Static", WS_GROUP, 44, 3, 353, 24
 }
 

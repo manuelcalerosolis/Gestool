@@ -283,6 +283,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   SuperUsuarioController():New():DialogViewActivate()
+
 RETURN nil
 
 //----------------------------------------------------------------------------//
