@@ -3908,17 +3908,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE CHECKBOX aGet[ _LIMPRIMIDO ] VAR aTmp[ _LIMPRIMIDO ] ;
          ID       120 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          OF       fldData
 
       REDEFINE GET aGet[ _DFECIMP ] VAR aTmp[ _DFECIMP ] ;
          ID       121 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          OF       fldData
 
       REDEFINE GET aGet[ _CHORIMP ] VAR aTmp[ _CHORIMP ] ;
          ID       122 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          OF       fldData
 
       /*
@@ -3939,20 +3939,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE CHECKBOX aGet[ _LEXPEDI ] VAR aTmp[ _LEXPEDI ] ;
          ID       130 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          ON CHANGE( lChangeEDI( aGet, aTmp ) ) ;
          OF       fldData
 
       REDEFINE GET aGet[ _DFECEDI ] VAR aTmp[ _DFECEDI ] ;
          ID       131 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          OF       fldData
 
       // Envio por mail
 
       REDEFINE CHECKBOX aGet[ _LMAIL ] VAR aTmp[ _LMAIL ] ;
          ID       135 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          ON CHANGE( iif(   aTmp[ _LMAIL ],;
                            ( aGet[ _DMAIL ]:Hide(), aGet[ _TMAIL ]:Hide() ),;
                            ( aGet[ _DMAIL ]:Show(), aGet[ _TMAIL ]:Show() ) ) );
@@ -3971,7 +3971,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE GET aGet[ _CHOREDI ] VAR aTmp[ _CHOREDI ] ;
          ID       132 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          OF       fldData
 
       REDEFINE GET aGet[ _MOBSERV ] VAR aTmp[ _MOBSERV ];

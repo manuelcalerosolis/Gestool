@@ -495,17 +495,14 @@ METHOD Activate( lAuto ) CLASS TSndRecInf
 
       REDEFINE CHECKBOX ::lGetProcesados ;
          ID       170 ;
-         WHEN     ( lUsrMaster() ) ;
          OF       ::oFld:aDialogs[1]
 
       REDEFINE CHECKBOX ::lGetFueraSecuencia ;
          ID       180 ;
-         WHEN     ( lUsrMaster() ) ;
          OF       ::oFld:aDialogs[1]
 
       REDEFINE CHECKBOX ::lGetEliminarFicheros ;
          ID       190 ;
-         WHEN     ( lUsrMaster() ) ;
          OF       ::oFld:aDialogs[1]
 
       REDEFINE CHECKBOX ::lImprimirEnvio ;

@@ -1026,22 +1026,20 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       HOTKEY   "C";
       LEVEL    ACC_EDIT
 
-   if lUsrMaster()
-
    DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw GROUP;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {| lChk1, lChk2, oTree| CambiarEstado( lChk1, lChk2, oTree ) }, "Cambiar estado", .f., "Contabilizado", .t. ) ) ;
+      ACTION   (  iif(  SuperUsuarioController():New():isDialogViewActivate(),;
+                        aGetSelRec( oWndBrw, {| lChk1, lChk2, oTree| CambiarEstado( lChk1, lChk2, oTree ) }, "Cambiar estado", .f., "Contabilizado", .t. ), ) ) ;
       TOOLTIP  "Cambiar es(t)ado" ;
       HOTKEY   "T";
       LEVEL    ACC_EDIT
 
    DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw GROUP;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {| lChk1, lChk2, oTree| CambiarLiquidado( lChk1, lChk2, oTree ) }, "Cambiar liquidación", .f., "Liquidación", .t. ) ) ;
+      ACTION   (  iif(  SuperUsuarioController():New():isDialogViewActivate(),;
+                        aGetSelRec( oWndBrw, {| lChk1, lChk2, oTree| CambiarLiquidado( lChk1, lChk2, oTree ) }, "Cambiar liquidación", .f., "Liquidación", .t. ), )  ) ;
       TOOLTIP  "Cambiar liquidación" ;
       LEVEL    ACC_EDIT
-
-   end if
 
    DEFINE BTNSHELL oSnd RESOURCE "LBL" GROUP OF oWndBrw ;
       NOBORDER ;

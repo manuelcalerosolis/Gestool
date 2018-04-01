@@ -3178,17 +3178,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       REDEFINE CHECKBOX aGet[ _LIMPRIMIDO ] VAR aTmp[ _LIMPRIMIDO ] ;
          ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _DFECIMP ] VAR aTmp[ _DFECIMP ] ;
          ID       121 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CHORIMP ] VAR aTmp[ _CHORIMP ] ;
          ID       122 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -3199,17 +3199,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          ID       130 ;
          ON CHANGE( lChangeCancel( aGet, aTmp, dbfTmpLin ) ) ;
          VALID    ( lValidCancel( aGet, aTmp, oBrwLin ) ) ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() .and. aTmp[ _NESTADO ] != 2 ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _NESTADO ] != 2 ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _DCANCEL ] VAR aTmp[ _DCANCEL ] ;
          ID       131 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() .and. aTmp[ _LCANCEL ] ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _LCANCEL ] ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CCANCEL ] VAR aTmp[ _CCANCEL ] ;
          ID       132 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() .and. aTmp[ _LCANCEL ] ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ _LCANCEL ] ) ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -3859,7 +3859,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "cTurRec" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "cTurRec" ) ) ] ;
          ID       335 ;
          PICTURE  "999999" ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
       //Cliente
@@ -10597,7 +10597,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
          Solo pueden modificar los precios los administradores--------------
          */
 
-         if Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) )
+         if Empty( aTmp[ _NPREDIV ] ) .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) )
 
             aGet[ _NPREDIV ]:HardEnable()
             aGet[ _NIMPTRN ]:HardEnable()

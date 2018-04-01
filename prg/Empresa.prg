@@ -2474,12 +2474,11 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
       REDEFINE CHECKBOX aTmp[ _LMAILTRNO ] ;
          ID       300;
-         WHEN     ( lUsrMaster() ) ;
          OF       fldEnvios
 
       REDEFINE GET aTmp[ _CMAILTRNO ] ;
          ID       310 ;
-         WHEN     ( lUsrMaster() .and. aTmp[ _LMAILTRNO ] ) ;
+         WHEN     ( aTmp[ _LMAILTRNO ] ) ;
          OF       fldEnvios
 
       REDEFINE GET aTmp[ _CCODCLIFRQ ] ;

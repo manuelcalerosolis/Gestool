@@ -392,21 +392,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
    do case
       case nMode == APPD_MODE
 
-         if !lUsrMaster()
-            msgStop( "Solo puede añadir usuarios, el usuario Administrador." )
-            return .f.
-         end if
-
          aTmp[ _NLEVUSE ]  := 1
          aTmp[ _NGRPUSE ]  := 2
          aTmp[ _LGRUPO  ]  := lGrupo
-
-      case nMode == EDIT_MODE
-
-         if !lUsrMaster()
-            msgStop( "Solo puede modificar las propiedades el usuario Administrador." )
-            return .f.
-         end if
 
    end case
 
@@ -1623,11 +1611,6 @@ Static Function QuiUsr( dbfUser )
    if ( dbfUser )->lUseUse
       MsgStop( "Usuario en uso" )
       return .t.
-   end if
-
-   if !lUsrMaster()
-      msgStop( "Solo puede eliminar usuarios el Administrador." )
-      return .f.
    end if
 
 Return .t.
@@ -2873,10 +2856,6 @@ Function ComprobarUser( dbfUsr )
    local cClave
    local oDlg
    local oBmp
-
-   if lUsrMaster()
-      return .t.
-   end if
 
    DEFINE DIALOG oDlg RESOURCE "TPV_USER"
 

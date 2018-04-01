@@ -127,21 +127,17 @@ METHOD Activate()
 
       ::oWndBrw:GralButtons( Self )
 
-      if lUsrMaster() .or. oUser():lDocAuto()
+      DEFINE BTNSHELL oGen RESOURCE "GC_FLASH_" OF ::oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ::RunPlantillaAutomatica( ::oDbf:cCodGrp ) ) ;
+         TOOLTIP  "(G)enerar ahora";
+         HOTKEY   "G"
 
-         DEFINE BTNSHELL oGen RESOURCE "GC_FLASH_" OF ::oWndBrw ;
-            NOBORDER ;
-            ACTION   ( ::RunPlantillaAutomatica( ::oDbf:cCodGrp ) ) ;
-            TOOLTIP  "(G)enerar ahora";
-            HOTKEY   "G"
+         DEFINE BTNSHELL RESOURCE "GC_FLASH_" OF ::oWndBrw ;
+            ACTION   ( ::RunPlantillaAutomatica() );
+            TOOLTIP  "Generar todas ahora" ;
+            FROM     oGen
    
-            DEFINE BTNSHELL RESOURCE "GC_FLASH_" OF ::oWndBrw ;
-               ACTION   ( ::RunPlantillaAutomatica() );
-               TOOLTIP  "Generar todas ahora" ;
-               FROM     oGen
-   
-      end if
-
       ::oWndBrw:EndButtons( Self )
 
       if ::cHtmlHelp != nil
@@ -665,6 +661,10 @@ Return ( cMemo )
 
 METHOD RunPlantillaAutomatica( cCodigoGrupo )
 
+   if SuperUsuarioController():New():isNotDialogViewActivate()
+      RETURN ( Self )
+   end if 
+   
    with object ( TCreaFacAutomaticas():New() )
 
       if :OpenFiles()

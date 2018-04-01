@@ -311,8 +311,6 @@ METHOD Activate() CLASS TFacAutomatica
       HOTKEY   "E";
       LEVEL    ACC_DELE
 
-if lUsrMaster() .or. oUser():lDocAuto()
-
    DEFINE BTNSHELL oGen RESOURCE "GC_FLASH_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::RunPlantillaAutomatica( ::oDbf:cCodFac ) ) ;
@@ -323,8 +321,6 @@ if lUsrMaster() .or. oUser():lDocAuto()
          ACTION   ( ::RunPlantillaAutomatica() );
          TOOLTIP  "Generar todas ahora" ;
          FROM     oGen
-
-end if
 
    DEFINE BTNSHELL RESOURCE "END" GROUP OF ::oWndBrw ;
       NOBORDER ;
@@ -1476,6 +1472,10 @@ RETURN ( Self )
 
 METHOD RunPlantillaAutomatica( cCodigoPlantilla ) CLASS TFacAutomatica
 
+   if SuperUsuarioController():New():isNotDialogViewActivate()
+      RETURN ( Self )
+   end if 
+
    with object ( TCreaFacAutomaticas():New() )
 
       :cCodigoPlantilla    := cCodigoPlantilla
@@ -2015,29 +2015,25 @@ METHOD lSelectCodigoPlantilla() CLASS TCreaFacAutomaticas
 
       CursorWait()
 
-      if oUser():lDocAuto() .or. lUsrMaster()
-      
-         aCodigoGrupo                     := ::oGrpFacturasAutomaticas:aChild( ::cCodigoGrupo, { ::cCodigoGrupo } )
+      aCodigoGrupo                     := ::oGrpFacturasAutomaticas:aChild( ::cCodigoGrupo, { ::cCodigoGrupo } )
 
-         ::aPlantilla                     := {}
+      ::aPlantilla                     := {}
 
-         ::oFacAutT:oDbf:GoTop()
-         while !::oFacAutT:oDbf:Eof()
+      ::oFacAutT:oDbf:GoTop()
+      while !::oFacAutT:oDbf:Eof()
 
-            if ( Empty( aCodigoGrupo )       .or. ( lScanCodeInMemo( aCodigoGrupo, ::oFacAutT:oDbf:mGrpSel ) ) )  .and. ;
-               ( Empty( ::cCodigoPlantilla ) .or. ( ::oFacAutT:oDbf:cCodFac == ::cCodigoPlantilla ) )                
-              
-               aAdd( ::aPlantilla, { .t., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Lista para generar documentos." } )
+         if ( Empty( aCodigoGrupo )       .or. ( lScanCodeInMemo( aCodigoGrupo, ::oFacAutT:oDbf:mGrpSel ) ) )  .and. ;
+            ( Empty( ::cCodigoPlantilla ) .or. ( ::oFacAutT:oDbf:cCodFac == ::cCodigoPlantilla ) )                
+           
+            aAdd( ::aPlantilla, { .t., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Lista para generar documentos." } )
 
-               lSelect                    := .t.
+            lSelect                    := .t.
 
-            end if 
+         end if 
 
-            ::oFacAutT:oDbf:Skip()
+         ::oFacAutT:oDbf:Skip()
 
-         end while
-
-      end if
+      end while
 
       aSort( ::aPlantilla, , , {|x,y| x[1] > y[1]} )
 

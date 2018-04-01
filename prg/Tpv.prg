@@ -8100,23 +8100,8 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
 
       if !lPermitirVentaSinValorar( aTmp[ _CCBATIL ], dbfArticulo, dbfFamilia )
 
-         if lUsrMaster()
-
-            SetLostFocusOff()
-            lOk   := ApoloMsgNoYes( "Precio igual a cero, ¿desea continuar con la venta?" )
-            SetLostFocusOn()
-
-            if !lOk
-               aGet[ _NPVPTIL ]:SetFocus()
-               return .f.
-            end if
-
-         else
-
-            aGet[ _NPVPTIL ]:SetFocus()
-            return .f.
-
-         end if
+         aGet[ _NPVPTIL ]:SetFocus()
+         return .f.
 
       else
 

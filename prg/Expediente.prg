@@ -888,7 +888,7 @@ METHOD Resource( nMode, aDatosAnterior )
       REDEFINE GET oFecAsg VAR ::oDbf:dFecAsg ;
          ID       170 ;
 			SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
       /*
