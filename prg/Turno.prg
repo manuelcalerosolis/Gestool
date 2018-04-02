@@ -699,7 +699,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
       ::nLevel                := Auth():Level( oMenuItem )
    end if
 
-   if IsNum( ::nLevel ) .and. nAnd( ::nLevel, 1 ) != 0
+   if IsNum( ::nLevel ) .and. nAnd( ::nLevel, 1 ) == 0
       ::lAccess               := .f.
       msgStop( "Acceso no permitido." )
       RETURN ( nil )
@@ -782,7 +782,7 @@ METHOD Build( cPath, cDriver, oWnd, oMenuItem )
       ::nLevel          := 0
    end if
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       ::lAccess         := .f.
       msgStop( "Acceso no permitido." )
       RETURN ( Self )

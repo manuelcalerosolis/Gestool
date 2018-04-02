@@ -28,7 +28,7 @@ METHOD New() CLASS PermisosController
 
    ::cTitle                := "Permisos"
 
-   ::setName( "Permisos" )
+   ::setName( "permisos" )
 
    ::lTransactional        := .t.
 

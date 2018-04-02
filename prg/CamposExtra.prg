@@ -114,7 +114,7 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TCamposExtra
 
    DEFAULT cPath           := cPatEmp()
    DEFAULT oWndParent      := oWnd()
-   DEFAULT oMenuItem       := "01124"
+   DEFAULT oMenuItem       := "campos_extra"
 
    ::cPath                 := cPath
    ::oWndParent            := oWndParent
@@ -171,61 +171,58 @@ METHOD Activate() CLASS TCamposExtra
    local nLevel   := Auth():Level( ::oMenuItem )
 
    if nAnd( nLevel, 1 ) == 0
-
-      /*
-      Cerramos todas las ventanas----------------------------------------------
-      */
-
-      if ::oWndParent != nil
-         ::oWndParent:CloseAll()
-      end if
-
-      ::CreateShell( nLevel )
-
-      DEFINE BTNSHELL RESOURCE "BUS" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:SearchSetFocus() ) ;
-         TOOLTIP  "(B)uscar" ;
-         HOTKEY   "B";
-
-         ::oWndBrw:AddSeaBar()
-
-      DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecAdd() );
-         ON DROP  ( ::oWndBrw:RecAdd() );
-         TOOLTIP  "(A)ñadir";
-         BEGIN GROUP ;
-         HOTKEY   "A" ;
-         LEVEL    ACC_APPD
-
-      DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecEdit() );
-         TOOLTIP  "(M)odificar";
-         HOTKEY   "M" ;
-         LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL oDel RESOURCE "DEL" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecDel() );
-         TOOLTIP  "(E)liminar";
-         HOTKEY   "E";
-         LEVEL    ACC_DELE
-
-      ::oWndBrw:EndButtons( Self )
-
-      if ::cHtmlHelp != nil
-         ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
-      end if
-
-      ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() }, nil, nil )
-
-   else
-
       msgStop( "Acceso no permitido." )
+      RETURN ( Self )
+   end if 
 
+   /*
+   Cerramos todas las ventanas----------------------------------------------
+   */
+
+   if ::oWndParent != nil
+      ::oWndParent:CloseAll()
    end if
+
+   ::CreateShell( nLevel )
+
+   DEFINE BTNSHELL RESOURCE "BUS" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:SearchSetFocus() ) ;
+      TOOLTIP  "(B)uscar" ;
+      HOTKEY   "B";
+
+      ::oWndBrw:AddSeaBar()
+
+   DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecAdd() );
+      ON DROP  ( ::oWndBrw:RecAdd() );
+      TOOLTIP  "(A)ñadir";
+      BEGIN GROUP ;
+      HOTKEY   "A" ;
+      LEVEL    ACC_APPD
+
+   DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecEdit() );
+      TOOLTIP  "(M)odificar";
+      HOTKEY   "M" ;
+      LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL oDel RESOURCE "DEL" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecDel() );
+      TOOLTIP  "(E)liminar";
+      HOTKEY   "E";
+      LEVEL    ACC_DELE
+
+   ::oWndBrw:EndButtons( Self )
+
+   if ::cHtmlHelp != nil
+      ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
+   end if
+
+   ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() }, nil, nil )
 
 RETURN ( Self )
 
@@ -625,8 +622,8 @@ Return ( cCodigo )
 
 FUNCTION CamposExtra( oMenuItem, oWnd )  
 
-   DEFAULT  oMenuItem   := "01124"
-   DEFAULT  oWnd        := oWnd()
+   DEFAULT oMenuItem    := "campos_extra"
+   DEFAULT oWnd         := oWnd()
 
    if Empty( oCamposExtra )
 

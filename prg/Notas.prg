@@ -225,7 +225,7 @@ RETURN .t.
 
 METHOD Activate()
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if
@@ -308,7 +308,7 @@ METHOD Dialog()
    local oCbxOrden
    local cCbxOrden   := "Fecha"
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if

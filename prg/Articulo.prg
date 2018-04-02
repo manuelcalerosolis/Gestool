@@ -4827,10 +4827,10 @@ Static Function ActualizaCostoProveedor( aTmp, aGet, dbfTmpPrv )
 
    if ApoloMsgNoYes( "¿Desea actualizar el costo del producto?", "Seleccione una opción" )
 
-      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"  ) ) ]   := nTotImpPrv( dbfTmpPrv, dbfDiv )
+      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "pCosto" ) ) ]   := nTotImpPrv( dbfTmpPrv, dbfDiv )
 
-      if !empty( aGet[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"  ) ) ] )
-         aGet[ ( D():Articulos( nView ) )->( fieldpos( "pCosto"  ) ) ]:Refresh()
+      if !empty( aGet[ ( D():Articulos( nView ) )->( fieldpos( "pCosto" ) ) ] )
+         aGet[ ( D():Articulos( nView ) )->( fieldpos( "pCosto" ) ) ]:Refresh()
       end if   
 
    end if    

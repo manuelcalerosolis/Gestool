@@ -297,7 +297,9 @@ FUNCTION Test()
 
    // msgalert( oRowSet:getAttribute( ATTR_STR_PAD ) )
 
-   msgalert( SuperUsuarioController():New():DialogViewActivate() )
+   // msgalert( SuperUsuarioController():New():DialogViewActivate() )
+
+   getSQLDatabase():Export( "test.sql" )
 
 RETURN nil
 
@@ -2352,17 +2354,9 @@ FUNCTION CreateAcceso( oWnd )
    oItemHerramientas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 3
 
-   do case
-   case IsOscommerce()
-      oGrupo:nBigItems  := 4
-   case IsProfesional()
-      oGrupo:nBigItems  := 4
-   otherwise
-      oGrupo:nBigItems  := 3
-   end case
-
-   oGrupo:cPrompt       := 'Herramientas'
+   oGrupo:cPrompt       := 'Usuarios, roles y permisos'
    oGrupo:cLittleBitmap := "gc_document_text_screw_16"
    oGrupo:cBigBitmap    := "gc_document_text_screw_32"
 
@@ -2370,11 +2364,38 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Usuarios y grupos'
    oItem:cMessage       := 'Acceso a los usuarios del programa'
-   oItem:bAction        := {|| Usuarios( "usuarios", oWnd ) }
+   oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
    oItem:cId            := "usuarios"
    oItem:cBmp           := "gc_businesspeople_16"
    oItem:cBmpBig        := "gc_businesspeople_32"
    oItem:lShow          := .f.
+
+   oItem                := oItemHerramientas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Roles'
+   oItem:cMessage       := 'Roles'
+   oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios_beta"
+   oItem:cBmp           := "gc_businesspeople_16"
+   oItem:cBmpBig        := "gc_businesspeople_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemHerramientas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Permisos'
+   oItem:cMessage       := 'Permisos'
+   oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios_beta"
+   oItem:cBmp           := "gc_businesspeople_16"
+   oItem:cBmpBig        := "gc_businesspeople_32"
+   oItem:lShow          := .f.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 3
+
+   oGrupo:cPrompt       := 'Herramientas'
+   oGrupo:cLittleBitmap := "gc_document_text_screw_16"
+   oGrupo:cBigBitmap    := "gc_document_text_screw_32"
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
@@ -2396,8 +2417,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_printer2_check_32"
    oItem:lShow          := .f.
 
-   if IsProfesional()
-
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Centro de contabilización'
@@ -2407,8 +2426,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmp           := "gc_folders2_16"
    oItem:cBmpBig        := "gc_folders2_32"
    oItem:lShow          := .f.
-
-   end if
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 4
@@ -2749,36 +2766,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cMessage       := 'Solicitar asistencia remota'
    oItem:bAction        := {|| RunAsistenciaRemota() }
    oItem:cId            := "asistencia_remota"
-   oItem:cBmp           := "gc_user_headset_16"
-   oItem:cBmpBig        := "gc_user_headset_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemAyudas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Usuarios [Beta*]'
-   oItem:cMessage       := 'Usuarios [Beta*]'
-   oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
-   oItem:cId            := "usuarios_beta"
-   oItem:cBmp           := "gc_user_headset_16"
-   oItem:cBmpBig        := "gc_user_headset_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemAyudas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Roles [Beta*]'
-   oItem:cMessage       := 'Roles [Beta*]'
-   oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
-   oItem:cId            := "usuarios_beta"
-   oItem:cBmp           := "gc_user_headset_16"
-   oItem:cBmpBig        := "gc_user_headset_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemAyudas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Permisos [Beta*]'
-   oItem:cMessage       := 'Permisos [Beta*]'
-   oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
-   oItem:cId            := "usuarios_beta"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.

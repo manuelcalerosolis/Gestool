@@ -121,7 +121,7 @@ RETURN Self
 
 METHOD Play( uParam ) CLASS TExportaTarifas
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if
