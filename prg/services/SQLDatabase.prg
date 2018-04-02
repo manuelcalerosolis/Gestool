@@ -62,7 +62,7 @@ CLASS SQLDatabase
 
    METHOD selectHashList( cSentence )
 
-   METHOD getValue( cSql, nColumn )       INLINE ( if( !empty( ::oConexion ), ::oConexion:execScalar( cSql, nColumn ), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD getValue( cSql, nColumn )       // INLINE ( if( !empty( ::oConexion ), ::oConexion:execScalar( cSql, nColumn ), msgstop( "No ha conexiones disponibles" ) ) )
 
    METHOD lastInsertId()                  INLINE ( if( !empty( ::oConexion ), ::oConexion:lastInsertId(), msgstop( "No ha conexiones disponibles" ) ) )
 
@@ -322,7 +322,7 @@ METHOD selectHashList( cSentence )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-/*
+
 METHOD getValue( cSentence )
 
    local oError
@@ -352,7 +352,7 @@ METHOD getValue( cSentence )
    end
 
 RETURN ( uValue )
-*/
+
 //---------------------------------------------------------------------------//
 
 METHOD selectFetchArrayOneColumn( cSentence )
