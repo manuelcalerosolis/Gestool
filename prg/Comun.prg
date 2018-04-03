@@ -297,7 +297,7 @@ FUNCTION Test()
 
    // msgalert( oRowSet:getAttribute( ATTR_STR_PAD ) )
 
-   msgalert( SuperUsuarioController():New():DialogViewActivate() )
+   //msgalert( SuperUsuarioController():New():DialogViewActivate() )
 
 RETURN nil
 
@@ -3072,7 +3072,6 @@ FUNCTION InitClasses()
    TNotas()
    TOrdCarga()
    TPais()
-   TLenguaje()
    TReindex()
    TRemesas()
    TCamposExtra()

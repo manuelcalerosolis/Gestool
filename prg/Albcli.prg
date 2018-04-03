@@ -14080,7 +14080,7 @@ RETURN ( Descrip( cAlbCliL, cAlbCliS ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cDesAlbCliLeng( cAlbCliL, cAlbCliS, cArtLeng ) // CallHbFunc('SetLenguajeSegundario', ['ENU'] )
+FUNCTION cDesAlbCliLeng( cAlbCliL, cAlbCliS, cArtLeng )
 
    if !empty( nView )
       DEFAULT cAlbCliL  := D():Get( "AlbCliL", nView )

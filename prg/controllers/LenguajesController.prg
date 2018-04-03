@@ -5,8 +5,11 @@
 
 CLASS LenguajesController FROM SQLNavigatorController
 
-
    METHOD New()
+
+   METHOD SetSelectorToGet( oGet, oSay )
+
+   METHOD validLenguajeFromGet( oGet, oSay )
 
 END CLASS
 
@@ -34,9 +37,60 @@ METHOD New() CLASS LenguajesController
 
    ::oValidator               := LenguajesValidator():New( self )
 
+   ::oRepository              := LenguajesRepository():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetSelectorToGet( oGet, oSay ) CLASS LenguajesController
+
+   local hLenguaje    := ::ActivateSelectorView() 
+
+   if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "codigo" )
+      oGet:cText( hget( hLenguaje, "codigo" ) )
+   else
+      oGet:cText( "" )
+   end if
+
+   if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "codigo" )
+      oSay:cText( hget( hLenguaje, "nombre" ) )
+   else
+      oSay:cText( "" )
+   end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD validLenguajeFromGet( oGet, oSay ) CLASS LenguajesController
+
+   local uValue
+   local cNombre
+
+   if Empty( oGet )
+      Return .t.
+   end if
+
+   uValue            := oGet:VarGet()
+
+   if Empty( uValue )
+      Return .t.
+   end if
+
+   cNombre           := ::oModel:getNombre( uValue )
+
+   if Empty( cNombre )
+      oSay:cText( "" )
+      MsgStop( "Lenguaje no encontrado" )
+      Return .f.
+   end if
+
+   oSay:cText( cNombre )
+
+return .t.
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -195,7 +249,9 @@ RETURN ( ::hValidators )
 
 CLASS SQLLenguajesModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "lenguajes"
+   DATA cTableName                  INIT "lenguajes"
+
+   MESSAGE getNombre( codigo )      INLINE ( ::getField( "nombre", "codigo", codigo ) )
 
    METHOD getColumns()
 
@@ -233,10 +289,11 @@ RETURN ( ::hColumns )
 
 CLASS LenguajesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( SQLLenguajesModel():getTableName() ) 
+   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), SQLTiposImpresorasModel():getTableName() ) )
 
 END CLASS
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -1885,13 +1885,6 @@ METHOD BuildData()
    oDataTable:bCreateFile  := {| cPath | TPais():BuildFiles( cPath ) }
    ::AddDataTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "Lenguaje", cPathDatos() )
-   oDataTable:cDataFile    := cPatDat( .t. ) + "Lenguaje.Dbf"
-   oDataTable:cIndexFile   := cPatDat( .t. ) + "Lenguaje.Cdx"
-   oDataTable:cDescription := "Lenguajes"
-   oDataTable:bCreateFile  := {| cPath | TLenguaje():BuildFiles( cPath ) }
-   ::AddDataTable( oDataTable )
-
    oDataTable              := TDataTable():New( "Backup", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "Backup.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Backup.Cdx"
