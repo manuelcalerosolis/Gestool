@@ -262,9 +262,11 @@ RETURN ( ::hValidators )
 
 CLASS SQLCamposExtraModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "campos_extra"
+   DATA cTableName                           INIT "campos_extra"
 
    METHOD getColumns()
+
+   METHOD getRequeridoAttributes( value )    INLINE ( msgalert( value, "value" ) )
 
 END CLASS
 

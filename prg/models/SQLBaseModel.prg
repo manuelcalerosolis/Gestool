@@ -718,7 +718,9 @@ RETURN ( cColumn )
 
 METHOD setAttribute( key, value )
 
-   if __ObjHasMethod( Self, "get" + key + "attribute" )
+   local cMethod  := "set" + strtran( key, "_", "" ) + "attribute"
+
+   if __ObjHasMethod( Self, cMethod )
       RETURN ( Self:&( cMethod )( value ) )
    end if 
 
@@ -728,7 +730,11 @@ RETURN ( toSQLString( value ) )
 
 METHOD getAttribute( key, value )
 
-   if __ObjHasMethod( Self, "get" + key + "attribute" )
+   local cMethod  := "get" + strtran( key, "_", "" ) + "attribute"
+
+   logwrite( cMethod )
+
+   if __ObjHasMethod( Self, cMethod )
       RETURN ( Self:&( cMethod )( value ) )
    end if 
 
@@ -805,6 +811,8 @@ METHOD defaultCurrentBuffer()
       end if
 
    next
+
+   heval( ::hBuffer, {|k,v| ::getAttribute( k, v ) } )
 
 RETURN ( ::hBuffer )
 
