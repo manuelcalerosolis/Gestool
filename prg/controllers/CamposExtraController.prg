@@ -17,13 +17,13 @@ METHOD New() CLASS CamposExtraController
 
    ::cTitle                   := "Campos Extra"
 
-   ::cName                    := "campos_extra"
+   ::setName( "campos_extra" )
+
+   ::nLevel                   := Auth():Level( ::getName() )
 
    ::hImage                   := {  "16" => "gc_user_message_16",;
                                     "32" => "gc_user_message_32",;
                                     "48" => "gc_user_message_48" }
-
-   ::nLevel                   := nLevelUsr( ::cName )
 
    ::oModel                   := SQLCamposExtraModel():New( self )
 
@@ -71,6 +71,7 @@ METHOD addColumns() CLASS CamposExtraBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
+
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
@@ -78,35 +79,40 @@ METHOD addColumns() CLASS CamposExtraBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
-      with object ( ::oBrowse:AddCol() )
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'requerido'
       :cHeader             := 'Requerido'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'requerido' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
-      with object ( ::oBrowse:AddCol() )
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tipo'
       :cHeader             := 'Tipo'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tipo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
-      with object ( ::oBrowse:AddCol() )
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'longitud'
       :cHeader             := 'Longitud'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'longitud' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
-      with object ( ::oBrowse:AddCol() )
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'decimales'
       :cHeader             := 'Decimales'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'decimales' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
-      with object ( ::oBrowse:AddCol() )
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'defecto'
       :cHeader             := 'Defecto'
       :nWidth              := 300
@@ -126,7 +132,11 @@ RETURN ( self )
 
 CLASS CamposExtraView FROM SQLBaseView
   
+   DATA lRequerido
+
    METHOD Activate()
+
+   METHOD validDialog()
 
 END CLASS
 
@@ -139,6 +149,8 @@ METHOD Activate() CLASS CamposExtraView
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
+
+   ::lRequerido      := ( ::oController:oModel:hBuffer[ "requerido" ] == 1 )
 
    DEFINE DIALOG  oDlg ;
       RESOURCE    "CAMPOS_EXTRA";
@@ -156,7 +168,7 @@ METHOD Activate() CLASS CamposExtraView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
-   REDEFINE CHECKBOX   ::oController:oModel:hBuffer[ "requerido" ] ;
+   REDEFINE CHECKBOX ::lRequerido ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          oDlg
@@ -181,12 +193,11 @@ METHOD Activate() CLASS CamposExtraView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          oDlg
 
-
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( if( ::validDialog(), if( validateDialog( oDlg ), oDlg:end( IDOK ), ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -195,7 +206,7 @@ METHOD Activate() CLASS CamposExtraView
       ACTION      ( oDlg:end() )
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) } )
+      oDlg:AddFastKey( VK_F5, {|| if( ::validDialog(), if( validateDialog( oDlg ), oDlg:end( IDOK ), ), ) } )
    end if
 
    ACTIVATE DIALOG oDlg CENTER
@@ -203,6 +214,18 @@ METHOD Activate() CLASS CamposExtraView
    oBmpGeneral:end()
 
 RETURN ( oDlg:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD validDialog() CLASS CamposExtraView
+
+   if ::lRequerido
+      hSet( ::oController:oModel:hBuffer, "requerido", 1 )
+   else
+      hSet( ::oController:oModel:hBuffer, "requerido", 0 )
+   end if
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
