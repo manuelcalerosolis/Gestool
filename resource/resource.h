@@ -7,3 +7,4 @@
 #define IDRELACIONES    5
 
 #define MANIFEST       24
+#define Campo Extra  4001

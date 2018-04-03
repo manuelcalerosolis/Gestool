@@ -284,6 +284,34 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+   CamposExtraController():New():ActivateNavigatorView()
+=======
+   local oRowSet
+
+   try
+
+   // oRowSet      := TRowSet():new( getSQLDatabase():oConexion, "SELECT * FROM usuarios" )
+
+   catch
+
+
+   end 
+
+   // msgalert( oRowSet:getAttribute( ATTR_STR_PAD ) )
+
+<<<<<<< HEAD
+   //msgalert( SuperUsuarioController():New():DialogViewActivate() )
+=======
+   // msgalert( SuperUsuarioController():New():DialogViewActivate() )
+
+   getSQLDatabase():Export( "test.sql" )
+>>>>>>> a5cd1c91869dc48aee30959d005d285fc8faefc3
+>>>>>>> e2e440a43d95a4ad670f5e53fddfbf683fa4bd5a
+
+>>>>>>> c980c03d3a55ab9c35b70ca22cc7855a008f8630
 RETURN nil
 
 //----------------------------------------------------------------------------//
