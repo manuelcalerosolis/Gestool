@@ -2362,7 +2362,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Usuarios y grupos'
+   oItem:cPrompt        := 'Usuarios'
    oItem:cMessage       := 'Acceso a los usuarios del programa'
    oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
    oItem:cId            := "usuarios"
@@ -2375,7 +2375,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Roles'
    oItem:cMessage       := 'Roles'
    oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
-   oItem:cId            := "usuarios_beta"
+   oItem:cId            := "usuarios_roles"
    oItem:cBmp           := "gc_businesspeople_16"
    oItem:cBmpBig        := "gc_businesspeople_32"
    oItem:lShow          := .f.
@@ -2385,7 +2385,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Permisos'
    oItem:cMessage       := 'Permisos'
    oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
-   oItem:cId            := "usuarios_beta"
+   oItem:cId            := "usuarios_permisos"
    oItem:cBmp           := "gc_businesspeople_16"
    oItem:cBmpBig        := "gc_businesspeople_32"
    oItem:lShow          := .f.

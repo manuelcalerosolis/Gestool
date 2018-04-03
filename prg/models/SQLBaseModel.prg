@@ -56,6 +56,9 @@ CLASS SQLBaseModel
    METHOD setSQLUpdate( cSQLUpdate )                  INLINE ( ::cSQLUpdate := cSQLUpdate )
    METHOD getSQLUpdate()                              INLINE ( ::cSQLUpdate )
 
+   METHOD setAttribute( key, value )
+   METHOD getAttribute( key, value )
+
    // Facades -----------------------------------------------------------------
 
    METHOD setDatabase( oDb )                          INLINE ( ::oDatabase := oDb )
@@ -505,7 +508,11 @@ RETURN ( "DROP TABLE " + ::cTableName )
 
 METHOD findById( id )
 
-RETURN ( atail( ::getDatabase():selectFetchHash( ::getIdSelect( id ) ) ) )
+   local hBuffer  := atail( ::getDatabase():selectFetchHash( ::getIdSelect( id ) ) )
+
+   heval( hBuffer, {|k,v| ::getAttribute( k, v ) } )
+
+RETURN ( hBuffer )
 
 //---------------------------------------------------------------------------//
 
@@ -704,6 +711,26 @@ METHOD getEditValue( cColumn )
    end if 
 
 RETURN ( cColumn ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD setAttribute( key, value )
+
+   if __ObjHasMethod( Self, "get" + key + "attribute" )
+      RETURN ( Self:&( cMethod )( value ) )
+   end if 
+
+RETURN ( toSQLString( value ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getAttribute( key, value )
+
+   if __ObjHasMethod( Self, "get" + key + "attribute" )
+      RETURN ( Self:&( cMethod )( value ) )
+   end if 
+
+RETURN ( value )
 
 //---------------------------------------------------------------------------//
 
