@@ -99,7 +99,6 @@ static oUndMedicion
 static oFraPub
 static oFabricante
 static oOrdenComanda
-static oLenguajes
 static oTpvMenu
 
 static oDetCamposExtra
@@ -226,8 +225,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       D():Articulos( nView )
 
       D():ArticuloLenguaje( nView )
-      
-      D():Lenguajes( nView )
       
       D():EstadoArticulo( nView )
 
@@ -405,11 +402,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       if !oOrdenComanda:OpenFiles()
          lOpenfiles        := .f.
       end if 
-
-      oLenguajes           := TLenguaje():Create( cPatDat() )
-      if !oLenguajes:OpenFiles()
-         lOpenFiles        := .f.
-      end if
 
       oTpvMenu             := TpvMenu():Create( cPath )
       oTpvMenu:OpenService( .f., cPath )
@@ -671,10 +663,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oDetCamposExtra:CloseFiles()
    end if
 
-   if !empty( oLenguajes )
-      oLenguajes:End()
-   end if
-
    if !IsReport()
       TComercioConfig():DestroyInstance()
    end if
@@ -720,7 +708,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfUbicaL         := nil
    oTpvMenu          := nil
    oDetCamposExtra   := nil
-   oLenguajes        := nil
 
    lOpenFiles        := .f.
 
@@ -1835,7 +1822,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
                   "&Precios",;
                   "&Adicionales",;
                   "&Táctil",;
-                  "&Idiomas",;
+                  "Lenguajes",;
                   "Imagenes",;
                   "P&ropiedades",;
                   "&Logística",;
@@ -3041,7 +3028,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
       with object ( oBrwLeng:AddCol() )
          :cHeader                := "Lenguaje"
-         :bEditValue             := {|| AllTrim( ( dbfTmpLeng )->cCodLen ) + " - " + RetFld( ( dbfTmpLeng )->cCodLen, D():Lenguajes( nView ), "cNomLen" ) }
+         :bEditValue             := {|| AllTrim( ( dbfTmpLeng )->cCodLen ) }
          :nWidth                 := 200
       end with
 
@@ -7163,10 +7150,11 @@ STATIC FUNCTION EdtLeng( aTmp, aGet, dbfTmpLeng, oBrw, bWhen, bValid, nMode, aTm
       ID       110 ;
       IDTEXT   111;
       COLOR    CLR_GET ;
-      VALID    ( oLenguajes:Existe( aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ], aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ]:oHelpText, "cNomLen" ) );
-      ON HELP  ( oLenguajes:Buscar( aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ] ) ) ;
       BITMAP   "LUPA" ;
       OF       oDlg
+
+      aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ]:bValid := {|| LenguajesController():New():validLenguajeFromGet( aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ], aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ]:oHelpText ) }
+      aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ]:bHelp  := {|| LenguajesController():New():SetSelectorToGet( aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ], aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ]:oHelpText ) }
 
    REDEFINE GET aGet[ ( dbfTmpLeng )->( fieldpos( "cDesTik" ) ) ] ; 
       VAR      aTmp[ ( dbfTmpLeng )->( fieldpos( "cDesTik" ) ) ] ;

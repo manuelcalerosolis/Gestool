@@ -2428,6 +2428,15 @@ Return nil
 FUNCTION permisoscontroller
 Return nil
 
+FUNCTION application
+Return nil
+
+FUNCTION superusuariocontroller
+Return nil
+
+FUNCTION applicationload
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

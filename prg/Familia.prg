@@ -78,7 +78,6 @@ static tmpLenguaje
 static oGrpFam
 static oFraPub
 static oComentarios
-static oLenguajes
 
 static oDetCamposExtra
 
@@ -259,8 +258,6 @@ STATIC FUNCTION OpenFiles()
 
       D():FamiliasLenguajes( nView )
 
-      D():Lenguajes( nView )
-
       USE ( cPatEmp() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
       SET ADSINDEX TO ( cPatEmp() + "FamPrv.Cdx" ) ADDITIVE
 
@@ -285,11 +282,6 @@ STATIC FUNCTION OpenFiles()
          oDetCamposExtra:OpenFiles()
          oDetCamposExtra:SetTipoDocumento( "Familias" )
          oDetCamposExtra:setbId( {|| D():FamiliasId( nView ) } )
-      end if
-
-      oLenguajes        := TLenguaje():Create( cPatDat() )
-      if !oLenguajes:OpenFiles()
-         lOpenFiles     := .f.
       end if
 
       oComercio         := TComercioConfig()
@@ -336,10 +328,6 @@ STATIC FUNCTION CloseFiles()
       oDetCamposExtra:CloseFiles()
    end if
 
-   if !empty( oLenguajes )
-      oLenguajes:End()
-   end if
-
    if !Empty( oComercio )
       oComercio:DestroyInstance()
    end if
@@ -351,7 +339,6 @@ STATIC FUNCTION CloseFiles()
    dbfArticulo    := nil
    dbfPrv         := nil
    oComentarios   := nil
-   oLenguajes     := nil
 
 RETURN .t.
 
@@ -655,7 +642,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
          PROMPT   "&General",;
                   "&Propiedades",;
                   "&Proveedores",;
-                  "&Idiomas";
+                  "Lenguajes";
          DIALOGS  "FAMILIA_01",;
                   "FAMILIA_04",;
                   "FAMILIA_02",;
@@ -942,8 +929,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
          oBrwLenguaje:nMarqueeStyle    := 6
 
             with object ( oBrwLenguaje:AddCol() )
-               :cHeader                := "Idioma"
-               :bEditValue             := {|| alltrim( ( tmpLenguaje )->cCodLen ) + " - " + retFld( ( tmpLenguaje )->cCodLen, D():Lenguajes( nView ), "cNomLen" ) }
+               :cHeader                := "Lenguaje"
+               :bEditValue             := {|| alltrim( ( tmpLenguaje )->cCodLen ) }
                :nWidth                 := 220
             end with
 
@@ -1574,11 +1561,12 @@ STATIC FUNCTION EditLenguaje( aTmp, aGet, tmpLenguaje, oBrwLenguaje, bWhen, bVal
       VAR         aTmp[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ] ;
       ID          110 ;
       IDTEXT      111 ;
-      VALID       ( oLenguajes:Existe( aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ], aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ]:oHelpText, "cNomLen" ) );
-      ON HELP     ( oLenguajes:Buscar( aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ] ) ) ;
       BITMAP      "LUPA" ;
       OF          oDlg
 
+      aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ]:bValid   := {|| LenguajesController():New():validLenguajeFromGet( aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ], aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ]:oHelpText ) }
+      aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ]:bHelp    := {|| LenguajesController():New():SetSelectorToGet( aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ], aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ]:oHelpText ) }
+      
    REDEFINE GET   aGet[ ( tmpLenguaje )->( fieldpos( "cDesFam" ) ) ] ; 
       VAR         aTmp[ ( tmpLenguaje )->( fieldpos( "cDesFam" ) ) ] ;
       ID          120 ;

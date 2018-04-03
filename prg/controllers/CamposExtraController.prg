@@ -3,96 +3,41 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS LenguajesController FROM SQLNavigatorController
+CLASS CamposExtraController FROM SQLNavigatorController
 
    METHOD New()
-
-   METHOD SetSelectorToGet( oGet, oSay )
-
-   METHOD validLenguajeFromGet( oGet, oSay )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS LenguajesController
+METHOD New() CLASS CamposExtraController
 
    ::Super:New()
 
-   ::cTitle                   := "Lenguajes"
+   ::cTitle                   := "Campos Extra"
 
-   ::cName                    := "lenguajes"
+   ::setName( "campos_extra" )
+
+   ::nLevel                   := Auth():Level( ::getName() )
 
    ::hImage                   := {  "16" => "gc_user_message_16",;
                                     "32" => "gc_user_message_32",;
                                     "48" => "gc_user_message_48" }
 
-   ::nLevel                   := Auth():Level( ::cName )
+   ::oModel                   := SQLCamposExtraModel():New( self )
 
-   ::oModel                   := SQLLenguajesModel():New( self )
+   ::oBrowseView              := CamposExtraBrowseView():New( self )
 
-   ::oBrowseView              := LenguajesBrowseView():New( self )
+   ::oDialogView              := CamposExtraView():New( self )
 
-   ::oDialogView              := LenguajesView():New( self )
-
-   ::oValidator               := LenguajesValidator():New( self )
-
-   ::oRepository              := LenguajesRepository():New( self )
+   ::oValidator               := CamposExtraValidator():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD SetSelectorToGet( oGet, oSay ) CLASS LenguajesController
-
-   local hLenguaje    := ::ActivateSelectorView() 
-
-   if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "codigo" )
-      oGet:cText( hget( hLenguaje, "codigo" ) )
-   else
-      oGet:cText( "" )
-   end if
-
-   if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "codigo" )
-      oSay:cText( hget( hLenguaje, "nombre" ) )
-   else
-      oSay:cText( "" )
-   end if
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD validLenguajeFromGet( oGet, oSay ) CLASS LenguajesController
-
-   local uValue
-   local cNombre
-
-   if Empty( oGet )
-      Return .t.
-   end if
-
-   uValue            := oGet:VarGet()
-
-   if Empty( uValue )
-      Return .t.
-   end if
-
-   cNombre           := ::oModel:getNombre( uValue )
-
-   if Empty( cNombre )
-      oSay:cText( "" )
-      MsgStop( "Lenguaje no encontrado" )
-      Return .f.
-   end if
-
-   oSay:cText( cNombre )
-
-return .t.
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -101,7 +46,7 @@ return .t.
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS LenguajesBrowseView FROM SQLBrowseView
+CLASS CamposExtraBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -109,7 +54,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS LenguajesBrowseView
+METHOD addColumns() CLASS CamposExtraBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -128,18 +73,50 @@ METHOD addColumns() CLASS LenguajesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'requerido'
+      :cHeader             := 'Requerido'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'requerido' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'tipo'
+      :cHeader             := 'Tipo'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tipo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'longitud'
+      :cHeader             := 'Longitud'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'longitud' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'decimales'
+      :cHeader             := 'Decimales'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'decimales' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'defecto'
+      :cHeader             := 'Defecto'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'defecto' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -153,15 +130,19 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS LenguajesView FROM SQLBaseView
+CLASS CamposExtraView FROM SQLBaseView
   
+   DATA lRequerido
+
    METHOD Activate()
+
+   METHOD validDialog()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS LenguajesView
+METHOD Activate() CLASS CamposExtraView
 
    local oDlg
    local oBmpGeneral
@@ -169,9 +150,11 @@ METHOD Activate() CLASS LenguajesView
    local oBtnAppend
    local oBtnDelete
 
+   ::lRequerido      := ( ::oController:oModel:hBuffer[ "requerido" ] == 1 )
+
    DEFINE DIALOG  oDlg ;
-      RESOURCE    "LENGUAJE" ;
-      TITLE       ::LblTitle() + "lenguajes"
+      RESOURCE    "CAMPOS_EXTRA";
+      TITLE       ::LblTitle() + "Campo extra"
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
@@ -179,23 +162,42 @@ METHOD Activate() CLASS LenguajesView
       TRANSPARENT ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
-      ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode()  ) ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          oDlg
-
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          110 ;
+      ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
+      OF          oDlg
+
+   REDEFINE CHECKBOX ::lRequerido ;
+      ID          110 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          oDlg
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "tipo" ] ;
+      ID          120 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "tipo" ) ) ;
+      OF          oDlg
+   REDEFINE GET   ::oController:oModel:hBuffer[ "longitud" ] ;
+      ID          130 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          oDlg
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "decimales" ] ;
+      ID          140 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          oDlg
+
+      REDEFINE GET   ::oController:oModel:hBuffer[ "defecto" ] ;
+      ID          150 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( if( ::validDialog(), if( validateDialog( oDlg ), oDlg:end( IDOK ), ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -204,7 +206,7 @@ METHOD Activate() CLASS LenguajesView
       ACTION      ( oDlg:end() )
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) } )
+      oDlg:AddFastKey( VK_F5, {|| if( ::validDialog(), if( validateDialog( oDlg ), oDlg:end( IDOK ), ), ) } )
    end if
 
    ACTIVATE DIALOG oDlg CENTER
@@ -214,13 +216,25 @@ METHOD Activate() CLASS LenguajesView
 RETURN ( oDlg:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD validDialog() CLASS CamposExtraView
+
+   if ::lRequerido
+      hSet( ::oController:oModel:hBuffer, "requerido", 1 )
+   else
+      hSet( ::oController:oModel:hBuffer, "requerido", 0 )
+   end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS LenguajesValidator FROM SQLBaseValidator
+CLASS CamposExtraValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -228,13 +242,12 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS LenguajesValidator
+METHOD getValidators() CLASS CamposExtraValidator
 
-   ::hValidators  := {     "codigo" =>          {  "required"     => "El código es un dato requerido",;
-                                                   "unique"       => "El código introducido ya existe" },;
-                           "nombre" =>          {  "required"     => "El nombre es un datos requerido",;
-                                                   "unique"       => "El nombre introducido ya existe" } }                      
-
+   ::hValidators  := {     "nombre" =>          {  "required"     => "El nombre es un dato requerido",;
+                                                   "unique"       => "El nombre introducido ya existe" } ,;   
+                           "tipo"     =>        {  "required"     => "El tipo es un dato requerido"} ,; 
+                           "longitud" =>        {  "required"     => "La longitud es un dato requerido"} }
 
 RETURN ( ::hValidators )
 
@@ -247,11 +260,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLLenguajesModel FROM SQLBaseModel
+CLASS SQLCamposExtraModel FROM SQLBaseModel
 
-   DATA cTableName                  INIT "lenguajes"
-
-   MESSAGE getNombre( codigo )      INLINE ( ::getField( "nombre", "codigo", codigo ) )
+   DATA cTableName               INIT "campos_extra"
 
    METHOD getColumns()
 
@@ -259,7 +270,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLLenguajesModel
+METHOD getColumns() CLASS SQLCamposExtraModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "text"      => "Identificador"                           ,;
@@ -269,11 +280,23 @@ METHOD getColumns() CLASS SQLLenguajesModel
                                              "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 10 )"                          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                      )
+
+   hset( ::hColumns, "requerido",         {  "create"    => "TINYINT"                                 ,;
+                                             "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "tipo",              {  "create"    => "VARCHAR( 10 )"                          ,;
                                              "default"   => {|| space( 10 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 20 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "longitud",          {  "create"    => "TINYINT"                                 ,;
+                                             "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "decimales",         {  "create"    => "TINYINT"                                 ,;
+                                             "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "defecto",           {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                      )
 
 RETURN ( ::hColumns )
 
@@ -287,13 +310,12 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS LenguajesRepository FROM SQLBaseRepository
+CLASS CamposExtraRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), SQLTiposImpresorasModel():getTableName() ) )
+   METHOD getTableName()         INLINE ( SQLCamposExtraModel():getTableName() ) 
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

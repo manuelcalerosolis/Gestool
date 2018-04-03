@@ -94,6 +94,8 @@ CLASS SQLBaseModel
    METHOD getGeneralSelect()
    METHOD getInitialSelect()                          INLINE ( "SELECT * FROM " + ::getTableName() )
 
+   METHOD getField( cField, cBy, cId )
+
    METHOD getIdSelect( id )
    METHOD getWhereSelect( cWhere )
    METHOD getSelectSentence()
@@ -1031,5 +1033,25 @@ METHOD updateFieldWhereId( id, cField, uValue )
    cSql        +=    "WHERE id = " + toSqlString( id )
 
 Return ( ::getDatabase():Exec( cSql ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD getField( cField, cBy, cId )
+
+   local cSql
+   local aResult
+   local cResult
+
+   cSql              := "SELECT " + cField + " "                              
+   cSql              +=    "FROM " + ::cTableName + " "
+   cSql              +=    "WHERE " + cBy + " = " + quoted( cId ) 
+
+   aResult           := atail( ::getDatabase():selectFetchArray( cSql ) )
+
+   if hb_isarray( aResult )
+      cResult        := aResult[1]
+   end if
+
+Return ( cResult )
 
 //----------------------------------------------------------------------------//

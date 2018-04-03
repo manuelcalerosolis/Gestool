@@ -48,7 +48,7 @@ METHOD New() CLASS RolesController
 
    ::lConfig               := .t.
 
-   ::hImage                := { "16" => "gc_businesspeople_16" }
+   ::hImage                := { "16" => "GC_ID_CARDS_16" }
 
    ::oModel                := SQLRolesModel():New( self )
 
@@ -341,7 +341,7 @@ METHOD Activate() CLASS RolesView
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
-      RESOURCE    "gc_businessman_48" ;
+      RESOURCE    "GC_ID_CARDS_48" ;
       TRANSPARENT ;
       OF          oDlg
 
