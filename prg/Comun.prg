@@ -284,27 +284,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   local oRowSet
-
-   try
-
-   // oRowSet      := TRowSet():new( getSQLDatabase():oConexion, "SELECT * FROM usuarios" )
-
-   catch
-
-
-   end 
-
-   // msgalert( oRowSet:getAttribute( ATTR_STR_PAD ) )
-
-<<<<<<< HEAD
-   //msgalert( SuperUsuarioController():New():DialogViewActivate() )
-=======
-   // msgalert( SuperUsuarioController():New():DialogViewActivate() )
-
-   getSQLDatabase():Export( "test.sql" )
->>>>>>> a5cd1c91869dc48aee30959d005d285fc8faefc3
-
 RETURN nil
 
 //----------------------------------------------------------------------------//
