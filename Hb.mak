@@ -347,6 +347,7 @@ StocksModel.prg 																\
 SituacionesController.prg       											\
 CajonesPortamonedasController.prg 										\
 TransportistasController.prg												\
+CamposExtraController.prg													\
 ListinController.prg															\
 CodigosPostalesController.prg												\
 ProvinciasController.prg													\
@@ -960,6 +961,7 @@ GruposMovimientosModel.obj 												\
 SituacionesController.obj       											\
 CajonesPortamonedasController.obj       								\
 TransportistasController.obj       										\
+CamposExtraController.obj       											\
 ListinController.obj       												\
 CodigosPostalesController.obj       									\
 ProvinciasController.obj       											\
@@ -1559,6 +1561,7 @@ $(OBJ)\StocksModel.obj 														+
 $(OBJ)\SituacionesController.obj          							+
 $(OBJ)\CajonesPortamonedasController.obj    							+
 $(OBJ)\TransportistasController.obj    								+
+$(OBJ)\CamposExtraController.obj    									+
 $(OBJ)\ListinController.obj    											+
 $(OBJ)\CodigosPostalesController.obj    								+
 $(OBJ)\ProvinciasController.obj    										+

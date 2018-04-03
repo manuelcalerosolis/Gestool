@@ -283,6 +283,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   CamposExtraController():New():ActivateNavigatorView()
+
 RETURN nil
 
 //----------------------------------------------------------------------------//
