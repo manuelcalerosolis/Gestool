@@ -75,7 +75,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfIva  PATH ( cPatDat() )   FILE "TIVA.DBF"      VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfPrv  PATH ( cPatPrv() )   FILE "PROVEE.DBF"    VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
+   DATABASE NEW ::oDbfPrv  PATH ( cPatEmp() )   FILE "PROVEE.DBF"    VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
 
    RECOVER
 

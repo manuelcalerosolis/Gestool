@@ -384,11 +384,11 @@ STATIC FUNCTION OpenFiles( lExt )
    USE ( cPatEmp() + "AntCliD.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliD", @dbfAntCliD ) )
    SET ADSINDEX TO ( cPatEmp() + "AntCliD.CDX" ) ADDITIVE
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
+   SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
-   USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
-   SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
+   SET ADSINDEX TO ( cPatEmp() + "AGENTES.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
@@ -399,8 +399,8 @@ STATIC FUNCTION OpenFiles( lExt )
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+   SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
 
    USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
    SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
@@ -409,8 +409,8 @@ STATIC FUNCTION OpenFiles( lExt )
    USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
    SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
-   USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-   SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
+   SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
    SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
@@ -471,7 +471,7 @@ STATIC FUNCTION OpenFiles( lExt )
    */
 
    if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
-      cFiltroUsuario    := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+      cFiltroUsuario    := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
    end if
 
    /*
@@ -643,8 +643,8 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
    DEFAULT  oWnd        := oWnd()
    DEFAULT  cCodCli     := nil
 
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel               := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return Nil
    end if
@@ -1026,22 +1026,20 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       HOTKEY   "C";
       LEVEL    ACC_EDIT
 
-   if lUsrMaster()
-
    DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw GROUP;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {| lChk1, lChk2, oTree| CambiarEstado( lChk1, lChk2, oTree ) }, "Cambiar estado", .f., "Contabilizado", .t. ) ) ;
+      ACTION   (  iif(  SuperUsuarioController():New():isDialogViewActivate(),;
+                        aGetSelRec( oWndBrw, {| lChk1, lChk2, oTree| CambiarEstado( lChk1, lChk2, oTree ) }, "Cambiar estado", .f., "Contabilizado", .t. ), ) ) ;
       TOOLTIP  "Cambiar es(t)ado" ;
       HOTKEY   "T";
       LEVEL    ACC_EDIT
 
    DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw GROUP;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {| lChk1, lChk2, oTree| CambiarLiquidado( lChk1, lChk2, oTree ) }, "Cambiar liquidación", .f., "Liquidación", .t. ) ) ;
+      ACTION   (  iif(  SuperUsuarioController():New():isDialogViewActivate(),;
+                        aGetSelRec( oWndBrw, {| lChk1, lChk2, oTree| CambiarLiquidado( lChk1, lChk2, oTree ) }, "Cambiar liquidación", .f., "Liquidación", .t. ), )  ) ;
       TOOLTIP  "Cambiar liquidación" ;
       LEVEL    ACC_EDIT
-
-   end if
 
    DEFINE BTNSHELL oSnd RESOURCE "LBL" GROUP OF oWndBrw ;
       NOBORDER ;
@@ -1184,14 +1182,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
          Return .f.
       end if
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURANT  ]    := cCurSesion()
-      aTmp[ _CCODALM  ]    := oUser():cAlmacen()
-      aTmp[ _CCODCAJ  ]    := oUser():cCaja()
+      aTmp[ _CCODALM  ]    := Application():codigoAlmacen()
+      aTmp[ _CCODCAJ  ]    := Application():CodigoCaja()
       aTmp[ _CCODUSR  ]    := Auth():Codigo()
       aTmp[ _CCODPAGO ]    := cDefFpg()
       aTmp[ _CDIVANT  ]    := cDivEmp()
@@ -1202,7 +1200,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
       aTmp[ _LIVAINC  ]    := .t.
       aTmp[ _NPCTIVA  ]    := nIva( dbfIva, cDefIva() )
       aTmp[ _NREQ     ]    := nReq( dbfIva, cDefIva() )
-      aTmp[ _CCODDLG  ]    := oUser():cDelegacion()
+      aTmp[ _CCODDLG  ]    := Application():CodigoDelegacion()
 
       if !Empty( cCodCli )
          aTmp[ _CCODCLI ]  := cCodCli
@@ -1215,8 +1213,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
          Return .f.
       end if
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
@@ -2820,11 +2818,11 @@ RETURN NIL
 
 Function AppAntCli( cCodCli, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_APPD ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -2850,11 +2848,11 @@ RETURN .t.
 
 Function EdtAntCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -2889,11 +2887,11 @@ Return .t.
 
 FUNCTION ZooAntCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -2925,11 +2923,11 @@ Return .t.
 
 FUNCTION DelAntCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_DELE ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_DELE ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -2964,11 +2962,11 @@ Return .t.
 
 FUNCTION PrnAntCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -3003,11 +3001,11 @@ Return .t.
 
 FUNCTION VisAntCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -4329,9 +4327,9 @@ Return nil
 
 Function CreateAntCli( cCodCli )
 
-   local nLevel   := nLevelUsr( _MENUITEM_ )
+   local nLevel   := Auth():Level( _MENUITEM_ )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if

@@ -92,9 +92,9 @@ function TblCnv( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -367,7 +367,7 @@ FUNCTION BrwTblCnv( oGet, dbfTblCnv, oGet2 )
 	local oCbxOrd
    local aCbxOrd  := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevel   := nLevelUsr( "01016" )
+   local nLevel   := Auth():Level( "01016" )
    local lClose   := .f.
 
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )

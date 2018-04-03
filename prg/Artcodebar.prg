@@ -43,11 +43,11 @@ STATIC FUNCTION OpenFiles()
 
    BEGIN SEQUENCE
 
-   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+   SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
-   SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
+   SET ADSINDEX TO ( cPatEmp() + "ArtCodebar.Cdx" ) ADDITIVE
 
    lOpenFiles  := .t.
 
@@ -102,9 +102,9 @@ FUNCTION ArtCodebar( oMenuItem, oWnd )
       Obtenemos el nivel de acceso---------------------------------------------
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -626,9 +626,9 @@ RETURN NIL
 
 Function EdtArtCodeBar( cCodArt, oBrw )
 
-   local nLevel   := nLevelUsr( "01024" )
+   local nLevel   := Auth():Level( "01024" )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if

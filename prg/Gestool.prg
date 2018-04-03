@@ -150,9 +150,11 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
       case ( !empty( appParamsMain() ) .and. !empty( appParamsSecond() ) .and. !empty( appParamsThird() ) )
 
-         Auth():getWhereUuid( appParamsMain() )
+         Auth():guardWhereUuid( appParamsMain() )
 
          setEmpresa( appParamsSecond() )
+
+         ApplicationLoad()
 
          controllerReportGallery( appParamsThird() )
 
@@ -218,25 +220,25 @@ STATIC FUNCTION controllerReportGallery( cInitOptions )
    do case
       case upper( cInitOptions ) == "ARTICULOS"
 
-         if validRunReport( "01118" )
+         if validRunReport( "reporting_articulos" )
             TFastVentasArticulos():New():Play()
-         end if 
+         endif
 
       case upper( cInitOptions ) == "CLIENTES"
 
-         if validRunReport( "01120" )
+         if validRunReport( "reporting_clientes" )
             TFastVentasClientes():New():Play()
-         end if 
+         endif
 
       case upper( cInitOptions ) == "PROVEEDORES"
 
-         if validRunReport( "01121" )
+         if validRunReport( "reporting_proveedores" )
             TFastComprasProveedores():New():Play()
          end if 
 
       case upper( cInitOptions ) == "PRODUCCION"
 
-         if validRunReport( "01123" )
+         if validRunReport( "reporting_produccion" )
             TFastProduccion():New():Play()
          end if 
 
@@ -624,7 +626,7 @@ STATIC FUNCTION lTctInitCheck( lDir, oMessage, oProgress )
 
       oMsgText( 'Inicializamos las clases de la aplicación' )
 
-      InitClasses()
+      Application()
 
       // Comprobamos q exista al menos un almacen---------------------------------
 
@@ -1057,9 +1059,9 @@ FUNCTION StartMainTablet( oGridTree )
 
    oGridTree:Add( "Empresa : "      + uFieldEmpresa( "CodEmp" ) + "-" + uFieldEmpresa( "cNombre" ) )
    oGridTree:Add( "Usuario : "      + rtrim( oUser():cNombre() ) )
-   oGridTree:Add( "Delegación : "   + rtrim( oUser():cDelegacion() ) )
-   oGridTree:Add( "Caja : "         + oUser():cCaja() )
-   oGridTree:Add( "Almacén : "      + rtrim( oUser():cAlmacen() ) + "-" + RetAlmacen( oUser():cAlmacen() ) )
+   oGridTree:Add( "Delegación : "   + rtrim( Application():CodigoDelegacion() ) )
+   oGridTree:Add( "Caja : "         + Application():CodigoCaja() )
+   oGridTree:Add( "Almacén : "      + rtrim( Application():codigoAlmacen() ) + "-" + RetAlmacen( Application():codigoAlmacen() ) )
    oGridTree:Add( "Agente : "       + rtrim( cCodigoAgente() ) + "-" + alltrim( RetNbrAge( cCodigoAgente() ) ) )
    oGridTree:Add( "Sesión : "       + alltrim( Transform( cCurSesion(), "######" ) ) )
 
@@ -1097,80 +1099,6 @@ RETURN ( by( nRow ) )
 Function mainTest()
 
 Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION orderTest()
-
-    local oWnd, oBrw, oCol
-    local oDb, oStmt, oRS // Objetos de HDO
-
-    oStmt   := getSQLDatabase():query( "SELECT * FROM etiquetas ORDER BY id" )
-   
-    oRS     := oStmt:fetchRowSet()
-
-    DEFINE WINDOW oWnd TITLE "Testing HDO - Fivewin"
-
-      oBrw  := TXBrowse():New()
-      
-         oCol := oBrw:AddCol()
-         oCol:nWidth   := 50
-         oCol:bStrData := { || oRS:FieldGet( 1 ) }
-         oCol:cHeader  := oRS:FieldName( 1 )
-
-         oCol := oBrw:AddCol()
-         oCol:nWidth   := 250
-         oCol:bStrData := { || oRS:FieldGet( 2 ) }
-         oCol:cHeader  := oRS:FieldName( 2 )
-
-         oCol := oBrw:AddCol()
-         oCol:nWidth   := 50
-         oCol:bStrData := { || oRS:FieldGet( 3 ) }
-         oCol:cHeader  := oRS:FieldName( 3 )
-
-         oCol := oBrw:AddCol()
-         oCol:nWidth   := 50
-         oCol:bStrData := { || oRS:FieldGet( 4 ) }
-         oCol:cHeader  := oRS:FieldName( 4 )
-
-      // Asignamos los codeblock de movimiento
-      
-      MySetBrowse( oBrw, oRS )
-
-      oWnd:oClient  := oBrw
-
-      oBrw:CreateFromCode()
-   
-    ACTIVATE WINDOW oWnd ON INIT ( oBrw:Refresh() )
-
-    oRS:free()
-    oStmt:free()
-    
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-// Asigna los codeblock de movimiento a un Browse
-
-STATIC FUNCTION MySetBrowse( oBrw, oRS )
-
-   oBrw:lAutoSort := .f.
-    oBrw:nDataType := DATATYPE_USER
-    oBrw:bGoTop := {|| oRS:GoTop() }
-    oBrw:bGoBottom := {|| oRS:GoBottom() }
-    oBrw:bSkip := {| n | oRS:Skipper( n ) }
-    oBrw:bBof := {|| oRS:Bof() }
-    oBrw:bEof := {|| oRS:Eof() }
-    oBrw:bKeyCount := {|| oRS:RecCount() }
-    oBrw:bKeyNo := {| n | if( n == nil, oRS:RecNo(), oRS:GoTo( n ) ) }
-    oBrw:bBookMark := oBrw:bKeyNo
-
-   if oBrw:oVScroll() != nil
-      oBrw:oVscroll():SetRange( 1, oRS:RecCount() )
-   endif
-
-   oBrw:lFastEdit := .t.
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

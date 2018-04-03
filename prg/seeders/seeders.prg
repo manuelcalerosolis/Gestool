@@ -8,10 +8,17 @@ CLASS Seeders
 
    DATA oMsg
 
+   DATA hConfig
+   DATA cStmProvincias
+   DATA cStmCodigosPostales
+
    METHOD New()
 
    METHOD runSeederDatos()
    METHOD runSeederEmpresa()
+
+   METHOD getFullFileProvincias()            INLINE ( cPatConfig() + "insertprovincias.sql" )
+   METHOD getFullFileCodigosPostales()       INLINE ( cPatConfig() + "insertcodigospostales.sql" )
 
    METHOD getInsertStatement( hCampos, cDataBaseName )
 
@@ -36,6 +43,12 @@ CLASS Seeders
    METHOD SeederMovimientosAlmacenSeries()
    METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer )
 
+   METHOD SeederProvincias()
+   METHOD SeederCodigosPostales()
+
+   METHOD SeederLenguajes()
+   METHOD getStatementLenguajes( dbfLenguajes )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -50,14 +63,23 @@ RETURN ( self )
 
 METHOD runSeederDatos()
 
-   ::oMsg:SetText( "Datos: Ejecutando seeder de usuarios" )
+   /*::oMsg:SetText( "Datos: Ejecutando seeder de usuarios" )
    ::SeederUsuarios()
 
    ::oMsg:SetText( "Datos: Ejecutando seeder de situaciones" )
    ::SeederSituaciones()
 
    ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de impresoras" )
-   ::SeederTiposImpresoras()
+   ::SeederTiposImpresoras()*/
+
+   //::oMsg:SetText( "Datos: Ejecutando provincias" )
+   //::SeederProvincias()
+
+   //::oMsg:SetText( "Datos: Ejecutando códigos postales" )
+   //::SeederCodigosPostales()
+
+   ::oMsg:SetText( "Datos: Ejecutando lenguajes" )
+   ::SeederLenguajes()
 
 RETURN ( self )
 
@@ -65,7 +87,7 @@ RETURN ( self )
 
 METHOD runSeederEmpresa()
 
-   SincronizaRemesasMovimientosAlmacen()
+   /*SincronizaRemesasMovimientosAlmacen()
 
    ::oMsg:SetText( "Ejecutando seeder de cabeceras de movimientos de almacén" )
    ::SeederMovimientosAlmacen()
@@ -74,7 +96,7 @@ METHOD runSeederEmpresa()
    ::SeederMovimientosAlmacenLineas()
 
    ::oMsg:SetText( "Ejecutando seeder de números de serie de lineas de movimientos de almacén" )
-   ::SeederMovimientosAlmacenSeries()
+   ::SeederMovimientosAlmacenSeries()*/
 
    ::oMsg:SetText( "Seeders finalizados" )
 
@@ -545,5 +567,99 @@ STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
    CLOSE ( dbfMovSer )
 
 RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederLenguajes()
+
+   local cPath       := cPatDat( .t. )
+   local dbfLenguajes
+
+   if ( file( cPath + "LENGUAJE.old" ) )
+      RETURN ( self )
+   end if
+
+   if !( file( cPath + "LENGUAJE.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\LENGUAJE.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "LENGUAJE.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "LENGUAJE", @dbfLenguajes ) )
+   ( dbfLenguajes )->( ordsetfocus(0) )
+   
+   ( dbfLenguajes )->( dbgotop() )
+   while !( dbfLenguajes )->( eof() )
+
+      getSQLDatabase():Exec( ::getStatementLenguajes( dbfLenguajes ) )
+
+      ( dbfLenguajes )->( dbSkip() )
+
+   end while
+
+   if dbfLenguajes != nil
+      ( dbfLenguajes )->( dbCloseArea() )
+   end if
+
+   frename( cPath + "LENGUAJE.dbf", cPath + "LENGUAJE.old" )
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementLenguajes( dbfLenguajes )
+
+   local hCampos        := { "uuid" => quoted( win_uuidcreatestring() ),;
+                             "codigo" => quoted( ( dbfLenguajes )->cCodLen ),;
+                             "nombre"=> quoted( ( dbfLenguajes )->cNomLen ) }
+
+RETURN ( ::getInsertStatement( hCampos, "lenguajes" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederProvincias()
+
+   if !file( ::getFullFileProvincias() )
+      ::oMsg:SetText( "Fichero " + ::getFullFileProvincias() + " no encontrado" )
+      RETURN ( Self )
+   end if 
+
+   ::cStmProvincias                    := memoread( ::getFullFileProvincias() )
+
+   ::oMsg:SetText( "Fichero " + ::getFullFileProvincias() + " cargado correctamente" )
+
+   if Empty( ::cStmProvincias )
+      ::oMsg:SetText( "No hay provincias a importar" )
+      return ( self )
+   end if
+
+   ::oMsg:SetText( "Importando provincias" )
+
+   getSQLDatabase():Exec( ::cStmProvincias )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederCodigosPostales()
+
+   if !file( ::getFullFileCodigosPostales() )
+      ::oMsg:SetText( "Fichero " + ::getFullFileCodigosPostales() + " no encontrado" )
+      RETURN ( Self )
+   end if 
+
+   ::cStmCodigosPostales               := memoread( ::getFullFileCodigosPostales() )
+
+   ::oMsg:SetText( "Fichero " + ::getFullFileCodigosPostales() + " cargado correctamente" )
+
+   if Empty( ::cStmCodigosPostales )
+      ::oMsg:SetText( "No hay códigos postales a importar" )
+      return ( self )
+   end if
+
+   ::oMsg:SetText( "Importando códigos postales" )
+
+   getSQLDatabase():Exec( ::cStmCodigosPostales )
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//

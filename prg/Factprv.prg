@@ -562,7 +562,7 @@ STATIC FUNCTION OpenFiles( lExt )
       // Limitaciones de cajero y cajas--------------------------------------------------------
 
       if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
-         cFiltroUsuario       := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario       := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
       end if
 
       EnableAcceso()
@@ -666,8 +666,8 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
    Obtenemos el nivel de acceso
    */
 
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel               := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return .f.
    end if
@@ -1264,8 +1264,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    do case
    case nMode == APPD_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
@@ -1274,12 +1274,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       aTmp[ _CTURFAC ]     := cCurSesion()
       aTmp[ _CDIVFAC ]     := cDivEmp()
       aTmp[ _NVDVFAC ]     := nChgDiv( aTmp[ _CDIVFAC ], D():Divisas( nView ) )
-      aTmp[ _CCODALM ]     := oUser():cAlmacen()
-      aTmp[ _CCODCAJ ]     := oUser():cCaja()
+      aTmp[ _CCODALM ]     := Application():codigoAlmacen()
+      aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
       aTmp[ _LSNDDOC ]     := .t.
       aTmp[ _CCODPRO ]     := cProCnt()
       aTmp[ _CCODUSR ]     := Auth():Codigo()
-      aTmp[ _CCODDLG ]     := oUser():cDelegacion()
+      aTmp[ _CCODDLG ]     := Application():CodigoDelegacion()
       aTmp[ _DFECENT ]     := Ctod( "" )
       aTmp[ _DFECIMP ]     := Ctod( "" )
       aTmp[ _TFECFAC ]     := getSysTime()
@@ -1294,13 +1294,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
    case nMode == DUPL_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURFAC ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _LSNDDOC ]  := .t.
       aTmp[ _DFECENT ]  := Ctod( "" )
       aTmp[ _DFECIMP ]  := Ctod( "" )
@@ -2525,17 +2525,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
       REDEFINE CHECKBOX aGet[ _LIMPRIMIDO ] VAR aTmp[ _LIMPRIMIDO ] ;
          ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _DFECIMP ] VAR aTmp[ _DFECIMP ] ;
          ID       121 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CHORIMP ] VAR aTmp[ _CHORIMP ] ;
          ID       122 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -10609,17 +10609,17 @@ Function SynFacPrv( cPath )
    dbUseArea( .t., cDriver(), cPath + "FacPrvP.DBF", cCheckArea( "FacPrvP", @dbfFacPrvP ), .f. )
    if !lAIS(); ordListAdd( cPath + "FacPrvP.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "PROVART.DBF", cCheckArea( "PROVART", @dbfArtPrv ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "PROVART.DBF", cCheckArea( "PROVART", @dbfArtPrv ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "ARTDIV.DBF", cCheckArea( "ARTDIV", @cArtDiv ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "ARTDIV.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "ARTDIV.DBF", cCheckArea( "ARTDIV", @cArtDiv ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "ARTDIV.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @dbfIva ), .t. )
    if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end
@@ -11354,7 +11354,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
 
                      cSerie      := ( tmpFacPrvT )->cSerie
                      nNumero     := nNewDoc( ( tmpFacPrvT )->cSerie, cFacPrvT, "NFACPRV", , dbfCount )
-                     cSufijo     := oUser():cDelegacion()
+                     cSufijo     := Application():CodigoDelegacion()
 
                      ( cFacPrvT)->( dbAppend() )
 
@@ -11364,8 +11364,8 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                      ( cFacPrvT)->CTURFAC     := cCurSesion()
                      ( cFacPrvT)->DFECFAC     := ( tmpFacPrvT )->dFecFac
                      ( cFacPrvT)->CCODPRV     := ( tmpFacPrvT )->cCodCli
-                     ( cFacPrvT)->CCODALM     := oUser():cAlmacen()
-                     ( cFacPrvT)->CCODCAJ     := oUser():cCaja()
+                     ( cFacPrvT)->CCODALM     := Application():codigoAlmacen()
+                     ( cFacPrvT)->CCODCAJ     := Application():CodigoCaja()
                      ( cFacPrvT)->CNOMPRV     := ( tmpFacPrvT )->cNomCli
                      ( cFacPrvT)->CDIRPRV     := ( tmpFacPrvT )->cDirCli
                      ( cFacPrvT)->CPOBPRV     := ( tmpFacPrvT )->cPobCli
@@ -11397,7 +11397,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                      ( cFacPrvT)->nPctRet     := ( tmpFacPrvT )->nPctRet
                      ( cFacPrvT)->dFecChg     := GetSysDate()
                      ( cFacPrvT)->cTimChg     := Time()
-                     ( cFacPrvT)->cCodDlg     := oUser():cDelegacion()
+                     ( cFacPrvT)->cCodDlg     := Application():CodigoDelegacion()
                      ( cFacPrvT)->nRegIva     := ( tmpFacPrvT )->nRegIva
                      ( cFacPrvT)->nTotNet     := ( tmpFacPrvT )->nTotNet
                      ( cFacPrvT)->nTotIva     := ( tmpFacPrvT )->nTotIva
@@ -11484,7 +11484,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                            ( cFacPrvP )->cSufFac    := cSufijo
                            ( cFacPrvP )->nNumRec    := ( tmpFacPrvP )->nNumRec
                            ( cFacPrvP )->cTipRec    := ( tmpFacPrvP )->cTipRec
-                           ( cFacPrvP )->CCODCAJ    := oUser():cCaja()
+                           ( cFacPrvP )->CCODCAJ    := Application():CodigoCaja()
                            ( cFacPrvP )->CCODPRV    := ( tmpFacPrvT )->cCodCli
                            ( cFacPrvP )->cNomPrv    := ( tmpFacPrvP )->cNomCli
                            ( cFacPrvP )->DENTRADA   := ( tmpFacPrvP )->dEntrada
@@ -11620,11 +11620,11 @@ RETURN ( aDoc )
 
 Function AppFacPrv( cCodPrv, cCodArt, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_APPD ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -11661,11 +11661,11 @@ return ( bGen )
 
 FUNCTION EdtFacPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -11700,11 +11700,11 @@ RETURN NIL
 
 FUNCTION ZooFacPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -11739,11 +11739,11 @@ RETURN NIL
 
 FUNCTION DelFacPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -11777,11 +11777,11 @@ Return nil
 
 FUNCTION PrnFacPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -11816,11 +11816,11 @@ RETURN NIL
 
 FUNCTION VisFacPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if

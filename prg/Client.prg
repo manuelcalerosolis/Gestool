@@ -393,11 +393,11 @@ STATIC FUNCTION OpenFiles( lExt )
       Articulos-------------------------------------------------------------------
       */
 
-      USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfArtKit ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfArtKit ) )
+      SET ADSINDEX TO ( cPatEmp() + "ARTKIT.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @cAgente ) )
-      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @cAgente ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGENTES.CDX" ) ADDITIVE
 
       /*
       Otros Ficheros--------------------------------------------------------------
@@ -406,30 +406,30 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
       SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
+      SET ADSINDEX TO ( cPatEmp() + "FAMILIAS.CDX" ) ADDITIVE
 
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
-      SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
+      SET ADSINDEX TO ( cPatEmp() + "PRO.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfProL ) )
-      SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfProL ) )
+      SET ADSINDEX TO ( cPatEmp() + "TBLPRO.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
       SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
       SET TAG TO "CTIPO"
 
-      USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOfe ) )
-      SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOfe ) )
+      SET ADSINDEX TO ( cPatEmp() + "OFERTA.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTDIV.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
+      SET ADSINDEX TO ( cPatEmp() + "ARTDIV.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
-      SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
+      SET ADSINDEX TO ( cPatEmp() + "RUTA.CDX" ) ADDITIVE
 
       oBandera             := TBandera():New()
 
@@ -443,7 +443,7 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles        := .f.
       end if
 
-      oCtaRem              := TCtaRem():Create( cPatCli() )
+      oCtaRem              := TCtaRem():Create( cPatEmp() )
       if !oCtaRem:OpenFiles()
          lOpenFiles        := .f.
       end if
@@ -453,7 +453,7 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles        := .f.
       end if
 
-      oTrans               := TTrans():Create( cPatCli() )
+      oTrans               := TTrans():Create( cPatEmp() )
       if !oTrans:OpenFiles()
          lOpenFiles        := .f.
       end if
@@ -486,7 +486,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      oEnvases              := TFrasesPublicitarias():Create( cPatArt() )
+      oEnvases              := TFrasesPublicitarias():Create( cPatEmp() )
       if !oEnvases:OpenFiles()
          lOpenFiles        := .f.
       end if
@@ -639,9 +639,9 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       Obtenemos el nivel de acceso---------------------------------------------
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -4855,10 +4855,10 @@ Static Function StartEdtAtp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayV
 
    cValoresProp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2 )
 
-   if !lUsrMaster()
-      oBtnRen:Hide()
-   else
+   if ( SQLAjustableModel():getRolMostrarRentabilidad( Auth():rolUuid() ) )
       oBtnRen:Show()
+   else
+      oBtnRen:Hide()
    end if
 
    lChangeCostoParticular( aGet, aTmp, oCosto, nMode )
@@ -6174,11 +6174,11 @@ RETURN nVal2Change
 
 FUNCTION AppCli( lOpenBrowse )
 
-   local nLevel         := nLevelUsr( "01032" )
+   local nLevel         := Auth():Level( "01032" )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_APPD ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -6207,12 +6207,12 @@ RETURN .t.
 
 FUNCTION EdtCli( cCodCli, lOpenBrowse, nTabInicio )
 
-   local nLevel         := nLevelUsr( "01032" )
+   local nLevel         := Auth():Level( "01032" )
 
    DEFAULT lOpenBrowse  := .f.
    DEFAULT nTabInicio   := 1
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -6247,12 +6247,12 @@ RETURN .t.
 
 Function InfCliente( cCodCli, oBrw, lSatCli )
 
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local cArticulo   := ""
 
    DEFAULT lSatCli   := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -6756,7 +6756,7 @@ Return ( .f. )
 
 Function SynClient( cPath )
 
-   DEFAULT cPath     := cPatCli()
+   DEFAULT cPath     := cPatEmp()
 
    /*
    Abrimos los ficheros--------------------------------------------------------
@@ -8035,7 +8035,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
    local oCbxOrd
    local aCbxOrd     := { "Código", "Nombre", "NIF/CIF", "Población", "Provincia", "Código postal", "Teléfono", "Establecimiento", "Correo electrónico" }
    local cCbxOrd
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local oSayText
    local cSayText    := "Listado de clientes"
 
@@ -8316,7 +8316,7 @@ FUNCTION BrwEntidad( cCodCli, oDbf )
    local oCbxOrd
    local aCbxOrd     := { "Descripción del organismo" }
    local cCbxOrd
-   local nLevel      := nLevelUsr( "04012" )
+   local nLevel      := Auth():Level( "04012" )
    local oSayText
    local cSayText    := "Listado de entidades"
    local hash        := {}
@@ -8502,7 +8502,7 @@ RETURN ( nil )
 
 FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
 
-   DEFAULT cPath        := cPatCli()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT lAppend      := .f.
 
    assertClient( cPath )
@@ -8534,7 +8534,7 @@ FUNCTION rxClient( cPath, cDriver )
    local oError
    local oBlock
 
-   DEFAULT cPath     := cPatCli()
+   DEFAULT cPath     := cPatEmp()
    DEFAULT cDriver   := cDriver()
 
    assertClient( cPath )
@@ -9187,8 +9187,8 @@ FUNCTION RetClient( cCodCli, dbfClient )
    BEGIN SEQUENCE
 
    if Empty( dbfClient )
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+      SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -9245,8 +9245,8 @@ FUNCTION cClient( oGet, dbfCli, oGet2 )
    BEGIN SEQUENCE
 
    if Empty( dbfCli )
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
+      SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -11780,8 +11780,8 @@ FUNCTION cCtaBanCli( cCodCli, cDbfBanco )
    BEGIN SEQUENCE
 
    if Empty( cDbfBanco )
-      USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @cDbfBanco ) )
-      SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @cDbfBanco ) )
+      SET ADSINDEX TO ( cPatEmp() + "CliBnc.Cdx" ) ADDITIVE
       SET TAG TO CCODDEF
       lClose      := .t.
    else
@@ -11825,8 +11825,8 @@ FUNCTION cCliCta( cCodCli, dbfCli )
    BEGIN SEQUENCE
 
    if Empty( dbfCli )
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
+      SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -11864,8 +11864,8 @@ FUNCTION cCliCtaVta( cCodCli, dbfCli )
    BEGIN SEQUENCE
 
    if Empty( dbfCli )
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
+      SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
       lClose         := .t.
    end if
 
@@ -11903,8 +11903,8 @@ FUNCTION cBanco( cCodCli, dbfCli )
    BEGIN SEQUENCE
 
    if Empty( dbfCli )
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfCli ) )
+      SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -11976,7 +11976,7 @@ FUNCTION BrwBncCli( oGet, oPaisIBAN, oControlIBAN, oEntBnc, oSucBnc, oDigBnc, oC
    local oCbxOrd
    local aCbxOrd     := { "Nombre", "Cuenta" }
    local cCbxOrd     := "Nombre"
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local lClose      := .f.
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
@@ -11987,14 +11987,14 @@ FUNCTION BrwBncCli( oGet, oPaisIBAN, oControlIBAN, oEntBnc, oSucBnc, oDigBnc, oC
       return .t.
    end if
 
-   if !lExistTable( cPatCli() + "CliBnc.Dbf" )
+   if !lExistTable( cPatEmp() + "CliBnc.Dbf" )
       MsgStop( 'No existe el fichero de bancos' )
       Return .f.
    end if
 
    if Empty( cDbfBancos )
-      USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @cDbfBancos ) )
-      SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @cDbfBancos ) )
+      SET ADSINDEX TO ( cPatEmp() + "CliBnc.Cdx" ) ADDITIVE
       lClose         := .t.
    end if
 
@@ -12148,8 +12148,8 @@ Function cClientCuenta( cCliente, dbfBncCli, lIBAN )
    DEFAULT lIBAN     := .t.
 
    if Empty( dbfBncCli )
-      USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfBncCli ) )
-      SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfBncCli ) )
+      SET ADSINDEX TO ( cPatEmp() + "CliBnc.Cdx" ) ADDITIVE
       lCloseBnc      := .t.
    end if
 

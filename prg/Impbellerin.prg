@@ -30,9 +30,9 @@ METHOD New( oMenuItem, oWnd )
 
    DEFAULT oMenuItem    := "01102"
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( nil )
    end if
@@ -53,7 +53,7 @@ METHOD lOpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfCli     FILE "CLIENT.DBF"     PATH ( cPatCli() )  VIA ( cLocalDriver() ) SHARED INDEX  "CLIENT.CDX"
+   DATABASE NEW ::oDbfCli     FILE "CLIENT.DBF"     PATH ( cPatEmp() )  VIA ( cLocalDriver() ) SHARED INDEX  "CLIENT.CDX"
 
    RECOVER
 

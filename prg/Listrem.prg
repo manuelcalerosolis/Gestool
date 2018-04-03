@@ -71,11 +71,11 @@ METHOD OpenFiles()
    ::oFacCliP := TDataCenter():oFacCliP()
    ::oFacCliP:OrdSetFocus( "nNumRem" )
 
-   DATABASE NEW ::oDbfCli PATH ( cPatCli() )    FILE "CLIENT.DBF"    VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+   DATABASE NEW ::oDbfCli PATH ( cPatEmp() )    FILE "CLIENT.DBF"    VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
    DATABASE NEW ::oDbfDiv PATH ( cPatDat() )    FILE "DIVISAS.DBF"   VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-   DATABASE NEW ::oDbfCta PATH ( cPatCli() )    FILE "CTAREM.DBF"    VIA ( cDriver() ) SHARED INDEX "CTAREM.CDX"
+   DATABASE NEW ::oDbfCta PATH ( cPatEmp() )    FILE "CTAREM.DBF"    VIA ( cDriver() ) SHARED INDEX "CTAREM.CDX"
 
    RECOVER
 

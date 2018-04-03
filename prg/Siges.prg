@@ -69,9 +69,9 @@ METHOD New( oMenuItem, oWnd )
 
    DEFAULT oMenuItem    := "01073"
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( nil )
    end if
@@ -118,21 +118,21 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfDiv     FILE "DIVISAS.DBF"   PATH ( cPatDat() )  VIA ( cDriver() ) SHARED INDEX  "DIVISAS.CDX"
 
-   DATABASE NEW ::oDbfClient  FILE "CLIENT.DBF"    PATH ( cPatCli() )  VIA ( cDriver() ) SHARED INDEX  "CLIENT.CDX"
+   DATABASE NEW ::oDbfClient  FILE "CLIENT.DBF"    PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfArt     FILE "ARTICULO.DBF"  PATH ( cPatArt() )  VIA ( cDriver() ) SHARED INDEX  "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt     FILE "ARTICULO.DBF"  PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "ARTICULO.CDX"
 
    DATABASE NEW ::oDbfIva     FILE "TIVA.DBF"      PATH ( cPatDat() )  VIA ( cDriver() ) SHARED INDEX  "TIVA.CDX"
 
-   DATABASE NEW ::oDbfPrv     FILE "PROVEE.DBF"    PATH ( cPatPrv() )  VIA ( cDriver() ) SHARED INDEX  "PROVEE.CDX"
+   DATABASE NEW ::oDbfPrv     FILE "PROVEE.DBF"    PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "PROVEE.CDX"
 
-   DATABASE NEW ::oDbfPrvArt  FILE "PROVART.DBF"   PATH ( cPatArt() )  VIA ( cDriver() ) SHARED INDEX  "PROVART.CDX"
+   DATABASE NEW ::oDbfPrvArt  FILE "PROVART.DBF"   PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "PROVART.CDX"
 
    DATABASE NEW ::oTikCliT    FILE "TIKET.DBF"     PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "TIKET.CDX"
 
    DATABASE NEW ::oTikCliL    FILE "TIKEL.DBF"     PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "TIKEL.CDX"
 
-   DATABASE NEW ::oDbfFam     FILE "FAMILIAS.DBF"  PATH ( cPatArt() )  VIA ( cDriver() ) SHARED INDEX  "FAMILIAS.CDX"
+   DATABASE NEW ::oDbfFam     FILE "FAMILIAS.DBF"  PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "FAMILIAS.CDX"
 
    RECOVER
 
@@ -359,17 +359,17 @@ METHOD ProccesLine( cLine )
             ::oAlbCliT:dFecCre      := Ctod( SubStr( cLine, 157, 2 ) + "-" + SubStr( cLine, 155, 2 ) + "-" + SubStr( cLine, 151, 4 ) )
             ::oAlbCliT:cTimCre      := SubStr( cLine, 159, 2 ) + ":" + SubStr( cLine, 161, 2 )
             ::oAlbCliT:cTurAlb      := cCurSesion()
-            ::oAlbCliT:cCodAlm      := oUser():cAlmacen()
+            ::oAlbCliT:cCodAlm      := Application():codigoAlmacen()
             ::oAlbCliT:cDivAlb      := cDivEmp()
             ::oAlbCliT:cCodPago     := cDefFpg()
-            ::oAlbCliT:cCodCaj      := oUser():cCaja()
+            ::oAlbCliT:cCodCaj      := Application():CodigoCaja()
             ::oAlbCliT:cCodUsr      := Auth():Codigo()
             ::oAlbCliT:nVdvAlb      := nChgDiv( cDivEmp(), ::oDbfDiv )
             ::oAlbCliT:lFacturado   := .f.
             ::oAlbCliT:lSndDoc      := .t.
             ::oAlbCliT:dFecEnv      := Ctod( "" )
             ::oAlbCliT:dFecImp      := Ctod( "" )
-            ::oAlbCliT:cCodDlg      := oUser():cDelegacion()
+            ::oAlbCliT:cCodDlg      := Application():CodigoDelegacion()
             ::oAlbCliT:lIvaInc      := .t.
 
             if SubStr( cLine, 58, 1 )  == "J"
@@ -446,7 +446,7 @@ METHOD ProccesLine( cLine )
          ::oAlbCliL:lControl     := .f.
          ::oAlbCliL:lTotLin      := .f.
          ::oAlbCliL:dFecha       := Ctod( SubStr( cLine, 157, 2 ) + "-" + SubStr( cLine, 155, 2 ) + "-" + SubStr( cLine, 151, 4 ) )
-         ::oAlbCliL:cAlmLin      := oUser():cAlmacen()
+         ::oAlbCliL:cAlmLin      := Application():codigoAlmacen()
          ::oAlbCliL:lIvaLin      := .t.
          ::oAlbCliL:nIva         := nIvaCodTer( SubStr( cLine, 57, 1 ), ::oDbfIva:cAlias )
 
@@ -487,13 +487,13 @@ METHOD ProccesLine( cLine )
             ::oAlbPrvT:nNumAlb    := cNum
             ::oAlbPrvT:cSufAlb    := RetSufEmp()
             ::oAlbPrvT:cTurAlb    := cCurSesion()
-            ::oAlbPrvT:cCodAlm    := oUser():cAlmacen()
-            ::oAlbPrvT:cCodCaj    := oUser():cCaja()
+            ::oAlbPrvT:cCodAlm    := Application():codigoAlmacen()
+            ::oAlbPrvT:cCodCaj    := Application():CodigoCaja()
             ::oAlbPrvT:cDivAlb    := cDivEmp()
             ::oAlbPrvT:nVdvAlb    := nChgDiv( cDivEmp(), ::oDbfDiv )
             ::oAlbPrvT:lSndDoc    := .t.
             ::oAlbPrvT:cCodUsr    := Auth():Codigo()
-            ::oAlbPrvT:cCodDlg    := oUser():cDelegacion()
+            ::oAlbPrvT:cCodDlg    := Application():CodigoDelegacion()
             ::oAlbPrvT:cCodPgo    := cDefFpg()
             ::oAlbPrvT:lFacturado := .f.
             ::oAlbPrvT:dFecAlb    := Ctod( SubStr( cLine, 76, 2 ) + "-" + SubStr( cLine, 74, 2 ) + "-" + SubStr( cLine, 70, 4 ) )
@@ -555,7 +555,7 @@ METHOD ProccesLine( cLine )
          ::oAlbPrvL:nCanEnt      := 1
          ::oAlbPrvL:nCanPed      := 1
          ::oAlbPrvL:lIvaLin      := .t.
-         ::oAlbPrvL:cAlmLin      := oUser():cAlmacen()
+         ::oAlbPrvL:cAlmLin      := Application():codigoAlmacen()
          ::oAlbPrvL:lControl     := .f.
          ::oAlbPrvL:cNumPed      := SubStr( cLine, 22, 10 )
          ::oAlbPrvL:nPreDiv      := Val( SubStr( cLine, 61, 6 ) + "." + SubStr( cLine, 67, 3 ) )
@@ -709,12 +709,12 @@ METHOD ProccesLine( cLine )
             ::oTikCliT:dFecTik      := Ctod( SubStr( cLine, 157, 2 ) + "-" + SubStr( cLine, 155, 2 ) + "-" + SubStr( cLine, 151, 4 ) )
             ::oTikCliT:cHorTik      := SubStr( cLine, 159, 2 ) + ":" + SubStr( cLine, 161, 2 )
             ::oTikCliT:cCcjTik      := Auth():Codigo()
-            ::oTikCliT:cNcjTik      := oUser():cCaja()
-            ::oTikCliT:cAlmTik      := oUser():cAlmacen()
+            ::oTikCliT:cNcjTik      := Application():CodigoCaja()
+            ::oTikCliT:cAlmTik      := Application():codigoAlmacen()
             ::oTikCliT:cFpgTik      := cDefFpg()
             ::oTikCliT:cDivTik      := cDivEmp()
             ::oTikCliT:nVdvTik      := nChgDiv( cDivEmp(), ::oDbfDiv )
-            ::oTikCliT:cCodDlg      := oUser():cDelegacion()
+            ::oTikCliT:cCodDlg      := Application():CodigoDelegacion()
             ::oTikCliT:dFecCre      := Ctod( SubStr( cLine, 157, 2 ) + "-" + SubStr( cLine, 155, 2 ) + "-" + SubStr( cLine, 151, 4 ) )
             ::oTikCliT:cTimCre      := SubStr( cLine, 159, 2 ) + ":" + SubStr( cLine, 161, 2 )
             ::oTikCliT:nTarifa      := 1
@@ -776,7 +776,7 @@ METHOD ProccesLine( cLine )
          ::oTikCliL:cNumTil         := SubStr( cLine, 29, 10 )
          ::oTikCliL:cSufTil         := RetSufEmp()
          ::oTikCliL:cCbaTil         := Padr( SubStr( cLine, 6, 8 ), 18 )
-         ::oTikCliL:cAlmLin         := oUser():cAlmacen()
+         ::oTikCliL:cAlmLin         := Application():codigoAlmacen()
          ::oTikCliL:lControl        := .f.
          ::oTikCliL:lOfeTil         := .f.
          ::oTikCliL:lFreTil         := .f.

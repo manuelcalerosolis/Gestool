@@ -52,10 +52,10 @@ Method OpenFiles( cPatEmp )
 
    BEGIN SEQUENCE
 
-   USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
-   SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
+   SET ADSINDEX TO ( cPatEmp() + "RUTA.CDX" ) ADDITIVE
 
-   oTipArt           := TTipArt():New( cPatArt() )
+   oTipArt           := TTipArt():New( cPatEmp() )
    oTipArt:OpenFiles()
 
    RECOVER
@@ -90,8 +90,8 @@ Method Activate( oMenuItem, oWnd )
    local cSayPgo
    local oStru
 
-   local nLevel      := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   local nLevel      := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return ( nil )
    end if
@@ -611,8 +611,8 @@ FUNCTION EdmCli( cCodRut, cPathTo, oStru )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+   SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
    oStru:oMetUno:cText   := "Clientes"
    oStru:oMetUno:SetTotal( ( dbfClient )->( LastRec() ) )
@@ -719,8 +719,8 @@ FUNCTION EdmRutCli( cCodRut, cPathTo, oStru )
    Abrimos las bases de datos
    */
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+   SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
    oStru:oMetUno:cText   := "Rutas"
    oStru:oMetUno:SetTotal( ( dbfClient )->( LastRec() ) )

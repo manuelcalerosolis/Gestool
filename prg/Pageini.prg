@@ -120,13 +120,13 @@ FUNCTION PageIni( oMenuItem, oWnd )
    local oError
    local oBlock
 
-   DEFAULT  oMenuItem      := "01004"
+   DEFAULT  oMenuItem      := "gestion_de_cartera"
    DEFAULT  oWnd           := oWnd()
 
    // Obtenemos el nivel de acceso
 
-   nLevel                  := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel                  := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if
@@ -236,8 +236,8 @@ FUNCTION PageIniClient( View )
 
    // Obtenemos el nivel de acceso---------------------------------------------
 
-   nLevel                  := nLevelUsr( "01004" )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel                  := Auth():Level( "gestion_de_cartera" )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if

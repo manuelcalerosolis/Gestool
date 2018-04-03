@@ -456,8 +456,8 @@ STATIC FUNCTION lOpenFiles( cPatEmp, lExt )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      USE ( cPatCli() + "CLIENT.DBF" )      NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "CLIENT.DBF" )      NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+      SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "FPAGO.DBF" )       NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
       SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
@@ -734,7 +734,7 @@ Static Function lFinalizar( oCodCli, oEntrega, oCambio, oCodFPago, oDlg, lPrint 
 
       ( dbfTikCliC )->nNumPgo := nNumPgo
       ( dbfTikCliC )->cSufPgo := RetSufEmp()
-      ( dbfTikCliC )->cCodCaj := oUser():cCaja()
+      ( dbfTikCliC )->cCodCaj := Application():CodigoCaja()
       ( dbfTikCliC )->dPgoTik := GetSysDate()
       ( dbfTikCliC )->cFpgPgo := cCodPgo
       ( dbfTikCliC )->nImpPgo := nEntrega
@@ -774,7 +774,7 @@ Static Function lFinalizar( oCodCli, oEntrega, oCambio, oCodFPago, oDlg, lPrint 
                ( dbfTikCliP )->cCtaRec    := cCtaCob()
                ( dbfTikCliP )->cTurPgo    := cCurSesion()
                ( dbfTikCliP )->dPgoTik    := GetSysDate()
-               ( dbfTikCliP )->cCodCaj    := oUser():cCaja()
+               ( dbfTikCliP )->cCodCaj    := Application():CodigoCaja()
                ( dbfTikCliP )->cFpgPgo    := cCodPgo
                ( dbfTikCliP )->cSerTik    := ( dbfTmpTik )->cSerTik
                ( dbfTikCliP )->cNumTik    := ( dbfTmpTik )->cNumTik
@@ -822,7 +822,7 @@ Static Function lFinalizar( oCodCli, oEntrega, oCambio, oCodFPago, oDlg, lPrint 
                ( dbfTikCliP )->cCtaRec    := cCtaCob()
                ( dbfTikCliP )->cTurPgo    := cCurSesion()
                ( dbfTikCliP )->dPgoTik    := GetSysDate()
-               ( dbfTikCliP )->cCodCaj    := oUser():cCaja()
+               ( dbfTikCliP )->cCodCaj    := Application():CodigoCaja()
                ( dbfTikCliP )->cFpgPgo    := cCodPgo
                ( dbfTikCliP )->cSerTik    := ( dbfTmpTik )->cSerTik
                ( dbfTikCliP )->cNumTik    := ( dbfTmpTik )->cNumTik
@@ -978,8 +978,8 @@ STATIC FUNCTION PrintPagoCliente( lPrev, cCodDoc, cPrinter, nCopies )
 
    DEFAULT lPrev     := .f.
    DEFAULT cCodDoc   := cFormatoPagoEnCaja( ( dbfTikCliC )->cCodCaj, dbfCajT )
-   DEFAULT cPrinter  := cPrinterMetaPago( oUser():cCaja(), dbfCajT )
-   DEFAULT nCopies   := nCopiasMetaPagosEnCaja( oUser():cCaja(), dbfCajT )
+   DEFAULT cPrinter  := cPrinterMetaPago( Application():CodigoCaja(), dbfCajT )
+   DEFAULT nCopies   := nCopiasMetaPagosEnCaja( Application():CodigoCaja(), dbfCajT )
 
    if !Empty( cPgoInUse )
       ( dbfTikCLiC )->( dbGoTop() )

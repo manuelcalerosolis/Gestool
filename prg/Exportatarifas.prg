@@ -107,7 +107,7 @@ METHOD New( oMenuItem, oWndParent ) CLASS TExportaTarifas
    DEFAULT oMenuItem    := "01112"
    DEFAULT oWndParent   := GetWndFrame()
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
    if oWndParent != nil
       oWndParent:CloseAll()
@@ -121,7 +121,7 @@ RETURN Self
 
 METHOD Play( uParam ) CLASS TExportaTarifas
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if

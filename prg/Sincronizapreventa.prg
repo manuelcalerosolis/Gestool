@@ -33,7 +33,7 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-      DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArt PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
 
@@ -79,8 +79,8 @@ METHOD Activate( oMenuItem, oWnd )
 
    //Nivel de usuario---------------------------------------------------------
 
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel               := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if

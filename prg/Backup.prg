@@ -99,45 +99,45 @@ CLASS TBackup
 
    DATA  aBackupFiles
 
-   Method Create( cPath )
+   METHOD Create( cPath )
 
-   Method New( oMenuItem, oWnd )
+   METHOD New( oMenuItem, oWnd )
 
-   Method DefineFiles()
+   METHOD DefineFiles()
 
-   Method OpenFiles()
-   Method OpenService( lExclusive, cPath )   INLINE ( ::OpenFiles( lExclusive, cPath ))
+   METHOD OpenFiles()
+   METHOD OpenService( lExclusive, cPath )   INLINE ( ::OpenFiles( lExclusive, cPath ))
 
-   Method BuildFiles( cPath )                INLINE ( ::DefineFiles( cPath ):Create() )
+   METHOD BuildFiles( cPath )                INLINE ( ::DefineFiles( cPath ):Create() )
 
-   Method CloseFiles()
+   METHOD CloseFiles()
 
-   Method MuestraDialogo()
+   METHOD MuestraDialogo()
 
-   Method BotonSiguiente()
-   Method BotonAnterior()
+   METHOD BotonSiguiente()
+   METHOD BotonAnterior()
 
-   Method ZipFiles()
+   METHOD ZipFiles()
 
-   Method doBackup( aFiles, cDriveTo )
-   Method doRestore( cFileFrom )
+   METHOD doBackup( aFiles, cDriveTo )
+   METHOD doRestore( cFileFrom )
 
-   Method doFtp( aFiles )
+   METHOD doFtp( aFiles )
 
-   Method SaveToDisk( cFile )
-   Method RestoreFromDisk( cFile )
+   METHOD SaveToDisk( cFile )
+   METHOD RestoreFromDisk( cFile )
 
-   Method cGetFilesToRestore()
+   METHOD cGetFilesToRestore()
 
-   Method GetZipFiles()
+   METHOD GetZipFiles()
 
-   Method RestoreZipFiles()
+   METHOD RestoreZipFiles()
 
-   Method CleanDisk( cDriveTo )
+   METHOD CleanDisk( cDriveTo )
 
-   Method CargarPreferencias()
+   METHOD CargarPreferencias()
 
-   Method GuardarPreferencias()
+   METHOD GuardarPreferencias()
 
    METHOD SyncAllDbf()
 
@@ -153,7 +153,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method New( oMenuItem, oWnd )
+METHOD New( oMenuItem, oWnd )
 
    DEFAULT oWnd      := oWnd()
    DEFAULT oMenuItem := "01075"
@@ -167,15 +167,15 @@ Method New( oMenuItem, oWnd )
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
 
-   ::nLevel          := nLevelUsr( oMenuItem )
-   if nAnd( ::nLevel, 1 ) != 0
+   ::nLevel          := Auth():Level( oMenuItem )
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
-      return ( nil )
+      RETURN ( nil )
    end if
 
    if nUsrInUse() > 1
       msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return ( nil )
+      RETURN ( nil )
    end if
 
    ::DefineFiles()
@@ -186,11 +186,11 @@ Method New( oMenuItem, oWnd )
 
    ::CloseFiles()
 
-return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method OpenFiles( lExclusive, cPath)
+METHOD OpenFiles( lExclusive, cPath)
 
    local lOpen          := .t.
    local oError
@@ -219,11 +219,11 @@ Method OpenFiles( lExclusive, cPath)
 
    ErrorBlock( oBlock )
 
-Return ( lOpen )
+RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-Method CloseFiles()
+METHOD CloseFiles()
 
    local oBlock   := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    local lOpen    := .T.
@@ -250,7 +250,7 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-Method MuestraDialogo()
+METHOD MuestraDialogo()
 
    local oBmp
 
@@ -320,7 +320,7 @@ Method MuestraDialogo()
    ::oBrwSave:CreateFromResource( 200 )
 
    with object ( ::oBrwSave:aCols[ 1 ] )
-      :cHeader       := "Se. Seleccionada"
+      :cHeader       := ""
       :bStrData      := {|| "" }
       :bEditValue    := {|| ::aEmp[ ::oBrwSave:nArrayAt, 1 ] }
       :nWidth        := 20
@@ -569,7 +569,7 @@ RETURN ( Self )
 
 //-----------------------------------------------------------------------//
 
-Method CargarPreferencias()
+METHOD CargarPreferencias()
 
    local oIniApp                 := TIni():New( cIniAplication() )
 
@@ -586,11 +586,11 @@ Method CargarPreferencias()
    ::lInternet                   := oIniApp:Get( "Backup", "Internet",  .t. )
    ::lPassword                   := oIniApp:Get( "Backup", "Copia",     .t. )
 
-return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method GuardarPreferencias()
+METHOD GuardarPreferencias()
 
    local oIniApp                 := TIni():New( cIniAplication() )
 
@@ -608,14 +608,14 @@ Method GuardarPreferencias()
    oIniApp:Set( "Backup",  "Copia",             ::lPassword )
    oIniApp:Set( "Backup",  "PasswordCopia",     ::cPassword1 )
 
-return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 //
 //procesos a realizar al pulsar sobre siguiente de la ventana principal
 //
 
-Method BotonSiguiente()
+METHOD BotonSiguiente()
 
    local n
    local lSeleccionado
@@ -657,15 +657,15 @@ Method BotonSiguiente()
 
          if ::lPassword .and. ::cPassword1 != ::cPassword2
             msgStop( "Las contraseñas para las copias de seguridad, no coinciden", "Atención" )
-            Return ( Self )
+            RETURN ( Self )
          end if
 
          if !::lDir .and. !::lInternet
             msgStop( "Debe especificar al menos un destino para la copia", "Atención" )
-            Return ( Self )
+            RETURN ( Self )
          end if
 
-         if ( !::lDir ) .or. ( len( AllTrim( ::cDir ) ) > 0 )
+         if ( !::lDir ) .or. ( len( alltrim( ::cDir ) ) > 0 )
 
             ::oFld:GoNext()
             ::oBotonAnterior:Disable()
@@ -721,14 +721,14 @@ Method BotonSiguiente()
 
    end case
 
-return ( Self )
+RETURN ( Self )
 
 //-----------------------------------------------------------------------//
 //
 //procesos a realizar al pulsar sobre anterior de la ventana principal
 //
 
-Method BotonAnterior()
+METHOD BotonAnterior()
 
    do case
       case ::oFld:nOption == 1
@@ -762,11 +762,11 @@ Method BotonAnterior()
 
    end case
 
-return ( Self )
+RETURN ( Self )
 
 //-----------------------------------------------------------------------//
 
-Method ZipFiles()
+METHOD ZipFiles()
 
 	local n
    local nZip
@@ -778,7 +778,8 @@ Method ZipFiles()
    local aFil           := {}
    local lSel           := .f.
    local cCodGrp        := Space(2)
-   local aestructura    := {}
+   local cPassword
+   local aEstructura    := {}
 
    ::aMsgs              := {}
 
@@ -786,7 +787,29 @@ Method ZipFiles()
       ::oDlg:Disable()
    end if
 
-   aEval( Directory( cPatSafe() + "*.*" ), {|aFiles| fErase( cPatSafe() + aFiles[ 1 ] ) } )
+   if !empty( ::cPassword1 )
+      cPassword         := rtrim( ::cPassword1 )
+   end if 
+
+   aeval( directory( cPatSafe() + "*.*" ), {|aFiles| fErase( cPatSafe() + aFiles[ 1 ] ) } )
+
+   /*
+   Backup de la base de datos SQL----------------------------------------------
+   */
+
+   ::oProgreso:cText    := "Copiando datos de SQL"
+
+   cZip                 := cPatSafe() + "gestool"
+   if ::lDate
+      cZip              += dtos( date() )
+   end if
+   cZip                 += ".sql"
+
+   getSQLDataBase():Export( cZip )
+
+   aadd( aFil, cZip )
+
+   SysRefresh()
 
    /*
    Comprimiendo los archivos---------------------------------------------------
@@ -800,9 +823,9 @@ Method ZipFiles()
 
          cZip                 := cPatSafe() + "Emp" + ::aEmp[ n, 2 ]
          if ::lDate
-            cZip              += Dtos( Date() )
+            cZip              += dtos( date() )
          end if
-         cZip                 += ".Zip"
+         cZip                 += ".zip"
 
          if file( cZip )
             ferase( cZip )
@@ -811,18 +834,14 @@ Method ZipFiles()
          ::nActualFile        := 0
          aDir                 := Directory( FullCurDir() + "EMP" + ::aEmp[ n, 2 ] + "\*.*" )
 
-         ::oProgreso:SetTotal( Len( aDir ) )
+         ::oProgreso:SetTotal( len( aDir ) )
          ::oProgreso:cText    := "Comprimiendo " + ::aEmp[ n, 2 ] + "-" + Rtrim( ::aEmp[ n, 3 ] )
 
-         hb_SetDiskZip( {|| nil } )
-         if !empty( ::cPassword1 )
-            aEval( aDir, { | cName, nIndex | hb_ZipFile( cZip, FullCurDir() + "Emp" + ::aEmp[ n, 2 ] + "\" + cName[ 1 ], 9, , , rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
-         else
-            aEval( aDir, { | cName, nIndex | hb_ZipFile( cZip, FullCurDir() + "Emp" + ::aEmp[ n, 2 ] + "\" + cName[ 1 ], 9 ), ::oProgreso:Set( nIndex ) } )
-         end if 
-         hb_gcAll()
+         hb_setdiskzip( {|| nil } )
+         aeval( aDir, { | cName, nIndex | hb_ZipFile( cZip, FullCurDir() + "Emp" + ::aEmp[ n, 2 ] + "\" + cName[ 1 ], 9, , , cPassword, ::oProgreso:Set( nIndex ) ) } )
+         hb_gcall()
 
-         aAdd( aFil, cZip )
+         aadd( aFil, cZip )
 
       end if
 
@@ -830,11 +849,11 @@ Method ZipFiles()
 
    next
 
-   if lSel
+   /*
+   Ahora el directorio de DATOS------------------------------------------------
+   */
 
-      /*
-      Ahora el directorio de DATOS---------------------------------------------
-      */
+   if lSel
 
       cDat                 := cPatSafe() + "Datos"
       if ::lDate
@@ -852,15 +871,11 @@ Method ZipFiles()
       ::oProgreso:SetTotal( Len( aDir ) )
       ::oProgreso:cText    := "Comprimiendo directorio de datos generales"
 
-      hb_SetDiskZip( {|| nil } )
-      if !empty( ::cPassword1 )
-         aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "Datos\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
-      else
-         aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "Datos\" + cName[ 1 ], 9 ), ::oProgreso:Set( nIndex ) } )
-      end if 
-      hb_gcAll()
+      hb_setdiskzip( {|| nil } )
+      aeval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "Datos\" + cName[ 1 ], 9, , , cPassword, ::oProgreso:Set( nIndex ) ) } )
+      hb_gcall()
 
-      aAdd( aFil, cDat )
+      aadd( aFil, cDat )
 
       /*
       Ahora el directorio de database---------------------------------------------
@@ -883,11 +898,7 @@ Method ZipFiles()
       ::oProgreso:cText    := "Comprimiendo directorio de bases de datos"
 
       hb_SetDiskZip( {|| nil } )
-      if !empty( ::cPassword1 )
-         aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "Database\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
-      else
-         aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "Database\" + cName[ 1 ], 9 ), ::oProgreso:Set( nIndex ) } )
-      end if 
+      aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "Database\" + cName[ 1 ], 9, , , cPassword, ::oProgreso:Set( nIndex ) ) } )
       hb_gcAll()
 
       aAdd( aFil, cDat ) 
@@ -913,17 +924,12 @@ Method ZipFiles()
       ::oProgreso:SetTotal( Len( aDir ) )
       ::oProgreso:cText    := "Comprimiendo directorio scripts"
 
-      aestructura          := {}
+      aEstructura          := {}
 
-      aEval( aDir, { | cName, nIndex | aAdd( aestructura, cName[ 1 ] ), ::oProgreso:Set( nIndex ) } )
+      aEval( aDir, { | cName, nIndex | aAdd( aEstructura, cName[ 1 ] ), ::oProgreso:Set( nIndex ) } )
 
       hb_SetDiskZip( {|| nil } )
-      if !empty( ::cPassword1 )
-         hb_ZipFile( cDat, aestructura, 9, , .t., Rtrim( ::cPassword1 ), .t. )
-      else
-         hb_ZipFile( cDat, aestructura, 9, , .t., , .t. )
-      end if
-
+      hb_ZipFile( cDat, aEstructura, 9, , .t., cPassword, .t. )
       hb_gcAll()
 
       aAdd( aFil, cDat )
@@ -949,17 +955,12 @@ Method ZipFiles()
       ::oProgreso:SetTotal( Len( aDir ) )
       ::oProgreso:cText    := "Comprimiendo directorio reporting"
 
-      aestructura          := {}
+      aEstructura          := {}
 
-      aEval( aDir, { | cName, nIndex | aAdd( aestructura, cName[ 1 ] ), ::oProgreso:Set( nIndex ) } )
+      aEval( aDir, { | cName, nIndex | aAdd( aEstructura, cName[ 1 ] ), ::oProgreso:Set( nIndex ) } )
 
       hb_SetDiskZip( {|| nil } )
-      if !empty( ::cPassword1 )
-         hb_ZipFile( cDat, aestructura, 9, , .t., Rtrim( ::cPassword1 ), .t. )
-      else
-         hb_ZipFile( cDat, aestructura, 9, , .t., , .t. )
-      end if
-
+      hb_ZipFile( cDat, aEstructura, 9, , .t., cPassword, .t. )
       hb_gcAll()
 
       aAdd( aFil, cDat )
@@ -985,17 +986,12 @@ Method ZipFiles()
       ::oProgreso:SetTotal( Len( aDir ) )
       ::oProgreso:cText    := "Comprimiendo directorio userreporting"
 
-      aestructura          := {}
+      aEstructura          := {}
 
-      aEval( aDir, { | cName, nIndex | aAdd( aestructura, cName[ 1 ] ), ::oProgreso:Set( nIndex ) } )
+      aEval( aDir, { | cName, nIndex | aAdd( aEstructura, cName[ 1 ] ), ::oProgreso:Set( nIndex ) } )
 
       hb_SetDiskZip( {|| nil } )
-      if !empty( ::cPassword1 )
-         hb_ZipFile( cDat, aestructura, 9, , .t., Rtrim( ::cPassword1 ), .t. )
-      else
-         hb_ZipFile( cDat, aestructura, 9, , .t., , .t. )
-      end if
-
+      hb_ZipFile( cDat, aEstructura, 9, , .t., cPassword, .t. )
       hb_gcAll()
 
       aAdd( aFil, cDat )
@@ -1032,25 +1028,25 @@ Method ZipFiles()
       ::oDlg:Enable()
    end if
 
-return ( lSel )
+RETURN ( lSel )
 
 //-----------------------------------------------------------------------//
 
-Method cGetFilesToRestore()
+METHOD cGetFilesToRestore()
 
    if ::doRestore( ::cDirOrigen )
       aEval( ::aEmp, { | aItm | aItm[ 1 ] := file( cPatSafe() + "Emp" + aItm[ 2 ] + ".Zip" ) } )
       ::oBrwRestore:Refresh()
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //-------------------------------------------------------------------------//
 //
 //Descomprime los ficheros de un zip
 //
 
-Method GetZipFiles()
+METHOD GetZipFiles()
 
    local n
    local cZipFile
@@ -1073,7 +1069,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method RestoreZipFiles()
+METHOD RestoreZipFiles()
 
    local n
    local nZip
@@ -1091,7 +1087,7 @@ Method RestoreZipFiles()
 
    if !lSel
       msgStop( "No se selecciono ninguna empresa" )
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    for n := 1 to len( ::aEmp )
@@ -1170,7 +1166,7 @@ RETURN nBytes
 
 //----------------------------------------------------------------------------//
 
-Method doBackup( aFiles, cDriveTo )
+METHOD doBackup( aFiles, cDriveTo )
 
    local x
    local lRetVal
@@ -1245,7 +1241,7 @@ Method doBackup( aFiles, cDriveTo )
 
                if ( "A:" $ cDriveTo .or. "B:" $ cDriveTo ) .and. ;
                   !ApoloMsgNoYes( "Inserte el disco # " + lTrim( Str( nDiskNum ) ) + " en unidad " + cDriveTo, "¿ Continuar ?" )
-                  return ( .f. )
+                  RETURN ( .f. )
                endif
 
                ::bk_DiskNum  := nDiskNum
@@ -1257,7 +1253,7 @@ Method doBackup( aFiles, cDriveTo )
 
                if !fClose( fCreate( cDriveTo + "x" ) )
                   if !ApoloMsgNoYes(  "No hay discos en unidad o esta protegido contra escritura.", "¿ Continuar ?" )
-                     return ( .f. )
+                     RETURN ( .f. )
                   else
                      loop
                   endif
@@ -1373,7 +1369,7 @@ RETURN ( nBytes == nByteCopy )
 // Vacia un disquete
 //
 
-Method CleanDisk( cDriveTo )
+METHOD CleanDisk( cDriveTo )
 
    local x
    local aDiskFile
@@ -1388,7 +1384,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method DoRestore( cFileFrom )
+METHOD DoRestore( cFileFrom )
 
    local x
    local aFiles
@@ -1406,13 +1402,13 @@ Method DoRestore( cFileFrom )
 
          if ( "A:" $ cFileFrom .or. "B:" $ cFileFrom )                                                                  .and. ;
             !ApoloMsgNoYes(  "Inserte el disco # " + lTrim( Str( nDiskNum ) ) + " en unidad " + cDriveFrom, "¿ Continuar ?" )
-            Return ( .f. )
+            RETURN ( .f. )
          endif
 
          if !file( cFileFrom )
 
             if ApoloMsgNoYes( "No hay discos de copia o no esta preparado.", "¿ Continuar ?" )
-               return ( .f. )
+               RETURN ( .f. )
             else
                loop
             end if
@@ -1428,7 +1424,7 @@ Method DoRestore( cFileFrom )
 
             if ::bk_DiskNum != nDiskNum .OR. ::bk_Serial != cSerial
                if !ApoloMsgNoYes( "Los discos no estan en el orden correcto en la unidad " + cDriveFrom, "¿ Continuar ?" )
-                  Return .f.
+                  RETURN .f.
                end if
 
             else
@@ -1545,7 +1541,7 @@ Function CompressEmpresa( cCodEmp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
       oDlg:End( IDOK )
    end if
 
-Return nil
+RETURN nil
 
 //-----------------------------------------------------------------------//
 
@@ -1618,11 +1614,11 @@ Function CompressGrupo( cCodGrp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
       oDlg:End( IDOK )
    end if
 
-Return nil
+RETURN nil
 
 //-----------------------------------------------------------------------//
 
-Method SaveToDisk( Resultado )
+METHOD SaveToDisk( Resultado )
 
    local n
    local oIni
@@ -1689,11 +1685,11 @@ Method SaveToDisk( Resultado )
    ::oDbf:Resumen := ::mResultado
    ::oDbf:Save()
 
-Return ( Self )
+RETURN ( Self )
 
 //-----------------------------------------------------------------------//
 
-Method RestoreFromDisk( cFile )
+METHOD RestoreFromDisk( cFile )
 
    local oIni
 
@@ -1721,11 +1717,11 @@ Method RestoreFromDisk( cFile )
       ::bk_NumFiles     := Val( ::bk_NumFiles)
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method doFtp( aFiles )
+METHOD doFtp( aFiles )
 
    local oInt
    local oFtp
@@ -1739,12 +1735,12 @@ Method doFtp( aFiles )
 
    if Empty( oFtp )
       msgStop( "Imposible crear la conexión" )
-      return .f.
+      RETURN .f.
    end if
 
    if Empty( oFTP:hFTP )
       msgStop( "Imposible conectar con el servidor de backup" )
-      return .f.
+      RETURN .f.
    endif
 
    for each cFile in aFiles
@@ -1757,7 +1753,7 @@ Method doFtp( aFiles )
 
    next
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -1852,7 +1848,7 @@ Function ImprimirODbf( oDbf, cTitulo )
 
    if oDbf == nil .or. !oDbf:Used()
       msgStop( "La base de datos esta cerrada." )
-      return .f.
+      RETURN .f.
    end if
 
    DEFINE FONT oFont NAME "Courier New" SIZE 0, -12
@@ -1939,7 +1935,7 @@ function DbfToC( oDbf, cTitulo )
 
    oDbf:GoTop()
 
-return Texto
+RETURN Texto
 
 //---------------------------------------------------------------------------//
 

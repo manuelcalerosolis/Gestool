@@ -91,7 +91,10 @@ CLASS SQLBaseModel
    METHOD getGeneralSelect()
    METHOD getInitialSelect()                          INLINE ( "SELECT * FROM " + ::getTableName() )
 
+   METHOD getField( cField, cBy, cId )
+
    METHOD getIdSelect( id )
+   METHOD getWhereSelect( cWhere )
    METHOD getSelectSentence()
    
    METHOD setCreatedTimeStamp( hBuffer )
@@ -153,6 +156,8 @@ CLASS SQLBaseModel
    METHOD aUuidToDelete()
 
    METHOD getSelectByOrder()
+
+   METHOD getWhere( cWhere )                          INLINE ( atail( ::getDatabase():selectFetchHash( ::getWhereSelect( cWhere ) ) ) )
 
    // Busquedas----------------------------------------------------------------
 
@@ -315,18 +320,23 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addGroupBy( cSQLSelect )
 
-   // msgAlert( cSQLSelect, "cSQLSelect" )
-
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
 METHOD getIdSelect( id )
 
-   local cSQLSelect        := ::cGeneralSelect 
-
-   cSQLSelect              += space( 1 )
+   local cSQLSelect        := ::cGeneralSelect + " "
    cSQLSelect              += "WHERE id = " + toSQLString( id )
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereSelect( cWhere )
+
+   local cSQLSelect        := ::cGeneralSelect + " "
+   cSQLSelect              += "WHERE " + cWhere 
 
 RETURN ( cSQLSelect )
 
@@ -582,12 +592,13 @@ RETURN ( ::cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertOnDuplicateSentence( hBuffer )
+METHOD getInsertOnDuplicateSentence( hBuffer, lDebug )
 
    local uValue
    local cSQLUpdate  
 
    DEFAULT hBuffer   := ::hBuffer
+   DEFAULT lDebug    := .f.
 
    hBuffer           := ::setUpdatedTimeStamp( hBuffer )
    
@@ -875,11 +886,11 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertOnDuplicate( hBuffer )
+METHOD insertOnDuplicate( hBuffer, lDebug )
 
    ::fireEvent( 'insertingOnDuplicatingBuffer' )
 
-   ::getDatabase():Execs( ::getInsertOnDuplicateSentence( hBuffer ) )
+   ::getDatabase():Execs( ::getInsertOnDuplicateSentence( hBuffer, lDebug ) )
 
    ::fireEvent( 'insertedOnDuplicatedBuffer' )
 
@@ -990,11 +1001,30 @@ RETURN ( self )
 
 METHOD updateFieldWhereId( id, cField, uValue )
 
-   local cSentence   := "UPDATE " + ::cTableName + " "
-      
-   cSentence      += "SET " + cField + " = " + toSqlString( uValue )
-   cSentence      += "WHERE id = " + toSqlString( id )
+   local cSql  := "UPDATE " + ::cTableName + " "
+   cSql        +=    "SET " + cField + " = " + toSqlString( uValue )
+   cSql        +=    "WHERE id = " + toSqlString( id )
 
-Return ( ::getDatabase():Exec( cSentence ) )
+Return ( ::getDatabase():Exec( cSql ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD getField( cField, cBy, cId )
+
+   local cSql
+   local aResult
+   local cResult
+
+   cSql              := "SELECT " + cField + " "                              
+   cSql              +=    "FROM " + ::cTableName + " "
+   cSql              +=    "WHERE " + cBy + " = " + quoted( cId ) 
+
+   aResult           := atail( ::getDatabase():selectFetchArray( cSql ) )
+
+   if hb_isarray( aResult )
+      cResult        := aResult[1]
+   end if
+
+Return ( cResult )
 
 //----------------------------------------------------------------------------//

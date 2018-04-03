@@ -87,8 +87,8 @@ FUNCTION TIva( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
-      if nAnd( nLevel, 1 ) != 0
+      nLevel            := Auth():Level( oMenuItem )
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -627,7 +627,7 @@ FUNCTION BrwIva( oGet, dbfTIva, oGetNombre, lTipo )
    local aCbxOrd  := { "Código", "Nombre" }
    local cCbxOrd
    local lClose   := .f.
-   local nLevel   := nLevelUsr( "01036" )
+   local nLevel   := Auth():Level( "01036" )
    local cReturn  := Space( 1 )
 
    DEFAULT lTipo  := .f.
@@ -1015,7 +1015,7 @@ FUNCTION pdaBrwTipoIva( oGet, dbfTIva, oGet2 )
    local aCbxOrd  := { "Código", "Nombre" }
    local cCbxOrd
    local lClose   := .f.
-   local nLevel   := nLevelUsr( "01036" )
+   local nLevel   := Auth():Level( "01036" )
    local oSayText
    local cSayText := "Tipos de I.V.A"
 

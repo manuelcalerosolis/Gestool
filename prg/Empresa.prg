@@ -295,9 +295,9 @@ FUNCTION Empresa( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          RETURN nil
       end if
@@ -340,6 +340,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
 
       if oUser():lCambiarEmpresa 
          oWndBrw:oBrw:bLDblClick    := {||   setEmpresa( ( dbfEmp )->CodEmp ),;
+                                             ApplicationLoad(),;
                                              chkTurno( , oWnd ),;
                                              if( !empty( oWndBrw ), oWndBrw:End( .t. ), ) }
       else
@@ -526,10 +527,16 @@ STATIC FUNCTION initialProccesBuildEmpresa( cCodigoEmpresa, cNombreEmpresa )
    mkPathEmp( cCodigoEmpresa, cNombreEmpresa, cOldCodigoEmpresa, aImportacion, .t., .t., nSemillaContadores )
 
    /*
-   Establecemos la empresa como la seleccionada-----------------------------
+   Establecemos la empresa como la seleccionada--------------------------------
    */
 
    setEmpresa( cCodigoEmpresa )
+
+   /*
+   Cargamos datos de la aplicacion---------------------------------------------
+   */
+
+   ApplicationLoad()
 
    /*
    Inicio del turno------------------------------------------------------------
@@ -538,7 +545,7 @@ STATIC FUNCTION initialProccesBuildEmpresa( cCodigoEmpresa, cNombreEmpresa )
    chkTurno( , oWnd() )
 
    /*
-   Iniciamos todas los servicios---------------------------------------------
+   Iniciamos todos los servicios---------------------------------------------
    */
 
    initServices()
@@ -549,9 +556,14 @@ RETURN ( nil )
 
 STATIC FUNCTION WinEdtEmp()
 
-   if WinEdtRec( oWndBrw, bEdit, dbfEmp )
+   if winEdtRec( oWndBrw, bEdit, dbfEmp )
+      
       setEmpresa( ( dbfEmp )->CodEmp )
-      chkTurno( , oWnd() )
+      
+      applicationLoad()
+      
+      chkTurno()
+
    end if
 
 RETURN ( nil )
@@ -623,9 +635,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    
    local oSemilla
    
-   local oSayGrp
-   local cSayGrp
-
    local oGetSemilla
    
    local oBmpGeneral
@@ -684,8 +693,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
       aTmp[ _DFINOPE ]     := Ctod( "31/12/" + Str( Year( Date() ), 4 ) )
       aTmp[ _UUID    ]     := win_uuidcreatestring()
    end if 
-
-   cSayGrp                 := RetFld( aTmp[ _CCODGRP ], dbfEmp )
 
    if BeginEdtRec( aTmp, nMode )
       RETURN .f.
@@ -812,40 +819,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    /*
    Codigo de Divisas______________________________________________________________
    */
-
-   REDEFINE GET aGet[ _CCODGRP ] VAR aTmp[ _CCODGRP ] ;
-         ID       400 ;
-         PICTURE  "@!" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( if( cEmpresa( aGet[ _CCODGRP ], dbfEmp, oSayGrp ) .and. aTmp[ _CCODGRP ] != aTmp[ _CODEMP ], .t., ( MsgStop( "Empresa martiz no valida" ), .f. ) ) );
-         BITMAP   "LUPA";
-         ON HELP  ( BrwEmpresa( aGet[ _CCODGRP ], dbfEmp, oSayGrp ) ) ;
-         OF       oFld:aDialogs[1]
-
-   REDEFINE GET oSayGrp VAR cSayGrp ;
-         ID       410 ;
-         WHEN     ( .F. ) ;
-         OF       oFld:aDialogs[1]
-
-   REDEFINE CHECKBOX aGet[ _LGRPCLI ] VAR aTmp[ _LGRPCLI ] ;
-         ID       420 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-   REDEFINE CHECKBOX aGet[ _LGRPPRV ] VAR aTmp[ _LGRPPRV ] ;
-         ID       430 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-   REDEFINE CHECKBOX aGet[ _LGRPART ] VAR aTmp[ _LGRPART ] ;
-         ID       440 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-   REDEFINE CHECKBOX aGet[ _LGRPALM ] VAR aTmp[ _LGRPALM ] ;
-         ID       450 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
 
    REDEFINE GET aGet[ _CDIVEMP ] VAR aTmp[ _CDIVEMP ];
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -1220,7 +1193,7 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    Obtenemos el nivel de acceso------------------------------------------------
    */
 
-   if nAnd( nLevelUsr( _MENUITEM_ ), ACC_EDIT ) == 0
+   if nAnd( Auth():Level( _MENUITEM_ ), ACC_EDIT ) == 0
       msgStop( "Acceso no permitido." )
       RETURN .f.
    end if
@@ -1252,6 +1225,8 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    // Seleccionamos la empresa ------------------------------------------------
 
    setEmpresa( ( dbfEmp )->CodEmp, oBrw )
+
+   ApplicationLoad()
 
    checkEmpresaTablesExistences()
 
@@ -2499,12 +2474,11 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
 
       REDEFINE CHECKBOX aTmp[ _LMAILTRNO ] ;
          ID       300;
-         WHEN     ( lUsrMaster() ) ;
          OF       fldEnvios
 
       REDEFINE GET aTmp[ _CMAILTRNO ] ;
          ID       310 ;
-         WHEN     ( lUsrMaster() .and. aTmp[ _LMAILTRNO ] ) ;
+         WHEN     ( aTmp[ _LMAILTRNO ] ) ;
          OF       fldEnvios
 
       REDEFINE GET aTmp[ _CCODCLIFRQ ] ;
@@ -2651,11 +2625,15 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
    KillTrans()
 
    if oDlg:nResult == IDOK
+
       setEmpresa( ( dbfEmp )->CodEmp, oBrw )
+   
+      ApplicationLoad()
       
       checkEmpresaTablesExistences()
 
       chkTurno( , oWnd() )
+   
    end if
 
    // Reanudamos los servicios ---------------------------------------------------
@@ -3257,8 +3235,8 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
    Si la empresa esta vacia----------------------------------------------------
    */
 
-   if empty( cCodEmp ) .and. !empty( cEmpUsr() )
-      cCodEmp        := cEmpUsr()
+   if empty( cCodEmp ) 
+      cCodEmp        := SQLAjustableModel():getUsuarioEmpresa( Auth():Uuid() )
    end if
 
    if empty( cCodEmp )
@@ -3288,13 +3266,13 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
    Directorios si no tiene grupo-----------------------------------------------
    */
 
-   cPatCli( EmpresasModel():getCodigoGrupoCliente( cCodEmp ), nil, .t. )
+   cPatEmp( EmpresasModel():getCodigoGrupoCliente( cCodEmp ), nil, .t. )
 
-   cPatPrv( EmpresasModel():getCodigoGrupoProveedor( cCodEmp ), nil, .t. )
+   cPatEmp( EmpresasModel():getCodigoGrupoProveedor( cCodEmp ), nil, .t. )
 
-   cPatArt( EmpresasModel():getCodigoGrupoArticulo( cCodEmp ), nil, .t. )
+   cPatEmp( EmpresasModel():getCodigoGrupoArticulo( cCodEmp ), nil, .t. )
 
-   cPatAlm( EmpresasModel():getCodigoGrupoAlmacen( cCodEmp ), nil, .t. )
+   cPatEmp( EmpresasModel():getCodigoGrupoAlmacen( cCodEmp ), nil, .t. )
    
    /*
    Cargamos el buffer----------------------------------------------------------
@@ -3375,13 +3353,13 @@ FUNCTION SelectEmpresa( cCodEmp )
    Directorios si no tiene grupo-----------------------------------------------
    */
 
-   cPatCli( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
 
-   cPatPrv( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
 
-   cPatArt( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
 
-   cPatAlm( cCodEmp, nil, .t. )
+   cPatEmp( cCodEmp, nil, .t. )
    
    /*
    Cargamos el buffer----------------------------------------------------------
@@ -4221,10 +4199,10 @@ FUNCTION ReindexaEmp( cPath, cCodigoEmpresa, oMsg )
       :lSincroniza   := .f.
       :lMessageEnd   := .f.
       :cCodEmp       := cCodigoEmpresa
-      :cPatCli       := cPatCli( cCodigoEmpresa, .f., .t. )
-      :cPatArt       := cPatArt( cCodigoEmpresa, .f., .t. )
-      :cPatPrv       := cPatPrv( cCodigoEmpresa, .f., .t. )
-      :cPatAlm       := cPatAlm( cCodigoEmpresa, .f., .t. )
+      :cPatCli       := cPatEmp( cCodigoEmpresa, .f., .t. )
+      :cPatArt       := cPatEmp( cCodigoEmpresa, .f., .t. )
+      :cPatPrv       := cPatEmp( cCodigoEmpresa, .f., .t. )
+      :cPatAlm       := cPatEmp( cCodigoEmpresa, .f., .t. )
       :GenIndices( oMsg )
    end with
 
@@ -4571,9 +4549,6 @@ STATIC FUNCTION ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
 
          oMsg:SetText( "País" )
          TPais():Create( cPatDat() ):SyncAllDbf()
-
-         oMsg:SetText( "Lenguaje" )
-         TLenguaje():Create( cPatDat() ):SyncAllDbf()
 
          oMsg:SetText( "Centro de coste" )
          TCentroCoste():Create( cPatDat() ):SyncAllDbf()
@@ -5275,9 +5250,9 @@ FUNCTION ConfEmpresa( oMenuItem, oWnd, nSelFolder )
    Obtenemos el nivel de acceso------------------------------------------------
    */
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
 
-   if nAnd( nLevel, 1 ) != 0
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       RETURN nil
    end if
@@ -5789,8 +5764,6 @@ CLASS AImportacion
 
    Method False()
 
-   Method Load( aTmp )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -5822,17 +5795,6 @@ Method False() Class AImportacion
    ::nCosto          := 1
    ::lScript         := .f.
    ::lEntidades      := .f.
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method Load( aTmp ) Class AImportacion
-
-   ::lArticulos      := aTmp[ _LGRPART ]
-   ::lClientes       := aTmp[ _LGRPCLI ]
-   ::lProveedor      := aTmp[ _LGRPPRV ]
-   ::lAlmacen        := aTmp[ _LGRPALM ]
 
 RETURN ( Self )
 
@@ -6042,7 +6004,7 @@ FUNCTION NextEmpresa()
    Obtenemos el nivel de acceso------------------------------------------------
    */
 
-   if nAnd( nLevelUsr( _MENUITEM_ ), 1 ) != 0
+   if nAnd( Auth():Level( _MENUITEM_ ), 1 ) != 0
       msgStop( "Acceso no permitido." )
       RETURN .f.
    end if
@@ -6069,6 +6031,8 @@ FUNCTION NextEmpresa()
          end if
 
          setEmpresa( ( dbfEmp )->CodEmp )
+
+         ApplicationLoad()
 
          chkTurno()
 
@@ -6098,7 +6062,7 @@ FUNCTION PriorEmpresa()
    Obtenemos el nivel de acceso------------------------------------------------
    */
 
-   if nAnd( nLevelUsr( _MENUITEM_ ), 1 ) != 0
+   if nAnd( Auth():Level( _MENUITEM_ ), 1 ) != 0
       msgStop( "Acceso no permitido." )
       RETURN .f.
    end if
@@ -6126,6 +6090,8 @@ FUNCTION PriorEmpresa()
 
          setEmpresa( ( dbfEmp )->CodEmp )
 
+         ApplicationLoad()
+
          chkTurno()
 
          msgInfo( "Nueva empresa activa : " + ( dbfEmp )->CodEmp + " - " + Rtrim( ( dbfEmp )->cNombre ), "Cambio de empresa" )
@@ -6149,111 +6115,113 @@ Actualiza la base de datos
 
 FUNCTION TstEmpresa( cPatDat )
 
+   local oBlock
+   local oError
    local dbfEmp
    local dbfDlg
    local cCodEmp
    local lChangeCode
    local lChangeStruct  
 
-   if !lExistTable( cPatDat() + "Empresa.Dbf" )
-      dbCreate( cPatDat() + "Empresa.Dbf", aSqlStruct( aItmEmp() ), cDriver() )
-   end if
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
-   if !lExistTable( cPatDat() + "Delega.Dbf" )
-      dbCreate( cPatDat() + "Delega.Dbf", aSqlStruct( aItmDlg() ), cDriver() )
-   end if
+      if !lExistTable( cPatDat() + "Empresa.Dbf" )
+         dbCreate( cPatDat() + "Empresa.Dbf", aSqlStruct( aItmEmp() ), cDriver() )
+      end if
 
-   if !lExistIndex( cPatDat() + "Empresa.Cdx" ) .or. !lExistIndex( cPatDat() + "Delega.Cdx" )
-      rxEmpresa( cPatDat() )
-   end if
+      if !lExistTable( cPatDat() + "Delega.Dbf" )
+         dbCreate( cPatDat() + "Delega.Dbf", aSqlStruct( aItmDlg() ), cDriver() )
+      end if
 
-   /*
-   Empresa---------------------------------------------------------------------
-   */
+      if !lExistIndex( cPatDat() + "Empresa.Cdx" ) .or. !lExistIndex( cPatDat() + "Delega.Cdx" )
+         rxEmpresa( cPatDat() )
+      end if
 
-   dbUseArea( .t., cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "Empresa", @dbfEmp ), .f. )
+      /*
+      Empresa---------------------------------------------------------------------
+      */
 
-   if ( dbfEmp )->( netErr() )
-      if( ( dbfEmp )->( Used() ), ( dbfEmp )->( dbCloseArea() ), )
-      RETURN .f.
-   end if 
+      dbUseArea( .t., cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "Empresa", @dbfEmp ), .f. )
 
-   lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() )
+      if !( dbfEmp )->( netErr() )
 
-   ( dbfEmp )->( dbCloseArea() )
+         lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() )
 
-   if lChangeStruct
-      changeStructEmpresa()
-   end if
+         ( dbfEmp )->( dbCloseArea() )
 
-   /*
-   Delegaciones----------------------------------------------------------------
-   */
+         if lChangeStruct
+            changeStructEmpresa()
+         end if
 
-   dbUseArea( .t., cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
-
-   if ( dbfDlg )->( netErr() )
-      if( ( dbfDlg )->( Used() ), ( dbfDlg )->( dbCloseArea() ), )
-      RETURN .f.
-   end if 
-
-   lChangeStruct  := lChangeStruct( dbfDlg, aItmDlg() )
-
-   ( dbfDlg )->( dbCloseArea() )
-
-   if lChangeStruct
-      changeStructDelegacion()
-   end if
-
-   CursorWait()
-
-   /*
-   Situacion especial para cambio de codigo------------------------------------
-   */
-
-   dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
-      
-   if ( dbfEmp )->( netErr() )
-      if( ( dbfEmp )->( Used() ), ( dbfEmp )->( dbCloseArea() ), )
-      RETURN .f.
-   else 
-      if( !lAIS(), ( dbfEmp )->( ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ), ordSetFocus( 1 ) )
-   end if 
-      
-   /*
-   Comprobamos la longitud del codigo------------------------------------------
-   */
-
-   ( dbfEmp )->( dbgotop() )
-   while !( dbfEmp )->( eof() )
-      
-      cCodEmp     := alltrim( ( dbfEmp )->CodEmp )
-      
-      if len( cCodEmp ) < 4
-      
-         if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
-            if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
-               msgStop( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
-            end if
-         end if 
-    
       end if 
-              
-      ( dbfEmp )->( dbskip() )
-                  
-   end while
 
-   ( dbfEmp )->( dbclosearea() )
+      /*
+      Delegaciones----------------------------------------------------------------
+      */
 
-   /*
-   Comprobamos que el campo de codigo de empresa de las delegaciones se rellenen por 0
-   */
+      dbUseArea( .t., cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
 
-   EmpresasModel():UpdateEmpresaCodigoEmpresa()
+      if !( dbfDlg )->( netErr() )
 
-   //DelegacionesModel():UpdateDelegacionCodigoEmpresa()
+         lChangeStruct  := lChangeStruct( dbfDlg, aItmDlg() )
 
-   CursorWE()
+         ( dbfDlg )->( dbCloseArea() )
+
+         if lChangeStruct
+            changeStructDelegacion()
+         end if
+         
+      end if 
+
+      CursorWait()
+
+      /*
+      Situacion especial para cambio de codigo------------------------------------
+      */
+
+      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
+         
+      if !( dbfEmp )->( netErr() )
+
+         ( dbfEmp )->( dbgotop() )
+         while !( dbfEmp )->( eof() )
+            
+            cCodEmp     := alltrim( ( dbfEmp )->CodEmp )
+            
+            if len( cCodEmp ) < 4
+            
+               if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
+                  if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
+                     msgStop( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
+                  end if
+               end if 
+          
+            end if 
+                    
+            ( dbfEmp )->( dbskip() )
+                        
+         end while
+
+         ( dbfEmp )->( dbclosearea() )
+
+      end if 
+         
+      /*
+      Comprobamos que el campo de codigo de empresa de las delegaciones se rellenen por 0
+      */
+
+      EmpresasModel():UpdateEmpresaCodigoEmpresa()
+
+      CursorWE()
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de empresa" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN ( .t. )
 
@@ -6293,7 +6261,7 @@ Trasbase a delegaciones--------------------------------------------------------
 
 STATIC FUNCTION changeStructDelegacion()
 
-   TDataCenter():DeleteTableName( "Delega" )
+   TDataCenter():deleteTableNameFromDataDictionary( "Delega" )
 
    lCdx( .t. )
    lAIS( .f. )
@@ -6647,9 +6615,10 @@ STATIC FUNCTION aItmDlg()
 
    local aItmDlg  := {}
 
-   aAdd( aItmDlg, { "CCODEMP", "C", 4, 0, "Código de empresa"    } )
-   aAdd( aItmDlg, { "CCODDLG", "C", 2, 0, "Código de delegación" } )
-   aAdd( aItmDlg, { "CNOMDLG", "C",50, 0, "Nombre de delegación" } )
+   aAdd( aItmDlg, { "cCodEmp", "C",  4, 0, "Código de empresa"    } )
+   aAdd( aItmDlg, { "cCodDlg", "C",  2, 0, "Código de delegación" } )
+   aAdd( aItmDlg, { "cNomDlg", "C", 50, 0, "Nombre de delegación" } )
+   aAdd( aItmDlg, { "Uuid",    "C", 40, 0, "Uuid" } )
 
 RETURN ( aItmDlg )
 
@@ -6715,7 +6684,9 @@ FUNCTION rxEmpresa( cPath, cDriver )
       ( dbfDlg)->( __dbPack() )
 
       ( dbfDlg )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfDlg )->( ordCreate( cPath + "DELEGA.CDX", "CCODEMP", "CCODEMP + CCODDLG", {|| Field->cCodEmp + Field->cCodDlg } ) )
+      ( dbfDlg )->( ordCreate( cPath + "DELEGA.CDX", "CCODEMP", "CCODEMP + CCODDLG", {|| field->cCodEmp + field->cCodDlg } ) )
+
+      ( dbfDlg )->( dbeval( {|| field->uuid := win_uuidcreatestring() }, {|| empty( field->uuid ) } ) )
 
       ( dbfDlg )->( dbCloseArea() )
    else
@@ -7022,7 +6993,7 @@ FUNCTION BrwBncEmp( oGet, oGetPaisIBAN, oGetControlIBAN, oGetEntidad, oGetSucurs
 	local oCbxOrd
    local aCbxOrd     := { "Nombre", "Cuenta" }
    local cCbxOrd     := "Nombre"
-   local nLevel      := nLevelUsr( "01003" )
+   local nLevel      := Auth():Level( "01003" )
    local lClose      := .f.
    local nOrdAnt
 
@@ -7394,7 +7365,7 @@ FUNCTION SelectDelegacion()
 
       REDEFINE BITMAP oBmp ;
          ID       300 ;
-         RESOURCE "Flag_Eu_48_Alpha" ; 
+         RESOURCE "flag_eu_48_alpha" ; 
          TRANSPARENT ;
          OF       oDlg
 
@@ -7457,8 +7428,8 @@ FUNCTION SelectDelegacion()
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult == IDOK
-      oUser():cDelegacion( ( dbfDlg )->cCodDlg )
-      ChkTurno()
+      Application():setDelegacion( ( dbfDlg )->cCodDlg, ( dbfDlg )->Uuid )
+      cDlgUsr( ( dbfDlg )->cCodDlg )
    end if
 
    if !empty( dbfDlg )

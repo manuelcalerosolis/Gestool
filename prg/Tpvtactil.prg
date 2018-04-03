@@ -949,7 +949,7 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    ::oWnd                     := oWnd
 
    if oMenuItem != nil
-      ::nLevel                := nLevelUsr( oMenuItem )
+      ::nLevel                := Auth():Level( oMenuItem )
    else
       ::nLevel                := 0
    end if
@@ -1167,7 +1167,7 @@ METHOD Activate( lAlone ) CLASS TpvTactil
 
    DEFAULT lAlone    := .f.
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return .f.
    end if
@@ -1181,8 +1181,8 @@ METHOD Activate( lAlone ) CLASS TpvTactil
       Return .f.
    end if
 
-   if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lMaster()
-      msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+   if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lMaster()
+      msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
       Return .f.
    end if
 
@@ -1283,7 +1283,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oTiketNumeroSerie                         PATH ( cPatEmp() )   FILE "TIKES.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKES.CDX"
 
-   DATABASE NEW ::oCliente                                  PATH ( cPatCli() )   FILE "CLIENT.DBF"          VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+   DATABASE NEW ::oCliente                                  PATH ( cPatEmp() )   FILE "CLIENT.DBF"          VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
    DATABASE NEW ::oCajaCabecera                             PATH ( cPatDat() )   FILE "Cajas.DBF"           VIA ( cDriver() ) SHARED INDEX "Cajas.CDX"
 
@@ -1291,21 +1291,21 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oUsuario                                  PATH ( cPatDat() )   FILE "USERS.DBF"           VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
 
-   DATABASE NEW ::oArticulo                                 PATH ( cPatArt() )   FILE "ARTICULO.DBF"        VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oArticulo                                 PATH ( cPatEmp() )   FILE "ARTICULO.DBF"        VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oCodigoBarraArticulo                      PATH ( cPatArt() )   FILE "ArtCodebar.DBF"      VIA ( cDriver() ) SHARED INDEX "ArtCodebar.CDX"
+   DATABASE NEW ::oCodigoBarraArticulo                      PATH ( cPatEmp() )   FILE "ArtCodebar.DBF"      VIA ( cDriver() ) SHARED INDEX "ArtCodebar.CDX"
 
-   DATABASE NEW ::oArticulosEscandallos                     PATH ( cPatArt() )   FILE "ARTKIT.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
+   DATABASE NEW ::oArticulosEscandallos                     PATH ( cPatEmp() )   FILE "ARTKIT.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
-   DATABASE NEW ::oArticulosLenguajes                       PATH ( cPatArt() )   FILE "ARTLENG"             VIA ( cDriver() ) SHARED INDEX "ARTLENG"
+   DATABASE NEW ::oArticulosLenguajes                       PATH ( cPatEmp() )   FILE "ARTLENG"             VIA ( cDriver() ) SHARED INDEX "ARTLENG"
 
-   DATABASE NEW ::oArticulosOfertas                         PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
+   DATABASE NEW ::oArticulosOfertas                         PATH ( cPatEmp() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
    DATABASE NEW ::oFormaPago                                PATH ( cPatEmp() )   FILE "FPAGO.DBF"           VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
    DATABASE NEW ::oPropiedadesLinea                         PATH ( cPatEmp() )   FILE "TBLPRO.DBF"          VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
 
-   DATABASE NEW ::oFamilias                                 PATH ( cPatArt() )   FILE "FAMILIAS.DBF"        VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+   DATABASE NEW ::oFamilias                                 PATH ( cPatEmp() )   FILE "FAMILIAS.DBF"        VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    DATABASE NEW ::oAlbaranClienteCabecera                   PATH ( cPatEmp() )   FILE "ALBCLIT.DBF"         VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
 
@@ -1331,21 +1331,21 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oObras                                    PATH ( cPatEmp() )   FILE "ObrasT.DBF"          VIA ( cDriver() ) SHARED INDEX "ObrasT.CDX"
 
-   DATABASE NEW ::oAgentes                                  PATH ( cPatCli() )   FILE "AGENTES.DBF"         VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+   DATABASE NEW ::oAgentes                                  PATH ( cPatEmp() )   FILE "AGENTES.DBF"         VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
    DATABASE NEW ::oRuta                                     PATH ( cPatEmp() )   FILE "RUTA.DBF"            VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
 
-   DATABASE NEW ::oAlmacen                                  PATH ( cPatAlm() )   FILE "ALMACEN.DBF"         VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+   DATABASE NEW ::oAlmacen                                  PATH ( cPatEmp() )   FILE "ALMACEN.DBF"         VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
-   DATABASE NEW ::oArticuloPropiedades                      PATH ( cPatArt() )   FILE "ARTDIV.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
+   DATABASE NEW ::oArticuloPropiedades                      PATH ( cPatEmp() )   FILE "ARTDIV.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
 
-   DATABASE NEW ::oTarifaPrecioLinea                        PATH ( cPatArt() )   FILE "TARPREL.DBF"         VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
+   DATABASE NEW ::oTarifaPrecioLinea                        PATH ( cPatEmp() )   FILE "TARPREL.DBF"         VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
 
-   DATABASE NEW ::oTarifaPrecioLineaAgente                  PATH ( cPatArt() )   FILE "TARPRES.DBF"         VIA ( cDriver() ) SHARED INDEX "TARPRES.CDX"
+   DATABASE NEW ::oTarifaPrecioLineaAgente                  PATH ( cPatEmp() )   FILE "TARPRES.DBF"         VIA ( cDriver() ) SHARED INDEX "TARPRES.CDX"
 
    DATABASE NEW ::oDocument                                 PATH ( cPatEmp() )   FILE "RDOCUMEN.DBF"        VIA ( cDriver() ) SHARED INDEX "RDOCUMEN.CDX"
 
-   DATABASE NEW ::oAtipicasCliente                          PATH ( cPatCli() )   FILE "CliAtp.DBF"          VIA ( cDriver() ) SHARED INDEX "CliAtp.CDX"
+   DATABASE NEW ::oAtipicasCliente                          PATH ( cPatEmp() )   FILE "CliAtp.DBF"          VIA ( cDriver() ) SHARED INDEX "CliAtp.CDX"
 
    DATABASE NEW ::oContadores                               PATH ( cPatEmp() )   FILE "NCOUNT.DBF"          VIA ( cDriver() ) SHARED INDEX "NCOUNT.CDX"
 
@@ -1395,11 +1395,11 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oRectificativaProveedorNumeroSerie        PATH ( cPatEmp() )   FILE "RctPrvS.DBF"         VIA ( cDriver() ) SHARED INDEX "RctPrvS.CDX"
 
-   DATABASE NEW ::oComentariosCabecera                      PATH ( cPatArt() )   FILE "COMENTARIOST.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOST.CDX"
+   DATABASE NEW ::oComentariosCabecera                      PATH ( cPatEmp() )   FILE "COMENTARIOST.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOST.CDX"
 
-   DATABASE NEW ::oComentariosLinea                         PATH ( cPatArt() )   FILE "COMENTARIOSL.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOSL.CDX"
+   DATABASE NEW ::oComentariosLinea                         PATH ( cPatEmp() )   FILE "COMENTARIOSL.DBF"    VIA ( cDriver() ) SHARED INDEX "COMENTARIOSL.CDX"
 
-   DATABASE NEW ::oTemporadas                               PATH ( cPatArt() )   FILE "Temporadas.DBF"      VIA ( cDriver() ) SHARED INDEX "Temporadas.CDX"
+   DATABASE NEW ::oTemporadas                               PATH ( cPatEmp() )   FILE "Temporadas.DBF"      VIA ( cDriver() ) SHARED INDEX "Temporadas.CDX"
 
    DATABASE NEW ::oParteProducionLinea                      PATH ( cPatEmp() )   FILE "PROLIN.DBF"          VIA ( cDriver() ) SHARED INDEX "PROLIN.CDX"
 
@@ -1434,7 +1434,7 @@ METHOD OpenFiles() CLASS TpvTactil
          ::lOpenFiles         := .f.
    end if
 
-   ::cVisor                   := cVisorEnCaja( oUser():cCaja(), ::oCajaCabecera )
+   ::cVisor                   := cVisorEnCaja( Application():CodigoCaja(), ::oCajaCabecera )
    if !Empty( ::cVisor )
    ::oVisor                   := TVisor():Create( ::cVisor )
       if !Empty( ::oVisor )
@@ -1442,7 +1442,7 @@ METHOD OpenFiles() CLASS TpvTactil
       end if
    end if
 
-   ::cImpresora               := cImpresoraTicketEnCaja( oUser():cCaja(), ::oCajaCabecera )
+   ::cImpresora               := cImpresoraTicketEnCaja( Application():CodigoCaja(), ::oCajaCabecera )
 
    ::oUndMedicion             := UniMedicion():Create( cPatEmp() )
    if !::oUndMedicion:OpenFiles()
@@ -1462,42 +1462,42 @@ METHOD OpenFiles() CLASS TpvTactil
       ::lOpenFiles            := .f.
    end if
 
-   ::oFideliza                := TFideliza():CreateInit( cPatArt() )
+   ::oFideliza                := TFideliza():CreateInit( cPatEmp() )
    if !::oFideliza:OpenFiles()
       ::lOpenFiles            := .f.
    end if
 
-   ::oTipArt                  := TTipArt():Create( cPatArt() )
+   ::oTipArt                  := TTipArt():Create( cPatEmp() )
    if !::oTipArt:OpenFiles()
       ::lOpenFiles            := .f.
    end if
 
-   ::oFabricante              := TFabricantes():Create( cPatArt() )
+   ::oFabricante              := TFabricantes():Create( cPatEmp() )
    if !::oFabricante:OpenFiles()
       ::lOpenFiles            := .f.
    end if
 
-   ::oTransportista           := TTrans():Create( cPatCli() )
+   ::oTransportista           := TTrans():Create( cPatEmp() )
    if !::oTransportista:OpenFiles()
       ::lOpenFiles            := .f.
    end if
 
-   ::oOrdenComanda            := TOrdenComanda():Create( cPatArt() )
+   ::oOrdenComanda            := TOrdenComanda():Create( cPatEmp() )
    if !::oOrdenComanda:OpenFiles()
       ::lOpenfiles            := .f.
    end if 
 
-   ::oTpvMenu                 := TpvMenu():Create( cPatArt(), Self )
+   ::oTpvMenu                 := TpvMenu():Create( cPatEmp(), Self )
    if !::oTpvMenu:OpenService()
       ::lOpenfiles            := .f.
    end if 
 
-   ::oTpvMenuOrdenes          := TpvMenuOrdenes():Create( cPatArt() )
+   ::oTpvMenuOrdenes          := TpvMenuOrdenes():Create( cPatEmp() )
    if !::oTpvMenuOrdenes:OpenService()
       ::lOpenfiles            := .f.
    end if 
 
-   ::oTpvMenuArticulo         := TpvMenuArticulo():Create( cPatArt() )
+   ::oTpvMenuArticulo         := TpvMenuArticulo():Create( cPatEmp() )
    if !::oTpvMenuArticulo:OpenService()
       ::lOpenfiles            := .f.
    end if 
@@ -1529,7 +1529,7 @@ METHOD OpenFiles() CLASS TpvTactil
    Visor-----------------------------------------------------------------------
    */
 
-   cVisor                     := cVisorEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias )
+   cVisor                     := cVisorEnCaja( Application():CodigoCaja(), ::oCajaCabecera:cAlias )
    if !Empty( cVisor )
       ::oVisor                := TVisor():Create( cVisor )
       if !Empty( ::oVisor )
@@ -3547,7 +3547,7 @@ METHOD GuardarAgregarLibre() CLASS TpvTactil
    ::oTemporalLinea:nUntTil      := ::nUnidadesLibre
    ::oTemporalLinea:nPvpTil      := ::nImporteLibre
    ::oTemporalLinea:nIvaTil      := ::nIvaLibre
-   ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
+   ::oTemporalLinea:cAlmLin      := Application():codigoAlmacen()
    ::oTemporalLinea:cImpCom1     := ::cImpresoraLibre
    ::oTemporalLinea:cOrdOrd      := ::oOrdenComanda:cOrden( ::cOrdenComandaLibre ) 
    ::oTemporalLinea:Insert()
@@ -4477,7 +4477,7 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
    end if 
          
    ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
-   ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
+   ::oTemporalLinea:cAlmLin      := Application():codigoAlmacen()
    ::oTemporalLinea:cImpCom1     := ::oArticulo:cTipImp1
    ::oTemporalLinea:cImpCom2     := ::oArticulo:cTipImp2
    ::oTemporalLinea:cComent      := ""
@@ -4576,7 +4576,7 @@ METHOD AgregarAcompannamiento( cCodigoArticulo, nUnidadesMenu, cCodigoMenu, cCod
    end if 
          
    ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
-   ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
+   ::oTemporalLinea:cAlmLin      := Application():codigoAlmacen()
    ::oTemporalLinea:cImpCom1     := ::oArticulo:cTipImp1
    ::oTemporalLinea:cImpCom2     := ::oArticulo:cTipImp2
    ::oTemporalLinea:cComent      := ""
@@ -4994,7 +4994,7 @@ METHOD AgregarKit( cCodigoArticulo, nUnidades, cTipoImpresora1, cTipoImpresora2,
             end if
 
             ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
-            ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
+            ::oTemporalLinea:cAlmLin      := Application():codigoAlmacen()
             ::oTemporalLinea:cComent      := ""
 
             ::oTemporalLinea:lInPromo     := ::oFideliza:InPrograma( ::oArticulo:Codigo, ::oTiketCabecera:dFecTik, ::oArticulo )
@@ -5172,7 +5172,7 @@ METHOD AgregarFavoritos( cNombreArticulo ) CLASS TpvTactil
       ::oTemporalLinea:nUntTil   := 1
       ::oTemporalLinea:nPvpTil   := cRetPreArt( ::oArticulo:Codigo, Max( ::oTiketCabecera:nTarifa, 1 ), cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
       ::oTemporalLinea:nIvaTil   := nIva( ::oTipoIVA, ::oArticulo:TipoIVA )
-      ::oTemporalLinea:cAlmLin   := oUser():cAlmacen()
+      ::oTemporalLinea:cAlmLin   := Application():codigoAlmacen()
       ::oTemporalLinea:cImpCom1  := ::oArticulo:cTipImp1
       ::oTemporalLinea:cImpCom2  := ::oArticulo:cTipImp2
       ::oTemporalLinea:cComent   := ""
@@ -7114,9 +7114,9 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
    ::oAlbaranClienteCabecera:nFacturado   := 1
    ::oAlbaranClienteCabecera:lSndDoc      := .t.
    ::oAlbaranClienteCabecera:lIvaInc      := .t.
-   ::oAlbaranClienteCabecera:cCodCaj      := oUser():cCaja()
+   ::oAlbaranClienteCabecera:cCodCaj      := Application():CodigoCaja()
    ::oAlbaranClienteCabecera:cCodPago     := cDefFpg()
-   ::oAlbaranClienteCabecera:cCodAlm      := oUser():cAlmacen()
+   ::oAlbaranClienteCabecera:cCodAlm      := Application():codigoAlmacen()
    ::oAlbaranClienteCabecera:nTarifa      := Max( uFieldEmpresa( "nPreVta" ), 1 )
    ::oAlbaranClienteCabecera:cCodCli      := ::oTiketCabecera:cCliTik
    ::oAlbaranClienteCabecera:cNomCli      := ::oTiketCabecera:cNomTik
@@ -7173,7 +7173,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
       ::oAlbaranClienteLinea:lKitArt      := ::oTemporalLinea:lKitArt
       ::oAlbaranClienteLinea:lKitPrc      := ::oTemporalLinea:lKitPrc
       ::oAlbaranClienteLinea:dFecAlb      := GetSysDate()
-      ::oAlbaranClienteLinea:cAlmLin      := oUser():cAlmacen()
+      ::oAlbaranClienteLinea:cAlmLin      := Application():codigoAlmacen()
       ::oAlbaranClienteLinea:lIvaLin      := .t.
       ::oAlbaranClienteLinea:nNumLin      := ::oTemporalLinea:nNumLin
       ::oAlbaranClienteLinea:nPosPrint    := ::oTemporalLinea:nPosPrint
@@ -7204,7 +7204,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
          ::oAlbaranClientePago:nNumAlb    := nNumAlb
          ::oAlbaranClientePago:cSufAlb    := cSufAlb
          ::oAlbaranClientePago:nNumRec    := n
-         ::oAlbaranClientePago:cCodCaj    := oUser():cCaja()
+         ::oAlbaranClientePago:cCodCaj    := Application():CodigoCaja()
          ::oAlbaranClientePago:cTurRec    := cCurSesion()
          ::oAlbaranClientePago:cCodCli    := ::oTiketCabecera:cCliTik
          ::oAlbaranClientePago:dEntrega   := GetSysDate()
@@ -7406,7 +7406,7 @@ METHOD CargaValoresDefecto( nUbicacion ) CLASS TpvTactil
    */
 
    if Empty( ::oTiketCabecera:cNcjTik )
-      ::oTiketCabecera:cNcjTik   := oUser():cCaja()
+      ::oTiketCabecera:cNcjTik   := Application():CodigoCaja()
    end if
 
    /*
@@ -7438,7 +7438,7 @@ METHOD CargaValoresDefecto( nUbicacion ) CLASS TpvTactil
    */
 
    if Empty( ::oTiketCabecera:cAlmTik )
-      ::oTiketCabecera:cAlmTik   := oUser():cAlmacen()
+      ::oTiketCabecera:cAlmTik   := Application():codigoAlmacen()
    end if
 
    /*
@@ -8316,10 +8316,10 @@ RETURN ( Self )
 
 METHOD ImprimeComanda( cImpresora )
 
-   ::cFormato        := cFormatoComandaEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
-   ::cImpresora      := alltrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
+   ::cFormato        := cFormatoComandaEnCaja( Application():CodigoCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
+   ::cImpresora      := alltrim( cNombreImpresoraComanda( Application():CodigoCaja(), cImpresora, ::oCajaLinea:cAlias ) )
    ::nDispositivo    := IS_PRINTER
-   ::nCopias         := max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
+   ::nCopias         := max( nCopiasComandasEnCaja( Application():CodigoCaja(), ::oCajaCabecera:cAlias ), 1 )
    ::lComanda        := .t.
 
    ::ImprimeDocumento()
@@ -8330,10 +8330,10 @@ RETURN ( Self )
 
 METHOD ImprimeAnulacion( cImpresora )
 
-  ::cFormato        := cFormatoAnulacionEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
-  ::cImpresora      := AllTrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
+  ::cFormato        := cFormatoAnulacionEnCaja( Application():CodigoCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
+  ::cImpresora      := AllTrim( cNombreImpresoraComanda( Application():CodigoCaja(), cImpresora, ::oCajaLinea:cAlias ) )
   ::nDispositivo    := IS_PRINTER
-  ::nCopias         := Max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
+  ::nCopias         := Max( nCopiasComandasEnCaja( Application():CodigoCaja(), ::oCajaCabecera:cAlias ), 1 )
   ::lComanda        := .t.
 
   ::ImprimeDocumento()
@@ -8480,7 +8480,7 @@ RETURN ( Self )
 
 METHOD SonidoComanda( cImpresora )
 
-  local cWav        := AllTrim( cWavImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
+  local cWav        := AllTrim( cWavImpresoraComanda( Application():CodigoCaja(), cImpresora, ::oCajaLinea:cAlias ) )
 
   if !Empty( cWav ) .and. File( cWav )
      SndPlaySound( cWav )
@@ -9573,7 +9573,7 @@ METHOD GetPesoBalanza() CLASS TpvTactil
    local oBalanza
    local cBalanza 
 
-   cBalanza                :=  cBalanzaEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias )
+   cBalanza                :=  cBalanzaEnCaja( Application():CodigoCaja(), ::oCajaCabecera:cAlias )
 
    if empty( cBalanza )
       return ( Self )
@@ -10518,8 +10518,8 @@ METHOD lValidTurno()
       Return .f.
    end if
 
-   if !lCajaOpen( oUser():cCaja() )
-      msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+   if !lCajaOpen( Application():CodigoCaja() )
+      msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
       Return .f.
    end if
 

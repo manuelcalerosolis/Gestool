@@ -20,6 +20,8 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD setUsuarioPcEnUso( cAjusteValue, cAjustableUuid )             INLINE ( ::setValue( 'pc_en_uso', cAjusteValue, 'usuarios', cAjustableUuid ) )
    METHOD setUsuarioEmpresaEnUso( cAjusteValue, cAjustableUuid )        INLINE ( ::setValue( 'empresa_en_uso', cAjusteValue, 'usuarios', cAjustableUuid ) )
    METHOD setUsuarioEmpresaExclusiva( cAjusteValue, cAjustableUuid )    INLINE ( ::setValue( 'empresa_exclusiva', cAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioAlmacenExclusivo( cAjusteValue, cAjustableUuid )    INLINE ( ::setValue( 'almacen_exclusivo', cAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioDelegacionExclusiva( cAjusteValue, cAjustableUuid ) INLINE ( ::setValue( 'delegacion_exclusiva', cAjusteValue, 'usuarios', cAjustableUuid ) )
 
    METHOD setRolMostrarRentabilidad( cAjusteValue, cAjustableUuid )     INLINE ( ::setLogic( 'mostrar_rentabilidad', cAjusteValue, 'roles', cAjustableUuid ) )
    METHOD setRolCambiarPrecios( cAjusteValue, cAjustableUuid )          INLINE ( ::setLogic( 'cambiar_precios', cAjusteValue, 'roles', cAjustableUuid ) )
@@ -36,6 +38,8 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD getUsuarioEmpresaEnUso( cUuid )                               INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_en_uso', '' ) )
    METHOD getUsuarioEmpresaExclusiva( cUuid )                           INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_exclusiva', space( 40 ) ) )   
    METHOD getUsuarioEmpresa( cUuid )                                    
+   METHOD getUsuarioAlmacenExclusivo( cUuid )                           INLINE ( ::getValue( cUuid, 'usuarios', 'almacen_exclusivo', space( 40 ) ) )   
+   METHOD getUsuarioDelegacionExclusiva( cUuid )                        INLINE ( ::getValue( cUuid, 'usuarios', 'delegacion_exclusiva', space( 40 ) ) )   
 
    METHOD getRolMostrarRentabilidad( cUuid )                            INLINE ( ::getLogic( cUuid, 'roles', 'mostrar_rentabilidad', .t. ) )   
    METHOD getRolNoMostrarRentabilidad( cUuid )                          INLINE ( !::getRolMostrarRentabilidad( cUuid ) )   
@@ -53,6 +57,8 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD getRolNoFiltrarVentas( cUuid )                                INLINE ( !::getRolFiltrarVentas( cUuid ) )   
    
    METHOD getRolAbrirCajonPortamonedas( cUuid )                         INLINE ( ::getLogic( cUuid, 'roles', 'abrir_cajon_portamonedas', .t. ) )   
+
+   // METHOD assertUsuarioFavoritos( cUuid )                               INLINE ( ::getValue( cUuid, 'favoritos', cAjusteValue, 'usuarios', cAjustableUuid ) )
 
 END CLASS
 
@@ -91,7 +97,7 @@ METHOD set( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid )
    hset( hBuffer, "ajustable_tipo", cAjustableTipo )
    hset( hBuffer, "ajustable_uuid", cAjustableUuid )
 
-RETURN ( ::insertOnDuplicate( hBuffer ) )
+RETURN ( ::insertOnDuplicate( hBuffer, .t. ) )
 
 //---------------------------------------------------------------------------//
 
@@ -99,11 +105,11 @@ METHOD setValue( cAjusteDescripcion, cAjusteValue, cAjustableTipo, cAjustableUui
 
    local cAjusteUuid
 
-   if empty( cAjusteDescripcion ) .or. empty( cAjusteValue ) .or. empty( cAjustableTipo ) .or. empty( cAjustableUuid )
+   if empty( cAjusteDescripcion ) .or. empty( cAjustableTipo ) .or. empty( cAjustableUuid )
       RETURN ( nil )
    endif
 
-   cAjusteUuid := SQLAjustesModel():getAjusteUuid( cAjusteDescripcion )
+   cAjusteUuid       := SQLAjustesModel():getAjusteUuid( cAjusteDescripcion )
 
    if empty( cAjusteUuid )
       RETURN ( nil )
@@ -143,8 +149,6 @@ METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    cSentence         += "WHERE ajustes.ajuste = " + quoted( cAjuste ) + " "
    cSentence         +=    "AND ajustables.ajustable_tipo = " + quoted( cTipo ) + " "
    cSentence         +=    "AND ajustables.ajustable_uuid = " + quoted( cUuid ) 
-
-   logwrite( cSentence )
 
    uValue            := ::getDatabase():getValue( cSentence )
 

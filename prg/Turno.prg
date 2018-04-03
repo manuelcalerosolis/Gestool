@@ -445,7 +445,7 @@ CLASS TTurno FROM TMasDet
    METHOD GetCurrentTurno()                        INLINE   ( ::GetLastOpen() )
    METHOD GoCurrentTurno()
 
-   METHOD GetCurrentCaja()                         INLINE   ( ::cCurCaja   := oUser():cCaja() )
+   METHOD GetCurrentCaja()                         INLINE   ( ::cCurCaja   := Application():CodigoCaja() )
 
    METHOD GetFullTurno()                           INLINE   ( ::cCurTurno + ::cCurCaja )
 
@@ -696,13 +696,13 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    DEFAULT oWndParent         := GetWndFrame()
 
    if oMenuItem != nil
-      ::nLevel                := nLevelUsr( oMenuItem )
+      ::nLevel                := Auth():Level( oMenuItem )
    end if
 
-   if IsNum( ::nLevel ) .and. nAnd( ::nLevel, 1 ) != 0
+   if IsNum( ::nLevel ) .and. nAnd( ::nLevel, 1 ) == 0
       ::lAccess               := .f.
       msgStop( "Acceso no permitido." )
-      Return ( nil )
+      RETURN ( nil )
    end if
 
    ::cPath                    := cPath
@@ -777,15 +777,15 @@ METHOD Build( cPath, cDriver, oWnd, oMenuItem )
    end if
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
       ::nLevel          := 0
    end if
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       ::lAccess         := .f.
       msgStop( "Acceso no permitido." )
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    ::cPath              := cPath
@@ -894,11 +894,11 @@ METHOD OpenFiles( lExclusive )
       DATABASE NEW ::oAlbCliP    PATH ( cPatEmp() ) FILE "ALBCLIP.DBF"     VIA ( cDriver() ) SHARED INDEX "ALBCLIP.CDX"
       ::oAlbCliP:OrdSetFocus( "cTurRec" )
 
-      DATABASE NEW ::oArticulo   PATH ( cPatArt() ) FILE "ARTICULO.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oArticulo   PATH ( cPatEmp() ) FILE "ARTICULO.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-      DATABASE NEW ::oClient     PATH ( cPatCli() ) FILE "CLIENT.DBF"      VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oClient     PATH ( cPatEmp() ) FILE "CLIENT.DBF"      VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-      DATABASE NEW ::oProvee     PATH ( cPatPrv() ) FILE "Provee.Dbf"      VIA ( cDriver() ) SHARED INDEX "Provee.Cdx"
+      DATABASE NEW ::oProvee     PATH ( cPatEmp() ) FILE "Provee.Dbf"      VIA ( cDriver() ) SHARED INDEX "Provee.Cdx"
 
       DATABASE NEW ::oFPago      PATH ( cPatEmp() ) FILE "FPAGO.DBF"       VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
@@ -924,9 +924,9 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oAntCliT    PATH ( cPatEmp() ) FILE "AntCliT.Dbf"     VIA ( cDriver() ) SHARED INDEX "AntCliT.Cdx"
 
-      DATABASE NEW ::oFamilia    PATH ( cPatArt() ) FILE "Familias.Dbf"    VIA ( cDriver() ) SHARED INDEX "Familias.Cdx"
+      DATABASE NEW ::oFamilia    PATH ( cPatEmp() ) FILE "Familias.Dbf"    VIA ( cDriver() ) SHARED INDEX "Familias.Cdx"
 
-      DATABASE NEW ::oTemporada  PATH ( cPatArt() ) FILE "Temporadas.Dbf"  VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
+      DATABASE NEW ::oTemporada  PATH ( cPatEmp() ) FILE "Temporadas.Dbf"  VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
 
       DATABASE NEW ::oContador   PATH ( cPatEmp() ) FILE "nCount.Dbf"      VIA ( cDriver() ) SHARED INDEX "nCount.Cdx"
 
@@ -953,12 +953,12 @@ METHOD OpenFiles( lExclusive )
          lOpen                   := .f.
       end if
 
-      ::oTipArt                  := TTipArt():Create( cPatArt() )
+      ::oTipArt                  := TTipArt():Create( cPatEmp() )
       if !::oTipArt:OpenFiles()
          lOpen                   := .f.
       end if
 
-      ::oFabricante              := TFabricantes():Create( cPatArt() )
+      ::oFabricante              := TFabricantes():Create( cPatEmp() )
       if !::oFabricante:OpenFiles()
          lOpen                   := .f.
       end if
@@ -1232,7 +1232,7 @@ METHOD Activate()
 
    ::oWndBrw:Activate( , , , , , , , , , , , , , , , , {|| ::CloseFiles() } )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
@@ -1546,15 +1546,15 @@ METHOD lOpenTurno()
    */
 
    if empty( ::oDbf ) 
-      Return( ::OpenTurno )
+      RETURN( ::OpenTurno )
    end if
 
    if !::oDbf:Used()
-      Return( ::OpenTurno )
+      RETURN( ::OpenTurno )
    end if
 
    if ::oDbf:RecCount() == 0
-      Return( ::OpenTurno )
+      RETURN( ::OpenTurno )
    end if
 
    ::oDbf:GetStatus()
@@ -1987,7 +1987,7 @@ METHOD lAllCloseTurno( cCurrentTurno )
 
    ::oDbf:setStatus( aStatus )   
 
-Return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -2018,7 +2018,7 @@ METHOD DialogCreateTurno()
    local cResource      
 
    if ( oRetFld( ::GetCurrentCaja(), ::oCaja, "lNoArq" ) )
-      return .t.
+      RETURN .t.
    end if
 
    nNumTur              := 0
@@ -2196,7 +2196,7 @@ METHOD StartCreateTurno( oDivisa, oImporte, oCodUsr )
    oImporte:lValid()   
    oImporte:SetFocus()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -2204,7 +2204,7 @@ METHOD CreateTurno( oDlg )
 
    if empty( ::cCajeroTurno )
       MsgStop( "Debe de cumplimentar el usuario", "Imposible realizar apertura" )
-      Return .f.
+      RETURN .f.
    end if
 
    // Creamos el registros para el turno---------------------------------------
@@ -2227,7 +2227,7 @@ METHOD CreateTurno( oDlg )
 
    oDlg:end( IDOK )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -2405,7 +2405,7 @@ METHOD MarkTurno( lMark )
    
    CursorWe()
 
-return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -2432,21 +2432,21 @@ METHOD lInvCierre()
    local lVal     := .f.
    local oMsg
 
-   if !lUsrMaster()
-      MsgStop( "Solo puede invertir el cierre el usuario Administrador." )
-      Return .f.
-   end if
-
-   if nUserCaja( oUser():cCaja() ) > 1
+   if nUserCaja( Application():CodigoCaja() ) > 1
       msgStop( "Hay más de un usuario conectado a la caja", "Atención" )
-      return .f.
+      RETURN .f.
    end if
 
    ::cCurTurno    := ::GetLastClose()
 
    if empty( ::cCurTurno )
       MsgStop( "No hay sesiones para invertir el cierre" )
-      return .f.
+      RETURN .f.
+   end if
+
+   if SuperUsuarioController():New():isNotDialogViewActivate()
+      MsgStop( "Solo puede invertir el cierre con privilegios de super administrador." )
+      RETURN .f.
    end if
 
    if ::oWndBrw != nil
@@ -2973,7 +2973,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       if !::GoCurrentTurno()
          msgStop( "No puedo posicionarme en la sesión actual.")
-         return .f.
+         RETURN .f.
       end if
 
       if empty( ::dFecTur )
@@ -2996,7 +2996,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    if !::lZoom .and. empty( ::cCurTurno )
       MsgStop( "No hay sesiones para cerrar" )
-      return .f.
+      RETURN .f.
    end if
 
    ::CreateCajaTurno()
@@ -3006,7 +3006,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    ::oDbf:GetStatus()
    if !( ::oDbf:SeekInOrd( ::GetFullTurno(), "cNumTur" ) )
       msgStop( "Turno " + ::GetFullTurno() + " no encontrado" )
-      return .f.
+      RETURN .f.
    end if 
 
    ::oDbfDet:OrdScope( ::GetFullTurno() )
@@ -3723,7 +3723,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE CHECKBOX ::oChkEnviarMail ;
          VAR      ::lEnviarMail ;
-         WHEN     lUsrMaster() .and. !::lArqueoParcial ;
+         WHEN     !::lArqueoParcial ;
          ID       720 ;
          OF       ::oFldTurno:aDialogs[ 4 ]
 
@@ -3735,7 +3735,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE CHECKBOX ::oChkActualizaStockWeb ;
          VAR      ::lChkActualizaStockWeb ;
-         WHEN     lUsrMaster() .and. !::lArqueoParcial ;
+         WHEN     !::lArqueoParcial ;
          ID       740 ;
          OF       ::oFldTurno:aDialogs[ 4 ]   
 
@@ -3875,7 +3875,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       ::oWndBrw:Refresh()
    end if
 
-Return ( if( !empty( ::oDlgTurno ), ::oDlgTurno:nResult == IDOK, .f. ) )
+RETURN ( if( !empty( ::oDlgTurno ), ::oDlgTurno:nResult == IDOK, .f. ) )
 
 //---------------------------------------------------------------------------//
 
@@ -3966,7 +3966,7 @@ METHOD InitArqueoTurno()
 
    end if    
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -4040,7 +4040,7 @@ METHOD InitDlgImprimir()
 
    ::oTreeImpresion:ExpandAll()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -4076,7 +4076,7 @@ METHOD StartArqueoTurno( oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario )
 
    SysRefresh()
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -4110,7 +4110,7 @@ METHOD GoPrev( oBrwCnt, oBrwCaj )
 
    ::oFldTurno:GoPrev()
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -4127,21 +4127,21 @@ METHOD GoNext( oCajTur, oBrwCnt )
          if !::lZoom .and. empty( ::cCajTur )
             MsgStop( "Es necesario codificar un usuario." )
             oCajTur:SetFocus()
-            return nil
+            RETURN nil
          end if
 
          if !::lZoom .and. !::lAnyCajaSelect()
             MsgStop( "Es necesario seleccionar una caja." )
-            return nil
+            RETURN nil
          end if
 
          if !::lZoom .and. !::lValidCajas()
-            return nil
+            RETURN nil
          end if
 
          if ::lZoom .and. !::lOneCajaSelect()
             MsgStop( "Seleccione solo una caja." )
-            return nil
+            RETURN nil
          end if
 
          if ::lIsContadores()
@@ -4243,7 +4243,7 @@ METHOD GoNext( oCajTur, oBrwCnt )
 
    end case
 
-return nil
+RETURN nil
 
 //--------------------------------------------------------------------------//
 
@@ -4258,7 +4258,7 @@ METHOD lIsContadores()
 
    ::oArticulo:SetStatus()
 
-Return ( lIsContadores )
+RETURN ( lIsContadores )
 
 //---------------------------------------------------------------------------//
 
@@ -4330,7 +4330,7 @@ METHOD LoadContadores( lReLoad )
 
    end if
 
-Return Nil
+RETURN Nil
 
 //--------------------------------------------------------------------------//
 
@@ -4375,7 +4375,7 @@ METHOD CreateCajaTurno()
 
    ErrorBlock( oBlock )
 
-Return Nil
+RETURN Nil
 
 //---------------------------------------------------------------------------//
 
@@ -4414,7 +4414,7 @@ METHOD SelCajas( lSelect, oBrw, lMessage )
       oBrw:Refresh()
    end if
 
-Return Nil
+RETURN Nil
 
 //--------------------------------------------------------------------------//
 
@@ -4439,7 +4439,7 @@ METHOD SelAllCajas( lSelect, oBrw )
       oBrw:Refresh()
    end if
 
-Return Nil
+RETURN Nil
 
 //---------------------------------------------------------------------------//
 //
@@ -4471,7 +4471,7 @@ METHOD lAnyCajaSelect()
 
    ::oDbfCaj:SetRecno()
 
-Return ( lAny )
+RETURN ( lAny )
 
 //---------------------------------------------------------------------------//
 //
@@ -4499,7 +4499,7 @@ METHOD lOneCajaSelect()
 
    ::oDbfCaj:SetRecno()
 
-Return ( nOne == 1 )
+RETURN ( nOne == 1 )
 
 //---------------------------------------------------------------------------//
 
@@ -4509,7 +4509,7 @@ METHOD lValidCajas()
    local lValidCajas    := .t.
 
    if ::lArqueoParcial
-      Return .t.
+      RETURN .t.
    end if
 
    ::oDbfCaj:GetRecno()
@@ -4539,7 +4539,7 @@ METHOD lValidCajas()
 
    ::oDbfCaj:SetRecno()
 
-Return ( lValidCajas )
+RETURN ( lValidCajas )
 
 //--------------------------------------------------------------------------//
 
@@ -4552,7 +4552,7 @@ METHOD lChangeCajas( oNomCaj )
    */
 
    if !cCajas( ::oCodCaj, ::oCaja:cAlias, oNomCaj )
-      Return .f.
+      RETURN .f.
    end if
 
    /*
@@ -4589,7 +4589,7 @@ METHOD lChangeCajas( oNomCaj )
 
    ::RefreshTurno()
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 /*
@@ -4892,7 +4892,7 @@ METHOD ClickBrwTotales()
       end if
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 /*
@@ -4925,7 +4925,7 @@ METHOD TotContadores( cTurno )
 
    ::oDbfDet:SetStatus()
 
-return ( ::oTotales:nContadores )
+RETURN ( ::oTotales:nContadores )
 
 //---------------------------------------------------------------------------//
 
@@ -5931,7 +5931,7 @@ METHOD EdtCol( oCol, xValue, nLastKey )
       ::oDbfDet:FieldPutByName( "nCanAct", xValue )
    endif
 
-return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -5941,7 +5941,7 @@ METHOD EdtAnt( oCol, xValue, nLastKey )
       ::oDbfDet:FieldPutByName( "nCanAnt", xValue )
    endif
 
-return ( .t. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -5960,7 +5960,7 @@ METHOD DlgImprimir( nDevice, lTactil )
 
    if ::lArqueoCiego
       MsgStop( "No tiene privilegios para imprimir el arqueo." )
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    cCodCaj           := ::GetCurrentCaja()
@@ -6117,7 +6117,7 @@ METHOD DlgImprimir( nDevice, lTactil )
 
    oDlg:Activate( , , , .t., {|| .t. }, , {|| ::InitDlgImprimir() } )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -6162,11 +6162,11 @@ METHOD PrintArqueo( cTurno, cCaja, nDevice, cCaption, cDocumento, cPrinter, nCop
    DEFAULT cPrinter     := cPrinterArqueo( ::GetCurrentCaja(), ::oCaja:cAlias )
 
    if ::oDbf:Lastrec() == 0
-      return nil
+      RETURN nil
    end if
 
    if !lExisteDocumento( cDocumento, ::oDbfDoc:cAlias )
-      return nil
+      RETURN nil
    end if
 
    if lVisualDocumento( cDocumento, ::oDbfDoc:cAlias )
@@ -6222,12 +6222,12 @@ METHOD Contabiliza()
 
    if ::oDbf:nStaTur != cajCerrrada .and. !::lAllSesions
       ::oTreeSelect:Add( "Sesión : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " no cerrada", 0 )
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    if ::oDbf:lConTur .and. !::lAllSesions
       ::oTreeSelect:Add( "Sesión : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " ya contabilizada", 0 )
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    ::oMtrSelect:SetTotal( 8 )
@@ -6242,7 +6242,7 @@ METHOD Contabiliza()
       CloseDiario()
    else
       ::oTreeSelect:Add( "Sesión : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " imposible abrir ficheros de contaplus", 0 )
-      return .f.
+      RETURN .f.
    end if
 
    /*
@@ -6622,7 +6622,7 @@ METHOD MixApunte()
 
    next
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -6731,7 +6731,7 @@ METHOD ContabilizaContadores()
    */
 
    if nTotCon == 0
-      Return ( ::aSimula )
+      RETURN ( ::aSimula )
    end if
 
    /*
@@ -6777,7 +6777,7 @@ METHOD ContabilizaContadores()
 
       if !::lChkSimula .AND. !ChkSubcuenta( cRutCnt, ::cGetEmpresaContaplus, cCtaVen, , .f. )
          ::oTreeSelect:Add( "Contadores : " + ::oDbf:cNumTur + "subcuenta de venta " + RTrim( cCtaVen ) + " no encontada, en empresa" + ::cGetEmpresaContaplus, 0 )
-         return .f.
+         RETURN .f.
       end if
 
       nPos           := aScan( aVta, {|x| x[ 1 ] + x[ 2 ] + x[ 3 ] == ::cGetEmpresaContaplus + ::cGetProjectoContaplus + cCtaVen } )
@@ -6798,7 +6798,7 @@ METHOD ContabilizaContadores()
 
       if !::lChkSimula .AND. !ChkSubcuenta( cRutCnt, ::cGetEmpresaContaplus, cCtaIvm, , .f. )
          ::oTreeSelect:Add( "Contadores : " + ::oDbf:cNumTur + " subcuenta de impuestos especiales " + RTrim( cCtaIvm ) + " no encontada, en empresa" + ::cGetEmpresaContaplus, 0 )
-         return .f.
+         RETURN .f.
       end if
 
       nPos           := aScan( aIvm, {|x| x[ 1 ] + x[ 2 ] + x[ 3 ] == ::cGetEmpresaContaplus + ::cGetProjectoContaplus + cCtaIvm } )
@@ -6821,7 +6821,7 @@ METHOD ContabilizaContadores()
 
       if !::lChkSimula .AND. !ChkSubcuenta( cRutCnt, ::cGetEmpresaContaplus, cCtaIva, , .f. )
          ::oTreeSelect:Add( "Contadores : " + ::oDbf:cNumTur + "subcuenta de " + cImp() + " " + RTrim( cCtaIva ) + " no encontada, en empresa" + ::cGetEmpresaContaplus, 0 )
-         return .f.
+         RETURN .f.
       end if
 
       nPos  := aScan( aIva, {|x| x[ 1 ] + x[ 2 ] + x[ 3 ] == ::cGetEmpresaContaplus + ::cGetProjectoContaplus + cCtaIva } )
@@ -6841,7 +6841,7 @@ METHOD ContabilizaContadores()
 
    if !::lChkSimula .AND. !ChkSubcuenta( cRutCnt, ::cGetEmpresaContaplus, cCtaPgo, , .f. )
       ::oTreeSelect:Add( "Contadores : " + ::oDbf:cNumTur + " subcuenta de pago " + RTrim( cCtaPgo ) + " no encontada, en empresa" + ::cGetEmpresaContaplus, 0 )
-      return .f.
+      RETURN .f.
    end if
 
    nPos  := aScan( aPgo, {|x| x[ 1 ] + x[ 2 ] + x[ 3 ] + x[ 4 ] == ::cGetEmpresaContaplus + ::cGetProjectoContaplus + cCtaPgo + cCtaCli } )
@@ -7035,7 +7035,7 @@ METHOD Asiento()
    local lErrors     := .f.
 
    if empty( ::aSimula )
-      Return .f.
+      RETURN .f.
    end if
 
    nLen              := len( ::aSimula )
@@ -7065,7 +7065,7 @@ METHOD Asiento()
    next
 
    if lErrors
-      Return .f.
+      RETURN .f.
    end if
 
    /*
@@ -7201,7 +7201,7 @@ METHOD lSelectTurno( lSel )
 
    end if
 
-return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -7230,7 +7230,7 @@ METHOD lSelectAll( lSel )
 
    CursorWE()
 
-return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -7506,7 +7506,7 @@ METHOD CreateData()
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -7530,7 +7530,7 @@ METHOD RestoreData()
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -7550,7 +7550,7 @@ METHOD SendData()
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -7571,7 +7571,7 @@ METHOD ReciveData()
 
    ::oSender:SetText( "Sesiones recibidas" )
 
-Return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
@@ -7702,7 +7702,7 @@ METHOD Process()
 
    next
 
-Return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
@@ -7728,7 +7728,7 @@ METHOD nGetNumberToSend()
 
    ::nNumberSend     := GetPvProfInt( "Numero", ::cText, ::nNumberSend, ::cIniFile )
 
-Return ( ::nNumberSend )
+RETURN ( ::nNumberSend )
 
 //----------------------------------------------------------------------------//
 
@@ -7738,7 +7738,7 @@ METHOD CheckFiles( cFileAppendFrom )
       ::CloseService()
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -7867,7 +7867,7 @@ METHOD PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
    ::oDbfCaj:SetRecno()
    ::oDbfDet:SetRecno()
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -7910,7 +7910,7 @@ METHOD DataReport( cTurno, cCaja, oFastReport )
    oFastReport:SetResyncPair(   "Sesión",   "Usuarios" )
    oFastReport:SetResyncPair(   "Sesión",   "Empresa" )
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -8036,7 +8036,7 @@ METHOD VariableReport( oFastReport )
    oFastReport:AddVariable(     "Monedas en caja",  "Retirado en caja",                              "GetHbVar('nRetiradoEnCaja')")
    oFastReport:AddVariable(     "Monedas en caja",  "Tarjeta en caja",                               "GetHbVar('nTarjetaEnCaja')")
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
@@ -8156,11 +8156,11 @@ METHOD DesignReport( oFastReport, dbfDoc )
 
    else
 
-      Return .f.
+      RETURN .f.
 
    end if
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
@@ -8204,11 +8204,11 @@ METHOD AppendInTemporal( cKey, cNaturaleza, nImporte )
    local oBlock
 
    if !( hb_ischar( cNaturaleza ) )
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    if !( hb_isnumeric( nImporte ) )
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
@@ -10549,7 +10549,7 @@ METHOD bEdtAlbaranCliente()
 
    local cNumeroDocumento  := by( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
 
-Return ( {|| EdtAlbCli( cNumeroDocumento ) } )
+RETURN ( {|| EdtAlbCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10557,7 +10557,7 @@ METHOD bEdtFacturaCliente()
 
    local cNumeroDocumento  := by( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac )
 
-Return ( {|| EdtFacCli( cNumeroDocumento ) } )
+RETURN ( {|| EdtFacCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10565,7 +10565,7 @@ METHOD bEdtFacturaRectificativaCliente()
 
    local cNumeroDocumento  := by( ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac )
 
-Return ( {|| EdtFacRec( cNumeroDocumento ) } )
+RETURN ( {|| EdtFacRec( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10574,10 +10574,10 @@ METHOD bEdtTiketCliente()
    local cNumeroDocumento  := by( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik )
 
    if ( "TPV" $ appParamsMain() )
-      Return ( {|| InitTikCli( cNumeroDocumento ) } )
+      RETURN ( {|| InitTikCli( cNumeroDocumento ) } )
    end if
 
-Return ( { || EdtTikCli( cNumeroDocumento ) } )
+RETURN ( { || EdtTikCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10585,7 +10585,7 @@ METHOD bZooTiketCliente()
 
    local cNumeroDocumento  := by( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik )
 
-Return ( { || ZooTikCli( cNumeroDocumento ) } )
+RETURN ( { || ZooTikCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10593,7 +10593,7 @@ METHOD bEdtAnticipoCliente()
 
    local cNumeroDocumento  := by( ::oAntCliT:cSerAnt + Str( ::oAntCliT:nNumAnt ) + ::oAntCliT:cSufAnt )
 
-Return ( {|| EdtAntCli( cNumeroDocumento ) } )
+RETURN ( {|| EdtAntCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10601,7 +10601,7 @@ METHOD bEdtAlbaranProveedor()
 
    local cNumeroDocumento  := by( ::oAlbPrvT:cSerAlb + Str( ::oAlbPrvT:nNumAlb ) + ::oAlbPrvT:cSufAlb )
 
-Return ( {|| EdtAlbPrv( cNumeroDocumento ) } )
+RETURN ( {|| EdtAlbPrv( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10609,7 +10609,7 @@ METHOD bEdtFacturaProveedor()
 
    local cNumeroDocumento  := by( ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac )
 
-Return ( {|| EdtFacPrv( cNumeroDocumento ) } )
+RETURN ( {|| EdtFacPrv( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10617,7 +10617,7 @@ METHOD bEdtFacturaRectificativaProveedor()
 
    local cNumeroDocumento  := by( ::oRctPrvT:cSerFac + Str( ::oRctPrvT:nNumFac ) + ::oRctPrvT:cSufFac )
 
-Return ( {|| EdtRctPrv( cNumeroDocumento ) } )
+RETURN ( {|| EdtRctPrv( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10625,7 +10625,7 @@ METHOD bEdtTiketCobro()
 
    local cNumeroDocumento  := by( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik )
 
-Return ( {|| EdtTikCli( cNumeroDocumento ) } )
+RETURN ( {|| EdtTikCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10633,7 +10633,7 @@ METHOD bZooTiketCobro()
 
    local cNumeroDocumento  := by( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik )
 
-Return ( {|| ZooTikCli( cNumeroDocumento ) } )
+RETURN ( {|| ZooTikCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10642,10 +10642,10 @@ METHOD bEdtFacturaCobro()
    local cNumeroDocumento  := ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac
 
    if !empty( ::oFacCliP:cTipRec )
-      Return ( {|| EdtFacRec( cNumeroDocumento ) } )
+      RETURN ( {|| EdtFacRec( cNumeroDocumento ) } )
    end if
 
-Return ( {|| EdtFacCli( cNumeroDocumento ) } )
+RETURN ( {|| EdtFacCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10653,7 +10653,7 @@ METHOD bEdtPedidoEntrega()
 
    local cNumeroDocumento  := ::oPedCliT:cSerPed + Str( ::oPedCliP:nNumPed ) + ::oPedCliP:cSufPed
 
-Return ( {|| EdtPedCli( cNumeroDocumento ) } )
+RETURN ( {|| EdtPedCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10661,7 +10661,7 @@ METHOD bEdtAlbaranEntrega()
 
    local cNumeroDocumento  := ::oAlbCliP:cSerAlb + Str( ::oAlbCliP:nNumAlb ) +::oAlbCliP:cSufAlb
 
-Return ( {|| EdtAlbCli( cNumeroDocumento ) } )
+RETURN ( {|| EdtAlbCli( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10669,7 +10669,7 @@ METHOD bEdtEntradasSalidas()
 
    local cNumeroDocumento  := ::oEntSal:Recno()
 
-Return ( {|| EdtEntSal( cNumeroDocumento ) } )
+RETURN ( {|| EdtEntSal( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -10678,10 +10678,10 @@ METHOD bEdtFacturaPago()
    local cNumeroDocumento  := ::oFacPrvP:cSerFac + Str( ::oFacPrvP:nNumFac ) + ::oFacPrvP:cSufFac
 
    if !empty( ::oFacPrvP:cTipRec )
-      Return ( {|| EdtRctPrv( cNumeroDocumento ) } )
+      RETURN ( {|| EdtRctPrv( cNumeroDocumento ) } )
    end if
 
-Return ( {|| EdtFacPrv( cNumeroDocumento ) } )
+RETURN ( {|| EdtFacPrv( cNumeroDocumento ) } )
 
 //---------------------------------------------------------------------------//
 
@@ -11034,11 +11034,11 @@ METHOD GetLastOpen()
    local cLasTur        := ""
 
    if empty( ::oDbf )
-      Return ( cLasTur )
+      RETURN ( cLasTur )
    end if
 
    if !( ::oDbf:Used() )
-      Return ( cLasTur )
+      RETURN ( cLasTur )
    end if
 
    CursorWait()
@@ -11174,7 +11174,7 @@ METHOD MailArqueo( cCurrentTurno )
       fErase( ::cPdfDefaultPath + ::cHtmlFileName )
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -11184,7 +11184,7 @@ METHOD ActualizaStockWeb()
 //      :buildActualizaStockProductPrestashop()        
 //   end with
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -11212,7 +11212,7 @@ METHOD TotSesion( cTurno, cCaja )
       ::oTotales:addTotCajaObjetivo(   cCaja, ::oDbfCaj:nCanPre )
    end if
 
-Return ( nil ) 
+RETURN ( nil ) 
 
 //------------------------------------------------------------------------//
 
@@ -11234,7 +11234,7 @@ METHOD GetTreeState( aItems )
 
    next
 
-Return ( nil ) 
+RETURN ( nil ) 
 
 //------------------------------------------------------------------------//
 
@@ -11256,7 +11256,7 @@ METHOD SetTreeState( aItems )
 
    next
 
-Return ( nil ) 
+RETURN ( nil ) 
 
 //------------------------------------------------------------------------//
 
@@ -11276,7 +11276,7 @@ METHOD SaveImporte( cCodCaj )
 
    ::oDbfCaj:SetRecno()
 
-Return ( nil ) 
+RETURN ( nil ) 
 
 //------------------------------------------------------------------------//
 
@@ -11300,7 +11300,7 @@ METHOD LoadImporte( cCodCaj )
 
    ::oDbfCaj:SetRecno()
 
-Return ( nil ) 
+RETURN ( nil ) 
 
 //------------------------------------------------------------------------//
 
@@ -11321,7 +11321,7 @@ METHOD GetItemCheckState( cPrompt )
 
    end if
 
-Return ( lState )
+RETURN ( lState )
 
 //------------------------------------------------------------------------//
 
@@ -11387,7 +11387,7 @@ METHOD RefreshTurno()
       ::oImporteCambio:SetText( ::nImporteEfectivo - ::nImporteRetirado )
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //------------------------------------------------------------------------//
 
@@ -11407,13 +11407,13 @@ METHOD cBancoCuenta( uRctCli )
       end if
    end if
 
-Return ( cCuenta )
+RETURN ( cCuenta )
 
 //------------------------------------------------------------------------//
 
 METHOD cEstadoSesion()
 
-Return( ::aEstadoSesion[ MinMax( ::oDbf:nStaTur + 1, 1, 3 ) ] )
+RETURN( ::aEstadoSesion[ MinMax( ::oDbf:nStaTur + 1, 1, 3 ) ] )
 
 //------------------------------------------------------------------------//
 
@@ -11433,7 +11433,7 @@ METHOD cInfoAperturaCierreCaja()
       cInfoAperturaCierreCaja    += Capitalize( oRetFld( ::oDbfCaj:FieldGetByName( "cCajTur" ), ::oUser ) ) 
    end if  
    
-Return ( cInfoAperturaCierreCaja )
+RETURN ( cInfoAperturaCierreCaja )
 
 //---------------------------------------------------------------------------//
 
@@ -11445,7 +11445,7 @@ METHOD GetItemTree()
       cItem       := ::oBrwTotales:oTreeItem:Cargo[ 1 ]
    end if
 
-Return ( cItem )
+RETURN ( cItem )
 
 //---------------------------------------------------------------------------//
 
@@ -11459,7 +11459,7 @@ METHOD GetImporteTree()
       end if 
    end if
 
-Return ( cItem )
+RETURN ( cItem )
 
 //---------------------------------------------------------------------------//
 
@@ -11471,7 +11471,7 @@ METHOD GetColorTree()
       cColor      := { CLR_BLACK, CLR_BAR }
    end if 
 
-Return ( cColor )
+RETURN ( cColor )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -11535,9 +11535,9 @@ FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
 
-   if !lParcial .and. nUserCaja( oUser():cCaja() ) > 1
+   if !lParcial .and. nUserCaja( Application():CodigoCaja() ) > 1
       msgStop( "Hay más de un usuario conectado a la caja", "Atención" )
-      return .f.
+      RETURN .f.
    end if
 
    DisableMainWnd( oWnd )
@@ -11628,7 +11628,7 @@ Function lCajaOpen( cCodCaj )
 
    end if
 
-Return ( lCajaOpen )
+RETURN ( lCajaOpen )
 
 //-------------------------------------------------------------------------//
 //
@@ -11659,7 +11659,7 @@ Function chkTurno( oMenuItem )
 
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //
@@ -11677,7 +11677,7 @@ Function lCurSesion( cDbfCaj )
       lOpen          := .t.
    end if
 
-   lCurSesion        := !empty( TTurno():cCurTurno ) .or. RetFld( oUser():cCaja(), cDbfCaj, "lNoArq" )
+   lCurSesion        := !empty( TTurno():cCurTurno ) .or. RetFld( Application():CodigoCaja(), cDbfCaj, "lNoArq" )
 
    if lOpen
 
@@ -11689,7 +11689,7 @@ Function lCurSesion( cDbfCaj )
 
    end if
 
-Return ( lCurSesion )
+RETURN ( lCurSesion )
 
 //---------------------------------------------------------------------------//
 //
@@ -11700,7 +11700,7 @@ Function CloSesion()
 
    TTurno():cCurTurno   := nil
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -11732,7 +11732,7 @@ Function AddImpTactil( nImpVta, cCodArt, uArt )
 
    end case
 
-return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -11759,7 +11759,7 @@ Function cCurSesion( cCurSes, lDelega )
       cSesion           := SubStr( oTurno:cCurTurno, 1, 6 )
    end if 
 
-Return ( cSesion )
+RETURN ( cSesion )
 
 //---------------------------------------------------------------------------//
 
@@ -11794,6 +11794,6 @@ Function lExisteTurno( cNumTur, dbfTurno )
       ( dbfTurno )->( dbGoTo( nRec ) )
    end if
 
-Return ( lExiste )
+RETURN ( lExiste )
 
 //---------------------------------------------------------------------------//

@@ -50,7 +50,7 @@ END CLASS
 
 METHOD Create( cPath ) CLASS TGrpFam
 
-   DEFAULT cPath     := cPatArt()
+   DEFAULT cPath     := cPatEmp()
 
    ::cPath           := cPath
    ::oDbf            := nil
@@ -61,13 +61,13 @@ RETURN ( Self )
 
 METHOD New( cPath, oWndParent, oMenuItem ) CLASS TGrpFam
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
-      ::nLevel          := nLevelUsr( "01011" )
+      ::nLevel          := Auth():Level( "01011" )
    end if
 
    /*
@@ -299,7 +299,7 @@ RETURN ( oDlg:end( IDOK ) )
 
 METHOD Activate() CLASS TGrpFam
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if

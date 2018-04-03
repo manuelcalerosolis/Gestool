@@ -1102,7 +1102,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    DEFAULT oWndParent      := GetWndFrame()
 
    if oMenuItem != nil .and. ::nLevel == nil
-      ::nLevel             := nLevelUsr( oMenuItem )
+      ::nLevel             := Auth():Level( oMenuItem )
    else
       ::nLevel             := 0
    end if
@@ -1701,8 +1701,8 @@ FUNCTION cSalaVta( oGet, dbfSalaVta, oGet2 )
    BEGIN SEQUENCE
 
    if dbfSalaVta == nil
-      USE ( cPatAlm() + "SALAVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SALAVTA", @dbfSalaVta ) )
-      SET ADSINDEX TO ( cPatAlm() + "SALAVTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "SALAVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SALAVTA", @dbfSalaVta ) )
+      SET ADSINDEX TO ( cPatEmp() + "SALAVTA.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 

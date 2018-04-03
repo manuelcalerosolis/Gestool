@@ -75,7 +75,7 @@ END CLASS
 
 METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := GetWndFrame()
 
@@ -84,9 +84,9 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    ::oWndParent         := oWndParent
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
-      ::nLevel          := nLevelUsr( "01013" )
+      ::nLevel          := Auth():Level( "01013" )
    end if
 
    ::oDbf               := nil
@@ -149,7 +149,7 @@ RETURN ( lOpen )
 
 METHOD DefineFiles( cPath, cDriver )
 
-   DEFAULT cPath        := if( empty( ::cPath ), cPatArt(), ::cPath )
+   DEFAULT cPath        := if( empty( ::cPath ), cPatEmp(), ::cPath )
    DEFAULT cDriver      := if( empty( ::cDriver ), cDriver(), ::cDriver )
 
    DEFINE DATABASE ::oDbf FILE "Tipart.Dbf" CLASS "Tipart" ALIAS "Tipart" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de artículos"
@@ -186,7 +186,7 @@ RETURN ( ::oDbf )
 
 METHOD Activate()
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if

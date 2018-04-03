@@ -53,9 +53,9 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfUbiT PATH ( cPatAlm() )   FILE "UBICAT.DBF"   VIA ( cDriver() ) SHARED INDEX "UBICAT.CDX"
+   DATABASE NEW ::oDbfUbiT PATH ( cPatEmp() )   FILE "UBICAT.DBF"   VIA ( cDriver() ) SHARED INDEX "UBICAT.CDX"
 
-   DATABASE NEW ::oDbfUbiL PATH ( cPatAlm() )   FILE "UBICAL.DBF"   VIA ( cDriver() ) SHARED INDEX "UBICAL.CDX"
+   DATABASE NEW ::oDbfUbiL PATH ( cPatEmp() )   FILE "UBICAL.DBF"   VIA ( cDriver() ) SHARED INDEX "UBICAL.CDX"
 
    RECOVER
 

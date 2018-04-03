@@ -179,8 +179,8 @@ FUNCTION Usuarios( oMenuItem, oWnd )
    DEFAULT  oMenuItem   := "01052"
    DEFAULT  oWnd        := oWnd()
 
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel               := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if
@@ -392,21 +392,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
    do case
       case nMode == APPD_MODE
 
-         if !lUsrMaster()
-            msgStop( "Solo puede añadir usuarios, el usuario Administrador." )
-            return .f.
-         end if
-
          aTmp[ _NLEVUSE ]  := 1
          aTmp[ _NGRPUSE ]  := 2
          aTmp[ _LGRUPO  ]  := lGrupo
-
-      case nMode == EDIT_MODE
-
-         if !lUsrMaster()
-            msgStop( "Solo puede modificar las propiedades el usuario Administrador." )
-            return .f.
-         end if
 
    end case
 
@@ -735,6 +723,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
 
    oBmpGeneral:End()
 
+   aeval( aBmp, {|oBmp| oBmp:End() } )
+
 Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
@@ -980,7 +970,7 @@ return nil
 
 //----------------------------------------------------------------------------//
 /*
-function nLevelUsr( uHelpId )
+function Auth():Level( uHelpId )
 
    local oError
    local oBlock
@@ -1621,11 +1611,6 @@ Static Function QuiUsr( dbfUser )
    if ( dbfUser )->lUseUse
       MsgStop( "Usuario en uso" )
       return .t.
-   end if
-
-   if !lUsrMaster()
-      msgStop( "Solo puede eliminar usuarios el Administrador." )
-      return .f.
    end if
 
 Return .t.
@@ -2871,10 +2856,6 @@ Function ComprobarUser( dbfUsr )
    local cClave
    local oDlg
    local oBmp
-
-   if lUsrMaster()
-      return .t.
-   end if
 
    DEFINE DIALOG oDlg RESOURCE "TPV_USER"
 

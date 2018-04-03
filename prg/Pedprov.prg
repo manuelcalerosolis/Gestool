@@ -445,8 +445,8 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
    Obtenemos el nivel de acceso------------------------------------------------
    */
 
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel               := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return .f.
    end if
@@ -988,35 +988,35 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
    do case
    case nMode == APPD_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CSERPED ]        := cNewSer( "nPedPrv" )
       aTmp[ _CTURPED ]        := cCurSesion()
-      aTmp[ _CCODCAJ ]        := oUser():cCaja()
-      aTmp[ _CCODALM ]        := oUser():cAlmacen()
+      aTmp[ _CCODCAJ ]        := Application():CodigoCaja()
+      aTmp[ _CCODALM ]        := Application():codigoAlmacen()
       aTmp[ _CDIVPED ]        := cDivEmp()
       aTmp[ _NVDVPED ]        := nChgDiv( aTmp[ _CDIVPED ], D():Divisas( nView ) )
       aTmp[ _CSUFPED ]        := RetSufEmp()
       aTmp[ _LSNDDOC ]        := .t.
       aTmp[ _NESTADO ]        := 1
       aTmp[ _CCODUSR ]        := Auth():Codigo()
-      aTmp[ _CCODDLG ]        := oUser():cDelegacion()
+      aTmp[ _CCODDLG ]        := Application():CodigoDelegacion()
       if !empty( cCodPrv )
          aTmp[ _CCODPRV ]     := cCodPrv
       end if
 
    case nMode == DUPL_MODE
    
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURPED ]        := cCurSesion()
-      aTmp[ _CCODCAJ ]        := oUser():cCaja()
+      aTmp[ _CCODCAJ ]        := Application():CodigoCaja()
       aTmp[ _LSNDDOC ]        := .t.
       aTmp[ _LCLOPED ]        := .f.
       aTmp[ _NESTADO ]        := 1
@@ -1945,17 +1945,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
       REDEFINE CHECKBOX aGet[ _LIMPRIMIDO ] VAR aTmp[ _LIMPRIMIDO ] ;
          ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _DFECIMP ] VAR aTmp[ _DFECIMP ] ;
          ID       121 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CHORIMP ] VAR aTmp[ _CHORIMP ] ;
          ID       122 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -5357,7 +5357,7 @@ Static Function CreaPedido( cCodPrv, cCodAlm )
       else
          ( D():PedidosProveedores( nView ) )->cCodAlm := cDefAlm()
       end if
-      ( D():PedidosProveedores( nView ) )->cCodCaj    := oUser():cCaja()
+      ( D():PedidosProveedores( nView ) )->cCodCaj    := Application():CodigoCaja()
       ( D():PedidosProveedores( nView ) )->cNomPrv    := ( D():Proveedores( nView ) )->Titulo
       ( D():PedidosProveedores( nView ) )->cDirPrv    := ( D():Proveedores( nView ) )->Domicilio
       ( D():PedidosProveedores( nView ) )->cPobPrv    := ( D():Proveedores( nView ) )->Poblacion
@@ -7332,11 +7332,11 @@ Return nil
 
 Function AppPedPrv( cCodPrv, cCodArt, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_APPD ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -7362,11 +7362,11 @@ RETURN .t.
 
 FUNCTION EdtPedPrv( nNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -7400,11 +7400,11 @@ RETURN NIL
 
 FUNCTION ZooPedPrv( nNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -7438,11 +7438,11 @@ RETURN NIL
 
 FUNCTION DelPedPrv( nNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -7476,11 +7476,11 @@ Return nil
 
 FUNCTION PrnPedPrv( nNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -7514,11 +7514,11 @@ RETURN NIL
 
 FUNCTION VisPedPrv( nNumPed, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -8104,14 +8104,14 @@ Function SynPedPrv( cPath )
    dbUseArea( .t., cDriver(), cPath + "PedPrvI.Dbf", cCheckArea( "PedPRVI", @dbfPedPrvI ), .f. )
    if !lAIS(); ordListAdd( cPath + "PedPrvI.Cdx" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   dbUseArea( .t., cDriver(), cPatArt() + "PROVART.DBF", cCheckArea( "PROVART", @dbfArtPrv ), .f. )
-   if !lAIS(); ordListAdd( cPatArt() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
+   dbUseArea( .t., cDriver(), cPatEmp() + "PROVART.DBF", cCheckArea( "PROVART", @dbfArtPrv ), .f. )
+   if !lAIS(); ordListAdd( cPatEmp() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @dbfIva ), .t. )
    if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end

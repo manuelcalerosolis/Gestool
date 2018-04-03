@@ -87,10 +87,10 @@ METHOD New( oWnd, oMenuItem, cPatEmp, cPatDat )
 
    ::cCodEmp         := cCodEmp()
 
-   ::cPatCli         := cPatCli()
-   ::cPatArt         := cPatArt()
-   ::cPatPrv         := cPatPrv()
-   ::cPatAlm         := cPatAlm()
+   ::cPatCli         := cPatEmp()
+   ::cPatArt         := cPatEmp()
+   ::cPatPrv         := cPatEmp()
+   ::cPatAlm         := cPatEmp()
 
    ::aLgcIndices     := Afill( Array( 6 ), .t. )
    ::aChkIndices     := Array( 6 )
@@ -180,7 +180,7 @@ METHOD GenIndices( oMsg )
       ::SetText( "Generando índices : Transportistas", ::aProgress[ 1 ] )        ; TTrans():Create( ::cPatCli ):Reindexa()
       ::SetText( "Generando índices : Tipos de comandas", ::aProgress[ 1 ] )     ; TComandas():Create( ::cPatArt ):Reindexa()
       ::SetText( "Generando índices : Cuentas de remesas", ::aProgress[ 1 ] )          ; TCtaRem():Create( ::cPatCli ):Reindexa()
-      ::SetText( "Generando índices : Tipo de envasado", ::aProgress[ 1 ] )            ; TFrasesPublicitarias():Create( cPatArt() ):Reindexa()
+      ::SetText( "Generando índices : Tipo de envasado", ::aProgress[ 1 ] )            ; TFrasesPublicitarias():Create( cPatEmp() ):Reindexa()
       ::SetText( "Generando índices : Sala de venta", ::aProgress[ 1 ] )               ; TTpvRestaurante():Create( ::cPathEmp ):Reindexa()
       ::SetText( "Generando índices : Puntos de venta", ::aProgress[ 1 ] )             ; TDetSalaVta():Create( ::cPathEmp ):Reindexa()
       ::SetText( "Generando índices : Configuración de informes", ::aProgress[ 1 ] )   ; TInfGen():Reindexa( ::cPathEmp )
@@ -436,9 +436,9 @@ METHOD Resource( lAutoInit )
 
    DEFAULT lAutoInit       := .f.
 
-   nLevel                  := nLevelUsr( "01067" )
+   nLevel                  := Auth():Level( "01067" )
 
-   if nAnd( nLevel, 1 ) != 0
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       RETURN nil
    end if

@@ -795,7 +795,7 @@ METHOD lGrupoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfArt == nil .or. !::oDbfArt:Used()
-      DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArt PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
    end if
 
    ::oGrupoArticulo                    := TRGroup():New( {|| ::oDbf:cCodArt }, {|| "Artículo : " + AllTrim( ::oDbf:cCodArt ) + " - " + AllTRim( ::oDbf:cNomArt ) }, {|| "Total artículo..." }, {|| 3 }, ::lSalto )
@@ -874,7 +874,7 @@ METHOD lGrupoMateriaPrima( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfArticuloMateriaPrima == nil .or. !::oDbfArticuloMateriaPrima:Used()
-      DATABASE NEW ::oDbfArticuloMateriaPrima PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArticuloMateriaPrima PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
    end if
 
    ::oGrupoMateriaPrima                    := TRGroup():New( {|| ::oDbf:cCodArt }, {|| "Materia prima : " + AllTrim( ::oDbf:cCodArt ) + " - " + AllTRim( ::oDbf:cNomArt ) }, {|| "Total artículo..." }, {|| 3 }, ::lSalto )
@@ -952,7 +952,7 @@ METHOD lGrupoCliente( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfCli == nil .or. !::oDbfCli:Used()
-      DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oDbfCli PATH ( cPatEmp() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
    end if
 
    ::oGrupoCliente                  := TRGroup():New( {|| ::oDbf:cCodCli }, {|| "Cliente : " + AllTrim( ::oDbf:cCodCli ) + " - " + AllTRim( ::oDbf:cNomCli ) }, {|| "Total cliente : " + ::oDbf:cCodCli }, {|| 3 }, ::lSalto )
@@ -1027,7 +1027,7 @@ METHOD lGrupoProveedor( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfPrv == nil .or. !::oDbfPrv:Used()
-      DATABASE NEW ::oDbfPrv PATH ( cPatPrv() ) FILE "PROVEE.DBF" VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
+      DATABASE NEW ::oDbfPrv PATH ( cPatEmp() ) FILE "PROVEE.DBF" VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
    end if
 
    ::oGrupoProveedor                  := TRGroup():New( {|| ::oDbf:cCodPrv }, {|| "Proveedor : " + AllTrim( ::oDbf:cCodPrv ) + " - " + AllTRim( ::oDbf:cNomPrv ) }, {|| "Total proveedor..." }, {|| 3 }, ::lSalto )
@@ -1327,7 +1327,7 @@ METHOD lGrupoAlmacen( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfAlm == nil .or. !::oDbfAlm:Used()
-      DATABASE NEW ::oDbfAlm PATH ( cPatAlm() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+      DATABASE NEW ::oDbfAlm PATH ( cPatEmp() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
    end if
 
    ::oGrupoAlmacen                  := TRGroup():New( {|| ::oDbf:cCodAlm }, {|| "Almacén : " + AllTrim( ::oDbf:cCodAlm ) + " - " + AllTrim( ::oDbf:cNomAlm ) }, {|| "Total almacén : " + ::oDbf:cCodAlm }, {|| 3 }, ::lSalto )
@@ -1402,7 +1402,7 @@ METHOD lGrupoAlmacenOrigen( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfAlmacenOrigen == nil .or. !::oDbfAlmacenOrigen:Used()
-      DATABASE NEW ::oDbfAlmacenOrigen PATH ( cPatAlm() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+      DATABASE NEW ::oDbfAlmacenOrigen PATH ( cPatEmp() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
    end if
 
    ::oGrupoAlmacenOrigen                  := TRGroup():New( {|| ::oDbf:cCodAlm }, {|| "Almacén origen: " + AllTrim( ::oDbf:cCodAlm ) + " - " + AllTrim( ::oDbf:cNomAlm ) }, {|| "Total almacén : " + ::oDbf:cCodAlm }, {|| 3 }, ::lSalto )
@@ -1771,7 +1771,7 @@ METHOD lGrupoAgente( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfAge == nil .or. !::oDbfAge:Used()
-      DATABASE NEW ::oDbfAge PATH ( cPatCli() ) FILE "AGENTES.DBF" VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+      DATABASE NEW ::oDbfAge PATH ( cPatEmp() ) FILE "AGENTES.DBF" VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
    end if
 
     ::oGrupoAgente                  := TRGroup():New( {|| ::oDbf:cCodAge }, {|| "Agente : " + AllTrim( ::oDbf:cCodAge ) + " - " + AllTrim( ::oDbf:cApeAge ) + "," + AllTRim( ::oDbf:cNomAge ) }, {|| "Total agente : " + ::oDbf:cCodAge }, {|| 3 }, ::lSalto )
@@ -1990,7 +1990,7 @@ METHOD lGrupoTransportista( lInitGroup, lImp ) CLASS TNewInfGen
 
    BEGIN SEQUENCE
 
-   ::oDbfTrn            := TTrans():Create( cPatCli(), "Transport" )
+   ::oDbfTrn            := TTrans():Create( cPatEmp(), "Transport" )
    ::oDbfTrn:OpenFiles()
 
    ::oGrupoTransportista                  := TRGroup():New( {|| ::oDbf:cCodTrans }, {|| "Transportista : " + AllTrim( ::oDbf:cCodTrans ) + " - " + AllTRim( ::oDbf:cNomTrans ) }, {|| "Total transportista : " + ::oDbf:cCodTrans }, {|| 3 }, ::lSalto )
@@ -2063,7 +2063,7 @@ METHOD lGrupoGrupoCliente( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if empty(::oGrpCli)
-      ::oGrpCli                      := TGrpCli():Create( cPatCli() )
+      ::oGrpCli                      := TGrpCli():Create( cPatEmp() )
       ::oGrpCli:OpenService()
    end if 
 
@@ -2141,7 +2141,7 @@ METHOD lGrupoGProveedor( lInitGroup, lImp ) CLASS TNewInfGen
 
    BEGIN SEQUENCE
 
-   ::oGrpPrv            := TGrpPrv():Create( cPatPrv() )
+   ::oGrpPrv            := TGrpPrv():Create( cPatEmp() )
    ::oGrpPrv:OpenFiles()
 
    ::oGrupoGProveedor                  := TRGroup():New( {|| ::oDbf:cCodGPrv }, {|| "Grp. proveedor : " + AllTrim( ::oDbf:cCodGPrv ) + " - " + AllTRim( ::oDbf:cNomGPrv ) }, {|| "Total grp. proveedor : " + ::oDbf:cCodGPrv }, {|| 3 }, ::lSalto )
@@ -2216,7 +2216,7 @@ METHOD lGrupoObra( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfObr == nil .or. !::oDbfObr:Used()
-      DATABASE NEW ::oDbfObr PATH ( cPatCli() ) FILE "OBRAST.DBF" VIA ( cDriver() ) SHARED INDEX "OBRAST.CDX"
+      DATABASE NEW ::oDbfObr PATH ( cPatEmp() ) FILE "OBRAST.DBF" VIA ( cDriver() ) SHARED INDEX "OBRAST.CDX"
    end if
 
    ::oGrupoObra                  := TRGroup():New( {|| ::oDbf:cCodObra }, {|| "Obra : " + AllTrim( ::oDbf:cCodObra ) + " - " + AllTRim( ::oDbf:cNomObra ) }, {|| "Total obra : " + ::oDbf:cCodObra }, {|| 3 }, ::lSalto )
@@ -2286,7 +2286,7 @@ METHOD lGrupoFamilia( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfFam == nil .or. !::oDbfFam:Used()
-      DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oDbfFam PATH ( cPatEmp() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
    end if
 
    ::oGrupoFamilia                    := TRGroup():New( {|| ::oDbf:cCodFam }, {|| "Familia : " + AllTrim( ::oDbf:cCodFam ) + " - " + AllTRim( ::oDbf:cNomFam ) }, {|| "Total familia : " + ::oDbf:cCodFam }, {|| 3 }, ::lSalto )
@@ -2360,7 +2360,7 @@ METHOD lGrupoGFamilia( lInitGroup, lImp ) CLASS TNewInfGen
 
    BEGIN SEQUENCE
 
-   ::oGruFam            := TGrpFam():Create( cPatArt(), "GRPFAM" )
+   ::oGruFam            := TGrpFam():Create( cPatEmp(), "GRPFAM" )
    ::oGruFam:OpenFiles()
 
    ::oGrupoGFamilia                  := TRGroup():New( {|| ::oDbf:cCodGFam }, {|| "Grp. familia : " + AllTrim( ::oDbf:cCodGFam ) + " - " + AllTRim( ::oDbf:cNomGFam ) }, {|| "Total grp. familia : " + ::oDbf:cCodGFam }, {|| 3 }, ::lSalto )
@@ -2509,7 +2509,7 @@ METHOD lGrupoTipoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
 
    BEGIN SEQUENCE
 
-   ::oTipArt            := TTipArt():New( cPatArt(), cDriver() )
+   ::oTipArt            := TTipArt():New( cPatEmp(), cDriver() )
    ::oTipArt:OpenFiles()
 
    ::oGrupoTArticulo                  := TRGroup():New( {|| ::oDbf:cCodTArt }, {|| "Tip. artículo : " + AllTrim( ::oDbf:cCodTArt ) + " - " + AllTRim( ::oDbf:cNomTArt ) }, {|| "Total tip. artículo : " + ::oDbf:cCodTArt }, {|| 3 }, ::lSalto )
@@ -2940,7 +2940,7 @@ METHOD lGrupoRuta( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfRut == nil .or. !::oDbfRut:Used()
-      DATABASE NEW ::oDbfRut PATH ( cPatCli() ) FILE "RUTA.DBF" VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
+      DATABASE NEW ::oDbfRut PATH ( cPatEmp() ) FILE "RUTA.DBF" VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
    end if
 
    ::oGrupoRuta                  := TRGroup():New( {|| ::oDbf:cCodRut }, {|| "Ruta : " + AllTrim( ::oDbf:cCodRut ) + " - " + AllTRim( ::oDbf:cNomRut ) }, {|| "Total ruta..." }, {|| 3 }, ::lSalto )
@@ -3189,7 +3189,7 @@ METHOD lGrupoTemporada( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfTmp == nil .or. !::oDbfTmp:Used()
-      DATABASE NEW ::oDbfTmp PATH ( cPatArt() ) FILE "Temporadas.DBF" VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
+      DATABASE NEW ::oDbfTmp PATH ( cPatEmp() ) FILE "Temporadas.DBF" VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
    end if
 
    ::oGrupoTemporada                   := TRGroup():New( {|| ::oDbf:cCodTmp }, {|| "Temporada : " + AllTrim( ::oDbf:cCodTmp ) + " - " + AllTRim( ::oDbf:cNomTmp ) }, {|| "Total temporada..." }, {|| 3 }, ::lSalto )
@@ -3264,7 +3264,7 @@ METHOD lGrupoCategoria( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfCat == nil .or. !::oDbfCat:Used()
-      DATABASE NEW ::oDbfCat PATH ( cPatArt() ) FILE "Categorias.DBF" VIA ( cDriver() ) SHARED INDEX "Categorias.Cdx"
+      DATABASE NEW ::oDbfCat PATH ( cPatEmp() ) FILE "Categorias.DBF" VIA ( cDriver() ) SHARED INDEX "Categorias.Cdx"
    end if
 
    ::oGrupoCategoria                   := TRGroup():New( {|| ::oDbf:cCodCate }, {|| "Categoría : " + AllTrim( ::oDbf:cCodCate ) }, {|| "Total categoría..." }, {|| 3 }, ::lSalto )
@@ -3690,7 +3690,7 @@ METHOD lGrupoRemesas( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oDbfRemCli == nil .or. !::oDbfRemCli:Used()
-      DATABASE NEW ::oDbfRemCli PATH ( cPatArt() ) FILE "RemCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "RemCliT.Cdx"
+      DATABASE NEW ::oDbfRemCli PATH ( cPatEmp() ) FILE "RemCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "RemCliT.Cdx"
    end if
 
    ::oGrupoRemesas                   := TRGroup():New( {|| ::oDbf:cCodTmp }, {|| "Remesas : " + alltrim( str( ::oDbf:nNumRem ) ) + " - " + alltrim( ::oDbf:cSufRem ) }, {|| "Total remesa..." }, {|| 3  }, ::lSalto )

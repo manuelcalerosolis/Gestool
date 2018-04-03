@@ -68,7 +68,7 @@ METHOD OpenFiles() CLASS TInfRenFam
    DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF" VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
    ::oTikCliL:OrdSetFocus( "CREF" )
 
-   DATABASE NEW ::oArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oArt     PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    //::oArt := DbfServer("ARTICULO.DBF"):NewOpen("ARTICULO.DBF",,cDriver() ,,(cPatEmp()),.F.,.T.,.F.,.F. ) ; ::oArt:AddBag("ARTICULO.CDX" ) ; ::oArt:AddBag() ; ::oArt:AutoIndex()
 
@@ -78,7 +78,7 @@ METHOD OpenFiles() CLASS TInfRenFam
 
     
 
-   DATABASE NEW ::oFamilia PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+   DATABASE NEW ::oFamilia PATH ( cPatEmp() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
 RETURN ( Self )
 

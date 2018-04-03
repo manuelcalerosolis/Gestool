@@ -147,6 +147,7 @@ Entsal.prg              										\
 Usuario.prg             										\
 Tuser.prg               										\
 AuthManager.prg           										\
+ApplicationManager.prg    										\
 Oferta.prg              										\
 Internet.prg            										\
 Intitem.prg             										\
@@ -578,6 +579,7 @@ MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
 TagsController.prg 															\
 UsuariosController.prg														\
+SuperUsuarioController.prg													\
 RolesController.prg															\
 AjustesController.prg														\
 AjustableController.prg														\
@@ -625,6 +627,7 @@ SQLMovimientosAlmacenLineasNumerosSeriesModel.prg 					\
 NumerosSeriesController.prg 								  				\
 NumerosSeriesView.prg 														\
 SQLExportableModel.prg 														\
+SQLUsuarioFavoritosModel.prg 												\
 ExportableController.prg													\
 SQLRowSet.prg 																	\
 PdaEnvioRecepcionController.prg 											\
@@ -748,6 +751,7 @@ Entsal.obj                                         				\
 Usuario.obj                                        				\
 Tuser.obj                                          				\
 AuthManager.obj                                          		\
+ApplicationManager.obj                                     		\
 Oferta.obj                                         				\
 Internet.obj                                       				\
 Intitem.obj                                        				\
@@ -1199,6 +1203,7 @@ DelegacionesModel.obj														\
 TiposImpresorasController.obj 											\
 TagsController.obj 															\
 UsuariosController.obj														\
+SuperUsuarioController.obj													\
 RolesController.obj 															\
 AjustesController.obj														\
 AjustableController.obj														\
@@ -1231,6 +1236,7 @@ SQLMovimientosAlmacenLineasNumerosSeriesModel.obj 					\
 NumerosSeriesController.obj 												\
 NumerosSeriesView.obj 														\
 SQLExportableModel.obj 														\
+SQLUsuarioFavoritosModel.obj												\
 ExportableController.obj 													\
 SQLRowSet.obj 																	\
 PdaEnvioRecepcionController.obj 											\
@@ -1364,6 +1370,7 @@ $(OBJ)\Entsal.obj                										+
 $(OBJ)\Usuario.obj               										+
 $(OBJ)\Tuser.obj                 										+
 $(OBJ)\AuthManager.obj             										+
+$(OBJ)\ApplicationManager.obj      										+
 $(OBJ)\Oferta.obj                										+
 $(OBJ)\Internet.obj              										+
 $(OBJ)\Intitem.obj               										+
@@ -1805,6 +1812,7 @@ $(OBJ)\DelegacionesModel.obj 												+
 $(OBJ)\TiposImpresorasController.obj               				+
 $(OBJ)\TagsController.obj                 							+
 $(OBJ)\UsuariosController.obj               							+
+$(OBJ)\SuperUsuarioController.obj           							+
 $(OBJ)\RolesController.obj               								+
 $(OBJ)\AjustesController.obj               							+
 $(OBJ)\AjustableController.obj              							+
@@ -1829,6 +1837,7 @@ $(OBJ)\NumerosSeriesController.obj 										+
 $(OBJ)\NumerosSeriesView.obj 												+
 $(OBJ)\SQLRowSet.obj 														+
 $(OBJ)\SQLExportableModel.obj 											+
+$(OBJ)\SQLUsuarioFavoritosModel.obj										+
 $(OBJ)\ExportableController.obj											+
 $(OBJ)\PdaEnvioRecepcionController.obj 								+
 $(OBJ)\PdaEnvioRecepcionView.obj 										+

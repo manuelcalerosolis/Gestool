@@ -188,11 +188,11 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       D():Proveedores( nView )
 
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
 
-      USE ( cPatPrv() + "PROVEED.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEED", @dbfProveeD ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEED.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVEED.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEED", @dbfProveeD ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROVEED.CDX" ) ADDITIVE
 
       USE ( cPath + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) )
       SET ADSINDEX TO ( cPath + "PEDPROVT.CDX" ) ADDITIVE
@@ -218,20 +218,20 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
       SET ADSINDEX TO ( cPatEmp() + "FPAGO.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
-      SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROVART.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+      SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-      USE ( cPatPrv() + "PRVBNC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfBanco ) )
-      SET ADSINDEX TO ( cPatPrv() + "PRVBNC.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PRVBNC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfBanco ) )
+      SET ADSINDEX TO ( cPatEmp() + "PRVBNC.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
       SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
@@ -244,7 +244,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          lOpenFiles     := .f.
       end if
 
-      oGrpPrv           := TGrpPrv():Create( cPatPrv() )
+      oGrpPrv           := TGrpPrv():Create( cPatEmp() )
       if !oGrpPrv:OpenFiles()
          lOpenFiles     := .f.
       end if
@@ -307,8 +307,8 @@ FUNCTION Provee( oMenuItem, oWnd )
    Obtenemos el nivel de acceso
    */
 
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel               := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return .f.
    end if
@@ -2295,8 +2295,8 @@ FUNCTION cPrvCta( cCodPrv, dbfProvee )
    BEGIN SEQUENCE
 
    if Empty( dbfProvee )
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -2335,8 +2335,8 @@ FUNCTION cPrvCtaVta( cCodPrv, dbfProvee )
    BEGIN SEQUENCE
 
    if Empty( dbfProvee )
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -2376,8 +2376,8 @@ FUNCTION cPrvFPago( cCodPrv, dbfProvee )
    BEGIN SEQUENCE
 
 	IF dbfProvee == NIL
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
 		lClose = .T.
 	END IF
 
@@ -2421,8 +2421,8 @@ FUNCTION cPrvCodSnd( cCodPrv, dbfProvee )
    BEGIN SEQUENCE
 
 	IF dbfProvee == NIL
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
 		lClose = .T.
 	END IF
 
@@ -2468,11 +2468,11 @@ Return nil
 
 FUNCTION EdtPrv( cCodPrv, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( "01032" )
+   local nLevel         := Auth():Level( "01032" )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -2502,11 +2502,11 @@ RETURN .t.
 
 FUNCTION AppPrv( lOpenBrowse )
 
-   local nLevel         := nLevelUsr( "01032" )
+   local nLevel         := Auth():Level( "01032" )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_APPD ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -2532,9 +2532,9 @@ RETURN .t.
 
 Function InfProveedor( cCodPrv, oBrw )
 
-   local nLevel   := nLevelUsr( "01034" )
+   local nLevel   := Auth():Level( "01034" )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -2599,8 +2599,8 @@ Method CreateData()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
-   SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
+   SET ADSINDEX TO ( cPatEmp() + "Provee.Cdx" ) ADDITIVE
    ( dbfProvee )->( OrdSetFocus( "lSndInt" ) )
 
    /*
@@ -2685,8 +2685,8 @@ Method RestoreData()
       oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-      USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
+      SET ADSINDEX TO ( cPatEmp() + "Provee.Cdx" ) ADDITIVE
       ( dbfProvee )->( OrdSetFocus( "lSndInt" ) )
 
       while !( dbfProvee )->( eof() )
@@ -2808,8 +2808,8 @@ Method Process()
 
                USE ( cPatSnd() + "Provee.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @tmpPrv ) )
 
-               USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
-               SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
+               USE ( cPatEmp() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
+               SET ADSINDEX TO ( cPatEmp() + "Provee.Cdx" ) ADDITIVE
 
                if !Empty( ::oSender:oMtr )
                   ::oSender:oMtr:nTotal := ( tmpPrv )->( OrdKeyCount() )
@@ -4236,8 +4236,8 @@ Method lCreateTemporal() CLASS TProveedorLabelGenerator
       ( tmpProvee )->( OrdCreate( filProvee, "Cod", "Cod", {|| Field->Cod } ) )
 
       if Empty( dbfProvee )
-         USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-         SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+         USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+         SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
          lClose            := .t.
       end if
 
@@ -4398,11 +4398,11 @@ STATIC FUNCTION pdaOpenFiles( lExt, cPath )
 
       lOpenFiles     := .t.
 
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
 
-      USE ( cPatPrv() + "PROVEED.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEED", @dbfProveeD ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEED.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVEED.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEED", @dbfProveeD ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROVEED.CDX" ) ADDITIVE
 
       cPinDiv        := cPinDiv( cDivEmp(), dbfDiv ) // Picture de la divisa
       cPirDiv        := cPirDiv( cDivEmp(), dbfDiv ) // Picture de la divisa redondeada
@@ -4499,14 +4499,14 @@ Function IsProvee()
    local oError
    local oBlock
 
-   if !lExistTable( cPatPrv() + "PROVEE.Dbf" ) .or.;
-      !lExistTable( cPatPrv() + "PROVEED.Dbf" )
-      mkProvee( cPatPrv() )
+   if !lExistTable( cPatEmp() + "PROVEE.Dbf" ) .or.;
+      !lExistTable( cPatEmp() + "PROVEED.Dbf" )
+      mkProvee( cPatEmp() )
    end if
 
-   if !lExistIndex( cPatPrv() + "PROVEE.Cdx" ) .or.;
-      !lExistIndex( cPatPrv() + "PROVEED.Cdx" )
-      rxProvee( cPatPrv() )
+   if !lExistIndex( cPatEmp() + "PROVEE.Cdx" ) .or.;
+      !lExistIndex( cPatEmp() + "PROVEED.Cdx" )
+      rxProvee( cPatEmp() )
    end if
 
 Return ( .t. )
@@ -4523,7 +4523,7 @@ FUNCTION mkProvee( cPath, lAppend, cPathOld, oMeter )
    local oldPrvD
 
    DEFAULT lAppend   := .f.
-   DEFAULT cPath     := cPatPrv()
+   DEFAULT cPath     := cPatEmp()
 
 	IF oMeter != NIL
 		oMeter:cText	:= "Generando Bases"
@@ -4558,7 +4558,7 @@ FUNCTION rxProvee( cPath, cDriver )
 
 	local dbfProvee
 
-   DEFAULT cPath     := cPatPrv()
+   DEFAULT cPath     := cPatEmp()
    DEFAULT cDriver   := cDriver()
 
    fEraseIndex( cPath + "Provee.Cdx", cDriver )
@@ -4667,8 +4667,8 @@ FUNCTION RetProvee( cCodProv, dbfProvee )
    BEGIN SEQUENCE
 
    	if empty( dbfProvee )
-         USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-         SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+         USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+         SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
    		lClose	   := .t.
    	end if
 
@@ -4869,8 +4869,8 @@ FUNCTION cProvee( oGet, dbfProvee, oGet2 )
    BEGIN SEQUENCE
 
    if Empty( dbfProvee )
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
       lClose   := .t.
    end if
 
@@ -4917,7 +4917,7 @@ FUNCTION BrwProvee( oGet, oGet2, lApp )
    local cCbxOrd
    local cTxtOrigen
    local cReturn     := Space( 12 )
-   local nLevelUsr   := nLevelUsr( "01034" )
+   local nLevelUsr   := Auth():Level( "01034" )
    local aCbxOrd     := {  "Código", "Nombre", "NIF/CIF", "Población", "Teléfono", "Fax", "Domicilio", "Población", "Código postal", "Provincia", "Correo electrónico", "Contacto" }
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
@@ -5179,7 +5179,7 @@ FUNCTION BrwPrv( oGet, oGet2, dbfProvee )
    local cCbxOrd
    local cTxtOrigen
    local cReturn     := Space( 12 )
-   local nLevelUsr   := nLevelUsr( "01034" )
+   local nLevelUsr   := Auth():Level( "01034" )
    local aCbxOrd     := {  "Código", "Nombre", "NIF/CIF", "Población", "Teléfono", "Fax", "Domicilio", "Población", "Código postal", "Provincia", "Correo electrónico", "Contacto" }
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
@@ -5480,8 +5480,8 @@ FUNCTION cCtaBanPrv( cCodPrv, dbfBanco )
    BEGIN SEQUENCE
 
    if Empty( dbfBanco )
-      USE ( cPatPrv() + "PRVBNC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfBanco ) )
-      SET ADSINDEX TO ( cPatPrv() + "PRVBNC.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PRVBNC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfBanco ) )
+      SET ADSINDEX TO ( cPatEmp() + "PRVBNC.CDX" ) ADDITIVE
       SET TAG TO CCODDEF
       lClose      := .t.
    else
@@ -5523,7 +5523,7 @@ FUNCTION BrwBncPrv( oGet, oPaisIBAN, oCtrlIBAN, oEntBnc, oSucBnc, oDigBnc, oCtaB
 	local oCbxOrd
    local aCbxOrd     := { "Cuenta" }
    local cCbxOrd     := "Cuenta"
-   local nLevel      := nLevelUsr( "01110" )
+   local nLevel      := Auth():Level( "01110" )
    local lClose      := .f.
 
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
@@ -5534,14 +5534,14 @@ FUNCTION BrwBncPrv( oGet, oPaisIBAN, oCtrlIBAN, oEntBnc, oSucBnc, oDigBnc, oCtaB
       return .t.
    end if
 
-   if !lExistTable( cPatPrv() + "PrvBnc.Dbf" )
+   if !lExistTable( cPatEmp() + "PrvBnc.Dbf" )
       MsgStop( 'No existe el fichero de bancos' )
       Return .f.
    end if
 
    if Empty( dbfBancos )
-      USE ( cPatPrv() + "PrvBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfBancos ) )
-      SET ADSINDEX TO ( cPatPrv() + "PrvBnc.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "PrvBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfBancos ) )
+      SET ADSINDEX TO ( cPatEmp() + "PrvBnc.Cdx" ) ADDITIVE
       lClose      := .t.
    END IF
 
@@ -5900,8 +5900,8 @@ Function cProveeCuenta( cProvee, dbfBncPrv )
    local cCuenta     := ""
 
    if Empty( dbfBncPrv )
-      USE ( cPatPrv() + "PrvBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfBncPrv ) )
-      SET ADSINDEX TO ( cPatPrv() + "PrvBnc.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "PrvBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfBncPrv ) )
+      SET ADSINDEX TO ( cPatEmp() + "PrvBnc.Cdx" ) ADDITIVE
       lCloseBnc      := .t.
    end if
 
@@ -5929,8 +5929,8 @@ Function cNombreBancoProvee( cProvee, dbfBncPrv )
    local cBanco      := ""
 
    if Empty( dbfBncPrv )
-      USE ( cPatPrv() + "PrvBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfBncPrv ) )
-      SET ADSINDEX TO ( cPatPrv() + "PrvBnc.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "PrvBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRVBNC", @dbfBncPrv ) )
+      SET ADSINDEX TO ( cPatEmp() + "PrvBnc.Cdx" ) ADDITIVE
       lCloseBnc      := .t.
    end if
 

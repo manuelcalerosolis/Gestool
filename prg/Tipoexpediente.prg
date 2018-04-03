@@ -56,12 +56,12 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    ::oWndParent         := oWndParent
 
    if oMenuItem != nil .and. ::nLevel == nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
       ::nLevel          := 1
    end if
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if

@@ -154,7 +154,7 @@ METHOD New( oMenuItem, oWnd ) CLASS TSndRecInf
    DEFAULT oMenuItem    := "01073"
    DEFAULT oWnd         := oWnd()
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
    // Cerramos todas las ventanas----------------------------------------------
 
@@ -426,7 +426,7 @@ METHOD Activate( lAuto ) CLASS TSndRecInf
       return ( Self )
    end if
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return ( Self )
    end if
@@ -495,17 +495,14 @@ METHOD Activate( lAuto ) CLASS TSndRecInf
 
       REDEFINE CHECKBOX ::lGetProcesados ;
          ID       170 ;
-         WHEN     ( lUsrMaster() ) ;
          OF       ::oFld:aDialogs[1]
 
       REDEFINE CHECKBOX ::lGetFueraSecuencia ;
          ID       180 ;
-         WHEN     ( lUsrMaster() ) ;
          OF       ::oFld:aDialogs[1]
 
       REDEFINE CHECKBOX ::lGetEliminarFicheros ;
          ID       190 ;
-         WHEN     ( lUsrMaster() ) ;
          OF       ::oFld:aDialogs[1]
 
       REDEFINE CHECKBOX ::lImprimirEnvio ;

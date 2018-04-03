@@ -144,9 +144,9 @@ FUNCTION RptLabel( oMenuItem, oWnd )
 
    if Empty( oWndBrw )
 
-      nLevel   := nLevelUsr( oMenuItem )
+      nLevel   := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -1853,9 +1853,9 @@ FUNCTION EdtEtiquetas( cCodLbl )
       Return .f.
    end if
 
-   nLevel         := nLevelUsr( _MENUITEM_ )
+   nLevel         := Auth():Level( _MENUITEM_ )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if

@@ -351,3 +351,18 @@ GC_FLAG_SPAIN_48 BITMAP "..\\bmp\\gc_flag_spain_48.bmp"
 
 GC_GLOBE_48 BITMAP "..\\bmp\\gc_globe_48.bmp"
 GC_BOOK_TELEPHONE_48 BITMAP "..\\bmp\\gc_book_telephone_48.bmp"
+
+GC_SKULL2_48 BITMAP "..\\bmp\\gc_skull2_48.bmp"
+
+GC_CD_PIRATED_48 BITMAP "..\\bmp\\gc_cd_pirated_48.bmp"
+GC_SPY_48 BITMAP "..\\bmp\\gc_spy_48.bmp"
+
+GC_ID_BADGE_48 BITMAP "..\\bmp\\gc_id_badge_48.bmp"
+GC_ID_BADGE_32 BITMAP "..\\bmp\\gc_id_badge_32.bmp"
+GC_ID_BADGE_16 BITMAP "..\\bmp\\gc_id_badge_16.bmp"
+
+GC_ID_CARDS_48 BITMAP "..\\bmp\\gc_id_cards_48.bmp"
+GC_ID_CARDS_32 BITMAP "..\\bmp\\gc_id_cards_32.bmp"
+GC_ID_CARDS_16 BITMAP "..\\bmp\\gc_id_cards_16.bmp"
+
+GC_BUSINESSPEOPLE_48 BITMAP "..\\bmp\\gc_businesspeople_48.bmp"

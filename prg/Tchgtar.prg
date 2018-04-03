@@ -9,9 +9,9 @@ function ChgTarifa( oMenuItem, oWnd )
 
    local nLevel
 
-   nLevel   := nLevelUsr( oMenuItem )
+   nLevel   := Auth():Level( oMenuItem )
 
-   if nAnd( nLevel, 1 ) != 0
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if
@@ -70,7 +70,7 @@ METHOD OpenFiles( cPatEmp ) CLASS TChgTarifa
 
       DATABASE NEW ::oFacCliL PATH ( cPatEmp ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-      DATABASE NEW ::oCliAtp  PATH ( cPatCli() ) FILE "CLIATP.DBF" VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
+      DATABASE NEW ::oCliAtp  PATH ( cPatEmp() ) FILE "CLIATP.DBF" VIA ( cDriver() ) SHARED INDEX "CLIATP.CDX"
       ::oCliAtp:OrdSetFocus( "cCodArt" )
 
    RECOVER

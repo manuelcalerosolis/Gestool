@@ -109,7 +109,7 @@ METHOD New( cPath, oMenuItem, oWndParent )
    DEFAULT cPath           := cPatEmp()
    DEFAULT oWndParent      := oWnd()
 
-   ::nLevel                := nLevelUsr( oMenuItem )
+   ::nLevel                := Auth():Level( oMenuItem )
 
    ::cPath                 := cPath
    ::oWndParent            := oWndParent
@@ -235,21 +235,21 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oAlbCliP    FILE "ALBCLIP.DBF"   PATH ( ::cPath )     VIA ( cDriver() ) SHARED INDEX "ALBCLIP.CDX"
 
-      DATABASE NEW ::oClientes   FILE "CLIENT.DBF"    PATH ( cPatCli() )   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oClientes   FILE "CLIENT.DBF"    PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
       DATABASE NEW ::oDbfIva     FILE "TIVA.DBF"      PATH ( cPatDat() )   VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
       DATABASE NEW ::oDbfCnt     FILE "NCOUNT.DBF"    PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "NCOUNT.CDX"
 
-      DATABASE NEW ::oDbfAge     FILE "AGENTES.DBF"   PATH ( cPatCli() )   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+      DATABASE NEW ::oDbfAge     FILE "AGENTES.DBF"   PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
-      DATABASE NEW ::oDbfArt     FILE "ARTICULO.DBF"  PATH ( cPatArt() )   VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArt     FILE "ARTICULO.DBF"  PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-      DATABASE NEW ::oTblPro     FILE "TBLPRO.DBF"    PATH ( cPatArt() )   VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
+      DATABASE NEW ::oTblPro     FILE "TBLPRO.DBF"    PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
 
-      DATABASE NEW ::oDbfPro     FILE "PRO.DBF"       PATH ( cPatArt() )   VIA ( cDriver() ) SHARED INDEX "PRO.CDX"
+      DATABASE NEW ::oDbfPro     FILE "PRO.DBF"       PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "PRO.CDX"
 
-      DATABASE NEW ::oDbfFam     FILE "FAMILIAS.DBF"  PATH ( cPatArt() )   VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oDbfFam     FILE "FAMILIAS.DBF"  PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
       ::lLoadDivisa()
 
@@ -679,8 +679,8 @@ FUNCTION OrdCar( oMenuItem, oWnd )
    DEFAULT  oMenuItem   := "01039"
    DEFAULT  oWnd        := oWnd()
 
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel               := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if

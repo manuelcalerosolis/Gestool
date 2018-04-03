@@ -34,7 +34,7 @@ METHOD New( cPath, oWndParent, nLevel )
    ::Create( cPath )
 
    if Empty( ::nLevel )
-      ::nLevel          := nLevelUsr( nLevel )
+      ::nLevel          := Auth():Level( nLevel )
    end if
 
    /*

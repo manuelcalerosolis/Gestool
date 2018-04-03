@@ -233,8 +233,8 @@ STATIC FUNCTION OpenFiles()
 
    BEGIN SEQUENCE
 
-   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+   SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
 
    RECOVER
 
@@ -299,12 +299,12 @@ RETURN NIL
 
 FUNCTION EdtObras( cCodCli, cCodObr, dbfObrasT, oBrw, lControl )
 
-   local nLevel   := nLevelUsr( "01032" )
+   local nLevel   := Auth():Level( "01032" )
 
    DEFAULT cCodObr   := ( dbfObrasT )->cCodObr
    DEFAULT lControl  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -579,7 +579,7 @@ FUNCTION BrwObrasOLD( oGet, oGet2, cCodigoCliente, dbfObrasT )
    local aCbxOrd     := { "Código", "Nombre" }
    local aIndOrd     := { "cCodigo", "cNombre" }
    local cCbxOrd     := "Código"
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local lClose      := .f.
    local oSayText
    local cSayText    := "Listado de obras"
@@ -592,14 +592,14 @@ FUNCTION BrwObrasOLD( oGet, oGet2, cCodigoCliente, dbfObrasT )
       return .t.
    end if
 
-   if !lExistTable( cPatCli() + "ObrasT.Dbf" )
+   if !lExistTable( cPatEmp() + "ObrasT.Dbf" )
       MsgStop( 'No existe el fichero de obras' )
       Return .f.
    end if
 
    if Empty( dbfObrasT )
-      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
       lClose         := .t.
    END IF
 
@@ -768,7 +768,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
    local aCbxOrd     := { "Código", "Nombre" }
    local aIndOrd     := { "cCodigo", "cNombre" }
    local cCbxOrd     := "Código"
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local lClose      := .f.
    local oSayText
    local cSayText    := "Listado de obras"
@@ -784,7 +784,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
       return .t.
    end if
 
-   if !lExistTable( cPatCli() + "ObrasT.Dbf" )
+   if !lExistTable( cPatEmp() + "ObrasT.Dbf" )
       MsgStop( 'No existe el fichero de obras' )
       Return .f.
    end if
@@ -795,8 +795,8 @@ FUNCTION BrwObras( oGet, oGet2, cCodigoCliente, dbfObrasT )
    ( dbfSql )->( dbGoTop() )  
 
    if Empty( dbfObrasT )
-      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
       lClose         := .t.
    end if
 

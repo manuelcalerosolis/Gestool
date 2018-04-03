@@ -94,7 +94,7 @@ METHOD New( cPath, oMenuItem, oWndParent )
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT oMenuItem    := "01037"
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
    ::cPath              := cPath
    ::oWndParent         := oWndParent
@@ -111,7 +111,7 @@ METHOD New( cPath, oMenuItem, oWndParent )
    ::bFirstKey          := {|| Str( ::oDbf:nNumCob, 9 ) + ::oDbf:cSufCob }
    ::bWhile             := {|| Str( ::oDbf:nNumCob, 9 ) + ::oDbf:cSufCob == Str( ::oDbfDet:nNumCob, 9 ) + ::oDbfDet:cSufCob }
 
-   ::oCuentasRemesa     := TCtaRem():Create( cPatCli() )
+   ::oCuentasRemesa     := TCtaRem():Create( cPatEmp() )
 
 RETURN ( Self )
 
@@ -240,9 +240,9 @@ METHOD OpenFiles( lExclusive )
 
    DATABASE NEW ::oDbfDiv     FILE "DIVISAS.DBF"   PATH (cPatDat()) VIA ( cDriver() )SHARED INDEX "DIVISAS.CDX"
 
-   DATABASE NEW ::oClientes   FILE "CLIENT.DBF"    PATH ( cPatCli() ) VIA ( cDriver() )SHARED INDEX "CLIENT.CDX"
+   DATABASE NEW ::oClientes   FILE "CLIENT.DBF"    PATH ( cPatEmp() ) VIA ( cDriver() )SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oAgentes    FILE "AGENTES.DBF"   PATH ( cPatCli() ) VIA ( cDriver() )SHARED INDEX "AGENTES.CDX"
+   DATABASE NEW ::oAgentes    FILE "AGENTES.DBF"   PATH ( cPatEmp() ) VIA ( cDriver() )SHARED INDEX "AGENTES.CDX"
 
    DATABASE NEW ::oFPago      FILE "FPAGO.DBF"     PATH ( cPatEmp() ) VIA ( cDriver() )SHARED INDEX "FPAGO.CDX"
 

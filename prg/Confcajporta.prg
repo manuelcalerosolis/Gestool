@@ -75,9 +75,9 @@ FUNCTION ConfCajPorta( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -439,7 +439,7 @@ FUNCTION BrwSelCajPorta( oGet, dbfCajPorta, oGet2 )
    local oCbxOrd
    local aCbxOrd        := { "Código", "Descripción" }
    local cCbxOrd
-   local nLevel         := nLevelUsr( "01091" )
+   local nLevel         := Auth():Level( "01091" )
 
    nOrdAnt              := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
    cCbxOrd              := aCbxOrd[ nOrdAnt ]
@@ -615,7 +615,7 @@ Function OpnCaj()
    USE ( cPatDat() + "CAJAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajon ) )
    SET ADSINDEX TO ( cPatDat() + "CAJAS.CDX" ) ADDITIVE
 
-   cCajon            := cCajonEnCaja( oUser():cCaja(), dbfCajon )
+   cCajon            := cCajonEnCaja( Application():CodigoCaja(), dbfCajon )
 
    if !Empty( cCajon )
 

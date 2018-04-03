@@ -76,18 +76,11 @@ CLASS TAcceso
    METHOD InitButtonBar()
 
    METHOD Save()
-   METHOD SaveTree( oItem, cCurUsr, cDbf )
+   METHOD SaveTree()
+   METHOD saveItem( oItem, Uuid )
 
-   METHOD Load()
-   METHOD LoadTree( oItem, cOpcion, lShow )
-   METHOD DeleteTree()
-   METHOD Default()                       INLINE ( if( ::lOpenDatabase(), ( ::DeleteTree(), ::oTree:DeleteAll(), ::CloseDatabase(), ::CreateTree() ), ) )
-
-   METHOD MakeDatabase( cPath, oMeter )
-   METHOD ReindexDatabase( cPath, oMeter )
-
-   METHOD lOpenDatabase()
-   METHOD CloseDatabase()
+   METHOD LoadTree()
+   METHOD setItem()
 
    METHOD CreateButtonBar( oWnd )
 
@@ -227,7 +220,7 @@ METHOD New() CLASS TAcceso
       aAdd( ::aYearComboBox, Str( n, 4 ) )
    next
 
-RETURN Self
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -268,16 +261,10 @@ RETURN ( Self )
 
 METHOD AddImageList( aAccesos )
 
-   local n
-
    DEFAULT aAccesos  := ::aAccesos
 
-   for n := 1 to len( aAccesos )
-      ::AddBitmapMasked( aAccesos[ n ] )
-      if len( aAccesos[ n ]:aAccesos ) > 0
-         ::AddImageList( aAccesos[ n ]:aAccesos )
-      end if
-   next
+   aeval( aAccesos,  {|oItem| ::addBitmapMasked( oItem ),;
+                              if( len( oItem:aAccesos ) > 0, ::AddImageList( oItem:aAccesos ), ) } )
 
 RETURN ( Self )
 
@@ -309,7 +296,6 @@ METHOD AddTree( oTree, oAcceso )
    local oItemTree   := oTree:Add( oAcceso:cPrompt, oAcceso:nImageList, oAcceso:cId )
 
    if !empty( ::oTree )
-      // TvSetCheckState( ::oTree:hWnd, oItemTree:hItem, oAcceso:lShow )
       ::oTree:SetCheck( oItemTree, oAcceso:lShow ) 
    end if
 
@@ -335,13 +321,10 @@ METHOD EditButtonBar( oWnd, oMenuItem )
    local oBmpGeneral
 
    DEFAULT oWnd      := oWnd()
-   DEFAULT oMenuItem := "01085"
+   DEFAULT oMenuItem := "configurar_botones"
 
-   nLevel            := nLevelUsr( oMenuItem )
-
-   // Obtenemos el nivel de acceso
-
-   if nAnd( nLevel, 1 ) != 0
+   nLevel            := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       RETURN nil
    end if
@@ -364,7 +347,7 @@ METHOD EditButtonBar( oWnd, oMenuItem )
    REDEFINE BUTTON ;
       ID       IDOK ;
       OF       oDlg ;
-      ACTION   ( ::Save(), ::ReCreateOfficeBar( oWnd() ), oDlg:End( IDOK ) )
+      ACTION   ( ::Save( oDlg ) )
 
    REDEFINE BUTTON ;
       ID       IDCANCEL ;
@@ -372,7 +355,7 @@ METHOD EditButtonBar( oWnd, oMenuItem )
       CANCEL ;
       ACTION   ( oDlg:End() )
 
-   oDlg:AddFastKey( VK_F5, {|| ::Save(), ::ReCreateOfficeBar( oWnd() ), oDlg:End( IDOK ) } )
+   oDlg:AddFastKey( VK_F5, {|| ::Save( oDlg ) } )
 
    oDlg:Activate( , , , .t., , , {|| ::InitButtonBar() } )
 
@@ -387,185 +370,79 @@ RETURN ( oDlg:nResult == IDOK )
 METHOD InitButtonBar()
 
    ::SetImageList()
+
    ::CreateTree()
-   ::Load()
+
+   ::LoadTree()
 
 RETURN nil
 
 //---------------------------------------------------------------------------//
 
-METHOD Save()
+METHOD Save( oDlg )
 
-   local cDbf
-   local cCurUsr  := Auth():Codigo()
+   ::SaveTree( Auth():Uuid(), ::oTree:aItems )
 
-   if ::lOpenDatabase()
-      ::DeleteTree( cCurUsr )
-      ::SaveTree( ::oTree:aItems, cCurUsr, cDbf )
-      ::CloseDatabase()
-   end if
+   ::ReCreateOfficeBar( oWnd() )
 
-   oUser():Save( cCurUsr )
+   oDlg:End( IDOK )
 
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD SaveTree( aItems, cCurUsr, cDbf )
+METHOD SaveTree( Uuid, aItems )
 
-   local n
+   aeval( aItems,;
+            {|oItem| ::saveItem( Uuid, oItem, ::oTree:GetCheck( oItem ) ),;
+                     if( !empty( oItem:aItems ), ::SaveTree( Uuid, oItem:aItems ), ) } )
 
-   for n := 1 to len( aItems )
-
-      if !empty( aItems[ n ]:aItems )
-
-         ( ::cDbf )->( dbAppend() )
-         ( ::cDbf )->cCodUse     := cCurUsr
-         ( ::cDbf )->cOpcion     := aItems[ n ]:cPrompt
-         ( ::cDbf )->lShow       := ::oTree:GetCheck( aItems[ n ] )         
-         ( ::cDbf )->( dbUnLock() )
-
-         ::SaveTree( aItems[ n ]:aItems, cCurUsr, cDbf )
-
-      else
-
-         if IsChar( aItems[ n ]:bAction )
-            ( ::cDbf )->( dbAppend() )
-            ( ::cDbf )->cCodUse  := cCurUsr
-            ( ::cDbf )->cOpcion  := aItems[ n ]:bAction
-            ( ::cDbf )->lShow    := ::oTree:GetCheck( aItems[ n ] )         
-            ( ::cDbf )->( dbUnLock() )
-         end if
-
-      end if
-
-   next
-
-RETURN Self
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD Load()
+METHOD saveItem( Uuid, oItem, lVisible )
 
-   local cCurUsr  := Auth():Codigo()
+   if hb_ischar( oItem:bAction ) 
+      SQLUsuarioFavoritosModel():set( Uuid, oItem:bAction, lVisible ) 
+   end if 
 
-   if ::lOpenDatabase()
-
-      if ( ::cDbf )->( dbSeek( cCurUsr ) )
-
-         while ( ::cDbf )->cCodUse == cCurUsr .and. !( ::cDbf )->( eof() )
-
-            ::LoadTree( ::oTree:aItems, ( ::cDbf )->cOpcion, ( ::cDbf )->lShow )
-
-            ( ::cDbf )->( dbSkip() )
-
-         end while
-
-      end if
-
-   end if
-
-   ::CloseDatabase()
-
-RETURN Self
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD LoadTree( aItems, cOpcion, lShow )
+METHOD setItem( Uuid, oItem )
 
-   local n
+   local nVisible := SQLUsuarioFavoritosModel():get( Uuid, oItem:bAction )
 
-   if empty( cOpcion )
-      RETURN nil
-   end if
+   if hb_isnumeric( nVisible ) .and. ( nVisible == 1 )
+      ::oTree:SetCheck( oItem, .t. )
+   end if 
 
-   for n := 1 to Len( aItems )
+RETURN ( Self )
 
-      if Len( aItems[ n ]:aItems ) > 0
+//--------------------------------------------------------------------------//
 
-         if !empty( aItems[ n ] ) .and. Rtrim( aItems[ n ]:cPrompt ) == Rtrim( cOpcion )
+METHOD LoadTree( Uuid, aItems )
 
-            ::oTree:SetCheck( aItems[ n ], lShow ) 
+   DEFAULT Uuid   := Auth():Uuid()
+   DEFAULT aItems := ::oTree:aItems
 
-         end if
-
-         ::LoadTree( aItems[ n ]:aItems, cOpcion, lShow )
-
-      else
-
-         if !empty( aItems[ n ]:bAction ) .and.  Rtrim( aItems[ n ]:bAction ) == Rtrim( cOpcion )
-
-            ::oTree:SetCheck( aItems[ n ], lShow ) 
-
-         end if
-
-      end if
-
-   next
+   aeval( aItems,;
+            {|oItem| ::setItem( Uuid, oItem ),;
+                     if( !empty( oItem:aItems ), ::LoadTree( Uuid, oItem:aItems ), ) } )
 
 RETURN nil
 
 //--------------------------------------------------------------------------//
 
-METHOD MakeDatabase( cPath, oMeter )
-
-   DEFAULT cPath     := cPatDat()
-
-   if !empty( oMeter )
-		oMeter:cText	:= "Generando Bases"
-      SysRefresh()
-   end if
-
-   if !lExistTable( cPath + "UsrBtnBar.Dbf" )
-      dbCreate( cPath + "UsrBtnBar.Dbf", ::aStruct, cDriver() )
-   end if
-
-   if !lExistIndex( cPath + "UsrBtnBar.Cdx" )
-      ::ReindexDatabase( cPath, oMeter )
-   end if
-
-RETURN .t.
-
-//--------------------------------------------------------------------------//
-
-METHOD ReindexDatabase( cPath, oMeter )
-
-   local dbf
-
-   DEFAULT cPath     := cPatDat()
-
-   if !lExistTable( cPath + "UsrBtnBar.Dbf" )
-      dbCreate( cPath + "UsrBtnBar.Dbf", ::aStruct, cDriver() )
-   end if
-
-   fEraseIndex( cPath + "UsrBtnBar.Cdx" )
-
-   dbUseArea( .t., cDriver(), cPath + "UsrBtnBar.Dbf", cCheckArea( "UsrBtnBar", @dbf ), .f. )
-   if !( dbf )->( neterr() )
-      ( dbf )->( __dbPack() )
-
-      ( dbf )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbf )->( ordCreate( cPath + "UsrBtnBar.Cdx", "cCodUse", "Field->cCodUse", {|| Field->cCodUse } ) )
-
-      ( dbf )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbf )->( ordCreate( cPath + "UsrBtnBar.Cdx", "cOpcion", "Field->cCodUse + Field->cOpcion", {|| Field->cCodUse  + Field->cOpcion } ) )
-
-      ( dbf )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de usuarios" )
-   end if
-
-RETURN Self
-
-//--------------------------------------------------------------------------//
-
 METHOD CreateButtonBar( oWnd, lCreateButtonBar )
 
-   DEFAULT lCreateButtonBar := .t.
+   DEFAULT lCreateButtonBar   := .t.
 
-   ::oReBar                	:= TPanelEx():New( 0, 0, if( ::lTactil, 124, 150 ), 1000, oWnd, Rgb( 255, 255, 255 ), .f. ) 
+   ::oReBar                   := TPanelEx():New( 0, 0, if( ::lTactil, 124, 150 ), 1000, oWnd, Rgb( 255, 255, 255 ), .f. ) 
 
-   oWnd:oTop                := ::oReBar
+   oWnd:oTop                  := ::oReBar
 
    ::CreateOfficeBar( oWnd )
 
@@ -574,7 +451,7 @@ METHOD CreateButtonBar( oWnd, lCreateButtonBar )
       ::HideSearchBar()
    end if
 
-RETURN Self
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
@@ -779,52 +656,19 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD lOpenDatabase()
-
-   local oBlock
-   local oError
-
-   if ::lOpenFiles
-      RETURN ( ::lOpenFiles )
-   end if
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      ::MakeDatabase()
-
-      USE ( cPatDat() + "UsrBtnBar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cDbf := cCheckArea( "UsrBtnBar" ) )
-      SET ADSINDEX TO ( cPatDat() + "UsrBtnBar.Cdx" ) ADDITIVE
-
-      ::lOpenFiles   := .t.
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de barras de botones" )
-
-      CLOSE ( ::cDbf )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( ::lOpenFiles )
-
-//----------------------------------------------------------------------------//
-
 METHOD lGetShowToolBar( oAcceso, cCurUsr )
-
-   local lShow       := .f.
 
    DEFAULT cCurUsr   := Auth():Codigo()
 
+   if empty( cCurUsr )
+      RETURN ( oAcceso:lShow )
+   end if 
+
    if ::lOpenFiles .and. dbSeekInOrd( cCurUsr + oAcceso:cId, "cOpcion", ::cDbf )
-      lShow          := ( ::cDbf )->lShow
-   else
-      lShow          := oAcceso:lShow
+      RETURN ( ( ::cDbf )->lShow )
    end if
 
-RETURN ( lShow )
+RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
@@ -839,30 +683,6 @@ METHOD lHideCarpeta( oAcceso, cCurUsr )
    end if
 
 RETURN ( lHide )
-
-//----------------------------------------------------------------------------//
-
-METHOD CloseDatabase()
-
-   if !empty( ::cDbf )
-      ( ::cDbf )->( dbCloseArea() )
-   end if
-
-   ::lOpenFiles      := .f.
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD DeleteTree( cCurUsr )
-
-   DEFAULT cCurUsr   := Auth():Codigo()
-
-   while ( ::cDbf )->( dbSeek( cCurUsr ) )
-      if( ( ::cDbf )->( dbRLock() ), ( ( ::cDbf )->( dbDelete() ), ( ::cDbf )->( dbUnLock() ) ), )
-   end while
-
-RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -883,23 +703,17 @@ METHOD CreateOfficeBar( oWnd )
    Creamos la carpeta de favoritos---------------------------------------------
    */
 
-   if ::lOpenDatabase()
+   ::CreateFavoritosOfficeBar()
 
-      ::CreateFavoritosOfficeBar()
+   /*
+   Resto de carpetas-----------------------------------------------------------
+   */
 
-      /*
-      Resto de carpetas-----------------------------------------------------------
-      */
-
-      for each oAcceso in ::aAccesos
-         if len( oAcceso:aAccesos ) > 0
-            ::CreateCarpetaOfficeBar( oAcceso )
-         end if
-      next
-
-      ::CloseDatabase()
-
-   end if
+   for each oAcceso in ::aAccesos
+      if len( oAcceso:aAccesos ) > 0
+         ::CreateCarpetaOfficeBar( oAcceso )
+      end if
+   next
 
 RETURN ( Self )
 
@@ -913,24 +727,18 @@ METHOD ReCreateOfficeBar( oWnd )
    Creamos la carpeta de favoritos---------------------------------------------
    */
 
-   if ::lOpenDatabase()
+   ::CreateFavoritosOfficeBar()
 
-      ::CreateFavoritosOfficeBar()
+   /*
+   Resto de carpetas-----------------------------------------------------------
+   */
 
-      /*
-      Resto de carpetas-----------------------------------------------------------
-      */
+   for each oCarpeta in ::oOfficeBar:aCarpetas
+      oCarpeta:lHide    := ::lHideCarpeta( oCarpeta )
+   next
 
-      for each oCarpeta in ::oOfficeBar:aCarpetas
-         oCarpeta:lHide    := ::lHideCarpeta( oCarpeta )
-      next
-
-      ::oOfficeBar:GetCoords()
-      ::oOfficeBar:Refresh()
-
-      ::CloseDatabase()
-
-   end if
+   ::oOfficeBar:GetCoords()
+   ::oOfficeBar:Refresh()
 
 RETURN ( Self )
 
@@ -1012,18 +820,22 @@ METHOD CreateFavoritosOfficeBar()
    local oAcceso
    local oBoton
    local oGrupo
-   local nBoton                  := 0
-   local aGrupo                  := {}
-   local aColor                  := { RGB( 237, 71, 0 ), RGB( 237, 71, 0 ), , Rgb( 237, 71, 0 ), CLR_WHITE }
+   local nBoton                     
+   local aGrupo                  
+   local cUsuarioUuid            
 
    if ( "TCT" $ appParamsMain() ) .or. ( "TPV" $ appParamsMain() )
       RETURN ( Self )
    end if
+   
+   nBoton                        := 0
+   aGrupo                        := {}
+   cUsuarioUuid                  := Auth():Uuid()
 
    // Creamos los favoritos-----------------------------------------------------
 
    if empty( ::oFavoritosBar )
-      ::oFavoritosBar            := TCarpeta():New( ::oOfficeBar, "FAVORITOS", , , aColor )
+      ::oFavoritosBar            := TCarpeta():New( ::oOfficeBar, "FAVORITOS", , , { RGB( 237, 71, 0 ), RGB( 237, 71, 0 ), , Rgb( 237, 71, 0 ), CLR_WHITE } )
    else
       ::oFavoritosBar:aGrupos    := {}
    end if
@@ -1034,20 +846,20 @@ METHOD CreateFavoritosOfficeBar()
 
          for each oItem in oAcceso:aAccesos
 
-            if ::lGetShowToolBar( oItem )
+            if SQLUsuarioFavoritosModel():getVisible( cUsuarioUuid, oItem:cId, oItem:lShow )
 
                if !empty( oItem:oGroup )
 
-                  nScan          := aScan( aGrupo, oItem:oGroup:cPrompt )
+                  nScan                := aScan( aGrupo, oItem:oGroup:cPrompt )
                   if nScan == 0
                      aAdd( aGrupo, oItem:oGroup:cPrompt )
-                     oGrupo      := TDotNetGroup():New( ::oFavoritosBar, 6, oItem:oGroup:cPrompt, .f., , oItem:oGroup:cBigBitmap )
-                     nBoton      := 0
+                     oGrupo            := TDotNetGroup():New( ::oFavoritosBar, 6, oItem:oGroup:cPrompt, .f., , oItem:oGroup:cBigBitmap )
+                     nBoton            := 0
                   end if
 
                   if !empty( oGrupo )
 
-                     oBoton      := TDotNetButton():New( 60, oGrupo, oItem:cBmpBig, oItem:cPrompt, ++nBoton, oItem:bAction, , , .f., .f., .f. )
+                     oBoton            := TDotNetButton():New( 60, oGrupo, oItem:cBmpBig, oItem:cPrompt, ++nBoton, oItem:bAction, , , .f., .f., .f. )
 
                      oGrupo:nWidth     += 60
                      oGrupo:aSize[ 1 ] := oGrupo:nWidth
@@ -1190,7 +1002,6 @@ Static Function lEndApp()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
 
 #pragma BEGINDUMP
 

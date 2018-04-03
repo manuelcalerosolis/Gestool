@@ -183,12 +183,12 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TCobAge
    DEFAULT cDriver         := cDriver()
 
    if oMenuItem != nil
-      ::nLevel             := nLevelUsr( oMenuItem )
+      ::nLevel             := Auth():Level( oMenuItem )
    else
       ::nLevel             := 1
    end if
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if
@@ -452,11 +452,11 @@ METHOD OpenFiles( cPath ) CLASS TCobAge
 
       DATABASE NEW ::oDivisas FILE "DIVISAS.DBF"   PATH ( cPatDat() ) VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-      DATABASE NEW ::oClientes FILE "CLIENT.DBF"   PATH ( cPatCli() ) VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oClientes FILE "CLIENT.DBF"   PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-      DATABASE NEW ::oAgentes FILE "AGENTES.DBF"   PATH ( cPatCli() ) VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+      DATABASE NEW ::oAgentes FILE "AGENTES.DBF"   PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
-      DATABASE NEW ::oAgeRel  FILE "AgeRel.Dbf"    PATH ( cPatCli() ) VIA ( cDriver() ) SHARED INDEX "AgeRel.Cdx"
+      DATABASE NEW ::oAgeRel  FILE "AgeRel.Dbf"    PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "AgeRel.Cdx"
 
       DATABASE NEW ::oIva     FILE "TIVA.DBF"      PATH ( cPatDat() ) VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
@@ -473,13 +473,13 @@ METHOD OpenFiles( cPath ) CLASS TCobAge
 
       DATABASE NEW ::oFacPrvP FILE "FacPrvP.DBF"   PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX  "FACPRVP.CDX"
 
-      DATABASE NEW ::oProvee  FILE "PROVEE.DBF"    PATH ( cPatPrv() ) VIA ( cDriver() ) SHARED INDEX  "PROVEE.CDX"
+      DATABASE NEW ::oProvee  FILE "PROVEE.DBF"    PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX  "PROVEE.CDX"
 
-      DATABASE NEW ::oPrvBnc  FILE "PRVBNC.DBF"    PATH ( cPatPrv() ) VIA ( cDriver() ) SHARED INDEX  "PRVBNC.CDX"
+      DATABASE NEW ::oPrvBnc  FILE "PRVBNC.DBF"    PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX  "PRVBNC.CDX"
 
       DATABASE NEW ::oFPago   FILE "FPAGO.DBF"     PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX  "FPAGO.CDX"
 
-      DATABASE NEW ::oArticulo FILE "ARTICULO.DBF" PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oArticulo FILE "ARTICULO.DBF" PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
       ::cPorDiv   := cPorDiv( cDivEmp(), ::oDivisas:cAlias ) // Picture de la divisa redondeada
 
@@ -1101,11 +1101,11 @@ METHOD GeneraFacturaGastos( lExternal ) CLASS TCobAge
    ::oFacPrvT:dFecFac         := GetSysDate()
    ::oFacPrvT:cDivFac         := ::oDbf:cCodDiv
    ::oFacPrvT:nVdvFac         := ::oDbf:nVdvDiv
-   ::oFacPrvT:cCodAlm         := oUser():cAlmacen()
-   ::oFacPrvT:cCodCaj         := oUser():cCaja()
+   ::oFacPrvT:cCodAlm         := Application():codigoAlmacen()
+   ::oFacPrvT:cCodCaj         := Application():CodigoCaja()
    ::oFacPrvT:lSndDoc         := .t.
    ::oFacPrvT:cCodUsr         := Auth():Codigo()
-   ::oFacPrvT:cCodDlg         := oUser():cDelegacion()
+   ::oFacPrvT:cCodDlg         := Application():CodigoDelegacion()
    ::oFacPrvT:dFecEnt         := Ctod( "" )
    ::oFacPrvT:dFecImp         := Ctod( "" )
    ::oFacPrvT:lCloFac         := .f.
@@ -1148,7 +1148,7 @@ METHOD GeneraFacturaGastos( lExternal ) CLASS TCobAge
    ::oFacPrvL:nCtlStk         := oRetFld( cCodArt, ::oArticulo, "nCtlStock" )
    ::oFacPrvL:nUniCaja        := 1
    ::oFacPrvL:nPreUnit        := ::oDbf:nTotCob
-   ::oFacPrvL:cAlmLin         := oUser():cAlmacen()
+   ::oFacPrvL:cAlmLin         := Application():codigoAlmacen()
 
    ::oFacPrvL:Save()
 

@@ -42,7 +42,7 @@ Function mkTemporada( cPath, lAppend, cPathOld )
    local dbfTemporada
 
 	DEFAULT lAppend := .f.
-   DEFAULT cPath   := cPatArt()
+   DEFAULT cPath   := cPatEmp()
 
    dbCreate( cPath + "Temporadas.Dbf", aSqlStruct( aItmTemporada() ), cDriver() )
 
@@ -70,7 +70,7 @@ Function rxTemporada( cPath )
 
    local dbfTemporada
 
-   DEFAULT cPath  := cPatArt()
+   DEFAULT cPath  := cPatEmp()
 
    if !lExistTable( cPath + "Temporadas.Dbf" )
       mkTemporada( cPath )
@@ -116,8 +116,8 @@ Static Function OpenFiles()
    end if
    */
 
-   USE ( cPatArt() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Temporada", @dbfTemporada ) )
-   SET ADSINDEX TO ( cPatArt() + "Temporadas.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Temporada", @dbfTemporada ) )
+   SET ADSINDEX TO ( cPatEmp() + "Temporadas.Cdx" ) ADDITIVE
 
    RECOVER
 
@@ -167,9 +167,9 @@ FUNCTION Temporada( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -463,8 +463,8 @@ Function cTemporada( oGet, dbfTemporada, oGet2, oBmpTemporada  )
 
    if dbfTemporada == nil
 
-      USE ( cPatArt() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Temporada", @dbfTemporada ) )
-      SET ADSINDEX TO ( cPatArt() + "Temporadas.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Temporada", @dbfTemporada ) )
+      SET ADSINDEX TO ( cPatEmp() + "Temporadas.Cdx" ) ADDITIVE
 
       lOpen := .t.
 
@@ -544,7 +544,7 @@ Function BrwTemporada( oGet, oGet2, oBmpTemporada )
 
    ( dbfTemporada )->( dbGoTop() )
 
-   nLevelUsr            := nLevelUsr( MENUITEM )
+   nLevelUsr            := Auth():Level( MENUITEM )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Temporadas de artículos" )
 
@@ -686,7 +686,7 @@ Function BrwInternalTemporada( oGet, dbfArticulo, oGet2 )
 
    ( dbfTemporada )->( dbGoTop() )
 
-   nLevelUsr            := nLevelUsr( MENUITEM )
+   nLevelUsr            := Auth():Level( MENUITEM )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Temporadas de artículos" )
 

@@ -44,9 +44,9 @@ FUNCTION TVta( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -422,7 +422,7 @@ FUNCTION BrwTVta( oGet, dbfTVta, oGet2 )
    local cCbxOrd
    local lClose   := .f.
    local cPath    := cPatDat()
-   local nLevel   := nLevelUsr( "01042" )
+   local nLevel   := Auth():Level( "01042" )
 
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd        := aCbxOrd[ nOrd ]

@@ -6,9 +6,9 @@
 
 CLASS SQLBaseValidator
 
-   DATA oDatabase
-
    DATA oController
+
+   DATA oView
 
    DATA hValidators
    DATA hAsserts
@@ -37,6 +37,8 @@ CLASS SQLBaseValidator
    METHOD ProcessAll()
       METHOD Process()
 
+   METHOD sayMessage( cMessage )
+
    METHOD Required()
    METHOD RequiredOrEmpty( uValue )
 
@@ -55,11 +57,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
-
-   ::oDatabase                   := getSQLDatabase()
+METHOD New( oController, oView )
 
    ::oController                 := oController
+
+   ::oView                       := oView
 
 Return ( Self )
 
@@ -109,7 +111,7 @@ METHOD Process( cMethod, cMessage )
       lValidate      := Self:&( cMethod )( ::uValue ) 
 
       if !lValidate .and. !empty( cMessage )
-         msgstop( strtran( cMessage, "{value}", alltrim( cvaltostr( ::uValue ) ) ), "Error" )
+         ::sayMessage( cMessage )         
       end if
 
    catch oError
@@ -119,6 +121,21 @@ METHOD Process( cMethod, cMessage )
    end 
 
 RETURN ( lValidate )
+
+//---------------------------------------------------------------------------//
+
+METHOD sayMessage( cMessage )
+
+   local cText    := strtran( cMessage, "{value}", alltrim( cvaltostr( ::uValue ) ) )
+
+   if empty( ::oView ) .or. empty( ::oView:oMessage )
+      msgstop( cText, "Error" )
+      RETURN ( self )
+   end if 
+
+   ::oView:showMessage( cText )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -156,7 +173,7 @@ METHOD Unique( uValue )
       msgInfo( cSQLSentence, "Unique validator" )
    end if 
 
-   nCount            := ::oDatabase:getValue( cSQLSentence )
+   nCount            := getSQLDatabase():getValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount == 0 )
 
@@ -170,7 +187,7 @@ METHOD Exist( uValue )
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
-   nCount            := ::oDatabase:getValue( cSQLSentence )
+   nCount            := getSQLDatabase():getValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 
@@ -188,7 +205,7 @@ METHOD EmptyOrExist( uValue )
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
-   nCount            := ::oDatabase:getValue( cSQLSentence )
+   nCount            := getSQLDatabase():getValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 

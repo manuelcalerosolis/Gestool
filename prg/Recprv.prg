@@ -149,7 +149,7 @@ STATIC FUNCTION OpenFiles( cPatEmp )
       */
 
       if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
-         cFiltroUsuario := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
       end if
 
       oCentroCoste            := TCentroCoste():Create( cPatDat() )
@@ -222,8 +222,8 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
    Obtenemos el nivel de acceso
    */
 
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel               := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return .f.
    end if
@@ -671,7 +671,7 @@ Static Function lValCheck( aGet, aTmp )
    if aTmp[ _LCOBRADO ]
       aGet[ _DENTRADA ]:cText( GetSysDate() )
       aGet[ _CTURREC  ]:cText( cCurSesion( nil, .f. ) )
-      aGet[ _CCODCAJ  ]:cText( oUser():cCaja() )      
+      aGet[ _CCODCAJ  ]:cText( Application():CodigoCaja() )      
       aGet[ _CCODCAJ  ]:lValid()
    else
       aGet[ _DENTRADA ]:cText( Ctod( "" ) )
@@ -697,7 +697,7 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
    local oBmpBancos
 
    if empty( aTmp[ _CCODCAJ ] )
-      aTmp[ _CCODCAJ ]     := oUser():cCaja()
+      aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
    end if
 
    if empty( aTmp[ _CPAISIBAN ] )
@@ -759,7 +759,7 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
       REDEFINE GET aGet[ _CTURREC ] VAR aTmp[ _CTURREC ] ;
          ID       335 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _CCODPGO ] VAR aTmp[ _CCODPGO ] ;
@@ -791,18 +791,18 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
 
       REDEFINE CHECKBOX aGet[ _LRECIMP ] VAR aTmp[ _LRECIMP ];
          ID       160 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _DFECIMP ] VAR aTmp[ _DFECIMP ] ;
          ID       161 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _CHORIMP ] VAR aTmp[ _CHORIMP ] ;
          ID       162 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _CDIVPGO ] VAR aTmp[ _CDIVPGO ];
@@ -2334,8 +2334,8 @@ Function SynRecPrv( cPatEmp )
    USE ( cPatEmp + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "RctPrvT", @dbfRctPrvT ) )
    SET ADSINDEX TO ( cPatEmp + "RctPrvT.CDX" ) ADDITIVE
 
-   USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
-   SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
+   SET ADSINDEX TO ( cPatEmp() + "PROVEE.CDX" ) ADDITIVE
 
    USE ( cPatEmp + "FPAGO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
    SET ADSINDEX TO ( cPatEmp + "FPAGO.CDX" ) ADDITIVE
@@ -2718,11 +2718,11 @@ return ( aCalRecPrv )
 
 Function EdtRecPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -2756,11 +2756,11 @@ RETURN NIL
 
 Function ZooRecPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -2794,11 +2794,11 @@ RETURN NIL
 
 Function DelRecPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -2832,11 +2832,11 @@ Return nil
 
 Function PrnRecPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -2870,11 +2870,11 @@ RETURN NIL
 
 Function VisRecPrv( nNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -3266,11 +3266,11 @@ return .t.
 
 FUNCTION ExtEdtRecPrv( cFacPrvP, nExternalView, lRectificativa, oCtrCoste )
 
-   local nLevel            := nLevelUsr( _MENUITEM_ )
+   local nLevel            := Auth():Level( _MENUITEM_ )
 
    DEFAULT lRectificativa  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -3287,9 +3287,9 @@ Return .t.
 
 FUNCTION ExtDelRecPrv( cFacPrvP )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_DELE ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_DELE ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if

@@ -502,7 +502,7 @@ METHOD AddComboBox( cPrompt, cItem, aItems ) CLASS TTaskPanel
 
    @ nTop + 6, 10  SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
 
-   @ nTop, 120 COMBOBOX oCbx VAR cItem ITEMS aItems SIZE 400, 460 OF Self PIXEL HEIGHTGET 20 
+   @ nTop, 120 COMBOBOX oCbx VAR cItem ITEMS aItems SIZE 400, 460 OF Self PIXEL HEIGHTGET 20  
 
    ::setHeight( oCbx:nTop, oCbx:nHeight )
 

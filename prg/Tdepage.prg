@@ -49,17 +49,17 @@ METHOD OpenFiles( lExclusive )
 
    DATABASE NEW ::oDbfFPgo PATH ( cPatEmp() ) FILE "FPAGO.DBF" VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
-   DATABASE NEW ::oDbfAlm  PATH ( cPatAlm() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+   DATABASE NEW ::oDbfAlm  PATH ( cPatEmp() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
-   DATABASE NEW ::oDbfTarPreL PATH ( cPatArt() ) FILE "TARPREL.DBF" VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
+   DATABASE NEW ::oDbfTarPreL PATH ( cPatEmp() ) FILE "TARPREL.DBF" VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
 
-   DATABASE NEW ::oDbfPrmT PATH ( cPatArt() ) FILE "PROMOT.DBF" VIA ( cDriver() ) SHARED INDEX "PROMOT.CDX"
+   DATABASE NEW ::oDbfPrmT PATH ( cPatEmp() ) FILE "PROMOT.DBF" VIA ( cDriver() ) SHARED INDEX "PROMOT.CDX"
 
-   DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt  PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    DATABASE NEW ::oDbfDiv  PATH ( cPatEmp() ) FILE "DIVISAS.DBF" VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-   DATABASE NEW ::oDbfKit  PATH ( cPatArt() ) FILE "ARTKIT.DBF"  VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
+   DATABASE NEW ::oDbfKit  PATH ( cPatEmp() ) FILE "ARTKIT.DBF"  VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
    /*
    Objetos --------------------------------------------------------------------

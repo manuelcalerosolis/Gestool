@@ -89,9 +89,9 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacPrvL    PATH ( cPatEmp() ) FILE "FACPRVL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACPRVL.CDX"
 
-   DATABASE NEW ::oDbfAlm     PATH ( cPatAlm() ) FILE "ALMACEN.DBF"  VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+   DATABASE NEW ::oDbfAlm     PATH ( cPatEmp() ) FILE "ALMACEN.DBF"  VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
-   DATABASE NEW ::oDbfUbicaL  PATH ( cPatAlm() ) FILE "UBICAL.DBF"   VIA ( cDriver() ) SHARED INDEX "UBICAL.CDX"
+   DATABASE NEW ::oDbfUbicaL  PATH ( cPatEmp() ) FILE "UBICAL.DBF"   VIA ( cDriver() ) SHARED INDEX "UBICAL.CDX"
 
    RECOVER
 

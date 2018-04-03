@@ -206,7 +206,7 @@ STATIC FUNCTION OpenFiles()
       SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
       SET TAG TO "cNumMtr"
 
-      oCtaRem              := TCtaRem():Create( cPatCli() )
+      oCtaRem              := TCtaRem():Create( cPatEmp() )
       oCtaRem:OpenFiles()
 
       oCentroCoste         := TCentroCoste():Create( cPatDat() )
@@ -280,8 +280,8 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
    DEFAULT  oWnd        := oWnd()
    DEFAULT  aNumRec     := Array( 1 )
 
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel               := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       RETURN nil
    end if
@@ -859,7 +859,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
    end case
 
    if empty( aTmp[ _CCODCAJ ] )
-      aTmp[ _CCODCAJ ]     := oUser():cCaja()
+      aTmp[ _CCODCAJ ]     := Application():CodigoCaja()
    end if
 
    lOldDevuelto            := aTmp[ _LDEVUELTO ]
@@ -934,7 +934,7 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
       REDEFINE GET aGet[ _CTURREC ] VAR aTmp[ _CTURREC ] ;
          ID       335 ;
          PICTURE  "999999" ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _CCODCLI ] VAR aTmp[ _CCODCLI ] ;
@@ -1299,17 +1299,17 @@ FUNCTION EdtCob( aTmp, aGet, cFacCliP, oBrw, lRectificativa, nSpecialMode, nMode
 
       REDEFINE CHECKBOX aGet[_LRECIMP] VAR aTmp[_LRECIMP];
          ID       160 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 4 ]
 
       REDEFINE GET aGet[ _DFECIMP ] VAR aTmp[ _DFECIMP ] ;
          ID       161 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 4 ]
 
       REDEFINE GET aGet[ _CHORIMP ] VAR aTmp[ _CHORIMP ] ;
          ID       162 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 4 ]
 
       REDEFINE CHECKBOX aGet[ _LESPERADOC ] VAR aTmp[ _LESPERADOC ];
@@ -2241,8 +2241,8 @@ function SynRecCli( cPath )
    USE ( cPath + "FACRECL.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacRecL", @cFacRecL ) ) EXCLUSIVE
    if !lAIS() ; ( cFacRecL )->( ordListAdd( cPath + "FacRecL.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Client", @cClient ) )
-   if !lAIS() ; ( cClient )->( ordListAdd( cPatCli() + "CLIENT.CDX" ) ); else ; ordSetFocus( 1 ) ; end
+   USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Client", @cClient ) )
+   if !lAIS() ; ( cClient )->( ordListAdd( cPatEmp() + "CLIENT.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPatEmp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FPago", @cFPago ) )
    if !lAIS() ; ( cFPago )->( ordListAdd( cPatEmp() + "FPAGO.CDX" ) ); else ; ordSetFocus( 1 ) ; end
@@ -3338,12 +3338,12 @@ RETURN( oMenu:End() )
 Function EdtRecCli( cNumFac, lOpenBrowse, lRectificativa )
 
    local lEdit             := .f.
-   local nLevel            := nLevelUsr( _MENUITEM_ )
+   local nLevel            := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse     := .f.
    DEFAULT lRectificativa  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       RETURN .t.
    end if
@@ -3380,11 +3380,11 @@ RETURN ( lEdit )
 
 FUNCTION ZooRecCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       RETURN .t.
    end if
@@ -3416,11 +3416,11 @@ RETURN .t.
 
 FUNCTION DelRecCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_DELE ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_DELE ) == 0
       msgStop( 'Acceso no permitido.' )
       RETURN .t.
    end if
@@ -3455,11 +3455,11 @@ RETURN .t.
 
 FUNCTION PrnRecCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
       RETURN .t.
    end if
@@ -3494,11 +3494,11 @@ RETURN .t.
 
 FUNCTION VisRecCli( cNumFac, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
       RETURN .t.
    end if
@@ -3533,9 +3533,9 @@ RETURN .t.
 
 FUNCTION IntEdtRecCli( cNumFac )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       RETURN .t.
    end if
@@ -3552,7 +3552,7 @@ RETURN .t.
 
 FUNCTION ExtEdtRecCli( cFacCliP, nVista, lRectificativa, oCta, oCtrCoste )
 
-   local nLevel               := nLevelUsr( _MENUITEM_ )
+   local nLevel               := Auth():Level( _MENUITEM_ )
 
    lActualizarEstadoFactura   := .f.
 
@@ -3562,7 +3562,7 @@ FUNCTION ExtEdtRecCli( cFacCliP, nVista, lRectificativa, oCta, oCtrCoste )
 
    DEFAULT lRectificativa     := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       RETURN .t.
    end if
@@ -3577,9 +3577,9 @@ RETURN .t.
 
 FUNCTION ExtDelRecCli( cFacCliP )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_DELE ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_DELE ) == 0
       msgStop( 'Acceso no permitido.' )
       RETURN .t.
    end if
@@ -4672,7 +4672,7 @@ FUNCTION aItmRecCli()
    aAdd( aBasRecCli, {"cGuid"       ,"C", 40, 0, "Guid de recibo",                                       "GUID",                 "", "( cDbfRec )", {|| win_uuidcreatestring() } } )
    aAdd( aBasRecCli, {"cTipRec"     ,"C",  1, 0, "Tipo de recibo",                                       "TipoRecibo",           "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"cCodPgo"     ,"C",  2, 0, "Código de forma de pago",                              "Pago",                 "", "( cDbfRec )", nil } )
-   aAdd( aBasRecCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja",                                       "Caja",                 "", "( cDbfRec )", {|| oUser():cCaja() } } )
+   aAdd( aBasRecCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja",                                       "Caja",                 "", "( cDbfRec )", {|| Application():CodigoCaja() } } )
    aAdd( aBasRecCli, {"cTurRec"     ,"C",  6, 0, "Sesión del recibo",                                    "Turno",                "", "( cDbfRec )", {|| cCurSesion( nil, .f.) } } )
    aAdd( aBasRecCli, {"cCodCli"     ,"C", 12, 0, "Código de cliente",                                    "Cliente",              "", "( cDbfRec )", nil } )
    aAdd( aBasRecCli, {"cNomCli"     ,"C", 80, 0, "Nombre de cliente",                                    "NombreCliente",        "", "( cDbfRec )", nil } )
@@ -5230,7 +5230,7 @@ Function ValCheck( aGet, aTmp )
 
       aGet[ _DENTRADA ]:cText( GetSysDate() )
       aGet[ _CTURREC  ]:cText( cCurSesion( nil, .f. ) )
-      aGet[ _CCODCAJ  ]:cText( oUser():cCaja() )
+      aGet[ _CCODCAJ  ]:cText( Application():CodigoCaja() )
       aGet[ _CCODCAJ  ]:lValid()
 
       if aTmp[ _NIMPCOB ] == 0

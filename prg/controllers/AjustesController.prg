@@ -25,8 +25,6 @@ METHOD New() CLASS AjustesController
 
    ::hImage                := { "16" => "gc_businesspeople_16" }
 
-   ::nLevel                := nLevelUsr( "01052" )
-
    ::oModel                := SQLAjustesModel():New( self )
 
    ::oRepository           := AjustesRepository():New( self )
@@ -105,6 +103,8 @@ METHOD getInsertAjustesSentence()
    cSentence  += "VALUES "
    cSentence  +=    "( UUID(), 'empresa_exclusiva',         '1',  'alphanumeric', NULL, NULL ), "
    cSentence  +=    "( UUID(), 'caja_exclusiva',            '1',  'alphanumeric', NULL, NULL ), "
+   cSentence  +=    "( UUID(), 'almacen_exclusivo',         '1',  'alphanumeric', NULL, NULL ), "
+   cSentence  +=    "( UUID(), 'delegacion_exclusiva',      '1',  'alphanumeric', NULL, NULL ), "
    cSentence  +=    "( UUID(), 'pc_en_uso',                 '1',  'alphanumeric', NULL, NULL ), "
    cSentence  +=    "( UUID(), 'empresa_en_uso',            '1',  'alphanumeric', NULL, NULL ), "
    cSentence  +=    "( UUID(), 'mostrar_rentabilidad',      '1',  'boolean',      NULL, NULL ), "

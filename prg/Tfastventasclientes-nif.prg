@@ -225,21 +225,21 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) CLASS "TIKEL"   FILE "TIKEL.DBF"   VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
 
-      DATABASE NEW ::oObras   PATH ( cPatCli() ) CLASS "OBRAST"  FILE "ObrasT.DBF"  VIA ( cDriver() ) SHARED INDEX "ObrasT.CDX"
+      DATABASE NEW ::oObras   PATH ( cPatEmp() ) CLASS "OBRAST"  FILE "ObrasT.DBF"  VIA ( cDriver() ) SHARED INDEX "ObrasT.CDX"
 
-      DATABASE NEW ::oBancos  PATH ( cPatCli() ) CLASS "CliBnc"  FILE "CliBnc.DBF"  VIA ( cDriver() ) SHARED INDEX "CliBnc.CDX"
+      DATABASE NEW ::oBancos  PATH ( cPatEmp() ) CLASS "CliBnc"  FILE "CliBnc.DBF"  VIA ( cDriver() ) SHARED INDEX "CliBnc.CDX"
 
-      DATABASE NEW ::oCliAtp  PATH ( cPatCli() ) CLASS "CliAtp"   FILE "CliAtp.Dbf" VIA ( cDriver() ) SHARED INDEX "CliAtp.Cdx"
+      DATABASE NEW ::oCliAtp  PATH ( cPatEmp() ) CLASS "CliAtp"   FILE "CliAtp.Dbf" VIA ( cDriver() ) SHARED INDEX "CliAtp.Cdx"
 
-      DATABASE NEW ::oCliDoc  PATH ( cPatCli() ) CLASS "CliDoc"   FILE "ClientD.Dbf" VIA ( cDriver() ) SHARED INDEX "ClientD.Cdx"
+      DATABASE NEW ::oCliDoc  PATH ( cPatEmp() ) CLASS "CliDoc"   FILE "ClientD.Dbf" VIA ( cDriver() ) SHARED INDEX "ClientD.Cdx"
 
-      DATABASE NEW ::oCliInc  PATH ( cPatCli() ) CLASS "CliInc"   FILE "CliInc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliInc.Cdx"
+      DATABASE NEW ::oCliInc  PATH ( cPatEmp() ) CLASS "CliInc"   FILE "CliInc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliInc.Cdx"
 
-      DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oDbfCli PATH ( cPatEmp() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
-      DATABASE NEW ::oDbfAge PATH ( cPatCli() ) FILE "AGENTES.DBF" VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+      DATABASE NEW ::oDbfAge PATH ( cPatEmp() ) FILE "AGENTES.DBF" VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
       
-      DATABASE NEW ::oDbfRut PATH ( cPatCli() ) FILE "RUTA.DBF" VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
+      DATABASE NEW ::oDbfRut PATH ( cPatEmp() ) FILE "RUTA.DBF" VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
       
       DATABASE NEW ::oDbfFpg PATH ( cPatEmp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
 
@@ -247,7 +247,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oDbfIva PATH ( cPatDat() ) FILE "TIva.Dbf" VIA ( cDriver() ) SHARED INDEX "TIva.Cdx"
 
-      ::oGrpCli               := TGrpCli():Create( cPatCli() )
+      ::oGrpCli               := TGrpCli():Create( cPatEmp() )
       ::oGrpCli:OpenService()
 
       ::oCnfFlt               := TDataCenter():oCnfFlt()

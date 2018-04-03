@@ -25,7 +25,7 @@ METHOD New() CLASS CajonesPortamonedasController
                                  "32" => "gc_modem_32",;
                                  "48" => "gc_modem_48" }
 
-   ::nLevel                := nLevelUsr( ::cName )
+   ::nLevel                := Auth():Level( ::cName )
 
    ::oModel                := SQLCajonesPortamonedasModel():New( self )
 

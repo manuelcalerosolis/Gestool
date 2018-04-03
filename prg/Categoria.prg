@@ -62,7 +62,7 @@ Function mkCategoria( cPath, lAppend, cPathOld )
    local dbfCategoria
 
    DEFAULT lAppend := .f.
-   DEFAULT cPath   := cPatArt()
+   DEFAULT cPath   := cPatEmp()
 
    dbCreate( cPath + "Categorias.Dbf", aSqlStruct( aItmCategoria() ), cDriver() )
 
@@ -90,7 +90,7 @@ Function rxCategoria( cPath )
 
    local dbfCategoria
 
-   DEFAULT cPath  := cPatArt()
+   DEFAULT cPath  := cPatEmp()
 
    if !lExistTable( cPath + "Categorias.Dbf" )
       mkCategoria( cPath )
@@ -135,8 +135,8 @@ Static Function OpenFiles()
    end if
    */
 
-   USE ( cPatArt() + "CATEGORIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
-   SET ADSINDEX TO ( cPatArt() + "CATEGORIAS.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CATEGORIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
+   SET ADSINDEX TO ( cPatEmp() + "CATEGORIAS.CDX" ) ADDITIVE
 
    RECOVER
 
@@ -186,9 +186,9 @@ FUNCTION Categoria( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -516,7 +516,7 @@ Function BrwCategoria( oGet, oGet2, oBmpCategoria )
 
    ( dbfCategoria )->( dbGoTop() )
 
-   nLevelUsr            := nLevelUsr( MENUITEM )
+   nLevelUsr            := Auth():Level( MENUITEM )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Categorías" )
 
@@ -658,7 +658,7 @@ Function BrwInternalCategoria( oGet, dbfArticulo, oGet2 )
 
    ( dbfCategoria )->( dbGoTop() )
 
-   nLevelUsr            := nLevelUsr( MENUITEM )
+   nLevelUsr            := Auth():Level( MENUITEM )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE getConfigTraslation( "Categorías" )
 

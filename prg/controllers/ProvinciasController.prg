@@ -24,7 +24,7 @@ METHOD New() CLASS ProvinciasController
                                     "32" => "gc_flag_spain_32",;
                                     "48" => "gc_flag_spain_48" }
 
-   ::nLevel                   := nLevelUsr( ::cName )
+   ::nLevel                   := Auth():Level( ::cName )
 
    ::oModel                   := SQLProvinciasModel():New( self )
 
@@ -63,14 +63,6 @@ METHOD addColumns() CLASS ProvinciasBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -209,11 +201,7 @@ METHOD getColumns() CLASS SQLProvinciasModel
                                              "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "text"      => "Uuid"                                    ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
-
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 10 )"                          ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 10 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| space( 10 ) } }                       )
 
    hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 20 )"                          ,;

@@ -26,7 +26,7 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TSerDoc
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
       ::nLevel          := 0
    end if

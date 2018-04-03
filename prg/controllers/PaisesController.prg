@@ -24,7 +24,7 @@ METHOD New() CLASS PaisesController
                                     "32" => "gc_globe_32",;
                                     "48" => "gc_globe_48" }
 
-   ::nLevel                   := nLevelUsr( ::cName )
+   ::nLevel                   := Auth():Level( ::cName )
 
    ::oModel                   := SQLPaisesModel():New( self )
 

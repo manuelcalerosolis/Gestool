@@ -71,9 +71,9 @@ METHOD New( cPath, oWndParent, oMenuItem )
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
-      ::nLevel          := nLevelUsr( "01013" )
+      ::nLevel          := Auth():Level( "01013" )
    end if
 
    ::cPath              := cPath
@@ -104,7 +104,7 @@ RETURN ( Self )
 
 METHOD Activate()
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if

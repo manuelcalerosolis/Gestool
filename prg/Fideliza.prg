@@ -9,7 +9,7 @@ Function StartTFideliza()
 
    local oFideliza
 
-   oFideliza      := TFideliza():New( cPatArt(), cDriver(), oWnd(), "programa_de_fidelizacion" )
+   oFideliza      := TFideliza():New( cPatEmp(), cDriver(), oWnd(), "programa_de_fidelizacion" )
 
    if !Empty( oFideliza )
       oFideliza:Activate()
@@ -88,19 +88,19 @@ END CLASS
 
 METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := GetWndFrame()
 
    ::cDriver            := cDriver
 
    if oMenuItem != nil .and. ::nLevel == nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
       ::nLevel          := 1
    end if
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if
@@ -119,7 +119,7 @@ RETURN ( Self )
 
 METHOD CreateInit( cPath, cDriver )
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
@@ -136,7 +136,7 @@ RETURN ( Self )
 
 METHOD Create( cPath, cDriver )
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
@@ -649,7 +649,7 @@ METHOD LoadFamilia()
    local aFamilia := hb_ATokens( Alltrim( ::oDbf:mFamilia ), "," )
 
    if ::oDbfFam == nil .or. !::oDbfFam:Used()
-      DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oDbfFam PATH ( cPatEmp() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
    end if
 
    ::oDbfFam:GoTop()
@@ -671,7 +671,7 @@ METHOD LoadTipo()
    local aTipo := hb_ATokens( Alltrim( ::oDbf:mTipo ) )
 
    if ::oDbfTip == nil .or. !::oDbfTip:Used()
-      DATABASE NEW ::oDbfTip PATH ( cPatArt() ) FILE "TipArt.Dbf" VIA ( cDriver() ) SHARED INDEX "TipArt.Cdx"
+      DATABASE NEW ::oDbfTip PATH ( cPatEmp() ) FILE "TipArt.Dbf" VIA ( cDriver() ) SHARED INDEX "TipArt.Cdx"
    end if
 
    ::oDbfTip:GoTop()
@@ -691,7 +691,7 @@ METHOD LoadFabricante()
    local aFabricante := hb_ATokens( Alltrim( ::oDbf:mFabricant ) )
 
    if ::oDbfFab == nil .or. !::oDbfFab:Used()
-      DATABASE NEW ::oDbfFab PATH ( cPatArt() ) FILE "Fabric.Dbf" VIA ( cDriver() ) ALIAS "FABRIC" SHARED INDEX "Fabric.Cdx"
+      DATABASE NEW ::oDbfFab PATH ( cPatEmp() ) FILE "Fabric.Dbf" VIA ( cDriver() ) ALIAS "FABRIC" SHARED INDEX "Fabric.Cdx"
    end if
 
    ::oDbfFab:GoTop()
@@ -711,7 +711,7 @@ METHOD LoadTemporada()
    local aTemporada  := hb_ATokens( Alltrim( ::oDbf:mTemporada ) )
 
    if ::oDbfTem == nil .or. !::oDbfTem:Used()
-      DATABASE NEW ::oDbfTem PATH ( cPatArt() ) FILE "Temporadas.Dbf" VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
+      DATABASE NEW ::oDbfTem PATH ( cPatEmp() ) FILE "Temporadas.Dbf" VIA ( cDriver() ) SHARED INDEX "Temporadas.Cdx"
    end if
 
    ::oDbfTem:GoTop()

@@ -384,7 +384,7 @@ METHOD Activate() CLASS TRemMovAlm
    local oDel
    local oImp
    local oPrv
-   local nLevel   := nLevelUsr( ::oMenuItem )
+   local nLevel   := Auth():Level( ::oMenuItem )
 
    if nAnd( nLevel, 1 ) == 0
 
@@ -554,23 +554,23 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       DATABASE NEW ::oTMov             FILE "TMOV.DBF"      PATH ( cPatDat() )        VIA ( cDriver() ) SHARED INDEX "TMov.Cdx"
 
-      DATABASE NEW ::oAlmacenOrigen    FILE "ALMACEN.DBF"   ALIAS "ALMACEN"   PATH ( cPatAlm() )   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+      DATABASE NEW ::oAlmacenOrigen    FILE "ALMACEN.DBF"   ALIAS "ALMACEN"   PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
-      DATABASE NEW ::oAlmacenDestino   FILE "ALMACEN.DBF"   ALIAS "ALMACEN"   PATH ( cPatAlm() )   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+      DATABASE NEW ::oAlmacenDestino   FILE "ALMACEN.DBF"   ALIAS "ALMACEN"   PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
-      DATABASE NEW ::oArtCom           FILE "ARTDIV.DBF"    ALIAS "ARTDIV"    PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
+      DATABASE NEW ::oArtCom           FILE "ARTDIV.DBF"    ALIAS "ARTDIV"    PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
 
-      DATABASE NEW ::oPro              FILE "PRO.DBF"       ALIAS "PRO"       PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "PRO.CDX"
+      DATABASE NEW ::oPro              FILE "PRO.DBF"       ALIAS "PRO"       PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "PRO.CDX"
 
-      DATABASE NEW ::oTblPro           FILE "TBLPRO.DBF"    ALIAS "TBLPRO"    PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
+      DATABASE NEW ::oTblPro           FILE "TBLPRO.DBF"    ALIAS "TBLPRO"    PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
 
-      DATABASE NEW ::oFam              FILE "FAMILIAS.DBF"  ALIAS "FAMILIAS"  PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oFam              FILE "FAMILIAS.DBF"  ALIAS "FAMILIAS"  PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-      DATABASE NEW ::oArt              FILE "ARTICULO.DBF"  ALIAS "ARTICULO"  PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oArt              FILE "ARTICULO.DBF"  ALIAS "ARTICULO"  PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-      DATABASE NEW ::oArtKit           FILE "ARTKIT.DBF"    ALIAS "ARTKIT"    PATH ( cPatArt() ) VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
+      DATABASE NEW ::oArtKit           FILE "ARTKIT.DBF"    ALIAS "ARTKIT"    PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
-      DATABASE NEW ::oDbfAge           FILE "AGENTES.DBF"  PATH ( cPatCli() )   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+      DATABASE NEW ::oDbfAge           FILE "AGENTES.DBF"  PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
       DATABASE NEW ::oPedPrvT          FILE "PEDPROVT.DBF" PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "PEDPROVT.CDX"
 
@@ -638,7 +638,7 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       DATABASE NEW ::oHisMovS    PATH ( cPatEmp() ) FILE "MovSer.Dbf"      VIA ( cDriver() ) SHARED INDEX "MovSer.Cdx"
 
-      DATABASE NEW ::oDbfBar     PATH ( cPatArt() ) FILE "ArtCodebar.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
+      DATABASE NEW ::oDbfBar     PATH ( cPatEmp() ) FILE "ArtCodebar.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
 
       DATABASE NEW ::oDbfDoc     PATH ( cPatEmp() ) FILE "RDocumen.Dbf"    VIA ( cDriver() ) SHARED INDEX "RDocumen.Cdx"
       ::oDbfDoc:OrdSetFocus( "cTipo" )
@@ -655,7 +655,7 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       DATABASE NEW ::oDbfMatSer  PATH ( cPatEmp() ) FILE "MatSer.Dbf"      VIA ( cDriver() ) SHARED INDEX "MatSer.Cdx"
 
-      ::oTipArt           := TTipArt():Create( cPatArt() )
+      ::oTipArt           := TTipArt():Create( cPatEmp() )
       ::oTipArt:OpenFiles()
 
       ::oStock             := TStock():Create( cPatEmp() )
@@ -1940,7 +1940,7 @@ METHOD Process() CLASS TRemMovAlm
    local dbfRemMovFix
    local aFiles               := Directory( cPatIn() )
 
-   DATABASE NEW oAlm PATH ( cPatAlm() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+   DATABASE NEW oAlm PATH ( cPatEmp() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
    /*
    Recibirlo de internet

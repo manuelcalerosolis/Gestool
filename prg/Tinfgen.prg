@@ -2070,7 +2070,7 @@ METHOD oDefPrvInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllPrv ) CLASS TInfG
    DEFAULT nIdDes    := 110
    DEFAULT nIdSayDes := 111
 
-   DATABASE NEW ::oDbfPrv PATH ( cPatPrv() ) FILE "PROVEE.DBF" VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
+   DATABASE NEW ::oDbfPrv PATH ( cPatEmp() ) FILE "PROVEE.DBF" VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
 
    /*
    Si nos pasan la BD montamos los valores
@@ -2346,7 +2346,7 @@ METHOD lDefArtInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllArt, lInitGroup )
    BEGIN SEQUENCE
 
    if ::oDbfArt == nil .or. !::oDbfArt:Used()
-      DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArt PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
    end if
 
    /*
@@ -2619,7 +2619,7 @@ METHOD oDefAlmInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllAlm, lInitGroup )
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfAlm PATH ( cPatAlm() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+   DATABASE NEW ::oDbfAlm PATH ( cPatEmp() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
    /*
    Si nos pasan la BD montamos los valores
@@ -2724,7 +2724,7 @@ METHOD oBrwAlmInf() CLASS TInfGen
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfAlm PATH ( cPatAlm() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+   DATABASE NEW ::oDbfAlm PATH ( cPatEmp() ) FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
    //Añadimos una nueva línea el el browse
 
@@ -2765,7 +2765,7 @@ METHOD oDefAgeInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAll ) CLASS TInfGen
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfAge PATH ( cPatCli() ) FILE "AGENTES.DBF" VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+   DATABASE NEW ::oDbfAge PATH ( cPatEmp() ) FILE "AGENTES.DBF" VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
    /*
    Si nos pasan la BD montamos los valores
@@ -2853,7 +2853,7 @@ METHOD lDefFamInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllFam ) CLASS TInfG
    BEGIN SEQUENCE
 
    if ::oDbfFam == nil .or. !::oDbfFam:Used()
-      DATABASE NEW ::oDbfFam PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oDbfFam PATH ( cPatEmp() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
    end if
 
    /*
@@ -3026,7 +3026,7 @@ METHOD oDefTipInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllTip ) CLASS TInfG
 
    BEGIN SEQUENCE
 
-   ::oTipArt         :=  TTipArt():New( cPatArt(), cDriver() )
+   ::oTipArt         :=  TTipArt():New( cPatEmp(), cDriver() )
    ::oTipArt:OpenFiles()
 
    /*
@@ -3277,7 +3277,7 @@ METHOD oDefGrpCli( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdGrp, oDlg ) CLASS TI
    local cSayGrpOrg
    local lOpen
 
-   ::oGrpCli         :=  TGrpCli():Create( cPatCli() )
+   ::oGrpCli         :=  TGrpCli():Create( cPatEmp() )
 
    if ::oGrpCli:OpenFiles()
 
@@ -3356,7 +3356,7 @@ METHOD oDefGrpPrv( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdGrp, oDlg ) CLASS TI
 
    DEFAULT oDlg      := ::oFld:aDialogs[1]
 
-   ::oGrpPrv         :=  TGrpPrv():Create( cPatPrv() )
+   ::oGrpPrv         :=  TGrpPrv():Create( cPatEmp() )
    if ::oGrpPrv:OpenFiles()
 
       /*
@@ -3476,7 +3476,7 @@ METHOD oDefCliInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, oDlg, nIdAllCli ) CLASS
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+   DATABASE NEW ::oDbfCli PATH ( cPatEmp() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
    /*
    Obtenemos los valores del primer y último codigo
@@ -3560,7 +3560,7 @@ METHOD oDefTmpInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, oDlg, nIdAllTmp ) CLASS
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfTmp PATH ( cPatCli() ) FILE "Temporadas.DBF" VIA ( cDriver() ) SHARED INDEX "Temporadas.CDX"
+   DATABASE NEW ::oDbfTmp PATH ( cPatEmp() ) FILE "Temporadas.DBF" VIA ( cDriver() ) SHARED INDEX "Temporadas.CDX"
 
    /*
    Obtenemos los valores del primer y último codigo
@@ -3644,7 +3644,7 @@ METHOD oDefGrfInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllGrp ) CLASS TInfG
 
    BEGIN SEQUENCE
 
-   ::oGruFam      := TGrpFam():Create( cPatArt(), "GRPFAM" )
+   ::oGruFam      := TGrpFam():Create( cPatEmp(), "GRPFAM" )
    ::oGruFam:OpenFiles()
 
    oThis          := ::oGruFam
@@ -3797,7 +3797,7 @@ METHOD oDefObrInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllObr ) CLASS TInfG
    DEFAULT nIdDes    := 80
    DEFAULT nIdSayDes := 81
 
-   DATABASE NEW ::oDbfObr PATH ( cPatCli() ) FILE "OBRAST.DBF" VIA ( cDriver() ) SHARED INDEX "OBRAST.CDX"
+   DATABASE NEW ::oDbfObr PATH ( cPatEmp() ) FILE "OBRAST.DBF" VIA ( cDriver() ) SHARED INDEX "OBRAST.CDX"
 
    /*
 	Obtenemos los valores del primer y ultimo codigo
@@ -3876,7 +3876,7 @@ METHOD oDefRutInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllRut ) CLASS TInfG
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfRut PATH ( cPatCli() ) FILE "RUTA.DBF" VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
+   DATABASE NEW ::oDbfRut PATH ( cPatEmp() ) FILE "RUTA.DBF" VIA ( cDriver() ) SHARED INDEX "RUTA.CDX"
 
    /*
    Si nos pasan la BD montamos los valores
@@ -4147,7 +4147,7 @@ METHOD oDefTrnInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllTrn ) CLASS TInfG
 
    BEGIN SEQUENCE
 
-   ::oDbfTrn         := TTrans():Create( cPatCli(), "Transport" )
+   ::oDbfTrn         := TTrans():Create( cPatEmp(), "Transport" )
    ::oDbfTrn:OpenFiles()
 
    /*
@@ -4334,7 +4334,7 @@ METHOD AddArticulo( cCodArt, oDbfArt, oDbfLin, lPrp, lLote )
    BEGIN SEQUENCE
 
    if oDbfArt == nil
-      DATABASE NEW oDbfArt PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW oDbfArt PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
       lOpen       := .t.
    end if
 
@@ -4646,7 +4646,7 @@ METHOD AddCliente( cCodCli, oDbfDocT, lTiket )
    BEGIN SEQUENCE
 
       if ::oDbfCli == nil
-         DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+         DATABASE NEW ::oDbfCli PATH ( cPatEmp() ) FILE "CLIENT.DBF" VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
       end if
 
       ::oDbf:cCodCli    := cCodCli
@@ -4724,7 +4724,7 @@ METHOD AddTemporada( cCodTmp, oDbfTmp )
    BEGIN SEQUENCE
 
       if ::oDbfTmp == nil
-         DATABASE NEW ::oDbfTmp PATH ( cPatCli() ) FILE "Temporadas.DBF" VIA ( cDriver() ) SHARED INDEX "Temporadas.CDX"
+         DATABASE NEW ::oDbfTmp PATH ( cPatEmp() ) FILE "Temporadas.DBF" VIA ( cDriver() ) SHARED INDEX "Temporadas.CDX"
       end if
 
       ::oDbf:cCodTmp    := cCodTmp
@@ -4762,7 +4762,7 @@ RETURN ( Self )
 METHOD AddProveedor( cCodPrv )
 
    if ::oDbfPrv == nil
-      DATABASE NEW ::oDbfPrv PATH ( cPatPrv() ) FILE "PROVEE.DBF" VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
+      DATABASE NEW ::oDbfPrv PATH ( cPatEmp() ) FILE "PROVEE.DBF" VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
    end if
 
    if ::oDbfPrv:Seek ( cCodPrv )

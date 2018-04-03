@@ -128,12 +128,12 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TFacAutomatica
    DEFAULT oWndParent         := GetWndFrame()
 
    if oMenuItem != nil .and. ::nLevel == nil
-      ::nLevel                := nLevelUsr( oMenuItem )
+      ::nLevel                := Auth():Level( oMenuItem )
    else
       ::nLevel                := 0
    end if
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if
@@ -311,8 +311,6 @@ METHOD Activate() CLASS TFacAutomatica
       HOTKEY   "E";
       LEVEL    ACC_DELE
 
-if lUsrMaster() .or. oUser():lDocAuto()
-
    DEFINE BTNSHELL oGen RESOURCE "GC_FLASH_" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::RunPlantillaAutomatica( ::oDbf:cCodFac ) ) ;
@@ -323,8 +321,6 @@ if lUsrMaster() .or. oUser():lDocAuto()
          ACTION   ( ::RunPlantillaAutomatica() );
          TOOLTIP  "Generar todas ahora" ;
          FROM     oGen
-
-end if
 
    DEFINE BTNSHELL RESOURCE "END" GROUP OF ::oWndBrw ;
       NOBORDER ;
@@ -355,7 +351,7 @@ METHOD OpenFiles( lExclusive ) CLASS TFacAutomatica
 
       DATABASE NEW ::oDbfFPago   PATH ( cPatEmp() )   FILE "FPAGO.DBF"     VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
-      DATABASE NEW ::oDbfAge     PATH ( cPatCli() )   FILE "AGENTES.DBF"   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+      DATABASE NEW ::oDbfAge     PATH ( cPatEmp() )   FILE "AGENTES.DBF"   VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
       DATABASE NEW ::oDbfIva     PATH ( cPatDat() )   FILE "TIVA.DBF"      VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
@@ -1476,6 +1472,10 @@ RETURN ( Self )
 
 METHOD RunPlantillaAutomatica( cCodigoPlantilla ) CLASS TFacAutomatica
 
+   if SuperUsuarioController():New():isNotDialogViewActivate()
+      RETURN ( Self )
+   end if 
+
    with object ( TCreaFacAutomaticas():New() )
 
       :cCodigoPlantilla    := cCodigoPlantilla
@@ -1817,9 +1817,9 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
 
    ::nView              := D():CreateView()
 
-   DATABASE NEW ::oDbfArt     PATH ( cPatArt() )   FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt     PATH ( cPatEmp() )   FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfCli     PATH ( cPatCli() )   FILE "CLIENT.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+   DATABASE NEW ::oDbfCli     PATH ( cPatEmp() )   FILE "CLIENT.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
    ::oAlbCliT := TDataCenter():oAlbCliT()
 
@@ -1839,9 +1839,9 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
 
    DATABASE NEW ::oDbfTblCnv  PATH ( cPatDat() )   FILE "TBLCNV.DBF"   VIA ( cDriver() ) SHARED INDEX "TBLCNV.CDX"
 
-   DATABASE NEW ::oDbfFam     PATH ( cPatArt() )   FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+   DATABASE NEW ::oDbfFam     PATH ( cPatEmp() )   FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-   DATABASE NEW ::oDbfKit     PATH ( cPatArt() )   FILE "ARTKIT.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
+   DATABASE NEW ::oDbfKit     PATH ( cPatEmp() )   FILE "ARTKIT.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
    DATABASE NEW ::oDbfIva     PATH ( cPatDat() )   FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
@@ -1849,7 +1849,7 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
 
    DATABASE NEW ::oDbfFPago   PATH ( cPatEmp() )   FILE "FPAGO.DBF"    VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
-   DATABASE NEW ::oDbfAge     PATH ( cPatCli() )   FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
+   DATABASE NEW ::oDbfAge     PATH ( cPatEmp() )   FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
 
    D():Atipicas( ::nView )
 
@@ -2015,29 +2015,25 @@ METHOD lSelectCodigoPlantilla() CLASS TCreaFacAutomaticas
 
       CursorWait()
 
-      if oUser():lDocAuto() .or. lUsrMaster()
-      
-         aCodigoGrupo                     := ::oGrpFacturasAutomaticas:aChild( ::cCodigoGrupo, { ::cCodigoGrupo } )
+      aCodigoGrupo                     := ::oGrpFacturasAutomaticas:aChild( ::cCodigoGrupo, { ::cCodigoGrupo } )
 
-         ::aPlantilla                     := {}
+      ::aPlantilla                     := {}
 
-         ::oFacAutT:oDbf:GoTop()
-         while !::oFacAutT:oDbf:Eof()
+      ::oFacAutT:oDbf:GoTop()
+      while !::oFacAutT:oDbf:Eof()
 
-            if ( Empty( aCodigoGrupo )       .or. ( lScanCodeInMemo( aCodigoGrupo, ::oFacAutT:oDbf:mGrpSel ) ) )  .and. ;
-               ( Empty( ::cCodigoPlantilla ) .or. ( ::oFacAutT:oDbf:cCodFac == ::cCodigoPlantilla ) )                
-              
-               aAdd( ::aPlantilla, { .t., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Lista para generar documentos." } )
+         if ( Empty( aCodigoGrupo )       .or. ( lScanCodeInMemo( aCodigoGrupo, ::oFacAutT:oDbf:mGrpSel ) ) )  .and. ;
+            ( Empty( ::cCodigoPlantilla ) .or. ( ::oFacAutT:oDbf:cCodFac == ::cCodigoPlantilla ) )                
+           
+            aAdd( ::aPlantilla, { .t., ::oFacAutT:oDbf:cCodFac, ::oFacAutT:oDbf:cNomFac, "Lista para generar documentos." } )
 
-               lSelect                    := .t.
+            lSelect                    := .t.
 
-            end if 
+         end if 
 
-            ::oFacAutT:oDbf:Skip()
+         ::oFacAutT:oDbf:Skip()
 
-         end while
-
-      end if
+      end while
 
       aSort( ::aPlantilla, , , {|x,y| x[1] > y[1]} )
 
@@ -2344,7 +2340,7 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
    ::oAlbCliT:cTurAlb      := cCurSesion()
    ::oAlbCliT:dFecAlb      := ::dFecDocumento
    ::oAlbCliT:cCodCli      := ::oDbfCli:Cod
-   ::oAlbCliT:cCodCaj      := oUser():cCaja()
+   ::oAlbCliT:cCodCaj      := Application():CodigoCaja()
    ::oAlbCliT:cNomCli      := ::oDbfCli:Titulo
    ::oAlbCliT:cDirCli      := ::oDbfCli:Domicilio
    ::oAlbCliT:cPobCli      := ::oDbfCli:Poblacion
@@ -2359,7 +2355,7 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
    ::oAlbCliT:cCodUsr      := Auth():Codigo()
    ::oAlbCliT:dFecCre      := GetSysDate()
    ::oAlbCliT:cTimCre      := Time()
-   ::oAlbCliT:cCodDlg      := oUser():cDelegacion()
+   ::oAlbCliT:cCodDlg      := Application():CodigoDelegacion()
    ::oAlbCliT:nTarifa      := Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa )
    ::oAlbCliT:cDtoEsp      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:cDtoEsp, ::oFacAutT:oDbf:cDtoEsp )
    ::oAlbCliT:nDtoEsp      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:nDtoEsp, ::oFacAutT:oDbf:nDtoEsp )
@@ -2658,7 +2654,7 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    ::oFacCliT:cTurFac      := cCurSesion()
    ::oFacCliT:dFecFac      := ::dFecDocumento
    ::oFacCliT:cCodCli      := ::oDbfCli:Cod
-   ::oFacCliT:cCodCaj      := oUser():cCaja()
+   ::oFacCliT:cCodCaj      := Application():CodigoCaja()
    ::oFacCliT:cNomCli      := ::oDbfCli:Titulo
    ::oFacCliT:cDirCli      := ::oDbfCli:Domicilio
    ::oFacCliT:cPobCli      := ::oDbfCli:Poblacion
@@ -2674,7 +2670,7 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    ::oFacCliT:dFecCre      := GetSysDate()
    ::oFacCliT:cTimCre      := Time()
    ::oFacCliT:nTarifa      := Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa )
-   ::oFacCliT:cCodDlg      := oUser():cDelegacion()
+   ::oFacCliT:cCodDlg      := Application():CodigoDelegacion()
    ::oFacCliT:cDtoEsp      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:cDtoEsp, ::oFacAutT:oDbf:cDtoEsp )
    ::oFacCliT:nDtoEsp      := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:nDtoEsp, ::oFacAutT:oDbf:nDtoEsp )
    ::oFacCliT:cDpp         := if( ::oFacAutT:oDbf:lUseCli, ::oDbfCli:cDpp,    ::oFacAutT:oDbf:cDpp )

@@ -78,7 +78,6 @@ static tmpLenguaje
 static oGrpFam
 static oFraPub
 static oComentarios
-static oLenguajes
 
 static oDetCamposExtra
 
@@ -115,7 +114,7 @@ FUNCTION BrwFamilia( oGet, oGet2, lAdd )
 	local oCbxOrd
    local aCbxOrd  := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevel   := nLevelUsr( MENUOPTION )
+   local nLevel   := Auth():Level( MENUOPTION )
    local lOpen    := .f.
 
    DEFAULT lAdd   := .t.
@@ -259,25 +258,23 @@ STATIC FUNCTION OpenFiles()
 
       D():FamiliasLenguajes( nView )
 
-      D():Lenguajes( nView )
+      USE ( cPatEmp() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
+      SET ADSINDEX TO ( cPatEmp() + "FamPrv.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
-      SET ADSINDEX TO ( cPatArt() + "FamPrv.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
+      SET ADSINDEX TO ( cPatEmp() + "Provee.Cdx" ) ADDITIVE
 
-      USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
-      SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
-
-      USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-      SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+      SET ADSINDEX TO ( cPatEmp() + "Articulo.Cdx" ) ADDITIVE
       ( dbfArticulo )->( OrdSetFocus( "cFamCod" ) )
 
-      oGrpFam           := TGrpFam():Create( cPatArt() )
+      oGrpFam           := TGrpFam():Create( cPatEmp() )
       oGrpFam:OpenFiles()
 
-      oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
+      oFraPub           := TFrasesPublicitarias():Create( cPatEmp() )
       oFraPub:OpenFiles()
 
-      oComentarios      := TComentarios():Create( cPatArt() )
+      oComentarios      := TComentarios():Create( cPatEmp() )
       oComentarios:OpenFiles()
 
       oDetCamposExtra   := TDetCamposExtra():New()
@@ -285,11 +282,6 @@ STATIC FUNCTION OpenFiles()
          oDetCamposExtra:OpenFiles()
          oDetCamposExtra:SetTipoDocumento( "Familias" )
          oDetCamposExtra:setbId( {|| D():FamiliasId( nView ) } )
-      end if
-
-      oLenguajes        := TLenguaje():Create( cPatDat() )
-      if !oLenguajes:OpenFiles()
-         lOpenFiles     := .f.
       end if
 
       oComercio         := TComercioConfig()
@@ -336,10 +328,6 @@ STATIC FUNCTION CloseFiles()
       oDetCamposExtra:CloseFiles()
    end if
 
-   if !empty( oLenguajes )
-      oLenguajes:End()
-   end if
-
    if !Empty( oComercio )
       oComercio:DestroyInstance()
    end if
@@ -351,7 +339,6 @@ STATIC FUNCTION CloseFiles()
    dbfArticulo    := nil
    dbfPrv         := nil
    oComentarios   := nil
-   oLenguajes     := nil
 
 RETURN .t.
 
@@ -371,9 +358,9 @@ FUNCTION Familia( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          RETURN nil
       end if
@@ -655,7 +642,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
          PROMPT   "&General",;
                   "&Propiedades",;
                   "&Proveedores",;
-                  "&Idiomas";
+                  "Lenguajes";
          DIALOGS  "FAMILIA_01",;
                   "FAMILIA_04",;
                   "FAMILIA_02",;
@@ -942,8 +929,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
          oBrwLenguaje:nMarqueeStyle    := 6
 
             with object ( oBrwLenguaje:AddCol() )
-               :cHeader                := "Idioma"
-               :bEditValue             := {|| alltrim( ( tmpLenguaje )->cCodLen ) + " - " + retFld( ( tmpLenguaje )->cCodLen, D():Lenguajes( nView ), "cNomLen" ) }
+               :cHeader                := "Lenguaje"
+               :bEditValue             := {|| alltrim( ( tmpLenguaje )->cCodLen ) }
                :nWidth                 := 220
             end with
 
@@ -1574,11 +1561,12 @@ STATIC FUNCTION EditLenguaje( aTmp, aGet, tmpLenguaje, oBrwLenguaje, bWhen, bVal
       VAR         aTmp[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ] ;
       ID          110 ;
       IDTEXT      111 ;
-      VALID       ( oLenguajes:Existe( aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ], aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ]:oHelpText, "cNomLen" ) );
-      ON HELP     ( oLenguajes:Buscar( aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ] ) ) ;
       BITMAP      "LUPA" ;
       OF          oDlg
 
+      aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ]:bValid   := {|| LenguajesController():New():validLenguajeFromGet( aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ], aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ]:oHelpText ) }
+      aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ]:bHelp    := {|| LenguajesController():New():SetSelectorToGet( aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ], aGet[ ( tmpLenguaje )->( fieldpos( "cCodLen" ) ) ]:oHelpText ) }
+      
    REDEFINE GET   aGet[ ( tmpLenguaje )->( fieldpos( "cDesFam" ) ) ] ; 
       VAR         aTmp[ ( tmpLenguaje )->( fieldpos( "cDesFam" ) ) ] ;
       ID          120 ;
@@ -1755,11 +1743,11 @@ RETURN ( lSeek )
 FUNCTION EdtFamilia( cCodFam, lOpenBrowse )
 
    local lEdit          := .f.
-   local nLevel         := nLevelUsr( MENUOPTION )
+   local nLevel         := Auth():Level( MENUOPTION )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       RETURN .f.
    end if
@@ -2065,8 +2053,8 @@ Method CreateData()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
-   SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
+   SET ADSINDEX TO ( cPatEmp() + "Familias.Cdx" ) ADDITIVE
 
    mkFamilia( cPatSnd() )
 
@@ -2141,8 +2129,8 @@ Method RestoreData()
       oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-      USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @cFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @cFamilia ) )
+      SET ADSINDEX TO ( cPatEmp() + "Familias.Cdx" ) ADDITIVE
 
       while !( cFamilia )->( eof() )
          if ( cFamilia )->lSelDoc .and. ( cFamilia )->( dbRLock() )
@@ -2252,8 +2240,8 @@ Method Process()
                USE ( cPatSnd() + "Familias.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @tmpFam ) )
                SET ADSINDEX TO ( cPatSnd() + "Familias.Cdx" ) ADDITIVE
 
-               USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
-               SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
+               USE ( cPatEmp() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
+               SET ADSINDEX TO ( cPatEmp() + "Familias.Cdx" ) ADDITIVE
 
                if !empty( ::oSender:oMtr )
                   ::oSender:oMtr:nTotal := ( tmpFam )->( lastrec() )
@@ -2511,7 +2499,7 @@ FUNCTION mkFamilia( cPath, lAppend, cPathOld )
 	local cFamilia
 
 	DEFAULT lAppend := .f.
-   DEFAULT cPath   := cPatArt()
+   DEFAULT cPath   := cPatEmp()
 
    if lExistTable( cPath + "Familias.Dbf", cLocalDriver() )
       fEraseTable( cPath + "Familias.dbf" )
@@ -2565,7 +2553,7 @@ FUNCTION rxFamilia( cPath, cDriver )
 
 	local cFamilia
 
-   DEFAULT cPath     := cPatArt()
+   DEFAULT cPath     := cPatEmp()
    DEFAULT cDriver   := cDriver()
 
    if !lExistTable( cPath + "Familias.Dbf", cDriver )
@@ -2811,8 +2799,8 @@ FUNCTION retFamilia( cCodFam, uFamilia )
    BEGIN SEQUENCE
 
    if empty( uFamilia )
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @uFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @uFamilia ) )
+      SET ADSINDEX TO ( cPatEmp() + "Familias.Cdx" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -2866,8 +2854,8 @@ FUNCTION cFamilia( oGet, cFamilia, oGet2, lMessage, oGetPrp1, oGetPrp2 )
    BEGIN SEQUENCE
 
    if empty( cFamilia )
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "FAMILIAS", @cFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "FAMILIAS", @cFamilia ) )
+      SET ADSINDEX TO ( cPatEmp() + "Familias.Cdx" ) ADDITIVE
       lClose         := .t.
    else
       nRec           := ( cFamilia )->( Recno() )
@@ -3071,11 +3059,11 @@ FUNCTION AppFamilia( lOpenBrowse )
 
    local oBlock
    local oError
-   local nLevel         := nLevelUsr( MENUOPTION )
+   local nLevel         := Auth():Level( MENUOPTION )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_APPD ) == 0
       msgStop( 'Acceso no permitido.' )
       RETURN .t.
    end if
@@ -3124,7 +3112,7 @@ FUNCTION BrwFamiliaCombinada( oGet, cFamilia, oGet2 )
    local oCbxOrd
    local aCbxOrd  := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevel   := nLevelUsr( MENUOPTION )
+   local nLevel   := Auth():Level( MENUOPTION )
    local lOpen    := .f.
 
    nRec           := ( cFamilia )->( RecNo() )

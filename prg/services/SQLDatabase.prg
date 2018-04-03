@@ -41,9 +41,9 @@ CLASS SQLDatabase
    METHOD Exec( cSql )             
    METHOD Execs( aSql ) 
    METHOD TransactionalExec( cSql )       INLINE ( ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
-   METHOD Query( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ),  msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD Prepare( cSql )                 INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ),  msgstop( "No ha conexiones disponibles" ) ) )
-   METHOD Parse( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ),  msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Query( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Prepare( cSql )                 INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
+   METHOD Parse( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
 
    METHOD escapeStr( cEscape )            INLINE ( if( !empty( ::oConexion ), ::oConexion:escapeStr( cEscape ), cEscape ) )
 
@@ -62,9 +62,7 @@ CLASS SQLDatabase
 
    METHOD selectHashList( cSentence )
 
-   METHOD getValue( cSql )
-
-   METHOD fetchRowSet( cSentence )
+   METHOD getValue( cSql, nColumn )       // INLINE ( if( !empty( ::oConexion ), ::oConexion:execScalar( cSql, nColumn ), msgstop( "No ha conexiones disponibles" ) ) )
 
    METHOD lastInsertId()                  INLINE ( if( !empty( ::oConexion ), ::oConexion:lastInsertId(), msgstop( "No ha conexiones disponibles" ) ) )
 
@@ -72,14 +70,16 @@ CLASS SQLDatabase
    METHOD Commit()                        INLINE ( if( !empty( ::oConexion ), ::oConexion:commit(), msgstop( "No ha conexiones disponibles" ) ) )
    METHOD rollBack()                      INLINE ( if( !empty( ::oConexion ), ::oConexion:rollback(),  msgstop( "No ha conexiones disponibles" ) ) )
 
-   METHOD startForeignKey()               VIRTUAL // INLINE ( ::Query( "pragma foreign_keys = ON" ) )
-   METHOD endForeignKey()                 VIRTUAL // INLINE ( ::Query( "pragma foreign_keys = OFF" ) )
-
    METHOD errorInfo()                     INLINE ( if( !empty( ::oConexion ), ::oConexion:errorInfo(), ) )
+
+   METHOD Export( cFileName )
+      METHOD exportTable( hFileName, cTable )
 
    METHOD checkModels()   
    METHOD checkModel( oModel )   
    METHOD getSchemaColumns()
+
+   METHOD getListTables()
 
    METHOD sayConexionInfo()               INLINE ( "Database : " + ::cDatabaseMySQL + CRLF + ;
                                                    "IP : " + ::cIpMySQL             + CRLF + ;
@@ -92,9 +92,6 @@ ENDCLASS
 //----------------------------------------------------------------------------//
 
 METHOD New() 
-
-   local aOptions             := { "GESTOOL", "--defaults-file=./my.cnf" }             
-   local aGroup               := { "server", "client" }                                 
 
    ::cPathDatabaseMySQL       := fullCurDir() + "Database\" 
 
@@ -236,7 +233,7 @@ METHOD selectFetch( cSentence, fetchType, attributePad )
 
    try 
 
-      oStatement        := ::oConexion:Query( cSentence )
+      oStatement        := ::Query( cSentence )
 
       oStatement:setAttribute( ATTR_STR_PAD, attributePad )
    
@@ -264,7 +261,7 @@ RETURN ( nil )
 
 METHOD firstTrimedFetchHash( cSentence )
 
-   local aSelect              := ::selectTrimedFetchHash( cSentence )
+   local aSelect        := ::selectTrimedFetchHash( cSentence )
 
    if hb_isarray( aSelect )
       RETURN ( afirst( aSelect ) )
@@ -302,9 +299,9 @@ METHOD selectHashList( cSentence )
 
    try 
 
-      oStatement     := ::oConexion:Query( cSentence )
+      oStatement     := ::Query( cSentence )
 
-      oHashList      := TMemList():new( oStatement:fetchAllArray(), oStatement:listColNames( AS_ARRAY_TYPE ) )
+      oHashList      := THashList():new( oStatement:fetchAll( FETCH_HASH ) ) 
    
    catch oError
 
@@ -334,7 +331,7 @@ METHOD getValue( cSentence )
 
    try 
 
-      oStatement     := ::oConexion:Query( cSentence )
+      oStatement     := ::Query( cSentence )
       
       if oStatement:fetchDirect()
          uValue      := oStatement:getValue( 1 ) 
@@ -355,54 +352,6 @@ METHOD getValue( cSentence )
    end
 
 RETURN ( uValue )
-
-//---------------------------------------------------------------------------//
-/*
-METHOD fetchDirect( cSentence )
-
-   local oError
-   local oStatement
-
-   try 
-
-      oStatement     := ::oConexion:Query( cSentence )
-      
-   catch oError
-
-      eval( errorBlock(), oError )
-
-   end
-
-RETURN ( if( hb_isobject( oStatement ), oStatement, nil ) )
-*/
-//---------------------------------------------------------------------------//
-
-METHOD fetchRowSet( cSentence )
-
-   local oError
-   local oRowSet
-   
-   if ::isParseError( cSentence )
-      RETURN ( nil )  
-   end if  
-
-   try 
-
-      if !empty( ::oStatement )
-         ::oStatement:Free()
-      end if 
-
-      ::oStatement   := ::oConexion:Query( cSentence )
-
-      oRowSet        := ::oStatement:fetchRowSet()
-
-   catch oError
-
-      eval( errorBlock(), oError )
-
-   end
-
-RETURN ( oRowSet )
 
 //---------------------------------------------------------------------------//
 
@@ -455,8 +404,8 @@ METHOD getSchemaColumns( oModel )
    local oStatement
    local aSchemaColumns
 
-   cSentence               := "SELECT COLUMN_NAME "                              +;
-                                 "FROM INFORMATION_SCHEMA.COLUMNS "              +;
+   cSentence               := "SELECT COLUMN_NAME "                                 +;
+                                 "FROM INFORMATION_SCHEMA.COLUMNS "                 +;
                                  "WHERE table_name = " + quoted( oModel:cTableName )
 
    if ::isParseError( cSentence )
@@ -465,7 +414,7 @@ METHOD getSchemaColumns( oModel )
 
    try
 
-      oStatement           := ::oConexion:Query( cSentence )
+      oStatement           := ::Query( cSentence )
    
       aSchemaColumns       := oStatement:fetchAll( FETCH_HASH )
 
@@ -486,6 +435,90 @@ METHOD getSchemaColumns( oModel )
    end if
 
 RETURN ( aSchemaColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getListTables()
+   
+   local oError
+   local oStatement
+   local aListTables
+
+   try 
+
+      oStatement           := ::Query( "SHOW TABLES FROM " + ::cDatabaseMySQL )      
+            
+      aListTables          := oStatement:fetchAllArray()
+
+   catch oError
+
+      eval( errorBlock(), oError )
+
+   finally
+
+      if !empty( oStatement )
+         oStatement:Free()
+      end if
+
+   end
+
+RETURN ( aListTables )
+
+//---------------------------------------------------------------------------//
+
+METHOD Export( cFileName )
+
+   local cString     
+   local hFileName   
+   local aListTables 
+
+   hFileName         := fcreate( cFileName )
+   if ferror() <> 0
+      msgStop( "Error creando fichero de backup : " + cFileName + ", error " + alltrim( str(  ferror() ) ), "Error" )
+      RETURN ( .f. )
+   endif
+
+   aListTables       := ::getListTables()
+   if empty( aListTables )
+      RETURN ( .f. )
+   endif
+
+   cString           := "USE `" + ::cDatabaseMySQL + "`;" + hb_osnewline() + hb_osnewline()
+
+   fwrite( hFileName, cString )
+
+   aeval( aListTables,;
+      {|aTables| aeval( aTables,;
+         {|cTable| ::exportTable( hFileName, cTable ) } ) } )
+
+   cString           := "--  " + hb_OSNewLine()
+   cString           += "--  Fin del procesado de la base de datos " + ::cDatabaseMySQL + hb_OSNewLine()
+   cString           += "--  " + hb_OSNewLine() + hb_OSNewLine()
+
+   fwrite( hFileName, cString )
+
+   fclose( hFileName )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD exportTable( hFileName, cTable )
+
+   local cString
+
+   cString        := "--  Datos de la tabla " + cTable + hb_osnewline()
+   cString        += "INSERT INTO `" + cTable + "` VALUES " + hb_osnewline()
+
+   fwrite( hFileName, cString )
+
+   hdo_rowprocess( ::oConexion:getHandle(), hFileName, cTable )  // Hacerlo en lenguaje C
+   
+   cString        :=  hb_osnewline() + "--  Fin de datos de la tabla " + cTable + hb_osnewline() + hb_osnewline()
+
+   fwrite( hFileName, cString )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 

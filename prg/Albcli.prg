@@ -528,8 +528,8 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
    DEFAULT  oMenuItem   := _MENUITEM_
    DEFAULT  oWnd        := oWnd()
 
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel               := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return .f.
    end if
@@ -1449,62 +1449,62 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "TIKES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKES", @dbfTikS ) )
       SET ADSINDEX TO ( cPatEmp() + "TIKES.CDX" ) ADDITIVE 
 
-      USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
-      SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
+      SET ADSINDEX TO ( cPatEmp() + "CliBnc.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
-      SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROVART.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
-      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGENTES.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "TarPreL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TarPreL", @dbfTarPreL ) )
-      SET ADSINDEX TO ( cPatArt() + "TarPreL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "TarPreL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TarPreL", @dbfTarPreL ) )
+      SET ADSINDEX TO ( cPatEmp() + "TarPreL.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "TarPreS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TarPreS", @dbfTarPreS ) )
-      SET ADSINDEX TO ( cPatArt() + "TarPreS.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "TarPreS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TarPreS", @dbfTarPreS ) )
+      SET ADSINDEX TO ( cPatEmp() + "TarPreS.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "PROMOT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOT", @dbfPromoT ) )
-      SET ADSINDEX TO ( cPatArt() + "PROMOT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROMOT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOT", @dbfPromoT ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROMOT.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "PROMOL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOL", @dbfPromoL ) )
-      SET ADSINDEX TO ( cPatArt() + "PROMOL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROMOL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOL", @dbfPromoL ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROMOL.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "PROMOC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOC", @dbfPromoC ) )
-      SET ADSINDEX TO ( cPatArt() + "PROMOC.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PROMOC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOC", @dbfPromoC ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROMOC.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
-      SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
+      SET ADSINDEX TO ( cPatEmp() + "ArtCodebar.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
+      SET ADSINDEX TO ( cPatEmp() + "ARTKIT.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
       SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
-      SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
+      SET ADSINDEX TO ( cPatEmp() + "OFERTA.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
-      SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
+      SET ADSINDEX TO ( cPatEmp() + "PRO.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfTblPro ) )
-      SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLPRO", @dbfTblPro ) )
+      SET ADSINDEX TO ( cPatEmp() + "TBLPRO.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
-      SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
+      SET ADSINDEX TO ( cPatEmp() + "RUTA.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTDIV.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
+      SET ADSINDEX TO ( cPatEmp() + "ARTDIV.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
       SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
-      USE ( cPatAlm() + "Almacen.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
-      SET ADSINDEX TO ( cPatAlm() + "Almacen.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Almacen.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
+      SET ADSINDEX TO ( cPatEmp() + "Almacen.Cdx" ) ADDITIVE
 
       USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
       SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
@@ -1585,17 +1585,17 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oTrans            := TTrans():Create( cPatCli() )
+      oTrans            := TTrans():Create( cPatEmp() )
       if !oTrans:OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oTipArt           := TTipArt():Create( cPatArt() )
+      oTipArt           := TTipArt():Create( cPatEmp() )
       if !oTipArt:OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oGrpFam           := TGrpFam():Create( cPatArt() )
+      oGrpFam           := TGrpFam():Create( cPatEmp() )
       if !oGrpFam:OpenFiles()
          lOpenFiles     := .f.
       end if
@@ -1610,7 +1610,7 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
+      oFraPub           := TFrasesPublicitarias():Create( cPatEmp() )
       if !oFraPub:OpenFiles()
          lOpenFiles     := .f.
       end if
@@ -1671,7 +1671,7 @@ STATIC FUNCTION OpenFiles()
 
       if lAIS() .and. !oUser():lAdministrador()
       
-         cFiltroUsuario    := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         cFiltroUsuario    := "Field->cSufAlb == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
          
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
             cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
@@ -2048,7 +2048,7 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopie
    DEFAULT nDevice            := IS_PRINTER
    DEFAULT cCaption           := "Imprimiendo albaranes a clientes"
    DEFAULT cCodigoDocumento   := cFormatoAlbaranesClientes()
-   DEFAULT cPrinter           := cPrinterAlbaran( oUser():cCaja(), dbfCajT )
+   DEFAULT cPrinter           := cPrinterAlbaran( Application():CodigoCaja(), dbfCajT )
 
    nOrdAnt                    := ( D():AlbaranesClientes( nView ) )->( OrdSetFocus() )
 
@@ -2098,9 +2098,9 @@ Return nil
 
 FUNCTION imprimeAlbaranCliente( cNumeroAlbaran, cFormatoDocumento )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -2185,16 +2185,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
             Return .f.
          end if
 
-         if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-            msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+         if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+            msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
             Return .f.
          end if
 
          aTmp[ _CTURALB   ]   := cCurSesion()
-         aTmp[ _CCODALM   ]   := oUser():cAlmacen()
+         aTmp[ _CCODALM   ]   := Application():codigoAlmacen()
          aTmp[ _CDIVALB   ]   := cDivEmp()
          aTmp[ _CCODPAGO  ]   := cDefFpg()
-         aTmp[ _CCODCAJ   ]   := oUser():cCaja()
+         aTmp[ _CCODCAJ   ]   := Application():CodigoCaja()
          aTmp[ _CCODUSR   ]   := Auth():Codigo()
          aTmp[ _NVDVALB   ]   := nChgDiv( aTmp[ _CDIVALB ], D():Get( "Divisas", nView ) )
          aTmp[ _LFACTURADO]   := .f.
@@ -2203,7 +2203,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _CSERALB   ]   := cNewSer( "NALBCLI", D():Get( "NCount", nView ) )
          aTmp[ _DFECENV   ]   := Ctod( "" )
          aTmp[ _DFECIMP   ]   := Ctod( "" )
-         aTmp[ _CCODDLG   ]   := oUser():cDelegacion()
+         aTmp[ _CCODDLG   ]   := Application():CodigoDelegacion()
          aTmp[ _LIVAINC   ]   := uFieldEmpresa( "lIvaInc" )
          aTmp[ _NIVAMAN   ]   := nIva( D():Get( "TIva", nView ), cDefIva() )
          aTmp[ _CMANOBR   ]   := Padr( getConfigTraslation( "Gastos" ), 250 )
@@ -2217,15 +2217,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
             Return .f.
          end if
 
-         if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-            msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+         if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+            msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
             Return .f.
          end if
 
          aTmp[ _DFECALB   ]   := GetSysDate()
          aTmp[ _TFECALB   ]   := GetSysTime()
          aTmp[ _CTURALB   ]   := cCurSesion()
-         aTmp[ _CCODCAJ   ]   := oUser():cCaja()
+         aTmp[ _CCODCAJ   ]   := Application():CodigoCaja()
          aTmp[ _LFACTURADO]   := .f.
          aTmp[ _LSNDDOC   ]   := .t.
          aTmp[ _CNUMPED   ]   := ""
@@ -2426,18 +2426,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          COLOR    CLR_GET ;
          WHEN     ( lWhen .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
-
-      /*
-      REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ];
-         ID       172 ;
-         SPINNER ;
-         MIN      1 ;
-         MAX      6 ;
-         PICTURE  "9" ;
-         VALID    ( ChangeTarifaCabecera( aTmp[ _NTARIFA ], dbfTmpLin, oBrwLin ) ) ;
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) ) ) );
-         OF       oFld:aDialogs[1]
-      */
 
       /*
       Combox tarifa
@@ -3636,17 +3624,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE CHECKBOX aGet[ _LIMPRIMIDO ] VAR aTmp[ _LIMPRIMIDO ] ;
          ID       120 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _DFECIMP ] VAR aTmp[ _DFECIMP ] ;
          ID       121 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CHORIMP ] VAR aTmp[ _CHORIMP ] ;
          ID       122 ;
-         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE SAY oGetMasDiv VAR cGetMasDiv;
@@ -5918,20 +5906,17 @@ STATIC FUNCTION SelSend( oBrw )
    local oFecEnv
    local dFecEnv  := GetSysDate()
 
+   if SuperUsuarioController():New():isNotDialogViewActivate()
+      msgStop( "Sin autorización para cambio de entrega." )
+      RETURN ( nil )
+   end if 
+
    if dbDialogLock( D():Get( "AlbCliT", nView ) )
 
       if ( D():Get( "AlbCliT", nView ) )->lEntregado
 
-         if lUsrMaster()
-
-            ( D():Get( "AlbCliT", nView ) )->lEntregado := !( D():Get( "AlbCliT", nView ) )->lEntregado
-            ( D():Get( "AlbCliT", nView ) )->dFecEnv    := Ctod( "" )
-
-         else
-
-            MsgStop( "Sin autorizacion para cambio de entrega" )
-
-         end if
+         ( D():Get( "AlbCliT", nView ) )->lEntregado := !( D():Get( "AlbCliT", nView ) )->lEntregado
+         ( D():Get( "AlbCliT", nView ) )->dFecEnv    := Ctod( "" )
 
       else
 
@@ -5958,6 +5943,7 @@ STATIC FUNCTION SelSend( oBrw )
                ACTION   ( oDlg:end() )
 
          oDlg:AddFastKey( VK_F5, {|| ( D():Get( "AlbCliT", nView ) )->lEntregado := !( D():Get( "AlbCliT", nView ) )->lEntregado , ( D():Get( "AlbCliT", nView ) )->dFecEnv    := dFecEnv , ( D():Get( "AlbCliT", nView ) )->lSndDoc    := .t. , oDlg:end() } )
+
          oDlg:bStart := { || oFecEnv:SetFocus() }
 
          ACTIVATE DIALOG oDlg CENTER
@@ -6738,7 +6724,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpA
       case nMode == APPD_MODE
 
          aTmp[ ( dbfTmpPgo )->( FieldPos( "cTurRec" ) ) ]      := cCurSesion()
-         aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCaj" ) ) ]      := oUser():cCaja()
+         aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCaj" ) ) ]      := Application():CodigoCaja()
 
          aTmp[ ( dbfTmpPgo )->( FieldPos( "cSerAlb" ) ) ]      := aTmpAlb[ _CSERALB ]
          aTmp[ ( dbfTmpPgo )->( FieldPos( "nNumAlb" ) ) ]      := aTmpAlb[ _NNUMALB ]
@@ -6857,7 +6843,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpA
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "cTurRec" ) ) ] VAR aTmp[ ( dbfTmpPgo )->( FieldPos( "cTurRec" ) ) ] ;
          ID       335 ;
          PICTURE  "999999" ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
       //Cliente
@@ -7951,9 +7937,9 @@ STATIC FUNCTION PrnEntregas( lPrint, cAlbCliP, lTicket )
    DEFAULT lTicket   := .f.
 
    if lTicket
-      cFmtEnt        := cFormatoEntregasCuentaEnCaja( oUser():cCaja(), dbfCajT )
-      cPrinter       := cPrinterEntregasCuenta( oUser():cCaja(), dbfCajT )
-      nCopPrn        := nCopiasEntregasCuentaEnCaja( oUser():cCaja(), dbfCajT )
+      cFmtEnt        := cFormatoEntregasCuentaEnCaja( Application():CodigoCaja(), dbfCajT )
+      cPrinter       := cPrinterEntregasCuenta( Application():CodigoCaja(), dbfCajT )
+      nCopPrn        := nCopiasEntregasCuentaEnCaja( Application():CodigoCaja(), dbfCajT )
    else
       cFmtEnt        := cFormatoDocumento( nil, "NENTALB", D():Get( "NCount", nView ) )
       cPrinter       := PrnGetName()
@@ -8335,7 +8321,7 @@ STATIC FUNCTION AlbRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       if !empty( cFecDoc )
          aTabla[ _DFECALB  ]  := cFecDoc
       end if
-      aTabla[ _CCODCAJ     ]  := oUser():cCaja()
+      aTabla[ _CCODCAJ     ]  := Application():CodigoCaja()
       aTabla[ _LENTREGADO  ]  = .f.
       aTabla[ _DFECENT     ]  := Ctod("")
       aTabla[ _CNUMPED     ]  := Space( 12 )
@@ -8349,7 +8335,7 @@ STATIC FUNCTION AlbRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       aTabla[ _LIMPRIMIDO  ]  := .f.
       aTabla[ _DFECIMP     ]  := Ctod("")
       aTabla[ _CHORIMP     ]  := Space( 5 )
-      aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
+      aTabla[ _CCODDLG     ]  := Application():CodigoDelegacion()
       aTabla[ _LFACTURADO  ]  := .f.
       aTabla[ _NFACTURADO  ]  := 1
 
@@ -13359,7 +13345,7 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
    local aStatus
    local cFormato 
    local oPrinter  
-   local cPrinterAlbaran   := cPrinterAlbaran( oUser():cCaja(), dbfCajT )
+   local cPrinterAlbaran   := cPrinterAlbaran( Application():CodigoCaja(), dbfCajT )
 
    DEFAULT nDevice         := IS_PRINTER
    DEFAULT lExternal       := .f.
@@ -13590,11 +13576,11 @@ return ( Max( nEstado, 1 ) )
 
 Function AppAlbCli( hHash, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_APPD ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -13621,11 +13607,11 @@ RETURN .t.
 
 Function EdtAlbCli( cNumAlb, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -13661,11 +13647,11 @@ Return .t.
 
 FUNCTION ZooAlbCli( cNumAlb, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_ZOOM ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -13701,11 +13687,11 @@ Return .t.
 
 FUNCTION DelAlbCli( cNumAlb, lOpenBrowse )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_DELE ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_DELE ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -13741,11 +13727,11 @@ Return .t.
 
 FUNCTION PrnAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -13781,11 +13767,11 @@ Return .t.
 
 FUNCTION PrnSerieAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -13821,11 +13807,11 @@ Return .t.
 
 FUNCTION VisAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
    DEFAULT lOpenBrowse  := .f.
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -14094,7 +14080,7 @@ RETURN ( Descrip( cAlbCliL, cAlbCliS ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cDesAlbCliLeng( cAlbCliL, cAlbCliS, cArtLeng ) // CallHbFunc('SetLenguajeSegundario', ['ENU'] )
+FUNCTION cDesAlbCliLeng( cAlbCliL, cAlbCliS, cArtLeng )
 
    if !empty( nView )
       DEFAULT cAlbCliL  := D():Get( "AlbCliL", nView )
@@ -14729,7 +14715,7 @@ FUNCTION EdmAlbCli( cCodRut, cPathTo, oStru, aSucces )
                   ( D():Get( "AlbCliT", nView ) )->nNumAlb    := nNumAlb
                   ( D():Get( "AlbCliT", nView ) )->cSufAlb    := RetSufEmp()
                   ( D():Get( "AlbCliT", nView ) )->dFecAlb    := dFecAlb
-                  ( D():Get( "AlbCliT", nView ) )->cCodAlm    := oUser():cAlmacen()
+                  ( D():Get( "AlbCliT", nView ) )->cCodAlm    := Application():codigoAlmacen()
                   ( D():Get( "AlbCliT", nView ) )->cDivAlb    := cDivEmp()
                   ( D():Get( "AlbCliT", nView ) )->nVdvAlb    := nChgDiv( ( D():Get( "AlbCliT", nView ) )->cDivAlb, D():Get( "Divisas", nView ) )
                   ( D():Get( "AlbCliT", nView ) )->lFacturado := .f.
@@ -15383,9 +15369,9 @@ return nil
 
 FUNCTION PrnEntAlb( cNumEnt, lPrint )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -15594,9 +15580,9 @@ Return .t.
 
 FUNCTION PrnEntAlbCli( cNumDoc, lPrint, dbfTmpEnt )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -16934,7 +16920,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "nCtlStk",   "N",  1, 0, "Tipo de stock de la linea",                       "TipoStock",                     "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nCosDiv",   "N", 16, 6, "Precio de costo",                                 "PrecioCosto",                   "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nPvpRec",   "N", 16, 6, "Precio de venta recomendado",                     "PrecioVentaRecomendado",        "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "cAlmLin",   "C", 16, 0, "Código del almacen",                              "Almacen",                       "", "( cDbfCol )", {|| oUser():cAlmacen() } } )
+   aAdd( aColAlbCli, { "cAlmLin",   "C", 16, 0, "Código del almacen",                              "Almacen",                       "", "( cDbfCol )", {|| Application():codigoAlmacen() } } )
    aAdd( aColAlbCli, { "lIvaLin",   "L",  1, 0, cImp() + " incluido",                              "LineaImpuestoIncluido",         "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nValImp",   "N", 16, 6, "Importe de impuesto",                             "ImporteImpuestoEspecial",       "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cCodImp",   "C",  3, 0, "Código del IVMH",                                 "ImpuestoEspecial",              "", "( cDbfCol )", nil } )
@@ -17026,8 +17012,8 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "CTURALB"   ,"C",  6, 0, "Sesión del albarán",                                       "Turno",                         "", "( cDbf )", {|| cCurSesion( nil, .f.) } } )
    aAdd( aItmAlbCli, { "DFECALB"   ,"D",  8, 0, "Fecha del albarán" ,                                       "Fecha",                         "", "( cDbf )", {|| GetSysDate() } } )
    aAdd( aItmAlbCli, { "CCODCLI"   ,"C", 12, 0, "Código del cliente" ,                                      "Cliente",                       "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "CCODALM"   ,"C", 16, 0, "Código de almacén" ,                                       "Almacen",                       "", "( cDbf )", {|| oUser():cAlmacen() } } )
-   aAdd( aItmAlbCli, { "CCODCAJ"   ,"C",  3, 0, "Código de caja" ,                                          "Caja",                          "", "( cDbf )", {|| oUser():cCaja() } } )
+   aAdd( aItmAlbCli, { "CCODALM"   ,"C", 16, 0, "Código de almacén" ,                                       "Almacen",                       "", "( cDbf )", {|| Application():codigoAlmacen() } } )
+   aAdd( aItmAlbCli, { "CCODCAJ"   ,"C",  3, 0, "Código de caja" ,                                          "Caja",                          "", "( cDbf )", {|| Application():CodigoCaja() } } )
    aAdd( aItmAlbCli, { "CNOMCLI"   ,"C", 80, 0, "Nombre del cliente" ,                                      "NombreCliente",                 "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CDIRCLI"   ,"C",200, 0, "Domicilio del cliente" ,                                   "DomicilioCliente",              "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CPOBCLI"   ,"C",200, 0, "Población del cliente" ,                                   "PoblacionCliente",              "", "( cDbf )", nil } )
@@ -17097,7 +17083,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "lImprimido","L",  1, 0, "Lógico de imprimido" ,                                     "Imprimido",                     "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "dFecImp"   ,"D",  8, 0, "Última fecha de impresión" ,                               "FechaImpresion",                "", "( cDbf )", {|| cTod( "" ) } } )
    aAdd( aItmAlbCli, { "cHorImp"   ,"C",  5, 0, "Hora de la última impresión" ,                             "HoraImpresion",                 "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cCodDlg"   ,"C",  2, 0, "Código delegación" ,                                       "Delegacion",                    "", "( cDbf )", {|| oUser():cDelegacion() } } )
+   aAdd( aItmAlbCli, { "cCodDlg"   ,"C",  2, 0, "Código delegación" ,                                       "Delegacion",                    "", "( cDbf )", {|| Application():CodigoDelegacion() } } )
    aAdd( aItmAlbCli, { "nDtoAtp"   ,"N",  6, 2, "Porcentaje de descuento atípico",                          "DescuentoAtipico",              "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nSbrAtp"   ,"N",  1, 0, "Lugar donde aplicar dto atípico",                          "LugarAplicarDescuentoAtipico",  "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nMontaje"  ,"N",  6, 2, "Horas de montaje",                                         "Montaje",                       "", "( cDbf )", nil } )
@@ -18416,8 +18402,8 @@ Function cDireccionSAT()
    local dbfObras
    local cDireccion  := ""
 
-   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Obras", @dbfObras ) )
-   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Obras", @dbfObras ) )
+   SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
 
    if ( dbfObras )->( dbSeek( ( dbfAlbCliT )->cCodCli + ( dbfAlbCliT )->cCodObr ) )
       cDireccion     := ( dbfObras )->cNomObr

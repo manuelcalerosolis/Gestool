@@ -4306,6 +4306,23 @@ function ApoloSender( oObject, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 RETURN ( nil )
 
 //--------------------------------------------------------------------------//
+
+FUNCTION dialogSayNo( oDlg )
+
+   oDlg:coorsUpdate()
+   oDlg:Move( oDlg:nTop, oDlg:nLeft - 100 )  ; SysWait(.05)
+   oDlg:Move( oDlg:nTop, oDlg:nLeft )        ; SysWait(.05)
+   oDlg:Move( oDlg:nTop, oDlg:nLeft + 100 )  ; SysWait(.05)
+   oDlg:Move( oDlg:nTop, oDlg:nLeft )        ; SysWait(.05)
+   oDlg:Move( oDlg:nTop, oDlg:nLeft - 50 )   ; SysWait(.1)
+   oDlg:Move( oDlg:nTop, oDlg:nLeft  )       ; SysWait(.1)
+   oDlg:Move( oDlg:nTop, oDlg:nLeft + 50 )   ; SysWait(.1)
+   oDlg:Move( oDlg:nTop, oDlg:nLeft )
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
 /*
 Function QrCodeToHBmp( nLineWidth, nLineHeight, cVar, cFileName, cFlags, nColor, nColorBack  )
 

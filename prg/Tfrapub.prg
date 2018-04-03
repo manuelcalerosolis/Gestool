@@ -49,7 +49,7 @@ END CLASS
 
 METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT oMenuItem    := "01129"
@@ -57,7 +57,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    ::cPath              := cPath
    ::cDriver            := cDriver   
    ::oWndParent         := oWndParent
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
    ::oDbf               := nil
    ::cMru               := "gc_box_closed_16"
@@ -73,7 +73,7 @@ RETURN ( Self )
 
 METHOD Activate()
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if

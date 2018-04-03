@@ -169,7 +169,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote )
+METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPrimeraPropiedad, cCodigoSegundaPropiedad, cValorPrimeraPropiedad, cValorSegundaPropiedad, cLote, dFechaFinLimite )
 
    local cSql  := "SELECT "                                                                              + ;
                      "cabecera.fecha_hora "                                                              + ;
@@ -187,8 +187,11 @@ METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cC
    cSql        +=    "AND lineas.codigo_segunda_propiedad = " + quoted( cCodigoSegundaPropiedad ) + " "   
    cSql        +=    "AND lineas.valor_primera_propiedad = " + quoted( cValorPrimeraPropiedad ) + " "   
    cSql        +=    "AND lineas.valor_segunda_propiedad = " + quoted( cValorSegundaPropiedad ) + " "   
-   
    cSql        +=    "AND lineas.lote = " + quoted( cLote, .t. ) + " "
+
+   if !empty( dFechaFinLimite )
+      cSql     +=    "AND cabecera.fecha_hora <= " + toSQLString( dFechaFinLimite ) + " "
+   end if
 
    cSql        += "ORDER BY cabecera.fecha_hora DESC " + ;
                      "LIMIT 1"
@@ -207,11 +210,11 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2, cLote )
+METHOD getFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2, cLote, dFechaFinLimite )
 
    local cSentence
 
-   cSentence   := ::getSqlSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2, cLote )
+   cSentence   := ::getSqlSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2, cLote, dFechaFinLimite )
 
 RETURN ( ::getDatabase():getValue( cSentence ) )
 
@@ -351,7 +354,7 @@ METHOD getRowSetMovimientosAlmacenForReport( oReporting )
 
    local cSentence   := ::getSqlSentenceMovimientosAlmacenForReport( oReporting )
 
-RETURN ( SQLRowSet():New():Build( cSentence ) ) // ::getDatabase():fetchRowSet( cSentence ) )
+RETURN ( SQLRowSet():New():Build( cSentence ) ) 
 
 //---------------------------------------------------------------------------//
 
@@ -451,6 +454,6 @@ METHOD getRowSetMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenLineas
 
    local cSentence   := ::getSqlSentenceMovimientosForArticulo( hParams )
 
-RETURN ( SQLRowSet():New():Build( cSentence ) ) // ::getDatabase():fetchRowSet( cSentence ) )
+RETURN ( SQLRowSet():New():Build( cSentence ) ) 
 
 //---------------------------------------------------------------------------//

@@ -76,7 +76,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TNotas
    DEFAULT oWndParent   := oWnd()
    DEFAULT oMenuItem    := "01075"
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
    /*
    Cerramos todas las ventanas
@@ -151,15 +151,15 @@ METHOD OpenFiles( lExclusive, lCloseNotas ) CLASS TNotas
    ::oDbf:Activate( .f., !( lExclusive ) )
    ::oDbf:OrdScope( Auth():Codigo() )
 
-   DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "Client.DBF"   VIA ( ::cDriver ) SHARED INDEX "CLIENT.CDX"
+   DATABASE NEW ::oDbfCli PATH ( cPatEmp() ) FILE "Client.DBF"   VIA ( ::cDriver ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfPrv PATH ( cPatPrv() ) FILE "Provee.DBF"   VIA ( ::cDriver ) SHARED INDEX "PROVEE.CDX"
+   DATABASE NEW ::oDbfPrv PATH ( cPatEmp() ) FILE "Provee.DBF"   VIA ( ::cDriver ) SHARED INDEX "PROVEE.CDX"
 
-   DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "Articulo.DBF" VIA ( ::cDriver ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt PATH ( cPatEmp() ) FILE "Articulo.DBF" VIA ( ::cDriver ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfAge PATH ( cPatCli() ) FILE "Agentes.Dbf"  VIA ( ::cDriver ) SHARED INDEX "Agentes.Cdx"
+   DATABASE NEW ::oDbfAge PATH ( cPatEmp() ) FILE "Agentes.Dbf"  VIA ( ::cDriver ) SHARED INDEX "Agentes.Cdx"
 
-   DATABASE NEW ::oDbfAlm PATH ( cPatAlm() ) FILE "Almacen.Dbf"  VIA ( ::cDriver ) SHARED INDEX "Almacen.Cdx"
+   DATABASE NEW ::oDbfAlm PATH ( cPatEmp() ) FILE "Almacen.Dbf"  VIA ( ::cDriver ) SHARED INDEX "Almacen.Cdx"
 
    if lCloseNotas .and. oUser():lAlerta()
       CloseNotas()
@@ -225,7 +225,7 @@ RETURN .t.
 
 METHOD Activate()
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if
@@ -308,7 +308,7 @@ METHOD Dialog()
    local oCbxOrden
    local cCbxOrden   := "Fecha"
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if

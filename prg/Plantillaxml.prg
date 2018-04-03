@@ -224,12 +224,12 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TPlantillaXML
    DEFAULT oWndParent         := GetWndFrame()
 
    if oMenuItem != nil .and. ::nLevel == nil
-      ::nLevel                := nLevelUsr( oMenuItem )
+      ::nLevel                := Auth():Level( oMenuItem )
    else
       ::nLevel                := 1
    end if
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if
@@ -356,11 +356,11 @@ METHOD OpenFiles( lExclusive ) CLASS TPlantillaXML
 
       DATABASE NEW ::oDbfDiv     PATH ( cPatDat() )   FILE "DIVISAS.DBF"      VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-      DATABASE NEW ::oDbfPrv     PATH ( cPatPrv() )   FILE "PROVEE.DBF"       VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
+      DATABASE NEW ::oDbfPrv     PATH ( cPatEmp() )   FILE "PROVEE.DBF"       VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
 
-      DATABASE NEW ::oDbfArt     PATH ( cPatArt() )   FILE "ARTICULO.DBF"     VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArt     PATH ( cPatEmp() )   FILE "ARTICULO.DBF"     VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-      DATABASE NEW ::oDbfArtCod  PATH ( cPatArt() )   FILE "ArtCodebar.Dbf"   VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
+      DATABASE NEW ::oDbfArtCod  PATH ( cPatEmp() )   FILE "ArtCodebar.Dbf"   VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
 
       DATABASE NEW ::oFacPrvT    PATH ( cPatEmp() )   FILE "FACPRVT.DBF"      VIA ( cDriver() ) SHARED INDEX "FACPRVT.CDX"
 
@@ -372,13 +372,13 @@ METHOD OpenFiles( lExclusive ) CLASS TPlantillaXML
 
       DATABASE NEW ::oAlbPrvL    PATH ( cPatEmp() )   FILE "AlbProvL.DBF"     VIA ( cDriver() ) SHARED INDEX "AlbProvL.CDX"
 
-      DATABASE NEW ::oDbfFam     PATH ( cPatArt() )   FILE "FAMILIAS.DBF"     VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oDbfFam     PATH ( cPatEmp() )   FILE "FAMILIAS.DBF"     VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
       DATABASE NEW ::oDbfIva     PATH ( cPatDat() )   FILE "TIVA.DBF"         VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
       DATABASE NEW ::oDbfFPago   PATH ( cPatEmp() )   FILE "FPAGO.DBF"        VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
-      DATABASE NEW ::oArtPrv     PATH ( cPatArt() )   FILE "PROVART.DBF"      VIA ( cDriver() ) SHARED INDEX "PROVART.CDX"
+      DATABASE NEW ::oArtPrv     PATH ( cPatEmp() )   FILE "PROVART.DBF"      VIA ( cDriver() ) SHARED INDEX "PROVART.CDX"
 
       ::OpenDetails()
 
@@ -1780,13 +1780,13 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
             aCampos[ ::oAlbPrvT:FieldPos( "cSufAlb" ) ]     := RetSufEmp()
             aCampos[ ::oAlbPrvT:FieldPos( "cTurAlb" ) ]     := cCurSesion()
             aCampos[ ::oAlbPrvT:FieldPos( "cDivAlb" ) ]     := cDivEmp()
-            aCampos[ ::oAlbPrvT:FieldPos( "cCodAlm" ) ]     := oUser():cAlmacen()
-            aCampos[ ::oAlbPrvT:FieldPos( "cCodCaj" ) ]     := oUser():cCaja()
+            aCampos[ ::oAlbPrvT:FieldPos( "cCodAlm" ) ]     := Application():codigoAlmacen()
+            aCampos[ ::oAlbPrvT:FieldPos( "cCodCaj" ) ]     := Application():CodigoCaja()
             aCampos[ ::oAlbPrvT:FieldPos( "nVdvAlb" ) ]     := nChgDiv( aPlantilla[ ::oAlbPrvT:FieldPos( "cDivAlb" ) ], ::oDbfDiv:cAlias )
             aCampos[ ::oAlbPrvT:FieldPos( "lSndDoc" ) ]     := .t.
             aCampos[ ::oAlbPrvT:FieldPos( "cCodPro" ) ]     := cProCnt()
             aCampos[ ::oAlbPrvT:FieldPos( "cCodUsr" ) ]     := Auth():Codigo()
-            aCampos[ ::oAlbPrvT:FieldPos( "cCodDlg" ) ]     := oUser():cDelegacion()
+            aCampos[ ::oAlbPrvT:FieldPos( "cCodDlg" ) ]     := Application():CodigoDelegacion()
             aCampos[ ::oAlbPrvT:FieldPos( "dFecAlb" ) ]     := GetSysDate()
 
             if !Empty( aCampos[ ::oAlbPrvT:FieldPos( "cCodPrv" ) ] )    .and.;
@@ -1983,11 +1983,11 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodAlm" ) ] )
-            aCampos[ ::oFacPrvT:FieldPos( "cCodAlm" ) ]     := oUser():cAlmacen()
+            aCampos[ ::oFacPrvT:FieldPos( "cCodAlm" ) ]     := Application():codigoAlmacen()
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ) ] )
-            aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ) ]     := oUser():cCaja()
+            aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ) ]     := Application():CodigoCaja()
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "nVdvFac" ) ] )
@@ -2007,7 +2007,7 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ) ] )
-            aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ) ]     := oUser():cDelegacion()
+            aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ) ]     := Application():CodigoDelegacion()
          end if
 
          if Empty( aCampos[ ::oFacPrvT:FieldPos( "dFecFac" ) ] )
@@ -2122,7 +2122,7 @@ METHOD TxtCreateRegister( oFile ) CLASS TPlantillaXML
             */
 
             if Empty( aCampos[ ::oFacPrvL:FieldPos( "cAlmLin" ) ] )
-               aCampos[ ::oFacPrvL:FieldPos( "cAlmLin" ) ]  := oUser():cAlmacen()
+               aCampos[ ::oFacPrvL:FieldPos( "cAlmLin" ) ]  := Application():codigoAlmacen()
             end if
 
             if Empty( aCampos[ ::oFacPrvL:FieldPos( "nIva" ) ] )
@@ -2454,11 +2454,11 @@ METHOD CreateRegister() CLASS TPlantillaXML
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodAlm" ), 9 ] )
-                  aCampos[ ::oFacPrvT:FieldPos( "cCodAlm" ), 9 ]     := oUser():cAlmacen()
+                  aCampos[ ::oFacPrvT:FieldPos( "cCodAlm" ), 9 ]     := Application():codigoAlmacen()
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ), 9 ] )
-                  aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ), 9 ]     := oUser():cCaja()
+                  aCampos[ ::oFacPrvT:FieldPos( "cCodCaj" ), 9 ]     := Application():CodigoCaja()
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "lSndDoc" ), 9 ] )
@@ -2474,7 +2474,7 @@ METHOD CreateRegister() CLASS TPlantillaXML
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ), 9 ] )
-                  aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ), 9 ]     := oUser():cDelegacion()
+                  aCampos[ ::oFacPrvT:FieldPos( "cCodDlg" ), 9 ]     := Application():CodigoDelegacion()
                end if
 
                if Empty( aCampos[ ::oFacPrvT:FieldPos( "dFecFac" ), 9 ] )
@@ -2628,7 +2628,7 @@ METHOD CreateRegister() CLASS TPlantillaXML
                   if !Empty( aCampos[ ::oFacPrvL:FieldPos( "cRef" ), 9 ] ) .and. ::oDbfArt:SeekInOrd( aCampos[ ::oFacPrvL:FieldPos( "cRef" ), 9 ], "Codigo" )
 
                      if Empty( aCampos[ ::oFacPrvL:FieldPos( "cAlmLin" ), 9 ] )
-                        aCampos[ ::oFacPrvL:FieldPos( "cAlmLin" ), 9 ]  := oUser():cAlmacen()
+                        aCampos[ ::oFacPrvL:FieldPos( "cAlmLin" ), 9 ]  := Application():codigoAlmacen()
                      end if
 
                      if Empty( aCampos[ ::oFacPrvL:FieldPos( "nIva" ), 9 ] )

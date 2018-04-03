@@ -20,11 +20,11 @@ STATIC FUNCTION OpenFiles()
 
    BEGIN SEQUENCE
 
-      USE ( cPatAlm() + "UBICAT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAT", @dbfUbicaT ) )
-      SET ADSINDEX TO ( cPatAlm() + "UBICAT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "UBICAT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAT", @dbfUbicaT ) )
+      SET ADSINDEX TO ( cPatEmp() + "UBICAT.CDX" ) ADDITIVE
 
-      USE ( cPatAlm() + "UBICAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAL", @dbfUbicaL ) )
-      SET ADSINDEX TO ( cPatAlm() + "UBICAL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "UBICAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAL", @dbfUbicaL ) )
+      SET ADSINDEX TO ( cPatEmp() + "UBICAL.CDX" ) ADDITIVE
 
    RECOVER
 
@@ -76,9 +76,9 @@ FUNCTION Ubicacion( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
+      nLevel            := Auth():Level( oMenuItem )
 
-      if nAnd( nLevel, 1 ) != 0
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -517,7 +517,7 @@ FUNCTION mkUbi( cPath, lAppend, cPathOld, oMeter )
    local dbfUbicaT
    local dbfUbicaL
 
-   DEFAULT cPath     := cPatAlm()
+   DEFAULT cPath     := cPatEmp()
 	DEFAULT lAppend	:= .F.
 
    if !lExistTable( cPath + "UbiCat.Dbf" )
@@ -543,7 +543,7 @@ FUNCTION rxUbi( cPath, oMeter )
 
    local dbfUbi
 
-   DEFAULT cPath := cPatAlm()
+   DEFAULT cPath := cPatEmp()
 
    IF !lExistTable( cPath + "UBICAT.DBF" ) .or. !lExistTable( cPath + "UBICAL.DBF" )
       mkUbi( cPath )

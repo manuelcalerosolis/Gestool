@@ -192,7 +192,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TMant
    ::oWndParent         := oWndParent
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    end if
 
    ::oDbf               := nil
@@ -211,7 +211,7 @@ RETURN ( Self )
 
 METHOD Create( cPath, cDriver )
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
@@ -461,7 +461,7 @@ RETURN ( .t. )
 
 METHOD Activate() CLASS TMant
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if

@@ -125,11 +125,11 @@ METHOD OpenFiles()
 
       DATABASE NEW ::oDbfIva  PATH ( cPatDat() ) FILE "TIva.Dbf" VIA ( cDriver() ) SHARED INDEX "TIva.Cdx"
 
-      DATABASE NEW ::oDbfArt PATH ( cPatArt() )  FILE "Articulo.Dbf" VIA ( cDriver() ) SHARED INDEX "Articulo.Cdx"
+      DATABASE NEW ::oDbfArt PATH ( cPatEmp() )  FILE "Articulo.Dbf" VIA ( cDriver() ) SHARED INDEX "Articulo.Cdx"
 
-      DATABASE NEW ::oDbfCli PATH ( cPatCli() )  FILE "Client.Dbf" VIA ( cDriver() ) SHARED INDEX "Client.Cdx"
+      DATABASE NEW ::oDbfCli PATH ( cPatEmp() )  FILE "Client.Dbf" VIA ( cDriver() ) SHARED INDEX "Client.Cdx"
 
-      DATABASE NEW ::oDbfPrv PATH ( cPatPrv() )  FILE "Provee.Dbf" VIA ( cDriver() ) SHARED INDEX "Provee.Cdx"
+      DATABASE NEW ::oDbfPrv PATH ( cPatEmp() )  FILE "Provee.Dbf" VIA ( cDriver() ) SHARED INDEX "Provee.Cdx"
 
       DATABASE NEW ::oAlbPrvT PATH ( cPatEmp() ) FILE "AlbProvT.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbProvT.Cdx"
 
@@ -417,9 +417,9 @@ METHOD Activate( oMenuItem, oWnd, lStart )
 
    // Nivel de usuario---------------------------------------------------------
 
-   nLevel            := nLevelUsr( oMenuItem )
+   nLevel            := Auth():Level( oMenuItem )
 
-   if nAnd( nLevel, 1 ) != 0
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if

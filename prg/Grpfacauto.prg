@@ -55,12 +55,12 @@ END CLASS
 
 METHOD New( cPath, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatCli()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT oMenuItem    := "04018"
 
    if Empty( ::nLevel )
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    end if
 
    /*
@@ -85,7 +85,7 @@ RETURN ( Self )
 
 METHOD Create( cPath )
 
-   DEFAULT cPath        := cPatCli()
+   DEFAULT cPath        := cPatEmp()
 
    ::cPath              := cPath
    ::oDbf               := nil
@@ -98,7 +98,7 @@ METHOD Activate()
 
    local oGen
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if
@@ -127,21 +127,17 @@ METHOD Activate()
 
       ::oWndBrw:GralButtons( Self )
 
-      if lUsrMaster() .or. oUser():lDocAuto()
+      DEFINE BTNSHELL oGen RESOURCE "GC_FLASH_" OF ::oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ::RunPlantillaAutomatica( ::oDbf:cCodGrp ) ) ;
+         TOOLTIP  "(G)enerar ahora";
+         HOTKEY   "G"
 
-         DEFINE BTNSHELL oGen RESOURCE "GC_FLASH_" OF ::oWndBrw ;
-            NOBORDER ;
-            ACTION   ( ::RunPlantillaAutomatica( ::oDbf:cCodGrp ) ) ;
-            TOOLTIP  "(G)enerar ahora";
-            HOTKEY   "G"
+         DEFINE BTNSHELL RESOURCE "GC_FLASH_" OF ::oWndBrw ;
+            ACTION   ( ::RunPlantillaAutomatica() );
+            TOOLTIP  "Generar todas ahora" ;
+            FROM     oGen
    
-            DEFINE BTNSHELL RESOURCE "GC_FLASH_" OF ::oWndBrw ;
-               ACTION   ( ::RunPlantillaAutomatica() );
-               TOOLTIP  "Generar todas ahora" ;
-               FROM     oGen
-   
-      end if
-
       ::oWndBrw:EndButtons( Self )
 
       if ::cHtmlHelp != nil
@@ -665,6 +661,10 @@ Return ( cMemo )
 
 METHOD RunPlantillaAutomatica( cCodigoGrupo )
 
+   if SuperUsuarioController():New():isNotDialogViewActivate()
+      RETURN ( Self )
+   end if 
+   
    with object ( TCreaFacAutomaticas():New() )
 
       if :OpenFiles()

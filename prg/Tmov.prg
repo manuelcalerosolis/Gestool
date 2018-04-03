@@ -92,8 +92,8 @@ FUNCTION TMov( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
-      if nAnd( nLevel, 1 ) != 0
+      nLevel            := Auth():Level( oMenuItem )
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -544,7 +544,7 @@ FUNCTION browseGruposMovimientos( oGet, oGet2, dbfTMov )
    local aCbxOrd  := { "Código", "Nombre" }
    local cCbxOrd
    local lClose   := .f.
-   local nLevel   := nLevelUsr( _MENUITEM )
+   local nLevel   := Auth():Level( _MENUITEM )
    local oBtn
    local oSayTit
    local oFont
@@ -556,7 +556,7 @@ FUNCTION browseGruposMovimientos( oGet, oGet2, dbfTMov )
    Obtenemos el nivel de acceso
    */
 
-   if nAnd( nLevel, 1 ) != 0
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if

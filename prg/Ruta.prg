@@ -36,8 +36,8 @@ STATIC FUNCTION OpenFiles( cPatEmp )
 
    BEGIN SEQUENCE
 
-      USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
-      SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
+      SET ADSINDEX TO ( cPatEmp() + "RUTA.CDX" ) ADDITIVE
 
    RECOVER
 
@@ -76,9 +76,9 @@ FUNCTION Ruta( oMenuItem, oWnd )
 
 	IF oWndBrw == NIL
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
 
-   if nAnd( nLevel, 1 ) != 0
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if
@@ -297,8 +297,8 @@ FUNCTION RetRuta( cCodRut, dbfRuta )
 	local lClose 	:= .F.
 
 	IF dbfRuta == NIL
-      USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
-      SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
+      SET ADSINDEX TO ( cPatEmp() + "RUTA.CDX" ) ADDITIVE
 		lClose := .T.
 	END IF
 
@@ -349,7 +349,7 @@ function pdaVentas()
 	local oCbxOrd
    local aCbxOrd     := { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo", "Todos los clientes" }
    local cCbxOrd     := "Lunes"
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local dbfClient
    local oOrden
    local aOrden      := { "Código", "Nombre", "NIF/CIF", "Población", "Provincia", "Código postal", "Teléfono", "Establecimiento" }
@@ -362,8 +362,8 @@ function pdaVentas()
 
    hBmp              := LoadBitmap( GetResources(), "bStop"  )
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+   SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
    /*
    Distintas cajas de dialogo--------------------------------------------------
@@ -564,7 +564,7 @@ FUNCTION pdaBrwRuta( oGet, dbfRuta, oGet2 )
    local aCbxOrd     := { 'Código', 'Nombre' }
    local cCbxOrd     := "Código"
    local lClose      := .f.
-   local nLevel      := nLevelUsr( "01031" )
+   local nLevel      := Auth():Level( "01031" )
    local oSayText
    local cSayText    := "Listado de rutas"
 
@@ -572,8 +572,8 @@ FUNCTION pdaBrwRuta( oGet, dbfRuta, oGet2 )
    cCbxOrd           := aCbxOrd[ nOrd ]
 
    if ( dbfRuta == nil )
-      USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
-      SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
+      SET ADSINDEX TO ( cPatEmp() + "RUTA.CDX" ) ADDITIVE
       lClose         := .t.
    end if
 
@@ -675,8 +675,8 @@ Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaRutaSenderRec
    local cFileName
    local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
 
-   USE ( cPatCli() + "Ruta.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRut ) )
-   SET ADSINDEX TO ( cPatCli() + "Ruta.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "Ruta.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRut ) )
+   SET ADSINDEX TO ( cPatEmp() + "Ruta.Cdx" ) ADDITIVE
 
    dbUseArea( .t., cDriver(), cPatPc + "Ruta.Dbf", cCheckArea( "RUTA", @tmpRut ), .t. )
    ( tmpRut )->( ordListAdd( cPatPc + "Ruta.Cdx" ) )
@@ -729,15 +729,15 @@ Function IsRuta()
    local oError
    local oBlock
 
-   if !lExistTable( cPatCli() + "Ruta.Dbf" )
-      mkRuta( cPatCli() )
+   if !lExistTable( cPatEmp() + "Ruta.Dbf" )
+      mkRuta( cPatEmp() )
    end if
 
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      USE ( cPatCli() + "Ruta.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CCODRUT", @dbfRuta ) )
-      SET ADSINDEX TO ( cPatCli() + "Ruta.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "Ruta.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CCODRUT", @dbfRuta ) )
+      SET ADSINDEX TO ( cPatEmp() + "Ruta.Cdx" ) ADDITIVE
 
    RECOVER USING oError
 
@@ -758,7 +758,7 @@ FUNCTION mkRuta( cPath, lAppend, cPathOld, oMeter )
 	local dbfRuta
 
    DEFAULT lAppend   := .f.
-   DEFAULT cPath     := cPatCli()
+   DEFAULT cPath     := cPatEmp()
 
 	IF oMeter != NIL
 		oMeter:cText	:= "Generando Bases"
@@ -785,7 +785,7 @@ FUNCTION rxRuta( cPath, oMeter )
 
 	local dbfRuta
 
-   DEFAULT cPath := cPatCli()
+   DEFAULT cPath := cPatEmp()
 
    if !lExistTable( cPath + "RUTA.DBF" )
       dbCreate( cPath + "RUTA.DBF", aSqlStrucT( aItmRut() ), cDriver() )
@@ -840,7 +840,7 @@ FUNCTION BrwRuta( oGet, dbfRuta, oGet2 )
    local aCbxOrd     := { 'Código', 'Nombre' }
    local cCbxOrd     := "Código"
    local lClose      := .f.
-   local nLevel      := nLevelUsr( "01031" )
+   local nLevel      := Auth():Level( "01031" )
    local oSayText
    local cSayText    := "Listado de rutas"
    local cReturn     := ""
@@ -849,8 +849,8 @@ FUNCTION BrwRuta( oGet, dbfRuta, oGet2 )
    cCbxOrd           := aCbxOrd[ nOrd ]
 
    if ( dbfRuta == nil )
-      USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
-      SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
+      SET ADSINDEX TO ( cPatEmp() + "RUTA.CDX" ) ADDITIVE
       lClose         := .t.
    end if
 
@@ -996,8 +996,8 @@ FUNCTION cRuta( oGet, dbfRuta, oGet2 )
    end if
 
    if Empty( dbfRuta )
-      USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
-      SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
+      SET ADSINDEX TO ( cPatEmp() + "RUTA.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 

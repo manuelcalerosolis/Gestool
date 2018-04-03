@@ -67,9 +67,9 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-      DATABASE NEW ::oDbfOfr  PATH ( cPatArt() ) FILE "OFERTA.DBF" VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
+      DATABASE NEW ::oDbfOfr  PATH ( cPatEmp() ) FILE "OFERTA.DBF" VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
-      DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArt  PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    RECOVER
 

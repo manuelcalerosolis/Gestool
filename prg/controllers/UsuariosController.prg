@@ -2,6 +2,7 @@
 #include "Factu.ch" 
 
 #define  __encryption_key__ "snorlax"
+#define  __admin_password__ "superusuario"
 
 //---------------------------------------------------------------------------//
 
@@ -14,12 +15,24 @@ CLASS UsuariosController FROM SQLNavigatorController
    DATA cUuidUsuario
 
    DATA aCajas
+   DATA oComboCaja
    DATA cUuidCajaExclusiva
    DATA cNombreCajaExclusiva
 
    DATA aEmpresas
+   DATA oComboEmpresa
    DATA cCodigoEmpresaExclusiva
    DATA cNombreEmpresaExclusiva
+
+   DATA aAlmacenes
+   DATA oComboAlmacen
+   DATA cUuidAlmacenExclusivo
+   DATA cNombreAlmacenExclusivo
+
+   DATA aDelegaciones
+   DATA oComboDelegacion
+   DATA cUuidDelegacionExclusiva
+   DATA cNombreDelegacionExclusiva
 
    DATA oLoginView
 
@@ -36,7 +49,11 @@ CLASS UsuariosController FROM SQLNavigatorController
 
    METHOD startingActivate()
 
+   METHOD changeComboEmpresa()
+
    METHOD validUserPassword()
+
+   METHOD checkSuperUser()
 
 END CLASS
 
@@ -56,8 +73,6 @@ METHOD New() CLASS UsuariosController
 
    ::hImage                := { "16" => "gc_businesspeople_16" }
 
-   ::nLevel                := nLevelUsr( "01052" )
-
    ::oModel                := SQLUsuariosModel():New( self )
 
    ::oRepository           := UsuariosRepository():New( self )
@@ -66,9 +81,9 @@ METHOD New() CLASS UsuariosController
 
    ::oDialogView           := UsuariosView():New( self )
 
-   ::oLoginView            := UsuariosLoginView():New( self )
+   ::oValidator            := UsuariosValidator():New( self, ::oDialogView )
 
-   ::oValidator            := UsuariosValidator():New( self )
+   ::oLoginView            := UsuariosLoginView():New( self )
 
    ::oAjustableController  := AjustableController():New( self )
 
@@ -138,19 +153,27 @@ RETURN ( self )
 
 METHOD loadConfig()
 
-   ::cUuidUsuario             := ::getRowSet():fieldGet( 'uuid' )
+   ::cUuidUsuario                := ::getRowSet():fieldGet( 'uuid' )
 
    if empty( ::cUuidUsuario )
       RETURN ( .f. )
    end if 
 
-   ::aEmpresas                := EmpresasModel():aNombresSeleccionables()
-   ::cCodigoEmpresaExclusiva  := ::oAjustableController:oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
-   ::cNombreEmpresaExclusiva  := EmpresasModel():getNombreFromCodigo( ::cCodigoEmpresaExclusiva )
+   ::aEmpresas                   := EmpresasModel():aNombresSeleccionables()
+   ::cCodigoEmpresaExclusiva     := ::oAjustableController:oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
+   ::cNombreEmpresaExclusiva     := EmpresasModel():getNombreFromCodigo( ::cCodigoEmpresaExclusiva )
 
-   ::aCajas                   := CajasModel():aNombresSeleccionables()
-   ::cUuidCajaExclusiva       := ::oAjustableController:oModel:getUsuarioCajaExclusiva( ::cUuidUsuario )
-   ::cNombreCajaExclusiva     := CajasModel():getNombreFromUuid( ::cUuidCajaExclusiva )
+   ::aCajas                      := CajasModel():aNombresSeleccionables()
+   ::cUuidCajaExclusiva          := ::oAjustableController:oModel:getUsuarioCajaExclusiva( ::cUuidUsuario )
+   ::cNombreCajaExclusiva        := CajasModel():getNombreFromUuid( ::cUuidCajaExclusiva )
+
+   ::aAlmacenes                  := AlmacenesModel():aNombresSeleccionables()
+   ::cUuidAlmacenExclusivo       := ::oAjustableController:oModel:getUsuarioAlmacenExclusivo( ::cUuidUsuario )
+   ::cNombreAlmacenExclusivo     := AlmacenesModel():getNombreFromUuid( ::cUuidAlmacenExclusivo )
+
+   ::aDelegaciones               := DelegacionesModel():aNombresSeleccionables()
+   ::cUuidDelegacionExclusiva    := ::oAjustableController:oModel:getUsuarioDelegacionExclusiva( ::cUuidUsuario )
+   ::cNombreDelegacionExclusiva  := DelegacionesModel():getNombreFromUuid( ::cUuidDelegacionExclusiva )
 
 RETURN ( .t. )
 
@@ -158,11 +181,15 @@ RETURN ( .t. )
 
 METHOD saveConfig()
 
-   ::cCodigoEmpresaExclusiva  := EmpresasModel():getCodigoFromNombre( ::cNombreEmpresaExclusiva )
-   ::cUuidCajaExclusiva       := CajasModel():getUuidFromNombre( ::cNombreCajaExclusiva )
+   ::cCodigoEmpresaExclusiva     := EmpresasModel():getCodigoFromNombre( ::cNombreEmpresaExclusiva )
+   ::cUuidCajaExclusiva          := CajasModel():getUuidFromNombre( ::cNombreCajaExclusiva )
+   ::cUuidAlmacenExclusivo       := AlmacenesModel():getUuidFromNombre( ::cNombreAlmacenExclusivo )
+   ::cUuidDelegacionExclusiva    := DelegacionesModel():getUuidFromNombre( ::cNombreDelegacionExclusiva )
 
    ::oAjustableController:oModel:setUsuarioEmpresaExclusiva( ::cCodigoEmpresaExclusiva, ::cUuidUsuario )
    ::oAjustableController:oModel:setUsuarioCajaExclusiva( ::cUuidCajaExclusiva, ::cUuidUsuario )
+   ::oAjustableController:oModel:setUsuarioAlmacenExclusivo( ::cUuidAlmacenExclusivo, ::cUuidUsuario )
+   ::oAjustableController:oModel:setUsuarioDelegacionExclusiva( ::cUuidDelegacionExclusiva, ::cUuidUsuario )
 
 RETURN ( self )
 
@@ -172,10 +199,35 @@ METHOD startingActivate()
 
    local oPanel               := ::oAjustableController:oDialogView:oExplorerBar:AddPanel( "Propiedades usuario", nil, 1 ) 
 
-   oPanel:addComboBox( "Empresa exclusiva", @::cNombreEmpresaExclusiva, ::aEmpresas )
+   ::oComboEmpresa            := oPanel:addComboBox( "Empresa exclusiva", @::cNombreEmpresaExclusiva, ::aEmpresas )
+   ::oComboEmpresa:bChange    := {|| ::changeComboEmpresa() }
 
-   oPanel:addComboBox( "Caja exclusiva", @::cNombreCajaExclusiva, ::aCajas )
+   ::oComboDelegacion         := oPanel:addComboBox( "Delegación exclusiva", @::cNombreDelegacionExclusiva, ::aDelegaciones )
+
+   ::oComboCaja               := oPanel:addComboBox( "Caja exclusiva", @::cNombreCajaExclusiva, ::aCajas )
+
+   ::oComboAlmacen            := oPanel:addComboBox( "Almacén exclusivo", @::cNombreAlmacenExclusivo, ::aAlmacenes )
+
+   ::changeComboEmpresa()
+      
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeComboEmpresa()
+
+   iif(  empty( ::cNombreEmpresaExclusiva ),;
+         ( ::oComboDelegacion:Disable(), ::oComboDelegacion:Set( "" ) ),;
+         ::oComboDelegacion:Enable() )
    
+   iif(  empty( ::cNombreEmpresaExclusiva ),;
+         ( ::oComboCaja:Disable(), ::oComboCaja:Set( "" ) ),;
+         ::oComboCaja:Enable() )
+   
+   iif(  empty( ::cNombreEmpresaExclusiva ),;
+         ( ::oComboAlmacen:Disable(), ::oComboAlmacen:Set( "" ) ),;
+         ::oComboAlmacen:Enable() )
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -188,13 +240,11 @@ METHOD validUserPassword()
 
    if empty( hUsuario )
       ::oLoginView:sayError( "Usuario y contraseña con coinciden" )            
-      ::oLoginView:sayNo()
       RETURN ( .f. )
    end if 
 
    if !( setUserActive( hget( hUsuario, "nombre" ) ) )
       ::oLoginView:sayError( "Usuario actualmente en uso" )            
-      ::oLoginView:sayNo()
       RETURN ( .f. )
    end if 
 
@@ -216,6 +266,27 @@ METHOD isLogin()
 
 RETURN ( .t. )
 
+//---------------------------------------------------------------------------//
+
+METHOD checkSuperUser()
+
+   local hUsuario
+
+   hUsuario       := ::oModel:getWhere( "super_user = 1" )
+   if !hb_ishash( hUsuario )
+      msgStop( "No se ha definido super usuario" )
+      RETURN ( .f. )
+   end if 
+
+   if !empty( hget( hUsuario, "password" ) )
+      RETURN ( .f. )
+   end if 
+
+   ::Edit( hget( hUsuario, "id" ) )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -263,7 +334,10 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 3 )"                            ,;
                                           "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "rol_uuid",       {  "create"    => "VARCHAR(40)"                             ,;
+   hset( ::hColumns, "super_user",     {  "create"    => "TINYINT ( 1 )"                          ,;
+                                          "default"   => {|| "0" } }                               )
+
+   hset( ::hColumns, "rol_uuid",       {  "create"    => "VARCHAR( 40 )"                           ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
    ::getTimeStampColumns()   
@@ -274,10 +348,27 @@ RETURN ( ::hColumns )
 
 METHOD getInsertUsuariosSentence()
 
-   local cSQL  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cSQL        +=    "( uuid, nombre, email, password ) "
+   local cSQL  
+   local cUuidRol
+
+   cUuidRol    := RolesRepository():getUuidWhereNombre( "Super administrador" )
+
+   cSQL        := "INSERT IGNORE INTO " + ::cTableName + " "
+   cSQL        += "( uuid, "
+   cSQL        +=    "codigo, "
+   cSQL        +=    "nombre, "
+   cSQL        +=    "email, "
+   cSQL        +=    "password, "
+   cSQL        +=    "super_user, "
+   cSQL        +=    "rol_uuid ) "
    cSQL        += "VALUES "
-   cSQL        +=    "( UUID(), 'Administrador', 'admin@admin.com', " + quoted( ::Crypt( '12345678' ) ) + " )"
+   cSQL        +=    "( UUID(), "
+   cSQL        +=    "'999', "
+   cSQL        +=    "'Super administrador', "
+   cSQL        +=    "'', "
+   cSQL        +=    "'', "
+   cSQL        +=    "'1', "
+   cSQL        +=    quoted( cUuidRol ) + " )"
 
 RETURN ( cSQL )
 
@@ -303,7 +394,6 @@ METHOD addColumns() CLASS UsuariosBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -390,6 +480,8 @@ CLASS UsuariosView FROM SQLBaseView
    DATA cComboRol   
    DATA aComboRoles           
 
+   DATA lSuperUser            
+
    METHOD openingDialog()
 
    METHOD closedDialog()
@@ -425,43 +517,44 @@ RETURN ( self )
 
 METHOD Activate() CLASS UsuariosView
 
-   local oDlg
-   local oBtnOk
-   local oBmpGeneral
-
-   DEFINE DIALOG  oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "USUARIO" ;
       TITLE       ::lblTitle() + "usuario" 
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
       RESOURCE    "gc_businessman_48" ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
 
    REDEFINE GET   ::getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::getModel():hBuffer[ "email" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "email" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::oGetPassword ;
       VAR         ::cGetPassword ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          oDlg
+      OF          ::oDialog
    
    ::oGetPassword:bValid         := {|| ::oController:validate( "password", ::cGetPassword ) }
 
@@ -469,7 +562,7 @@ METHOD Activate() CLASS UsuariosView
       VAR         ::cGetRepeatPassword ;
       ID          131 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    ::oGetRepeatPassword:bValid   := {|| ::oController:validate( "repeatPassword", ::cGetRepeatPassword ) }
 
@@ -477,33 +570,34 @@ METHOD Activate() CLASS UsuariosView
       VAR         ::cComboRol ;
       ID          140 ;
       ITEMS       ::aComboRoles ;
-      OF          oDlg
-
-   REDEFINE BUTTON oBtnOk ;
-      ID          IDOK ;
-      OF          oDlg ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( ::saveView( oDlg ) )
+      OF          ::oDialog
+
+   REDEFINE BUTTON ;
+      ID          IDOK ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      ACTION      ( ::saveView( ::oDialog ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( ::oDialog:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
+   ::oDialog:AddFastKey( VK_F5, {|| ::saveView() } )
 
-   oDlg:Activate( , , , .t. )
+   ::oDialog:Activate( , , , .t. )
 
-   oBmpGeneral:end()
+   ::oBitmap:end()
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveView( oDlg )
+METHOD saveView()
 
-   if !( validateDialog( oDlg ) )
+   if !( validateDialog( ::oDialog ) )
       RETURN ( .f. )
    end if 
 
@@ -511,9 +605,9 @@ METHOD saveView( oDlg )
       ::getModel():setBuffer( "password", ::getModel():Crypt( ::cGetPassword ) )
    end if 
 
-   oDlg:end( IDOK )
+   ::oDialog:end( IDOK )
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -553,7 +647,7 @@ METHOD Password( uValue )
 
    uValue         := alltrim( uValue )
 
-   if ::oController:isAppendMode()
+   if ::oController:isAppendMode() .or. empty( ::oController:getModel():hBuffer[ "password" ] )
       RETURN ( ::Super:Password( uValue ) )
    end if 
 
@@ -586,6 +680,8 @@ CLASS UsuariosRepository FROM SQLBaseRepository
 
    METHOD validUserPassword() 
 
+   METHOD validSuperUserPassword( cPassword )
+
    METHOD getWhereUuid( uuid ) 
 
    METHOD Crypt( cPassword )     INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
@@ -605,6 +701,19 @@ METHOD validUserPassword( cNombre, cPassword ) CLASS UsuariosRepository
       cSQL     +=     "AND password = " + quoted( ::Crypt( cPassword ) )      + " " 
    end if 
 
+   cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD validSuperUserPassword( cPassword ) CLASS UsuariosRepository
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE super_user = 1"                                   + " "    
+   if ( alltrim( cPassword ) != __encryption_key__ ) 
+      cSQL     +=       "AND password = " + quoted( ::Crypt( cPassword ) )    + " " 
+   end if 
    cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
@@ -654,8 +763,7 @@ CLASS UsuariosLoginView FROM SQLBaseView
    METHOD Activate()
       METHOD onActivate()
 
-   METHOD sayNo()
-   METHOD sayError( cError )  INLINE ( ::oSayError:setText( cError ), ::oSayError:Show() )
+   METHOD sayError( cError )  INLINE ( ::oSayError:setText( cError ), ::oSayError:Show(), dialogSayNo( ::oDlg ) )
    
 END CLASS
 
@@ -671,7 +779,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS UsuariosLoginView
+METHOD Activate() CLASS UsuariosLoginView 
 
    local oBmpGeneral
 
@@ -714,21 +822,5 @@ METHOD Activate() CLASS UsuariosLoginView
    oBmpGeneral:end()
 
 RETURN ( ::oDlg:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD sayNo()
-
-   ::oDlg:coorsUpdate()
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft - 100 )  ; SysWait(.05)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft )        ; SysWait(.05)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft + 100 )  ; SysWait(.05)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft )        ; SysWait(.05)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft - 50 )   ; SysWait(.1)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft  )       ; SysWait(.1)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft + 50 )   ; SysWait(.1)
-   ::oDlg:Move( ::oDlg:nTop, ::oDlg:nLeft )
-
-RETURN ( .f. )
 
 //---------------------------------------------------------------------------//

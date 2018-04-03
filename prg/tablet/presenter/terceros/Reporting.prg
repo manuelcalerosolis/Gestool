@@ -57,7 +57,7 @@ METHOD ExecuteReportingArticulo( hInforme, oDevice ) CLASS Reporting
    oInf:lLoadDivisa()
    oInf:dIniInf            := GetSysDate()
    oInf:dFinInf            := GetSysDate()
-   oInf:cAlmacenDefecto    := oUser():cAlmacen()
+   oInf:cAlmacenDefecto    := Application():codigoAlmacen()
    oInf:BuildReportCorrespondences()
 
    oInf:PlayTablet( , oDevice )
@@ -81,8 +81,8 @@ METHOD ExecuteReportingCliente( hInforme, oDevice ) CLASS Reporting
    oInf:dIniInf            := GetSysDate()
    oInf:dFinInf            := GetSysDate()
 
-      /*oInf:bPreGenerate       := {|| oInf:oGrupoSufijo:Cargo:Desde       := Rtrim( oUser():cDelegacion() ),;
-                                     oInf:oGrupoSufijo:Cargo:Hasta       := Rtrim( oUser():cDelegacion() ) }*/
+      /*oInf:bPreGenerate       := {|| oInf:oGrupoSufijo:Cargo:Desde       := Rtrim( Application():CodigoDelegacion() ),;
+                                     oInf:oGrupoSufijo:Cargo:Hasta       := Rtrim( Application():CodigoDelegacion() ) }*/
 
    oInf:PlayTablet( , oDevice )
 

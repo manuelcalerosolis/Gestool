@@ -57,7 +57,7 @@ METHOD OpenFiles() CLASS TAcuNFac
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRecL.DBF" VIA ( cDriver() ) SHARED INDEX "FACRecL.CDX"
 
-   DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt  PATH ( cPatEmp() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
    DATABASE NEW ::oIva PATH ( cPatDat () ) FILE "TIVA.DBF" VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 

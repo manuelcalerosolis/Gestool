@@ -159,18 +159,18 @@ Method CreateData() CLASS TClienteSenderReciver
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-   SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+   SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
    ( dbfClient )->( OrdSetFocus( "lSndInt" ) )
 
-   USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
-   SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
+   SET ADSINDEX TO ( cPatEmp() + "CliAtp.Cdx" ) ADDITIVE
 
-   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+   SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
 
-   USE ( cPatCli() + "CliCto.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliCto", @dbfContactos ) )
-   SET ADSINDEX TO ( cPatCli() + "CliCto.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "CliCto.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliCto", @dbfContactos ) )
+   SET ADSINDEX TO ( cPatEmp() + "CliCto.Cdx" ) ADDITIVE
 
    /*
    Creamos todas las bases de datos temporales
@@ -302,8 +302,8 @@ Method RestoreData() CLASS TClienteSenderReciver
 
    if ::lSuccesfullSend
 
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+      SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
       while !( dbfClient )->( eof() )
 
@@ -435,18 +435,18 @@ Method Process() CLASS TClienteSenderReciver
 
                dbUseArea( .t., cLocalDriver(), cPatSnd() + "CliCto.Dbf", cCheckArea( "CliConta", @tmpCon ), .f. )
 
-               USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-               SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+               USE ( cPatEmp() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+               SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
-               USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
-               SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
+               USE ( cPatEmp() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
+               SET ADSINDEX TO ( cPatEmp() + "CliAtp.Cdx" ) ADDITIVE
                SET TAG TO "cCliArt"
 
-               USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-               SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+               USE ( cPatEmp() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
+               SET ADSINDEX TO ( cPatEmp() + "ObrasT.Cdx" ) ADDITIVE
 
-               USE ( cPatCli() + "CliCto.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLICONTA", @dbfContactos ) )
-               SET ADSINDEX TO ( cPatCli() + "CliCto.Cdx" ) ADDITIVE
+               USE ( cPatEmp() + "CliCto.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLICONTA", @dbfContactos ) )
+               SET ADSINDEX TO ( cPatEmp() + "CliCto.Cdx" ) ADDITIVE
 
                if !Empty( ::oSender:oMtr )
                   ::oSender:oMtr:nTotal := ( tmpCli )->( lastrec() )

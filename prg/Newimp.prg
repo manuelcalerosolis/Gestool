@@ -57,7 +57,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::cPath              := cPath
    ::oWndParent         := oWndParent
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := Auth():Level( oMenuItem )
 
    ::oDbf               := nil
 

@@ -61,9 +61,9 @@ FUNCTION ConfVisor ( oMenuItem, oWnd )
      Obtenemos el nivel de acceso
      */
 
-     nLevel            := nLevelUsr( oMenuItem )
+     nLevel            := Auth():Level( oMenuItem )
 
-     if nAnd( nLevel, 1 ) != 0
+     if nAnd( nLevel, 1 ) == 0
         msgStop( "Acceso no permitido." )
         return nil
      end if
@@ -674,7 +674,7 @@ FUNCTION BrwSelVisor( oGet, dbfVisor, oGet2 )
    local aCbxOrd        := { "Código", "Descripción" }
    local cCbxOrd
    local nRec           := ( dbfVisor )->( RecNo() )
-   local nLevel         := nLevelUsr( "01091" )
+   local nLevel         := Auth():Level( "01091" )
 
    nOrdAnt              := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
    cCbxOrd              := aCbxOrd[ nOrdAnt ]

@@ -171,12 +171,12 @@ METHOD New( cPath, oWndParent, oMenuItem )
    DEFAULT oWndParent      := GetWndFrame()
 
    if oMenuItem != nil .and. ::nLevel == nil
-      ::nLevel             := nLevelUsr( oMenuItem )
+      ::nLevel             := Auth():Level( oMenuItem )
    else
       ::nLevel             := 0
    end if
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if
@@ -570,7 +570,7 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oDbfEmp     PATH ( cPatDat() )   FILE "Empresa.Dbf"   VIA ( cDriver() ) SHARED INDEX "Empresa.Cdx"
 
-      DATABASE NEW ::oCli        PATH ( cPatCli() )   FILE "Client.Dbf"    VIA ( cDriver() ) SHARED INDEX "Client.Cdx"
+      DATABASE NEW ::oCli        PATH ( cPatEmp() )   FILE "Client.Dbf"    VIA ( cDriver() ) SHARED INDEX "Client.Cdx"
 
       DATABASE NEW ::oDbfDoc     PATH ( cPatEmp() )   FILE "rDocumen.Dbf"  VIA ( cDriver() ) SHARED INDEX "rDocumen.Cdx"
       ::oDbfDoc:OrdSetFocus( "cTipo" )
@@ -888,7 +888,7 @@ METHOD Resource( nMode, aDatosAnterior )
       REDEFINE GET oFecAsg VAR ::oDbf:dFecAsg ;
          ID       170 ;
 			SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
       /*

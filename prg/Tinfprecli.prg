@@ -65,9 +65,9 @@ METHOD OpenFiles()
 								{ "DFECMOV", "D",  8, 0 } }
    local aIdx     :=    { "CCODALM + CCODART" }
 
-   DATABASE NEW ::oDbfArt PATH cPatArt() FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt PATH cPatEmp() FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfAlm PATH cPatAlm() FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
+   DATABASE NEW ::oDbfAlm PATH cPatEmp() FILE "ALMACEN.DBF" VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
    ::oPreCliT  := TDataCenter():oPreCliT()
 

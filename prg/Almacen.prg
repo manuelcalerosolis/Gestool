@@ -39,7 +39,6 @@ static cNewFile
 static oTreePadre
 
 //----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
 
 #ifndef __PDA__
 
@@ -56,8 +55,8 @@ FUNCTION Almacen( oMenuItem, oWnd )
       Obtenemos el nivel de acceso
       */
 
-      nLevel            := nLevelUsr( oMenuItem )
-      if nAnd( nLevel, 1 ) != 0
+      nLevel            := Auth():Level( oMenuItem )
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          RETURN nil
       end if
@@ -704,8 +703,8 @@ FUNCTION RetAlmacen( cCodAlm, dbfAlmT )
    BEGIN SEQUENCE
 
 	IF dbfAlmT == NIL
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
       lClose         := .t.
 	END IF
 
@@ -754,8 +753,8 @@ FUNCTION RetCliAlm( cCodAlm, dbfAlmT )
    BEGIN SEQUENCE
 
    if dbfAlmT == nil
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
       lClose         := .t.
    end if
 
@@ -794,6 +793,7 @@ FUNCTION aItmAlm()
    aAdd( aItmAlm, { "cPerAlm",  "C",     50,     0, "Persona de contacto de almacen" ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cCodCli",  "C",     12,     0, "Codigo del cliente"             ,  "",   "", "( cDbfAlm )" } )
    aAdd( aItmAlm, { "cComAlm",  "C",     16,     0, "Código de almacen padre"        ,  "",   "", "( cDbfAlm )" } )
+   aAdd( aItmAlm, { "Uuid",     "C",     40,     0, "Uuid"        ,  "",   "", "( cDbfAlm )" } )
 
 RETURN ( aItmAlm )
 
@@ -901,10 +901,10 @@ Function SelectAlmacen()
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult == IDOK
-      oUser():cAlmacen( ( dbfAlmT )->cCodAlm )
+      Application():setAlmacen( ( dbfAlmT )->cCodAlm, ( dbfAlmT )->Uuid )
    else
       MsgInfo( "No seleccionó ningún almacén, se establecerá el almacén por defecto." + CRLF + ;
-               "Almacén actual, " + oUser():cAlmacen() )
+               "Almacén actual, " + Application():codigoAlmacen() )
    end if
 
    CloseFiles()
@@ -966,8 +966,8 @@ Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaAlmacenSender
    local cFileName
    local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
 
-   USE ( cPatAlm() + "Almacen.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Almacen", @dbfAlm ) )
-   SET ADSINDEX TO ( cPatAlm() + "Almacen.Cdx" ) ADDITIVE
+   USE ( cPatEmp() + "Almacen.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Almacen", @dbfAlm ) )
+   SET ADSINDEX TO ( cPatEmp() + "Almacen.Cdx" ) ADDITIVE
 
    dbUseArea( .t., cDriver(), cPatPc + "Almacen.Dbf", cCheckArea( "Almacen", @tmpAlm ), .t. )
    ( tmpAlm )->( ordListAdd( cPatPc + "Almacen.Cdx" ) )
@@ -1014,7 +1014,7 @@ function IsAlmacen( cPatEmp )
    local dbfAlmT
    local lIsAlmacen  := .f.
 
-   DEFAULT cPatEmp   := cPatAlm()
+   DEFAULT cPatEmp   := cPatEmp()
 
    if !lExistTable( cPatEmp + "Almacen.Dbf" ) .or. !lExistTable( cPatEmp + "AlmacenL.Dbf" )
       mkAlmacen()
@@ -1055,7 +1055,7 @@ RETURN ( lIsAlmacen )
 
 FUNCTION mkAlmacen( cPath, lAppend, cPathOld, oMeter )
 
-   DEFAULT cPath     := cPatAlm()
+   DEFAULT cPath     := cPatEmp()
 	DEFAULT lAppend	:= .F.
 
 	IF oMeter != NIL
@@ -1090,7 +1090,7 @@ FUNCTION rxAlmacen( cPath, oMeter )
 	local dbfAlmT
 	local dbfAlmL
 
-   DEFAULT cPath  := cPatAlm()
+   DEFAULT cPath  := cPatEmp()
 
    IF !lExistTable( cPath + "ALMACEN.DBF" )
       dbCreate( cPath + "ALMACEN.DBF", aSqlStruct( aItmAlm() ), cDriver() )
@@ -1111,6 +1111,8 @@ FUNCTION rxAlmacen( cPath, oMeter )
 
       ( dbfAlmT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfAlmT )->( ordCreate( cPath + "ALMACEN.CDX", "CCOMALM", "CCOMALM", {|| Field->cComAlm } ) )
+
+      ( dbfAlmT )->( dbeval( {|| Field->uuid := win_uuidcreatestring() }, {|| empty( field->uuid ) } ) )
 
       ( dbfAlmT )->( dbCloseArea() )
    else
@@ -1178,8 +1180,8 @@ FUNCTION cAlmacen( oGet, dbfAlmT, oGet2 )
    BEGIN SEQUENCE
 
    if dbfAlmT == nil
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
       lClose      := .t.
    end if
 
@@ -1240,7 +1242,7 @@ FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
 	local oCbxOrd
    local aCbxOrd        := { "Código", "Nombre" }
    local cCbxOrd
-   local nLevel         := nLevelUsr( "01035" )
+   local nLevel         := Auth():Level( "01035" )
    local oSayText
    local cSayText       := "Listado de almacenes"
    local cRETURN        := ""
@@ -1414,19 +1416,19 @@ STATIC FUNCTION lOpenFiles()
 
    BEGIN SEQUENCE
 
-      IF !lExistTable( cPatAlm() + "ALMACEN.DBF" ) .OR.;
-         !lExistTable( cPatAlm() + "ALMACENL.DBF" )
+      IF !lExistTable( cPatEmp() + "ALMACEN.DBF" ) .OR.;
+         !lExistTable( cPatEmp() + "ALMACENL.DBF" )
 			mkAlmacen()
 		END IF
 
-      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
 
-      USE ( cPatAlm() + "ALMACENL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACENL", @dbfAlmL ) )
-      SET ADSINDEX TO ( cPatAlm() + "ALMACENL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALMACENL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACENL", @dbfAlmL ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALMACENL.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
-      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGENTES.CDX" ) ADDITIVE
 
    RECOVER
 
@@ -1463,9 +1465,9 @@ Funcion para editar un almacén desde cualquier parte del programa
 
 FUNCTION EdtAlm( cCodAlm )
 
-   local nLevel         := nLevelUsr( "01035" )
+   local nLevel         := Auth():Level( "01035" )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       RETURN .t.
    end if

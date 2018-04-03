@@ -90,8 +90,8 @@ FUNCTION EntSal( oMenuItem, oWnd )
 
    if oWndBrw == nil
 
-      nLevel            := nLevelUsr( oMenuItem )
-      if nAnd( nLevel, 1 ) != 0
+      nLevel            := Auth():Level( oMenuItem )
+      if nAnd( nLevel, 1 ) == 0
          msgStop( "Acceso no permitido." )
          return nil
       end if
@@ -243,11 +243,10 @@ FUNCTION EntSal( oMenuItem, oWnd )
          HOTKEY   "A";
          LEVEL    ACC_APPD
 
-   if lUsrMaster()
-
       DEFINE BTNSHELL RESOURCE "gc_money2_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfEntT, _RETIRADA_EFECTIVO ) );
+         ACTION   (  iif(  SuperUsuarioController():New():isDialogViewActivate(),;
+                           WinAppRec( oWndBrw:oBrw, bEdit, dbfEntT, _RETIRADA_EFECTIVO ), ) );
          TOOLTIP  "(R)etirada efectivo";
          BEGIN GROUP;
          HOTKEY   "R";
@@ -255,13 +254,12 @@ FUNCTION EntSal( oMenuItem, oWnd )
          
       DEFINE BTNSHELL RESOURCE "gc_credit_cards_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfEntT, _RETIRADA_TARJETA ) );
+         ACTION   (  iif(  SuperUsuarioController():New():isDialogViewActivate(),;
+                           WinAppRec( oWndBrw:oBrw, bEdit, dbfEntT, _RETIRADA_TARJETA ), ) );
          TOOLTIP  "Retirada tar(j)eta";
          BEGIN GROUP;
          HOTKEY   "J";
          LEVEL    ACC_APPD
-
-   end if
 
 		DEFINE BTNSHELL RESOURCE "DUP" OF oWndBrw ;
 			NOBORDER ;
@@ -460,13 +458,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
    do case
    case nMode == APPD_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURENT ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _CSUFENT ]  := RetSufEmp()
       aTmp[ _CCODDIV ]  := cDivEmp()
       aTmp[ _NVDVDIV ]  := 1
@@ -481,18 +479,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
 
    case nMode == DUPL_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
-      if aTmp[ _NTIPENT ] > 2 .and. !lUsrMaster()
-         MsgStop( "Sólo el administrador puede duplicar" )
-         Return .f.
+      if SuperUsuarioController():New():isNotDialogViewActivate()
+         RETURN .f.
       end if
 
       aTmp[ _CTURENT ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _DFECCRE ]  := GetSysDate()
       aTmp[ _CSUFENT ]  := RetSufEmp()
       aTmp[ _LSNDENT ]  := .t.
@@ -502,14 +499,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
 
    case nMode == EDIT_MODE
 
-      if aTmp[ _LCLOENT ] .AND. !oUser():lAdministrador()
-         msgStop( "Solo puede modificar las entradas cerradas los administradores." )
-         return .f.
-      end if
-
-      if aTmp[ _NTIPENT ] > 2 .and. !lUsrMaster()
-         MsgStop( "Sólo el administrador puede modificar" )
-         Return .f.
+      if SuperUsuarioController():New():isNotDialogViewActivate()
+         RETURN .f.
       end if
 
       oMoneyEfectivo:SetStream( aTmp[ _CMONEDAS ] )
@@ -542,7 +533,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
    end if
 
    if Empty( aTmp[ _CCODCAJ ] )
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
    end if
 
    if Empty( aTmp[ _CCODDIV ] )
@@ -595,7 +586,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEntT, oBrw, nTipoDocumento, bValid, nMode
 		*/
 
       REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
-         WHEN     ( lUsrMaster() .and. nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    cCajas( aGet[ _CCODCAJ ], dbfCaj, oSay ) ;
          ID       150 ;
          BITMAP   "LUPA" ;
@@ -718,13 +709,13 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
    do case
    case nMode == APPD_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURENT ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _CSUFENT ]  := RetSufEmp()
       aTmp[ _CCODDIV ]  := cDivEmp()
       aTmp[ _NVDVDIV ]  := 1
@@ -734,13 +725,13 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
 
    case nMode == DUPL_MODE
 
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+      if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lAdministrador()
+         msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
          Return .f.
       end if
 
       aTmp[ _CTURENT ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
       aTmp[ _CSUFENT ]  := RetSufEmp()
 
    case nMode == EDIT_MODE
@@ -757,7 +748,7 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
    end if
 
    if Empty( aTmp[ _CCODCAJ ] )
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
+      aTmp[ _CCODCAJ ]  := Application():CodigoCaja()
    end if
 
    if Empty( aTmp[ _CCODDIV ] )
@@ -998,7 +989,7 @@ RETURN ( .t. )
 
 static function SetBigCaj( oSayUsr )
 
-   oSayUsr:cText( RetFld( oUser():cCaja(), dbfCaj, "cNomCaj" ) )
+   oSayUsr:cText( RetFld( Application():CodigoCaja(), dbfCaj, "cNomCaj" ) )
 
 RETURN ( .t. )
 
@@ -1155,9 +1146,9 @@ Function AppEntSal( oMenuItem )
 
    DEFAULT  oMenuItem   := _MENUITEM_
 
-   nLevel               := nLevelUsr( oMenuItem )
+   nLevel               := Auth():Level( oMenuItem )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_APPD ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -1173,9 +1164,9 @@ RETURN .t.
 
 Function EdtEntSal( nRecEntradaSalida )
 
-   local nLevel         := nLevelUsr( _MENUITEM_ )
+   local nLevel         := Auth():Level( _MENUITEM_ )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if

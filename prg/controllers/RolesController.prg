@@ -50,8 +50,6 @@ METHOD New() CLASS RolesController
 
    ::hImage                := { "16" => "gc_businesspeople_16" }
 
-   ::nLevel                := nLevelUsr( "01052" )
-
    ::oModel                := SQLRolesModel():New( self )
 
    ::oRepository           := RolesRepository():New( self )
@@ -188,7 +186,6 @@ CLASS SQLRolesModel FROM SQLBaseModel
 
    METHOD getInsertRolesSentence()
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -220,7 +217,9 @@ METHOD getInsertRolesSentence()
    cStatement  := "INSERT IGNORE INTO " + ::cTableName + " "
    cStatement  +=    "( uuid, nombre ) "
    cStatement  += "VALUES "
-   cStatement  +=    "( UUID(), 'Administrador' )"
+   cStatement  +=    "( UUID(), 'Super administrador' ), "
+   cStatement  +=    "( UUID(), 'Administrador' ), "
+   cStatement  +=    "( UUID(), 'Usuario' )"
 
 RETURN ( cStatement )
 
@@ -360,6 +359,7 @@ METHOD Activate() CLASS RolesView
    REDEFINE COMBOBOX ::cComboPermiso ;
       ID          120 ;
       ITEMS       ::aComboPermisos ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          oDlg
 
    REDEFINE BUTTON ;
@@ -424,13 +424,14 @@ RETURN ( ::hValidators )
 
 CLASS RolesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()      INLINE ( SQLRolesModel():getTableName() ) 
+   METHOD getTableName()               INLINE ( SQLRolesModel():getTableName() ) 
 
    METHOD getNombres() 
 
-   METHOD getNombre( uuid )   INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) ) 
+   METHOD getNombre( uuid )            INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) ) 
 
-   METHOD getUuid()
+   METHOD getUuid( nombre )
+   METHOD getUuidWhereNombre( nombre ) INLINE ( ::getUuid( nombre ) ) 
 
 END CLASS
 

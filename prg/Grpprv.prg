@@ -45,12 +45,12 @@ END CLASS
 
 METHOD New( cPath, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatPrv()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT oMenuItem    := "01030"
 
    if Empty( ::nLevel )
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    end if
 
    /*
@@ -74,7 +74,7 @@ RETURN ( Self )
 
 METHOD Create( cPath )
 
-   DEFAULT cPath        := cPatCli()
+   DEFAULT cPath        := cPatEmp()
 
    ::cPath              := cPath
    ::oDbf               := nil

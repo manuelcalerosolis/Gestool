@@ -638,9 +638,9 @@ RETURN ( Self )
 
 METHOD dialogActivate() CLASS TComercio
 
-   ::nLevel             := nLevelUsr( "01108" )
+   ::nLevel             := Auth():Level( "01108" )
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       RETURN ( Self )
    end if

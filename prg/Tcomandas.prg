@@ -36,7 +36,7 @@ END CLASS
 
 METHOD Create( cPath )
 
-   DEFAULT cPath     := cPatCli()
+   DEFAULT cPath     := cPatEmp()
 
    ::cPath           := cPath
    ::oDbf            := nil
@@ -47,11 +47,11 @@ RETURN ( Self )
 
 METHOD New( cPath, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatArt()
+   DEFAULT cPath        := cPatEmp()
    DEFAULT oWndParent   := oWnd()
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
       ::nLevel          := 1
    end if
@@ -190,7 +190,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD Activate() CLASS TComandas
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if

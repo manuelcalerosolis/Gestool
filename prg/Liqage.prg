@@ -89,7 +89,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil
-      ::nLevel          := nLevelUsr( oMenuItem )
+      ::nLevel          := Auth():Level( oMenuItem )
    else
       ::nLevel          := 1
    end if
@@ -189,7 +189,7 @@ METHOD OpenFiles( cPath )
 
    DATABASE NEW ::oAgentes ;
          FILE  "AGENTES.DBF" ;
-         PATH  ( cPatCli() ) ;
+         PATH  ( cPatEmp() ) ;
          VIA   cDriver() ;
          SHARED ;
          INDEX "AGENTES.CDX"
@@ -1155,8 +1155,8 @@ FUNCTION LiqAge( oMenuItem, oWnd )
    DEFAULT  oMenuItem   := "01038"
    DEFAULT  oWnd        := oWnd()
 
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
+   nLevel               := Auth():Level( oMenuItem )
+   if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if

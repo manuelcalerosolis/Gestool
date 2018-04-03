@@ -165,8 +165,8 @@ STATIC FUNCTION OpenFiles()
 
    BEGIN SEQUENCE
 
-      USE ( cPatCli() + "CliCto.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliConta", @dbfContactos ) )
-      SET ADSINDEX TO ( cPatCli() + "CliCto.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "CliCto.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliConta", @dbfContactos ) )
+      SET ADSINDEX TO ( cPatEmp() + "CliCto.Cdx" ) ADDITIVE
 
    RECOVER
 
@@ -210,9 +210,9 @@ RETURN NIL
 
 FUNCTION EdtContactos( dbfContactos, oBrw )
 
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
 
-   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
+   if nAnd( nLevel, 1 ) == 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
@@ -294,7 +294,7 @@ FUNCTION BrwContactos( oGet, oGet2, cCodCli, dbfContactos )
 	local oCbxOrd
    local aCbxOrd     := { "Nombre", "Código postal", "Teléfono", "Movil", "Correo electrónico" }
    local cCbxOrd     := "Nombre"
-   local nLevel      := nLevelUsr( "01032" )
+   local nLevel      := Auth():Level( "01032" )
    local lClose      := .f.
    local oSayText
    local cSayText    := "Listado de obras"
@@ -307,14 +307,14 @@ FUNCTION BrwContactos( oGet, oGet2, cCodCli, dbfContactos )
       return .t.
    end if
 
-   if !lExistTable( cPatCli() + "CliCto.dbf" )
+   if !lExistTable( cPatEmp() + "CliCto.dbf" )
       MsgStop( 'No existe el fichero de obras' )
       Return .f.
    end if
 
    if Empty( dbfContactos )
-      USE ( cPatCli() + "CliCto.dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliConta", @dbfContactos ) )
-      SET ADSINDEX TO ( cPatCli() + "CliCto.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "CliCto.dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CliConta", @dbfContactos ) )
+      SET ADSINDEX TO ( cPatEmp() + "CliCto.Cdx" ) ADDITIVE
       lClose      := .t.
    END IF
 

@@ -70,9 +70,9 @@ RETURN ( Self )
 
 METHOD checkValues()
 
-   getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() ) 
-
    getSQLDatabase():Exec( SQLRolesModel():getInsertRolesSentence() )
+
+   getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() ) 
 
    getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
 
@@ -178,6 +178,8 @@ METHOD addModels()
    aadd( ::aModels, SQLMovimientosAlmacenLineasNumerosSeriesModel():New() )
 
    aadd( ::aModels, SQLFiltrosModel():New() )
+   
+   aadd( ::aModels, SQLUsuarioFavoritosModel():New() )
 
    aadd( ::aModels, SQLRelacionesEntidadesModel():New() )
 
