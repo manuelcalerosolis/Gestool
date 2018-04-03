@@ -72,6 +72,7 @@ METHOD getVisible( cUsuarioUuid, cFavorito, lDefault ) CLASS SQLUsuarioFavoritos
    cSql           +=    "AND favorito = " + quoted( cFavorito ) + " "
 
    nVisible       := getSQLDataBase():getValue( cSql )
+
    if hb_isnil( nVisible )
       RETURN ( lDefault )
    end if 

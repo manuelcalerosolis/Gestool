@@ -165,7 +165,7 @@ METHOD Activate( oWnd )
    local oBmp
    local oDirOrigen
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return( Self )
    end if

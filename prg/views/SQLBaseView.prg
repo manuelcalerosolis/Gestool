@@ -10,11 +10,17 @@ CLASS SQLBaseView
 
    DATA oEvents 
 
+   DATA oTimer
+
    DATA oDialog
 
    DATA oMessage
 
+   DATA cMessage
+
    DATA oBitmap
+   
+   DATA cBitmap
 
    DATA oBtnOk
 
@@ -57,6 +63,7 @@ CLASS SQLBaseView
    METHOD fireEvent( cEvent )                         INLINE ( iif( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
    METHOD ShowMessage( cMessage )        
+   METHOD RestoreMessage()
 
 END CLASS
 
@@ -68,6 +75,8 @@ METHOD New( oController )
 
    ::oEvents                                          := Events():New()
 
+   ::oTimer                                           := TTimer():New( 4000, {|| ::RestoreMessage() } )
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -76,9 +85,13 @@ METHOD End()
 
    if !empty( ::oEvents )
       ::oEvents:End()
+      ::oEvents   := nil
    end if 
 
-   ::oEvents   := nil
+   if !empty( ::oTimer )
+      ::oTimer:End()
+      ::oTimer   := nil
+   end if 
 
 RETURN ( nil )
 
@@ -87,15 +100,38 @@ RETURN ( nil )
 METHOD ShowMessage( cMessage )
 
    if !empty( ::oBitmap )
+      ::cBitmap   := ::oBitmap:cResName
       ::oBitmap:setBMP( "gc_sign_warning_48" )
    end if 
 
-   if empty( ::oMessage )
-      RETURN ( self )
+   if !empty( ::oMessage )
+      ::cMessage  := ::oMessage:cCaption
+      ::oMessage:setColor( rgb( 229, 57, 53 ), GetSysColor( COLOR_BTNFACE ) )
+      ::oMessage:setText( cMessage )
    end if 
 
-   ::oMessage:setColor( rgb( 229, 57, 53 ), GetSysColor( COLOR_BTNFACE ) )
-   ::oMessage:setText( cMessage )
+   if !empty( ::oTimer )
+      ::oTimer:Activate()
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD RestoreMessage()
+
+   if !empty( ::oBitmap )
+      ::oBitmap:setBMP( ::cBitmap )
+   end if 
+
+   if !empty( ::oMessage )
+      ::oMessage:setColor( rgb( 0, 0, 0 ), GetSysColor( COLOR_BTNFACE ) )
+      ::oMessage:setText( ::cMessage )
+   end if 
+
+   if !empty( ::oTimer )
+      ::oTimer:DeActivate()
+   end if 
 
 RETURN ( self )
 

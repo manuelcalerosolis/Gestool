@@ -4855,10 +4855,10 @@ Static Function StartEdtAtp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayV
 
    cValoresProp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2 )
 
-   if !lUsrMaster()
-      oBtnRen:Hide()
-   else
+   if ( SQLAjustableModel():getRolMostrarRentabilidad( Auth():rolUuid() ) )
       oBtnRen:Show()
+   else
+      oBtnRen:Hide()
    end if
 
    lChangeCostoParticular( aGet, aTmp, oCosto, nMode )

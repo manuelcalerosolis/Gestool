@@ -299,7 +299,7 @@ RETURN ( oDlg:end( IDOK ) )
 
 METHOD Activate() CLASS TGrpFam
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if

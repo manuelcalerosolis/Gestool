@@ -229,7 +229,7 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TPlantillaXML
       ::nLevel                := 1
    end if
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if

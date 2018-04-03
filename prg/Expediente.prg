@@ -176,7 +176,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
       ::nLevel             := 0
    end if
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return nil
    end if

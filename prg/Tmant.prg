@@ -461,7 +461,7 @@ RETURN ( .t. )
 
 METHOD Activate() CLASS TMant
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if

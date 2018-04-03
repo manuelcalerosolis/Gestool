@@ -1167,7 +1167,7 @@ METHOD Activate( lAlone ) CLASS TpvTactil
 
    DEFAULT lAlone    := .f.
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return .f.
    end if

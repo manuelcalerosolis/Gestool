@@ -19,13 +19,13 @@ METHOD New() CLASS ListinController
 
    ::cTitle                   := "Listín"
 
-   ::cName                    := "listin"
+   ::cName                    := "listin_telefonico"
 
    ::hImage                   := {  "16" => "gc_book_telephone_16",;
                                     "32" => "gc_book_telephone_32",;
                                     "48" => "gc_book_telephone_48" }
 
-   ::nLevel                   := nLevelUsr( ::cName )
+   ::nLevel                   := Auth():Level( ::cName )
 
    ::oModel                   := SQLListinModel():New( self )
 
@@ -33,7 +33,7 @@ METHOD New() CLASS ListinController
 
    ::oDialogView              := ListinView():New( self )
 
-   ::oValidator               := ListinValidator():New( self )
+   ::oValidator               := ListinValidator():New( self, ::oDialogView )
 
    ::oDireccionesController   := DireccionesController():New( self )
 
@@ -112,78 +112,86 @@ END CLASS
 
 METHOD Activate() CLASS ListinView
 
-   local oDlg
-   local oBmpGeneral
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
 
-   DEFINE DIALOG  oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "LISTIN" ;
-      TITLE       ::LblTitle() + "Contacto"
+      TITLE       ::LblTitle() + "contacto"
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_book_telephone_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "id" ] ;
+      ID          100 ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "dni" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "dni" ] ;
+      ID          120 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "dni" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE BUTTON oBtnAppend ;
-      ID          120 ;
-      OF          oDlg ;
+      ID          130 ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
    oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
 
    REDEFINE BUTTON oBtnEdit ;
-      ID          130 ;
-      OF          oDlg ;
+      ID          140 ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
    oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
-      ID          140 ;
-      OF          oDlg ;
+      ID          150 ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
    oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
 
-   ::oController:oDireccionesController:Activate( oDlg, 150 )
+   ::oController:oDireccionesController:Activate( ::oDialog, 160 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG ::oDialog CENTER
 
-   oBmpGeneral:end()
+   ::oBitmap:end()
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

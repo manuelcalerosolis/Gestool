@@ -190,7 +190,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD Activate() CLASS TComandas
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if

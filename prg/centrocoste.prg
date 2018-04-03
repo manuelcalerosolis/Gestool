@@ -130,7 +130,7 @@ METHOD Activate() CLASS TCentroCoste
 
    local oScript
 
-   if nAnd( ::nLevel, 1 ) != 0
+   if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       Return ( Self )
    end if
