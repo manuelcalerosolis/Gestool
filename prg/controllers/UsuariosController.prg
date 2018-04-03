@@ -523,7 +523,7 @@ METHOD Activate() CLASS UsuariosView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_businessman_48" ;
+      RESOURCE    "gc_businesspeople_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
