@@ -337,17 +337,10 @@ METHOD TactilResource() CLASS AccessCode
    local oBmpVersion
 
    /*
-   Comprobamos que exista el direcotrio USR------------------------------------
-   */
-
-   if( !lIsDir( cPatUsr() ), MakeDir( cNamePath( cPatUsr() ) ), )
-
-   /*
    Iconos----------------------------------------------------------------------
    */
 
    DEFINE ICON oIcoApp RESOURCE "Gestool"
-
 
    /*
    Preparamos el dialogo-------------------------------------------------------
@@ -370,30 +363,18 @@ METHOD TactilResource() CLASS AccessCode
       Montamos la lista con los usuarios-------------------------------------
       */
 
-      oImgUsr                    := TImageList():New( 50, 50 ) //
+      oImgUsr                 := TImageList():New( 50, 50 ) //
 
-      oLstUsr                    := TListView():Redefine( 100, oDlg )
-      oLstUsr:nOption            := 0
-      oLstUsr:bClick             := {| nOpt | ::SelectTactilResource( nOpt, oDlg, oLstUsr ) }
+      oLstUsr                 := TListView():Redefine( 100, oDlg )
+      oLstUsr:nOption         := 0
+      oLstUsr:bClick          := {| nOpt | ::SelectTactilResource( nOpt, oDlg, oLstUsr ) }
 
       /*
       Información global-------------------------------------------------------
       */
 
-      do case
-      case lAds()
-         ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : Sybase Advantage Release 10.0 - SAP Company ®", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-         ::cBmpEngine            := "gc_data_48"
-
-      case lAIS()
-         ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : Internet Sybase Advantage Release 10.0 - SAP Company ®", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-         ::cBmpEngine            := "gc_floppy_disk_48"
-
-      otherwise
-         ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : xHarbour Native RDD", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-         ::cBmpEngine            := "gc_data_48"
-
-      end case
+      ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Powered by MariaDB SQL Database", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+      ::cBmpEngine            := "gc_data_48"
 
       ::oSayDatabase:SetTransparent()
 
@@ -452,94 +433,48 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD InitTactilResource( oDlg, oImgUsr, oLstUsr ) CLASS AccessCode
 
+   local oStmt
    local nImg     := -1
    local nUser    := 0
 
+   if empty( oImgUsr ) .or. empty( oLstUsr )
+      RETURN ( Self )
+   end if 
+
    CursorWait()
 
-   // Comprobamos q exista al menos un usario master---------------------------
+   oImgUsr:AddMasked( TBitmap():Define( "gc_businessman2_50" ),   Rgb( 255, 0, 255 ) )
+   oImgUsr:AddMasked( TBitmap():Define( "gc_user2_50" ),          Rgb( 255, 0, 255 ) )
 
-   TstUsuario()
+   oLstUsr:SetImageList( oImgUsr )
+   oLstUsr:EnableGroupView()
+   oLstUsr:SetIconSpacing( 120, 140 )
 
-   while !IsMaster()
-      rxUsuario()
-   end while
+   with object ( TListViewGroup():New() )
+      :cHeader := "Administradores"
+      :Create( oLstUsr )
+   end with
 
-   // Abrimos las bases de datos de usuarios-----------------------------------
+   with object ( TListViewGroup():New() )
+      :cHeader := "Usuarios"
+      :Create( oLstUsr )
+   end with
 
-   USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::dbfUser := cCheckArea( "USERS" ) )
-   SET ADSINDEX TO ( cPatDat() + "Users.Cdx" ) ADDITIVE   
-
-   ( ::dbfUser )->( dbSetFilter( {|| !Field->lGrupo }, "!lGrupo" ) )
-
-   USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::dbfCajas := cCheckArea( "CAJAS" ) )
-   SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE   
-
-   // Comprobamos q el usuario esta libre--------------------------------------
-
-   nUsrInUse( ::dbfUser )
-
-   if !Empty( oImgUsr ) .and. !Empty( oLstUsr )
-
-      oImgUsr:AddMasked( TBitmap():Define( "GC_BUSINESSMAN2_50" ),   Rgb( 255, 0, 255 ) )
-      oImgUsr:AddMasked( TBitmap():Define( "GC_USER2_50" ),    Rgb( 255, 0, 255 ) )
-
-      oLstUsr:SetImageList( oImgUsr )
-
-      oLstUsr:EnableGroupView()
-
-      oLstUsr:SetIconSpacing( 120, 140 )
-
-      with object ( TListViewGroup():New() )
-         :cHeader := "Administradores"
-         :Create( oLstUsr )
-      end with
-
-      with object ( TListViewGroup():New() )
-         :cHeader := "Usuarios"
-         :Create( oLstUsr )
-      end with
-
-      ( ::dbfUser )->( dbGoTop() )
-      while !( ::dbfUser )->( eof() )
-
-         if !( ::dbfUser )->lUseUse .and. !( ::dbfUser )->lGrupo
-
-            if !Empty( ( ::dbfUser )->cImagen ) .and. File( Rtrim( ( ::dbfUser )->cImagen ) )
-
-               oImgUsr:Add( TBitmap():Define( , Rtrim( ( ::dbfUser )->cImagen ) ) )
-
-               nImg++
-
-               with object ( TListViewItem():New() )
-                  :Cargo   := ( ::dbfUser )->cCodUse
-                  :cText   := Capitalize( ( ::dbfUser )->cNbrUse )
-                  :nImage  := nImg
-                  :nGroup  := if( ( ::dbfUser )->nGrpUse <= 1, 1, 2 )
-                  :Create( oLstUsr )
-               end with
-
-            else
-
-               with object ( TListViewItem():New() )
-                  :Cargo   := ( ::dbfUser )->cCodUse
-                  :cText   := Capitalize( ( ::dbfUser )->cNbrUse )
-                  :nImage  := if( ( ::dbfUser )->nGrpUse <= 1, 0, 1 )
-                  :nGroup  := if( ( ::dbfUser )->nGrpUse <= 1, 1, 2 )
-                  :Create( oLstUsr )
-               end with
-
-            end if
-
-         end if
-
-         ( ::dbfUser )->( dbSkip() )
-
+   oStmt    := UsuariosRepository():fetchDirect()
+   if !empty( oStmt )
+      while oStmt:fetchDirect()
+         with object ( TListViewItem():New() )
+            :Cargo   := oStmt:fieldget( "codigo" )
+            :cText   := Capitalize( oStmt:fieldget( "nombre" ) )
+            :nImage  := 0
+            :nGroup  := 1
+            :Create( oLstUsr )
+         end with
       end while
+      oStmt:free()
+   end if 
 
-      oLstUsr:Refresh()
-
-   end if
+   oLstUsr:Refresh()
 
    CursorWE()
 
