@@ -65,6 +65,9 @@ CLASS SQLBaseView
    METHOD ShowMessage( cMessage )        
    METHOD RestoreMessage()
 
+   METHOD verticalHide( oControl )
+   METHOD verticalShow( oControl )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -136,3 +139,48 @@ METHOD RestoreMessage()
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD verticalHide( oControl )
+
+   local nId     
+   local nHeight  
+
+   if !( oControl:lVisible )
+      RETURN ( .f. )
+   end if  
+
+   nId            := oControl:nId
+   nHeight        := oControl:nHeight + 2
+
+   oControl:Hide()
+
+   aeval( ::oDialog:aControls,;
+      {|oControl| if( oControl:nId >= 100 .and. oControl:nId > nId,;
+         oControl:move( oControl:nTop - nHeight, oControl:nLeft, oControl:nWidth, oControl:nHeight ), ) } )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD verticalShow( oControl )
+
+   local nId     
+   local nHeight 
+
+   if oControl:lVisible
+      RETURN ( .f. )
+   end if  
+
+   nId            := oControl:nId
+   nHeight        := oControl:nHeight + 2
+
+   oControl:Show()
+
+   aeval( ::oDialog:aControls,;
+      {|oControl| if( oControl:nId >= 100 .and. oControl:nId > nId,;
+         oControl:move( oControl:nTop + nHeight, oControl:nLeft, oControl:nWidth, oControl:nHeight ), ) } )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+

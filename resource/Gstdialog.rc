@@ -772,7 +772,7 @@ FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 400, "SysTabControl32", WS_TABSTOP, 2, 2, 669, 392
   CONTROL "&Aceptar [ F5 ]", IDOK, "Button", WS_TABSTOP, 478, 397, 50, 14
-  CONTROL "Aceptar e &Imprimir [ F6 ]", IDSERIES, "Button", WS_TABSTOP, 533, 397, 82, 14
+  CONTROL "Aceptar e &Imprimir [ F6 ]", IDOKANDDOWN, "Button", WS_TABSTOP, 533, 397, 82, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 620, 397, 50, 14
 }
 
@@ -1631,9 +1631,9 @@ FONT 8, "Ms Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 400, 305, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 456, 305, 50, 14
   CONTROL "", 500, "TBitmap", 0x00800000, 510, 14, 60, 62
-  CONTROL "A&nterior [F7]", 3, "Button", 0x00000000, 6, 306, 50, 14
-  CONTROL "&Siguiente [F8]", IDSERIES, "Button", 0x00000000, 62, 305, 50, 14
-  CONTROL "Aceptar y actualizar &web [F6]", IDRELACIONES, "Button", WS_TABSTOP, 297, 305, 98, 14
+  CONTROL "A&nterior [F7]", IDOKANDNEW, "Button", 0x00000000, 6, 306, 50, 14
+  CONTROL "&Siguiente [F8]", IDOKANDDOWN, "Button", 0x00000000, 62, 305, 50, 14
+  CONTROL "Aceptar y actualizar &web [F6]", IDOKANDUP, "Button", WS_TABSTOP, 297, 305, 98, 14
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
@@ -2058,7 +2058,7 @@ CAPTION "Asistente para la conversión documentos"
 FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 100, "TPages", WS_TABSTOP, 44, 29, 628, 384
-  CONTROL "< Anterior", 3, "Button", WS_TABSTOP, 485, 417, 61, 14
+  CONTROL "< Anterior", IDOKANDNEW, "Button", WS_TABSTOP, 485, 417, 61, 14
   CONTROL "[F5] Siguiente >", IDOK, "Button", WS_TABSTOP, 548, 417, 61, 14
   CONTROL "Cancelar", IDCANCEL, "Button", WS_TABSTOP, 611, 417, 60, 14
   CONTROL "", 500, "TBitmap", 0x0000020e, 4, 3, 34, 30, 0x00000020
@@ -2555,7 +2555,7 @@ CAPTION "Configurar carpetas principales y favoritos"
 FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 100, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|TVS_CHECKBOXES|TVS_TRACKSELECT|TVS_FULLROWSELECT|WS_BORDER, 44, 29, 248, 264
-  CONTROL "&Restablecer ", 3, "Button", WS_TABSTOP, 44, 298, 50, 14
+  CONTROL "&Restablecer ", IDOKANDNEW, "Button", WS_TABSTOP, 44, 298, 50, 14
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 186, 298, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 242, 298, 50, 14
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
@@ -2589,7 +2589,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 190, "Edit", ES_RIGHT|ES_AUTOVSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 101, 152, 30, 12
   CONTROL "&Aceptar", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 108, 172, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 163, 172, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 218, 172, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 218, 172, 50, 14
   CONTROL "Familia", -1, "Static", WS_GROUP, 6, 44, 27, 8
   CONTROL "Precios a cambiar", -1, "Button", BS_GROUPBOX, 2, 58, 129, 81
   CONTROL "Nº de decimales", -1, "Button", BS_GROUPBOX, 2, 142, 266, 24
@@ -2622,7 +2622,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 220, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 48, 174, 342, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 234, 194, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 289, 194, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 344, 194, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 344, 194, 50, 14
   CONTROL "Descripción", -1, "Static", WS_GROUP, 7, 11, 38, 8
   CONTROL "Expresión", -1, "Static", WS_GROUP, 7, 24, 37, 8
   CONTROL "Fichero", -1, "Static", WS_GROUP, 7, 37, 37, 8
@@ -2663,7 +2663,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 202, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 242, 168, 65, 102
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 234, 193, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 289, 193, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 344, 193, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 344, 193, 50, 14
   CONTROL "Columna", -1, "Static", WS_GROUP, 7, 77, 37, 8
   CONTROL "Mascara", -1, "Static", WS_GROUP, 7, 144, 37, 8
   CONTROL "Alineación", -1, "Static", WS_GROUP, 7, 128, 37, 8
@@ -2702,7 +2702,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Fichero", -1, "Static", WS_GROUP, 7, 17, 31, 8
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 79, 150, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 134, 150, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 189, 150, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 189, 150, 50, 14
 }
 
 CABECERA_4 DIALOG DISCARDABLE 111, 48, 222, 193
@@ -2737,7 +2737,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Tabla Color", 200, "Button", WS_TABSTOP|0x00000020, 6, 129, 61, 11
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 60, 176, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 115, 176, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 170, 176, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 170, 176, 50, 14
   CONTROL "", 190, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 7, 156, 195, 12
   CONTROL "Condición", -1, "Button", BS_GROUPBOX, 2, 147, 218, 24
 }
@@ -3419,8 +3419,8 @@ CAPTION "Clientes"
 FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 500, "SysTabControl32", 0x00000000, 2, 3, 500, 299
-  CONTROL "A&nterior [F7]", 3, "Button", 0x00000000, 1, 306, 50, 14
-  CONTROL "&Siguiente [F8]", IDSERIES, "Button", 0x00000000, 57, 306, 50, 14
+  CONTROL "A&nterior [F7]", IDOKANDNEW, "Button", 0x00000000, 1, 306, 50, 14
+  CONTROL "&Siguiente [F8]", IDOKANDDOWN, "Button", 0x00000000, 57, 306, 50, 14
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 396, 306, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 452, 306, 50, 14
 }
@@ -5395,7 +5395,7 @@ CAPTION "Empresa"
 FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 400, "SysTabControl32", WS_TABSTOP, 2, 1, 397, 245
-  CONTROL "< &Anterior", 3, "Button", WS_TABSTOP, 238, 251, 50, 14
+  CONTROL "< &Anterior", IDOKANDNEW, "Button", WS_TABSTOP, 238, 251, 50, 14
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 293, 251, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 348, 251, 50, 14
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 402, 2, 59, 48
@@ -5962,7 +5962,7 @@ FONT 8, "Ms Sans Serif"
 {
   CONTROL "&Aceptar", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 393, 249, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 448, 249, 50, 14
-  CONTROL "C&opiar", 3, "Button", WS_TABSTOP, 2, 249, 50, 14
+  CONTROL "C&opiar", IDOKANDNEW, "Button", WS_TABSTOP, 2, 249, 50, 14
   CONTROL "Nuestro programa puede realizar una copia de seguridad de manera", 100, "Static", WS_GROUP, 268, 200, 219, 10
   CONTROL "Los datos serán comprimidos y guardados en una carpeta para el efecto.", 120, "Static", WS_GROUP, 268, 224, 234, 11
   CONTROL "automática para minimizar la posibilidad de perdidas de datos", 110, "Static", WS_GROUP, 268, 209, 196, 10
@@ -6381,7 +6381,7 @@ FONT 8, "Helv"
   CONTROL "Publicar en internet", 140, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 75, 70, 81, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 194, 91, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 249, 91, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 304, 91, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 304, 91, 50, 14
   CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 2, 3, 290, 83
   CONTROL "Código", -1, "Static", WS_GROUP, 10, 17, 60, 8
   CONTROL "Descripción ", -1, "Static", WS_GROUP, 10, 31, 60, 8
@@ -6490,9 +6490,9 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 400, "SysTabControl32", WS_TABSTOP, 2, 1, 670, 392
   CONTROL "TBitMap", 500, "TBitMap", 0x00000000, 2, 402, 223, 14
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 480, 402, 50, 14
-  CONTROL "Aceptar e &imprimir [F6]", IDSERIES, "Button", WS_TABSTOP, 536, 402, 80, 14
+  CONTROL "Aceptar e &imprimir [F6]", IDOKANDDOWN, "Button", WS_TABSTOP, 536, 402, 80, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 622, 402, 50, 14
-  CONTROL "&Recalcular", 3, "Button", 0x00000000, 423, 402, 50, 14
+  CONTROL "&Recalcular", IDOKANDNEW, "Button", 0x00000000, 423, 402, 50, 14
   CONTROL "", 200, "msctls_progress32", 0x00000000, 2, 395, 669, 4
 }
 
@@ -7121,7 +7121,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 290, 370, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 341, 370, 50, 14
   CONTROL "", 100, "SysTabControl32", WS_TABSTOP, 3, 2, 391, 365
-  CONTROL "Aceptar y actualizar &web [F6]", 3, "Button", WS_TABSTOP, 189, 370, 98, 14
+  CONTROL "Aceptar y actualizar &web [F6]", IDOKANDNEW, "Button", WS_TABSTOP, 189, 370, 98, 14
 }
 
 FAMILIA_01 DIALOG DISCARDABLE 98, -11, 391, 348
@@ -7220,7 +7220,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 500, "TBitMap", 0x0000020e, 4, 3, 34, 30, 0x00000020
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 381, 276, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 437, 276, 50, 14
-  CONTROL "&Quitar filtro", 3, "Button", WS_TABSTOP, 44, 276, 50, 14
+  CONTROL "&Quitar filtro", IDOKANDNEW, "Button", WS_TABSTOP, 44, 276, 50, 14
 }
 
 FASTFILTROS_ALMACENADOS DIALOG DISCARDABLE 9, 8, 440, 223
@@ -7660,7 +7660,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 220, "Edit", WS_BORDER|WS_TABSTOP, 162, 324, 60, 12
   CONTROL "Hasta", -1, "Button", BS_GROUPBOX, 224, 299, 224, 42
   CONTROL "Desde", -1, "Button", BS_GROUPBOX, 2, 299, 224, 42
-  CONTROL "Navegador", 3, "Button", WS_TABSTOP, 451, 318, 50, 14
+  CONTROL "Navegador", IDOKANDNEW, "Button", WS_TABSTOP, 451, 318, 50, 14
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH
@@ -7749,7 +7749,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 5, 33, 210, 1
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 53, 41, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 108, 41, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 163, 41, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 163, 41, 50, 14
 }
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
@@ -8149,7 +8149,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 55, 3, 276, 11
   CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 55, 27, 276, 11
   CONTROL "Imagen por defecto", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 3, 40, 78, 12
-  CONTROL "&Zoom", 3, "Button", WS_TABSTOP, 3, 54, 50, 14
+  CONTROL "&Zoom", IDOKANDNEW, "Button", WS_TABSTOP, 3, 54, 50, 14
   CONTROL "", 110, "TBitmap", 0x00800000, 55, 54, 276, 252
   CONTROL "Imagen local", -1, "Static", WS_GROUP, 3, 6, 50, 8
   CONTROL "Nombre", -1, "Static", WS_GROUP, 3, 30, 31, 8
@@ -8787,7 +8787,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Sólo no cobrados", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 248, 79, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 92, 269, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 147, 269, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 202, 269, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 202, 269, 50, 14
   CONTROL "Formato", -1, "Button", BS_GROUPBOX, 2, 2, 252, 24
   CONTROL "", -1, "Button", BS_GROUPBOX, 2, 27, 252, 50
   CONTROL "Inicio", -1, "Static", WS_GROUP, 6, 53, 26, 8
@@ -11799,7 +11799,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 130, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 52, 29, 40, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 110, 52, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 165, 52, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 220, 52, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 220, 52, 50, 14
   CONTROL "Agente", -1, "Static", WS_GROUP, 4, 8, 36, 8
   CONTROL "Comisión %", -1, "Static", WS_GROUP, 4, 20, 43, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 4, 45, 267, 2
@@ -11856,7 +11856,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "&Series [F6]", 552, "Button", WS_TABSTOP, 3, 295, 50, 14
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 383, 295, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 438, 295, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 493, 295, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 493, 295, 50, 14
   CONTROL "TBitmap", 220, "TBitmap", 0x00000000, 544, 15, 59, 47
 }
 
@@ -12161,7 +12161,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 210, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 46, 133, 342, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 232, 154, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 287, 154, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 342, 154, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 342, 154, 50, 14
   CONTROL "Expresión", -1, "Button", BS_GROUPBOX, 2, 0, 390, 59
   CONTROL "Mascara", -1, "Static", WS_GROUP, 6, 98, 37, 8
   CONTROL "Alineación", -1, "Static", WS_GROUP, 6, 72, 37, 8
@@ -12216,7 +12216,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 150, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 74, 103, 70, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 210, 125, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 265, 125, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 320, 125, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 320, 125, 50, 14
   CONTROL "Total comisión", -1, "Static", WS_GROUP, 8, 106, 51, 8
   CONTROL "Factura", -1, "Static", WS_GROUP, 8, 12, 36, 8
   CONTROL "Base comisionable", -1, "Static", WS_GROUP, 9, 79, 64, 8
@@ -12242,7 +12242,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 140, "Edit", ES_RIGHT|WS_BORDER, 52, 53, 68, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 166, 73, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 221, 73, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 276, 73, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 276, 73, 50, 14
   CONTROL "Importe ", -1, "Static", WS_GROUP, 8, 27, 28, 8
   CONTROL "% Aplicación", -1, "Static", WS_GROUP, 8, 39, 43, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 8, 50, 314, 3
@@ -12275,7 +12275,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 291, "Edit", WS_BORDER|WS_TABSTOP, 244, 98, 104, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 193, 121, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 248, 121, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 303, 121, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 303, 121, 50, 14
   CONTROL "", 190, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 58, 98, 59, 12
   CONTROL "Precio Venta", -1, "Static", WS_GROUP, 7, 74, 42, 8
   CONTROL "Cajas ", 129, "Static", WS_GROUP, 7, 48, 48, 8
@@ -12313,7 +12313,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Finalizada", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 171, 48, 10
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 216, 195, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 271, 195, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 326, 195, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 326, 195, 50, 14
   CONTROL "Operario", -1, "Static", WS_GROUP, 8, 24, 36, 8
   CONTROL "Actuación", -1, "Button", BS_GROUPBOX, 2, 1, 374, 34
   CONTROL "Tipo actuación", -1, "Static", WS_GROUP, 8, 12, 53, 8
@@ -12363,7 +12363,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Código tarifa", -1, "Static", WS_GROUP, 3, 8, 44, 8
   CONTROL "&Aceptar", IDOK, "Button", WS_TABSTOP, 128, 66, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 183, 66, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 238, 66, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 238, 66, 50, 14
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 2, 59, 287, 1
 }
 
@@ -12406,7 +12406,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "&Series [F6]", 552, "Button", WS_TABSTOP, 3, 295, 50, 14
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 383, 295, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 438, 295, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 493, 295, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 493, 295, 50, 14
   CONTROL "TBitmap", 220, "TBitmap", 0x00000000, 544, 15, 59, 47
 }
 
@@ -12820,7 +12820,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "&Series [F6]", 552, "Button", WS_TABSTOP, 2, 240, 50, 14
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 205, 240, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 260, 240, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 315, 240, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 315, 240, 50, 14
   CONTROL "TBitmap", 100, "TBitmap", 0x00000000, 387, 2, 80, 167
 }
 
@@ -13134,7 +13134,7 @@ FONT 8, "Ms Sans Serif"
 {
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 216, 76, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 271, 76, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 326, 76, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 326, 76, 50, 14
   CONTROL "Horas", -1, "Button", BS_GROUPBOX, 2, 2, 374, 69
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 74, 11, 68, 12
   CONTROL "", 101, "Edit", ES_MULTILINE|ES_AUTOVSCROLL|WS_BORDER|WS_TABSTOP, 143, 11, 228, 12
@@ -13294,7 +13294,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 200, "Edit", ES_RIGHT|WS_BORDER, 61, 98, 68, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 153, 117, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 208, 117, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 263, 117, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 263, 117, 50, 14
   CONTROL "Maquinaria", -1, "Button", BS_GROUPBOX, 2, 2, 311, 111
   CONTROL "Total horas", -1, "Static", WS_GROUP, 8, 77, 39, 8
   CONTROL "Coste horas", -1, "Static", WS_GROUP, 8, 89, 41, 8
@@ -13337,7 +13337,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "&Series [F6]", 552, "Button", WS_TABSTOP, 2, 132, 50, 14
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 216, 132, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 271, 132, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 326, 132, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 326, 132, 50, 14
   CONTROL "Materia prima", -1, "Button", BS_GROUPBOX, 2, 2, 374, 126
   CONTROL "Cajas ", 121, "Static", WS_GROUP, 8, 62, 23, 8
   CONTROL "Total unidades", -1, "Static", WS_GROUP, 8, 86, 50, 8
@@ -13387,7 +13387,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Series [F6]", 500, "Button", WS_TABSTOP, 4, 285, 50, 14
   CONTROL "&Aceptar [F5]", 510, "Button", WS_TABSTOP, 374, 285, 50, 14
   CONTROL "&Cancelar", 520, "Button", WS_TABSTOP, 429, 285, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 484, 285, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 484, 285, 50, 14
   CONTROL "Cajas ", 142, "Static", WS_GROUP, 4, 220, 60, 8
   CONTROL "Total unidades", -1, "Static", WS_GROUP, 4, 246, 60, 8
   CONTROL "Unidades", 152, "Static", WS_GROUP, 4, 233, 60, 8
@@ -13929,7 +13929,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 400, "SysTabControl32", WS_TABSTOP, 3, 2, 540, 290
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 383, 295, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 438, 295, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 493, 295, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 493, 295, 50, 14
   CONTROL "TBitmap", 100, "TBitmap", 0x00000000, 544, 15, 59, 47
 }
 
@@ -13970,7 +13970,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 160, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 74, 69, 104, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 216, 231, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 271, 231, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 326, 231, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 326, 231, 50, 14
   CONTROL "Sección", -1, "Static", WS_GROUP, 8, 24, 36, 8
   CONTROL "Personal", -1, "Button", BS_GROUPBOX, 2, 1, 374, 82
   CONTROL "Horas", -1, "Button", BS_GROUPBOX, 2, 85, 374, 142
@@ -13996,7 +13996,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 400, "SysTabControl32", WS_TABSTOP, 3, 2, 364, 236
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 207, 241, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 262, 241, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 317, 241, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 317, 241, 50, 14
   CONTROL "TBitmap", 220, "TBitmap", 0x00000000, 369, 14, 59, 47
 }
 
@@ -14156,9 +14156,9 @@ CAPTION "Materia primas"
 FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 400, "SysTabControl32", WS_TABSTOP, 3, 14, 382, 189
-  CONTROL "&Series [F6]", 3, "Button", WS_TABSTOP, 2, 206, 50, 14
-  CONTROL "A&nterior [F7]", IDSERIES, "Button", 0x00000000, 56, 206, 50, 14
-  CONTROL "&Siguiente [F8]", IDRELACIONES, "Button", 0x00000000, 112, 206, 50, 14
+  CONTROL "&Series [F6]", IDOKANDNEW, "Button", WS_TABSTOP, 2, 206, 50, 14
+  CONTROL "A&nterior [F7]", IDOKANDDOWN, "Button", 0x00000000, 56, 206, 50, 14
+  CONTROL "&Siguiente [F8]", IDOKANDUP, "Button", 0x00000000, 112, 206, 50, 14
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 279, 206, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 334, 206, 50, 14
 }
@@ -14256,7 +14256,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 5, 34, 254, 1
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 98, 41, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 153, 41, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 208, 41, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 208, 41, 50, 14
 }
 
 LPROMOC DIALOG DISCARDABLE 44, 104, 266, 86
@@ -14277,7 +14277,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 6, 61, 259, 1
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 104, 68, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 159, 68, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 214, 68, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 214, 68, 50, 14
 }
 
 LQDALM DIALOG DISCARDABLE 61, 21, 395, 287
@@ -14337,7 +14337,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 5, 65, 174, 1
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 18, 72, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 73, 72, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 128, 72, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 128, 72, 50, 14
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 5, 46, 174, 2
   CONTROL "Total unidades", -1, "Static", WS_GROUP, 5, 55, 49, 8
   CONTROL "", 130, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER, 58, 52, 60, 12
@@ -14366,7 +14366,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 52, 25, 200, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 98, 45, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 153, 45, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 208, 45, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 208, 45, 50, 14
   CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 28, 28, 8
   CONTROL "Subtipo de expediente", -1, "Button", BS_GROUPBOX, 2, 2, 256, 38
   CONTROL "Código", -1, "Static", WS_GROUP, 8, 16, 40, 8
@@ -14494,7 +14494,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 170, "Edit", ES_RIGHT|WS_BORDER, 74, 89, 68, 12
   CONTROL "&Aceptar", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 216, 109, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 271, 109, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 326, 109, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 326, 109, 50, 14
   CONTROL "Cajas ", -1, "Static", WS_GROUP, 8, 38, 48, 8
   CONTROL "Total unidades", -1, "Static", WS_GROUP, 8, 62, 60, 8
   CONTROL "Unidades", -1, "Static", WS_GROUP, 8, 50, 43, 8
@@ -14638,7 +14638,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 230, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|ES_AUTOVSCROLL|WS_BORDER|WS_TABSTOP, 100, 251, 438, 58
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 370, 318, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 425, 318, 50, 14
-  CONTROL "&Ayuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 480, 318, 50, 14
+  CONTROL "&Ayuda", IDMESSAGE, "Button", WS_TABSTOP, 480, 318, 50, 14
   CONTROL "Fecha", -1, "Static", WS_GROUP, 51, 150, 20, 8
   CONTROL "Asunto", -1, "Static", WS_GROUP, 51, 45, 35, 8
   CONTROL "Interesado", -1, "Static", WS_GROUP, 51, 59, 35, 8
@@ -15211,9 +15211,9 @@ FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 200, "SysTabControl32", WS_TABSTOP, 1, 2, 669, 392
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 478, 396, 50, 14
-  CONTROL "Aceptar e &imprimir [F6]", IDSERIES, "Button", WS_TABSTOP, 534, 396, 80, 14
+  CONTROL "Aceptar e &imprimir [F6]", IDOKANDDOWN, "Button", WS_TABSTOP, 534, 396, 80, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 620, 396, 50, 14
-  CONTROL "&Recalcular", 3, "Button", 0x00000000, 422, 396, 50, 14
+  CONTROL "&Recalcular", IDOKANDNEW, "Button", 0x00000000, 422, 396, 50, 14
   CONTROL "TBitMap", 500, "TBitMap", 0x00000000, 2, 396, 223, 14
 }
 
@@ -15462,10 +15462,10 @@ FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 400, "SysTabControl32", WS_TABSTOP, 2, 2, 669, 392
   CONTROL "&Aceptar [ F5 ]", IDOK, "Button", WS_TABSTOP, 480, 396, 50, 14
-  CONTROL "Aceptar e &imprimir [ F6 ]", 3, "Button", WS_TABSTOP, 535, 396, 80, 14
+  CONTROL "Aceptar e &imprimir [ F6 ]", IDOKANDNEW, "Button", WS_TABSTOP, 535, 396, 80, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 620, 396, 50, 14
   CONTROL "TBitMap", 500, "TBitMap", 0x00000000, 2, 396, 223, 14
-  CONTROL "&Recalcular", IDSERIES, "Button", 0x00000000, 426, 396, 50, 14
+  CONTROL "&Recalcular", IDOKANDDOWN, "Button", 0x00000000, 426, 396, 50, 14
 }
 
 PEDPRV_1 DIALOG DISCARDABLE 29, 33, 670, 375
@@ -16041,7 +16041,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 200, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 104, 55, 175, 11
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 118, 75, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 173, 75, 50, 14
-  CONTROL "&Ayuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 228, 75, 50, 14
+  CONTROL "&Ayuda", IDMESSAGE, "Button", WS_TABSTOP, 228, 75, 50, 14
   CONTROL "Descripción", -1, "Static", WS_GROUP, 3, 19, 45, 8
   CONTROL "Código", -1, "Static", WS_GROUP, 3, 6, 45, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 2, 69, 279, 1
@@ -16058,8 +16058,8 @@ FONT 8, "Ms Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 565, 397, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 620, 397, 50, 14
   CONTROL "", 400, "SysTabControl32", WS_TABSTOP, 2, 2, 669, 392
-  CONTROL "A&nterior [F7]", IDSERIES, "Button", 0x00000000, 2, 397, 50, 14
-  CONTROL "&Siguiente [F8]", IDRELACIONES, "Button", 0x00000000, 58, 397, 50, 14
+  CONTROL "A&nterior [F7]", IDOKANDDOWN, "Button", 0x00000000, 2, 397, 50, 14
+  CONTROL "&Siguiente [F8]", IDOKANDUP, "Button", 0x00000000, 58, 397, 50, 14
 }
 
 PRODUCCION_1 DIALOG DISCARDABLE 97, 39, 670, 375
@@ -16167,7 +16167,7 @@ FONT 8, "Ms Sans Serif"
 {
   CONTROL "&Aceptar [F5]", 511, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 140, 292, 50, 14
   CONTROL "&Cancelar", 510, "Button", WS_TABSTOP, 195, 292, 50, 14
-  CONTROL "&Ayuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 250, 292, 50, 14
+  CONTROL "&Ayuda", IDMESSAGE, "Button", WS_TABSTOP, 250, 292, 50, 14
   CONTROL "", 90, "Edit", WS_BORDER|WS_TABSTOP, 59, 11, 60, 12
   CONTROL "", 95, "Edit", WS_BORDER|WS_TABSTOP, 59, 24, 228, 12
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 59, 51, 60, 12
@@ -16972,7 +16972,7 @@ FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 400, "SysTabControl32", WS_TABSTOP, 2, 2, 669, 392
   CONTROL "&Aceptar [ F5 ]", IDOK, "Button", WS_TABSTOP, 480, 396, 50, 14
-  CONTROL "Aceptar e &imprimir [ F6 ]", 3, "Button", WS_TABSTOP, 535, 396, 80, 14
+  CONTROL "Aceptar e &imprimir [ F6 ]", IDOKANDNEW, "Button", WS_TABSTOP, 535, 396, 80, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 620, 396, 50, 14
   CONTROL "TBitMap", 500, "TBitMap", 0x00000000, 2, 396, 223, 14
   CONTROL "&Recalcular", 10, "Button", 0x00000000, 426, 396, 50, 14
@@ -16985,7 +16985,7 @@ FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 400, "SysTabControl32", WS_TABSTOP, 2, 2, 500, 300
   CONTROL "&Aceptar [ F5 ]", IDOK, "Button", WS_TABSTOP, 310, 307, 50, 14
-  CONTROL "Aceptar e &imprimir [ F6 ]", 3, "Button", WS_TABSTOP, 365, 307, 80, 14
+  CONTROL "Aceptar e &imprimir [ F6 ]", IDOKANDNEW, "Button", WS_TABSTOP, 365, 307, 80, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 450, 307, 50, 14
   CONTROL "TBitMap", 500, "TBitmap", 0x00000000, 2, 307, 223, 14
   CONTROL "&Recalcular", 10, "Button", 0x00000000, 256, 307, 50, 14
@@ -17179,7 +17179,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 400, "msctls_progress32", 0x00000000, 44, 349, 618, 4
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Movimientos entre almacenes", -1, "Static", WS_GROUP, 44, 3, 120, 8
-  CONTROL "&Recalcular", 3, "Button", WS_TABSTOP, 44, 357, 50, 14
+  CONTROL "&Recalcular", IDOKANDNEW, "Button", WS_TABSTOP, 44, 357, 50, 14
 }
 
 REP_ARTICULO DIALOG DISCARDABLE 67, 60, 342, 205
@@ -18340,7 +18340,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 500, "SysTabControl32", 0x00000000, 1, 2, 280, 224
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 120, 230, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 175, 230, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 230, 230, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 230, 230, 50, 14
 }
 
 SND_EDM1 DIALOG DISCARDABLE 37, -50, 277, 212
@@ -18603,7 +18603,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 51, 37, 30, 12
   CONTROL "&Aceptar [F5]", 500, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 52, 60, 50, 14
   CONTROL "&Cancelar", 550, "Button", WS_TABSTOP, 106, 60, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 164, 60, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 164, 60, 50, 14
   CONTROL "General", -1, "Button", BS_GROUPBOX, 2, 1, 211, 52
   CONTROL "Nombre", -1, "Static", WS_GROUP, 8, 27, 39, 8
   CONTROL "Código", -1, "Static", WS_GROUP, 8, 15, 39, 8
@@ -18732,7 +18732,7 @@ FONT 8, "Helv"
   CONTROL "", 180, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 58, 139, 40, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 121, 158, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 176, 158, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 231, 158, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 231, 158, 50, 14
   CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 2, 3, 278, 41
   CONTROL "Código", -1, "Static", WS_GROUP, 8, 19, 27, 8
   CONTROL "Descripción ", -1, "Static", WS_GROUP, 8, 32, 45, 8
@@ -19224,7 +19224,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 75, 198, 74, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 133, 221, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 188, 221, 50, 14
-  CONTROL "A&yuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 243, 221, 50, 14
+  CONTROL "A&yuda", IDMESSAGE, "Button", WS_TABSTOP, 243, 221, 50, 14
   CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 2, 3, 292, 55
   CONTROL "Domicilio", -1, "Button", BS_GROUPBOX, 2, 59, 292, 55
   CONTROL "Teléfonos", -1, "Button", BS_GROUPBOX, 2, 116, 292, 55
@@ -19377,7 +19377,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Código", -1, "Static", WS_GROUP, 3, 6, 45, 8
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 72, 39, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 127, 39, 50, 14
-  CONTROL "&Ayuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 182, 39, 50, 14
+  CONTROL "&Ayuda", IDMESSAGE, "Button", WS_TABSTOP, 182, 39, 50, 14
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 3, 32, 230, 1
 }
 
@@ -21344,7 +21344,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 200, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 104, 55, 175, 11
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 118, 75, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 173, 75, 50, 14
-  CONTROL "&Ayuda", IDOKNOTFOCUS, "Button", WS_TABSTOP, 228, 75, 50, 14
+  CONTROL "&Ayuda", IDMESSAGE, "Button", WS_TABSTOP, 228, 75, 50, 14
   CONTROL "Nombre", -1, "Static", WS_GROUP, 3, 19, 45, 8
   CONTROL "Código", -1, "Static", WS_GROUP, 3, 6, 45, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 2, 69, 279, 1
@@ -21467,11 +21467,11 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Cajas ", 171, "Static", WS_GROUP, 47, 234, 60, 8
   CONTROL "Unidades", 181, "Static", WS_GROUP, 47, 246, 60, 8
   CONTROL "Bultos", 161, "Static", WS_GROUP, 47, 222, 60, 8
-  CONTROL "&Aceptar [F5]", IDOKNOTFOCUS, "Button", WS_TABSTOP, 384, 301, 50, 14
-  CONTROL "&Aceptar y nuevo [F6]", 3, "Button", WS_TABSTOP, 438, 301, 84, 14
+  CONTROL "&Aceptar [F5]", IDMESSAGE, "Button", WS_TABSTOP, 384, 301, 50, 14
+  CONTROL "&Aceptar y nuevo [F6]", IDOKANDNEW, "Button", WS_TABSTOP, 438, 301, 84, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 526, 301, 50, 14
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 295, 580, 1
-  CONTROL "&Series [F7]", IDSERIES, "Button", 0x00000000, 47, 301, 50, 14
+  CONTROL "&Series [F7]", IDOKANDDOWN, "Button", 0x00000000, 47, 301, 50, 14
 }
 
 ETIQUETAS_SELECTOR_0 DIALOG DISCARDABLE 185, 67, 519, 311
@@ -21910,30 +21910,29 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Para realizar algunas acciones en Gestool, necesita proporcionar la contraseña de super usuario.", 800, "Static", WS_GROUP, 44, 3, 353, 24
 }
 
-CAMPOS_EXTRA DIALOG DISCARDABLE 193, 47, 328, 271
+CAMPOS_EXTRA DIALOG DISCARDABLE 193, 47, 328, 243
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Campo Extra"
 FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 120, 40, 200, 11
-  CONTROL "", 120, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 68, 50, 11
-  CONTROL "", 130, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 81, 50, 11
-  CONTROL "Entrada obligatoria", 140, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 120, 96, 72, 10
-  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 221, 252, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 276, 252, 50, 14
-  CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
-  CONTROL "Campo Extra", 800, "Static", WS_GROUP, 44, 3, 354, 24
-  CONTROL "Campo extra", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 31, 281, 79
-  CONTROL "Longitud*", -1, "Static", WS_GROUP, 50, 71, 32, 8
-  CONTROL "Decimales", -1, "Static", WS_GROUP, 50, 84, 52, 8
-  CONTROL "Tipo*", -1, "Static", WS_GROUP, 50, 56, 52, 8
-  CONTROL "Nombre*", -1, "Static", WS_GROUP, 50, 43, 44, 8
-  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 120, 122, 176, 11
-  CONTROL "Valor por defecto", -1, "Static", WS_GROUP, 50, 125, 61, 8
   CONTROL "", 110, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 120, 53, 100, 99
-  CONTROL "+", 160, "Button", WS_TABSTOP, 297, 122, 11, 11
-  CONTROL "-", 170, "Button", WS_TABSTOP, 309, 122, 11, 11
-  CONTROL "Valores", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 112, 281, 134
-  CONTROL "", 180, "ListBox", LBS_NOTIFY|WS_BORDER, 120, 134, 200, 112
+  CONTROL "Entrada obligatoria", 120, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 120, 68, 72, 11
+  CONTROL "", 130, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 82, 50, 11
+  CONTROL "", 140, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 95, 50, 11
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 120, 108, 176, 11
+  CONTROL "+", 160, "Button", WS_TABSTOP, 297, 108, 11, 11
+  CONTROL "-", 170, "Button", WS_TABSTOP, 309, 108, 11, 11
+  CONTROL "", 180, "ListBox", LBS_NOTIFY|WS_BORDER, 120, 121, 200, 100
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 221, 223, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 276, 223, 50, 14
+  CONTROL "", IDBITMAP, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Campo extra", IDMESSAGE, "Static", WS_GROUP, 44, 3, 281, 24
+  CONTROL "Campo extra", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 29, 281, 189
+  CONTROL "Longitud", 131, "Static", WS_GROUP, 50, 85, 35, 8
+  CONTROL "Decimales", 141, "Static", WS_GROUP, 50, 98, 38, 8
+  CONTROL "Tipo *", -1, "Static", WS_GROUP, 50, 56, 22, 8
+  CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 43, 33, 8
+  CONTROL "Lista de valores", 151, "Static", WS_GROUP, 50, 111, 55, 8
 }
 
