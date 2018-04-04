@@ -162,7 +162,6 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Codigos postales", ::aProgress[ 1 ] )   ; CodigosPostales():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Provincia", ::aProgress[ 1 ] )          ; Provincias():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Paises", ::aProgress[ 1 ] )             ; TPais():Create( ::cPathDat ):Reindexa()
-         ::SetText( "Generando índices : Lenguaje", ::aProgress[ 1 ] )           ; TLenguaje():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Centro de coste", ::aProgress[ 1 ] )    ; TCentroCoste():Create( ::cPathDat ):Reindexa()
       end if
 

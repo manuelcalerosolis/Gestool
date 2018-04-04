@@ -34,7 +34,7 @@ METHOD New() CLASS PermisosController
 
    ::lConfig               := .t.
 
-   ::hImage                := { "16" => "gc_businesspeople_16" }
+   ::hImage                := { "16" => "GC_ID_BADGE_16" }
 
    ::oModel                := SQLPermisosModel():New( self )
    
@@ -314,7 +314,7 @@ METHOD Activate() CLASS PermisosView
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
-      RESOURCE    "gc_businessman_48" ;
+      RESOURCE    "GC_ID_BADGE_48" ;
       TRANSPARENT ;
       OF          oDlg
 

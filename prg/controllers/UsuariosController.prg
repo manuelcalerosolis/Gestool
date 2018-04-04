@@ -430,14 +430,6 @@ METHOD addColumns() CLASS UsuariosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'password'
-      :cHeader             := 'Contraseña'
-      :nWidth              := 180
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'password' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'creado'
       :cHeader             := 'Creado'
       :cEditPicture        := '@DT'
@@ -523,7 +515,7 @@ METHOD Activate() CLASS UsuariosView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_businessman_48" ;
+      RESOURCE    "gc_businesspeople_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -684,6 +676,8 @@ CLASS UsuariosRepository FROM SQLBaseRepository
 
    METHOD getWhereUuid( uuid ) 
 
+   METHOD fetchDirect()
+
    METHOD Crypt( cPassword )     INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
 
    METHOD getNombreUsuarioWhereNetName( cNetName )
@@ -696,11 +690,9 @@ METHOD validUserPassword( cNombre, cPassword ) CLASS UsuariosRepository
 
    local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
    cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
-
    if ( alltrim( cPassword ) != __encryption_key__ ) .and. !( "NOPASSWORD" $ appParamsMain() )
       cSQL     +=     "AND password = " + quoted( ::Crypt( cPassword ) )      + " " 
    end if 
-
    cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
@@ -727,6 +719,14 @@ METHOD getWhereUuid( Uuid ) CLASS UsuariosRepository
    cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD fetchDirect() CLASS UsuariosRepository
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()
+
+RETURN ( ::getDatabase():Query( cSQL ) )
 
 //---------------------------------------------------------------------------//
 

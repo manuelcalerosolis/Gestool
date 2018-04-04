@@ -284,31 +284,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-<<<<<<< HEAD
    CamposExtraController():New():ActivateNavigatorView()
-=======
-   local oRowSet
-
-   try
-
-   // oRowSet      := TRowSet():new( getSQLDatabase():oConexion, "SELECT * FROM usuarios" )
-
-   catch
-
-
-   end 
-
-   // msgalert( oRowSet:getAttribute( ATTR_STR_PAD ) )
-
-<<<<<<< HEAD
-   //msgalert( SuperUsuarioController():New():DialogViewActivate() )
-=======
-   // msgalert( SuperUsuarioController():New():DialogViewActivate() )
-
-   getSQLDatabase():Export( "test.sql" )
->>>>>>> a5cd1c91869dc48aee30959d005d285fc8faefc3
->>>>>>> e2e440a43d95a4ad670f5e53fddfbf683fa4bd5a
-
+   
 RETURN nil
 
 //----------------------------------------------------------------------------//
@@ -2370,7 +2347,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Usuarios y grupos'
+   oItem:cPrompt        := 'Usuarios'
    oItem:cMessage       := 'Acceso a los usuarios del programa'
    oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
    oItem:cId            := "usuarios"
@@ -2383,9 +2360,10 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Roles'
    oItem:cMessage       := 'Roles'
    oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios_roles"
    oItem:cId            := "usuarios_beta"
-   oItem:cBmp           := "gc_businesspeople_16"
-   oItem:cBmpBig        := "gc_businesspeople_32"
+   oItem:cBmp           := "gc_id_cards_16"
+   oItem:cBmpBig        := "gc_id_cards_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -2393,9 +2371,9 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Permisos'
    oItem:cMessage       := 'Permisos'
    oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
-   oItem:cId            := "usuarios_beta"
-   oItem:cBmp           := "gc_businesspeople_16"
-   oItem:cBmpBig        := "gc_businesspeople_32"
+   oItem:cId            := "usuarios_permisos"
+   oItem:cBmp           := "gc_id_badge_16"
+   oItem:cBmpBig        := "gc_id_badge_32"
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
