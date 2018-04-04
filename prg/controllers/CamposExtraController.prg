@@ -31,7 +31,7 @@ METHOD New() CLASS CamposExtraController
 
    ::oDialogView              := CamposExtraView():New( self )
 
-   ::oValidator               := CamposExtraValidator():New( self )
+   ::oValidator               := CamposExtraValidator():New( self, ::oDialogView )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -81,14 +81,6 @@ METHOD addColumns() CLASS CamposExtraBrowseView
    end with 
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'requerido'
-      :cHeader             := 'Requerido'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'requerido' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tipo'
       :cHeader             := 'Tipo'
       :nWidth              := 300
@@ -132,98 +124,185 @@ RETURN ( self )
 
 CLASS CamposExtraView FROM SQLBaseView
   
-   DATA lRequerido
+   DATA oLongitud
+
+   DATA oDecimales
+
+   DATA oValorDefecto
+
+   DATA oDecimales
+
+   DATA oTipo
+
+   DATA aTipos 
+
+   DATA hTipos
+
+   DATA oAddDefecto
+
+   DATA oDelDefecto
+
+   DATA oListaDefecto
+
+   DATA cListaDefecto
+
+   DATA aListaDefecto                  
+
+   METHOD New()
+
+   METHOD enableLongitud()             INLINE ( ::oLongitud:Enable(), ::oDecimales:Enable() )
+
+   METHOD disableLongitud()            INLINE ( ::oLongitud:Disable(), ::oDecimales:Disable() )
+
+   METHOD setLongitud( nLen, nDec )    INLINE ( ::oLongitud:cText( nLen ), ::oDecimales:cText( nDec ) )
+
+   METHOD enableDefecto()              INLINE ( ::oValorDefecto:Enable(), ::oAddDefecto:Enable(), ::oDelDefecto:Enable(), ::oListaDefecto:Enable() )
+
+   METHOD disableDefecto()             INLINE ( ::oValorDefecto:Disable(), ::oAddDefecto:Disable(), ::oDelDefecto:Disable(), ::oListaDefecto:Disable() )
+
+   METHOD changeTipo( cTipo )          INLINE ( if( hhaskey( ::hTipos, cTipo ), eval( hGet( ::hTipos, cTipo ) ), ) )
+
+   METHOD addDefecto()
 
    METHOD Activate()
-
-   METHOD validDialog()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD New( oController ) CLASS CamposExtraView
+
+   ::Super:New( oController )
+
+   ::aTipos          := {  "Texto", "Número", "Fecha", "Lógico", "Lista" }
+
+   ::hTipos          := {  "Texto"  => {|| ::oLongitud:Enable(), ::oDecimales:Disable(), ::disableDefecto(), ::setLongitud( 100, 0 ) } ,;
+                           "Número" => {|| ::enableLongitud(), ::disableDefecto(), ::setLongitud( 16, 6 ) } ,;
+                           "Fecha"  => {|| ::disableLongitud(), ::setLongitud( 8, 0 ), ::disableDefecto() } ,;
+                           "Lógico" => {|| ::disableLongitud(), ::setLongitud( 1, 0 ), ::disableDefecto() } ,;
+                           "Lista"  => {|| ::disableLongitud(), ::setLongitud( 10, 0 ), ::enableDefecto() } }
+
+   ::aListaDefecto   := {}
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD Activate() CLASS CamposExtraView
 
-   local oDlg
-   local oBmpGeneral
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
-
-   ::lRequerido      := ( ::oController:oModel:hBuffer[ "requerido" ] == 1 )
-
-   DEFINE DIALOG  oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CAMPOS_EXTRA";
       TITLE       ::LblTitle() + "Campo extra"
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_user_message_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
-   REDEFINE CHECKBOX ::lRequerido ;
+   REDEFINE COMBOBOX ::oTipo ;
+      VAR         ::oController:oModel:hBuffer[ "tipo" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          oDlg
+      ITEMS       ( ::aTipos ) ;
+      OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "tipo" ] ;
+   ::oTipo:bChange   := {|| ::ChangeTipo( ::oController:oModel:hBuffer[ "tipo" ] ) }
+
+   REDEFINE GET   ::oLongitud ;
+      VAR         ::oController:oModel:hBuffer[ "longitud" ] ;
       ID          120 ;
+      PICTURE     "999" ;
+      SPINNER ;
+      MIN         1 ;
+      MAX         200 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "tipo" ) ) ;
-      OF          oDlg
-   REDEFINE GET   ::oController:oModel:hBuffer[ "longitud" ] ;
-      ID          130 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          oDlg
+      VALID       ( ::oController:oModel:hBuffer[ "longitud" ] >= 1 .and. ::oController:oModel:hBuffer[ "longitud" ] <= 200 ) ;
+      OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "decimales" ] ;
+   REDEFINE GET   ::oDecimales ;
+      VAR         ::oController:oModel:hBuffer[ "decimales" ] ;
+      ID          130 ;
+      PICTURE     "9" ;
+      SPINNER ;
+      MIN         0 ;
+      MAX         9 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:oModel:hBuffer[ "decimales" ] >= 0 .and. ::oController:oModel:hBuffer[ "decimales" ] <= 9 ) ;
+      OF          ::oDialog
+
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "requerido" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          oDlg
+      OF          ::oDialog
 
-      REDEFINE GET   ::oController:oModel:hBuffer[ "defecto" ] ;
+   REDEFINE GET   ::oValorDefecto ;
+      VAR         ::oController:oModel:hBuffer[ "defecto" ] ;
       ID          150 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          oDlg
+      OF          ::oDialog
+
+   REDEFINE BUTTON ::oAddDefecto;
+      ID          160 ;
+      OF          ::oDialog ;
+      ACTION      ( ::addDefecto() )
+
+   REDEFINE BUTTON ::oDelDefecto;
+      ID          170 ;
+      OF          ::oDialog ;
+      ACTION      ( ::oListaDefecto:Del() )
+
+   REDEFINE LISTBOX ::oListaDefecto ;
+      VAR         ::cListaDefecto ;
+      ITEMS       ::aListaDefecto ;
+      ID          180 ;
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( ::validDialog(), if( validateDialog( oDlg ), oDlg:end( IDOK ), ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F5, {|| if( ::validDialog(), if( validateDialog( oDlg ), oDlg:end( IDOK ), ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG ::oDialog CENTER
 
-   oBmpGeneral:end()
+   ::oBitmap:end()
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD validDialog() CLASS CamposExtraView
+METHOD addDefecto()
+   
+   if empty( ::oController:oModel:hBuffer[ "defecto" ] )
+      RETURN ( .f. )
+   end if 
 
-   if ::lRequerido
-      hSet( ::oController:oModel:hBuffer, "requerido", 1 )
-   else
-      hSet( ::oController:oModel:hBuffer, "requerido", 0 )
-   end if
+   ::oListaDefecto:Add( ::oController:oModel:hBuffer[ "defecto" ] )
+
+   ::oValorDefecto:cText( space( 100 ) )
+   ::oValorDefecto:setFocus()
 
 RETURN ( .t. )
 
@@ -262,10 +341,14 @@ RETURN ( ::hValidators )
 
 CLASS SQLCamposExtraModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "campos_extra"
+   DATA cTableName                           INIT "campos_extra"
 
    METHOD getColumns()
 
+   // METHOD getRequeridoAttribute( value )     INLINE ( value == 1 )
+
+   // METHOD setRequeridoAttribute( value )     INLINE ( iif( value, 1, 0 ) )
+          
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -276,17 +359,17 @@ METHOD getColumns() CLASS SQLCamposExtraModel
                                              "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "requerido",         {  "create"    => "TINYINT"                                 ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "requerido",         {  "create"    => "BIT"                                     ,;
+                                             "default"   => {|| .f. } }                               )
 
-   hset( ::hColumns, "tipo",              {  "create"    => "VARCHAR( 10 )"                          ,;
+   hset( ::hColumns, "tipo",              {  "create"    => "VARCHAR( 10 )"                           ,;
                                              "default"   => {|| space( 10 ) } }                       )
 
    hset( ::hColumns, "longitud",          {  "create"    => "TINYINT"                                 ,;

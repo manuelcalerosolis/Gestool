@@ -512,7 +512,7 @@ METHOD findById( id )
 
    local hBuffer  := atail( ::getDatabase():selectFetchHash( ::getIdSelect( id ) ) )
 
-   heval( hBuffer, {|k,v| ::getAttribute( k, v ) } )
+   heval( hBuffer, {|k,v| hset( hBuffer, k, ::getAttribute( k, v ) ) } )
 
 RETURN ( hBuffer )
 
@@ -561,7 +561,7 @@ METHOD getInsertSentence( hBuffer, lIgnore )
 
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' ) VALUES ( ', 2 )
 
-   hEval( hBuffer, {| k, v | if( k != ::cColumnKey, ::cSQLInsert += toSQLString( v ) + ", ", ) } )
+   hEval( hBuffer, {| k, v | if( k != ::cColumnKey, ::cSQLInsert += toSQLString( ::setAttribute( k, v ) ) + ", ", ) } )
 
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' )', 2 )
 
@@ -585,7 +585,7 @@ METHOD getUpdateSentence( hBuffer )
 
    for each uValue in hBuffer
       if ( uValue:__enumkey() != ::cColumnKey )
-         ::cSQLUpdate  += uValue:__enumKey() + " = " + toSQLString( uValue ) + ", "
+         ::cSQLUpdate  += uValue:__enumKey() + " = " + toSQLString( ::setAttribute( uValue:__enumKey(), uValue ) ) + ", "
       end if 
    next
 
@@ -617,7 +617,7 @@ METHOD getInsertOnDuplicateSentence( hBuffer, lDebug )
 
    for each uValue in hBuffer
       if ( uValue:__enumkey() != ::cColumnKey )
-         cSQLUpdate  += uValue:__enumKey() + " = " + toSQLString( uValue ) + ", "
+         cSQLUpdate  += uValue:__enumKey() + " = " + toSQLString( ::setAttribute( uValue:__enumKey(), uValue ) ) + ", "
       end if 
    next
 
@@ -718,17 +718,21 @@ RETURN ( cColumn )
 
 METHOD setAttribute( key, value )
 
-   if __ObjHasMethod( Self, "get" + key + "attribute" )
+   local cMethod  := "set" + strtran( key, "_", "" ) + "attribute"
+
+   if __ObjHasMethod( Self, cMethod )
       RETURN ( Self:&( cMethod )( value ) )
    end if 
 
-RETURN ( toSQLString( value ) )
+RETURN ( value )
 
 //---------------------------------------------------------------------------//
 
 METHOD getAttribute( key, value )
 
-   if __ObjHasMethod( Self, "get" + key + "attribute" )
+   local cMethod  := "get" + strtran( key, "_", "" ) + "attribute"
+
+   if __ObjHasMethod( Self, cMethod )
       RETURN ( Self:&( cMethod )( value ) )
    end if 
 
@@ -800,8 +804,8 @@ METHOD defaultCurrentBuffer()
 
       if hhaskey( h, "default" ) .and. hb_isblock( hget( h, "default" ) )
 
-         hset( ::hBuffer, h:__enumkey(), eval( hget( h, "default" ) ) )
-
+         hset( ::hBuffer, h:__enumkey(), ::getAttribute( h:__enumkey(), eval( hget( h, "default" ) ) ) )
+         
       end if
 
    next

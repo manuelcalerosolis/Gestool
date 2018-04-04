@@ -35,8 +35,8 @@ METHOD getColumns() CLASS SQLUsuarioFavoritosModel
    hset( ::hColumns, "favorito",       {  "create"    => "VARCHAR( 100 )"                          ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "visible",        {  "create"    => "TINYINT UNSIGNED NOT NULL"               ,;
-                                          "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "visible",        {  "create"    => "BIT NOT NULL"                            ,;
+                                          "default"   => {|| .f. } }                               )
 
 RETURN ( ::hColumns )
 
@@ -48,7 +48,6 @@ METHOD set( cUsuarioUuid, cFavorito, lVisible ) CLASS SQLUsuarioFavoritosModel
 
    hset( hBuffer, "usuario_uuid",   cUsuarioUuid )
    hset( hBuffer, "favorito",       cFavorito )
-   hset( hBuffer, "visible",        if( lVisible, '1', '0') )
  
 RETURN ( ::insertOnDuplicate( hBuffer ) )
 
@@ -66,17 +65,17 @@ RETURN ( getSQLDataBase():getValue( cSql ) )
 
 METHOD getVisible( cUsuarioUuid, cFavorito, lDefault ) CLASS SQLUsuarioFavoritosModel
 
-   local nVisible
+   local lVisible
    local cSql     := "SELECT visible FROM " + ::cTableName + " "
    cSql           +=    "WHERE usuario_uuid = " + quoted( cUsuarioUuid ) + " "
    cSql           +=    "AND favorito = " + quoted( cFavorito ) + " "
 
-   nVisible       := getSQLDataBase():getValue( cSql )
+   lVisible       := getSQLDataBase():getValue( cSql )
 
-   if hb_isnil( nVisible )
+   if hb_isnil( lVisible )
       RETURN ( lDefault )
    end if 
 
-RETURN ( nVisible == 1 )
+RETURN ( lVisible )
 
 //---------------------------------------------------------------------------//
