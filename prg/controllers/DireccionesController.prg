@@ -350,8 +350,8 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "movil",             {  "create"    => "VARCHAR( 15 )"                          ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
-   hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 15 )"                          ,;
-                                             "default"   => {|| space( 15 ) } }                       )
+   hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 200 )"                         ,;
+                                             "default"   => {|| space( 200 ) } }                      )  
 
 RETURN ( ::hColumns )
 
