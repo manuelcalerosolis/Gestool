@@ -2,9 +2,12 @@
 #define IDOKANDDOWN                     4
 #define IDOKANDUP                       5
 #define IDOKANDGOTO                     6
+#define IDOKNOTFOCUS                    7
+#define IDBITMAP                        8
+#define IDMESSAGE                       9
 
 /*
-Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
+Fichero de cabecera para la aplcación de Gestool-------------------------------
 */
 
 #define __GSTROTOR__                    "Gestool"

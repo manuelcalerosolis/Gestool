@@ -83,7 +83,7 @@ METHOD addColumns() CLASS CamposExtraBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tipo'
       :cHeader             := 'Tipo'
-      :nWidth              := 300
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tipo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
@@ -91,7 +91,9 @@ METHOD addColumns() CLASS CamposExtraBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'longitud'
       :cHeader             := 'Longitud'
-      :nWidth              := 300
+      :nWidth              := 60
+      :nHeadStrAlign       := AL_RIGHT
+      :nDataStrAlign       := AL_RIGHT
       :bEditValue          := {|| ::getRowSet():fieldGet( 'longitud' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
@@ -99,16 +101,10 @@ METHOD addColumns() CLASS CamposExtraBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'decimales'
       :cHeader             := 'Decimales'
-      :nWidth              := 300
+      :nWidth              := 60
+      :nHeadStrAlign       := AL_RIGHT
+      :nDataStrAlign       := AL_RIGHT
       :bEditValue          := {|| ::getRowSet():fieldGet( 'decimales' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'defecto'
-      :cHeader             := 'Defecto'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'defecto' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -128,8 +124,6 @@ CLASS CamposExtraView FROM SQLBaseView
 
    DATA oDecimales
 
-   DATA oValorDefecto
-
    DATA oDecimales
 
    DATA oTipo
@@ -138,31 +132,35 @@ CLASS CamposExtraView FROM SQLBaseView
 
    DATA hTipos
 
-   DATA oAddDefecto
+   DATA oLista
 
-   DATA oDelDefecto
+   DATA cLista
 
-   DATA oListaDefecto
+   DATA oAddListaValores
 
-   DATA cListaDefecto
+   DATA oDelListaValores 
 
-   DATA aListaDefecto                  
+   DATA oListaValores
+
+   DATA cListaValores
+
+   DATA aListaValores                  
 
    METHOD New()
 
-   METHOD enableLongitud()             INLINE ( ::oLongitud:Enable(), ::oDecimales:Enable() )
+   METHOD enableLongitud()             INLINE ( ::verticalShow( ::oLongitud ), ::verticalShow( ::oDecimales ) )
 
-   METHOD disableLongitud()            INLINE ( ::oLongitud:Disable(), ::oDecimales:Disable() )
+   METHOD disableLongitud()            INLINE ( ::verticalHide( ::oLongitud ), ::verticalHide( ::oDecimales ) )
 
    METHOD setLongitud( nLen, nDec )    INLINE ( ::oLongitud:cText( nLen ), ::oDecimales:cText( nDec ) )
 
-   METHOD enableDefecto()              INLINE ( ::oValorDefecto:Enable(), ::oAddDefecto:Enable(), ::oDelDefecto:Enable(), ::oListaDefecto:Enable() )
+   METHOD enableDefecto()              INLINE ( ::verticalShow( ::oLista ), ::verticalShow( ::oListaValores ), ::oAddListaValores:Show(), ::oDelListaValores:Show() )
 
-   METHOD disableDefecto()             INLINE ( ::oValorDefecto:Disable(), ::oAddDefecto:Disable(), ::oDelDefecto:Disable(), ::oListaDefecto:Disable() )
+   METHOD disableDefecto()             INLINE ( ::verticalHide( ::oLista ), ::verticalHide( ::oListaValores ), ::oAddListaValores:Hide(), ::oDelListaValores:Hide() )
 
    METHOD changeTipo( cTipo )          INLINE ( if( hhaskey( ::hTipos, cTipo ), eval( hGet( ::hTipos, cTipo ) ), ) )
 
-   METHOD addDefecto()
+   METHOD addListaValores()
 
    METHOD Activate()
 
@@ -176,13 +174,15 @@ METHOD New( oController ) CLASS CamposExtraView
 
    ::aTipos          := {  "Texto", "Número", "Fecha", "Lógico", "Lista" }
 
-   ::hTipos          := {  "Texto"  => {|| ::oLongitud:Enable(), ::oDecimales:Disable(), ::disableDefecto(), ::setLongitud( 100, 0 ) } ,;
-                           "Número" => {|| ::enableLongitud(), ::disableDefecto(), ::setLongitud( 16, 6 ) } ,;
-                           "Fecha"  => {|| ::disableLongitud(), ::setLongitud( 8, 0 ), ::disableDefecto() } ,;
-                           "Lógico" => {|| ::disableLongitud(), ::setLongitud( 1, 0 ), ::disableDefecto() } ,;
+   ::hTipos          := {  "Texto"  => {|| ::verticalShow( ::oLongitud ), ::verticalHide( ::oDecimales ), ::setLongitud( 100, 0 ), ::disableDefecto() },;
+                           "Número" => {|| ::enableLongitud(), ::disableDefecto(), ::setLongitud( 16, 6 ) },;
+                           "Fecha"  => {|| ::disableLongitud(), ::setLongitud( 8, 0 ), ::disableDefecto() },;
+                           "Lógico" => {|| ::disableLongitud(), ::setLongitud( 1, 0 ), ::disableDefecto() },;
                            "Lista"  => {|| ::disableLongitud(), ::setLongitud( 10, 0 ), ::enableDefecto() } }
 
-   ::aListaDefecto   := {}
+   ::cLista          := space( 200 )
+
+   ::aListaValores   := {}
 
 RETURN ( self )
 
@@ -192,16 +192,16 @@ METHOD Activate() CLASS CamposExtraView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CAMPOS_EXTRA";
-      TITLE       ::LblTitle() + "Campo extra"
+      TITLE       ::LblTitle() + "campo extra"
 
    REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
+      ID          IDBITMAP ;
       RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      ID          800 ;
+      ID          IDMESSAGE ;
       FONT        getBoldFont() ;
       OF          ::oDialog
 
@@ -220,9 +220,15 @@ METHOD Activate() CLASS CamposExtraView
 
    ::oTipo:bChange   := {|| ::ChangeTipo( ::oController:oModel:hBuffer[ "tipo" ] ) }
 
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "requerido" ] ;
+      ID          120 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
    REDEFINE GET   ::oLongitud ;
       VAR         ::oController:oModel:hBuffer[ "longitud" ] ;
-      ID          120 ;
+      ID          130 ;
+      IDSAY       131 ;
       PICTURE     "999" ;
       SPINNER ;
       MIN         1 ;
@@ -233,7 +239,8 @@ METHOD Activate() CLASS CamposExtraView
 
    REDEFINE GET   ::oDecimales ;
       VAR         ::oController:oModel:hBuffer[ "decimales" ] ;
-      ID          130 ;
+      ID          140 ;
+      IDSAY       141 ;
       PICTURE     "9" ;
       SPINNER ;
       MIN         0 ;
@@ -242,32 +249,30 @@ METHOD Activate() CLASS CamposExtraView
       VALID       ( ::oController:oModel:hBuffer[ "decimales" ] >= 0 .and. ::oController:oModel:hBuffer[ "decimales" ] <= 9 ) ;
       OF          ::oDialog
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "requerido" ] ;
-      ID          140 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oValorDefecto ;
-      VAR         ::oController:oModel:hBuffer[ "defecto" ] ;
+   REDEFINE GET   ::oLista ;
+      VAR         ::cLista ;
       ID          150 ;
+      IDSAY       151 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE BUTTON ::oAddDefecto;
+   REDEFINE BUTTON ::oAddListaValores;
       ID          160 ;
       OF          ::oDialog ;
-      ACTION      ( ::addDefecto() )
+      ACTION      ( ::addListaValores() )
 
-   REDEFINE BUTTON ::oDelDefecto;
+   REDEFINE BUTTON ::oDelListaValores ;
       ID          170 ;
       OF          ::oDialog ;
-      ACTION      ( ::oListaDefecto:Del() )
+      ACTION      ( ::oListaValores:Del() )
 
-   REDEFINE LISTBOX ::oListaDefecto ;
-      VAR         ::cListaDefecto ;
-      ITEMS       ::aListaDefecto ;
+   REDEFINE LISTBOX ::oListaValores ;
+      VAR         ::cListaValores ;
+      ITEMS       ::oController:oModel:hBuffer[ "lista" ] ;
       ID          180 ;
       OF          ::oDialog
+
+   ::oListaValores:lVisible := .t.
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -281,6 +286,8 @@ METHOD Activate() CLASS CamposExtraView
       CANCEL ;
       ACTION      ( ::oDialog:end() )
 
+   ::oDialog:bStart  := {|| ::ChangeTipo( alltrim( ::oController:oModel:hBuffer[ "tipo" ] ) ) }
+
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
@@ -293,16 +300,16 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD addDefecto()
+METHOD addListaValores()
    
-   if empty( ::oController:oModel:hBuffer[ "defecto" ] )
+   if empty( ::cLista )
       RETURN ( .f. )
    end if 
 
-   ::oListaDefecto:Add( ::oController:oModel:hBuffer[ "defecto" ] )
+   ::oListaValores:Add( alltrim( ::cLista ) )
 
-   ::oValorDefecto:cText( space( 100 ) )
-   ::oValorDefecto:setFocus()
+   ::oLista:cText( space( 100 ) )
+   ::oLista:setFocus()
 
 RETURN ( .t. )
 
@@ -345,9 +352,9 @@ CLASS SQLCamposExtraModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   // METHOD getRequeridoAttribute( value )     INLINE ( value == 1 )
+   METHOD getListaAttribute( value )         INLINE ( if( empty( value ), {}, hb_deserialize( value ) ) )
 
-   // METHOD setRequeridoAttribute( value )     INLINE ( iif( value, 1, 0 ) )
+   METHOD setListaAttribute( value )         INLINE ( hb_serialize( value ) )
           
 END CLASS
 
@@ -378,7 +385,7 @@ METHOD getColumns() CLASS SQLCamposExtraModel
    hset( ::hColumns, "decimales",         {  "create"    => "TINYINT"                                 ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "defecto",           {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "lista",             {  "create"    => "TEXT"                                    ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
 RETURN ( ::hColumns )

@@ -1,14 +1,12 @@
 MVC - ToDo
 
+- Quitar la tabla user.dbf de todos lados
+
 - Estudiar la selección de cajas y almacenes
 
 - Almacen por defecto en usuario
 
 - Delegacion por defecto en usuario
-
-- nLevelUsr debe funcionar con SQL
-
-- lUsrMaster() revisar esta funcion
 
 - Guardar configuracón de columnas en Selector
 
@@ -23,6 +21,10 @@ MVC - ToDo
 - No guarda configuracion de columnas en factura proveedor.
 
 - No muestra el importe de IVA en factura proveedores. 
+
+- nLevelUsr debe funcionar con SQL (done)
+
+- lUsrMaster() revisar esta funcion (done)
 
 - Meter codigo en la ficha de usuario (done)
 

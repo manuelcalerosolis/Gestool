@@ -2,9 +2,12 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define IDOKNOTFOCUS    9
-#define IDSERIES        4
-#define IDRELACIONES    5
+#define IDOKANDNEW      3
+#define IDOKANDDOWN     4
+#define IDOKANDUP       5
+#define IDOKANDGOTO     6
+#define IDOKNOTFOCUS    7
+#define IDBITMAP        8
+#define IDMESSAGE       9
 
 #define MANIFEST       24
-#define Campo Extra  4001
