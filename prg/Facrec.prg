@@ -114,6 +114,7 @@
 #define _NDTOTARIFA 	      102
 #define _TFECFAC 		      103
 #define _CCENTROCOSTE	   104
+#define _UUID_TRN          105
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -12871,6 +12872,7 @@ function aItmFacRec()
    aAdd( aItmFacRec, { "nDtoTarifa"  ,"N",  6, 2, "Descuento de tarifa de cliente",                          "DescuentoTarifa",         "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "tFecFac"     ,"C",  9, 0, "Hora de la factura rectificativa",                        "HoraFactura",             "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "cCtrCoste"   ,"C",  9, 0, "Código del centro de coste",                              "CentroCoste",             "", "( cDbf )", nil } )
+   aAdd( aItmFacRec, { "Uuid_Trn"    ,"C", 40, 0, "Identificador transportista" ,                            "UuidTransportista",       "", "( cDbf )", nil } )
 
 RETURN ( aItmFacRec )
 
@@ -13382,6 +13384,7 @@ function SynFacRec( cPath )
    local aNumSer
    local dbfFacRecL
    local dbfArticulo
+   local objTrans
 
    DEFAULT cPath     := cPatEmp()
 
@@ -13428,6 +13431,9 @@ function SynFacRec( cPath )
       oNewImp        := TNewImp():Create( cPatEmp() )
       oNewImp:OpenFiles()
 
+      objTrans            := TTrans():New( cPatEmp() )
+      objTrans:OpenFiles()
+
       // Cabeceras-------------------------------------------------------------
 
 		( dbfFacRecT )->( ordSetFocus( 0 ) )
@@ -13445,6 +13451,10 @@ function SynFacRec( cPath )
 
          if empty( ( dbfFacRecT )->cCodCaj )
             ( dbfFacRecT )->cCodCaj := "000"
+         end if
+
+         if Empty( ( dbfFacRecT )->Uuid_Trn )
+            ( dbfFacRecT )->Uuid_Trn := objTrans:GetField( ( dbfFacRecT )->cCodTrn, "uuid" )
          end if
 
          /*
@@ -13574,6 +13584,8 @@ function SynFacRec( cPath )
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+   objTrans:End()
 
    CLOSE ( dbfFacRecT  )
    CLOSE ( dbfFacRecL  )

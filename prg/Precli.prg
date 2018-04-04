@@ -99,6 +99,7 @@ Definici¢n de la base de datos de presupuestos a clientes
 #define _LINTERNET                84
 #define _MFIRMA                   85
 #define _CCENTROCOSTE             86
+#define _UUID_TRN                 87
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -10441,6 +10442,7 @@ function aItmPreCli()
    aAdd( aItmPreCli, { "lInternet", "L",  1,  0, "Pedido desde internet" ,                            "",                              "", "( cDbf )", nil } )
    aAdd( aItmPreCli, { "mFirma",    "M", 10,  2, "Firma",                                             "Firma",                         "", "( cDbf )", nil } )
    aAdd( aItmPreCli, { "cCtrCoste", "C",  9,  0, "Código del centro de coste" ,                       "CentroCoste",                   "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "Uuid_Trn",  "C", 40,  0, "Identificador transportista" ,                      "UuidTransportista",             "", "( cDbf )", nil } )
 
 return ( aItmPreCli )
 
@@ -10858,6 +10860,7 @@ Function SynPreCli( cPath )
    local dbfFPago
    local dbfIva
    local dbfDiv
+   local objTrans
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -10889,6 +10892,9 @@ Function SynPreCli( cPath )
    USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
+   objTrans            := TTrans():New( cPatEmp() )
+   objTrans:OpenFiles()
+
    ( dbfPreCliT )->( ordSetFocus( 0 ) )
    ( dbfPreCliT )->( dbGoTop() )
 
@@ -10908,6 +10914,10 @@ Function SynPreCli( cPath )
 
          if Empty( ( dbfPreCliT )->cCodGrp )
             ( dbfPreCliT )->cCodGrp := RetGrpCli( ( dbfPreCliT )->cCodCli, dbfClient )
+         end if
+
+         if Empty( ( dbfPreCliT )->Uuid_Trn )
+            ( dbfPreCliT )->Uuid_Trn := objTrans:GetField( ( dbfPreCliT )->cCodTrn, "uuid" )
          end if
 
          /*
@@ -11009,6 +11019,8 @@ Function SynPreCli( cPath )
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+   objTrans:End()
 
    CLOSE ( dbfPreCliT )
    CLOSE ( dbfPreCliL )

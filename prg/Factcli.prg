@@ -159,6 +159,7 @@
 #define _TFECFAC           129
 #define _CCENTROCOSTE      130
 #define _MFIRMA            131
+#define _UUID_TRN          132
 
 /*
 Definici-n de la base de datos de lineas de detalle
@@ -18369,6 +18370,10 @@ function SynFacCli( cPath )
             end if 
          end if
 
+         if Empty( ( D():FacturasClientes( nView ) )->Uuid_Trn )
+            ( D():FacturasClientes( nView ) )->Uuid_Trn := oTrans:GetField( ( D():FacturasClientes( nView ) )->cCodTrn, "uuid" )
+         end if
+
          /*
          Esto es para la Jaca para que todas las facturas tengan las comisiones de agente bien-------------------------------------
          */
@@ -19765,6 +19770,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"tFecFac"     ,"C", 6,   0, "Hora de la factura" ,                                       "HoraFactura",                 "", "( cDbf )", {|| getSysTime() } } )
    aAdd( aItmFacCli, {"cCtrCoste"   ,"C", 9,   0, "Código del centro de coste" ,                               "CentroCoste",                 "", "( cDbf )", nil } )
    aAdd( aItmFacCli, { "mFirma"     ,"M", 10,  0, "Firma" ,                                                    "Firma",                       "", "( cDbf )", nil } )                  
+   aAdd( aItmFacCli, { "Uuid_Trn"   ,"C", 40,  0, "Identificador transportista" ,                              "UuidTransportista",           "", "( cDbf )", nil } )
 
 RETURN ( aItmFacCli )
 

@@ -2415,6 +2415,7 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Transpor.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Transpor.Cdx"
    oDataTable:cDescription := "Transportistas"
+   oDataTable:bSyncFile    := {|| SynTransportista( cPatEmp() ) }
    oDataTable:bCreateFile  := {| cPath | TTrans():BuildFiles( cPath ) }
    ::AddEmpresaTable( oDataTable )
 

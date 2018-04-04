@@ -9,6 +9,8 @@ CLASS TransportistasController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD SetSelectorToGet( oGet, oSay )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -40,6 +42,28 @@ METHOD New() CLASS TransportistasController
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetSelectorToGet( oGet, oSay ) CLASS TransportistasController
+
+   local hLenguaje    := ::ActivateSelectorView() 
+
+   /*if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "codigo" )
+      oGet:cText( hget( hLenguaje, "codigo" ) )
+   else
+      oGet:cText( "" )
+   end if
+
+   if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "codigo" )
+      oSay:cText( hget( hLenguaje, "nombre" ) )
+   else
+      oSay:cText( "" )
+   end if*/
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

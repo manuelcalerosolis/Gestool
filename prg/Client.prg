@@ -148,7 +148,8 @@
 #define _LINACLI                 138  
 #define _DFECINA                 139  
 #define _CMOTINA                 140  
-#define _DALTA                   141  
+#define _DALTA                   141 
+#define _UUID_TRN                142 
 
 #define _aCCODCLI                  1     //   C     12     0
 #define _aCCODGRP                  2     //   C     12     0
@@ -6806,6 +6807,13 @@ Function SynClient( cPath )
 
          end if
 
+         if Empty( ( D():Clientes( nView ) )->Uuid_Trn )
+            if D():Lock( "Client", nView )
+               ( D():Clientes( nView ) )->Uuid_Trn := oTrans:GetField( ( D():Clientes( nView ) )->cCodTrn, "uuid" )
+               D():UnLock( "Client", nView ) 
+            end if
+         end if
+
          ( D():Clientes( nView ) )->( dbSkip() )
 
       end while
@@ -9042,6 +9050,7 @@ FUNCTION aItmCli()
    aAdd( aBase, { "dFecIna",   "D",  8, 0, "Fecha de inactividad del cliente",              "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cMotIna",   "C",250, 0, "Motivo de inactividad del cliente",             "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "dAlta",     "D",  8, 0, "Fecha de alta del cliente",                     "",                      "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "Uuid_Trn",  "C", 40, 0, "Identificador transportista" ,                  "UuidTransportista",     "", "( cDbfCli )", nil } )
 
 RETURN ( aBase )
 
