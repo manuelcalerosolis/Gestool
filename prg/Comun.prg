@@ -2360,15 +2360,9 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Roles'
    oItem:cMessage       := 'Roles'
    oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
-<<<<<<< HEAD
    oItem:cId            := "usuarios_roles"
-   oItem:cBmp           := "gc_businesspeople_16"
-   oItem:cBmpBig        := "gc_businesspeople_32"
-=======
-   oItem:cId            := "usuarios_beta"
    oItem:cBmp           := "GC_ID_CARDS_16"
    oItem:cBmpBig        := "GC_ID_CARDS_32"
->>>>>>> 9eef7a083d5c37459562887e2d5b51d33213ab01
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -2376,15 +2370,9 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cPrompt        := 'Permisos'
    oItem:cMessage       := 'Permisos'
    oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
-<<<<<<< HEAD
    oItem:cId            := "usuarios_permisos"
-   oItem:cBmp           := "gc_businesspeople_16"
-   oItem:cBmpBig        := "gc_businesspeople_32"
-=======
-   oItem:cId            := "usuarios_beta"
    oItem:cBmp           := "GC_ID_BADGE_16"
    oItem:cBmpBig        := "GC_ID_BADGE_32"
->>>>>>> 9eef7a083d5c37459562887e2d5b51d33213ab01
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
