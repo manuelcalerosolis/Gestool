@@ -79,10 +79,6 @@ CLASS MovimientosAlmacenLineasView FROM SQLBaseView
 
    METHOD searchCodeGS128( nKey, cCodigoArticulo )
 
-   METHOD verticalHide()
-
-   METHOD verticalShow()
-
    METHOD EdtRecMenu()
 
 END CLASS
@@ -374,50 +370,6 @@ METHOD hidePrecios()
       ::verticalHide( ::oSayTextImporte )
 
    end if 
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD verticalHide( oControl )
-
-   local nId     
-   local nHeight  
-
-   if !( oControl:lVisible )
-      RETURN ( .f. )
-   end if  
-
-   nId            := oControl:nId
-   nHeight        := oControl:nHeight + 1
-
-   oControl:Hide()
-
-   aeval( ::oDialog:aControls,;
-      {|oControl| if( oControl:nId >= 100 .and. oControl:nId > nId,;
-         oControl:move( oControl:nTop - nHeight, oControl:nLeft, oControl:nWidth, oControl:nHeight ), ) } )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD verticalShow( oControl )
-
-   local nId     
-   local nHeight 
-
-   if oControl:lVisible
-      RETURN ( .f. )
-   end if  
-
-   nId            := oControl:nId
-   nHeight        := oControl:nHeight + 1
-
-   oControl:Show()
-
-   aeval( ::oDialog:aControls,;
-      {|oControl| if( oControl:nId >= 100 .and. oControl:nId > nId,;
-         oControl:move( oControl:nTop + nHeight, oControl:nLeft, oControl:nWidth, oControl:nHeight ), ) } )
 
 RETURN ( .t. )
 
