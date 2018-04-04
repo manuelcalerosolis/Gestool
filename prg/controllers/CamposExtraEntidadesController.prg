@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraController FROM SQLNavigatorController
+CLASS CamposExtraEntidadesController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -11,13 +11,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS CamposExtraController
+METHOD New() CLASS CamposExtraEntidadesController
 
    ::Super:New()
 
-   ::cTitle                   := "Campos Extra"
+   ::cTitle                   := "Campos Extra Entidades"
 
-   ::setName( "campos_extra" )
+   ::setName( "campos_extra_entidades" )
 
    ::nLevel                   := Auth():Level( ::getName() )
 
@@ -25,13 +25,13 @@ METHOD New() CLASS CamposExtraController
                                     "32" => "gc_user_message_32",;
                                     "48" => "gc_user_message_48" }
 
-   ::oModel                   := SQLCamposExtraModel():New( self )
+   ::oModel                   := SQLCamposExtraEntidadesModel():New( self )
 
-   ::oBrowseView              := CamposExtraBrowseView():New( self )
+   ::oBrowseView              := CamposExtraEntidadesBrowseView():New( self )
 
-   ::oDialogView              := CamposExtraView():New( self )
+   ::oDialogView              := CamposExtraEntidadesView():New( self )
 
-   ::oValidator               := CamposExtraValidator():New( self, ::oDialogView )
+   ::oValidator               := CamposExtraEntidadesValidator():New( self, ::oDialogView )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -46,7 +46,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraBrowseView FROM SQLBrowseView
+CLASS CamposExtraEntidadesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -54,7 +54,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS CamposExtraBrowseView
+METHOD addColumns() CLASS CamposExtraEntidadesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -62,6 +62,7 @@ METHOD addColumns() CLASS CamposExtraBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -78,6 +79,7 @@ METHOD addColumns() CLASS CamposExtraBrowseView
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid_campo_extra' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with 
 
    with object ( ::oBrowse:AddCol() )
@@ -98,55 +100,42 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraView FROM SQLBaseView
-  
-   DATA oLongitud
+CLASS CamposExtraEntidadesView FROM SQLBaseView
 
-   DATA oDecimales
-
-   DATA oValorDefecto
-
-   DATA oDecimales
-
-   DATA oTipo
-
-   DATA aTipos 
-
-   DATA hTipos
-
-   DATA oAddDefecto
-
-   DATA oDelDefecto
-
-   DATA oListaDefecto
-
-   DATA cListaDefecto
-
-   DATA aListaDefecto                  
+   CLASSDATA CEADD  INIT {    "articulos" =>                            { "nombre" => "Artículos",  "icono" => "gc_object_cube_16"                                     } ,;
+                              "clientes" =>                             { "nombre" => "Clientes",  "icono" => "gc_user_16"                                             } ,;
+                              "proveedores" =>                          { "nombre" => "Proveedores",  "icono" => "gc_businessman_16"                                   } ,;
+                              "familias" =>                             { "nombre" => "Familias",  "icono" => "gc_cubes_16"                                            } ,;
+                              "agentes" =>                              { "nombre" => "Agentes",  "icono" => "gc_businessman2_16"                                      } ,;
+                              "presupuestos_clientes" =>                { "nombre" => "Presupuestos a clientes",  "icono" => "gc_notebook_user_16"                     } ,;
+                              "pedidos_clientes" =>                     { "nombre" => "Pedidos a clientes",  "icono" => "gc_clipboard_empty_user_16"                   } ,;
+                              "albaranes_clientes" =>                   { "nombre" => "Albaranes a clientes",  "icono" => "gc_document_empty_16"                       } ,;
+                              "lineas_albaranes_clientes" =>            { "nombre" => "Lineas de albaranes a clientes",  "icono" => "gc_document_empty_16"             } ,;
+                              "facturas_clientes" =>                    { "nombre" => "Facturas a clientes",  "icono" => "gc_document_text_user_16"                    } ,;
+                              "lineas_facturas_clientes" =>             { "nombre" => "Lineas de facturas a clientes",  "icono" => "gc_document_text_user_16"          } ,;
+                              "facturas_anticipos_clientes" =>          { "nombre" => "Facturas de anticipos a clientes",  "icono" => "gc_document_text_money2_16"     } ,;
+                              "rectificativa_clientes" =>               { "nombre" => "Facturas rectificativa a clientes",  "icono" => "gc_document_text_delete_16"    } ,;
+                              "pedidos_proveedores" =>                  { "nombre" => "Pedidos a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"         } ,;
+                              "lineas_pedidos_proveedores" =>           { "nombre" => "Lineas pedidos a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"  } ,;
+                              "albaranes_proveedores" =>                { "nombre" => "Albaranes a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"       } ,;
+                              "lineas_albaranes_proveedores" =>         { "nombre" => "Lineas albaranes a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"} ,;
+                              "facturas_proveedores" =>                 { "nombre" => "Facturas a proveedores",  "icono" => "gc_document_text_businessman_16"          } ,;
+                              "lineas_facturas_proveedores" =>          { "nombre" => "Lineas facturas a proveedores",  "icono" => "gc_document_text_businessman_16"   } ,;
+                              "facturas_rectificativa_proveedores"=>    {"nombre" => "Facturas rectificativa a proveedores",  "icono" => "gc_document_text_delete2_16" } ,;
+                              "sat" =>                                  { "nombre" => "S.A.T",  "icono" => "gc_power_drill_sat_user_16"                                } ,;
+                              "envases_articulos" =>                    { "nombre" => "Envases de artículos",  "icono" => "gc_box_closed_16"                           } ,;
+                              "grupos_clientes"   =>                    { "nombre" => "Grupos de clientes",  "icono" => "gc_users3_16"                                 } ,;
+                              "propiedades"       =>                    { "nombre" => "Propiedades",  "icono" => "gc_coathanger_16"                                    } ,;
+                              "lineas_propiedades" =>                   { "nombre" => "Lineas de propiedades",  "icono" => "gc_coathanger_16"                          } ,;
+                           }   
 
    METHOD New()
-
-   METHOD enableLongitud()             INLINE ( ::oLongitud:Enable(), ::oDecimales:Enable() )
-
-   METHOD disableLongitud()            INLINE ( ::oLongitud:Disable(), ::oDecimales:Disable() )
-
-   METHOD setLongitud( nLen, nDec )    INLINE ( ::oLongitud:cText( nLen ), ::oDecimales:cText( nDec ) )
-
-   METHOD enableDefecto()              INLINE ( ::oValorDefecto:Enable(), ::oAddDefecto:Enable(), ::oDelDefecto:Enable(), ::oListaDefecto:Enable() )
-
-   METHOD disableDefecto()             INLINE ( ::oValorDefecto:Disable(), ::oAddDefecto:Disable(), ::oDelDefecto:Disable(), ::oListaDefecto:Disable() )
-
-   METHOD changeTipo( cTipo )          INLINE ( if( hhaskey( ::hTipos, cTipo ), eval( hGet( ::hTipos, cTipo ) ), ) )
-
-   METHOD addDefecto()
-
-   METHOD Activate()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS CamposExtraView
+/*METHOD New( oController ) CLASS CamposExtraEntidadesView
 
    ::Super:New( oController )
 
@@ -155,19 +144,19 @@ METHOD New( oController ) CLASS CamposExtraView
    ::hTipos          := {  "Texto"  => {|| ::oLongitud:Enable(), ::oDecimales:Disable(), ::disableDefecto(), ::setLongitud( 100, 0 ) } ,;
                            "Número" => {|| ::enableLongitud(), ::disableDefecto(), ::setLongitud( 16, 6 ) } ,;
                            "Fecha"  => {|| ::disableLongitud(), ::setLongitud( 8, 0 ), ::disableDefecto() } ,;
-                           "Lógico" => {|| ::disableLongitud(), ::setLongitud( 1, 0 ), ::disableDefecto() } ,;
+                           "Lógico" =>  {|| ::disableLongitud(), ::setLongitud( 1, 0 ), ::disableDefecto() } ,;
                            "Lista"  => {|| ::disableLongitud(), ::setLongitud( 10, 0 ), ::enableDefecto() } }
 
    ::aListaDefecto   := {}
 
-RETURN ( self )
+RETURN ( self )*/
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS CamposExtraView
+METHOD Activate() CLASS CamposExtraEntidadesView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CAMPOS_EXTRA";
+      RESOURCE    "CAMPOS_EXTRA_ENTIDAD";
       TITLE       ::LblTitle() + "Campo extra"
 
    REDEFINE BITMAP ::oBitmap ;
@@ -181,69 +170,28 @@ METHOD Activate() CLASS CamposExtraView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "uuid_campo_extra" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
+      VALID       ( ::oController:validate( "uuid_campo_extra" ) ) ;
       OF          ::oDialog
 
    REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:oModel:hBuffer[ "tipo" ] ;
+      VAR         ::oController:oModel:hBuffer[ "entidad" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ITEMS       ( ::aTipos ) ;
       OF          ::oDialog
 
-   ::oTipo:bChange   := {|| ::ChangeTipo( ::oController:oModel:hBuffer[ "tipo" ] ) }
-
-   REDEFINE GET   ::oLongitud ;
-      VAR         ::oController:oModel:hBuffer[ "longitud" ] ;
-      ID          120 ;
-      PICTURE     "999" ;
-      SPINNER ;
-      MIN         1 ;
-      MAX         200 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:oModel:hBuffer[ "longitud" ] >= 1 .and. ::oController:oModel:hBuffer[ "longitud" ] <= 200 ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oDecimales ;
-      VAR         ::oController:oModel:hBuffer[ "decimales" ] ;
-      ID          130 ;
-      PICTURE     "9" ;
-      SPINNER ;
-      MIN         0 ;
-      MAX         9 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:oModel:hBuffer[ "decimales" ] >= 0 .and. ::oController:oModel:hBuffer[ "decimales" ] <= 9 ) ;
-      OF          ::oDialog
-
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "requerido" ] ;
-      ID          140 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oValorDefecto ;
-      VAR         ::oController:oModel:hBuffer[ "defecto" ] ;
-      ID          150 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
-
    REDEFINE BUTTON ::oAddDefecto;
-      ID          160 ;
+      ID          120 ;
       OF          ::oDialog ;
       ACTION      ( ::addDefecto() )
 
    REDEFINE BUTTON ::oDelDefecto;
-      ID          170 ;
+      ID          130 ;
       OF          ::oDialog ;
       ACTION      ( ::oListaDefecto:Del() )
-
-   REDEFINE LISTBOX ::oListaDefecto ;
-      VAR         ::cListaDefecto ;
-      ITEMS       ::aListaDefecto ;
-      ID          180 ;
-      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -268,20 +216,6 @@ METHOD Activate() CLASS CamposExtraView
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
-
-METHOD addDefecto()
-   
-   if empty( ::oController:oModel:hBuffer[ "defecto" ] )
-      RETURN ( .f. )
-   end if 
-
-   ::oListaDefecto:Add( ::oController:oModel:hBuffer[ "defecto" ] )
-
-   ::oValorDefecto:cText( space( 100 ) )
-   ::oValorDefecto:setFocus()
-
-RETURN ( .t. )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -289,7 +223,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraValidator FROM SQLBaseValidator
+CLASS CamposExtraEntidadesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -297,9 +231,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS CamposExtraValidator
+METHOD getValidators() CLASS CamposExtraEntidadesValidator
 
-   ::hValidators  := {     "campo_extra" =>  {  "required"     => "El  campo extra es un dato requerido",;
+   ::hValidators  := {     "nombre" =>          {  "required"     => "El  campo extra es un dato requerido",;
                                                    "unique"       => "El nombre introducido ya existe" } ,;   
                            "tipo"     =>        {  "required"     => "El tipo es un dato requerido"} ,; 
                            "longitud" =>        {  "required"     => "La longitud es un dato requerido"} }
@@ -315,9 +249,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCamposExtraModel FROM SQLBaseModel
+CLASS SQLCamposExtraEntidadesModel FROM SQLBaseModel
 
-   DATA cTableName                           INIT "campos_extra"
+   DATA cTableName                           INIT "campos_extra_entidad"
 
    METHOD getColumns()
 
@@ -329,7 +263,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLCamposExtraModel
+METHOD getColumns() CLASS SQLCamposExtraEntidadesModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "text"      => "Identificador"                           ,;
@@ -339,23 +273,12 @@ METHOD getColumns() CLASS SQLCamposExtraModel
                                              "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "uuid_campo_extra",  {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                             "text"      => "Uuid_campo_extra"                        ,;
+                                             "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "requerido",         {  "create"    => "BIT"                                     ,;
-                                             "default"   => {|| .f. } }                               )
-
-   hset( ::hColumns, "tipo",              {  "create"    => "VARCHAR( 10 )"                           ,;
-                                             "default"   => {|| space( 10 ) } }                       )
-
-   hset( ::hColumns, "longitud",          {  "create"    => "TINYINT"                                 ,;
-                                             "default"   => {|| 0 } }                                 )
-
-   hset( ::hColumns, "decimales",         {  "create"    => "TINYINT"                                 ,;
-                                             "default"   => {|| 0 } }                                 )
-
-   hset( ::hColumns, "defecto",           {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "entidad",           {  "create"    => "VARCHAR ( 30 )"                          ,;
+                                             "default"   => {|| space( 30 ) } }                       )
 
 RETURN ( ::hColumns )
 
@@ -369,9 +292,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraRepository FROM SQLBaseRepository
+CLASS CamposExtraEntidadesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( SQLCamposExtraModel():getTableName() ) 
+   METHOD getTableName()         INLINE ( SQLCamposExtraEntidadesModel():getTableName() ) 
 
 END CLASS
 
