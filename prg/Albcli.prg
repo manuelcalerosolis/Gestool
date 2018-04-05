@@ -5602,6 +5602,8 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
    aGet[ _CCODTRN ]:cText( ( dbfPedCliT )->cCodTrn )
    aGet[ _CCODTRN ]:lValid()
 
+   aTmp[ _UUID_TRN ] := ( dbfPedCliT )->Uuid_Trn
+
    aGet[ _LIVAINC ]:Click( ( dbfPedCliT )->lIvaInc )
    aGet[ _LRECARGO]:Click( ( dbfPedCliT )->lRecargo )
    aGet[ _LOPERPV ]:Click( ( dbfPedCliT )->lOperPv )

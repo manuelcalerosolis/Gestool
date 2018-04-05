@@ -11820,6 +11820,8 @@ STATIC FUNCTION cPreCli( aTmp, aGet, oBrw, nMode )
          aGet[_LOPERPV ]:Click( ( dbfPreCLiT )->lOperPv ):Refresh()
          aGet[_LIVAINC ]:Click( ( dbfPreCliT )->lIvaInc ):Refresh()
 
+         aTmp[ _UUID_TRN ] := ( dbfPreCliT )->Uuid_Trn
+
          /*
          Pasamos los comentarios-----------------------------------------------
          */

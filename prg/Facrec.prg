@@ -8923,6 +8923,8 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
       aGet[ _CCODTRN ]:cText( ( dbfFacCliT )->cCodTrn )
       aGet[ _CCODTRN ]:lValid()
 
+      aTmp[ _UUID_TRN ] := ( dbfFacCliT )->Uuid_Trn
+
       aGet[ _LRECARGO ]:Click( ( dbfFacCliT )->lRecargo )
       aGet[ _LOPERPV  ]:Click( ( dbfFacCliT )->lOperPv )
 

@@ -9,7 +9,7 @@ CLASS TransportistasController FROM SQLNavigatorController
 
    METHOD New()
 
-   METHOD SetSelectorToGet( oGet, oSay )
+   METHOD SetSelectorToGet( oGet )
 
 END CLASS
 
@@ -45,26 +45,25 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetSelectorToGet( oGet, oSay ) CLASS TransportistasController
+METHOD SetSelectorToGet( oGet, cGet ) CLASS TransportistasController
 
-   local hLenguaje    := ::ActivateSelectorView() 
+   local hLenguaje            := ::ActivateSelectorView() 
 
-   /*if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "codigo" )
-      oGet:cText( hget( hLenguaje, "codigo" ) )
+   if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "nombre" )
+      oGet:cText( hget( hLenguaje, "nombre" ) )
    else
       oGet:cText( "" )
    end if
 
-   if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "codigo" )
-      oSay:cText( hget( hLenguaje, "nombre" ) )
+   if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "uuid" )
+      cGet  := hget( hLenguaje, "uuid" )
    else
-      oSay:cText( "" )
-   end if*/
+      cGet  := ""
+   end if
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -244,6 +243,8 @@ CLASS SQLTransportistasModel FROM SQLBaseModel
 
    DATA cTableName               INIT "transportistas"
 
+   MESSAGE getNombre( uuid )      INLINE ( ::getField( "nombre", "uuid", uuid ) )
+
    METHOD getColumns()
 
 END CLASS
@@ -282,7 +283,20 @@ CLASS TransportistasRepository FROM SQLBaseRepository
 
    METHOD getTableName()         INLINE ( SQLTransportistasModel():getTableName() ) 
 
+   METHOD getNombres()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getNombres() CLASS TransportistasRepository
+
+   local cSentence               := "SELECT nombre, uuid FROM " + ::getTableName()
+   local aNombres                := ::getDatabase():selectFetch( cSentence )
+
+RETURN ( aNombres )
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
