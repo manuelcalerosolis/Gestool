@@ -41,7 +41,7 @@ CLASS SQLRowSet
 
    METHOD Build( cSentence )                    
 
-   METHOD refreshAndFindId( nId )                     INLINE ( ::Refresh(), ::FindId( nId ) )
+   METHOD refreshAndFindId( nId )                     INLINE ( msgalert(nId, "nId refreshAndFindId"), ::Refresh(), ::FindId( nId ) )
    METHOD buildAndFindId( nId )                       INLINE ( ::Build(), ::FindId( nId ) )
 
    METHOD refreshAndFindString( cFind, cColumn )      INLINE ( ::Refresh(), ::FindString( cFind, cColumn ) )

@@ -116,7 +116,11 @@ METHOD Resource() CLASS AccessCode
 
    DEFINE BRUSH ::oBrush COLOR Rgb( 255, 255, 255 ) // FILE ( cBmpVersion() ) 
 
-   DEFINE DIALOG oDlg RESOURCE "Bienvenidos" TITLE "Bienvenidos a " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + " - " + __GSTFACTORY__ BRUSH ::oBrush ICON oIcoApp
+   DEFINE DIALOG     oDlg ;
+      RESOURCE       "Bienvenidos" ;
+      TITLE          "Bienvenidos a " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + " - " + __GSTFACTORY__ ;
+      BRUSH          ::oBrush ;
+      ICON           oIcoApp
 
    REDEFINE BITMAP   oBmpVersion ;
       ID             600 ;
@@ -352,80 +356,52 @@ METHOD TactilResource() CLASS AccessCode
    Montamos el diálogo con la imágen de fondo--------------------------------
    */
 
-   DEFINE DIALOG oDlg RESOURCE "BienvenidosTactil" TITLE __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + " - " + __GSTFACTORY__ BRUSH ::oBrush
+   DEFINE DIALOG  oDlg   ;
+      RESOURCE    "BIENVENIDOS_TACTIL" ;
+      TITLE       __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + " - " + __GSTFACTORY__ 
 
    REDEFINE BITMAP oBmpVersion ;
-      FILE     cBmpVersion() ;
-      ID       600 ;
-      OF       oDlg
+      FILE        cBmpVersion() ;
+      ID          600 ;
+      OF          oDlg
 
-      /*
-      Montamos la lista con los usuarios-------------------------------------
-      */
+   /*
+   Montamos la lista con los usuarios-------------------------------------
+   */
 
-      oImgUsr                 := TImageList():New( 50, 50 ) //
+   oImgUsr        := TImageList():New( 50, 50 ) //
 
-      oLstUsr                 := TListView():Redefine( 100, oDlg )
-      oLstUsr:nOption         := 0
-      oLstUsr:bClick          := {| nOpt | ::SelectTactilResource( nOpt, oDlg, oLstUsr ) }
+   oLstUsr           := TListView():Redefine( 100, oDlg )
+   oLstUsr:nOption   := 0
+   oLstUsr:bClick    := {| nOpt | ::SelectTactilResource( nOpt, oDlg, oLstUsr ) }
 
-      /*
-      Información global-------------------------------------------------------
-      */
+   /*
+   Información global-------------------------------------------------------
+   */
 
-      ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Powered by MariaDB SQL Database", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-      ::cBmpEngine            := "gc_data_48"
+   ::oProgress    := TApoloMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
-      ::oSayDatabase:SetTransparent()
+   /*
+   Botones de la caja de diálogo--------------------------------------------
+   */
 
-      REDEFINE IMAGE ::oBmpEngine ;
-         ID       200 ;
-         RESOURCE ::cBmpEngine ;
-         OF       oDlg
+   REDEFINE BUTTON ID IDCANCEL OF oDlg ACTION ( oDlg:end() )
 
-      TWebBtn():Redefine( 220,,,,,, oDlg,,,, cNameVersion(), "Left",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
+   /*
+   Al iniciar el diálogo cargamos las imágenes de los usuarios--------------
+   */
 
-      ::oProgress                := TApoloMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
-
-      REDEFINE SAY ::oMessage PROMPT "" ID 160 COLOR Rgb( 0,0,0 ), Rgb( 255,255,255 ) OF oDlg
-
-      /*
-      Botones de la caja de diálogo--------------------------------------------
-      */
-
-      REDEFINE BUTTON ID IDCANCEL OF oDlg ACTION ( oDlg:end() )
-
-      /*
-      Al iniciar el diálogo cargamos las imágenes de los usuarios--------------
-      */
-
-      oDlg:bStart                := {|| ::InitTactilResource( oDlg, oImgUsr, oLstUsr ) }
+   oDlg:bStart       := {|| ::InitTactilResource( oDlg, oImgUsr, oLstUsr ) }
 
    ACTIVATE DIALOG oDlg CENTER
-
-   if !Empty( ::oBrush )
-      ::oBrush:End()
-   end if
-
-   if !Empty( ::oBmpEngine )
-      ::oBmpEngine:End()
-   end if
 
    if !Empty( oIcoApp )
       oIcoApp:end()
    end if
 
-   if !Empty( oBmpVersion )
-      oBmpVersion:End()
-   end if 
-
    if !Empty( oLstUsr )
       oLstUsr:End()
    end if
-
-   if !Empty( ::oBrush )
-      ::oBrush:End()
-   end if  
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -464,7 +440,7 @@ METHOD InitTactilResource( oDlg, oImgUsr, oLstUsr ) CLASS AccessCode
    if !empty( oStmt )
       while oStmt:fetchDirect()
          with object ( TListViewItem():New() )
-            :Cargo   := oStmt:fieldget( "codigo" )
+            :Cargo   := oStmt:fieldget( "uuid" )
             :cText   := Capitalize( oStmt:fieldget( "nombre" ) )
             :nImage  := 0
             :nGroup  := 1
@@ -507,46 +483,24 @@ METHOD SelectTactilResource( nOpt, oDlg, oLstUsr ) CLASS AccessCode
 
    // Chequeamos que seleccione almenos un usuario-----------------------------
 
-   if Empty( nOpt )
+   if empty( nOpt )
       MsgStop( "Seleccione usuario" )
-      Return .f.
+      RETURN .f.
    end if
 
    oItem             := oLstUsr:GetItem( nOpt )
 
-   if !Empty( oItem ) .and. dbSeekInOrd( oItem:Cargo, "cCodUse", ::dbfUser )
+   msgalert( oItem:Cargo, "Cargo" )
 
-      if !( ::dbfUser )->lUseUse
+   // usuario en uso
 
-         // Comprobamos la clave del usuario-----------------------------------
+   // Comprobamos la clave del usuario-----------------------------------
 
-         if lGetPsw( ::dbfUser, .t. )
+   // Creamos el objeto usuario
 
-            oUser    := oSetUsr( ( ::dbfUser )->cCodUse, .t., .f. )
-            if oUser:lCreated
-               oUser:Save()
-               oUser:CloseFiles()
-            end if
+   //       if lGetPsw( ::dbfUser, .t. )
 
-            ::EndTactilResource( oDlg )
-
-            Return ( .t. )
-
-         end if
-
-      else
-
-         MsgStop( "Usuario en uso" )
-
-         Return .f.
-
-      end if
-
-   else
-
-      MsgStop( "El usuario no existe" )
-
-   end if
+   ::EndTactilResource( oDlg )
 
 Return ( .f. )
 

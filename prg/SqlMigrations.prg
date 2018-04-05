@@ -149,6 +149,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLCamposExtraModel():New() )
 
+   aadd( ::aModels, SQLCamposExtraEntidadesModel():New() )
+
    aadd( ::aModels, SQLListinModel():New() )
 
    aadd( ::aModels, SQLCodigosPostalesModel():New() )

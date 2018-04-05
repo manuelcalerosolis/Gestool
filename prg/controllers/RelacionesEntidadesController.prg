@@ -98,6 +98,7 @@ METHOD AppendLine() CLASS RelacionesEntidadesController
    local id    := ::oModel:insertBlankRelacionEntidad( hget( ::oSenderController:oModel:hBuffer, "uuid" ) )
 
    ::oRowSet:refreshAndFindId( id )
+
    ::oBrowseView:oBrowse:Refresh()
 
 RETURN ( nil )
@@ -109,6 +110,7 @@ METHOD DeleteLine() CLASS RelacionesEntidadesController
    ::oModel:deleteById( ::oRowSet:fieldGet( 'id' ) )
 
    ::oRowSet:Refresh()
+   
    ::oBrowseView:oBrowse:Refresh()
 
 RETURN ( nil )
@@ -301,7 +303,7 @@ METHOD getSQLSentenceRelacionesEntidades( uuid ) CLASS RelacionesEntidadesReposi
 
    local cSql  := "SELECT * "                                       
       cSql     += "FROM " + ::getTableName() + " "
-      cSql     += "WHERE uuid_origen = " + quoted( uuid )
+      cSql     +=    "WHERE uuid_origen = " + quoted( uuid )
 
 RETURN ( cSql )
 

@@ -350,6 +350,9 @@ METHOD Append()
          ::commitTransactionalMode()
 
          if !empty( nId )
+
+            msgalert( nId )
+
             ::refreshRowSetAndFindId( nId )
          else 
             ::refreshRowSet()

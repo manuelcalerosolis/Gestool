@@ -183,7 +183,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
    do case
       case ( "TACTIL" $ appParamsMain() )
          
-         if AccessCode():TactilResource()
+         if UsuariosController():New():isTactilLogin()
             InitMainTactilWindow( oIconApp )
          end if
 
