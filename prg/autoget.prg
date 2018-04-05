@@ -170,7 +170,8 @@ return nKey
 
 //----------------------------------------------------------------------------//
 
-CLASS TAutoGet FROM TGet
+//CLASS TAutoGet FROM TGet
+CLASS TAutoGet FROM TGetHlp
 
    DATA aGradList   //will be custom
    DATA aGradItem       //will be custom

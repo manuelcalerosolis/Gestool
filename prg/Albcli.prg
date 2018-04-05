@@ -127,6 +127,7 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _TFECALB                  104
 #define _CCENTROCOSTE             105  
 #define _MFIRMA                   106
+#define _UUID_TRN                 107
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -5600,6 +5601,8 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
    aGet[ _CCODTRN ]:cText( ( dbfPedCliT )->cCodTrn )
    aGet[ _CCODTRN ]:lValid()
+
+   aTmp[ _UUID_TRN ] := ( dbfPedCliT )->Uuid_Trn
 
    aGet[ _LIVAINC ]:Click( ( dbfPedCliT )->lIvaInc )
    aGet[ _LRECARGO]:Click( ( dbfPedCliT )->lRecargo )
@@ -15051,6 +15054,10 @@ function SynAlbCli( cPath )
          
          end if
 
+         if Empty( ( D():Get( "AlbCliT", nView ) )->Uuid_Trn )
+         ( D():Get( "AlbCliT", nView ) )->Uuid_Trn := oTrans:GetField( ( D():Get( "AlbCliT", nView ) )->cCodTrn, "uuid" )
+      end if
+
          /*
          Esto es para Cafes y zumos para que todos los albaranes tengan la ruta del cliente
          */
@@ -17112,6 +17119,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "tFecAlb",   "C",  6, 0, "Hora del albarán" ,                                        "Hora",                          "", "( cDbf )", {|| getSysTime() } } )
    aAdd( aItmAlbCli, { "cCtrCoste", "C",  9, 0, "Código del centro de coste" ,                              "CentroCoste",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "mFirma",    "M", 10, 0, "Firma" ,                                                   "Firma",                         "", "( cDbf )", nil } )                  
+   aAdd( aItmAlbCli, { "Uuid_Trn",  "C", 40, 0, "Identificador transportista" ,                             "UuidTransportista",             "", "( cDbf )", nil } )
 
 Return ( aItmAlbCli )
 

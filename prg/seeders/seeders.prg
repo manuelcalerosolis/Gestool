@@ -78,8 +78,8 @@ METHOD runSeederDatos()
    //::oMsg:SetText( "Datos: Ejecutando códigos postales" )
    //::SeederCodigosPostales()
 
-   ::oMsg:SetText( "Datos: Ejecutando lenguajes" )
-   ::SeederLenguajes()
+   //::oMsg:SetText( "Datos: Ejecutando lenguajes" )
+   //::SeederLenguajes()
 
 RETURN ( self )
 

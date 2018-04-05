@@ -1,4 +1,3 @@
-//
 #include "FiveWin.Ch"
 #include "Font.ch"
 #include "Folder.ch"

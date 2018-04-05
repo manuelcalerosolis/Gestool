@@ -284,7 +284,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   CamposExtraController():New():ActivateNavigatorView()
+   //CamposExtraController():New():ActivateNavigatorView()
    
 RETURN nil
 
@@ -2361,8 +2361,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cMessage       := 'Roles'
    oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
    oItem:cId            := "usuarios_roles"
-   oItem:cBmp           := "gc_id_cards_16"
-   oItem:cBmpBig        := "gc_id_cards_32"
+   oItem:cBmp           := "GC_ID_CARDS_16"
+   oItem:cBmpBig        := "GC_ID_CARDS_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -2371,8 +2371,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cMessage       := 'Permisos'
    oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
    oItem:cId            := "usuarios_permisos"
-   oItem:cBmp           := "gc_id_badge_16"
-   oItem:cBmpBig        := "gc_id_badge_32"
+   oItem:cBmp           := "GC_ID_BADGE_16"
+   oItem:cBmpBig        := "GC_ID_BADGE_32"
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()

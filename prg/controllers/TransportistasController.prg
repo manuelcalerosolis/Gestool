@@ -9,6 +9,8 @@ CLASS TransportistasController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD SetSelectorToGet( oGet )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -41,6 +43,27 @@ METHOD New() CLASS TransportistasController
 
 RETURN ( Self )
 
+//---------------------------------------------------------------------------//
+
+METHOD SetSelectorToGet( oGet, cGet ) CLASS TransportistasController
+
+   local hLenguaje            := ::ActivateSelectorView() 
+
+   if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "nombre" )
+      oGet:cText( hget( hLenguaje, "nombre" ) )
+   else
+      oGet:cText( "" )
+   end if
+
+   if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "uuid" )
+      cGet  := hget( hLenguaje, "uuid" )
+   else
+      cGet  := ""
+   end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -220,6 +243,8 @@ CLASS SQLTransportistasModel FROM SQLBaseModel
 
    DATA cTableName               INIT "transportistas"
 
+   MESSAGE getNombre( uuid )      INLINE ( ::getField( "nombre", "uuid", uuid ) )
+
    METHOD getColumns()
 
 END CLASS
@@ -258,7 +283,20 @@ CLASS TransportistasRepository FROM SQLBaseRepository
 
    METHOD getTableName()         INLINE ( SQLTransportistasModel():getTableName() ) 
 
+   METHOD getNombres()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getNombres() CLASS TransportistasRepository
+
+   local cSentence               := "SELECT nombre, uuid FROM " + ::getTableName()
+   local aNombres                := ::getDatabase():selectFetch( cSentence )
+
+RETURN ( aNombres )
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

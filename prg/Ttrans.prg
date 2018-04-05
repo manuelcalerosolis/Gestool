@@ -125,6 +125,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "nKgsTrn" TYPE "N" LEN 16  DEC 6 COMMENT "Tara"                 PICTURE MasUnd() ALIGN RIGHT COLSIZE 100  OF ::oDbf
       FIELD NAME "cMatTrn" TYPE "C" LEN 20  DEC 0 COMMENT "Matrícula"            HIDE                                      OF ::oDbf
       FIELD NAME "cDniTrn" TYPE "C" LEN 15  DEC 0 COMMENT "DNI Transportista"    HIDE                                      OF ::oDbf
+      FIELD NAME "Uuid"    TYPE "C" LEN 40  DEC 0 COMMENT "Uuid transportista"   HIDE                                      OF ::oDbf
 
       INDEX TO "Transpor.Cdx" TAG "cCodTrn" ON "cCodTrn"          COMMENT "Código" NODELETED OF ::oDbf
       INDEX TO "Transpor.Cdx" TAG "cNomTrn" ON "Upper( cNomTrn )" COMMENT "Nombre" NODELETED OF ::oDbf
@@ -432,6 +433,53 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+Function SynTransportista( cPath )
+
+   local oBlock
+   local oError
+   local dbfTrans
+   local nOrdAnt
+
+   DEFAULT cPath  := cPatEmp()
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPath + "TRANSPOR.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "TRANSPOR", @dbfTrans ) )
+   SET ADSINDEX TO ( cPath + "TRANSPOR.CDX" ) ADDITIVE
+
+   /*
+   Cabeceras-------------------------------------------------------------------
+   */
+
+   ( dbfTrans )->( ordSetFocus( 0 ) )
+
+   ( dbfTrans )->( dbGoTop() )
+   while !( dbfTrans )->( eof() )
+
+      if empty( ( dbfTrans )->uuid )
+         ( dbfTrans )->uuid          := win_uuidcreatestring()
+      end if
+
+      ( dbfTrans )->( dbSkip() )
+
+   end while
+   ( dbfTrans )->( ordSetFocus( 1 ) )
+
+   RECOVER USING oError
+
+      msgstop( "Imposible abrir todas las bases de datos de transportistas" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( dbfTrans )
+
+return nil
+
+//---------------------------------------------------------------------------//
+
 #ifdef __PDA__
 
 //---------------------------------------------------------------------------//
@@ -546,6 +594,6 @@ local aBase := {  {"cCodTrn",   "C",  9, 0, "Código"              ,  "",  "", "(
 
 return ( aBase )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 #endif

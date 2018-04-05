@@ -102,6 +102,7 @@ Definici¢n de la base de datos de S.A.T. a clientes
 #define _CCODEST                  87
 #define _MFIRMA                   88
 #define _CCENTROCOSTE             89
+#define _UUID_TRN                 90
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -10512,6 +10513,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "cCodEst",   "C",  3,  0, "Código estado" ,                              "Estado",                  "", "( cDbf )", nil } )                  
    aAdd( aItmSatCli, { "mFirma",    "M", 10,  0, "Firma" ,                                      "Firma",                   "", "( cDbf )", nil } )                  
    aAdd( aItmSatCli, { "cCtrCoste", "C",  9,  0, "Código del centro de coste" ,                 "CentroCoste",             "", "( cDbf )", nil } )
+   aAdd( aItmSatCli, { "Uuid_Trn",  "C", 40,  0, "Identificador transportista" ,                "UuidTransportista",       "", "( cDbf )", nil } )
 
 return ( aItmSatCli )
 
@@ -10747,6 +10749,7 @@ Function SynSatCli( cPath )
    local cSatCliL
    local cSatCliT
    local dbfArticulo
+   local objTrans
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -10780,6 +10783,9 @@ Function SynSatCli( cPath )
 
    USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
+
+   objTrans            := TTrans():New( cPatEmp() )
+   objTrans:OpenFiles()
 
    ( cSatCliT )->( ordSetFocus( 0 ) )
    ( cSatCliT )->( dbGoTop() )
@@ -10832,6 +10838,10 @@ Function SynSatCli( cPath )
 
          if Empty( ( cSatCliT )->cDniCli )
             ( cSatCliT )->cDniCli := RetFld( ( cSatCliT )->cCodCli, dbfClient, "Nif" )
+         end if
+
+         if Empty( ( cSatCliT )->Uuid_Trn )
+            ( cSatCliT )->Uuid_Trn := objTrans:GetField( ( cSatCliT )->cCodTrn, "uuid" )
          end if
 
          /*
@@ -10979,6 +10989,7 @@ Function SynSatCli( cPath )
 
    ErrorBlock( oBlock )
 
+   objTrans:End()
    CLOSE ( cSatCliT )
    CLOSE ( cSatCliL )
    CLOSE ( dbfSatCliI )

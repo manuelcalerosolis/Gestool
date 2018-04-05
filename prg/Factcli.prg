@@ -159,6 +159,7 @@
 #define _TFECFAC           129
 #define _CCENTROCOSTE      130
 #define _MFIRMA            131
+#define _UUID_TRN          132
 
 /*
 Definici-n de la base de datos de lineas de detalle
@@ -2412,6 +2413,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local oSayGetRnt
    local cTipFac
    local oSayDias
+   local oAutoGet
+   local cAutoGet          := Space( 200 )
    local hBmp
    local hBmpGeneral       := {  { "Resource" => "gc_document_text_user2_48",    "Dialog" => 1 },;
                                  { "Resource" => "gc_folders2_48",               "Dialog" => 2 },;
@@ -2421,7 +2424,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                  { "Resource" => "gc_document_attachment_48",    "Dialog" => 6 },;
                                  { "Resource" => "gc_money2_48",                 "Dialog" => 7 },;
                                  { "Resource" => "gc_document_text_money2_48",   "Dialog" => 8 } }
-   
+
    /*
    Este valor los guaradamos para detectar los posibles cambios----------------
    */
@@ -2581,10 +2584,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    cSay[ 3 ]               := RetFld( aTmp[ _CCODAGE ], D():Agentes( nView ) )
    cSay[ 5 ]               := RetFld( aTmp[ _CCODTAR ], dbfTarPreT )
    cSay[ 7 ]               := RetFld( aTmp[ _CCODCLI ] + aTmp[ _CCODOBR ], dbfObrasT, "cNomObr", "cCodCli" )
-   cSay[ 9 ]               := oTrans:cNombre( aTmp[ _CCODTRN ] )
    cSay[ 10]               := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
    cSay[ 11]               := RetFld( aTmp[ _CCODUSR ], dbfUsr, "cNbrUse" )
    cSay[ 12]               := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
+   cSay[ 9 ]               := SQLTransportistasModel():getNombre( aTmp[ _UUID_TRN ] )
 
    /*
    Inicializamos el valor de la tarifa por si cambian--------------------------
@@ -3791,18 +3794,35 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       Transportistas-----------------------------------------------------------
       */
 
-      REDEFINE GET aGet[ _CCODTRN ] VAR aTmp[ _CCODTRN ] ;
+      REDEFINE GET oSay[ 9 ] VAR cSay[ 9 ] ;
          ID       235 ;
          WHEN     ( lWhen ) ;
-         VALID    ( LoadTrans( aTmp, aGet[ _CCODTRN ], aGet[ _NKGSTRN ], oSay[ 9 ] ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( oTrans:Buscar( aGet[ _CCODTRN ] ), .t. );
+         ON HELP  ( TransportistasController():New():SetSelectorToGet( oSay[ 9 ], @aTmp[ _UUID_TRN ] ) );
          OF       fldData
 
-      REDEFINE GET oSay[ 9 ] VAR cSay[ 9 ] ;
-         ID       236 ;
-         WHEN     .F. ;
-         OF       fldData
+      oAutoGet       := TAutoGet():ReDefine( 956,;
+                                             { | u | iif( pcount() == 0, cAutoGet, cAutoGet := u ) },;
+                                             fldData,,,,,,,,, .f.,,, .f., .f.,,,,,,"Lupa", "cAutoGet",,;
+                                             TransportistasRepository():getNombres(),,;
+                                             400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, self )} )
+      oAutoGet:cBmp  := "Lupa"
+      oAutoGet:bHelp := {|| TransportistasController():New():SetSelectorToGet( oAutoGet, @aTmp[ _UUID_TRN ] ) }
+
+
+
+      /*
+      METHOD ReDefine( nId,       bSetGet,  oWnd,    nHelpId, cPict,   bValid, nClrFore,;7
+         nClrBack,  oFont,    oCursor, cMsg,    lUpdate, bWhen,  bChanged,;7
+         lReadOnly, lSpinner, bUp,     bDown,   bMin,    bMax,   bAction,;7 
+         cBmpName,  cVarName, cCueText,;3
+         uDataSrc, Flds    , nLHeight,  bCreateList,;4
+         aGradList, aGradItem, nClrLine, nClrText, nClrSel, cBmp ) CLASS TAutoGet 6
+      */
+
+
+
+
 
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;
@@ -6632,6 +6652,8 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          aGet[ _CCODTRN ]:cText( ( dbfAlbCliT )->cCodTrn )
          aGet[ _CCODTRN ]:lValid()
 
+         aTmp[ _UUID_TRN ] := ( dbfAlbCliT )->Uuid_Trn
+
          aGet[ _CCENTROCOSTE ]:cText( ( dbfAlbCliT )->cCtrCoste )
          aGet[ _CCENTROCOSTE ]:lValid()
 
@@ -7855,6 +7877,8 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          aGet[_CCODTRN ]:cText( ( dbfPedCliT )->cCodTrn )
          aGet[_CCODTRN ]:lValid()
 
+         aTmp[ _UUID_TRN ] := ( dbfPedCliT )->Uuid_Trn
+
          aGet[_LIVAINC ]:Click( ( dbfPedCliT )->lIvaInc )
          aGet[_LRECARGO]:Click( ( dbfPedCliT )->lRecargo )
          aGet[_LOPERPV ]:Click( ( dbfPedCliT )->lOperPv )
@@ -8259,6 +8283,8 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
 
          aGet[_CCODTRN ]:cText( ( dbfPreCliT )->cCodTrn )
          aGet[_CCODTRN ]:lValid()
+
+         aTmp[ _UUID_TRN ] := ( dbfPreCliT )->Uuid_Trn
 
          aGet[_LIVAINC ]:Click( ( dbfPreCliT )->lIvaInc )
          aGet[_LRECARGO]:Click( ( dbfPreCliT )->lRecargo )
@@ -16172,7 +16198,9 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
          end if
 
          aGet[ _CCODTRN ]:cText( ( dbfSatCliT )->cCodTrn )
-         aGet[ _CCODTRN ]:lValid() 
+         aGet[ _CCODTRN ]:lValid()
+
+         aTmp[ _UUID_TRN ] := ( dbfSatCliT )->Uuid_Trn 
 
          aGet[ _LIVAINC ]:Click( ( dbfSatCliT )->lIvaInc )
          aGet[ _LRECARGO]:Click( ( dbfSatCliT )->lRecargo )
@@ -18369,6 +18397,10 @@ function SynFacCli( cPath )
             end if 
          end if
 
+         if Empty( ( D():FacturasClientes( nView ) )->Uuid_Trn )
+            ( D():FacturasClientes( nView ) )->Uuid_Trn := oTrans:GetField( ( D():FacturasClientes( nView ) )->cCodTrn, "uuid" )
+         end if
+
          /*
          Esto es para la Jaca para que todas las facturas tengan las comisiones de agente bien-------------------------------------
          */
@@ -19765,6 +19797,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"tFecFac"     ,"C", 6,   0, "Hora de la factura" ,                                       "HoraFactura",                 "", "( cDbf )", {|| getSysTime() } } )
    aAdd( aItmFacCli, {"cCtrCoste"   ,"C", 9,   0, "Código del centro de coste" ,                               "CentroCoste",                 "", "( cDbf )", nil } )
    aAdd( aItmFacCli, { "mFirma"     ,"M", 10,  0, "Firma" ,                                                    "Firma",                       "", "( cDbf )", nil } )                  
+   aAdd( aItmFacCli, { "Uuid_Trn"   ,"C", 40,  0, "Identificador transportista" ,                              "UuidTransportista",           "", "( cDbf )", nil } )
 
 RETURN ( aItmFacCli )
 
