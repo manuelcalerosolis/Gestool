@@ -1527,7 +1527,6 @@ CLASS TCreaFacAutomaticas
    DATA oDbfFam
    DATA oDbfKit
    DATA oDbfIva
-   DATA oDbfUser
    DATA oDbfFPago
    DATA oDbfAge
 
@@ -1845,8 +1844,6 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
 
    DATABASE NEW ::oDbfIva     PATH ( cPatDat() )   FILE "TIVA.DBF"     VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   DATABASE NEW ::oDbfUser    PATH ( cPatDat() )   FILE "USERS.DBF"    VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
-
    DATABASE NEW ::oDbfFPago   PATH ( cPatEmp() )   FILE "FPAGO.DBF"    VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
    DATABASE NEW ::oDbfAge     PATH ( cPatEmp() )   FILE "AGENTES.DBF"  VIA ( cDriver() ) SHARED INDEX "AGENTES.CDX"
@@ -1945,10 +1942,6 @@ METHOD CloseFiles() CLASS TCreaFacAutomaticas
       ::oAntCliT:End()
    end if
 
-   if ::oDbfUser != nil .and. ::oDbfUser:Used()
-      ::oDbfUser:End()
-   end if
-
    if ::oDbfFPago != nil .and. ::oDbfFPago:Used()
       ::oDbfFPago:End()
    end if
@@ -1995,7 +1988,6 @@ METHOD CloseFiles() CLASS TCreaFacAutomaticas
    ::oDbfKit      := nil
    ::oDbfIva      := nil
    ::oAntCliT     := nil
-   ::oDbfUser     := nil
    ::oDbfFPago    := nil
    ::oDbfAge      := nil
 

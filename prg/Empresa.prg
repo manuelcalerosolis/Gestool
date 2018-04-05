@@ -23,7 +23,6 @@ static dbfDlg
 static tmpDlg
 static dbfBnc
 static dbfCount
-static dbfUser
 static oBandera
 
 static cNewDlg
@@ -148,9 +147,6 @@ STATIC FUNCTION OpenFiles( lCount )
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDlg ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
       if lCount
          USE ( cPatEmp() + "NCOUNT.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
          SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
@@ -251,10 +247,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfDlg )->( dbCloseArea() )
    end if
 
-   if !empty( dbfUser )
-      ( dbfUser )->( dbCloseArea() )
-   end if
-
    if !empty( dbfCount )
       ( dbfCount )->( dbCloseArea() )
    end if
@@ -272,7 +264,6 @@ STATIC FUNCTION CloseFiles()
    dbfEmp      := nil
    dbfDiv      := nil
    dbfDlg      := nil
-   dbfUser     := nil
    dbfCount    := nil
    oBanco      := nil
    oPais       := nil
@@ -443,13 +434,6 @@ FUNCTION Empresa( oMenuItem, oWnd )
          TOOLTIP  "Con(f)igurar";
          HOTKEY   "F" ;
          LEVEL    ACC_EDIT
-
-      /*DEFINE BTNSHELL RESOURCE "CAL" GROUP OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( ActualizaEstructuras( dbfEmp, dbfDlg, dbfUser, oWndBrw, oWnd ) );
-         TOOLTIP  "Ac(t)ualizar ficheros";
-         HOTKEY   "T" ;
-         LEVEL    ACC_EDIT*/
 
    end if         
 
@@ -7441,55 +7425,6 @@ FUNCTION SelectDelegacion()
    end if
 
 RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION ActualizaEstructuras( dbfEmp, dbfDlg, dbfUser, oBrw, oWnd )
-
-   local cCodEmp  := ""
-   local cNomEmp  := ""
-
-   if lAIS()
-      msgStop( "Esta opción no esta disponible para versiones ADS.", "Actualizar empresas." )
-      RETURN nil
-   end if 
-
-   // Paramos los servicios----------------------------------------------------
-
-   CursorWait()
-
-   // Paramos los servicios----------------------------------------------------
-
-   oWnd:Disable()
-
-   StopServices()
-
-   cCodEmp        := ( dbfEmp )->CodEmp
-   cNomEmp        := ( dbfEmp )->cNombre
-
-   if !( dbfEmp )->lGrupo
-      
-      setEmpresa( cCodEmp )
-
-      checkEmpresaTablesExistences()      
-      
-   end if
-
-   CursorWE()
-
-   oBrw:End()
-
-   sysrefresh()
-
-   lActualiza( cCodEmp, oBrw, .f., cNomEmp )
-   
-   // Iniciamos los servicios----------------------------------------------------
-
-   InitServices()
-
-   oWnd:Enable()
-
-RETURN nil
 
 //---------------------------------------------------------------------------//
 

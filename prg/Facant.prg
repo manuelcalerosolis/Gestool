@@ -90,7 +90,6 @@ memvar cDbfPgo
 memvar cDbfIva
 memvar cDbfAge
 memvar cDbfObr
-memvar cDbfUsr
 memvar nTotNet
 memvar nTotIva
 memvar nTotReq
@@ -121,7 +120,6 @@ static oWndBrw
 static nView
 
 static oBrw
-static dbfUsr
 static dbfTikCliT
 static dbfAntCliT
 static dbfAntCliI
@@ -256,7 +254,6 @@ STATIC FUNCTION GenAntCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       private cDbfIva      := dbfIva
       private cDbfAge      := dbfAgent
       private cDbfObr      := dbfObrasT
-      private cDbfUsr      := dbfUsr
       private nVdv         := nVdvDiv
       private nVdvDivAnt   := nVdvDiv
       private cPicUndAnt   := cPicUnd
@@ -412,9 +409,6 @@ STATIC FUNCTION OpenFiles( lExt )
    USE ( cPatEmp() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
    SET ADSINDEX TO ( cPatEmp() + "ALMACEN.CDX" ) ADDITIVE
 
-   USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-   SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
    USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
    SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
 
@@ -548,10 +542,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfAlmT    )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfUsr )
-      ( dbfUsr )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfCount )
       ( dbfCount   )->( dbCloseArea() )
    end if
@@ -611,7 +601,6 @@ STATIC FUNCTION CloseFiles()
    dbfDoc      := nil
    dbfCajT     := nil
    dbfAlmT     := nil
-   dbfUsr      := nil
    dbfCount    := nil
    dbfDelega   := nil
    dbfAgeCom   := nil
@@ -1369,7 +1358,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
       REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
          ID       115 ;
          WHEN     ( .f. ) ;
-         VALID    ( SetUsuario( aGet[ _CCODUSR ], oSay[ 8 ], nil, dbfUsr ) );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oSay[ 8 ] VAR cSay[ 8 ] ;
@@ -1846,7 +1834,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
    end if
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) .and. lRecogerUsuario()
-      oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), , oDlg:End() ) }
+      oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), , oDlg:End() ) }
    end if
 
    oDlg:bStart := {|| StartEdtRec( aGet, nMode ) }
