@@ -260,7 +260,6 @@ memvar cDbfCli
 memvar cIva
 memvar cDbfIva
 memvar cDbfDiv
-memvar cDbfUsr
 memvar cFPago
 memvar cDbfPgo
 memvar cAgent
@@ -336,7 +335,6 @@ Definici¢n de Array para objetos impuestos
 static oWndBrw
 static oBrwIva
 static nView
-static dbfUsr
 static dbfProSer
 static dbfMatSer
 static dbfAlbPrvL
@@ -1065,13 +1063,6 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
    if oUser():lAdministrador()
 
-      /*DEFINE BTNSHELL RESOURCE "gc_gearwheel_" GROUP OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( GenFCli( oWndBrw:oBrw, D():Get( "AlbCliT", nView ), D():Get( "AlbCliL", nView ), D():Get( "AlbCliP", nView ), D():Get( "AlbCliS", nView ), D():Get( "Client", nView ), D():Atipicas( nView ), D():Get( "TIva", nView ), D():Get( "Divisas", nView ), D():Get( "FPago", nView ), dbfUsr, D():Get( "NCount", nView ), D():objectGruposClientes( nView ), oStock ) );
-         TOOLTIP  "(G)enerar facturas";
-         HOTKEY   "G";
-         LEVEL    ACC_APPD*/
-
       DEFINE BTNSHELL RESOURCE "gc_gearwheel_" GROUP OF oWndBrw ;
          NOBORDER ;
          ACTION   ( GeneraFacturasClientes():New() );
@@ -1507,9 +1498,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "Almacen.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
       SET ADSINDEX TO ( cPatEmp() + "Almacen.Cdx" ) ADDITIVE
 
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
       
@@ -1822,10 +1810,6 @@ STATIC FUNCTION CloseFiles()
    if !empty( dbfCajT )
       ( dbfCajT )->( dbCloseArea() )
    end if
-   if !empty( dbfUsr )
-      ( dbfUsr )->( dbCloseArea() )
-   end if
-
    if dbfArtPrv != nil
       ( dbfArtPrv )->( dbCloseArea() )
    end if
@@ -1964,7 +1948,6 @@ STATIC FUNCTION CloseFiles()
    dbfRuta        := nil
    dbfArtDiv      := nil
    dbfCajT        := nil
-   dbfUsr         := nil
    dbfArtPrv      := nil
    dbfDelega      := nil
    dbfAgeCom      := nil
@@ -2320,7 +2303,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    cSay[ 7 ]                  := RetFld( aTmp[ _CCODRUT ], dbfRuta )
    cSay[ 8 ]                  := oTrans:cNombre( aTmp[ _CCODTRN ] )
    cSay[ 9 ]                  := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
-   cSay[ 10]                  := RetFld( aTmp[ _CCODUSR ], dbfUsr, "cNbrUse" )
+   cSay[ 10]                  := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCODUSR ] )
    cSay[ 11]                  := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
 
    /*
@@ -2457,10 +2440,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
          ID       125 ;
          WHEN     ( .f. ) ;
-         VALID    ( SetUsuario( aGet[ _CCODUSR ], oSay[ 10 ], nil, dbfUsr ) );
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET oSay[ 10 ] VAR cSay[ 10 ] ;
+      REDEFINE GET oSay[ 10 ] ;
+         VAR      cSay[ 10 ] ;
          ID       126 ;
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[2]
@@ -4082,9 +4065,9 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
 
       if lRecogerUsuario()
 
-         if !lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
-            oDlg:End()
-         end if
+         // if !lGetUsuario( aGet[ _CCODUSR ] )
+         //    oDlg:End()
+         // end if
 
       end if 
 
@@ -8672,9 +8655,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Tipo artículo",  oTipArt:Select() )
    oFr:SetFieldAliases( "Tipo artículo",  cObjectsToReport( oTipArt:oDbf ) )
 
-   oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
-   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
-
    oFr:SetWorkArea(     "Ofertas", ( dbfOferta )->( Select() ) )
    oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )
 
@@ -8699,7 +8679,6 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Albaranes", "Formas de pago",                           {|| ( D():Get( "AlbCliT", nView ) )->cCodPago} )
    oFr:SetMasterDetail( "Albaranes", "Transportistas",                           {|| ( D():Get( "AlbCliT", nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Albaranes", "Empresa",                                  {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Albaranes", "Usuarios",                                 {|| ( D():Get( "AlbCliT", nView ) )->cCodUsr } )
    oFr:SetMasterDetail( "Albaranes", "País",                                     {|| RetFld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Clientes( nView ), "cCodPai" ) } )
    
    oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                      {|| SynchronizeDetails() } )
@@ -8721,7 +8700,6 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Albaranes", "Agentes" )
    oFr:SetResyncPair(   "Albaranes", "Formas de pago" )
    oFr:SetResyncPair(   "Albaranes", "Transportistas" )
-   oFr:SetResyncPair(   "Albaranes", "Usuarios" )
    oFr:SetResyncPair(   "Albaranes", "Pais" )
 
    oFr:SetResyncPair(   "Lineas de albaranes", "Artículos" )

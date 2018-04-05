@@ -1043,19 +1043,11 @@ Return ( ::getDatabase():Exec( cSql ) )
 METHOD getField( cField, cBy, cId )
 
    local cSql
-   local aResult
-   local cResult
 
    cSql              := "SELECT " + cField + " "                              
    cSql              +=    "FROM " + ::cTableName + " "
    cSql              +=    "WHERE " + cBy + " = " + quoted( cId ) 
 
-   aResult           := atail( ::getDatabase():selectFetchArray( cSql ) )
-
-   if hb_isarray( aResult )
-      cResult        := aResult[1]
-   end if
-
-Return ( cResult )
+Return ( ::getDatabase():getValue( cSql ) )
 
 //----------------------------------------------------------------------------//

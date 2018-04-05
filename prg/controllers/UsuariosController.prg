@@ -37,6 +37,8 @@ CLASS UsuariosController FROM SQLNavigatorController
    DATA oLoginView
    DATA oLoginTactilView
 
+   DATA cValidError        INIT ""  
+
    METHOD New()
    METHOD End()
 
@@ -244,18 +246,16 @@ METHOD validUserPassword( cUsuario, cPassword )
    hUsuario                   := ::oRepository:validUserPassword( cUsuario, cPassword )
 
    if empty( hUsuario )
-      ::oLoginView:sayError( "Usuario y contraseña con coinciden" )            
+      ::cValidError           := "Usuario y contraseña con coinciden" 
       RETURN ( .f. )
    end if 
 
    if !( setUserActive( hget( hUsuario, "nombre" ) ) )
-      ::oLoginView:sayError( "Usuario actualmente en uso" )            
+      ::cValidError           := "Usuario actualmente en uso"
       RETURN ( .f. )
    end if 
 
    Auth( hUsuario )
-
-   ::oLoginView:oDialog:end( IDOK )      
 
 RETURN ( .t. )
 
@@ -311,16 +311,18 @@ RETURN ( .t. )
 
 CLASS SQLUsuariosModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "usuarios"
+   DATA cTableName                        INIT "usuarios"
 
-   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
+   DATA cConstraints                      INIT "PRIMARY KEY (id), KEY (uuid)"
 
    METHOD getColumns()
 
    METHOD getInsertUsuariosSentence()
 
-   METHOD Crypt( cPassword )     INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
-   METHOD Decrypt( cPassword )   INLINE ( hb_decrypt( alltrim( cPassword ), __encryption_key__ ) )
+   METHOD Crypt( cPassword )              INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
+   METHOD Decrypt( cPassword )            INLINE ( hb_decrypt( alltrim( cPassword ), __encryption_key__ ) )
+
+   METHOD getNombreWhereCodigo( cCodigo ) INLINE ( ::getField( 'nombre', 'codigo', cCodigo ) )
 
 END CLASS
 
@@ -774,6 +776,7 @@ CLASS UsuariosLoginView FROM SQLBaseView
 
    METHOD Activate()
       METHOD onActivate()
+      METHOD Validate()
 
    METHOD sayError( cError )  INLINE ( ::oSayError:setText( cError ), ::oSayError:Show(), dialogSayNo( ::oDialog ) )
    
@@ -823,15 +826,27 @@ METHOD Activate() CLASS UsuariosLoginView
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
-      ACTION      ( ::oController:validUserPassword( ::cComboUsuario, ::cGetPassword ) )
+      ACTION      ( ::Validate() )
 
-   ::oDialog:AddFastKey( VK_F5, {|| ::oController:validUserPassword( ::cComboUsuario, ::cGetPassword ) } )
+   ::oDialog:AddFastKey( VK_F5, {|| ::Validate() } )
 
    ::oDialog:Activate( , , , .t. )
 
    ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD Validate()
+
+   if ::oController:validUserPassword( ::cComboUsuario, ::cGetPassword )
+      ::oDialog:end( IDOK ) 
+   else     
+      ::sayError( ::oController:cValidError )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -854,7 +869,7 @@ CLASS UsuariosLoginTactilView FROM SQLBaseView
 
    METHOD sayError( cError )  INLINE ( ::oSayError:setText( cError ), ::oSayError:Show(), dialogSayNo( ::oDialog ) )
    
-   METHOD Select( nOpt )
+   METHOD Validate( nOpt )
 
 END CLASS
 
@@ -917,7 +932,7 @@ METHOD Activate() CLASS UsuariosLoginTactilView
 
    ::oListView          := TListView():Redefine( 100, ::oDialog )
    ::oListView:nOption  := 0
-   ::oListView:bClick   := {| nOpt | ::Select( nOpt ) }
+   ::oListView:bClick   := {| nOpt | ::Validate( nOpt ) }
 
    REDEFINE SAY   ::oSayError ;
       ID          120 ;
@@ -939,13 +954,17 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD Select( nOpt ) CLASS UsuariosLoginTactilView 
+METHOD Validate( nOpt ) CLASS UsuariosLoginTactilView 
 
-   local cPassword   := VirtualKey( .t., , "Introduzca contraseña" )
    local cUsuario    := ::oListView:GetItem( nOpt ):Cargo
+   local cPassword   := VirtualKey( .t., , "Introduzca contraseña" )
 
-   ::oController:validUserPassword( cUsuario, cPassword )
+   if ::oController:validUserPassword( cUsuario, cPassword )
+      ::oDialog:End( IDOK )
+   else
+      ::sayError( ::oController:cValidError )
+   end if 
 
-RETURN ( ::oDialog:nResult )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
