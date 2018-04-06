@@ -328,7 +328,15 @@ RETURN ( Self )
 
 METHOD Resource( idLink, idCombobox, oDlg )
 
-   TWebBtn():Redefine( idLink,,,,, {|This| ::oController:SetSelectorToGet() }, oDlg,,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ) ):SetTransparent()
+   local oUrlLink
+
+   //TWebBtn():Redefine( idLink,,,,, {|This| ::oController:SetSelectorToGet() }, oDlg,,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ) ):SetTransparent()
+
+   oUrlLink := TUrlLink():Redefine( idLink, oDlg, , "Transportista" )
+   oUrlLink:bAction = {|| ::oController:SetSelectorToGet() }
+
+  //413:    oUrlLink:SetColor( ::nClrHover, ::nClrPane )
+  //414:    oUrlLink:nClrOver = ::nClrHover
 
 Return ( self )
 

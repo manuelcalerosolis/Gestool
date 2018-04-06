@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraValoresController FROM SQLNavigatorController
+CLASS CamposExtraValoresController FROM SQLBrowseController
 
    DATA oCamposExtraValoresController
 
@@ -36,11 +36,6 @@ METHOD New() CLASS CamposExtraValoresController
    ::oDialogView                       := CamposExtraValoresView():New( self )
 
    ::oValidator                        := CamposExtraValoresValidator():New( self, ::oDialogView )
-
-   ::oCamposExtraValoresController     := CamposExtraValoresController():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
 
 RETURN ( Self )
 
@@ -119,17 +114,23 @@ RETURN ( self )
 
 CLASS CamposExtraValoresView FROM SQLBaseView
 
+   METHOD New( oSender )
+
    METHOD Activate()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
+
+METHOD New( oSender )
+
+   ::oController  := oSender
+
+Return ( self )
+
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS CamposExtraValoresView
-
-   local oBtnAppend
-   local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CAMPOS_EXTRA_VALORES" ;
@@ -146,24 +147,6 @@ METHOD Activate() CLASS CamposExtraValoresView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   /*REDEFINE GET   ::oController:oModel:hBuffer[ "campo_extra_relacion_uuid" ] ;
-      ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "campo_extra_relacion_uuid" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "registro_uuid" ] ;
-      ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "registro_uuid" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "valor" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "valor" ) ) ;
-      OF          ::oDialog*/
-
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
@@ -179,6 +162,8 @@ METHOD Activate() CLASS CamposExtraValoresView
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
+
+   ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()
 
