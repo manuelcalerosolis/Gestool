@@ -17,9 +17,9 @@ METHOD New() CLASS CamposExtraValoresController
 
    ::Super:New()
 
-   ::cTitle                            := "Campos extra relacion"
+   ::cTitle                            := "Campos extra valores"
 
-   ::setName( "campos_extra_relacion" )
+   ::setName( "campos_extra_valores" )
 
    ::lTransactional                    := .t.
 
@@ -37,7 +37,7 @@ METHOD New() CLASS CamposExtraValoresController
 
    ::oValidator                        := CamposExtraValoresValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController   := CamposExtraValoresController():New( self )
+   ::oCamposExtraValoresController     := CamposExtraValoresController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -146,7 +146,7 @@ METHOD Activate() CLASS CamposExtraValoresView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "campo_extra_relacion_uuid" ] ;
+   /*REDEFINE GET   ::oController:oModel:hBuffer[ "campo_extra_relacion_uuid" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "campo_extra_relacion_uuid" ) ) ;
@@ -162,7 +162,7 @@ METHOD Activate() CLASS CamposExtraValoresView
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "valor" ) ) ;
-      OF          ::oDialog
+      OF          ::oDialog*/
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -219,7 +219,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLCamposExtraValoresModel FROM SQLBaseModel
 
-   DATA cTableName                           INIT "campos_extra_entidad_valor"
+   DATA cTableName                           INIT "campos_extra_valores"
 
    METHOD getColumns()
 
@@ -282,6 +282,7 @@ METHOD getCampoExtraEntidades() CLASS CamposExtraValoresRepository
    cSQL              := "SELECT uuid FROM " + ::getTableNameCamposExtra() + " "
 
 RETURN ( getSQLDataBase():Exec( cSQL ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

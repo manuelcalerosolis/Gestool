@@ -40,7 +40,7 @@ METHOD New() CLASS TransportistasController
 
    ::oDireccionesController      := DireccionesController():New( self )
 
-   ::oGetSelectorTransportista   := GetSelectorTransportista():New( self )
+   ::oGetSelectorTransportista   := ComboSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -306,7 +306,7 @@ RETURN ( aNombres )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS GetSelectorTransportista
+CLASS ComboSelector
 
    DATA oController
 
