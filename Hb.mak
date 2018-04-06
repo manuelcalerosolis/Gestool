@@ -634,6 +634,7 @@ PdaEnvioRecepcionController.prg 											\
 PdaEnvioRecepcionView.prg 													\
 RelacionesEntidadesController.prg 										\
 CentroCosteModel.prg 														\
+TransportistasModel.prg 													\
 MdiChild.prg 																	\
 
 C               =       	            								\
@@ -1245,6 +1246,7 @@ PedidosProveedoresLineasModel.obj 										\
 RelacionesEntidadesController.obj 										\
 CentroCosteModel.obj 														\
 MdiChild.obj 																	\
+TransportistasModel.obj 													\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1844,6 +1846,7 @@ $(OBJ)\PdaEnvioRecepcionView.obj 										+
 $(OBJ)\PedidosProveedoresLineasModel.obj 							   +
 $(OBJ)\RelacionesEntidadesController.obj 							   +
 $(OBJ)\CentroCosteModel.obj 												+
+$(OBJ)\TransportistasModel.obj 											+
 $(OBJ)\MdiChild.obj 															+
 $(OBJ)\Events.obj              		
 $<,$*

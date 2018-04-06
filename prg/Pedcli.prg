@@ -12592,7 +12592,6 @@ Function SynPedCli( cPath )
    local cDbfPago
    local cDbfDiv
    local dbfPedCliR
-   local objTrans
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -12633,9 +12632,6 @@ Function SynPedCli( cPath )
    USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @cdbfDiv ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-   objTrans            := TTrans():New( cPatEmp() )
-   objTrans:OpenFiles()
-
    ( dbfPedCliT )->( ordSetFocus( 0 ) )
    ( dbfPedCliT )->( dbGoTop() )
     
@@ -12658,7 +12654,7 @@ Function SynPedCli( cPath )
       end if
 
       if Empty( ( dbfPedCliT )->Uuid_Trn )
-         ( dbfPedCliT )->Uuid_Trn := objTrans:GetField( ( dbfPedCliT )->cCodTrn, "uuid" )
+         ( dbfPedCliT )->Uuid_Trn := TransportistasModel():getUuid( ( dbfPedCliT )->cCodTrn )
       end if
 
       ( dbfPedCliT )->( dbSkip() )
@@ -12777,7 +12773,6 @@ Function SynPedCli( cPath )
 
    ErrorBlock( oBlock )
 
-   objTrans:End()
    CLOSE ( dbfPedCliT )
    CLOSE ( dbfPedCliL )
    CLOSE ( dbfPedCliI )

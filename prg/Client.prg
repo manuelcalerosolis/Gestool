@@ -6809,7 +6809,7 @@ Function SynClient( cPath )
 
          if Empty( ( D():Clientes( nView ) )->Uuid_Trn )
             if D():Lock( "Client", nView )
-               ( D():Clientes( nView ) )->Uuid_Trn := oTrans:GetField( ( D():Clientes( nView ) )->cCodTrn, "uuid" )
+               ( D():Clientes( nView ) )->Uuid_Trn := TransportistasModel():getUuid( ( D():Clientes( nView ) )->cCodTrn )
                D():UnLock( "Client", nView ) 
             end if
          end if

@@ -463,6 +463,8 @@ static dbfPedPrvL
 static oStock
 static TComercio
 
+static oTransportistaSelector
+
 static oCtaRem
 static oBandera
 static oTrans
@@ -1896,6 +1898,8 @@ STATIC FUNCTION OpenFiles()
       TComercio                  := TComercio():New( nView, oStock )
 
       Counter                    := TCounter():New( nView, "nFacCli" )
+
+      oTransportistaSelector     := TransportistasController():New():oGetSelectorTransportista
 
       /*
       Declaramos variables p-blicas--------------------------------------------
@@ -3794,31 +3798,26 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       Transportistas-----------------------------------------------------------
       */
 
-      REDEFINE GET oSay[ 9 ] VAR cSay[ 9 ] ;
+      /*REDEFINE GET oSay[ 9 ] VAR cSay[ 9 ] ;
          ID       235 ;
          WHEN     ( lWhen ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( TransportistasController():New():SetSelectorToGet( oSay[ 9 ], @aTmp[ _UUID_TRN ] ) );
-         OF       fldData
+         OF       fldData*/
 
-      oAutoGet       := TAutoGet():ReDefine( 956,;
-                                             { | u | iif( pcount() == 0, cAutoGet, cAutoGet := u ) },;
-                                             fldData,,,,,,,,, .f.,,, .f., .f.,,,,,,"Lupa", "cAutoGet",,;
-                                             TransportistasRepository():getNombres(),,;
-                                             400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, self )} )
-      oAutoGet:cBmp  := "Lupa"
-      oAutoGet:bHelp := {|| TransportistasController():New():SetSelectorToGet( oAutoGet, @aTmp[ _UUID_TRN ] ) }
+
+         oTransportistaSelector:Resource( 236, 235, fldData )
+
+
+      //TWebBtn():Redefine( 236,,,,, {|This| oTransportistaController:SetSelectorToGet( oSay[ 9 ], @aTmp[ _UUID_TRN ] ) }, fldData,,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ) ):SetTransparent()
 
 
 
-      /*
-      METHOD ReDefine( nId,       bSetGet,  oWnd,    nHelpId, cPict,   bValid, nClrFore,;7
-         nClrBack,  oFont,    oCursor, cMsg,    lUpdate, bWhen,  bChanged,;7
-         lReadOnly, lSpinner, bUp,     bDown,   bMin,    bMax,   bAction,;7 
-         cBmpName,  cVarName, cCueText,;3
-         uDataSrc, Flds    , nLHeight,  bCreateList,;4
-         aGradList, aGradItem, nClrLine, nClrText, nClrSel, cBmp ) CLASS TAutoGet 6
-      */
+
+
+
+
+
 
 
 
@@ -10262,34 +10261,6 @@ static function loadComisionAgente( aTmp, aGet, aTmpFac )
 return .t.
 
 //-----------------------------------------------------------------------------
-
-Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
-
-   local uValor   := oGetCod:VarGet()
-
-   if empty( uValor )
-
-      oSayTrn:cText( "" )
-      oGetKgs:cText( 0 )
-
-   else
-
-      if oTrans:oDbf:SeekInOrd( uValor, "cCodTrn" )
-         oGetCod:cText( uValor )
-         oSayTrn:cText( oTrans:oDbf:cNomTrn )
-         oGetKgs:cText( oTrans:oDbf:nKgsTrn )
-      else
-         msgStop( "Código de transportista no encontrado." )
-         Return .f.
-      end if
-
-   end if
-
-   RecalculaTotal( aTmp )
-
-Return .t.
-
-//---------------------------------------------------------------------------//
 
 Static Function DataReport( oFr )
 
@@ -18398,7 +18369,7 @@ function SynFacCli( cPath )
          end if
 
          if Empty( ( D():FacturasClientes( nView ) )->Uuid_Trn )
-            ( D():FacturasClientes( nView ) )->Uuid_Trn := oTrans:GetField( ( D():FacturasClientes( nView ) )->cCodTrn, "uuid" )
+            ( D():FacturasClientes( nView ) )->Uuid_Trn := TransportistasModel():getUuid( ( D():FacturasClientes( nView ) )->cCodTrn )
          end if
 
          /*

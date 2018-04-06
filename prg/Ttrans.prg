@@ -445,7 +445,7 @@ Function SynTransportista( cPath )
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPath + "TRANSPOR.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "TRANSPOR", @dbfTrans ) )
+   USE ( cPath + "TRANSPOR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TRANSPOR", @dbfTrans ) )
    SET ADSINDEX TO ( cPath + "TRANSPOR.CDX" ) ADDITIVE
 
    /*
@@ -458,12 +458,17 @@ Function SynTransportista( cPath )
    while !( dbfTrans )->( eof() )
 
       if empty( ( dbfTrans )->uuid )
-         ( dbfTrans )->uuid          := win_uuidcreatestring()
+         if dbLock( dbfTrans )
+            ( dbfTrans )->uuid          := win_uuidcreatestring()
+            ( dbfTrans )->( dbUnLock() )
+         end if
+         
       end if
 
       ( dbfTrans )->( dbSkip() )
 
    end while
+
    ( dbfTrans )->( ordSetFocus( 1 ) )
 
    RECOVER USING oError

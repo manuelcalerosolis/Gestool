@@ -6,6 +6,7 @@
 CLASS TransportistasController FROM SQLNavigatorController
 
    DATA oDireccionesController
+   DATA oGetSelectorTransportista
 
    METHOD New()
 
@@ -19,25 +20,27 @@ METHOD New() CLASS TransportistasController
 
    ::Super:New()
 
-   ::cTitle                   := "Transportistas"
+   ::cTitle                      := "Transportistas"
 
-   ::cName                    := "transportistas"
+   ::cName                       := "transportistas"
 
-   ::hImage                   := {  "16" => "gc_small_truck_16",;
-                                    "32" => "gc_small_truck_32",;
-                                    "48" => "gc_small_truck_48" }
+   ::hImage                      := {  "16" => "gc_small_truck_16",;
+                                       "32" => "gc_small_truck_32",;
+                                       "48" => "gc_small_truck_48" }
 
-   ::nLevel                   := Auth():Level( ::cName )
+   ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                   := SQLTransportistasModel():New( self )
+   ::oModel                      := SQLTransportistasModel():New( self )
 
-   ::oBrowseView              := TransportistasBrowseView():New( self )
+   ::oBrowseView                 := TransportistasBrowseView():New( self )
 
-   ::oDialogView              := TransportistasView():New( self )
+   ::oDialogView                 := TransportistasView():New( self )
 
-   ::oValidator               := TransportistasValidator():New( self )
+   ::oValidator                  := TransportistasValidator():New( self )
 
-   ::oDireccionesController   := DireccionesController():New( self )
+   ::oDireccionesController      := DireccionesController():New( self )
+
+   ::oGetSelectorTransportista   := GetSelectorTransportista():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -297,6 +300,37 @@ METHOD getNombres() CLASS TransportistasRepository
 RETURN ( aNombres )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS GetSelectorTransportista
+
+   DATA oController
+
+   METHOD New( oSender )
+
+   METHOD Resource( idLink, idCombobox, oDlg )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oSender )
+
+   ::oController     := oSender
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Resource( idLink, idCombobox, oDlg )
+
+   TWebBtn():Redefine( idLink,,,,, {|This| ::oController:SetSelectorToGet() }, oDlg,,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ) ):SetTransparent()
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
