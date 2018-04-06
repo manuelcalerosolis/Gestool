@@ -482,11 +482,23 @@ FUNCTION validateDialog( oDlg )
    local oControl
    local aControls   := oDlg:aControls
 
+   msgalert( oDlg:ClassName(), "ClassName" )
+
    if empty( aControls )
+      msgalert( hb_valtoexp( aControls ), "ClassName" )
       RETURN ( .t. )
    end if 
 
    for each oControl in aControls
+
+
+      if oControl:ClassName() == "TFOLDER"   
+
+         msgalert( "Llamada recursiva" )
+
+         validateDialog( oControl:aDialogs[1] )
+
+      end if 
 
       if empty( oControl:bWhen ) .or. eval( oControl:bWhen )
 

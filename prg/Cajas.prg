@@ -3193,7 +3193,7 @@ FUNCTION SelCajTactil( oWnd, lInicio )
          BITMAP   "Delete_32" ;
          ID       IDCANCEL ;
          OF       oDlg ;
-         ACTION   ( oDlg:end(), if( lInicio, oWnd:End(), ) )
+         ACTION   ( oDlg:end(), if( lInicio .and. !empty( oWnd ), oWnd:End(), ) )
 
    ACTIVATE DIALOG oDlg;
       ON INIT     ( InitBrwBigCaj( oDlg, oImgCaj, oLstCaj, dbfCaj ) ) ;

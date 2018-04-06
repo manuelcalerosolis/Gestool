@@ -226,7 +226,6 @@ memvar cDbfAge
 memvar cTvta
 memvar cDbfTvt
 memvar cObras
-memvar cDbfUsr
 memvar cDbfObr
 memvar cDbfPedT
 memvar cDbfPedL
@@ -353,7 +352,6 @@ static dbfKit
 static dbfArtDiv
 static dbfCliBnc
 static dbfCajT
-static dbfUsr
 static dbfDelega
 static dbfAgeCom
 static dbfEmp
@@ -689,9 +687,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "Almacen.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Almacen", @dbfAlm ) )
       SET ADSINDEX TO ( cPatEmp() + "Almacen.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
       SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
@@ -1067,10 +1062,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfCajT    )->( dbCloseArea() )
    end if
 
-   if !empty( dbfUsr )
-      ( dbfUsr     )->( dbCloseArea() )
-   end if
-
    if !empty( dbfCount )
       ( dbfCount   )->( dbCloseArea() )
    end if
@@ -1236,7 +1227,6 @@ STATIC FUNCTION CloseFiles()
    dbfRuta     := nil
    dbfArtDiv   := nil
    dbfCajT     := nil
-   dbfUsr      := nil
    dbfArtPrv   := nil
    dbfDelega   := nil
    dbfAgeCom   := nil
@@ -2060,7 +2050,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
    cSay[ 7 ]               := RetFld( aTmp[ _CCODCLI ] + aTmp[ _CCODOBR ], dbfObrasT, "cNomObr" )
    cSay[ 9 ]               := oTrans:cNombre( aTmp[ _CCODTRN ] )
    cSay[ 10]               := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
-   cSay[ 11]               := RetFld( aTmp[ _CCODUSR ], dbfUsr, "cNbrUse" )
+   cSay[ 11]               := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCODUSR ] )
    cSay[ 12]               := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
 
    /*
@@ -2296,7 +2286,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
    	REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
       	ID       125 ;
       	WHEN     ( .f. ) ;
-      	VALID    ( SetUsuario( aGet[ _CCODUSR ], oSay[ 11 ], nil, dbfUsr ) );
       	OF       oFld:aDialogs[2]
 
    	REDEFINE GET oSay[ 11 ] VAR cSay[ 11 ] ;
@@ -3084,7 +3073,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 			WHEN 		( nMode != ZOOM_MODE ) ;
          	VALID    cCajas( aGet[ _CCODCAJ ], dbfCajT, oSay[ 10 ] ) ;
          	ID       165 ;
-			COLOR 	CLR_GET ;
          	BITMAP   "LUPA" ;
          	ON HELP  ( BrwCajas( aGet[ _CCODCAJ ], oSay[ 10 ] ) ) ;
          	OF       oFld:aDialogs[2]
@@ -3092,7 +3080,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       	REDEFINE GET oSay[ 10 ] VAR cSay[ 10 ] ;
          	ID       166 ;
          	WHEN     .f. ;
-			COLOR 	CLR_GET ;
          	OF       oFld:aDialogs[2]
 
       	REDEFINE GET aGet[ _CCODPRO] VAR aTmp[_CCODPRO] ;
@@ -3622,10 +3609,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), , oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), , oDlg:End() ) }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ), oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ), oDlg:End() ) }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !empty( cCodArt )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ) }

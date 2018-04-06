@@ -349,6 +349,8 @@ SituacionesController.prg       											\
 CajonesPortamonedasController.prg 										\
 TransportistasController.prg												\
 CamposExtraController.prg													\
+CamposExtraEntidadesController.prg										\
+CamposExtraValoresController.prg											\
 ListinController.prg															\
 CodigosPostalesController.prg												\
 ProvinciasController.prg													\
@@ -967,6 +969,8 @@ SituacionesController.obj       											\
 CajonesPortamonedasController.obj       								\
 TransportistasController.obj       										\
 CamposExtraController.obj       											\
+CamposExtraEntidadesController.obj										\
+CamposExtraValoresController.obj											\
 ListinController.obj       												\
 CodigosPostalesController.obj       									\
 ProvinciasController.obj       											\
@@ -1571,6 +1575,8 @@ $(OBJ)\SituacionesController.obj          							+
 $(OBJ)\CajonesPortamonedasController.obj    							+
 $(OBJ)\TransportistasController.obj    								+
 $(OBJ)\CamposExtraController.obj    									+
+$(OBJ)\CamposExtraEntidadesController.obj								+
+$(OBJ)\CamposExtraValoresController.obj								+
 $(OBJ)\ListinController.obj    											+
 $(OBJ)\CodigosPostalesController.obj    								+
 $(OBJ)\ProvinciasController.obj    										+

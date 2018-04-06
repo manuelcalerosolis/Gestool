@@ -35,11 +35,16 @@ CLASS UsuariosController FROM SQLNavigatorController
    DATA cNombreDelegacionExclusiva
 
    DATA oLoginView
+   DATA oLoginTactilView
+
+   DATA cValidError        INIT ""  
 
    METHOD New()
    METHOD End()
 
    METHOD isLogin()
+
+   METHOD isTactilLogin()
 
    METHOD setConfig()
 
@@ -84,6 +89,8 @@ METHOD New() CLASS UsuariosController
    ::oValidator            := UsuariosValidator():New( self, ::oDialogView )
 
    ::oLoginView            := UsuariosLoginView():New( self )
+
+   ::oLoginTactilView      := UsuariosLoginTactilView():New( self )
 
    ::oAjustableController  := AjustableController():New( self )
 
@@ -232,25 +239,23 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validUserPassword()
+METHOD validUserPassword( cUsuario, cPassword )
 
    local hUsuario
 
-   hUsuario                   := ::oRepository:validUserPassword( ::oLoginView:cComboUsuario, ::oLoginView:cGetPassword )
+   hUsuario                   := ::oRepository:validUserPassword( cUsuario, cPassword )
 
    if empty( hUsuario )
-      ::oLoginView:sayError( "Usuario y contraseña con coinciden" )            
+      ::cValidError           := "Usuario y contraseña con coinciden" 
       RETURN ( .f. )
    end if 
 
    if !( setUserActive( hget( hUsuario, "nombre" ) ) )
-      ::oLoginView:sayError( "Usuario actualmente en uso" )            
+      ::cValidError           := "Usuario actualmente en uso"
       RETURN ( .f. )
    end if 
 
    Auth( hUsuario )
-
-   ::oLoginView:oDlg:end( IDOK )      
 
 RETURN ( .t. )
 
@@ -263,6 +268,16 @@ METHOD isLogin()
    end if 
 
    ::oAjustableController:oModel:setUsuarioPcEnUso( rtrim( netname() ), Auth():uuid() )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD isTactilLogin()
+
+   if ( ::oLoginTactilView:Activate() != IDOK )
+      RETURN ( .f. )
+   end if 
 
 RETURN ( .t. )
 
@@ -296,16 +311,18 @@ RETURN ( .t. )
 
 CLASS SQLUsuariosModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "usuarios"
+   DATA cTableName                        INIT "usuarios"
 
-   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
+   DATA cConstraints                      INIT "PRIMARY KEY (id), KEY (uuid)"
 
    METHOD getColumns()
 
    METHOD getInsertUsuariosSentence()
 
-   METHOD Crypt( cPassword )     INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
-   METHOD Decrypt( cPassword )   INLINE ( hb_decrypt( alltrim( cPassword ), __encryption_key__ ) )
+   METHOD Crypt( cPassword )              INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
+   METHOD Decrypt( cPassword )            INLINE ( hb_decrypt( alltrim( cPassword ), __encryption_key__ ) )
+
+   METHOD getNombreWhereCodigo( cCodigo ) INLINE ( ::getField( 'nombre', 'codigo', cCodigo ) )
 
 END CLASS
 
@@ -480,7 +497,7 @@ CLASS UsuariosView FROM SQLBaseView
 
    METHOD Activate()
    
-   METHOD saveView( oDlg )
+   METHOD saveView( oDialog )
 
 END CLASS
 
@@ -748,10 +765,7 @@ RETURN ( ::getDatabase():getValue( cSQL ) )
 
 CLASS UsuariosLoginView FROM SQLBaseView
 
-   DATA oDlg
-
    DATA oSayError
-   DATA cSayError
 
    DATA oGetPassword
    DATA cGetPassword
@@ -762,8 +776,9 @@ CLASS UsuariosLoginView FROM SQLBaseView
 
    METHOD Activate()
       METHOD onActivate()
+      METHOD Validate()
 
-   METHOD sayError( cError )  INLINE ( ::oSayError:setText( cError ), ::oSayError:Show(), dialogSayNo( ::oDlg ) )
+   METHOD sayError( cError )  INLINE ( ::oSayError:setText( cError ), ::oSayError:Show(), dialogSayNo( ::oDialog ) )
    
 END CLASS
 
@@ -781,46 +796,175 @@ RETURN ( self )
 
 METHOD Activate() CLASS UsuariosLoginView 
 
-   local oBmpGeneral
-
    ::onActivate()
 
-   DEFINE DIALOG  ::oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "LOGIN" 
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
       RESOURCE    "gestool_logo" ;
       TRANSPARENT ;
-      OF          ::oDlg
+      OF          ::oDialog
 
    REDEFINE COMBOBOX ::oComboUsuario ;
       VAR         ::cComboUsuario ;
       ID          100 ;
       ITEMS       ::aComboUsuarios ;
-      OF          ::oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::oGetPassword ;
       VAR         ::cGetPassword ;
       ID          110 ;
-      OF          ::oDlg
+      OF          ::oDialog
 
    REDEFINE SAY   ::oSayError ;
       ID          120 ;
       COLOR       Rgb( 183, 28, 28 ) ;
-      OF          ::oDlg
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          ::oDlg ;
-      ACTION      ( ::oController:validUserPassword() )
+      OF          ::oDialog ;
+      ACTION      ( ::Validate() )
 
-   ::oDlg:AddFastKey( VK_F5, {|| ::oController:validUserPassword() } )
+   ::oDialog:AddFastKey( VK_F5, {|| ::Validate() } )
 
-   ::oDlg:Activate( , , , .t. )
+   ::oDialog:Activate( , , , .t. )
 
-   oBmpGeneral:end()
+   ::oBitmap:end()
 
-RETURN ( ::oDlg:nResult )
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD Validate()
+
+   if ::oController:validUserPassword( ::cComboUsuario, ::cGetPassword )
+      ::oDialog:end( IDOK ) 
+   else     
+      ::sayError( ::oController:cValidError )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS UsuariosLoginTactilView FROM SQLBaseView
+
+   DATA oSayError
+
+   DATA oImageList
+
+   DATA oListView
+
+   METHOD Activate()
+      METHOD startActivate()
+      METHOD initActivate() 
+
+   METHOD sayError( cError )  INLINE ( ::oSayError:setText( cError ), ::oSayError:Show(), dialogSayNo( ::oDialog ) )
+   
+   METHOD Validate( nOpt )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS UsuariosLoginTactilView
+
+   local oStatement
+
+   oStatement  := UsuariosRepository():fetchDirect()
+   if !empty( oStatement )
+      while oStatement:fetchDirect()
+         with object ( TListViewItem():New() )
+            :Cargo   := oStatement:fieldget( "nombre" )
+            :cText   := Capitalize( oStatement:fieldget( "nombre" ) )
+            :nImage  := 0
+            :nGroup  := 1
+            :Create( ::oListView )
+         end with
+      end while
+      oStatement:free()
+   end if 
+
+   ::oListView:Refresh()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD initActivate() CLASS UsuariosLoginTactilView
+
+   ::oListView:SetImageList( ::oImageList )
+   ::oListView:EnableGroupView()
+   ::oListView:SetIconSpacing( 120, 140 )
+
+   with object ( TListViewGroup():New() )
+      :cHeader := "Usuarios"
+      :Create( ::oListView )
+   end with
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS UsuariosLoginTactilView 
+
+   ::oImageList   := TImageList():New( 50, 50 ) 
+
+   ::oImageList:AddMasked( TBitmap():Define( "gc_businessman2_50" ),   Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "gc_user2_50" ),          Rgb( 255, 0, 255 ) )
+
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "LOGIN_TACTIL" 
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    "gestool_logo" ;
+      TRANSPARENT ;
+      OF          ::oDialog
+
+   ::oListView          := TListView():Redefine( 100, ::oDialog )
+   ::oListView:nOption  := 0
+   ::oListView:bClick   := {| nOpt | ::Validate( nOpt ) }
+
+   REDEFINE SAY   ::oSayError ;
+      ID          120 ;
+      COLOR       Rgb( 183, 28, 28 ) ;
+      OF          ::oDialog
+
+   REDEFINE BUTTON ;
+      ID          IDCANCEL ;
+      OF          ::oDialog ;
+      ACTION      ( ::oDialog:End( IDCANCEL ) )
+
+   ::oDialog:bStart := {|| ::startActivate() }
+
+   ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } )
+
+   ::oBitmap:end()
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD Validate( nOpt ) CLASS UsuariosLoginTactilView 
+
+   local cUsuario    := ::oListView:GetItem( nOpt ):Cargo
+   local cPassword   := VirtualKey( .t., , "Introduzca contraseña" )
+
+   if ::oController:validUserPassword( cUsuario, cPassword )
+      ::oDialog:End( IDOK )
+   else
+      ::sayError( ::oController:cValidError )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//

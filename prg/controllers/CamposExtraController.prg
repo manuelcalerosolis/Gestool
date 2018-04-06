@@ -5,7 +5,11 @@
 
 CLASS CamposExtraController FROM SQLNavigatorController
 
+   DATA oCamposExtraEntidadesController
+
    METHOD New()
+
+   METHOD deleteEntitiesWhereEmpty()
 
 END CLASS
 
@@ -15,25 +19,41 @@ METHOD New() CLASS CamposExtraController
 
    ::Super:New()
 
-   ::cTitle                   := "Campos Extra"
+   ::cTitle                            := "Campos extra"
 
    ::setName( "campos_extra" )
 
-   ::nLevel                   := Auth():Level( ::getName() )
+   ::lTransactional                    := .t.
 
-   ::hImage                   := {  "16" => "gc_user_message_16",;
-                                    "32" => "gc_user_message_32",;
-                                    "48" => "gc_user_message_48" }
+   ::nLevel                            := Auth():Level( ::getName() )
 
-   ::oModel                   := SQLCamposExtraModel():New( self )
+   ::hImage                            := {  "16" => "gc_user_message_16",;
+                                             "32" => "gc_user_message_32",;
+                                             "48" => "gc_user_message_48" }
 
-   ::oBrowseView              := CamposExtraBrowseView():New( self )
+   ::oModel                            := SQLCamposExtraModel():New( self )
 
-   ::oDialogView              := CamposExtraView():New( self )
+   ::oBrowseView                       := CamposExtraBrowseView():New( self )
 
-   ::oValidator               := CamposExtraValidator():New( self, ::oDialogView )
+   ::oDialogView                       := CamposExtraView():New( self )
+
+   ::oValidator                        := CamposExtraValidator():New( self, ::oDialogView )
+
+   ::oCamposExtraEntidadesController   := CamposExtraEntidadesController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
+   ::setEvent( 'edited',      {|| ::deleteEntitiesWhereEmpty() } )
+   ::setEvent( 'appended',    {|| ::deleteEntitiesWhereEmpty() } )
+   ::setEvent( 'duplicated',  {|| ::deleteEntitiesWhereEmpty() } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteEntitiesWhereEmpty()
+   
+   ::oCamposExtraEntidadesController:oModel:deleteBlankEntityWhereUuid( ::getUuid() )
 
 RETURN ( Self )
 
@@ -119,6 +139,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS CamposExtraView FROM SQLBaseView
+
+   DATA oFolder
   
    DATA oLongitud
 
@@ -190,6 +212,9 @@ RETURN ( self )
 
 METHOD Activate() CLASS CamposExtraView
 
+   local oBtnAppend
+   local oBtnDelete
+
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CAMPOS_EXTRA";
       TITLE       ::LblTitle() + "campo extra"
@@ -205,25 +230,33 @@ METHOD Activate() CLASS CamposExtraView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
+   REDEFINE FOLDER ::oFolder ;
+      ID          100 ;
+      OF          ::oDialog ;
+      PROMPT      "&General" ,;
+                  "&Entidades" ;
+      DIALOGS     "CAMPOS_EXTRA_PRINCIPAL",;
+                  "CAMPOS_EXTRA_ENTIDADES" 
+
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[ 1 ]
 
    REDEFINE COMBOBOX ::oTipo ;
       VAR         ::oController:oModel:hBuffer[ "tipo" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ITEMS       ( ::aTipos ) ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[ 1 ]
 
    ::oTipo:bChange   := {|| ::ChangeTipo( ::oController:oModel:hBuffer[ "tipo" ] ) }
 
    REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "requerido" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[ 1 ]
 
    REDEFINE GET   ::oLongitud ;
       VAR         ::oController:oModel:hBuffer[ "longitud" ] ;
@@ -235,7 +268,7 @@ METHOD Activate() CLASS CamposExtraView
       MAX         200 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:oModel:hBuffer[ "longitud" ] >= 1 .and. ::oController:oModel:hBuffer[ "longitud" ] <= 200 ) ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[ 1 ]
 
    REDEFINE GET   ::oDecimales ;
       VAR         ::oController:oModel:hBuffer[ "decimales" ] ;
@@ -247,38 +280,58 @@ METHOD Activate() CLASS CamposExtraView
       MAX         9 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:oModel:hBuffer[ "decimales" ] >= 0 .and. ::oController:oModel:hBuffer[ "decimales" ] <= 9 ) ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[ 1 ]
 
    REDEFINE GET   ::oLista ;
       VAR         ::cLista ;
       ID          150 ;
       IDSAY       151 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[ 1 ]
 
    REDEFINE BUTTON ::oAddListaValores;
       ID          160 ;
-      OF          ::oDialog ;
+      OF          ::oFolder:aDialogs[ 1 ] ;
       ACTION      ( ::addListaValores() )
 
    REDEFINE BUTTON ::oDelListaValores ;
       ID          170 ;
-      OF          ::oDialog ;
+      OF          ::oFolder:aDialogs[ 1 ] ;
       ACTION      ( ::oListaValores:Del() )
 
    REDEFINE LISTBOX ::oListaValores ;
       VAR         ::cListaValores ;
       ITEMS       ::oController:oModel:hBuffer[ "lista" ] ;
       ID          180 ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[ 1 ]
 
    ::oListaValores:lVisible := .t.
+
+   // Segunda pestaña----------------------------------------------------------
+
+   REDEFINE BUTTON oBtnAppend ;
+      ID          100 ;
+      OF          ::oFolder:aDialogs[ 2 ] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnAppend:bAction   := {|| ::oController:oCamposExtraEntidadesController:Append() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          110 ;
+      OF          ::oFolder:aDialogs[ 2 ] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnDelete:bAction   := {|| ::oController:oCamposExtraEntidadesController:Delete( ::oController:oCamposExtraEntidadesController:oBrowseView:oBrowse:aSelected ) }
+
+   ::oController:oCamposExtraEntidadesController:Activate( ::oFolder:aDialogs[ 2 ], 120 )
+
+   // Botones ------------------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oFolder:aDialogs[ 1 ] ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -289,7 +342,7 @@ METHOD Activate() CLASS CamposExtraView
    ::oDialog:bStart  := {|| ::ChangeTipo( alltrim( ::oController:oModel:hBuffer[ "tipo" ] ) ) }
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs[ 1 ] ), ::oDialog:end( IDOK ), ) } )
    end if
 
    ACTIVATE DIALOG ::oDialog CENTER
