@@ -15,6 +15,8 @@ END CLASS
 
 METHOD New() CLASS CamposExtraValoresController
 
+   msgAlert ("New")
+
    ::Super:New()
 
    ::cTitle                            := "Campos extra valores"
@@ -118,6 +120,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS CamposExtraValoresView FROM SQLBaseView
+msgAlert ("Camposextraview")
 
    METHOD Activate()
 
@@ -130,6 +133,7 @@ METHOD Activate() CLASS CamposExtraValoresView
 
    local oBtnAppend
    local oBtnDelete
+
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CAMPOS_EXTRA_VALORES" ;
@@ -146,23 +150,6 @@ METHOD Activate() CLASS CamposExtraValoresView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   /*REDEFINE GET   ::oController:oModel:hBuffer[ "campo_extra_relacion_uuid" ] ;
-      ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "campo_extra_relacion_uuid" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "registro_uuid" ] ;
-      ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "registro_uuid" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "valor" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "valor" ) ) ;
-      OF          ::oDialog*/
 
    REDEFINE BUTTON ;
       ID          IDOK ;
