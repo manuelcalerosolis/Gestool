@@ -598,9 +598,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "Almacen.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
       SET ADSINDEX TO ( cPatEmp() + "Almacen.Cdx" ) ADDITIVE
 
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
 
@@ -918,10 +915,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfAlm )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfUsr )
-      ( dbfUsr )->( dbCloseArea() )
-   end if
-
    if dbfArtPrv != nil
       ( dbfArtPrv )->( dbCloseArea() )
    end if
@@ -1077,7 +1070,6 @@ STATIC FUNCTION CloseFiles()
    dbfArtDiv      := nil
    dbfTblCnv      := nil
    dbfCajT        := nil
-   dbfUsr         := nil
    dbfDelega      := nil
    dbfCount       := nil
    oBandera       := nil
@@ -1872,7 +1864,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    cSay[ 7 ]            := RetFld( aTmp[ _CCODRUT ], dbfRuta )
    cSay[ 8 ]            := oTrans:cNombre( aTmp[ _CCODTRN ] )
    cSay[ 9 ]            := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
-   cSay[10 ]            := RetFld( aTmp[ _CCODUSR ], dbfUsr, "cNbrUse" )
+   cSay[10 ]            := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCODUSR ] )
    cSay[11 ]            := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
 
    cTlfCli              := RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "Telefono" )
@@ -2004,7 +1996,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
          ID       125 ;
          WHEN     ( .f. ) ;
-         VALID    ( SetUsuario( aGet[ _CCODUSR ], oSay[ 10 ], nil, dbfUsr ) );
          OF       oFld:aDialogs[2]
 
       REDEFINE GET oSay[ 10 ] VAR cSay[ 10 ] ;
@@ -3129,10 +3120,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), , oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), , oDlg:End() ) }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ), oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ), oDlg:End() ) }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
@@ -8029,9 +8020,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
-   oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
-   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
-
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
@@ -8049,7 +8037,6 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Presupuestos", "Agentes",                         {|| ( D():PresupuestosClientes( nView ) )->cCodAge } )
    oFr:SetMasterDetail( "Presupuestos", "Formas de pago",                  {|| ( D():PresupuestosClientes( nView ) )->cCodPgo } )
    oFr:SetMasterDetail( "Presupuestos", "Transportistas",                  {|| ( D():PresupuestosClientes( nView ) )->cCodTrn } )
-   oFr:SetMasterDetail( "Presupuestos", "Usuarios",                        {|| ( D():PresupuestosClientes( nView ) )->cCodUsr } )
 
    oFr:SetMasterDetail( "Lineas de presupuestos", "Artículos",             {|| ( D():PresupuestosClientesLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de presupuestos", "Ofertas",               {|| ( D():PresupuestosClientesLineas( nView ) )->cRef } )
@@ -8068,7 +8055,6 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Presupuestos", "Agentes" )
    oFr:SetResyncPair(   "Presupuestos", "Formas de pago" )
    oFr:SetResyncPair(   "Presupuestos", "Transportistas" )
-   oFr:SetResyncPair(   "Presupuestos", "Usuarios" )
 
    oFr:SetResyncPair(   "Lineas de presupuestos", "Artículos" )
    oFr:SetResyncPair(   "Lineas de presupuestos", "Ofertas" )

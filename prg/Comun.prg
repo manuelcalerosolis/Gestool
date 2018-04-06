@@ -284,7 +284,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   //CamposExtraController():New():ActivateNavigatorView()
+   CamposExtraController():New():ActivateNavigatorView()
    
 RETURN nil
 

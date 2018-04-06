@@ -185,6 +185,7 @@ CLASS CamposExtraView FROM SQLBaseView
    METHOD addListaValores()
 
    METHOD Activate()
+   METHOD Activating()
 
 END CLASS
 
@@ -205,6 +206,16 @@ METHOD New( oController ) CLASS CamposExtraView
    ::cLista          := space( 200 )
 
    ::aListaValores   := {}
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activating() CLASS CamposExtraView
+
+   if ::oController:isAppendOrDuplicateMode()
+      ::oController:oModel:hBuffer[ "tipo" ]    := "Texto"
+   end if 
 
 RETURN ( self )
 
@@ -385,8 +396,8 @@ METHOD getValidators() CLASS CamposExtraValidator
 
    ::hValidators  := {     "nombre" =>          {  "required"     => "El nombre es un dato requerido",;
                                                    "unique"       => "El nombre introducido ya existe" } ,;   
-                           "tipo"     =>        {  "required"     => "El tipo es un dato requerido"} ,; 
-                           "longitud" =>        {  "required"     => "La longitud es un dato requerido"} }
+                           "tipo"     =>        {  "required"     => "El tipo es un dato requerido" } ,; 
+                           "longitud" =>        {  "required"     => "La longitud es un dato requerido" } }
 
 RETURN ( ::hValidators )
 

@@ -15,19 +15,15 @@ CLASS SQLBaseView
    DATA oDialog
 
    DATA oMessage
-
    DATA cMessage
 
    DATA oBitmap
-   
    DATA cBitmap
 
    DATA oBtnOk
-
    DATA oBtnOkAndNew
 
    DATA oOfficeBar
-
    DATA oOfficeBarFolder
 
    DATA hTextMode                                     INIT {   __append_mode__      => "Añadiendo ",;
@@ -39,6 +35,8 @@ CLASS SQLBaseView
    METHOD End()      
 
    METHOD Activate()                                  VIRTUAL
+   METHOD Activating()                                VIRTUAL
+   METHOD Activated()                                 VIRTUAL
 
    METHOD lblTitle()                                  INLINE ( iif(  hhaskey( ::hTextMode, ::oController:getMode() ),;
                                                                      hget( ::hTextMode, ::oController:getMode() ),;
@@ -62,8 +60,11 @@ CLASS SQLBaseView
    METHOD setEvent( cEvent, bEvent )                  INLINE ( iif( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                         INLINE ( iif( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
-   METHOD ShowMessage( cMessage )        
-   METHOD RestoreMessage()
+   METHOD showMessage( cMessage )        
+   METHOD restoreMessage()
+
+   METHOD setMessage( cMessage )                      INLINE ( iif( empty( ::cMessage ), ::cMessage := cMessage, ) )
+   METHOD setBitmap( cBitmap )                        INLINE ( iif( empty( ::cBitmap ), ::cBitmap := cBitmap, ) )
 
    METHOD verticalHide( oControl )
    METHOD verticalShow( oControl )
@@ -103,12 +104,12 @@ RETURN ( nil )
 METHOD ShowMessage( cMessage )
 
    if !empty( ::oBitmap )
-      ::cBitmap   := ::oBitmap:cResName
+      ::setBitmap( ::oBitmap:cResName )
       ::oBitmap:setBMP( "gc_sign_warning_48" )
    end if 
 
    if !empty( ::oMessage )
-      ::cMessage  := ::oMessage:cCaption
+      ::setMessage( ::oMessage:cCaption )
       ::oMessage:setColor( rgb( 229, 57, 53 ), GetSysColor( COLOR_BTNFACE ) )
       ::oMessage:setText( cMessage )
    end if 
