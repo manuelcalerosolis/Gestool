@@ -15033,8 +15033,8 @@ function SynAlbCli( cPath )
          end if
 
          if Empty( ( D():Get( "AlbCliT", nView ) )->Uuid_Trn )
-         ( D():Get( "AlbCliT", nView ) )->Uuid_Trn := oTrans:GetField( ( D():Get( "AlbCliT", nView ) )->cCodTrn, "uuid" )
-      end if
+            ( D():Get( "AlbCliT", nView ) )->Uuid_Trn := TransportistasModel():getUuid( ( D():Get( "AlbCliT", nView ) )->cCodTrn )
+         end if
 
          /*
          Esto es para Cafes y zumos para que todos los albaranes tengan la ruta del cliente

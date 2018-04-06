@@ -6298,6 +6298,11 @@ STATIC FUNCTION EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode )
             RESOURCE "GC_FORM_PLUS2_16" ;
             ACTION   ( oDetCamposExtra:Play( space(1) ) )
 
+         MENUITEM "&11. Campos extra TEST";
+            MESSAGE  "Mostramos y rellenamos los campos extra para el cliente" ;
+            RESOURCE "GC_FORM_PLUS2_16" ;
+            ACTION   ( CamposExtraValoresController():New():oDialogView:Activate() )
+
          MENUITEM "&2. Informe del cliente";
          MESSAGE  "Muestra el informe del Cliente" ;
          RESOURCE "info16" ;
@@ -6809,7 +6814,7 @@ Function SynClient( cPath )
 
          if Empty( ( D():Clientes( nView ) )->Uuid_Trn )
             if D():Lock( "Client", nView )
-               ( D():Clientes( nView ) )->Uuid_Trn := oTrans:GetField( ( D():Clientes( nView ) )->cCodTrn, "uuid" )
+               ( D():Clientes( nView ) )->Uuid_Trn := TransportistasModel():getUuid( ( D():Clientes( nView ) )->cCodTrn )
                D():UnLock( "Client", nView ) 
             end if
          end if

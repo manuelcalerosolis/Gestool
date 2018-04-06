@@ -10846,7 +10846,6 @@ Function SynPreCli( cPath )
    local dbfFPago
    local dbfIva
    local dbfDiv
-   local objTrans
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -10878,9 +10877,6 @@ Function SynPreCli( cPath )
    USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-   objTrans            := TTrans():New( cPatEmp() )
-   objTrans:OpenFiles()
-
    ( dbfPreCliT )->( ordSetFocus( 0 ) )
    ( dbfPreCliT )->( dbGoTop() )
 
@@ -10903,7 +10899,7 @@ Function SynPreCli( cPath )
          end if
 
          if Empty( ( dbfPreCliT )->Uuid_Trn )
-            ( dbfPreCliT )->Uuid_Trn := objTrans:GetField( ( dbfPreCliT )->cCodTrn, "uuid" )
+            ( dbfPreCliT )->Uuid_Trn := TransportistasModel():getUuid( ( dbfPreCliT )->cCodTrn )
          end if
 
          /*
@@ -11005,8 +11001,6 @@ Function SynPreCli( cPath )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   objTrans:End()
 
    CLOSE ( dbfPreCliT )
    CLOSE ( dbfPreCliL )

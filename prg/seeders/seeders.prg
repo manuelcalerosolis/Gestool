@@ -49,6 +49,10 @@ CLASS Seeders
    METHOD SeederLenguajes()
    METHOD getStatementLenguajes( dbfLenguajes )
 
+   METHOD SeederTransportistas()
+   METHOD getStatementTransportistas( dbfTransportista )
+   METHOD getStatementDireccionTransportistas( dbfTransportista )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -63,14 +67,14 @@ RETURN ( self )
 
 METHOD runSeederDatos()
 
-   /*::oMsg:SetText( "Datos: Ejecutando seeder de usuarios" )
+   ::oMsg:SetText( "Datos: Ejecutando seeder de usuarios" )
    ::SeederUsuarios()
 
    ::oMsg:SetText( "Datos: Ejecutando seeder de situaciones" )
    ::SeederSituaciones()
 
    ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de impresoras" )
-   ::SeederTiposImpresoras()*/
+   ::SeederTiposImpresoras()
 
    //::oMsg:SetText( "Datos: Ejecutando provincias" )
    //::SeederProvincias()
@@ -87,7 +91,7 @@ RETURN ( self )
 
 METHOD runSeederEmpresa()
 
-   /*SincronizaRemesasMovimientosAlmacen()
+   SincronizaRemesasMovimientosAlmacen()
 
    ::oMsg:SetText( "Ejecutando seeder de cabeceras de movimientos de almacén" )
    ::SeederMovimientosAlmacen()
@@ -96,7 +100,10 @@ METHOD runSeederEmpresa()
    ::SeederMovimientosAlmacenLineas()
 
    ::oMsg:SetText( "Ejecutando seeder de números de serie de lineas de movimientos de almacén" )
-   ::SeederMovimientosAlmacenSeries()*/
+   ::SeederMovimientosAlmacenSeries()
+
+   ::oMsg:SetText( "Ejecutando seeder de transportistas" )
+   ::SeederTransportistas()
 
    ::oMsg:SetText( "Seeders finalizados" )
 
@@ -661,5 +668,66 @@ METHOD SeederCodigosPostales()
    getSQLDatabase():Exec( ::cStmCodigosPostales )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederTransportistas()
+
+   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
+   local dbfTransportista
+
+   if ( file( cPath + "Transpor.old" ) )
+      RETURN ( self )
+   end if
+
+   if !( file( cPath + "Transpor.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Transpor.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "Transpor.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Transpor", @dbfTransportista ) )
+   ( dbfTransportista )->( ordsetfocus(0) )
+   
+   ( dbfTransportista )->( dbgotop() )
+   while !( dbfTransportista )->( eof() )
+
+      getSQLDatabase():Exec( ::getStatementTransportistas( dbfTransportista ) )
+      getSQLDatabase():Exec( ::getStatementDireccionTransportistas( dbfTransportista ) )
+
+      ( dbfTransportista )->( dbSkip() )
+
+   end while
+
+   if dbfTransportista != nil
+      ( dbfTransportista )->( dbCloseArea() )
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementTransportistas( dbfTransportista )
+
+   local hCampos        := {  "uuid" => quoted( ( dbfTransportista )->Uuid ),;
+                              "nombre" => quoted( ( dbfTransportista )->cNomTrn ),;
+                              "dni"=> quoted( ( dbfTransportista )->cDniTrn ) }
+
+RETURN ( ::getInsertStatement( hCampos, "transportistas" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementDireccionTransportistas( dbfTransportista )
+
+   local hCampos        := {  "uuid" => quoted( win_uuidcreatestring() ),;
+                              "parent_uuid" => quoted( ( dbfTransportista )->Uuid ),;
+                              "nombre" => quoted( ( dbfTransportista )->cNomTrn ),;
+                              "direccion" => quoted( ( dbfTransportista )->cDirTrn ),;
+                              "poblacion" => quoted( ( dbfTransportista )->cLocTrn ),;
+                              "provincia" => quoted( ( dbfTransportista )->cPrvTrn ),;
+                              "codigo_postal" => quoted( ( dbfTransportista )->cCdpTrn ),;
+                              "telefono" => quoted( ( dbfTransportista )->cTlfTrn ),;
+                              "movil" => quoted( ( dbfTransportista )->cMovTrn ) }
+
+RETURN ( ::getInsertStatement( hCampos, "direcciones" ) )
 
 //---------------------------------------------------------------------------//

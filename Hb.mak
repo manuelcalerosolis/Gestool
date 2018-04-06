@@ -350,6 +350,7 @@ CajonesPortamonedasController.prg 										\
 TransportistasController.prg												\
 CamposExtraController.prg													\
 CamposExtraEntidadesController.prg										\
+CamposExtraValoresController.prg											\
 ListinController.prg															\
 CodigosPostalesController.prg												\
 ProvinciasController.prg													\
@@ -635,6 +636,7 @@ PdaEnvioRecepcionController.prg 											\
 PdaEnvioRecepcionView.prg 													\
 RelacionesEntidadesController.prg 										\
 CentroCosteModel.prg 														\
+TransportistasModel.prg 													\
 MdiChild.prg 																	\
 
 C               =       	            								\
@@ -968,6 +970,7 @@ CajonesPortamonedasController.obj       								\
 TransportistasController.obj       										\
 CamposExtraController.obj       											\
 CamposExtraEntidadesController.obj										\
+CamposExtraValoresController.obj											\
 ListinController.obj       												\
 CodigosPostalesController.obj       									\
 ProvinciasController.obj       											\
@@ -1247,6 +1250,7 @@ PedidosProveedoresLineasModel.obj 										\
 RelacionesEntidadesController.obj 										\
 CentroCosteModel.obj 														\
 MdiChild.obj 																	\
+TransportistasModel.obj 													\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1572,6 +1576,7 @@ $(OBJ)\CajonesPortamonedasController.obj    							+
 $(OBJ)\TransportistasController.obj    								+
 $(OBJ)\CamposExtraController.obj    									+
 $(OBJ)\CamposExtraEntidadesController.obj								+
+$(OBJ)\CamposExtraValoresController.obj								+
 $(OBJ)\ListinController.obj    											+
 $(OBJ)\CodigosPostalesController.obj    								+
 $(OBJ)\ProvinciasController.obj    										+
@@ -1847,6 +1852,7 @@ $(OBJ)\PdaEnvioRecepcionView.obj 										+
 $(OBJ)\PedidosProveedoresLineasModel.obj 							   +
 $(OBJ)\RelacionesEntidadesController.obj 							   +
 $(OBJ)\CentroCosteModel.obj 												+
+$(OBJ)\TransportistasModel.obj 											+
 $(OBJ)\MdiChild.obj 															+
 $(OBJ)\Events.obj              		
 $<,$*

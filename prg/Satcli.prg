@@ -10733,7 +10733,6 @@ Function SynSatCli( cPath )
    local cSatCliL
    local cSatCliT
    local dbfArticulo
-   local objTrans
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -10767,9 +10766,6 @@ Function SynSatCli( cPath )
 
    USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-   objTrans            := TTrans():New( cPatEmp() )
-   objTrans:OpenFiles()
 
    ( cSatCliT )->( ordSetFocus( 0 ) )
    ( cSatCliT )->( dbGoTop() )
@@ -10825,7 +10821,7 @@ Function SynSatCli( cPath )
          end if
 
          if Empty( ( cSatCliT )->Uuid_Trn )
-            ( cSatCliT )->Uuid_Trn := objTrans:GetField( ( cSatCliT )->cCodTrn, "uuid" )
+            ( cSatCliT )->Uuid_Trn := TransportistasModel():getUuid( ( cSatCliT )->cCodTrn )
          end if
 
          /*
@@ -10973,7 +10969,6 @@ Function SynSatCli( cPath )
 
    ErrorBlock( oBlock )
 
-   objTrans:End()
    CLOSE ( cSatCliT )
    CLOSE ( cSatCliL )
    CLOSE ( dbfSatCliI )

@@ -13443,7 +13443,7 @@ function SynFacRec( cPath )
          end if
 
          if Empty( ( dbfFacRecT )->Uuid_Trn )
-            ( dbfFacRecT )->Uuid_Trn := objTrans:GetField( ( dbfFacRecT )->cCodTrn, "uuid" )
+            ( dbfFacRecT )->Uuid_Trn := TransportistasModel():getUuid( ( dbfFacRecT )->cCodTrn )
          end if
 
          /*
