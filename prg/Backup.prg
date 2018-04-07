@@ -173,11 +173,6 @@ METHOD New( oMenuItem, oWnd )
       RETURN ( nil )
    end if
 
-   if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      RETURN ( nil )
-   end if
-
    ::DefineFiles()
 
    if ::OpenFiles()
@@ -1497,7 +1492,7 @@ Function CompressEmpresa( cCodEmp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
       lEnableBackup     := GetPvProfString( "Backup", "Enable", ".T.", cIniAplication() )
       lEnableBackup     := Upper( lEnableBackup ) == ".T."
 
-      lLastBackup       := ( Date() - dLastBackup >= 7 ) .and. ( nUsrInUse() == 1 ) .and. ( lEnableBackup ) 
+      lLastBackup       := ( Date() - dLastBackup >= 7 ) .and. ( lEnableBackup ) 
    end if
 
    if lAuto .or. lLastBackup
@@ -1572,7 +1567,7 @@ Function CompressGrupo( cCodGrp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
    lEnableBackup     := Upper( lEnableBackup ) == ".T."
 
    dLastBackup       := Stod( GetPvProfString( "Backup", "Ultimo", Dtos( Date() ), cIniAplication() ) )
-   lLastBackup       := ( Date() - dLastBackup >= 7 ) .and. ( nUsrInUse() == 1 ) .and. ( !lAuto )
+   lLastBackup       := ( Date() - dLastBackup >= 7 ) .and. ( !lAuto )
 
    if lEnableBackup .and. ( lAuto .or. lLastBackup )
 

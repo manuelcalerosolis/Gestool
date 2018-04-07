@@ -243,8 +243,6 @@ METHOD OpenFiles() CLASS TFastVentasClientes
       
       DATABASE NEW ::oDbfFpg PATH ( cPatEmp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
 
-      DATABASE NEW ::oDbfUsr PATH ( cPatDat() ) FILE "USERS.DBF" VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
-
       DATABASE NEW ::oDbfIva PATH ( cPatDat() ) FILE "TIva.Dbf" VIA ( cDriver() ) SHARED INDEX "TIva.Cdx"
 
       ::oGrpCli               := TGrpCli():Create( cPatEmp() )
@@ -398,10 +396,6 @@ METHOD CloseFiles() CLASS TFastVentasClientes
 
    if !empty( ::oDbfFpg ) .and. ( ::oDbfFpg:Used() )
       ::oDbfFpg:end()
-   end if 
-
-   if !empty( ::oDbfUsr ) .and. ( ::oDbfUsr:Used() )
-      ::oDbfUsr:end()
    end if 
 
    if !empty( ::oDbfIva ) .and. ( ::oDbfIva:Used() )
@@ -604,9 +598,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetWorkArea(       "Grupos de cliente",                ::oGrpCli:Select() )
    ::oFastReport:SetFieldAliases(   "Grupos de cliente",                cObjectsToReport( ::oGrpCli:oDbf ) )
 
-   ::oFastReport:SetWorkArea(       "Usuarios",                         ::oDbfUsr:nArea ) 
-   ::oFastReport:SetFieldAliases(   "Usuarios",                         cItemsToReport( aItmUsuario() ) )
-
    ::oFastReport:SetWorkArea(       "Direcciones",                      ::oObras:nArea )
    ::oFastReport:SetFieldAliases(   "Direcciones",                      cItemsToReport( aItmObr() ) )
 
@@ -636,7 +627,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetMasterDetail(   "Informe", "Documentos",            {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Incidencias",           {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",               {|| ::oDbf:cCodAge } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Usuarios",              {|| ::oDbf:cCodUsr } )
    ::oFastReport:SetMasterDetail(   "Informe", "Rutas",                 {|| ::oDbf:cCodRut } )
    ::oFastReport:SetMasterDetail(   "Informe", "Formas de pago",        {|| ::oDbf:cCodPgo } )
 
@@ -663,7 +653,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Tarifas de cliente" )
    ::oFastReport:SetResyncPair(     "Informe", "Documentos" )
    ::oFastReport:SetResyncPair(     "Informe", "Incidencias" )
-   ::oFastReport:SetResyncPair(     "Informe", "Usuarios" )
    ::oFastReport:SetResyncPair(     "Informe", "Rutas" )
    ::oFastReport:SetResyncPair(     "Informe", "Formas de pago" )
 

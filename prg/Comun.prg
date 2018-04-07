@@ -925,10 +925,6 @@ Static FUNCTION FinishAplication() //  Static FUNCTION
       WritePProString( "main", "Ultima Empresa", cCodEmp(), cIniAplication() )
    end if 
 
-   // liberar el usuario-------------------------------------------------------
-
-   lFreeUser()
-
    // Cerramos las auditorias--------------------------------------------------
 
    stopServices()

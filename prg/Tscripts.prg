@@ -264,11 +264,7 @@ METHOD Resource( nMode ) CLASS TScripts
       REDEFINE GET oGetUsuario VAR ::oDbf:cCodUsr;
          ID       130 ;
          IDTEXT   131 ;
-         BITMAP   "LUPA" ;
-         VALID    ( cUser( oGetUsuario, nil, oGetUsuario:oHelpText ) );        
          OF       oDlg
-
-      oGetUsuario:bHelp := {|| BrwUser( oGetUsuario, nil, oGetUsuario:oHelpText, .f., .f., .f., .t. ) }
 
       REDEFINE COMBOBOX ::oTime VAR ::cTime ;
          ITEMS    ::aTime ;

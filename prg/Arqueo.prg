@@ -473,9 +473,6 @@ STATIC FUNCTION lGetArqueo( lZoom )
       REDEFINE GET oCajTur VAR cCajTur;
          ID       120 ;
          WHEN     ( !lZoom ) ;
-         VALID    cUser( oCajTur, nil, oNomCaj ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwUser( oCajTur, nil, oNomCaj ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oNomCaj VAR cNomCaj ;

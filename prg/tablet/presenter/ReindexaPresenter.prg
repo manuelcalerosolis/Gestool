@@ -60,11 +60,6 @@ METHOD runReindexa() CLASS ReindexaPresenter
  
    local oClassReindexa
 
-   if nUsrInUse() > 1
-      ApoloMsgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return nil
-   end if
-
    if !TReindex():lCreateHandle()
       ApoloMsgStop( "Esta opción ya ha sido inicada por otro usuario", "Atención" )
       return nil

@@ -430,7 +430,6 @@ METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    oMsgProgress():Deltapos( 1 )
 
-   ::oTreeAgenda:Add( "No volver a mostrar página de inicio",  21, {|| SetNotIni( Auth():Codigo() ) } )
    ::oTreeAgenda:Add( "Salir de página de inicio",             22, {|| ::End() } )
 
    oMsgText( "Cargando gráfico" )

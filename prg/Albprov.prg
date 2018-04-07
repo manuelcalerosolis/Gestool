@@ -980,8 +980,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Contadores( nView )
 
-      D():Usuarios( nView )
-
       D():Delegaciones( nView )
 
       D():Cajas( nView )
@@ -1277,6 +1275,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    cSay[ 6 ]            := RetFld( cCodEmp() + aTmp[ _CCODDLG ], D():Delegaciones( nView ), "cNomDlg" )
    cSay[ 7 ]            := RetFld( aTmp[ _CALMORIGEN ], D():Almacen( nView ) )
 
+   cUsr                 := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCODUSR ] )
+
    DEFINE DIALOG oDlg RESOURCE "PEDPRV" TITLE LblTitle( nMode ) + "albaranes de proveedores" 
 
       REDEFINE FOLDER oFld ;
@@ -1320,7 +1320,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
          ID       220 ;
          WHEN     ( .f. ) ;
-         VALID    ( SetUsuario( aGet[ _CCODUSR ], oUsr, nil, D():Usuarios( nView ) ) );
          OF       oFld:aDialogs[2]
 
       REDEFINE GET oUsr VAR cUsr ;
@@ -1328,7 +1327,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[2]
 
-      cUsr        := RetFld( aTmp[ _CCODUSR ], D():Usuarios( nView ), "cNbrUse" )
 
       /*
       Datos del Proveedor______________________________________________________
@@ -2271,12 +2269,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ),;
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ),;
                               ( ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay, nMode ) ),;
                               oDlg:end() ) }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ),;
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ),;
                               ( AppendDetail( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay, nMode ) ),;
                               oDlg:end() ) }
 

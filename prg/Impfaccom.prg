@@ -415,11 +415,6 @@ METHOD Resource()
    local oBmp
    local oGet
 
-   if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return nil
-   end if
-
    if oWnd() != nil
       oWnd():CloseAll()
    end if

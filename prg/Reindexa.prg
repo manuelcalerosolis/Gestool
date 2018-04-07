@@ -446,11 +446,6 @@ METHOD Resource( lAutoInit )
       oWnd():CloseAll()
    end if
 
-   if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      RETURN nil
-   end if
-
    if !::lCreateHandle()
       msgStop( "Esta opción ya ha sido inicada por otro usuario", "Atención" )
       RETURN nil

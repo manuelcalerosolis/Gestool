@@ -216,7 +216,6 @@ memvar cDbfTik
 memvar cDbfTil
 memvar cDbfTip
 memvar cDbfCli
-memvar cDbfUsr
 memvar cPouTik
 memvar cPorTik
 memvar cUndTik
@@ -261,7 +260,6 @@ static oFr
 static nLevel
 static oWndBig
 static dbfClient
-static dbfUsr
 static dbfCodebar
 static dbfCajT
 static dbfCajL
@@ -646,9 +644,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       USE ( cPatDat() + "CajasL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJASL", @dbfCajL ) )
       SET ADSINDEX TO ( cPatDat() + "CajasL.Cdx" ) ADDITIVE
 
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
       SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE
 
@@ -954,7 +949,6 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfClient   )
    CLOSE ( dbfCajT     )
    CLOSE ( dbfCajL     )
-   CLOSE ( dbfUsr      )
    CLOSE ( dbfFPago    )
 	CLOSE ( dbfArticulo )
    CLOSE ( dbfCodebar  )
@@ -1074,7 +1068,6 @@ STATIC FUNCTION CloseFiles()
    dbfClient         := nil
    dbfCajT           := nil
    dbfCajL           := nil
-   dbfUsr            := nil
    dbfFPago          := nil
    dbfArticulo       := nil
    dbfCodebar        := nil
@@ -2695,7 +2688,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, hDocum
       REDEFINE GET aGet[ _CCCJTIK ] VAR aTmp[ _CCCJTIK ];
          ID       125 ;
          WHEN     ( .f. ) ;
-         VALID    ( SetUsuario( aGet[ _CCCJTIK ], oGetTxt[ 10 ], nil, dbfUsr ) );
          OF       oDlgTpv
 
       REDEFINE GET oGetTxt[ 10 ] VAR aGetTxt[ 10 ] ;
@@ -2883,7 +2875,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, hDocumen
 
       aGet[ _CCLITIK ]:lValid()
 
-      if !lGetUsuario( aGet[ _CCCJTIK ], dbfUsr )      
+      if !lGetUsuario( aGet[ _CCCJTIK ] )      
          oDlgTpv:End()
          Return ( nil )         
       end if
@@ -6756,12 +6748,6 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
          aTmp[ _CCODPRO ]     := cProCnt()
       end if
 
-      if !empty( aGet[ _CCODDLG ] )
-         aGet[ _CCODDLG ]:cText( RetFld( Auth():Codigo(), dbfUsr, "cCodDlg" ) )
-      else
-         aTmp[ _CCODDLG ]     := RetFld( Auth():Codigo(), dbfUsr, "cCodDlg" )
-      end if
-
       aTmp[ _NNUMCOM    ]     := 0
 
       if !empty( aGet[ _CDTOESP ] )
@@ -7019,7 +7005,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       aGetTxt[ 7 ]      := RetFld( aTmp[ _CCODRUT ], dbfRuta )
       aGetTxt[ 8 ]      := RetFld( aTmp[ _CCODTAR ], dbfTarPreS )
       aGetTxt[ 9 ]      := RetFld( aTmp[ _CCLITIK ], dbfClient,   "Telefono" )
-      aGetTxt[ 10]      := RetFld( aTmp[ _CCCJTIK ], dbfUsr,      "cNbrUse" )
+      aGetTxt[ 10]      := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCCJTIK ] )
    end if
 
    /*
@@ -7027,12 +7013,6 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
    */
 
    lSave                := .f.
-
-   /*
-   if !empty( ( dbfUsr )->cImagen )
-      oBmpVis:LoadBmp( cFileBmpName( ( dbfUsr )->cImagen ) )
-   end if
-   */
 
    /*
    Refrescamos el browse-------------------------------------------------------
@@ -12805,36 +12785,6 @@ return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function SelBigUser( aTmp, aGet, dbfUsr )
-
-   if BrwBigUser( dbfUsr )
-
-      SetBigUser( aTmp, aGet )
-
-      Return .t.
-
-   end if
-
-Return .f.
-
-//---------------------------------------------------------------------------//
-
-Static Function SetBigUser( aTmp, aGet )
-
-   aTmp[ _CCCJTIK ]  := Auth():Codigo() 
-
-   if !empty( oUser():cImagen() )
-      oBtnUsuario:cBmp( cFileBmpName( oUser():cImagen() ) )
-   else
-      oBtnUsuario:cBmp( if( oUser():lAdministrador(), "gc_businessman2_32", "gc_user2_32" ) )
-   end if
-
-   oBtnUsuario:cCaption( Capitalize( oUser():cNombre() ) )
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
 FUNCTION Tik2AlbFac( nTipTik, cNumDoc )
 
 do case
@@ -14362,9 +14312,6 @@ Static Function DataReport( oFr )
 
    oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
-
-   oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
-   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
    oFr:SetWorkArea(     "Artículos", ( dbfArticulo )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
