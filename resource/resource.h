@@ -11,3 +11,4 @@
 #define IDMESSAGE       9
 
 #define MANIFEST       24
+#define Valores  65535
