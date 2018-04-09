@@ -563,11 +563,6 @@ STATIC FUNCTION WinDelEmp()
    local cEmp     := ( dbfEmp )->CodEmp
    local cPath    := fullCurDir() + "Emp" + cEmp + "\"
 
-   if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación" )
-      RETURN ( lRet )
-   end if
-
    if cEmp == cCodigoEmpresaEnUso()
       msgStop( "Imposible borrar empresa activa" )
       RETURN ( lRet )
@@ -627,7 +622,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    local oBmpBancos
    local lAppendMode       := ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
-   if ( lAppendMode ) .and. ( nUsrInUse() > 1 )
+   if ( lAppendMode ) 
       msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
       RETURN .f.
    end if
@@ -1719,9 +1714,6 @@ STATIC FUNCTION EditConfig( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode 
       REDEFINE GET aGet[ _CDEFCJR ] VAR aTmp[ _CDEFCJR ] ;
          ID       150;
          PICTURE  "@!" ;
-         VALID    ( cUser( aGet[ _CDEFCJR ], , oSay[34] ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwUser( aGet[ _CDEFCJR ], , oSay[34] ) ) ;
          OF       fldValores
 
       REDEFINE GET oSay[34] VAR cSay[34] ;
@@ -3418,11 +3410,6 @@ STATIC FUNCTION WinDelGrp( oBrw, dbfEmp )
    local cCodEmp  := ( dbfEmp )->CodEmp
    local nRec     := ( dbfEmp )->( Recno() )
 
-   if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      RETURN ( lRet )
-   end if
-
    if dbSeekInOrd( cCodEmp, "CCODGRP", dbfEmp )
       msgStop( "No se puede eliminar un grupo asignado a empresas" )
       ( dbfEmp )->( dbGoto( nRec ) )
@@ -4213,11 +4200,6 @@ FUNCTION lActualiza( cCodEmp, oWndBrw, lNoWait, cNomEmp, lSincroniza )
 
    DEFAULT lNoWait      := .f.
    DEFAULT lSincroniza  := .t.
-
-   if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      RETURN .f.
-   end if
 
    if !TReindex():lFreeHandle()
       msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicación" + CRLF + ;

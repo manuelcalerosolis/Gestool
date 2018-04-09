@@ -95,7 +95,6 @@ CLASS TpvTactil
    DATA oCliente
    DATA oCajaCabecera
    DATA oCajaLinea
-   DATA oUsuario
    DATA oArticulo
    DATA oCodigoBarraArticulo
    DATA oArticulosEscandallos
@@ -1181,7 +1180,7 @@ METHOD Activate( lAlone ) CLASS TpvTactil
       Return .f.
    end if
 
-   if !lCajaOpen( Application():CodigoCaja() ) .and. !oUser():lMaster()
+   if !lCajaOpen( Application():CodigoCaja() ) 
       msgStop( "Esta caja " + Application():CodigoCaja() + " esta cerrada." )
       Return .f.
    end if
@@ -1288,8 +1287,6 @@ METHOD OpenFiles() CLASS TpvTactil
    DATABASE NEW ::oCajaCabecera                             PATH ( cPatDat() )   FILE "Cajas.DBF"           VIA ( cDriver() ) SHARED INDEX "Cajas.CDX"
 
    DATABASE NEW ::oCajaLinea                                PATH ( cPatDat() )   FILE "CajasL.DBF"          VIA ( cDriver() ) SHARED INDEX "CAJASL.CDX"
-
-   DATABASE NEW ::oUsuario                                  PATH ( cPatDat() )   FILE "USERS.DBF"           VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
 
    DATABASE NEW ::oArticulo                                 PATH ( cPatEmp() )   FILE "ARTICULO.DBF"        VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
@@ -1585,10 +1582,6 @@ METHOD CloseFiles() CLASS TpvTactil
 
    if ::oCajaLinea != nil .and. ::oCajaLinea:Used()
       ::oCajaLinea:End()
-   end if
-
-   if ::oUsuario != nil .and. ::oUsuario:Used()
-      ::oUsuario:End()
    end if
 
    if ::oArticulo != nil .and. ::oArticulo:Used()
@@ -1904,7 +1897,6 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oCliente                                := nil
    ::oCajaCabecera                           := nil
    ::oCajaLinea                              := nil
-   ::oUsuario                                := nil
    ::oArticulo                               := nil
    ::oCodigoBarraArticulo                    := nil
    ::oArticulosEscandallos                   := nil
@@ -3158,19 +3150,7 @@ Si pulsamos sobre el boton de usuario nos crea el dialogo para cambiar de usuari
 
 METHOD ShowUsuario()
 
-   if BrwBigUser()
-
-      ::oBtnUsuario:cBmp( if( oUser():lAdministrador(), "gc_businessman2_32", "gc_user2_32" ) )
-
-      ::oBtnUsuario:cCaption( Capitalize( oUser():cNombre() ) )
-
-   else
-
-      RETURN ( .f. )
-
-   end if
-
-RETURN ( .t. )
+RETURN ( BrwBigUser() )
 
 //------------------------------------------------------------------------//
 
@@ -6466,12 +6446,6 @@ METHOD OnClickCobro() CLASS TpvTactil
       Return .f.
    end if
 
-   if oUser():lNotCobrarTPV()
-      MsgStop( "El usuario no esta autorizado para cobrar tickes." )
-      Return .f.
-
-   end if
-
    if ::isArticulosSinPeso()
       msgStop( "Existen artículos por peso sin valor." )
       Return .f.
@@ -6816,13 +6790,6 @@ METHOD OnClickEntregaNota() CLASS TpvTactil
    // Si el documento es nuevo y no tiene lineas no lo guardo------------------
 
    if !::lValidatePreSave()
-      Return ( .f. )
-   end if
-
-   // Permiso de usuario para entregar nota-------------------------------------
-
-   if oUser():lNotNotasTPV()
-      MsgStop( "El usuario no esta autorizado para entregar notas." )
       Return ( .f. )
    end if
 
@@ -8530,10 +8497,6 @@ METHOD ProcesaComandas( lCopia )
 
    DEFAULT lCopia       := .f.
 
-   if oUser():lNotImprimirComandas()
-      Return ( Self )
-   end if 
-
    // Matamos la temporal------------------------------------------------------
 
    ::oTemporalComanda:Zap()
@@ -8969,9 +8932,6 @@ METHOD DataReport() CLASS TpvTactil
 
    ::oFastReport:SetWorkArea(       "Formas de pago", ::oFormaPago:nArea )
    ::oFastReport:SetFieldAliases(   "Formas de pago", cItemsToReport( aItmFPago() ) )
-
-   ::oFastReport:SetWorkArea(       "Usuarios", ::oUsuario:nArea )
-   ::oFastReport:SetFieldAliases(   "Usuarios", cItemsToReport( aItmUsuario() ) )
 
    ::oFastReport:SetWorkArea(       "Artículos", ::oArticulo:nArea )
    ::oFastReport:SetFieldAliases(   "Artículos", cItemsToReport( aItmArt() ) )
@@ -9728,7 +9688,7 @@ METHOD mailEliminarLinea()
    cMensajeMail         += "<p>" + "Descripción : " +  alltrim( ::oTemporalLinea:cNomTil )      + "</p>" + CRLF  
    cMensajeMail         += "<p>" + "Unidades : " + ::nUnidadesLinea( ::oTemporalLinea, .t. )    + "</p>" + CRLF  
    cMensajeMail         += "<p>" + "Importe : " + ::nTotalLinea( ::oTemporalLinea, .t. )        + "</p>" + CRLF  
-   cMensajeMail         += "<p>" + "Cajero : " + Auth():Codigo()  + " - " + oUser():cNombre()  + "</p>" + CRLF  
+   cMensajeMail         += "<p>" + "Cajero : " + Auth():Codigo()  + " - " +  Auth():Nombre()    + "</p>" + CRLF  
    cMensajeMail         += "<p>" + "Fecha y hora : " + dtoc( date() ) + " - " + time()          + "</p>" + CRLF  
 
    hSet( hMail, "mail", cDireccionMail ) 
@@ -10677,11 +10637,6 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD OnClickEliminarTicket()
-
-   if !oUser():lAdministrador()
-      apoloMsgStop( "Eliminar tickets solo esta permitido a adeministradores" )
-      Return .f.
-   end if 
 
    if ::lEmptyNumeroTicket()
       apoloMsgStop( "El ticket aún no ha sido guardado." )

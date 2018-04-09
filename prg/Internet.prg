@@ -202,7 +202,6 @@ METHOD Init() CLASS TSndRecInf
    aAdd( ::aSend, TTiketsClientesSenderReciver():New(          "Tickets clientes",           Self ) )
    aAdd( ::aSend, TEntradasSalidasSenderReciver():New(         "Entradas y salidas",         Self ) )
    aAdd( ::aSend, TTurno():Initiate(                           "Sesiones",                   Self ) )
-   aAdd( ::aSend, TUsuarioSenderReciver():New(                 "Usuarios",                   Self ) )
 
    ::DefineFiles()
 

@@ -38,7 +38,6 @@ static dbfDivisa
 
 static cPorDiv
 static oBandera
-static dbfUser
 static dbfCaj
 static dbfCount
 static bBmp
@@ -339,7 +338,6 @@ FUNCTION EntSal( oMenuItem, oWnd )
 
 #endif
 
-
       DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
 			NOBORDER ;
 			ACTION ( oWndBrw:End() ) ;
@@ -382,9 +380,6 @@ STATIC FUNCTION OpenFiles()
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDivisa ) )
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-   USE ( cPatDat() + "USERS.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "USERS", @dbfUser ) )
-   SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
    USE ( cPatDat() + "CAJAS.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "CAJAS", @dbfCaj ) )
    SET ADSINDEX TO ( cPatDat() + "CAJAS.CDX" ) ADDITIVE
 
@@ -418,7 +413,6 @@ STATIC FUNCTION CloseFiles()
 
    CLOSE ( dbfEntT   )
    CLOSE ( dbfDivisa )
-   CLOSE ( dbfUser   )
    CLOSE ( dbfCaj    )
    CLOSE ( dbfCount  )
 
@@ -426,7 +420,6 @@ STATIC FUNCTION CloseFiles()
 
    dbfEntT     := nil
    dbfDivisa   := nil
-   dbfUser     := nil
    dbfCaj      := nil
    dbfCount    := nil   
 
@@ -788,15 +781,6 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
          ID       150 ;
          OF       oDlg
 
-      REDEFINE BUTTONBMP oBtnUser ;
-         ID       161 ;
-         OF       oDlg ;
-         ACTION   ( BrwUserEnt( aTmp, dbfUser ), SetBigUsr( aTmp, oBtnUser, oSayUsr, dbfUser ) )
-
-      REDEFINE GET oSayUsr VAR cSayUsr ;
-         ID       160 ;
-         OF       oDlg
-
       REDEFINE BUTTONBMP ;
          ID       171 ;
          OF       oDlg ;
@@ -836,156 +820,13 @@ STATIC FUNCTION EdtRecTct( aTmp, aGet, dbfEntT, oBrw, bWhen, bValid, nMode )
          oDlg:AddFastKey( VK_F5, {|| SaveRec( aTmp, aGet, dbfEntT, oBrw, oDlg, nMode ) } )
       end if
 
-      oDlg:bStart := {|| SetBigUsr( aTmp, oBtnUser, oSayUsr, dbfUser ), SetBigCaj( oSayCaj ) }
+      oDlg:bStart := {|| SetBigCaj( oSayCaj ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
-
-Static Function BrwUserEnt( aTmp, dbfUsr )
-
-   local oBlock
-   local oError
-   local oDlg
-   local aSta
-   local lClose         := .f.
-   local oImgUsr
-   local oLstUsr
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if Empty( dbfUsr )
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-   end if
-
-   aSta                 := aGetStatus( dbfUsr )
-
-   DEFINE DIALOG oDlg RESOURCE "SelUsuarios"
-
-      oImgUsr           := TImageList():New( 50, 50 )
-
-      oLstUsr           := TListView():Redefine( 100, oDlg )
-      oLstUsr:nOption   := 0
-      oLstUsr:bAction   := {| nOpt | SelBrwUserEnt( nOpt, oDlg, dbfUsr, aTmp ) }
-
-      REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end() )
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT     ( InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr ) ) ;
-      CENTER
-
-   SetStatus( dbfUsr, aSta )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if lClose
-      Close( dbfUsr )
-   end if
-
-Return ( oDlg:nResult == IDOK  )
-
-//--------------------------------------------------------------------------//
-
-Static Function SelBrwUserEnt( nOpt, oDlg, dbfUsr, aTmp )
-
-   if nOpt == 0
-      MsgStop( "Seleccione usuario" )
-      Return nil
-   end if
-
-   if ( dbfUsr )->( OrdKeyGoTo( nOpt ) )
-
-      if lGetPsw( dbfUsr, .t. )
-
-         aTmp[ _CCODUSR ] := ( dbfUsr )->cCodUse
-
-         oDlg:end( IDOK )
-
-      end if
-
-   else
-
-      MsgStop( "El usuario no existe" )
-
-   end if
-
-Return ( nil )
-
-//--------------------------------------------------------------------------//
-
-Static function InitBrwUserEnt( oDlg, oImgUsr, oLstUsr, dbfUsr )
-
-   local nUser := 0
-
-   if !Empty( oImgUsr ) .and. !Empty( oLstUsr )
-
-   ( dbfUsr )->( dbSetFilter( {|| !Field->lGrupo }, "!lGrupo" ) )
-
-   ( dbfUsr )->( dbGoTop() )
-   while !( dbfUsr )->( eof() )
-
-      if !Empty( ( dbfUsr )->cImagen ) .and. File( Rtrim( ( dbfUsr )->cImagen ) )
-         oImgUsr:Add( TBitmap():Define( , Rtrim( ( dbfUsr )->cImagen ), oDlg ) )
-      else
-         if ( dbfUsr )->nGrpUse <= 1
-            oImgUsr:AddMasked( TBitmap():Define( "GC_BUSINESSMAN2_50" ), Rgb( 255, 0, 255 ) )
-         else
-            oImgUsr:AddMasked( TBitmap():Define( "GC_USER2_50" ), Rgb( 255, 0, 255 ) )
-         end if
-      end if
-
-      oLstUsr:InsertItem( nUser, Capitalize( ( dbfUsr )->cNbrUse ) )
-
-      ( dbfUsr )->( dbSkip() )
-
-      nUser++
-
-   end while
-
-   ( dbfUsr )->( dbClearFilter() )
-
-   oLstUsr:SetImageList( oImgUsr )
-
-   end if
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-static function SetBigUsr( aTmp, oBtnUser, oSayUsr, dbfUser )
-
-      if ( dbfUser )->( dbSeek( aTmp[ _CCODUSR ] ) )
-
-         if !Empty( ( dbfUser )->cImagen )
-            oBtnUser:lTransparent := .f.
-            oBtnUser:LoadBitmap( cFileBmpName( ( dbfUser )->cImagen ) )
-         else
-            oBtnUser:lTransparent := .t.
-            oBtnUser:LoadBitmap( if( ( dbfUser )->nGrpUse == 1, "GC_BUSINESSMAN2_50", "GC_USER2_50" ) )
-         end if
-
-         oBtnUser:Refresh()
-
-         oSayUsr:cText( ( dbfUser )->cNbrUse )
-
-      end if
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
 
 static function SetBigCaj( oSayUsr )
 

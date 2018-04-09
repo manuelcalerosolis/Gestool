@@ -140,7 +140,6 @@ CLASS TInfGen
    DATA oGruFam
    DATA oDbfTur
    DATA oDbfTrn
-   DATA oDbfUsr
    DATA oDbfCaj
    DATA oDbfRemCli
    DATA oResumen
@@ -3955,88 +3954,48 @@ METHOD oDefUsrInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllUsr ) CLASS TInfG
    local cSayUsrOrg
    local oSayUsrDes
    local cSayUsrDes
-   local lOpen    := .t.
-   local oError
-   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local lOpen       := .t.
 
-   BEGIN SEQUENCE
+   ::lAllUsr         := .t.
+   ::cUsrOrg         := ""
+   ::cUsrDes         := ""
+   cSayUsrOrg        := ""
+   cSayUsrDes        := ""
 
-      DATABASE NEW ::oDbfUsr PATH ( cPatDat() ) FILE "Users.Dbf" VIA ( cDriver() ) SHARED INDEX "Users.Cdx"
+   DEFAULT nIdOrg    := 70
+   DEFAULT nIdSayOrg := 71
+   DEFAULT nIdDes    := 80
+   DEFAULT nIdSayDes := 81
 
-      /*
-      Filtramos la tabla para que no aparezcan los grupos----------------------
-      */
+   if !Empty( nIdAllUsr )
 
-      ::oDbfUsr:SetFilter( "!lGrupo" )
-
-      ::cUsrOrg         := dbFirst( ::oDbfUsr, 1 )
-      ::cUsrDes         := dbLast( ::oDbfUsr, 1 )
-      cSayUsrOrg        := RTrim( dbFirst( ::oDbfUsr, 2 ) )
-      cSayUsrDes        := RTrim( dbLast( ::oDbfUsr, 2 ) )
-
-      ::oDbfUsr:SetFilter()
-
-      DEFAULT nIdOrg    := 70
-      DEFAULT nIdSayOrg := 71
-      DEFAULT nIdDes    := 80
-      DEFAULT nIdSayDes := 81
-
-      if !Empty( nIdAllUsr )
-
-         ::lAllUsr      := .t.
-         REDEFINE CHECKBOX ::lAllUsr ;
-            ID       ( nIdAllUsr ) ;
-            OF       ::oFld:aDialogs[1]
-
-      else
-
-         ::lAllUsr      := .f.
-
-      end if
-
-      REDEFINE GET oUsrOrg VAR ::cUsrOrg;
-         ID       ( nIdOrg );
-         WHEN     ( !::lAllUsr );
-         VALID    cUser( oUsrOrg, ::oDbfUsr:cAlias, oSayUsrOrg ) ;
-         BITMAP   "LUPA" ;
+      REDEFINE CHECKBOX ::lAllUsr ;
+         ID       ( nIdAllUsr ) ;
+         WHEN     ( .f. ) ;
          OF       ::oFld:aDialogs[1]
 
-      oUsrOrg:bHelp  := {|| BrwUser( oUsrOrg, ::oDbfUsr:cAlias, oSayUsrOrg, .f., .f., .f. ) }
+   end if
 
-      REDEFINE GET oSayUsrOrg VAR cSayUsrOrg ;
-         ID       ( nIdSayOrg );
-         WHEN     .f.;
-         COLOR    CLR_GET ;
-         OF       ::oFld:aDialogs[1]
+   REDEFINE GET oUsrOrg VAR ::cUsrOrg;
+      ID       ( nIdOrg );
+      WHEN     ( !::lAllUsr );
+      OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET oUsrDes VAR ::cUsrDes;
-         ID       ( nIdDes );
-         WHEN     ( !::lAllUsr );
-         VALID    cUser( oUsrDes, ::oDbfUsr:cAlias, oSayUsrDes ) ;
-         BITMAP   "LUPA" ;
-         OF       ::oFld:aDialogs[1]
+   REDEFINE GET oSayUsrOrg VAR cSayUsrOrg ;
+      ID       ( nIdSayOrg );
+      WHEN     .f.;
+      OF       ::oFld:aDialogs[1]
 
-      oUsrDes:bHelp  := {|| BrwUser( oUsrDes, ::oDbfUsr:cAlias, oSayUsrDes, .f., .f., .f. ) }
+   REDEFINE GET oUsrDes VAR ::cUsrDes;
+      ID       ( nIdDes );
+      WHEN     ( !::lAllUsr );
+      BITMAP   "LUPA" ;
+      OF       ::oFld:aDialogs[1]
 
-      REDEFINE GET oSayUsrDes VAR cSayUsrDes ;
-         WHEN     .f.;
-         ID       ( nIdSayDes );
-         OF       ::oFld:aDialogs[1]
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
-
-      if !Empty ( ::oDbfUsr )
-         ::oDbfUsr:End()
-      end if
-      lOpen       := .f.
-
-      return lOpen
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+   REDEFINE GET oSayUsrDes VAR cSayUsrDes ;
+      WHEN     .f.;
+      ID       ( nIdSayDes );
+      OF       ::oFld:aDialogs[1]
 
 RETURN ( lOpen )
 

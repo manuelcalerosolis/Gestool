@@ -1844,29 +1844,25 @@ METHOD lGrupoUsuario( lInitGroup, lImp ) CLASS TNewInfGen
 
    BEGIN SEQUENCE
 
-   if ::oDbfUsr == nil .or. !::oDbfUsr:Used()
-      DATABASE NEW ::oDbfUsr PATH ( cPatDat() ) FILE "USERS.DBF" VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
-   end if
-
    ::oGrupoUsuario                  := TRGroup():New( {|| ::oDbf:cCodUsr }, {|| "Usuario : " + AllTrim( ::oDbf:cCodUsr ) + " - " + AllTRim( ::oDbf:cNomUsr ) }, {|| "Total usuario : " + ::oDbf:cCodUsr }, {|| 3 }, ::lSalto )
 
    ::oGrupoUsuario:Cargo            := TItemGroup()
    ::oGrupoUsuario:Cargo:Nombre     := "Usuario"
    ::oGrupoUsuario:Cargo:Expresion  := "cCodUsr"
    ::oGrupoUsuario:Cargo:Todos      := .t.
-   ::oGrupoUsuario:Cargo:Desde      := Space( 3 )            //dbFirst( ::oDbfUsr, 1 )
-   ::oGrupoUsuario:Cargo:Hasta      := Replicate( "Z", 3 )   //dbLast( ::oDbfUsr, 1 )
+   ::oGrupoUsuario:Cargo:Desde      := Space( 3 )            
+   ::oGrupoUsuario:Cargo:Hasta      := Replicate( "Z", 3 )      
    ::oGrupoUsuario:Cargo:cPicDesde  := "@!"
    ::oGrupoUsuario:Cargo:cPicHasta  := "@!"
 
-   ::oGrupoUsuario:Cargo:TextDesde  := {|| oRetFld( ::oGrupoUsuario:Cargo:Desde, ::oDbfUsr, "CNBRUSE", "CCODUSE" ) }
-   ::oGrupoUsuario:Cargo:TextHasta  := {|| oRetFld( ::oGrupoUsuario:Cargo:Hasta, ::oDbfUsr, "CNBRUSE", "CCODUSE" ) }
+   ::oGrupoUsuario:Cargo:TextDesde  := {|| SQLUsuariosModel():getNombreWhereCodigo( ::oGrupoUsuario:Cargo:Desde ) }
+   ::oGrupoUsuario:Cargo:TextHasta  := {|| SQLUsuariosModel():getNombreWhereCodigo( ::oGrupoUsuario:Cargo:Hasta ) }
 
-   ::oGrupoUsuario:Cargo:HelpDesde  := {|| BrwUser( ::oDesde, ::oDbfUsr:cAlias, ::oSayDesde, .f., .f., .f. ) }
-   ::oGrupoUsuario:Cargo:HelpHasta  := {|| BrwUser( ::oHasta, ::oDbfUsr:cAlias, ::oSayHasta, .f., .f., .f. ) }
+   ::oGrupoUsuario:Cargo:HelpDesde  := {|| msgStop( "Implementar el selector" ) }
+   ::oGrupoUsuario:Cargo:HelpHasta  := {|| msgStop( "Implementar el selector" ) }
 
-   ::oGrupoUsuario:Cargo:ValidDesde := {|oGet| if( cUser( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfUsr:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
-   ::oGrupoUsuario:Cargo:ValidHasta := {|oGet| if( cUser( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfUsr:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoUsuario:Cargo:ValidDesde := {|oGet| msgStop( "Implementar el validador" ) }
+   ::oGrupoUsuario:Cargo:ValidHasta := {|oGet| msgStop( "Implementar el validador" ) }
 
    ::oGrupoUsuario:Cargo:lImprimir  := lImp
    ::oGrupoUsuario:Cargo:cBitmap    := "gc_businesspeople_16"
@@ -1896,10 +1892,6 @@ METHOD lGrupoUsuario( lInitGroup, lImp ) CLASS TNewInfGen
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
-
-      if !Empty( ::oDbfUsr )
-         ::oDbfUsr:End()
-      end if
 
       lOpen          := .f.
 

@@ -290,7 +290,6 @@ memvar cDbfAge
 memvar cTvta
 memvar cDbfTvt
 memvar cObras
-memvar cDbfUsr
 memvar cDbfObr
 memvar cDbfPedT
 memvar cDbfPedL
@@ -448,7 +447,6 @@ static dbfKit
 
 static dbfArtDiv
 static dbfCajT
-static dbfUsr
 static dbfDelega
 static dbfAgeCom
 static dbfEmp
@@ -1770,9 +1768,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "Almacen.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Almacen", @dbfAlm ) )
       SET ADSINDEX TO ( cPatEmp() + "Almacen.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
 
@@ -2157,10 +2152,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfCajT    )->( dbCloseArea() )
    end if
 
-   if !empty( dbfUsr )
-      ( dbfUsr     )->( dbCloseArea() )
-   end if
-
    if dbfArtPrv != nil
       ( dbfArtPrv )->( dbCloseArea() )
    end if
@@ -2340,7 +2331,6 @@ STATIC FUNCTION CloseFiles()
    dbfRuta     := nil
    dbfArtDiv   := nil
    dbfCajT     := nil
-   dbfUsr      := nil
    dbfArtPrv   := nil
    dbfDelega   := nil
    dbfAgeCom   := nil
@@ -2589,7 +2579,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    cSay[ 5 ]               := RetFld( aTmp[ _CCODTAR ], dbfTarPreT )
    cSay[ 7 ]               := RetFld( aTmp[ _CCODCLI ] + aTmp[ _CCODOBR ], dbfObrasT, "cNomObr", "cCodCli" )
    cSay[ 10]               := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
-   cSay[ 11]               := RetFld( aTmp[ _CCODUSR ], dbfUsr, "cNbrUse" )
+   cSay[ 11]               := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCODUSR ] )
    cSay[ 12]               := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
    cSay[ 9 ]               := SQLTransportistasModel():getNombre( aTmp[ _UUID_TRN ] )
 
@@ -2752,7 +2742,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
          ID       125 ;
          WHEN     ( .f. ) ;
-         VALID    ( SetUsuario( aGet[ _CCODUSR ], oSay[ 11 ], nil, dbfUsr ) );
          OF       fldData
 
       REDEFINE GET oSay[ 11 ] VAR cSay[ 11 ] ;
@@ -4629,7 +4618,7 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
 
    if nMode == APPD_MODE
 
-      if lRecogerUsuario() .and. !lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
+      if lRecogerUsuario() .and. !lGetUsuario( aGet[ _CCODUSR ] )
          oDlg:End()
       end if 
 
@@ -10327,9 +10316,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Anticipos", ( D():AnticiposClientes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Anticipos", cItemsToReport( aItmAntCli() ) )
 
-   oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
-   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
-
    oFr:SetWorkArea(     "Ofertas", ( dbfOferta )->( Select() ) )
    oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )
 
@@ -10361,7 +10347,6 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas", "Empresa",                                {|| cCodigoEmpresaEnUso() } )
    oFr:SetMasterDetail( "Facturas", "Recibos",                                {|| D():FacturasClientesId( nView ) } )
    oFr:SetMasterDetail( "Facturas", "Anticipos",                              {|| D():FacturasClientesId( nView ) } )
-   oFr:SetMasterDetail( "Facturas", "Usuarios",                               {|| ( D():FacturasClientes( nView ) )->cCodUsr } )
    oFr:SetMasterDetail( "Facturas", "Bancos",                                 {|| ( D():FacturasClientes( nView ) )->cCodCli } )
    oFr:SetMasterDetail( "Facturas", "País",                                   {|| retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cCodPai" ) } )
 
@@ -10387,7 +10372,6 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Facturas", "Transportistas" )
    oFr:SetResyncPair(   "Facturas", "Recibos" )
    oFr:SetResyncPair(   "Facturas", "Anticipos" )
-   oFr:SetResyncPair(   "Facturas", "Usuarios" )
    oFr:SetResyncPair(   "Facturas", "Bancos" )
    oFr:SetResyncPair(   "Facturas", "País" )
 
@@ -15774,7 +15758,6 @@ static function FacturaImportacion( oTreeImportacion )
             ( D():FacturasClientes( nView ) )->cCodUsr    := Auth():Codigo()
             ( D():FacturasClientes( nView ) )->dFecCre    := Date()
             ( D():FacturasClientes( nView ) )->cTimCre    := Time()
-            ( D():FacturasClientes( nView ) )->cCodDlg    := RetFld( Auth():Codigo(), dbfUsr, "cCodDlg" )
             ( D():FacturasClientes( nView ) )->cCodCaj    := Application():CodigoCaja()
 
             lAppendFactura             := .t.

@@ -135,9 +135,12 @@ Return ( self )
 
 METHOD Activate() CLASS CamposExtraValoresView
 
+<<<<<<< HEAD
    local oBtnAppend
    local oBtnDelete
 
+=======
+>>>>>>> 9e5db85fc6dc9be08dfd4a23461b42163c4f5a24
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CAMPOS_EXTRA_VALORES" ;
       TITLE       ::LblTitle() + "valor"
@@ -153,8 +156,11 @@ METHOD Activate() CLASS CamposExtraValoresView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
+<<<<<<< HEAD
    ::oController:oBrowseView:Activate( ::oDialog, 100 )
 
+=======
+>>>>>>> 9e5db85fc6dc9be08dfd4a23461b42163c4f5a24
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;

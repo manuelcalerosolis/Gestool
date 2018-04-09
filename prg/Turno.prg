@@ -147,12 +147,10 @@ CLASS TTurno FROM TMasDet
    DATA  oContador
    DATA  oDbfEmp
    DATA  oDbfDoc
-   DATA  oDbfUsr
    DATA  oDbfTemporal
 
    DATA  cFileTemporal
 
-   DATA  oUser
    DATA  oTikT
    DATA  oTikP
    DATA  oTikL
@@ -748,7 +746,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    ::lDefaultPrinter          := .t.
    ::cPrinter                 := PrnGetName()
 
-   ::lArqueoCiego             := oUser():lArqueoCiego() 
+   ::lArqueoCiego             := .f.
 
 RETURN ( Self )
 
@@ -839,15 +837,11 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oDbfCount   PATH ( cPatEmp() ) FILE "NCOUNT.DBF"         VIA ( cDriver() ) SHARED INDEX "NCOUNT.CDX"
 
-      DATABASE NEW ::oUser       PATH ( cPatDat() ) FILE "USERS.DBF"          VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
-
       DATABASE NEW ::oIvaImp     PATH ( cPatDat() ) FILE "TIVA.DBF"           VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
       DATABASE NEW ::oImpTik     PATH ( cPatDat() ) FILE "ImpTik.Dbf"         VIA ( cDriver() ) SHARED INDEX "ImpTik.Cdx"
 
       DATABASE NEW ::oCaja       PATH ( cPatDat() ) FILE "Cajas.Dbf"          VIA ( cDriver() ) SHARED INDEX "Cajas.Cdx"
-
-      DATABASE NEW ::oDbfUsr     PATH ( cPatDat() ) FILE "Users.Dbf"          VIA ( cDriver() ) SHARED INDEX "Users.Cdx"
 
       DATABASE NEW ::oEntSal     PATH ( cPatEmp() ) FILE "EntSal.Dbf"         VIA ( cDriver() ) SHARED INDEX "EntSal.Cdx"
       ::oEntSal:OrdSetFocus( "cTurEnt" )
@@ -1386,10 +1380,6 @@ METHOD CloseFiles()
       ::oArticulo:end()
    end if
 
-   if !empty( ::oUser ) .and. ::oUser:Used()
-      ::oUser:end()
-   end if
-
    if !empty( ::oContador ) .and. ::oContador:Used()
       ::oContador:end()
    end if
@@ -1488,10 +1478,6 @@ METHOD CloseFiles()
 
    if !empty( ::oDbfDoc ) .and. ::oDbfDoc:Used()
       ::oDbfDoc:End()
-   end if
-
-   if !empty( ::oDbfUsr ) .and. ::oDbfUsr:Used()
-      ::oDbfUsr:End()
    end if
 
    if !empty( ::oLogPorta ) .and. ::oLogPorta:Used()
@@ -2025,7 +2011,7 @@ METHOD DialogCreateTurno()
    cCaja                := ::GetCurrentCaja()
    cPicImp              := cPorDiv( cDivEmp(), ::oDbfDiv )
    cDivisa              := cDivEmp()
-   cSayUsr              := Capitalize( oRetFld( Auth():Codigo(), ::oUser ) )
+   cSayUsr              := Auth():Nombre()
    cDivObjetivo         := cDivEmp()
    cNombreCaja          := Alltrim( oRetFld( ::GetCurrentCaja(), ::oCaja ) )
    cResource            := "ApTurnoTCT"
@@ -2086,26 +2072,12 @@ METHOD DialogCreateTurno()
          WHEN     ( .f. ) ;
          OF       oDlg
 
+      REDEFINE GET oCodUsr VAR ::cCajeroTurno UPDATE ;
+         ID       130 ;
+         OF       oDlg
+
     if ::lArqueoTactil()
-
-      REDEFINE GET oCodUsr VAR ::cCajeroTurno UPDATE ;
-         ID       130 ;
-         VALID    cUser( oCodUsr, , oNomUsr ) ;
-         BITMAP   "LUPA_24" ;
-         ON HELP  ( BrwUserTactil( oCodUsr, , oNomUsr ) ) ;
-         OF       oDlg
-
       oCodusr:nMargin   := 25
-
-    else
-
-      REDEFINE GET oCodUsr VAR ::cCajeroTurno UPDATE ;
-         ID       130 ;
-         VALID    cUser( oCodUsr, , oNomUsr ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwUser( oCodUsr, , oNomUsr ) ) ;
-         OF       oDlg
-
     end if
 
       REDEFINE GET oNomUsr VAR cNomUsr UPDATE ;
@@ -2277,13 +2249,7 @@ RETURN ( Self )
 
 METHOD cNombreUser()
 
-   local cRet  := ""
-
-   if ::oUser != nil .and. ::oUser:Seek( ::oDbf:cCajTur )
-      cRet     := Rtrim( ::oUser:cNbrUse )
-   end if
-
-RETURN ( cRet )
+RETURN ( SQLUsuariosModel():getNombreWhereCodigo( ::oDbf:cCajTur ) )
 
 //---------------------------------------------------------------------------//
 /*
@@ -3142,10 +3108,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       REDEFINE GET oCajTur VAR ::cCajTur;
          ID       120 ;
-         WHEN     ( !lZoom ) ;
-         VALID    ( !empty( ::cCajTur ) .and. cUser( oCajTur, nil, oNomCaj ) ) ;
+         WHEN     ( .f. ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwUser( oCajTur, nil, oNomCaj ) ) ;
          OF       ::oFldTurno:aDialogs[1]
 
       else
@@ -3159,9 +3123,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE GET oCajTur VAR ::cCajTur;
          ID       120 ;
          WHEN     ( !lZoom ) ;
-         VALID    ( !empty( ::cCajTur ) .and. cUser( oCajTur, nil, oNomCaj ) ) ;
+         VALID    ( !empty( ::cCajTur ) ) ;
          BITMAP   "LUPA_24" ;
-         ON HELP  ( BrwUserTactil( oCajTur, nil, oNomCaj ) ) ;
          OF       ::oFldTurno:aDialogs[1]
 
       oCajTur:nMargin   := 25
@@ -3176,25 +3139,21 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE BUTTON ;
          ID       501;
          OF       ::oFldTurno:aDialogs[1] ;
-         WHEN     ( oUser():lAdministrador() );
          ACTION   ( ::SelCajas( .t., oBrwCaj, .t. ) )
 
       REDEFINE BUTTON ;
          ID       502;
          OF       ::oFldTurno:aDialogs[1] ;
-         WHEN     ( oUser():lAdministrador() );
          ACTION   ( ::SelCajas( .f., oBrwCaj, .t. ) )
 
       REDEFINE BUTTON ::oBtnSelectAllCajas ;
          ID       503;
          OF       ::oFldTurno:aDialogs[1] ;
-         WHEN     ( oUser():lMaster() );
          ACTION   ( ::SelAllCajas( .t., oBrwCaj ) )
 
       REDEFINE BUTTON ::oBtnUnSelectAllCajas ;
          ID       504;
          OF       ::oFldTurno:aDialogs[1] ;
-         WHEN     ( oUser():lMaster() );
          ACTION   ( ::SelAllCajas( .f., oBrwCaj ) )
 
       if !::lArqueoTactil()
@@ -3202,13 +3161,11 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE BUTTON ;
          ID       505;
          OF       ::oFldTurno:aDialogs[ 1 ] ;
-         WHEN     ( oUser():lMaster() );
          ACTION   ( oBrwCaj:GoUp() )
 
       REDEFINE BUTTON ;
          ID       506;
          OF       ::oFldTurno:aDialogs[ 1 ] ;
-         WHEN     ( oUser():lAdministrador() );
          ACTION   ( oBrwCaj:GoDown() )
 
       end if
@@ -4387,7 +4344,7 @@ METHOD SelCajas( lSelect, oBrw, lMessage )
 
    if lSelect
 
-      if .f. // ::oDbfCaj:lCajClo // .and. !oUser():lMaster()
+      if .f.
 
          if lMessage 
             MsgStop( "La caja " + ::oDbfCaj:FieldGetByName( "cCodCaj" ) + " ya está cerrada." )
@@ -6013,7 +5970,7 @@ METHOD DlgImprimir( nDevice, lTactil )
          OF       oDlg
 
       oCodCaj:nMargin   := 25
-      oCodCaj:bWhen     := {|| oUser():lAdministrador() }
+      oCodCaj:bWhen     := {|| .t. }
       oCodCaj:bValid    := {|| cCajas( oCodCaj, ::oCaja:cAlias, oCajNbr )  }
       oCodCaj:bHelp     := {|| BrwCajaTactil( oCodCaj, ::oCaja:cAlias, oCajNbr ) }
 
@@ -6029,7 +5986,7 @@ METHOD DlgImprimir( nDevice, lTactil )
          BITMAP   "LUPA" ;
          OF       oDlg
 
-      oCodCaj:bWhen  := {|| oUser():lAdministrador() }
+      oCodCaj:bWhen  := {|| .t. }
       oCodCaj:bValid := {|| cCajas( oCodCaj, ::oCaja:cAlias, oCajNbr )  }
       oCodCaj:bHelp  := {|| BrwCajas( oCodCaj, oCajNbr ) }
 
@@ -7893,9 +7850,6 @@ METHOD DataReport( cTurno, cCaja, oFastReport )
 
    oFastReport:SetWorkArea(     "Lineas de informes", ::oDbfTemporal:nArea )
    oFastReport:SetFieldAliases( "Lineas de informes", cObjectsToReport( ::oDbfTemporal ) )
-
-   oFastReport:SetWorkArea(     "Usuarios", ::oDbfUsr:nArea )
-   oFastReport:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
    oFastReport:SetWorkArea(     "Empresa", ::oDbfEmp:nArea )
    oFastReport:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
@@ -10407,11 +10361,11 @@ METHOD FillTemporal( cCodCaj )
             do case
                case ::oTikT:cTipTik == SAVTIK
 
-                   ::AppendInTemporal( ::oTikT:cCcjTik, Rtrim( ::oTikT:cCcjTik ) + Space( 1 ) + Rtrim( RetUser( ::oTikT:cCcjTik, ::oUser:cAlias ) ), nTotTik( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
+                   ::AppendInTemporal( ::oTikT:cCcjTik, Rtrim( ::oTikT:cCcjTik ), nTotTik( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
 
                case ::oTikT:cTipTik == SAVDEV
 
-                   ::AppendInTemporal( ::oTikT:cCcjTik, Rtrim( ::oTikT:cCcjTik ) + Space( 1 ) + Rtrim( RetUser( ::oTikT:cCcjTik, ::oUser:cAlias ) ), - nTotTik( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
+                   ::AppendInTemporal( ::oTikT:cCcjTik, Rtrim( ::oTikT:cCcjTik ), - nTotTik( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
 
             end case
 
@@ -10432,7 +10386,7 @@ METHOD FillTemporal( cCodCaj )
          while ::oAlbCliT:cTurAlb + ::oAlbCliT:cSufAlb + ::oAlbCliT:cCodCaj == cTurnoCaja .and. !::oAlbCliT:eof()
 
             if !lFacturado( ::oAlbCliT )
-               ::AppendInTemporal( ::oAlbCliT:cCodUsr, Rtrim( ::oAlbCliT:cCodUsr ) + Space( 1 ) + Rtrim( RetUser( ::oAlbCliT:cCodUsr, ::oUser:cAlias ) ), nTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
+               ::AppendInTemporal( ::oAlbCliT:cCodUsr, Rtrim( ::oAlbCliT:cCodUsr ), nTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
             end if
 
             ::oAlbCliT:Skip()
@@ -10451,7 +10405,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oFacCliT:cTurFac + ::oFacCliT:cSufFac + ::oFacCliT:cCodCaj == cTurnoCaja .and. !::oFacCliT:eof()
 
-            ::AppendInTemporal( ::oFacCliT:cCodUsr, Rtrim( ::oFacCliT:cCodUsr ) + Space( 1 ) + Rtrim( RetUser( ::oFacCliT:cCodUsr, ::oUser:cAlias ) ), nTotFacCli( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, nil, cDivEmp(), .f., .t. ) )
+            ::AppendInTemporal( ::oFacCliT:cCodUsr, Rtrim( ::oFacCliT:cCodUsr ), nTotFacCli( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, nil, cDivEmp(), .f., .t. ) )
 
             ::oFacCliT:Skip()
 
@@ -10469,7 +10423,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oRctCliT:cTurFac + ::oRctCliT:cSufFac + ::oRctCliT:cCodCaj == cTurnoCaja .and. !::oRctCliT:eof()
 
-            ::AppendInTemporal( ::oRctCliT:cCodUsr, Rtrim( ::oRctCliT:cCodUsr ) + Space( 1 ) + Rtrim( RetUser( ::oRctCliT:cCodUsr, ::oUser:cAlias ) ), nTotFacRec( ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac, ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
+            ::AppendInTemporal( ::oRctCliT:cCodUsr, Rtrim( ::oRctCliT:cCodUsr ), nTotFacRec( ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac, ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
 
             ::oRctCliT:Skip()
 
@@ -11423,14 +11377,14 @@ METHOD cInfoAperturaCierreCaja()
    cInfoAperturaCierreCaja       += Dtoc( ::oDbfCaj:FieldGetByName( "dFecOpe" ) ) + Space(1)
    cInfoAperturaCierreCaja       += ::oDbfCaj:FieldGetByName( "cHorOpe" ) + Space(1)
    cInfoAperturaCierreCaja       += ::oDbfCaj:FieldGetByName( "cCajOpe" ) + Space(1)
-   cInfoAperturaCierreCaja       += Capitalize( oRetFld( ::oDbfCaj:FieldGetByName( "cCajOpe" ), ::oUser ) ) 
+   cInfoAperturaCierreCaja       += ::oDbfCaj:FieldGetByName( "cCajOpe" )  
    cInfoAperturaCierreCaja       += CRLF
 
    if ::oDbfCaj:FieldGetByName( "lCajClo" )
       cInfoAperturaCierreCaja    += Dtoc( ::oDbfCaj:FieldGetByName( "dFecClo" ) ) + Space(1)
       cInfoAperturaCierreCaja    += ::oDbfCaj:FieldGetByName( "cHorClo" ) + Space(1)
       cInfoAperturaCierreCaja    += ::oDbfCaj:FieldGetByName( "cCajTur" ) + Space(1)
-      cInfoAperturaCierreCaja    += Capitalize( oRetFld( ::oDbfCaj:FieldGetByName( "cCajTur" ), ::oUser ) ) 
+      cInfoAperturaCierreCaja    += ::oDbfCaj:FieldGetByName( "cCajTur" )  
    end if  
    
 RETURN ( cInfoAperturaCierreCaja )

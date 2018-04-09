@@ -267,7 +267,6 @@ METHOD LoadInformacion()
 
    oMsgProgress():Deltapos( 1 )
 
-   ::oTreeAgenda:Add( "No volver a mostrar página de inicio",  21, {|| SetNotIni( Auth():Codigo() ), ::oDlg:End() } )
    ::oTreeAgenda:Add( "Salir de página de inicio",             22, {|| ::oDlg:End() } )
 
    oMsgProgress():Deltapos( 1 )

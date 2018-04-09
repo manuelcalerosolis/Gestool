@@ -168,11 +168,6 @@ METHOD New( oMenuItem, oWnd ) CLASS TChgCode
       return ( Self )
    end if
 
-   if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return ( Self )
-   end if
-
    /*
    Cerramos todas las ventanas
    */

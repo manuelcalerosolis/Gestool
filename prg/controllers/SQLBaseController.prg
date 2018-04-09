@@ -350,9 +350,6 @@ METHOD Append()
          ::commitTransactionalMode()
 
          if !empty( nId )
-
-            msgalert( nId )
-
             ::refreshRowSetAndFindId( nId )
          else 
             ::refreshRowSet()
@@ -556,11 +553,15 @@ METHOD Zoom( nId )
 
    ::oModel:loadCurrentBuffer( nId )
 
+   ::oDialogView:Activating()
+
    ::fireEvent( 'openingDialog' )
 
    ::oDialogView:Activate()
 
    ::fireEvent( 'closedDialog' )    
+
+   ::oDialogView:Activated()
 
    ::fireEvent( 'zoomed' ) 
 
@@ -572,6 +573,8 @@ RETURN ( .t. )
 
 METHOD DialogViewActivate()
 
+   ::oDialogView:Activating()
+
    ::uDialogResult         := ::oDialogView:Activate()
 
    if hb_islogical( ::uDialogResult )
@@ -581,6 +584,8 @@ METHOD DialogViewActivate()
    if hb_isnumeric( ::uDialogResult ) .and. ( ::uDialogResult != IDCANCEL )
       RETURN ( .t. )
    end if 
+
+   ::oDialogView:Activated()
 
 RETURN ( .f. )
 

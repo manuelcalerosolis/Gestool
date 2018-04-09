@@ -88,7 +88,7 @@ METHOD gettingSelectSentence()
    local uuid        := ::getSenderController():getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "uuid_campo_extra = " + quoted( uuid ) )
+      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( Self )
@@ -166,6 +166,8 @@ RETURN ( nil )
 
 CLASS CamposExtraEntidadesBrowseView FROM SQLBrowseView
 
+   DATA lFooter            INIT .f.
+
    METHOD addColumns()                       
 
 ENDCLASS
@@ -192,10 +194,10 @@ METHOD addColumns() CLASS CamposExtraEntidadesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid_campo_extra'
+      :cSortOrder          := 'parent_uuid'
       :cHeader             := 'Campo Extra'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid_campo_extra' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'parent_uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with 
@@ -289,7 +291,7 @@ METHOD getColumns() CLASS SQLCamposExtraEntidadesModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "uuid_campo_extra",  {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "entidad",           {  "create"    => "VARCHAR ( 40 )"                          ,;
@@ -316,7 +318,7 @@ RETURN ( ::oController:oSenderController:getUuid() )
 METHOD deleteBlankEntityWhereUuid( uuidCampoExtra )
 
    local cSQL  := "DELETE FROM " + ::getTableName() + " "
-   cSQL        +=    "WHERE uuid_campo_extra = " + quoted( uuidCampoExtra ) + " "
+   cSQL        +=    "WHERE parent_uuid = " + quoted( uuidCampoExtra ) + " "
    cSQL        +=    "AND entidad = ''"
 
 RETURN ( getSQLDataBase():Exec( cSQL ) )
@@ -348,7 +350,7 @@ METHOD isEntityWhereUuid( uuidCampoExtra, cEntidad )
    local cSQL  
 
    cSQL              := "SELECT Count(*) FROM " + ::getTableName() + " "
-   cSQL              +=    "WHERE uuid_campo_extra = " + quoted( uuidCampoExtra ) + " "
+   cSQL              +=    "WHERE parent_uuid = " + quoted( uuidCampoExtra ) + " "
    cSQL              +=    "AND entidad = " + quoted( cEntidad )
 
 RETURN ( getSQLDataBase():getValue( cSQL ) > 0 )

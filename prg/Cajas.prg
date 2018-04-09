@@ -22,8 +22,6 @@ static bEdtDet       := { |aTmp, aGet, dbfCajL, oBrw, bWhen, bValid, nMode, aTmp
 
 //----------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
 STATIC FUNCTION lOpenFiles()
 
    local oError
@@ -257,17 +255,6 @@ FUNCTION Cajas( oMenuItem, oWnd )
          MRU ;
          HOTKEY   "E";
          LEVEL    ACC_DELE
-
-#ifndef __TACTIL__
-
-      DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( InfCaj():New( "Listado de cajas" ):Play() ) ;
-         TOOLTIP  "(L)istado";
-         HOTKEY   "L";
-         LEVEL    ACC_IMPR
-
-#endif
 
       DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
 			NOBORDER ;
@@ -1607,7 +1594,7 @@ FUNCTION BrwCajaTactil( oGet, dbfCaja, oGet2, lRETURNCaja, lParaLlevar )
 
    if empty( dbfCaja )
 
-      if !OpenFiles( .t. )
+      if !lOpenFiles( .t. )
          RETURN nil
       end if
 
@@ -3373,8 +3360,6 @@ FUNCTION SelectCajon()
    CloseFiles()
 
 RETURN ( .t. )
-
-#endif
 
 //---------------------------------------------------------------------------//
 

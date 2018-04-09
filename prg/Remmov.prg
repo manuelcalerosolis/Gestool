@@ -50,7 +50,6 @@ CLASS TRemMovAlm FROM TMasDet
 
    DATA  oArt
    DATA  oArtKit
-   DATA  oUsr
    DATA  oDbfDoc
    DATA  oDbfCnt
    DATA  oDelega
@@ -550,8 +549,6 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       DATABASE NEW ::oDelega           FILE "Delega.Dbf"    PATH ( cPatDat() )      VIA ( cDriver() ) SHARED INDEX "Delega.Cdx"
 
-      DATABASE NEW ::oUsr              FILE "Users.Dbf"     PATH ( cPatDat() )       VIA ( cDriver() ) SHARED INDEX "Users.Cdx"
-
       DATABASE NEW ::oTMov             FILE "TMOV.DBF"      PATH ( cPatDat() )        VIA ( cDriver() ) SHARED INDEX "TMov.Cdx"
 
       DATABASE NEW ::oAlmacenOrigen    FILE "ALMACEN.DBF"   ALIAS "ALMACEN"   PATH ( cPatEmp() )   VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
@@ -867,10 +864,6 @@ METHOD CloseFiles() CLASS TRemMovAlm
       ::oDelega:End()
    end if
 
-   if ::oUsr != nil .and. ::oUsr:Used()
-      ::oUsr:End()
-   end if
-
    if ::oDbfDoc != nil .and. ::oDbfDoc:Used()
       ::oDbfDoc:End()
    end if
@@ -1034,7 +1027,6 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
    if nMode == APPD_MODE
       ::oDbf:lSelDoc := .t.
       ::oDbf:cCodUsr := Auth():Codigo()
-      ::oDbf:cCodDlg := oRetFld( Auth():Codigo(), ::oUsr, "cCodDlg" )
    end if
 
    cSay[ 1 ]         := oRetFld( ::oDbf:cAlmOrg, ::oAlmacenOrigen )
@@ -1042,7 +1034,6 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
    cSay[ 3 ]         := oRetFld( ::oDbf:cCodMov, ::oTMov )
    cSay[ 5 ]         := oRetFld( cCodEmp() + ::oDbf:cCodDlg, ::oDelega, "cNomDlg" )
    cSay[ 6 ]         := Rtrim( oRetFld( ::oDbf:cCodAge, ::oDbfAge, 2 ) ) + ", " + Rtrim( oRetFld( ::oDbf:cCodAge, ::oDbfAge, 3 ) )
-   cSay[ 7 ]         := oRetFld( ::oDbf:cCodUsr, ::oUsr )
 
    DEFINE DIALOG oDlg RESOURCE "RemMov" TITLE LblTitle( nMode ) + "movimientos de almacén"
 

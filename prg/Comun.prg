@@ -284,7 +284,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   //CamposExtraController():New():ActivateNavigatorView()
+   CamposExtraController():New():ActivateNavigatorView()
    
 RETURN nil
 
@@ -924,10 +924,6 @@ Static FUNCTION FinishAplication() //  Static FUNCTION
    if !empty( cCodEmp() )
       WritePProString( "main", "Ultima Empresa", cCodEmp(), cIniAplication() )
    end if 
-
-   // liberar el usuario-------------------------------------------------------
-
-   lFreeUser()
 
    // Cerramos las auditorias--------------------------------------------------
 
