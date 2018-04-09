@@ -284,7 +284,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   CamposExtraController():New():ActivateNavigatorView()
+   // CamposExtraController():New():ActivateNavigatorView()
    
 RETURN nil
 
@@ -892,7 +892,7 @@ FUNCTION lEnviarCorreoCliente( cSay, oDlg )
       */
 
       :SetDe(                "Gestool sistema de registro" )
-      :SetPara(              AllTrim( cSay[6] ) )
+      :SetPara(              alltrim( cSay[6] ) )
       :SetAsunto(            "Registro de Gestool." )
       :cGetMensaje           := "Su petición de registro está siendo procesada. En breve nos pondremos en contacto con usted "
       :cGetMensaje           += "para finalizar el proceso de registro." + "<br>"
