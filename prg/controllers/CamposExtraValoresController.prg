@@ -15,8 +15,6 @@ END CLASS
 
 METHOD New() CLASS CamposExtraValoresController
 
-   msgAlert ("New")
-
    ::Super:New()
 
    ::cTitle                            := "Campos extra valores"
@@ -34,6 +32,8 @@ METHOD New() CLASS CamposExtraValoresController
    ::oModel                            := SQLCamposExtraValoresModel():New( self )
 
    ::oBrowseView                       := CamposExtraValoresBrowseView():New( self )
+
+   ::oRepository                       := CamposExtraValoresRepository():New( self )
 
    ::oDialogView                       := CamposExtraValoresView():New( self )
 
@@ -67,6 +67,7 @@ METHOD addColumns() CLASS CamposExtraValoresBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -116,7 +117,6 @@ RETURN ( self )
 
 CLASS CamposExtraValoresView FROM SQLBaseView
 
-
    METHOD New( oSender )
 
    METHOD Activate()
@@ -135,13 +135,9 @@ Return ( self )
 
 METHOD Activate() CLASS CamposExtraValoresView
 
-<<<<<<< HEAD
    local oBtnAppend
    local oBtnDelete
 
-
-=======
->>>>>>> 37496296bf770646439592f8fa723a7a23155329
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CAMPOS_EXTRA_VALORES" ;
       TITLE       ::LblTitle() + "valor"
@@ -157,10 +153,8 @@ METHOD Activate() CLASS CamposExtraValoresView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-<<<<<<< HEAD
+   ::oController:oBrowseView:Activate( ::oDialog, 100 )
 
-=======
->>>>>>> 37496296bf770646439592f8fa723a7a23155329
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
@@ -267,18 +261,22 @@ CLASS CamposExtraValoresRepository FROM SQLBaseRepository
 
    METHOD getTableName()                              INLINE ( SQLCamposExtraValoresModel():getTableName() ) 
    METHOD getTableNameCamposExtra()                   INLINE ( SQLCamposExtraModel():getTableName() ) 
-   METHOD getCampoExtraEntidades()
+   METHOD getCampoExtraValores()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 
-METHOD getCampoExtraEntidades() CLASS CamposExtraValoresRepository
+METHOD getCampoExtraValores() CLASS CamposExtraValoresRepository
 
    local cSQL  
 
-   cSQL              := "SELECT uuid FROM " + ::getTableNameCamposExtra() + " "
+   cSQL              :=    "SELECT entidad.id, entidad.uuid, entidad.uuid_campo_extra, entidad.entidad, campos.nombre, valores.valor " 
+   cSQL              +=    "FROM campos_extra_entidad entidad "
+   cSQL              +=    "INNER JOIN campos_extra campos ON entidad.uuid_campo_extra = campos.uuid "
+   cSQL              +=    "LEFT JOIN campos_extra_valores valores ON valores.campo_extra_entidades_uuid = entidad.uuid "
+   cSQL              +=    "WHERE entidad = 'clientes'"
 
 RETURN ( getSQLDataBase():Exec( cSQL ) )
 
