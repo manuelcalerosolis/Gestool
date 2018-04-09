@@ -55,6 +55,8 @@ METHOD deleteEntitiesWhereEmpty()
    
    ::oCamposExtraEntidadesController:oModel:deleteBlankEntityWhereUuid( ::getUuid() )
 
+   msgalert( "deleteEntitiesWhereEmpty" )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

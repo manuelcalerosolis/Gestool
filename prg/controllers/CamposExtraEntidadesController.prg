@@ -205,7 +205,7 @@ METHOD addColumns() CLASS CamposExtraEntidadesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'entidad'
       :cHeader             := 'Entidad'
-      :nWidth              := 250
+      :nWidth              := 380
       :bEditValue          := {|| ::oController:getNombreWhereEntidad( ::getRowSet():fieldGet( 'entidad' ) )  }
       :nEditType           := EDIT_LISTBOX
       :cEditPicture        := ""
@@ -275,9 +275,9 @@ CLASS SQLCamposExtraEntidadesModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   METHOD getUuidCampoExtraAttribute( value )
+   METHOD getParentUuidAttribute( value )
 
-   METHOD deleteBlankEntityWhereUuid( uuidCampoExtra )
+   METHOD deleteBlankEntityWhereUuid( parentUuid )
 
 END CLASS
 
@@ -301,7 +301,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getUuidCampoExtraAttribute( value )
+METHOD getParentUuidAttribute( value )
 
    if empty( ::oController )
       RETURN ( value )
@@ -315,10 +315,10 @@ RETURN ( ::oController:oSenderController:getUuid() )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteBlankEntityWhereUuid( uuidCampoExtra )
+METHOD deleteBlankEntityWhereUuid( parentUuid )
 
    local cSQL  := "DELETE FROM " + ::getTableName() + " "
-   cSQL        +=    "WHERE parent_uuid = " + quoted( uuidCampoExtra ) + " "
+   cSQL        +=    "WHERE parent_uuid = " + quoted( parentUuid ) + " "
    cSQL        +=    "AND entidad = ''"
 
 RETURN ( getSQLDataBase():Exec( cSQL ) )
@@ -333,24 +333,24 @@ RETURN ( getSQLDataBase():Exec( cSQL ) )
 
 CLASS CamposExtraEntidadesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                              INLINE ( SQLCamposExtraEntidadesModel():getTableName() ) 
+   METHOD getTableName()                          INLINE ( SQLCamposExtraEntidadesModel():getTableName() ) 
 
-   METHOD isEntityWhereUuid( uuidCampoExtra, cEntidad )
+   METHOD isEntityWhereUuid( parentUuid, cEntidad )
 
-   METHOD isBlankEntityWhereUuid( uuidCampoExtra )    INLINE ( ::isEntityWhereUuid( uuidCampoExtra, '' ) )
+   METHOD isBlankEntityWhereUuid( parentUuid )    INLINE ( ::isEntityWhereUuid( parentUuid, '' ) )
    
-   METHOD isNotBlankEntityWhereUuid( uuidCampoExtra ) INLINE ( !::isBlankEntityWhereUuid(  uuidCampoExtra ) )
+   METHOD isNotBlankEntityWhereUuid( parentUuid ) INLINE ( !::isBlankEntityWhereUuid(  parentUuid ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD isEntityWhereUuid( uuidCampoExtra, cEntidad )
+METHOD isEntityWhereUuid( parentUuid, cEntidad )
 
    local cSQL  
 
    cSQL              := "SELECT Count(*) FROM " + ::getTableName() + " "
-   cSQL              +=    "WHERE parent_uuid = " + quoted( uuidCampoExtra ) + " "
+   cSQL              +=    "WHERE parent_uuid = " + quoted( parentUuid ) + " "
    cSQL              +=    "AND entidad = " + quoted( cEntidad )
 
 RETURN ( getSQLDataBase():getValue( cSQL ) > 0 )

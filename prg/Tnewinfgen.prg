@@ -315,7 +315,7 @@ METHOD NewResource( cFldRes ) CLASS TNewInfGen
    local aoFont      := { , , }
    local aoSizes     := { , , }
    local aoEstilo    := { , , }
-   local aSize02s        := { "8", "10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72" }
+   local aSizes      := { "8", "10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72" }
    local aEstilo     := { "Normal", "Cursiva", "Negrita", "Negrita Cursiva" }
    local aPad        := { "Izquierda", "Derecha" }
    local oPrinter

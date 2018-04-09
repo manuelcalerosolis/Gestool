@@ -2761,6 +2761,17 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Campos extra valores'
+   oItem:cMessage       := 'Solicitar campos extra'
+   oItem:bAction        := {|| CamposExtraValoresController():New( 'clientes', '00001495-645a-4e47-b964-f7205f057a85' ):Edit() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_user_headset_16"
+   oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:lShow          := .f.
+
+
 RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
