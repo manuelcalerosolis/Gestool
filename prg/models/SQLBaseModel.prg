@@ -360,8 +360,6 @@ METHOD getSelectSentence()
 
    ::fireEvent( 'gotSelectSentence')
 
-   msgalert( cSQLSelect, "cSQLSelect" )
-
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//

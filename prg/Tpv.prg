@@ -2698,7 +2698,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cTikT, oBrw, cCodCli, cCodArt, nMode, hDocum
    oDlgTpv:bStart       := {|| StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, hDocument, cCodArt ) }
 
    /*
-   Apertura de la caja de dialogo
+   Apertura de la caja de dialogo----------------------------------------------
    */
 
    if nMode != ZOOM_MODE
@@ -7251,6 +7251,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
    local oCol
    local aPos
    local oBtn
+   local oBtnCancel
    local lTwo                 := .f.
    local nTop
    local nLeft
@@ -7358,7 +7359,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
                aGet[ _CCBATIL ]:bLostFocus         := {|| LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlgDet, @lMsgVta, @lNotVta ) }
                aGet[ _CCBATIL ]:bHelp              := {|| SetLostFocusOff(), BrwArticulo( aGet[ _CCBATIL ], aGet[ _CNOMTIL ] ), SetLostFocusOn() }
-               aGet[ _CCBATIL ]:bValid             := {|| lCodigoArticulo( aGet, aTmp, .t. ) }
 
                do case
                case nCaptura == 1
@@ -7724,10 +7724,17 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                      DEFAULT  ;
                      OF       oDlgDet
 
+      @ 0, 0 BUTTON  oBtnCancel ;
+                     PROMPT   ( "Cancelar" );
+                     FONT     oBrw:oFont ;
+                     WHEN     ( nMode != ZOOM_MODE ) ;
+                     ACTION   ( oDlgDet:end( IDCANCEL ) ) ;
+                     OF       oDlgDet
+
       oDlgDet:AddFastKey( VK_F11, {|| GetPesoBalanza( aGet, oBtn ) } )
 
       oDlgDet:bKeyDown        := {| nKey | EdtDetKeyDown( nKey, aGet, oDlgDet, oBtn ) }
-      oDlgDet:bStart          := {|| if( !empty( cCodArt ), ( Eval( aGet[ _CCBATIL ]:bLostFocus ), aGet[ _CCBATIL ]:lValid() ), ), SetDlgMode( oDlgDet, aTmp, aGet, nMode, oBrw, oBtn ) }
+      oDlgDet:bStart          := {|| startDlgDet( oDlgDet, cCodArt, aGet, aTmp, nMode, oBrw, oBtn, oBtnCancel ) }
       oDlgDet:bLostFocus      := {|| dlgLostFocus( nMode, aTmp ) }
       
       setLostFocusOff()
@@ -7741,7 +7748,33 @@ RETURN ( oDlgDet:nResult == IDOK )
 
 //-------------------------------------------------------------------------//
 
-Static Function SetDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn ) // , nTop, nLeft, nHeight, nWidth )
+STATIC FUNCTION startDlgDet( oDlgDet, cCodArt, aGet, aTmp, nMode, oBrw, oBtn, oBtnCancel )
+
+   if !empty( cCodArt )
+      aGet[ _CCBATIL ]:lValid() 
+   end if 
+
+   SetDlgMode( oDlgDet, aTmp, aGet, nMode, oBrw, oBtn, oBtnCancel )
+
+RETURN ( nil )
+
+//-------------------------------------------------------------------------//
+
+STATIC FUNCTION EditGetLostFocus( oGet, hWndFocus, oDlgDet )
+
+   if getLostFocus()
+      RETURN NIL
+   end if 
+   
+   if ( ascan( oDlgDet:aControls, {|oControl| oControl:hWnd == hWndFocus } ) == 0 )
+      oDlgDet:end( IDCANCEL )
+   end if 
+
+RETURN NIL
+
+//-------------------------------------------------------------------------//
+
+Static Function SetDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn, oBtnCancel ) // , nTop, nLeft, nHeight, nWidth )
 
    local n
    local oCtl
@@ -7753,7 +7786,7 @@ Static Function SetDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn ) // , nTop, nLe
 
    // oDlg:Move( nTop, nLeft, nWidth + nHeight, nHeight )
 
-   for n := 1 to len( oDlg:aControls ) - 1
+   for n := 1 to len( oDlg:aControls ) - 2
 
       nRow        := 3 //( ( oBrw:nRowSel - 1 ) * oBrw:nRowHeight ) // + oBrw:HeaderHeight() + 4
       nCol        := oBrw:aCols[ n ]:nDisplayCol - 25
@@ -7767,6 +7800,8 @@ Static Function SetDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn ) // , nTop, nLe
    next
 
    oBtn:Move( nRow, nGWidth, nHeight + 4, nHeight + 4, .t. )
+
+   oBtnCancel:Move( nRow, nGWidth + 18, nHeight + 50, nHeight + 4, .t. )
 
    if empty( aTmp[ _NPVPTIL ] ) .or. oUser():lAdministrador() .or. ( SQLAjustableModel():getRolCambiarPrecios( Auth():rolUuid() ) )
       if( !empty( aGet[ _NPVPTIL ] ), aGet[ _NPVPTIL ]:HardEnable(), )
@@ -8412,8 +8447,8 @@ RETURN ( .t. )
 STATIC FUNCTION lCodigoArticulo( aGet, aTmp, lMessage, oDlg )
 
    local lCodArt        := .t.
-   local cValPr1        := Space(10)
-   local cValPr2        := Space(10)
+   local cValPr1        := Space( 20 )
+   local cValPr2        := Space( 20 )
    local cCodArt        := aGet[ _CCBATIL ]:VarGet()
 
    DEFAULT lMessage     := .t.
@@ -8437,7 +8472,7 @@ STATIC FUNCTION lCodigoArticulo( aGet, aTmp, lMessage, oDlg )
       if lMessage
 
          SetLostFocusOff()
-         MsgBeepStop( "Artículo con código " + Rtrim( cCodArt ) + " no encontrado" )
+         MsgBeepStop( "Artículo con código " + rtrim( cCodArt ) + " no encontrado" )
          SetLostFocusOn()
 
       end if
@@ -9019,6 +9054,10 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
       end if
 
    else
+
+      SetLostFocusOff()
+      MsgBeepStop( "Artículo con código " + rtrim( cCodArt ) + " no encontrado" )
+      SetLostFocusOn()
 
       Return .f.
 
@@ -15003,8 +15042,6 @@ STATIC FUNCTION browseTipoImpresora( oGet )
 
    local cTipoImpresora    := TiposImpresorasController():New():ActivateSelectorView()
 
-   msgalert( hb_valtoexp( cTipoImpresora ), "cTipoImpresora" )
-
    if !empty( cTipoImpresora )
       oGet:cText( padr( cTipoImpresora, 50 ) )
    end if 
@@ -18099,18 +18136,23 @@ return cChr
 //---------------------------------------------------------------------------//
 
 Static Function SetLostFocusOn()
+
    oDlgDet:Cargo           := .t.
+
 Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
 Static Function SetLostFocusOff()
+
    oDlgDet:Cargo           := .f.
+
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
 Static Function getLostFocus()
+
 Return ( isLogic( oDlgDet:Cargo ) .and. ( oDlgDet:Cargo ) )
 
 //---------------------------------------------------------------------------//
