@@ -1516,22 +1516,6 @@ FUNCTION IsReportFolder()
       USE ( cPatEmp() + "CFGCAR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CFGCAR", @dbfFolder ) )
       SET ADSINDEX TO ( cPatEmp() + "CFGCAR.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "USERS.DBF" )     NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
-      while !( dbfUser )->( eof() )
-
-         if !( dbfFolder )->( dbSeek( ( dbfUser )->cCodUse + Padr( "Favoritos", 100 ) ) )
-            ( dbfFolder )->( dbAppend() )
-            ( dbfFolder )->cCodUsr     := ( dbfUser )->cCodUse
-            ( dbfFolder )->cNombre     := "Favoritos"
-            ( dbfFolder )->( dbUnLock() )
-         end if
-
-         ( dbfUser )->( dbSkip() )
-
-      end while
-
       lIsFolder         := .t.
 
    RECOVER USING oError
@@ -1542,7 +1526,6 @@ FUNCTION IsReportFolder()
    ErrorBlock( oBlock )
 
    CLOSE ( dbfFolder )
-   CLOSE ( dbfUser )
 
  RETURN ( lIsFolder )
 

@@ -1400,10 +1400,6 @@ FUNCTION InfDiaCaj()
 
    REDEFINE GET oCajDesde VAR cCajDesde;
 		ID 		120 ;
-		COLOR 	CLR_GET ;
-      VALID    ( cUser( oCajDesde, dbfCajero, oNomCajDesde ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwUser( oCajDesde, dbfCajero, oNomCajDesde ) ) ;
 		OF 		oDlg
 
    REDEFINE GET oNomCajDesde VAR cNomCajDesde ;
@@ -1414,10 +1410,6 @@ FUNCTION InfDiaCaj()
 
    REDEFINE GET oCajHasta VAR cCajHasta;
 		ID 		130 ;
-		COLOR 	CLR_GET ;
-      VALID    ( cUser( oCajHasta, dbfCajero, oNomCajHasta ) ) ;
-      BITMAP   "LUPA" ;
-      ON HELP  ( BrwUser( oCajHasta, dbfCajero, oNomCajHasta ) ) ;
 		OF 		oDlg
 
    REDEFINE GET oNomCajHasta VAR cNomCajHasta ;
@@ -1542,8 +1534,7 @@ STATIC FUNCTION GenDiaCaj( dInfDesde, dInfHasta, cCajDesde, cCajHasta, nDevice, 
 			FONT 		2
 
    GROUP ON (dbfTikT)->CCCJTIK ;
-         HEADER   "Cajero : " + oReport:aGroups[1]:cValue + " - " + ;
-                  RetUser( oReport:aGroups[1]:cValue, dbfCajero ) ;
+         HEADER   "Cajero : " + oReport:aGroups[1]:cValue ;
          EJECT ;
 			FONT 3
 
@@ -1616,7 +1607,7 @@ STATIC FUNCTION TikDiaCaj( dInfDesde, dInfHasta, cCajDesde, cCajHasta, cTitulo, 
    Grupo
    */
 
-   oPrn:write( "Cajero : " + (dbfTikT)->CCCJTIK + RetUser( (dbfTikT)->CCCJTIK, dbfCajero ) + CRLF )
+   oPrn:write( "Cajero : " + (dbfTikT)->CCCJTIK + CRLF )
    cCodCaj := (dbfTikT)->CCCJTIK
 
 	/*
@@ -1660,7 +1651,7 @@ STATIC FUNCTION TikDiaCaj( dInfDesde, dInfHasta, cCajDesde, cCajHasta, cTitulo, 
          nTotEnd := 0
 
          oPrn:write( CRLF )
-         oPrn:write( "Cajero : " + (dbfTikT)->CCCJTIK + RetUser( (dbfTikT)->CCCJTIK, dbfCajero ) + CRLF )
+         oPrn:write( "Cajero : " + (dbfTikT)->CCCJTIK + CRLF )
          oPrn:write( Replicate( "-", 40 ) + CRLF )
 
       end if

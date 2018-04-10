@@ -477,8 +477,6 @@ STATIC FUNCTION OpenFiles( lExt )
       D():Documentos( nView )
       ( D():Documentos( nView ) )->( ordSetFocus( "CTIPO" ) )
 
-      D():Usuarios( nView )
-
       D():UbicacionLineas( nView )
 
       D():Delegaciones( nView )
@@ -1259,7 +1257,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    local oBmpGeneral
 
    cTlfPrv           := RetFld( aTmp[ _CCODPRV ], D():Proveedores( nView ), "Telefono" )
-   cUsr              := RetFld( aTmp[ _CCODUSR ], D():Usuarios( nView ), "cNbrUse" )
+   cUsr              := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCODUSR ] )
 
    do case
    case nMode == APPD_MODE
@@ -2305,7 +2303,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       REDEFINE GET   aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
          ID          125 ;
          WHEN        ( .f. ) ;
-         VALID       ( SetUsuario( aGet[ _CCODUSR ], oUsr, nil, D():Usuarios( nView ) ) );
          OF          oFld:aDialogs[2]
 
       REDEFINE GET   oUsr VAR cUsr ;
@@ -2708,10 +2705,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), , oDlg:end() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), , oDlg:end() ) }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), oDlg:end() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), oDlg:end() ) }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !empty( cCodArt )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ) }

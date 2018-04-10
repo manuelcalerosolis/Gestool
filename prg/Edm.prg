@@ -96,15 +96,6 @@ Method Activate( oMenuItem, oWnd )
       return ( nil )
    end if
 
-   if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
-      return ( nil )
-   end if
-
-   if oWnd != nil
-      SysRefresh(); oWnd:CloseAll(); SysRefresh()
-   end if
-
    if !::OpenFiles()
       Return nil
    end if

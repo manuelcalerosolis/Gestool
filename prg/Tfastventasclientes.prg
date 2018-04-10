@@ -244,8 +244,6 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       D():FormasPago( ::nView )
 
-      D():Usuarios( ::nView )
-
       D():TiposIva( ::nView )
 
       D():Divisas( ::nView )
@@ -488,9 +486,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetWorkArea(       "Grupos de cliente",                D():objectGruposClientes( ::nView ):Select() )
    ::oFastReport:SetFieldAliases(   "Grupos de cliente",                cObjectsToReport( D():objectGruposClientes( ::nView ):oDbf ) )
 
-   ::oFastReport:SetWorkArea(       "Usuarios",                         ( D():Usuarios( ::nView ) )->( select() ) ) 
-   ::oFastReport:SetFieldAliases(   "Usuarios",                         cItemsToReport( aItmUsuario() ) )
-
    ::oFastReport:SetWorkArea(       "Direcciones",                      ( D():ClientesDirecciones( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Direcciones",                      cItemsToReport( aItmObr() ) )
 
@@ -517,7 +512,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetMasterDetail(   "Informe", "Documentos",            {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Incidencias",           {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",               {|| ::oDbf:cCodAge } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Usuarios",              {|| ::oDbf:cCodUsr } )
    ::oFastReport:SetMasterDetail(   "Informe", "Rutas",                 {|| ::oDbf:cCodRut } )
    ::oFastReport:SetMasterDetail(   "Informe", "Formas de pago",        {|| ::oDbf:cCodPgo } )
 
@@ -542,7 +536,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Tarifas de cliente" )
    ::oFastReport:SetResyncPair(     "Informe", "Documentos" )
    ::oFastReport:SetResyncPair(     "Informe", "Incidencias" )
-   ::oFastReport:SetResyncPair(     "Informe", "Usuarios" )
    ::oFastReport:SetResyncPair(     "Informe", "Rutas" )
    ::oFastReport:SetResyncPair(     "Informe", "Formas de pago" )
 

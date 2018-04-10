@@ -95,7 +95,6 @@ CLASS TAuditor FROM TMant
    DATA aBmp               INIT {}
 
    DATA oEmpresa
-   DATA oUsuario
 
    DATA oFilter
 
@@ -230,8 +229,6 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oEmpresa PATH ( cPatDat() ) FILE "Empresa.Dbf" VIA ( cDriver() ) SHARED INDEX "Empresa.Cdx"
 
-      DATABASE NEW ::oUsuario PATH ( cPatDat() ) FILE "Users.Dbf"   VIA ( cDriver() ) SHARED INDEX "Users.Cdx"
-
       ::lOpenFiles      := .t.
 
       /*
@@ -355,8 +352,6 @@ METHOD Resource( nMode )
          WHEN     ( .f. ) ;
 			OF 		oDlg
 
-      oGetUse:oHelpText:cText( oRetFld( ::oDbf:cCodUse, ::oUsuario, "cNbrUse" ) )
-
       REDEFINE GET oGetEmp VAR ::oDbf:cCodEmp UPDATE;
          ID       150 ;
          IDTEXT   151 ;
@@ -410,10 +405,6 @@ METHOD CloseFiles()
 
    if !Empty( ::oEmpresa ) .and. ::oEmpresa:Used()
       ::oEmpresa:end()
-   end if
-
-   if !Empty( ::oUsuario ) .and. ::oUsuario:Used()
-      ::oUsuario:end()
    end if
 
    /*
@@ -482,10 +473,6 @@ Return ( "" )
 //----------------------------------------------------------------------------//
 
 Method UsuarioOperacion()
-
-   if !Empty( ::oUsuario )
-      return ( ::oDbf:cCodUse + Space( 1 ) + "-" + Space( 1 ) + oRetFld( ::oDbf:cCodUse, ::oUsuario, "cNbrUse" ) )
-   end if
 
 return ( ::oDbf:cCodUse )
 
@@ -595,9 +582,6 @@ Method Filter()
       PICTURE  "@!" ;
       BITMAP   "LUPA" ;
       OF       oDlg
-
-   ::oCodigoUsuario:bValid := {|| cUser( ::oCodigoUsuario, ::oUsuario:cAlias, ::oCodigoUsuario:oHelpText ) }
-   ::oCodigoUsuario:bHelp  := {|| BrwUser( ::oCodigoUsuario, ::oUsuario:cAlias, ::oCodigoUsuario:oHelpText ) }
 
    REDEFINE GET ::oCodigoEmpresa VAR ::cCodigoEmpresa ;
       ID       140 ;

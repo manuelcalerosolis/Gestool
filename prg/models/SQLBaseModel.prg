@@ -173,7 +173,8 @@ CLASS SQLBaseModel
    METHOD setBuffer( cColumn, uValue )
    METHOD setBufferPadr( cColumn, uValue )
    
-   METHOD insertBuffer( hBuffer )                     
+   METHOD insertBuffer( hBuffer ) 
+   METHOD insertIgnoreBuffer( hBuffer )                    
    METHOD updateBuffer( hBuffer )
    METHOD insertOnDuplicate( hBuffer )
    METHOD deleteSelection( aIds )
@@ -358,6 +359,8 @@ METHOD getSelectSentence()
    cSQLSelect              := ::getSelectByOrder( cSQLSelect )
 
    ::fireEvent( 'gotSelectSentence')
+
+   msgalert( cSQLSelect, "cSQLSelect" )
 
 RETURN ( cSQLSelect )
 
@@ -555,7 +558,13 @@ METHOD getInsertSentence( hBuffer, lIgnore )
 
    hBuffer           := ::setCreatedTimeStamp( hBuffer )
 
-   ::cSQLInsert      := "INSERT" + if( lIgnore, "IGNORE", " " ) + "INTO " + ::cTableName + " ( "
+   ::cSQLInsert      := "INSERT " 
+
+   if lIgnore
+      ::cSQLInsert   += "IGNORE "
+   end if 
+
+   ::cSQLInsert      += "INTO " + ::cTableName + " ( "
 
    hEval( hBuffer, {| k, v | if( k != ::cColumnKey, ::cSQLInsert += k + ", ", ) } )
 
@@ -565,7 +574,7 @@ METHOD getInsertSentence( hBuffer, lIgnore )
 
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' )', 2 )
 
-   ::fireEvent( 'gotInsertSentence' )  
+   ::fireEvent( 'gotInsertSentence' ) 
 
 RETURN ( ::cSQLInsert )
 
@@ -886,6 +895,26 @@ METHOD insertBuffer( hBuffer )
    local nId
 
    ::getInsertSentence( hBuffer )
+
+   ::fireEvent( 'insertingBuffer' )
+
+   if !empty( ::cSQLInsert )
+      ::getDatabase():Execs( ::cSQLInsert )
+   end if 
+
+   nId         := ::getDatabase():LastInsertId()
+
+   ::fireEvent( 'insertedBuffer' )
+
+RETURN ( nId )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertIgnoreBuffer( hBuffer )
+
+   local nId
+
+   ::getInsertIgnoreSentence( hBuffer )
 
    ::fireEvent( 'insertingBuffer' )
 

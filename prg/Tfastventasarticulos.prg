@@ -438,8 +438,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       D():Almacen( ::nView )
 
-      D():Usuarios( ::nView )
-
       D():Ruta( ::nView )
 
       D():Agentes( ::nView )
@@ -1216,9 +1214,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
    ::oFastReport:SetWorkArea(       "Almacenes",                     ( D():Almacen( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Almacenes",                     cItemsToReport( aItmAlm() ) )
-
-   ::oFastReport:SetWorkArea(       "Usuarios",                      ( D():Usuarios( ::nView ) )->( select() ) ) 
-   ::oFastReport:SetFieldAliases(   "Usuarios",                      cItemsToReport( aItmUsuario() ) )
 
    ::oFastReport:SetWorkArea(       "Stock por almacén",             ( D():ArticuloStockAlmacenes( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Stock por almacén",             cItemsToReport( aItmStockaAlmacenes() ) )

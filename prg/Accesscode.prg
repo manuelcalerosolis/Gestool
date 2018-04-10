@@ -67,10 +67,6 @@ METHOD loadTableConfiguration() CLASS AccessCode
       Return ( .f. )
    end if 
 
-   if lChkUser( ::cGetUser, ::cGetPassword )
-      Return ( .t. )
-   end if
-
 Return ( .f. )
 
 //--------------------------------------------------------------------------//

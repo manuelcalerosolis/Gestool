@@ -241,7 +241,6 @@ memvar cAgente
 memvar cDbfAge
 memvar cIva
 memvar cDbfIva
-memvar cDbfUsr
 memvar cFPago
 memvar cDbfPgo
 memvar cTarPreL
@@ -357,7 +356,6 @@ static dbfArtDiv
 static dbfRuta
 static dbfTblCnv
 static dbfAlm
-static dbfUsr
 static dbfObrasT
 static oBrwIva
 static dbfArtPrv
@@ -711,9 +709,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
       SET ADSINDEX TO ( cPatEmp() + "PROVART.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
@@ -1921,7 +1916,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    cSay[ 7 ]        := RetFld( aTmp[ _CCODRUT ], dbfRuta )
    cSay[ 8 ]        := oTrans:cNombre( aTmp[ _CCODTRN ] )
    cSay[ 9 ]        := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
-   cSay[10 ]        := RetFld( aTmp[ _CCODUSR ], dbfUsr, "cNbrUse" )
+   cSay[10 ]        := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCODUSR ] )
    cSay[11 ]        := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
 
    /*
@@ -2979,7 +2974,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
          ID       115 ;
          WHEN     ( .f. ) ;
-         VALID    ( SetUsuario( aGet[ _CCODUSR ], oSay[ 10 ], nil, dbfUsr ) );
          OF       oFld:aDialogs[2]
 
       REDEFINE GET oSay[ 10 ] VAR cSay[ 10 ] ;
@@ -3650,13 +3644,13 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin,
 		do case
    		case lRecogerUsuario() .and. Empty( cCodArt )
 
-         	if !lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
+         	if !lGetUsuario( aGet[ _CCODUSR ] )
       			oDlg:End()
       		end if
 
    		case lRecogerUsuario() .and. !Empty( cCodArt )
       		
-   			if lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
+   			if lGetUsuario( aGet[ _CCODUSR ] )
       			AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt )
    			else
       			oDlg:End()
@@ -7285,9 +7279,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Ofertas", ( dbfOferta )->( Select() ) )
    oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )
 
-   oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
-   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
-
    if !empty(oUndMedicion)
       oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
       oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
@@ -7645,7 +7636,6 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfArtDiv  ), ( dbfArtDiv  )->( dbCloseArea() ), )
    if( !Empty( dbfTblCnv  ), ( dbfTblCnv  )->( dbCloseArea() ), )
    if( !Empty( dbfCajT    ), ( dbfCajT    )->( dbCloseArea() ), )
-   if( !Empty( dbfUsr     ), ( dbfUsr     )->( dbCloseArea() ), )
    if( !Empty( dbfArtPrv  ), ( dbfArtPrv  )->( dbCloseArea() ), )
    if( !Empty( dbfDelega  ), ( dbfDelega  )->( dbCloseArea() ), )
    if( !Empty( dbfAgeCom  ), ( dbfAgeCom  )->( dbCloseArea() ), )
@@ -7717,7 +7707,6 @@ STATIC FUNCTION CloseFiles()
    dbfArtDiv      := nil
    dbfTblCnv      := nil
    dbfCajT        := nil
-   dbfUsr         := nil
    dbfAgeCom      := nil
    dbfEmp         := nil
    dbfFacPrvL     := nil

@@ -332,8 +332,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Cajas( nView )
 
-      D():Usuarios( nView )
-
       D():PedidosClientesReservas( nView )
 
       D():Propiedades( nView )
@@ -1068,13 +1066,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
    Etiquetas-------------------------------------------------------------------
    */
 
-   cSay[ 1 ]            := RetFld( aTmp[ _CCODALM ], D():Almacen( nView ) )
-   cSay[ 2 ]            := RetFld( aTmp[ _CCODPGO ], D():FormasPago( nView ) )
-   cSay[ 3 ]            := RetFld( aTmp[ _CCODCAJ ], D():Cajas( nView ) )
-   cSay[ 4 ]            := RetFld( aTmp[ _CCODPRV ], D():Proveedores( nView ) )
-   cTlfPrv              := RetFld( aTmp[ _CCODPRV ], D():Proveedores( nView ), "Telefono" )
-   cUsr                 := RetFld( aTmp[ _CCODUSR ], D():Usuarios( nView ), "cNbrUse" )
-   cSay[ 5 ]            := RetFld( cCodEmp() + aTmp[ _CCODDLG ], D():Delegaciones( nView ), "cNomDlg" )
+   cSay[ 1 ]         := RetFld( aTmp[ _CCODALM ], D():Almacen( nView ) )
+   cSay[ 2 ]         := RetFld( aTmp[ _CCODPGO ], D():FormasPago( nView ) )
+   cSay[ 3 ]         := RetFld( aTmp[ _CCODCAJ ], D():Cajas( nView ) )
+   cSay[ 4 ]         := RetFld( aTmp[ _CCODPRV ], D():Proveedores( nView ) )
+   cSay[ 5 ]         := RetFld( cCodEmp() + aTmp[ _CCODDLG ], D():Delegaciones( nView ), "cNomDlg" )
+   cTlfPrv           := RetFld( aTmp[ _CCODPRV ], D():Proveedores( nView ), "Telefono" )
+   cUsr              := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCODUSR ] )
 
    DEFINE DIALOG oDlg RESOURCE "PEDPRV" TITLE LblTitle( nMode ) + "pedidos a proveedores"
 
@@ -1096,7 +1094,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          VAR         aTmp[ _CCODUSR ];
          ID          215 ;
          WHEN        ( .f. ) ;
-         VALID       ( SetUsuario( aGet[ _CCODUSR ], oUsr, nil, D():Usuarios( nView ) ) );
          OF          oFld:aDialogs[2]
 
       REDEFINE GET   oUsr ;
@@ -2125,10 +2122,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
       do case
          case nMode == APPD_MODE .and. lRecogerUsuario() .and. empty( cCodArt )
-            oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), , oDlg:end() ), StartEdtRec( aGet ) }
+            oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), , oDlg:end() ), StartEdtRec( aGet ) }
 
          case nMode == APPD_MODE .and. lRecogerUsuario() .and. !empty( cCodArt )
-            oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), oDlg:end() ), StartEdtRec( aGet ) }
+            oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), oDlg:end() ), StartEdtRec( aGet ) }
 
          case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !empty( cCodArt )
             oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), StartEdtRec( aGet ) }
@@ -5626,9 +5623,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Formas de pago", ( D():FormasPago( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
-   oFr:SetWorkArea(     "Usuarios", ( D():Usuarios( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
-
    oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
@@ -5656,7 +5650,6 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Pedidos", "Proveedor",                {|| ( D():PedidosProveedores( nView ) )->cCodPrv } )
    oFr:SetMasterDetail( "Pedidos", "Almacenes",                {|| ( D():PedidosProveedores( nView ) )->cCodAlm } )
    oFr:SetMasterDetail( "Pedidos", "Formas de pago",           {|| ( D():PedidosProveedores( nView ) )->cCodPgo } )
-   oFr:SetMasterDetail( "Pedidos", "Usuarios",                 {|| ( D():PedidosProveedores( nView ) )->cCodUsr } )
    oFr:SetMasterDetail( "Pedidos", "Empresa",                  {|| cCodigoEmpresaEnUso() } )
    oFr:SetMasterDetail( "Pedidos", "Clientes",                 {|| GetCodCli( ( D():PedidosProveedores( nView ) )->cNumPedCli ) } )
    oFr:SetMasterDetail( "Pedidos", "Centro de coste",          {|| ( D():PedidosProveedores( nView ) )->cCtrCoste } )
@@ -5674,7 +5667,6 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Pedidos", "Proveedor" )
    oFr:SetResyncPair(   "Pedidos", "Almacenes" )
    oFr:SetResyncPair(   "Pedidos", "Formas de pago" )
-   oFr:SetResyncPair(   "Pedidos", "Usuarios" )
    oFr:SetResyncPair(   "Pedidos", "Clientes" )
    oFr:SetResyncPair(   "Pedidos", "Centro de coste" )
 

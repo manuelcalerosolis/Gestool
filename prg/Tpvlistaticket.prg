@@ -533,8 +533,6 @@ METHOD OnClickFiltro() CLASS TpvListaTicket
          OF       ::oDlgFiltro
 
       ::oGetUsuario:nMargin   := 25
-      ::oGetUsuario:bValid    := {|| cUser( ::oGetUsuario, ::oSender:oUsuario:cAlias, ::oNombreUsuario ) }
-      ::oGetUsuario:bHelp     := {|| BrwUserTactil( ::oGetUsuario, ::oSender:oUsuario:cAlias, ::oNombreUsuario ) }
 
       REDEFINE GET ::oNombreUsuario VAR ::cNombreUsuario ;
          ID       121 ;
