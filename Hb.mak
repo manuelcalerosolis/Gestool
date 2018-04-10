@@ -638,6 +638,7 @@ RelacionesEntidadesController.prg 										\
 CentroCosteModel.prg 														\
 TransportistasModel.prg 													\
 MdiChild.prg 																	\
+SQLComboSelector.prg 														\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1251,6 +1252,7 @@ RelacionesEntidadesController.obj 										\
 CentroCosteModel.obj 														\
 MdiChild.obj 																	\
 TransportistasModel.obj 													\
+SQLComboSelector.obj 														\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1854,6 +1856,7 @@ $(OBJ)\RelacionesEntidadesController.obj 							   +
 $(OBJ)\CentroCosteModel.obj 												+
 $(OBJ)\TransportistasModel.obj 											+
 $(OBJ)\MdiChild.obj 															+
+$(OBJ)\SQLComboSelector.obj 												+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

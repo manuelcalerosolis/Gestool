@@ -467,7 +467,6 @@ static oTransportistaSelector
 
 static oCtaRem
 static oBandera
-static oTrans
 static oUndMedicion
 static cTmpLin
 static cTmpInc
@@ -1846,11 +1845,6 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oTrans            := TTrans():Create( cPatEmp() )
-      if !oTrans:OpenFiles()
-         lOpenFiles     := .f.
-      end if
-
       oTipArt           := TTipArt():Create( cPatEmp() )
       if !oTipArt:OpenFiles()
          lOpenFiles     := .f.
@@ -2267,10 +2261,6 @@ STATIC FUNCTION CloseFiles()
       oGrpFam:end()
    end if
 
-   if !empty( oTrans )
-      oTrans:End()
-   end if
-
    if !empty( oUndMedicion )
       oUndMedicion:End()
    end if
@@ -2362,7 +2352,6 @@ STATIC FUNCTION CloseFiles()
 
    oStock      := nil
    oNewImp     := nil
-   oTrans      := nil
    oTipArt     := nil
    oGrpFam     := nil
    oUndMedicion:= nil
@@ -3798,30 +3787,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       Transportistas-----------------------------------------------------------
       */
 
-      /*REDEFINE GET oSay[ 9 ] VAR cSay[ 9 ] ;
-         ID       235 ;
-         WHEN     ( lWhen ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( TransportistasController():New():SetSelectorToGet( oSay[ 9 ], @aTmp[ _UUID_TRN ] ) );
-         OF       fldData*/
-
-
-         oTransportistaSelector:Resource( 236, 235, fldData )
-
-
-      //TWebBtn():Redefine( 236,,,,, {|This| oTransportistaController:SetSelectorToGet( oSay[ 9 ], @aTmp[ _UUID_TRN ] ) }, fldData,,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ) ):SetTransparent()
-
-
-
-
-
-
-
-
-
-
-
-
+      oTransportistaSelector:Bind( bSETGET( aTmp[ _UUID_TRN ] ) )
+      oTransportistaSelector:Activate( 236, 235, fldData )
 
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;
@@ -10309,9 +10276,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Formas de pago", ( D():FormasPago( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
-   oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
-   oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
-
    oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
@@ -10357,7 +10321,6 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas", "Rutas",                                  {|| ( D():FacturasClientes( nView ) )->cCodRut } )
    oFr:SetMasterDetail( "Facturas", "Agentes",                                {|| ( D():FacturasClientes( nView ) )->cCodAge } )
    oFr:SetMasterDetail( "Facturas", "Formas de pago",                         {|| ( D():FacturasClientes( nView ) )->cCodPago } )
-   oFr:SetMasterDetail( "Facturas", "Transportistas",                         {|| ( D():FacturasClientes( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Facturas", "Empresa",                                {|| cCodigoEmpresaEnUso() } )
    oFr:SetMasterDetail( "Facturas", "Recibos",                                {|| D():FacturasClientesId( nView ) } )
    oFr:SetMasterDetail( "Facturas", "Anticipos",                              {|| D():FacturasClientesId( nView ) } )
@@ -10384,7 +10347,6 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Facturas", "Rutas" )
    oFr:SetResyncPair(   "Facturas", "Agentes" )
    oFr:SetResyncPair(   "Facturas", "Formas de pago" )
-   oFr:SetResyncPair(   "Facturas", "Transportistas" )
    oFr:SetResyncPair(   "Facturas", "Recibos" )
    oFr:SetResyncPair(   "Facturas", "Anticipos" )
    oFr:SetResyncPair(   "Facturas", "Usuarios" )
@@ -10531,6 +10493,8 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",                                    "CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
    oFr:AddVariable(     "Lineas de facturas",   "Total línea "+ cImp() + " incluido",              "CallHbFunc('nIncLFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Precio unitario "+ cImp() + " incluido",          "CallHbFunc('nIncUFacCli')" )
+   
+   oFr:AddVariable(     "Transportistas",       "Nombre transportista",                            "CallHbFunc('getNombreTransportistaFacCli')" )
 
 Return nil
 
@@ -10798,7 +10762,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
- 
+
    /*
    Inicializaci-n de variables-------------------------------------------------
    */
@@ -20954,12 +20918,22 @@ Static Function KillTrans()
       ( dbfTmpSer )->( dbCloseArea() )
    end if
 
-   dbfTmpLin      := nil
-   dbfTmpInc      := nil
-   dbfTmpDoc      := nil
-   dbfTmpAnt      := nil
-   dbfTmpPgo      := nil
-   dbfTmpSer      := nil
+   if !empty( dbfTmpEntidades ) .and. ( dbfTmpEntidades )->( Used() )
+      ( dbfTmpEntidades )->( dbCloseArea() )
+   end if
+
+   if !empty( dbfTmpEst ) .and. ( dbfTmpEst )->( Used() )
+      ( dbfTmpEst )->( dbCloseArea() )
+   end if
+
+   dbfTmpLin         := nil
+   dbfTmpInc         := nil
+   dbfTmpDoc         := nil
+   dbfTmpAnt         := nil
+   dbfTmpPgo         := nil
+   dbfTmpSer         := nil
+   dbfTmpEntidades   := nil
+   dbfTmpEst         := nil
 
    dbfErase( cTmpLin )
    dbfErase( cTmpInc )
@@ -20967,6 +20941,8 @@ Static Function KillTrans()
    dbfErase( cTmpAnt )
    dbfErase( cTmpPgo )
    dbfErase( cTmpSer )
+   dbfErase( cTmpEnt )
+   dbfErase( cTmpEst )
 
    oStock:SetTmpFacCliL()
 
@@ -23269,6 +23245,12 @@ Function nTotalSaldo16( cCodCli, dFecFac )
    DEFAULT dFecFac   := ( D():FacturasClientes( nView ) )->dFecFac
    
 Return oStock:nTotalSaldo( Padr("16", 18 ), cCodCli, dFecFac)
+
+//---------------------------------------------------------------------------//
+
+Function getNombreTransportistaFacCli()
+
+Return TransportistasRepository():getNombreWhereUuid( ( D():FacturasClientes( nView ) )->Uuid_Trn )
 
 //---------------------------------------------------------------------------//
 

@@ -10,8 +10,6 @@ CLASS TransportistasController FROM SQLNavigatorController
 
    METHOD New()
 
-   METHOD SetSelectorToGet( oGet )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -40,31 +38,13 @@ METHOD New() CLASS TransportistasController
 
    ::oDireccionesController      := DireccionesController():New( self )
 
+   ::oRepository                 := TransportistasRepository():New( self )
+
    ::oGetSelectorTransportista   := ComboSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetSelectorToGet( oGet, cGet ) CLASS TransportistasController
-
-   local hLenguaje            := ::ActivateSelectorView() 
-
-   if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "nombre" )
-      oGet:cText( hget( hLenguaje, "nombre" ) )
-   else
-      oGet:cText( "" )
-   end if
-
-   if !empty( hLenguaje ) .and. hhaskey( hLenguaje, "uuid" )
-      cGet  := hget( hLenguaje, "uuid" )
-   else
-      cGet  := ""
-   end if
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -284,9 +264,13 @@ RETURN ( ::hColumns )
 
 CLASS TransportistasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( SQLTransportistasModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLTransportistasModel():getTableName() ) 
 
    METHOD getNombres()
+
+   METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
+
+   METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )
 
 END CLASS
 
@@ -294,55 +278,14 @@ END CLASS
 
 METHOD getNombres() CLASS TransportistasRepository
 
-   local cSentence               := "SELECT nombre, uuid FROM " + ::getTableName()
-   local aNombres                := ::getDatabase():selectFetch( cSentence )
+   local h
+   local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
+   local aResult     := {}
 
-RETURN ( aNombres )
+   for each h in aNombres
+      aAdd( aResult, AllTrim( hGet( h, "nombre" ) ) )
+   next
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+RETURN ( aResult )
 
-CLASS ComboSelector
-
-   DATA oController
-
-   METHOD New( oSender )
-
-   METHOD Resource( idLink, idCombobox, oDlg )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD New( oSender )
-
-   ::oController     := oSender
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Resource( idLink, idCombobox, oDlg )
-
-   local oUrlLink
-
-   //TWebBtn():Redefine( idLink,,,,, {|This| ::oController:SetSelectorToGet() }, oDlg,,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ) ):SetTransparent()
-
-   oUrlLink := TUrlLink():Redefine( idLink, oDlg, , "Transportista" )
-   oUrlLink:bAction = {|| ::oController:SetSelectorToGet() }
-
-  //413:    oUrlLink:SetColor( ::nClrHover, ::nClrPane )
-  //414:    oUrlLink:nClrOver = ::nClrHover
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
