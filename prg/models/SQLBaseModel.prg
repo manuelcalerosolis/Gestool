@@ -191,6 +191,7 @@ CLASS SQLBaseModel
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
    METHOD updateFieldWhereId( id, cField, uValue )
+   METHOD updateFieldWhereUuid( uuid, cField, uValue )
 
 END CLASS
 
@@ -1062,6 +1063,16 @@ METHOD updateFieldWhereId( id, cField, uValue )
    local cSql  := "UPDATE " + ::cTableName + " "
    cSql        +=    "SET " + cField + " = " + toSqlString( uValue ) + " "
    cSql        +=    "WHERE id = " + toSqlString( id )
+
+Return ( ::getDatabase():Exec( cSql ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD updateFieldWhereUuid( uuid, cField, uValue )
+
+   local cSql  := "UPDATE " + ::cTableName + " "
+   cSql        +=    "SET " + cField + " = " + toSqlString( uValue ) + " "
+   cSql        +=    "WHERE uuid = " + toSqlString( uuid )
 
 Return ( ::getDatabase():Exec( cSql ) )
 

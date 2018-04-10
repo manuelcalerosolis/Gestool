@@ -135,33 +135,126 @@ RETURN ( Self )
 
 CLASS CamposExtraValoresBrowseView FROM SQLBrowseView
 
-   METHOD addColumns()                       
+   DATA oColumnValor
+
+   METHOD Create( oDialog )
+
+   METHOD addColumns() 
+
+   METHOD changeBrowse()
+
+   METHOD setColType( uValue )                  INLINE ( ::oColumnValor:nEditType := uValue )
+
+   METHOD setColPicture( uValue )               INLINE ( ::oColumnValor:cEditPicture := uValue )
+
+   METHOD setColListTxt( aValue )               INLINE ( ::oColumnValor:aEditListTxt := aValue )
+
+   METHOD fieldPutValor( uValue )               
 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
+METHOD Create( oDialog ) CLASS CamposExtraValoresBrowseView
+
+   ::oBrowse                  := SQLXBrowse():New( oDialog )
+   ::oBrowse:l2007            := .f.
+
+   ::oBrowse:lRecordSelector  := .f.
+   ::oBrowse:lSortDescend     := .f.  
+   ::oBrowse:lFooter          := .f.
+   ::oBrowse:lFastEdit        := .t.
+   ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLCELL
+
+   // Propiedades del control--------------------------------------------------
+
+   ::oBrowse:bClrStd          := {|| { CLR_BLACK, CLR_WHITE } }
+   ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   ::oBrowse:bChange          := {|| ::ChangeBrowse() }
+
+   ::oBrowse:setRowSet( ::getRowSet() )
+
+   ::oBrowse:nColSel          := 2
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 METHOD addColumns() CLASS CamposExtraValoresBrowseView
 
-   // "SELECT campos.nombre, campos.tipo, campos.longitud, campos.decimales, campos.lista, valores.valor, valores.uuid, entidad.parent_uuid "
-
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :cHeader                   := 'Nombre'
+      :nWidth                    := 200
+      :bEditValue                := {|| ::getRowSet():fieldGet( 'nombre' ) }
    end with 
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'valor'
-      :cHeader             := 'Valor'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'valor' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   ::oColumnValor                := ::oBrowse:AddCol() 
+   ::oColumnValor:cHeader        := 'Valor'
+   ::oColumnValor:nWidth         := 300
+   ::oColumnValor:bEditValue     := {|| ::getRowSet():fieldGet( 'valor' ) }
+   ::oColumnValor:bStrData       := {|| ::getRowSet():fieldGet( 'valor' ) }
+   ::oColumnValor:bOnPostEdit    := {|o,x| ::fieldPutValor( x ) }
+   ::oColumnValor:nEditType      := 1
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ChangeBrowse() CLASS CamposExtraValoresBrowseView
+
+   local cTipo    := alltrim( ::getRowSet():fieldGet( 'tipo' ) )
+
+   do case
+      case ( cTipo == "Texto" )
+
+         ::setColType( EDIT_GET )
+         ::setColPicture( "" )
+
+      case ( cTipo == "Número" )
+
+         ::setColType( EDIT_GET )
+         ::setColPicture( NumPict( ::getRowSet():fieldget( "longitud" ) + ::getRowSet():fieldget( "decimales" ) - 1, ::getRowSet():fieldget( "decimales" ), , .t. ) )
+
+      case ( cTipo == "Fecha" )
+         
+         ::setColType( EDIT_GET )
+         ::setColPicture( "" ) 
+                           
+      case ( cTipo == "Lógico" )
+
+         ::setColType( EDIT_LISTBOX )
+         ::setColListTxt( { "Si", "No" } )
+         ::setColPicture( "" )
+
+      case ( cTipo == "Lista" )
+
+         ::setColType( EDIT_LISTBOX )
+         ::setColListTxt( hb_deserialize( ::getRowSet():fieldget( "lista" ) ) )
+         ::setColPicture( "" ) 
+
+   end case
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD fieldPutValor( uValue )               
+
+   local uuidValor   := ::getRowSet():fieldget( "valor_uuid" )
+
+   if empty( uuidValor )
+      RETURN ( Self )
+   end if 
+
+   ::oController:oModel:updateValorWhereUuid( uuidValor, uValue )
+
+   ::getRowSet():Refresh()
+
+   ::oBrowse:Refresh()
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -269,15 +362,17 @@ CLASS SQLCamposExtraValoresModel FROM SQLBaseModel
 
    DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( campo_extra_entidad_uuid, entidad_uuid )"
 
-   DATA cColumnOrder                         INIT "campos.nombre"                  
+   DATA cColumnOrder                         INIT "nombre"                  
 
    METHOD getInitialSelect()
 
    METHOD getColumns()
 
-   METHOD getListaAttribute( value )         INLINE ( if( empty( value ), {}, hb_deserialize( value ) ) )
+   METHOD getListaAttribute( value )            INLINE ( if( empty( value ), {}, hb_deserialize( value ) ) )
 
-   METHOD setListaAttribute( value )         INLINE ( hb_serialize( value ) )
+   METHOD setListaAttribute( value )            INLINE ( hb_serialize( value ) )
+
+   METHOD updateValorWhereUuid( uuid, uValue )  INLINE ( ::updateFieldWhereUuid( uuid, 'valor', uValue ) )
 
 END CLASS
 
@@ -294,7 +389,7 @@ METHOD getInitialSelect( uuidEntidad ) CLASS SQLCamposExtraValoresModel
    cSQL        +=       "campos.decimales as decimales, "
    cSQL        +=       "campos.lista as lista, "
    cSQL        +=       "valores.valor as valor, "
-   cSQL        +=       "valores.uuid as uuidValor, "
+   cSQL        +=       "valores.uuid as valor_uuid, "
    cSQL        +=       "entidad.parent_uuid "
    cSQL        +=    "FROM " + ::cTableName + " valores "
    cSQL        +=    "INNER JOIN " + SQLCamposExtraEntidadesModel():cTableName + " entidad ON entidad.uuid = valores.campo_extra_entidad_uuid "

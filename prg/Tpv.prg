@@ -7740,11 +7740,27 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
       setLostFocusOff()
 
    oDlgDet:Activate( , , , .f., , .t. )
+   // oDlgDet:Activate( {| nRow, nCol| clickDlgDet( nRow, nCol, oDlgDet ) }, , , .f., , .t., {|| SetCapture( oDlgDet:hWnd ) } )
 
    oBrw:setFocus()
    oBrw:Refresh()
 
 RETURN ( oDlgDet:nResult == IDOK )
+
+//-------------------------------------------------------------------------//
+
+STATIC FUNCTION clickDlgDet( nRow, nCol, oDlg )
+   
+   msgalert( nRow )
+   msgalert( nCol )
+
+   if nRow < 0 .or. nCol < 0 .or. nRow > oDlg:nHeight - 0 .or. nCol > oDlg:nWidth
+      msgStop( "clicked outside" )
+   else 
+      setCapture( oDlg:hWnd )
+   end if 
+
+RETURN ( nil )
 
 //-------------------------------------------------------------------------//
 
