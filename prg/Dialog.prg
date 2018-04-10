@@ -39,6 +39,8 @@
 #define SC_CLOSE       61536   // 0xF060
 #define SW_HIDE            0
 
+#define WM_NCHITTEST                         0x0084
+
 extern Set
 
 static aGradColors // Colors to use to GRADIENT dialogs
@@ -928,11 +930,15 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TDialog
            if ::lHelpIcon != nil .and. ::lHelpIcon
               ::Help()
            else
+              logwrite( nMsg) 
+              logwrite( nWParam )
+              logwrite( nLParam )           
               return ::Super:HandleEvent( nMsg, nWParam, nLParam )
            endif
 
       otherwise
-           return ::Super:HandleEvent( nMsg, nWParam, nLParam )
+
+         return ::Super:HandleEvent( nMsg, nWParam, nLParam )
    endcase
 
 return nil

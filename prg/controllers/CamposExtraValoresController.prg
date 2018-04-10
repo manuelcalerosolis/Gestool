@@ -81,8 +81,6 @@ METHOD Edit() CLASS CamposExtraValoresController
 
    end if 
 
-   // Validar el dialogo
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -145,46 +143,20 @@ ENDCLASS
 
 METHOD addColumns() CLASS CamposExtraValoresBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   // "SELECT campos.nombre, campos.tipo, campos.longitud, campos.decimales, campos.lista, valores.valor, valores.uuid, entidad.parent_uuid "
 
    with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'campos_extra_relacion_uuid'
-      :cHeader             := 'Campo extra entidad'
-      :nWidth              := 300
-      :bEditValue          := {|| ::oController:getCampoExtraRelacion() }
-      :nEditType           := EDIT_LISTBOX
-      :cEditPicture        := ""
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'campo_extra_relacion_uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid_registro'
-      :cHeader             := 'Registro'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid_registro' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'valor'
       :cHeader             := 'Valor'
-      :nWidth              := 100
+      :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'valor' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
@@ -218,8 +190,6 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS CamposExtraValoresView
-
-   msgalert( "ACctivate")
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CAMPOS_EXTRA_VALORES" ;
@@ -299,6 +269,10 @@ CLASS SQLCamposExtraValoresModel FROM SQLBaseModel
 
    DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( campo_extra_entidad_uuid, entidad_uuid )"
 
+   DATA cColumnOrder                         INIT "campos.nombre"                  
+
+   METHOD getInitialSelect()
+
    METHOD getColumns()
 
    METHOD getListaAttribute( value )         INLINE ( if( empty( value ), {}, hb_deserialize( value ) ) )
@@ -306,6 +280,31 @@ CLASS SQLCamposExtraValoresModel FROM SQLBaseModel
    METHOD setListaAttribute( value )         INLINE ( hb_serialize( value ) )
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect( uuidEntidad ) CLASS SQLCamposExtraValoresModel
+
+   local cSQL  
+
+   cSQL        := "SELECT "
+   cSQL        +=       "campos.nombre as nombre, "
+   cSQL        +=       "campos.tipo as tipo, "
+   cSQL        +=       "campos.longitud as longitud, "
+   cSQL        +=       "campos.decimales as decimales, "
+   cSQL        +=       "campos.lista as lista, "
+   cSQL        +=       "valores.valor as valor, "
+   cSQL        +=       "valores.uuid as uuidValor, "
+   cSQL        +=       "entidad.parent_uuid "
+   cSQL        +=    "FROM " + ::cTableName + " valores "
+   cSQL        +=    "INNER JOIN " + SQLCamposExtraEntidadesModel():cTableName + " entidad ON entidad.uuid = valores.campo_extra_entidad_uuid "
+   cSQL        +=    "INNER JOIN " + SQLCamposExtraModel():cTableName + " campos ON campos.uuid = entidad.parent_uuid "
+
+   if !empty( uuidEntidad )
+      cSQL     += "WHERE entidad_uuid = " + uuidEntidad
+   end if 
+
+RETURN ( cSQL)
 
 //---------------------------------------------------------------------------//
 
