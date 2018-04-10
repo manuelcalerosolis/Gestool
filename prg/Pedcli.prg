@@ -375,7 +375,6 @@ static dbfProMat
 static dbfsitua
 static cOrdAnt
 static oBandera
-static oTrans
 static oNewImp
 static oDetCamposExtra
 static dbfTmpLin
@@ -464,6 +463,8 @@ static aTipoCtrCoste       := { "Centro de coste", "Proveedor", "Agente", "Clien
 static oCentroCoste
 
 static Counter
+
+static oTransportistaSelector
 
 //---------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
@@ -791,11 +792,6 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if
 
-      oTrans            := TTrans():Create( cPatEmp() )
-      if !oTrans:OpenFiles()
-         lOpenFiles     := .f.
-      end if
-
       oTipArt           := TTipArt():Create( cPatEmp() )
       if !oTipArt:OpenFiles()
          lOpenFiles     := .f.
@@ -821,6 +817,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oMailing          := TGenmailingDatabasePedidosClientes():New( nView )
 
       Counter           := TCounter():New( nView, "nPedCli" )
+
+      oTransportistaSelector     := TransportistasController():New():oGetSelectorTransportista
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -1355,13 +1353,6 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
          :cEditPicture     := cPorDiv
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Transportista"
-         :bEditValue       := {|| if( Empty( ( D():PedidosClientes( nView ) )->cCodTrn ), "", ( D():PedidosClientes( nView ) )->cCodTrn + " - " + AllTrim( RetFld( ( D():PedidosClientes( nView ) )->cCodTrn, oTrans:GetAlias(), "cNomTrn" ) ) ) }
-         :nWidth           := 200
          :lHide            := .t.
       end with
 
@@ -1914,7 +1905,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    cSay[ 5 ]        := RetFld( aTmp[ _CCODPGO ], D():FormasPago( nView ) )
    cSay[ 6 ]        := cNbrAgent( aTmp[ _CCODAGE ], dbfAgent )
    cSay[ 7 ]        := RetFld( aTmp[ _CCODRUT ], dbfRuta )
-   cSay[ 8 ]        := oTrans:cNombre( aTmp[ _CCODTRN ] )
    cSay[ 9 ]        := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
    cSay[10 ]        := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCODUSR ] )
    cSay[11 ]        := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
@@ -3022,20 +3012,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       /*
       Transportistas-----------------------------------------------------------
       */
-
-      REDEFINE GET aGet[_CCODTRN] VAR aTmp[_CCODTRN] ;
-         ID       235 ;
-         WHEN     ( lWhen ) ;
-         VALID    ( LoadTrans( aTmp, aGet[ _CCODTRN ], aGet[ _NKGSTRN ], oSay[ 8 ] ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( oTrans:Buscar( aGet[_CCODTRN] ), .t. );
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET oSay[ 8 ] VAR cSay[ 8 ] ;
-         ID       236 ;
-			WHEN 		.F. ;
-         OF       oFld:aDialogs[2]
-
+      
+      oTransportistaSelector:Bind( bSETGET( aTmp[ _UUID_TRN ] ) )
+      oTransportistaSelector:Activate( 236, 235, oFld:aDialogs[2] )
+      
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;
          WHEN     ( .f. ) ;
@@ -7199,34 +7179,6 @@ return .t.
 
 //-----------------------------------------------------------------------------
 
-Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
-
-   local uValor   := oGetCod:VarGet()
-
-   if Empty( uValor )
-
-      oSayTrn:cText( "" )
-      oGetKgs:cText( 0 )
-
-   else
-
-      if oTrans:oDbf:SeekInOrd( uValor, "cCodTrn" )
-         oGetCod:cText( uValor )
-         oSayTrn:cText( oTrans:oDbf:cNomTrn )
-         oGetKgs:cText( oTrans:oDbf:nKgsTrn )
-      else
-         msgStop( "Código de transportista no encontrado." )
-         Return .f.
-      end if
-
-   end if
-
-   RecalculaTotal( aTmp )
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
 #include "FastRepH.ch"
 
 Static Function DataReport( oFr )
@@ -7284,11 +7236,6 @@ Static Function DataReport( oFr )
       oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
    end if 
 
-   if !empty(oTrans)
-      oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
-      oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
-   end if 
-
    if !empty(oNewImp)
       oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
       oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
@@ -7304,7 +7251,6 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Pedidos", "Rutas",                             {|| ( D():PedidosClientes( nView ) )->cCodRut } )
    oFr:SetMasterDetail( "Pedidos", "Agentes",                           {|| ( D():PedidosClientes( nView ) )->cCodAge } )
    oFr:SetMasterDetail( "Pedidos", "Formas de pago",                    {|| ( D():PedidosClientes( nView ) )->cCodPgo } )
-   oFr:SetMasterDetail( "Pedidos", "Transportistas",                    {|| ( D():PedidosClientes( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Pedidos", "Usuarios",                        	{|| ( D():PedidosClientes( nView ) )->cCodUsr } )
 
    oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {|| SynchronizeDetails() } )
@@ -7322,7 +7268,6 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair( "Pedidos", "Rutas" )
    oFr:SetResyncPair( "Pedidos", "Agentes" )
    oFr:SetResyncPair( "Pedidos", "Formas de pago" )
-   oFr:SetResyncPair( "Pedidos", "Transportistas" )
    oFr:SetResyncPair( "Pedidos", "Usuarios" )
 
    oFr:SetResyncPair( "Lineas de pedidos", "Artículos" )
@@ -7431,8 +7376,16 @@ Static Function VariableReport( oFr )
 
    oFr:AddVariable(     "Lineas de Pedidos",   "Nombre primera propiedad línea del pedido",  "CallHbFunc('nombrePrimeraPropiedadPedidosClientesLineas')" )
    oFr:AddVariable(     "Lineas de Pedidos",   "Nombre segunda propiedad línea del pedido",  "CallHbFunc('nombreSegundaPropiedadPedidosClientesLineas')" )
+
+   oFr:AddVariable(     "Transportistas",      "Nombre transportista",                       "CallHbFunc('getNombreTransportistaPedCli')" )
    
 Return nil
+
+//---------------------------------------------------------------------------//
+
+Function getNombreTransportistaPedCli()
+
+Return TransportistasRepository():getNombreWhereUuid( ( D():PedidosClientes( nView ) )->Uuid_Trn )
 
 //---------------------------------------------------------------------------//
 
@@ -7655,7 +7608,6 @@ STATIC FUNCTION CloseFiles()
 
 
    if( !Empty( oStock     ), oStock:end(),  )
-   if( !Empty( oTrans     ), oTrans:end(),  )
    if( !Empty( oNewImp    ), oNewImp:end(), )
    if( !Empty( oTipArt    ), oTipArt:end(), )
    if( !Empty( oFabricante), oFabricante:end(), )
@@ -7726,7 +7678,6 @@ STATIC FUNCTION CloseFiles()
    oStock         := nil
    oBandera       := nil
    oNewImp        := nil
-   oTrans         := nil
    oTipArt        := nil
    oFabricante    := nil
    oGrpFam        := nil
@@ -7769,6 +7720,10 @@ Static Function KillTrans()
       ( dbfTmpRes )->( dbCloseArea() )
    end if
 
+   if !Empty( dbfTmpEst ) .and. ( dbfTmpEst )->( Used() )
+      ( dbfTmpEst )->( dbCloseArea() )
+   end if
+
    /*
    Eliminamos los temporales
    */
@@ -7778,6 +7733,7 @@ Static Function KillTrans()
    dbfErase( cTmpDoc )
    dbfErase( cTmpPgo )
    dbfErase( cTmpRes )
+   dbfErase( cTmpEst )
 
 Return .t.
 
