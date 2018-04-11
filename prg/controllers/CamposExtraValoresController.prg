@@ -149,6 +149,20 @@ CLASS CamposExtraValoresBrowseView FROM SQLBrowseView
 
    METHOD setColListTxt( aValue )               INLINE ( ::oColumnValor:aEditListTxt := aValue )
 
+   METHOD fieldGetPicture()                     INLINE ( NumPict( ::getRowSet():fieldget( "longitud" ) + ::getRowSet():fieldget( "decimales" ) - 1, ::getRowSet():fieldget( "decimales" ) ) )
+   
+   METHOD fieldGetTipo()                        INLINE ( alltrim( ::getRowSet():fieldGet( 'tipo' ) ) )
+
+   METHOD fieldGetTipoNumerico()                INLINE ( ::fieldGetTipo() == "Número" )
+   METHOD fieldGetTipoTexto()                   INLINE ( ::fieldGetTipo() == "Texto" )
+   METHOD fieldGetTipoFecha()                   INLINE ( ::fieldGetTipo() == "Fecha" )
+   METHOD fieldGetTipoLogico()                  INLINE ( ::fieldGetTipo() == "Lógico" )
+   METHOD fieldGetTipoLista()                   INLINE ( ::fieldGetTipo() == "Lista" )
+
+   METHOD fieldGetValor()
+
+   METHOD fieldGetValorPicture()                INLINE ( ::fieldGetValor( .t. ) )
+   
    METHOD fieldPutValor( uValue )               
 
 ENDCLASS
@@ -193,10 +207,13 @@ METHOD addColumns() CLASS CamposExtraValoresBrowseView
    ::oColumnValor                := ::oBrowse:AddCol() 
    ::oColumnValor:cHeader        := 'Valor'
    ::oColumnValor:nWidth         := 300
-   ::oColumnValor:bEditValue     := {|| ::getRowSet():fieldGet( 'valor' ) }
-   ::oColumnValor:bStrData       := {|| ::getRowSet():fieldGet( 'valor' ) }
+   ::oColumnValor:bEditValue     := {|| ::fieldGetValor() }
+   ::oColumnValor:bStrData       := {|| ::fieldGetValorPicture() }
    ::oColumnValor:bOnPostEdit    := {|o,x| ::fieldPutValor( x ) }
    ::oColumnValor:nEditType      := 1
+   ::oColumnValor:nDataStrAlign  := 3
+   ::oColumnValor:nHeadStrAlign  := 3
+   ::oColumnValor:nFootStrAlign  := 3
 
 RETURN ( self )
 
@@ -204,31 +221,29 @@ RETURN ( self )
 
 METHOD ChangeBrowse() CLASS CamposExtraValoresBrowseView
 
-   local cTipo    := alltrim( ::getRowSet():fieldGet( 'tipo' ) )
-
    do case
-      case ( cTipo == "Texto" )
+      case ( ::fieldGetTipoTexto() )
 
          ::setColType( EDIT_GET )
          ::setColPicture( "" )
 
-      case ( cTipo == "Número" )
+      case ( ::fieldGetTipoNumerico() )
 
          ::setColType( EDIT_GET )
-         ::setColPicture( NumPict( ::getRowSet():fieldget( "longitud" ) + ::getRowSet():fieldget( "decimales" ) - 1, ::getRowSet():fieldget( "decimales" ), , .t. ) )
+         ::setColPicture( ::fieldGetPicture(), , .t. ) 
 
-      case ( cTipo == "Fecha" )
+      case ( ::fieldGetTipoFecha() )
          
          ::setColType( EDIT_GET )
          ::setColPicture( "" ) 
                            
-      case ( cTipo == "Lógico" )
+      case ( ::fieldGetTipoLogico() )
 
          ::setColType( EDIT_LISTBOX )
          ::setColListTxt( { "Si", "No" } )
          ::setColPicture( "" )
 
-      case ( cTipo == "Lista" )
+      case ( ::fieldGetTipoLista() )
 
          ::setColType( EDIT_LISTBOX )
          ::setColListTxt( hb_deserialize( ::getRowSet():fieldget( "lista" ) ) )
@@ -240,7 +255,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD fieldPutValor( uValue )               
+METHOD fieldPutValor( uValue ) CLASS CamposExtraValoresBrowseView              
 
    local uuidValor   := ::getRowSet():fieldget( "valor_uuid" )
 
@@ -248,6 +263,12 @@ METHOD fieldPutValor( uValue )
       RETURN ( Self )
    end if 
 
+   uValue            := alltrim( cValToStr( uValue ) )
+
+   if ( ::fieldGetTipoNumerico() )
+      uValue         := strtran( uValue, ",", "." )
+   end if 
+   
    ::oController:oModel:updateValorWhereUuid( uuidValor, uValue )
 
    ::getRowSet():Refresh()
@@ -255,6 +276,31 @@ METHOD fieldPutValor( uValue )
    ::oBrowse:Refresh()
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD fieldGetValor( lPicture ) CLASS CamposExtraValoresBrowseView              
+
+   local uValor      := ::getRowSet():fieldget( "valor" )
+
+   DEFAULT lPicture  := .f.
+
+   do case
+      case ( ::fieldGetTipoNumerico() )
+
+         uValor      := val( alltrim( uValor ) )
+
+         if lPicture 
+            uValor   := trans( uValor, ::fieldGetPicture() )
+         end if 
+
+      case ( ::fieldGetTipoFecha() )
+         
+         uValor      := ctod( alltrim( uValor ) )
+
+   end case
+
+RETURN ( uValor )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

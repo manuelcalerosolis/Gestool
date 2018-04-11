@@ -2771,7 +2771,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
 
-
 RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
