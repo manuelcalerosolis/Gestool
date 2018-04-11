@@ -293,7 +293,7 @@ METHOD getValidators() CLASS DireccionesValidator
 
    ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido" },; 
                         "direccion" =>       {  "required"        => "La dirección es un dato requerido" },; 
-                        "email" =>           {  "mail"            => "El email no es valido" }}
+                        "email" =>           {  "mail"            => "El email no es valido" } }
 
 RETURN ( ::hValidators )
 
@@ -308,9 +308,11 @@ RETURN ( ::hValidators )
 
 CLASS SQLDireccionesModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "direcciones"
+   DATA cTableName                     INIT "direcciones"
 
    METHOD getColumns()
+
+   METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
 END CLASS
 

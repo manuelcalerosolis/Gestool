@@ -9,6 +9,10 @@ CLASS AgentesController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD DireccionesControllerLoadCurrentBuffer()
+
+   METHOD DireccionesControllerUpdateBuffer()   
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -29,6 +33,7 @@ METHOD New() CLASS AgentesController
 
    ::oModel                      := SQLAgentesModel():New( self )
 
+
    ::oBrowseView                 := AgentesBrowseView():New( self )
 
    ::oDialogView                 := AgentesView():New( self )
@@ -39,13 +44,53 @@ METHOD New() CLASS AgentesController
 
    ::oRepository                 := AgentesRepository():New( self )
 
-   /*::oGetSelectorTransportista   := ComboSelector():New( self )*/
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
+   ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::oDireccionesController:oModel:loadBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',      {|| ::oDireccionesController:oModel:insertBuffer() } )
+   
+   ::oModel:setEvent( 'loadedCurrentBuffer', {|| ::DireccionesControllerLoadCurrentBuffer() } )
+   ::oModel:setEvent( 'updatedBuffer',       {|| ::DireccionesControllerUpdateBuffer() } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD DireccionesControllerLoadCurrentBuffer()
+
+   local idDireccion     
+   local uuidAgente     := hget( ::oModel:hBuffer, "uuid" )
+
+   if empty( uuidAgente )
+      ::oDireccionesController:oModel:insertBuffer()
+   end if 
+
+   idDireccion          := ::oDireccionesController:oModel:getIdWhereParentUuid( uuidAgente )
+   if empty( idDireccion )
+      ::oDireccionesController:oModel:insertBuffer()
+   end if 
+
+   ::oDireccionesController:oModel:loadCurrentBuffer( idDireccion )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DireccionesControllerUpdateBuffer()
+
+   local idDireccion     
+   local uuidAgente     := hget( ::oModel:hBuffer, "uuid" )
+
+   idDireccion          := ::oDireccionesController:oModel:getIdWhereParentUuid( uuidAgente )
+   if empty( idDireccion )
+      ::oDireccionesController:oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+
+   ::oDireccionesController:oModel:updateBuffer()
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -119,90 +164,74 @@ CLASS AgentesView FROM SQLBaseView
   
    METHOD Activate()
 
+   METHOD getDireccionesController()   INLINE ( ::oController:oDireccionesController )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS AgentesView
 
-   local oDlg
-   local oBmpGeneral
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
-
-   DEFINE DIALOG  oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "AGENTE" ;
       TITLE       ::LblTitle() + "agente"
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
       RESOURCE    "gc_businessman2_48" ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "dni" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "dni" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "comision" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          oDlg
+      PICTURE     "@E 999.99" ;
+      OF          ::oDialog
 
-
-   REDEFINE BUTTON oBtnAppend ;
+   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "direccion" ] ;
       ID          130 ;
-      OF          oDlg ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          140 ;
-      OF          oDlg ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          150 ;
-      OF          oDlg ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
-
-   ::oController:oDireccionesController:Activate( oDlg, 160 )
+      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
+      VALID       ( ::getDireccionesController():validate( "direccion" ) ) ;
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG ::oDialog CENTER
 
-   oBmpGeneral:end()
+   ::oBitmap:end()
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
