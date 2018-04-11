@@ -2771,6 +2771,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Agentes'
+   oItem:cMessage       := 'Solicitar agente'
+   oItem:bAction        := {|| AgentesController():New():ActivateNavigatorView() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_businessman2_16"
+   oItem:cBmpBig        := "gc_businessman2_32"
+   oItem:lShow          := .f.
+
 
 RETURN ( oAcceso )
 
