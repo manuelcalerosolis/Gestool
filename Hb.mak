@@ -640,6 +640,7 @@ CentroCosteModel.prg 														\
 TransportistasModel.prg 													\
 MdiChild.prg 																	\
 SQLComboSelector.prg 														\
+urllink.prg 																	\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1255,6 +1256,7 @@ CentroCosteModel.obj 														\
 MdiChild.obj 																	\
 TransportistasModel.obj 													\
 SQLComboSelector.obj 														\
+urllink.obj 																	\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1860,6 +1862,7 @@ $(OBJ)\CentroCosteModel.obj 												+
 $(OBJ)\TransportistasModel.obj 											+
 $(OBJ)\MdiChild.obj 															+
 $(OBJ)\SQLComboSelector.obj 												+
+$(OBJ)\urllink.obj 															+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

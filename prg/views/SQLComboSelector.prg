@@ -78,7 +78,7 @@ RETURN ( Self )
 
 METHOD ResourceLink() CLASS ComboSelector
 
-   ::oUrlLink           := TUrlLink():Redefine( ::idLink, ::oDialog, , , , , ::nColorUrlLink, ::nColorUrlLink, ::nColorUrlLink )
+   ::oUrlLink           := TUrlLink():Redefine( ::idLink, ::oDialog, , , , , ::nColorUrlLink, ::nColorUrlLink, ::nColorUrlLink, .t. )
    ::oUrlLink:bAction   := {|| ::ActionLink() }
 
 RETURN ( Self )
@@ -87,9 +87,8 @@ RETURN ( Self )
 
 METHOD ResourceComboBox() CLASS ComboSelector
    
-   ::oComboBox    := TComboBox():ReDefine( ::idCombobox, { | u | if( pcount() == 0, ::cComboBox, ::cComboBox := u ) },;
-                                           ::aComboBox , ::oDialog,,, {|| ::ChangeComboBox() } ,,,, .F.,;
-                                           {|| .t. },,,,, )
+   ::oComboBox             := TComboBox():ReDefine( ::idCombobox, bSETGET( ::cComboBox ), ::aComboBox, ::oDialog,,, {|| ::ChangeComboBox() } , , , , .f., {|| .t. } )
+   ::oComboBox:lIncSearch  := .t.
 
 RETURN ( Self )
 
