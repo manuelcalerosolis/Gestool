@@ -271,9 +271,6 @@ METHOD GenIndices( oMsg )
       ::SetText( "Generando índices : Expedientes", ::aProgress[ 3 ] );                      TExpediente():Create( ::cPathEmp ):Reindexa()
       ::SetText( "Generando índices : Actuaciones de expedientes", ::aProgress[ 3 ] );       TDetActuacion():Create( ::cPathEmp ):Reindexa()
 
-      ::SetText( "Generando índices : Ordenes de carga", ::aProgress[ 3 ] );                 TOrdCarga():Create( ::cPathEmp ):Reindexa()
-      ::SetText( "Generando índices : Líneas de ordenes de carga", ::aProgress[ 3 ] );       TDetOrdCar():New( ::cPathEmp ):Reindexa()
-
       ::SetText( "Generando índices : Programas de fidelización", ::aProgress[ 3 ] );           TFideliza():Create( ::cPatArt ):Reindexa()
       ::SetText( "Generando índices : Líneas de programas de fidelización", ::aProgress[ 3 ] ); TDetFideliza():New( ::cPatArt ):Reindexa()
 
@@ -376,7 +373,6 @@ METHOD Sincroniza()
    ::SetText( "Sincroniza líneas de facturas a proveedor", ::aProgress[ 6 ]  )         ; SynFacPrv( ::cPathEmp )
    ::SetText( "Sincroniza líneas de rectificativas a proveedor", ::aProgress[ 6 ]  )   ; SynRctPrv( ::cPathEmp )
    ::SetText( "Sincroniza recibos de proveedores", ::aProgress[ 6 ]  )                 ; SynRecPrv( ::cPathEmp )
-   ::SetText( "Sincroniza líneas de ordenes de carga", ::aProgress[ 6 ]  )             ; SynOrdCar( ::cPathEmp )
    ::SetText( "Sincroniza unidades de medición", ::aProgress[ 6 ]  )                   ; UniMedicion():Create():Syncronize()
    ::SetText( "Sincroniza fabricantes", ::aProgress[ 6 ]  )                            ; TFabricantes():Create():Syncronize()
    ::SetText( "Sincroniza centros de coste", ::aProgress[ 6 ]  )                       ; SynCentroCoste()

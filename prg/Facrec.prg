@@ -13340,7 +13340,6 @@ function SynFacRec( cPath )
    local aNumSer
    local dbfFacRecL
    local dbfArticulo
-   local objTrans
 
    DEFAULT cPath     := cPatEmp()
 
@@ -13386,9 +13385,6 @@ function SynFacRec( cPath )
 
       oNewImp        := TNewImp():Create( cPatEmp() )
       oNewImp:OpenFiles()
-
-      objTrans            := TTrans():New( cPatEmp() )
-      objTrans:OpenFiles()
 
       // Cabeceras-------------------------------------------------------------
 
@@ -13540,8 +13536,6 @@ function SynFacRec( cPath )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   objTrans:End()
 
    CLOSE ( dbfFacRecT  )
    CLOSE ( dbfFacRecL  )

@@ -400,7 +400,6 @@ static oMenu
 static oDetMenu
 static oStock
 static TComercio
-static oTrans
 static oNewImp
 static oUndMedicion
 static oCentroCoste
@@ -505,6 +504,8 @@ static bEdtEst          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmp
 static oMailing
 
 static oBrwProperties
+
+static oTransportistaSelector
 
 //--------------------------------------------------------------------------//
 
@@ -893,7 +894,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bOnPostEdit      := {|oCol, uNewValue, nKey| ChangeBultos( oCol, uNewValue, nKey ) }
       end with
 
-      with object ( oWndBrw:AddXCol() )
+      /*with object ( oWndBrw:AddXCol() )
          :cHeader          := "Transportista"
          :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->cCodTrn }
          :nWidth           := 60
@@ -910,7 +911,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| oTrans:GetField( ( D():Get( "AlbCliT", nView ) )->cCodTrn, "cNomTrn" ) }
          :nWidth           := 180
          :lHide            := .t.
-      end with
+      end with*/
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Centro de coste"
@@ -1574,11 +1575,6 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oTrans            := TTrans():Create( cPatEmp() )
-      if !oTrans:OpenFiles()
-         lOpenFiles     := .f.
-      end if
-
       oTipArt           := TTipArt():Create( cPatEmp() )
       if !oTipArt:OpenFiles()
          lOpenFiles     := .f.
@@ -1614,6 +1610,8 @@ STATIC FUNCTION OpenFiles()
       TComercio         := TComercio():New( nView, oStock )
 
       Counter           := TCounter():New( nView, "nAlbCli" ) 
+
+      oTransportistaSelector     := TransportistasController():New():oGetSelectorTransportista
 
       /*
       Declaración de variables públicas----------------------------------------
@@ -1884,9 +1882,6 @@ STATIC FUNCTION CloseFiles()
    if !empty( oNewImp )
       oNewImp:end()
    end if
-   if !empty( oTrans )
-      oTrans:end()
-   end if
    if !empty( oTipArt )
       oTipArt:end()
    end if
@@ -1965,7 +1960,6 @@ STATIC FUNCTION CloseFiles()
 
    oStock         := nil
    oNewImp        := nil
-   oTrans         := nil
    oTipArt        := nil
    oGrpFam        := nil
    oUndMedicion   := nil
@@ -2301,7 +2295,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    cSay[ 5 ]                  := RetFld( aTmp[ _CCODTAR ], dbfTarPreS )
    cSay[ 6 ]                  := RetFld( aTmp[ _CCODCLI ] + aTmp[ _CCODOBR ], dbfObrasT, "cNomObr", "cCodCli" )
    cSay[ 7 ]                  := RetFld( aTmp[ _CCODRUT ], dbfRuta )
-   cSay[ 8 ]                  := oTrans:cNombre( aTmp[ _CCODTRN ] )
    cSay[ 9 ]                  := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
    cSay[ 10]                  := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCODUSR ] )
    cSay[ 11]                  := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
@@ -3486,17 +3479,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       // Transportistas--------------------------------------------------------
 
-      REDEFINE GET aGet[ _CCODTRN ] VAR aTmp[ _CCODTRN ] ;
-         ID       235 ;
-         WHEN     ( lWhen ) ;
-         VALID    ( LoadTrans( aTmp, aGet[ _CCODTRN ], aGet[ _NKGSTRN ], oSay[ 8 ] ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( oTrans:Buscar( aGet[ _CCODTRN ] ), .t. );
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET oSay[ 8 ] VAR cSay[ 8 ] ;
-         ID       236 ;
-         OF       oFld:aDialogs[2]
+      oTransportistaSelector:Bind( bSETGET( aTmp[ _UUID_TRN ] ) )
+      oTransportistaSelector:Activate( 236, 235, oFld:aDialogs[2] )
 
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;
@@ -8447,34 +8431,6 @@ return .t.
 
 //-----------------------------------------------------------------------------
 
-Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
-
-   local uValor   := oGetCod:VarGet()
-
-   if empty( uValor )
-
-      oSayTrn:cText( "" )
-      oGetKgs:cText( 0 )
-
-   else
- 
-      if oTrans:oDbf:SeekInOrd( uValor, "cCodTrn" )
-         oGetCod:cText( uValor )
-         oSayTrn:cText( oTrans:oDbf:cNomTrn )
-         oGetKgs:cText( oTrans:oDbf:nKgsTrn )
-      else
-         msgStop( "Código de transportista no encontrado." )
-         Return .f.
-      end if
-
-   end if
-
-   RecalculaTotal( aTmp )
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
 STATIC FUNCTION ValidaMedicion( aTmp, aGet )
 
   // local cNewUndMed  := aGet[ _CUNIDAD ]:VarGet
@@ -8646,9 +8602,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Formas de pago", ( D():Get( "FPago", nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
-   oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
-   oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
-
    oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
@@ -8677,7 +8630,6 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Albaranes", "Rutas",                                    {|| ( D():Get( "AlbCliT", nView ) )->cCodRut } )
    oFr:SetMasterDetail( "Albaranes", "Agentes",                                  {|| ( D():Get( "AlbCliT", nView ) )->cCodAge } )
    oFr:SetMasterDetail( "Albaranes", "Formas de pago",                           {|| ( D():Get( "AlbCliT", nView ) )->cCodPago} )
-   oFr:SetMasterDetail( "Albaranes", "Transportistas",                           {|| ( D():Get( "AlbCliT", nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Albaranes", "Empresa",                                  {|| cCodigoEmpresaEnUso() } )
    oFr:SetMasterDetail( "Albaranes", "País",                                     {|| RetFld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Clientes( nView ), "cCodPai" ) } )
    
@@ -8699,7 +8651,6 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Albaranes", "Rutas" )
    oFr:SetResyncPair(   "Albaranes", "Agentes" )
    oFr:SetResyncPair(   "Albaranes", "Formas de pago" )
-   oFr:SetResyncPair(   "Albaranes", "Transportistas" )
    oFr:SetResyncPair(   "Albaranes", "Pais" )
 
    oFr:SetResyncPair(   "Lineas de albaranes", "Artículos" )
@@ -8807,10 +8758,17 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 4 meses",            "CallHbFunc('dJuliano4AlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 6 meses",            "CallHbFunc('dJulianoAlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 8 meses",            "CallHbFunc('dJulianoAlbAnio')" )
+   oFr:AddVariable(     "Lineas de albaranes",   "Dirección del SAT",                   "CallHbFunc('cDireccionSAT')" )
 
-   oFr:AddVariable(     "Lineas de albaranes",   "dirección del SAT",                   "CallHbFunc('cDireccionSAT')" )
+   oFr:AddVariable(     "Transportistas",        "Nombre transportista",                "CallHbFunc('getNombreTransportistaAlbCli')" )
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+Function getNombreTransportistaAlbCli()
+
+Return TransportistasRepository():getNombreWhereUuid( ( D():AlbaranesClientes( nView ) )->Uuid_Trn )
 
 //---------------------------------------------------------------------------//
 
@@ -9009,17 +8967,23 @@ STATIC FUNCTION KillTrans()
       ( dbfTmpSer )->( dbCloseArea() )
    end if
 
+   if !empty( dbfTmpEst ) .and. ( dbfTmpEst )->( Used() )
+      ( dbfTmpEst )->( dbCloseArea() )
+   end if
+
    dbfTmpLin      := nil
    dbfTmpInc      := nil
    dbfTmpDoc      := nil
    dbfTmpPgo      := nil
    dbfTmpSer      := nil
+   dbfTmpEst      := nil
 
    dbfErase( cTmpLin )
    dbfErase( cTmpPgo )
    dbfErase( cTmpInc )
    dbfErase( cTmpDoc )
    dbfErase( cTmpSer )
+   dbfErase( cTmpEst )
 
    oStock:SetTmpAlbCliL()
    oStock:SetTmpAlbCliS()
@@ -13431,7 +13395,7 @@ Return .t.
 Cambiamos el valor de los bultos en el albaran---------------------------------
 */
 
-Static Function ChangeTrasportista( oCol, uNewValue, nKey )
+/*Static Function ChangeTrasportista( oCol, uNewValue, nKey )
 
    if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
 
@@ -13452,7 +13416,7 @@ Static Function ChangeTrasportista( oCol, uNewValue, nKey )
 
    end if
 
-Return .t.
+Return .t.*/
 
 //---------------------------------------------------------------------------//
 

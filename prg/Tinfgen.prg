@@ -386,8 +386,6 @@ CLASS TInfGen
 
    METHOD oDefRutInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllRut )
 
-   METHOD oDefTrnInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllTrn )
-
    METHOD oDefUsrInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllUsr )
 
    METHOD oDefCajInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllCaj )
@@ -4083,94 +4081,6 @@ METHOD oDefCajInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllCaj ) CLASS TInfG
       lOpen       := .f.
 
       return lOpen
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
-
-//---------------------------------------------------------------------------//
-
-METHOD oDefTrnInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllTrn ) CLASS TInfGen
-
-   local oTrnOrg
-   local oTrnDes
-   local oSayTrnOrg
-   local cSayTrnOrg
-   local oSayTrnDes
-   local cSayTrnDes
-   local lOpen    := .t.
-   local oError
-   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   BEGIN SEQUENCE
-
-   ::oDbfTrn         := TTrans():Create( cPatEmp(), "Transport" )
-   ::oDbfTrn:OpenFiles()
-
-   /*
-   Si nos pasan la BD montamos los valores
-   */
-
-   ::cTrnOrg         := dbFirst( ::oDbfTrn:oDbf, 1 )
-   ::cTrnDes         := dbLast( ::oDbfTrn:oDbf, 1 )
-   cSayTrnOrg        := RTrim( dbFirst( ::oDbfTrn:oDbf, 2 ) )
-   cSayTrnDes        := RTrim( dbLast( ::oDbfTrn:oDbf, 2 ) )
-
-   DEFAULT nIdOrg    := 70
-   DEFAULT nIdSayOrg := 71
-   DEFAULT nIdDes    := 80
-   DEFAULT nIdSayDes := 81
-
-   if !Empty( nIdAllTrn )
-   ::lAllTrn      := .t.
-   REDEFINE CHECKBOX ::lAllTrn ;
-      ID       ( nIdAllTrn ) ;
-      OF       ::oFld:aDialogs[1]
-   else
-      ::lAllTrn   := .f.
-   end if
-
-   REDEFINE GET oTrnOrg VAR ::cTrnOrg;
-      ID       ( nIdOrg );
-      WHEN     ( !::lAllTrn );
-      BITMAP   "LUPA" ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
-
-      oTrnOrg:bHelp     := {|| ::oDbfTrn:Buscar( oTrnOrg ) }
-      oTrnOrg:bValid    := {|| ::oDbfTrn:Existe( oTrnOrg, oSayTrnOrg, "cNomTrn" ) }
-
-   REDEFINE GET oSayTrnOrg VAR cSayTrnOrg ;
-      ID       ( nIdSayOrg );
-      WHEN     .f.;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
-
-   REDEFINE GET oTrnDes VAR ::cTrnDes;
-      ID       ( nIdDes );
-      WHEN     ( !::lAllTrn );
-      BITMAP   "LUPA" ;
-      COLOR    CLR_GET ;
-      OF       ::oFld:aDialogs[1]
-
-      oTrnDes:bHelp     := {|| ::oDbfTrn:Buscar( oTrnDes ) }
-      oTrnDes:bValid    := {|| ::oDbfTrn:Existe( oTrnDes, oSayTrnDes, "cNomTrn" ) }
-
-   REDEFINE GET oSayTrnDes VAR cSayTrnDes ;
-      WHEN     .f.;
-      ID       ( nIdSayDes );
-      OF       ::oFld:aDialogs[1]
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
-
-      if !Empty ( ::oDbfTrn )
-         ::oDbfTrn:End()
-      end if
-      lOpen       := .f.
 
    END SEQUENCE
 

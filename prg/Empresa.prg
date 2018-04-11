@@ -4585,12 +4585,6 @@ STATIC FUNCTION ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp, lSinc
          oMsg:SetText( "Añadiendo expedientes" )
          TExpediente():Create():SyncAllDbf()
 
-         oMsg:SetText( "Añadiendo ordenes de carga" )
-         TOrdCarga():Create():SyncAllDbf()
-
-         oMsg:SetText( "Añadiendo líneas ordenes de carga" )
-         TDetOrdCar():Create():SyncAllDbf()
-
          oMsg:SetText( "Añadiendo tipos de artículos" )
          TTipArt():Create():SyncAllDbf()
 
