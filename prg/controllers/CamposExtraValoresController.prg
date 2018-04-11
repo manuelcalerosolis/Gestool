@@ -135,33 +135,172 @@ RETURN ( Self )
 
 CLASS CamposExtraValoresBrowseView FROM SQLBrowseView
 
-   METHOD addColumns()                       
+   DATA oColumnValor
+
+   METHOD Create( oDialog )
+
+   METHOD addColumns() 
+
+   METHOD changeBrowse()
+
+   METHOD setColType( uValue )                  INLINE ( ::oColumnValor:nEditType := uValue )
+
+   METHOD setColPicture( uValue )               INLINE ( ::oColumnValor:cEditPicture := uValue )
+
+   METHOD setColListTxt( aValue )               INLINE ( ::oColumnValor:aEditListTxt := aValue )
+
+   METHOD fieldGetPicture()                     INLINE ( NumPict( ::getRowSet():fieldget( "longitud" ) + ::getRowSet():fieldget( "decimales" ) - 1, ::getRowSet():fieldget( "decimales" ) ) )
+   
+   METHOD fieldGetTipo()                        INLINE ( alltrim( ::getRowSet():fieldGet( 'tipo' ) ) )
+
+   METHOD fieldGetTipoNumerico()                INLINE ( ::fieldGetTipo() == "Número" )
+   METHOD fieldGetTipoTexto()                   INLINE ( ::fieldGetTipo() == "Texto" )
+   METHOD fieldGetTipoFecha()                   INLINE ( ::fieldGetTipo() == "Fecha" )
+   METHOD fieldGetTipoLogico()                  INLINE ( ::fieldGetTipo() == "Lógico" )
+   METHOD fieldGetTipoLista()                   INLINE ( ::fieldGetTipo() == "Lista" )
+
+   METHOD fieldGetValor()
+
+   METHOD fieldGetValorPicture()                INLINE ( ::fieldGetValor( .t. ) )
+   
+   METHOD fieldPutValor( uValue )               
 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
+METHOD Create( oDialog ) CLASS CamposExtraValoresBrowseView
+
+   ::oBrowse                  := SQLXBrowse():New( oDialog )
+   ::oBrowse:l2007            := .f.
+
+   ::oBrowse:lRecordSelector  := .f.
+   ::oBrowse:lSortDescend     := .f.  
+   ::oBrowse:lFooter          := .f.
+   ::oBrowse:lFastEdit        := .t.
+   ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLCELL
+
+   // Propiedades del control--------------------------------------------------
+
+   ::oBrowse:bClrStd          := {|| { CLR_BLACK, CLR_WHITE } }
+   ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   ::oBrowse:bChange          := {|| ::ChangeBrowse() }
+
+   ::oBrowse:setRowSet( ::getRowSet() )
+
+   ::oBrowse:nColSel          := 2
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 METHOD addColumns() CLASS CamposExtraValoresBrowseView
 
-   // "SELECT campos.nombre, campos.tipo, campos.longitud, campos.decimales, campos.lista, valores.valor, valores.uuid, entidad.parent_uuid "
-
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :cHeader                   := 'Nombre'
+      :nWidth                    := 200
+      :bEditValue                := {|| ::getRowSet():fieldGet( 'nombre' ) }
    end with 
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'valor'
-      :cHeader             := 'Valor'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'valor' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   ::oColumnValor                := ::oBrowse:AddCol() 
+   ::oColumnValor:cHeader        := 'Valor'
+   ::oColumnValor:nWidth         := 300
+   ::oColumnValor:bEditValue     := {|| ::fieldGetValor() }
+   ::oColumnValor:bStrData       := {|| ::fieldGetValorPicture() }
+   ::oColumnValor:bOnPostEdit    := {|o,x| ::fieldPutValor( x ) }
+   ::oColumnValor:nEditType      := 1
+   ::oColumnValor:nDataStrAlign  := 3
+   ::oColumnValor:nHeadStrAlign  := 3
+   ::oColumnValor:nFootStrAlign  := 3
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ChangeBrowse() CLASS CamposExtraValoresBrowseView
+
+   do case
+      case ( ::fieldGetTipoTexto() )
+
+         ::setColType( EDIT_GET )
+         ::setColPicture( "" )
+
+      case ( ::fieldGetTipoNumerico() )
+
+         ::setColType( EDIT_GET )
+         ::setColPicture( ::fieldGetPicture(), , .t. ) 
+
+      case ( ::fieldGetTipoFecha() )
+         
+         ::setColType( EDIT_GET )
+         ::setColPicture( "" ) 
+                           
+      case ( ::fieldGetTipoLogico() )
+
+         ::setColType( EDIT_LISTBOX )
+         ::setColListTxt( { "Si", "No" } )
+         ::setColPicture( "" )
+
+      case ( ::fieldGetTipoLista() )
+
+         ::setColType( EDIT_LISTBOX )
+         ::setColListTxt( hb_deserialize( ::getRowSet():fieldget( "lista" ) ) )
+         ::setColPicture( "" ) 
+
+   end case
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD fieldPutValor( uValue ) CLASS CamposExtraValoresBrowseView              
+
+   local uuidValor   := ::getRowSet():fieldget( "valor_uuid" )
+
+   if empty( uuidValor )
+      RETURN ( Self )
+   end if 
+
+   uValue            := alltrim( cValToStr( uValue ) )
+
+   if ( ::fieldGetTipoNumerico() )
+      uValue         := strtran( uValue, ",", "." )
+   end if 
+   
+   ::oController:oModel:updateValorWhereUuid( uuidValor, uValue )
+
+   ::getRowSet():Refresh()
+
+   ::oBrowse:Refresh()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD fieldGetValor( lPicture ) CLASS CamposExtraValoresBrowseView              
+
+   local uValor      := ::getRowSet():fieldget( "valor" )
+
+   DEFAULT lPicture  := .f.
+
+   do case
+      case ( ::fieldGetTipoNumerico() )
+
+         uValor      := val( alltrim( uValor ) )
+
+         if lPicture 
+            uValor   := trans( uValor, ::fieldGetPicture() )
+         end if 
+
+      case ( ::fieldGetTipoFecha() )
+         
+         uValor      := ctod( alltrim( uValor ) )
+
+   end case
+
+RETURN ( uValor )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -269,15 +408,17 @@ CLASS SQLCamposExtraValoresModel FROM SQLBaseModel
 
    DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( campo_extra_entidad_uuid, entidad_uuid )"
 
-   DATA cColumnOrder                         INIT "campos.nombre"                  
+   DATA cColumnOrder                         INIT "nombre"                  
 
    METHOD getInitialSelect()
 
    METHOD getColumns()
 
-   METHOD getListaAttribute( value )         INLINE ( if( empty( value ), {}, hb_deserialize( value ) ) )
+   METHOD getListaAttribute( value )            INLINE ( if( empty( value ), {}, hb_deserialize( value ) ) )
 
-   METHOD setListaAttribute( value )         INLINE ( hb_serialize( value ) )
+   METHOD setListaAttribute( value )            INLINE ( hb_serialize( value ) )
+
+   METHOD updateValorWhereUuid( uuid, uValue )  INLINE ( ::updateFieldWhereUuid( uuid, 'valor', uValue ) )
 
 END CLASS
 
@@ -294,7 +435,7 @@ METHOD getInitialSelect( uuidEntidad ) CLASS SQLCamposExtraValoresModel
    cSQL        +=       "campos.decimales as decimales, "
    cSQL        +=       "campos.lista as lista, "
    cSQL        +=       "valores.valor as valor, "
-   cSQL        +=       "valores.uuid as uuidValor, "
+   cSQL        +=       "valores.uuid as valor_uuid, "
    cSQL        +=       "entidad.parent_uuid "
    cSQL        +=    "FROM " + ::cTableName + " valores "
    cSQL        +=    "INNER JOIN " + SQLCamposExtraEntidadesModel():cTableName + " entidad ON entidad.uuid = valores.campo_extra_entidad_uuid "

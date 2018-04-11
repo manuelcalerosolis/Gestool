@@ -396,10 +396,10 @@ END CLASS
 
 METHOD getValidators() CLASS CamposExtraValidator
 
-   ::hValidators  := {     "nombre" =>          {  "required"     => "El nombre es un dato requerido",;
-                                                   "unique"       => "El nombre introducido ya existe" } ,;   
-                           "tipo"     =>        {  "required"     => "El tipo es un dato requerido" } ,; 
-                           "longitud" =>        {  "required"     => "La longitud es un dato requerido" } }
+   ::hValidators  := {     "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
+                                             "unique"       => "El nombre introducido ya existe" } ,;   
+                           "tipo"     =>  {  "required"     => "El tipo es un dato requerido" } ,; 
+                           "longitud" =>  {  "required"     => "La longitud es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -429,11 +429,9 @@ END CLASS
 METHOD getColumns() CLASS SQLCamposExtraModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                             "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;

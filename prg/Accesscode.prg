@@ -38,7 +38,7 @@ METHOD loadTableConfiguration() CLASS AccessCode
 
    local cTag
 
-   SysRefresh()
+   sysRefresh()
 
    cTag              := "Tablet"
 
@@ -58,16 +58,16 @@ METHOD loadTableConfiguration() CLASS AccessCode
    ::lAddLote        := ::getLogicValueFromIni( cTag, "AddLote",           ".f." )
 
    if empty( ::cGetUser ) 
-      apoloMsgStop( "Código de usuario esta vacio")
-      Return ( .f. )
+      apoloMsgStop( "Código de usuario esta vacio" )
+      RETURN ( .f. )
    end if 
 
    if empty( ::cGetPassword ) 
       apoloMsgStop( "Clave de acceso esta vacia" )
-      Return ( .f. )
+      RETURN ( .f. )
    end if 
 
-Return ( .f. )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -1,5 +1,6 @@
 #include "FiveWin.Ch"
 #include "Factu.Ch"
+#include "Xbrowse.Ch"
 
 //------------------------------------------------------------------------//
 
