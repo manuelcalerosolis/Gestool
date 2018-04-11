@@ -1870,13 +1870,7 @@ RETURN ( oDlg:nResult == IDOK )*/
       Objetos---------------------------------------------------------------------
       */
 
-/*      with object ( TTrans():Create( cPatEmp() ) )
-         :DefineFiles()
-         AppObjItm( cDbfFld, "TR", :oDbf, "( cDbfTrn )"  )                // Transportes
-         :End()
-      end with
-
-      with object ( TRemMovAlm():Create( cPatEmp ) )
+/*      with object ( TRemMovAlm():Create( cPatEmp ) )
          ?"1"
          AppObjItm( cDbfFld, "RM", :DefineFiles(),      "( cDbf )"     )  // Remesas de movimientos
          ?"2"

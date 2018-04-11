@@ -188,8 +188,6 @@ CLASS TNewInfGen FROM TInfGen
 
    METHOD lGrupoCaja( lInitGroup, lImp )
 
-   METHOD lGrupoTransportista( lInitGroup, lImp )
-
    METHOD lGrupoGrupoCliente( lInitGroup, lImp )
 
    METHOD lGrupoGProveedor( lInitGroup, lImp )
@@ -1960,77 +1958,6 @@ METHOD lGrupoCaja( lInitGroup, lImp ) CLASS TNewInfGen
 
       if !Empty( ::oDbfCaj )
          ::oDbfCaj:End()
-      end if
-
-      lOpen          := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
-
-//---------------------------------------------------------------------------//
-
-METHOD lGrupoTransportista( lInitGroup, lImp ) CLASS TNewInfGen
-
-   local lOpen          := .t.
-   local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   DEFAULT lImp         := .t.
-
-   BEGIN SEQUENCE
-
-   ::oDbfTrn            := TTrans():Create( cPatEmp(), "Transport" )
-   ::oDbfTrn:OpenFiles()
-
-   ::oGrupoTransportista                  := TRGroup():New( {|| ::oDbf:cCodTrans }, {|| "Transportista : " + AllTrim( ::oDbf:cCodTrans ) + " - " + AllTRim( ::oDbf:cNomTrans ) }, {|| "Total transportista : " + ::oDbf:cCodTrans }, {|| 3 }, ::lSalto )
-
-   ::oGrupoTransportista:Cargo            := TItemGroup()
-   ::oGrupoTransportista:Cargo:Nombre     := "Transportista"
-   ::oGrupoTransportista:Cargo:Expresion  := "cCodTrans"
-   ::oGrupoTransportista:Cargo:Todos      := .t.
-   ::oGrupoTransportista:Cargo:Desde      := Space( 9 )            // dbFirst( ::oDbfTrn:oDbf, 1 )
-   ::oGrupoTransportista:Cargo:Hasta      := Replicate( "Z", 9 )   // dbLast( ::oDbfTrn:oDbf, 1 )
-   ::oGrupoTransportista:Cargo:cPicDesde  := "@!"
-   ::oGrupoTransportista:Cargo:cPicHasta  := "@!"
-   ::oGrupoTransportista:Cargo:HelpDesde  := {|| ::oDbfTrn:Buscar( ::oDesde ) }
-   ::oGrupoTransportista:Cargo:HelpHasta  := {|| ::oDbfTrn:Buscar( ::oHasta ) }
-   ::oGrupoTransportista:Cargo:TextDesde  := {|| ::SetNombreDesdeTransportista() }
-   ::oGrupoTransportista:Cargo:TextHasta  := {|| ::SetNombreHastaTransportista() }
-   ::oGrupoTransportista:Cargo:ValidDesde := {|oGet| if( ::oDbfTrn:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cNomTrn" ), ( ::ChangeValor(), .t. ), .f. ) }
-   ::oGrupoTransportista:Cargo:ValidHasta := {|oGet| if( ::oDbfTrn:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNomTrn" ), ( ::ChangeValor(), .t. ), .f. ) }
-   ::oGrupoTransportista:Cargo:lImprimir  := lImp
-   ::oGrupoTransportista:Cargo:cBitmap    := "gc_small_truck_16"
-
-   if lInitGroup != nil
-
-      aAdd( ::aSelectionGroup, ::oGrupoTransportista )
-
-      if !Empty( ::oImageGroup )
-         ::oImageGroup:AddMasked( TBitmap():Define( "gc_small_truck_16" ), Rgb( 255, 0, 255 ) )
-
-         ::oGrupoTransportista:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
-      end if
-
-      if lInitGroup
-         if !Empty( ::oColNombre )
-            ::oColNombre:AddResource( ::oGrupoTransportista:Cargo:cBitmap )
-         end if
-         aAdd( ::aInitGroup, ::oGrupoTransportista )
-      end if
-
-   end if
-
-   aAdd( ::aSelectionRango, ::oGrupoTransportista )
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), 'Imposible abrir las bases de datos de transportista' )
-
-      if !Empty( ::oDbfTrn )
-         ::oDbfTrn:End()
       end if
 
       lOpen          := .f.

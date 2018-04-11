@@ -236,11 +236,9 @@ InfoArticulo.prg        										\
 TAuditor.prg            										\
 Ttvitem.prg             										\
 Tur2ses.prg             										\
-Ordcar.prg              										\
 Ttrans.prg              										\
 TCaptura.prg            										\
 TDetCaptura.prg         										\
-Tiordcar.prg            													\
 TICobAge.prg            													\
 Tchgtar.prg             													\
 Tchgdia.prg             													\
@@ -424,7 +422,6 @@ Entidades.prg           													\
 Colaboradores.prg       													\
 Actuaciones.prg         													\
 TDetActuacion.prg       													\
-TDetOrdCar.prg          													\
 Fabricantes.prg         													\
 ExportaTarifas.prg      													\
 TComentarios.prg        													\
@@ -869,11 +866,9 @@ Treeitem.obj            													\
 Ttvitem.obj             													\
 Tur2ses.obj             													\
 Allfamar.obj            													\
-Ordcar.obj              													\
 Ttrans.obj              													\
 TCaptura.obj            													\
 TDetCaptura.obj         													\
-Tiordcar.obj            													\
 TICobAge.obj            													\
 Tchgtar.obj             													\
 Tchgdia.obj             													\
@@ -1048,7 +1043,6 @@ Entidades.obj           													\
 Colaboradores.obj       													\
 Actuaciones.obj         													\
 TDetActuacion.obj       													\
-TDetOrdCar.obj          													\
 Fabricantes.obj         													\
 ExportaTarifas.obj      													\
 TComentarios.obj        													\
@@ -1481,11 +1475,9 @@ $(OBJ)\TAuditor.obj             											+
 $(OBJ)\Treeitem.obj             											+
 $(OBJ)\Ttvitem.obj              											+
 $(OBJ)\Tur2ses.obj              											+
-$(OBJ)\Ordcar.obj               											+
 $(OBJ)\Ttrans.obj               											+
 $(OBJ)\TCaptura.obj             											+
 $(OBJ)\TDetCaptura.obj          											+
-$(OBJ)\Tiordcar.obj             											+
 $(OBJ)\TICobAge.obj             											+
 $(OBJ)\Tchgtar.obj              											+
 $(OBJ)\Tchgdia.obj              											+
@@ -1656,7 +1648,6 @@ $(OBJ)\Actuaciones.obj          											+
 $(OBJ)\TDetActuacion.obj        											+
 $(OBJ)\Fabricantes.obj          											+
 $(OBJ)\ExportaTarifas.obj       											+
-$(OBJ)\TDetOrdCar.obj           											+
 $(OBJ)\TComentarios.obj         											+
 $(OBJ)\TDetComentarios.obj      											+
 $(OBJ)\OrdenComanda.obj 													+

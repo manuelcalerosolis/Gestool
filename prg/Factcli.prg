@@ -14,7 +14,7 @@
 #define OFN_LONGNAMES         0x00200000     // force long names for 3.x modules
 #define OFN_ENABLESIZING      0x00800000
 
-#define _MENUITEM_            "01058"
+#define _MENUITEM_            "facturas_de_clientes"
 
 #define CLR_BAR               14197607
 #define CLR_KIT               Rgb( 239, 239, 239 )

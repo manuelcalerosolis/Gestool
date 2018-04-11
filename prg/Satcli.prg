@@ -358,7 +358,6 @@ static nDouDiv
 static nRouDiv
 static cPpvDiv
 static nDpvDiv
-static oTrans
 static nVdvDiv
 static oStock
 static oTipArt
@@ -398,6 +397,8 @@ static oBtnKit
 static oBrwProperties
 
 static Counter
+
+static oTransportistaSelector
 
 static oTipoCtrCoste
 static cTipoCtrCoste
@@ -690,11 +691,6 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if
 
-      oTrans            := TTrans():New( cPatEmp() )
-      if !oTrans:OpenFiles()
-         lOpenFiles     := .f.
-      end if
-
       oTipArt           := TTipArt():Create( cPatEmp() )
       if !oTipArt:OpenFiles()
          lOpenFiles     := .f.
@@ -741,6 +737,8 @@ STATIC FUNCTION OpenFiles( lExt )
       Counter           := TCounter():New( nView, "nSatCli" )
 
       CodigosPostales():GetInstance():OpenFiles()
+
+      oTransportistaSelector     := TransportistasController():New():oGetSelectorTransportista
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -1015,10 +1013,6 @@ STATIC FUNCTION CloseFiles()
       oNewImp:End()
    end if
 
-   if !Empty( oTrans )
-      oTrans:End()
-   end if
-
    if !Empty( oStock )
       oStock:end()
    end if
@@ -1089,7 +1083,6 @@ STATIC FUNCTION CloseFiles()
    dbfDelega      := nil
    oBandera       := nil
    oNewImp        := nil
-   oTrans         := nil
    oStock         := nil
    oTipArt        := nil
    oGrpFam        := nil
@@ -1888,7 +1881,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    cSay[ 5 ]            := RetFld( aTmp[ _CCODPGO ], dbfFPago )
    cSay[ 6 ]            := RetFld( aTmp[ _CCODAGE ], dbfAgent )
    cSay[ 7 ]            := RetFld( aTmp[ _CCODRUT ], dbfRuta )
-   cSay[ 8 ]            := oTrans:cNombre( aTmp[ _CCODTRN ] )
    cSay[ 9 ]            := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
    cSay[10 ]            := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCODUSR ] )
    cSay[11 ]            := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
@@ -2850,18 +2842,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       Transportistas-----------------------------------------------------------
       */
 
-      REDEFINE GET aGet[ _CCODTRN ] VAR aTmp[ _CCODTRN ] ;
-         ID       235 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( LoadTrans( aTmp, aGet[ _CCODTRN ], aGet[ _NKGSTRN ], oSay[ 8 ] ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( oTrans:Buscar( aGet[ _CCODTRN ] ), .t. );
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET oSay[ 8 ] VAR cSay[ 8 ] ;
-         ID       236 ;
-         WHEN     .F. ;
-         OF       oFld:aDialogs[2]
+      oTransportistaSelector:Bind( bSETGET( aTmp[ _UUID_TRN ] ) )
+      oTransportistaSelector:Activate( 236, 235, oFld:aDialogs[2] )
 
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;
@@ -8060,34 +8042,6 @@ return .t.
 
 //-----------------------------------------------------------------------------
 
-Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
-
-   local uValor   := oGetCod:VarGet()
-
-   if Empty( uValor )
-
-      oSayTrn:cText( "" )
-      oGetKgs:cText( 0 )
-
-   else
-
-      if oTrans:oDbf:SeekInOrd( uValor, "cCodTrn" )
-         oGetCod:cText( uValor )
-         oSayTrn:cText( oTrans:oDbf:cNomTrn )
-         oGetKgs:cText( oTrans:oDbf:nKgsTrn )
-      else
-         msgStop( "Código de transportista no encontrado." )
-         Return .f.
-      end if
-
-   end if
-
-   RecalculaTotal( aTmp )
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
 #include "FastRepH.ch"
 
 Static Function DataReport( oFr )
@@ -8134,9 +8088,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
-   oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
-   oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
-
    oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
@@ -8160,7 +8111,6 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "SAT", "Rutas",                           {|| ( D():SatClientes( nView ) )->cCodRut } )
    oFr:SetMasterDetail( "SAT", "Agentes",                         {|| ( D():SatClientes( nView ) )->cCodAge } )
    oFr:SetMasterDetail( "SAT", "Formas de pago",                  {|| ( D():SatClientes( nView ) )->cCodPgo } )
-   oFr:SetMasterDetail( "SAT", "Transportistas",                  {|| ( D():SatClientes( nView ) )->cCodTrn } )
 
    oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {|| SynchronizeDetails() } )
    oFr:SetMasterDetail( "Lineas de SAT", "Ofertas",               {|| ( D():SatClientesLineas( nView ) )->cRef } )
@@ -8178,7 +8128,6 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "SAT", "Rutas" )
    oFr:SetResyncPair(   "SAT", "Agentes" )
    oFr:SetResyncPair(   "SAT", "Formas de pago" )
-   oFr:SetResyncPair(   "SAT", "Transportistas" )
 
    oFr:SetResyncPair(   "Lineas de SAT", "Artículos" )
    oFr:SetResyncPair(   "Lineas de SAT", "Ofertas" )
@@ -8277,7 +8226,15 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de SAT",   "Total peso por línea",                "CallHbFunc('nPesLSatCli')" )
    oFr:AddVariable(     "Lineas de SAT",   "Total final línea del SAT",           "CallHbFunc('nTotFSatCli')" )
 
+   oFr:AddVariable(     "Transportistas",  "Nombre transportista",                "CallHbFunc('getNombreTransportistaSatCli')" )
+
 Return nil
+
+//---------------------------------------------------------------------------//
+
+Function getNombreTransportistaSatCli()
+
+Return TransportistasRepository():getNombreWhereUuid( ( D():SatClientes( nView ) )->Uuid_Trn )
 
 //---------------------------------------------------------------------------//
 

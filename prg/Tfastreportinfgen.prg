@@ -994,10 +994,6 @@ METHOD End() CLASS TFastReportInfGen
       ::oGrpPrv:End()
    end if
 
-   if ::oDbfTrn != nil
-      ::oDbfTrn:End()
-   end if
-
    if ::oSeccion != nil
       ::oSeccion:End()
    end if
@@ -1012,10 +1008,6 @@ METHOD End() CLASS TFastReportInfGen
 
    if ::oDbfRut != nil .and. ::oDbfRut:Used()
       ::oDbfRut:End()
-   end if
-
-   if ::oDbfUsr != nil .and. ::oDbfUsr:Used()
-      ::oDbfUsr:End()
    end if
 
    if !Empty( ::oRemAgeT ) .and. ( ::oRemAgeT:Used() )

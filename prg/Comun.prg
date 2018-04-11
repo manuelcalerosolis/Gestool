@@ -2043,7 +2043,7 @@ FUNCTION CreateAcceso( oWnd )
    // Ventas-------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 8
+   oGrupo:nBigItems     := 7
    oGrupo:cPrompt       := 'Ventas'
    oGrupo:cLittleBitmap := "gc_notebook_user_16"
    oGrupo:cBigBitmap    := "gc_notebook_user_32"
@@ -2122,16 +2122,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "rectificativas_de_clientes"
    oItem:cBmp           := "gc_document_text_delete_16"
    oItem:cBmpBig        := "gc_document_text_delete_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Ordenes de carga'
-   oItem:cMessage       := 'Acceso a las ordenes de carga'
-   oItem:bAction        := {|| TOrdCarga():New( cPatEmp(), "ordenes_de_carga", oWnd ):Activate() }
-   oItem:cId            := "ordenes_de_carga"
-   oItem:cBmp           := "gc_small_truck_user_16"
-   oItem:cBmpBig        := "gc_small_truck_user_32"
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()
@@ -3059,7 +3049,6 @@ FUNCTION InitClasses()
    TInfoArticulo()
    TSndRecInf()
    TNotas()
-   TOrdCarga()
    TPais()
    TReindex()
    TRemesas()
