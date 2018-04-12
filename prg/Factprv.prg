@@ -6041,7 +6041,7 @@ STATIC FUNCTION ContFactu( lSimula, lPago, oTree )
 
                cCtaVent    := RetCtaCom( ( D():FacturasProveedoresLineas( nView ) )->cRef, ( nImpDeta < 0 ), D():Articulos( nView ) )
                if empty( cCtaVent )
-                  cCtaVent := cCtaPrvVta + RetGrpVta( ( D():FacturasProveedoresLineas( nView ) )->cRef, cRuta, cCodEmp, D():Articulos( nView ), ( D():FacturasProveedoresLineas( nView ) )->nIva )
+                  cCtaVent := cCtaPrvVta + RetGrpVta( ( D():FacturasProveedoresLineas( nView ) )->cRef, cRuta, cCodEmp, ( D():FacturasProveedoresLineas( nView ) )->nIva )
                end if
 
                nPosicion   := aScan( aVentas, {|x| x[1] == cCtaVent } )

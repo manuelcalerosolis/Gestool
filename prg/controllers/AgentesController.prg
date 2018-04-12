@@ -43,7 +43,7 @@ METHOD New() CLASS AgentesController
 
    ::oDialogView                 := AgentesView():New( self )
 
-   ::oValidator                  := AgentesValidator():New( self )
+   ::oValidator                  := AgentesValidator():New( self, ::oDialogView )
 
    ::oDireccionesController      := DireccionesController():New( self )
 

@@ -407,20 +407,6 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfTIva, oBrw, bWhen, bValid, nMode )
 			COLOR 	CLR_GET ;
 			OF 		oDlg
 
-      REDEFINE GET aoGet[ _GRPASC ] VAR aTemp[ _GRPASC ] ;
-			ID 		150 ;
-         WHEN     ( !Empty( cRutCnt() ) .AND. nMode != ZOOM_MODE ) ;
-         VALID    ( cGrpVenta( aoGet[ _GRPASC ], , oGet ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwGrpVenta( aoGet[ _GRPASC ], , oGet ) );
-         PICTURE  ( Replicate( "9", nLenCuentaContaplus() ) )  ;
-			OF 		oDlg
-
-      REDEFINE GET oGet VAR cGet ;
-			ID 		160 ;
-			WHEN 		( .F. ) ;
-			OF 		oDlg
-
       REDEFINE GET aTemp[ _CODTER ] ;
          ID       170 ;
          PICTURE  "9";
@@ -444,18 +430,13 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfTIva, oBrw, bWhen, bValid, nMode )
 			OF 		oDlg ;
 			ACTION 	( oDlg:end() )
 
-      REDEFINE BUTTON ;
-         ID       559 ;
-			OF 		oDlg ;
-         ACTION   ( GoHelp() )
-
-   if nMode != ZOOM_MODE
+      if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F5, {|| if( nMode == DUPL_MODE, if( aoGet[ _TIPO ]:lValid(), lPreSave ( aTemp, aoGet, dbfTIva, oBrw, nMode, oDlg ), ), lPreSave ( aTemp, aoGet, dbfTIva, oBrw, nMode, oDlg ) ) } )
-   end if
+      end if
 
    oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
 
-   oDlg:bStart := {|| aoGet[_GRPASC]:lValid(), aoGet[ _TIPO ]:SetFocus() }
+   oDlg:bStart := {|| aoGet[ _TIPO ]:SetFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -932,198 +913,18 @@ RETURN nTemp
 
 FUNCTION retGrpAsc( nCodIva, dbfTiva, cRuta, cCodEmp )
 
-   local oBlock
-   local oError
-   local cTemp
    local nLenSubCta
-   local lClose      := .f.
 
    DEFAULT cRuta     := cRutCnt()
    DEFAULT cCodEmp   := cEmpCnt( "A" )
 
    nLenSubCta        := nLenCuentaContaplus( cRuta, cCodEmp )
-   cTemp             := Replicate( "0", nLenSubCta )
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if dbfTIva == nil
-      USE ( cPatDat() + "TIva.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfTIva ) )
-      SET ADSINDEX TO ( cPatDat() + "TIva.Cdx" ) ADDITIVE
-      lClose         := .t.
-   end if
-
-   if ( dbSeekInOrd( Str( nCodIva, 6, 2 ), "TPIva", dbfTIva ) .and. !empty( ( dbfTIva )->GrpAsc ) )
-      cTemp          := SubStr( ( dbfTIva )->GrpAsc, 1, nLenSubCta )
-   end if
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if lClose
-		CLOSE ( dbfTIva )
-   end if
-
-RETURN ( Rtrim( cTemp ) )
+RETURN ( Replicate( "0", nLenSubCta ) )
 
 //---------------------------------------------------------------------------//
 
 #else
-
-//---------------------------------------------------------------------------//
-//Funciones solo de PDA
-//---------------------------------------------------------------------------//
-
-static function pdaMenuEdtRec( oDlg, oBrw )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 100 ;
-      BITMAPS  10 ; // bitmaps resoruces ID
-      IMAGES   3     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 110 OF oMenu ACTION ( oDlg:End( IDOK ) )
-
-      REDEFINE MENUITEM ID 120 OF oMenu ACTION ( oDlg:End( IDCANCEL ) )
-
-   oDlg:SetMenu( oMenu )
-
-   oBrw:GoTop()
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-FUNCTION pdaBrwTipoIva( oGet, dbfTIva, oGet2 )
-
-   local oBlock
-   local oError
-   local oFont
-   local oBtn
-	local oDlg
-	local oGet1
-	local cGet1
-	local oBrw
-   local nOrd     := GetBrwOpt( "BrwTiva" )
-	local oCbxOrd
-   local aCbxOrd  := { "Código", "Nombre" }
-   local cCbxOrd
-   local lClose   := .f.
-   local nLevel   := Auth():Level( "01036" )
-   local oSayText
-   local cSayText := "Tipos de I.V.A"
-
-   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd        := aCbxOrd[ nOrd ]
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   if dbfTIva == nil
-      USE ( cPatDat() + "TIva.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfTIva ) )
-      SET ADSINDEX TO ( cPatDat() + "TIva.Cdx" ) ADDITIVE
-      lClose      := .t.
-   end if
-
-   nOrd           := ( dbfTIva )->( OrdSetFocus( nOrd ) )
-
-   ( dbfTIva )->( dbGoTop() )
-
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"      TITLE "Seleccionar tipo de " + cImp()
-
-      DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-      REDEFINE SAY oSayTit ;
-         VAR      "Buscando tipo de " + cImp() ;
-         ID       110 ;
-         COLOR    "N/W*" ;
-         FONT     oFont ;
-         OF       oDlg
-
-      REDEFINE BTNBMP oBtn ;
-         ID       100 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "gc_user_16.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-      oBtn:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-		REDEFINE GET oGet1 VAR cGet1;
-			ID 		104 ;
-			ON CHANGE AutoSeek( nKey, nFlags, Self, oBrw, dbfTIva ) ;
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfTiva )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus(), ( dbfTiva )->( OrdSetFocus( oCbxOrd:nAt ) ), oCbxOrd:refresh() ) ;
-			OF 		oDlg
-
-		REDEFINE LISTBOX oBrw ;
-			FIELDS ;
-                  (dbfTIva)->Tipo + CRLF + (dbfTIva)->DescIva ,;
-                  Trans( (dbfTIva)->TpIva, "@E 999.99"),;
-                  "";
-			HEADER;
-                  "Código" + CRLF + "Nombre",;
-                  "%";
-         SIZES;
-                  180,;
-                  80;
-         ALIAS    ( dbfTIva );
-         ON DBLCLICK ( oDlg:end( IDOK ) );
-         ID       105 ;
-         OF       oDlg
-
-         oBrw:aJustify  := { .f., .f., .t., .f. }
-         oBrw:aActions  := {| nCol | lPressCol( nCol, oBrw, oCbxOrd, aCbxOrd, dbfTIva ) }
-
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( pdaMenuEdtRec( oDlg, oBrw ) )
-
-   if oDlg:nResult == IDOK
-
-      oGet:cText( ( dbfTIva )->TpIva )
-
-      if ValType( oGet2 ) == "O"
-         oGet2:cText( ( dbfTIva )->DescIva )
-      end if
-
-   end if
-
-   DestroyFastFilter( dbfTIva )
-
-   SetBrwOpt( "BrwTiva", ( dbfTIva )->( OrdNumber() ) )
-
-   oGet:SetFocus()
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if lClose
-		Close( dbfTIva )
-   else
-      ( dbfTIva )->( OrdSetFocus( nOrd  ) )
-   end if
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
 
 #endif
 

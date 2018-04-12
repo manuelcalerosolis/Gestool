@@ -193,7 +193,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
                cCtaVent       := RetCtaVta( ( dbfFacCliL )->cRef, ( nImpDet < 0 ), dbfArt )
                if empty( cCtaVent )
-                  cCtaVent    := cCtaCliVta + RetGrpVta( ( dbfFacCliL )->cRef, cRuta, cCodEmp, dbfArt, nIva )
+                  cCtaVent    := cCtaCliVta + RetGrpVta( ( dbfFacCliL )->cRef, cRuta, cCodEmp, nIva )
                end if
 
                /*
@@ -1495,7 +1495,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
 
          cCtaVent    := RetCtaVta( ( dbfTikL )->cCbaTil, ( nImpDeta < 0 ), dbfArt )
          if Empty( cCtaVent )
-            cCtaVent := cCtaCli() + RetGrpVta( ( dbfTikL )->cCbaTil, cRuta, cCodEmp, dbfArt, ( dbfTikL )->nIvaTil )
+            cCtaVent := cCtaCli() + RetGrpVta( ( dbfTikL )->cCbaTil, cRuta, cCodEmp, ( dbfTikL )->nIvaTil )
          end if
 
          /*
@@ -2133,7 +2133,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
 
                cCtaVent    := RetCtaVta( ( dbfAlbCliL )->cRef, ( nImpDet < 0 ), dbfArt )
                if Empty( cCtaVent )
-                  cCtaVent := cCtaCliVta + RetGrpVta( ( dbfAlbCliL )->cRef, cRuta, cCodEmp, dbfArt, nIva )
+                  cCtaVent := cCtaCliVta + RetGrpVta( ( dbfAlbCliL )->cRef, cRuta, cCodEmp, nIva )
                end if
 
                /*
@@ -2873,7 +2873,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
 
                cCtaVent    := RetCtaCom( ( dbfFacPrvL )->cRef, ( nImpDeta < 0 ), dbfArticulo )
                if Empty( cCtaVent )
-                  cCtaVent := cCtaPrvVta + RetGrpVta( ( dbfFacPrvL )->cRef, cRuta, cCodEmp, dbfArticulo, ( dbfFacPrvL )->nIva )
+                  cCtaVent := cCtaPrvVta + RetGrpVta( ( dbfFacPrvL )->cRef, cRuta, cCodEmp, ( dbfFacPrvL )->nIva )
                end if
 
                nPosicion   := aScan( aVentas, {|x| x[1] == cCtaVent } )
@@ -3431,7 +3431,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
 
             cCtaVent := RetCtaCom( ( dbfRctPrvL )->cRef, ( nImpDeta < 0 ), dbfArticulo )
             if Empty( cCtaVent )
-               cCtaVent := cCtaPrvVta + RetGrpVta( ( dbfRctPrvL )->cRef, cRuta, cCodEmp, dbfArticulo, ( dbfRctPrvL )->nIva )
+               cCtaVent := cCtaPrvVta + RetGrpVta( ( dbfRctPrvL )->cRef, cRuta, cCodEmp, ( dbfRctPrvL )->nIva )
             end if
 
             nPosicion   := aScan( aVentas, {|x| x[1] == cCtaVent } )
@@ -4742,7 +4742,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
                cCtaVent       := RetCtaVta( ( dbfFacRecL )->cRef, ( nImpDet < 0 ), dbfArt )
                if Empty( cCtaVent )
-                  cCtaVent    := cCtaCliVta + RetGrpVta( ( dbfFacRecL )->cRef, cRuta, cCodEmp, dbfArt, nIva )
+                  cCtaVent    := cCtaCliVta + RetGrpVta( ( dbfFacRecL )->cRef, cRuta, cCodEmp, nIva )
                end if
 
                /*
