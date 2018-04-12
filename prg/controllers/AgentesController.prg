@@ -54,8 +54,7 @@ METHOD New() CLASS AgentesController
    ::oModel:setEvent( 'loadedCurrentBuffer', {|| ::DireccionesControllerLoadCurrentBuffer() } )
    ::oModel:setEvent( 'updatedBuffer',       {|| ::DireccionesControllerUpdateBuffer() } )
 
-   ::oModel:setEvent( 'deletedSelection',    {|| ::DireccionesControllerDeleteBuffer () } )
-
+   ::oModel:setEvent( 'deletedSelection',    {|| ::DireccionesControllerDeleteBuffer() } )
 
 RETURN ( Self )
 

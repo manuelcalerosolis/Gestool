@@ -107,7 +107,12 @@ CLASS SQLBaseModel
    METHOD getInsertIgnoreSentence( hBuffer )          INLINE ( ::getInsertSentence( hBuffer, .t. ) )
    METHOD getUpdateSentence()
    METHOD getInsertOnDuplicateSentence( hBuffer )   
-   METHOD getdeleteSentenceByUuid()
+
+   METHOD getdeleteSentenceByUuid( aUuid )
+   METHOD getDeleteSentenceById( aId )
+   METHOD getDeleteSentenceWhereParentUuid( uUuid )
+
+   METHOD aUuidToDelete()
    
    METHOD getDropTableSentence()
 
@@ -154,10 +159,6 @@ CLASS SQLBaseModel
    METHOD setNavigatorColumnOrientationFromModel( cName )   INLINE ( ::setColumnOrientationFromModel( "navigator", cName ) )
    METHOD setSelectorColumnOrientationFromModel( cName )    INLINE ( ::setColumnOrientationFromModel( "selector", cName ) )
 
-   METHOD getDeleteSentenceById( nId )
-
-   METHOD aUuidToDelete()
-
    METHOD getSelectByOrder()
 
    METHOD getWhere( cWhere )                          INLINE ( atail( ::getDatabase():selectFetchHash( ::getWhereSelect( cWhere ) ) ) )
@@ -178,7 +179,9 @@ CLASS SQLBaseModel
    METHOD updateBuffer( hBuffer )
    METHOD insertOnDuplicate( hBuffer )
    METHOD deleteSelection( aIds )
-   METHOD deleteById( nId )
+   METHOD deleteById( uId )
+   METHOD deleteByUuid( uUuid )
+   METHOD deleteWhereParentUuid( uUuid )
 
    METHOD loadBlankBuffer()
    METHOD loadDuplicateBuffer() 
@@ -648,6 +651,19 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
+METHOD getDeleteSentenceWhereParentUuid( aUuid )
+
+   local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+                           "WHERE parent_uuid IN ( " 
+
+   aeval( aUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+
+   cSentence         := chgAtEnd( cSentence, ' )', 2 )
+
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
+
 METHOD getDeleteSentenceById( aIds )
 
    local cSentence   
@@ -978,6 +994,30 @@ METHOD deleteById( nId )
    ::getDatabase():Execs( ::getDeleteSentenceById( nId ) )
 
    ::fireEvent( 'deletedById' )
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteByUuid( uUuid )
+
+   ::fireEvent( 'deletingByUuid' )
+
+   ::getDatabase():Execs( ::getDeleteSentenceByUuid( uUuid ) )
+
+   ::fireEvent( 'deletedByUuid' )
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteWhereParentUuid( uUuid )
+
+   ::fireEvent( 'deletingWhereParentUuid' )
+
+   ::getDatabase():Execs( ::getDeleteSentenceWhereParentUuid( uUuid ) )
+
+   ::fireEvent( 'deletedWhereParentUuid' )
    
 RETURN ( Self )
 
