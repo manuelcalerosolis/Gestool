@@ -16,6 +16,10 @@ CLASS AgentesController FROM SQLNavigatorController
    METHOD DireccionesControllerDeleteBuffer()
 
 
+   METHOD DireccionesControllerLoadDuplicateBuffer()
+
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -48,13 +52,15 @@ METHOD New() CLASS AgentesController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::oDireccionesController:oModel:loadBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',      {|| ::oDireccionesController:oModel:insertBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::oDireccionesController:oModel:loadBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',         {|| ::oDireccionesController:oModel:insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer', {|| ::DireccionesControllerLoadCurrentBuffer() } )
-   ::oModel:setEvent( 'updatedBuffer',       {|| ::DireccionesControllerUpdateBuffer() } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',    {|| ::DireccionesControllerLoadCurrentBuffer() } )
+   ::oModel:setEvent( 'updatedBuffer',          {|| ::DireccionesControllerUpdateBuffer() } )
 
-   ::oModel:setEvent( 'deletedSelection',    {|| ::DireccionesControllerDeleteBuffer() } )
+   ::oModel:setEvent( 'loadingDuplicateBuffer', {|| ::DireccionesControllerLoadDuplicateBuffer() } )
+   
+   ::oModel:setEvent( 'deletedSelection',       {|| ::DireccionesControllerDeleteBuffer() } )
 
 RETURN ( Self )
 
@@ -101,8 +107,6 @@ METHOD DireccionesControllerDeleteBuffer()
 
    local aUuidAgente    := ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected )
 
-   msgalert( hb_valtoexp( aUuidAgente ) )
-
    if empty( aUuidAgente )
       RETURN ( self )
    end if
@@ -111,6 +115,23 @@ METHOD DireccionesControllerDeleteBuffer()
 
    RETURN ( self )
 //---------------------------------------------------------------------------//
+
+METHOD DireccionesControllerLoadDuplicateBuffer()
+
+   local idDireccion     
+   local uuidAgente     := hget( ::oModel:hBuffer, "uuid" )
+
+   idDireccion          := ::oDireccionesController:oModel:getIdWhereParentUuid( uuidAgente )
+   if ! empty( idDireccion )
+      RETURN .t. 
+   end if 
+
+   msgalert( idDireccion )
+
+   ::oDireccionesController:oModel:loadDuplicateBuffer( idDireccion )
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -182,11 +203,26 @@ CLASS AgentesView FROM SQLBaseView
   
    METHOD Activate()
 
+   METHOD Activating()
+
    METHOD getDireccionesController()   INLINE ( ::oController:oDireccionesController )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
+METHOD Activating() CLASS AgentesView
+
+   if ::oController:isAppendOrDuplicateMode()
+      ::oController:oModel:hBuffer()
+   end if 
+
+RETURN ( self )
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 
 METHOD Activate() CLASS AgentesView
 
@@ -298,8 +334,8 @@ END CLASS
 
 METHOD getValidators() CLASS AgentesValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre del agente es un dato requerido",;
-                                                "unique"       => "El nombre del agente introducido ya existe" }}
+   ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre del agente es un dato requerido"/*,*/;
+                                                /*"unique"       => "El nombre del agente introducido ya existe" */}}
 
 RETURN ( ::hValidators )
 

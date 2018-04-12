@@ -647,6 +647,8 @@ METHOD getDeleteSentenceByUuid( aUuid )
 
    cSentence         := chgAtEnd( cSentence, ' )', 2 )
 
+   msgalert( hb_valtoexp( aUuid ) )
+
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
