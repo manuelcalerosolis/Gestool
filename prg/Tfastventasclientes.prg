@@ -85,9 +85,6 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD setFilterAgentId()              INLINE ( if( ::lApplyFilters,;
                                                    ::cExpresionHeader  += ' .and. ( Field->cCodAge >= "' + ::oGrupoAgente:Cargo:Desde + '" .and. Field->cCodAge <= "' + ::oGrupoAgente:Cargo:Hasta + '" )', ) )
 
-   METHOD setFilterUserId()               INLINE ( if( ::lApplyFilters,;
-                                                   ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:Desde + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:Hasta + '" )', ) )
-
    METHOD setFilterAlmacenId()            INLINE ( if( ::lApplyFilters,;
                                                    ::cExpresionHeader  += ' .and. ( Field->cCodAlm >= "' + ::oGrupoAlmacen:Cargo:Desde + '" .and. Field->cCodAlm <= "' + ::oGrupoAlmacen:Cargo:Hasta + '" )', ) )
 
@@ -142,10 +139,6 @@ METHOD lResource() CLASS TFastVentasClientes
    end if
 
    if !::lGrupoAgente( .t. )
-      return .f.
-   end if
-
-   if !::lGrupoUsuario( .t. )
       return .f.
    end if
 
@@ -812,10 +805,6 @@ Method lValidRegister( cCodigoCliente ) CLASS TFastVentasClientes
       Return .f.
    end if 
 
-   if !empty( ::oGrupoUsuario ) .and. !( ::oDbf:cCodUsr  >= ::oGrupoUsuario:Cargo:Desde  .and. ::oDbf:cCodUsr <= ::oGrupoUsuario:Cargo:Hasta )
-      Return .f.
-   end if 
-
    if !empty( ::oGrupoGCliente ) .and. !( ::oGrupoGCliente:Cargo:ValidMayorIgual( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:Desde ) .and. ::oGrupoGCliente:Cargo:ValidMenorIgual( ::oDbf:cCodGrp, ::oGrupoGcliente:Cargo:Hasta ) )
       return .f.
    end if
@@ -873,7 +862,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:cCodAge    := ( D():SatClientes( ::nView ) )->cCodAge
          ::oDbf:cCodPgo    := ( D():SatClientes( ::nView ) )->cCodPgo
          ::oDbf:cCodRut    := ( D():SatClientes( ::nView ) )->cCodRut
-         ::oDbf:cCodUsr    := ( D():SatClientes( ::nView ) )->cCodUsr
+         ::oDbf:cCodUsr    := SQLUsuariosModel():getNombreWhereCodigo( ( D():SatClientes( ::nView ) )->cCodUsr )
          ::oDbf:cCodObr    := ( D():SatClientes( ::nView ) )->cCodObr
          ::oDbf:cCodAlm    := ( D():SatClientes( ::nView ) )->cCodAlm
 
@@ -999,7 +988,7 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:cCodAge    := ( D():PresupuestosClientes( ::nView ) )->cCodAge
          ::oDbf:cCodPgo    := ( D():PresupuestosClientes( ::nView ) )->cCodPgo
          ::oDbf:cCodRut    := ( D():PresupuestosClientes( ::nView ) )->cCodRut
-         ::oDbf:cCodUsr    := ( D():PresupuestosClientes( ::nView ) )->cCodUsr
+         ::oDbf:cCodUsr    := SQLUsuariosModel():getNombreWhereCodigo( ( D():PresupuestosClientes( ::nView ) )->cCodUsr )
          ::oDbf:cCodObr    := ( D():PresupuestosClientes( ::nView ) )->cCodObr
          ::oDbf:cCodAlm    := ( D():PresupuestosClientes( ::nView ) )->cCodAlm
 
@@ -1266,7 +1255,7 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
          ::oDbf:cCodRut    := ( D():AlbaranesClientes( ::nView ) )->cCodRut
          ::oDbf:cCodObr    := ( D():AlbaranesClientes( ::nView ) )->cCodObr
          ::oDbf:cCodAlm    := ( D():AlbaranesClientes( ::nView ) )->cCodAlm
-         ::oDbf:cCodUsr    := ( D():AlbaranesClientes( ::nView ) )->cCodUsr
+         ::oDbf:cCodUsr    := SQLUsuariosModel():getNombreWhereCodigo( ( D():AlbaranesClientes( ::nView ) )->cCodUsr )
 
          ::oDbf:nComAge    := ( D():AlbaranesClientes( ::nView ) )->nPctComAge
 
@@ -1399,7 +1388,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:cCodAge    := ( D():FacturasClientes( ::nView ) )->cCodAge
          ::oDbf:cCodPgo    := ( D():FacturasClientes( ::nView ) )->cCodPago
          ::oDbf:cCodRut    := ( D():FacturasClientes( ::nView ) )->cCodRut
-         ::oDbf:cCodUsr    := ( D():FacturasClientes( ::nView ) )->cCodUsr
+         ::oDbf:cCodUsr    := SQLUsuariosModel():getNombreWhereCodigo(  ( D():FacturasClientes( ::nView ) )->cCodUsr )
          ::oDbf:cCodObr    := ( D():FacturasClientes( ::nView ) )->cCodObr
          ::oDbf:cCodAlm    := ( D():FacturasClientes( ::nView ) )->cCodAlm
 
@@ -1527,7 +1516,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
          ::oDbf:cCodAge    := ( D():FacturasRectificativas( ::nView ) )->cCodAge
          ::oDbf:cCodPgo    := ( D():FacturasRectificativas( ::nView ) )->cCodPago
          ::oDbf:cCodRut    := ( D():FacturasRectificativas( ::nView ) )->cCodRut
-         ::oDbf:cCodUsr    := ( D():FacturasRectificativas( ::nView ) )->cCodUsr
+         ::oDbf:cCodUsr    := SQLUsuariosModel():getNombreWhereCodigo( ( D():FacturasRectificativas( ::nView ) )->cCodUsr )
          ::oDbf:cCodObr    := ( D():FacturasRectificativas( ::nView ) )->cCodObr
          ::oDbf:cCodAlm    := ( D():FacturasRectificativas( ::nView ) )->cCodAlm
 
@@ -1638,7 +1627,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
          ::oDbf:cCodAge    := ( D():TiketsClientes( ::nView ) )->cCodAge
          ::oDbf:cCodPgo    := ( D():TiketsClientes( ::nView ) )->cFpgTik
          ::oDbf:cCodRut    := ( D():TiketsClientes( ::nView ) )->cCodRut
-         ::oDbf:cCodUsr    := ( D():TiketsClientes( ::nView ) )->cCcjTik
+         ::oDbf:cCodUsr    := SQLUsuariosModel():getNombreWhereCodigo( ( D():TiketsClientes( ::nView ) )->cCcjTik )
          ::oDbf:cCodObr    := ( D():TiketsClientes( ::nView ) )->cCodObr
          ::oDbf:cCodAlm    := ( D():TiketsClientes( ::nView ) )->cAlmTik
 
@@ -1753,7 +1742,7 @@ METHOD AddRecibosCliente( cFieldOrder ) CLASS TFastVentasClientes
          ::oDbf:cNomCli    := ( D():FacturasClientesCobros( ::nView ) )->cNomCli
          ::oDbf:cCodAge    := ( D():FacturasClientesCobros( ::nView ) )->cCodAge
          ::oDbf:cCodPgo    := ( D():FacturasClientesCobros( ::nView ) )->cCodPgo
-         ::oDbf:cCodUsr    := ( D():FacturasClientesCobros( ::nView ) )->cCodUsr
+         ::oDbf:cCodUsr    := SQLUsuariosModel():getNombreWhereCodigo( ( D():FacturasClientesCobros( ::nView ) )->cCodUsr )
 
          ::oDbf:cCodRut    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), 'cCodRut' )
          ::oDbf:cCodPos    := RetFld( ( D():FacturasClientesCobros( ::nView ) )->cCodCli, ( D():Clientes( ::nView ) ), 'cCodPos' )
@@ -1872,7 +1861,7 @@ METHOD AddCobrosTickets() CLASS TFastVentasClientes
          ::oDbf:cCodCli    := RetFld( ( D():TiketsCobros( ::nView ) )->cSerTik + ( D():TiketsCobros( ::nView ) )->cNumTik + ( D():TiketsCobros( ::nView ) )->cSufTik, ( D():TiketsClientes( ::nView ) ), "cCliTik", "CNUMTIK" )
          ::oDbf:cNomCli    := RetFld( ( D():TiketsCobros( ::nView ) )->cSerTik + ( D():TiketsCobros( ::nView ) )->cNumTik + ( D():TiketsCobros( ::nView ) )->cSufTik, ( D():TiketsClientes( ::nView ) ), "cNomTik", "CNUMTIK" )
          ::oDbf:cDniCli    := RetFld( ( D():TiketsCobros( ::nView ) )->cSerTik + ( D():TiketsCobros( ::nView ) )->cNumTik + ( D():TiketsCobros( ::nView ) )->cSufTik, ( D():TiketsClientes( ::nView ) ), "cDniCli", "CNUMTIK" )
-         ::oDbf:cCodUsr    := RetFld( ( D():TiketsCobros( ::nView ) )->cSerTik + ( D():TiketsCobros( ::nView ) )->cNumTik + ( D():TiketsCobros( ::nView ) )->cSufTik, ( D():TiketsClientes( ::nView ) ), "cCcjTik", "CNUMTIK" )
+         ::oDbf:cCodUsr    := SQLUsuariosModel():getNombreWhereCodigo( RetFld( ( D():TiketsCobros( ::nView ) )->cSerTik + ( D():TiketsCobros( ::nView ) )->cNumTik + ( D():TiketsCobros( ::nView ) )->cSufTik, ( D():TiketsClientes( ::nView ) ), "cCcjTik", "CNUMTIK" ) )
          ::oDbf:cCodAlm    := RetFld( ( D():TiketsCobros( ::nView ) )->cSerTik + ( D():TiketsCobros( ::nView ) )->cNumTik + ( D():TiketsCobros( ::nView ) )->cSufTik, ( D():TiketsClientes( ::nView ) ), "cAlmTik", "CNUMTIK" )
 
          ::oDbf:nTotNet    := ( D():TiketsCobros( ::nView ) )->nImpTik
@@ -1960,7 +1949,7 @@ METHOD insertFacturaCliente()
                ::oDbf:cCodAge    := ( D():FacturasClientesFecha( ::nView ) )->cCodAge
                ::oDbf:cCodPgo    := ( D():FacturasClientesFecha( ::nView ) )->cCodPago
                ::oDbf:cCodRut    := ( D():FacturasClientesFecha( ::nView ) )->cCodRut
-               ::oDbf:cCodUsr    := ( D():FacturasClientesFecha( ::nView ) )->cCodUsr
+               ::oDbf:cCodUsr    := SQLUsuariosModel():getNombreWhereCodigo( ( D():FacturasClientesFecha( ::nView ) )->cCodUsr )
                ::oDbf:cCodObr    := ( D():FacturasClientesFecha( ::nView ) )->cCodObr
                ::oDbf:nComAge    := ( D():FacturasClientesFecha( ::nView ) )->nPctComAge
 
@@ -2089,7 +2078,7 @@ METHOD insertRectificativa()
                ::oDbf:cCodAge    := ( D():FacturasRectificativas( ::nView ) )->cCodAge
                ::oDbf:cCodPgo    := ( D():FacturasRectificativas( ::nView ) )->cCodPago
                ::oDbf:cCodRut    := ( D():FacturasRectificativas( ::nView ) )->cCodRut
-               ::oDbf:cCodUsr    := ( D():FacturasRectificativas( ::nView ) )->cCodUsr
+               ::oDbf:cCodUsr    := SQLUsuariosModel():getNombreWhereCodigo( ( D():FacturasRectificativas( ::nView ) )->cCodUsr )
                ::oDbf:cCodObr    := ( D():FacturasRectificativas( ::nView ) )->cCodObr
                ::oDbf:nComAge    := ( D():FacturasRectificativas( ::nView ) )->nPctComAge
                ::oDbf:cCodAlm    := ( D():FacturasRectificativas( ::nView ) )->cCodAlm
@@ -2215,7 +2204,7 @@ METHOD insertTicketCliente()
                   ::oDbf:cCodAge    := ( D():TiketsClientes( ::nView ) )->cCodAge
                   ::oDbf:cCodPgo    := ( D():TiketsClientes( ::nView ) )->cFpgTik
                   ::oDbf:cCodRut    := ( D():TiketsClientes( ::nView ) )->cCodRut
-                  ::oDbf:cCodUsr    := ( D():TiketsClientes( ::nView ) )->cCcjTik
+                  ::oDbf:cCodUsr    := SQLUsuariosModel():getNombreWhereCodigo( ( D():TiketsClientes( ::nView ) )->cCcjTik )
                   ::oDbf:cCodObr    := ( D():TiketsClientes( ::nView ) )->cCodObr
                   ::oDbf:cCodAlm    := ( D():TiketsClientes( ::nView ) )->cAlmTik
 
