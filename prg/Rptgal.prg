@@ -704,51 +704,7 @@ Static Function CreateVentasReportGalery( oTrvArbolGaleria, lArray )
          AddInforme( lArray, oTrvDocumento, "Acumulado de ventas por rutas", {|| TAcuUVta():New( "Informe de acumulados de ventas por rutas" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Resumen anual de ventas por rutas", {|| TAnuUVta():New( "Informe anual de ventas por rutas" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Rentabilidad de ventas por rutas", {|| TRenUVta():New( "Informe de rentabilidad de ventas por rutas" ):Play() } )
-
-   oTrvTipo             := AddInforme( lArray, oTrvArbolGaleria, "Usuarios" )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Presupuestos" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de presupuestos por usuarios", {|| TInfUsrPre():New( "Informe detallado de presupuestos por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de presupuestos por usuarios", {|| TAcuUsrPre():New( "Informe de acumulados de presupuestos por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de presupuestos por usuarios", {|| TAnuUsrPre():New( "Informe anual de presupuestos por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Rentabilidad de presupuestos por usuarios", {|| TRenUsrPre():New( "Informe de rentabilidad de presupuestos por usuarios" ):Play() } )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Pedidos" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de pedidos por usuarios", {|| TInfUsrPed():New( "Informe detallado de pedidos por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de pedidos por usuarios", {|| TAcuUsrPed():New( "Informe de acumulados de pedidos por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de pedidos por usuarios", {|| TAnuUsrPed():New( "Informe anual de pedidos por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Rentabilidad de pedidos por usuarios", {|| TRenUsrPed():New( "Informe de rentabilidad de pedidos por usuarios" ):Play() } )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Albaranes" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de albaranes por usuarios", {|| TInfUsrAlb():New( "Informe detallado de albaranes por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de albaranes por usuarios", {|| TAcuUsrAlb():New( "Informe de acumulados de albaranes por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de albaranes por usuarios", {|| TAnuUsrAlb():New( "Informe anual de albaranes por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Rentabilidad de albaranes por usuarios", {|| TRenUsrAlb():New( "Informe de rentabilidad de albaranes por usuarios" ):Play() } )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Facturas" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de facturas por usuarios", {|| TInfUsrFac():New( "Informe detallado de facturas por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de facturas por usuarios", {|| TAcuUsrFac():New( "Informe de acumulados de facturas por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de facturas por usuarios", {|| TAnuUsrFac():New( "Informe anual de facturas por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Rentabilidad de facturas por usuarios", {|| TRenUsrFac():New( "Informe de rentabilidad de facturas por usuarios" ):Play() } )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Facturas rectificativas" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de facturas rectificativas por usuarios", {|| TInfUsrFacRec():New( "Informe detallado de facturas rectificativas por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de facturas rectificativas por usuarios", {|| TAcuUsrFacRec():New( "Informe de acumulados de facturas rectificativas por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de facturas rectificativas por usuarios", {|| TAnuUsrFacRec():New( "Informe anual de facturas rectificativas por usuarios" ):Play() } )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Tikets" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de tikets por usuarios", {|| TInfUsrTik():New( "Informe detallado de tikets por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de tikets por usuarios", {|| TAcuUsrTik():New( "Informe de acumulados de tikets por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de tikets por usuarios", {|| TAnuUsrTik():New( "Informe anual de tikets por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Rentabilidad de tikets por usuarios", {|| TRenUsrTik():New( "Informe de rentabilidad de tikets por usuarios" ):Play() } )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Ventas" )
-         AddInforme( lArray, oTrvDocumento, "Informe de ventas por usuarios", {|| TUsrTotVta():New( "Informe de ventas totales por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Detalle de ventas por usuarios", {|| TInfUsrVta():New( "Informe detallado de ventas por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de ventas por usuarios", {|| TAcuUsrVta():New( "Informe de acumulados de ventas por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de ventas por usuarios", {|| TAnuUsrVta():New( "Informe anual de ventas por usuarios" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Rentabilidad de ventas por usuarios", {|| TRenUsrVta():New( "Informe de rentabilidad de ventas por usuarios" ):Play() } )
-
+   
    oTrvTipo             := AddInforme( lArray, oTrvArbolGaleria, "Grupos de clientes" )
 
       oTrvDocumento     := AddInforme( lArray, oTrvTipo, "General" )
@@ -2404,6 +2360,11 @@ Return nil
 FUNCTION CamposExtraController
 Return nil
 
+FUNCTION sqlAgentesModel
+Return nil
+
+FUNCTION AgentesController
+Return nil
 
 //------------------------------------------------------------------//
 

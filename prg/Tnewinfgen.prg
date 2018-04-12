@@ -103,10 +103,8 @@ CLASS TNewInfGen FROM TInfGen
    DATA oGrupoFpago
    DATA oGrupoBanco
    DATA oGrupoAgente
-   DATA oGrupoUsuario
    DATA oGrupoCaja
    DATA oGrupoCategoria
-   DATA oGrupoTransportista
    DATA oGrupoGCliente
    DATA oGrupoGProveedor
    DATA oGrupoObra
@@ -183,8 +181,6 @@ CLASS TNewInfGen FROM TInfGen
    METHOD lGrupoBanco( lInitGroup, lImp )
 
    METHOD lGrupoAgente( lInitGroup, lImp )
-
-   METHOD lGrupoUsuario( lInitGroup, lImp )
 
    METHOD lGrupoCaja( lInitGroup, lImp )
 
@@ -296,9 +292,6 @@ CLASS TNewInfGen FROM TInfGen
 
    METHOD SetNombreDesdeArticulo()
    METHOD SetNombreHastaArticulo()
-
-   METHOD SetNombreDesdeTransportista()
-   METHOD SetNombreHastaTransportista()
 
 END CLASS
 
@@ -1821,75 +1814,6 @@ METHOD lGrupoAgente( lInitGroup, lImp ) CLASS TNewInfGen
       if !Empty( ::oDbfAge )
          ::oDbfAge:End()
       end if
-
-      lOpen          := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
-
-//---------------------------------------------------------------------------//
-
-METHOD lGrupoUsuario( lInitGroup, lImp ) CLASS TNewInfGen
-
-   local lOpen          := .t.
-   local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   DEFAULT lImp         := .t.
-
-   BEGIN SEQUENCE
-
-   ::oGrupoUsuario                  := TRGroup():New( {|| ::oDbf:cCodUsr }, {|| "Usuario : " + AllTrim( ::oDbf:cCodUsr ) + " - " + AllTRim( ::oDbf:cNomUsr ) }, {|| "Total usuario : " + ::oDbf:cCodUsr }, {|| 3 }, ::lSalto )
-
-   ::oGrupoUsuario:Cargo            := TItemGroup()
-   ::oGrupoUsuario:Cargo:Nombre     := "Usuario"
-   ::oGrupoUsuario:Cargo:Expresion  := "cCodUsr"
-   ::oGrupoUsuario:Cargo:Todos      := .t.
-   ::oGrupoUsuario:Cargo:Desde      := Space( 3 )            
-   ::oGrupoUsuario:Cargo:Hasta      := Replicate( "Z", 3 )      
-   ::oGrupoUsuario:Cargo:cPicDesde  := "@!"
-   ::oGrupoUsuario:Cargo:cPicHasta  := "@!"
-
-   ::oGrupoUsuario:Cargo:TextDesde  := {|| SQLUsuariosModel():getNombreWhereCodigo( ::oGrupoUsuario:Cargo:Desde ) }
-   ::oGrupoUsuario:Cargo:TextHasta  := {|| SQLUsuariosModel():getNombreWhereCodigo( ::oGrupoUsuario:Cargo:Hasta ) }
-
-   ::oGrupoUsuario:Cargo:HelpDesde  := {|| msgStop( "Implementar el selector" ) }
-   ::oGrupoUsuario:Cargo:HelpHasta  := {|| msgStop( "Implementar el selector" ) }
-
-   ::oGrupoUsuario:Cargo:ValidDesde := {|oGet| msgStop( "Implementar el validador" ) }
-   ::oGrupoUsuario:Cargo:ValidHasta := {|oGet| msgStop( "Implementar el validador" ) }
-
-   ::oGrupoUsuario:Cargo:lImprimir  := lImp
-   ::oGrupoUsuario:Cargo:cBitmap    := "gc_businesspeople_16"
-
-   if lInitGroup != nil
-
-      aAdd( ::aSelectionGroup, ::oGrupoUsuario )
-
-      if !Empty( ::oImageGroup )
-         ::oImageGroup:AddMasked( TBitmap():Define( "gc_businesspeople_16" ), Rgb( 255, 0, 255 ) )
-
-         ::oGrupoUsuario:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
-
-      end if
-
-      if lInitGroup
-         if !Empty( ::oColNombre )
-            ::oColNombre:AddResource( ::oGrupoUsuario:Cargo:cBitmap )
-         end if
-         aAdd( ::aInitGroup, ::oGrupoUsuario )
-      end if
-
-   end if
-
-   aAdd( ::aSelectionRango, ::oGrupoUsuario )
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
 
       lOpen          := .f.
 
@@ -4264,23 +4188,7 @@ Method AddVariable() CLASS TNewInfGen
 
    end if
 
-   if !Empty( ::oGrupoUsuario )
-   end if
-
    if !Empty( ::oGrupoCaja )
-   end if
-
-   if !Empty( ::oGrupoTransportista )
-
-      public cGrupoTransportistaDesde  := ::oGrupoTransportista:Cargo:Desde
-      public cGrupoTransportistaHasta  := ::oGrupoTransportista:Cargo:Hasta
-      
-      ::oFastReport:AddVariable(       "Informe", "Desde código transportista",        "GetHbVar('cGrupoTransportistaDesde')" )
-      ::oFastReport:AddVariable(       "Informe", "Hasta código transportista",        "GetHbVar('cGrupoTransportistaHasta')" )
-
-      ::oFastReport:AddVariable(       "Informe", "Desde nombre transportista",        "GetHbVar('cGrupoTransportistaNombreDesde')" )
-      ::oFastReport:AddVariable(       "Informe", "Hasta nombre transportista",        "GetHbVar('cGrupoTransportistaNombreHasta')" )
-
    end if
 
    if !Empty( ::oGrupoGCliente )
@@ -4551,29 +4459,5 @@ METHOD SetNombreHastaArticulo() CLASS TNewInfGen
    end if
 
 Return ( cGrupoArticuloNombreHasta )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetNombreDesdeTransportista() CLASS TNewInfGen
-   
-   if !Empty( ::oGrupoTransportista:Cargo:Desde )
-      public cGrupoTransportistaNombreDesde  := oRetFld( ::oGrupoTransportista:Cargo:Desde, ::oDbfTrn:oDbf, "cNomTrn", "cCodTrn" )
-   else
-      public cGrupoTransportistaNombreDesde  := ""
-   end if
-
-Return ( cGrupoTransportistaNombreDesde )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetNombreHastaTransportista() CLASS TNewInfGen
-
-   if !Empty( ::oGrupoTransportista:Cargo:Hasta )
-      public cGrupoTransportistaNombreHasta  := oRetFld( ::oGrupoTransportista:Cargo:Hasta, ::oDbfTrn:oDbf, "cNomTrn", "cCodTrn" )
-   else
-      public cGrupoTransportistaNombreHasta  := ""
-   end if
-
-Return ( cGrupoTransportistaNombreHasta )
 
 //---------------------------------------------------------------------------//
