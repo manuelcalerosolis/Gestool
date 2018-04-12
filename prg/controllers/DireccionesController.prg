@@ -314,6 +314,10 @@ CLASS SQLDireccionesModel FROM SQLBaseModel
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
+   METHOD deleteWhereParentUuid( aUuidAgente )
+
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -358,6 +362,18 @@ METHOD getColumns() CLASS SQLDireccionesModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD deleteWhereParentUuid( aUuidAgente )
+
+   local parent_uuid       :=hb_serialize( aUuidAgente )  
+
+   local cSQL  := "DELETE FROM " + ::getTableName() + " "
+   cSQL        += "WHERE parent_uuid in(" + parent_uuid  + ") "
+
+   msgalert( "estoy dentro" )
+   msgalert( cSQL )
+
+RETURN ( getSQLDataBase():Exec( cSQL ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

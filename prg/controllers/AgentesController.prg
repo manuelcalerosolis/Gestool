@@ -11,7 +11,10 @@ CLASS AgentesController FROM SQLNavigatorController
 
    METHOD DireccionesControllerLoadCurrentBuffer()
 
-   METHOD DireccionesControllerUpdateBuffer()   
+   METHOD DireccionesControllerUpdateBuffer()
+
+   METHOD DireccionesControllerDeleteBuffer()
+
 
 END CLASS
 
@@ -33,7 +36,6 @@ METHOD New() CLASS AgentesController
 
    ::oModel                      := SQLAgentesModel():New( self )
 
-
    ::oBrowseView                 := AgentesBrowseView():New( self )
 
    ::oDialogView                 := AgentesView():New( self )
@@ -51,6 +53,9 @@ METHOD New() CLASS AgentesController
    
    ::oModel:setEvent( 'loadedCurrentBuffer', {|| ::DireccionesControllerLoadCurrentBuffer() } )
    ::oModel:setEvent( 'updatedBuffer',       {|| ::DireccionesControllerUpdateBuffer() } )
+
+   ::oModel:setEvent( 'deletedSelection',    {|| ::DireccionesControllerDeleteBuffer () } )
+
 
 RETURN ( Self )
 
@@ -92,6 +97,20 @@ METHOD DireccionesControllerUpdateBuffer()
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD DireccionesControllerDeleteBuffer()
+
+   local aUuidAgente    := ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected )
+
+   msgalert( hb_valtoexp( aUuidAgente ) )
+
+   if empty( aUuidAgente )
+      RETURN ( self )
+   end if
+
+   ::oDireccionesController:oModel:deleteWhereParentUuid( aUuidAgente )
+
+   RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -196,7 +215,6 @@ METHOD Activate() CLASS AgentesView
    REDEFINE GET   ::oController:oModel:hBuffer[ "dni" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "dni" ) ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "comision" ] ;
@@ -209,6 +227,37 @@ METHOD Activate() CLASS AgentesView
       ID          130 ;
       WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
       VALID       ( ::getDireccionesController():validate( "direccion" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "codigo_postal" ] ;
+      ID          140 ;
+      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
+      OF          ::oDialog 
+
+   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "poblacion" ] ;
+      ID          150 ;
+      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "provincia" ] ;
+      ID          160 ;
+      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "telefono" ] ;
+      ID          170 ;
+      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "movil" ] ;
+      ID          180 ;
+      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "email" ] ;
+      ID          190 ;
+      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
+      VALID       ( ::getDireccionesController():validate( "email" ) ) ;
       OF          ::oDialog
 
    REDEFINE BUTTON ;
@@ -252,7 +301,6 @@ METHOD getValidators() CLASS AgentesValidator
 
    ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre del agente es un dato requerido",;
                                                 "unique"       => "El nombre del agente introducido ya existe" }}
-   ::hValidators  := {  "dni" =>             {  "unique"       => "El DNI del agente introducido ya existe" }}
 
 RETURN ( ::hValidators )
 
@@ -269,7 +317,6 @@ CLASS SQLAgentesModel FROM SQLBaseModel
 
    DATA cTableName               INIT "agentes"
 
-   /*MESSAGE getNombre( uuid )      INLINE ( ::getField( "nombre", "uuid", uuid ) )*/
 
    METHOD getColumns()
 
@@ -280,11 +327,9 @@ END CLASS
 METHOD getColumns() CLASS SQLAgentesModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
@@ -293,9 +338,8 @@ METHOD getColumns() CLASS SQLAgentesModel
    hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                          ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "comision",          {  "create"    => "FLOAT( 5,2 )"                          ,;
-                                             "default"   => {|| space( 5 ) } }                       )
-
+   hset( ::hColumns, "comision",          {  "create"    => "FLOAT( 5,2 )"                            ,;
+                                             "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 
