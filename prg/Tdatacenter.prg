@@ -2327,6 +2327,7 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CampoExtra.Cdx"
    oDataTable:cDescription := "Campos extra"
    oDataTable:bCreateFile  := {| cPath | TCamposExtra():BuildFiles( cPath ) }
+   oDataTable:bSyncFile    := {|| TCamposExtra():Create():Syncronize() }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "DetCExtra" )

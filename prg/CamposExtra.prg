@@ -40,71 +40,73 @@ CLASS TCamposExtra FROM TMant
 
    DATA aDocumentos        INIT {}
 
-   Method New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
+   METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
 
-   Method DefineFiles()
+   METHOD DefineFiles()
 
-   Method Activate()
+   METHOD Activate()
 
-   Method OpenFiles( lExclusive )
-   Method CloseFiles()
+   METHOD OpenFiles( lExclusive )
+   METHOD CloseFiles()
 
-   Method OpenService( lExclusive )
-   Method CloseService()
+   METHOD OpenService( lExclusive )
+   METHOD CloseService()
 
-   Method Reindexa( oMeter )
+   METHOD Reindexa( oMeter )
 
-   Method Resource( nMode )
+   METHOD Resource( nMode )
 
-   Method ChangeTipo()                 INLINE ( if( hhaskey( ::hActions, ::cTipo ), Eval( hGet( ::hActions, ::cTipo ) ), ) )
+   METHOD ChangeTipo()                 INLINE ( if( hhaskey( ::hActions, ::cTipo ), Eval( hGet( ::hActions, ::cTipo ) ), ) )
 
-   Method PreSave()
+   METHOD PreSave()
 
-   Method initCombo()                  INLINE ( ::cTipo := ::aTipo[ Max( ::oDbf:nTipo, 1 ) ] )
+   METHOD initCombo()                  INLINE ( ::cTipo := ::aTipo[ Max( ::oDbf:nTipo, 1 ) ] )
 
-   Method initDefecto()                INLINE ( ::cValorDefecto := Space( 100 ) )
+   METHOD initDefecto()                INLINE ( ::cValorDefecto := Space( 100 ) )
 
-   Method initValores()                INLINE ( ::initCombo(),;
+   METHOD initValores()                INLINE ( ::initCombo(),;
                                                 ::initDefecto(),;
                                                 ::GetValoresDefecto() )
 
-   Method enableLongitud()             INLINE ( ::oLongitud:Enable(),;
+   METHOD enableLongitud()             INLINE ( ::oLongitud:Enable(),;
                                                 ::oDecimales:Enable() )
 
-   Method disableLongitud()            INLINE ( ::oLongitud:Disable(),;
+   METHOD disableLongitud()            INLINE ( ::oLongitud:Disable(),;
                                                 ::oDecimales:Disable() )
 
-   Method cTextLongitud( nLon, nDec)   INLINE ( ::oLongitud:cText( nLon ),;
+   METHOD cTextLongitud( nLon, nDec)   INLINE ( ::oLongitud:cText( nLon ),;
                                                 ::oDecimales:cText( nDec ) )
    
-   Method enableDefecto()              INLINE ( ::oValorDefecto:Enable(),; 
+   METHOD enableDefecto()              INLINE ( ::oValorDefecto:Enable(),; 
                                                 ::oAddDefecto:Enable(),;
                                                 ::oDelDefecto:Enable(),;
                                                 ::oListaDefecto:Enable() )
 
-   Method disableDefecto()             INLINE ( ::oValorDefecto:Disable(),;
+   METHOD disableDefecto()             INLINE ( ::oValorDefecto:Disable(),;
                                                 ::oAddDefecto:Disable(),;
                                                 ::oDelDefecto:Disable(),;
                                                 ::oListaDefecto:Disable() )
 
-   Method SetValoresDefecto()          INLINE ( ::oDbf:mDefecto   := hb_serialize( ::oListaDefecto:aItems ) )
-   Method GetValoresDefecto()          INLINE ( ::aValoresDefecto := hb_deserialize( ::oDbf:mDefecto ) )
+   METHOD SetValoresDefecto()          INLINE ( ::oDbf:mDefecto   := hb_serialize( ::oListaDefecto:aItems ) )
+   METHOD GetValoresDefecto()          INLINE ( ::aValoresDefecto := hb_deserialize( ::oDbf:mDefecto ) )
 
-   Method setDocumentos()              INLINE ( ::oDbf:mDocumento := hb_serialize( ::aDocumentos ) )
-   Method getDocumentos()              INLINE ( ::aDocumentos     := hb_deserialize( ::oDbf:mDocumento ) )
-   Method readDocumentos()             
-   Method initDocumentos()             INLINE ( ::aDocumentos     := DOCUMENTOS_SELECTED ) 
+   METHOD setDocumentos()              INLINE ( ::oDbf:mDocumento := hb_serialize( ::aDocumentos ) )
+   METHOD getDocumentos()              INLINE ( ::aDocumentos     := hb_deserialize( ::oDbf:mDocumento ) )
+   METHOD readDocumentos()             
+   METHOD initDocumentos()             INLINE ( ::aDocumentos     := DOCUMENTOS_SELECTED ) 
 
-   Method cargaValoresDocumentos( nMode )
+   METHOD cargaValoresDocumentos( nMode )
 
-   Method CreaTreeDocumentos()
-   Method CreaListaImagenes()
-   Method AddItemTree( k, v, i )
+   METHOD CreaTreeDocumentos()
+   METHOD CreaListaImagenes()
+   METHOD AddItemTree( k, v, i )
 
-   Method lValidResource( nMode )
+   METHOD lValidResource( nMode )
 
-   Method aCamposExtra( cTipoCampo )
-   Method getCodigoCampoExtra( cNombreCampo )
+   METHOD aCamposExtra( cTipoCampo )
+   METHOD getCodigoCampoExtra( cNombreCampo )
+   
+   METHOD Syncronize()
 
 END CLASS
 
@@ -152,6 +154,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TCamposExtra
       FIELD NAME "nLongitud"     TYPE "N" LEN   3  DEC 0              COMMENT "Longitud campo"         HIDE           OF ::oDbf
       FIELD NAME "nDecimales"    TYPE "N" LEN   1  DEC 0              COMMENT "Decimales campo"        HIDE           OF ::oDbf
       FIELD NAME "mDefecto"      TYPE "M" LEN  10  DEC 0              COMMENT "Valores por defecto"    HIDE           OF ::oDbf
+      FIELD NAME "uuid"          TYPE "C" LEN  40  DEC 0              COMMENT "Uuid"                   HIDE           OF ::oDbf
 
       INDEX TO "CAMPOEXTRA.Cdx" TAG "cCodigo"   ON "cCodigo"          COMMENT "Código"        NODELETED OF ::oDbf
       INDEX TO "CAMPOEXTRA.Cdx" TAG "cNombre"   ON Upper( "cNombre" ) COMMENT "Descripción"   NODELETED OF ::oDbf
@@ -447,7 +450,7 @@ METHOD Resource( nMode ) CLASS TCamposExtra
 
    oBmp:End()
 
-Return ( ::oDlg:nResult == IDOK )
+RETURN ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
@@ -459,7 +462,7 @@ METHOD cargaValoresDocumentos( nMode ) CLASS TCamposExtra
       ::getDocumentos()
    end if
 
-Return ( self )
+RETURN ( self )
 
 //----------------------------------------------------------------------------//
 
@@ -471,7 +474,7 @@ METHOD CreaTreeDocumentos() CLASS TCamposExtra
 
    hEval( ::aDocumentos, {| k, v, i | ::AddItemTree( k, v, i ) } )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -483,7 +486,7 @@ METHOD CreaListaImagenes() CLASS TCamposExtra
 
    ::oTree:SetImageList( ::oTreeImageList )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -493,11 +496,11 @@ METHOD AddItemTree( k, v, i ) CLASS TCamposExtra
 
    ::oTree:SetCheck( oItem, v )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method readDocumentos() CLASS TCamposExtra
+METHOD readDocumentos() CLASS TCamposExtra
 
    local oItem
 
@@ -507,7 +510,7 @@ Method readDocumentos() CLASS TCamposExtra
       end if 
    next
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -518,22 +521,22 @@ METHOD lValidResource( nMode ) CLASS TCamposExtra
    if Empty( ::oDbf:cCodigo )
       MsgStop( "Código del campo extra no puede estar vacío." )
       ::oCodigo:SetFocus()
-      Return .f.
+      RETURN .f.
    end if
 
    if Empty( ::oDbf:cNombre )
       MsgStop( "Nombre del campo extra no puede estar vacío." )
       ::oNombre:SetFocus()
-      Return .f.
+      RETURN .f.
    end if
 
    ::readDocumentos()
 
-Return .t.
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Method PreSave() CLASS TCamposExtra
+METHOD PreSave() CLASS TCamposExtra
 
    ::oDbf:nTipo  := ::oTipo:nAt
    
@@ -541,11 +544,11 @@ Method PreSave() CLASS TCamposExtra
 
    ::setDocumentos()
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-Method aCamposExtra( cTipoCampo ) CLASS TCamposExtra
+METHOD aCamposExtra( cTipoCampo ) CLASS TCamposExtra
 
    local nLen
    local nDec
@@ -591,11 +594,11 @@ Method aCamposExtra( cTipoCampo ) CLASS TCamposExtra
 
    end while
 
-Return ( aCamposExtra )
+RETURN ( aCamposExtra )
 
 //---------------------------------------------------------------------------//
 
-Method getCodigoCampoExtra( cNombreCampo ) CLASS TCamposExtra
+METHOD getCodigoCampoExtra( cNombreCampo ) CLASS TCamposExtra
 
    local cCodigo  := ""
 
@@ -608,7 +611,49 @@ Method getCodigoCampoExtra( cNombreCampo ) CLASS TCamposExtra
 
    ::oDbf:setStatus()
 
-Return ( cCodigo )
+RETURN ( cCodigo )
+
+//---------------------------------------------------------------------------//
+
+METHOD Syncronize()
+
+   local oDetCamposExtra
+
+   if ::OpenFiles()
+
+      while !( ::oDbf:Eof() )
+
+         if empty( ::oDbf:Uuid ) 
+            ::oDbf:fieldputByName( "uuid", win_uuidcreatestring() )
+         end if 
+
+         ::oDbf:Skip()
+
+      end if
+
+      ::CloseService()
+
+   end if
+
+   oDetCamposExtra            := TDetCamposExtra():New()
+   
+   if oDetCamposExtra:OpenFiles()
+
+      while !( oDetCamposExtra:oDbf:Eof() )
+
+         if empty( oDetCamposExtra:oDbf:Uuid ) 
+            oDetCamposExtra:oDbf:fieldputByName( "uuid", win_uuidcreatestring() )
+         end if 
+
+         oDetCamposExtra:oDbf:Skip()
+
+      end if
+
+      oDetCamposExtra:CloseService()
+
+   end if
+
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -665,7 +710,7 @@ Function getExtraField( cFieldName, oDetCamposExtra, Id )
    cCodigoCampo         := oDetCamposExtra:oCamposExtra:getCodigoCampoExtra( cFieldName )
 
    if empty(cTipoDocumento) .or. empty(cCodigoCampo) .or. empty(Id)
-      Return ( cExtraField )
+      RETURN ( cExtraField )
    end if 
 
    oDetCamposExtra:oDbf:getStatus()
@@ -677,7 +722,7 @@ Function getExtraField( cFieldName, oDetCamposExtra, Id )
    
    oDetCamposExtra:oDbf:setStatus()
 
-Return ( cExtraField )
+RETURN ( cExtraField )
 
 //---------------------------------------------------------------------------//
 
@@ -688,7 +733,7 @@ Function getCustomExtraField( cFieldName, cDocumentType, Id )
    local oDetCamposExtra
 
    if Empty( Id )
-      Return cExtraField
+      RETURN cExtraField
    end if
 
    oDetCamposExtra            := TDetCamposExtra():New()
@@ -722,6 +767,6 @@ Function getCustomExtraField( cFieldName, cDocumentType, Id )
    oDetCamposExtra:CloseFiles()
    oDetCamposExtra:End()
 
-Return ( cExtraField )
+RETURN ( cExtraField )
 
 //---------------------------------------------------------------------------//
