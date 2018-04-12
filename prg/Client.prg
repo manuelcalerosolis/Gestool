@@ -251,7 +251,7 @@ static dbfTmpCon
 static dbfTmpSubCta
 static dbfArtDiv
 static dbfOfe
-static oTrans
+static oTransportistaSelector
 static cTmpDoc
 static cTmpFacturae
 static cTmpObr
@@ -350,8 +350,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
    lExternal            := lExt
 
-   /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       DisableAcceso()
 
@@ -454,11 +454,6 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles        := .f.
       end if
 
-      oTrans               := TTrans():Create( cPatEmp() )
-      if !oTrans:OpenFiles()
-         lOpenFiles        := .f.
-      end if
-      
       oFacAut              := TFacAutomatica():Create( cPatEmp() )
       if !oFacAut:Openfiles()
          lOpenfiles        := .f.
@@ -487,6 +482,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
+      oTransportistaSelector     := TransportistasController():New():oGetSelectorTransportista
+
       oEnvases              := TFrasesPublicitarias():Create( cPatEmp() )
       if !oEnvases:OpenFiles()
          lOpenFiles        := .f.
@@ -502,7 +499,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       EnableAcceso()
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       lOpenFiles           := .f.
 
@@ -512,7 +509,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    if !lOpenFiles
       CloseFiles()
@@ -559,10 +556,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
 
    if oNewImp != nil
       oNewImp:end()
-   end if
-
-   if !Empty( oTrans )
-      oTrans:End()
    end if
 
    if !Empty( oFacAut )
@@ -896,12 +889,6 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :bEditValue       := {|| ( D():Clientes( nView ) )->CodPago + if( !Empty( ( D():Clientes( nView ) )->CodPago ), " - " , "" ) + RetFld( ( D():Clientes( nView ) )->CodPago, dbfFPago ) }
          :nWidth           := 200
          :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Transportista"
-         :bEditValue       := {|| AllTrim( ( D():Clientes( nView ) )->cCodTrn ) + if( !Empty( ( D():Clientes( nView ) )->cCodTrn ), " - " , "" ) + oTrans:cNombre( ( D():Clientes( nView ) )->cCodTrn ) }
-         :nWidth           := 200
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1915,16 +1902,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       Transportistas-----------------------------------------------------------
       */
 
-      REDEFINE GET   aGet[ _CCODTRN ] ;
-         VAR         aTmp[ _CCODTRN ] ;
-         ID          315 ;
-         IDTEXT      316 ;
-         WHEN        ( nMode != ZOOM_MODE ) ;
-         BITMAP      "Lupa" ;
-         OF          fldGeneral
-
-      aGet[ _CCODTRN ]:bValid := {|| oTrans:Existe( aGet[ _CCODTRN ], aGet[ _CCODTRN ]:oHelpText ) }
-      aGet[ _CCODTRN ]:bHelp  := {|| oTrans:Buscar( aGet[ _CCODTRN ] ) }
+      oTransportistaSelector:Bind( bSETGET( aTmp[ _UUID_TRN ] ) )
+      oTransportistaSelector:Activate( 236, 235, fldGeneral )
 
       REDEFINE GET   aGet[ _DALTA ] ;
          VAR         aTmp[ _DALTA ] ;

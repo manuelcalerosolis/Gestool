@@ -132,6 +132,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TDetCamposExtra
       FIELD NAME "cCodTipo"      TYPE "C" LEN   3  DEC 0 COMMENT "Código"                 HIDE           OF ::oDbf
       FIELD NAME "cClave"        TYPE "C" LEN  30  DEC 0 COMMENT "Clave principal"        HIDE           OF ::oDbf
       FIELD NAME "cValor"        TYPE "C" LEN 250  DEC 0 COMMENT "Valor del campo"        HIDE           OF ::oDbf
+      FIELD NAME "uuid"          TYPE "C" LEN  40  DEC 0 COMMENT "Uuid"                   HIDE           OF ::oDbf
 
       INDEX TO "DETCEXTRA.Cdx" TAG "cTipDoc"      ON "cTipDoc"                        COMMENT "cTipDoc"                      NODELETED OF ::oDbf
       INDEX TO "DETCEXTRA.Cdx" TAG "cCodTipo"     ON "cCodTipo"                       COMMENT "cCodTipo"                     NODELETED OF ::oDbf

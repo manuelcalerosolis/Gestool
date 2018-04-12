@@ -22,7 +22,6 @@ static aCountersDocument   := {  {"NPEDPRV", "Pedido a proveedores"             
                                  {"NMOVALM", "Movimientos de almacén"                  , .f., .t., .t., .f. },;
                                  {"NSESION", "Sesiónes"                                , .f., .f., .t., .f. },;
                                  {"NREMESA", "Remesas bancarias"                       , .f., .f., .t., .f. },;
-                                 {"NORDCAR", "Ordenes de carga"                        , .f., .f., .t., .f. },;
                                  {"NCOBCLI", "Cobros de clientes"                      , .f., .f., .t., .f. },;
                                  {"NRECPRV", "Recibos de proveedor"                    , .t., .t., .f., .f. },;
                                  {"NRECCLI", "Recibos de clientes"                     , .t., .t., .t., .f. },;

@@ -2327,6 +2327,7 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CampoExtra.Cdx"
    oDataTable:cDescription := "Campos extra"
    oDataTable:bCreateFile  := {| cPath | TCamposExtra():BuildFiles( cPath ) }
+   oDataTable:bSyncFile    := {|| TCamposExtra():Create():Syncronize() }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable():New( "DetCExtra" )
@@ -3335,25 +3336,6 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TipOpera.Cdx"
    oDataTable:cDescription := "Producción"
    oDataTable:bCreateFile  := {| cPath | TTipOpera():buildfiles(cPath ) }
-   ::AddEmpresaTable( oDataTable )
-
-   /*
-   Ordenes de carga------------------------------------------------------------
-   */
-
-   oDataTable              := TDataTable():New( "OrdCarP" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "OrdCarP.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "OrdCarP.Cdx"
-   oDataTable:cDescription := "Ordenes de carga"
-   oDataTable:bCreateFile  := {| cPath | TOrdCarga():buildfiles(cPath ) }
-   oDataTable:bSyncFile    := {|| SynOrdCar( cPatEmp() ) }
-   ::AddEmpresaTable( oDataTable )
-
-   oDataTable              := TDataTable():New( "OrdCarL" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "OrdCarL.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "OrdCarL.Cdx"
-   oDataTable:cDescription := "Ordenes de carga"
-   oDataTable:bCreateFile  := {| cPath | TDetOrdCar():buildfiles(cPath ) }
    ::AddEmpresaTable( oDataTable )
 
    /*

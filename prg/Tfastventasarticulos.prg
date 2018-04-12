@@ -164,12 +164,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD setFilterRouteId()                    INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodRut >= "' + ::oGrupoRuta:Cargo:getDesde() + '" .and. Field->cCodRut <= "' + ::oGrupoRuta:Cargo:getHasta() + '" )', ) )
 
-   METHOD setFilterTransportId()                INLINE ( if( ::lApplyFilters,;
-                                                         ::cExpresionHeader  += ' .and. ( Field->cCodTrn >= "' + ::oGrupoTransportista:Cargo:getDesde() + '" .and. Field->cCodTrn <= "' + ::oGrupoTransportista:Cargo:getHasta() + '" )', ) )
-
-   METHOD setFilterUserId()                     INLINE ( if( ::lApplyFilters,;
-                                                         ::cExpresionHeader  += ' .and. ( Field->cCodUsr >= "' + ::oGrupoUsuario:Cargo:getDesde() + '" .and. Field->cCodUsr <= "' + ::oGrupoUsuario:Cargo:getHasta() + '" )', ) )
-
    METHOD setFilterOperarioId()                 INLINE ( if( ::lApplyFilters,;
                                                          ::cExpresionHeader  += ' .and. ( Field->cCodOpe >= "' + ::oGrupoOperario:Cargo:getDesde() + '" .and. Field->cCodOpe <= "' + ::oGrupoOperario:Cargo:getHasta() + '" )', ) )
 
@@ -296,14 +290,6 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
    end if
 
    if !::lGrupoAgente( .t. )
-      return .f.
-   end if
-
-   if !::lGrupoTransportista( .t. )
-      return .f.
-   end if
-
-   if !::lGrupoUsuario( .t. )
       return .f.
    end if
 
@@ -460,11 +446,6 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
          lOpen                := .f.
       end if
 
-      ::oDbfTrn               := TTrans():Create( cPatEmp(), "Transport" )
-      if !::oDbfTrn:OpenFiles()
-         lOpen                := .f.
-      end if
-
       ::oStock    := TStock():Create( cPatEmp(), ::cDriver )
       if !::oStock:lOpenFiles()
          lOpen                := .f.
@@ -538,10 +519,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !Empty( ::oDbfFab )
          ::oDbfFab:End()
-      end if
-
-      if !Empty( ::oDbfTrn )
-         ::oDbfTrn:End()
       end if
 
       if !Empty( ::nView )
@@ -1251,9 +1228,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Tipo envases",                  ( D():TiposEnvases( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Tipo envases",                  cObjectsToReport( TFrasesPublicitarias():DefineFiles( cPatEmp(), cDriver() ) ) )
 
-   ::oFastReport:SetWorkArea(       "Transportistas",                ::oDbfTrn:Select() )
-   ::oFastReport:SetFieldAliases(   "Transportistas",                cObjectsToReport( ::oDbfTrn:oDbf ) )
-
    ::oFastReport:SetWorkArea(       "Formas de pago",                ( D():FormasPago( ::nView ) )->( select() ) )
    ::oFastReport:SetFieldAliases(   "Formas de pago",                cItemsToReport( aItmFPago() ) )
 
@@ -1285,7 +1259,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Grupos familias",                   {|| ::oDbf:cGrpFam } )
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",                           {|| ::oDbf:cCodAge } )
    ::oFastReport:SetMasterDetail(   "Informe", "Tipo envases",                      {|| ::oDbf:cCodEnv } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Transportistas",                    {|| ::oDbf:cCodTrn } )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Atipicas de clientes",              {|| ::oDbf:cCodCli + ::oDbf:cCodArt } )
 
@@ -1330,7 +1303,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Grupos familias" )
    ::oFastReport:SetResyncPair(     "Informe", "Agentes" )
    ::oFastReport:SetResyncPair(     "Informe", "Tipo envases" )
-   ::oFastReport:SetResyncPair(     "Informe", "Transportistas" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
    ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
@@ -1379,10 +1351,6 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
    ::setFilterPaymentInvoiceId()
 
    ::setFilterRouteId() 
-
-   ::setFilterTransportId()
-
-   ::setFilterUserId()
 
    ::setFilterOperarioId()
 
@@ -1570,10 +1538,6 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
    ::setFilterPaymentInvoiceId()
 
    ::setFilterRouteId() 
-
-   ::setFilterTransportId()
-   
-   ::setFilterUserId()
 
    ::setFilterAgent()
 
@@ -1764,10 +1728,6 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    ::setFilterPaymentInvoiceId()
 
    ::setFilterRouteId() 
-
-   ::setFilterTransportId()
-   
-   ::setFilterUserId()
 
    ::setFilterAgent()
 
@@ -1975,10 +1935,6 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
    ::setFilterRouteId() 
 
-   ::setFilterTransportId()
-   
-   ::setFilterUserId()
-
    ::setFilterAgent()
 
    // filtros para las líneas-------------------------------------------------
@@ -2171,10 +2127,6 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
    ::setFilterRouteId() 
 
-   ::setFilterTransportId()
-   
-   ::setFilterUserId()
-
    ::setFilterAgent()
 
    // filtros para las líneas-------------------------------------------------
@@ -2357,10 +2309,6 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
    ::setFilterPaymentId()
 
    ::setFilterRouteId() 
-
-   ::setFilterTransportId()
-   
-   ::setFilterUserId()
 
    ::setFilterAgent()
 

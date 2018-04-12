@@ -53,6 +53,9 @@ CLASS Seeders
    METHOD getStatementTransportistas( dbfTransportista )
    METHOD getStatementDireccionTransportistas( dbfTransportista )
 
+   METHOD SeederCamposExtra() 
+   METHOD getStatementCamposExtra() 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -92,7 +95,7 @@ RETURN ( self )
 METHOD runSeederEmpresa()
 
    SincronizaRemesasMovimientosAlmacen()
-
+/*
    ::oMsg:SetText( "Ejecutando seeder de cabeceras de movimientos de almacén" )
    ::SeederMovimientosAlmacen()
    
@@ -104,6 +107,9 @@ METHOD runSeederEmpresa()
 
    ::oMsg:SetText( "Ejecutando seeder de transportistas" )
    ::SeederTransportistas()
+*/
+   ::oMsg:SetText( "Ejecutando seeder de campos extra" )
+   ::SeederCamposExtra()
 
    ::oMsg:SetText( "Seeders finalizados" )
 
@@ -413,19 +419,19 @@ METHOD getStatementSeederMovimientosAlmacenLineas( dbfHisMov )
 
    local hCampos  
 
-   hCampos        := {  "uuid" =>                     quoted( ( dbfHisMov )->cGuid ),;
-                        "parent_uuid" =>              quoted( ( dbfHisMov )->cGuidPar ),;
-                        "codigo_articulo" =>          quoted( ( dbfHisMov )->cRefMov ),;
-                        "nombre_articulo" =>          quoted( ( dbfHisMov )->cNomMov ),;
+   hCampos        := {  "uuid"                     => quoted( ( dbfHisMov )->cGuid ),;
+                        "parent_uuid"              => quoted( ( dbfHisMov )->cGuidPar ),;
+                        "codigo_articulo"          => quoted( ( dbfHisMov )->cRefMov ),;
+                        "nombre_articulo"          => quoted( ( dbfHisMov )->cNomMov ),;
                         "codigo_primera_propiedad" => quoted( ( dbfHisMov )->cCodPr1 ),;
-                        "valor_primera_propiedad" =>  quoted( ( dbfHisMov )->cValPr1 ),;
+                        "valor_primera_propiedad"  => quoted( ( dbfHisMov )->cValPr1 ),;
                         "codigo_segunda_propiedad" => quoted( ( dbfHisMov )->cCodPr2 ),;
-                        "valor_segunda_propiedad" =>  quoted( ( dbfHisMov )->cValPr2 ),;
-                        "lote" =>                     quoted( ( dbfHisMov )->cLote ),;
-                        "bultos_articulo" =>          quoted( str( ( dbfHisMov )->nBultos ) ),;
-                        "cajas_articulo" =>           quoted( str( ( dbfHisMov )->nCajMov ) ),;
-                        "unidades_articulo" =>        quoted( str( ( dbfHisMov )->nUndMov ) ),;
-                        "precio_articulo" =>          quoted( str( ( dbfHisMov )->nPreDiv ) ) }
+                        "valor_segunda_propiedad"  => quoted( ( dbfHisMov )->cValPr2 ),;
+                        "lote"                     => quoted( ( dbfHisMov )->cLote ),;
+                        "bultos_articulo"          => quoted( str( ( dbfHisMov )->nBultos ) ),;
+                        "cajas_articulo"           => quoted( str( ( dbfHisMov )->nCajMov ) ),;
+                        "unidades_articulo"        => quoted( str( ( dbfHisMov )->nUndMov ) ),;
+                        "precio_articulo"          => quoted( str( ( dbfHisMov )->nPreDiv ) ) }
 
 RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen_lineas" ) )
 
@@ -615,9 +621,9 @@ RETURN ( Self )
 
 METHOD getStatementLenguajes( dbfLenguajes )
 
-   local hCampos        := { "uuid" => quoted( win_uuidcreatestring() ),;
-                             "codigo" => quoted( ( dbfLenguajes )->cCodLen ),;
-                             "nombre"=> quoted( ( dbfLenguajes )->cNomLen ) }
+   local hCampos  := { "uuid"       => quoted( win_uuidcreatestring() ),;
+                        "codigo"    => quoted( ( dbfLenguajes )->cCodLen ),;
+                        "nombre"    => quoted( ( dbfLenguajes )->cNomLen ) }
 
 RETURN ( ::getInsertStatement( hCampos, "lenguajes" ) )
 
@@ -708,9 +714,9 @@ RETURN ( Self )
 
 METHOD getStatementTransportistas( dbfTransportista )
 
-   local hCampos        := {  "uuid" => quoted( ( dbfTransportista )->Uuid ),;
+   local hCampos        := {  "uuid"   => quoted( ( dbfTransportista )->Uuid ),;
                               "nombre" => quoted( ( dbfTransportista )->cNomTrn ),;
-                              "dni"=> quoted( ( dbfTransportista )->cDniTrn ) }
+                              "dni"    => quoted( ( dbfTransportista )->cDniTrn ) }
 
 RETURN ( ::getInsertStatement( hCampos, "transportistas" ) )
 
@@ -718,16 +724,52 @@ RETURN ( ::getInsertStatement( hCampos, "transportistas" ) )
 
 METHOD getStatementDireccionTransportistas( dbfTransportista )
 
-   local hCampos        := {  "uuid" => quoted( win_uuidcreatestring() ),;
-                              "parent_uuid" => quoted( ( dbfTransportista )->Uuid ),;
-                              "nombre" => quoted( ( dbfTransportista )->cNomTrn ),;
-                              "direccion" => quoted( ( dbfTransportista )->cDirTrn ),;
-                              "poblacion" => quoted( ( dbfTransportista )->cLocTrn ),;
-                              "provincia" => quoted( ( dbfTransportista )->cPrvTrn ),;
-                              "codigo_postal" => quoted( ( dbfTransportista )->cCdpTrn ),;
-                              "telefono" => quoted( ( dbfTransportista )->cTlfTrn ),;
-                              "movil" => quoted( ( dbfTransportista )->cMovTrn ) }
+   local hCampos        := {  "uuid"            => quoted( win_uuidcreatestring() ),;
+                              "parent_uuid"     => quoted( ( dbfTransportista )->Uuid ),;
+                              "nombre"          => quoted( ( dbfTransportista )->cNomTrn ),;
+                              "direccion"       => quoted( ( dbfTransportista )->cDirTrn ),;
+                              "poblacion"       => quoted( ( dbfTransportista )->cLocTrn ),;
+                              "provincia"       => quoted( ( dbfTransportista )->cPrvTrn ),;
+                              "codigo_postal"   => quoted( ( dbfTransportista )->cCdpTrn ),;
+                              "telefono"        => quoted( ( dbfTransportista )->cTlfTrn ),;
+                              "movil"           => quoted( ( dbfTransportista )->cMovTrn ) }
 
 RETURN ( ::getInsertStatement( hCampos, "direcciones" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederCamposExtra() CLASS Seeders
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
+
+   if !( file( cPath + "CampoExtra.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\CampoExtra.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "CampoExtra.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "CampoExtra", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| getSQLDatabase():Exec( ::getStatementCamposExtra() ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementCamposExtra() CLASS Seeders
+
+   local aTipo    := {  "Texto", "Número", "Fecha", "Lógico", "Lista" } 
+   local hCampos  := {  "uuid"      => quoted( field->Uuid ),;
+                        "nombre"    => quoted( field->cNombre ),;
+                        "requerido" => if( field->lRequerido, '1', '0' ),;
+                        "tipo"      => quoted( aTipo[ minmax( field->nTipo, 1, 5 ) ] ),;
+                        "longitud"  => quoted( field->nLongitud ),;
+                        "decimales" => quoted( field->nDecimales ),;
+                        "lista"     => quoted( field->mDefecto ) }
+
+RETURN ( ::getInsertStatement( hCampos, "campos_extra" ) )
 
 //---------------------------------------------------------------------------//

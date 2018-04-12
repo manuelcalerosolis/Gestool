@@ -705,43 +705,6 @@ Static Function CreateVentasReportGalery( oTrvArbolGaleria, lArray )
          AddInforme( lArray, oTrvDocumento, "Resumen anual de ventas por rutas", {|| TAnuUVta():New( "Informe anual de ventas por rutas" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Rentabilidad de ventas por rutas", {|| TRenUVta():New( "Informe de rentabilidad de ventas por rutas" ):Play() } )
 
-   oTrvTipo             := AddInforme( lArray, oTrvArbolGaleria, "Transportistas" )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Presupuestos" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de presupuestos por transportistas", {|| TInfPPre():New( "Informe detallado de presupuestos por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de presupuestos por transportistas", {|| TAcuPPre():New( "Informe de acumulados de presupuestos por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de presupuestos por transportistas", {|| TAnuPPre():New( "Informe anual de presupuestos por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Rentabilidad de presupuestos por transportistas", {|| TRenPPre():New( "Informe de rentabilidad de presupuestos por transportistas" ):Play() } )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Pedidos" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de pedidos por transportistas", {|| TInfPPed():New( "Informe detallado de pedidos por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de pedidos por transportistas", {|| TAcuPPed():New( "Informe de acumulados de pedidos por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de pedidos por transportistas", {|| TAnuPPed():New( "Informe anual de pedidos por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Rentabilidad de pedidos por transportistas", {|| TRenPPed():New( "Informe de rentabilidad de pedidos por transportistas" ):Play() } )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Albaranes" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de albaranes por transportistas", {|| TInfPAlb():New( "Informe detallado de albaranes por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de albaranes por transportistas", {|| TAcuPAlb():New( "Informe de acumulados de albaranes por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de albaranes por transportistas", {|| TAnuPAlb():New( "Informe anual de albaranes por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Rentabilidad de albaranes por transportistas", {|| TRenPAlb():New( "Informe de rentabilidad de albaranes por transportistas" ):Play() } )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Facturas" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de facturas por transportistas", {|| TInfPFac():New( "Informe detallado de facturas por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de facturas por transportistas", {|| TAcuPFac():New( "Informe de acumulados de facturas por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de facturas por transportistas", {|| TAnuPFac():New( "Informe anual de facturas por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Rentabilidad de facturas por transportistas", {|| TRenPFac():New( "Informe de rentabilidad de facturas por transportistas" ):Play() } )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Facturas rectificativas" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de facturas rectificativas por transportistas", {|| TInfPFacRec():New( "Informe detallado de facturas rectificativas por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de facturas rectificativas por transportistas", {|| TAcuPFacRec():New( "Informe de acumulados de facturas rectificativas por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de facturas rectificativas por transportistas", {|| TAnuPFacRec():New( "Informe anual de facturas rectificativas por transportistas" ):Play() } )
-
-      oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Ventas" )
-         AddInforme( lArray, oTrvDocumento, "Detalle de ventas por transportistas", {|| TInfPVta():New( "Informe detallado de ventas por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Acumulado de ventas por transportistas", {|| TAcuPVta():New( "Informe de acumulados de ventas por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Resumen anual de ventas por transportistas", {|| TAnuPVta():New( "Informe anual de ventas por transportistas" ):Play() } )
-         AddInforme( lArray, oTrvDocumento, "Rentabilidad de ventas por transportistas", {|| TRenPVta():New( "Informe de rentabilidad de ventas por transportistas" ):Play() } )
-
    oTrvTipo             := AddInforme( lArray, oTrvArbolGaleria, "Usuarios" )
 
       oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Presupuestos" )
@@ -2422,6 +2385,25 @@ Return nil
 
 FUNCTION SqlCamposExtraModel
 Return nil
+
+FUNCTION sqlCamposExtraEntidadesModel
+Return nil
+
+FUNCTION sqlCamposExtraValoresModel
+Return nil
+
+FUNCTION TransportistasRepository
+Return nil
+
+FUNCTION TransportistasModel
+Return nil
+
+FUNCTION CamposExtraValoresController
+Return nil
+
+FUNCTION CamposExtraController
+Return nil
+
 
 //------------------------------------------------------------------//
 

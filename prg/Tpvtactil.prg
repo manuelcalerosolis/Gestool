@@ -155,7 +155,6 @@ CLASS TpvTactil
    DATA oMaterialesProducionSeries
    DATA oMaterialesNumeroSeries
    DATA oTipoVenta
-   DATA oTransportista
    DATA oCaptura
    DATA oBandera
    DATA oStock
@@ -1474,11 +1473,6 @@ METHOD OpenFiles() CLASS TpvTactil
       ::lOpenFiles            := .f.
    end if
 
-   ::oTransportista           := TTrans():Create( cPatEmp() )
-   if !::oTransportista:OpenFiles()
-      ::lOpenFiles            := .f.
-   end if
-
    ::oOrdenComanda            := TOrdenComanda():Create( cPatEmp() )
    if !::oOrdenComanda:OpenFiles()
       ::lOpenfiles            := .f.
@@ -1864,10 +1858,6 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oFabricante:End()
    end if
 
-   if !Empty( ::oTransportista )
-      ::oTransportista:End()
-   end if
-
    if !Empty( ::oOrdenComanda )
       ::oOrdenComanda:End()
    end if
@@ -1967,7 +1957,6 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oFideliza                               := nil
    ::oTipArt                                 := nil
    ::oFabricante                             := nil
-   ::oTransportista                          := nil
    ::oOrdenComanda                           := nil 
    ::oOfficeBar                              := nil
    ::oVisor                                  := nil
@@ -8966,9 +8955,6 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Documentos de albaranes", ::oAlbaranClienteDocumento:nArea )
    ::oFastReport:SetFieldAliases(   "Documentos de albaranes", cItemsToReport( aAlbCliDoc() ) )
 
-   ::oFastReport:SetWorkArea(       "Transportistas", ::oTransportista:Select() )
-   ::oFastReport:SetFieldAliases(   "Transportistas", cObjectsToReport( ::oTransportista:oDbf ) )
-
    ::oFastReport:SetWorkArea(       "Ofertas", ::oArticulosOfertas:nArea )
    ::oFastReport:SetFieldAliases(   "Ofertas", cItemsToReport( aItmOfe() ) )
 
@@ -9003,7 +8989,6 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Albaranes", "Rutas",                            {|| ::oAlbaranClienteCabecera:cCodRut } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Agentes",                          {|| ::oAlbaranClienteCabecera:cCodAge } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Formas de pago",                   {|| ::oAlbaranClienteCabecera:cCodPago } )
-         ::oFastReport:SetMasterDetail( "Albaranes", "Transportistas",                   {|| ::oAlbaranClienteCabecera:cCodTrn } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Empresa",                          {|| cCodigoEmpresaEnUso() } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Usuarios",                         {|| ::oAlbaranClienteCabecera:cCodUsr } )
 
@@ -9027,7 +9012,6 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetResyncPair( "Albaranes", "Rutas" )
          ::oFastReport:SetResyncPair( "Albaranes", "Agentes" )
          ::oFastReport:SetResyncPair( "Albaranes", "Formas de pago" )
-         ::oFastReport:SetResyncPair( "Albaranes", "Transportistas" )
          ::oFastReport:SetResyncPair( "Albaranes", "Empresa" )
          ::oFastReport:SetResyncPair( "Albaranes", "Usuarios" )
 
@@ -9153,7 +9137,6 @@ METHOD ClearRelationReport() CLASS TpvTactil
          ::oFastReport:ClearMasterDetail( "Rutas" )
          ::oFastReport:ClearMasterDetail( "Agentes" )
          ::oFastReport:ClearMasterDetail( "Formas de pago" )
-         ::oFastReport:ClearMasterDetail( "Transportistas" )
          ::oFastReport:ClearMasterDetail( "Empresa" )
          ::oFastReport:ClearMasterDetail( "Usuarios" )
          ::oFastReport:ClearMasterDetail( "Artículos" )
@@ -9172,7 +9155,6 @@ METHOD ClearRelationReport() CLASS TpvTactil
          ::oFastReport:ClearResyncPair( "Albaranes", "Rutas" )
          ::oFastReport:ClearResyncPair( "Albaranes", "Agentes" )
          ::oFastReport:ClearResyncPair( "Albaranes", "Formas de pago" )
-         ::oFastReport:ClearResyncPair( "Albaranes", "Transportistas" )
          ::oFastReport:ClearResyncPair( "Albaranes", "Empresa" )
          ::oFastReport:ClearResyncPair( "Albaranes", "Usuarios" )
          ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Artículos" )
