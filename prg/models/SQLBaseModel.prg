@@ -790,23 +790,25 @@ METHOD loadCurrentBuffer( id )
 
    ::hBuffer            := {=>}
 
-   ::fireEvent( 'loadingcurrentbuffer' )
+   ::fireEvent( 'loadingCurrentBuffer' )
 
    ::hBuffer            := ::findById( id )
 
-   ::fireEvent( 'loadedcurrentbuffer' )
+   ::fireEvent( 'loadedCurrentBuffer' )
 
 RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadDuplicateBuffer( id )                
+METHOD loadDuplicateBuffer( id ) 
 
    ::hBuffer            := {=>}
 
-   ::fireEvent( 'loadingduplicatebuffer' )
+   ::fireEvent( 'loadingDuplicateBuffer' )
 
    ::hBuffer            := ::findById( id )
+
+   ::fireEvent( 'loadedDuplicateCurrentBuffer' )
 
    if hhaskey( ::hBuffer, "id" )
       hset( ::hBuffer, "id", 0 )
@@ -816,7 +818,7 @@ METHOD loadDuplicateBuffer( id )
       hset( ::hBuffer, "uuid", win_uuidcreatestring() )
    end if 
 
-   ::fireEvent( 'loadedduplicatebuffer' )
+   ::fireEvent( 'loadedDuplicateBuffer' )
 
 RETURN ( ::hBuffer )
 

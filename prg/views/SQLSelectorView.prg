@@ -77,7 +77,7 @@ METHOD Activate()
 
       ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
 
-   ACTIVATE DIALOG ::oDialog CENTER
+   ACTIVATE DIALOG ::oDialog ON INIT ::oDialog:Move( 33, 0 )
 
 RETURN ( ::getSelectedBuffer() )
 

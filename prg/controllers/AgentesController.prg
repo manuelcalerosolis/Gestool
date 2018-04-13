@@ -15,10 +15,9 @@ CLASS AgentesController FROM SQLNavigatorController
 
    METHOD DireccionesControllerDeleteBuffer()
 
+   METHOD DireccionesControllerLoadedDuplicateCurrentBuffer()
 
-   METHOD DireccionesControllerLoadDuplicateBuffer()
-
-
+   METHOD DireccionesControllerLoadedDuplicateBuffer()
 
 END CLASS
 
@@ -52,15 +51,16 @@ METHOD New() CLASS AgentesController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::oDireccionesController:oModel:loadBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',         {|| ::oDireccionesController:oModel:insertBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:oModel:loadBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:oModel:insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',    {|| ::DireccionesControllerLoadCurrentBuffer() } )
-   ::oModel:setEvent( 'updatedBuffer',          {|| ::DireccionesControllerUpdateBuffer() } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::DireccionesControllerLoadCurrentBuffer() } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::DireccionesControllerUpdateBuffer() } )
 
-   ::oModel:setEvent( 'loadingDuplicateBuffer', {|| ::DireccionesControllerLoadDuplicateBuffer() } )
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::DireccionesControllerLoadedDuplicateCurrentBuffer() } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::DireccionesControllerLoadedDuplicateBuffer() } )
    
-   ::oModel:setEvent( 'deletedSelection',       {|| ::DireccionesControllerDeleteBuffer() } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::DireccionesControllerDeleteBuffer() } )
 
 RETURN ( Self )
 
@@ -116,19 +116,30 @@ METHOD DireccionesControllerDeleteBuffer()
    RETURN ( self )
 //---------------------------------------------------------------------------//
 
-METHOD DireccionesControllerLoadDuplicateBuffer()
+METHOD DireccionesControllerLoadedDuplicateCurrentBuffer()
 
+   local uuidAgente
    local idDireccion     
-   local uuidAgente     := hget( ::oModel:hBuffer, "uuid" )
+
+   uuidAgente           := hget( ::oModel:hBuffer, "uuid" )
 
    idDireccion          := ::oDireccionesController:oModel:getIdWhereParentUuid( uuidAgente )
-   if ! empty( idDireccion )
-      RETURN .t. 
+   if empty( idDireccion )
+      ::oDireccionesController:oModel:insertBuffer()
+      RETURN ( self )
    end if 
 
-   msgalert( idDireccion )
-
    ::oDireccionesController:oModel:loadDuplicateBuffer( idDireccion )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DireccionesControllerLoadedDuplicateBuffer()
+
+   local uuidAgente     := hget( ::oModel:hBuffer, "uuid" )
+
+   hset( ::oDireccionesController:oModel:hBuffer, "parent_uuid", uuidAgente )
 
 RETURN ( self )
 
