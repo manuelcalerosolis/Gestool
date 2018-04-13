@@ -44,7 +44,7 @@ METHOD New() CLASS FabricantesController
 
    ::oDialogView                 := FabricantesView():New( self )
 
-   ::oValidator                  := FabricantesValidator():New( self )
+   ::oValidator                  := FabricantesValidator():New( self, ::oDialogView )
 
    ::oImagenesController         := ImagenesController():New( self )
 
@@ -53,6 +53,8 @@ METHOD New() CLASS FabricantesController
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::setEvent( 'appended',                            {|| ::proccesImage() } )
+   ::setEvent( 'edited',                              {|| ::proccesImage() } )
+   ::setEvent( 'duplicated',                          {|| ::proccesImage() } )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oImagenesController:oModel:loadBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oImagenesController:oModel:insertBuffer() } )
@@ -150,7 +152,7 @@ RETURN ( self )
 
 METHOD proccesImage()
 
-   local uuid              := ::oImagenesController:oModel:hBuffer[ "uuid" ] 
+   local uuid              := alltrim( ::oImagenesController:oModel:hBuffer[ "uuid" ] )
    local cImagen           := alltrim( ::oImagenesController:oModel:hBuffer[ "imagen" ] )
    local cNombreFabricante := alltrim( ::oModel:hBuffer[ "nombre" ] )
    local cNombreImagen
@@ -343,9 +345,8 @@ END CLASS
 
 METHOD getValidators() CLASS FabricantesValidator
 
-   ::hValidators  := {     "nombre" =>     {  "required"     => "La descripción es un dato requerido",;
-                                                   "unique"       => "La descripción introducida ya existe" } }                  
-
+   ::hValidators  := {  "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
+                                          "unique"       => "El nombre introducido ya existe" } }                  
 
 RETURN ( ::hValidators )
 
@@ -370,19 +371,17 @@ END CLASS
 
 METHOD getColumns() CLASS SQLFabricantesModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "text"      => "Identificador"                           ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                       "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "text"      => "Uuid"                                    ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+                                       "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "nombre",       {  "create"    => "VARCHAR( 100 )"                          ,;
-                                             "default"   => {|| space( 100 ) } }                       )
+   hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 100 )"                          ,;
+                                       "default"   => {|| space( 100 ) } }                       )
 
-   hset( ::hColumns, "pagina_web",        {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "pagina_web",  {  "create"    => "VARCHAR( 200 )"                          ,;
+                                       "default"   => {|| space( 200 ) } }                       )
 
 RETURN ( ::hColumns )
 
@@ -422,6 +421,7 @@ METHOD getNombres() CLASS FabricantesRepository
    next
 
 RETURN ( aResult )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
