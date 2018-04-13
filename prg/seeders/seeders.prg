@@ -78,11 +78,11 @@ METHOD runSeederDatos()
    ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de impresoras" )
    ::SeederTiposImpresoras()*/
 
-   ::oMsg:SetText( "Datos: Ejecutando ficheros SQL" )
-   ::SeederSqlFiles()
-
    //::oMsg:SetText( "Datos: Ejecutando lenguajes" )
    //::SeederLenguajes()
+
+   ::oMsg:SetText( "Datos: Ejecutando ficheros SQL" )
+   ::SeederSqlFiles()
 
 RETURN ( self )
 
@@ -725,7 +725,6 @@ RETURN ( ::getInsertStatement( hCampos, "campos_extra" ) )
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
 METHOD SeederCamposExtraValores() CLASS Seeders
 
    local dbf
@@ -801,37 +800,26 @@ METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS Seeders
 RETURN ( cEntidadUuid )
 
 //---------------------------------------------------------------------------//
-=======
+
 METHOD SeederSqlFiles()
 
-   local cFile
    local cStm
-   local cPath          := cPatConfig() + "sql\"
-   local aDirectory     := Directory( cPath + "*.sql" )
    local aFile
+   local cPath          := cPatConfig() + "sql\"
+   local aDirectory     := directory( cPath + "*.sql" )
 
    if len( aDirectory ) == 0
-      Return( self )
+      RETURN ( Self )
    end if
 
    for each aFile in aDirectory
 
       ::oMsg:SetText( "Procesando fichero " + cPath + aFile[1] )
 
-      if !file( cPath + aFile[1] )
+      cStm              := memoread( cPath + aFile[1] )
 
-         ::oMsg:SetText( "Fichero " + cPath + aFile[1] + " no encontrado" )
-
-      else
-
-         cStm  := memoread( cPath + aFile[1] )
-
-         if !Empty( cStm )
-         
-            getSQLDatabase():Exec( cStm )
-
-         end if
-
+      if !empty( cStm )
+         getSQLDatabase():Exec( cStm )
       end if
 
    next
@@ -839,4 +827,3 @@ METHOD SeederSqlFiles()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
->>>>>>> 452995b019c1bbed784782d2e6afcb714d67f903
