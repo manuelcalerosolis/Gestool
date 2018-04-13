@@ -204,8 +204,8 @@ METHOD getColumns() CLASS SQLProvinciasModel
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 10 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| space( 10 ) } }                       )
 
-   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 20 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 50 )"                          ,;
+                                             "default"   => {|| space( 50 ) } }                       )
 
 RETURN ( ::hColumns )
 

@@ -77,7 +77,7 @@ METHOD addColumns() CLASS CodigosPostalesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'poblacion'
       :cHeader             := 'Población'
-      :nWidth              := 200
+      :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'poblacion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
@@ -201,7 +201,7 @@ CLASS SQLCodigosPostalesModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( id, codigo, poblacion )"
+   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( codigo, poblacion )"
 
 END CLASS
 
