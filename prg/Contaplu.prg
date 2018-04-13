@@ -1833,16 +1833,12 @@ RETURN ( cCtaVta )
 Devuelve el grupo de venta de un articulo
 */
 
-FUNCTION RetGrpVta( cCodArt, cRuta, cCodEmp, cAlias, nIva )
+FUNCTION RetGrpVta( cCodArt, cRuta, cCodEmp, nIva )
 
-   local cCtaVent := Replicate( "0", nLenCuentaContaplus( cRuta, cCodEmp ) )
+   local cCtaVent := replicate( "0", nLenCuentaContaplus( cRuta, cCodEmp ) )
 
-   if ( cAlias )->( dbSeek( cCodArt ) ) .and. !empty( ( cAlias )->GrpVent )
-      cCtaVent    := Rtrim( ( cAlias )->GrpVent )
-   else
-      if nIva != nil
-         cCtaVent := retGrpAsc( nIva, , cRuta, cCodEmp ) // Devuelve el grupo asociado TIVA.PRG
-      end if
+   if nIva != nil
+      cCtaVent    := retGrpAsc( nIva, , cRuta, cCodEmp ) // Devuelve el grupo asociado TIVA.PRG
    end if
 
 RETURN ( cCtaVent )

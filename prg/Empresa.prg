@@ -3646,11 +3646,6 @@ STATIC FUNCTION StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       mkArticulo( cPath, aImportacion:lArticulos, cPathGrp, nil, .f. )  ; sysrefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando grupos de venta" )
-      end if
-      mkGrpVenta( cPath, aImportacion:lArticulos, cPathGrp )            ; sysrefresh()
-
-      if oMsg != nil
          oMsg:SetText( "Creando clientes" )
       end if
       mkClient( cPath, aImportacion:lClientes, cPathGrp )             ; sysrefresh()

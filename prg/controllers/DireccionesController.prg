@@ -281,7 +281,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DIreccionesValidator FROM SQLBaseValidator
+CLASS DireccionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

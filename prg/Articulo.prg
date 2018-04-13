@@ -3743,22 +3743,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
          TRANSPARENT ;
          OF       fldContabilidad
 
-   REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "GRPVENT" ) ) ] ;
-         VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "GRPVENT" ) ) ] ;
-         ID       100 ;
-         PICTURE  ( Replicate( "9", 9 ) )  ;
-         WHEN     ( !empty( cRutCnt() ) .and. nMode != ZOOM_MODE ) ;
-         VALID    ( cGrpVenta( aGet[ ( D():Articulos( nView ) )->( fieldpos( "GRPVENT" ) ) ], , oSay[1] ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwGrpVenta( aGet[ ( D():Articulos( nView ) )->( fieldpos( "GRPVENT" ) ) ], , oSay[1] ) );
-         OF       fldContabilidad
-
-   REDEFINE GET   oSay[1] ;
-         VAR      cSay[1] ;
-			WHEN 		.F. ;
-         ID       101 ;
-         OF       fldContabilidad
-
    REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ] ;
          VAR      aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCtaVta" ) ) ] ;
          ID       110 ;
@@ -14843,7 +14827,7 @@ function aItmArt()
    aAdd( aBase, { "LIVAINC",   "L",  1, 0, "Lógico " + cImp() + " incluido (S/N)" ,   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "FAMILIA",   "C", 16, 0, "Código de la familia del artículo" ,      "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CSUBFAM",   "C",  8, 0, "Código de la subfamilia del artículo" ,   "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "GRPVENT",   "C",  9, 0, "Código del grupo de ventas" ,             "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "GRPVENT",   "C",  9, 0, "" ,                                       "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CCTAVTA",   "C", 12, 0, "Código de la cuenta de ventas" ,          "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CCTACOM",   "C", 12, 0, "Código de la cuenta de compras" ,         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CCTAVTADEV","C", 12, 0, "Código de la cuenta de ventas en devoluciones" ,    "",         "", "( cDbfArt )", nil } )

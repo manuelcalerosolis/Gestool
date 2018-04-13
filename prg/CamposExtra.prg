@@ -770,3 +770,29 @@ Function getCustomExtraField( cFieldName, cDocumentType, Id )
 RETURN ( cExtraField )
 
 //---------------------------------------------------------------------------//
+
+CLASS CamposExtraModel FROM ADSBaseModel
+
+   METHOD getTableName()                     INLINE ::getEmpresaTableName( "CampoExtra" )
+
+   METHOD getUuid( cCodigoTipo )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getUuid( cCodigoTipo ) CLASS CamposExtraModel
+
+   local cStm
+   local cSql  := "SELECT Uuid "                                  + ;
+                     "FROM " + ::getTableName() + " "             + ;
+                     "WHERE cCodigo = " + quoted( cCodigoTipo ) 
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->Uuid ) 
+   end if 
+
+RETURN ( "" )
+
+//---------------------------------------------------------------------------//
+

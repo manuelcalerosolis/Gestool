@@ -2036,14 +2036,6 @@ METHOD BuildEmpresa()
    oDataTable:cDescription := "Ubicaciones calles"
    ::AddEmpresaTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "GrpVent" )
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "GrpVent.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "GrpVent.Cdx"
-   oDataTable:cDescription := "Grupos de ventas"
-   oDataTable:bCreateFile  := {| cPath | mkGrpVenta( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxGrpVenta( cPath ) }
-   ::AddEmpresaTable( oDataTable )
-
    /*
    Movimientos de almacén ( Al final es para quitarlo )------------------------
    */

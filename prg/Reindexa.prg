@@ -205,11 +205,9 @@ METHOD GenIndices( oMsg )
       ::SetText( "Generando índices : Agentes", ::aProgress[ 2 ] )                  ; rxAgentes(  ::cPatCli )
       ::SetText( "Generando índices : Rutas", ::aProgress[ 2 ] )                    ; rxRuta(     ::cPatCli )
       ::SetText( "Generando índices : Almacén", ::aProgress[ 2 ] )                  ; rxAlmacen(  ::cPatAlm )
-      ::SetText( "Generando índices : Grupos de ventas", ::aProgress[ 2 ] )      ; rxGrpVenta( ::cPathEmp )
       ::SetText( "Generando índices : Documentos", ::aProgress[ 2 ] )            ; rxDocs(     ::cPathEmp )
       ::SetText( "Generando índices : Tarifas de precios", ::aProgress[ 2 ] )    ; rxTarifa(   ::cPatArt )
       ::SetText( "Generando índices : Promociones", ::aProgress[ 2 ] )           ; rxPromo(    ::cPatArt )
-      ::SetText( "Generando índices : Grupos de venta", ::aProgress[ 2 ] )       ; rxGrpVenta( ::cPathEmp )
       ::SetText( "Generando índices : Ubicaciones", ::aProgress[ 2 ] )           ; rxUbi(      ::cPatAlm )
 
    end if

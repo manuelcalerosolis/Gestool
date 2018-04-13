@@ -711,3 +711,4 @@ METHOD SaveTemporalAppend( nClave ) CLASS TDetCamposExtra
 Return ( self )
 
 //---------------------------------------------------------------------------//
+

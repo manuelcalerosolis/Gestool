@@ -1491,7 +1491,7 @@ FUNCTION CreateAcceso( oWnd )
    // Otros--------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso() 
-   oGrupo:nBigItems     := 11
+   oGrupo:nBigItems     := 10
    oGrupo:cPrompt       := 'Global'
    oGrupo:cLittleBitmap := "gc_folder2_16"
    oGrupo:cBigBitmap    := "gc_folder2_32"
@@ -1504,16 +1504,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "cajas"
    oItem:cBmp           := "gc_cash_register_16"
    oItem:cBmpBig        := "gc_cash_register_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Grupos ventas'
-   oItem:cMessage       := 'Acceso a los grupos de ventas de contabilidad'
-   oItem:bAction        := {|| GrpVenta( "grupos_de_ventas", oWnd ) }
-   oItem:cId            := "grupos_de_ventas"
-   oItem:cBmp           := "gc_magazine_folder_16"
-   oItem:cBmpBig        := "gc_magazine_folder_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2706,7 +2696,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 6
+   oGrupo:nBigItems     := 7
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2769,6 +2759,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "asistencia_remota"
    oItem:cBmp           := "gc_businessman2_16"
    oItem:cBmpBig        := "gc_businessman2_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Fabricantes'
+   oItem:cMessage       := 'Solicitar fabricante'
+   oItem:bAction        := {|| FabricantesController():New():ActivateNavigatorView() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_wrench_16"
+   oItem:cBmpBig        := "gc_wrench_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

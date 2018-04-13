@@ -32,6 +32,8 @@ CLASS ComboSelector
    METHOD ResourceComboBox()
    METHOD ChangeComboBox()
 
+   METHOD moveSelectorView()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -96,7 +98,11 @@ RETURN ( Self )
 
 METHOD ActionLink() CLASS ComboSelector
 
-   local hResult     := ::oController:ActivateSelectorView()
+   local hResult     
+
+   ::oController:oSelectorView:bInitActivate := {|| ::moveSelectorView() }
+
+   hResult        := ::oController:ActivateSelectorView()
 
    if hb_isnil( hResult )
       RETURN ( Self )
@@ -109,6 +115,30 @@ METHOD ActionLink() CLASS ComboSelector
    if hHaskey( hResult, "nombre" )
       ::oComboBox:set( hGet( hResult, "nombre" ) )
    end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD moveSelectorView() CLASS ComboSelector
+
+   local nRow
+   local nCol
+   local aRect
+   local nScreenWidth   := GetSysMetrics( 0 )
+   // local nScreenHeight  := GetSysMetrics( 1 )
+
+   aRect                := ClientToScreen( ::oComboBox:hWnd )
+
+   nRow                 := aRect[ 1 ] + ::oComboBox:nHeight + 1
+
+   nCol                 := aRect[ 2 ]
+
+   if ( nCol + ::oController:oSelectorView:oDialog:nWidth() ) > nScreenWidth
+      nCol              -= ( ::oController:oSelectorView:oDialog:nWidth() - ::oComboBox:nWidth() )
+   end if 
+
+   ::oController:oSelectorView:oDialog:Move( nRow, nCol )
 
 RETURN ( Self )
 

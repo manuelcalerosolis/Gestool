@@ -30,8 +30,6 @@ CLASS TImpFactu
    DATA oDbfPrePrvFac
    DATA oDbfFamGst
    DATA oDbfFamFac
-   DATA oDbfGrpGst
-   DATA oDbfGrpFac
    DATA oDbfIvaGst
    DATA oDbfIvaFac
    DATA oDbfFpgGst
@@ -172,14 +170,6 @@ METHOD OpenFiles()
    else
       DATABASE NEW ::oDbfFamGst PATH ( cPatEmp() )  FILE "FAMILIAS.DBF" VIA ( cDriver() ) CLASS "FAMGST" SHARED INDEX "FAMILIAS.CDX"
       DATABASE NEW ::oDbfFamFac PATH ( ::cPathFac ) FILE "FAMILIAS.DBF" VIA ( cLocalDriver() ) CLASS "FAMFAC"
-   end if
-
-   if !File( ::cPathFac + "GRP_VENT.DBF" )
-      ::aChkIndices[ 3 ]:Click( .f. ):Refresh()
-      msgStop( "No existe fichero de grupos de ventas", ::cPathFac + "GRP_VENT.DBF" )
-   else
-      DATABASE NEW ::oDbfGrpGst PATH ( cPatEmp() )  FILE "GRPVENT.DBF"  VIA ( cDriver() ) CLASS "GRPGST" SHARED INDEX "GRPVENT.CDX"
-      DATABASE NEW ::oDbfGrpFac PATH ( ::cPathFac ) FILE "GRP_VENT.DBF" VIA ( cLocalDriver() ) CLASS "GRPFAC"
    end if
 
    if !File( ::cPathFac + "IVAS.DBF" )
@@ -470,18 +460,6 @@ METHOD CloseFiles()
       ::oDbfFamFac:End()
    else
       ::oDbfFamFac := nil
-   end if
-
-   if !Empty( ::oDbfGrpGst )
-      ::oDbfGrpGst:End()
-   else
-      ::oDbfGrpGst := nil
-   end if
-
-   if !Empty( ::oDbfGrpFac )
-      ::oDbfGrpFac:End()
-   else
-      ::oDbfGrpFac := nil
    end if
 
    if !Empty( ::oDbfIvaGst )
@@ -1064,7 +1042,6 @@ METHOD Importar()
             ::oDbfArtGst:nMinimo    := ::oDbfArtFac:nStockMin
             ::oDbfArtGst:TipoIva    := ::oDbfArtFac:cTipoIva
             ::oDbfArtGst:Familia    := ::oDbfArtFac:cCodFAm
-            ::oDbfArtGst:GrpVent    := ::oDbfArtFac:cGrpConta
             ::oDbfArtGst:cOdeBar    := ::oDbfArtFac:cCodeBar
             ::oDbfArtGst:nTipBar    := ::oDbfArtFac:nTipoCode
             ::oDbfArtGst:nLabel     := ::oDbfArtFac:nEtiquetas
@@ -1186,36 +1163,6 @@ METHOD Importar()
             ::aMtrIndices[ 2 ]:Set( ::oDbfFamFac:Recno() )
 
             ::oDbfFamFac:Skip()
-
-         end while
-
-      end if
-
-      /*
-      Trasbase de grupos de ventas
-      */
-
-      if ::aLgcIndices[ 3 ]
-
-         ::aMtrIndices[ 3 ]:SetTotal( ::oDbfGrpFac:LastRec() )
-
-         ::oDbfGrpFac:GoTop()
-         while !( ::oDbfGrpFac:eof() )
-
-            while ::oDbfGrpGst:Seek( ::oDbfGrpFac:cGrpConta )
-               ::oDbfGrpGst:Delete( .f. )
-            end if
-
-            ::oDbfGrpGst:Append()
-
-            ::oDbfGrpGst:cGrpConta  := ::oDbfGrpFac:cGrpConta
-            ::oDbfGrpGst:cGrpNom    := ::oDbfGrpFac:cGrpNom
-
-            ::oDbfGrpGst:Save()
-
-            ::aMtrIndices[ 3 ]:Set( ::oDbfGrpFac:Recno() )
-
-            ::oDbfGrpFac:Skip()
 
          end while
 

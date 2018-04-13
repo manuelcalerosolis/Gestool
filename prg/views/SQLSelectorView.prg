@@ -13,11 +13,14 @@ CLASS SQLSelectorView FROM SQLBrowseableView
    DATA oComboBoxOrder
    DATA cComboBoxOrder
 
+   DATA bInitActivate
+
    DATA hSelectedBuffer
 
    METHOD End()
 
    METHOD Activate()
+      METHOD initActivate()               INLINE ( iif( hb_isblock( ::bInitActivate ), eval( ::bInitActivate, Self ), ) )
 
    METHOD isActive()                      INLINE ( ::oDialog != nil )
 
@@ -77,7 +80,7 @@ METHOD Activate()
 
       ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
 
-   ACTIVATE DIALOG ::oDialog ON INIT ::oDialog:Move( 33, 0 )
+   ::oDialog:Activate( , , , .f., , .t., {|| ::initActivate() } )
 
 RETURN ( ::getSelectedBuffer() )
 

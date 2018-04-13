@@ -2918,6 +2918,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
+         :cHeader             := "Precio " + cImp() + " inc."
+         :bEditValue          := {|| nIncUAlbCli( dbfTmpLin, nDouDiv ) }
+         :cEditPicture        := cPouDiv
+         :nWidth              := 80
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end with
+
+      with object ( oBrwLin:AddCol() )
          :cHeader             := "% Dto."
          :bEditValue          := {|| ( dbfTmpLin )->nDto }
          :cEditPicture        := "@E 999.99"

@@ -2019,7 +2019,6 @@ STATIC FUNCTION TransAbono( oBrw )
 
 		WHILE ( (dbfAbnPrvL)->NNUMFAC = cFactura )
 
-         cCtaVent    := RetGrpVta( (dbfAbnPrvL)->CREF, cArea )
 			nPosicion 	:= aScan( aVentas, {|x| x[1] == cCtaPrvVta + cCtaVent } )
 			nImpDeta		:= nCalcDeta( dbfAbnPrvL )
 

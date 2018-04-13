@@ -51,6 +51,9 @@ CLASS Seeders
 
    METHOD SeederCamposExtra() 
    METHOD getStatementCamposExtra() 
+   METHOD getStatementCamposExtraValores() 
+   METHOD getEntidadUuid( cTipoDocumento, cClave ) 
+   METHOD SeederCamposExtraValores()
 
 END CLASS
 
@@ -75,11 +78,11 @@ METHOD runSeederDatos()
    ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de impresoras" )
    ::SeederTiposImpresoras()*/
 
-   ::oMsg:SetText( "Datos: Ejecutando ficheros SQL" )
-   ::SeederSqlFiles()
-
    //::oMsg:SetText( "Datos: Ejecutando lenguajes" )
    //::SeederLenguajes()
+
+   ::oMsg:SetText( "Datos: Ejecutando ficheros SQL" )
+   ::SeederSqlFiles()
 
 RETURN ( self )
 
@@ -103,6 +106,9 @@ METHOD runSeederEmpresa()
 
    ::oMsg:SetText( "Ejecutando seeder de campos extra" )
    ::SeederCamposExtra()*/
+
+   ::oMsg:SetText( "Ejecutando seeder de campos extra valores" )
+   ::SeederCamposExtraValores()
 
    ::oMsg:SetText( "Seeders finalizados" )
 
@@ -133,7 +139,7 @@ METHOD SeederSituaciones() CLASS Seeders
    local cPath       := cPatDat( .t. )
    local dbfSitua
 
-   if ( file( cPath + "Situa.old" ) )
+   if ( file( cPath + "Situa.Old" ) )
       RETURN ( self )
    end if
 
@@ -696,7 +702,7 @@ METHOD SeederCamposExtra() CLASS Seeders
    USE ( cPath + "CampoExtra.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "CampoExtra", @dbf ) )
    ( dbf )->( ordsetfocus( 0 ) )
 
-   ( dbf )->( dbeval( {|| getSQLDatabase():Exec( ::getStatementCamposExtra() ) } ) )
+   ( dbf )->( dbeval( {|| getSQLDatabase():Exec( ::getStatementCamposExtra( dbf ) ) } ) )
 
    ( dbf )->( dbCloseArea() )
 
@@ -704,51 +710,116 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementCamposExtra() CLASS Seeders
+METHOD getStatementCamposExtra( dbf ) CLASS Seeders
 
    local aTipo    := {  "Texto", "Número", "Fecha", "Lógico", "Lista" } 
-   local hCampos  := {  "uuid"      => quoted( field->Uuid ),;
-                        "nombre"    => quoted( field->cNombre ),;
-                        "requerido" => if( field->lRequerido, '1', '0' ),;
-                        "tipo"      => quoted( aTipo[ minmax( field->nTipo, 1, 5 ) ] ),;
-                        "longitud"  => quoted( field->nLongitud ),;
-                        "decimales" => quoted( field->nDecimales ),;
-                        "lista"     => quoted( field->mDefecto ) }
+   local hCampos  := {  "uuid"      => quoted( ( dbf )->Uuid ),;
+                        "nombre"    => quoted( ( dbf )->cNombre ),;
+                        "requerido" => if( ( dbf )->lRequerido, '1', '0' ),;
+                        "tipo"      => quoted( aTipo[ minmax( ( dbf )->nTipo, 1, 5 ) ] ),;
+                        "longitud"  => quoted( ( dbf )->nLongitud ),;
+                        "decimales" => quoted( ( dbf )->nDecimales ),;
+                        "lista"     => quoted( ( dbf )->mDefecto ) }
 
 RETURN ( ::getInsertStatement( hCampos, "campos_extra" ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD SeederCamposExtraValores() CLASS Seeders
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
+
+   if !( file( cPath + "Detcextra.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Detcextra.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "Detcextra.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Cextra", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| getSQLDatabase():Exec( ::getStatementCamposExtraValores( dbf ) ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementCamposExtraValores( dbf ) CLASS Seeders
+
+   local hCampos  := {  "uuid"                     => quoted( ( dbf )->Uuid ),;
+                        "campo_extra_entidad_uuid" => quoted( CamposExtraModel():getUuid( ( dbf )->cCodTipo ) ),;
+                        "entidad_uuid"             => quoted( ::getEntidadUuid( ( dbf )->cCodTipo, ( dbf )->cClave ) ),;
+                        "valor"                    => quoted( ( dbf )->cValor ) }
+
+RETURN ( ::getInsertStatement( hCampos, "campos_extra_valores" ) )
+
+//---------------------------------------------------------------------------//
+// "Clientes" => "21",;
+// "Proveedores" => "22",;
+// "Familias" => "37",; 
+// "Agentes" => "38",;
+// "Presupuestos a clientes" => "08",;
+// "Pedidos a clientes" => "09",;
+// "Albaranes a clientes" => "10",;
+// "Lineas de albaranes a clientes" => "35",;
+// "Facturas a clientes" => "11",;
+// "Lineas de facturas a clientes" => "36",;
+// "Facturas de anticipos a clientes" => "13",;
+// "Facturas rectificativa a clientes" => "14",;
+// "Pedidos a proveedores" => "01",;
+// "Lineas pedidos a proveedores" => "41",;
+// "Albaranes a proveedores" => "02",;
+// "Lineas albaranes a proveedores" => "37",;
+// "Facturas a proveedores" => "03",;
+// "Lineas facturas a proveedores" => "38",;
+// "Facturas rectificativa a proveedores" => "04",;
+// "S.A.T" => "32",;
+// "Envases de artículos" => "33" ,;
+// "Grupos de clientes" => "34" ,;
+// "Propiedades" => "39" ,;
+// "Lineas de propiedades" => "40" }
+
+METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS Seeders
+
+   local cEntidadUuid   := ""
+
+   cTipoDocumento       := alltrim( cTipoDocumento )
+   cClave               := alltrim( cClave )
+
+   msgalert( cTipoDocumento, "cTipoDocumento" )
+   msgalert( cClave, "cClave" )
+
+   do case 
+      case cTipoDocumento = "20" // "Artículos" => "20"
+         cEntidadUuid   := ArticulosModel():getUuid( cClave )
+
+   end case
+
+RETURN ( cEntidadUuid )
+
+//---------------------------------------------------------------------------//
+
 METHOD SeederSqlFiles()
 
-   local cFile
    local cStm
-   local cPath          := cPatConfig() + "sql\"
-   local aDirectory     := Directory( cPath + "*.sql" )
    local aFile
+   local cPath          := cPatConfig() + "sql\"
+   local aDirectory     := directory( cPath + "*.sql" )
 
    if len( aDirectory ) == 0
-      Return( self )
+      RETURN ( Self )
    end if
 
    for each aFile in aDirectory
 
       ::oMsg:SetText( "Procesando fichero " + cPath + aFile[1] )
 
-      if !file( cPath + aFile[1] )
+      cStm              := memoread( cPath + aFile[1] )
 
-         ::oMsg:SetText( "Fichero " + cPath + aFile[1] + " no encontrado" )
-
-      else
-
-         cStm  := memoread( cPath + aFile[1] )
-
-         if !Empty( cStm )
-         
-            getSQLDatabase():Exec( cStm )
-
-         end if
-
+      if !empty( cStm )
+         getSQLDatabase():Exec( cStm )
       end if
 
    next

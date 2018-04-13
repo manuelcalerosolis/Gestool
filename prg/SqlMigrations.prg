@@ -149,6 +149,10 @@ METHOD addModels()
 
    aadd( ::aModels, SQLAgentesModel():New() )
 
+   aadd( ::aModels, SQLFabricantesModel():New() )
+
+   aadd( ::aModels, SQLImagenesModel():New() )
+
    aadd( ::aModels, SQLCamposExtraModel():New() )
 
    aadd( ::aModels, SQLCamposExtraEntidadesModel():New() )
