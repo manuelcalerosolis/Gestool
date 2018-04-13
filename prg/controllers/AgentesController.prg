@@ -415,13 +415,12 @@ END CLASS
 
 METHOD getNombres() CLASS AgentesRepository
 
-   local h
    local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
    local aResult     := {}
 
-   for each h in aNombres
-      aAdd( aResult, AllTrim( hGet( h, "nombre" ) ) )
-   next
+   if !empty( aNombres )
+      aeval( aNombres, {| h | aadd( aResult, alltrim( hGet( h, "nombre" ) ) ) } )
+   end if 
 
 RETURN ( aResult )
 

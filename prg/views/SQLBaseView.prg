@@ -151,7 +151,7 @@ METHOD verticalHide( oControl )
    end if  
 
    nId            := oControl:nId
-   nHeight        := oControl:nHeight + 2
+   nHeight        := oControl:nHeight + 1
 
    oControl:Hide()
 
@@ -173,7 +173,7 @@ METHOD verticalShow( oControl )
    end if  
 
    nId            := oControl:nId
-   nHeight        := oControl:nHeight + 2
+   nHeight        := oControl:nHeight + 1
 
    oControl:Show()
 
