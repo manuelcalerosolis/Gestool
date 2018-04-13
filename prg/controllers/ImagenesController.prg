@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesController FROM SQLBrowseController
+CLASS ImagenesController FROM SQLBrowseController
 
    METHOD New()
 
@@ -13,25 +13,26 @@ CLASS DireccionesController FROM SQLBrowseController
 
 END CLASS
 
+
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS DireccionesController
+METHOD New( oSenderController ) CLASS ImagenesController
 
    ::Super:New( oSenderController )
 
    ::lTransactional        := .t.
 
-   ::cTitle                := "Direcciones"
+   ::cTitle                := "Imagenes"
 
-   ::cName                 := "direcciones"
+   ::cName                 := "imagenes"
 
-   ::oModel                := SQLDireccionesModel():New( self )
+   ::oModel                := SQLImagenesModel():New( self )
 
-   ::oBrowseView           := DireccionesBrowseView():New( self )
+   ::oBrowseView           := ImagenesBrowseView():New( self )
 
-   ::oDialogView           := DireccionesView():New( self )
+   ::oDialogView           := ImagenesView():New( self )
 
-   ::oValidator            := DireccionesValidator():New( self, ::oDialogView )
+   ::oValidator            := ImagenesValidator():New( self, ::oDialogView )
 
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
@@ -44,7 +45,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() CLASS DireccionesController
+METHOD loadedBlankBuffer() CLASS ImagenesController
 
    local uuid        := ::getSenderController():getUuid() 
 
@@ -56,7 +57,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD gettingSelectSentence() CLASS DireccionesController
+METHOD gettingSelectSentence() CLASS ImagenesController
 
    local uuid        := ::getSenderController():getUuid() 
 
@@ -75,7 +76,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesBrowseView FROM SQLBrowseView
+CLASS ImagenesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -83,7 +84,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS DireccionesBrowseView
+METHOD addColumns() CLASS ImagenesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -103,67 +104,29 @@ METHOD addColumns() CLASS DireccionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'direccion'
-      :cHeader             := 'Dirección'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'poblacion'
-      :cHeader             := 'Población'
+      :cSortOrder          := 'parent_uuid'
+      :cHeader             := 'Parent Uuid'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'poblacion' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'parent_uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'ruta_local'
+      :cHeader             := 'Ruta Local'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'ruta_local' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'provincia'
-      :cHeader             := 'Provincia'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'provincia' ) }
+      :cSortOrder          := 'ruta_remota'
+      :cHeader             := 'Ruta Remota'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'ruta_remota' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo_postal'
-      :cHeader             := 'Código Postal'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_postal' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'telefono'
-      :cHeader             := 'Teléfono'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'telefono' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with   
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'movil'
-      :cHeader             := 'Móvil'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'movil' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'email'
-      :cHeader             := 'Email'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'email' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
 RETURN ( self )
@@ -176,7 +139,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesView FROM SQLBaseView
+CLASS ImagenesView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -184,11 +147,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS DireccionesView
+METHOD Activate() CLASS ImagenesView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "DIRECCION" ;
-      TITLE       ::LblTitle() + "direcciones"
+      RESOURCE    "IMAGEN" ;
+      TITLE       ::LblTitle() + "imagenes"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -201,52 +164,14 @@ METHOD Activate() CLASS DireccionesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "ruta_local" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "direccion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "ruta_remota" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "direccion" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo_postal" ) ) ;
-      OF          ::oDialog 
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "poblacion" ] ;
-      ID          130 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "poblacion" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "provincia" ] ;
-      ID          140 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "provincia" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
-      ID          150 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "telefono" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "movil" ] ;
-      ID          160 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "movil" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "email" ] ;
-      ID          170 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "email" ) ) ;
       OF          ::oDialog
 
    REDEFINE BUTTON ;
@@ -281,7 +206,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesValidator FROM SQLBaseValidator
+CLASS ImagenesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -289,7 +214,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS DireccionesValidator
+METHOD getValidators() CLASS ImagenesValidator
 
    ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido" },; 
                         "direccion" =>       {  "required"        => "La dirección es un dato requerido" },; 
@@ -306,9 +231,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLDireccionesModel FROM SQLBaseModel
+CLASS SQLImagenesModel FROM SQLBaseModel
 
-   DATA cTableName                     INIT "direcciones"
+   DATA cTableName                     INIT "imagenes"
 
    METHOD getColumns()
 
@@ -318,7 +243,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLDireccionesModel
+METHOD getColumns() CLASS SQLImagenesModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "text"      => "Identificador"                           ,;
@@ -331,29 +256,11 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL "                   ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
-                                             "default"   => {|| space( 140 ) } }                      )
+   hset( ::hColumns, "ruta_local",        {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "direccion",         {  "create"    => "VARCHAR( 150 )"                          ,;
-                                             "default"   => {|| space( 150 ) } }                      )
-
-   hset( ::hColumns, "poblacion",         {  "create"    => "VARCHAR( 100 )"                          ,;
-                                             "default"   => {|| space( 100 ) } }                      )
-
-   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 100 )"                          ,;
-                                             "default"   => {|| space( 100 ) } }                      )
-
-   hset( ::hColumns, "codigo_postal",     {  "create"    => "VARCHAR( 10 )"                           ,;
-                                             "default"   => {|| space( 10 ) } }                       )
-
-   hset( ::hColumns, "telefono",          {  "create"    => "VARCHAR( 15 )"                           ,;
-                                             "default"   => {|| space( 15 ) } }                       )
-
-   hset( ::hColumns, "movil",             {  "create"    => "VARCHAR( 15 )"                          ,;
-                                             "default"   => {|| space( 15 ) } }                       )
-
-   hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 200 )"                         ,;
-                                             "default"   => {|| space( 200 ) } }                      )  
+   hset( ::hColumns, "ruta_remota",       {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                      ) 
 
 RETURN ( ::hColumns )
 
@@ -363,7 +270,7 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesRepository FROM SQLBaseRepository
+CLASS ImagenesRepository FROM SQLBaseRepository
 
    METHOD getTableName()         INLINE ( SQLDireccionesModel():getTableName() ) 
 

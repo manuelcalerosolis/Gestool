@@ -355,6 +355,8 @@ ProvinciasController.prg													\
 PaisesController.prg															\
 LenguajesController.prg														\
 DireccionesController.prg 													\
+FabricantesController.prg 													\
+ImagenesController.prg 														\
 AgentesController.prg 														\
 MovimientosAlmacenView.prg													\
 MovimientosAlmacenBrowseView.prg											\
@@ -975,6 +977,8 @@ ProvinciasController.obj       											\
 PaisesController.obj       												\
 LenguajesController.obj  		     										\
 DireccionesController.obj       											\
+FabricantesController.obj       											\
+ImagenesController.obj       												\
 AgentesController.obj     		  											\
 MovimientosAlmacenesLineasModel.obj 									\
 FacturasClientesLineasModel.obj 											\
@@ -1581,6 +1585,8 @@ $(OBJ)\ProvinciasController.obj    										+
 $(OBJ)\PaisesController.obj    											+
 $(OBJ)\LenguajesController.obj    										+
 $(OBJ)\DireccionesController.obj    									+
+$(OBJ)\FabricantesController.obj    									+
+$(OBJ)\ImagenesController.obj    										+
 $(OBJ)\AgentesController.obj    											+
 $(OBJ)\MovimientosAlmacenView.obj 										+
 $(OBJ)\MovimientosAlmacenBrowseView.obj								+
