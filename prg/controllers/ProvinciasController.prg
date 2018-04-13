@@ -5,7 +5,6 @@
 
 CLASS ProvinciasController FROM SQLNavigatorController
 
-
    METHOD New()
 
 END CLASS
