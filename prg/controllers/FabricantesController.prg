@@ -3,33 +3,32 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS AgentesController FROM SQLNavigatorController
+CLASS FabricantesController FROM SQLNavigatorController
 
-   DATA oDireccionesController
+   DATA oImagenesController
 
    METHOD New()
 
-   METHOD DireccionesControllerLoadCurrentBuffer()
+   METHOD ImagenesControllerLoadCurrentBuffer()
 
-   METHOD DireccionesControllerUpdateBuffer()
+   METHOD ImagenesControllerUpdateBuffer()
 
-   METHOD DireccionesControllerDeleteBuffer()
+   METHOD ImagenesControllerDeleteBuffer()
 
-   METHOD DireccionesControllerLoadedDuplicateCurrentBuffer()
+   METHOD ImagenesControllerLoadedDuplicateCurrentBuffer()
 
-   METHOD DireccionesControllerLoadedDuplicateBuffer()
+   METHOD ImagenesControllerLoadedDuplicateBuffer()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
-
-METHOD New() CLASS AgentesController
+METHOD New() CLASS FabricantesController
 
    ::Super:New()
 
-   ::cTitle                      := "Agentes"
+   ::cTitle                      := "Fabricantes"
 
-   ::cName                       := "agentes"
+   ::cName                       := "fabricantes"
 
    ::hImage                      := {  "16" => "gc_businessman2_16",;
                                        "32" => "gc_businessman2_32",;
@@ -37,109 +36,110 @@ METHOD New() CLASS AgentesController
 
    ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                      := SQLAgentesModel():New( self )
+   ::oModel                      := SQLFabricantesModel():New( self )
 
-   ::oBrowseView                 := AgentesBrowseView():New( self )
+   ::oBrowseView                 := FabricantesBrowseView():New( self )
 
-   ::oDialogView                 := AgentesView():New( self )
+   ::oDialogView                 := FabricantesView():New( self )
 
-   ::oValidator                  := AgentesValidator():New( self, ::oDialogView )
+   ::oValidator                  := FabricantesValidator():New( self )
 
-   ::oDireccionesController      := DireccionesController():New( self )
+   ::oImagenesController         := ImagenesController():New( self )
 
-   ::oRepository                 := AgentesRepository():New( self )
+   ::oRepository                 := FabricantesRepository():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:oModel:loadBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:oModel:insertBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oImagenesController:oModel:loadBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::oImagenesController:oModel:insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::DireccionesControllerLoadCurrentBuffer() } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::DireccionesControllerUpdateBuffer() } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::ImagenesControllerLoadCurrentBuffer() } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::ImagenesControllerUpdateBuffer() } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::DireccionesControllerLoadedDuplicateCurrentBuffer() } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::DireccionesControllerLoadedDuplicateBuffer() } )
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::ImagenesControllerLoadedDuplicateCurrentBuffer() } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::ImagenesControllerLoadedDuplicateBuffer() } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::DireccionesControllerDeleteBuffer() } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::ImagenesControllerDeleteBuffer() } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DireccionesControllerLoadCurrentBuffer()
+METHOD ImagenesControllerLoadCurrentBuffer()
 
-   local idDireccion     
-   local uuidAgente     := hget( ::oModel:hBuffer, "uuid" )
+   local idImagen     
+   local uuidFabricante     := hget( ::oModel:hBuffer, "uuid" )
 
-   if empty( uuidAgente )
-      ::oDireccionesController:oModel:insertBuffer()
+   if empty( uuidFabricante )
+      ::oImagenesController:oModel:insertBuffer()
    end if 
 
-   idDireccion          := ::oDireccionesController:oModel:getIdWhereParentUuid( uuidAgente )
-   if empty( idDireccion )
-      ::oDireccionesController:oModel:insertBuffer()
+   idImagen                 := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFabricante )
+   if empty( idImagen )
+      ::oImagenesController:oModel:insertBuffer()
    end if 
 
-   ::oDireccionesController:oModel:loadCurrentBuffer( idDireccion )
+   ::oImagenesController:oModel:loadCurrentBuffer( idImagen )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DireccionesControllerUpdateBuffer()
+METHOD ImagenesControllerUpdateBuffer()
 
-   local idDireccion     
-   local uuidAgente     := hget( ::oModel:hBuffer, "uuid" )
+   local idImagen     
+   local uuidFabricante     := hget( ::oModel:hBuffer, "uuid" )
 
-   idDireccion          := ::oDireccionesController:oModel:getIdWhereParentUuid( uuidAgente )
-   if empty( idDireccion )
-      ::oDireccionesController:oModel:insertBuffer()
+   idImagen                 := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFabricante )
+   if empty( idImagen )
+      ::oImagenesController:oModel:insertBuffer()
       RETURN ( self )
    end if 
 
-   ::oDireccionesController:oModel:updateBuffer()
+   ::oImagenesController:oModel:updateBuffer()
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DireccionesControllerDeleteBuffer()
+METHOD ImagenesControllerDeleteBuffer()
 
-   local aUuidAgente    := ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected )
+   local aUuidFabricante   := ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected )
 
-   if empty( aUuidAgente )
+   if empty( aUuidFabricante )
       RETURN ( self )
    end if
 
-   ::oDireccionesController:oModel:deleteWhereParentUuid( aUuidAgente )
+   ::oImagenesController:oModel:deleteWhereParentUuid( aUuidFabricante )
 
    RETURN ( self )
 //---------------------------------------------------------------------------//
 
-METHOD DireccionesControllerLoadedDuplicateCurrentBuffer()
+METHOD ImagenesControllerLoadedDuplicateCurrentBuffer()
 
-   local uuidAgente
-   local idDireccion     
+   local uuidFabricante
+   local idImagen     
 
-   uuidAgente           := hget( ::oModel:hBuffer, "uuid" )
+   uuidFabricante           := hget( ::oModel:hBuffer, "uuid" )
 
-   idDireccion          := ::oDireccionesController:oModel:getIdWhereParentUuid( uuidAgente )
-   if empty( idDireccion )
-      ::oDireccionesController:oModel:insertBuffer()
+   idImagen          := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFabricante )
+   if empty( idImagen )
+      ::oImagenesController:oModel:insertBuffer()
       RETURN ( self )
    end if 
 
-   ::oDireccionesController:oModel:loadDuplicateBuffer( idDireccion )
+   ::oImagenesController:oModel:loadDuplicateBuffer( idImagen )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DireccionesControllerLoadedDuplicateBuffer()
+METHOD ImagenesControllerLoadedDuplicateBuffer()
 
-   local uuidAgente     := hget( ::oModel:hBuffer, "uuid" )
+   local uuidFabricante
+   uuidFabricante     := hget( ::oModel:hBuffer, "uuid" )
 
-   hset( ::oDireccionesController:oModel:hBuffer, "parent_uuid", uuidAgente )
+   hset( ::oImagenesController:oModel:hBuffer, "parent_uuid", uuidFabricante )
 
 RETURN ( self )
 
@@ -149,8 +149,11 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS AgentesBrowseView FROM SQLBrowseView
+CLASS FabricantesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -158,7 +161,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS AgentesBrowseView
+METHOD addColumns() CLASS FabricantesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -170,33 +173,25 @@ METHOD addColumns() CLASS AgentesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Uuid'
-      :nWidth              := 300
+      :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :cSortOrder          := 'descripcion'
+      :cHeader             := 'Descripción'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'dni'
-      :cHeader             := 'DNI/CIF'
+      :cSortOrder          := 'pagina_web'
+      :cHeader             := 'Página web'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'dni' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'comision'
-      :cHeader             := 'Comisión'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'comision' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'pagina_web' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -210,18 +205,19 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesView FROM SQLBaseView
+CLASS FabricantesView FROM SQLBaseView
   
    METHOD Activate()
 
    METHOD Activating()
 
-   METHOD getDireccionesController()   INLINE ( ::oController:oDireccionesController )
+   METHOD getImagenesController()   INLINE ( ::oController:oImagenesController )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
-METHOD Activating() CLASS AgentesView
+//---------------------------------------------------------------------------//
+METHOD Activating() CLASS FabricantesView
 
    if ::oController:isAppendOrDuplicateMode()
       ::oController:oModel:hBuffer()
@@ -229,21 +225,16 @@ METHOD Activating() CLASS AgentesView
 
 RETURN ( self )
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-
-METHOD Activate() CLASS AgentesView
+METHOD Activate() CLASS FabricantesView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "AGENTE" ;
-      TITLE       ::LblTitle() + "agente"
+      RESOURCE    "FABRICANTES" ;
+      TITLE       ::LblTitle() + "fabricante"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_businessman2_48" ;
+      RESOURCE    "gc_wrench_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -252,58 +243,21 @@ METHOD Activate() CLASS AgentesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
       ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode()  ) ;
+      VALID       ( ::oController:validate( "descripcion" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "dni" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "pagina_web" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "comision" ] ;
+   REDEFINE GET   ::getImagenesController():oModel:hBuffer[ "ruta_local" ] ;
       ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      PICTURE     "@E 999.99" ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "direccion" ] ;
-      ID          130 ;
-      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
-      VALID       ( ::getDireccionesController():validate( "direccion" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "codigo_postal" ] ;
-      ID          140 ;
-      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
-      OF          ::oDialog 
-
-   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "poblacion" ] ;
-      ID          150 ;
-      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "provincia" ] ;
-      ID          160 ;
-      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "telefono" ] ;
-      ID          170 ;
-      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "movil" ] ;
-      ID          180 ;
-      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "email" ] ;
-      ID          190 ;
-      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
-      VALID       ( ::getDireccionesController():validate( "email" ) ) ;
+      WHEN        ( ::getImagenesController():isNotZoomMode() ) ;
       OF          ::oDialog
 
    REDEFINE BUTTON ;
@@ -324,7 +278,7 @@ METHOD Activate() CLASS AgentesView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBitmap:end()
+  ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -335,7 +289,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesValidator FROM SQLBaseValidator
+CLASS FabricantesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -343,9 +297,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS AgentesValidator
+METHOD getValidators() CLASS FabricantesValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre del agente es un dato requerido" }  }
+   ::hValidators  := {     "descripcion" =>     {  "required"     => "La descripción es un dato requerido",;
+                                                   "unique"       => "La descripción introducida ya existe" } }                  
+
 
 RETURN ( ::hValidators )
 
@@ -358,10 +314,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLAgentesModel FROM SQLBaseModel
+CLASS SQLFabricantesModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "agentes"
-
+   DATA cTableName                  INIT "fabricantes"
 
    METHOD getColumns()
 
@@ -369,26 +324,26 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLAgentesModel
+METHOD getColumns() CLASS SQLFabricantesModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                             "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+                                             "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
-                                             "default"   => {|| space( 140 ) } }                       )
+   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 100 )"                          ,;
+                                             "default"   => {|| space( 100 ) } }                       )
 
-   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
-
-   hset( ::hColumns, "comision",          {  "create"    => "FLOAT( 5,2 )"                            ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "pagina_web",        {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -398,7 +353,7 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesRepository FROM SQLBaseRepository
+CLASS FabricantesRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLAgentesModel():getTableName() ) 
 
@@ -412,15 +367,20 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getNombres() CLASS AgentesRepository
+METHOD getNombres() CLASS FabricantesRepository
 
+   local h
    local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
    local aResult     := {}
 
-   if !empty( aNombres )
-      aeval( aNombres, {| h | aadd( aResult, alltrim( hGet( h, "nombre" ) ) ) } )
-   end if 
+   for each h in aNombres
+      aAdd( aResult, AllTrim( hGet( h, "nombre" ) ) )
+   next
 
 RETURN ( aResult )
-
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -67,16 +67,8 @@ METHOD addColumns() CLASS PaisesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
+      :cHeader             := 'Código iso'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -87,14 +79,6 @@ METHOD addColumns() CLASS PaisesBrowseView
       :cHeader             := 'Nombre'
       :nWidth              := 150
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'iso'
-      :cHeader             := 'ISO'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'iso' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -143,13 +127,6 @@ METHOD Activate() CLASS PaisesView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "iso" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "iso" ) ) ;
-      OF          oDlg
-
-
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          oDlg ;
@@ -189,12 +166,10 @@ END CLASS
 
 METHOD getValidators() CLASS PaisesValidator
 
-   ::hValidators  := {     "codigo" =>          {  "required"     => "El código es un dato requerido",;
-                                                   "unique"       => "El código introducido ya existe" },;
+   ::hValidators  := {     "codigo" =>          {  "required"     => "El código iso es un dato requerido",;
+                                                   "unique"       => "El código iso introducido ya existe" },;
                            "nombre" =>          {  "required"     => "El nombre es un datos requerido",;
-                                                   "unique"       => "El nombre introducido ya existe" },;
-                           "iso"    =>          {  "required"     => "El iso es un campo requerido",;
-                                                   "unique"       => "El iso introducido ya existe"} } 
+                                                   "unique"       => "El nombre introducido ya existe" } } 
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -218,22 +193,15 @@ END CLASS
 
 METHOD getColumns() CLASS SQLPaisesModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "text"      => "Identificador"                           ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"         ,;
+                                             "text"      => "Identificador"                         ,;
+                                             "default"   => {|| 0 } }                                )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "text"      => "Uuid"                                    ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                          ,;
+                                             "default"   => {|| space( 3 ) } }                       )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 10 )"                          ,;
-                                             "default"   => {|| space( 10 ) } }                       )
-
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 20 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
-
-   hset( ::hColumns, "iso",               {  "create"    => "VARCHAR( 5 )"                          ,;
-                                             "default"   => {|| space( 5 ) } }                       )
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 100 )"                        ,;
+                                             "default"   => {|| space( 100 ) } }                     )
 
 RETURN ( ::hColumns )
 
