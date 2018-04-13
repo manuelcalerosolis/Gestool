@@ -115,4 +115,3 @@ METHOD getUuidWhereColumn( uValue, cColumn, uDefault )
 RETURN ( uDefault )
 
 //---------------------------------------------------------------------------//
-

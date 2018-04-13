@@ -5,6 +5,7 @@
 
 CLASS CodigosPostalesController FROM SQLNavigatorController
 
+   DATA oProvinciasController
 
    METHOD New()
 
@@ -34,6 +35,7 @@ METHOD New() CLASS CodigosPostalesController
 
    ::oValidator               := CodigosPostalesValidator():New( self )
 
+   ::oProvinciasController    := ProvinciasController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -102,7 +104,12 @@ RETURN ( self )
 
 CLASS CodigosPostalesView FROM SQLBaseView
   
+   DATA oSayProvincia
+   DATA cSayProvincia
+
    METHOD Activate()
+
+   METHOD validProvincia()
 
 END CLASS
 
@@ -112,6 +119,8 @@ METHOD Activate() CLASS CodigosPostalesView
 
    local oDlg
    local oBmpGeneral
+
+   ::validProvincia()
 
    DEFINE DIALOG  oDlg ;
       RESOURCE    "CODIGO_POSTAL" ;
@@ -138,7 +147,15 @@ METHOD Activate() CLASS CodigosPostalesView
    REDEFINE GET   ::oController:oModel:hBuffer[ "provincia" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "provincia" ) ) ;
+      VALID       ( ::oController:validate( "provincia" ), ::validProvincia() ) ;
+      BITMAP      "LUPA" ;
+      OF          oDlg
+   
+   //   ON HELP      ;
+
+   REDEFINE GET ::oSayProvincia VAR ::cSayProvincia ;
+      ID          121;
+      WHEN        ( .f. );
       OF          oDlg
 
    REDEFINE BUTTON ;
@@ -164,6 +181,17 @@ METHOD Activate() CLASS CodigosPostalesView
 RETURN ( oDlg:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD validProvincia() CLASS CodigosPostalesView
+
+   ::cSayProvincia  := SQLProvinciasModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "provincia" ] )
+
+   if !Empty( ::oSayProvincia )
+      ::oSayProvincia:Refresh()
+   end if
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -180,10 +208,9 @@ END CLASS
 
 METHOD getValidators() CLASS CodigosPostalesValidator
 
-   ::hValidators  := {     "codigo"       =>    {  "required"     => "El código es un dato requerido",;
-                                                   "unique"       => "El código introducido ya existe" },;
-                           "poblacion"    =>    {  "required"     => "La población es un dato requerido"},;
-                           "provincia"    =>    {  "required"     => "La provincia es un campo requerido"} }
+   ::hValidators  := {     "codigo"       =>    {  "required"     => "El código es un dato requerido" },;
+                           "poblacion"    =>    {  "required"     => "La población es un dato requerido" },;
+                           "provincia"    =>    {  "required"     => "La provincia es un campo requerido" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
