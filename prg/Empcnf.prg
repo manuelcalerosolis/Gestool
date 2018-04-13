@@ -1288,8 +1288,20 @@ RETURN ( cPatImg )
 
 //---------------------------------------------------------------------------//
 
+Function cPathImageApplicationStorage()
+
+RETURN ( FullCurDir() + "Imagen\" )
+
+//---------------------------------------------------------------------------//
+
+Function cRelativeImageApplicationStorage()
+
+RETURN ( ".\Imagen\" )
+
+//---------------------------------------------------------------------------//
+
 /*
-Devuelve el numero de digitos de proveedores de la empresa activa
+Devuelve el numero de digitos de proveedores de la empresa activa--------------
 */
 
 FUNCTION RetNumCodPrvEmp()

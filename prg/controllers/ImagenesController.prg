@@ -105,7 +105,7 @@ METHOD addColumns() CLASS ImagenesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'parent_uuid'
-      :cHeader             := 'Parent Uuid'
+      :cHeader             := 'Uuid entidad'
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'parent_uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -113,20 +113,11 @@ METHOD addColumns() CLASS ImagenesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'ruta_local'
-      :cHeader             := 'Ruta Local'
+      :cSortOrder          := 'imagen'
+      :cHeader             := 'Imagen'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'ruta_local' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'imagen' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'ruta_remota'
-      :cHeader             := 'Ruta Remota'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'ruta_remota' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
 RETURN ( self )
@@ -164,13 +155,8 @@ METHOD Activate() CLASS ImagenesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "ruta_local" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "imagen" ] ;
       ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "ruta_remota" ] ;
-      ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
@@ -237,7 +223,9 @@ CLASS SQLImagenesModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+   METHOD getIdWhereParentUuid( uuid )             INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+
+   METHOD updateImagenWhereUuid( uValue, uuid )    INLINE ( ::updateFieldWhereUuid( uuid, 'imagen', uValue ) )
 
 END CLASS
 
@@ -246,21 +234,16 @@ END CLASS
 METHOD getColumns() CLASS SQLImagenesModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL "                   ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "ruta_local",        {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "imagen",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
-
-   hset( ::hColumns, "ruta_remota",       {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                      ) 
 
 RETURN ( ::hColumns )
 

@@ -4324,6 +4324,149 @@ RETURN ( .f. )
 //---------------------------------------------------------------------------//
 
 /*
+Selecciona el fichero de un grafico
+*/
+
+FUNCTION GetBmp( aGet )
+
+   local cFile := Upper( cGetFile( "Imagenes (*.bmp,jpg,png,gif)|*.bmp;*.jpg;*.png;*.gif|", "Seleccione el fichero", 1, Rtrim( cPatImg() ) ) )
+
+   if aGet != nil .and. !Empty( cFile )
+
+      aGet:cText( Padr( cFile, 254 ) )
+
+      if !Empty( aGet:bChange )
+         Eval( aGet:bChange )
+      end if
+
+   end if
+
+RETURN ( cFile )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION ChgBmp( aGet, bmpFile )
+
+   local cFile    := ""
+
+   do case
+      case hb_isobject( aGet )
+         cFile    := cFileBmpName( Rtrim( aGet:VarGet() ) )
+      case hb_ischar( aGet )
+         cFile    := Rtrim( aGet )
+   end case
+
+   if empty( bmpFile )
+      RETURN ( .t. )
+   end if 
+
+   if !file( cFile )
+      bmpFile:Hide()
+      RETURN ( .t. )
+   end if
+
+   bmpFile:LoadBmp( cFile )
+   bmpFile:Show()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cFileBmpName( cFile, lEmptyImage )
+
+   DEFAULT lEmptyImage  := .f.
+
+   if File( cFile )
+      RETURN ( cFile )
+   end if
+
+   if At( ":", cFile ) == 0 .and. !Empty( cPatImg() )
+      cFile    := Rtrim( cPatImg() ) + Rtrim( cFile )
+   else
+      cFile    := Rtrim( cFile )
+   end if
+
+   if lEmptyImage .and. !File( cFile )
+      cFile    := "Bmp\NoImage.bmp"
+   end if
+
+RETURN ( cFile )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION isImageInApplicationStorage( cFile )
+
+   if empty( cFile )
+      RETURN ( .f. )
+   end if
+
+   if empty( cPatImg() )
+      RETURN ( .f. )
+   end if
+
+   cFile       := rtrim( cPatImg() ) + rtrim( cFile )
+
+RETURN ( file( cFile ) )
+
+//---------------------------------------------------------------------------//
+
+Function ShowImage( oBmpImage )
+
+   local oDlg
+   local oBmp
+   local nHeight
+   local nWidth
+
+   if !Empty( oBmpImage )
+
+      nHeight     := oBmpImage:nHeight()
+      nWidth      := oBmpImage:nWidth()
+
+      if !Empty( nHeight ) .and. !Empty( nWidth )
+
+         DEFINE DIALOG oDlg FROM 0, 0 TO nHeight, nWidth PIXEL TITLE "Imagen"
+
+            @ 0, 0   IMAGE    oBmp ;
+                     OF       oDlg ;
+                     FILE     Rtrim( oBmpImage:cBmpFile )
+
+         ACTIVATE DIALOG oDlg CENTER
+
+      end if
+
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Function ShowImageFile( cImageFile )
+
+   local oDlg
+   local oBmp
+
+   if File( Rtrim( cImageFile ) )
+
+      DEFINE DIALOG oDlg FROM 0, 0 TO 800, 800 PIXEL TITLE "Imagen"
+
+         @ 0, 0   IMAGE oBmp ;
+                  OF    oDlg ;
+                  FILE  Rtrim( cImageFile )
+
+      ACTIVATE DIALOG oDlg CENTER
+
+   else
+
+      MsgStop( "Fichero " + Rtrim( cImageFile ) + " no encontrado." )
+
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+
+/*
 Function QrCodeToHBmp( nLineWidth, nLineHeight, cVar, cFileName, cFlags, nColor, nColorBack  )
 
    local oBmp

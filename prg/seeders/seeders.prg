@@ -750,7 +750,7 @@ METHOD getStatementCamposExtraValores( dbf ) CLASS Seeders
 
    local hCampos  := {  "uuid"                     => quoted( ( dbf )->Uuid ),;
                         "campo_extra_entidad_uuid" => quoted( CamposExtraModel():getUuid( ( dbf )->cCodTipo ) ),;
-                        "entidad_uuid"             => quoted( ::getEntidadUuid( ( dbf )->cCodTipo, ( dbf )->cClave ) ),;
+                        "entidad_uuid"             => quoted( ::getEntidadUuid( ( dbf )->cTipDoc, ( dbf )->cClave ) ),;
                         "valor"                    => quoted( ( dbf )->cValor ) }
 
 RETURN ( ::getInsertStatement( hCampos, "campos_extra_valores" ) )
@@ -787,15 +787,19 @@ METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS Seeders
 
    cTipoDocumento       := alltrim( cTipoDocumento )
    cClave               := alltrim( cClave )
-
+   
    msgalert( cTipoDocumento, "cTipoDocumento" )
-   msgalert( cClave, "cClave" )
 
    do case 
-      case cTipoDocumento = "20" // "Artículos" => "20"
+      case cTipoDocumento == "20" // "Artículos" => "20"
+         
+         msgalert( cTipoDocumento, "20" )
+
          cEntidadUuid   := ArticulosModel():getUuid( cClave )
 
    end case
+
+   msgalert( cEntidadUuid, "cEntidadUuid" )
 
 RETURN ( cEntidadUuid )
 

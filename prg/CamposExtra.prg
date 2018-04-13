@@ -458,6 +458,7 @@ METHOD cargaValoresDocumentos( nMode ) CLASS TCamposExtra
 
    if nMode == APPD_MODE .or. Empty( ::oDbf:mDocumento )
       ::initDocumentos()
+      ::oDbf:Uuid    := win_uuidcreatestring()
    else
       ::getDocumentos()
    end if
