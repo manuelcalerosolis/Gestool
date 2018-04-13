@@ -219,13 +219,15 @@ RETURN ( ::hValidators )
 
 CLASS SQLImagenesModel FROM SQLBaseModel
 
-   DATA cTableName                     INIT "imagenes"
+   DATA cTableName                                 INIT "imagenes"
 
    METHOD getColumns()
 
    METHOD getIdWhereParentUuid( uuid )             INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD updateImagenWhereUuid( uValue, uuid )    INLINE ( ::updateFieldWhereUuid( uuid, 'imagen', uValue ) )
+   
+   METHOD SetImagenAttribute( uValue )             
 
 END CLASS
 
@@ -246,6 +248,30 @@ METHOD getColumns() CLASS SQLImagenesModel
                                              "default"   => {|| space( 200 ) } }                      )
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetImagenAttribute( uValue )
+
+   local cNombreImagen
+
+   if empty( uValue ) .or. isImageInApplicationStorage( uValue )
+      RETURN ( uValue )
+   end if       
+
+   if empty( ::oController ) .or. empty( ::oController:oSenderController )
+      RETURN ( uValue )
+   end if       
+
+   cNombreImagen           := alltrim( ::oController:oSenderController:oModel:hBuffer[ "nombre" ] ) 
+   cNombreImagen           += '(' + alltrim( ::hBuffer[ "uuid" ] ) + ')' + '.' 
+   cNombreImagen           += lower( getFileExt( uValue ) ) 
+
+   if !( copyfile( uValue, cPathImageApplicationStorage() + cNombreImagen ) )
+      RETURN ( self )
+   end if      
+
+RETURN ( cRelativeImageApplicationStorage() + cNombreImagen )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

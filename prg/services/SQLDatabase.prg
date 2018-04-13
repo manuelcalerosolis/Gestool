@@ -357,21 +357,18 @@ RETURN ( uValue )
 
 METHOD selectFetchArrayOneColumn( cSentence )
 
-   local uFetch
    local aFetch   
-   local aResult  
+   local aResult  := {}  
 
    aFetch         := ::selectFetchArray( cSentence, .f. )
 
    if !hb_isarray( aFetch )
-      RETURN ( nil )
+      RETURN ( aResult )
    end if 
 
    aResult        := array( len( aFetch ) )
 
-   for each uFetch in aFetch 
-      aResult[ hb_enumindex() ]  := afirst( uFetch ) 
-   next
+   aeval( aFetch, {|x, n| aResult[ n ] := afirst( x ) } )
 
 RETURN ( aResult )
 

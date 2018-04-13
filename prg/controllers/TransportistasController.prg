@@ -278,12 +278,10 @@ END CLASS
 
 METHOD getNombres() CLASS TransportistasRepository
 
-   local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() + " ORDER BY nombre ASC" )
-   local aResult     := { "" }
+   local cSentence     := "SELECT nombre FROM " + ::getTableName() + " ORDER BY nombre ASC"
+   local aNombres      := ::getDatabase():selectFetchArrayOneColumn( cSentence )
 
-   if !empty( aNombres )
-      aeval( aNombres, {| h | aadd( aResult, alltrim( hGet( h, "nombre" ) ) ) } )
-   end if 
+   ains( aNombres, 1, "", .t. )
 
 RETURN ( aResult )
 

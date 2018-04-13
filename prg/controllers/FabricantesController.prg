@@ -9,8 +9,6 @@ CLASS FabricantesController FROM SQLNavigatorController
 
    METHOD New()
 
-   METHOD proccesImage()
-
    METHOD ImagenesControllerLoadCurrentBuffer()
 
    METHOD ImagenesControllerUpdateBuffer()
@@ -24,6 +22,7 @@ CLASS FabricantesController FROM SQLNavigatorController
 END CLASS
 
 //---------------------------------------------------------------------------//
+
 METHOD New() CLASS FabricantesController
 
    ::Super:New()
@@ -51,10 +50,6 @@ METHOD New() CLASS FabricantesController
    ::oRepository                 := FabricantesRepository():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
-   ::setEvent( 'appended',                            {|| ::proccesImage() } )
-   ::setEvent( 'edited',                              {|| ::proccesImage() } )
-   ::setEvent( 'duplicated',                          {|| ::proccesImage() } )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oImagenesController:oModel:loadBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oImagenesController:oModel:insertBuffer() } )
@@ -118,7 +113,8 @@ METHOD ImagenesControllerDeleteBuffer()
 
    ::oImagenesController:oModel:deleteWhereParentUuid( aUuidFabricante )
 
-   RETURN ( self )
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 
 METHOD ImagenesControllerLoadedDuplicateCurrentBuffer()
@@ -148,36 +144,6 @@ METHOD ImagenesControllerLoadedDuplicateBuffer()
 
 RETURN ( self )
 
-//---------------------------------------------------------------------------//
-
-METHOD proccesImage()
-
-   local uuid              := alltrim( ::oImagenesController:oModel:hBuffer[ "uuid" ] )
-   local cImagen           := alltrim( ::oImagenesController:oModel:hBuffer[ "imagen" ] )
-   local cNombreFabricante := alltrim( ::oModel:hBuffer[ "nombre" ] )
-   local cNombreImagen
-
-   if empty( cImagen )
-      RETURN ( self )
-   end if       
-
-   if isImageInApplicationStorage( cImagen )
-      RETURN ( self )
-   end if       
-
-   cNombreImagen           := cNombreFabricante + '(' + uuid + ')' + '.' + lower( getFileExt( cImagen ) ) 
-
-   if !( copyfile( cImagen, cPathImageApplicationStorage() + cNombreImagen ) )
-      RETURN ( self )
-   end if       
-
-   ::oImagenesController:oModel:updateImagenWhereUuid( cRelativeImageApplicationStorage() + cNombreImagen, uuid )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -374,7 +340,7 @@ METHOD getColumns() CLASS SQLFabricantesModel
    hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                        "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                        "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 100 )"                          ,;
@@ -400,27 +366,13 @@ CLASS FabricantesRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLAgentesModel():getTableName() ) 
 
-   METHOD getNombres()
+   METHOD getNombres()                    INLINE ( ::getDatabase():selectFetchArrayOneColumn( "SELECT nombre FROM " + ::getTableName() ) )
 
    METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
 
    METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD getNombres() CLASS FabricantesRepository
-
-   local h
-   local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
-   local aResult     := {}
-
-   for each h in aNombres
-      aAdd( aResult, AllTrim( hGet( h, "nombre" ) ) )
-   next
-
-RETURN ( aResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
