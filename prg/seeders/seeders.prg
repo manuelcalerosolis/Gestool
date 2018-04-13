@@ -9,8 +9,6 @@ CLASS Seeders
    DATA oMsg
 
    DATA hConfig
-   DATA cStmProvincias
-   DATA cStmCodigosPostales
 
    METHOD New()
 
@@ -18,7 +16,6 @@ CLASS Seeders
    METHOD runSeederEmpresa()
 
    METHOD getFullFileProvincias()            INLINE ( cPatConfig() + "insertprovincias.sql" )
-   METHOD getFullFileCodigosPostales()       INLINE ( cPatConfig() + "insertcodigospostales.sql" )
 
    METHOD getInsertStatement( hCampos, cDataBaseName )
 
@@ -43,8 +40,7 @@ CLASS Seeders
    METHOD SeederMovimientosAlmacenSeries()
    METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer )
 
-   METHOD SeederProvincias()
-   METHOD SeederCodigosPostales()
+   METHOD SeederSqlFiles()
 
    METHOD SeederLenguajes()
    METHOD getStatementLenguajes( dbfLenguajes )
@@ -70,20 +66,17 @@ RETURN ( self )
 
 METHOD runSeederDatos()
 
-   ::oMsg:SetText( "Datos: Ejecutando seeder de usuarios" )
+   /*::oMsg:SetText( "Datos: Ejecutando seeder de usuarios" )
    ::SeederUsuarios()
 
    ::oMsg:SetText( "Datos: Ejecutando seeder de situaciones" )
    ::SeederSituaciones()
 
    ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de impresoras" )
-   ::SeederTiposImpresoras()
+   ::SeederTiposImpresoras()*/
 
-   //::oMsg:SetText( "Datos: Ejecutando provincias" )
-   //::SeederProvincias()
-
-   //::oMsg:SetText( "Datos: Ejecutando códigos postales" )
-   //::SeederCodigosPostales()
+   ::oMsg:SetText( "Datos: Ejecutando ficheros SQL" )
+   ::SeederSqlFiles()
 
    //::oMsg:SetText( "Datos: Ejecutando lenguajes" )
    //::SeederLenguajes()
@@ -95,8 +88,8 @@ RETURN ( self )
 METHOD runSeederEmpresa()
 
    SincronizaRemesasMovimientosAlmacen()
-/*
-   ::oMsg:SetText( "Ejecutando seeder de cabeceras de movimientos de almacén" )
+
+   /*::oMsg:SetText( "Ejecutando seeder de cabeceras de movimientos de almacén" )
    ::SeederMovimientosAlmacen()
    
    ::oMsg:SetText( "Ejecutando seeder de líneas de movimientos de almacén" )
@@ -107,9 +100,9 @@ METHOD runSeederEmpresa()
 
    ::oMsg:SetText( "Ejecutando seeder de transportistas" )
    ::SeederTransportistas()
-*/
+
    ::oMsg:SetText( "Ejecutando seeder de campos extra" )
-   ::SeederCamposExtra()
+   ::SeederCamposExtra()*/
 
    ::oMsg:SetText( "Seeders finalizados" )
 
@@ -629,54 +622,6 @@ RETURN ( ::getInsertStatement( hCampos, "lenguajes" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD SeederProvincias()
-
-   if !file( ::getFullFileProvincias() )
-      ::oMsg:SetText( "Fichero " + ::getFullFileProvincias() + " no encontrado" )
-      RETURN ( Self )
-   end if 
-
-   ::cStmProvincias                    := memoread( ::getFullFileProvincias() )
-
-   ::oMsg:SetText( "Fichero " + ::getFullFileProvincias() + " cargado correctamente" )
-
-   if Empty( ::cStmProvincias )
-      ::oMsg:SetText( "No hay provincias a importar" )
-      return ( self )
-   end if
-
-   ::oMsg:SetText( "Importando provincias" )
-
-   getSQLDatabase():Exec( ::cStmProvincias )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SeederCodigosPostales()
-
-   if !file( ::getFullFileCodigosPostales() )
-      ::oMsg:SetText( "Fichero " + ::getFullFileCodigosPostales() + " no encontrado" )
-      RETURN ( Self )
-   end if 
-
-   ::cStmCodigosPostales               := memoread( ::getFullFileCodigosPostales() )
-
-   ::oMsg:SetText( "Fichero " + ::getFullFileCodigosPostales() + " cargado correctamente" )
-
-   if Empty( ::cStmCodigosPostales )
-      ::oMsg:SetText( "No hay códigos postales a importar" )
-      return ( self )
-   end if
-
-   ::oMsg:SetText( "Importando códigos postales" )
-
-   getSQLDatabase():Exec( ::cStmCodigosPostales )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
 METHOD SeederTransportistas()
 
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
@@ -771,5 +716,43 @@ METHOD getStatementCamposExtra() CLASS Seeders
                         "lista"     => quoted( field->mDefecto ) }
 
 RETURN ( ::getInsertStatement( hCampos, "campos_extra" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederSqlFiles()
+
+   local cFile
+   local cStm
+   local cPath          := cPatConfig() + "sql\"
+   local aDirectory     := Directory( cPath + "*.sql" )
+   local aFile
+
+   if len( aDirectory ) == 0
+      Return( self )
+   end if
+
+   for each aFile in aDirectory
+
+      ::oMsg:SetText( "Procesando fichero " + cPath + aFile[1] )
+
+      if !file( cPath + aFile[1] )
+
+         ::oMsg:SetText( "Fichero " + cPath + aFile[1] + " no encontrado" )
+
+      else
+
+         cStm  := memoread( cPath + aFile[1] )
+
+         if !Empty( cStm )
+         
+            getSQLDatabase():Exec( cStm )
+
+         end if
+
+      end if
+
+   next
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
