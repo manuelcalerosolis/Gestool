@@ -8,6 +8,8 @@ CLASS PaisesController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD getSelectorPais( oGet )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -37,6 +39,24 @@ METHOD New() CLASS PaisesController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSelectorPais( oGet ) CLASS PaisesController
+
+   local hResult := ::ActivateSelectorView()
+
+   if hb_isnil( hResult )
+      RETURN ( Self )
+   end if 
+
+   if hHasKey( hResult, "codigo" )
+      oGet:cText( hGet( hResult, "codigo" ) )
+   else
+      oGet:cText( "" )
+   end if
+   
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

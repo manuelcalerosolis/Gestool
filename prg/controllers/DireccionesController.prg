@@ -5,6 +5,9 @@
 
 CLASS DireccionesController FROM SQLBrowseController
 
+   DATA oPaisesController
+   DATA oProvinciasController
+
    METHOD New()
 
    METHOD loadedBlankBuffer()
@@ -32,6 +35,9 @@ METHOD New( oSenderController ) CLASS DireccionesController
    ::oDialogView                 := DireccionesView():New( self )
 
    ::oValidator                  := DireccionesValidator():New( self, ::oDialogView )
+
+   ::oPaisesController           := PaisesController():New( self )
+   ::oProvinciasController       := ProvinciasController():New( self )
 
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
@@ -180,10 +186,18 @@ RETURN ( self )
 CLASS DireccionesView FROM SQLBaseView
   
    DATA oGetPoblacion
+   
    DATA oGetProvincia
+   DATA oSayProvincia
+   DATA cSayProvincia
+
+   DATA oGetPais
+   DATA oSayPais
+   DATA cSayPais
 
    METHOD Activate()
-   METHOD validCodigoPostal()
+   
+   METHOD validateFields()
 
 END CLASS
 
@@ -221,7 +235,7 @@ METHOD Activate() CLASS DireccionesView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo_postal" ), ::validCodigoPostal() ) ;
+      VALID       ( ::oController:validate( "codigo_postal" ), ::validateFields() ) ;
       OF          ::oDialog 
 
    REDEFINE GET   ::oGetPoblacion VAR ::oController:oModel:hBuffer[ "poblacion" ] ;
@@ -233,7 +247,29 @@ METHOD Activate() CLASS DireccionesView
    REDEFINE GET   ::oGetProvincia VAR ::oController:oModel:hBuffer[ "provincia" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "provincia" ) ) ;
+      VALID       ( ::oController:validate( "provincia" ), ::validateFields() ) ;
+      BITMAP      "LUPA" ;
+      OF          ::oDialog
+
+   ::oGetProvincia:bHelp  := {|| ::oController:oProvinciasController:getSelectorProvincia( ::oGetProvincia ), ::validateFields() }
+
+   REDEFINE GET ::oSayProvincia VAR ::cSayProvincia ;
+      ID          141;
+      WHEN        ( .f. );
+      OF          ::oDialog
+
+   REDEFINE GET   ::oGetPais VAR ::oController:oModel:hBuffer[ "codigo_pais" ] ;
+      ID          180 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "codigo_pais" ), ::validateFields() ) ;
+      BITMAP      "LUPA" ;
+      OF          ::oDialog
+
+   ::oGetPais:bHelp  := {|| ::oController:oPaisesController:getSelectorPais( ::oGetPais ), ::validateFields() }
+
+   REDEFINE GET ::oSayPais VAR ::cSayPais ;
+      ID          181;
+      WHEN        ( .f. );
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
@@ -270,6 +306,8 @@ METHOD Activate() CLASS DireccionesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
+   ::oDialog:bStart     := {|| ::validateFields() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()
@@ -278,24 +316,37 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD validCodigoPostal() CLASS DireccionesView
+METHOD validateFields() CLASS DireccionesView
 
-   msginfo( ::oController:oModel:hBuffer[ "codigo_postal" ], "codigo_postal" )
+   local cCodigoProvincia
 
-   if Empty( ::oGetPoblacion:VarGet() )
+   if Empty( ::oController:oModel:hBuffer[ "poblacion" ] )
       ::oGetPoblacion:cText( SQLCodigosPostalesModel():getField( "poblacion", "codigo", ::oController:oModel:hBuffer[ "codigo_postal" ] ) )
       ::oGetPoblacion:Refresh()
    end if
 
-//SQLProvinciasModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "provincia" ] )                            )
+   cCodigoProvincia     := SQLCodigosPostalesModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "codigo_postal" ] )
 
-   if Empty( ::oGetProvincia:VarGet() )
-      ::oGetProvincia:cText( SQLCodigosPostalesModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "codigo_postal" ] ) )
+   if !Empty( cCodigoProvincia ) .and. Empty( ::oController:oModel:hBuffer[ "provincia" ] )
+      ::oGetProvincia:cText( cCodigoProvincia )
       ::oGetProvincia:Refresh()
+   end if
+
+   ::cSayProvincia  := SQLProvinciasModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "provincia" ] )
+
+   if !Empty( ::oSayProvincia )
+      ::oSayProvincia:Refresh()
+   end if
+
+   ::cSayPais  := SQLPaisesModel():getField( "nombre", "codigo", ::oController:oModel:hBuffer[ "codigo_pais" ] )
+
+   if !Empty( ::oSayPais )
+      ::oSayPais:Refresh()
    end if
 
 RETURN ( .t. )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -371,13 +422,16 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "codigo_postal",     {  "create"    => "VARCHAR( 10 )"                           ,;
                                              "default"   => {|| space( 10 ) } }                       )
 
+   hset( ::hColumns, "codigo_pais",       {  "create"    => "VARCHAR( 3 )"                            ,;
+                                             "default"   => {|| space( 3 ) } }                        )
+
    hset( ::hColumns, "telefono",          {  "create"    => "VARCHAR( 15 )"                           ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
-   hset( ::hColumns, "movil",             {  "create"    => "VARCHAR( 15 )"                          ,;
+   hset( ::hColumns, "movil",             {  "create"    => "VARCHAR( 15 )"                           ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
-   hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 200 )"                         ,;
+   hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )  
 
 RETURN ( ::hColumns )
