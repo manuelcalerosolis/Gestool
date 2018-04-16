@@ -33,6 +33,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
    METHOD ActivateNavigatorView()
 
    METHOD ActivateSelectorView()
+   METHOD ActivateSelectorViewNoCenter()              INLINE ( ::ActivateSelectorView( .f. ) )
 
    METHOD closeAllWindows()                           INLINE ( if( !empty( oWnd() ), ( SysRefresh(), oWnd():CloseAll(), SysRefresh() ), ) )
 
@@ -149,7 +150,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActivateSelectorView()
+METHOD ActivateSelectorView( lCenter )
+
+   DEFAULT lCenter   := .t.
 
    if empty( ::oSelectorView )
       RETURN ( nil )
@@ -165,7 +168,7 @@ METHOD ActivateSelectorView()
 
    ::oRowSet:build( ::oModel:getSelectSentence() )
 
-RETURN ( ::oSelectorView:Activate() )
+RETURN ( ::oSelectorView:Activate( lCenter ) )
 
 //---------------------------------------------------------------------------//
 

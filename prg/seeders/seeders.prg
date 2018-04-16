@@ -69,17 +69,17 @@ RETURN ( self )
 
 METHOD runSeederDatos()
 
-   /*::oMsg:SetText( "Datos: Ejecutando seeder de usuarios" )
+   ::oMsg:SetText( "Datos: Ejecutando seeder de usuarios" )
    ::SeederUsuarios()
 
    ::oMsg:SetText( "Datos: Ejecutando seeder de situaciones" )
    ::SeederSituaciones()
 
    ::oMsg:SetText( "Datos: Ejecutando seeder de tipos de impresoras" )
-   ::SeederTiposImpresoras()*/
+   ::SeederTiposImpresoras()
 
-   //::oMsg:SetText( "Datos: Ejecutando lenguajes" )
-   //::SeederLenguajes()
+   ::oMsg:SetText( "Datos: Ejecutando lenguajes" )
+   ::SeederLenguajes()
 
    ::oMsg:SetText( "Datos: Ejecutando ficheros SQL" )
    ::SeederSqlFiles()
@@ -99,13 +99,13 @@ METHOD runSeederEmpresa()
    ::SeederMovimientosAlmacenLineas()
 
    ::oMsg:SetText( "Ejecutando seeder de números de serie de lineas de movimientos de almacén" )
-   ::SeederMovimientosAlmacenSeries()
+   ::SeederMovimientosAlmacenSeries()*/
 
    ::oMsg:SetText( "Ejecutando seeder de transportistas" )
    ::SeederTransportistas()
 
    ::oMsg:SetText( "Ejecutando seeder de campos extra" )
-   ::SeederCamposExtra()*/
+   ::SeederCamposExtra()
 
    ::oMsg:SetText( "Ejecutando seeder de campos extra valores" )
    ::SeederCamposExtraValores()
