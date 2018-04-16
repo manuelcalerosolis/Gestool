@@ -123,6 +123,7 @@ METHOD Activate() CLASS TransportistasView
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
+   local oGetDni
 
    DEFINE DIALOG  oDlg ;
       RESOURCE    "TRANSPORTISTA" ;
@@ -140,10 +141,10 @@ METHOD Activate() CLASS TransportistasView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "dni" ] ;
+   REDEFINE GET   oGetDni VAR ::oController:oModel:hBuffer[ "dni" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "dni" ) ) ;
+      VALID       ( CheckCif( oGetDni ) ) ;
       OF          oDlg
 
    REDEFINE BUTTON oBtnAppend ;

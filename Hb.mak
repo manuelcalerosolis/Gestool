@@ -159,7 +159,6 @@ Pro.prg                 										\
 Reccli.prg              										\
 Turno.prg               										\
 Ttotturno.prg           										\
-Tblconv.prg             										\
 Regalm.prg              										\
 Rhtml.prg               										\
 Tshell.prg              										\
@@ -767,7 +766,6 @@ Pro.obj                                            				\
 Reccli.obj                                         				\
 Turno.obj                                          				\
 Ttotturno.obj                                      				\
-Tblconv.obj                                        				\
 Regalm.obj                                         				\
 Rhtml.obj                                          				\
 Tshell.obj                                         				\
@@ -1390,7 +1388,6 @@ $(OBJ)\Pro.obj                   										+
 $(OBJ)\Reccli.obj                										+
 $(OBJ)\Turno.obj                 										+
 $(OBJ)\Ttotturno.obj             										+
-$(OBJ)\Tblconv.obj               										+
 $(OBJ)\Regalm.obj                										+
 $(OBJ)\Rhtml.obj                 										+
 $(OBJ)\Tshell.obj                										+
