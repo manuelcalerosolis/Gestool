@@ -19,19 +19,19 @@ METHOD New( oSenderController ) CLASS DireccionesController
 
    ::Super:New( oSenderController )
 
-   ::lTransactional        := .t.
+   ::lTransactional              := .t.
 
-   ::cTitle                := "Direcciones"
+   ::cTitle                      := "Direcciones"
 
-   ::cName                 := "direcciones"
+   ::cName                       := "direcciones"
 
-   ::oModel                := SQLDireccionesModel():New( self )
+   ::oModel                      := SQLDireccionesModel():New( self )
 
-   ::oBrowseView           := DireccionesBrowseView():New( self )
+   ::oBrowseView                 := DireccionesBrowseView():New( self )
 
-   ::oDialogView           := DireccionesView():New( self )
+   ::oDialogView                 := DireccionesView():New( self )
 
-   ::oValidator            := DireccionesValidator():New( self, ::oDialogView )
+   ::oValidator                  := DireccionesValidator():New( self, ::oDialogView )
 
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
@@ -66,6 +66,7 @@ METHOD gettingSelectSentence() CLASS DireccionesController
 
 RETURN ( Self )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -178,7 +179,11 @@ RETURN ( self )
 
 CLASS DireccionesView FROM SQLBaseView
   
+   DATA oGetPoblacion
+   DATA oGetProvincia
+
    METHOD Activate()
+   METHOD validCodigoPostal()
 
 END CLASS
 
@@ -216,16 +221,16 @@ METHOD Activate() CLASS DireccionesView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo_postal" ) ) ;
+      VALID       ( ::oController:validate( "codigo_postal" ), ::validCodigoPostal() ) ;
       OF          ::oDialog 
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "poblacion" ] ;
+   REDEFINE GET   ::oGetPoblacion VAR ::oController:oModel:hBuffer[ "poblacion" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "poblacion" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "provincia" ] ;
+   REDEFINE GET   ::oGetProvincia VAR ::oController:oModel:hBuffer[ "provincia" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "provincia" ) ) ;
@@ -270,6 +275,26 @@ METHOD Activate() CLASS DireccionesView
    ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD validCodigoPostal() CLASS DireccionesView
+
+   msginfo( ::oController:oModel:hBuffer[ "codigo_postal" ], "codigo_postal" )
+
+   if Empty( ::oGetPoblacion:VarGet() )
+      ::oGetPoblacion:cText( SQLCodigosPostalesModel():getField( "poblacion", "codigo", ::oController:oModel:hBuffer[ "codigo_postal" ] ) )
+      ::oGetPoblacion:Refresh()
+   end if
+
+//SQLProvinciasModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "provincia" ] )                            )
+
+   if Empty( ::oGetProvincia:VarGet() )
+      ::oGetProvincia:cText( SQLCodigosPostalesModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "codigo_postal" ] ) )
+      ::oGetProvincia:Refresh()
+   end if
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

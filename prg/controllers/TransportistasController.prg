@@ -283,6 +283,6 @@ METHOD getNombres() CLASS TransportistasRepository
 
    ains( aNombres, 1, "", .t. )
 
-RETURN ( aResult )
+RETURN ( aNombres )
 
 //---------------------------------------------------------------------------//

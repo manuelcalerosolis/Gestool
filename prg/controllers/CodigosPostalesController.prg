@@ -9,6 +9,8 @@ CLASS CodigosPostalesController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD getSelectorProvincia( oGet )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -39,6 +41,24 @@ METHOD New() CLASS CodigosPostalesController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSelectorProvincia( oGet ) CLASS CodigosPostalesController
+
+   local hResult := ::oProvinciasController:ActivateSelectorView()
+
+   if !Empty( hResult )
+
+      if hHasKey( hResult, "codigo" )
+         oGet:cText( hGet( hResult, "codigo" ) )
+      else
+         oGet:cText( "" )
+      end if
+
+   end if
+   
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -119,6 +139,7 @@ METHOD Activate() CLASS CodigosPostalesView
 
    local oDlg
    local oBmpGeneral
+   local oGetProvincia
 
    ::validProvincia()
 
@@ -144,14 +165,14 @@ METHOD Activate() CLASS CodigosPostalesView
       VALID       ( ::oController:validate( "poblacion" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "provincia" ] ;
+   REDEFINE GET   oGetProvincia VAR ::oController:oModel:hBuffer[ "provincia" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "provincia" ), ::validProvincia() ) ;
       BITMAP      "LUPA" ;
       OF          oDlg
-   
-   //   ON HELP      ;
+
+      oGetProvincia:bHelp  := {|| ::oController:getSelectorProvincia( oGetProvincia ), ::validProvincia() }
 
    REDEFINE GET ::oSayProvincia VAR ::cSayProvincia ;
       ID          121;

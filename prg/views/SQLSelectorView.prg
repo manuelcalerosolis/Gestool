@@ -19,7 +19,8 @@ CLASS SQLSelectorView FROM SQLBrowseableView
 
    METHOD End()
 
-   METHOD Activate()
+   METHOD Activate( bInitActivate )
+      METHOD ActivateMoved()              INLINE ( ::Activate( .f. ) )
       METHOD initActivate()               INLINE ( iif( hb_isblock( ::bInitActivate ), eval( ::bInitActivate, Self ), ) )
 
    METHOD isActive()                      INLINE ( ::oDialog != nil )
@@ -38,7 +39,9 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD Activate()
+METHOD Activate( lCenter )
+
+   DEFAULT lCenter         := .t.
 
    DEFINE DIALOG           ::oDialog ;
       RESOURCE             "SELECTOR_VIEW" ;
@@ -80,7 +83,7 @@ METHOD Activate()
 
       ::getGetSearch():bChange      := {|| ::onChangeSearch() } 
 
-   ::oDialog:Activate( , , , .f., , .t., {|| ::initActivate() } )
+   ::oDialog:Activate( , , , lCenter, , .t., {|| ::initActivate() } )
 
 RETURN ( ::getSelectedBuffer() )
 

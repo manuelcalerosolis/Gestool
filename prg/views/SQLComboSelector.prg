@@ -102,7 +102,7 @@ METHOD ActionLink() CLASS ComboSelector
 
    ::oController:oSelectorView:bInitActivate := {|| ::moveSelectorView() }
 
-   hResult        := ::oController:ActivateSelectorView()
+   hResult                                   := ::oController:ActivateSelectorViewNoCenter()
 
    if hb_isnil( hResult )
       RETURN ( Self )
