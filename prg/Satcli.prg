@@ -293,7 +293,6 @@ static dbfTarPreS
 static dbfPromoT
 static dbfPromoL
 static dbfPromoC
-static dbfTblCnv
 static dbfIva
 static dbfTmpLin
 static dbfTmpInc
@@ -602,9 +601,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
       SET ADSINDEX TO ( cPatEmp() + "ARTDIV.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
-      SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
       SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
@@ -921,10 +917,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfArtDiv    )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTblCnv )
-      ( dbfTblCnv    )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfCajT )
       ( dbfCajT )->( dbCloseArea() )
    end if
@@ -1078,7 +1070,6 @@ STATIC FUNCTION CloseFiles()
    dbfObrasT      := nil
    dbfRuta        := nil
    dbfArtDiv      := nil
-   dbfTblCnv      := nil
    dbfCajT        := nil
    dbfDelega      := nil
    oBandera       := nil

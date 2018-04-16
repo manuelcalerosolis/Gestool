@@ -91,7 +91,6 @@ InfAge.prg              \
 InfAlm.prg              \
 InfCaj.prg              \
 InfCategoria.prg        \
-InfCnv.prg              \
 InfDiv.prg              \
 InfFpg.prg              \
 InfGrpArt.prg           \
@@ -1015,7 +1014,6 @@ InfAge.obj              \
 InfAlm.obj              \
 InfCaj.obj              \
 InfCategoria.obj        \
-InfCnv.obj              \
 InfDiv.obj              \
 InfFpg.obj              \
 InfGrpArt.obj           \
@@ -1951,7 +1949,6 @@ $(OBJ)\InfAge.obj               +
 $(OBJ)\InfAlm.obj               +
 $(OBJ)\InfCaj.obj               +
 $(OBJ)\InfCategoria.obj         +
-$(OBJ)\InfCnv.obj               +
 $(OBJ)\InfDiv.obj               +
 $(OBJ)\InfFpg.obj               +
 $(OBJ)\InfGrpArt.obj            +

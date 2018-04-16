@@ -1251,17 +1251,6 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Factores conversión'
-   oItem:cMessage       := 'Acceso a los factores de conversion de los artículos'
-   oItem:bAction        := {|| TblCnv( "factores_de_conversion", oWnd ) }
-   oItem:cId            := "factores_de_conversion"
-   oItem:cBmp           := "gc_objects_transform_16"
-   oItem:cBmpBig        := "gc_objects_transform_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Unidades medición'
    oItem:cMessage       := 'Unidades de medición'
    oItem:bAction        := {|| UniMedicion():New( cPatEmp(), oWnd, "unidades_de_medicion" ):Activate() }

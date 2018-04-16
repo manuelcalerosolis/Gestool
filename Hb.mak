@@ -320,7 +320,6 @@ InfUbi.prg              													\
 InfRut.prg              													\
 InfPro.prg              													\
 InfTar.prg              													\
-InfCnv.prg              													\
 InfTipIva.prg           													\
 InfDiv.prg              													\
 InfFpg.prg              													\
@@ -945,7 +944,6 @@ InfUbi.obj              													\
 InfRut.obj              													\
 InfPro.obj              													\
 InfTar.obj              													\
-InfCnv.obj              													\
 InfTipIva.obj           													\
 InfDiv.obj              													\
 InfFpg.obj              													\
@@ -1548,7 +1546,6 @@ $(OBJ)\InfUbi.obj               											+
 $(OBJ)\InfRut.obj               											+
 $(OBJ)\InfPro.obj               											+
 $(OBJ)\InfTar.obj               											+
-$(OBJ)\InfCnv.obj               											+
 $(OBJ)\InfTipIva.obj            											+
 $(OBJ)\InfDiv.obj               											+
 $(OBJ)\InfFpg.obj               											+
