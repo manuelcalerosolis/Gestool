@@ -53,7 +53,11 @@ CLASS Seeders
    METHOD getStatementCamposExtra() 
    METHOD getStatementCamposExtraValores() 
    METHOD getEntidadUuid( cTipoDocumento, cClave ) 
+
    METHOD SeederCamposExtraValores()
+
+   METHOD SeederFabricantes()
+   METHOD getStatementFabricantes( dbf )
 
 END CLASS
 
@@ -109,6 +113,9 @@ METHOD runSeederEmpresa()
 
    ::oMsg:SetText( "Ejecutando seeder de campos extra valores" )
    ::SeederCamposExtraValores()
+
+   ::oMsg:SetText( "Ejecutando seeder de fabricantes" )
+   ::SeederFabricantes()
 
    ::oMsg:SetText( "Seeders finalizados" )
 
@@ -725,6 +732,37 @@ RETURN ( ::getInsertStatement( hCampos, "campos_extra" ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD SeederFabricantes() CLASS Seeders
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
+
+   if !( file( cPath + "Fabric.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Fabric.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "Fabric.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Fabric", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| getSQLDatabase():Exec( ::getStatementFabricantes( dbf ) ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementFabricantes( dbf ) CLASS Seeders
+
+   local hCampos  := {  "uuid"                     => quoted( ( dbf )->Uuid ),;
+                        "nombre"                   => quoted( ( dbf )->cNomFab ),;
+                        "pagina_web"               => quoted( ( dbf )->cUrlFab ) }
+
+RETURN ( ::getInsertStatement( hCampos, "fabricantes" ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD SeederCamposExtraValores() CLASS Seeders
 
    local dbf
@@ -793,8 +831,6 @@ METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS Seeders
    do case 
       case cTipoDocumento == "20" // "Artículos" => "20"
          
-         msgalert( cTipoDocumento, "20" )
-
          cEntidadUuid   := ArticulosModel():getUuid( cClave )
 
    end case
@@ -803,6 +839,12 @@ METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS Seeders
 
 RETURN ( cEntidadUuid )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD SeederSqlFiles()
