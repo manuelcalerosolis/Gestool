@@ -21998,7 +21998,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Fabricante", 800, "Static", WS_GROUP, 44, 3, 353, 25
   CONTROL "Fabricante", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 352, 52
   CONTROL "Página web", -1, "Static", WS_GROUP, 50, 56, 47, 8
-  CONTROL "Descripción*", -1, "Static", WS_GROUP, 50, 43, 41, 8
+  CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 43, 41, 8
   CONTROL "Ruta imagen", -1, "Static", WS_GROUP, 50, 69, 47, 8
 }
 

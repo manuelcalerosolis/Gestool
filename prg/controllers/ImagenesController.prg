@@ -268,7 +268,7 @@ METHOD SetImagenAttribute( uValue )
    cNombreImagen           += lower( getFileExt( uValue ) ) 
 
    if !( copyfile( uValue, cPathImageApplicationStorage() + cNombreImagen ) )
-      RETURN ( self )
+      RETURN ( uValue )
    end if      
 
 RETURN ( cRelativeImageApplicationStorage() + cNombreImagen )
