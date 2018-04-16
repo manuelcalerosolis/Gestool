@@ -99,6 +99,7 @@ METHOD ResourceComboBox() CLASS ComboSelector
    
    ::oComboBox             := TComboBox():ReDefine( ::idCombobox, bSETGET( ::cComboBox ), ::aComboBox, ::oDialog,,, {|| ::ChangeComboBox() } , , , , .f., {|| .t. } )
    ::oComboBox:lIncSearch  := .t.
+   ::oComboBox:cToolTip    := "Buscando : " + cvaltostr( ::oComboBox:cSearchKey )
 
 RETURN ( Self )
 
@@ -165,7 +166,11 @@ METHOD Refresh()
       RETURN ( Self )
    end if 
    
+   cursorWait()
+
    ::oComboBox:setItems( ::oController:oRepository:getNombres() )
+
+   cursorWE()
 
 RETURN ( Self )
 

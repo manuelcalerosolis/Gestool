@@ -241,15 +241,23 @@ Return ( self )
 
 METHOD deleteLinesDocument() CLASS InvoiceCustomer
 
-   D():getStatusFacturasClientesLineas( ::nView )
+   if lAIS()
 
-   ( D():FacturasClientesLineas( ::nView ) )->( ordSetFocus( 1 ) )
+      FacturasClientesLineasModel():deleteWherId( ::getSerie(), ::getStrNumero(), ::getSufijo() )
 
-   while ( D():FacturasClientesLineas( ::nView ) )->( dbSeek( ::getID() ) ) 
-      ::delDocumentLine()
-   end while
+   else
 
-   D():setStatusFacturasClientesLineas( ::nView ) 
+      D():getStatusFacturasClientesLineas( ::nView )
+
+      ( D():FacturasClientesLineas( ::nView ) )->( ordSetFocus( 1 ) )
+
+      while ( D():FacturasClientesLineas( ::nView ) )->( dbSeek( ::getID() ) ) 
+         ::delDocumentLine()
+      end while
+
+      D():setStatusFacturasClientesLineas( ::nView ) 
+
+   end if 
 
 Return ( Self )
 

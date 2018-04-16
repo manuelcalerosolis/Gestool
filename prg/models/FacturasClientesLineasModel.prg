@@ -12,7 +12,24 @@ CLASS FacturasClientesLineasModel FROM TransaccionesComercialesLineasModel
    METHOD getFechaFieldName()                      INLINE ( "dFecFac" )
    METHOD getHoraFieldName()                       INLINE ( "tFecFac" )
 
+   METHOD deleteWherId( cSerie, nNumero, cDelegacion )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
+
+METHOD deleteWherId( cSerie, nNumero, cDelegacion )
+
+   local cSentence
+
+   cSentence         := "DELETE FROM " + ::getTableName() + " " + ;
+                           "WHERE cSerie = '" + cSerie + "' AND nNumFac = " + alltrim( nNumero ) + " AND cSufFac = '" + cDelegacion + "'" 
+   
+   ADSBaseModel():ExecuteSqlStatement( cSentence )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+
 

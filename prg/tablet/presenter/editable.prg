@@ -202,6 +202,8 @@ METHOD saveEdit() CLASS Editable
 
    local lEdit    := .f.
 
+   logwrite( "saveEdit")
+
    if !::onPreSaveEdit()
       Return .f.
    end if 
@@ -211,6 +213,8 @@ METHOD saveEdit() CLASS Editable
    if lEdit 
       ::onPostSaveEdit()
    end if 
+
+   logwrite( "fin saveEdit" )
 
 Return ( lEdit )
 
