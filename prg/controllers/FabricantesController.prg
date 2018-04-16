@@ -96,7 +96,6 @@ METHOD ImagenesControllerUpdateBuffer()
       ::oImagenesController:oModel:insertBuffer()
       RETURN ( self )
    end if 
-
    ::oImagenesController:oModel:updateBuffer()
 
 RETURN ( self )
