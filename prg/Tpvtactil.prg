@@ -1355,8 +1355,6 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oEmpresa                                  PATH ( cPatDat() )   FILE "EMPRESA.DBF"         VIA ( cDriver() ) SHARED INDEX "EMPRESA.CDX"
 
-   DATABASE NEW ::oFactoresConversion                       PATH ( cPatDat() )   FILE "TBLCNV.DBF"          VIA ( cDriver() ) SHARED INDEX "TBLCNV.CDX"
-
    DATABASE NEW ::oPedidoClienteCabecera                    PATH ( cPatEmp() )   FILE "PEDCLIT.DBF"         VIA ( cDriver() ) SHARED INDEX "PEDCLIT.CDX"
 
    DATABASE NEW ::oPedidoClienteLinea                       PATH ( cPatEmp() )   FILE "PEDCLIL.DBF"         VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"

@@ -159,7 +159,6 @@ Pro.prg                 										\
 Reccli.prg              										\
 Turno.prg               										\
 Ttotturno.prg           										\
-Tblconv.prg             										\
 Regalm.prg              										\
 Rhtml.prg               										\
 Tshell.prg              										\
@@ -320,7 +319,6 @@ InfUbi.prg              													\
 InfRut.prg              													\
 InfPro.prg              													\
 InfTar.prg              													\
-InfCnv.prg              													\
 InfTipIva.prg           													\
 InfDiv.prg              													\
 InfFpg.prg              													\
@@ -768,7 +766,6 @@ Pro.obj                                            				\
 Reccli.obj                                         				\
 Turno.obj                                          				\
 Ttotturno.obj                                      				\
-Tblconv.obj                                        				\
 Regalm.obj                                         				\
 Rhtml.obj                                          				\
 Tshell.obj                                         				\
@@ -945,7 +942,6 @@ InfUbi.obj              													\
 InfRut.obj              													\
 InfPro.obj              													\
 InfTar.obj              													\
-InfCnv.obj              													\
 InfTipIva.obj           													\
 InfDiv.obj              													\
 InfFpg.obj              													\
@@ -1392,7 +1388,6 @@ $(OBJ)\Pro.obj                   										+
 $(OBJ)\Reccli.obj                										+
 $(OBJ)\Turno.obj                 										+
 $(OBJ)\Ttotturno.obj             										+
-$(OBJ)\Tblconv.obj               										+
 $(OBJ)\Regalm.obj                										+
 $(OBJ)\Rhtml.obj                 										+
 $(OBJ)\Tshell.obj                										+
@@ -1548,7 +1543,6 @@ $(OBJ)\InfUbi.obj               											+
 $(OBJ)\InfRut.obj               											+
 $(OBJ)\InfPro.obj               											+
 $(OBJ)\InfTar.obj               											+
-$(OBJ)\InfCnv.obj               											+
 $(OBJ)\InfTipIva.obj            											+
 $(OBJ)\InfDiv.obj               											+
 $(OBJ)\InfFpg.obj               											+

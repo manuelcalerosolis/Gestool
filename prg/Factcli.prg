@@ -450,7 +450,6 @@ static dbfCajT
 static dbfDelega
 static dbfAgeCom
 static dbfEmp
-static dbfTblCnv
 static dbfFacPrvT
 static dbfRctPrvL
 static dbfRctPrvS
@@ -1782,9 +1781,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
-      SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "FACPRVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVT", @dbfFacPrvT ) )
       SET ADSINDEX TO ( cPatEmp() + "FACPRVT.CDX" ) ADDITIVE
 
@@ -2174,10 +2170,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfEmp )->( dbCloseArea() )
    end if
 
-   if !empty( dbfTblCnv)
-      ( dbfTblCnv )->( dbCloseArea() )
-   end if
-
    if !empty( dbfFacPrvT )
       ( dbfFacPrvT )->( dbCloseArea() )
    end if
@@ -2328,7 +2320,6 @@ STATIC FUNCTION CloseFiles()
    dbfAlbPrvS  := nil
    dbfPedCliR  := nil
    dbfEmp      := nil
-   dbfTblCnv   := nil
    dbfFacPrvT  := nil
    dbfFacPrvL  := nil
    dbfFacPrvS  := nil

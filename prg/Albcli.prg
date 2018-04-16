@@ -405,7 +405,6 @@ static oUndMedicion
 static oCentroCoste
 static oBandera
 static dbfKit
-static dbfTblCnv
 static dbfOferta
 static dbfObrasT
 static dbfCentroCoste
@@ -1472,9 +1471,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
       SET ADSINDEX TO ( cPatEmp() + "ARTKIT.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
-      SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
       SET ADSINDEX TO ( cPatEmp() + "OFERTA.CDX" ) ADDITIVE
 
@@ -1784,9 +1780,6 @@ STATIC FUNCTION CloseFiles()
    if !empty( dbfAlm )
       ( dbfAlm       )->( dbCloseArea() )
    end if
-   if !empty( dbfTblCnv )
-      ( dbfTblCnv    )->( dbCloseArea() )
-   end if
    if !empty( dbfOferta )
       ( dbfOferta    )->( dbCloseArea() )
    end if
@@ -1935,7 +1928,6 @@ STATIC FUNCTION CloseFiles()
    dbfCodebar     := nil
    dbfKit         := nil
    oBandera       := nil
-   dbfTblCnv      := nil
    dbfOferta      := nil
    dbfObrasT      := nil
    dbfPro         := nil

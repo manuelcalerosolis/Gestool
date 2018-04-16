@@ -474,7 +474,6 @@ static dbfArticulo
 static dbfTmpL
 static dbfTmpS
 static dbfKit
-static dbfTblCnv
 static dbfCount
 static dbfImp
 static dbfComentariosT
@@ -710,9 +709,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
 
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
-      SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
@@ -973,7 +969,6 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfAgeCom   )
    CLOSE ( dbfEmp      )
    CLOSE ( dbfAlbCliP  )
-   CLOSE ( dbfTblCnv   )
 
    CLOSE ( dbfPreCliT  )
    CLOSE ( dbfPreCliL  )
@@ -1096,7 +1091,6 @@ STATIC FUNCTION CloseFiles()
    dbfAgeCom         := nil
    dbfEmp            := nil
    dbfAlbCliP        := nil
-   dbfTblCnv         := nil
 
    dbfPreCliT        := nil
    dbfPreCliL        := nil
@@ -15546,9 +15540,6 @@ Function SynTikCli( cPath )
    USE ( cPatEmp() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatEmp() + "ARTICULO.CDX" ) ADDITIVE
 
-   USE ( cPatDat() + "TBLCNV.DBF" )    NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) ) EXCLUSIVE
-   SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
-
    USE ( cPatEmp() + "FACCLIT.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
 
@@ -15829,10 +15820,6 @@ Function SynTikCli( cPath )
 
    if !empty( dbfArticulo ) .and. ( dbfArticulo )->( Used() )
       ( dbfArticulo )->( dbCloseArea() )
-   end if
-
-   if !empty( dbfTblCnv ) .and. ( dbfTblCnv )->( Used() )
-      ( dbfTblCnv )->( dbCloseArea() )
    end if
 
    if !empty( dbfDiv ) .and. ( dbfDiv )->( Used() )

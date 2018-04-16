@@ -102,7 +102,6 @@ METHOD ImagenesControllerUpdateBuffer()
       idImagen             := ::oImagenesController:oModel:insertBuffer()
       RETURN ( self )
    end if 
-
    ::oImagenesController:oModel:updateBuffer()
 
 RETURN ( self )

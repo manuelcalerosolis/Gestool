@@ -7,6 +7,8 @@ CLASS ProvinciasController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD getSelectorProvincia( oGet )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -35,6 +37,24 @@ METHOD New() CLASS ProvinciasController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSelectorProvincia( oGet ) CLASS ProvinciasController
+
+   local hResult := ::ActivateSelectorView()
+
+   if hb_isnil( hResult )
+      RETURN ( Self )
+   end if 
+
+   if hHasKey( hResult, "codigo" )
+      oGet:cText( hGet( hResult, "codigo" ) )
+   else
+      oGet:cText( "" )
+   end if
+   
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
