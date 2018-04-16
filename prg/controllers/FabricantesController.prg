@@ -73,15 +73,16 @@ RETURN ( Self )
 METHOD ImagenesControllerLoadCurrentBuffer()
 
    local idImagen     
-   local uuidFabricante     := hget( ::oModel:hBuffer, "uuid" )
+   local uuidFabricante    := hget( ::oModel:hBuffer, "uuid" )
 
    if empty( uuidFabricante )
       ::oImagenesController:oModel:insertBuffer()
    end if 
 
-   idImagen                 := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFabricante )
+   idImagen                := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFabricante )
    if empty( idImagen )
-      ::oImagenesController:oModel:insertBuffer()
+      ::oImagenesController:oModel:loadBlankBuffer()
+      idImagen             := ::oImagenesController:oModel:insertBuffer()
    end if 
 
    ::oImagenesController:oModel:loadCurrentBuffer( idImagen )
@@ -95,9 +96,10 @@ METHOD ImagenesControllerUpdateBuffer()
    local idImagen     
    local uuidFabricante     := hget( ::oModel:hBuffer, "uuid" )
 
-   idImagen                 := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFabricante )
+   idImagen                := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFabricante )
    if empty( idImagen )
-      ::oImagenesController:oModel:insertBuffer()
+      ::oImagenesController:oModel:loadBlankBuffer()
+      idImagen             := ::oImagenesController:oModel:insertBuffer()
       RETURN ( self )
    end if 
 
@@ -372,7 +374,7 @@ CLASS FabricantesRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLFabricantesModel():getTableName() ) 
 
-   METHOD getNombres()                    INLINE ( ::getDatabase():selectFetchArrayOneColumn( "SELECT nombre FROM " + ::getTableName() ) )
+   METHOD getNombres()                    
 
    METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
 
@@ -385,4 +387,15 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD getNombres() CLASS FabricantesRepository
+
+   local cSentence     := "SELECT nombre FROM " + ::getTableName() + " ORDER BY nombre ASC"
+   local aNombres      := ::getDatabase():selectFetchArrayOneColumn( cSentence )
+
+   ains( aNombres, 1, "", .t. )
+
+RETURN ( aNombres )
+
 //---------------------------------------------------------------------------//

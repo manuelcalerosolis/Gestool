@@ -368,7 +368,7 @@ METHOD selectFetchArrayOneColumn( cSentence )
 
    aResult        := array( len( aFetch ) )
 
-   aeval( aFetch, {|x, n| aResult[ n ] := afirst( x ) } )
+   aeval( aFetch, {|x, n| aResult[ n ] := alltrim( afirst( x ) ) } )
 
 RETURN ( aResult )
 
