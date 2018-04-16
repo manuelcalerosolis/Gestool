@@ -446,6 +446,7 @@ METHOD saveExtraField( cClave, cClaveInterna ) CLASS TDetCamposExtra
             ::oDbf:cCodTipo   := hGet( hCampos, "código" )
             ::oDbf:cClave     := padr( cClave, 30 )
             ::oDbf:cValor     := ::cFormat2Char( hGet( hCampos, "valor" ) )
+            ::oDbf:Uuid       := win_uuidcreatestring()
 
             ::oDbf:Save()
 

@@ -11,7 +11,7 @@ CLASS ArticulosModel FROM ADSBaseModel
 
    METHOD get()
 
-   METHOD getUuid( cCodigoArticulo )               INLINE ( ::getField( 'Uuid', 'Codigo', cCodigoArticulo ) )
+   METHOD getUuid( cCodigoArticulo )               INLINE ( ::getField( 'Uuid', 'Codigo', cCodigoArticulo, .t. ) )
    
    METHOD getNombre( cCodigoArticulo )             INLINE ( ::getField( 'Nombre', 'Codigo', cCodigoArticulo ) )
 

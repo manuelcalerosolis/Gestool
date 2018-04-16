@@ -22,6 +22,7 @@ CLASS FabricantesController FROM SQLNavigatorController
 END CLASS
 
 //---------------------------------------------------------------------------//
+
 METHOD New() CLASS FabricantesController
 
    ::Super:New()
@@ -42,7 +43,7 @@ METHOD New() CLASS FabricantesController
 
    ::oDialogView                 := FabricantesView():New( self )
 
-   ::oValidator                  := FabricantesValidator():New( self )
+   ::oValidator                  := FabricantesValidator():New( self, ::oDialogView )
 
    ::oImagenesController         := ImagenesController():New( self )
 
@@ -112,7 +113,8 @@ METHOD ImagenesControllerDeleteBuffer()
 
    ::oImagenesController:oModel:deleteWhereParentUuid( aUuidFabricante )
 
-   RETURN ( self )
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 
 METHOD ImagenesControllerLoadedDuplicateCurrentBuffer()
@@ -120,9 +122,9 @@ METHOD ImagenesControllerLoadedDuplicateCurrentBuffer()
    local uuidFabricante
    local idImagen     
 
-   uuidFabricante           := hget( ::oModel:hBuffer, "uuid" )
+   uuidFabricante       := hget( ::oModel:hBuffer, "uuid" )
 
-   idImagen          := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFabricante )
+   idImagen             := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFabricante )
    if empty( idImagen )
       ::oImagenesController:oModel:insertBuffer()
       RETURN ( self )
@@ -136,17 +138,12 @@ RETURN ( self )
 
 METHOD ImagenesControllerLoadedDuplicateBuffer()
 
-   local uuidFabricante
-   uuidFabricante     := hget( ::oModel:hBuffer, "uuid" )
+   local uuidFabricante    := hget( ::oModel:hBuffer, "uuid" )
 
    hset( ::oImagenesController:oModel:hBuffer, "parent_uuid", uuidFabricante )
 
 RETURN ( self )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -180,10 +177,10 @@ METHOD addColumns() CLASS FabricantesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'descripcion'
-      :cHeader             := 'Descripción'
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -216,7 +213,7 @@ CLASS FabricantesView FROM SQLBaseView
 END CLASS
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
 METHOD Activating() CLASS FabricantesView
 
    if ::oController:isAppendOrDuplicateMode()
@@ -227,6 +224,9 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS FabricantesView
+
+   local getImagen
+   local bmpImagen
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "FABRICANTES" ;
@@ -243,11 +243,10 @@ METHOD Activate() CLASS FabricantesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
-      VALID       ( ::oController:validate( "descripcion" ) ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "pagina_web" ] ;
@@ -255,10 +254,23 @@ METHOD Activate() CLASS FabricantesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::getImagenesController():oModel:hBuffer[ "ruta_local" ] ;
+   REDEFINE GET   getImagen ;
+      VAR         ::getImagenesController():oModel:hBuffer[ "imagen" ] ;
       ID          120 ;
+      BITMAP      "Folder" ;
+      ON HELP     ( GetBmp( getImagen, bmpImagen ) ) ;
+      ON CHANGE   ( ChgBmp( getImagen, bmpImagen ) ) ;
       WHEN        ( ::getImagenesController():isNotZoomMode() ) ;
       OF          ::oDialog
+
+   REDEFINE IMAGE bmpImagen ;
+      ID          130 ;
+      FILE        cFileBmpName( ::getImagenesController():oModel:hBuffer[ "imagen" ] ) ;
+      OF          ::oDialog
+
+      bmpImagen:SetColor( , getsyscolor( 15 ) )
+      bmpImagen:bLClicked   := {|| ShowImage( bmpImagen ) }
+      bmpImagen:bRClicked   := {|| ShowImage( bmpImagen ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -299,9 +311,8 @@ END CLASS
 
 METHOD getValidators() CLASS FabricantesValidator
 
-   ::hValidators  := {     "descripcion" =>     {  "required"     => "La descripción es un dato requerido",;
-                                                   "unique"       => "La descripción introducida ya existe" } }                  
-
+   ::hValidators  := {  "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
+                                          "unique"       => "El nombre introducido ya existe" } }                  
 
 RETURN ( ::hValidators )
 
@@ -326,19 +337,17 @@ END CLASS
 
 METHOD getColumns() CLASS SQLFabricantesModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "text"      => "Identificador"                           ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                       "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "text"      => "Uuid"                                    ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                       "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 100 )"                          ,;
-                                             "default"   => {|| space( 100 ) } }                       )
+   hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 100 )"                          ,;
+                                       "default"   => {|| space( 100 ) } }                       )
 
-   hset( ::hColumns, "pagina_web",        {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "pagina_web",  {  "create"    => "VARCHAR( 200 )"                          ,;
+                                       "default"   => {|| space( 200 ) } }                       )
 
 RETURN ( ::hColumns )
 
@@ -357,7 +366,7 @@ CLASS FabricantesRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLAgentesModel():getTableName() ) 
 
-   METHOD getNombres()
+   METHOD getNombres()                    INLINE ( ::getDatabase():selectFetchArrayOneColumn( "SELECT nombre FROM " + ::getTableName() ) )
 
    METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
 
@@ -365,19 +374,6 @@ CLASS FabricantesRepository FROM SQLBaseRepository
 
 END CLASS
 
-//---------------------------------------------------------------------------//
-
-METHOD getNombres() CLASS FabricantesRepository
-
-   local h
-   local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
-   local aResult     := {}
-
-   for each h in aNombres
-      aAdd( aResult, AllTrim( hGet( h, "nombre" ) ) )
-   next
-
-RETURN ( aResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
