@@ -48,7 +48,7 @@ CLASS TFabricantes FROM TMant
    METHOD Save()
    METHOD Load()
 
-   Method Syncronize()
+   METHOD Syncronize()
 
 END CLASS
 
@@ -106,7 +106,7 @@ METHOD Activate()
 
    if nAnd( ::nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
-      Return ( Self )
+      RETURN ( Self )
    end if
 
    /*
@@ -210,6 +210,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cCodWeb"             TYPE "N" LEN  11  DEC 0 COMMENT "Código Web"                   HIDE         OF ::oDbf
       FIELD NAME "cUrlFab"             TYPE "C" LEN 250  DEC 0 COMMENT "Url"                          COLSIZE 200  OF ::oDbf
       FIELD NAME "lSndDoc"             TYPE "L" LEN   1  DEC 0 COMMENT "Envio"                        HIDE         OF ::oDbf
+      FIELD NAME "uuid"                TYPE "C" LEN  40  DEC 0 COMMENT "uuid"                         HIDE         OF ::oDbf
 
       INDEX TO "Fabric.CDX"    TAG "cCodFab" ON "cCodFab"             COMMENT "Código"     NODELETED OF ::oDbf
       INDEX TO "Fabric.CDX"    TAG "cNomFab" ON "cNomFab"             COMMENT "Nombre"     NODELETED OF ::oDbf
@@ -309,12 +310,12 @@ METHOD lPreSave( oGet, oGet2, oDlg, nMode )
       if Empty( ::oDbf:cCodFab )
          MsgStop( "Código de tipo de fabricante no puede estar vacío." )
          oGet:SetFocus()
-         Return .f.
+         RETURN .f.
       end if
 
       if ::oDbf:SeekInOrd( ::oDbf:cCodFab, "cCodFab" )
          MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodFab ) )
-         return nil
+         RETURN nil
       end if
 
    end if
@@ -322,7 +323,7 @@ METHOD lPreSave( oGet, oGet2, oDlg, nMode )
    if Empty( ::oDbf:cNomFab )
       MsgStop( "Nombre de tipo de fabricante no puede estar vacío." )
       oGet2:SetFocus()
-      Return .f.
+      RETURN .f.
    end if
 
    ::oDbf:lSndDoc := .t.
@@ -336,7 +337,7 @@ METHOD lValid( oGet, oSay )
    local cCodArt
 
    if Empty( oGet:VarGet() )
-      return .t.
+      RETURN .t.
    end if
 
    cCodArt        := RJustObj( oGet, "0" )
@@ -348,7 +349,7 @@ METHOD lValid( oGet, oSay )
       end if
    else
       msgStop( "Código no encontrado" )
-      return .f.
+      RETURN .f.
    end if
 
 RETURN .t.
@@ -416,7 +417,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method CreateData()
+METHOD CreateData()
 
    local lSnd        := .t.
    local oFabricantes
@@ -492,11 +493,11 @@ Method CreateData()
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method RestoreData()
+METHOD RestoreData()
 
    local oFabricantes
 
@@ -521,11 +522,11 @@ Method RestoreData()
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method SendData()
+METHOD SendData()
 
    local cFileName
 
@@ -547,11 +548,11 @@ Method SendData()
 
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method ReciveData()
+METHOD ReciveData()
 
    local n
    local aExt
@@ -574,11 +575,11 @@ Method ReciveData()
 
    ::oSender:SetText( "Fabricantes recibidos" )
 
-Return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
-Method Process()
+METHOD Process()
 
    local m
    local oBlock
@@ -686,15 +687,15 @@ Method Process()
 
    next
 
-Return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
-Method nGetNumberToSend()
+METHOD nGetNumberToSend()
 
    ::nNumberSend     := GetPvProfInt( "Numero", ::cText, ::nNumberSend, ::cIniFile )
 
-Return ( ::nNumberSend )
+RETURN ( ::nNumberSend )
 
 //----------------------------------------------------------------------------//
 
@@ -716,41 +717,54 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method Syncronize()
+METHOD Syncronize()
 
-   local cFabricantes
+   if ::OpenService()
 
-   if ::OpenService( .t. )
+      while !::oDbf:Eof()
 
-      if File( cPatEmp( , .t. ) + "Fabricantes.Dbf" )
-
-         USE ( cPatEmp( , .t. ) + "Fabricantes.Dbf" ) NEW VIA ( "DBFCDX" ) SHARED ALIAS ( cCheckArea( "Fabricantes", @cFabricantes ) )
-
-         ( cFabricantes )->( dbGoTop() )
-
-         while !( cFabricantes )->( Eof() )
-
-            if !::oDbf:SeekInOrd( ( cFabricantes )->cCodFab, "cCodFab" )
-               dbPass( cFabricantes, ::oDbf:cAlias, .t. )
-            end if
-
-            ( cFabricantes )->( dbSkip() )
-
-         end while
-
-         if cFabricantes != nil
-            ( cFabricantes )->( dbCloseArea() )
+         if empty( ::oDbf:uuid )
+            ::oDbf:FieldPutByName( "uuid", win_uuidcreatestring() )
          end if
 
-         dbfErase( cPatEmp( , .t. ) + "Fabricantes.Dbf" )
-         dbfErase( cPatEmp( , .t. ) + "Fabricantes.Cdx" )
+         ::oDbf:Skip()
 
-      end if
+      end while
 
       ::CloseService()
 
    end if
 
-Return .t.
+RETURN .t.
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS FabricantesModel FROM ADSBaseModel
+
+   METHOD getTableName()                     INLINE ::getEmpresaTableName( "Fabric" )
+
+   METHOD getUuid( cCodigoFabricante )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getUuid( cCodigoFabricante ) CLASS FabricantesModel
+
+   local cStm
+   local cSql  := "SELECT uuid "                                  + ;
+                     "FROM " + ::getTableName() + " "             + ;
+                     "WHERE cCodFab = " + quoted( cCodigoFabricante ) 
+
+   if ::ExecuteSqlStatement( cSql, @cStm )
+      RETURN ( ( cStm )->uuid )
+   end if 
+
+RETURN ( "" )
+
+//---------------------------------------------------------------------------//
+

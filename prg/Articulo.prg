@@ -97,7 +97,6 @@ static oBandera
 static oCosto
 static oUndMedicion
 static oFraPub
-static oFabricante
 static oOrdenComanda
 static oTpvMenu
 
@@ -124,6 +123,8 @@ static lEuro               := .f.
 
 static lChangeImage        := .f.
 static cImageOld           := ""
+
+static oFabricantesController
 
 static bEdit               := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtDet             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
@@ -368,11 +369,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          lOpenFiles        := .f.
       end if
 
-      oFabricante          := TFabricantes():Create( cPatEmp() )
-      if !oFabricante:OpenFiles()
-         lOpenFiles        := .f.
-      end if
-
       oCatalogo            := TCatalogo():Create()
       if !oCatalogo:OpenFiles()
          lOpenFiles        := .f.
@@ -424,6 +420,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       if !Empty( TiposImpresorasRepository() )
          aTiposImpresoras  := TiposImpresorasRepository():getNombres()  
       end if
+
+      oFabricantesController  := FabricantesController():New()
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
@@ -627,10 +625,6 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oTipArt:end()
    end if
 
-   if !empty( oFabricante )
-      oFabricante:end()
-   end if
-
    if !empty( oCatalogo )
       oCatalogo:end()
    end if
@@ -666,6 +660,8 @@ STATIC FUNCTION CloseFiles( lDestroy )
    if !IsReport()
       TComercioConfig():DestroyInstance()
    end if
+
+   oFabricantesController:End()
 
    dbfProv           := nil
    dbfCatalogo       := nil
@@ -741,7 +737,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    */
 
    nLevel            := Auth():Level( oMenuItem )
-   
+
    if nAnd( nLevel, 1 ) == 0
       msgStop( "Acceso no permitido." )
       return .f.
@@ -937,8 +933,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    with object ( oWndBrw:AddXCol() )
       :cHeader          := "Fabricante"
-      :cSortOrder       := "cCodFab"
-      :bStrData         := {|| AllTrim( ( D():Articulos( nView ) )->cCodFab ) + if( !empty( ( D():Articulos( nView ) )->cCodFab ), " - ", "" ) + RetFld( ( D():Articulos( nView ) )->cCodFab, oFabricante:GetAlias() ) }
+      :bStrData         := {|| oFabricantesController:oModel:getNombreWhereUuid( ( D():Articulos( nView ) )->fab_uuid ) }
       :nWidth           := 140
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       :lHide            := .t. 
@@ -1977,24 +1972,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
 
    TBtnBmp():ReDefine( 101, "Lupa",,,,,{|| getEtiquetasBrowse( oTagsEver:getItems() ) }, fldGeneral, .f., , .f.,  )
 
-   REDEFINE GET oSay[9] ;
+   REDEFINE GET   oSay[9] ;
       VAR         cSay[9] ;
       ID          271 ;
       SPINNER ;
       WHEN        ( .f. ) ;
       OF          fldGeneral
 
-   REDEFINE GET   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ] ;
-      VAR         aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ] ;
-      ID          390 ;
-      IDTEXT      391 ;
-      WHEN        ( nMode != ZOOM_MODE ) ;
-      BITMAP      "LUPA" ;
-      OF          fldGeneral
+      /*
+      Fabricantes-----------------------------------------------------------
+      */
 
-   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ]:bValid := {|| ( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ], oFabricante:GetAlias() ) ), .t. ) }
-   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ]:bHelp  := {|| oFabricante:Buscar( aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ] ) }
-  
+      oFabricantesController:oGetSelector:Bind( bSETGET( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "fab_uuid" ) ) ] ) )
+      oFabricantesController:oGetSelector:Activate( 391, 390, fldGeneral )
+
    REDEFINE SAY ;
          PROMPT   getConfigTraslation( "Familia" );
          ID       900 ;
@@ -11327,27 +11318,6 @@ Return aCodigos
 
 //---------------------------------------------------------------------------//
 
-Static Function aNombresFabricante()
-
-   local nRec        := oFabricante:oDbf:Recno()
-   local aCodigos    := {}
-
-   oFabricante:oDbf:GoTop()
-
-   while !oFabricante:oDbf:Eof()
-
-      aAdd( aCodigos, { oFabricante:oDbf:cNomFab, oFabricante:oDbf:cCodFab } )
-
-      oFabricante:oDbf:Skip()
-
-   end while
-
-   oFabricante:oDbf:GoTo( nRec )
-
-Return aCodigos
-
-//---------------------------------------------------------------------------//
-
 Static Function aNombresEstadoArticulo()
 
    local nRec        := ( D():EstadoArticulo( nView ) )->( Recno() )
@@ -11853,6 +11823,10 @@ function SynArt( cPath )
 
          if empty( ( dbfArt )->Uuid )
             ( dbfArt )->Uuid        := win_uuidcreatestring()
+         end if 
+
+         if empty( ( dbfArt )->fab_uuid )
+            ( dbfArt )->fab_uuid    := FabricantesModel():getUuid( ( dbfArt )->cCodFab )
          end if 
 
          /*
@@ -14991,6 +14965,7 @@ function aItmArt()
    aAdd( aBase, { "lIvaWeb",   "L",  1, 0, "Iva incluido para precio web" ,            "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cEtiqueta", "M", 10, 0, "Relación de etiquetas" ,                   "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "uuid",      "C", 40, 0, "Uuid" ,                                    "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "fab_uuid",  "C", 40, 0, "Fabricante uuid",                          "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 
@@ -16743,9 +16718,6 @@ Static Function DataReport( oFr, lTemporal )
    oFr:SetWorkArea(     "Tipo artículo",  oTipArt:Select() )
    oFr:SetFieldAliases( "Tipo artículo",  cObjectsToReport( oTipArt:oDbf ) )
 
-   oFr:SetWorkArea(     "Fabricante",  oFabricante:Select() )
-   oFr:SetFieldAliases( "Fabricante",  cObjectsToReport( oFabricante:oDbf ) )
-
    oFr:SetWorkArea(     "Unidad de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidad de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
@@ -17397,31 +17369,6 @@ static function ChangePropiedadesInt( cCodPro )
       end if
 
       ( dbfPro )->( dbGoto( nRec ) )
-
-   end if
-
-return nil
-
-//---------------------------------------------------------------------------//
-
-static function ChangeFabricantesInt( cCodFab )
-
-   local nRec
-
-   if !empty( cCodFab )
-
-      nRec  := oFabricante:oDbf:Recno()
-
-      if oFabricante:oDbf:SeekInOrd( cCodFab, "CCODFAB" )
-
-         oFabricante:oDbf:Load()
-         oFabricante:oDbf:lPubInt   := .t.
-         oFabricante:oDbf:lSndDoc   := .t.
-         oFabricante:oDbf:Save()
-
-      end if
-
-      oFabricante:oDbf:GoTo( nRec )
 
    end if
 

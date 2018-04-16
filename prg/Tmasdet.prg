@@ -1487,44 +1487,41 @@ RETURN ( Self )
 METHOD Activate() CLASS TMasDet
 
    if nAnd( ::nLevel, 1 ) == 0
-
-      /*
-      Cerramos todas las ventanas
-      */
-
-      if ::oWndParent != nil
-         ::oWndParent:CloseAll()
-      end if
-
-      if Empty( ::oDbf )
-         if !::OpenFiles()
-            return nil
-         end if
-      end if
-
-      /*
-      Creamos el Shell
-      */
-
-      if !::lCreateShell
-         ::CreateShell( ::nLevel )
-      end if
-
-      if ::lAutoButtons
-         ::oWndBrw:AutoButtons( Self )
-      end if
-
-      if ::cHtmlHelp != nil
-         ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
-      end if
-
-      ::oWndBrw:Activate(  nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() } )
-
-   else
-
       msgStop( "Acceso no permitido." )
-
+      RETURN ( Self )
    end if
+
+   /*
+   Cerramos todas las ventanas
+   */
+
+   if ::oWndParent != nil
+      ::oWndParent:CloseAll()
+   end if
+
+   if Empty( ::oDbf )
+      if !::OpenFiles()
+         return nil
+      end if
+   end if
+
+   /*
+   Creamos el Shell
+   */
+
+   if !::lCreateShell
+      ::CreateShell( ::nLevel )
+   end if
+
+   if ::lAutoButtons
+      ::oWndBrw:AutoButtons( Self )
+   end if
+
+   if ::cHtmlHelp != nil
+      ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
+   end if
+
+   ::oWndBrw:Activate(  nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() } )
 
 RETURN ( Self )
 

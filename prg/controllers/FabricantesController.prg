@@ -7,6 +7,8 @@ CLASS FabricantesController FROM SQLNavigatorController
 
    DATA oImagenesController
 
+   DATA oGetSelector
+
    METHOD New()
 
    METHOD ImagenesControllerLoadCurrentBuffer()
@@ -48,6 +50,8 @@ METHOD New() CLASS FabricantesController
    ::oImagenesController         := ImagenesController():New( self )
 
    ::oRepository                 := FabricantesRepository():New( self )
+
+   ::oGetSelector                := ComboSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -96,7 +100,6 @@ METHOD ImagenesControllerUpdateBuffer()
       ::oImagenesController:oModel:insertBuffer()
       RETURN ( self )
    end if 
-
    ::oImagenesController:oModel:updateBuffer()
 
 RETURN ( self )
@@ -179,7 +182,7 @@ METHOD addColumns() CLASS FabricantesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
-      :nWidth              := 80
+      :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -327,9 +330,11 @@ RETURN ( ::hValidators )
 
 CLASS SQLFabricantesModel FROM SQLBaseModel
 
-   DATA cTableName                  INIT "fabricantes"
+   DATA cTableName                     INIT "fabricantes"
 
    METHOD getColumns()
+
+   METHOD getNombreWhereUuid( uuid )   INLINE ( ::getField( "nombre", "uuid", uuid ) )
 
 END CLASS
 
@@ -364,7 +369,7 @@ RETURN ( ::hColumns )
 
 CLASS FabricantesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLAgentesModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLFabricantesModel():getTableName() ) 
 
    METHOD getNombres()                    INLINE ( ::getDatabase():selectFetchArrayOneColumn( "SELECT nombre FROM " + ::getTableName() ) )
 
