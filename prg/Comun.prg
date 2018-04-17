@@ -2685,7 +2685,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 7
+   oGrupo:nBigItems     := 9
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2758,6 +2758,26 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "asistencia_remota"
    oItem:cBmp           := "gc_wrench_16"
    oItem:cBmpBig        := "gc_wrench_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Clientes'
+   oItem:cMessage       := 'Solicitar cliente'
+   oItem:bAction        := {|| ClientesController():New():ActivateNavigatorView() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_user_16"
+   oItem:cBmpBig        := "gc_user_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Proveedores'
+   oItem:cMessage       := 'Solicitar proveedor'
+   oItem:bAction        := {|| ProveedoresController():New():ActivateNavigatorView() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_businessman_16"
+   oItem:cBmpBig        := "gc_businessman_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

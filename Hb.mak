@@ -638,6 +638,12 @@ TransportistasModel.prg 													\
 MdiChild.prg 																	\
 SQLComboSelector.prg 														\
 urllink.prg 																	\
+TercerosController.prg 														\
+ClientesController.prg 														\
+ProveedoresController.prg 													\
+SQLTercerosModel.prg 														\
+SQLClientesModel.prg 														\
+SQLProveedoresModel.prg 		  											\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1251,6 +1257,12 @@ MdiChild.obj 																	\
 TransportistasModel.obj 													\
 SQLComboSelector.obj 														\
 urllink.obj 																	\
+TercerosController.obj 														\
+ClientesController.obj 														\
+ProveedoresController.obj 													\
+SQLTercerosModel.obj 														\
+SQLclientesModel.obj 														\
+SQLProveedoresModel.obj 		  											\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1854,6 +1866,12 @@ $(OBJ)\TransportistasModel.obj 											+
 $(OBJ)\MdiChild.obj 															+
 $(OBJ)\SQLComboSelector.obj 												+
 $(OBJ)\urllink.obj 															+
+$(OBJ)\TercerosController.obj 											+
+$(OBJ)\ClientesController.obj 											+
+$(OBJ)\ProveedoresController.obj 										+
+$(OBJ)\SQLTercerosModel.obj 												+
+$(OBJ)\SQLclientesModel.obj 												+
+$(OBJ)\SQLProveedoresModel.obj 		  									+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+
