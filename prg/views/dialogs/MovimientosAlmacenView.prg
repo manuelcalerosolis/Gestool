@@ -35,8 +35,7 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
                                                       ::oGetAlmacenOrigen:Show(),;
                                                       ::oGetAlmacenOrigen:Hide() ) )
 
-   METHOD getUsuario()              INLINE   (  alltrim( ::oController:oModel:hBuffer[ "usuario" ] ) + space( 1 ) + ;
-                                                UsuariosModel():getNombre( ::oController:oModel:hBuffer[ "usuario" ] ) )
+   METHOD getUsuario()              INLINE   (  SQLUsuariosModel():getNombreWhereCodigo( ::oController:oModel:hBuffer[ "usuario" ] ) )
 
    METHOD validateAndGoTo()         
    METHOD validateAndGoDown()       INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDDOWN ), ) )
@@ -74,11 +73,6 @@ METHOD Activate()
          PICTURE     "@DT" ;
          SPINNER ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          ::oDialog
-
-      REDEFINE SAY   ;
-         PROMPT      ::oController:oModel:hBuffer[ "delegacion" ] ;
-         ID          110 ;
          OF          ::oDialog
 
       REDEFINE SAY   ;

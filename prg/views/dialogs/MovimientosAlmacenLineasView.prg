@@ -377,7 +377,7 @@ RETURN ( .t. )
 
 METHOD EdtRecMenu()
 
-   MENU ::oMenu
+   MENU ::oMenu // COLORS
 
       MENUITEM    "&1. Rotor"
 

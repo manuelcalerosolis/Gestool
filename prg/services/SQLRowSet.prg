@@ -91,6 +91,7 @@ METHOD Build( cSentence )
 
    if !getSQLDatabase():parse( cSentence )
       msgStop( cSentence, "Sentencia no valida" )
+      logwrite( cSentence )
       RETURN ( nil )
    end if 
 

@@ -1,11 +1,11 @@
 HB                   = 	\harbour_bcc582\
 
 HBINCLUDE            = 	\harbour_bcc582\include
-FWINCLUDE            = 	\fwh1705\Include
+FWINCLUDE            = 	\fwh1709\Include
 GTINCLUDE            = 	.\Include
 
 HBLIB                = 	\harbour_bcc582\lib
-FWLIB                = 	\fwh1705\lib
+FWLIB                = 	\fwh1709\lib
 
 RESOURCE             = 	.\resource
 
@@ -14,12 +14,12 @@ BORLANDLIB           = 	\bcc582\lib
 
 IMG2PDFLIB           = 	\img2Pdf
 
-OBJ                  = 	obj1705
+OBJ                  = 	obj1709
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	.\C
 
-PPO 					   = 	ppo1705
+PPO 					   = 	ppo1709
 
 EXE 					   = 	bin\$(TARGET).exe
 
