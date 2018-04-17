@@ -103,6 +103,7 @@ Definici¢n de la base de datos de S.A.T. a clientes
 #define _MFIRMA                   88
 #define _CCENTROCOSTE             89
 #define _UUID_TRN                 90
+#define _UUID_AGE                 91
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -734,7 +735,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      oTransportistaSelector     := TransportistasController():New():oGetSelectorTransportista
+      oTransportistaSelector     := TransportistasController():New():oComboSelector
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -10446,6 +10447,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "mFirma",    "M", 10,  0, "Firma" ,                                      "Firma",                   "", "( cDbf )", nil } )                  
    aAdd( aItmSatCli, { "cCtrCoste", "C",  9,  0, "Código del centro de coste" ,                 "CentroCoste",             "", "( cDbf )", nil } )
    aAdd( aItmSatCli, { "Uuid_Trn",  "C", 40,  0, "Identificador transportista" ,                "UuidTransportista",       "", "( cDbf )", nil } )
+   aAdd( aItmSatCli, { "Uuid_Age",  "C", 40,  0, "Identificador agente" ,                       "UuidAgente",              "", "( cDbf )", nil } )
 
 return ( aItmSatCli )
 

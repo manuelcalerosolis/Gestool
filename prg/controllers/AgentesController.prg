@@ -54,6 +54,8 @@ METHOD New() CLASS AgentesController
    ::oPaisesController           := PaisesController():New( self )
    ::oProvinciasController       := ProvinciasController():New( self )
 
+   ::oComboSelector              := ComboSelector():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:oModel:loadBlankBuffer() } )

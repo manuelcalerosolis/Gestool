@@ -2428,6 +2428,7 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Agentes.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Agentes.Cdx"
    oDataTable:cDescription := "Agentes"
+   oDataTable:bSyncFile    := {|| SynAgente( cPatEmp() ) }
    oDataTable:bCreateFile  := {| cPath | mkAgentes( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxAgentes( cPath ) }
    ::AddEmpresaTable( oDataTable )

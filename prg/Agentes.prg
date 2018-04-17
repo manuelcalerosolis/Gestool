@@ -32,6 +32,7 @@
 #define _NCOMTAR4                26      //   N      5     2
 #define _NCOMTAR5                27      //   N      5     2
 #define _NCOMTAR6                28      //   N      5     2
+#define _UUID                    29
 
 #define fldGeneral               oFld:aDialogs[1]
 #define fldComisiones            oFld:aDialogs[2]
@@ -1657,7 +1658,8 @@ FUNCTION aItmAge()
                      { "nComTar3",  "N",  6,  2, "Comisión de la tarifa 3" ,  "'@E 99.99'",  "", "( cDbfAge )" },;
                      { "nComTar4",  "N",  6,  2, "Comisión de la tarifa 4" ,  "'@E 99.99'",  "", "( cDbfAge )" },;
                      { "nComTar5",  "N",  6,  2, "Comisión de la tarifa 5" ,  "'@E 99.99'",  "", "( cDbfAge )" },;
-                     { "nComTar6",  "N",  6,  2, "Comisión de la tarifa 6" ,  "'@E 99.99'",  "", "( cDbfAge )" } }
+                     { "nComTar6",  "N",  6,  2, "Comisión de la tarifa 6" ,  "'@E 99.99'",  "", "( cDbfAge )" },;
+                     { "Uuid",      "C", 40,  0, "Identificador único" ,      "",            "", "( cDbfAge )" } }
 
 RETURN ( aBase )
 
@@ -2071,5 +2073,47 @@ FUNCTION validateAgentPercentage( oGetPorcentajeAgente, dbfTmpLin, oBrw )
    setOldPorcentajeAgente( nNewPctComision )
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function SynAgente()
+
+   local oError
+   local oBlock
+   local dbfAgente
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      USE ( cPatEmp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgente ) )
+      SET ADSINDEX TO ( cPatEmp() + "AGENTES.CDX" ) ADDITIVE
+
+
+      ( dbfAgente )->( dbGoTop() )
+      
+      while !( dbfAgente )->( Eof() )
+
+         if Empty( ( dbfAgente )->Uuid )
+            if dbLock( dbfAgente )
+               ( dbfAgente )->Uuid := win_uuidcreatestring()
+               ( dbfAgente )->( dbUnLock() )
+            end if
+         end if         
+
+         ( dbfAgente )->( dbSkip() )
+
+      end while
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de agentes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( dbfAgente )
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//

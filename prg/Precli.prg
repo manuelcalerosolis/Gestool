@@ -100,6 +100,7 @@ Definici¢n de la base de datos de presupuestos a clientes
 #define _MFIRMA                   85
 #define _CCENTROCOSTE             86
 #define _UUID_TRN                 87
+#define _UUID_AGE                 88
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -708,7 +709,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       Counter                 := TCounter():New( nView, "nPreCli" )
 
-      oTransportistaSelector  := TransportistasController():New():oGetSelectorTransportista
+      oTransportistaSelector  := TransportistasController():New():oComboSelector
 
       CodigosPostales():GetInstance():OpenFiles()
 
@@ -10381,6 +10382,7 @@ function aItmPreCli()
    aAdd( aItmPreCli, { "mFirma",    "M", 10,  2, "Firma",                                             "Firma",                         "", "( cDbf )", nil } )
    aAdd( aItmPreCli, { "cCtrCoste", "C",  9,  0, "Código del centro de coste" ,                       "CentroCoste",                   "", "( cDbf )", nil } )
    aAdd( aItmPreCli, { "Uuid_Trn",  "C", 40,  0, "Identificador transportista" ,                      "UuidTransportista",             "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "Uuid_Age",  "C", 40,  0, "Identificador agente" ,                             "UuidAgente",                    "", "( cDbf )", nil } )
 
 return ( aItmPreCli )
 
