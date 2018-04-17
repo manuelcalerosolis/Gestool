@@ -293,8 +293,13 @@ Return ( self )
 
 METHOD recalculateCacheStock() CLASS InvoiceCustomer
 
-   local nRec        := ( D():FacturasClientesLineas( ::nView ) )->( recno() )
-   local nOrdAnt     := ( D():FacturasClientesLineas( ::nView ) )->( ordsetfocus( "nNumFac" ) )
+   local nRec        
+   local nOrdAnt     
+   
+   RETURN ( self )
+
+   nRec              := ( D():FacturasClientesLineas( ::nView ) )->( recno() )
+   nOrdAnt           := ( D():FacturasClientesLineas( ::nView ) )->( ordsetfocus( "nNumFac" ) )
 
    cursorWait()
 

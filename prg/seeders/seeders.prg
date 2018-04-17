@@ -794,7 +794,6 @@ METHOD getStatementCamposExtraValores( dbf ) CLASS Seeders
 RETURN ( ::getInsertStatement( hCampos, "campos_extra_valores" ) )
 
 //---------------------------------------------------------------------------//
-// "Clientes" => "21",;
 // "Proveedores" => "22",;
 // "Familias" => "37",; 
 // "Agentes" => "38",;
@@ -832,6 +831,11 @@ METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS Seeders
       case cTipoDocumento == "20" // "Artículos" => "20"
          
          cEntidadUuid   := ArticulosModel():getUuid( cClave )
+
+      case cTipoDocumento == "21" // "Clientes" => "21"
+         
+         cEntidadUuid   := ClientesModel():getUuid( cClave )
+
 
    end case
 

@@ -426,7 +426,6 @@ CLASS SQLAgentesModel FROM SQLBaseModel
 
    DATA cTableName               INIT "agentes"
 
-
    METHOD getColumns()
 
 END CLASS
@@ -434,12 +433,14 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD getColumns() CLASS SQLAgentesModel
-
+   
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
+   
+   ::getEmpresaColumns()
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
                                              "default"   => {|| space( 140 ) } }                       )

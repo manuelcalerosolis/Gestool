@@ -36,6 +36,12 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD getColumns()
+   
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                             "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+                                             "default"   => {|| win_uuidcreatestring() } }            )
 
    ::getEmpresaColumns()
 
