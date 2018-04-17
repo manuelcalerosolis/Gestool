@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS AgentesController FROM SQLNavigatorController
+CLASS TercerosController FROM SQLNavigatorController
 
    DATA oDireccionesController
    DATA oPaisesController
@@ -11,7 +11,7 @@ CLASS AgentesController FROM SQLNavigatorController
 
    METHOD New()
 
-   METHOD DireccionesControllerLoadCurrentBuffer()
+   /*METHOD DireccionesControllerLoadCurrentBuffer()
 
    METHOD DireccionesControllerUpdateBuffer()
 
@@ -19,46 +19,42 @@ CLASS AgentesController FROM SQLNavigatorController
 
    METHOD DireccionesControllerLoadedDuplicateCurrentBuffer()
 
-   METHOD DireccionesControllerLoadedDuplicateBuffer()
+   METHOD DireccionesControllerLoadedDuplicateBuffer()*/
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS AgentesController
+METHOD New() CLASS TercerosController
 
    ::Super:New()
 
-   ::cTitle                      := "Agentes"
+   ::cTitle                      := ""
 
-   ::cName                       := "agentes"
+   ::cName                       := ""
 
-   ::hImage                      := {  "16" => "gc_businessman2_16",;
-                                       "32" => "gc_businessman2_32",;
-                                       "48" => "gc_businessman2_48" }
+   ::hImage                      := {=>}
 
    ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                      := SQLAgentesModel():New( self )
+   ::oBrowseView                 := TercerosBrowseView():New( self )
 
-   ::oBrowseView                 := AgentesBrowseView():New( self )
+   ::oDialogView                 := TercerosView():New( self )
 
-   ::oDialogView                 := AgentesView():New( self )
+   ::oValidator                  := TercerosValidator():New( self, ::oDialogView )
 
-   ::oValidator                  := AgentesValidator():New( self, ::oDialogView )
+   //::oDireccionesController      := DireccionesController():New( self )
 
-   ::oDireccionesController      := DireccionesController():New( self )
+   ::oRepository                 := TercerosRepository():New( self )
 
-   ::oRepository                 := AgentesRepository():New( self )
-
-   ::oPaisesController           := PaisesController():New( self )
-   ::oProvinciasController       := ProvinciasController():New( self )
+   //::oPaisesController           := PaisesController():New( self )
+   //::oProvinciasController       := ProvinciasController():New( self )
 
    ::oComboSelector              := ComboSelector():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
+   //::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:oModel:loadBlankBuffer() } )
+   /*::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:oModel:loadBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:oModel:insertBuffer() } )
    
    ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::DireccionesControllerLoadCurrentBuffer() } )
@@ -67,13 +63,13 @@ METHOD New() CLASS AgentesController
    ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::DireccionesControllerLoadedDuplicateCurrentBuffer() } )
    ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::DireccionesControllerLoadedDuplicateBuffer() } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::DireccionesControllerDeleteBuffer() } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::DireccionesControllerDeleteBuffer() } )*/
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DireccionesControllerLoadCurrentBuffer()
+/*METHOD DireccionesControllerLoadCurrentBuffer()
 
    local idDireccion     
    local uuidAgente     := hget( ::oModel:hBuffer, "uuid" )
@@ -148,7 +144,7 @@ METHOD DireccionesControllerLoadedDuplicateBuffer()
 
    hset( ::oDireccionesController:oModel:hBuffer, "parent_uuid", uuidAgente )
 
-RETURN ( self )
+RETURN ( self )*/
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -157,7 +153,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesBrowseView FROM SQLBrowseView
+CLASS TercerosBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -165,7 +161,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS AgentesBrowseView
+METHOD addColumns() CLASS TercerosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -184,6 +180,14 @@ METHOD addColumns() CLASS AgentesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'CÃ³digo'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
       :nWidth              := 300
@@ -199,14 +203,6 @@ METHOD addColumns() CLASS AgentesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'comision'
-      :cHeader             := 'Comisión'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'comision' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -217,7 +213,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesView FROM SQLBaseView
+CLASS TercerosView FROM SQLBaseView
   
    DATA oGetProvincia
    DATA oGetPoblacion
@@ -234,21 +230,18 @@ CLASS AgentesView FROM SQLBaseView
 END CLASS
 
 //---------------------------------------------------------------------------//
-METHOD Activating() CLASS AgentesView
+
+METHOD Activating() CLASS TercerosView
 
    if ::oController:isAppendOrDuplicateMode()
       ::oController:oModel:hBuffer()
    end if 
 
 RETURN ( self )
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 
-
-METHOD Activate() CLASS AgentesView
+METHOD Activate() CLASS TercerosView
 
    local oGetDni
 
@@ -258,7 +251,7 @@ METHOD Activate() CLASS AgentesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_businessman2_48" ;
+      RESOURCE    "gc_user2_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -267,7 +260,7 @@ METHOD Activate() CLASS AgentesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   /*REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
@@ -335,7 +328,7 @@ METHOD Activate() CLASS AgentesView
       ID          190 ;
       WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
       VALID       ( ::getDireccionesController():validate( "email" ) ) ;
-      OF          ::oDialog
+      OF          ::oDialog*/
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -363,9 +356,9 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD validateFields() CLASS AgentesView
+METHOD validateFields() CLASS TercerosView
 
-   local cPoblacion
+   /*local cPoblacion
    local cCodigoProvincia
 
    cPoblacion           := SQLCodigosPostalesModel():getField( "poblacion", "codigo", ::getDireccionesController():oModel:hBuffer[ "codigo_postal" ] )
@@ -390,7 +383,7 @@ METHOD validateFields() CLASS AgentesView
    if !Empty( ::getDireccionesController():oModel:hBuffer[ "codigo_pais" ] )
       ::oGetPais:oHelpText:cText( SQLPaisesModel():getField( "nombre", "codigo", ::getDireccionesController():oModel:hBuffer[ "codigo_pais" ] ) )
       ::oGetPais:oHelpText:Refresh()
-   end if
+   end if*/
 
 RETURN ( .t. )
 
@@ -401,7 +394,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesValidator FROM SQLBaseValidator
+CLASS TercerosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -409,7 +402,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS AgentesValidator
+METHOD getValidators() CLASS TercerosValidator
 
    ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre del agente es un dato requerido" }  }
 
@@ -423,71 +416,12 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS SQLAgentesModel FROM SQLBaseModel
+CLASS TercerosRepository FROM SQLBaseRepository
 
-   DATA cTableName               INIT "agentes"
-
-   METHOD getColumns()
+   METHOD getTableName()                  INLINE ( SQLTercerosModel():getTableName() ) 
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD getColumns() CLASS SQLAgentesModel
-   
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "default"   => {|| 0 } }                                 )
-
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
-   
-   ::getEmpresaColumns()
-
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
-                                             "default"   => {|| space( 140 ) } }                       )
-
-   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
-
-   hset( ::hColumns, "comision",          {  "create"    => "FLOAT( 5,2 )"                            ,;
-                                             "default"   => {|| 0 } }                                 )
-
-RETURN ( ::hColumns )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS AgentesRepository FROM SQLBaseRepository
-
-   METHOD getTableName()                  INLINE ( SQLAgentesModel():getTableName() ) 
-
-   METHOD getNombres()
-
-   METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
-
-   METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD getNombres() CLASS AgentesRepository
-
-   local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
-   local aResult     := {}
-
-   if !empty( aNombres )
-      aeval( aNombres, {| h | aadd( aResult, alltrim( hGet( h, "nombre" ) ) ) } )
-   end if 
-
-RETURN ( aResult )
 
 //---------------------------------------------------------------------------//

@@ -128,6 +128,7 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _CCENTROCOSTE             105  
 #define _MFIRMA                   106
 #define _UUID_TRN                 107
+#define _UUID_AGE                 108
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -1607,7 +1608,7 @@ STATIC FUNCTION OpenFiles()
 
       Counter           := TCounter():New( nView, "nAlbCli" ) 
 
-      oTransportistaSelector     := TransportistasController():New():oGetSelectorTransportista
+      oTransportistaSelector     := TransportistasController():New():oComboSelector
 
       /*
       Declaración de variables públicas----------------------------------------
@@ -17063,6 +17064,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "cCtrCoste", "C",  9, 0, "Código del centro de coste" ,                              "CentroCoste",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "mFirma",    "M", 10, 0, "Firma" ,                                                   "Firma",                         "", "( cDbf )", nil } )                  
    aAdd( aItmAlbCli, { "Uuid_Trn",  "C", 40, 0, "Identificador transportista" ,                             "UuidTransportista",             "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "Uuid_Age",  "C", 40, 0, "Identificador agente" ,                                    "UuidAgente",                    "", "( cDbf )", nil } )
 
 Return ( aItmAlbCli )
 

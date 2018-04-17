@@ -43,7 +43,9 @@ CLASS SQLBaseController
 
    DATA aDocuments                                    INIT {}
 
-   DATA cDirectory                     
+   DATA cDirectory 
+
+   DATA oComboSelector                    
 
    METHOD New()
    METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 

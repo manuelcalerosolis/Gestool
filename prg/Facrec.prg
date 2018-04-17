@@ -115,6 +115,7 @@
 #define _TFECFAC 		      103
 #define _CCENTROCOSTE	   104
 #define _UUID_TRN          105
+#define _UUID_AGE          106
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -822,7 +823,7 @@ STATIC FUNCTION OpenFiles( lExt )
      
       Counter           := TCounter():New( nView, "nFacRec" )
 
-      oTransportistaSelector  := TransportistasController():New():oGetSelectorTransportista
+      oTransportistaSelector  := TransportistasController():New():oComboSelector
 
       /*
       Declaración de variables publicas----------------------------------------
@@ -12820,6 +12821,7 @@ function aItmFacRec()
    aAdd( aItmFacRec, { "tFecFac"     ,"C",  9, 0, "Hora de la factura rectificativa",                        "HoraFactura",             "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "cCtrCoste"   ,"C",  9, 0, "Código del centro de coste",                              "CentroCoste",             "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "Uuid_Trn"    ,"C", 40, 0, "Identificador transportista" ,                            "UuidTransportista",       "", "( cDbf )", nil } )
+   aAdd( aItmFacRec, { "Uuid_Age"    ,"C", 40, 0, "Identificador agente" ,                                   "UuidAgente",              "", "( cDbf )", nil } )
 
 RETURN ( aItmFacRec )
 

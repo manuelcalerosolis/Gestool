@@ -193,6 +193,10 @@ METHOD addModels()
 
    aadd( ::aModels, SQLRelacionesEntidadesModel():New() )
 
+   aadd( ::aModels, SQLClientesModel():New() )
+
+   aadd( ::aModels, SQLProveedoresModel():New() )
+
 RETURN ( ::aModels )
  
 //----------------------------------------------------------------------------//

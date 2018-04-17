@@ -637,6 +637,16 @@ CentroCosteModel.prg 														\
 TransportistasModel.prg 													\
 MdiChild.prg 																	\
 SQLComboSelector.prg 														\
+<<<<<<< HEAD
+=======
+urllink.prg 																	\
+TercerosController.prg 														\
+ClientesController.prg 														\
+ProveedoresController.prg 													\
+SQLTercerosModel.prg 														\
+SQLClientesModel.prg 														\
+SQLProveedoresModel.prg 		  											\
+>>>>>>> a6093d06e519ba8941ee35ac1255379d20100eeb
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1249,7 +1259,17 @@ CentroCosteModel.obj 														\
 MdiChild.obj 																	\
 TransportistasModel.obj 													\
 SQLComboSelector.obj 														\
+<<<<<<< HEAD
 TiposNotas.obj       														\
+=======
+urllink.obj 																	\
+TercerosController.obj 														\
+ClientesController.obj 														\
+ProveedoresController.obj 													\
+SQLTercerosModel.obj 														\
+SQLclientesModel.obj 														\
+SQLProveedoresModel.obj 		  											\
+>>>>>>> a6093d06e519ba8941ee35ac1255379d20100eeb
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1852,6 +1872,16 @@ $(OBJ)\CentroCosteModel.obj 												+
 $(OBJ)\TransportistasModel.obj 											+
 $(OBJ)\MdiChild.obj 															+
 $(OBJ)\SQLComboSelector.obj 												+
+<<<<<<< HEAD
+=======
+$(OBJ)\urllink.obj 															+
+$(OBJ)\TercerosController.obj 											+
+$(OBJ)\ClientesController.obj 											+
+$(OBJ)\ProveedoresController.obj 										+
+$(OBJ)\SQLTercerosModel.obj 												+
+$(OBJ)\SQLclientesModel.obj 												+
+$(OBJ)\SQLProveedoresModel.obj 		  									+
+>>>>>>> a6093d06e519ba8941ee35ac1255379d20100eeb
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

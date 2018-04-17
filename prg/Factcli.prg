@@ -160,6 +160,7 @@
 #define _CCENTROCOSTE      130
 #define _MFIRMA            131
 #define _UUID_TRN          132
+#define _UUID_AGE          133
 
 /*
 Definici-n de la base de datos de lineas de detalle
@@ -273,6 +274,7 @@ Definici-n de la base de datos de lineas de detalle
 #define _ID_TIPO_V         106
 #define __NREGIVA          107
 #define _NPRCULTCOM        108
+#define __UUID_AGE         109
 
 memvar cDbf
 memvar cDbfCol
@@ -1884,7 +1886,7 @@ STATIC FUNCTION OpenFiles()
 
       Counter                    := TCounter():New( nView, "nFacCli" )
 
-      oTransportistaSelector     := TransportistasController():New():oGetSelectorTransportista
+      oTransportistaSelector     := TransportistasController():New():oComboSelector
 
       /*
       Declaramos variables p-blicas--------------------------------------------
@@ -18310,6 +18312,10 @@ function SynFacCli( cPath )
             ( D():FacturasClientes( nView ) )->Uuid_Trn := TransportistasModel():getUuid( ( D():FacturasClientes( nView ) )->cCodTrn )
          end if
 
+         if Empty( ( D():FacturasClientes( nView ) )->Uuid_Age )
+            ( D():FacturasClientes( nView ) )->Uuid_Age := AgentesModel():getUuid( ( D():FacturasClientes( nView ) )->cCodAge )
+         end if
+
          /*
          Esto es para la Jaca para que todas las facturas tengan las comisiones de agente bien-------------------------------------
          */
@@ -18479,6 +18485,13 @@ function SynFacCli( cPath )
          if empty( ( D():FacturasClientesLineas( nView ) )->cCodAge )
             if ( D():FacturasClientesLineas( nView ) )->( dbRLock() )
                ( D():FacturasClientesLineas( nView ) )->cCodAge    := RetFld( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac, D():FacturasClientes( nView ), "cCodAge" )
+               ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
+            end if
+         end if
+
+         if Empty( ( D():FacturasClientesLineas( nView ) )->Uuid_Age )
+            if ( D():FacturasClientesLineas( nView ) )->( dbRLock() )
+               ( D():FacturasClientesLineas( nView ) )->Uuid_Age := AgentesModel():getUuid( ( D():FacturasClientesLineas( nView ) )->cCodAge )
                ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
             end if
          end if
@@ -19566,6 +19579,8 @@ function aColFacCli()
    aAdd( aColFacCli, { "id_tipo_v", "N",  16, 0, "Identificador tipo de venta"            , "IdentificadorTipoVenta",      "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nRegIva",   "N",   1, 0, "Régimen de " + cImp()                   , "TipoImpuesto",                "", "( cDbfCol )", nil } ) 
    aAdd( aColFacCli, { "nPrcUltCom","N",  16, 6, "Precio última compra"                   , "PrecioUltimaVenta",           "", "( cDbfCol )", nil } ) 
+   aAdd( aColFacCli, { "Uuid_Age",  "C",  40, 0, "Identificador agente"                   , "UuidAgente",                  "", "( cDbfCol )", nil } )
+
 
 return ( aColFacCli )
 
@@ -19707,6 +19722,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"cCtrCoste"   ,"C", 9,   0, "Código del centro de coste" ,                               "CentroCoste",                 "", "( cDbf )", nil } )
    aAdd( aItmFacCli, { "mFirma"     ,"M", 10,  0, "Firma" ,                                                    "Firma",                       "", "( cDbf )", nil } )                  
    aAdd( aItmFacCli, { "Uuid_Trn"   ,"C", 40,  0, "Identificador transportista" ,                              "UuidTransportista",           "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, { "Uuid_Age"   ,"C", 40,  0, "Identificador agente" ,                                     "UuidAgente",                  "", "( cDbf )", nil } )
 
 RETURN ( aItmFacCli )
 

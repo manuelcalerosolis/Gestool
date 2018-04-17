@@ -6,7 +6,6 @@
 CLASS TransportistasController FROM SQLNavigatorController
 
    DATA oDireccionesController
-   DATA oGetSelectorTransportista
 
    METHOD New()
 
@@ -40,7 +39,7 @@ METHOD New() CLASS TransportistasController
 
    ::oRepository                 := TransportistasRepository():New( self )
 
-   ::oGetSelectorTransportista   := ComboSelector():New( self )
+   ::oComboSelector              := ComboSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
