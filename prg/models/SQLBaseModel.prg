@@ -277,7 +277,7 @@ METHOD getEmpresaColumns()
    
    hset( ::hColumns, "empresa_uuid",   {  "create"    => "CHAR ( 40 ) NOT NULL"                    ,;
                                           "text"      => "Empresa"                                 ,;
-                                          "default"   => {|| cCodEmp() } }                         )
+                                          "default"   => {|| uuidEmpresa() } }                     )
 
    hset( ::hColumns, "usuario_uuid",   {  "create"    => "CHAR ( 40 ) NOT NULL"                    ,;
                                           "text"      => "Usuario uuid"                            ,;
