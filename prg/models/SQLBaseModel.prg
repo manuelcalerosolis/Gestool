@@ -188,6 +188,8 @@ CLASS SQLBaseModel
    METHOD loadCurrentBuffer()
    METHOD defaultCurrentBuffer()
 
+   METHOD insertBlankBuffer()                         INLINE ( ::loadBlankBuffer(), ::insertBuffer() ) 
+
    // Events-------------------------------------------------------------------
 
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
