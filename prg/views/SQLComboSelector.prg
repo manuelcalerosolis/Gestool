@@ -99,7 +99,7 @@ METHOD ResourceComboBox() CLASS ComboSelector
    
    ::oComboBox             := TComboBox():ReDefine( ::idCombobox, bSETGET( ::cComboBox ), ::aComboBox, ::oDialog,,, {|| ::ChangeComboBox() } , , , , .f., {|| .t. } )
    ::oComboBox:lIncSearch  := .t.
-   ::oComboBox:cToolTip    := "Buscando : " + cvaltostr( ::oComboBox:cSearchKey )
+   ::oComboBox:cToolTip    := "Buscando : " + ( ::oComboBox:cSearchKey )
 
 RETURN ( Self )
 

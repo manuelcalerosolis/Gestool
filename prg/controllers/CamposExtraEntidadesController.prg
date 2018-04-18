@@ -29,6 +29,8 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "envases_articulos" =>                    { "nombre" => "Envases de artículos",  "icono" => "gc_box_closed_16"                           } ,;
                                  "grupos_clientes" =>                      { "nombre" => "Grupos de clientes",  "icono" => "gc_users3_16"                                 } ,;
                                  "propiedades" =>                          { "nombre" => "Propiedades",  "icono" => "gc_coathanger_16"                                    } ,;
+                                 "movimientos_almacen" =>                  { "nombre" => "Movimientos de almacén",  "icono" => "gc_pencil_package_16"                     } ,;
+                                 "movimientos_almacen_lineas" =>           { "nombre" => "Movimientos de almacén lineas", "icono" => "gc_pencil_package_16"              } ,;
                                  "lineas_propiedades" =>                   { "nombre" => "Líneas de propiedades",  "icono" => "gc_coathanger_16"                          } }   
 
    METHOD New( oController )

@@ -8,7 +8,7 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    DATA cTableName               INIT "movimientos_almacen"
 
-   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid, empresa)"
+   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid, empresa, usuario)"
 
    DATA aTextoMovimiento         INIT { 'Entre almacenes', 'Regularización', 'Objetivos', 'Consolidación', 'Vacio' }
  
@@ -36,6 +36,12 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD getColumns()
+   
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                             "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+                                             "default"   => {|| win_uuidcreatestring() } }            )
 
    ::getEmpresaColumns()
 
@@ -88,7 +94,6 @@ METHOD getInitialSelect()
                   "movimientos_almacen.tipo_movimiento            AS tipo_movimiento, "   + ;
                   ::getColumnMovimiento( "movimientos_almacen" )                          + ;
                   "movimientos_almacen.fecha_hora                 AS fecha_hora, "        + ;
-                  "movimientos_almacen.usuario                    AS usuario, "           + ;
                   "movimientos_almacen.almacen_origen             AS almacen_origen, "    + ;
                   "movimientos_almacen.almacen_destino            AS almacen_destino, "   + ;
                   "movimientos_almacen.grupo_movimiento           AS grupo_movimiento, "  + ;

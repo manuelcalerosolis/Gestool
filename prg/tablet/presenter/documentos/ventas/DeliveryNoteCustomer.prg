@@ -165,7 +165,7 @@ METHOD deleteLinesDocument() CLASS DeliveryNoteCustomer
    if lAIS()
 
       statement   := "DELETE FROM " + cPatEmp() + "AlbCliL " + ;
-                     "WHERE cSerAlb = '" + ::getSerie() + "' AND nNumAlb = " + alltrim( ::getStrNumero() ) + " AND cSufAlb = '" + ::getSufijo() + "'" 
+                        "WHERE cSerAlb = '" + ::getSerie() + "' AND nNumAlb = " + alltrim( ::getStrNumero() ) + " AND cSufAlb = '" + ::getSufijo() + "'" 
 
       TDataCenter():ExecuteSqlStatement( statement )
 

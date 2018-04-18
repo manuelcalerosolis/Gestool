@@ -689,10 +689,13 @@ RETURN ( lCalCaj )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cCodEmp() ; RETURN ( if( IsArray( aEmp() ), aEmp()[ _CODEMP ], "" ) )
+FUNCTION cCodEmp() ; RETURN ( if( hb_isarray( aEmp() ), aEmp()[ _CODEMP ], "" ) )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION uuidEmpresa() ; RETURN ( if( hb_isarray( aEmp() ), aEmp()[ _UUID ], "" ) )
+
+//---------------------------------------------------------------------------//
 //
 // Devuelve si una empresa esta convertida
 //

@@ -1380,7 +1380,7 @@ METHOD editHashRecord( hTable, cDataTable, nView ) CLASS D
 
       lEdit          := .t.
 
-      // ( workArea )->( dbcommit() )
+      ( workArea )->( dbcommit() )
       ( workArea )->( dbUnLock() )
 
    end if 

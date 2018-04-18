@@ -12844,22 +12844,22 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
 
          MENU
 
-            MENUITEM "&1. Campos extra [F9]";
+            MENUITEM    "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para el artículo" ;
-               RESOURCE "GC_FORM_PLUS2_16" ;
+               RESOURCE "gc_form_plus2_16" ;
                ACTION   ( oDetCamposExtra:Play( Space(1) ) )
 
-            MENUITEM "&2. Informe de artículo en escandallo";
+            MENUITEM    "&2. Informe de artículo en escandallo";
                MESSAGE  "Muestra el informe del artículo en escandallo" ;
                RESOURCE "info16" ;
                ACTION   ( BrwVtaComArt( ( dbfTmpKit )->cRefKit, ( dbfTmpKit )->cDesKit, dbfDiv, D():TiposIva( nView ), dbfAlmT, D():Articulos( nView ) ) )
 
-            MENUITEM "&3. Ver comando";
+            MENUITEM    "&3. Ver comando";
                MESSAGE  "Muestra el informe del artículo en escandallo" ;
                RESOURCE "info16" ;
                ACTION   ( debugWeb( aTmp ) )
 
-            MENUITEM "&4. Información enlace web";
+            MENUITEM    "&4. Información enlace web";
                MESSAGE  "Muestra el informe del artículo en la web" ;
                RESOURCE "info16" ;
                ACTION   ( infoWeb( aTmp ) )

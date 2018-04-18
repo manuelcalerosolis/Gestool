@@ -273,15 +273,12 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 
 METHOD getEmpresaColumns()
-
    
-   hset( ::hColumns, "empresa_uuid",   {  "create"    => "CHAR ( 40 ) NOT NULL"                    ,;
-                                          "text"      => "Empresa"                                 ,;
-                                          "default"   => {|| cCodEmp() } }                         )
+   hset( ::hColumns, "empresa",     {  "create"    => "VARCHAR ( 4 ) NOT NULL"       ,;
+                                       "default"   => {|| cCodEmp() } }              )
 
-   hset( ::hColumns, "usuario_uuid",   {  "create"    => "CHAR ( 40 ) NOT NULL"                    ,;
-                                          "text"      => "Usuario uuid"                            ,;
-                                          "default"   => {|| Auth():Uuid() } }                     )
+   hset( ::hColumns, "usuario",     {  "create"    => "VARCHAR ( 3 ) NOT NULL"       ,;
+                                       "default"   => {|| Auth():Codigo() } }        )
 
 RETURN ( ::hColumns )
 
