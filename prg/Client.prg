@@ -1544,6 +1544,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "CLIENT_16" ,;
                   "CLIENT_FACTURAE" ,;
                   "CLIENT_18"
+                  
       /*
       Primera pestanna----------------------------------------------------------
       */

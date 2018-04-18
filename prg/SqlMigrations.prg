@@ -21,6 +21,8 @@ CLASS SQLMigrations
 
    METHOD getSchemaColumns( oModel )   
 
+   METHOD syncronizeModels()
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -30,6 +32,8 @@ METHOD Run()
    ::createDatabase()
 
    ::addModels()
+
+   ::syncronizeModels()
 
    ::checkModels()
 
@@ -41,9 +45,17 @@ RETURN ( Self )
 
 METHOD createDatabase()
 
-   getSQLDatabase():oConexion:exec( "CREATE DATABASE IF NOT EXISTS " + getSQLDatabase():cDatabaseMySQL + ";" )
-   getSQLDatabase():oConexion:exec( "USE " + getSQLDatabase():cDatabaseMySQL + ";" )
+   getSQLDatabase():oConexion:Exec( "CREATE DATABASE IF NOT EXISTS " + getSQLDatabase():cDatabaseMySQL + ";" )
+   getSQLDatabase():oConexion:Exec( "USE " + getSQLDatabase():cDatabaseMySQL + ";" )
        
+RETURN ( self )    
+
+//----------------------------------------------------------------------------//
+
+METHOD syncronizeModels()
+
+   SQLMovimientosAlmacenModel():Syncronize()   
+
 RETURN ( self )    
 
 //----------------------------------------------------------------------------//

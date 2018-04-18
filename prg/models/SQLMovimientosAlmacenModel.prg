@@ -31,6 +31,8 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
    METHOD cTextoMovimiento( nTipoMovimiento ) ;
                                  INLINE ( ::aTextoMovimiento[ minmax( nTipoMovimiento, 1, len( ::aTextoMovimiento ) ) ] )
 
+   METHOD Syncronize()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -209,6 +211,31 @@ METHOD assingNumber( hBuffer )
    end while
 
    hset( hBuffer, "numero", cNumero )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD Syncronize()
+
+   local nPosition
+   local aSchemaColumns    := SQLMigrations():getSchemaColumns( self )
+
+   nPosition               := ascan( aSchemaColumns, {| hColumn | hget( hColumn, "COLUMN_NAME" ) == 'empresa_uuid' } )
+
+   if nPosition == 0     
+      getSQLDatabase():Exec( "ALTER TABLE " + ::cTableName + " ADD empresa_uuid VARCHAR( 40 ) NOT NULL ;" )
+   end if 
+
+   nPosition               := ascan( aSchemaColumns, {| hColumn | hget( hColumn, "COLUMN_NAME" ) == 'usuario_uuid' } )
+
+   if nPosition == 0     
+      getSQLDatabase():Exec( "ALTER TABLE " + ::cTableName + " ADD usuario_uuid VARCHAR( 40 ) NOT NULL ;" )
+   end if 
+
+   // Ejecutar
+
+   // UPDATE 
 
 RETURN ( .t. )
 

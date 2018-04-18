@@ -238,11 +238,9 @@ RETURN ( nil )
 METHOD getDateTimeColumns()
 
    hset( ::hColumns, "creado",      {  "create"    => "DATETIME DEFAULT NULL"       ,;
-                                       "text"      => "Creación fecha y hora"       ,;
                                        "default"   => {|| hb_datetime() } }         )
 
    hset( ::hColumns, "modificado",  {  "create"    => "DATETIME DEFAULT NULL"       ,;
-                                       "text"      => "Modificación fecha y hora"   ,;
                                        "default"   => {|| hb_datetime() } }         )
 
 RETURN ( ::hColumns )
@@ -261,11 +259,9 @@ RETURN ( ::hColumns )
 METHOD getTimeStampColumns()
 
    hset( ::hColumns, "created_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
-                                       "text"      => "Creación fecha y hora"       ,;
                                        "default"   => {|| hb_datetime() } }         )
 
    hset( ::hColumns, "updated_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
-                                       "text"      => "Modificación fecha y hora"   ,;
                                        "default"   => {|| hb_datetime() } }         )
 
 RETURN ( ::hColumns )
@@ -274,11 +270,11 @@ RETURN ( ::hColumns )
 
 METHOD getEmpresaColumns()
    
-   hset( ::hColumns, "empresa",     {  "create"    => "VARCHAR ( 4 ) NOT NULL"       ,;
-                                       "default"   => {|| cCodEmp() } }              )
+   hset( ::hColumns, "empresa_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
+                                          "default"   => {|| space( 40 ) } }              )
 
-   hset( ::hColumns, "usuario",     {  "create"    => "VARCHAR ( 3 ) NOT NULL"       ,;
-                                       "default"   => {|| Auth():Codigo() } }        )
+   hset( ::hColumns, "usuario_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
+                                          "default"   => {|| space( 40 ) } }              )
 
 RETURN ( ::hColumns )
 
