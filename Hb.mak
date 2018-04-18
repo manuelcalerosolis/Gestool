@@ -68,6 +68,7 @@ Tgraph.prg              										\
 Toleexcel.prg           										\
 Toleword.prg            										\
 Empresa.prg             										\
+EmpresaController.prg             							\
 Empcnf.prg              										\
 Reindexa.prg            										\
 TDataCenter.prg         										\
@@ -681,6 +682,7 @@ TViewImg.obj                                       				\
 Toleexcel.obj                                      				\
 Toleword.obj                                       				\
 Empresa.obj                                        				\
+EmpresaController.obj                                				\
 Empcnf.obj                                         				\
 Reindexa.obj                                       				\
 TDataCenter.obj                                    				\
@@ -1312,6 +1314,7 @@ $(OBJ)\TViewImg.obj                                         	+
 $(OBJ)\Toleexcel.obj                                        	+
 $(OBJ)\Toleword.obj                                         	+
 $(OBJ)\Empresa.obj                                          	+
+$(OBJ)\EmpresaController.obj                                  	+
 $(OBJ)\Empcnf.obj                                           	+
 $(OBJ)\Reindexa.obj                                         	+
 $(OBJ)\TDataCenter.obj                                      	+

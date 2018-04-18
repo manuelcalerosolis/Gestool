@@ -218,6 +218,7 @@ RETURN ( .t. )
 
 METHOD Syncronize()
 
+   local cSql
    local nPosition
    local aSchemaColumns    := SQLMigrations():getSchemaColumns( self )
 
@@ -233,9 +234,14 @@ METHOD Syncronize()
       getSQLDatabase():Exec( "ALTER TABLE " + ::cTableName + " ADD usuario_uuid VARCHAR( 40 ) NOT NULL ;" )
    end if 
 
-   // Ejecutar
+   // Actualizar datos de usuario----------------------------------------------
 
-   // UPDATE 
+   cSql                    := "UPDATE movimientos_almacen "
+   cSql                    +=    "INNER JOIN usuarios ON movimientos_almacen.usuario = usuarios.codigo "
+   cSql                    += "SET movimientos_almacen.usuario_uuid = usuarios.uuid "
+   cSql                    +=    "WHERE movimientos_almacen.usuario_uuid = '' "
+
+   getSQLDatabase():Exec( cSql )
 
 RETURN ( .t. )
 
