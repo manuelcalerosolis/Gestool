@@ -53,6 +53,8 @@ CLASS SQLBaseValidator
    METHOD existFamilia( uValue )
    METHOD existTipoArticulo( uValue )
 
+   METHOD setDialog( oView )                 INLINE ( ::oView := oView )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

@@ -3,6 +3,7 @@
 
 CLASS ClientesView FROM SQLBaseView
   
+   DATA oGetDni
    DATA oGetProvincia
    DATA oGetPoblacion
    DATA oGetPais
@@ -31,11 +32,17 @@ RETURN ( self )
 
 METHOD Activate() CLASS ClientesView
 
-   local oGetDni
+   local oFld
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "AGENTE" ;
-      TITLE       ::LblTitle() + "agente"
+      RESOURCE    "Cliente" ;
+      TITLE       ::LblTitle() + "cliente"
+
+   REDEFINE FOLDER ::oFolder ;
+         ID       500 ;
+         OF       ::oDialog ;
+         PROMPT   "&General";
+         DIALOGS  "CLIENTE_GENERAL"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -48,39 +55,39 @@ METHOD Activate() CLASS ClientesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   /*REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          ::oDialog
+      VALID       ( ::oController:validate( "codigo" ) ) ;
+      OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   oGetDni VAR ::oController:oModel:hBuffer[ "dni" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( CheckCif( oGetDni ) );
-      OF          ::oDialog
+      VALID       ( ::oController:validate( "nombre" ) ) ;
+      OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "comision" ] ;
+   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "dni" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      PICTURE     "@E 999.99" ;
-      OF          ::oDialog
+      VALID       ( CheckCif( ::oGetDni ) );
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "direccion" ] ;
       ID          130 ;
       WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "codigo_postal" ] ;
       ID          140 ;
       WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
       VALID       ( ::validateFields ) ;
-      OF          ::oDialog 
+      OF          ::oFolder:aDialogs[1] 
 
    REDEFINE GET   ::oGetPoblacion VAR ::getDireccionesController():oModel:hBuffer[ "poblacion" ] ;
       ID          150 ;
       WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::oGetProvincia VAR ::getDireccionesController():oModel:hBuffer[ "provincia" ] ;
       ID          160 ;
@@ -88,41 +95,41 @@ METHOD Activate() CLASS ClientesView
       WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
       BITMAP      "LUPA" ;
       VALID       ( ::validateFields() ) ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[1]
 
    ::oGetProvincia:bHelp  := {|| ::oController:oProvinciasController:getSelectorProvincia( ::oGetProvincia ), ::validateFields() }
 
    REDEFINE GET   ::oGetPais VAR ::getDireccionesController():oModel:hBuffer[ "codigo_pais" ] ;
-      ID          200 ;
-      IDTEXT      201 ;
+      ID          170 ;
+      IDTEXT      171 ;
       WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
       VALID       ( ::validateFields() ) ;
       BITMAP      "LUPA" ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[1]
 
    ::oGetPais:bHelp  := {|| ::oController:oPaisesController:getSelectorPais( ::oGetPais ), ::validateFields() }
 
    REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "telefono" ] ;
-      ID          170 ;
-      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "movil" ] ;
       ID          180 ;
       WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
-      OF          ::oDialog
+      OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "email" ] ;
+   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "movil" ] ;
       ID          190 ;
       WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   REDEFINE GET   ::getDireccionesController():oModel:hBuffer[ "email" ] ;
+      ID          200 ;
+      WHEN        ( ::getDireccionesController():isNotZoomMode() ) ;
       VALID       ( ::getDireccionesController():validate( "email" ) ) ;
-      OF          ::oDialog*/
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -131,7 +138,7 @@ METHOD Activate() CLASS ClientesView
       ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) } )
    end if
 
    ::oDialog:bStart := {|| ::validateFields() }
@@ -146,7 +153,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD validateFields() CLASS ClientesView
 
-   /*local cPoblacion
+   local cPoblacion
    local cCodigoProvincia
 
    cPoblacion           := SQLCodigosPostalesModel():getField( "poblacion", "codigo", ::getDireccionesController():oModel:hBuffer[ "codigo_postal" ] )
@@ -171,7 +178,7 @@ METHOD validateFields() CLASS ClientesView
    if !Empty( ::getDireccionesController():oModel:hBuffer[ "codigo_pais" ] )
       ::oGetPais:oHelpText:cText( SQLPaisesModel():getField( "nombre", "codigo", ::getDireccionesController():oModel:hBuffer[ "codigo_pais" ] ) )
       ::oGetPais:oHelpText:Refresh()
-   end if*/
+   end if
 
 RETURN ( .t. )
 
