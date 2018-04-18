@@ -84,7 +84,8 @@ METHOD DireccionesControllerLoadCurrentBuffer()
 
    idDireccion          := ::oDireccionesController:oModel:getIdWhereParentUuid( uuidAgente )
    if empty( idDireccion )
-      ::oDireccionesController:oModel:insertBuffer()
+      ::oDireccionesController:oModel:loadBlankBuffer()
+      idDireccion       := ::oDireccionesController:oModel:insertBuffer()
    end if 
 
    ::oDireccionesController:oModel:loadCurrentBuffer( idDireccion )
