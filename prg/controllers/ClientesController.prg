@@ -24,6 +24,8 @@ METHOD New() CLASS ClientesController
                                        "48" => "gc_user2_48" }
 
    ::oModel                      := SQLClientesModel():New( self )
+   
+   ::oDialogView                 := ClientesView():New( self )
 
 RETURN ( Self )
 
