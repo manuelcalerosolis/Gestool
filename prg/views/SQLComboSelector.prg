@@ -88,6 +88,8 @@ RETURN ( Self )
 
 METHOD ResourceLink() CLASS ComboSelector
 
+   // ::oUrlLink              := TWebBtn():Redefine( ::idLink,,,,, {|| ::ActionLink() }, ::oDialog,,,,,,,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
    ::oUrlLink              := TUrlLink():Redefine( ::idLink, ::oDialog, , , , , ::nColorUrlLink, ::nColorUrlLink, ::nColorUrlLink, .t. )
    ::oUrlLink:bAction      := {|| ::ActionLink() }
 
