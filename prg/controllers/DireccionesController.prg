@@ -10,9 +10,16 @@ CLASS DireccionesController FROM SQLBrowseController
 
    METHOD New()
 
-   METHOD loadedBlankBuffer()
-
    METHOD gettingSelectSentence()
+
+   METHOD loadBlankBuffer()         INLINE ( ::oModel:loadBlankBuffer() )
+   METHOD insertBuffer()            INLINE ( ::oModel:insertBuffer() )
+
+   METHOD loadedCurrentBuffer( uuidEntidad ) 
+   METHOD updateBuffer( uuidEntidad )
+
+   METHOD loadedDuplicateCurrentBuffer( uuidEntidad )
+   METHOD loadedDuplicateBuffer( uuidEntidad )
 
 END CLASS
 
@@ -43,20 +50,7 @@ METHOD New( oSenderController ) CLASS DireccionesController
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedBlankBuffer() CLASS DireccionesController
-
-   local uuid        := ::getSenderController():getUuid() 
-
-   if !empty( uuid )
-      hset( ::oModel:hBuffer, "parent_uuid", uuid )
-   end if 
 
 RETURN ( Self )
 
@@ -73,9 +67,75 @@ METHOD gettingSelectSentence() CLASS DireccionesController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS DireccionesController
+
+   local idDireccion     
+
+   if empty( uuidEntidad )
+      ::oModel:insertBuffer()
+   end if 
+
+   idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idDireccion )
+      idDireccion       := ::oModel:insertBlankBuffer()
+   end if 
+
+   ::oModel:loadCurrentBuffer( idDireccion )
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
+
+METHOD UpdateBuffer( uuidEntidad ) CLASS DireccionesController
+
+   local idDireccion     
+
+   idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idDireccion )
+      ::oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+
+   ::oModel:updateBuffer()
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
+
+METHOD LoadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DireccionesController
+
+   local idDireccion     
+
+   idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idDireccion )
+      ::oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+
+   ::oModel:loadDuplicateBuffer( idDireccion )
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
+
+METHOD LoadedDuplicateBuffer( uuidEntidad ) CLASS DireccionesController
+
+   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DireccionesControllerDeleteBuffer( aUuidEntidades )
+
+   if empty( aUuidEntidades )
+      RETURN ( self )
+   end if
+
+   ::oDireccionesController:oModel:deleteWhereParentUuid( aUuidEntidades )
+
+   RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -190,6 +250,8 @@ CLASS DireccionesView FROM SQLBaseView
    DATA oGetPais
 
    METHOD Activate()
+
+   METHOD ExternalRedefine( oDialog )
    
    METHOD validateFields()
 
@@ -333,6 +395,63 @@ METHOD validateFields() CLASS DireccionesView
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD ExternalRedefine( oDialog )
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "direccion" ] ;
+      ID          1010 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
+      ID          1020 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::validateFields ) ;
+      OF          oDialog 
+
+   REDEFINE GET   ::oGetPoblacion VAR ::oController:oModel:hBuffer[ "poblacion" ] ;
+      ID          1030 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          oDialog
+
+   REDEFINE GET   ::oGetProvincia VAR ::oController:oModel:hBuffer[ "provincia" ] ;
+      ID          1040 ;
+      IDTEXT      1041 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      BITMAP      "LUPA" ;
+      VALID       ( ::validateFields() ) ;
+      OF          oDialog
+
+   ::oGetProvincia:bHelp  := {|| ::oController:oProvinciasController:getSelectorProvincia( ::oGetProvincia ), ::validateFields() }
+
+   REDEFINE GET   ::oGetPais VAR ::oController:oModel:hBuffer[ "codigo_pais" ] ;
+      ID          1050 ;
+      IDTEXT      1051 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::validateFields() ) ;
+      BITMAP      "LUPA" ;
+      OF          oDialog
+
+   ::oGetPais:bHelp  := {|| ::oController:oPaisesController:getSelectorPais( ::oGetPais ), ::validateFields() }
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
+      ID          1060 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "movil" ] ;
+      ID          1070 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "email" ] ;
+      ID          1080 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "email" ) ) ;
+      OF          oDialog
+
+RETURN ( Self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -374,6 +493,8 @@ CLASS SQLDireccionesModel FROM SQLBaseModel
    METHOD getColumns()
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+
+   METHOD getParentUuidAttribute( value )
 
 END CLASS
 
@@ -422,6 +543,23 @@ METHOD getColumns() CLASS SQLDireccionesModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getParentUuidAttribute( value ) CLASS SQLDireccionesModel
+
+   if empty( ::oController )
+      RETURN ( value )
+   end if
+
+   if empty( ::oController:oSenderController )
+      RETURN ( value )
+   end if
+
+   logwrite( "::oController:oSenderController:getUuid()"" )
+   logwrite( ::oController:oSenderController:getUuid() )
+   msgalert( ::oController:oSenderController:getUuid() )
+
+RETURN ( ::oController:oSenderController:getUuid() )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

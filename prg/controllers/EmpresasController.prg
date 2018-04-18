@@ -7,6 +7,8 @@ CLASS EmpresasController FROM SQLNavigatorController
 
    DATA oGetSelector
 
+   DATA oDireccionesController
+
    METHOD New()
 
 END CLASS
@@ -39,7 +41,21 @@ METHOD New() CLASS EmpresasController
 
    ::oGetSelector                := ComboSelector():New( self )
 
+   ::oDireccionesController      := DireccionesController():New( self )
+   ::oDireccionesController:oValidator:setDialog( ::oDialogView )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
+   
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:UpdateBuffer( ::getUuid() ) } )
+
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
+   
+   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:DeleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -201,6 +217,8 @@ METHOD Activate() CLASS EmpresasView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
       OF          ::oDialog
+
+   ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
