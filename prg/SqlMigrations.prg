@@ -137,6 +137,8 @@ RETURN ( aSchemaColumns )
 
 METHOD addModels()
 
+   aadd( ::aModels, SQLEmpresasModel():New() )
+
    aadd( ::aModels, SQLTiposImpresorasModel():New() )
 
    aadd( ::aModels, SQLTagsModel():New() )
