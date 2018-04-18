@@ -644,6 +644,7 @@ ProveedoresController.prg 													\
 SQLTercerosModel.prg 														\
 SQLClientesModel.prg 														\
 SQLProveedoresModel.prg 		  											\
+ClientesView.prg 																\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1264,6 +1265,7 @@ ProveedoresController.obj 													\
 SQLTercerosModel.obj 														\
 SQLclientesModel.obj 														\
 SQLProveedoresModel.obj 		  											\
+ClientesView.obj 																\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1873,6 +1875,7 @@ $(OBJ)\ProveedoresController.obj 										+
 $(OBJ)\SQLTercerosModel.obj 												+
 $(OBJ)\SQLclientesModel.obj 												+
 $(OBJ)\SQLProveedoresModel.obj 		  									+
+$(OBJ)\ClientesView.obj 													+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+
