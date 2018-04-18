@@ -3,8 +3,6 @@
 
 CLASS SQLTercerosModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "terceros"
-
    DATA cConstraints             INIT "PRIMARY KEY (id), KEY (codigo)"
 
    METHOD getColumns()
@@ -15,12 +13,10 @@ END CLASS
 
 METHOD getColumns() CLASS SQLTercerosModel
 
-   hset( ::hColumns, "id",             {  "create"    => "INTEGER UNIQUE AUTO_INCREMENT"        ,;
-                                          "text"      => "Identificador"                        ,;
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"        ,;
                                           "default"   => {|| 0 } }                              )
 
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"        ,;
-                                          "text"      => "Uuid"                                 ,;
                                           "default"   => {|| win_uuidcreatestring() } }         )
 
    ::getEmpresaColumns()

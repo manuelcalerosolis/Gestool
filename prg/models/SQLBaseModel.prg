@@ -431,7 +431,7 @@ METHOD getCreateTableSentence()
 
    else
 
-      cSQLCreateTable      := ChgAtEnd( cSQLCreateTable, ' )', 2 )
+      cSQLCreateTable      := chgAtEnd( cSQLCreateTable, ' )', 2 )
 
    end if 
 

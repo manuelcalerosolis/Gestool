@@ -19,7 +19,7 @@ METHOD New() CLASS EmpresasController
 
    ::cTitle                      := "Empresas"
 
-   ::cName                       := "Empresas"
+   ::cName                       := "empresas"
 
    ::hImage                      := {  "16" => "gc_factory_16",;
                                        "32" => "gc_factory_32",;
@@ -76,11 +76,34 @@ METHOD addColumns() CLASS EmpresasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Código'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'NIF/CIF'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nif' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Administrador'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'administrador' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
 RETURN ( self )
@@ -134,15 +157,49 @@ METHOD Activate() CLASS EmpresasView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      WHEN        ( ::oController:isNotZoomMode()  ) ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+      ID          110 ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pagina_web" ] ;
-      ID          110 ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nif" ] ;
+      ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "nif" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "administrador" ] ;
+      ID          130 ;
+      WHEN        ( ::oController:isNotZoomMode()  ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "registro_mercantil" ] ;
+      ID          140 ;
+      WHEN        ( ::oController:isNotZoomMode()  ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "pagina_web" ] ;
+      ID          150 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "inicio_operaciones" ] ;
+      ID          160 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "fin_operaciones" ] ;
+      ID          170 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
       OF          ::oDialog
 
    REDEFINE BUTTON ;
@@ -184,8 +241,11 @@ END CLASS
 
 METHOD getValidators() CLASS EmpresasValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
-                                          "unique"       => "El nombre introducido ya existe" } }                  
+   ::hValidators  := {     "codigo" =>          {  "required"     => "El código es un dato requerido",;
+                                                   "unique"       => "El código introducido ya existe" },;
+                           "nombre" =>          {  "required"     => "El nombre es un dato requerido",;
+                                                   "unique"       => "El nombre introducido ya existe" },;
+                           "nif" =>             {  "required"     => "El NIF/CIF es un dato requerido" } } 
 
 RETURN ( ::hValidators )
 
@@ -213,17 +273,35 @@ END CLASS
 METHOD getColumns() CLASS SQLEmpresasModel
 
 
-   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                       "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                             "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                       "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                             "default"   => {|| win_uuidcreatestring() } }            )
+
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 4 )"                            ,;
+                                             "default"   => {|| space( 4 ) } }                        )
    
-   hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 100 )"                          ,;
-                                       "default"   => {|| space( 100 ) } }                       )
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 100 )"                          ,;
+                                             "default"   => {|| space( 100 ) } }                       )
 
-   hset( ::hColumns, "pagina_web",  {  "create"    => "VARCHAR( 200 )"                          ,;
-                                       "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "nif",               {  "create"    => "VARCHAR( 15 )"                           ,;
+                                             "default"   => {|| space( 15 ) } }                       )
+
+   hset( ::hColumns, "administrador",     {  "create"    => "VARCHAR( 150 )"                          ,;
+                                             "default"   => {|| space( 150 ) } }                       )
+
+   hset( ::hColumns, "registro_mercantil",{  "create"    => "VARCHAR( 150 )"                          ,;
+                                             "default"   => {|| space( 150 ) } }                       )
+
+   hset( ::hColumns, "pagina_web",        {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
+
+   hset( ::hColumns, "inicio_operaciones",{  "create"    => "DATE"                                     ,;
+                                             "default"   => {|| ctod('') } }                           )
+
+   hset( ::hColumns, "fin_operaciones",   {  "create"    => "DATE"                                     ,;
+                                             "default"   => {|| ctod('') } }                           )
 
 RETURN ( ::hColumns )
 

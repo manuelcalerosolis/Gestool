@@ -2704,7 +2704,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 9
+   oGrupo:nBigItems     := 10
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2797,6 +2797,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "asistencia_remota"
    oItem:cBmp           := "gc_businessman_16"
    oItem:cBmpBig        := "gc_businessman_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Empresa'
+   oItem:cMessage       := 'Empresas'
+   oItem:bAction        := {|| EmpresasController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_factory_16"
+   oItem:cBmpBig        := "gc_factory_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

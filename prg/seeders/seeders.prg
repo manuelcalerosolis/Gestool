@@ -59,6 +59,9 @@ CLASS Seeders
    METHOD SeederFabricantes()
    METHOD getStatementFabricantes( dbf )
 
+   METHOD SeederEmpresas()
+   METHOD getStatementEmpresas( dbf )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -116,6 +119,9 @@ METHOD runSeederEmpresa()
 
    ::oMsg:SetText( "Ejecutando seeder de fabricantes" )
    ::SeederFabricantes()
+
+   ::oMsg:SetText( "Ejecutando seeder de empresas" )
+   ::SeederEmpresas()
 
    ::oMsg:SetText( "Seeders finalizados" )
 
@@ -760,6 +766,40 @@ METHOD getStatementFabricantes( dbf ) CLASS Seeders
                         "pagina_web"               => quoted( ( dbf )->cUrlFab ) }
 
 RETURN ( ::getInsertStatement( hCampos, "fabricantes" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederEmpresas() CLASS Seeders
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatDat() + "\" )
+
+   if !( file( cPath + "Empresa.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Empresa.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "Empresa.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Empresa", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| getSQLDatabase():Exec( ::getStatementEmpresas( dbf ) ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementEmpresas( dbf ) CLASS Seeders
+
+   local hCampos  := {  "uuid"                     => quoted( ( dbf )->Uuid ),;
+                        "codigo"                   => quoted( ( dbf )->CodEmp ),;
+                        "nombre"                   => quoted( ( dbf )->cNombre ),;
+                        "nif"                      => quoted( ( dbf )->cNif ),;
+                        "administrador"            => quoted( ( dbf )->cAdminis ),;
+                        "pagina_web"               => quoted( ( dbf )->web ) }
+
+RETURN ( ::getInsertStatement( hCampos, "empresas" ) )
 
 //---------------------------------------------------------------------------//
 
