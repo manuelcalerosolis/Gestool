@@ -21,6 +21,8 @@ CLASS DireccionesController FROM SQLBrowseController
    METHOD loadedDuplicateCurrentBuffer( uuidEntidad )
    METHOD loadedDuplicateBuffer( uuidEntidad )
 
+   METHOD deleteBuffer( aUuidEntidades )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -103,7 +105,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD LoadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DireccionesController
+METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DireccionesController
 
    local idDireccion     
 
@@ -119,7 +121,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD LoadedDuplicateBuffer( uuidEntidad ) CLASS DireccionesController
+METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS DireccionesController
 
    hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
 
@@ -127,7 +129,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DireccionesControllerDeleteBuffer( aUuidEntidades )
+METHOD deleteBuffer( aUuidEntidades ) CLASS DireccionesController
 
    if empty( aUuidEntidades )
       RETURN ( self )
@@ -135,7 +137,8 @@ METHOD DireccionesControllerDeleteBuffer( aUuidEntidades )
 
    ::oDireccionesController:oModel:deleteWhereParentUuid( aUuidEntidades )
 
-   RETURN ( self )
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -554,7 +557,7 @@ METHOD getParentUuidAttribute( value ) CLASS SQLDireccionesModel
       RETURN ( value )
    end if
 
-   logwrite( "::oController:oSenderController:getUuid()"" )
+   logwrite( "::oController:oSenderController:getUuid()" )
    logwrite( ::oController:oSenderController:getUuid() )
    msgalert( ::oController:oSenderController:getUuid() )
 
