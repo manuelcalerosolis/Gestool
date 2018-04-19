@@ -28,6 +28,8 @@ CLASS SQLBaseModel
    DATA cGeneralWhere
 
    DATA cFilterWhere
+
+   DATA cOthersWhere
    
    DATA cColumnOrder                  
 
@@ -121,6 +123,9 @@ CLASS SQLBaseModel
    METHOD addGeneralWhere( cSQLSelect )
    
    METHOD addEmpresaWhere()                           
+
+   METHOD setOthersWhere( cWhere )                   INLINE ( ::cOthersWhere   := cWhere )
+   METHOD addOthersWhere( cSQLSelect )
 
    METHOD setFilterWhere( cWhere )                    INLINE ( ::cFilterWhere    := cWhere )
    METHOD addFilterWhere( cSQLSelect )
@@ -294,6 +299,8 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addGeneralWhere( cSQLSelect )
 
+   cSQLSelect              := ::addOthersWhere( cSQLSelect )
+
    cSQLSelect              := ::addEmpresaWhere( cSQLSelect )
 
    cSQLSelect              := ::addFilterWhere( cSQLSelect )
@@ -345,8 +352,20 @@ METHOD addGeneralWhere( cSQLSelect )
    if empty( ::cGeneralWhere )
       RETURN ( cSQLSelect )
    end if 
-
+   
    cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cGeneralWhere 
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD addOthersWhere( cSQLSelect )
+
+   if empty( ::cOthersWhere )
+      RETURN ( cSQLSelect )
+   end if 
+   
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cOthersWhere 
 
 RETURN ( cSQLSelect )
 
