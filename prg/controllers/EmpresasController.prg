@@ -46,7 +46,7 @@ METHOD New() CLASS EmpresasController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadBlankBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
    
    ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
@@ -229,6 +229,8 @@ METHOD Activate() CLASS EmpresasView
       OF          ::oDialog ;
       CANCEL ;
       ACTION      ( ::oDialog:end() )
+
+
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )

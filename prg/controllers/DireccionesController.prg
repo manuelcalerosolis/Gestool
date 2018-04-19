@@ -12,8 +12,9 @@ CLASS DireccionesController FROM SQLBrowseController
 
    METHOD gettingSelectSentence()
 
-   METHOD loadBlankBuffer()         INLINE ( ::oModel:loadBlankBuffer() )
-   METHOD insertBuffer()            INLINE ( ::oModel:insertBuffer() )
+   METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
+   METHOD loadPrincipalBlankBuffer()   INLINE ( ::oModel:loadPrincipalBlankBuffer() )
+   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
 
    METHOD loadedCurrentBuffer( uuidEntidad ) 
    METHOD updateBuffer( uuidEntidad )
@@ -31,22 +32,22 @@ METHOD New( oSenderController ) CLASS DireccionesController
 
    ::Super:New( oSenderController )
 
-   ::lTransactional              := .t.
+   ::lTransactional                 := .t.
 
-   ::cTitle                      := "Direcciones"
+   ::cTitle                         := "Direcciones"
 
-   ::cName                       := "direcciones"
+   ::cName                          := "direcciones"
 
-   ::oModel                      := SQLDireccionesModel():New( self )
+   ::oModel                         := SQLDireccionesModel():New( self )
 
-   ::oBrowseView                 := DireccionesBrowseView():New( self )
+   ::oBrowseView                    := DireccionesBrowseView():New( self )
 
-   ::oDialogView                 := DireccionesView():New( self )
+   ::oDialogView                    := DireccionesView():New( self )
 
-   ::oValidator                  := DireccionesValidator():New( self, ::oDialogView )
+   ::oValidator                     := DireccionesValidator():New( self, ::oDialogView )
 
-   ::oPaisesController           := PaisesController():New( self )
-   ::oProvinciasController       := ProvinciasController():New( self )
+   ::oPaisesController              := PaisesController():New( self )
+   ::oProvinciasController          := ProvinciasController():New( self )
 
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
@@ -80,7 +81,7 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS DireccionesController
 
    idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idDireccion )
-      idDireccion       := ::oModel:insertBlankBuffer()
+      idDireccion       := ::oModel:insertPrincipalBlankBuffer()
    end if 
 
    ::oModel:loadCurrentBuffer( idDireccion )
@@ -509,6 +510,10 @@ CLASS SQLDireccionesModel FROM SQLBaseModel
 
    DATA cTableName                     INIT "direcciones"
 
+   METHOD loadPrincipalBlankBuffer()   INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
+
+   METHOD insertPrincipalBlankBuffer() INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
+
    METHOD getColumns()
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
@@ -531,6 +536,9 @@ METHOD getColumns() CLASS SQLDireccionesModel
 
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL "                   ,;
                                              "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "principal",         {  "create"    => "TINYINT ( 1 )"                           ,;
+                                             "default"   => {|| "0" } }                               )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
                                              "default"   => {|| space( 140 ) } }                      )
@@ -572,10 +580,6 @@ METHOD getParentUuidAttribute( value ) CLASS SQLDireccionesModel
    if empty( ::oController:oSenderController )
       RETURN ( value )
    end if
-
-   logwrite( "::oController:oSenderController:getUuid()" )
-   logwrite( ::oController:oSenderController:getUuid() )
-   msgalert( ::oController:oSenderController:getUuid() )
 
 RETURN ( ::oController:oSenderController:getUuid() )
 
