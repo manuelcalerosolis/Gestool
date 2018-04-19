@@ -33,13 +33,8 @@ METHOD New() CLASS TercerosController
 
    ::oRepository                 := TercerosRepository():New( self )
 
-   //::oPaisesController           := PaisesController():New( self )
-   //::oProvinciasController       := ProvinciasController():New( self )
-
    ::oComboSelector              := ComboSelector():New( self )
 
-   //::oFilterController:setTableToFilter( ::oModel:cTableName )
-   
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

@@ -503,7 +503,6 @@ FUNCTION validateControls( oDialog )
    local aControls   := oDialog:aControls
 
    if empty( aControls )
-      msgalert( hb_valtoexp( aControls ), "ClassName" )
       RETURN ( .t. )
    end if 
 

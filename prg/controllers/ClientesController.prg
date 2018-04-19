@@ -43,6 +43,8 @@ METHOD New() CLASS ClientesController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
+   ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

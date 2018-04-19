@@ -24,6 +24,8 @@ CLASS DireccionesController FROM SQLBrowseController
 
    METHOD deleteBuffer( aUuidEntidades )
 
+   METHOD externalStartDialog()        INLINE ( ::oDialogView:StartDialog() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -249,6 +251,7 @@ RETURN ( self )
 
 CLASS DireccionesView FROM SQLBaseView
   
+   DATA oGetDireccion
    DATA oGetPoblacion
    DATA oGetProvincia
    DATA oGetPais
@@ -256,6 +259,8 @@ CLASS DireccionesView FROM SQLBaseView
    METHOD Activate()
 
    METHOD ExternalRedefine( oDialog )
+
+   METHOD StartDialog()
    
 END CLASS
 
@@ -284,10 +289,13 @@ METHOD Activate() CLASS DireccionesView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "direccion" ] ;
+   REDEFINE GET   ::oGetDireccion VAR ::oController:oModel:hBuffer[ "direccion" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      BITMAP      "gc_earth_lupa_16" ;
       OF          ::oDialog
+
+   ::oGetDireccion:bHelp  := {|| GoogleMaps( ::oController:oModel:hBuffer[ "direccion" ], Rtrim( ::oController:oModel:hBuffer[ "poblacion" ] ) + Space( 1 ) + Rtrim( ::oGetProvincia:oHelpText:VarGet() ) ) }
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
       ID          120 ;
@@ -355,7 +363,7 @@ METHOD Activate() CLASS DireccionesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ::oDialog:bStart     := {|| ::oGetProvincia:lValid(), ::oGetPais:lValid() }
+   ::oDialog:bStart     := {|| ::StartDialog() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -367,10 +375,13 @@ RETURN ( ::oDialog:nResult )
 
 METHOD ExternalRedefine( oDialog )
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "direccion" ] ;
+   REDEFINE GET   ::oGetDireccion VAR ::oController:oModel:hBuffer[ "direccion" ] ;
       ID          1010 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      BITMAP      "gc_earth_lupa_16" ;
       OF          oDialog
+
+   ::oGetDireccion:bHelp  := {|| GoogleMaps( ::oController:oModel:hBuffer[ "direccion" ], Rtrim( ::oController:oModel:hBuffer[ "poblacion" ] ) + Space( 1 ) + Rtrim( ::oGetProvincia:oHelpText:VarGet() ) ) }
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
       ID          1020 ;
@@ -421,6 +432,16 @@ METHOD ExternalRedefine( oDialog )
 
 RETURN ( Self )
 
+//---------------------------------------------------------------------------//
+
+METHOD StartDialog()
+   
+   ::oGetProvincia:lValid()
+   ::oGetPais:lValid()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

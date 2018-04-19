@@ -39,8 +39,10 @@ METHOD Activate() CLASS ClientesView
    REDEFINE FOLDER ::oFolder ;
          ID       500 ;
          OF       ::oDialog ;
-         PROMPT   "&General";
-         DIALOGS  "CLIENTE_GENERAL"
+         PROMPT   "&General",;
+                  "&Direcciones";
+         DIALOGS  "CLIENTE_GENERAL" ,;
+                  "CLIENTE_GENERAL"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -89,7 +91,7 @@ METHOD Activate() CLASS ClientesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   //::oDialog:bStart := {|| ::validateFields() }
+   ::oDialog:bStart := {|| ::oController:oDireccionesController:externalStartDialog() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
