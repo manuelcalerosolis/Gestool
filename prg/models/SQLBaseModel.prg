@@ -273,10 +273,10 @@ RETURN ( ::hColumns )
 METHOD getEmpresaColumns()
    
    hset( ::hColumns, "empresa_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
-                                          "default"   => {|| space( 40 ) } }              )
+                                          "default"   => {|| uuidEmpresa() } }              )
 
    hset( ::hColumns, "usuario_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
-                                          "default"   => {|| space( 40 ) } }              )
+                                          "default"   => {|| Auth():Uuid() } }              )
 
 RETURN ( ::hColumns )
 

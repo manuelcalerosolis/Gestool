@@ -289,63 +289,7 @@ METHOD Activate() CLASS DireccionesView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oGetDireccion VAR ::oController:oModel:hBuffer[ "direccion" ] ;
-      ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      BITMAP      "gc_earth_lupa_16" ;
-      OF          ::oDialog
-
-   ::oGetDireccion:bHelp  := {|| GoogleMaps( ::oController:oModel:hBuffer[ "direccion" ], Rtrim( ::oController:oModel:hBuffer[ "poblacion" ] ) + Space( 1 ) + Rtrim( ::oGetProvincia:oHelpText:VarGet() ) ) }
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo_postal" ) ) ;
-      OF          ::oDialog 
-
-   REDEFINE GET   ::oGetPoblacion VAR ::oController:oModel:hBuffer[ "poblacion" ] ;
-      ID          130 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "poblacion" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oGetProvincia VAR ::oController:oModel:hBuffer[ "provincia" ] ;
-      ID          140 ;
-      IDTEXT      141 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "provincia" ) ) ;
-      BITMAP      "LUPA" ;
-      OF          ::oDialog
-
-   ::oGetProvincia:bHelp  := {|| ::oController:oProvinciasController:getSelectorProvincia( ::oGetProvincia ), ::oGetProvincia:lValid() }
-
-   REDEFINE GET   ::oGetPais VAR ::oController:oModel:hBuffer[ "codigo_pais" ] ;
-      ID          180 ;
-      IDTEXT      181 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo_pais" ) ) ;
-      BITMAP      "LUPA" ;
-      OF          ::oDialog
-
-   ::oGetPais:bHelp  := {|| ::oController:oPaisesController:getSelectorPais( ::oGetPais ), ::oGetPais:lValid() }
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
-      ID          150 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "telefono" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "movil" ] ;
-      ID          160 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "movil" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "email" ] ;
-      ID          170 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "email" ) ) ;
-      OF          ::oDialog
+   ::ExternalRedefine( ::oDialog )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -437,6 +381,7 @@ RETURN ( Self )
 METHOD StartDialog()
    
    ::oGetProvincia:lValid()
+
    ::oGetPais:lValid()
 
 RETURN ( Self )
