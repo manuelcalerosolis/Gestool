@@ -256,8 +256,6 @@ CLASS DireccionesView FROM SQLBaseView
 
    METHOD ExternalRedefine( oDialog )
    
-   METHOD validateFields()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -293,7 +291,7 @@ METHOD Activate() CLASS DireccionesView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo_postal" ), ::validateFields() ) ;
+      VALID       ( ::oController:validate( "codigo_postal" ) ) ;
       OF          ::oDialog 
 
    REDEFINE GET   ::oGetPoblacion VAR ::oController:oModel:hBuffer[ "poblacion" ] ;
@@ -306,21 +304,21 @@ METHOD Activate() CLASS DireccionesView
       ID          140 ;
       IDTEXT      141 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "provincia" ), ::validateFields() ) ;
+      VALID       ( ::oController:validate( "provincia" ) ) ;
       BITMAP      "LUPA" ;
       OF          ::oDialog
 
-   ::oGetProvincia:bHelp  := {|| ::oController:oProvinciasController:getSelectorProvincia( ::oGetProvincia ), ::validateFields() }
+   ::oGetProvincia:bHelp  := {|| ::oController:oProvinciasController:getSelectorProvincia( ::oGetProvincia ), ::oGetProvincia:lValid() }
 
    REDEFINE GET   ::oGetPais VAR ::oController:oModel:hBuffer[ "codigo_pais" ] ;
       ID          180 ;
       IDTEXT      181 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo_pais" ), ::validateFields() ) ;
+      VALID       ( ::oController:validate( "codigo_pais" ) ) ;
       BITMAP      "LUPA" ;
       OF          ::oDialog
 
-   ::oGetPais:bHelp  := {|| ::oController:oPaisesController:getSelectorPais( ::oGetPais ), ::validateFields() }
+   ::oGetPais:bHelp  := {|| ::oController:oPaisesController:getSelectorPais( ::oGetPais ), ::oGetPais:lValid() }
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
       ID          150 ;
@@ -356,46 +354,13 @@ METHOD Activate() CLASS DireccionesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ::oDialog:bStart     := {|| ::validateFields() }
+   ::oDialog:bStart     := {|| ::oGetProvincia:lValid(), ::oGetPais:lValid() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD validateFields() CLASS DireccionesView
-
-   local cPoblacion
-   local cCodigoProvincia
-
-   cPoblacion           := SQLCodigosPostalesModel():getField( "poblacion", "codigo", ::oController:oModel:hBuffer[ "codigo_postal" ] )
-
-   if !Empty( cPoblacion ) .and. Empty( ::oController:oModel:hBuffer[ "poblacion" ] )
-      ::oGetPoblacion:cText( SQLCodigosPostalesModel():getField( "poblacion", "codigo", ::oController:oModel:hBuffer[ "codigo_postal" ] ) )
-      ::oGetPoblacion:Refresh()
-   end if
-
-   cCodigoProvincia     := SQLCodigosPostalesModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "codigo_postal" ] )
-
-   if !Empty( cCodigoProvincia ) .and. Empty( ::oController:oModel:hBuffer[ "provincia" ] )
-      ::oGetProvincia:cText( cCodigoProvincia )
-      ::oGetProvincia:Refresh()
-   end if
-
-   if !Empty( ::oController:oModel:hBuffer[ "provincia" ] )
-      ::oGetProvincia:oHelpText:cText( SQLProvinciasModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "provincia" ] ) )
-      ::oGetProvincia:oHelpText:Refresh()
-   end if
-
-   if !Empty( ::oController:oModel:hBuffer[ "codigo_pais" ] )
-      ::oGetPais:oHelpText:cText( SQLPaisesModel():getField( "nombre", "codigo", ::oController:oModel:hBuffer[ "codigo_pais" ] ) )
-      ::oGetPais:oHelpText:Refresh()
-   end if
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -409,7 +374,7 @@ METHOD ExternalRedefine( oDialog )
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
       ID          1020 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::validateFields ) ;
+      VALID       ( ::oController:validate( "codigo_postal" ) ) ;
       OF          oDialog 
 
    REDEFINE GET   ::oGetPoblacion VAR ::oController:oModel:hBuffer[ "poblacion" ] ;
@@ -422,20 +387,20 @@ METHOD ExternalRedefine( oDialog )
       IDTEXT      1041 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       BITMAP      "LUPA" ;
-      VALID       ( ::validateFields() ) ;
+      VALID       ( ::oController:validate( "provincia" ) ) ;
       OF          oDialog
 
-   ::oGetProvincia:bHelp  := {|| ::oController:oProvinciasController:getSelectorProvincia( ::oGetProvincia ), ::validateFields() }
+   ::oGetProvincia:bHelp  := {|| ::oController:oProvinciasController:getSelectorProvincia( ::oGetProvincia ), ::oGetProvincia:lValid() }
 
    REDEFINE GET   ::oGetPais VAR ::oController:oModel:hBuffer[ "codigo_pais" ] ;
       ID          1050 ;
       IDTEXT      1051 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::validateFields() ) ;
+      VALID       ( ::oController:validate( "codigo_pais" ) ) ;
       BITMAP      "LUPA" ;
       OF          oDialog
 
-   ::oGetPais:bHelp  := {|| ::oController:oPaisesController:getSelectorPais( ::oGetPais ), ::validateFields() }
+   ::oGetPais:bHelp  := {|| ::oController:oPaisesController:getSelectorPais( ::oGetPais ), ::oGetPais:lValid() }
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
       ID          1060 ;
@@ -468,6 +433,12 @@ RETURN ( Self )
 CLASS DireccionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
+
+   METHOD codigoPostal()
+
+   METHOD Provincia()
+
+   METHOD codigoPais()
  
 END CLASS
 
@@ -476,13 +447,58 @@ END CLASS
 METHOD getValidators() CLASS DireccionesValidator
 
    ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido" },; 
+                        "codigo_postal" =>   {  "codigoPostal"    => "" },;
+                        "provincia" =>       {  "provincia"       => "" },;
+                        "codigo_pais" =>     {  "codigoPais"      => "" },;
                         "email" =>           {  "mail"            => "El email no es valido" } }
 
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
+
+METHOD codigoPostal( value )
+
+   if empty( value )
+      RETURN ( .t. )
+   end if 
+
+   if empty( ::oController:oDialogView:oGetPoblacion:varget() )
+      ::oController:oDialogView:oGetPoblacion:cText( SQLCodigosPostalesModel():getField( "poblacion", "codigo", value ) )
+   end if 
+
+   if empty( ::oController:oDialogView:oGetProvincia:varget() )
+      ::oController:oDialogView:oGetProvincia:cText( SQLCodigosPostalesModel():getField( "provincia", "codigo", value ) )
+      ::oController:oDialogView:oGetProvincia:lValid()
+   end if 
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
+
+METHOD Provincia( value )
+
+   if empty( value )
+      RETURN ( .t. )
+   end if 
+
+   ::oController:oDialogView:oGetProvincia:oHelpText:cText( SQLProvinciasModel():getField( "provincia", "codigo", value ) )
+   ::oController:oDialogView:oGetProvincia:oHelpText:Refresh()
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
+
+METHOD codigoPais( value )
+
+   if empty( value )
+      RETURN ( .t. )
+   end if 
+
+   ::oController:oDialogView:oGetPais:oHelpText:cText( SQLPaisesModel():getField( "nombre", "codigo", value ) )
+   ::oController:oDialogView:oGetPais:oHelpText:Refresh()
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

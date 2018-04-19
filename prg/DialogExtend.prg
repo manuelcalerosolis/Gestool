@@ -500,7 +500,6 @@ RETURN ( .t. )
 FUNCTION validateControls( oDialog ) 
 
    local oControl
-   local nSeconds    := seconds()
    local aControls   := oDialog:aControls
 
    if empty( aControls )
@@ -509,8 +508,6 @@ FUNCTION validateControls( oDialog )
    end if 
 
    for each oControl in aControls
-
-      msgalert( oControl:ClassName(), "ClassName" )
 
       if empty( oControl:bWhen ) .or. eval( oControl:bWhen )
 
@@ -525,8 +522,6 @@ FUNCTION validateControls( oDialog )
       end if 
 
    next
-
-   msgalert( seconds() - nSeconds, "seconds()" )
 
 RETURN ( .t. )
 
