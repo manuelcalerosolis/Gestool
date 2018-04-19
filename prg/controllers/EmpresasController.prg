@@ -50,12 +50,12 @@ METHOD New() CLASS EmpresasController
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
    
    ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:UpdateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:updateBuffer( ::getUuid() ) } )
 
    ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
    ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:DeleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -124,8 +124,6 @@ METHOD addColumns() CLASS EmpresasBrowseView
 
 RETURN ( self )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -259,11 +257,11 @@ END CLASS
 
 METHOD getValidators() CLASS EmpresasValidator
 
-   ::hValidators  := {     "codigo" =>          {  "required"     => "El código es un dato requerido",;
-                                                   "unique"       => "El código introducido ya existe" },;
-                           "nombre" =>          {  "required"     => "El nombre es un dato requerido",;
-                                                   "unique"       => "El nombre introducido ya existe" },;
-                           "nif" =>             {  "required"     => "El NIF/CIF es un dato requerido" } } 
+   ::hValidators  := {  "codigo" =>    {  "required"     => "El código es un dato requerido",;
+                                          "unique"       => "El código introducido ya existe" },;
+                        "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
+                                          "unique"       => "El nombre introducido ya existe" },;
+                        "nif" =>       {  "required"     => "El NIF/CIF es un dato requerido" } } 
 
 RETURN ( ::hValidators )
 
