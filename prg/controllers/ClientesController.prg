@@ -32,7 +32,7 @@ METHOD New() CLASS ClientesController
    ::oDireccionesController      := DireccionesController():New( self )
    ::oDireccionesController:oValidator:setDialog( ::oDialogView )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadBlankBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
    
    ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )

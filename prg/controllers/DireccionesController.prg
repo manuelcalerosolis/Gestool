@@ -69,6 +69,8 @@ METHOD gettingSelectSentence() CLASS DireccionesController
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
+   ::oModel:setOthersWhere( "principal = 0" )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
