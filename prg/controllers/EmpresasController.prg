@@ -278,7 +278,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLEmpresasModel FROM SQLBaseModel
 
-   DATA cTableName                     INIT "Empresas"
+   DATA cTableName                     INIT "empresas"
 
    METHOD getColumns()
 
