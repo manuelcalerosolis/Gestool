@@ -31,6 +31,9 @@ RETURN ( self )
 METHOD Activate() CLASS ClientesView
 
    local oFld
+   local oBtnAppend
+   local oBtnEdit
+   local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "Cliente" ;
@@ -42,7 +45,7 @@ METHOD Activate() CLASS ClientesView
          PROMPT   "&General",;
                   "&Direcciones";
          DIALOGS  "CLIENTE_GENERAL" ,;
-                  "CLIENTE_GENERAL"
+                  "CLIENTE_DIRECCIONES"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -54,6 +57,10 @@ METHOD Activate() CLASS ClientesView
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog
+
+   /*
+   GENERAL---------------------------------------------------------------------
+   */
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
@@ -74,6 +81,33 @@ METHOD Activate() CLASS ClientesView
       OF          ::oFolder:aDialogs[1]
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oFolder:aDialogs[1] )
+
+   /*
+   DIRECCIONES-----------------------------------------------------------------
+   */
+
+   REDEFINE BUTTON oBtnAppend ;
+      ID          100 ;
+      OF          ::oFolder:aDialogs[2] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
+
+   REDEFINE BUTTON oBtnEdit ;
+      ID          110 ;
+      OF          ::oFolder:aDialogs[2] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          120 ;
+      OF          ::oFolder:aDialogs[2] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
+
+   ::oController:oDireccionesController:Activate( ::oFolder:aDialogs[2], 130 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
