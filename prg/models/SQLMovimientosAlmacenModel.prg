@@ -47,6 +47,9 @@ METHOD getColumns()
 
    ::getEmpresaColumns()
 
+   hset( ::hColumns, "empresa",           {  "create"    => "VARCHAR( 4 )"                            ,;
+                                             "default"   => {|| space( 4 ) } }                        )
+
    hset( ::hColumns, "numero",            {  "create"    => "CHAR ( 50 )"                             ,;
                                              "default"   => {|| MovimientosAlmacenRepository():getNextNumber() } }                       )
 
@@ -215,31 +218,21 @@ METHOD assingNumber( hBuffer )
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+// Actualizar datos de empresa----------------------------------------------
+//---------------------------------------------------------------------------//
 
 METHOD Syncronize()
 
-   local cSql
-   local nPosition
-   local aSchemaColumns    := SQLMigrations():getSchemaColumns( self )
+   local cSql       
+   local cEmpresaTableName := SQLEmpresasModel():cTableName       
 
-   nPosition               := ascan( aSchemaColumns, {| hColumn | hget( hColumn, "COLUMN_NAME" ) == 'empresa_uuid' } )
+   cSql                    := "UPDATE " + ::cTableName + " "
+   cSql                    +=    "INNER JOIN " + cEmpresaTableName + " ON " + ::cTableName + ".empresa = " + cEmpresaTableName + ".codigo "
+   cSql                    += "SET " + ::cTableName + ".empresa_uuid = " + cEmpresaTableName + ".uuid "
+   cSql                    +=    "WHERE " + ::cTableName + ".empresa_uuid = '' "
 
-   if nPosition == 0     
-      getSQLDatabase():Exec( "ALTER TABLE " + ::cTableName + " ADD empresa_uuid VARCHAR( 40 ) NOT NULL ;" )
-   end if 
-
-   nPosition               := ascan( aSchemaColumns, {| hColumn | hget( hColumn, "COLUMN_NAME" ) == 'usuario_uuid' } )
-
-   if nPosition == 0     
-      getSQLDatabase():Exec( "ALTER TABLE " + ::cTableName + " ADD usuario_uuid VARCHAR( 40 ) NOT NULL ;" )
-   end if 
-
-   // Actualizar datos de usuario----------------------------------------------
-
-   cSql                    := "UPDATE movimientos_almacen "
-   cSql                    +=    "INNER JOIN usuarios ON movimientos_almacen.usuario = usuarios.codigo "
-   cSql                    += "SET movimientos_almacen.usuario_uuid = usuarios.uuid "
-   cSql                    +=    "WHERE movimientos_almacen.usuario_uuid = '' "
+   msgalert( cSql, "cSql" )
+   logwrite( cSql )
 
    getSQLDatabase():Exec( cSql )
 

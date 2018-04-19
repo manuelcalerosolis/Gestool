@@ -136,7 +136,7 @@ CLASS SQLBaseModel
 
    // Where for columns--------------------------------------------------------
 
-   METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa" ) )
+   METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa_uuid" ) )
 
    // Get edit value for xbrowse-----------------------------------------------
 
@@ -358,7 +358,7 @@ METHOD addEmpresaWhere( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "empresa = " + toSQLString( cCodEmp() )
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "empresa_uuid = " + toSQLString( uuidEmpresa() )
 
 RETURN ( cSQLSelect )
 
