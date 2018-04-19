@@ -1,4 +1,4 @@
-#include "FiveWin.Ch"
+#include "FiveWin.ch"
 #include "Constant.ch"
 
 #define COLOR_BTNFACE       15
@@ -11,7 +11,10 @@
 #define DT_CENTER            1
 
 #define TCM_FIRST         4864   // 0x1300
+#define TCM_SETIMAGELIST ( TCM_FIRST +  3 )
 #define TCM_SETCURSEL    ( TCM_FIRST + 12 )
+#define TCM_SETITEMSIZE  ( TCM_FIRST + 41 )
+#define TCM_SETPADDING   ( TCM_FIRST + 43 )
 
 #define TCN_FIRST         -550
 #define TCN_SELCHANGE    ( TCN_FIRST - 1 )
@@ -21,7 +24,7 @@
 #define TCS_OWNERDRAWFIXED   8192 // 0x2000
 
 #ifdef __XPP__
-   #define Super ::TControl
+   #define ::Super ::TControl
    #define New   _New
 #endif
 
@@ -31,12 +34,14 @@ CLASS TFolder FROM TControl
 
    CLASSDATA lRegistered AS LOGICAL
 
+   DATA   aHelps
    DATA   aPrompts, aDialogs
    DATA   nOption, nTabSize, nFdHeight
    DATA   oFont2
    DATA   aEnable
    DATA   lAllWidth AS LOGICAL INIT .t.
    DATA   lWin95Look AS LOGICAL
+   DATA   oImageList
 
    CLASSDATA aProperties ;
       INIT { "aPrompts", "cVarName", "nClrText",;
@@ -45,33 +50,34 @@ CLASS TFolder FROM TControl
 
    METHOD New( nTop, nLeft, aPrompts, aDialogs, oWnd, nOption, nClrFore,;
                nClrBack, lPixel, lDesign, nWidth, nHeight,;
-               cMsg, lAllWidth, oFont ) CONSTRUCTOR
+               cMsg, lAllWidth, oFont, aHelps, cVarName ) CONSTRUCTOR
 
    METHOD ReDefine( nId, aPrompts, aDialogs, oWnd, nOption, nClrFore,;
-                    nClrBack, bChange, lAllWidth ) CONSTRUCTOR
+                    nClrBack, bChange, lAllWidth, aHelps ) CONSTRUCTOR
 
-   #ifdef __CLIPPER__
-      METHOD Display()
-      METHOD Paint()
-   #else
-      METHOD Display() VIRTUAL
-      METHOD Paint() VIRTUAL
-      METHOD CtlColor( hWndChild, hDCChild )
-   #endif
+   METHOD Display() VIRTUAL
+
+   METHOD Paint() VIRTUAL
+
+   METHOD CtlColor( hWndChild, hDCChild )
 
    METHOD Initiate( hDlg )
 
-   METHOD LButtonDown( nRow, nCol, nFlags )
+   METHOD LButtonDown( nRow, nCol, nFlags, lTouch )
+
    METHOD Default()
+
    METHOD ReSize( nType, nWidth, nHeight )
 
-   METHOD AddItem( cItem )
+   METHOD AddItem( cItem, cResName, bRedefineControls )
 
-   #ifndef __CLIPPER__
-      METHOD cToChar() INLINE Super:cToChar( "SysTabControl32" )
-   #endif
+   METHOD cGenPrg()
+
+   METHOD cToChar() INLINE ::Super:cToChar( "SysTabControl32" )
 
    METHOD DelItem()
+
+   METHOD DelItemPos( nPos )
 
    METHOD DelPages()
 
@@ -81,38 +87,44 @@ CLASS TFolder FROM TControl
 
    METHOD LoadPages( aResNames, bRedefineControls )
 
-   #ifndef __CLIPPER__
-      METHOD MouseMove( nRow, nCol, nFlags ) INLINE ;
-    ( Super:MouseMove( nRow, nCol, nFlags ), nil ) // finally invoke default behavior
-   #endif
+   METHOD MouseMove( nRow, nCol, nFlags ) INLINE ;
+          ( ::Super:MouseMove( nRow, nCol, nFlags ), nil ) // finally invoke default behavior
 
    METHOD Notify( nIdCtrl, nPtrNMHDR )
 
+   METHOD SetItemText( nItem, cText )
+
    METHOD SetOption( nOption )
 
-   METHOD SetPrompts( aPrompts )
+   METHOD SetPrompts( aPrompts, aHelps )
 
    METHOD GetHotPos( nChar )
 
+   METHOD Update() INLINE ASend( ::aDialogs, "Update()" )
 
-   #ifdef __CLIPPER__
-     METHOD Refresh() INLINE ;
-            InvalidateRect( ::hWnd, { 0, 0, ::nFdHeight + 2, ::nWidth } )
-   #endif
-
-   #ifdef __CLIPPER__
-      METHOD Update() INLINE ASend( ::aDialogs, "Update" )
-   #else
-      METHOD Update() INLINE ASend( ::aDialogs, "Update()" )
-   #endif
-
-   METHOD KeyDown( nKey, nFlags )
-
-   #ifndef __CLIPPER__
-      METHOD AdjustRect()
-   #endif
+   METHOD AdjustRect()
 
    METHOD HScroll( nWParam, nLParam ) VIRTUAL
+
+   METHOD SetImageList( oImgList ) INLINE ;
+          ::oImageList := oImgList,;
+          ::SendMsg( TCM_SETIMAGELIST, 0, oImgList:hImageList )
+
+   METHOD SetItemSize( nWidth, nHeigth ) INLINE ;
+          ::SendMsg( TCM_SETITEMSIZE, 0, nMakeLong( nWidth, nHeigth ) )   && by Rossine
+
+   METHOD SetPadding( nTop, nLeft ) INLINE ;
+          ::SendMsg( TCM_SETPADDING, 0, nMakeLong( nTop, nLeft ) )
+
+
+   METHOD AddTab( cPrompt, lEnable, n ) INLINE ;
+      If( ::lUnicode, TabCtrlAddw( ::hWnd, cPrompt, lEnable, n ), TabCtrlAdd( ::hWnd, cPrompt, lEnable, n ) )
+
+   METHOD GetCurSel() INLINE If( ::lUnicode, TabCtrl_GetCurSelW( ::hWnd ), TabCtrl_GetCurSel( ::hWnd ) ) + 1
+
+   METHOD SetCurSel( n ) INLINE If( ::lUnicode, TabCtrl_SetCurSelW( ::hWnd, n - 1 ), ;
+                                                TabCtrl_SetCurSel ( ::hWnd, n - 1 ) )
+
 
 ENDCLASS
 
@@ -120,17 +132,14 @@ ENDCLASS
 
 METHOD New( nTop, nLeft, aPrompts, aDialogs, oWnd, nOption, nClrFore,;
             nClrBack, lPixel, lDesign, nWidth, nHeight, cMsg, lAllWidth,;
-            oFont ) CLASS TFolder
-
-   #ifdef __XPP__
-      #undef New
-   #endif
+            oFont, aHelps, cVarName ) CLASS TFolder
 
    local n, oDlg
 
    DEFAULT nTop := 0, nLeft := 0,;
            aDialogs  := {},;
            aPrompts  := { "&One", "&Two", "T&hree" },;
+           aHelps := {},;
            oWnd      := GetWndDefault(),;
            nOption   := 1,;
            nClrFore  := oWnd:nClrText,;
@@ -140,8 +149,16 @@ METHOD New( nTop, nLeft, aPrompts, aDialogs, oWnd, nOption, nClrFore,;
            nWidth    := 100, nHeight := 100,;
            lAllWidth := .t.
 
+   if ! Empty( aPrompts ) .and. ValType( aPrompts[ 1 ] ) == 'A'
+      aPrompts    = aPrompts[ 1 ]
+   endif
+
    if Len( aDialogs ) < Len( aPrompts )
       aDialogs = Array( Len( aPrompts ) )
+   endif
+
+   if Len( aHelps ) < Len( aPrompts )
+      aHelps = Array( Len( aPrompts ) )
    endif
 
    if ::aEnable == nil
@@ -149,6 +166,7 @@ METHOD New( nTop, nLeft, aPrompts, aDialogs, oWnd, nOption, nClrFore,;
       AFill( ::aEnable, .t. )
    endif
 
+   ::lUnicode  = FW_SetUnicode()
    ::nStyle    = nOR( WS_CHILD, WS_VISIBLE,;
                       If( lDesign, WS_CLIPSIBLINGS, 0 ),;
                       WS_TABSTOP /* , TCS_OWNERDRAWFIXED */ )
@@ -156,6 +174,7 @@ METHOD New( nTop, nLeft, aPrompts, aDialogs, oWnd, nOption, nClrFore,;
    ::oWnd      = oWnd
    ::aPrompts  = aPrompts
    ::aDialogs  = aDialogs
+   ::aHelps    = aHelps
    ::nOption   = nOption
    ::cMsg      = cMsg
    ::nTop      = If( lPixel, nTop, nTop * SAY_CHARPIX_H )
@@ -171,6 +190,7 @@ METHOD New( nTop, nLeft, aPrompts, aDialogs, oWnd, nOption, nClrFore,;
    ::cVarName  = ""
    ::lWin95Look = GetVersion()[ 1 ] > 3 .or. GetVersion()[ 2 ] > 51 .or. ;
                   IsWinNT()
+   ::lTransparent = .F.
 
    ::SetColor( nClrFore, nClrBack )
 
@@ -195,10 +215,15 @@ METHOD New( nTop, nLeft, aPrompts, aDialogs, oWnd, nOption, nClrFore,;
       oWnd:DefControl( Self )
    endif
 
+   DEFAULT cVarName := "oFld" + ::GetCtrlIndex()
+
+   ::cVarName = cVarName
+
    for n = 1 to Len( ::aDialogs )
       DEFINE DIALOG oDlg OF Self STYLE WS_CHILD  ;
          FROM 0, 0 TO ::nHeight() - ::nFdHeight - 5, ::nWidth() - 6 PIXEL ;
-         FONT Self:oFont
+         FONT Self:oFont ;
+         HELPID if(len(::aHelps) >= n , ::aHelps[n] , NIL)
       ::aDialogs[ n ] = oDlg
       oDlg:cVarName = "Page" + AllTrim( Str( n ) )
    next
@@ -218,7 +243,7 @@ return Self
 //----------------------------------------------------------------------------//
 
 METHOD ReDefine( nId, aPrompts, aDialogs, oWnd, nOption, ;
-                 nClrFore, nClrBack, bChange, lAllWidth ) CLASS TFolder
+                 nClrFore, nClrBack, bChange, lAllWidth, aHelps ) CLASS TFolder
 
    local n, oDlg
 
@@ -226,7 +251,8 @@ METHOD ReDefine( nId, aPrompts, aDialogs, oWnd, nOption, ;
            nClrFore := oWnd:nClrText,;
            nClrBack := oWnd:nClrPane,;
            aDialogs := Array( Len( aPrompts ) ),;
-           lAllWidth := .f.
+           aHelps   := Array( Len( aPrompts ) ),;
+           lAllWidth := .f., oWnd := GetWndDefault()
 
    if ::aEnable == nil
       ::aEnable = Array( Len( aPrompts ) )
@@ -235,8 +261,10 @@ METHOD ReDefine( nId, aPrompts, aDialogs, oWnd, nOption, ;
 
    ::nId      = nId
    ::oWnd     = oWnd
+   ::lUnicode  = FW_SetUnicode()
    ::aPrompts = aPrompts
    ::aDialogs = aDialogs
+   ::aHelps   = aHelps
    ::nOption  = nOption
 
    if oWnd != nil .and. oWnd:oFont != nil
@@ -259,7 +287,8 @@ METHOD ReDefine( nId, aPrompts, aDialogs, oWnd, nOption, ;
 
    for n = 1 to Len( ::aDialogs )
       DEFINE DIALOG oDlg OF Self RESOURCE ::aDialogs[ n ] ;
-         COLOR nClrFore, nClrBack FONT Self:oFont
+         COLOR nClrFore, nClrBack FONT Self:oFont ;
+         HELPID if(len(::aHelps) >= n , ::aHelps[n] , NIL)
       ::aDialogs[ n ] = oDlg
    next
 
@@ -291,22 +320,7 @@ METHOD CtlColor( hWndChild, hDCChild ) CLASS TFolder
       return DrawThemed( hWndChild, hDCChild )
    endif
 
-return Super:CtlColor( hWndChild, hDCChild )
-
-#endif
-
-//----------------------------------------------------------------------------//
-
-#ifdef __CLIPPER__
-
-METHOD Paint() CLASS TFolder
-
-   SetBkMode( ::hDC, 1 ) // make it transparent to allow bitmaps in background
-   FoldPaint( ::hWnd, ::hDC, ::aPrompts, ::oFont:hFont,;
-              ::oFont2:hFont, ::nClrPane, ::nOption, ::aEnable, ::nTabSize,;
-              ::lWin95Look, ::nFdHeight )
-
-return nil
+return ::Super:CtlColor( hWndChild, hDCChild )
 
 #endif
 
@@ -316,50 +330,44 @@ METHOD Initiate( hDlg ) CLASS TFolder
 
    local n
 
-   Super:Initiate( hDlg )
+   ::Super:Initiate( hDlg )
+
+   for n = 1 to Len( ::aDialogs )
+      if ::lTransparent
+         ::aDialogs[ n ]:lTransparent = .t.
+         if ::aDialogs[ n ]:oBrush:nRGBColor == RGB( 240, 240, 240 )
+            ::aDialogs[ n ]:SetBrush( ::oBrush )
+         endif
+      endif
+   next
 
    ::Default()
 
    for n = 1 to Len( ::aDialogs )
-      #ifdef __CLIPPER__
-         ::aDialogs[ n ]:SetSize( ::nWidth() - 6,;
-                                  ::nHeight() - ::nFdHeight - 5 )
-      #else
-         ::aDialogs[ n ]:SetSize( ::nWidth() - 5,;
-                                  ::nHeight() - ::nFdHeight - 4 )
-      #endif
+       ::aDialogs[ n ]:SetSize( ::nWidth() - 5,;
+                                ::nHeight() - ::nFdHeight - 4 )
    next
 
-   #ifndef __CLIPPER__
-      ::SetPrompts( ::aPrompts )
-   #endif
+   ::SetPrompts( ::aPrompts )
+   ::AdjustRect()
 
 return nil
 
 //----------------------------------------------------------------------------//
 
-METHOD LButtonDown( nRow, nCol, nFlags ) CLASS TFolder
+METHOD LButtonDown( nRow, nCol, nFlags, lTouch ) CLASS TFolder
 
    local n := 1
 
    if ::lDrag
-      return Super:LButtonDown( nRow, nCol, nFlags )
+      return ::Super:LButtonDown( nRow, nCol, nFlags, lTouch )
    else
-
-      #ifdef __CLIPPER__
-         if nRow <= ::nFdHeight
-            while nCol > ( nPos + If( ::lWin95Look,;
-                  nTabSize := GetTextWidth( 0, ::aPrompts[ n ],;
-                              ::oFont:hFont ) + 13, nTabSize ) ) .and. ;
-                  n < Len( ::aPrompts )
-               nPos += nTabSize
-               n++
-            end
-         endif
-      #else
-         n = TabCtrl_HitTest( ::hWnd ) + 1
-      #endif
-      ::SetOption( n )
+      n = TabCtrl_HitTest( ::hWnd ) + 1
+      if n != ::nOption
+         ::SetOption( n )
+      else
+         return 0
+      endif
    endif
 
 return nil
@@ -371,6 +379,8 @@ METHOD Default() CLASS TFolder
    local nLen := Len( ::aPrompts ), n
    local oDlg
    local nHeight := ::nFdHeight
+
+   nHeight *= If( ::lUnicode, TabGetRowCountW( ::hWnd ), TabGetRowCount( ::hWnd ) )
 
    if nLen > 0
       if ::lAllWidth
@@ -391,20 +401,33 @@ METHOD Default() CLASS TFolder
    for nLen = 1 to Len( ::aDialogs )
       oDlg = ::aDialogs[ nLen ]
 
-      #ifdef __CLIPPER__
+     #ifdef __CLIPPER__
          ACTIVATE DIALOG oDlg NOWAIT ;
             ON INIT ( oDlg:Move( nHeight + 2, 3 ) ) ;
             VALID .f.                // to avoid exiting pressing Esc !!!
       #else
-         ACTIVATE DIALOG oDlg NOWAIT ;
-            ON INIT oDlg:Move( nHeight, 1 ) ;
-            VALID .f.                // to avoid exiting pressing Esc !!!
+         if ::oWnd:IsKindOf( "TDIALOG" )
+            if ! ::oWnd:lResize16
+               ACTIVATE DIALOG oDlg NOWAIT ;
+                  ON INIT oDlg:Move( nHeight - 1, 1 ) ;
+                  VALID .f.                // to avoid exiting pressing Esc !!!
+            else
+               ACTIVATE DIALOG oDlg NOWAIT ;
+                  ON INIT oDlg:Move( nHeight - 1, 1 ) ;
+                  VALID .f. RESIZE16       // to avoid exiting pressing Esc !!!
+            endif
+         else
+            ACTIVATE DIALOG oDlg NOWAIT ;
+               ON INIT oDlg:Move( nHeight - 1, 1 ) ;
+               VALID .f.                   // to avoid exiting pressing Esc !!!
+         endif
       #endif
 
       #ifndef __CLIPPER__
-         if IsAppThemed()
-            // oDlg:SetBrush( TBrush():New( "NULL" ) )
-            oDlg:bEraseBkGnd = { | hDC | DrawPBack( oDlg:hWnd, hDC ), 1 }
+         if IsAppThemed() .and. ! ::lTransparent
+            if Empty( oDlg:oBrush:hBitmap )
+               oDlg:bEraseBkGnd = { | hDC | DrawPBack( oDlg:hWnd, hDC ), 1 }
+            endif
          endif
       #endif
 
@@ -460,11 +483,24 @@ METHOD Resize( nType, nWidth, nHeight ) CLASS TFolder
       ::aDialogs[ n ]:SetSize( nWidth - 6, nHeight - ::nFdHeight - 5 )
    next
 
-return Super:Resize( nType, nWidth, nHeight )
+return ::Super:Resize( nType, nWidth, nHeight )
 
 //----------------------------------------------------------------------------//
 
-METHOD SetPrompts( aPrompts ) CLASS TFolder
+METHOD SetItemText( nItem, cText ) CLASS TFolder
+
+   if ::lUnicode
+      TabSetItemW( ::hWnd, nItem, cText )
+   else
+      TabSetItem ( ::hWnd, nItem, cText )
+   endif
+   ::aPrompts[ nItem ] = cText
+
+return nil
+
+//----------------------------------------------------------------------------//
+
+METHOD SetPrompts( aPrompts, aHelps ) CLASS TFolder
 
    local n
 
@@ -473,38 +509,57 @@ METHOD SetPrompts( aPrompts ) CLASS TFolder
    endif
 
    #ifndef __CLIPPER__
-      TabDelAllItems( ::hWnd )
+      if ::lUnicode
+         TabDelAllItemsW( ::hWnd )
+      else
+         TabDelAllItems( ::hWnd )
+      endif
 
       for n = Len( ::aPrompts ) to 1 step -1
-         TabCtrlAdd( ::hWnd, ::aPrompts[ n ], ::aEnable[ n ] )
+         ::AddTab( ::aPrompts[ n ], ::aEnable[ n ], n )
+         if n <= Len( ::aDialogs )
+            if ::aDialogs[ n ] != nil
+               ::aDialogs[ n ]:nHelpid = If( Len( ::aHelps ) >= n, ::aHelps[ n ], nil )
+            endif
+         endif
       next
 
       SendMessage( ::hWnd, TCM_SETCURSEL, ::nOption - 1 )
-      Super:Refresh()
+      ::Super:Refresh()
    #endif
 
 return nil
 
 //----------------------------------------------------------------------------//
 
-METHOD AddItem( cItem ) CLASS TFolder
+METHOD AddItem( cItem, cResName, bRedefineControls, cnHelpId ) CLASS TFolder
 
-   local oDlg
+   local oDlg, nLen, n
    local oThis := Self
 
-   DEFINE DIALOG oDlg OF Self STYLE WS_CHILD ;
-      FROM 0, 0 TO oThis:nHeight - oThis:nFdHeight - 5, oThis:nWidth - 6 PIXEL
+   if Empty( cResName )
+      DEFINE DIALOG oDlg OF Self STYLE WS_CHILD ;
+         FROM 0, 0 TO oThis:nHeight - oThis:nFdHeight - 5, oThis:nWidth - 6 PIXEL
+   else
+      DEFINE DIALOG oDlg OF Self STYLE WS_CHILD ;
+         FROM 0, 0 TO oThis:nHeight - oThis:nFdHeight - 5, oThis:nWidth - 6 PIXEL ;
+         NAME cResName
+   endif
 
    AAdd( ::aDialogs, oDlg )
    AAdd( ::aPrompts, cItem )
+   AAdd( ::aHelps, cnHelpId )
    AAdd( ::aEnable, .t. )
 
+   if ValType( bRedefineControls ) == "B"
+      Eval( bRedefineControls, oDlg )
+   endif
+
    ACTIVATE DIALOG oDlg NOWAIT ;
-      ON INIT ( oDlg:Move( oThis:nFdHeight + 2, 3 ) ) ;
+      ON INIT ( oDlg:Move( oThis:nFdHeight + 2, 3, oThis:nWidth - 6, oThis:nHeight - oThis:nFdHeight - 5 ) ) ;
       VALID .f.            // to avoid exiting pressing Esc !!!
 
    oDlg:Hide()
-   oDlg:SetSize( ::nWidth - 6, ::nHeight - ::nFdHeight - 5 )
 
    #ifdef __CLIPPER__
       if ( nLen := Len( ::aPrompts ) ) > 0
@@ -524,7 +579,7 @@ METHOD AddItem( cItem ) CLASS TFolder
       endif
       ::Refresh()
    #else
-      ::SetPrompts( ::aPrompts )
+      ::SetPrompts( ::aPrompts, ::aHelps )
       ::SetOption( Len( ::aDialogs ) )
    #endif
 
@@ -542,39 +597,104 @@ return nil
 
 //----------------------------------------------------------------------------//
 
-METHOD DelItem( nOption ) CLASS TFolder
+METHOD cGenPrg() CLASS TFolder
+
+   local cPrg := ""
+   local cPrompts := ArrayToText( ::aPrompts )
+
+   cPrg += CRLF + "   @ " + AllTrim( Str( ::nTop ) ) + ", " + ;
+           AllTrim( Str( ::nLeft ) ) + ;
+           " FOLDER " + ::cVarName + " PROMPTS " + cPrompts + ;
+           " ;" + CRLF + '      SIZE ' + AllTrim( Str( ::nWidth ) ) + ", " + ;
+           AllTrim( Str( ::nHeight ) ) + ;
+           " PIXEL OF " + ::oWnd:cVarName + CRLF
+
+return cPrg
+
+//----------------------------------------------------------------------------//
+
+METHOD DelItem() CLASS TFolder
 
    local nLen, n
 
-   DEFAULT nOption   := ::nOption
-
    if Len( ::aPrompts ) > 0
-      ::aPrompts = ADel( ::aPrompts, nOption )
+      ::aPrompts = ADel( ::aPrompts, ::nOption )
       ::aPrompts = ASize( ::aPrompts, Len( ::aPrompts ) - 1 )
-      ::aDialogs[ nOption ]:bValid = { || .t. }
-      ::aDialogs[ nOption ]:End()
-      ::aDialogs = ADel( ::aDialogs, nOption )
+      ::aDialogs[ ::nOption ]:bValid = { || .t. }
+      ::aDialogs[ ::nOption ]:End()
+      ::aDialogs = ADel( ::aDialogs, ::nOption )
       ::aDialogs = ASize( ::aDialogs, Len( ::aDialogs ) - 1 )
+      ::aHelps = ADel( ::aHelps, ::nOption )
+      ::aHelps = ASize( ::aHelps, Len( ::aHelps ) - 1 )
    endif
-
-   ::nOption         := Min( nOption, Len( ::aPrompts ) )
+   ::nOption = Min( ::nOption, Len( ::aPrompts ) )
 
    if ( nLen := Len( ::aPrompts ) ) > 0
       if ::lAllWidth
          ::nTabSize = int( ::nWidth / nLen )
       else
-         ::nTabSize  := 0
+         ::nTabSize := 0
          for n = 1 to nLen
-            ::nTabSize  := Max( ::nTabSize, int( GetTextWidth( 0, ::aPrompts[n], ::oFont:hFont ) + FD_TABMARGIN ) )
+            ::nTabSize = Max( ::nTabSize, ;
+                              Int( GetTextWidth( 0, ::aPrompts[n], ;
+                                   ::oFont:hFont ) + FD_TABMARGIN ) )
          next n
-         ::nTabSize  := Min( ::nTabSize, int( ::nWidth / nLen ) )
+         ::nTabSize = Min( ::nTabSize, Int( ::nWidth / nLen ) )
       endif
    else
-      ::nTabSize     := ::nWidth + 1
+      ::nTabSize = ::nWidth + 1
    endif
 
    ::Refresh()
-   ::SetPrompts( ::aPrompts )
+   ::SetPrompts( ::aPrompts, ::aHelps )
+
+   if Len( ::aDialogs ) > 0
+      ::aDialogs[ ::nOption ]:Show()
+   endif
+
+return nil
+
+//----------------------------------------------------------------------------//
+
+METHOD DelItemPos( nPos ) CLASS TFolder
+
+   local nLen, n
+
+   if Len( ::aPrompts ) > 0 .and. nPos > 0 .and. nPos <= Len( ::aPrompts )
+      ::aPrompts = ADel( ::aPrompts, nPos )
+      ::aPrompts = ASize( ::aPrompts, Len( ::aPrompts ) - 1 )
+      ::aDialogs[ nPos ]:bValid = { || .t. }
+      ::aDialogs[ nPos ]:End()
+      ::aDialogs = ADel( ::aDialogs, nPos )
+      ::aDialogs = ASize( ::aDialogs, Len( ::aDialogs ) - 1 )
+      ::aHelps = ADel( ::aHelps, nPos )
+      ::aHelps = ASize( ::aHelps, Len( ::aHelps ) - 1 )
+   endif
+
+   ::nOption = Min( ::nOption, Len( ::aPrompts ) )
+
+   if ( nLen := Len( ::aPrompts ) ) > 0
+      if ::lAllWidth
+         ::nTabSize = int( ::nWidth / nLen )
+      else
+         ::nTabSize := 0
+         for n = 1 to nLen
+            ::nTabSize = Max( ::nTabSize, ;
+                              Int( GetTextWidth( 0, ::aPrompts[n], ;
+                                   ::oFont:hFont ) + FD_TABMARGIN ) )
+         next n
+         ::nTabSize = Min( ::nTabSize, int( ::nWidth / nLen ) )
+      endif
+   else
+      ::nTabSize = ::nWidth + 1
+   endif
+
+   ::Refresh()
+   ::SetPrompts( ::aPrompts, ::aHelps )
+
+   if Len( ::aDialogs ) > 0
+      ::aDialogs[ ::nOption ]:Show()
+   endif
 
 return nil
 
@@ -588,6 +708,7 @@ METHOD Destroy() CLASS TFolder
 
    if ::oFont != nil
       ::oFont:End()
+      ::oFont  := nil   // Prevent Super:Destroy from End()ing again
    endif
 
    for n = 1 to Len( ::aDialogs )
@@ -595,13 +716,17 @@ METHOD Destroy() CLASS TFolder
       ::aDialogs[ n ]:End()
    next
 
-return Super:Destroy()
+   if ::oImageList != nil
+      ::oImageList:End()
+   endif
+
+return ::Super:Destroy()
 
 //----------------------------------------------------------------------------//
 
 METHOD GotFocus( hWndLoseFocus ) CLASS TFolder
 
-   Super:GotFocus()
+   ::Super:GotFocus( hWndLoseFocus )
 
    if ::nOption > 0 .and. ::nOption <= Len( ::aDialogs )
       ::aDialogs[ ::nOption ]:AEvalWhen()
@@ -633,8 +758,16 @@ METHOD LoadPages( aResNames, bRedefineControls ) CLASS TFolder
       endif
 
       ACTIVATE DIALOG oDlg NOWAIT ;
-         ON INIT ( oDlg:Move( oThis:nFdHeight + 2, 3 ) ) ;
+         ON INIT ( oDlg:Move( oThis:nFdHeight + 2, 3, oThis:nWidth - 6, oThis:nHeight - oThis:nFdHeight - 5 ) ) ;
          VALID .f.                // to avoid exiting pressing Esc !!!
+
+      #ifndef __CLIPPER__
+         if IsAppThemed()
+            if Empty( oDlg:oBrush:hBitmap )
+               oDlg:bEraseBkGnd = { | hDC | DrawPBack( oDlg:hWnd, hDC ), 1 }
+            endif
+         endif
+      #endif
 
       oDlg:Hide()
    next
@@ -650,17 +783,13 @@ METHOD SetOption( nOption ) CLASS TFolder
 
    local nOldOption
 
-
    if nOption > 0 .and. nOption != ::nOption .and. ::aEnable[ nOption ]
-      if ::nOption <= Len( ::aDialogs ) .and. ::aDialogs[ ::nOption ] != nil
+      if ::nOption <= Len( ::aDialogs ) .and. ::nOption != 0 .and. ;
+          ::aDialogs[ ::nOption ] != nil
          ::aDialogs[ ::nOption ]:Hide()
       endif
       nOldOption = ::nOption
       ::nOption  = nOption
-
-      #ifdef __CLIPPER__
-         InvalidateRect( ::hWnd, { 0, 0, ::nFdHeight + 2, ::nWidth() } )
-      #endif
 
       if nOption <= Len( ::aDialogs ) .and. ::aDialogs[ nOption ] != nil
          if ::bChange != nil
@@ -672,11 +801,8 @@ METHOD SetOption( nOption ) CLASS TFolder
       endif
    endif
 
-
    if nOption > 0
-      #ifndef __CLIPPER__
-         PostMessage( ::hWnd, TCM_SETCURSEL, ::nOption - 1 )
-      #endif
+      PostMessage( ::hWnd, TCM_SETCURSEL, ::nOption - 1 )
       if ! ::aEnable[ nOption ]
          MsgBeep()
       endif
@@ -713,51 +839,26 @@ METHOD Notify( nIdCtrl, nPtrNMHDR ) CLASS TFolder
 
    do case
       case nCode == TCN_SELCHANGING
-           #ifndef __CLIPPER__
-              nOldOption = TabCtrl_GetCurSel( ::hWnd ) + 1
-           #endif
+           nOldOption = ::GetCurSel()
 
       case nCode == TCN_SELCHANGE
-           #ifndef __CLIPPER__
-              if ! ::aEnable[ TabCtrl_GetCurSel( ::hWnd ) + 1 ]
-                 TabCtrl_SetCurSel( ::hWnd, nOldOption - 1 )
-              endif
-           #endif
+           if ! ::aEnable[ ::GetCurSel() ]
+              ::SetCurSel( nOldOption )
+           endif
    endcase
 
 return nil
 
 //----------------------------------------------------------------------------//
-
-METHOD KeyDown( nKey, nFlags ) CLASS TFolder
-
-   do case
-      case nKey == VK_NEXT
-           TONE(155,3)
-           return 0
-
-      case nKey == VK_PRIOR
-           TONE(955,3)
-           return 0
-   endcase
-
-return Super:KeyDown( nKey, nFlags )
-
-
-//----------------------------------------------------------------------------//
-
-#ifndef __CLIPPER__
 
 METHOD AdjustRect() CLASS TFolder
 
-   local aRect:= TabCtrl_AdjustRect( ::hWnd )
+   local aRect:= If( ::lUnicode, TabCtrl_AdjustRectW( ::hWnd ), TabCtrl_AdjustRect( ::hWnd ) )
 
    if Len( ::aDialogs ) > 0 .and. ::aDialogs[ 1 ]:nTop <> aRect[ 1 ]
-      AEval( ::aDialogs, { | oDlg | oDlg:Move( aRect[ 1 ], aRect[ 2 ] ) } )
+      AEval( ::aDialogs, { | oDlg | oDlg:Move( aRect[ 1 ], aRect[ 2 ] - 2 ) } )
    endif
 
 return nil
-
-#endif
 
 //----------------------------------------------------------------------------//

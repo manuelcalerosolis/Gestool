@@ -60,7 +60,7 @@ CLASS Seeders
    METHOD getStatementFabricantes( dbf )
 
    METHOD SeederEmpresas()
-   METHOD getStatementEmpresas( dbf )
+   METHOD insertEmpresas( dbf )
 
 END CLASS
 
@@ -782,7 +782,7 @@ METHOD SeederEmpresas() CLASS Seeders
    USE ( cPath + "Empresa.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Empresa", @dbf ) )
    ( dbf )->( ordsetfocus( 0 ) )
 
-   ( dbf )->( dbeval( {|| getSQLDatabase():Exec( ::getStatementEmpresas( dbf ) ) } ) )
+   ( dbf )->( dbeval( {|| ::insertEmpresas( dbf ) } ) )
 
    ( dbf )->( dbCloseArea() )
 
@@ -790,16 +790,43 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementEmpresas( dbf ) CLASS Seeders
+METHOD insertEmpresas( dbf ) CLASS Seeders
 
-   local hCampos  := {  "uuid"                     => quoted( ( dbf )->Uuid ),;
-                        "codigo"                   => quoted( ( dbf )->CodEmp ),;
-                        "nombre"                   => quoted( ( dbf )->cNombre ),;
-                        "nif"                      => quoted( ( dbf )->cNif ),;
-                        "administrador"            => quoted( ( dbf )->cAdminis ),;
-                        "pagina_web"               => quoted( ( dbf )->web ) }
+   local nId
+   local cSql
+   local hBuffer  
 
-RETURN ( ::getInsertStatement( hCampos, "empresas" ) )
+   hBuffer        := SQLEmpresasModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              ( dbf )->Uuid      )
+   hset( hBuffer, "codigo",            ( dbf )->CodEmp    )
+   hset( hBuffer, "nombre",            ( dbf )->cNombre   )
+   hset( hBuffer, "nif",               ( dbf )->cNif      )
+   hset( hBuffer, "administrador",     ( dbf )->cAdminis  )
+   hset( hBuffer, "pagina_web",        ( dbf )->web       )
+
+   nId            := SQLEmpresasModel():insertIgnoreBuffer( hBuffer )
+
+   if empty( nId )
+      RETURN ( self )
+   end if 
+
+   // Direcciones--------------------------------------------------------------
+
+   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hBuffer, "principal",      1                     )
+   hset( hBuffer, "parent_uuid",    ( dbf )->Uuid         )
+   hset( hBuffer, "direccion",      ( dbf )->cDomicilio   )
+   hset( hBuffer, "poblacion",      ( dbf )->cPoblacion   )
+   hset( hBuffer, "provincia",      ( dbf )->cProvincia   )
+   hset( hBuffer, "codigo_postal",  ( dbf )->cCodPos      )
+   hset( hBuffer, "telefono",       ( dbf )->cTlf         )
+   hset( hBuffer, "email",          ( dbf )->email        )
+                        
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
