@@ -33,9 +33,9 @@ METHOD Run()
 
    ::addModels()
 
-   ::syncronizeModels()
-
    ::checkModels()
+
+   ::syncronizeModels()
 
    ::checkValues()
 

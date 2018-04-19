@@ -435,7 +435,9 @@ METHOD getCreateTableSentence()
 
       cSQLCreateTable      := chgAtEnd( cSQLCreateTable, ' )', 2 )
 
-   end if 
+   end if
+
+   msgAlert( cSQLCreateTable, "cSQLCreateTable " + ::cTableName ) 
 
 RETURN ( cSQLCreateTable )
 
@@ -472,7 +474,7 @@ METHOD getAlterTableSentences( aSchemaColumns )
    end if 
 
    if !empty( hColumns )
-      msgAlert( hb_valtoexp( hColumns ), "getAlterTableSentences" )
+      msgAlert( hb_valtoexp( hColumns ), "getAlterTableSentences " + ::cTableName )
    end if 
 
 RETURN ( aAlter )

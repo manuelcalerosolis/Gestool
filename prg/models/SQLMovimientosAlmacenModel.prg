@@ -8,7 +8,7 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    DATA cTableName               INIT "movimientos_almacen"
 
-   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid, empresa, usuario)"
+   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid, empresa_uuid, usuario_uuid)"
 
    DATA aTextoMovimiento         INIT { 'Entre almacenes', 'Regularización', 'Objetivos', 'Consolidación', 'Vacio' }
  
