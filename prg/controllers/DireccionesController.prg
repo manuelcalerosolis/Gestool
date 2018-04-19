@@ -135,7 +135,7 @@ METHOD deleteBuffer( aUuidEntidades ) CLASS DireccionesController
       RETURN ( self )
    end if
 
-   ::oDireccionesController:oModel:deleteWhereParentUuid( aUuidEntidades )
+   ::oModel:deleteWhereParentUuid( aUuidEntidades )
 
 RETURN ( self )
 
