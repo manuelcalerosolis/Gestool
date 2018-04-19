@@ -230,7 +230,7 @@ METHOD Activate() CLASS EmpresasView
       CANCEL ;
       ACTION      ( ::oDialog:end() )
 
-
+   ::oDialog:bStart  := {|| ::oController:oDireccionesController:oDialogView:StartDialog() }
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
