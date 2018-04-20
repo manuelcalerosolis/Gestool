@@ -323,6 +323,7 @@ CLASS SQLUsuariosModel FROM SQLBaseModel
    METHOD Decrypt( cPassword )            INLINE ( hb_decrypt( alltrim( cPassword ), __encryption_key__ ) )
 
    METHOD getNombreWhereCodigo( cCodigo ) INLINE ( ::getField( 'nombre', 'codigo', cCodigo ) )
+   METHOD getNombreWhereUuid( uuid )      INLINE ( ::getField( 'nombre', 'uuid', uuid ) )
 
 END CLASS
 
@@ -336,6 +337,9 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 3 )"                            ,;
+                                          "default"   => {|| space( 3 ) } }                        )
+
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
@@ -347,9 +351,6 @@ METHOD getColumns() CLASS SQLUsuariosModel
 
    hset( ::hColumns, "remember_token", {  "create"    => "VARCHAR ( 100 )"                         ,;
                                           "default"   => {|| "" } }                                )
-
-   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 3 )"                            ,;
-                                          "default"   => {|| space( 3 ) } }                        )
 
    hset( ::hColumns, "super_user",     {  "create"    => "TINYINT ( 1 )"                          ,;
                                           "default"   => {|| "0" } }                               )

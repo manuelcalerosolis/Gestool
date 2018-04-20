@@ -13,6 +13,7 @@ CLASS SQLBaseView
    DATA oTimer
 
    DATA oDialog
+   DATA oFolder
 
    DATA oMessage
    DATA cMessage

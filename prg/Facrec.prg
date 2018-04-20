@@ -115,6 +115,7 @@
 #define _TFECFAC 		      103
 #define _CCENTROCOSTE	   104
 #define _UUID_TRN          105
+#define _UUID_AGE          106
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -355,7 +356,6 @@ static dbfCajT
 static dbfDelega
 static dbfAgeCom
 static dbfEmp
-static dbfTblCnv
 static dbfAlbPrvL
 static dbfAlbPrvS
 static dbfFacPrvL
@@ -701,9 +701,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
-      SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
       SET TAG TO "CSTKFAST"
@@ -826,7 +823,7 @@ STATIC FUNCTION OpenFiles( lExt )
      
       Counter           := TCounter():New( nView, "nFacRec" )
 
-      oTransportistaSelector  := TransportistasController():New():oGetSelectorTransportista
+      oTransportistaSelector  := TransportistasController():New():oComboSelector
 
       /*
       Declaración de variables publicas----------------------------------------
@@ -1080,10 +1077,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfEmp )->( dbCloseArea() )
    end if
 
-   if !empty( dbfTblCnv )
-      ( dbfTblCnv )->( dbCloseArea() )
-   end if
-
    if !empty( dbfAlbPrvL )
       ( dbfAlbPrvL )->( dbCloseArea() )
    end if
@@ -1225,7 +1218,6 @@ STATIC FUNCTION CloseFiles()
    dbfDelega   := nil
    dbfAgeCom   := nil
    dbfEmp      := nil
-   dbfTblCnv   := nil
    dbfAlbPrvL  := nil
    dbfAlbPrvS  := nil
    dbfFacPrvL  := nil
@@ -12829,6 +12821,7 @@ function aItmFacRec()
    aAdd( aItmFacRec, { "tFecFac"     ,"C",  9, 0, "Hora de la factura rectificativa",                        "HoraFactura",             "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "cCtrCoste"   ,"C",  9, 0, "Código del centro de coste",                              "CentroCoste",             "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "Uuid_Trn"    ,"C", 40, 0, "Identificador transportista" ,                            "UuidTransportista",       "", "( cDbf )", nil } )
+   aAdd( aItmFacRec, { "Uuid_Age"    ,"C", 40, 0, "Identificador agente" ,                                   "UuidAgente",              "", "( cDbf )", nil } )
 
 RETURN ( aItmFacRec )
 

@@ -12,6 +12,7 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
    DATA oCamposExtraValoresController
 
    METHOD New( cEntidad, uuidEntidad )
+   METHOD NewArticulo( cEntidad, uuidEntidad )              INLINE ( ::New( 'articulos', uuidEntidad ) )
 
    METHOD Edit() 
 
@@ -336,7 +337,7 @@ METHOD Activate() CLASS CamposExtraValoresView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_signpost3_48" ;
+      RESOURCE    "gc_form_plus2_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -387,9 +388,9 @@ END CLASS
 
 METHOD getValidators() CLASS CamposExtraValoresValidator
 
-   ::hValidators  := {     "campo_extra_relacion_uuid"   =>          {  "required"     => "El lugar donde se encuentra el campo extra es un dato requerido"},; 
-                           "uuid_registro"               =>          {  "required"     => "El Registro es un dato requerido",;
-                                                                        "unique"       => "El Registro introducido ya existe" } }
+   ::hValidators  := {  "campo_extra_relacion_uuid"   => {  "required"     => "El lugar donde se encuentra el campo extra es un dato requerido"},; 
+                        "uuid_registro"               => {  "required"     => "El Registro es un dato requerido",;
+                                                            "unique"       => "El Registro introducido ya existe" } }
 
 RETURN ( ::hValidators )
 
@@ -404,11 +405,11 @@ RETURN ( ::hValidators )
 
 CLASS SQLCamposExtraValoresModel FROM SQLBaseModel
 
-   DATA cTableName                           INIT "campos_extra_valores"
+   DATA cTableName                              INIT "campos_extra_valores"
 
-   DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( campo_extra_entidad_uuid, entidad_uuid )"
+   DATA cConstraints                            INIT "PRIMARY KEY ( id ), UNIQUE KEY ( campo_extra_entidad_uuid, entidad_uuid )"
 
-   DATA cColumnOrder                         INIT "nombre"                  
+   DATA cColumnOrder                            INIT "nombre"                  
 
    METHOD getInitialSelect()
 
@@ -424,7 +425,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect( uuidEntidad ) CLASS SQLCamposExtraValoresModel
+METHOD getInitialSelect() CLASS SQLCamposExtraValoresModel
 
    local cSQL  
 
@@ -441,8 +442,8 @@ METHOD getInitialSelect( uuidEntidad ) CLASS SQLCamposExtraValoresModel
    cSQL        +=    "INNER JOIN " + SQLCamposExtraEntidadesModel():cTableName + " entidad ON entidad.uuid = valores.campo_extra_entidad_uuid "
    cSQL        +=    "INNER JOIN " + SQLCamposExtraModel():cTableName + " campos ON campos.uuid = entidad.parent_uuid "
 
-   if !empty( uuidEntidad )
-      cSQL     += "WHERE entidad_uuid = " + uuidEntidad
+   if !empty( ::oController )
+      cSQL     += "WHERE entidad.entidad = " + quoted( ::oController:cEntidad )
    end if 
 
 RETURN ( cSQL)

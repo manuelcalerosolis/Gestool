@@ -1827,14 +1827,6 @@ METHOD BuildData()
    oDataTable:bCreateIndex := {| cPath | TAcceso():ReindexDatabase( cPath ) }
    ::AddDataTable( oDataTable )
 
-   oDataTable              := TDataTable():New( "TblCnv", cPathDatos() )
-   oDataTable:cDataFile    := cPatDat( .t. ) + "TblCnv.Dbf"
-   oDataTable:cIndexFile   := cPatDat( .t. ) + "TblCnv.Cdx"
-   oDataTable:cDescription := "Factor conversión"
-   oDataTable:bCreateFile  := {| cPath | mkTblCnv( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxTblCnv( cPath ) }
-   ::AddDataTable( oDataTable )
-
    oDataTable              := TDataTable():New( "Captura", cPathDatos() )
    oDataTable:cDataFile    := cPatDat( .t. ) + "Captura.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Captura.Cdx"
@@ -2436,6 +2428,7 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Agentes.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Agentes.Cdx"
    oDataTable:cDescription := "Agentes"
+   oDataTable:bSyncFile    := {|| SynAgente( cPatEmp() ) }
    oDataTable:bCreateFile  := {| cPath | mkAgentes( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxAgentes( cPath ) }
    ::AddEmpresaTable( oDataTable )

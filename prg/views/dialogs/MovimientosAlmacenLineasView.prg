@@ -377,28 +377,39 @@ RETURN ( .t. )
 
 METHOD EdtRecMenu()
 
-   MENU ::oMenu
+   MENU ::oMenu // COLORS
 
       MENUITEM    "&1. Rotor"
 
          MENU
 
-            MENUITEM    "&1. Relaciones";
-               MESSAGE  "Mostramos y rellenamos relaciones" ;
+            MENUITEM    "&1. Relaciones con entidades";
+               MESSAGE  "Establecer relaciones entre distintas entidades" ;
                RESOURCE "gc_graph_claw_16" ;
-               ACTION   ( if( ::getController():isNotZoomMode(), ::oController:oRelacionesEntidades:Edit(), ) )
+               WHEN     ( ::getController():isNotZoomMode() ) ;   
+               ACTION   ( ::oController:oRelacionesEntidades:Edit() )
 
-         SEPARATOR
+            SEPARATOR
 
-         MENUITEM    "&1. Modificar artÃ­culo";
-               MESSAGE  "Modificar la ficha del artÃ­culo" ;
+            MENUITEM    "&2. Campos extra";
+               MESSAGE  "Muestra los campos extra de esta entidad" ;
+               RESOURCE "gc_form_plus2_16" ;
+               WHEN     ( ::getController():isNotZoomMode() ) ;   
+               ACTION   ( CamposExtraValoresController():New( 'movimientos_almacen_lineas', ::getController():getUuid() ):Edit() )
+
+            SEPARATOR
+
+            MENUITEM    "&3. Modificar artículo";
+               MESSAGE  "Modificar la ficha del artículo" ;
                RESOURCE "gc_object_cube_16";
-               ACTION   ( if( ::getController():isNotZoomMode(), EdtArticulo( ::oController:oModel:hBuffer[ "codigo_articulo" ] ), ) );
+               WHEN     ( ::getController():isNotZoomMode() ) ;   
+               ACTION   ( EdtArticulo( ::oController:oModel:hBuffer[ "codigo_articulo" ] ) );
 
-         MENUITEM    "&2. Informe de artÃ­culo";
-               MESSAGE  "Abrir el informe del artÃ­culo" ;
-               RESOURCE "Info16";
-               ACTION   ( if( ::getController():isNotZoomMode(), InfArticulo( ::oController:oModel:hBuffer[ "codigo_articulo" ] ), ) );
+            MENUITEM    "&4. Informe de artículo";
+               MESSAGE  "Abrir el informe del artículo" ;
+               RESOURCE "info16";
+               WHEN     ( ::getController():isNotZoomMode() ) ;   
+               ACTION   ( InfArticulo( ::oController:oModel:hBuffer[ "codigo_articulo" ] ) );
 
          ENDMENU
 

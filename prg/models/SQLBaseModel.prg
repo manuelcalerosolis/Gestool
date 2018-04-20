@@ -28,6 +28,8 @@ CLASS SQLBaseModel
    DATA cGeneralWhere
 
    DATA cFilterWhere
+
+   DATA cOthersWhere
    
    DATA cColumnOrder                  
 
@@ -122,6 +124,9 @@ CLASS SQLBaseModel
    
    METHOD addEmpresaWhere()                           
 
+   METHOD setOthersWhere( cWhere )                   INLINE ( ::cOthersWhere   := cWhere )
+   METHOD addOthersWhere( cSQLSelect )
+
    METHOD setFilterWhere( cWhere )                    INLINE ( ::cFilterWhere    := cWhere )
    METHOD addFilterWhere( cSQLSelect )
    METHOD clearFilterWhere()                          INLINE ( ::cFilterWhere    := nil )
@@ -136,7 +141,7 @@ CLASS SQLBaseModel
 
    // Where for columns--------------------------------------------------------
 
-   METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa" ) )
+   METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa_uuid" ) )
 
    // Get edit value for xbrowse-----------------------------------------------
 
@@ -188,6 +193,8 @@ CLASS SQLBaseModel
    METHOD loadCurrentBuffer()
    METHOD defaultCurrentBuffer()
 
+   METHOD insertBlankBuffer()                         INLINE ( ::loadBlankBuffer(), ::insertBuffer() ) 
+
    // Events-------------------------------------------------------------------
 
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
@@ -238,11 +245,9 @@ RETURN ( nil )
 METHOD getDateTimeColumns()
 
    hset( ::hColumns, "creado",      {  "create"    => "DATETIME DEFAULT NULL"       ,;
-                                       "text"      => "Creación fecha y hora"       ,;
                                        "default"   => {|| hb_datetime() } }         )
 
    hset( ::hColumns, "modificado",  {  "create"    => "DATETIME DEFAULT NULL"       ,;
-                                       "text"      => "Modificación fecha y hora"   ,;
                                        "default"   => {|| hb_datetime() } }         )
 
 RETURN ( ::hColumns )
@@ -261,11 +266,9 @@ RETURN ( ::hColumns )
 METHOD getTimeStampColumns()
 
    hset( ::hColumns, "created_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
-                                       "text"      => "Creación fecha y hora"       ,;
                                        "default"   => {|| hb_datetime() } }         )
 
    hset( ::hColumns, "updated_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
-                                       "text"      => "Modificación fecha y hora"   ,;
                                        "default"   => {|| hb_datetime() } }         )
 
 RETURN ( ::hColumns )
@@ -273,38 +276,12 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 
 METHOD getEmpresaColumns()
+   
+   hset( ::hColumns, "empresa_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
+                                          "default"   => {|| uuidEmpresa() } }              )
 
-   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
-                                          "text"      => "Identificador"                           ,;
-                                          "default"   => {|| 0 } }                                 )
-
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                          "text"      => "Uuid"                                    ,;
-                                          "default"   => {|| win_uuidcreatestring() } }            )
-
-   hset( ::hColumns, "empresa",        {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
-                                          "text"      => "Empresa"                                 ,;
-                                          "default"   => {|| cCodEmp() } }                         )
-
-   hset( ::hColumns, "empresa_uuid",   {  "create"    => "CHAR ( 40 ) NOT NULL"                    ,;
-                                          "text"      => "Empresa"                                 ,;
-                                          "default"   => {|| cCodEmp() } }                         )
-
-   hset( ::hColumns, "delegacion",     {  "create"    => "VARCHAR( 2 ) NOT NULL"                   ,;
-                                          "text"      => "Delegación"                              ,;
-                                          "default"   => {|| retSufEmp() } }                       )
-
-   hset( ::hColumns, "delegacion_uuid",{  "create"    => "CHAR ( 40 ) NOT NULL"                    ,;
-                                          "text"      => "Delegación uuid"                         ,;
-                                          "default"   => {|| space( 40 ) } }                       )
-
-   hset( ::hColumns, "usuario",        {  "create"    => "VARCHAR( 3 ) NOT NULL"                   ,;
-                                          "text"      => "Usuario"                                 ,;
-                                          "default"   => {|| Auth():Codigo() } }                   )
-
-   hset( ::hColumns, "usuario_uuid",   {  "create"    => "CHAR ( 40 ) NOT NULL"                    ,;
-                                          "text"      => "Usuario uuid"                            ,;
-                                          "default"   => {|| Auth():Uuid() } }                     )
+   hset( ::hColumns, "usuario_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
+                                          "default"   => {|| Auth():Uuid() } }              )
 
 RETURN ( ::hColumns )
 
@@ -321,6 +298,8 @@ METHOD getGeneralSelect()
    ::fireEvent( 'gotInitialSelect' )   
 
    cSQLSelect              := ::addGeneralWhere( cSQLSelect )
+
+   cSQLSelect              := ::addOthersWhere( cSQLSelect )
 
    cSQLSelect              := ::addEmpresaWhere( cSQLSelect )
 
@@ -373,8 +352,20 @@ METHOD addGeneralWhere( cSQLSelect )
    if empty( ::cGeneralWhere )
       RETURN ( cSQLSelect )
    end if 
-
+   
    cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cGeneralWhere 
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD addOthersWhere( cSQLSelect )
+
+   if empty( ::cOthersWhere )
+      RETURN ( cSQLSelect )
+   end if 
+   
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cOthersWhere 
 
 RETURN ( cSQLSelect )
 
@@ -386,7 +377,7 @@ METHOD addEmpresaWhere( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "empresa = " + toSQLString( cCodEmp() )
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "empresa_uuid = " + toSQLString( uuidEmpresa() )
 
 RETURN ( cSQLSelect )
 
@@ -461,9 +452,11 @@ METHOD getCreateTableSentence()
 
    else
 
-      cSQLCreateTable      := ChgAtEnd( cSQLCreateTable, ' )', 2 )
+      cSQLCreateTable      := chgAtEnd( cSQLCreateTable, ' )', 2 )
 
-   end if 
+   end if
+
+   msgAlert( cSQLCreateTable, "cSQLCreateTable " + ::cTableName ) 
 
 RETURN ( cSQLCreateTable )
 
@@ -500,7 +493,7 @@ METHOD getAlterTableSentences( aSchemaColumns )
    end if 
 
    if !empty( hColumns )
-      msgAlert( hb_valtoexp( hColumns ), "getAlterTableSentences" )
+      msgAlert( hb_valtoexp( hColumns ), "getAlterTableSentences " + ::cTableName )
    end if 
 
 RETURN ( aAlter )

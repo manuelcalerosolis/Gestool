@@ -103,6 +103,7 @@ Definici¢n de la base de datos de S.A.T. a clientes
 #define _MFIRMA                   88
 #define _CCENTROCOSTE             89
 #define _UUID_TRN                 90
+#define _UUID_AGE                 91
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -293,7 +294,6 @@ static dbfTarPreS
 static dbfPromoT
 static dbfPromoL
 static dbfPromoC
-static dbfTblCnv
 static dbfIva
 static dbfTmpLin
 static dbfTmpInc
@@ -603,9 +603,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
       SET ADSINDEX TO ( cPatEmp() + "ARTDIV.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
-      SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
-
       USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
       SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
@@ -738,7 +735,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      oTransportistaSelector     := TransportistasController():New():oGetSelectorTransportista
+      oTransportistaSelector     := TransportistasController():New():oComboSelector
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -921,10 +918,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfArtDiv    )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTblCnv )
-      ( dbfTblCnv    )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfCajT )
       ( dbfCajT )->( dbCloseArea() )
    end if
@@ -1078,7 +1071,6 @@ STATIC FUNCTION CloseFiles()
    dbfObrasT      := nil
    dbfRuta        := nil
    dbfArtDiv      := nil
-   dbfTblCnv      := nil
    dbfCajT        := nil
    dbfDelega      := nil
    oBandera       := nil
@@ -10455,6 +10447,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "mFirma",    "M", 10,  0, "Firma" ,                                      "Firma",                   "", "( cDbf )", nil } )                  
    aAdd( aItmSatCli, { "cCtrCoste", "C",  9,  0, "Código del centro de coste" ,                 "CentroCoste",             "", "( cDbf )", nil } )
    aAdd( aItmSatCli, { "Uuid_Trn",  "C", 40,  0, "Identificador transportista" ,                "UuidTransportista",       "", "( cDbf )", nil } )
+   aAdd( aItmSatCli, { "Uuid_Age",  "C", 40,  0, "Identificador agente" ,                       "UuidAgente",              "", "( cDbf )", nil } )
 
 return ( aItmSatCli )
 

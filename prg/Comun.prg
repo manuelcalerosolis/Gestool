@@ -283,9 +283,28 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
+/* 
+   local oUrlLink
+   local oUrlLinkFolder
+   local oDlg
+   local oFld
 
-   // CamposExtraController():New():ActivateNavigatorView()
-   
+   DEFINE DIALOG oDlg RESOURCE "test" COLOR "N/B"
+
+   REDEFINE FOLDER oFld ;
+         ID       500 ;
+         OF       oDlg ;
+         PROMPT   "&Folder"   ;
+         DIALOGS  "TEST_FOLDER"
+
+   oUrlLink = TUrlLink():Redefine( 100, oDlg,,, "www.fivetechsoft.com",, CLR_GRAY, CLR_WHITE, CLR_YELLOW, .T. )
+   oUrlLink:bAction = { || MsgInfo( "click" ) }
+
+   oUrlLink = TUrlLink():Redefine( 100, oFld:aDialogs[1],,, "www.gestool.com",, CLR_GRAY, CLR_WHITE, CLR_YELLOW, .T. )
+   oUrlLink:bAction = { || MsgInfo( "click" ) }
+
+   ACTIVATE DIALOG oDlg CENTERED  
+*/
 RETURN nil
 
 //----------------------------------------------------------------------------//
@@ -1246,17 +1265,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "propiedades"
    oItem:cBmp           := "gc_coathanger_16"
    oItem:cBmpBig        := "gc_coathanger_32"
-   oItem:lShow          := .f.
-   oItem:lLittle        := .t.
-
-   oItem                := oItemArchivo:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Factores conversión'
-   oItem:cMessage       := 'Acceso a los factores de conversion de los artículos'
-   oItem:bAction        := {|| TblCnv( "factores_de_conversion", oWnd ) }
-   oItem:cId            := "factores_de_conversion"
-   oItem:cBmp           := "gc_objects_transform_16"
-   oItem:cBmpBig        := "gc_objects_transform_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
 
@@ -2696,7 +2704,11 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
+<<<<<<< HEAD
    oGrupo:nBigItems     := 8
+=======
+   oGrupo:nBigItems     := 10
+>>>>>>> f12b8388bed639a34232a8b78ca0fd024f22993d
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2773,12 +2785,41 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
+<<<<<<< HEAD
    oItem:cPrompt        := 'Comentarios'
    oItem:cMessage       := 'Solicitar comentario'
    oItem:bAction        := {|| ComentariosController():New():ActivateNavigatorView() }
    oItem:cId            := "asistencia_remota"
    oItem:cBmp           := "gc_message_16"
    oItem:cBmpBig        := "gc_message_32"
+=======
+   oItem:cPrompt        := 'Clientes'
+   oItem:cMessage       := 'Solicitar cliente'
+   oItem:bAction        := {|| ClientesController():New():ActivateNavigatorView() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_user_16"
+   oItem:cBmpBig        := "gc_user_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Proveedores'
+   oItem:cMessage       := 'Solicitar proveedor'
+   oItem:bAction        := {|| ProveedoresController():New():ActivateNavigatorView() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_businessman_16"
+   oItem:cBmpBig        := "gc_businessman_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Empresa'
+   oItem:cMessage       := 'Empresas'
+   oItem:bAction        := {|| EmpresasController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_factory_16"
+   oItem:cBmpBig        := "gc_factory_32"
+>>>>>>> f12b8388bed639a34232a8b78ca0fd024f22993d
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

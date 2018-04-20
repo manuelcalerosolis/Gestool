@@ -8,7 +8,7 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
 
    DATA cTableName               INIT "movimientos_almacen"
 
-   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid, empresa)"
+   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid, empresa_uuid, usuario_uuid)"
 
    DATA aTextoMovimiento         INIT { 'Entre almacenes', 'Regularización', 'Objetivos', 'Consolidación', 'Vacio' }
  
@@ -31,13 +31,24 @@ CLASS SQLMovimientosAlmacenModel FROM SQLExportableModel
    METHOD cTextoMovimiento( nTipoMovimiento ) ;
                                  INLINE ( ::aTextoMovimiento[ minmax( nTipoMovimiento, 1, len( ::aTextoMovimiento ) ) ] )
 
+   METHOD Syncronize()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD getColumns()
+   
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                             "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+                                             "default"   => {|| win_uuidcreatestring() } }            )
 
    ::getEmpresaColumns()
+
+   hset( ::hColumns, "empresa",           {  "create"    => "VARCHAR( 4 )"                            ,;
+                                             "default"   => {|| space( 4 ) } }                        )
 
    hset( ::hColumns, "numero",            {  "create"    => "CHAR ( 50 )"                             ,;
                                              "default"   => {|| MovimientosAlmacenRepository():getNextNumber() } }                       )
@@ -88,7 +99,6 @@ METHOD getInitialSelect()
                   "movimientos_almacen.tipo_movimiento            AS tipo_movimiento, "   + ;
                   ::getColumnMovimiento( "movimientos_almacen" )                          + ;
                   "movimientos_almacen.fecha_hora                 AS fecha_hora, "        + ;
-                  "movimientos_almacen.usuario                    AS usuario, "           + ;
                   "movimientos_almacen.almacen_origen             AS almacen_origen, "    + ;
                   "movimientos_almacen.almacen_destino            AS almacen_destino, "   + ;
                   "movimientos_almacen.grupo_movimiento           AS grupo_movimiento, "  + ;
@@ -204,6 +214,27 @@ METHOD assingNumber( hBuffer )
    end while
 
    hset( hBuffer, "numero", cNumero )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+// Actualizar datos de empresa----------------------------------------------
+//---------------------------------------------------------------------------//
+
+METHOD Syncronize()
+
+   local cSql       
+   local cEmpresaTableName := SQLEmpresasModel():cTableName       
+
+   cSql                    := "UPDATE " + ::cTableName + " "
+   cSql                    +=    "INNER JOIN " + cEmpresaTableName + " ON " + ::cTableName + ".empresa = " + cEmpresaTableName + ".codigo "
+   cSql                    += "SET " + ::cTableName + ".empresa_uuid = " + cEmpresaTableName + ".uuid "
+   cSql                    +=    "WHERE " + ::cTableName + ".empresa_uuid = '' "
+
+   msgalert( cSql, "cSql" )
+   logwrite( cSql )
+
+   getSQLDatabase():Exec( cSql )
 
 RETURN ( .t. )
 

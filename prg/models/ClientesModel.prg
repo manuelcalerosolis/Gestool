@@ -5,11 +5,13 @@
 
 CLASS ClientesModel FROM ADSBaseModel
 
-   METHOD getTableName()                     INLINE ::getEmpresaTableName( "Client" )
+   METHOD getTableName()                           INLINE ::getEmpresaTableName( "Client" )
 
    METHOD Riesgo( idCliente )
 
-   METHOD getNombre( idCliente )             INLINE ( ::getField( "Titulo", "Cod", idCliente ) )
+   METHOD getNombre( idCliente )                   INLINE ( ::getField( "Titulo", "Cod", idCliente ) )
+
+   METHOD getUuid( idCliente )                     INLINE ( ::getField( 'Uuid', 'Cod', idCliente, .t. ) )
 
    METHOD getClientesPorRuta( cWhere, cOrderBy )
 

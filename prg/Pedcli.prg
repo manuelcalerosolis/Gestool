@@ -116,6 +116,7 @@ Definici¢n de la base de datos de pedidos a clientes
 #define _MFIRMA                  101
 #define _CCENTROCOSTE            102
 #define _UUID_TRN                103
+#define _UUID_AGE                104
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -354,7 +355,6 @@ static dbfCodebar
 static dbfKit
 static dbfArtDiv
 static dbfRuta
-static dbfTblCnv
 static dbfAlm
 static dbfObrasT
 static oBrwIva
@@ -699,9 +699,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
       SET ADSINDEX TO ( cPatEmp() + "RUTA.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
-      SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
-
       USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
       SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
@@ -818,7 +815,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       Counter           := TCounter():New( nView, "nPedCli" )
 
-      oTransportistaSelector     := TransportistasController():New():oGetSelectorTransportista
+      oTransportistaSelector     := TransportistasController():New():oComboSelector
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -7587,7 +7584,6 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfRuta    ), ( dbfRuta    )->( dbCloseArea() ), )
    if( !Empty( dbfAlm     ), ( dbfAlm     )->( dbCloseArea() ), )
    if( !Empty( dbfArtDiv  ), ( dbfArtDiv  )->( dbCloseArea() ), )
-   if( !Empty( dbfTblCnv  ), ( dbfTblCnv  )->( dbCloseArea() ), )
    if( !Empty( dbfCajT    ), ( dbfCajT    )->( dbCloseArea() ), )
    if( !Empty( dbfArtPrv  ), ( dbfArtPrv  )->( dbCloseArea() ), )
    if( !Empty( dbfDelega  ), ( dbfDelega  )->( dbCloseArea() ), )
@@ -7657,7 +7653,6 @@ STATIC FUNCTION CloseFiles()
    dbfRuta        := nil
    dbfAlm         := nil
    dbfArtDiv      := nil
-   dbfTblCnv      := nil
    dbfCajT        := nil
    dbfAgeCom      := nil
    dbfEmp         := nil
@@ -14635,6 +14630,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "mFirma",    "M",   10,  2, "Firma",                                                   "Firma",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cCtrCoste", "C",    9,  0, "Código del centro de coste" ,                             "CentroCoste",             "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "Uuid_Trn",  "C",   40,  0, "Identificador transportista" ,                            "UuidTransportista",       "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "Uuid_Age",  "C",   40,  0, "Identificador agente" ,                                   "UuidAgente",              "", "( cDbf )", nil } )
 
 return ( aItmPedCli )
 

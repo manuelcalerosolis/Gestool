@@ -1,11 +1,11 @@
 HB                   = 	\harbour_bcc582\
 
-HBINCLUDE            = 	\harbour_bcc582\Include
-FWINCLUDE            = 	\fwh1705\Include
+HBINCLUDE            = 	\harbour_bcc582\include
+FWINCLUDE            = 	\fwh1709\Include
 GTINCLUDE            = 	.\Include
 
-HBLIB                = 	\harbour_bcc582\Lib
-FWLIB                = 	\fwh1705\lib
+HBLIB                = 	\harbour_bcc582\lib
+FWLIB                = 	\fwh1709\lib
 
 RESOURCE             = 	.\resource
 
@@ -14,12 +14,12 @@ BORLANDLIB           = 	\bcc582\lib
 
 IMG2PDFLIB           = 	\img2Pdf
 
-OBJ                  = 	obj1705
+OBJ                  = 	obj1709
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	.\C
 
-PPO 					   = 	ppo1705
+PPO 					   = 	ppo1709
 
 EXE 					   = 	bin\$(TARGET).exe
 
@@ -68,6 +68,7 @@ Tgraph.prg              										\
 Toleexcel.prg           										\
 Toleword.prg            										\
 Empresa.prg             										\
+EmpresasController.prg             							\
 Empcnf.prg              										\
 Reindexa.prg            										\
 TDataCenter.prg         										\
@@ -159,7 +160,6 @@ Pro.prg                 										\
 Reccli.prg              										\
 Turno.prg               										\
 Ttotturno.prg           										\
-Tblconv.prg             										\
 Regalm.prg              										\
 Rhtml.prg               										\
 Tshell.prg              										\
@@ -320,7 +320,6 @@ InfUbi.prg              													\
 InfRut.prg              													\
 InfPro.prg              													\
 InfTar.prg              													\
-InfCnv.prg              													\
 InfTipIva.prg           													\
 InfDiv.prg              													\
 InfFpg.prg              													\
@@ -641,7 +640,15 @@ CentroCosteModel.prg 														\
 TransportistasModel.prg 													\
 MdiChild.prg 																	\
 SQLComboSelector.prg 														\
-urllink.prg 																	\
+Folder.prg 																	\
+TercerosController.prg 														\
+ClientesController.prg 														\
+ProveedoresController.prg 													\
+SQLTercerosModel.prg 														\
+SQLClientesModel.prg 														\
+SQLProveedoresModel.prg 		  											\
+ClientesView.prg 																\
+ClientesValidator.prg 														\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -677,6 +684,7 @@ TViewImg.obj                                       				\
 Toleexcel.obj                                      				\
 Toleword.obj                                       				\
 Empresa.obj                                        				\
+EmpresasController.obj                                			\
 Empcnf.obj                                         				\
 Reindexa.obj                                       				\
 TDataCenter.obj                                    				\
@@ -770,7 +778,6 @@ Pro.obj                                            				\
 Reccli.obj                                         				\
 Turno.obj                                          				\
 Ttotturno.obj                                      				\
-Tblconv.obj                                        				\
 Regalm.obj                                         				\
 Rhtml.obj                                          				\
 Tshell.obj                                         				\
@@ -947,7 +954,6 @@ InfUbi.obj              													\
 InfRut.obj              													\
 InfPro.obj              													\
 InfTar.obj              													\
-InfCnv.obj              													\
 InfTipIva.obj           													\
 InfDiv.obj              													\
 InfFpg.obj              													\
@@ -1258,7 +1264,16 @@ CentroCosteModel.obj 														\
 MdiChild.obj 																	\
 TransportistasModel.obj 													\
 SQLComboSelector.obj 														\
-urllink.obj 																	\
+TiposNotas.obj       														\
+Folder.obj 																	\
+TercerosController.obj 														\
+ClientesController.obj 														\
+ProveedoresController.obj 													\
+SQLTercerosModel.obj 														\
+SQLclientesModel.obj 														\
+SQLProveedoresModel.obj 		  											\
+ClientesView.obj 																\
+ClientesValidator.obj 														\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1303,6 +1318,7 @@ $(OBJ)\TViewImg.obj                                         	+
 $(OBJ)\Toleexcel.obj                                        	+
 $(OBJ)\Toleword.obj                                         	+
 $(OBJ)\Empresa.obj                                          	+
+$(OBJ)\EmpresasController.obj                                  +
 $(OBJ)\Empcnf.obj                                           	+
 $(OBJ)\Reindexa.obj                                         	+
 $(OBJ)\TDataCenter.obj                                      	+
@@ -1396,7 +1412,6 @@ $(OBJ)\Pro.obj                   										+
 $(OBJ)\Reccli.obj                										+
 $(OBJ)\Turno.obj                 										+
 $(OBJ)\Ttotturno.obj             										+
-$(OBJ)\Tblconv.obj               										+
 $(OBJ)\Regalm.obj                										+
 $(OBJ)\Rhtml.obj                 										+
 $(OBJ)\Tshell.obj                										+
@@ -1552,7 +1567,6 @@ $(OBJ)\InfUbi.obj               											+
 $(OBJ)\InfRut.obj               											+
 $(OBJ)\InfPro.obj               											+
 $(OBJ)\InfTar.obj               											+
-$(OBJ)\InfCnv.obj               											+
 $(OBJ)\InfTipIva.obj            											+
 $(OBJ)\InfDiv.obj               											+
 $(OBJ)\InfFpg.obj               											+
@@ -1865,7 +1879,15 @@ $(OBJ)\CentroCosteModel.obj 												+
 $(OBJ)\TransportistasModel.obj 											+
 $(OBJ)\MdiChild.obj 															+
 $(OBJ)\SQLComboSelector.obj 												+
-$(OBJ)\urllink.obj 															+
+$(OBJ)\Folder.obj 															+
+$(OBJ)\TercerosController.obj 											+
+$(OBJ)\ClientesController.obj 											+
+$(OBJ)\ProveedoresController.obj 										+
+$(OBJ)\SQLTercerosModel.obj 												+
+$(OBJ)\SQLclientesModel.obj 												+
+$(OBJ)\SQLProveedoresModel.obj 		  									+
+$(OBJ)\ClientesView.obj 													+
+$(OBJ)\ClientesValidator.obj 												+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

@@ -6,7 +6,9 @@ CLASS ComboSelector
    DATA oController
 
    DATA idLink
+
    DATA idCombobox
+
    DATA oDialog
 
    DATA oUrlLink
@@ -34,6 +36,8 @@ CLASS ComboSelector
 
    METHOD moveSelectorView()
 
+   METHOD Refresh()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -45,6 +49,10 @@ METHOD New( oSender ) CLASS ComboSelector
    ::nColorUrlLink   := nRGB( 51, 102, 187 )
    
    ::cComboBox       := ""
+
+   ::oController:setEvent( 'appended', {|| ::Refresh() } )
+   ::oController:setEvent( 'edited',   {|| ::Refresh() } )
+   ::oController:setEvent( 'deleted',  {|| ::Refresh() } )
 
 RETURN ( Self )
 
@@ -80,8 +88,10 @@ RETURN ( Self )
 
 METHOD ResourceLink() CLASS ComboSelector
 
-   ::oUrlLink           := TUrlLink():Redefine( ::idLink, ::oDialog, , , , , ::nColorUrlLink, ::nColorUrlLink, ::nColorUrlLink, .t. )
-   ::oUrlLink:bAction   := {|| ::ActionLink() }
+   // ::oUrlLink              := TWebBtn():Redefine( ::idLink,,,,, {|| ::ActionLink() }, ::oDialog,,,,,,,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+   ::oUrlLink              := TUrlLink():Redefine( ::idLink, ::oDialog, , , , , ::nColorUrlLink, ::nColorUrlLink, ::nColorUrlLink, .t. )
+   ::oUrlLink:bAction      := {|| ::ActionLink() }
 
 RETURN ( Self )
 
@@ -91,6 +101,7 @@ METHOD ResourceComboBox() CLASS ComboSelector
    
    ::oComboBox             := TComboBox():ReDefine( ::idCombobox, bSETGET( ::cComboBox ), ::aComboBox, ::oDialog,,, {|| ::ChangeComboBox() } , , , , .f., {|| .t. } )
    ::oComboBox:lIncSearch  := .t.
+   ::oComboBox:cToolTip    := "Buscando : " + ( ::oComboBox:cSearchKey )
 
 RETURN ( Self )
 
@@ -126,7 +137,6 @@ METHOD moveSelectorView() CLASS ComboSelector
    local nCol
    local aRect
    local nScreenWidth   := GetSysMetrics( 0 )
-   // local nScreenHeight  := GetSysMetrics( 1 )
 
    aRect                := ClientToScreen( ::oComboBox:hWnd )
 
@@ -147,6 +157,22 @@ RETURN ( Self )
 METHOD ChangeComboBox() CLASS ComboSelector
 
    eval( ::bValue, ::oController:oRepository:getUuidWhereNombre( ::cComboBox ) )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Refresh()
+
+   if empty( ::oComboBox )
+      RETURN ( Self )
+   end if 
+   
+   cursorWait()
+
+   ::oComboBox:setItems( ::oController:oRepository:getNombres() )
+
+   cursorWE()
 
 RETURN ( Self )
 

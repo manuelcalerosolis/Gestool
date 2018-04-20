@@ -7,6 +7,8 @@ CLASS AgentesModel FROM ADSBaseModel
 
    METHOD getTableName()                     INLINE ::getEmpresaTableName( "Agentes" )
 
+   METHOD getUuid( cCodigo )                 INLINE ( ::getField( 'uuid', 'cCodAge', cCodigo ) )
+
    METHOD exist( cCodigoAgente )
 
    METHOD getNombre( cCodigoAgente )

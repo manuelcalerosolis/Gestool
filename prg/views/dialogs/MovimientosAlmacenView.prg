@@ -35,8 +35,7 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
                                                       ::oGetAlmacenOrigen:Show(),;
                                                       ::oGetAlmacenOrigen:Hide() ) )
 
-   METHOD getUsuario()              INLINE   (  alltrim( ::oController:oModel:hBuffer[ "usuario" ] ) + space( 1 ) + ;
-                                                UsuariosModel():getNombre( ::oController:oModel:hBuffer[ "usuario" ] ) )
+   METHOD getUsuario()              INLINE   (  SQLUsuariosModel():getNombreWhereCodigo( ::oController:oModel:hBuffer[ "usuario" ] ) )
 
    METHOD validateAndGoTo()         
    METHOD validateAndGoDown()       INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDDOWN ), ) )
@@ -74,11 +73,6 @@ METHOD Activate()
          PICTURE     "@DT" ;
          SPINNER ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          ::oDialog
-
-      REDEFINE SAY   ;
-         PROMPT      ::oController:oModel:hBuffer[ "delegacion" ] ;
-         ID          110 ;
          OF          ::oDialog
 
       REDEFINE SAY   ;
@@ -214,6 +208,10 @@ METHOD initActivate()
    ::oOfficeBar:createButtonsLine( ::oController:oLineasController, ::oSQLBrowseView )
 
    if ::oController:isNotZoomMode()
+
+      oGrupo      := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 66, "", .f. )
+                     TDotNetButton():New( 60, oGrupo, "gc_form_plus2_32", "Campos extra",             1, {|| CamposExtraValoresController():New( 'movimientos_almacen', ::oController:getUuid() ):Edit() }, , , .f., .f., .f. )
+
       oGrupo      := TDotNetGroup():New( ::oOfficeBar:oOfficeBarFolder, 126,  "Otros", .f. )
                      TDotNetButton():New( 60, oGrupo, "gc_hand_truck_box_32", "Importar almacén",     1, {|| ::oController:oImportadorController:Activate() }, , , .f., .f., .f. )
                      TDotNetButton():New( 60, oGrupo, "gc_pda_32",            "Importar inventario",  2, {|| ::oController:oCapturadorController:Activate() }, , , .f., .f., .f. )

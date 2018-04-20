@@ -128,6 +128,7 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _CCENTROCOSTE             105  
 #define _MFIRMA                   106
 #define _UUID_TRN                 107
+#define _UUID_AGE                 108
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -405,7 +406,6 @@ static oUndMedicion
 static oCentroCoste
 static oBandera
 static dbfKit
-static dbfTblCnv
 static dbfOferta
 static dbfObrasT
 static dbfCentroCoste
@@ -1472,9 +1472,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
       SET ADSINDEX TO ( cPatEmp() + "ARTKIT.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
-      SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
       SET ADSINDEX TO ( cPatEmp() + "OFERTA.CDX" ) ADDITIVE
 
@@ -1611,7 +1608,7 @@ STATIC FUNCTION OpenFiles()
 
       Counter           := TCounter():New( nView, "nAlbCli" ) 
 
-      oTransportistaSelector     := TransportistasController():New():oGetSelectorTransportista
+      oTransportistaSelector     := TransportistasController():New():oComboSelector
 
       /*
       Declaración de variables públicas----------------------------------------
@@ -1784,9 +1781,6 @@ STATIC FUNCTION CloseFiles()
    if !empty( dbfAlm )
       ( dbfAlm       )->( dbCloseArea() )
    end if
-   if !empty( dbfTblCnv )
-      ( dbfTblCnv    )->( dbCloseArea() )
-   end if
    if !empty( dbfOferta )
       ( dbfOferta    )->( dbCloseArea() )
    end if
@@ -1935,7 +1929,6 @@ STATIC FUNCTION CloseFiles()
    dbfCodebar     := nil
    dbfKit         := nil
    oBandera       := nil
-   dbfTblCnv      := nil
    dbfOferta      := nil
    dbfObrasT      := nil
    dbfPro         := nil
@@ -17071,6 +17064,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "cCtrCoste", "C",  9, 0, "Código del centro de coste" ,                              "CentroCoste",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "mFirma",    "M", 10, 0, "Firma" ,                                                   "Firma",                         "", "( cDbf )", nil } )                  
    aAdd( aItmAlbCli, { "Uuid_Trn",  "C", 40, 0, "Identificador transportista" ,                             "UuidTransportista",             "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "Uuid_Age",  "C", 40, 0, "Identificador agente" ,                                    "UuidAgente",                    "", "( cDbf )", nil } )
 
 Return ( aItmAlbCli )
 

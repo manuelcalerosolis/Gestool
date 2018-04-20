@@ -5,11 +5,26 @@
 
 CLASS DireccionesController FROM SQLBrowseController
 
+   DATA oPaisesController
+   DATA oProvinciasController
+
    METHOD New()
 
-   METHOD loadedBlankBuffer()
-
    METHOD gettingSelectSentence()
+
+   METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
+   METHOD loadPrincipalBlankBuffer()   INLINE ( ::oModel:loadPrincipalBlankBuffer() )
+   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
+
+   METHOD loadedCurrentBuffer( uuidEntidad ) 
+   METHOD updateBuffer( uuidEntidad )
+
+   METHOD loadedDuplicateCurrentBuffer( uuidEntidad )
+   METHOD loadedDuplicateBuffer( uuidEntidad )
+
+   METHOD deleteBuffer( aUuidEntidades )
+
+   METHOD externalStartDialog()        INLINE ( ::oDialogView:StartDialog() )
 
 END CLASS
 
@@ -19,38 +34,28 @@ METHOD New( oSenderController ) CLASS DireccionesController
 
    ::Super:New( oSenderController )
 
-   ::lTransactional              := .t.
+   ::lTransactional                 := .t.
 
-   ::cTitle                      := "Direcciones"
+   ::cTitle                         := "Direcciones"
 
-   ::cName                       := "direcciones"
+   ::cName                          := "direcciones"
 
-   ::oModel                      := SQLDireccionesModel():New( self )
+   ::oModel                         := SQLDireccionesModel():New( self )
 
-   ::oBrowseView                 := DireccionesBrowseView():New( self )
+   ::oBrowseView                    := DireccionesBrowseView():New( self )
 
-   ::oDialogView                 := DireccionesView():New( self )
+   ::oDialogView                    := DireccionesView():New( self )
 
-   ::oValidator                  := DireccionesValidator():New( self, ::oDialogView )
+   ::oValidator                     := DireccionesValidator():New( self, ::oDialogView )
+
+   ::oPaisesController              := PaisesController():New( self )
+   ::oProvinciasController          := ProvinciasController():New( self )
 
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedBlankBuffer() CLASS DireccionesController
-
-   local uuid        := ::getSenderController():getUuid() 
-
-   if !empty( uuid )
-      hset( ::oModel:hBuffer, "parent_uuid", uuid )
-   end if 
 
 RETURN ( Self )
 
@@ -64,12 +69,81 @@ METHOD gettingSelectSentence() CLASS DireccionesController
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
+   ::oModel:setOthersWhere( "principal = 0" )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS DireccionesController
+
+   local idDireccion     
+
+   if empty( uuidEntidad )
+      ::oModel:insertBuffer()
+   end if 
+
+   idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idDireccion )
+      idDireccion       := ::oModel:insertPrincipalBlankBuffer()
+   end if 
+
+   ::oModel:loadCurrentBuffer( idDireccion )
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
+
+METHOD UpdateBuffer( uuidEntidad ) CLASS DireccionesController
+
+   local idDireccion     
+
+   idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idDireccion )
+      ::oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+
+   ::oModel:updateBuffer()
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
+
+METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DireccionesController
+
+   local idDireccion     
+
+   idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idDireccion )
+      ::oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+
+   ::oModel:loadDuplicateBuffer( idDireccion )
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
+
+METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS DireccionesController
+
+   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteBuffer( aUuidEntidades ) CLASS DireccionesController
+
+   if empty( aUuidEntidades )
+      RETURN ( self )
+   end if
+
+   ::oModel:deleteWhereParentUuid( aUuidEntidades )
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -128,6 +202,14 @@ METHOD addColumns() CLASS DireccionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'Código provincia'
+      :cHeader             := 'codigo_provincia'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_provincia' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'provincia'
       :cHeader             := 'Provincia'
       :nWidth              := 200
@@ -179,12 +261,18 @@ RETURN ( self )
 
 CLASS DireccionesView FROM SQLBaseView
   
+   DATA oGetDireccion
    DATA oGetPoblacion
+   DATA oGetCodigoProvincia
    DATA oGetProvincia
+   DATA oGetPais
 
    METHOD Activate()
-   METHOD validCodigoPostal()
 
+   METHOD ExternalRedefine( oDialog )
+
+   METHOD StartDialog()
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -212,47 +300,7 @@ METHOD Activate() CLASS DireccionesView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "direccion" ] ;
-      ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "direccion" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo_postal" ), ::validCodigoPostal() ) ;
-      OF          ::oDialog 
-
-   REDEFINE GET   ::oGetPoblacion VAR ::oController:oModel:hBuffer[ "poblacion" ] ;
-      ID          130 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "poblacion" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oGetProvincia VAR ::oController:oModel:hBuffer[ "provincia" ] ;
-      ID          140 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "provincia" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
-      ID          150 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "telefono" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "movil" ] ;
-      ID          160 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "movil" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "email" ] ;
-      ID          170 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "email" ) ) ;
-      OF          ::oDialog
+   ::ExternalRedefine( ::oDialog )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -270,6 +318,8 @@ METHOD Activate() CLASS DireccionesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
+   ::oDialog:bStart     := {|| ::StartDialog() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()
@@ -278,24 +328,86 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD validCodigoPostal() CLASS DireccionesView
+METHOD ExternalRedefine( oDialog )
 
-   msginfo( ::oController:oModel:hBuffer[ "codigo_postal" ], "codigo_postal" )
+   REDEFINE GET   ::oGetDireccion ;
+      VAR         ::oController:oModel:hBuffer[ "direccion" ] ;
+      ID          1010 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      BITMAP      "gc_earth_lupa_16" ;
+      OF          oDialog
 
-   if Empty( ::oGetPoblacion:VarGet() )
-      ::oGetPoblacion:cText( SQLCodigosPostalesModel():getField( "poblacion", "codigo", ::oController:oModel:hBuffer[ "codigo_postal" ] ) )
-      ::oGetPoblacion:Refresh()
-   end if
+   ::oGetDireccion:bHelp  := {|| GoogleMaps( ::oController:oModel:hBuffer[ "direccion" ], Rtrim( ::oController:oModel:hBuffer[ "poblacion" ] ) + Space( 1 ) + Rtrim( ::oController:oModel:hBuffer[ "provincia" ] ) ) }
 
-//SQLProvinciasModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "provincia" ] )                            )
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
+      ID          1020 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "codigo_postal" ) ) ;
+      OF          oDialog 
 
-   if Empty( ::oGetProvincia:VarGet() )
-      ::oGetProvincia:cText( SQLCodigosPostalesModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "codigo_postal" ] ) )
-      ::oGetProvincia:Refresh()
-   end if
+   REDEFINE GET   ::oGetPoblacion ;
+      VAR         ::oController:oModel:hBuffer[ "poblacion" ] ;
+      ID          1030 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          oDialog
 
-RETURN ( .t. )
+   REDEFINE GET   ::oGetCodigoProvincia ;
+      VAR         ::oController:oModel:hBuffer[ "codigo_provincia" ] ;
+      ID          1040 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      BITMAP      "LUPA" ;
+      VALID       ( ::oController:validate( "codigo_provincia" ) ) ;
+      OF          oDialog
 
+   ::oGetCodigoProvincia:bHelp  := {|| ::oController:oProvinciasController:getSelectorProvincia( ::oGetCodigoProvincia ), ::oGetCodigoProvincia:lValid() }
+
+   REDEFINE GET   ::oGetProvincia ;
+      VAR         ::oController:oModel:hBuffer[ "provincia" ] ;
+      ID          1050 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "provincia" ) ) ;
+      OF          oDialog
+
+   REDEFINE GET   ::oGetPais ;
+      VAR         ::oController:oModel:hBuffer[ "codigo_pais" ] ;
+      ID          1060 ;
+      IDTEXT      1061 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "codigo_pais" ) ) ;
+      BITMAP      "LUPA" ;
+      OF          oDialog
+
+   ::oGetPais:bHelp  := {|| ::oController:oPaisesController:getSelectorPais( ::oGetPais ), ::oGetPais:lValid() }
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
+      ID          1070 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "movil" ] ;
+      ID          1080 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "email" ] ;
+      ID          1090 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "email" ) ) ;
+      OF          oDialog
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartDialog()
+   
+   ::oGetCodigoProvincia:lValid()
+
+   ::oGetPais:lValid()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -309,6 +421,12 @@ RETURN ( .t. )
 CLASS DireccionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
+
+   METHOD codigoPostal()
+
+   METHOD codigoProvincia()
+
+   METHOD codigoPais()
  
 END CLASS
 
@@ -316,15 +434,57 @@ END CLASS
 
 METHOD getValidators() CLASS DireccionesValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido" },; 
-                        "direccion" =>       {  "required"        => "La dirección es un dato requerido" },; 
-                        "email" =>           {  "mail"            => "El email no es valido" } }
+   ::hValidators  := {  "nombre" =>             {  "required"        => "El nombre es un dato requerido" },; 
+                        "codigo_postal" =>      {  "codigoPostal"    => "" },;
+                        "codigo_provincia" =>   {  "codigoProvincia" => "" },;
+                        "codigo_pais" =>        {  "codigoPais"      => "" },;
+                        "email" =>              {  "mail"            => "El email no es valido" } }
 
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
+
+METHOD codigoPostal( value )
+
+   if empty( value )
+      RETURN ( .t. )
+   end if 
+
+   if empty( ::oController:oDialogView:oGetPoblacion:varget() )
+      ::oController:oDialogView:oGetPoblacion:cText( SQLCodigosPostalesModel():getField( "poblacion", "codigo", value ) )
+   end if 
+
+   if empty( ::oController:oDialogView:oGetCodigoProvincia:varget() )
+      ::oController:oDialogView:oGetCodigoProvincia:cText( SQLCodigosPostalesModel():getField( "provincia", "codigo", value ) )
+      ::oController:oDialogView:oGetCodigoProvincia:lValid()
+   end if 
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
+
+METHOD codigoProvincia( value )
+
+   if empty( value )
+      RETURN ( .t. )
+   end if 
+
+   ::oController:oDialogView:oGetProvincia:cText( SQLProvinciasModel():getField( "provincia", "codigo", value ) )
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
+
+METHOD codigoPais( value )
+
+   if empty( value )
+      RETURN ( .t. )
+   end if 
+
+   ::oController:oDialogView:oGetPais:oHelpText:cText( SQLPaisesModel():getField( "nombre", "codigo", value ) )
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -335,9 +495,15 @@ CLASS SQLDireccionesModel FROM SQLBaseModel
 
    DATA cTableName                     INIT "direcciones"
 
+   METHOD loadPrincipalBlankBuffer()   INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
+
+   METHOD insertPrincipalBlankBuffer() INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
+
    METHOD getColumns()
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+
+   METHOD getParentUuidAttribute( value )
 
 END CLASS
 
@@ -356,6 +522,9 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL "                   ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
+   hset( ::hColumns, "principal",         {  "create"    => "TINYINT ( 1 )"                           ,;
+                                             "default"   => {|| "0" } }                               )
+
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
                                              "default"   => {|| space( 140 ) } }                      )
 
@@ -365,24 +534,43 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "poblacion",         {  "create"    => "VARCHAR( 100 )"                          ,;
                                              "default"   => {|| space( 100 ) } }                      )
 
+   hset( ::hColumns, "codigo_provincia",  {  "create"    => "VARCHAR( 8 )"                           ,;
+                                             "default"   => {|| space( 8 ) } }                       )
+
    hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 100 )"                          ,;
                                              "default"   => {|| space( 100 ) } }                      )
 
    hset( ::hColumns, "codigo_postal",     {  "create"    => "VARCHAR( 10 )"                           ,;
                                              "default"   => {|| space( 10 ) } }                       )
 
+   hset( ::hColumns, "codigo_pais",       {  "create"    => "VARCHAR( 3 )"                            ,;
+                                             "default"   => {|| space( 3 ) } }                        )
+
    hset( ::hColumns, "telefono",          {  "create"    => "VARCHAR( 15 )"                           ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
-   hset( ::hColumns, "movil",             {  "create"    => "VARCHAR( 15 )"                          ,;
+   hset( ::hColumns, "movil",             {  "create"    => "VARCHAR( 15 )"                           ,;
                                              "default"   => {|| space( 15 ) } }                       )
 
-   hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 200 )"                         ,;
+   hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )  
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getParentUuidAttribute( value ) CLASS SQLDireccionesModel
+
+   if empty( ::oController )
+      RETURN ( value )
+   end if
+
+   if empty( ::oController:oSenderController )
+      RETURN ( value )
+   end if
+
+RETURN ( ::oController:oSenderController:getUuid() )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

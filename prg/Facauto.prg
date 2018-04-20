@@ -1523,7 +1523,6 @@ CLASS TCreaFacAutomaticas
    DATA oDbfCli
    DATA oDbfDiv
    DATA oDbfCount
-   DATA oDbfTblCnv
    DATA oDbfFam
    DATA oDbfKit
    DATA oDbfIva
@@ -1836,8 +1835,6 @@ METHOD OpenFiles() CLASS TCreaFacAutomaticas
 
    DATABASE NEW ::oDbfCount   PATH ( cPatEmp() )   FILE "NCOUNT.DBF"   VIA ( cDriver() ) SHARED INDEX "NCOUNT.CDX"
 
-   DATABASE NEW ::oDbfTblCnv  PATH ( cPatDat() )   FILE "TBLCNV.DBF"   VIA ( cDriver() ) SHARED INDEX "TBLCNV.CDX"
-
    DATABASE NEW ::oDbfFam     PATH ( cPatEmp() )   FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    DATABASE NEW ::oDbfKit     PATH ( cPatEmp() )   FILE "ARTKIT.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
@@ -1918,10 +1915,6 @@ METHOD CloseFiles() CLASS TCreaFacAutomaticas
       ::oDbfCount:End()
    end if
 
-   if ::oDbfTblCnv != nil .and. ::oDbfTblCnv:Used()
-      ::oDbfTblCnv:End()
-   end if
-
    if ::oDbfKit != nil .and. ::oDbfKit:Used()
       ::oDbfKit:End()
    end if
@@ -1983,7 +1976,6 @@ METHOD CloseFiles() CLASS TCreaFacAutomaticas
    ::oDbfDiv      := nil
    ::oDbfCount    := nil
    ::oTree        := nil
-   ::oDbfTblCnv   := nil
    ::oDbfFam      := nil
    ::oDbfKit      := nil
    ::oDbfIva      := nil

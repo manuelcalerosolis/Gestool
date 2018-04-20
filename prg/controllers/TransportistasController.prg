@@ -6,7 +6,6 @@
 CLASS TransportistasController FROM SQLNavigatorController
 
    DATA oDireccionesController
-   DATA oGetSelectorTransportista
 
    METHOD New()
 
@@ -40,7 +39,7 @@ METHOD New() CLASS TransportistasController
 
    ::oRepository                 := TransportistasRepository():New( self )
 
-   ::oGetSelectorTransportista   := ComboSelector():New( self )
+   ::oComboSelector              := ComboSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -123,6 +122,7 @@ METHOD Activate() CLASS TransportistasView
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
+   local oGetDni
 
    DEFINE DIALOG  oDlg ;
       RESOURCE    "TRANSPORTISTA" ;
@@ -140,10 +140,10 @@ METHOD Activate() CLASS TransportistasView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "dni" ] ;
+   REDEFINE GET   oGetDni VAR ::oController:oModel:hBuffer[ "dni" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "dni" ) ) ;
+      VALID       ( CheckCif( oGetDni ) ) ;
       OF          oDlg
 
    REDEFINE BUTTON oBtnAppend ;

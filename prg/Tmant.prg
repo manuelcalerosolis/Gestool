@@ -191,14 +191,9 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TMant
    ::cDriver            := cDriver
    ::oWndParent         := oWndParent
 
-   msgalert( oMenuItem, "MenuItem" )
-
    if oMenuItem != nil
       ::nLevel          := Auth():Level( oMenuItem )
    end if
-
-   msgalert( ::nLevel, "nLevel" )
-
 
    ::oDbf               := nil
 

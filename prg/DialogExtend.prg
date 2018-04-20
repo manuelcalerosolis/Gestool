@@ -477,13 +477,32 @@ RETURN oSheet
 
 //----------------------------------------------------------------------------//
 
-FUNCTION validateDialog( oDlg ) 
+FUNCTION validateDialog( uDialogs ) 
+
+   local oDialog
+
+   if hb_isobject( uDialogs )
+      RETURN ( validateControls( uDialogs ) )
+   end if 
+
+   if hb_isarray( uDialogs )
+      for each oDialog in uDialogs 
+         if !( validateControls( oDialog ) )
+            RETURN ( .f. )
+         end if 
+      next
+   end if 
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION validateControls( oDialog ) 
 
    local oControl
-   local aControls   := oDlg:aControls
+   local aControls   := oDialog:aControls
 
    if empty( aControls )
-      msgalert( hb_valtoexp( aControls ), "ClassName" )
       RETURN ( .t. )
    end if 
 

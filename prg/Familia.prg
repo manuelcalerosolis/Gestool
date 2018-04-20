@@ -740,15 +740,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cFamilia, oBrw, bWhen, bValid, nMode )
          oTreePadre                     := TTreeView():Redefine( 200, oFld:aDialogs[1] )
          oTreePadre:bItemSelectChanged  := {|| ChangeTreeState() }
 
-         REDEFINE IMAGE bmpImage ;
-            ID       600 ;
-            OF       oFld:aDialogs[1] ;
-            FILE     cFileBmpName( aTmp[ _CIMGBTN ] )
-
-         bmpImage:SetColor( , GetSysColor( 15 ) )
-         bmpImage:bLClicked   := {|| ShowImage( bmpImage ) }
-         bmpImage:bRClicked   := {|| ShowImage( bmpImage ) }
-
          /*
          Segunda Caja de diálogo-----------------------------------------------
          */

@@ -59,6 +59,9 @@ CLASS Seeders
    METHOD SeederFabricantes()
    METHOD getStatementFabricantes( dbf )
 
+   METHOD SeederEmpresas()
+   METHOD insertEmpresas( dbf )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -116,6 +119,9 @@ METHOD runSeederEmpresa()
 
    ::oMsg:SetText( "Ejecutando seeder de fabricantes" )
    ::SeederFabricantes()
+
+   ::oMsg:SetText( "Ejecutando seeder de empresas" )
+   ::SeederEmpresas()
 
    ::oMsg:SetText( "Seeders finalizados" )
 
@@ -763,6 +769,67 @@ RETURN ( ::getInsertStatement( hCampos, "fabricantes" ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD SeederEmpresas() CLASS Seeders
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatDat() + "\" )
+
+   if !( file( cPath + "Empresa.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Empresa.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "Empresa.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Empresa", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| ::insertEmpresas( dbf ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertEmpresas( dbf ) CLASS Seeders
+
+   local nId
+   local cSql
+   local hBuffer  
+
+   hBuffer        := SQLEmpresasModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              ( dbf )->Uuid      )
+   hset( hBuffer, "codigo",            ( dbf )->CodEmp    )
+   hset( hBuffer, "nombre",            ( dbf )->cNombre   )
+   hset( hBuffer, "nif",               ( dbf )->cNif      )
+   hset( hBuffer, "administrador",     ( dbf )->cAdminis  )
+   hset( hBuffer, "pagina_web",        ( dbf )->web       )
+
+   nId            := SQLEmpresasModel():insertIgnoreBuffer( hBuffer )
+
+   if empty( nId )
+      RETURN ( self )
+   end if 
+
+   // Direcciones--------------------------------------------------------------
+
+   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hBuffer, "principal",      1                     )
+   hset( hBuffer, "parent_uuid",    ( dbf )->Uuid         )
+   hset( hBuffer, "direccion",      ( dbf )->cDomicilio   )
+   hset( hBuffer, "poblacion",      ( dbf )->cPoblacion   )
+   hset( hBuffer, "provincia",      ( dbf )->cProvincia   )
+   hset( hBuffer, "codigo_postal",  ( dbf )->cCodPos      )
+   hset( hBuffer, "telefono",       ( dbf )->cTlf         )
+   hset( hBuffer, "email",          ( dbf )->email        )
+                        
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD SeederCamposExtraValores() CLASS Seeders
 
    local dbf
@@ -794,7 +861,6 @@ METHOD getStatementCamposExtraValores( dbf ) CLASS Seeders
 RETURN ( ::getInsertStatement( hCampos, "campos_extra_valores" ) )
 
 //---------------------------------------------------------------------------//
-// "Clientes" => "21",;
 // "Proveedores" => "22",;
 // "Familias" => "37",; 
 // "Agentes" => "38",;
@@ -832,6 +898,11 @@ METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS Seeders
       case cTipoDocumento == "20" // "Artículos" => "20"
          
          cEntidadUuid   := ArticulosModel():getUuid( cClave )
+
+      case cTipoDocumento == "21" // "Clientes" => "21"
+         
+         cEntidadUuid   := ClientesModel():getUuid( cClave )
+
 
    end case
 
