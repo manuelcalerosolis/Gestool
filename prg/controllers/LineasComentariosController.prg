@@ -116,7 +116,7 @@ METHOD addColumns() CLASS LineasComentariosBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'descripcion'
       :cHeader             := 'Descripcion'
-      :nWidth              := 300
+      :nWidth              := 480
       :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with

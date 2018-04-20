@@ -2703,12 +2703,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
-
-<<<<<<< HEAD
-   oGrupo:nBigItems     := 8
-=======
-   oGrupo:nBigItems     := 10
->>>>>>> f12b8388bed639a34232a8b78ca0fd024f22993d
+   oGrupo:nBigItems     := 11
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2785,14 +2780,15 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
-<<<<<<< HEAD
    oItem:cPrompt        := 'Comentarios'
    oItem:cMessage       := 'Solicitar comentario'
    oItem:bAction        := {|| ComentariosController():New():ActivateNavigatorView() }
    oItem:cId            := "asistencia_remota"
    oItem:cBmp           := "gc_message_16"
    oItem:cBmpBig        := "gc_message_32"
-=======
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Clientes'
    oItem:cMessage       := 'Solicitar cliente'
    oItem:bAction        := {|| ClientesController():New():ActivateNavigatorView() }
@@ -2819,7 +2815,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_factory_16"
    oItem:cBmpBig        := "gc_factory_32"
->>>>>>> f12b8388bed639a34232a8b78ca0fd024f22993d
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )
