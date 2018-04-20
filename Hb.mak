@@ -638,7 +638,7 @@ CentroCosteModel.prg 														\
 TransportistasModel.prg 													\
 MdiChild.prg 																	\
 SQLComboSelector.prg 														\
-Folder.prg 																	\
+CompanyManager.prg 															\
 TercerosController.prg 														\
 ClientesController.prg 														\
 ProveedoresController.prg 													\
@@ -1261,7 +1261,7 @@ MdiChild.obj 																	\
 TransportistasModel.obj 													\
 SQLComboSelector.obj 														\
 TiposNotas.obj       														\
-Folder.obj 																	\
+CompanyManager.obj 															\
 TercerosController.obj 														\
 ClientesController.obj 														\
 ProveedoresController.obj 													\
@@ -1873,7 +1873,7 @@ $(OBJ)\CentroCosteModel.obj 												+
 $(OBJ)\TransportistasModel.obj 											+
 $(OBJ)\MdiChild.obj 															+
 $(OBJ)\SQLComboSelector.obj 												+
-$(OBJ)\Folder.obj 															+
+$(OBJ)\CompanyManager.obj 													+
 $(OBJ)\TercerosController.obj 											+
 $(OBJ)\ClientesController.obj 											+
 $(OBJ)\ProveedoresController.obj 										+

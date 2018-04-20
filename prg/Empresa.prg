@@ -3223,7 +3223,7 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
       cCodEmp        := EmpresasModel():getPrimera() 
    end if
 
-   cCodEmp           := RJust( cCodEmp, "0", 4 ) 
+   cCodEmp           := rjust( cCodEmp, "0", 4 ) 
 
    if !lIsDir( FullCurDir() + "Emp" + cCodEmp )
       lError         := .t.
