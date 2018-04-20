@@ -354,6 +354,8 @@ ProvinciasController.prg													\
 PaisesController.prg															\
 LenguajesController.prg														\
 DireccionesController.prg 													\
+ComentariosController.prg 													\
+LineasComentariosController.prg 											\
 FabricantesController.prg 													\
 ImagenesController.prg 														\
 AgentesController.prg 														\
@@ -983,6 +985,8 @@ ProvinciasController.obj       											\
 PaisesController.obj       												\
 LenguajesController.obj  		     										\
 DireccionesController.obj       											\
+ComentariosController.obj       											\
+LineasComentariosController.obj       									\
 FabricantesController.obj       											\
 ImagenesController.obj       												\
 AgentesController.obj     		  											\
@@ -1599,6 +1603,8 @@ $(OBJ)\ProvinciasController.obj    										+
 $(OBJ)\PaisesController.obj    											+
 $(OBJ)\LenguajesController.obj    										+
 $(OBJ)\DireccionesController.obj    									+
+$(OBJ)\ComentariosController.obj    									+
+$(OBJ)\LineasComentariosController.obj    							+
 $(OBJ)\FabricantesController.obj    									+
 $(OBJ)\ImagenesController.obj    										+
 $(OBJ)\AgentesController.obj    											+
