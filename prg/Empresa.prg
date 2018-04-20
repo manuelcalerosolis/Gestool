@@ -3259,6 +3259,8 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
    if !aEmpresa( cCodEmp )
       Empresa()
    end if
+
+   Company():guardWhereCodigo( cCodEmp )
    
    /*
    Cargamos la estructura de ficheros de la empresa----------------------------

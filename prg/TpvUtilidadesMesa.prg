@@ -732,7 +732,7 @@ METHOD AddLinea( oOrigen, oDestino ) class TpvUtilidadesMesa
 
 	oOrigen:nUntTil -= nPasar
 
-	if ( oOrigen:nUntTil == 0 )
+	if ( oOrigen:nUntTil == 0.000000 )
 		// ::BorraLinea( nNumeroLinea, oOrigen )
       oOrigen:Delete( .f. )
 	end if

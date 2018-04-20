@@ -11,24 +11,24 @@ CLASS SQLAjustableModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   METHOD set( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid )
+   METHOD set( cAjusteUuid, uAjusteValue, cAjustableTipo, cAjustableUuid )
 
-   METHOD setValue( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid )
+   METHOD setValue( cAjusteUuid, uAjusteValue, cAjustableTipo, cAjustableUuid )
    METHOD setLogic( cAjusteUuid, lAjusteValue, cAjustableTipo, cAjustableUuid )
 
-   METHOD setUsuarioCajaExclusiva( cAjusteValue, cAjustableUuid )       INLINE ( ::setValue( 'caja_exclusiva', cAjusteValue, 'usuarios', cAjustableUuid ) )
-   METHOD setUsuarioPcEnUso( cAjusteValue, cAjustableUuid )             INLINE ( ::setValue( 'pc_en_uso', cAjusteValue, 'usuarios', cAjustableUuid ) )
-   METHOD setUsuarioEmpresaEnUso( cAjusteValue, cAjustableUuid )        INLINE ( ::setValue( 'empresa_en_uso', cAjusteValue, 'usuarios', cAjustableUuid ) )
-   METHOD setUsuarioEmpresaExclusiva( cAjusteValue, cAjustableUuid )    INLINE ( ::setValue( 'empresa_exclusiva', cAjusteValue, 'usuarios', cAjustableUuid ) )
-   METHOD setUsuarioAlmacenExclusivo( cAjusteValue, cAjustableUuid )    INLINE ( ::setValue( 'almacen_exclusivo', cAjusteValue, 'usuarios', cAjustableUuid ) )
-   METHOD setUsuarioDelegacionExclusiva( cAjusteValue, cAjustableUuid ) INLINE ( ::setValue( 'delegacion_exclusiva', cAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioCajaExclusiva( uAjusteValue, cAjustableUuid )       INLINE ( ::setValue( 'caja_exclusiva', uAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioPcEnUso( uAjusteValue, cAjustableUuid )             INLINE ( ::setValue( 'pc_en_uso', uAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioEmpresaEnUso( uAjusteValue, cAjustableUuid )        INLINE ( ::setValue( 'empresa_en_uso', uAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioEmpresaExclusiva( uAjusteValue, cAjustableUuid )    INLINE ( ::setValue( 'empresa_exclusiva', uAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioAlmacenExclusivo( uAjusteValue, cAjustableUuid )    INLINE ( ::setValue( 'almacen_exclusivo', uAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioDelegacionExclusiva( uAjusteValue, cAjustableUuid ) INLINE ( ::setValue( 'delegacion_exclusiva', uAjusteValue, 'usuarios', cAjustableUuid ) )
 
-   METHOD setRolMostrarRentabilidad( cAjusteValue, cAjustableUuid )     INLINE ( ::setLogic( 'mostrar_rentabilidad', cAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolCambiarPrecios( cAjusteValue, cAjustableUuid )          INLINE ( ::setLogic( 'cambiar_precios', cAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolVerPreciosCosto( cAjusteValue, cAjustableUuid )         INLINE ( ::setLogic( 'ver_precios_costo', cAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolConfirmacionEliminacion( cAjusteValue, cAjustableUuid ) INLINE ( ::setLogic( 'confirmacion_eliminacion', cAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolFiltrarVentas( cAjusteValue, cAjustableUuid )           INLINE ( ::setLogic( 'fitrar_ventas_por_usuario', cAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolAbrirCajonPortamonedas( cAjusteValue, cAjustableUuid )  INLINE ( ::setLogic( 'abrir_cajon_portamonedas', cAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolMostrarRentabilidad( uAjusteValue, cAjustableUuid )     INLINE ( ::setLogic( 'mostrar_rentabilidad', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolCambiarPrecios( uAjusteValue, cAjustableUuid )          INLINE ( ::setLogic( 'cambiar_precios', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolVerPreciosCosto( uAjusteValue, cAjustableUuid )         INLINE ( ::setLogic( 'ver_precios_costo', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolConfirmacionEliminacion( uAjusteValue, cAjustableUuid ) INLINE ( ::setLogic( 'confirmacion_eliminacion', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolFiltrarVentas( uAjusteValue, cAjustableUuid )           INLINE ( ::setLogic( 'fitrar_ventas_por_usuario', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolAbrirCajonPortamonedas( uAjusteValue, cAjustableUuid )  INLINE ( ::setLogic( 'abrir_cajon_portamonedas', uAjusteValue, 'roles', cAjustableUuid ) )
 
    METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    METHOD getLogic( cUuid, cTipo, cAjuste, lDefault ) 
@@ -58,7 +58,10 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    
    METHOD getRolAbrirCajonPortamonedas( cUuid )                         INLINE ( ::getLogic( cUuid, 'roles', 'abrir_cajon_portamonedas', .t. ) )   
 
-   // METHOD assertUsuarioFavoritos( cUuid )                               INLINE ( ::getValue( cUuid, 'favoritos', cAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setEmpresaSeleccionarUsuarios( uAjusteValue, cAjustableUuid ) INLINE ( ::setLogic( 'seleccionar_usuarios', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getEmpresaSeleccionarUsuarios( cUuid )                        INLINE ( ::getLogic( cUuid, 'empresas', 'seleccionar_usuarios', .f. ) )   
+
+   // METHOD assertUsuarioFavoritos( cUuid )                               INLINE ( ::getValue( cUuid, 'favoritos', uAjusteValue, 'usuarios', cAjustableUuid ) )
 
 END CLASS
 
@@ -88,12 +91,12 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD set( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid )
+METHOD set( cAjusteUuid, uAjusteValue, cAjustableTipo, cAjustableUuid )
 
    local hBuffer  := ::loadBlankBuffer()
 
    hset( hBuffer, "ajuste_uuid", cAjusteUuid )
-   hset( hBuffer, "ajuste_valor", cAjusteValue )
+   hset( hBuffer, "ajuste_valor", uAjusteValue )
    hset( hBuffer, "ajustable_tipo", cAjustableTipo )
    hset( hBuffer, "ajustable_uuid", cAjustableUuid )
 
@@ -101,7 +104,7 @@ RETURN ( ::insertOnDuplicate( hBuffer, .t. ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD setValue( cAjusteDescripcion, cAjusteValue, cAjustableTipo, cAjustableUuid )
+METHOD setValue( cAjusteDescripcion, uAjusteValue, cAjustableTipo, cAjustableUuid )
 
    local cAjusteUuid
 
@@ -115,22 +118,22 @@ METHOD setValue( cAjusteDescripcion, cAjusteValue, cAjustableTipo, cAjustableUui
       RETURN ( nil )
    endif
 
-RETURN ( ::set( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid ) )
+RETURN ( ::set( cAjusteUuid, uAjusteValue, cAjustableTipo, cAjustableUuid ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD setLogic( cAjusteDescripcion, lAjusteValue, cAjustableTipo, cAjustableUuid )
 
-   local cAjusteValue    
+   local uAjusteValue    
    local cAjusteUuid    := SQLAjustesModel():getAjusteUuid( cAjusteDescripcion )
 
    if empty( cAjusteUuid )
       RETURN ( nil )
    endif
 
-   cAjusteValue         := if( lAjusteValue, '1', '0' )
+   uAjusteValue         := if( lAjusteValue, '1', '0' )
 
-RETURN ( ::set( cAjusteUuid, cAjusteValue, cAjustableTipo, cAjustableUuid ) )
+RETURN ( ::set( cAjusteUuid, uAjusteValue, cAjustableTipo, cAjustableUuid ) )
 
 //---------------------------------------------------------------------------//
 

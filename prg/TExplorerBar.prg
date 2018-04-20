@@ -510,7 +510,7 @@ RETURN ( oCbx )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddCheckBox( cPrompt, lCheckBox, aItems ) CLASS TTaskPanel
+METHOD AddCheckBox( cPrompt, lCheckBox ) CLASS TTaskPanel
 
    local nTop        := ::getTopControl()
    local oCheckBox
