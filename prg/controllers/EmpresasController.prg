@@ -9,7 +9,23 @@ CLASS EmpresasController FROM SQLNavigatorController
 
    DATA oDireccionesController
 
+   DATA cUuidEmpresa
+
+   DATA oAjustableController
+
+   DATA lSolicitarUsuario 
+
    METHOD New()
+
+   METHOD End()
+
+   METHOD setConfig()
+
+   METHOD loadConfig()
+
+   METHOD saveConfig()
+
+   METHOD startingActivate()
 
 END CLASS
 
@@ -22,6 +38,8 @@ METHOD New() CLASS EmpresasController
    ::cTitle                      := "Empresas"
 
    ::cName                       := "empresas"
+
+   ::lConfig                     := .t.
 
    ::hImage                      := {  "16" => "gc_factory_16",;
                                        "32" => "gc_factory_32",;
@@ -41,8 +59,11 @@ METHOD New() CLASS EmpresasController
 
    ::oGetSelector                := ComboSelector():New( self )
 
+   ::oAjustableController        := AjustableController():New( self )
+
    ::oDireccionesController      := DireccionesController():New( self )
    ::oDireccionesController:oValidator:setDialog( ::oDialogView )
+
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -58,6 +79,64 @@ METHOD New() CLASS EmpresasController
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End()
+
+   if !empty( ::oAjustableController )
+      ::oAjustableController:End()
+      ::oAjustableController  := nil
+   end if 
+
+   ::Super:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setConfig()
+
+   if ::loadConfig() .and. ;
+      ::oAjustableController:DialogViewActivate()
+
+      ::saveConfig()
+
+   end if 
+   
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadConfig()
+
+   ::cUuidEmpresa                := ::getRowSet():fieldGet( 'uuid' )
+
+   if empty( ::cUuidEmpresa )
+      RETURN ( .f. )
+   end if 
+
+   ::lSolicitarUsuario           := ::oAjustableController:oModel:getEmpresaSeleccionarUsuarios( ::cUuidEmpresa )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveConfig()
+
+   ::oAjustableController:oModel:setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, ::cUuidEmpresa )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD startingActivate()
+
+   local oPanel                  := ::oAjustableController:oDialogView:oExplorerBar:AddPanel( "Propiedades empresa", nil, 1 ) 
+
+   oPanel:AddCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

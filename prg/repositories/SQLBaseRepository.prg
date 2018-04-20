@@ -39,7 +39,6 @@ CLASS SQLBaseRepository
    METHOD getNombresWithBlank()                 INLINE ( ::getColumnsWithBlank( 'nombre' ) )
 
    METHOD getWhereUuid( Uuid )
-
    METHOD getWhereCodigo( cCodigo )
 
 END CLASS
