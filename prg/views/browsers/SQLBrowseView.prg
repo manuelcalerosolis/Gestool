@@ -154,7 +154,9 @@ METHOD Create( oWindow )
 
    // Propiedades del control--------------------------------------------------
 
-   ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWMS
+   // ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWMS
+   // ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLCELL
+   ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWRC
 
    ::oBrowse:bClrStd          := {|| { CLR_BLACK, CLR_WHITE } }
    ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }

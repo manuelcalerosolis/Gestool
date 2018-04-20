@@ -17,7 +17,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLFilterView
+CLASS SQLFilterView FROM SQLBaseView
 
    DATA oController
 

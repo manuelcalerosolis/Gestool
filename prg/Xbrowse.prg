@@ -10685,7 +10685,7 @@ METHOD Box( nRow, nCol, nHeight, nType ) CLASS TXBrwColumn
    local hDC
    local nWidth
 
-   DEFAULT nType := 1
+    nType := 1
 
    if nCol != nil
       ::nDisplayCol := nCol
