@@ -2696,7 +2696,7 @@ FUNCTION CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
 
-   oGrupo:nBigItems     := 7
+   oGrupo:nBigItems     := 8
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2769,6 +2769,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "asistencia_remota"
    oItem:cBmp           := "gc_wrench_16"
    oItem:cBmpBig        := "gc_wrench_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Comentarios'
+   oItem:cMessage       := 'Solicitar comentario'
+   oItem:bAction        := {|| ComentariosController():New():ActivateNavigatorView() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_message_16"
+   oItem:cBmpBig        := "gc_message_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

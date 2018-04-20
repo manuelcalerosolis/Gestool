@@ -12,3 +12,4 @@
 
 #define MANIFEST       24
 #define Valores  65535
+#define IDZOOM  140
