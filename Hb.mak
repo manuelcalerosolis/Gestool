@@ -1,11 +1,11 @@
 HB                   = 	\harbour_bcc582\
 
 HBINCLUDE            = 	\harbour_bcc582\include
-FWINCLUDE            = 	\fwh1709\Include
+FWINCLUDE            = 	\fwh1705\Include
 GTINCLUDE            = 	.\Include
 
 HBLIB                = 	\harbour_bcc582\lib
-FWLIB                = 	\fwh1709\lib
+FWLIB                = 	\fwh1705\lib
 
 RESOURCE             = 	.\resource
 
@@ -14,12 +14,12 @@ BORLANDLIB           = 	\bcc582\lib
 
 IMG2PDFLIB           = 	\img2Pdf
 
-OBJ                  = 	obj1709
+OBJ                  = 	obj1705
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	.\C
 
-PPO 					   = 	ppo1709
+PPO 					   = 	ppo1705
 
 EXE 					   = 	bin\$(TARGET).exe
 
@@ -355,7 +355,8 @@ PaisesController.prg															\
 LenguajesController.prg														\
 DireccionesController.prg 													\
 ComentariosController.prg 													\
-LineasComentariosController.prg 											\
+ComentariosLineasController.prg 											\
+ArticulosTipoController.prg 												\
 FabricantesController.prg 													\
 ImagenesController.prg 														\
 AgentesController.prg 														\
@@ -986,7 +987,8 @@ PaisesController.obj       												\
 LenguajesController.obj  		     										\
 DireccionesController.obj       											\
 ComentariosController.obj       											\
-LineasComentariosController.obj       									\
+ComentariosLineasController.obj       									\
+ArticulosTipoController.obj       										\
 FabricantesController.obj       											\
 ImagenesController.obj       												\
 AgentesController.obj     		  											\
@@ -1604,7 +1606,8 @@ $(OBJ)\PaisesController.obj    											+
 $(OBJ)\LenguajesController.obj    										+
 $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
-$(OBJ)\LineasComentariosController.obj    							+
+$(OBJ)\ComentariosLineasController.obj    							+
+$(OBJ)\ArticulostipoController.obj    									+
 $(OBJ)\FabricantesController.obj    									+
 $(OBJ)\ImagenesController.obj    										+
 $(OBJ)\AgentesController.obj    											+
