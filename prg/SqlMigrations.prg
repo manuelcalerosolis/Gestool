@@ -187,7 +187,9 @@ METHOD addModels()
 
    aadd( ::aModels, SQLComentariosModel():New() )
 
-   aadd( ::aModels, SQLLineasComentariosModel():New() )
+   aadd( ::aModels, SQLComentariosLineasModel():New() )
+
+   aadd( ::aModels, SQLArticulosTipoModel():New() )
 
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 

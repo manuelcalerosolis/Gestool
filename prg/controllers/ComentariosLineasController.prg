@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS LineasComentariosController FROM SQLBrowseController
+CLASS ComentariosLineasController FROM SQLBrowseController
 
    METHOD New()
 
@@ -15,7 +15,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS LineasComentariosController
+METHOD New( oSenderController ) CLASS ComentariosLineasController
 
    ::Super:New( oSenderController )
 
@@ -25,13 +25,13 @@ METHOD New( oSenderController ) CLASS LineasComentariosController
 
    ::cName                       := "lineas de comentarios"
 
-   ::oModel                      := SQLLineasComentariosModel():New( self )
+   ::oModel                      := SQLComentariosLineasModel():New( self )
 
-   ::oBrowseView                 := LineasComentariosBrowseView():New( self )
+   ::oBrowseView                 := ComentariosLineasBrowseView():New( self )
 
-   ::oDialogView                 := LineasComentariosView():New( self )
+   ::oDialogView                 := ComentariosLineasView():New( self )
 
-   ::oValidator                  := LineasComentariosValidator():New( self, ::oDialogView )
+   ::oValidator                  := ComentariosLineasValidator():New( self, ::oDialogView )
 
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
@@ -44,7 +44,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() CLASS LineasComentariosController
+METHOD loadedBlankBuffer() CLASS ComentariosLineasController
 
    local uuid        := ::getSenderController():getUuid() 
 
@@ -56,7 +56,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD gettingSelectSentence() CLASS LineasComentariosController
+METHOD gettingSelectSentence() CLASS ComentariosLineasController
 
    local uuid        := ::getSenderController():getUuid() 
 
@@ -76,7 +76,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS LineasComentariosBrowseView FROM SQLBrowseView
+CLASS ComentariosLineasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -84,7 +84,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS LineasComentariosBrowseView
+METHOD addColumns() CLASS ComentariosLineasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -131,7 +131,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS LineasComentariosView FROM SQLBaseView
+CLASS ComentariosLineasView FROM SQLBaseView
 
    METHOD Activate()
 
@@ -140,10 +140,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS LineasComentariosView
+METHOD Activate() CLASS ComentariosLineasView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "LINEACOMENTARIO" ;
+      RESOURCE    "COMENTARIO_LINEA" ;
       TITLE       ::LblTitle() + "lineas de comentarios"
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
@@ -183,7 +183,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS LineasComentariosValidator FROM SQLBaseValidator
+CLASS ComentariosLineasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -191,7 +191,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS LineasComentariosValidator
+METHOD getValidators() CLASS ComentariosLineasValidator
 
    ::hValidators  := {  "descripcion" =>          {  "required"        => "La descripción es un dato requerido" } }
 
@@ -206,9 +206,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLLineasComentariosModel FROM SQLBaseModel
+CLASS SQLComentariosLineasModel FROM SQLBaseModel
 
-   DATA cTableName                     INIT "lineas_comentarios"
+   DATA cTableName                     INIT "comentarios_lineas"
 
    METHOD getColumns()
 
@@ -218,7 +218,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLLineasComentariosModel
+METHOD getColumns() CLASS SQLComentariosLineasModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
@@ -241,9 +241,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS LineasComentariosRepository FROM SQLBaseRepository
+CLASS ComentariosLineasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( SQLLineasComentariosModel():getTableName() ) 
+   METHOD getTableName()         INLINE ( SQLComentariosLineasModel():getTableName() ) 
 
 END CLASS
 

@@ -3,9 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosController FROM SQLNavigatorController
-
-   DATA oComentariosLineasController
+CLASS ArticulosTipoController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -13,31 +11,29 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ComentariosController
+METHOD New() CLASS ArticulosTipoController
 
    ::Super:New()
 
-   ::cTitle                      := "Comentarios"
+   ::cTitle                      := "Tipos de Artículos"
 
-   ::cName                       := "comentarios"
+   ::cName                       := "tipos_articulos"
 
-   ::hImage                      := {  "16" => "gc_message_16",;
-                                       "32" => "gc_message_32",;
-                                       "48" => "gc_message_48" }
+   ::hImage                      := {  "16" => "gc_objects_16",;
+                                       "32" => "gc_objects_32",;
+                                       "48" => "gc_objects_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLComentariosModel():New( self )
+   ::oModel                         := SQLArticulosTipoModel():New( self )
 
-   ::oBrowseView                    := ComentariosBrowseView():New( self )
+   ::oBrowseView                    := ArticulosTipoBrowseView():New( self )
 
-   ::oDialogView                    := ComentariosView():New( self )
+   ::oDialogView                    := ArticulosTipoView():New( self )
 
-   ::oComentariosLineasController   := ComentariosLineasController():New( self )
+   ::oValidator                     := ArticulosTipoValidator():New( self, ::oDialogView )
 
-   ::oValidator                     := ComentariosValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := ComentariosRepository():New( self )
+   ::oRepository                    := ArticulosTipoRepository():New( self )
 
 
 RETURN ( Self )
@@ -52,7 +48,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosBrowseView FROM SQLBrowseView
+CLASS ArticulosTipoBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -60,7 +56,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ComentariosBrowseView
+METHOD addColumns() CLASS ArticulosTipoBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -105,7 +101,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosView FROM SQLBaseView
+CLASS ArticulosTipoView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -113,7 +109,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ComentariosView
+METHOD Activate() CLASS ArticulosTipoView
 
    local oDialog 
    local oBmpGeneral
@@ -122,12 +118,12 @@ METHOD Activate() CLASS ComentariosView
    local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "COMENTARIO" ;
-      TITLE       ::LblTitle() + "Comentario"
+      RESOURCE    "ARTICULO_TIPO" ;
+      TITLE       ::LblTitle() + "tipos de articulos"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_message_48" ;
+      RESOURCE    "gc_objects_48" ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
@@ -148,29 +144,6 @@ METHOD Activate() CLASS ComentariosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE BUTTON oBtnAppend ;
-      ID          120 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-  oBtnAppend:bAction   := {|| ::oController:oComentariosLineasController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          130 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnEdit:bAction   := {|| ::oController:oComentariosLineasController:Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          150 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-  oBtnDelete:bAction   := {|| ::oController:oComentariosLineasController:Delete() }
-
-   ::oController:oComentariosLineasController:Activate( ::oDialog, 160 )
-
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
@@ -184,9 +157,6 @@ METHOD Activate() CLASS ComentariosView
       ACTION     ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oComentariosLineasController:Append() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oComentariosLineasController:Edit() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oComentariosLineasController:Delete() } )
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
@@ -203,7 +173,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosValidator FROM SQLBaseValidator
+CLASS ArticulosTipoValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -212,7 +182,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ComentariosValidator
+METHOD getValidators() CLASS ArticulosTipoValidator
 
    ::hValidators  := {  "descripcion" =>           {  "required"     => "La descripción es un dato requerido",;
                                                       "unique"       => "La descripción introducida ya existe" },;
@@ -229,9 +199,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLComentariosModel FROM SQLBaseModel
+CLASS SQLArticulosTipoModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "comentarios"
+   DATA cTableName               INIT "articulos_tipo"
 
    METHOD getColumns()
 
@@ -239,7 +209,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLComentariosModel
+METHOD getColumns() CLASS SQLArticulosTipoModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                              "default"   => {|| 0 } }                                 )
@@ -265,13 +235,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosRepository FROM SQLBaseRepository
+CLASS ArticulosTipoRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLComentariosModel():getTableName() ) 
-
-   METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
-
-   METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )
 
 END CLASS
 
