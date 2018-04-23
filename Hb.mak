@@ -359,6 +359,7 @@ ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
 ArticulosTemporadaController.prg 										\
 ArticulosCategoriasController.prg 										\
+AlmacenesController.prg 													\
 FabricantesController.prg 													\
 ImagenesController.prg 														\
 AgentesController.prg 														\
@@ -994,6 +995,7 @@ ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
 ArticulosTemporadaController.obj       								\
 ArticulosCategoriasController.obj       								\
+AlmacenesController.obj       											\
 FabricantesController.obj       											\
 ImagenesController.obj       												\
 AgentesController.obj     		  											\
@@ -1616,6 +1618,7 @@ $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
 $(OBJ)\ArticulosTemporadaController.obj    							+
 $(OBJ)\ArticulosCategoriasController.obj    							+
+$(OBJ)\AlmacenesController.obj    										+
 $(OBJ)\FabricantesController.obj    									+
 $(OBJ)\ImagenesController.obj    										+
 $(OBJ)\AgentesController.obj    											+
