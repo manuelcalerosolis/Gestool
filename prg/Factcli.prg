@@ -159,8 +159,6 @@
 #define _TFECFAC           129
 #define _CCENTROCOSTE      130
 #define _MFIRMA            131
-#define _UUID_TRN          132
-#define _UUID_AGE          133
 
 /*
 Definici-n de la base de datos de lineas de detalle
@@ -274,7 +272,6 @@ Definici-n de la base de datos de lineas de detalle
 #define _ID_TIPO_V         106
 #define __NREGIVA          107
 #define _NPRCULTCOM        108
-#define __UUID_AGE         109
 
 memvar cDbf
 memvar cDbfCol
@@ -1886,7 +1883,8 @@ STATIC FUNCTION OpenFiles()
 
       Counter                    := TCounter():New( nView, "nFacCli" )
 
-      oTransportistaSelector     := TransportistasController():New():oComboSelector
+      oTransportistaSelector     := TransportistasController():New():oGetSelector
+      oTransportistaSelector:setKey( "codigo" )
 
       /*
       Declaramos variables p-blicas--------------------------------------------
@@ -2563,7 +2561,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    cSay[ 10]               := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
    cSay[ 11]               := SQLUsuariosModel():getNombreWhereCodigo( aTmp[ _CCODUSR ] )
    cSay[ 12]               := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
-   cSay[ 9 ]               := SQLTransportistasModel():getNombre( aTmp[ _UUID_TRN ] )
 
    /*
    Inicializamos el valor de la tarifa por si cambian--------------------------
@@ -3769,8 +3766,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       Transportistas-----------------------------------------------------------
       */
 
-      oTransportistaSelector:Bind( bSETGET( aTmp[ _UUID_TRN ] ) )
-      oTransportistaSelector:Activate( 236, 235, fldData )
+      oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
+      oTransportistaSelector:Activate( 235, 236, fldData )
 
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;
@@ -4622,6 +4619,12 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
       endif 
 
    end if 
+
+   /*
+   Cargamos valores al iniciar el diálogo--------------------------------------
+   */
+
+   oTransportistaSelector:start()
 
    /*
    Muestra y oculta las rentabilidades-----------------------------------------
@@ -6600,8 +6603,6 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          aGet[ _CCODTRN ]:cText( ( dbfAlbCliT )->cCodTrn )
          aGet[ _CCODTRN ]:lValid()
 
-         aTmp[ _UUID_TRN ] := ( dbfAlbCliT )->Uuid_Trn
-
          aGet[ _CCENTROCOSTE ]:cText( ( dbfAlbCliT )->cCtrCoste )
          aGet[ _CCENTROCOSTE ]:lValid()
 
@@ -7825,8 +7826,6 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          aGet[_CCODTRN ]:cText( ( dbfPedCliT )->cCodTrn )
          aGet[_CCODTRN ]:lValid()
 
-         aTmp[ _UUID_TRN ] := ( dbfPedCliT )->Uuid_Trn
-
          aGet[_LIVAINC ]:Click( ( dbfPedCliT )->lIvaInc )
          aGet[_LRECARGO]:Click( ( dbfPedCliT )->lRecargo )
          aGet[_LOPERPV ]:Click( ( dbfPedCliT )->lOperPv )
@@ -8231,8 +8230,6 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
 
          aGet[_CCODTRN ]:cText( ( dbfPreCliT )->cCodTrn )
          aGet[_CCODTRN ]:lValid()
-
-         aTmp[ _UUID_TRN ] := ( dbfPreCliT )->Uuid_Trn
 
          aGet[_LIVAINC ]:Click( ( dbfPreCliT )->lIvaInc )
          aGet[_LRECARGO]:Click( ( dbfPreCliT )->lRecargo )
@@ -16111,8 +16108,6 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
          aGet[ _CCODTRN ]:cText( ( dbfSatCliT )->cCodTrn )
          aGet[ _CCODTRN ]:lValid()
 
-         aTmp[ _UUID_TRN ] := ( dbfSatCliT )->Uuid_Trn 
-
          aGet[ _LIVAINC ]:Click( ( dbfSatCliT )->lIvaInc )
          aGet[ _LRECARGO]:Click( ( dbfSatCliT )->lRecargo )
          aGet[ _LOPERPV ]:Click( ( dbfSatCliT )->lOperPv )
@@ -18308,14 +18303,6 @@ function SynFacCli( cPath )
             end if 
          end if
 
-         if Empty( ( D():FacturasClientes( nView ) )->Uuid_Trn )
-            ( D():FacturasClientes( nView ) )->Uuid_Trn := TransportistasModel():getUuid( ( D():FacturasClientes( nView ) )->cCodTrn )
-         end if
-
-         if Empty( ( D():FacturasClientes( nView ) )->Uuid_Age )
-            ( D():FacturasClientes( nView ) )->Uuid_Age := AgentesModel():getUuid( ( D():FacturasClientes( nView ) )->cCodAge )
-         end if
-
          /*
          Esto es para la Jaca para que todas las facturas tengan las comisiones de agente bien-------------------------------------
          */
@@ -18485,13 +18472,6 @@ function SynFacCli( cPath )
          if empty( ( D():FacturasClientesLineas( nView ) )->cCodAge )
             if ( D():FacturasClientesLineas( nView ) )->( dbRLock() )
                ( D():FacturasClientesLineas( nView ) )->cCodAge    := RetFld( ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac, D():FacturasClientes( nView ), "cCodAge" )
-               ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
-            end if
-         end if
-
-         if Empty( ( D():FacturasClientesLineas( nView ) )->Uuid_Age )
-            if ( D():FacturasClientesLineas( nView ) )->( dbRLock() )
-               ( D():FacturasClientesLineas( nView ) )->Uuid_Age := AgentesModel():getUuid( ( D():FacturasClientesLineas( nView ) )->cCodAge )
                ( D():FacturasClientesLineas( nView ) )->( dbUnLock() )
             end if
          end if
@@ -19579,8 +19559,6 @@ function aColFacCli()
    aAdd( aColFacCli, { "id_tipo_v", "N",  16, 0, "Identificador tipo de venta"            , "IdentificadorTipoVenta",      "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nRegIva",   "N",   1, 0, "Régimen de " + cImp()                   , "TipoImpuesto",                "", "( cDbfCol )", nil } ) 
    aAdd( aColFacCli, { "nPrcUltCom","N",  16, 6, "Precio última compra"                   , "PrecioUltimaVenta",           "", "( cDbfCol )", nil } ) 
-   aAdd( aColFacCli, { "Uuid_Age",  "C",  40, 0, "Identificador agente"                   , "UuidAgente",                  "", "( cDbfCol )", nil } )
-
 
 return ( aColFacCli )
 
@@ -19721,8 +19699,6 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"tFecFac"     ,"C", 6,   0, "Hora de la factura" ,                                       "HoraFactura",                 "", "( cDbf )", {|| getSysTime() } } )
    aAdd( aItmFacCli, {"cCtrCoste"   ,"C", 9,   0, "Código del centro de coste" ,                               "CentroCoste",                 "", "( cDbf )", nil } )
    aAdd( aItmFacCli, { "mFirma"     ,"M", 10,  0, "Firma" ,                                                    "Firma",                       "", "( cDbf )", nil } )                  
-   aAdd( aItmFacCli, { "Uuid_Trn"   ,"C", 40,  0, "Identificador transportista" ,                              "UuidTransportista",           "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, { "Uuid_Age"   ,"C", 40,  0, "Identificador agente" ,                                     "UuidAgente",                  "", "( cDbf )", nil } )
 
 RETURN ( aItmFacCli )
 
@@ -23240,7 +23216,7 @@ Return oStock:nTotalSaldo( Padr("16", 18 ), cCodCli, dFecFac)
 
 Function getNombreTransportistaFacCli()
 
-Return TransportistasRepository():getNombreWhereUuid( ( D():FacturasClientes( nView ) )->Uuid_Trn )
+Return SQLTransportistasModel():getNombreWhereCodigo( ( D():FacturasClientes( nView ) )->cCodTrn )
 
 //---------------------------------------------------------------------------//
 

@@ -357,6 +357,9 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+ArticulosTemporadaController.prg 										\
+ArticulosCategoriasController.prg 										\
+AlmacenesController.prg 													\
 FabricantesController.prg 													\
 ImagenesController.prg 														\
 AgentesController.prg 														\
@@ -650,6 +653,7 @@ SQLClientesModel.prg 														\
 SQLProveedoresModel.prg 		  											\
 ClientesView.prg 																\
 ClientesValidator.prg 														\
+SqlGetSelector.prg 															\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -989,6 +993,9 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+ArticulosTemporadaController.obj       								\
+ArticulosCategoriasController.obj       								\
+AlmacenesController.obj       											\
 FabricantesController.obj       											\
 ImagenesController.obj       												\
 AgentesController.obj     		  											\
@@ -1276,6 +1283,7 @@ SQLclientesModel.obj 														\
 SQLProveedoresModel.obj 		  											\
 ClientesView.obj 																\
 ClientesValidator.obj 														\
+SqlGetSelector.obj 															\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1607,7 +1615,10 @@ $(OBJ)\LenguajesController.obj    										+
 $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
-$(OBJ)\ArticulostipoController.obj    									+
+$(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\ArticulosTemporadaController.obj    							+
+$(OBJ)\ArticulosCategoriasController.obj    							+
+$(OBJ)\AlmacenesController.obj    										+
 $(OBJ)\FabricantesController.obj    									+
 $(OBJ)\ImagenesController.obj    										+
 $(OBJ)\AgentesController.obj    											+
@@ -1891,6 +1902,7 @@ $(OBJ)\SQLclientesModel.obj 												+
 $(OBJ)\SQLProveedoresModel.obj 		  									+
 $(OBJ)\ClientesView.obj 													+
 $(OBJ)\ClientesValidator.obj 												+
+$(OBJ)\SqlGetSelector.obj 													+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

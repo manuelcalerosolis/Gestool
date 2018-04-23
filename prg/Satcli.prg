@@ -102,8 +102,6 @@ Definici¢n de la base de datos de S.A.T. a clientes
 #define _CCODEST                  87
 #define _MFIRMA                   88
 #define _CCENTROCOSTE             89
-#define _UUID_TRN                 90
-#define _UUID_AGE                 91
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -735,7 +733,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      oTransportistaSelector     := TransportistasController():New():oComboSelector
+      oTransportistaSelector     := TransportistasController():New():oGetSelector
+      oTransportistaSelector:setKey( "codigo" )
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -2834,8 +2833,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       Transportistas-----------------------------------------------------------
       */
 
-      oTransportistaSelector:Bind( bSETGET( aTmp[ _UUID_TRN ] ) )
-      oTransportistaSelector:Activate( 236, 235, oFld:aDialogs[2] )
+      oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
+      oTransportistaSelector:Activate( 235, 236, oFld:aDialogs[2] )
 
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;
@@ -3137,16 +3136,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid() ), oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid() ), oDlg:End() ), oTransportistaSelector:start() }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) ), oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) ), oDlg:End() ) , oTransportistaSelector:start() }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
+         oDlg:bStart := {|| aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ), oTransportistaSelector:start() }
 
       otherwise
-         oDlg:bStart := {|| StartEdtRec( oBrwLin ) }
+         oDlg:bStart := {|| StartEdtRec( oBrwLin ), oTransportistaSelector:start() }
 
    end case
 
@@ -8226,7 +8225,7 @@ Return nil
 
 Function getNombreTransportistaSatCli()
 
-Return TransportistasRepository():getNombreWhereUuid( ( D():SatClientes( nView ) )->Uuid_Trn )
+return SQLTransportistasModel():getNombreWhereCodigo( ( D():SatClientes( nView ) )->cCodTrn )
 
 //---------------------------------------------------------------------------//
 
@@ -10446,8 +10445,6 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "cCodEst",   "C",  3,  0, "Código estado" ,                              "Estado",                  "", "( cDbf )", nil } )                  
    aAdd( aItmSatCli, { "mFirma",    "M", 10,  0, "Firma" ,                                      "Firma",                   "", "( cDbf )", nil } )                  
    aAdd( aItmSatCli, { "cCtrCoste", "C",  9,  0, "Código del centro de coste" ,                 "CentroCoste",             "", "( cDbf )", nil } )
-   aAdd( aItmSatCli, { "Uuid_Trn",  "C", 40,  0, "Identificador transportista" ,                "UuidTransportista",       "", "( cDbf )", nil } )
-   aAdd( aItmSatCli, { "Uuid_Age",  "C", 40,  0, "Identificador agente" ,                       "UuidAgente",              "", "( cDbf )", nil } )
 
 return ( aItmSatCli )
 
@@ -10768,10 +10765,6 @@ Function SynSatCli( cPath )
 
          if Empty( ( cSatCliT )->cDniCli )
             ( cSatCliT )->cDniCli := RetFld( ( cSatCliT )->cCodCli, dbfClient, "Nif" )
-         end if
-
-         if Empty( ( cSatCliT )->Uuid_Trn )
-            ( cSatCliT )->Uuid_Trn := TransportistasModel():getUuid( ( cSatCliT )->cCodTrn )
          end if
 
          /*

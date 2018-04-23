@@ -114,8 +114,6 @@
 #define _NDTOTARIFA 	      102
 #define _TFECFAC 		      103
 #define _CCENTROCOSTE	   104
-#define _UUID_TRN          105
-#define _UUID_AGE          106
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -823,7 +821,8 @@ STATIC FUNCTION OpenFiles( lExt )
      
       Counter           := TCounter():New( nView, "nFacRec" )
 
-      oTransportistaSelector  := TransportistasController():New():oComboSelector
+      oTransportistaSelector     := TransportistasController():New():oGetSelector
+      oTransportistaSelector:setKey( "codigo" )
 
       /*
       Declaración de variables publicas----------------------------------------
@@ -3032,8 +3031,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       Transportistas-----------------------------------------------------------
       */
 
-         oTransportistaSelector:Bind( bSETGET( aTmp[ _UUID_TRN ] ) )
-         oTransportistaSelector:Activate( 236, 235, oFld:aDialogs[2] )
+         oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
+         oTransportistaSelector:Activate( 235, 236, oFld:aDialogs[2] )
 
 
       	REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
@@ -3586,17 +3585,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), , oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), , oDlg:End() ), oTransportistaSelector:start() }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ), oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ), oDlg:End() ), oTransportistaSelector:start() }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !empty( cCodArt )
-         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ) }
+         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ), oTransportistaSelector:start() }
 
       otherwise
          oDlg:bStart := {|| StartEdtRec( aGet, nMode ),;
-         					ShowKit( D():FacturasRectificativas( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, aTmp[ _CCODCLI ], D():Clientes( nView ), nil, aGet, oSayGetRnt ) }
+         					ShowKit( D():FacturasRectificativas( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, aTmp[ _CCODCLI ], D():Clientes( nView ), nil, aGet, oSayGetRnt ), oTransportistaSelector:start() }
    end case
 
    ACTIVATE DIALOG oDlg ;
@@ -8893,8 +8892,6 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
       aGet[ _CCODTRN ]:cText( ( dbfFacCliT )->cCodTrn )
       aGet[ _CCODTRN ]:lValid()
 
-      aTmp[ _UUID_TRN ] := ( dbfFacCliT )->Uuid_Trn
-
       aGet[ _LRECARGO ]:Click( ( dbfFacCliT )->lRecargo )
       aGet[ _LOPERPV  ]:Click( ( dbfFacCliT )->lOperPv )
 
@@ -10167,7 +10164,7 @@ Return nil
 
 Function getNombreTransportistaFacRec()
 
-Return TransportistasRepository():getNombreWhereUuid( ( D():FacturasRectificativas( nView ) )->Uuid_Trn )
+Return SQLTransportistasModel():getNombreWhereCodigo( ( D():FacturasRectificativas( nView ) )->cCodTrn )
 
 //---------------------------------------------------------------------------//
 
@@ -12820,8 +12817,6 @@ function aItmFacRec()
    aAdd( aItmFacRec, { "nDtoTarifa"  ,"N",  6, 2, "Descuento de tarifa de cliente",                          "DescuentoTarifa",         "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "tFecFac"     ,"C",  9, 0, "Hora de la factura rectificativa",                        "HoraFactura",             "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "cCtrCoste"   ,"C",  9, 0, "Código del centro de coste",                              "CentroCoste",             "", "( cDbf )", nil } )
-   aAdd( aItmFacRec, { "Uuid_Trn"    ,"C", 40, 0, "Identificador transportista" ,                            "UuidTransportista",       "", "( cDbf )", nil } )
-   aAdd( aItmFacRec, { "Uuid_Age"    ,"C", 40, 0, "Identificador agente" ,                                   "UuidAgente",              "", "( cDbf )", nil } )
 
 RETURN ( aItmFacRec )
 
@@ -13396,10 +13391,6 @@ function SynFacRec( cPath )
 
          if empty( ( dbfFacRecT )->cCodCaj )
             ( dbfFacRecT )->cCodCaj := "000"
-         end if
-
-         if Empty( ( dbfFacRecT )->Uuid_Trn )
-            ( dbfFacRecT )->Uuid_Trn := TransportistasModel():getUuid( ( dbfFacRecT )->cCodTrn )
          end if
 
          /*

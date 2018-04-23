@@ -35,8 +35,6 @@ METHOD Activate( oDialog, nId )
 
    ::fireEvent( 'activating' )     
 
-   MsgInfo( ::oModel:getSelectSentence(), "Sentencia" )
-
    ::oRowSet:build( ::oModel:getSelectSentence() )
 
    ::fireEvent( 'activated' )     

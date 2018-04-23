@@ -45,7 +45,9 @@ CLASS SQLBaseController
 
    DATA cDirectory 
 
-   DATA oComboSelector                    
+   DATA oComboSelector
+
+   DATA oGetSelector
 
    METHOD New()
    METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
