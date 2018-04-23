@@ -21758,20 +21758,12 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Datos", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 483, 53
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Transportistas", -1, "Static", WS_GROUP, 44, 3, 120, 8
-<<<<<<< HEAD
   CONTROL "Aña&dir [F2]", 130, "Button", WS_TABSTOP, 49, 96, 50, 14
   CONTROL "&Modificar [F3]", 140, "Button", WS_TABSTOP, 105, 96, 50, 14
   CONTROL "&Eliminar [F4]", 150, "Button", WS_TABSTOP, 161, 96, 50, 14
   CONTROL "", 160, "TXBrowse", WS_TABSTOP|0x00300000, 49, 112, 474, 136
   CONTROL "Direcciones", -1, "Button", BS_GROUPBOX, 44, 84, 483, 171
   CONTROL "Código *", -1, "Static", WS_GROUP, 50, 44, 41, 7
-=======
-  CONTROL "Aña&dir [F2]", 120, "Button", WS_TABSTOP, 49, 84, 50, 14
-  CONTROL "&Modificar [F3]", 130, "Button", WS_TABSTOP, 105, 84, 50, 14
-  CONTROL "&Eliminar [F4]", IDZOOM, "Button", WS_TABSTOP, 161, 84, 50, 14
-  CONTROL "", 150, "TXBrowse", WS_TABSTOP|0x00300000, 49, 100, 474, 136
-  CONTROL "Direcciones", -1, "Button", BS_GROUPBOX, 44, 72, 483, 171
->>>>>>> fa93f664de5854d8925466cfc92e4b3126fa22bd
 }
 
 DIRECCION DIALOG DISCARDABLE 193, 47, 404, 212
