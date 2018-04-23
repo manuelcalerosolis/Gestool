@@ -150,8 +150,7 @@
 #define _CMOTINA                 140  
 #define _DALTA                   141 
 #define _UUID_TRN                142
-#define _UUID_AGE                143
-#define _UUID                    144
+#define _UUID                    143
 
 #define _aCCODCLI                  1     //   C     12     0
 #define _aCCODGRP                  2     //   C     12     0
@@ -6791,13 +6790,6 @@ Function SynClient( cPath )
             end if
          end if
 
-         if Empty( ( D():Clientes( nView ) )->Uuid_Trn )
-            if D():Lock( "Client", nView )
-               ( D():Clientes( nView ) )->Uuid_Trn := TransportistasModel():getUuid( ( D():Clientes( nView ) )->cCodTrn )
-               D():UnLock( "Client", nView ) 
-            end if
-         end if
-
          ( D():Clientes( nView ) )->( dbSkip() )
 
       end while
@@ -9036,7 +9028,6 @@ FUNCTION aItmCli()
    aAdd( aBase, { "cMotIna",   "C",250, 0, "Motivo de inactividad del cliente",             "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "dAlta",     "D",  8, 0, "Fecha de alta del cliente",                     "",                      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Uuid_Trn",  "C", 40, 0, "Identificador transportista" ,                  "UuidTransportista",     "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "Uuid_Age",  "C", 40, 0, "Identificador agente" ,                         "UuidAgente",            "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Uuid",      "C", 40, 0, "Identificador cliente" ,                        "UuidCliente",           "", "( cDbfCli )", nil } )
 
 RETURN ( aBase )
