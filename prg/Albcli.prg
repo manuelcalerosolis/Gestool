@@ -127,8 +127,6 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _TFECALB                  104
 #define _CCENTROCOSTE             105  
 #define _MFIRMA                   106
-#define _UUID_TRN                 107
-#define _UUID_AGE                 108
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -1608,7 +1606,8 @@ STATIC FUNCTION OpenFiles()
 
       Counter           := TCounter():New( nView, "nAlbCli" ) 
 
-      oTransportistaSelector     := TransportistasController():New():oComboSelector
+      oTransportistaSelector     := TransportistasController():New():oGetSelector
+      oTransportistaSelector:setKey( "codigo" )
 
       /*
       Declaración de variables públicas----------------------------------------
@@ -3481,8 +3480,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       // Transportistas--------------------------------------------------------
 
-      oTransportistaSelector:Bind( bSETGET( aTmp[ _UUID_TRN ] ) )
-      oTransportistaSelector:Activate( 236, 235, oFld:aDialogs[2] )
+      oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
+      oTransportistaSelector:Activate( 235, 236, oFld:aDialogs[2] )
 
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;
@@ -4106,6 +4105,12 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
       endif
 
    end if 
+
+   /*
+   Cargamos valores al iniciar el diálogo--------------------------------------
+   */
+
+   oTransportistaSelector:start()
 
    /*
    Muestra y oculta las rentabilidades-----------------------------------------
@@ -5570,8 +5575,6 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
    aGet[ _CCODTRN ]:cText( ( dbfPedCliT )->cCodTrn )
    aGet[ _CCODTRN ]:lValid()
-
-   aTmp[ _UUID_TRN ] := ( dbfPedCliT )->Uuid_Trn
 
    aGet[ _LIVAINC ]:Click( ( dbfPedCliT )->lIvaInc )
    aGet[ _LRECARGO]:Click( ( dbfPedCliT )->lRecargo )
@@ -8770,7 +8773,7 @@ Return nil
 
 Function getNombreTransportistaAlbCli()
 
-Return TransportistasRepository():getNombreWhereUuid( ( D():AlbaranesClientes( nView ) )->Uuid_Trn )
+Return SQLTransportistasModel():getNombreWhereCodigo( ( D():AlbaranesClientes( nView ) )->cCodTrn )
 
 //---------------------------------------------------------------------------//
 
@@ -14998,10 +15001,6 @@ function SynAlbCli( cPath )
          
          end if
 
-         if Empty( ( D():Get( "AlbCliT", nView ) )->Uuid_Trn )
-            ( D():Get( "AlbCliT", nView ) )->Uuid_Trn := TransportistasModel():getUuid( ( D():Get( "AlbCliT", nView ) )->cCodTrn )
-         end if
-
          /*
          Esto es para Cafes y zumos para que todos los albaranes tengan la ruta del cliente
          */
@@ -17063,8 +17062,6 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "tFecAlb",   "C",  6, 0, "Hora del albarán" ,                                        "Hora",                          "", "( cDbf )", {|| getSysTime() } } )
    aAdd( aItmAlbCli, { "cCtrCoste", "C",  9, 0, "Código del centro de coste" ,                              "CentroCoste",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "mFirma",    "M", 10, 0, "Firma" ,                                                   "Firma",                         "", "( cDbf )", nil } )                  
-   aAdd( aItmAlbCli, { "Uuid_Trn",  "C", 40, 0, "Identificador transportista" ,                             "UuidTransportista",             "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "Uuid_Age",  "C", 40, 0, "Identificador agente" ,                                    "UuidAgente",                    "", "( cDbf )", nil } )
 
 Return ( aItmAlbCli )
 

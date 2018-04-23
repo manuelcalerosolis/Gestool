@@ -41,6 +41,8 @@ METHOD New() CLASS TransportistasController
 
    ::oComboSelector              := ComboSelector():New( self )
 
+   ::oGetSelector                := GetSelector():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
@@ -79,6 +81,14 @@ METHOD addColumns() CLASS TransportistasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -134,40 +144,46 @@ METHOD Activate() CLASS TransportistasView
       TRANSPARENT ;
       OF          oDlg
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
+      OF          oDlg
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+      ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
    REDEFINE GET   oGetDni VAR ::oController:oModel:hBuffer[ "dni" ] ;
-      ID          110 ;
+      ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( CheckCif( oGetDni ) ) ;
       OF          oDlg
 
    REDEFINE BUTTON oBtnAppend ;
-      ID          120 ;
+      ID          130 ;
       OF          oDlg ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
    oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
 
    REDEFINE BUTTON oBtnEdit ;
-      ID          130 ;
+      ID          140 ;
       OF          oDlg ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
    oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
-      ID          140 ;
+      ID          150 ;
       OF          oDlg ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
    oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
 
-   ::oController:oDireccionesController:Activate( oDlg, 150 )
+   ::oController:oDireccionesController:Activate( oDlg, 160 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -211,7 +227,9 @@ END CLASS
 
 METHOD getValidators() CLASS TransportistasValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre del transportista es un dato requerido",;
+   ::hValidators  := {  "codigo" =>          {  "required"     => "El código del transportista es un dato requerido",;
+                                                "unique"       => "El código del transportista introducido ya existe" },;
+                        "nombre" =>          {  "required"     => "El nombre del transportista es un dato requerido",;
                                                 "unique"       => "El nombre del transportista introducido ya existe" }}
 
 RETURN ( ::hValidators )
@@ -227,9 +245,11 @@ RETURN ( ::hValidators )
 
 CLASS SQLTransportistasModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "transportistas"
+   DATA cTableName                           INIT "transportistas"
 
-   MESSAGE getNombre( uuid )      INLINE ( ::getField( "nombre", "uuid", uuid ) )
+   MESSAGE getNombre( uuid )                 INLINE ( ::getField( "nombre", "uuid", uuid ) )
+
+   MESSAGE getNombreWhereCodigo( codigo )   INLINE ( ::getField( "nombre", "codigo", codigo ) )
 
    METHOD getColumns()
 
@@ -247,10 +267,13 @@ METHOD getColumns() CLASS SQLTransportistasModel
                                              "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
-                                             "default"   => {|| space( 140 ) } }                       )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 9 ) NOT NULL UNIQUE"            ,;
+                                             "default"   => {|| space( 9 ) } }                        )
 
-   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
+                                             "default"   => {|| space( 140 ) } }                      )
+
+   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                           ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
 RETURN ( ::hColumns )

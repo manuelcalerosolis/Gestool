@@ -46,8 +46,7 @@ CLASS Seeders
    METHOD getStatementLenguajes( dbfLenguajes )
 
    METHOD SeederTransportistas()
-   METHOD getStatementTransportistas( dbfTransportista )
-   METHOD getStatementDireccionTransportistas( dbfTransportista )
+   METHOD insertTransportista( dbfTransportista )
 
    METHOD SeederCamposExtra() 
    METHOD getStatementCamposExtra() 
@@ -111,17 +110,17 @@ METHOD runSeederEmpresa()
    ::oMsg:SetText( "Ejecutando seeder de transportistas" )
    ::SeederTransportistas()
 
-   ::oMsg:SetText( "Ejecutando seeder de campos extra" )
+   /*::oMsg:SetText( "Ejecutando seeder de campos extra" )
    ::SeederCamposExtra()
 
    ::oMsg:SetText( "Ejecutando seeder de campos extra valores" )
-   ::SeederCamposExtraValores()
+   ::SeederCamposExtraValores()*/
 
    ::oMsg:SetText( "Ejecutando seeder de fabricantes" )
    ::SeederFabricantes()
 
-   ::oMsg:SetText( "Ejecutando seeder de empresas" )
-   ::SeederEmpresas()
+   /*::oMsg:SetText( "Ejecutando seeder de empresas" )
+   ::SeederEmpresas()*/
 
    ::oMsg:SetText( "Seeders finalizados" )
 
@@ -643,62 +642,58 @@ RETURN ( ::getInsertStatement( hCampos, "lenguajes" ) )
 
 METHOD SeederTransportistas()
 
+   local dbf
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
-   local dbfTransportista
-
-   if ( file( cPath + "Transpor.old" ) )
-      RETURN ( self )
-   end if
 
    if !( file( cPath + "Transpor.Dbf" ) )
       msgStop( "El fichero " + cPath + "\Transpor.Dbf no se ha localizado", "Atención" )  
       RETURN ( self )
    end if 
 
-   USE ( cPath + "Transpor.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Transpor", @dbfTransportista ) )
-   ( dbfTransportista )->( ordsetfocus(0) )
-   
-   ( dbfTransportista )->( dbgotop() )
-   while !( dbfTransportista )->( eof() )
+   USE ( cPath + "Transpor.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Transpor", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
 
-      getSQLDatabase():Exec( ::getStatementTransportistas( dbfTransportista ) )
-      getSQLDatabase():Exec( ::getStatementDireccionTransportistas( dbfTransportista ) )
+   ( dbf )->( dbeval( {|| ::insertTransportista( dbf ) } ) )
 
-      ( dbfTransportista )->( dbSkip() )
-
-   end while
-
-   if dbfTransportista != nil
-      ( dbfTransportista )->( dbCloseArea() )
-   end if
+   ( dbf )->( dbCloseArea() )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementTransportistas( dbfTransportista )
+METHOD insertTransportista( dbf )
 
-   local hCampos        := {  "uuid"   => quoted( ( dbfTransportista )->Uuid ),;
-                              "nombre" => quoted( ( dbfTransportista )->cNomTrn ),;
-                              "dni"    => quoted( ( dbfTransportista )->cDniTrn ) }
+   local nId
+   local hBuffer
 
-RETURN ( ::getInsertStatement( hCampos, "transportistas" ) )
+   hBuffer        := SQLTransportistasModel():loadBlankBuffer()
 
-//---------------------------------------------------------------------------//
+   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
+   hset( hBuffer, "codigo",            ( dbf )->cCodTrn  )
+   hset( hBuffer, "nombre",            ( dbf )->cNomTrn  )
+   hset( hBuffer, "dni",               ( dbf )->cDniTrn  )
 
-METHOD getStatementDireccionTransportistas( dbfTransportista )
+   nId            := SQLTransportistasModel():insertIgnoreBuffer( hBuffer )
 
-   local hCampos        := {  "uuid"            => quoted( win_uuidcreatestring() ),;
-                              "parent_uuid"     => quoted( ( dbfTransportista )->Uuid ),;
-                              "nombre"          => quoted( ( dbfTransportista )->cNomTrn ),;
-                              "direccion"       => quoted( ( dbfTransportista )->cDirTrn ),;
-                              "poblacion"       => quoted( ( dbfTransportista )->cLocTrn ),;
-                              "provincia"       => quoted( ( dbfTransportista )->cPrvTrn ),;
-                              "codigo_postal"   => quoted( ( dbfTransportista )->cCdpTrn ),;
-                              "telefono"        => quoted( ( dbfTransportista )->cTlfTrn ),;
-                              "movil"           => quoted( ( dbfTransportista )->cMovTrn ) }
+   if empty( nId )
+      RETURN ( self )
+   end if
 
-RETURN ( ::getInsertStatement( hCampos, "direcciones" ) )
+   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hBuffer, "principal",      0                    )
+   hset( hBuffer, "parent_uuid",    ( dbf )->Uuid        )
+   hset( hBuffer, "nombre",         ( dbf )->cNomTrn     )
+   hset( hBuffer, "direccion",      ( dbf )->cDirTrn     )
+   hset( hBuffer, "poblacion",      ( dbf )->cLocTrn     )
+   hset( hBuffer, "provincia",      ( dbf )->cPrvTrn     )
+   hset( hBuffer, "codigo_postal",  ( dbf )->cCdpTrn     )
+   hset( hBuffer, "telefono",       ( dbf )->cTlfTrn     )
+   hset( hBuffer, "movil",          ( dbf )->cMovTrn     )
+                        
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 

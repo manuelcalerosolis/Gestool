@@ -99,8 +99,6 @@ Definici¢n de la base de datos de presupuestos a clientes
 #define _LINTERNET                84
 #define _MFIRMA                   85
 #define _CCENTROCOSTE             86
-#define _UUID_TRN                 87
-#define _UUID_AGE                 88
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -709,7 +707,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       Counter                 := TCounter():New( nView, "nPreCli" )
 
-      oTransportistaSelector  := TransportistasController():New():oComboSelector
+      oTransportistaSelector     := TransportistasController():New():oGetSelector
+      oTransportistaSelector:setKey( "codigo" )
 
       CodigosPostales():GetInstance():OpenFiles()
 
@@ -2731,8 +2730,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
       // Transportistas-----------------------------------------------------------
 
-      oTransportistaSelector:Bind( bSETGET( aTmp[ _UUID_TRN ] ) )
-      oTransportistaSelector:Activate( 236, 235, oFld:aDialogs[2] )   
+      oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
+      oTransportistaSelector:Activate( 235, 236, oFld:aDialogs[2] )   
 
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;
@@ -3093,16 +3092,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), , oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), , oDlg:End() ), oTransportistaSelector:start() }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ), oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ), oDlg:End() ), oTransportistaSelector:start() }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
+         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ), oTransportistaSelector:start() }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( D():PresupuestosClientes( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, D():Clientes( nView ), oGetRnt, aGet, oSayGetRnt ) }
+         oDlg:bStart := {|| ShowKit( D():PresupuestosClientes( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, D():Clientes( nView ), oGetRnt, aGet, oSayGetRnt ), oTransportistaSelector:start() }
 
    end case
 
@@ -8111,7 +8110,7 @@ Return nil
 
 Function getNombreTransportistaPreCli()
 
-Return TransportistasRepository():getNombreWhereUuid( ( D():PresupuestosClientes( nView ) )->Uuid_Trn )
+Return SQLTransportistasModel():getNombreWhereCodigo( ( D():PresupuestosClientes( nView ) )->cCodTrn )
 
 //---------------------------------------------------------------------------//
 
@@ -10381,8 +10380,6 @@ function aItmPreCli()
    aAdd( aItmPreCli, { "lInternet", "L",  1,  0, "Pedido desde internet" ,                            "",                              "", "( cDbf )", nil } )
    aAdd( aItmPreCli, { "mFirma",    "M", 10,  2, "Firma",                                             "Firma",                         "", "( cDbf )", nil } )
    aAdd( aItmPreCli, { "cCtrCoste", "C",  9,  0, "Código del centro de coste" ,                       "CentroCoste",                   "", "( cDbf )", nil } )
-   aAdd( aItmPreCli, { "Uuid_Trn",  "C", 40,  0, "Identificador transportista" ,                      "UuidTransportista",             "", "( cDbf )", nil } )
-   aAdd( aItmPreCli, { "Uuid_Age",  "C", 40,  0, "Identificador agente" ,                             "UuidAgente",                    "", "( cDbf )", nil } )
 
 return ( aItmPreCli )
 
@@ -10850,10 +10847,6 @@ Function SynPreCli( cPath )
 
          if Empty( ( dbfPreCliT )->cCodGrp )
             ( dbfPreCliT )->cCodGrp := RetGrpCli( ( dbfPreCliT )->cCodCli, dbfClient )
-         end if
-
-         if Empty( ( dbfPreCliT )->Uuid_Trn )
-            ( dbfPreCliT )->Uuid_Trn := TransportistasModel():getUuid( ( dbfPreCliT )->cCodTrn )
          end if
 
          /*

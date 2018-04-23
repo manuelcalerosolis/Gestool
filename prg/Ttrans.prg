@@ -125,7 +125,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "nKgsTrn" TYPE "N" LEN 16  DEC 6 COMMENT "Tara"                 PICTURE MasUnd() ALIGN RIGHT COLSIZE 100  OF ::oDbf
       FIELD NAME "cMatTrn" TYPE "C" LEN 20  DEC 0 COMMENT "Matrícula"            HIDE                                      OF ::oDbf
       FIELD NAME "cDniTrn" TYPE "C" LEN 15  DEC 0 COMMENT "DNI Transportista"    HIDE                                      OF ::oDbf
-      FIELD NAME "Uuid"    TYPE "C" LEN 40  DEC 0 COMMENT "Uuid transportista"   HIDE                                      OF ::oDbf
+      FIELD NAME "uuid"    TYPE "C" LEN 40  DEC 0 COMMENT "UUID Transportista"   HIDE                                      OF ::oDbf
 
       INDEX TO "Transpor.Cdx" TAG "cCodTrn" ON "cCodTrn"          COMMENT "Código" NODELETED OF ::oDbf
       INDEX TO "Transpor.Cdx" TAG "cNomTrn" ON "Upper( cNomTrn )" COMMENT "Nombre" NODELETED OF ::oDbf

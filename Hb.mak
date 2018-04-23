@@ -653,6 +653,7 @@ SQLClientesModel.prg 														\
 SQLProveedoresModel.prg 		  											\
 ClientesView.prg 																\
 ClientesValidator.prg 														\
+SqlGetSelector.prg 															\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1282,6 +1283,7 @@ SQLclientesModel.obj 														\
 SQLProveedoresModel.obj 		  											\
 ClientesView.obj 																\
 ClientesValidator.obj 														\
+SqlGetSelector.obj 															\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1900,6 +1902,7 @@ $(OBJ)\SQLclientesModel.obj 												+
 $(OBJ)\SQLProveedoresModel.obj 		  									+
 $(OBJ)\ClientesView.obj 													+
 $(OBJ)\ClientesValidator.obj 												+
+$(OBJ)\SqlGetSelector.obj 													+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+
