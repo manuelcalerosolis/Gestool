@@ -3223,7 +3223,7 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
       cCodEmp        := EmpresasModel():getPrimera() 
    end if
 
-   cCodEmp           := RJust( cCodEmp, "0", 4 ) 
+   cCodEmp           := rjust( cCodEmp, "0", 4 ) 
 
    if !lIsDir( FullCurDir() + "Emp" + cCodEmp )
       lError         := .t.
@@ -3259,6 +3259,8 @@ FUNCTION SetEmpresa( cCodEmp, oBrw )
    if !aEmpresa( cCodEmp )
       Empresa()
    end if
+
+   Company():guardWhereCodigo( cCodEmp )
    
    /*
    Cargamos la estructura de ficheros de la empresa----------------------------

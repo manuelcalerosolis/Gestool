@@ -185,6 +185,16 @@ METHOD addModels()
 
    aadd( ::aModels, SQLDireccionesModel():New() )
 
+   aadd( ::aModels, SQLComentariosModel():New() )
+
+   aadd( ::aModels, SQLComentariosLineasModel():New() )
+
+   aadd( ::aModels, SQLArticulosTipoModel():New() )
+
+   aadd( ::aModels, SQLArticulosTemporadaModel():New() )
+
+   aadd( ::aModels, SQLArticulosCategoriasModel():New() )
+
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
    aadd( ::aModels, SQLTageableModel():New() )

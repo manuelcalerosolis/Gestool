@@ -3,9 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TransportistasController FROM SQLNavigatorController
+CLASS ComentariosController FROM SQLNavigatorController
 
-   DATA oDireccionesController
+   DATA oComentariosLineasController
 
    METHOD New()
 
@@ -13,37 +13,32 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS TransportistasController
+METHOD New() CLASS ComentariosController
 
    ::Super:New()
 
-   ::cTitle                      := "Transportistas"
+   ::cTitle                      := "Comentarios"
 
-   ::cName                       := "transportistas"
+   ::cName                       := "comentarios"
 
-   ::hImage                      := {  "16" => "gc_small_truck_16",;
-                                       "32" => "gc_small_truck_32",;
-                                       "48" => "gc_small_truck_48" }
+   ::hImage                      := {  "16" => "gc_message_16",;
+                                       "32" => "gc_message_32",;
+                                       "48" => "gc_message_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLTransportistasModel():New( self )
+   ::oModel                         := SQLComentariosModel():New( self )
 
-   ::oBrowseView                 := TransportistasBrowseView():New( self )
+   ::oBrowseView                    := ComentariosBrowseView():New( self )
 
-   ::oDialogView                 := TransportistasView():New( self )
+   ::oDialogView                    := ComentariosView():New( self )
 
-   ::oValidator                  := TransportistasValidator():New( self )
+   ::oComentariosLineasController   := ComentariosLineasController():New( self )
 
-   ::oDireccionesController      := DireccionesController():New( self )
+   ::oValidator                     := ComentariosValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := TransportistasRepository():New( self )
+   ::oRepository                    := ComentariosRepository():New( self )
 
-   ::oComboSelector              := ComboSelector():New( self )
-
-   ::oGetSelector                := GetSelector():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
 
@@ -57,7 +52,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TransportistasBrowseView FROM SQLBrowseView
+CLASS ComentariosBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -65,7 +60,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS TransportistasBrowseView
+METHOD addColumns() CLASS ComentariosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -73,6 +68,7 @@ METHOD addColumns() CLASS TransportistasBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -85,27 +81,19 @@ METHOD addColumns() CLASS TransportistasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
-      :cHeader             := 'CÃ³digo'
-      :nWidth              := 100
+      :cHeader             := 'Código'
+      :nWidth              := 50
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
+      :cSortOrder          := 'descripcion'
+      :cHeader             := 'Descripcion'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'dni'
-      :cHeader             := 'DNI/CIF'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'dni' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
 
 RETURN ( self )
 
@@ -117,7 +105,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TransportistasView FROM SQLBaseView
+CLASS ComentariosView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -125,90 +113,88 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS TransportistasView
+METHOD Activate() CLASS ComentariosView
 
-   local oDlg
+   local oDialog 
    local oBmpGeneral
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
-   local oGetDni
 
-   DEFINE DIALOG  oDlg ;
-      RESOURCE    "TRANSPORTISTA" ;
-      TITLE       ::LblTitle() + "transportistas"
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "COMENTARIO" ;
+      TITLE       ::LblTitle() + "Comentario"
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_small_truck_48" ;
+      RESOURCE    "gc_message_48" ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog ;
 
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog ;
+   
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          oDlg
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
       ID          110 ;
+      VALID       ( ::oController:validate( "descripcion" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
-
-   REDEFINE GET   oGetDni VAR ::oController:oModel:hBuffer[ "dni" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( CheckCif( oGetDni ) ) ;
-      OF          oDlg
+      OF          ::oDialog ;
 
    REDEFINE BUTTON oBtnAppend ;
-      ID          130 ;
-      OF          oDlg ;
+      ID          120 ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
+  oBtnAppend:bAction   := {|| ::oController:oComentariosLineasController:Append() }
 
    REDEFINE BUTTON oBtnEdit ;
-      ID          140 ;
-      OF          oDlg ;
+      ID          130 ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
+   oBtnEdit:bAction   := {|| ::oController:oComentariosLineasController:Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
       ID          150 ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
+  oBtnDelete:bAction   := {|| ::oController:oComentariosLineasController:Delete() }
 
-   ::oController:oDireccionesController:Activate( oDlg, 160 )
+   ::oController:oComentariosLineasController:Activate( ::oDialog, 160 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION     ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F2, {|| ::oController:oDireccionesController:Append() } )
-      oDlg:AddFastKey( VK_F3, {|| ::oController:oDireccionesController:Edit() } )
-      oDlg:AddFastKey( VK_F4, {|| ::oController:oDireccionesController:Delete() } )
-      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oComentariosLineasController:Append() } )
+      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oComentariosLineasController:Edit() } )
+      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oComentariosLineasController:Delete() } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG ::oDialog CENTER
 
-   oBmpGeneral:end()
+  ::oBitmap:end()
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -217,21 +203,21 @@ RETURN ( oDlg:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TransportistasValidator FROM SQLBaseValidator
+CLASS ComentariosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
+
  
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS TransportistasValidator
+METHOD getValidators() CLASS ComentariosValidator
 
-   ::hValidators  := {  "codigo" =>          {  "required"     => "El cÃ³digo del transportista es un dato requerido",;
-                                                "unique"       => "El cÃ³digo del transportista introducido ya existe" },;
-                        "nombre" =>          {  "required"     => "El nombre del transportista es un dato requerido",;
-                                                "unique"       => "El nombre del transportista introducido ya existe" }}
-
+   ::hValidators  := {  "descripcion" =>           {  "required"     => "La descripción es un dato requerido",;
+                                                      "unique"       => "La descripción introducida ya existe" },;
+                        "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
+                                                      "unique"       => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -243,13 +229,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLTransportistasModel FROM SQLBaseModel
+CLASS SQLComentariosModel FROM SQLBaseModel
 
-   DATA cTableName                           INIT "transportistas"
-
-   MESSAGE getNombre( uuid )                 INLINE ( ::getField( "nombre", "uuid", uuid ) )
-
-   MESSAGE getNombreWhereCodigo( codigo )   INLINE ( ::getField( "nombre", "codigo", codigo ) )
+   DATA cTableName               INIT "comentarios"
 
    METHOD getColumns()
 
@@ -257,24 +239,19 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLTransportistasModel
+METHOD getColumns() CLASS SQLComentariosModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "text"      => "Identificador"                           ,;
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "text"      => "Uuid"                                    ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 9 ) NOT NULL UNIQUE"            ,;
-                                             "default"   => {|| space( 9 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
+                                             "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
-                                             "default"   => {|| space( 140 ) } }                      )
-
-   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                           ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
 
 RETURN ( ::hColumns )
 
@@ -288,11 +265,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TransportistasRepository FROM SQLBaseRepository
+CLASS ComentariosRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLTransportistasModel():getTableName() ) 
-
-   METHOD getNombres()
+   METHOD getTableName()                  INLINE ( SQLComentariosModel():getTableName() ) 
 
    METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
 
@@ -301,14 +276,4 @@ CLASS TransportistasRepository FROM SQLBaseRepository
 END CLASS
 
 //---------------------------------------------------------------------------//
-
-METHOD getNombres() CLASS TransportistasRepository
-
-   local cSentence     := "SELECT nombre FROM " + ::getTableName() + " ORDER BY nombre ASC"
-   local aNombres      := ::getDatabase():selectFetchArrayOneColumn( cSentence )
-
-   ains( aNombres, 1, "", .t. )
-
-RETURN ( aNombres )
-
 //---------------------------------------------------------------------------//

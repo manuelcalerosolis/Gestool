@@ -2573,7 +2573,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    */
 
    DEFINE DIALOG oDlg RESOURCE "FACCLI" TITLE LblTitle( nMode ) + "facturas a clientes"
-
+      
       /*
       Define de los Folders
       ------------------------------------------------------------------------
@@ -9423,7 +9423,7 @@ return Trans( nTotal, cPorDiv )
 
 Static Function EdtRecMenu( aTmp, oDlg )
 
-   MENU oMenu
+   MENU oMenu 
 
       MENUITEM    "&1. Rotor"
 

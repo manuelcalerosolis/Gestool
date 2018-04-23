@@ -692,8 +692,6 @@ CLASS UsuariosRepository FROM SQLBaseRepository
 
    METHOD validSuperUserPassword( cPassword )
 
-   METHOD getWhereUuid( uuid ) 
-
    METHOD fetchDirect()
 
    METHOD Crypt( cPassword )     INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
@@ -724,16 +722,6 @@ METHOD validSuperUserPassword( cPassword ) CLASS UsuariosRepository
    if ( alltrim( cPassword ) != __encryption_key__ ) 
       cSQL     +=       "AND password = " + quoted( ::Crypt( cPassword ) )    + " " 
    end if 
-   cSQL        +=    "LIMIT 1"
-
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getWhereUuid( Uuid ) CLASS UsuariosRepository
-
-   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
-   cSQL        +=    "WHERE uuid = " + quoted( uuid )                         + " "    
    cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )

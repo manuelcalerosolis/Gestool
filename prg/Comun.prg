@@ -2703,8 +2703,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
-
-   oGrupo:nBigItems     := 10
+   oGrupo:nBigItems     := 14
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2781,6 +2780,15 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Comentarios'
+   oItem:cMessage       := 'Solicitar comentario'
+   oItem:bAction        := {|| ComentariosController():New():ActivateNavigatorView() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_message_16"
+   oItem:cBmpBig        := "gc_message_32"
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Clientes'
    oItem:cMessage       := 'Solicitar cliente'
    oItem:bAction        := {|| ClientesController():New():ActivateNavigatorView() }
@@ -2807,6 +2815,36 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_factory_16"
    oItem:cBmpBig        := "gc_factory_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Tipos de artículo'
+   oItem:cMessage       := 'Tipos de artículo'
+   oItem:bAction        := {|| ArticulosTipoController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_objects_16"
+   oItem:cBmpBig        := "gc_objects_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Temporadas de artículo'
+   oItem:cMessage       := 'Temporadas de artículo'
+   oItem:bAction        := {|| ArticulosTemporadaController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_cloud_sun__16"
+   oItem:cBmpBig        := "gc_cloud_sun_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Categorias de artículo'
+   oItem:cMessage       := 'Categorias de artículo'
+   oItem:bAction        := {|| ArticulosCategoriasController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_photographic_filters_16"
+   oItem:cBmpBig        := "gc_photographic_filters_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

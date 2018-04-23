@@ -72,7 +72,6 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD setColumns( hColumns )
 
    DEFAULT hColumns                    := SQLMovimientosAlmacenModel():getColumns()
@@ -114,7 +113,7 @@ RETURN ( Self )
 
 METHOD DeleteByText( cNameFilter, cTableToFilter )
 
-      ::oModel:deleteById( { ::getId( cNameFilter, cTableToFilter ) } )
+   ::oModel:deleteById( { ::getId( cNameFilter, cTableToFilter ) } )
 
 RETURN ( Self )   
 

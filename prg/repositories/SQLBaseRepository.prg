@@ -38,6 +38,9 @@ CLASS SQLBaseRepository
    METHOD getColumnsWithBlank( cColumn )
    METHOD getNombresWithBlank()                 INLINE ( ::getColumnsWithBlank( 'nombre' ) )
 
+   METHOD getWhereUuid( Uuid )
+   METHOD getWhereCodigo( cCodigo )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -61,8 +64,8 @@ RETURN ( hResult )
 
 METHOD getColumnWhereId( id, cColumn ) 
 
-   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + space( 1 ) + ;
-                        "WHERE id = " + quoted( id )                    + space( 1 ) + ;
+   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
+                        "WHERE id = " + quoted( id )                    + " " + ;
                         "LIMIT 1"
 
 RETURN ( ::getDatabase():getValue( cSQL ) )
@@ -71,8 +74,8 @@ RETURN ( ::getDatabase():getValue( cSQL ) )
 
 METHOD getColumnWhereUuid( uuid, cColumn ) 
 
-   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + space( 1 ) + ;
-                        "WHERE uuid = " + quoted( uuid )                + space( 1 ) + ;
+   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
+                        "WHERE uuid = " + quoted( uuid )                + " " + ;
                         "LIMIT 1"
 
 RETURN ( ::getDatabase():getValue( cSQL ) )
@@ -103,11 +106,11 @@ RETURN ( aColumns )
 METHOD getUuidWhereColumn( uValue, cColumn, uDefault ) 
 
    local uuid
-   local cSQL     := "SELECT uuid FROM " + ::getTableName()                + space( 1 ) + ;
-                        "WHERE " + cColumn + " = " + toSqlString( uValue ) + space( 1 ) + ;
-                        "LIMIT 1"
+   local cSQL  := "SELECT uuid FROM " + ::getTableName()                + " " + ;
+                     "WHERE " + cColumn + " = " + toSqlString( uValue ) + " " + ;
+                     "LIMIT 1"
 
-   uuid           := ::getDatabase():getValue( cSQL )
+   uuid        := ::getDatabase():getValue( cSQL )
    if !empty( uuid )
       RETURN ( uuid )
    end if 
@@ -115,3 +118,24 @@ METHOD getUuidWhereColumn( uValue, cColumn, uDefault )
 RETURN ( uDefault )
 
 //---------------------------------------------------------------------------//
+
+METHOD getWhereUuid( Uuid )
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE uuid = " + quoted( uuid )                         + " "    
+   cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereCodigo( cCodigo )
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE codigo = " + quoted( cCodigo )                    + " "    
+   cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+

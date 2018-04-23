@@ -1,11 +1,11 @@
 HB                   = 	\harbour_bcc582\
 
 HBINCLUDE            = 	\harbour_bcc582\include
-FWINCLUDE            = 	\fwh1709\Include
+FWINCLUDE            = 	\fwh1705\Include
 GTINCLUDE            = 	.\Include
 
 HBLIB                = 	\harbour_bcc582\lib
-FWLIB                = 	\fwh1709\lib
+FWLIB                = 	\fwh1705\lib
 
 RESOURCE             = 	.\resource
 
@@ -14,12 +14,12 @@ BORLANDLIB           = 	\bcc582\lib
 
 IMG2PDFLIB           = 	\img2Pdf
 
-OBJ                  = 	obj1709
+OBJ                  = 	obj1705
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	.\C
 
-PPO 					   = 	ppo1709
+PPO 					   = 	ppo1705
 
 EXE 					   = 	bin\$(TARGET).exe
 
@@ -354,6 +354,11 @@ ProvinciasController.prg													\
 PaisesController.prg															\
 LenguajesController.prg														\
 DireccionesController.prg 													\
+ComentariosController.prg 													\
+ComentariosLineasController.prg 											\
+ArticulosTipoController.prg 												\
+ArticulosTemporadaController.prg 										\
+ArticulosCategoriasController.prg 										\
 FabricantesController.prg 													\
 ImagenesController.prg 														\
 AgentesController.prg 														\
@@ -638,7 +643,7 @@ CentroCosteModel.prg 														\
 TransportistasModel.prg 													\
 MdiChild.prg 																	\
 SQLComboSelector.prg 														\
-Folder.prg 																	\
+CompanyManager.prg 															\
 TercerosController.prg 														\
 ClientesController.prg 														\
 ProveedoresController.prg 													\
@@ -984,6 +989,11 @@ ProvinciasController.obj       											\
 PaisesController.obj       												\
 LenguajesController.obj  		     										\
 DireccionesController.obj       											\
+ComentariosController.obj       											\
+ComentariosLineasController.obj       									\
+ArticulosTipoController.obj       										\
+ArticulosTemporadaController.obj       								\
+ArticulosCategoriasController.obj       								\
 FabricantesController.obj       											\
 ImagenesController.obj       												\
 AgentesController.obj     		  											\
@@ -1262,7 +1272,7 @@ MdiChild.obj 																	\
 TransportistasModel.obj 													\
 SQLComboSelector.obj 														\
 TiposNotas.obj       														\
-Folder.obj 																	\
+CompanyManager.obj 															\
 TercerosController.obj 														\
 ClientesController.obj 														\
 ProveedoresController.obj 													\
@@ -1601,6 +1611,11 @@ $(OBJ)\ProvinciasController.obj    										+
 $(OBJ)\PaisesController.obj    											+
 $(OBJ)\LenguajesController.obj    										+
 $(OBJ)\DireccionesController.obj    									+
+$(OBJ)\ComentariosController.obj    									+
+$(OBJ)\ComentariosLineasController.obj    							+
+$(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\ArticulosTemporadaController.obj    							+
+$(OBJ)\ArticulosCategoriasController.obj    							+
 $(OBJ)\FabricantesController.obj    									+
 $(OBJ)\ImagenesController.obj    										+
 $(OBJ)\AgentesController.obj    											+
@@ -1875,7 +1890,7 @@ $(OBJ)\CentroCosteModel.obj 												+
 $(OBJ)\TransportistasModel.obj 											+
 $(OBJ)\MdiChild.obj 															+
 $(OBJ)\SQLComboSelector.obj 												+
-$(OBJ)\Folder.obj 															+
+$(OBJ)\CompanyManager.obj 													+
 $(OBJ)\TercerosController.obj 											+
 $(OBJ)\ClientesController.obj 											+
 $(OBJ)\ProveedoresController.obj 										+
