@@ -56,6 +56,8 @@ CLASS SQLRowSet
 
    METHOD getFindValue()
 
+   METHOD setFilter( bFilter )                        INLINE ( if( !empty( ::oRowSet ), ::oRowSet:setFilter( bFilter ), ) ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//

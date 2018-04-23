@@ -14,7 +14,7 @@ ENDCLASS
 METHOD addColumns()
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
+      :cSortOrder          := 'movimientos_almacen.id'
       :cHeader             := 'Id'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
@@ -22,7 +22,7 @@ METHOD addColumns()
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid'
+      :cSortOrder          := 'movimientos_almacen.uuid'
       :cHeader             := 'Uuid'
       :nWidth              := 180
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
@@ -31,7 +31,7 @@ METHOD addColumns()
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'numero'
+      :cSortOrder          := 'movimientos_almacen.numero'
       :cHeader             := 'Número'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'numero' ) }

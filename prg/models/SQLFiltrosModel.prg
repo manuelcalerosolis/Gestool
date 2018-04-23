@@ -8,10 +8,10 @@ CLASS SQLFiltrosModel FROM SQLBaseModel
 
    DATA cTableToFilter
 
+   DATA cTableName                                    INIT "filtros"
+   
    METHOD setTableToFilter( cTableToFilter )          INLINE ( ::cTableToFilter := cTableToFilter )
    METHOD getTableToFilter()                          INLINE ( ::cTableToFilter )
-
-   DATA cTableName                                    INIT "filtros"
 
    METHOD getColumns()
 

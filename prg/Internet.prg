@@ -1183,7 +1183,7 @@ METHOD SetText( cText, nLevel ) CLASS TSndRecInf
    end if
 
    if Empty( ::cFilTxt )
-      ::cFilTxt      := cGetNewFileName( cPatLog() + "Snd" + Dtos( Date() ) + StrTran( Time(), ":", "" ) ) + ".Txt"
+      ::cFilTxt      := cGetNewFileName( cPatLog() + "Snd" + dtos( date() ) + strtran( time(), ":", "" ) ) + ".Txt"
       ::hFilTxt      := fCreate( ::cFilTxt )
    end if
 

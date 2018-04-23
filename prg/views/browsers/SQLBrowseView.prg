@@ -143,7 +143,7 @@ METHOD Create( oWindow )
       RETURN ( nil )
    endif
 
-   ::oBrowse                  := SQLXBrowse():New( oWindow )
+   ::oBrowse                  := SQLXBrowse():New( ::oController, oWindow )
    ::oBrowse:l2007            := .f.
 
    ::oBrowse:lRecordSelector  := .f.

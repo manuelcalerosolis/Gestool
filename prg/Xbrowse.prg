@@ -2959,9 +2959,11 @@ METHOD GoDown( nDown ) CLASS TXBrowse
 
             if ! ::FullPaint()
                XBrwScrollRow( ::hWnd, ::nRowHeight, ::HeaderHeight(), nLines * ::nRowHeight )
-               if ! Empty( ::aBookMarks )
-                  ADel( ::aBookMarks, 1 )
-                  ::aBookMarks[ ::nRowSel ] := ::BookMark
+               if !empty( ::aBookMarks )  // MCS
+                  adel( ::aBookMarks, 1 )
+                  if ( ::nRowSel > 0 .and. ::nRowSel < len( ::aBookMarks ) )
+                     ::aBookMarks[ ::nRowSel ] := ::BookMark
+                  end if 
                endif
                if n < nDown
                   ::DrawLine( .f. )
