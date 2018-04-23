@@ -2703,7 +2703,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 14
+   oGrupo:nBigItems     := 15
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2845,6 +2845,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_photographic_filters_16"
    oItem:cBmpBig        := "gc_photographic_filters_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Almacenes'
+   oItem:cMessage       := 'Almacenes'
+   oItem:bAction        := {|| AlmacenesController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_package_16"
+   oItem:cBmpBig        := "gc_package_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

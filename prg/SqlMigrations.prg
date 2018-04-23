@@ -195,6 +195,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosCategoriasModel():New() )
 
+   aadd( ::aModels, SQLAlmacenesModel():New() )
+
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
    aadd( ::aModels, SQLTageableModel():New() )
