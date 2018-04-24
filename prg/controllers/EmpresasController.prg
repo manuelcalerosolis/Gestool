@@ -64,7 +64,6 @@ METHOD New() CLASS EmpresasController
    ::oDireccionesController      := DireccionesController():New( self )
    ::oDireccionesController:oValidator:setDialog( ::oDialogView )
 
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
@@ -164,6 +163,7 @@ METHOD addColumns() CLASS EmpresasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Uuid'
+      :cSortOrder          := 'uuid'
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -172,6 +172,7 @@ METHOD addColumns() CLASS EmpresasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Código'
+      :cSortOrder          := 'codigo'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -187,6 +188,7 @@ METHOD addColumns() CLASS EmpresasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'NIF/CIF'
+      :cSortOrder          := 'nif'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nif' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -195,6 +197,7 @@ METHOD addColumns() CLASS EmpresasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Administrador'
+      :cSortOrder          := 'administrador'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'administrador' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -228,6 +231,7 @@ METHOD Activating() CLASS EmpresasView
    end if 
 
 RETURN ( self )
+
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS EmpresasView

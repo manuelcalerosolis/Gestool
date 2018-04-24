@@ -144,8 +144,8 @@ CLASS TAcceso
    METHOD DisableComboFilter()            INLINE ( if( !empty( ::oComboFilter ), ( ::setComboFilterChange( nil ), ::oComboFilter:Hide() ), ) )
    METHOD EnableComboFilter( aItems )
    METHOD SetDefaultComboFilter()         INLINE ( if( !empty( ::oComboFilter ), ::oComboFilter:Set( __txtFilters__ ), ) )
-   METHOD SetComboFilter( cItem )         INLINE ( if( !empty( ::oComboFilter ) .and. !empty( cItem ), ( ::oComboFilter:Set( cItem ), Eval( ::oComboFilter:bChange ) ), ) )
-   METHOD AddComboFilter( cItem )         INLINE ( if( !empty( ::oComboFilter ) .and. !empty( cItem ), ::oComboFilter:Add( cItem ), ) )
+   METHOD SetComboFilter( cItem )         INLINE ( if( !empty( ::oComboFilter ), ( ::oComboFilter:Set( cItem ), Eval( ::oComboFilter:bChange ) ), ) )
+   METHOD AddComboFilter( cItem )         INLINE ( if( !empty( ::oComboFilter ), ::oComboFilter:Add( cItem ), ) )
 
    METHOD SetGetChange( bBlock )          INLINE ( if( !empty( ::oGet ), ( ::oGet:bChange       := bBlock ), ) )
    METHOD SetGetPostKey( bBlock )         INLINE ( if( !empty( ::oGet ), ( ::oGet:bPostKey      := bBlock ), ) )

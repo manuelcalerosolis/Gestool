@@ -7,13 +7,13 @@ static oAuth
 
 CLASS AuthManager
 
-   DATA id
-   DATA uuid
-   DATA nombre
-   DATA codigo
-   DATA email
-   DATA password
-   DATA rolUuid
+   DATA id                       INIT 0
+   DATA uuid                     INIT ""
+   DATA nombre                   INIT ""
+   DATA codigo                   INIT ""
+   DATA email                    INIT ""
+   DATA password                 INIT ""
+   DATA rolUuid                  INIT ""
 
    METHOD New()
 

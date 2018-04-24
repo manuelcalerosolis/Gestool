@@ -49,6 +49,12 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD setFilter()                                                                                                       
 
+   METHOD buildFilter( cField, cExpresion, cValue )
+
+   METHOD buildInFilter( cField, cValue )
+
+   METHOD reBuildRowSet()
+
    METHOD getComboBoxOrder()                          INLINE ( if( !empty( ::oSelectorView ) .and. ::oSelectorView:isActive(), ::oSelectorView:getComboBoxOrder(), ::oWindowsBar:oComboBox() ) )
 
    METHOD onChangeCombo( oColumn )
@@ -131,10 +137,10 @@ METHOD ActivateNavigatorView()
 
    ::closeAllWindows()
    
-   ::oModel:setNavigatorColumnOrderFromModel( ::getName() )
-   ::oModel:setNavigatorColumnOrientationFromModel( ::getName() )
+   ::getModel():setNavigatorColumnOrderFromModel( ::getName() )
+   ::getModel():setNavigatorColumnOrientationFromModel( ::getName() )
 
-   ::oRowSet:build( ::oModel:getSelectSentence() )
+   ::oRowSet:build( ::getModel():getSelectSentence() )
 
    if !empty( ::oRowSet:get() )
 
@@ -163,10 +169,10 @@ METHOD ActivateSelectorView( lCenter )
       RETURN ( nil )
    end if
 
-   ::oModel:setSelectorColumnOrderFromModel( ::getName() )
-   ::oModel:setSelectorColumnOrientationFromModel( ::getName() )
+   ::getModel():setSelectorColumnOrderFromModel( ::getName() )
+   ::getModel():setSelectorColumnOrientationFromModel( ::getName() )
 
-   ::oRowSet:build( ::oModel:getSelectSentence() )
+   ::oRowSet:build( ::getModel():getSelectSentence() )
 
 RETURN ( ::oSelectorView:Activate( lCenter ) )
 
@@ -201,9 +207,9 @@ METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
       RETURN ( Self )    
    end if    
     
-   DEFAULT cColumns  := ::oModel:getSerializeColumns()       
+   DEFAULT cColumns  := ::getModel():getSerializeColumns()       
     
-   oRowSet           := ::oModel:newRowSet( cSentence )      
+   oRowSet           := ::getModel():newRowSet( cSentence )      
     
    if empty( oRowSet )      
       RETURN ( Self )    
@@ -246,10 +252,9 @@ RETURN ( Self )
     
 //---------------------------------------------------------------------------//
 
-METHOD setFilter()         
+METHOD setFilter( cFilter )         
 
-   local nId      
-   local cFilter  := ::oWindowsBar:GetComboFilter()
+   DEFAULT cFilter   := ::oWindowsBar:GetComboFilter()
 
    if empty( cFilter )
 
@@ -258,16 +263,65 @@ METHOD setFilter()
       ::hideEditAndDeleteButtonFilter()
    
    else 
-   
+
       ::getModel():setFilterWhere( ::oFilterController:getFilterSentence( cFilter ) )
    
       ::showEditAndDeleteButtonFilter()
    
    end if  
 
+   ::reBuildRowSet()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildFilter( cField, cExpresion, cValue )
+
+   local cFilter  := ""
+
+   if !empty( cField ) .and. !empty( cExpresion ) .and. !empty( cValue )
+      cFilter     := ( cField ) + " " + ( cExpresion ) + " " + ( cValue )
+   end if 
+
+   ::oFilterController:setComboFilter( cFilter )   
+
+   ::getModel():setFilterWhere( cFilter )
+
+   ::reBuildRowSet()
+   
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildInFilter( cField, cValue )
+
+   local cFilter  := ""
+
+   if !empty( cField ) .and. !empty( cValue )
+      cFilter     := ( cField ) + " IN (" + toSqlString( cValue ) + ")"
+   end if 
+
+   msgalert( cFilter, "cFilter" )
+
+   ::oFilterController:setComboFilter( cFilter )   
+
+   ::getModel():setFilterWhere( cFilter )
+
+   ::reBuildRowSet()
+   
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+
+METHOD reBuildRowSet()
+
+   local nId
+
    nId            := ::oRowSet:fieldGet( ::getModelColumnKey() )
    
-   ::oRowSet:build( ::oModel:getSelectSentence() )
+   ::oRowSet:build( ::getModel():getSelectSentence() )
 
    ::oRowSet:findString( nId )
       

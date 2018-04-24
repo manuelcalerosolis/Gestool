@@ -25,8 +25,10 @@ CLASS SQLFiltrosController FROM SQLBaseController
    METHOD getId( cFilter )
 
    METHOD Append()
-   METHOD EditByText( cFilter )              INLINE ( ::Edit( ::getId( cFilter ) ) )
-   METHOD DeleteByText( cFilter )      
+   METHOD editByText( cFilter )              INLINE ( ::Edit( ::getId( cFilter ) ) )
+   METHOD deleteByText( cFilter )      
+
+   METHOD setComboFilter( cText )
 
    METHOD setTableToFilter( cTableToFilter ) INLINE ( ::oModel:setTableToFilter( cTableToFilter ) )
    METHOD getTableToFilter()                 INLINE ( ::oModel:getTableToFilter() )
@@ -114,6 +116,14 @@ RETURN ( Self )
 METHOD DeleteByText( cNameFilter, cTableToFilter )
 
    ::oModel:deleteById( { ::getId( cNameFilter, cTableToFilter ) } )
+
+RETURN ( Self )   
+
+//---------------------------------------------------------------------------//
+
+METHOD SetComboFilter( cText )
+
+   ::oSender:oWindowsBar:setComboFilter( cText )
 
 RETURN ( Self )   
 
