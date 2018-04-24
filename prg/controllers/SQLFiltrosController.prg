@@ -32,7 +32,8 @@ CLASS SQLFiltrosController FROM SQLBaseController
 
    METHOD loadedBlankBuffer()
 
-   METHOD setComboFilter( cText )
+   METHOD setComboFilter( cText )            INLINE ( ::oSender:oWindowsBar:setComboFilter( cText ) )
+   METHOD setComboFilterItem( cText )        INLINE ( ::oSender:oWindowsBar:setComboFilterItem( cText ) )
 
    METHOD setTableToFilter( cTableToFilter ) INLINE ( ::oModel:setTableToFilter( cTableToFilter ) )
    METHOD getTableToFilter()                 INLINE ( ::oModel:getTableToFilter() )
@@ -144,14 +145,6 @@ RETURN ( Self )
 METHOD DeleteByText( cNameFilter, cTableToFilter )
 
    ::oModel:deleteById( { ::getId( cNameFilter, cTableToFilter ) } )
-
-RETURN ( Self )   
-
-//---------------------------------------------------------------------------//
-
-METHOD SetComboFilter( cText )
-
-   ::oSender:oWindowsBar:setComboFilter( cText )
 
 RETURN ( Self )   
 

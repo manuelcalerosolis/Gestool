@@ -128,8 +128,10 @@ CLASS SQLBaseModel
    METHOD addOthersWhere( cSQLSelect )
 
    METHOD setFilterWhere( cWhere )                    INLINE ( ::cFilterWhere    := cWhere )
-   METHOD addFilterWhere( cSQLSelect )
    METHOD clearFilterWhere()                          INLINE ( ::cFilterWhere    := nil )
+   METHOD getFilterWhere( cWhere )                    INLINE ( ::cFilterWhere )
+   METHOD insertFilterWhere( cWhere )                  
+   METHOD addFilterWhere( cSQLSelect )
 
    METHOD addFindWhere( cSQLSelect )
 
@@ -380,6 +382,18 @@ METHOD addEmpresaWhere( cSQLSelect )
    cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "empresa_uuid = " + toSQLString( uuidEmpresa() )
 
 RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertFilterWhere( cWhere )
+
+   if empty( ::cFilterWhere )
+      ::cFilterWhere    := cWhere
+   else 
+      ::cFilterWhere    += " AND " + cWhere
+   end if 
+
+RETURN ( ::cFilterWhere )
 
 //---------------------------------------------------------------------------//
 
