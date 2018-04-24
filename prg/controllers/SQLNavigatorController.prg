@@ -43,23 +43,6 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD onKeyChar( nKey )
 
-   METHOD appendFilter()
-   METHOD editFilter()
-   METHOD deleteFilter()                                
-
-   METHOD getFilters()                                INLINE ( if( !empty( ::oFilterController ), ::oFilterController:getFilters(), ) ) 
-
-   METHOD setFilter()                                                                                                       
-
-   METHOD buildFilter( cExpresion )
-   METHOD buildInFilter( cField, cValue )             INLINE ( ::buildFilter( if( !empty( cField ) .and. !empty( cValue ), cField + " IN (" + toSqlString( cValue ) + ")", "" ) ) )
-   METHOD buildNotInFilter( cField, cValue )          INLINE ( ::buildFilter( if( !empty( cField ) .and. !empty( cValue ), cField + " NOT IN (" + toSqlString( cValue ) + ")", "" ) ) )
-   METHOD buildBiggerFilter( cField, cValue )         INLINE ( ::buildFilter( if( !empty( cField ) .and. !empty( cValue ), cField + " > (" + toSqlString( cValue ) + ")", "" ) ) )
-   METHOD buildSmallerFilter( cField, cValue )        INLINE ( ::buildFilter( if( !empty( cField ) .and. !empty( cValue ), cField + " < (" + toSqlString( cValue ) + ")", "" ) ) )
-   METHOD buildStartLikeFilter( cField, cValue )      INLINE ( ::buildFilter( if( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( cValue ) + "%", "" ) ) )
-   METHOD buildEndLikeFilter( cField, cValue )        INLINE ( ::buildFilter( if( !empty( cField ) .and. !empty( cValue ), cField + " LIKE %" + toSqlString( cValue ), "" ) ) )
-   METHOD buildLikeFilter( cField, cValue )           INLINE ( ::buildFilter( if( !empty( cField ) .and. !empty( cValue ), cField + " LIKE %" + toSqlString( cValue ) + "%", "" ) ) )
-
    METHOD reBuildRowSet()
 
    METHOD getComboBoxOrder()                          INLINE ( if( !empty( ::oSelectorView ) .and. ::oSelectorView:isActive(), ::oSelectorView:getComboBoxOrder(), ::oWindowsBar:oComboBox() ) )
@@ -81,6 +64,36 @@ CLASS SQLNavigatorController FROM SQLBaseController
    METHOD showEditAndDeleteButtonFilter()
 
    METHOD getIds()                                    INLINE ( ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected ) )
+
+   // Filters manege-----------------------------------------------------------
+
+   METHOD appendFilter()
+   METHOD editFilter()
+   METHOD deleteFilter()                                
+
+   METHOD getFilters()                                INLINE ( iif( !empty( ::oFilterController ), ::oFilterController:getFilters(), ) ) 
+   METHOD setFilter()                                                                                                       
+
+   METHOD buildFilter( cExpresion )
+   METHOD buildInFilter( cField, cValue )             INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " IN (" + toSqlString( cValue ) + ")", "" ) ) )
+   METHOD buildNotInFilter( cField, cValue )          INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " NOT IN (" + toSqlString( cValue ) + ")", "" ) ) )
+   METHOD buildBiggerFilter( cField, cValue )         INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " > (" + toSqlString( cValue ) + ")", "" ) ) )
+   METHOD buildSmallerFilter( cField, cValue )        INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " < (" + toSqlString( cValue ) + ")", "" ) ) )
+   METHOD buildStartLikeFilter( cField, cValue )      INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( cValue ) + "%", "" ) ) )
+   METHOD buildEndLikeFilter( cField, cValue )        INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE %" + toSqlString( cValue ), "" ) ) )
+   METHOD buildLikeFilter( cField, cValue )           INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE %" + toSqlString( cValue ) + "%", "" ) ) )
+
+   METHOD buildCustomFilter( cField, cValue, cOperator )
+   METHOD buildCustomInFilter( cField, cValue )       INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "IN (...)" ),;
+                                                                     ::buildInFilter( cField, cValue ), ) )
+   METHOD buildCustomNotInFilter( cField, cValue )    INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "NOT IN (...)" ),;
+                                                                     ::buildNotInFilter( cField, cValue ), ) )
+   METHOD buildCustomBiggerFilter( cField, cValue )   INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "> (...)" ),;
+                                                                     ::buildBiggerFilter( cField, cValue ), ) )
+   METHOD buildCustomSmallerFilter( cField, cValue )  INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "< (...)" ),;
+                                                                     ::buildSmallerFilter( cField, cValue ), ) )
+   METHOD buildCustomLikeFilter( cField, cValue )     INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE> (...)" ),;
+                                                                     ::buildLikeFilter( cField, cValue ), ) )
 
 END CLASS
 
@@ -319,6 +332,21 @@ METHOD buildFilter( cFilter )
    ::reBuildRowSet()
    
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildCustomFilter( cField, cValue, cOperator )
+
+   ::oFilterController:oCustomView:setText( "'" + cField + "' " + cOperator )
+   ::oFilterController:oCustomView:setValue( cValue )
+
+   if !( ::oFilterController:oCustomView:Activate() )
+      RETURN ( .f. )
+   end if 
+
+   cValue      := ::oFilterController:oCustomView:getValue()
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

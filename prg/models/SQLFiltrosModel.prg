@@ -23,7 +23,7 @@ CLASS SQLFiltrosModel FROM SQLBaseModel
 
    METHOD getId( cNombre, cTabla )                    INLINE ( ::getFilterField( 'id', cNombre, cTabla ) )
 
-   METHOD getTablaAttribute( value )                  INLINE ( msgStop( if( empty( value ), ::cTableToFilter, value ) ), if( empty( value ), ::cTableToFilter, value ) )
+   METHOD getTablaAttribute( value )                  INLINE ( if( empty( value ), ::cTableToFilter, value ) )
 
 END CLASS
 

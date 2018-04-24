@@ -12,6 +12,8 @@ CLASS SQLFiltrosController FROM SQLBaseController
 
    DATA cName
 
+   DATA oCustomView
+
    METHOD New()
    METHOD End()
 
@@ -45,6 +47,8 @@ METHOD New( oSender )
 
    ::oDialogView                       := SQLFilterView():New( self )
 
+   ::oCustomView                       := SQLCustomFilterView():New( self )
+
    ::oModel                            := SQLFiltrosModel():New( self )
    
    ::oValidator                        := SQLFiltrosValidator():New( self )
@@ -60,6 +64,11 @@ METHOD End( oSender )
    if !empty( ::oDialogView )
       ::oDialogView:End()
       ::oDialogView                    := nil
+   end if 
+
+   if !empty( ::oCustomView )
+      ::oCustomView:End()
+      ::oCustomView                    := nil
    end if 
 
    if !empty( ::oModel )
