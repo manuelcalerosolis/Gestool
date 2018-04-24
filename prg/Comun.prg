@@ -2833,7 +2833,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cMessage       := 'Temporadas de artículo'
    oItem:bAction        := {|| ArticulosTemporadaController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_cloud_sun__16"
+   oItem:cBmp           := "gc_cloud_sun_16"
    oItem:cBmpBig        := "gc_cloud_sun_32"
    oItem:lShow          := .f.
 

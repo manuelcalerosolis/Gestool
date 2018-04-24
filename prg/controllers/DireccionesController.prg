@@ -271,6 +271,10 @@ CLASS DireccionesView FROM SQLBaseView
 
    METHOD ExternalRedefine( oDialog )
 
+   METHOD ExternalCoreRedefine( oDialog )
+
+   METHOD ExternalContactRedefine( oDialog )   
+
    METHOD StartDialog()
    
 END CLASS
@@ -330,6 +334,16 @@ RETURN ( ::oDialog:nResult )
 
 METHOD ExternalRedefine( oDialog )
 
+   ::ExternalCoreRedefine( oDialog )
+
+   ::ExternalContactRedefine( oDialog )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ExternalCoreRedefine( oDialog )
+
    REDEFINE GET   ::oGetDireccion ;
       VAR         ::oController:oModel:hBuffer[ "direccion" ] ;
       ID          1010 ;
@@ -378,6 +392,12 @@ METHOD ExternalRedefine( oDialog )
       OF          oDialog
 
    ::oGetPais:bHelp  := {|| ::oController:oPaisesController:getSelectorPais( ::oGetPais ), ::oGetPais:lValid() }
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ExternalContactRedefine( oDialog )
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
       ID          1070 ;

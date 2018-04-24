@@ -144,7 +144,7 @@ METHOD Activate() CLASS ArticulosTemporadaView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_objects_48" ;
+      RESOURCE    "gc_cloud_sun_48" ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
