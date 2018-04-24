@@ -3321,18 +3321,14 @@ RETURN ( if( oError:GenCode == EG_ZERODIV, 0, Break( oError ) ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION Quoted( uValue, lAlert )
+FUNCTION Quoted( uValue )
 
    if ( hb_isnumeric( uValue ) )
-      RETURN ( rtrim( str( uValue ) ) )
+      RETURN ( alltrim( str( uValue ) ) )
    end if 
 
    if ( hb_ischar( uValue ) .or. hb_ismemo( uValue ) )
-      if empty( getSqlDatabase() )
-         RETURN ( "'" + rtrim( uValue ) + "'" )
-      else 
-         RETURN ( "'" + rtrim( getSqlDatabase():escapeStr( uValue ) ) + "'" )
-      end if 
+      RETURN ( "'" + alltrim( getSqlDatabase():escapeStr( uValue ) ) + "'" )
    end if 
 
 RETURN ( "''" )

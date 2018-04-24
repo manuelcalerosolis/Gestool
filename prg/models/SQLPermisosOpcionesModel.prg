@@ -88,8 +88,6 @@ METHOD getNivelRol( cUuidRol, cOption ) CLASS PermisosOpcionesRepository
                      "WHERE roles.uuid = " + quoted( cUuidRol )               + " " +  ;
                         "AND permisos_opciones.nombre = " + quoted( cOption )
 
-   logwrite( cSQL )
-
 RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//

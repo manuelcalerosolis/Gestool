@@ -28,6 +28,8 @@ CLASS SQLFiltrosController FROM SQLBaseController
    METHOD editByText( cFilter )              INLINE ( ::Edit( ::getId( cFilter ) ) )
    METHOD deleteByText( cFilter )      
 
+   METHOD loadedBlankBuffer()
+
    METHOD setComboFilter( cText )
 
    METHOD setTableToFilter( cTableToFilter ) INLINE ( ::oModel:setTableToFilter( cTableToFilter ) )
@@ -46,6 +48,8 @@ METHOD New( oSender )
    ::oModel                            := SQLFiltrosModel():New( self )
    
    ::oValidator                        := SQLFiltrosValidator():New( self )
+
+   ::oModel:setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } )
 
 RETURN ( Self )
 
@@ -99,6 +103,21 @@ RETURN ( ::oModel:getFilterSentence( cNameFilter, cTableToFilter ) )
 METHOD getId( cNameFilter, cTableToFilter )
 
 RETURN ( ::oModel:getId( cNameFilter, cTableToFilter ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadedBlankBuffer()
+
+   local cTextFilter    := ::oSender:oWindowsBar:getComboFilter()
+
+   if empty( cTextFilter )
+      RETURN ( Self )   
+   end if 
+
+   hset( ::oModel:hBuffer, "nombre", cTextFilter ) 
+   hset( ::oModel:hBuffer, "filtro", cTextFilter ) 
+
+RETURN ( Self )   
 
 //---------------------------------------------------------------------------//
 

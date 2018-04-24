@@ -40,6 +40,7 @@ METHOD addColumns()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre_movimiento'
+      :Cargo               := .f.
       :cHeader             := 'Tipo movimiento'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_movimiento' ) }
@@ -109,6 +110,7 @@ METHOD addColumns()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'total_precio'
+      :Cargo               := .f.
       :cHeader             := 'Total'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'total_precio' ) }
