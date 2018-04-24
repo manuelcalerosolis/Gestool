@@ -21,13 +21,13 @@ METHOD New() CLASS BancosController
 
    ::Super:New()
 
-   ::cTitle                      := "Agentes"
+   ::cTitle                      := "Bancos"
 
-   ::cName                       := "agentes"
+   ::cName                       := "bancos"
 
-   ::hImage                      := {  "16" => "gc_businessman2_16",;
-                                       "32" => "gc_businessman2_32",;
-                                       "48" => "gc_businessman2_48" }
+   ::hImage                      := {  "16" => "gc_central_bank_euro_16",;
+                                       "32" => "gc_central_bank_euro_32",;
+                                       "48" => "gc_central_bank_euro_48" }
 
    ::nLevel                      := Auth():Level( ::cName )
 
@@ -112,18 +112,26 @@ METHOD addColumns() CLASS BancosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'dni'
-      :cHeader             := 'DNI/CIF'
+      :cSortOrder          := 'sucursal'
+      :cHeader             := 'Sucursal'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'dni' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'sucursal' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'comision'
-      :cHeader             := 'Comisión'
+      :cSortOrder          := 'entidad'
+      :cHeader             := 'Entidad'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'comision' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'entidad' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'oficina'
+      :cHeader             := 'Oficina'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'oficina' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -172,12 +180,12 @@ METHOD Activate() CLASS BancosView
    local oGetDni
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "AGENTE" ;
-      TITLE       ::LblTitle() + "agente"
+      RESOURCE    "BANCOS_SQL" ;
+      TITLE       ::LblTitle() + "banco"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_businessman2_48" ;
+      RESOURCE    "gc_central_bank_euro_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -186,20 +194,40 @@ METHOD Activate() CLASS BancosView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+      ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "dni" ] ;
-      ID          110 ;
+   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "sucursal" ] ;
+      ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( CheckCif( ::oGetDni ) );
+      OF          ::oDialog
+
+   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "entidad" ] ;
+      ID          130 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "oficina" ] ;
+      ID          140 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
+
+      REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "contacto" ] ;
+      ID          150 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -242,7 +270,10 @@ END CLASS
 
 METHOD getValidators() CLASS BancosValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre del agente es un dato requerido" }  }
+   ::hValidators  := {  "nombre" =>                {  "required"     => "El nombre es un dato requerido",;
+                                                      "unique"       => "El nombre introducido ya existe" },;
+                        "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
+                                                      "unique"       => "EL código introducido ya existe"  } }
 
 RETURN ( ::hValidators )
 
@@ -285,10 +316,13 @@ METHOD getColumns() CLASS SQLBancosModel
                                              "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "entidad",            { "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+                                             "default"   => {|| space( 200 ) } }                       )
 
    hset( ::hColumns, "oficina",            { "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+                                             "default"   => {|| space( 200 ) } }                       )
+
+   hset( ::hColumns, "contacto",            { "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
 
 RETURN ( ::hColumns )
 
