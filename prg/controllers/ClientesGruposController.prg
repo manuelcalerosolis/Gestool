@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoController FROM SQLNavigatorController
+CLASS ClientesGruposController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -11,29 +11,29 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ArticulosTipoController
+METHOD New() CLASS ClientesGruposController
 
    ::Super:New()
 
-   ::cTitle                      := "Tipos de artículo"
+   ::cTitle                      := "Grupos de clientes"
 
-   ::cName                       := "articulos_tipo"
+   ::cName                       := "clientes_grupos"
 
-   ::hImage                      := {  "16" => "gc_objects_16",;
-                                       "32" => "gc_objects_32",;
-                                       "48" => "gc_objects_48" }
+   ::hImage                      := {  "16" => "gc_users3_16",;
+                                       "32" => "gc_users3_32",;
+                                       "48" => "gc_users3_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLArticulosTipoModel():New( self )
+   ::oModel                         := SQLClientesGruposModel():New( self )
 
-   ::oBrowseView                    := ArticulosTipoBrowseView():New( self )
+   ::oBrowseView                    := ClientesGruposBrowseView():New( self )
 
-   ::oDialogView                    := ArticulosTipoView():New( self )
+   ::oDialogView                    := ClientesGruposView():New( self )
 
-   ::oValidator                     := ArticulosTipoValidator():New( self, ::oDialogView )
+   ::oValidator                     := ClientesGruposValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := ArticulosTipoRepository():New( self )
+   ::oRepository                    := ClientesGruposRepository():New( self )
 
 
 RETURN ( Self )
@@ -48,7 +48,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoBrowseView FROM SQLBrowseView
+CLASS ClientesGruposBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -56,7 +56,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ArticulosTipoBrowseView
+METHOD addColumns() CLASS ClientesGruposBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -84,10 +84,10 @@ METHOD addColumns() CLASS ArticulosTipoBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'descripcion'
-      :cHeader             := 'Descripción'
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -101,7 +101,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoView FROM SQLBaseView
+CLASS ClientesGruposView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -109,21 +109,17 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ArticulosTipoView
+METHOD Activate() CLASS ClientesGruposView
 
-   local oDialog
    local oBmpGeneral
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ARTICULO_TIPO" ;
-      TITLE       ::LblTitle() + "tipo de artículo"
+      RESOURCE    "CLIENTES_GRUPO" ;
+      TITLE       ::LblTitle() + "grupo de clientes"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_objects_48" ;
+      RESOURCE    "gc_users3_48" ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
@@ -138,9 +134,9 @@ METHOD Activate() CLASS ArticulosTipoView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
-      VALID       ( ::oController:validate( "descripcion" ) ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -173,7 +169,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoValidator FROM SQLBaseValidator
+CLASS ClientesGruposValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -182,10 +178,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ArticulosTipoValidator
+METHOD getValidators() CLASS ClientesGruposValidator
 
-   ::hValidators  := {  "descripcion" =>          {  "required"     => "La descripción es un dato requerido",;
-                                                      "unique"       => "La descripción introducida ya existe" },;
+   ::hValidators  := {  "nombre" =>                {  "required"     => "El nombre es un dato requerido",;
+                                                      "unique"       => "El nombre introducido ya existe" },;
                         "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
                                                       "unique"       => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
@@ -199,9 +195,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosTipoModel FROM SQLBaseModel
+CLASS SQLClientesGruposModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "articulos_tipo"
+   DATA cTableName               INIT "clientes_grupos"
 
    METHOD getColumns()
 
@@ -209,7 +205,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLArticulosTipoModel
+METHOD getColumns() CLASS SQLClientesGruposModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                              "default"   => {|| 0 } }                                 )
@@ -217,10 +213,10 @@ METHOD getColumns() CLASS SQLArticulosTipoModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
-                                             "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 4 )"                            ,;
+                                             "default"   => {|| space( 4 ) } }                        )
 
-   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
 RETURN ( ::hColumns )
@@ -235,9 +231,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoRepository FROM SQLBaseRepository
+CLASS ClientesGruposRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLArticulosTipoModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLClientesGruposModel():getTableName() ) 
 
 END CLASS
 

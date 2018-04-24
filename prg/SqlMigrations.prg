@@ -191,6 +191,10 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
 
+   aadd( ::aModels, SQLRutasModel():New() )
+
+   aadd( ::aModels, SQLClientesGruposModel():New() )
+
    aadd( ::aModels, SQLArticulosTemporadaModel():New() )
 
    aadd( ::aModels, SQLArticulosCategoriasModel():New() )

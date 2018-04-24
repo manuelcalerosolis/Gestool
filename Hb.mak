@@ -357,6 +357,8 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+RutasController.prg 															\
+ClientesGruposController.prg 												\
 ArticulosTemporadaController.prg 										\
 ArticulosCategoriasController.prg 										\
 AlmacenesController.prg 													\
@@ -993,6 +995,8 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+RutasController.obj       													\
+ClientesGruposController.obj       										\
 ArticulosTemporadaController.obj       								\
 ArticulosCategoriasController.obj       								\
 AlmacenesController.obj       											\
@@ -1616,6 +1620,8 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\RutasController.obj    											+
+$(OBJ)\ClientesGruposController.obj    								+
 $(OBJ)\ArticulosTemporadaController.obj    							+
 $(OBJ)\ArticulosCategoriasController.obj    							+
 $(OBJ)\AlmacenesController.obj    										+

@@ -2703,7 +2703,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 15
+   oGrupo:nBigItems     := 17
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2855,6 +2855,26 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_package_16"
    oItem:cBmpBig        := "gc_package_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Grupos de clientes'
+   oItem:cMessage       := 'Grupos de clientes'
+   oItem:bAction        := {|| ClientesGruposController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_users3_16"
+   oItem:cBmpBig        := "gc_users3_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Rutas'
+   oItem:cMessage       := 'Rutas'
+   oItem:bAction        := {|| RutasController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_signpost3_16"
+   oItem:cBmpBig        := "gc_signpost3_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

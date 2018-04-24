@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS AgentesController FROM SQLNavigatorController
+CLASS BancosController FROM SQLNavigatorController
 
    DATA oDireccionesController
 
@@ -17,7 +17,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS AgentesController
+METHOD New() CLASS BancosController
 
    ::Super:New()
 
@@ -31,17 +31,17 @@ METHOD New() CLASS AgentesController
 
    ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                      := SQLAgentesModel():New( self )
+   ::oModel                      := SQLBancosModel():New( self )
 
-   ::oBrowseView                 := AgentesBrowseView():New( self )
+   ::oBrowseView                 := BancosBrowseView():New( self )
 
-   ::oDialogView                 := AgentesView():New( self )
+   ::oDialogView                 := BancosView():New( self )
 
-   ::oValidator                  := AgentesValidator():New( self, ::oDialogView )
+   ::oValidator                  := BancosValidator():New( self, ::oDialogView )
 
    ::oDireccionesController      := DireccionesController():New( self )
 
-   ::oRepository                 := AgentesRepository():New( self )
+   ::oRepository                 := BancosRepository():New( self )
 
    ::oPaisesController           := PaisesController():New( self )
    ::oProvinciasController       := ProvinciasController():New( self )
@@ -69,7 +69,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesBrowseView FROM SQLBrowseView
+CLASS BancosBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -77,7 +77,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS AgentesBrowseView
+METHOD addColumns() CLASS BancosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -137,7 +137,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesView FROM SQLBaseView
+CLASS BancosView FROM SQLBaseView
   
    DATA oGetProvincia
    DATA oGetPoblacion
@@ -153,7 +153,7 @@ CLASS AgentesView FROM SQLBaseView
 END CLASS
 
 //---------------------------------------------------------------------------//
-METHOD Activating() CLASS AgentesView
+METHOD Activating() CLASS BancosView
 
    if ::oController:isAppendOrDuplicateMode()
       ::oController:oModel:hBuffer()
@@ -167,7 +167,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS AgentesView
+METHOD Activate() CLASS BancosView
 
    local oGetDni
 
@@ -186,29 +186,18 @@ METHOD Activate() CLASS AgentesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
-      ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          ::oDialog
-
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          110 ;
+      ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "dni" ] ;
-      ID          120 ;
+      ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( CheckCif( ::oGetDni ) );
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "comision" ] ;
-      ID          130 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      PICTURE     "@E 999.99" ;
-      OF          ::oDialog
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
 
@@ -243,7 +232,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesValidator FROM SQLBaseValidator
+CLASS BancosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -251,12 +240,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS AgentesValidator
+METHOD getValidators() CLASS BancosValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"     => "El nombre es un dato requerido",;
-                                                      "unique"       => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
-                                                      "unique"       => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre del agente es un dato requerido" }  }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -268,9 +255,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLAgentesModel FROM SQLBaseModel
+CLASS SQLBancosModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "agentes"
+   DATA cTableName               INIT "bancos"
 
    METHOD getColumns()
 
@@ -278,7 +265,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLAgentesModel
+METHOD getColumns() CLASS SQLBancosModel
    
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
@@ -294,11 +281,14 @@ METHOD getColumns() CLASS SQLAgentesModel
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
                                              "default"   => {|| space( 140 ) } }                       )
 
-   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                          ,;
+   hset( ::hColumns, "sucursal",          {  "create"    => "VARCHAR( 20 )"                          ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "comision",          {  "create"    => "FLOAT( 5,2 )"                            ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "entidad",            { "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 20 ) } }                       )
+
+   hset( ::hColumns, "oficina",            { "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 20 ) } }                       )
 
 RETURN ( ::hColumns )
 
@@ -312,9 +302,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesRepository FROM SQLBaseRepository
+CLASS BancosRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLAgentesModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLBancosModel():getTableName() ) 
 
    METHOD getNombres()
 
@@ -326,7 +316,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getNombres() CLASS AgentesRepository
+METHOD getNombres() CLASS BancosRepository
 
    local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
    local aResult     := {}
