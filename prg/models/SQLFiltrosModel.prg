@@ -6,10 +6,10 @@
 
 CLASS SQLFiltrosModel FROM SQLBaseModel
 
-   DATA cTableToFilter
+   DATA cTableToFilter                                INIT space( 50 )
 
    DATA cTableName                                    INIT "filtros"
-   
+
    METHOD setTableToFilter( cTableToFilter )          INLINE ( ::cTableToFilter := cTableToFilter )
    METHOD getTableToFilter()                          INLINE ( ::cTableToFilter )
 
@@ -23,6 +23,8 @@ CLASS SQLFiltrosModel FROM SQLBaseModel
 
    METHOD getId( cNombre, cTabla )                    INLINE ( ::getFilterField( 'id', cNombre, cTabla ) )
 
+   METHOD getTablaAttribute( value )                  INLINE ( if( empty( value ), ::cTableToFilter, value ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -32,7 +34,7 @@ METHOD getColumns()
    hset( ::hColumns, "id",       {  "create"    => "INTEGER PRIMARY KEY AUTO_INCREMENT" } )
 
    hset( ::hColumns, "tabla",    {  "create"    => "CHAR( 50 ) NOT NULL"                  ,;
-                                    "default"   => {|| if( empty( ::cTableToFilter ), space( 50 ), ::cTableToFilter ) } } ) 
+                                    "default"   => {|| space( 50 ) } } ) 
 
    hset( ::hColumns, "nombre",   {  "create"    => "CHAR( 50 ) NOT NULL"                  ,;
                                     "default"   => {|| space( 50 ) } }                    ) 
@@ -65,13 +67,13 @@ RETURN ( aFilters )
 
 METHOD getFilterField( cField, cNombre, cTabla )
 
-   local aFields     := {}
+   local uValue      
    local cSentence   
 
    DEFAULT cTabla    := ::getTableToFilter()
 
    if empty( cTabla )
-      RETURN ( aFields )   
+      RETURN ( uValue )   
    end if 
 
    cSentence         := "SELECT " + cField + " FROM " + ::getTableName()   + space( 1 ) + ;
@@ -79,9 +81,9 @@ METHOD getFilterField( cField, cNombre, cTabla )
                               "AND nombre = " + quoted( cNombre )          + space( 1 ) + ;
                            "LIMIT 1"
 
-   aFields           := ::getDatabase():selectFetchArrayOneColumn( cSentence )
+   uValue           := ::getDatabase():getValue( cSentence )
 
-RETURN ( atail( aFields ) )
+RETURN ( uValue )
 
 //---------------------------------------------------------------------------//
 
