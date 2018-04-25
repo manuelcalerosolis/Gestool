@@ -46,7 +46,7 @@ METHOD New() CLASS AgentesController
    ::oPaisesController           := PaisesController():New( self )
    ::oProvinciasController       := ProvinciasController():New( self )
 
-   ::oComboSelector              := ComboSelector():New( self )
+   ::oGetSelector                := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 

@@ -82,6 +82,9 @@ METHOD Activate() CLASS ClientesView
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oFolder:aDialogs[1] )
 
+   ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_uuid" ] ) )
+   ::oController:oAgentesController:oGetSelector:Activate( 240, 241, ::oFolder:aDialogs[1] )
+
    /*
    DIRECCIONES-----------------------------------------------------------------
    */

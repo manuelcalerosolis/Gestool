@@ -3506,8 +3506,9 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Combinado", -1, "Static", WS_GROUP, 363, 161, 41, 8
   CONTROL "Almacén", -1, "Static", WS_GROUP, 47, 199, 34, 8
   CONTROL "Alta", -1, "Static", WS_GROUP, 363, 250, 17, 10
-  CONTROL "", 235, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|CBS_OWNERDRAWFIXED|CBS_SORT|WS_VSCROLL|WS_TABSTOP, 98, 247, 258, 143
-  CONTROL "Transportista", 236, "Static", WS_GROUP, 47, 250, 46, 8, WS_EX_TRANSPARENT
+  CONTROL "", 235, "Edit", WS_BORDER|WS_TABSTOP, 98, 246, 54, 11
+  CONTROL "", 236, "Edit", WS_BORDER|WS_TABSTOP, 154, 246, 202, 11
+  CONTROL "Transportista", -1, "Static", WS_GROUP, 47, 249, 46, 8
 }
 
 CLIENT_10 DIALOG DISCARDABLE 32, 32, 496, 266
@@ -21759,7 +21760,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Transportistas", -1, "Static", WS_GROUP, 44, 3, 120, 8
   CONTROL "Aña&dir [F2]", 130, "Button", WS_TABSTOP, 49, 96, 50, 14
-  CONTROL "&Modificar [F3]", 140, "Button", WS_TABSTOP, 105, 96, 50, 14
+  CONTROL "&Modificar [F3]", IDZOOM, "Button", WS_TABSTOP, 105, 96, 50, 14
   CONTROL "&Eliminar [F4]", 150, "Button", WS_TABSTOP, 161, 96, 50, 14
   CONTROL "", 160, "TXBrowse", WS_TABSTOP|0x00300000, 49, 112, 474, 136
   CONTROL "Direcciones", -1, "Button", BS_GROUPBOX, 44, 84, 483, 171
@@ -22117,7 +22118,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Móvil", -1, "Static", WS_GROUP, 11, 162, 28, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 5, 4, 444, 50
   CONTROL "Valores", -1, "Button", BS_GROUPBOX, 5, 188, 444, 78
-  CONTROL "Transportista", -1, "Static", WS_GROUP, 11, 252, 46, 8, WS_EX_TRANSPARENT
+  CONTROL "Grupo", -1, "Static", WS_GROUP, 11, 252, 25, 8, WS_EX_TRANSPARENT
   CONTROL "Código postal", -1, "Static", WS_GROUP, 11, 84, 46, 8
   CONTROL "Agente", -1, "Static", WS_GROUP, 11, 239, 46, 8, WS_EX_TRANSPARENT
   CONTROL "Ruta", -1, "Static", WS_GROUP, 11, 226, 46, 8, WS_EX_TRANSPARENT
