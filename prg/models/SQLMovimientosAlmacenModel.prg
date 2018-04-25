@@ -94,8 +94,8 @@ METHOD getInitialSelect()
 
    cSelect  := "SELECT "                                                                  + ;
                   "movimientos_almacen.id                         AS id, "                + ;
-                  "movimientos_almacen.numero                     AS numero, "            + ;
                   "movimientos_almacen.uuid                       AS uuid, "              + ;
+                  "movimientos_almacen.numero                     AS numero, "            + ;
                   "movimientos_almacen.tipo_movimiento            AS tipo_movimiento, "   + ;
                   ::getColumnMovimiento( "movimientos_almacen" )                          + ;
                   "movimientos_almacen.fecha_hora                 AS fecha_hora, "        + ;

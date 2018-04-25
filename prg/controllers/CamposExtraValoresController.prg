@@ -172,7 +172,7 @@ ENDCLASS
 
 METHOD Create( oDialog ) CLASS CamposExtraValoresBrowseView
 
-   ::oBrowse                  := SQLXBrowse():New( oDialog )
+   ::oBrowse                  := SQLXBrowse():New( self, oDialog )
    ::oBrowse:l2007            := .f.
 
    ::oBrowse:lRecordSelector  := .f.

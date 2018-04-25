@@ -22,7 +22,7 @@ CLASS InvoiceCustomer FROM DocumentsSales
 
    METHOD printDocument()                 INLINE ( imprimeFacturaCliente( ::getID(), ::cFormatToPrint, ::nView ), .t. )
 
-   METHOD onPostSaveAppend()              INLINE ( ::onPostSaveEdit(), ::actualizaUltimoLote() )
+   METHOD onPostSaveAppend()              INLINE ( ::onPostSaveEdit(), ::actualizaUltimoLote(), ::saveToSDF() )
 
    METHOD onPostSaveEdit()                INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
                                                    checkPagosFacturaCliente( ::getId(), ::nView ),;
@@ -37,6 +37,8 @@ CLASS InvoiceCustomer FROM DocumentsSales
    METHOD recalculateCacheStock() 
 
    METHOD runScriptPreSaveAppend()
+
+   METHOD saveToSDF()
 
 END CLASS
 
@@ -96,7 +98,7 @@ METHOD Create( nView ) CLASS InvoiceCustomer
    
    ::setDataTableLine( "FacCliL" )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -105,7 +107,7 @@ METHOD New() CLASS InvoiceCustomer
    ::super:oSender         := self
 
    if !::openFiles()
-      return ( self )
+      RETURN ( self )
    end if 
 
    ::oViewSearchNavigator  := DocumentSalesViewSearchNavigator():New( self )
@@ -156,7 +158,7 @@ METHOD New() CLASS InvoiceCustomer
    
    ::setDataTableLine( "FacCliL" )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -164,7 +166,7 @@ METHOD GetAppendDocumento() CLASS InvoiceCustomer
 
    ::hDictionaryMaster      := D():getDefaultHashFacturaCliente( ::nView )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -173,18 +175,18 @@ METHOD getEditDocumento() CLASS InvoiceCustomer
    local id                := D():FacturasClientesId( ::nView )
 
    if Empty( id )
-      Return .f.
+      RETURN .f.
    end if
 
    ::hDictionaryMaster     := D():getHashRecordById( id, ::getWorkArea(), ::nView )
 
    if empty( ::hDictionaryMaster )
-      Return .f.
+      RETURN .f.
    end if 
 
    ::getLinesDocument( id )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //
@@ -222,10 +224,10 @@ METHOD getDocumentLine() CLASS InvoiceCustomer
    local hLine    := D():GetFacturaClienteLineasHash( ::nView )
 
    if empty( hLine )
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
-Return ( DictionaryDocumentLine():New( self, hLine ) )
+RETURN ( DictionaryDocumentLine():New( self, hLine ) )
 
 //---------------------------------------------------------------------------//
 
@@ -235,31 +237,15 @@ METHOD getAppendDetail() CLASS InvoiceCustomer
 
    ::oDocumentLineTemporal := DictionaryDocumentLine():New( self, hLine )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD deleteLinesDocument() CLASS InvoiceCustomer
 
-   if lAIS()
+   FacturasClientesLineasModel():deleteWherId( ::getSerie(), ::getStrNumero(), ::getSufijo() )
 
-      FacturasClientesLineasModel():deleteWherId( ::getSerie(), ::getStrNumero(), ::getSufijo() )
-
-   else
-
-      D():getStatusFacturasClientesLineas( ::nView )
-
-      ( D():FacturasClientesLineas( ::nView ) )->( ordSetFocus( 1 ) )
-
-      while ( D():FacturasClientesLineas( ::nView ) )->( dbSeek( ::getID() ) ) 
-         ::delDocumentLine()
-      end while
-
-      D():setStatusFacturasClientesLineas( ::nView ) 
-
-   end if 
-
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -287,7 +273,7 @@ METHOD actualizaUltimoLote() CLASS InvoiceCustomer
    ( D():FacturasClientesLineas( ::nView ) )->( ordSetFocus( nOrdAnt ) )
    ( D():FacturasClientesLineas( ::nView ) )->( dbGoTo( nRec ) )
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -324,7 +310,7 @@ METHOD recalculateCacheStock() CLASS InvoiceCustomer
 
    cursorWE()
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -332,7 +318,30 @@ METHOD onPreEditDocumento() CLASS InvoiceCustomer
 
    ::nOrdenAnterior     := ( ::getDataTable() )->( OrdSetFocus() )
 
-Return ( .t. )
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveToSDF()
+
+   local nRecno
+   local cFileSDF    := cPatSafe() + "Factura-" + ::getNumeroDocumento() + ".txt"
+
+   nRecno            := ( D():FacturasClientes( ::nView ) )->( recno() )
+
+   ( D():FacturasClientes( ::nView ) )->( __dbdelim( .t., cFileSDF, ";", , {|| field->cSerie + str( field->nNumFac ) + field->cSufFac == ::getID() }, , , , ,  ) )
+
+   ( D():FacturasClientes( ::nView ) )->( dbgoto( nRecno ) )
+
+   cFileSDF          := cPatSafe() + "Factura-Lineas-" + ::getNumeroDocumento() + ".txt"
+
+   nRecno            := ( D():FacturasClientesLineas( ::nView ) )->( recno() )
+
+   ( D():FacturasClientesLineas( ::nView ) )->( __dbdelim( .t., cFileSDF, ";", , {|| field->cSerie + str( field->nNumFac ) + field->cSufFac == ::getID() }, , , , ,  ) )
+
+   ( D():FacturasClientesLineas( ::nView ) )->( dbgoto( nRecno ) )
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -340,6 +349,6 @@ METHOD runScriptPreSaveAppend() CLASS InvoiceCustomer
 
    runScript( "Tablet\FacturasClientes\PreSaveAppend.prg", self )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//

@@ -15,6 +15,8 @@ CLASS SQLXBrowse FROM TXBrowse
 
    CLASSDATA lRegistered                        AS LOGICAL
 
+   DATA oController
+
    DATA aHeaders                                AS ARRAY       INIT {}
 
    DATA cName                                   AS CHARACTER   INIT ""
@@ -23,7 +25,7 @@ CLASS SQLXBrowse FROM TXBrowse
 
    DATA cViewType                               AS CHARACTER   INIT "navigator"
 
-   METHOD New( oWnd )
+   METHOD New( oController, oWnd )
 
    METHOD setRowSet( oRowSet )
    METHOD setHashList( oHashList )
@@ -64,11 +66,15 @@ CLASS SQLXBrowse FROM TXBrowse
    
    METHOD restoreStateFromModel( cViewType )
 
+   METHOD setFilterInRowSet( cFilterExpresion )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oWnd ) 
+METHOD New( oController, oWnd ) 
+
+   ::oController     := oController
 
    ::Super:New( oWnd )
 
@@ -95,6 +101,46 @@ METHOD RButtonDown( nRow, nCol, nFlags )
    bMenuSelect       := ::bMenuSelect
 
    ::bMenuSelect     := nil
+
+   if hb_isnil( ::SelectedCol():Cargo )
+
+   MenuAddItem( "Filtro rápido", "Establecer fitro rápido en columna actual", .f., .t., , , "gc_table_selection_column_16", oMenu )
+
+      MenuBegin( .f., , , .f., .f., , , , , , , , , , , , .f., .t., .f., .t. )
+
+         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' IN (" + toSqlString( ::SelectedCol():Value() ) + ")", "", .f., .t., {|| ::oController:buildInFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+         
+         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' NOT IN ('" + toSqlString( ::SelectedCol():Value() ) + "')", "", .f., .t., {|| ::oController:buildNotInFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' > '" + toSqlString( ::SelectedCol():Value() ) + "'", "", .f., .t., {|| ::oController:buildBiggerFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' < '" + toSqlString( ::SelectedCol():Value() ) + "'", "", .f., .t., {|| ::oController:buildSmallerFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' LIKE '" + toSqlString( ::SelectedCol():Value() ) + "%'", "", .f., .t., {|| ::oController:buildStartLikeFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' LIKE '%" + toSqlString( ::SelectedCol():Value() ) + "'", "", .f., .t., {|| ::oController:buildEndLikeFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' LIKE '%" + toSqlString( ::SelectedCol():Value() ) + "%'", "", .f., .t., {|| ::oController:buildLikeFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+         MenuAddItem()
+
+         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' IN (...)", "", .f., .t., {|| ::oController:buildCustomInFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' NOT IN (...)", "", .f., .t., {|| ::oController:buildCustomNotInFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' > '", "", .f., .t., {|| ::oController:buildCustomBiggerFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' < '", "", .f., .t., {|| ::oController:buildCustomSmallerFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' LIKE '%...%'", "", .f., .t., {|| ::oController:buildCustomLikeFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+         
+         MenuAddItem()
+
+         MenuAddItem( "Quitar filtro", "", .f., .t., {|| ::oController:buildFilter() }, "gc_funnel_delete_16" )
+
+      MenuEnd()
+
+   end if 
 
    MenuAddItem( "Columnas", "Columnas de la rejilla de datos", .f., .t., , , "gc_table_selection_column_16", oMenu )
 
@@ -355,6 +401,18 @@ METHOD restoreStateFromModel( cViewType )
    if !empty( cBrowseState )
       ::restoreState( cBrowseState )
    end if 
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD setFilterInRowSet( cFilterExpresion )
+
+   msgalert( ::SelectedCol():cSortOrder + cFilterExpresion + " ('" + alltrim( cvaltostr( ::SelectedCol():Value() ) ) + "' )" )
+   //msgalert( alltrim( ::SelectedCol():cSortOrder ) ) == alltrim( cvaltostr( ::SelectedCol():Value() ) ) )
+
+   // msgalert( ::oRowSet:fieldGet( ::SelectedCol():cSortOrder ) ) // + " == " + quoted( alltrim( cvaltostr( ::SelectedCol():Value() ) ) ) )
+   ::oRowSet:setFilter( { || ::oRowSet:fieldGet( 1 ) == 1 } )
 
 RETURN ( Self )
 

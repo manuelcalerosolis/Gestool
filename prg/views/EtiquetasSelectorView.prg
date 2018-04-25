@@ -182,7 +182,7 @@ METHOD Activate()
 
       // Propiedades del control--------------------------------------------------
 
-      ::oBrowse                  := SQLXBrowse():New( ::oPages:aDialogs[ 2 ] )
+      ::oBrowse                  := SQLXBrowse():New( self, ::oPages:aDialogs[ 2 ] )
       ::oBrowse:l2007            := .f.
 
       ::oBrowse:lRecordSelector  := .f.

@@ -1,36 +1,19 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
-#include "Font.ch"
-#include "Report.ch"
-#include "MesDbf.ch"
-#include "DbInfo.ch"
-#include "Xbrowse.ch"
-
-#define fldDescription                 1
-#define fldCondition                   2
-#define fldValue                       3
-#define fldNexo                        4
-
-#define posDescription                 1
-#define posField                       2
-#define posType                        3
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS SQLFilterView
-
-   DATA oController
-
-   DATA oDialog
-
-   DATA oBmp
+CLASS SQLFilterView FROM SQLBaseView
 
    DATA oName
 
    DATA oMemo
 
    METHOD New( oController ) 
-   METHOD End()      VIRTUAL
    
    METHOD Activate()
 
@@ -51,7 +34,7 @@ METHOD Activate()
    DEFINE DIALOG     ::oDialog ;
       RESOURCE       "SQL_FILTER_VIEW" 
 
-      REDEFINE BITMAP ::oBmp ;
+      REDEFINE BITMAP ::oBitmap ;
          ID          500 ;
          RESOURCE    ( "gc_funnel_48" ) ;
          TRANSPARENT ;
@@ -85,9 +68,89 @@ METHOD Activate()
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBmp:End()
+   ::oBitmap:End()
 
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLCustomFilterView FROM SQLBaseView
+
+   DATA oValue
+   DATA cValue                   INIT space( 200 )
+
+   DATA oText
+   DATA cText                    INIT ""   
+
+   METHOD New( oController ) 
+   
+   METHOD Activate()
+
+   METHOD setValue( cValue )     INLINE ( ::cValue := padr( cValue, 200 ) )
+   METHOD getValue()             INLINE ( ::cValue )
+
+   METHOD setText( cText )       INLINE ( ::cText := cText )
+   METHOD getText()              INLINE ( ::cText )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oController ) 
+
+   ::oController     := oController
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate()
+
+   DEFINE DIALOG     ::oDialog ;
+      RESOURCE       "SQL_FILTER_CUSTOM" 
+
+      REDEFINE BITMAP ::oBitmap ;
+         ID          800 ;
+         RESOURCE    ( "gc_funnel_48" ) ;
+         TRANSPARENT ;
+         OF          ::oDialog
+
+      REDEFINE SAY   ::oText ;
+         VAR         ::cText ;
+         ID          100 ;
+         OF          ::oDialog
+
+      REDEFINE GET   ::oValue ;
+         VAR         ::cValue ;
+         VALID       ( !empty( ::cValue ) ) ;
+         ID          110 ;
+         OF          ::oDialog 
+
+      REDEFINE BUTTON ;
+         ID          IDOK ;
+         OF          ::oDialog ;
+         ACTION      ( ::oDialog:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID          IDCANCEL ;
+         OF          ::oDialog ;
+         ACTION      ( ::oDialog:end() )
+
+      ::oDialog:AddFastKey( VK_F5, {|| ::oDialog:end( IDOK ) } )
+
+   ACTIVATE DIALOG ::oDialog CENTER
+
+   ::oBitmap:End()
+
+RETURN ( ::oDialog:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+
+
 

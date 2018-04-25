@@ -2030,8 +2030,7 @@ METHOD BuildEmpresa()
 
    /*
    Movimientos de almacén ( Al final es para quitarlo )------------------------
-   */
-
+   
    oDataTable              := TDataTable():New( "RemMovT" )
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RemMovT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RemMovT.Cdx"
@@ -2055,6 +2054,7 @@ METHOD BuildEmpresa()
    oDataTable:bCreateFile  := {| cPath | TDetSeriesMovimientos():BuildFiles( cPath ) }
    oDataTable:bCreateIndex := {| cPath | TDetSeriesMovimientos():Create( cPath ):Reindexa() }
    ::AddEmpresaTable( oDataTable )
+   */
 
    /*
    Articulos-------------------------------------------------------------------

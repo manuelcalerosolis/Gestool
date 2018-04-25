@@ -313,7 +313,6 @@ METHOD getSQLSentenceMovimientosAlmacenForReport( oReporting )
 
    cSentence         := "SELECT movimientos_almacen.id, "
    cSentence         +=    "movimientos_almacen.numero, "
-   cSentence         +=    "movimientos_almacen.delegacion, "
    cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS date ) AS fecha, "
    cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS time ) AS hora, "
    cSentence         +=    SQLMovimientosAlmacenModel():getColumnMovimiento( 'movimientos_almacen' ) 
@@ -390,7 +389,6 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
    cSentence         := "SELECT "
    cSentence         +=    "movimientos_almacen.id, "
    cSentence         +=    "movimientos_almacen.numero, "
-   cSentence         +=    "movimientos_almacen.delegacion, "
    cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS DATE ) AS fecha, "
    cSentence         +=    "CAST( movimientos_almacen.fecha_hora AS TIME ) AS hora, "
    cSentence         +=    SQLMovimientosAlmacenModel():getColumnMovimiento( 'movimientos_almacen' ) 

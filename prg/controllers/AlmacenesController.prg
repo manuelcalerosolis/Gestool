@@ -13,6 +13,7 @@ CLASS AlmacenesController FROM SQLNavigatorController
 
    METHOD New()
 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -68,6 +69,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS AlmacenesBrowseView FROM SQLBrowseView
 
@@ -82,7 +84,7 @@ METHOD addColumns() CLASS AlmacenesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
       :cHeader             := 'Id'
-      :nWidth              := 80
+      :nWidth              := 60
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -97,11 +99,11 @@ METHOD addColumns() CLASS AlmacenesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
-      :cHeader             := 'Codigo'
-      :nWidth              := 300
+      :cHeader             := 'Código'
+      :nWidth              := 50
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
+   end with 
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
@@ -109,7 +111,7 @@ METHOD addColumns() CLASS AlmacenesBrowseView
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   end with
 
 RETURN ( self )
 
@@ -126,7 +128,6 @@ CLASS AlmacenesView FROM SQLBaseView
    DATA oGetProvincia
    DATA oGetPoblacion
    DATA oGetPais
-   DATA oGetDni
 
    METHOD Activate()
 
@@ -153,10 +154,8 @@ RETURN ( self )
 
 METHOD Activate() CLASS AlmacenesView
 
-   local oGetDni
-
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ALMACEN" ;
+      RESOURCE    "ALMACEN_SQL" ;
       TITLE       ::LblTitle() + "almacen"
 
    REDEFINE BITMAP ::oBitmap ;
@@ -225,7 +224,7 @@ END CLASS
 
 METHOD getValidators() CLASS AlmacenesValidator
 
-   ::hValidators  := {  "nombre " =>               {  "required"     => "El nombre es un dato requerido",;
+   ::hValidators  := {  "nombre" =>                {  "required"     => "El nombre es un dato requerido",;
                                                       "unique"       => "El nombre introducido ya existe" },;
                         "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
                                                       "unique"       => "EL código introducido ya existe"  } }
@@ -258,12 +257,14 @@ METHOD getColumns() CLASS SQLAlmacenesModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
    
+   ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 140 )"                          ,;
-                                             "default"   => {|| space( 140 ) } }                       )
 
-   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 20 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                          ,;
+                                             "default"   => {|| space( 3 ) } }                       )
+
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
 
 RETURN ( ::hColumns )
 

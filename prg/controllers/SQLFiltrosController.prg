@@ -12,6 +12,8 @@ CLASS SQLFiltrosController FROM SQLBaseController
 
    DATA cName
 
+   DATA oCustomView
+
    METHOD New()
    METHOD End()
 
@@ -25,8 +27,13 @@ CLASS SQLFiltrosController FROM SQLBaseController
    METHOD getId( cFilter )
 
    METHOD Append()
-   METHOD EditByText( cFilter )              INLINE ( ::Edit( ::getId( cFilter ) ) )
-   METHOD DeleteByText( cFilter )      
+   METHOD editByText( cFilter )              INLINE ( ::Edit( ::getId( cFilter ) ) )
+   METHOD deleteByText( cFilter )      
+
+   METHOD loadedBlankBuffer()
+
+   METHOD setComboFilter( cText )            INLINE ( ::oSender:oWindowsBar:setComboFilter( cText ) )
+   METHOD setComboFilterItem( cText )        INLINE ( ::oSender:oWindowsBar:setComboFilterItem( cText ) )
 
    METHOD setTableToFilter( cTableToFilter ) INLINE ( ::oModel:setTableToFilter( cTableToFilter ) )
    METHOD getTableToFilter()                 INLINE ( ::oModel:getTableToFilter() )
@@ -41,9 +48,13 @@ METHOD New( oSender )
 
    ::oDialogView                       := SQLFilterView():New( self )
 
+   ::oCustomView                       := SQLCustomFilterView():New( self )
+
    ::oModel                            := SQLFiltrosModel():New( self )
    
    ::oValidator                        := SQLFiltrosValidator():New( self )
+
+   ::oModel:setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } )
 
 RETURN ( Self )
 
@@ -54,6 +65,11 @@ METHOD End( oSender )
    if !empty( ::oDialogView )
       ::oDialogView:End()
       ::oDialogView                    := nil
+   end if 
+
+   if !empty( ::oCustomView )
+      ::oCustomView:End()
+      ::oCustomView                    := nil
    end if 
 
    if !empty( ::oModel )
@@ -97,6 +113,21 @@ RETURN ( ::oModel:getFilterSentence( cNameFilter, cTableToFilter ) )
 METHOD getId( cNameFilter, cTableToFilter )
 
 RETURN ( ::oModel:getId( cNameFilter, cTableToFilter ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadedBlankBuffer()
+
+   local cTextFilter    := ::oSender:oWindowsBar:getComboFilter()
+
+   if empty( cTextFilter )
+      RETURN ( Self )   
+   end if 
+
+   hset( ::oModel:hBuffer, "nombre", cTextFilter ) 
+   hset( ::oModel:hBuffer, "filtro", cTextFilter ) 
+
+RETURN ( Self )   
 
 //---------------------------------------------------------------------------//
 

@@ -14,7 +14,7 @@ ENDCLASS
 METHOD addColumns()
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
+      :cSortOrder          := 'movimientos_almacen.id'
       :cHeader             := 'Id'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
@@ -22,7 +22,7 @@ METHOD addColumns()
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid'
+      :cSortOrder          := 'movimientos_almacen.uuid'
       :cHeader             := 'Uuid'
       :nWidth              := 180
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
@@ -31,7 +31,7 @@ METHOD addColumns()
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'numero'
+      :cSortOrder          := 'movimientos_almacen.numero'
       :cHeader             := 'Número'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'numero' ) }
@@ -40,6 +40,7 @@ METHOD addColumns()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre_movimiento'
+      :Cargo               := .f.
       :cHeader             := 'Tipo movimiento'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_movimiento' ) }
@@ -109,6 +110,7 @@ METHOD addColumns()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'total_precio'
+      :Cargo               := .f.
       :cHeader             := 'Total'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'total_precio' ) }

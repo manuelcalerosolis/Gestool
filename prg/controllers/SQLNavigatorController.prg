@@ -43,11 +43,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD onKeyChar( nKey )
 
-   METHOD deleteFilter()                                
-
-   METHOD getFilters()                                INLINE ( if( !empty( ::oFilterController ), ::oFilterController:getFilters(), ) ) 
-
-   METHOD setFilter()                                                                                                       
+   METHOD reBuildRowSet()
 
    METHOD getComboBoxOrder()                          INLINE ( if( !empty( ::oSelectorView ) .and. ::oSelectorView:isActive(), ::oSelectorView:getComboBoxOrder(), ::oWindowsBar:oComboBox() ) )
 
@@ -68,6 +64,36 @@ CLASS SQLNavigatorController FROM SQLBaseController
    METHOD showEditAndDeleteButtonFilter()
 
    METHOD getIds()                                    INLINE ( ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected ) )
+
+   // Filters manege-----------------------------------------------------------
+
+   METHOD appendFilter()
+   METHOD editFilter()
+   METHOD deleteFilter()                                
+
+   METHOD getFilters()                                INLINE ( iif( !empty( ::oFilterController ), ::oFilterController:getFilters(), ) ) 
+   METHOD setFilter()                                                                                                       
+
+   METHOD buildFilter( cExpresion )
+   METHOD buildInFilter( cField, cValue )             INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " IN (" + toSqlString( cValue ) + ")", "" ) ) )
+   METHOD buildNotInFilter( cField, cValue )          INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " NOT IN (" + toSqlString( cValue ) + ")", "" ) ) )
+   METHOD buildBiggerFilter( cField, cValue )         INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " > " + toSqlString( cValue ), "" ) ) )
+   METHOD buildSmallerFilter( cField, cValue )        INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " < " + toSqlString( cValue ), "" ) ) )
+   METHOD buildStartLikeFilter( cField, cValue )      INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( alltrim( cstr( cValue ) ) + "%" ), "" ) ) )
+   METHOD buildEndLikeFilter( cField, cValue )        INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( "%" + alltrim( cstr( cValue ) ) ), "" ) ) )
+   METHOD buildLikeFilter( cField, cValue )           INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( "%" + alltrim( cstr( cValue ) ) + "%" ), "" ) ) )
+
+   METHOD buildCustomFilter( cField, cValue, cOperator )
+   METHOD buildCustomInFilter( cField, cValue )       INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "IN (...)" ),;
+                                                                     ::buildInFilter( cField, cValue ), ) )
+   METHOD buildCustomNotInFilter( cField, cValue )    INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "NOT IN (...)" ),;
+                                                                     ::buildNotInFilter( cField, cValue ), ) )
+   METHOD buildCustomBiggerFilter( cField, cValue )   INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "> (...)" ),;
+                                                                     ::buildBiggerFilter( cField, cValue ), ) )
+   METHOD buildCustomSmallerFilter( cField, cValue )  INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "< (...)" ),;
+                                                                     ::buildSmallerFilter( cField, cValue ), ) )
+   METHOD buildCustomLikeFilter( cField, cValue )     INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
+                                                                     ::buildLikeFilter( cField, cValue ), ) )
 
 END CLASS
 
@@ -92,11 +118,6 @@ RETURN ( self )
 METHOD End()
 
    ::DisableWindowsBar()
-
-   // if !empty( ::oNavigatorView )
-   //    ::oNavigatorView:End()
-   //    ::oNavigatorView        := nil
-   // end if 
 
    if !empty( ::oSelectorView )
       ::oSelectorView:End()
@@ -131,10 +152,10 @@ METHOD ActivateNavigatorView()
 
    ::closeAllWindows()
    
-   ::oModel:setNavigatorColumnOrderFromModel( ::getName() )
-   ::oModel:setNavigatorColumnOrientationFromModel( ::getName() )
+   ::getModel():setNavigatorColumnOrderFromModel( ::getName() )
+   ::getModel():setNavigatorColumnOrientationFromModel( ::getName() )
 
-   ::oRowSet:build( ::oModel:getSelectSentence() )
+   ::oRowSet:build( ::getModel():getSelectSentence() )
 
    if !empty( ::oRowSet:get() )
 
@@ -163,10 +184,10 @@ METHOD ActivateSelectorView( lCenter )
       RETURN ( nil )
    end if
 
-   ::oModel:setSelectorColumnOrderFromModel( ::getName() )
-   ::oModel:setSelectorColumnOrientationFromModel( ::getName() )
+   ::getModel():setSelectorColumnOrderFromModel( ::getName() )
+   ::getModel():setSelectorColumnOrientationFromModel( ::getName() )
 
-   ::oRowSet:build( ::oModel:getSelectSentence() )
+   ::oRowSet:build( ::getModel():getSelectSentence() )
 
 RETURN ( ::oSelectorView:Activate( lCenter ) )
 
@@ -201,9 +222,9 @@ METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
       RETURN ( Self )    
    end if    
     
-   DEFAULT cColumns  := ::oModel:getSerializeColumns()       
+   DEFAULT cColumns  := ::getModel():getSerializeColumns()       
     
-   oRowSet           := ::oModel:newRowSet( cSentence )      
+   oRowSet           := ::getModel():newRowSet( cSentence )      
     
    if empty( oRowSet )      
       RETURN ( Self )    
@@ -220,6 +241,32 @@ METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
 RETURN ( Self )    
     
 //---------------------------------------------------------------------------//
+
+METHOD appendFilter()                                
+
+   if empty( ::oFilterController )
+      RETURN ( Self )  
+   end if 
+
+RETURN ( ::oFilterController:Append() )    
+    
+//---------------------------------------------------------------------------//
+
+METHOD editFilter()                                
+
+   local cFilter  := ::oWindowsBar:GetComboFilter()
+
+   if empty( cFilter )
+      RETURN ( Self )  
+   end if 
+
+   if empty( ::oFilterController )
+      RETURN ( Self )  
+   end if 
+
+RETURN ( ::oFilterController:EditByText( cFilter ) )    
+    
+//---------------------------------------------------------------------------//
     
 METHOD deleteFilter()                                
 
@@ -227,7 +274,11 @@ METHOD deleteFilter()
    local cFilter  := ::oWindowsBar:GetComboFilter()
 
    if empty( cFilter )
-      RETURN ( Self )    
+      RETURN ( Self )  
+   end if 
+
+   if empty( ::oFilterController )
+      RETURN ( Self )  
    end if 
 
    nId            := ::oFilterController:oModel:getId( cFilter )
@@ -246,28 +297,70 @@ RETURN ( Self )
     
 //---------------------------------------------------------------------------//
 
-METHOD setFilter()         
+METHOD setFilter( cFilterName )         
 
-   local nId      
-   local cFilter  := ::oWindowsBar:GetComboFilter()
+   local cFilterSentence
 
-   if empty( cFilter )
+   DEFAULT cFilterName     := ::oWindowsBar:getComboFilter()
+
+   if empty( cFilterName )
 
       ::getModel():clearFilterWhere()
    
       ::hideEditAndDeleteButtonFilter()
    
    else 
-   
-      ::getModel():setFilterWhere( ::oFilterController:getFilterSentence( cFilter ) )
+
+      cFilterSentence      := ::oFilterController:getFilterSentence( cFilterName )
+
+      ::getModel():setFilterWhere( cFilterSentence )
    
       ::showEditAndDeleteButtonFilter()
    
    end if  
 
-   nId            := ::oRowSet:fieldGet( ::getModelColumnKey() )
+   ::reBuildRowSet()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildFilter( cFilter )
+
+   DEFAULT cFilter   := ""
+
+   ::getModel():insertFilterWhere( cFilter )
+
+   ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
+
+   ::reBuildRowSet()
    
-   ::oRowSet:build( ::oModel:getSelectSentence() )
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildCustomFilter( cField, cValue, cOperator )
+
+   ::oFilterController:oCustomView:setText( "'" + cField + "' " + cOperator )
+   ::oFilterController:oCustomView:setValue( cValue )
+
+   if !( ::oFilterController:oCustomView:Activate() )
+      RETURN ( .f. )
+   end if 
+
+   cValue      := alltrim( ::oFilterController:oCustomView:getValue() )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD reBuildRowSet()
+
+   local nId
+
+   nId               := ::oRowSet:fieldGet( ::getModelColumnKey() )
+   
+   ::oRowSet:build( ::getModel():getSelectSentence() )
 
    ::oRowSet:findString( nId )
       
@@ -297,9 +390,9 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:setComboFilterChange( {|| ::setFilter() } )
 
-   ::oWindowsBar:setActionAddButtonFilter( {|| ::oFilterController:Append() } )
+   ::oWindowsBar:setActionAddButtonFilter( {|| ::appendFilter() } )
 
-   ::oWindowsBar:setActionEditButtonFilter( {|| ::oFilterController:EditByText( ::oWindowsBar:GetComboFilter() ) } )
+   ::oWindowsBar:setActionEditButtonFilter( {|| ::editFilter() } )
 
    ::oWindowsBar:setActionDeleteButtonFilter( {|| ::deleteFilter() } )
 

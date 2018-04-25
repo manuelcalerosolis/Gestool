@@ -1278,8 +1278,8 @@ STATIC FUNCTION OpenFiles()
       Return ( .f. )
    end if
 
-   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
       lOpenFiles        := .t.
 
@@ -1388,6 +1388,7 @@ STATIC FUNCTION OpenFiles()
 
       D():SatClientesLineas( nView )
 
+      msgalert( "Aperturas ------------------------------------------------------------" )
       // Aperturas ------------------------------------------------------------
 
       if !TDataCenter():OpenPreCliT( @dbfPreCliT )
@@ -1550,6 +1551,8 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "MATSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MATSER", @dbfMatSer ) )
       SET ADSINDEX TO ( cPatEmp() + "MATSER.CDX" ) ADDITIVE
 
+      msgalert( "TDataCenter ------------------------------------------------------------" )
+
       if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
          lOpenFiles        := .f.
       end if
@@ -1604,10 +1607,12 @@ STATIC FUNCTION OpenFiles()
 
       TComercio         := TComercio():New( nView, oStock )
 
-      Counter           := TCounter():New( nView, "nAlbCli" ) 
+      Counter                    := TCounter():New( nView, "nAlbCli" ) 
 
       oTransportistaSelector     := TransportistasController():New():oGetSelector
       oTransportistaSelector:setKey( "codigo" )
+
+      msgalert( "Public ------------------------------------------------------------" )
 
       /*
       Declaración de variables públicas----------------------------------------
@@ -1648,6 +1653,8 @@ STATIC FUNCTION OpenFiles()
       public nTotArt    := 0
       public nTotCaj    := 0
 
+      msgalert( "Filtros ------------------------------------------------------------" )
+
       /*
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
@@ -1668,6 +1675,8 @@ STATIC FUNCTION OpenFiles()
       Campos extras------------------------------------------------------------------------
       */
 
+      msgalert( "Campos extra ------------------------------------------------------------" )
+
       oDetCamposExtra      := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Albaranes a clientes" )
@@ -1678,15 +1687,17 @@ STATIC FUNCTION OpenFiles()
       oLinDetCamposExtra:setTipoDocumento( "Lineas de albaranes a clientes" )
       oLinDetCamposExtra:setbId( {|| D():AlbaranesClientesLineasEscandalloId( nView ) } )
 
-   RECOVER USING oError
+      msgalert( "Apertura de ficheros finalzada" )
 
-      lOpenFiles           := .f.
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+//    RECOVER USING oError
+// 
+//       lOpenFiles           := .f.
+// 
+//       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+// 
+//    END SEQUENCE
+// 
+//    ErrorBlock( oBlock )
 
    if !lOpenFiles
       CloseFiles()
