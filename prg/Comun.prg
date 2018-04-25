@@ -2703,7 +2703,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 19
+   oGrupo:nBigItems     := 20
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2895,6 +2895,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_notebook2_16"
    oItem:cBmpBig        := "gc_notebook2_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Tipos de IVA'
+   oItem:cMessage       := 'Tipos de IVA'
+   oItem:bAction        := {|| IvaTipoController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_moneybag_16"
+   oItem:cBmpBig        := "gc_moneybag_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

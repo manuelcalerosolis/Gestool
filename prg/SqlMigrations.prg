@@ -190,6 +190,8 @@ METHOD addModels()
    aadd( ::aModels, SQLComentariosLineasModel():New() )
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
+
+   aadd( ::aModels, SQLIvaTipoModel():New() )
    
    aadd( ::aModels, SQLCuentasRemesaModel():New() )
 
