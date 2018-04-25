@@ -1698,7 +1698,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmPedCli() ) 
       oWndBrw:oActiveFilter:SetFilterType( PED_CLI )
    end if

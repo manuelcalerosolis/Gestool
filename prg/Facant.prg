@@ -1125,7 +1125,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmAntCli() )
       oWndBrw:oActiveFilter:SetFilterType( ANT_CLI )
    end if

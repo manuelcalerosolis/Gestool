@@ -1241,7 +1241,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       Datos para el filtro-----------------------------------------------------
       */
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() ) // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmAlbCli() )
       oWndBrw:oActiveFilter:SetFilterType( ALB_CLI )
    end if
@@ -1652,7 +1652,7 @@ STATIC FUNCTION OpenFiles()
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      if lAIS() 
+      if .f. // lAIS() 
 
          cFiltroUsuario    := "Field->cSufAlb == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
          

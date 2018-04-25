@@ -57,8 +57,6 @@ CLASS TAcceso
 
    DATA  nLittleButtons
 
-   DATA  l2k9              INIT .t.
-
    METHOD New()
 
    METHOD Add()

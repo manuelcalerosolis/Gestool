@@ -1392,7 +1392,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       HOTKEY   "S" ;
       ALLOW EXIT ;
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmFacCli() )
       oWndBrw:oActiveFilter:SetFilterType( FAC_CLI )
    end if

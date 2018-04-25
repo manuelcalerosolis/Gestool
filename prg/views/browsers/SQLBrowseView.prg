@@ -79,6 +79,8 @@ CLASS SQLBrowseView
 
    // Columns------------------------------------------------------------------
 
+   METHOD insertSelectedColumn()
+
    METHOD addColumns()                       VIRTUAL
 
    METHOD getColumnsHeaders()
@@ -146,16 +148,15 @@ METHOD Create( oWindow )
    ::oBrowse                  := SQLXBrowse():New( ::oController, oWindow )
    ::oBrowse:l2007            := .f.
 
-   ::oBrowse:lRecordSelector  := .f.
+   ::oBrowse:lRecordSelector  := .t.
    ::oBrowse:lAutoSort        := .t.
    ::oBrowse:lSortDescend     := .f.  
+   ::oBrowse:lMultiSelect     := .t.
 
    ::oBrowse:lFooter          := ::lFooter
 
    // Propiedades del control--------------------------------------------------
 
-   // ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWMS
-   // ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLCELL
    ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWRC
 
    ::oBrowse:bClrStd          := {|| { CLR_BLACK, CLR_WHITE } }
@@ -226,6 +227,8 @@ METHOD ActivateDialog( oDialog, nId )
 
    ::setViewTypeToSelector()
 
+   ::insertSelectedColumn()
+
    ::addColumns()
 
    ::CreateFromResource( nId )
@@ -241,6 +244,8 @@ METHOD ActivateMDI( oWindow, nTop, nLeft, nRight, nBottom )
    ::setViewTypeToNavigator()
 
    ::setSize( nTop, nLeft, nRight, nBottom )
+
+   ::insertSelectedColumn()
 
    ::addColumns()
 
@@ -258,6 +263,19 @@ METHOD setSize( nTop, nLeft, nRight, nBottom )
    ::oBrowse:nLeft      := nLeft 
    ::oBrowse:nRight     := nRight 
    ::oBrowse:nBottom    := nBottom 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertSelectedColumn()
+
+   with object (::oBrowse:InsCol( 1 ) )
+      :Cargo         := .t.
+      :bEditValue    := { || ascan( ::oBrowse:aSelected, ::oBrowse:BookMark ) > 0 }
+      :nHeadBmpNo    := { || if( len( ::oBrowse:aSelected ) == ::oBrowse:nLen, 1, 2 ) }
+      :setCheck()
+   end with
 
 RETURN ( self )
 

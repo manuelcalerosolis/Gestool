@@ -82,9 +82,9 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD jsonToSQL()
 
-   METHOD setSent()                 INLINE ( ::setSender( ::oModel:getSentenceSentFromIds( ::getIdFromRecno( ::getBrowse():aSelected ) ) ) )
-   METHOD setNotSent()              INLINE ( ::setSender( ::oModel:getSentenceNotSentFromIds( ::getIdFromRecno( ::getBrowse():aSelected ) ) ) )
    METHOD setSender( cSentence )
+   METHOD setSent()                 INLINE ( ::setSender( ::oModel:getSentenceSentFromIds(      ::getIdFromRecno( ::getBrowse():aSelected ) ) ) )
+   METHOD setNotSent()              INLINE ( ::setSender( ::oModel:getSentenceNotSentFromIds(   ::getIdFromRecno( ::getBrowse():aSelected ) ) ) )
 
    METHOD isAddedTag( cMarcador )
       METHOD addTag( uuidTag )

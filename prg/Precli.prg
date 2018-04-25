@@ -1664,7 +1664,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmPreCli() )
       oWndBrw:oActiveFilter:SetFilterType( PRE_CLI )
    end if

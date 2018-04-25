@@ -1200,7 +1200,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       TOOLTIP  "(S)alir" ;
       HOTKEY   "S"
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmFacPrv() )
       oWndBrw:oActiveFilter:SetFilterType( FAC_PRV )
    end if

@@ -920,7 +920,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmPedPrv() )
       oWndBrw:oActiveFilter:SetFilterType( PED_PRV )
    end if

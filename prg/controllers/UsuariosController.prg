@@ -250,7 +250,7 @@ METHOD validUserPassword( cUsuario, cPassword )
       RETURN ( .f. )
    end if 
 
-   if !( setUserActive( hget( hUsuario, "nombre" ) ) )
+   if setUserActive( hget( hUsuario, "uuid" ) )
       ::cValidError           := "Usuario actualmente en uso"
       RETURN ( .f. )
    end if 
@@ -421,6 +421,13 @@ METHOD addColumns() CLASS UsuariosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Estado'
+      :nWidth              := 180
+      :bStrData            := {|| if( isUserActive( ::getRowSet():fieldGet( 'uuid' ) ), "En uso", "" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )

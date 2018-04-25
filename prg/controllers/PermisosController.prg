@@ -305,31 +305,28 @@ RETURN ( self )
 
 METHOD Activate() CLASS PermisosView
 
-   local oDlg
-   local oBmpGeneral
-
-   DEFINE DIALOG  oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "PERMISOS" ;
       TITLE       ::lblTitle() + "permisos" 
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
       RESOURCE    "GC_ID_BADGE_48" ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::getModel():hBuffer[ "id" ] ;
       ID          100 ;
       WHEN        ( .f. ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
-   ::oBrowse                  := IXBrowse():New( oDlg )
+   ::oBrowse                  := IXBrowse():New( ::oDialog )
    ::oBrowse:bWhen            := {|| ::oController:isNotZoomMode() }
 
    ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
@@ -399,39 +396,39 @@ METHOD Activate() CLASS PermisosView
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( ::saveView( oDlg ) )
+      ACTION      ( ::saveView() )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( ::oDialog:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| ::saveView( oDlg ) } )
+   ::oDialog:AddFastKey( VK_F5, {|| ::saveView() } )
 
-   oDlg:Activate( , , , .t. )
+   ::oDialog:Activate( , , , .t. )
 
    ::oBrowse:End()
 
    ::oTree:End()
 
-   oBmpGeneral:end()
+   ::oBitmap:end()
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveView( oDlg ) CLASS PermisosView 
+METHOD saveView() CLASS PermisosView 
 
-   if !( validateDialog( oDlg ) )
+   if !( validateDialog( ::oDialog ) )
       RETURN ( .f. )
    end if 
 
-   oDlg:end( IDOK )
+   ::oDialog:end( IDOK )
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

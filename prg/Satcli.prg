@@ -1690,7 +1690,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmSatCli() )
       oWndBrw:oActiveFilter:SetFilterType( SAT_CLI )
    end if
