@@ -116,8 +116,8 @@ METHOD runSeederEmpresa()
    ::oMsg:SetText( "Ejecutando seeder de campos extra valores" )
    ::SeederCamposExtraValores()*/
 
-   ::oMsg:SetText( "Ejecutando seeder de fabricantes" )
-   ::SeederFabricantes()
+   /*::oMsg:SetText( "Ejecutando seeder de fabricantes" )
+   ::SeederFabricantes()*/
 
    /*::oMsg:SetText( "Ejecutando seeder de empresas" )
    ::SeederEmpresas()*/

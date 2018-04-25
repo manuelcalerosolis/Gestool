@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoController FROM SQLNavigatorController
+CLASS CuentasRemesaController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -11,7 +11,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ArticulosTipoController
+METHOD New() CLASS CuentasRemesaController
 
    ::Super:New()
 
@@ -48,7 +48,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoBrowseView FROM SQLBrowseView
+CLASS CuentasRemesaBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -56,7 +56,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ArticulosTipoBrowseView
+METHOD addColumns() CLASS CuentasRemesaBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -101,7 +101,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoView FROM SQLBaseView
+CLASS CuentasRemesaView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -109,17 +109,14 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ArticulosTipoView
+METHOD Activate() CLASS CuentasRemesaView
 
    local oDialog
    local oBmpGeneral
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ARTICULO_TIPO" ;
-      TITLE       ::LblTitle() + "tipo de artículo"
+      RESOURCE    "CUENTA_REMESA" ;
+      TITLE       ::LblTitle() + "cuenta remesa"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -138,9 +135,104 @@ METHOD Activate() CLASS ArticulosTipoView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
-      VALID       ( ::oController:validate( "descripcion" ) ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "banco" ] ;
+      ID          120 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_pais" ] ;
+      ID          130 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "digitos_control" ] ;
+      ID          131 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_entidad" ] ;
+      ID          132 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_oficina" ] ;
+      ID          133 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "digitos_control_cc" ] ;
+      ID          134 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "numero_cuenta" ] ;
+      ID          135 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "sufijo" ] ;
+      ID          140 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_ine" ] ;
+      ID          150 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_banco" ] ;
+      ID          160 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_descuento" ] ;
+      ID          170 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "presentador_codigo" ] ;
+      ID          180 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "presentador_iso" ] ;
+      ID          190 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "presentador_nombre" ] ;
+      ID          200 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "presentador_nif" ] ;
+      ID          210 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "acreedor_codigo" ] ;
+      ID          220 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "acreedor_iso" ] ;
+      ID          230 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "acreedor_nombre" ] ;
+      ID          240 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "acreedor_nif" ] ;
+      ID          250 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -173,7 +265,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoValidator FROM SQLBaseValidator
+CLASS CuentasRemesaValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -182,10 +274,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ArticulosTipoValidator
+METHOD getValidators() CLASS CuentasRemesaValidator
 
-   ::hValidators  := {  "descripcion" =>          {  "required"     => "La descripción es un dato requerido",;
-                                                      "unique"       => "La descripción introducida ya existe" },;
+   ::hValidators  := {  "nombre" =>                {  "required"     => "El nombre es un dato requerido",;
+                                                      "unique"       => "El nombre introducido ya existe" },;
                         "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
                                                       "unique"       => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
@@ -199,9 +291,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosTipoModel FROM SQLBaseModel
+CLASS SQLCuentasRemesaModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "articulos_tipo"
+   DATA cTableName               INIT "cuentas_remesa"
 
    METHOD getColumns()
 
@@ -209,7 +301,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLArticulosTipoModel
+METHOD getColumns() CLASS SQLCuentasRemesaModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                              "default"   => {|| 0 } }                                 )
@@ -220,7 +312,7 @@ METHOD getColumns() CLASS SQLArticulosTipoModel
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
                                              "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",             {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
 RETURN ( ::hColumns )
@@ -235,7 +327,7 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoRepository FROM SQLBaseRepository
+CLASS CuentasRemesaRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLArticulosTipoModel():getTableName() ) 
 

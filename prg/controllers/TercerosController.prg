@@ -6,8 +6,12 @@
 CLASS TercerosController FROM SQLNavigatorController
 
    DATA oDireccionesController
+
    DATA oPaisesController
+
    DATA oProvinciasController
+
+   DATA oAgentesController
 
    METHOD New()
 
