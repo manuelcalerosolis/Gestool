@@ -92,6 +92,14 @@ METHOD addColumns() CLASS CamposExtraBrowseView
       :lHide               := .t.
    end with
 
+      with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
@@ -247,17 +255,23 @@ METHOD Activate() CLASS CamposExtraView
       PROMPT      "&General" ,;
                   "&Entidades" ;
       DIALOGS     "CAMPOS_EXTRA_PRINCIPAL",;
-                  "CAMPOS_EXTRA_ENTIDADES" 
+                  "CAMPOS_EXTRA_ENTIDADES"
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+      ID          100 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
+      OF          ::oFolder:aDialogs[ 1 ] 
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          100 ;
+      ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[ 1 ]
 
    REDEFINE COMBOBOX ::oTipo ;
       VAR         ::oController:oModel:hBuffer[ "tipo" ] ;
-      ID          110 ;
+      ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ITEMS       ( ::aTipos ) ;
       OF          ::oFolder:aDialogs[ 1 ]
@@ -265,13 +279,13 @@ METHOD Activate() CLASS CamposExtraView
    ::oTipo:bChange   := {|| ::ChangeTipo( ::oController:oModel:hBuffer[ "tipo" ] ) }
 
    REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "requerido" ] ;
-      ID          120 ;
+      ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[ 1 ]
 
    REDEFINE GET   ::oLongitud ;
       VAR         ::oController:oModel:hBuffer[ "longitud" ] ;
-      ID          130 ;
+      ID          140 ;
       IDSAY       131 ;
       PICTURE     "999" ;
       SPINNER ;
@@ -283,7 +297,7 @@ METHOD Activate() CLASS CamposExtraView
 
    REDEFINE GET   ::oDecimales ;
       VAR         ::oController:oModel:hBuffer[ "decimales" ] ;
-      ID          140 ;
+      ID          150 ;
       IDSAY       141 ;
       PICTURE     "9" ;
       SPINNER ;
@@ -295,25 +309,25 @@ METHOD Activate() CLASS CamposExtraView
 
    REDEFINE GET   ::oLista ;
       VAR         ::cLista ;
-      ID          150 ;
+      ID          160 ;
       IDSAY       151 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[ 1 ]
 
    REDEFINE BUTTON ::oAddListaValores;
-      ID          160 ;
+      ID          170 ;
       OF          ::oFolder:aDialogs[ 1 ] ;
       ACTION      ( ::addListaValores() )
 
    REDEFINE BUTTON ::oDelListaValores ;
-      ID          170 ;
+      ID          180 ;
       OF          ::oFolder:aDialogs[ 1 ] ;
       ACTION      ( ::oListaValores:Del() )
 
    REDEFINE LISTBOX ::oListaValores ;
       VAR         ::cListaValores ;
       ITEMS       ::oController:oModel:hBuffer[ "lista" ] ;
-      ID          180 ;
+      ID          190 ;
       OF          ::oFolder:aDialogs[ 1 ]
 
    ::oListaValores:lVisible := .t.
@@ -394,7 +408,9 @@ END CLASS
 
 METHOD getValidators() CLASS CamposExtraValidator
 
-   ::hValidators  := {     "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
+   ::hValidators  := {     "codigo" =>    {  "required"     => "El codigo es un dato requerido",;
+                                             "unique"       => "El codigo introducido ya existe" } ,;
+                           "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
                                              "unique"       => "El nombre introducido ya existe" } ,;   
                            "tipo"     =>  {  "required"     => "El tipo es un dato requerido" } ,; 
                            "longitud" =>  {  "required"     => "La longitud es un dato requerido" } }
@@ -431,6 +447,13 @@ METHOD getColumns() CLASS SQLCamposExtraModel
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
+
+   ::getEmpresaColumns()
+
+   ::getTimeStampColumns()
+
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
+                                             "default"   => {|| space( 3 ) } }                        )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )

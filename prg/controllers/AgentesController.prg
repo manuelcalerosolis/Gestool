@@ -123,7 +123,7 @@ METHOD addColumns() CLASS AgentesBrowseView
       :cSortOrder          := 'comision'
       :cHeader             := 'Comisión'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'comision' ) }
+      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'comision' ), "@E 999.99" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -207,6 +207,7 @@ METHOD Activate() CLASS AgentesView
    REDEFINE GET   ::oController:oModel:hBuffer[ "comision" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
       PICTURE     "@E 999.99" ;
       OF          ::oDialog
 
@@ -287,6 +288,8 @@ METHOD getColumns() CLASS SQLAgentesModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
    
    ::getEmpresaColumns()
+
+   ::getTimeStampColumns()
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(3) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| space( 3 )}})

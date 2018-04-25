@@ -15,26 +15,25 @@ METHOD New() CLASS CuentasRemesaController
 
    ::Super:New()
 
-   ::cTitle                      := "Tipos de artículo"
+   ::cTitle                         := "Cuentas de remesa"
 
-   ::cName                       := "articulos_tipo"
+   ::cName                          := "cuentas_remesa"
 
-   ::hImage                      := {  "16" => "gc_objects_16",;
-                                       "32" => "gc_objects_32",;
-                                       "48" => "gc_objects_48" }
+   ::hImage                         := {  "16" => "gc_notebook2_16",;
+                                       "32" => "gc_notebook2_32",;
+                                       "48" => "gc_notebook2_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLArticulosTipoModel():New( self )
+   ::oModel                         := SQLCuentasRemesaModel():New( self )
 
-   ::oBrowseView                    := ArticulosTipoBrowseView():New( self )
+   ::oBrowseView                    := CuentasRemesaBrowseView():New( self )
 
-   ::oDialogView                    := ArticulosTipoView():New( self )
+   ::oDialogView                    := CuentasRemesaView():New( self )
 
-   ::oValidator                     := ArticulosTipoValidator():New( self, ::oDialogView )
+   ::oValidator                     := CuentasRemesaValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := ArticulosTipoRepository():New( self )
-
+   ::oRepository                    := CuentasRemesaRepository():New( self )
 
 RETURN ( Self )
 
@@ -64,7 +63,6 @@ METHOD addColumns() CLASS CuentasRemesaBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -84,10 +82,18 @@ METHOD addColumns() CLASS CuentasRemesaBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'descripcion'
-      :cHeader             := 'Descripción'
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'cuenta bancaria'
+      :cHeader             := 'Cuenta Bancaria'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'iban_codigo_pais' ) + ::getRowSet():fieldGet( 'iban_digito_control' ) + '-' + ::getRowSet():fieldGet( 'cuenta_codigo_entidad' ) + '-' +  ::getRowSet():fieldGet( 'cuenta_codigo_oficina' ) + '-' +  ::getRowSet():fieldGet( 'cuenta_digito_control' ) + '-' +  ::getRowSet():fieldGet( 'cuenta_numero' ) } 
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -120,7 +126,7 @@ METHOD Activate() CLASS CuentasRemesaView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_objects_48" ;
+      RESOURCE    "gc_notebook2_48" ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
@@ -146,31 +152,33 @@ METHOD Activate() CLASS CuentasRemesaView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_pais" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "iban_codigo_pais" ] ;
       ID          130 ;
+      PICTURE     "@!" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "digitos_control" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "iban_digito_control" ] ;
       ID          131 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_entidad" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_codigo_entidad" ] ;
       ID          132 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_oficina" ] ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_codigo_oficina" ] ;
       ID          133 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "digitos_control_cc" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_digito_control" ] ;
       ID          134 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "numero_cuenta" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_numero" ] ;
       ID          135 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -201,7 +209,7 @@ METHOD Activate() CLASS CuentasRemesaView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "presentador_iso" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "presentador_iso_pais" ] ;
       ID          190 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -221,7 +229,7 @@ METHOD Activate() CLASS CuentasRemesaView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "acreedor_iso" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "acreedor_iso_pais" ] ;
       ID          230 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -303,17 +311,80 @@ END CLASS
 
 METHOD getColumns() CLASS SQLCuentasRemesaModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                                   "default"   => {|| win_uuidcreatestring() } }            )
+   ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
-                                             "default"   => {|| space( 3 ) } }                        )
+   ::getTimeStampColumns()
 
-   hset( ::hColumns, "nombre",             {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "banco_uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                                   "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 3 )"                            ,;
+                                                   "default"   => {|| space( 3 ) } }                        )
+
+   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                   "default"   => {|| space( 200 ) } }                      )
+
+   hset( ::hColumns, "banco",                   {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                   "default"   => {|| space( 200 ) } }                      )
+
+   hset( ::hColumns, "iban_codigo_pais",        {  "create"    => "VARCHAR( 2 )"                            ,;
+                                                   "default"   => {|| space( 2 ) } }                        )
+
+   hset( ::hColumns, "iban_digito_control",     {  "create"    => "VARCHAR( 2 )"                            ,;
+                                                   "default"   => {|| space( 2 ) } }                        )
+
+   hset( ::hColumns, "cuenta_codigo_entidad",   {  "create"    => "VARCHAR( 4 )"                            ,;
+                                                   "default"   => {|| space( 4 ) } }                        )
+
+   hset( ::hColumns, "cuenta_codigo_oficina",   {  "create"    => "VARCHAR( 4 )"                            ,;
+                                                   "default"   => {|| space( 4 ) } }                        )
+
+   hset( ::hColumns, "cuenta_digito_control",   {  "create"    => "VARCHAR( 2 )"                            ,;
+                                                   "default"   => {|| space( 2 ) } }                        )
+
+   hset( ::hColumns, "cuenta_numero",           {  "create"    => "VARCHAR( 9 )"                            ,;
+                                                   "default"   => {|| space( 9 ) } }                        )
+
+   hset( ::hColumns, "sufijo",                  {  "create"    => "VARCHAR( 3 )"                            ,;
+                                                   "default"   => {|| space( 3 ) } }                        )
+
+   hset( ::hColumns, "codigo_ine",              {  "create"    => "VARCHAR( 6 )"                            ,;
+                                                   "default"   => {|| space( 6 ) } }                        )
+
+   hset( ::hColumns, "cuenta_banco",            {  "create"    => "VARCHAR( 12 )"                           ,;
+                                                   "default"   => {|| space( 12 ) } }                       )
+
+   hset( ::hColumns, "cuenta_descuento",        {  "create"    => "VARCHAR( 12 )"                           ,;
+                                                   "default"   => {|| space( 12 ) } }                       )
+
+   hset( ::hColumns, "presentador_codigo",      {  "create"    => "VARCHAR( 2 )"                            ,;
+                                                   "default"   => {|| space( 2 ) } }                        )
+
+   hset( ::hColumns, "presentador_iso_pais",    {  "create"    => "VARCHAR( 2 )"                            ,;
+                                                   "default"   => {|| space( 2 ) } }                        )
+
+   hset( ::hColumns, "presentador_nombre",      {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                   "default"   => {|| space( 200 ) } }                      )
+
+   hset( ::hColumns, "presentador_nif",         {  "create"    => "VARCHAR( 9 )"                            ,;
+                                                   "default"   => {|| space( 9 ) } }                        )
+
+   hset( ::hColumns, "acreedor_codigo",         {  "create"    => "VARCHAR( 2 )"                            ,;
+                                                   "default"   => {|| space( 2 ) } }                        )
+
+   hset( ::hColumns, "acreedor_iso_pais",       {  "create"    => "VARCHAR( 2 )"                            ,;
+                                                   "default"   => {|| space( 2 ) } }                        )
+
+   hset( ::hColumns, "acreedor_nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                   "default"   => {|| space( 200 ) } }                      )
+
+   hset( ::hColumns, "acreedor_nif",            {  "create"    => "VARCHAR( 9 )"                            ,;
+                                                   "default"   => {|| space( 9 ) } }                        )
 
 RETURN ( ::hColumns )
 
