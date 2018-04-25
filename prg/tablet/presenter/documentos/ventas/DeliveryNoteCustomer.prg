@@ -73,6 +73,7 @@ METHOD Default() CLASS DeliveryNoteCustomer
    ::setCounterDocuments( "nAlbCli" )
 
    ::setDataTable( "AlbCliT" )
+   
    ::setDataTableLine( "AlbCliL" )
 
 Return ( self )

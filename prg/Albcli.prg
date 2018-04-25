@@ -15,7 +15,7 @@
 #define albParcialmenteFacturado 2
 #define albTotalmenteFacturado   3
 
-#define aTextoEstadoFacturado    {"No facturado", "Parcialmente", "Facturado" }
+#define aTextoEstadoFacturado    { "No facturado", "Parcialmente", "Facturado" }
 
 /*
 Definición de la base de datos de albaranes a CLIENTES-------------------------
@@ -1278,8 +1278,8 @@ STATIC FUNCTION OpenFiles()
       Return ( .f. )
    end if
 
-   // oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       lOpenFiles        := .t.
 
@@ -1388,7 +1388,6 @@ STATIC FUNCTION OpenFiles()
 
       D():SatClientesLineas( nView )
 
-      msgalert( "Aperturas ------------------------------------------------------------" )
       // Aperturas ------------------------------------------------------------
 
       if !TDataCenter():OpenPreCliT( @dbfPreCliT )
@@ -1551,8 +1550,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "MATSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MATSER", @dbfMatSer ) )
       SET ADSINDEX TO ( cPatEmp() + "MATSER.CDX" ) ADDITIVE
 
-      msgalert( "TDataCenter ------------------------------------------------------------" )
-
       if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
          lOpenFiles        := .f.
       end if
@@ -1612,8 +1609,6 @@ STATIC FUNCTION OpenFiles()
       oTransportistaSelector     := TransportistasController():New():oGetSelector
       oTransportistaSelector:setKey( "codigo" )
 
-      msgalert( "Public ------------------------------------------------------------" )
-
       /*
       Declaración de variables públicas----------------------------------------
       */
@@ -1653,18 +1648,16 @@ STATIC FUNCTION OpenFiles()
       public nTotArt    := 0
       public nTotCaj    := 0
 
-      msgalert( "Filtros ------------------------------------------------------------" )
-
       /*
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      if lAIS() .and. !oUser():lAdministrador()
-      
+      if lAIS() 
+
          cFiltroUsuario    := "Field->cSufAlb == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
          
          if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )         
-            cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo()  + "'"
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + Auth():Codigo() + "'"
          end if 
 
          ( D():Get( "AlbCliT", nView ) )->( AdsSetAOF( cFiltroUsuario ) )
@@ -1674,8 +1667,6 @@ STATIC FUNCTION OpenFiles()
       /*
       Campos extras------------------------------------------------------------------------
       */
-
-      msgalert( "Campos extra ------------------------------------------------------------" )
 
       oDetCamposExtra      := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
@@ -1687,17 +1678,15 @@ STATIC FUNCTION OpenFiles()
       oLinDetCamposExtra:setTipoDocumento( "Lineas de albaranes a clientes" )
       oLinDetCamposExtra:setbId( {|| D():AlbaranesClientesLineasEscandalloId( nView ) } )
 
-      msgalert( "Apertura de ficheros finalzada" )
+   RECOVER USING oError
 
-//    RECOVER USING oError
-// 
-//       lOpenFiles           := .f.
-// 
-//       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-// 
-//    END SEQUENCE
-// 
-//    ErrorBlock( oBlock )
+      lOpenFiles           := .f.
+
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
    if !lOpenFiles
       CloseFiles()
