@@ -288,6 +288,8 @@ METHOD getColumns() CLASS SQLAgentesModel
    
    ::getEmpresaColumns()
 
+   ::getTimeStampColumns()
+
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(3) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| space( 3 )}})
 

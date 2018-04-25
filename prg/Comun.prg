@@ -2703,7 +2703,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 18
+   oGrupo:nBigItems     := 19
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2877,7 +2877,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_signpost3_32"
    oItem:lShow          := .f.
 
-      oItem                := oItemAyudas:Add()
+   oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Bancos'
    oItem:cMessage       := 'Bancos'
@@ -2885,6 +2885,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_central_bank_euro_16"
    oItem:cBmpBig        := "gc_central_bank_euro_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Cuentas de remesa'
+   oItem:cMessage       := 'Cuentas de remesa'
+   oItem:bAction        := {|| CuentasRemesaController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_notebook2_16"
+   oItem:cBmpBig        := "gc_notebook2_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )
