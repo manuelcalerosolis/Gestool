@@ -57,7 +57,8 @@ METHOD getFilters( cTabla )
       RETURN ( aFilters )   
    end if 
 
-   cSentence         := "SELECT nombre FROM " + ::getTableName() + " WHERE tabla = " + quoted( cTabla ) 
+   cSentence         := "SELECT nombre FROM " + ::getTableName() + " " + ;
+                           "WHERE tabla = " + quoted( cTabla ) 
 
    aFilters          := ::getDatabase():selectFetchArrayOneColumn( cSentence )
 
