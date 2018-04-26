@@ -95,7 +95,9 @@ METHOD addColumns() CLASS DivisasMonetariasBrowseView
       :cSortOrder          := 'valor'
       :cHeader             := 'Valor en pesetas'
       :nWidth              := 120
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'valor_pesetas' ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'valor_pesetas' ), "@E 999,999.999999" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -103,14 +105,16 @@ METHOD addColumns() CLASS DivisasMonetariasBrowseView
       :cSortOrder          := 'valor_euros'
       :cHeader             := 'Valor en euros'
       :nWidth              := 120
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'valor_euros' ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'valor_euros' ), "@E 999,999.999999" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'simbolo'
       :cHeader             := 'Símbolo'
-      :nWidth              := 120
+      :nWidth              := 60
       :bEditValue          := {|| ::getRowSet():fieldGet( 'simbolo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -154,6 +158,7 @@ METHOD Activate() CLASS DivisasMonetariasView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     "@!" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -166,11 +171,13 @@ METHOD Activate() CLASS DivisasMonetariasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "valor_pesetas" ] ;
       ID          120 ;
+      PICTURE     "@E 999,999.999999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "valor_euros" ] ;
       ID          130 ;
+      PICTURE     "@E 999,999.999999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -184,58 +191,76 @@ METHOD Activate() CLASS DivisasMonetariasView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pcompra_entero" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "precio_compra_entero" ] ;
       ID          160 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
+      MIN         0 ;
+      MAX         8 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pcompra_decimal" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "precio_compra_decimal" ] ;
       ID          170 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
+      MIN         0 ;
+      MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pcompra_redondeo" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "precio_compra_redondeo" ] ;
       ID          180 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
+      MIN         0 ;
+      MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pventa_entero" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "precio_venta_entero" ] ;
       ID          190 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
+      MIN         0 ;
+      MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pventa_decimal" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "precio_venta_decimal" ] ;
       ID          200 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
+      MIN         0 ;
+      MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pventa_redondeo" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "precio_venta_redondeo" ] ;
       ID          210 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
+      MIN         0 ;
+      MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pverde_entero" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "punto_verde_entero" ] ;
       ID          220 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
+      MIN         0 ;
+      MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pverde_decimal" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "punto_verde_decimal" ] ;
       ID          230 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
+      MIN         0 ;
+      MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pverde_redondeo" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "punto_verde_redondeo" ] ;
       ID          240 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
+      MIN         0 ;
+      MAX         8 ;
       OF          ::oDialog ;
 
    REDEFINE BUTTON ;
@@ -305,56 +330,56 @@ END CLASS
 
 METHOD getColumns() CLASS SQLDivisasMonetariasModel
 
-   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                                "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                                   "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 3 )"                            ,;
-                                                "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 3 )"                            ,;
+                                                   "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                   "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "valor_pesetas",        {  "create"    => "FLOAT( 7,2 )"                            ,;
-                                                "default"   =>{|| space( 7 ) } }                          )
+   hset( ::hColumns, "valor_pesetas",           {  "create"    => "FLOAT( 14,6 )"                           ,;
+                                                   "default"   =>{|| 0 } }                                  )
 
-   hset( ::hColumns, "valor_euros",          {  "create"    => "FLOAT( 7,2 )"                            ,;
-                                                "default"   => {|| space( 7 ) } }                         )
+   hset( ::hColumns, "valor_euros",             {  "create"    => "FLOAT( 14,6 )"                           ,;
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "simbolo",              {  "create"    => "VARCHAR( 3 )"                            ,;
-                                                "default"   => {|| space( 3) } }                         )
+   hset( ::hColumns, "simbolo",                 {  "create"    => "VARCHAR( 3 )"                            ,;
+                                                   "default"   => {|| space( 3) } }                         )
 
-   hset( ::hColumns, "texto_masculino",      {  "create"    => "BIT"                                     ,;
-                                                "default"   => {|| .f. } }                               )
+   hset( ::hColumns, "texto_masculino",         {  "create"    => "BIT"                                     ,;
+                                                   "default"   => {|| .f. } }                               )
 
-   hset( ::hColumns, "pcompra_entero",       {  "create"    => "INTEGER"                                 ,;
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "precio_compra_entero",    {  "create"    => "INTEGER"                                 ,;
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "pcompra_decimal",      {  "create"    => "INTEGER"                                 ,;
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "precio_compra_decimal",   {  "create"    => "INTEGER"                                 ,;
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "pcompra_redondeo",     {  "create"    => "INTEGER"                                 ,;
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "precio_compra_redondeo",  {  "create"    => "INTEGER"                                 ,;
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "pventa_entero",        {  "create"    => "INTEGER"                                 ,;
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "precio_venta_entero",     {  "create"    => "INTEGER"                                 ,;
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "pventa_decimal",       {  "create"    => "INTEGER"                                 ,;
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "precio_venta_decimal",    {  "create"    => "INTEGER"                                 ,;
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "pventa_redondeo",      {  "create"    => "INTEGER"                                 ,;
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "precio_venta_redondeo",   {  "create"    => "INTEGER"                                 ,;
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "pverde_entero",        {  "create"    => "INTEGER"                                 ,;
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "punto_verde_entero",      {  "create"    => "INTEGER"                                 ,;
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "pverde_decimal",       {  "create"    => "INTEGER"                                 ,;
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "punto_verde_decimal",     {  "create"    => "INTEGER"                                 ,;
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "pverde_redondeo",      {  "create"    => "INTEGER"                                 ,;
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "punto_verde_redondeo",    {  "create"    => "INTEGER"                                 ,;
+                                                   "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 
