@@ -1,2 +1,0 @@
-22:24:04- 80644.0670 SELECT id FROM configuracion_columnas_usuarios WHERE view_name = 'movimientos_de_almacen' AND usuario_id = '000'
-22:27:06- 80826.3650 SELECT id FROM configuracion_columnas_usuarios WHERE view_name = 'movimientos_de_almacen' AND usuario_id = '000'
