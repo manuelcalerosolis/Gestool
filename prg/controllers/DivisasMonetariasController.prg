@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ImpuestosEspecialesController FROM SQLNavigatorController
+CLASS DivisasMonetariasController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -11,29 +11,29 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ImpuestosEspecialesController
+METHOD New() CLASS DivisasMonetariasController
 
    ::Super:New()
 
-   ::cTitle                      := "Impuestos Especiales"
+   ::cTitle                      := "Divisas monetarias"
 
-   ::cName                       := "impuestos_especiales"
+   ::cName                       := "divisas_monetarias"
 
-   ::hImage                      := {  "16" => "gc_moneybag_euro_16",;
-                                       "32" => "gc_moneybag_euro_32",;
-                                       "48" => "gc_moneybag_euro_48" }
+   ::hImage                      := {  "16" => "gc_currency_euro_16",;
+                                       "32" => "gc_currency_euro_32",;
+                                       "48" => "gc_currency_euro_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLImpuestosEspecialesModel():New( self )
+   ::oModel                         := SQLDivisasMonetariasModel():New( self )
 
-   ::oBrowseView                    := ImpuestosEspecialesBrowseView():New( self )
+   ::oBrowseView                    := DivisasMonetariasBrowseView():New( self )
 
-   ::oDialogView                    := ImpuestosEspecialesView():New( self )
+   ::oDialogView                    := DivisasMonetariasView():New( self )
 
-   ::oValidator                     := ImpuestosEspecialesValidator():New( self, ::oDialogView )
+   ::oValidator                     := DivisasMonetariasValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := ImpuestosEspecialesRepository():New( self )
+   ::oRepository                    := DivisasMonetariasRepository():New( self )
 
 
 RETURN ( Self )
@@ -48,7 +48,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImpuestosEspecialesBrowseView FROM SQLBrowseView
+CLASS DivisasMonetariasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -56,7 +56,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ImpuestosEspecialesBrowseView
+METHOD addColumns() CLASS DivisasMonetariasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -92,18 +92,26 @@ METHOD addColumns() CLASS ImpuestosEspecialesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'importe'
-      :cHeader             := 'Importe'
+      :cSortOrder          := 'valor'
+      :cHeader             := 'Valor en pesetas'
       :nWidth              := 120
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'importe' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'valor_pesetas' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'subcuenta'
-      :cHeader             := 'Subcuenta'
+      :cSortOrder          := 'valor_euros'
+      :cHeader             := 'Valor en euros'
       :nWidth              := 120
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'subcuenta' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'valor_euros' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'simbolo'
+      :cHeader             := 'Símbolo'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'simbolo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -117,25 +125,25 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImpuestosEspecialesView FROM SQLBaseView
-  
+CLASS DivisasMonetariasView FROM SQLBaseView
+
    METHOD Activate()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ImpuestosEspecialesView
+METHOD Activate() CLASS DivisasMonetariasView
 
    local oBmpGeneral
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "IMPUESTO_ESPECIAL" ;
-      TITLE       ::LblTitle() + "impuesto especial"
+      RESOURCE    "DIVISA_MONETARIA" ;
+      TITLE       ::LblTitle() + "divisa monetaria"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_moneybag_euro_48" ;
+      RESOURCE    "gc_currency_euro_48" ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
@@ -156,25 +164,78 @@ METHOD Activate() CLASS ImpuestosEspecialesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "valor_pesetas" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      SPINNER ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "subcuenta" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "valor_euros" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "subcuenta" ] ;
-      ID          131 ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "simbolo" ] ;
+      ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "aplicar" ] ;
-      ID          140 ;
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "texto_masculino" ] ;
+      ID          150 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "pcompra_entero" ] ;
+      ID          160 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "pcompra_decimal" ] ;
+      ID          170 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "pcompra_redondeo" ] ;
+      ID          180 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "pventa_entero" ] ;
+      ID          190 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "pventa_decimal" ] ;
+      ID          200 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "pventa_redondeo" ] ;
+      ID          210 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "pverde_entero" ] ;
+      ID          220 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "pverde_decimal" ] ;
+      ID          230 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "pverde_redondeo" ] ;
+      ID          240 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
       OF          ::oDialog ;
 
    REDEFINE BUTTON ;
@@ -206,7 +267,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImpuestosEspecialesValidator FROM SQLBaseValidator
+CLASS DivisasMonetariasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -215,7 +276,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ImpuestosEspecialesValidator
+METHOD getValidators() CLASS DivisasMonetariasValidator
 
    ::hValidators  := {  "nombre" =>                {  "required"     => "El nombre es un dato requerido",;
                                                       "unique"       => "El nombre introducido ya existe" },;
@@ -232,9 +293,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLImpuestosEspecialesModel FROM SQLBaseModel
+CLASS SQLDivisasMonetariasModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "impuestos_especiales"
+   DATA cTableName               INIT "divisas_monetarias"
 
    METHOD getColumns()
 
@@ -242,28 +303,58 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLImpuestosEspecialesModel
+METHOD getColumns() CLASS SQLDivisasMonetariasModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                                "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                                "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
-                                             "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 3 )"                            ,;
+                                                "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "importe",           {  "create"    => "FLOAT( 7,6 )"                            ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "valor_pesetas",        {  "create"    => "FLOAT( 7,2 )"                            ,;
+                                                "default"   =>{|| space( 7 ) } }                          )
 
-   hset( ::hColumns, "subcuenta",         {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "valor_euros",          {  "create"    => "FLOAT( 7,2 )"                            ,;
+                                                "default"   => {|| space( 7 ) } }                         )
 
-   hset( ::hColumns, "aplicar",           {  "create"    => "BIT"                                     ,;
-                                             "default"   => {|| .f. } }                               )
+   hset( ::hColumns, "simbolo",              {  "create"    => "VARCHAR( 3 )"                            ,;
+                                                "default"   => {|| space( 3) } }                         )
+
+   hset( ::hColumns, "texto_masculino",      {  "create"    => "BIT"                                     ,;
+                                                "default"   => {|| .f. } }                               )
+
+   hset( ::hColumns, "pcompra_entero",       {  "create"    => "INTEGER"                                 ,;
+                                                "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "pcompra_decimal",      {  "create"    => "INTEGER"                                 ,;
+                                                "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "pcompra_redondeo",     {  "create"    => "INTEGER"                                 ,;
+                                                "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "pventa_entero",        {  "create"    => "INTEGER"                                 ,;
+                                                "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "pventa_decimal",       {  "create"    => "INTEGER"                                 ,;
+                                                "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "pventa_redondeo",      {  "create"    => "INTEGER"                                 ,;
+                                                "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "pverde_entero",        {  "create"    => "INTEGER"                                 ,;
+                                                "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "pverde_decimal",       {  "create"    => "INTEGER"                                 ,;
+                                                "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "pverde_redondeo",      {  "create"    => "INTEGER"                                 ,;
+                                                "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 
@@ -277,7 +368,7 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImpuestosEspecialesRepository FROM SQLBaseRepository
+CLASS DivisasMonetariasRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLRutasModel():getTableName() ) 
 
