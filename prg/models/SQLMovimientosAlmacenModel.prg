@@ -65,9 +65,6 @@ METHOD getColumns()
    hset( ::hColumns, "almacen_destino",   {  "create"    => "CHAR ( 16 )"                             ,;
                                              "default"   => {|| space( 16 ) } }                       )
 
-   hset( ::hColumns, "grupo_movimiento",  {  "create"    => "CHAR ( 2 )"                              ,;
-                                             "default"   => {|| space( 2 ) } }                        )
-
    hset( ::hColumns, "divisa",            {  "create"    => "CHAR ( 3 )"                              ,;
                                              "default"   => {|| cDivEmp() } }                         )
 
@@ -226,9 +223,6 @@ METHOD Syncronize()
    cSql                    +=    "INNER JOIN " + cEmpresaTableName + " ON " + ::cTableName + ".empresa = " + cEmpresaTableName + ".codigo "
    cSql                    += "SET " + ::cTableName + ".empresa_uuid = " + cEmpresaTableName + ".uuid "
    cSql                    +=    "WHERE " + ::cTableName + ".empresa_uuid = '' "
-
-   msgalert( cSql, "cSql" )
-   logwrite( cSql )
 
    getSQLDatabase():Exec( cSql )
 
