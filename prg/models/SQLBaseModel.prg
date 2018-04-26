@@ -535,7 +535,7 @@ RETURN ( "DROP TABLE " + ::cTableName )
 
 METHOD findById( id )
 
-   local hBuffer  := atail( ::getDatabase():selectFetchHash( ::getIdSelect( id ) ) )
+   local hBuffer  := atail( ::getDatabase():selectPadedFetchHash( ::getIdSelect( id ) ) )
 
    heval( hBuffer, {|k,v| hset( hBuffer, k, ::getAttribute( k, v ) ) } )
 

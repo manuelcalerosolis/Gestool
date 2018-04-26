@@ -22,6 +22,8 @@ CLASS AuthManager
    METHOD Level( nOption )
 
    METHOD guardWhereUuid( uuid )
+   
+   METHOD guardWhereCodigo( cCodigo )
 
 END CLASS
 
@@ -99,6 +101,18 @@ RETURN ( __permission_full__ )
 METHOD guardWhereUuid( uuid )
 
    local hUser    := UsuariosRepository():getWhereUuid( Uuid )
+
+   if hb_ishash( hUser )
+      ::guard( hUser )
+   endif 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD guardWhereCodigo( cNombre )
+
+   local hUser    := UsuariosRepository():getWhereNombre( cNombre )
 
    if hb_ishash( hUser )
       ::guard( hUser )
