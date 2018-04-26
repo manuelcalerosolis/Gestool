@@ -1,0 +1,18 @@
+[
+  {
+    "id" : "000",
+    "nombre" : "ADMINISTRADOR"
+  },
+  {
+    "id" : "002",
+    "nombre" : "DOS"
+  },
+  {
+    "id" : "006",
+    "nombre" : "SEIS"
+  },
+  {
+    "id" : "999",
+    "nombre" : "CAMAREROS"
+  }
+]

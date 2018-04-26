@@ -20,9 +20,10 @@
 [Cc]lient/
 [Ii]ss/[Ee]xe/
 [Ii]nclude/
-[Bb]in/
 [Bb]in/[Ii]magen/
+[Bb]in/[Bb]mp/
 [Bb]in/[Dd]atabase/
+[Bb]in/[Cc]onfig/
 
 *.tmp
 *.bak
@@ -62,6 +63,24 @@
 *.ppo
 *.csv
 *.db
+*.lib
+*.nil
+*.old
+*.jpg
+*.mbk
+*.xls
+*.dbk
+*.jar
+*.html
+*.all
+*.hbr
+*.xml
+*.bat
+*.~pt
+*.dbu
+*.eje
+*.oxps
+
 
 ############
 ## Windows

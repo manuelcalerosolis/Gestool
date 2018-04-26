@@ -1,0 +1,25 @@
+{
+  "id" : 1,
+  "fecha_hora" : "01/11/2017 09:19:00",
+  "usuario" : "000",
+  "numero_lineas" : 2,
+  "uuid" : "2c68a636-3cae-4621-b35a-5aa19b88300c",
+  "imprimir" : true,
+  "lineas" : [
+  {
+    "numero" : 1,
+    "id_articulo" : "9",
+    "unidades" : 1,
+    "precio" : 9.60,
+    "uuid" : "5585b435-850d-4b7f-bf05-8e65ccde5548"
+  },
+  {
+    "numero" : 2,
+    "id_articulo" : "10",
+    "unidades" : 1,
+    "precio" : 23.75,
+    "uuid" : "26ca17cd-a896-4b80-bffa-aa03284cd50e"
+  }
+  ]
+}
+
