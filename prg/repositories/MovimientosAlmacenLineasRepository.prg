@@ -372,18 +372,11 @@ RETURN ( SQLRowSet():New():Build( cSentence ) )
 
 METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenLineasRepository
 
-   local idEmpresa
    local cSentence
 
    if !hhaskey( hParams, "codigo_articulo" )
       msgStop( "El código de artículo es un parametro obligatorio", "getSQLSentenceMovimientosForArticulo" )
       RETURN ( "" )
-   end if 
-
-   if hhaskey( hParams, "empresa" ) .and. !empty( hget( hParams, "empresa" ) )
-      idEmpresa      := hget( hParams, "empresa" )
-   else 
-      idEmpresa      := cCodEmp()
    end if 
 
    cSentence         := "SELECT "
@@ -412,7 +405,7 @@ METHOD getSQLSentenceMovimientosForArticulo( hParams ) CLASS MovimientosAlmacenL
    cSentence         += "INNER JOIN movimientos_almacen "
    cSentence         +=    "ON movimientos_almacen.uuid = movimientos_almacen_lineas.parent_uuid "
 
-   cSentence         += "WHERE movimientos_almacen.empresa = " + quoted( idEmpresa ) + " "
+   cSentence         += "WHERE movimientos_almacen.empresa_uuid = " + quoted( uuidEmpresa() ) + " "
    
    cSentence         +=    "AND movimientos_almacen_lineas.codigo_articulo = " + quoted( hget( hParams, "codigo_articulo" ) ) + " "
 

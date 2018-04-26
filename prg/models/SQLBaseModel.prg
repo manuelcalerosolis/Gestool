@@ -27,11 +27,9 @@ CLASS SQLBaseModel
 
    DATA cGeneralWhere
 
-   DATA cFilterWhere
+   DATA cFilterWhere                                  INIT ""
 
    DATA cOthersWhere
-   
-   DATA cColumnOrder                  
 
    DATA cColumnKey                                    INIT "id"
    
@@ -44,6 +42,10 @@ CLASS SQLBaseModel
    DATA cSQLUpdate
 
    DATA cGroupBy                                      INIT ""
+
+   DATA cOrderBy 
+   
+   DATA cOrientation
 
    DATA cFind
 
@@ -124,19 +126,25 @@ CLASS SQLBaseModel
    
    METHOD addEmpresaWhere()                           
 
-   METHOD setOthersWhere( cWhere )                   INLINE ( ::cOthersWhere   := cWhere )
+   METHOD setOthersWhere( cWhere )                    INLINE ( ::cOthersWhere   := cWhere )
    METHOD addOthersWhere( cSQLSelect )
 
    METHOD setFilterWhere( cWhere )                    INLINE ( ::cFilterWhere    := cWhere )
-   METHOD clearFilterWhere()                          INLINE ( ::cFilterWhere    := nil )
+   METHOD clearFilterWhere()                          INLINE ( ::cFilterWhere    := "" )
    METHOD getFilterWhere( cWhere )                    INLINE ( ::cFilterWhere )
    METHOD insertFilterWhere( cWhere )                  
    METHOD addFilterWhere( cSQLSelect )
 
    METHOD addFindWhere( cSQLSelect )
 
+   METHOD setOrderBy( cOrderBy )                      INLINE ( ::cOrderBy        := cOrderBy )
+   METHOD getOrderBy()                                INLINE ( ::cOrderBy )
+
+   METHOD setOrientation( cOrientation )              INLINE ( ::cOrientation    := cOrientation )
+   METHOD getOrientation()                            INLINE ( ::cOrientation )
+
    METHOD setGroupBy( cGroupBy )                      INLINE ( ::cGroupBy        := cGroupBy )
-   METHOD getGroupBy( cGroupBy )                      INLINE ( ::cGroupBy )
+   METHOD getGroupBy()                                INLINE ( ::cGroupBy )
    METHOD addGroupBy( cSQLSelect )
 
    METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
@@ -151,20 +159,6 @@ CLASS SQLBaseModel
    METHOD getValueField( cColumn, uValue )
 
    METHOD getMethod( cMethod )
-
-   METHOD setColumnOrder( cColumnOrder )              INLINE ( ::cColumnOrder := cColumnOrder )
-   METHOD getColumnOrder()                            INLINE ( ::cColumnOrder )
-   
-   METHOD setColumnOrderFromModel( cType, cName )
-   METHOD setNavigatorColumnOrderFromModel( cName )   INLINE ( ::setColumnOrderFromModel( "navigator", cName ) )
-   METHOD setSelectorColumnOrderFromModel( cName )    INLINE ( ::setColumnOrderFromModel( "selector", cName ) )
-
-   METHOD setColumnOrientation( cColumnOrientation )  INLINE ( ::cColumnOrientation := cColumnOrientation )
-   METHOD getColumnOrientation()                      INLINE ( ::cColumnOrientation )
-   
-   METHOD setColumnOrientationFromModel( cType, cName )
-   METHOD setNavigatorColumnOrientationFromModel( cName )   INLINE ( ::setColumnOrientationFromModel( "navigator", cName ) )
-   METHOD setSelectorColumnOrientationFromModel( cName )    INLINE ( ::setColumnOrientationFromModel( "selector", cName ) )
 
    METHOD getSelectByOrder()
 
@@ -226,10 +220,6 @@ METHOD New( oController )
       ::cColumnKey               := hGetKeyAt( ::hColumns, 1 )
    end if 
 
-   if empty( ::getColumnOrder() )
-      ::setColumnOrder( hGetKeyAt( ::hColumns, 1 ) )
-   end if 
-
    ::cGeneralSelect              := "SELECT * FROM " + ::getTableName()    
 
 RETURN ( Self )
@@ -280,10 +270,10 @@ RETURN ( ::hColumns )
 METHOD getEmpresaColumns()
    
    hset( ::hColumns, "empresa_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
-                                          "default"   => {|| uuidEmpresa() } }              )
+                                          "default"   => {|| uuidEmpresa() } }            )
 
    hset( ::hColumns, "usuario_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
-                                          "default"   => {|| Auth():Uuid() } }              )
+                                          "default"   => {|| Auth():Uuid() } }            )
 
 RETURN ( ::hColumns )
 
@@ -331,9 +321,13 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSelectSentence() 
+METHOD getSelectSentence( cOrderBy, cOrientation ) 
 
    local cSQLSelect        
+
+   ::cOrderBy              := cOrderBy
+
+   ::cOrientation          := cOrientation
 
    ::fireEvent( 'gettingSelectSentence')
 
@@ -424,17 +418,17 @@ RETURN ( cSQLSelect )
 
 METHOD addFindWhere( cSQLSelect )
 
-   if empty( ::getColumnOrder() ) .or. empty( ::cFind )
+   if empty( ::cOrderBy ) .or. empty( ::cFind )
       RETURN ( cSQLSelect )
    end if 
 
    cSQLSelect     += space( 1 )
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::getColumnOrder() +") LIKE '%" + Upper( ::cFind ) + "%'" 
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::cOrderBy +") LIKE '%" + Upper( ::cFind ) + "%'" 
 
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
-
+/*
 METHOD getSelectByOrder( cSQLSelect )
 
    if !empty( ::getColumnOrder() )
@@ -442,6 +436,25 @@ METHOD getSelectByOrder( cSQLSelect )
    end if 
 
    if !empty( ::getColumnOrientation() ) .and. ::getColumnOrientation() == "A"
+      cSQLSelect  += " DESC"
+   else
+      cSQLSelect  += " ASC"
+   end if
+
+RETURN ( cSQLSelect )
+*/
+
+//---------------------------------------------------------------------------//
+
+METHOD getSelectByOrder( cSQLSelect )
+
+   if empty( ::cOrderBy )
+      RETURN ( cSQLSelect )
+   end if 
+   
+   cSQLSelect     += " ORDER BY " + ::cOrderBy 
+
+   if !empty( ::cOrientation ) .and. ::cOrientation == "A"
       cSQLSelect  += " DESC"
    else
       cSQLSelect  += " ASC"
@@ -522,7 +535,7 @@ RETURN ( "DROP TABLE " + ::cTableName )
 
 METHOD findById( id )
 
-   local hBuffer  := atail( ::getDatabase():selectFetchHash( ::getIdSelect( id ) ) )
+   local hBuffer  := atail( ::getDatabase():selectPadedFetchHash( ::getIdSelect( id ) ) )
 
    heval( hBuffer, {|k,v| hset( hBuffer, k, ::getAttribute( k, v ) ) } )
 
@@ -1082,30 +1095,6 @@ METHOD setBufferPadr( cColumn, uValue )
    uValue         := padr( uValue, nLen )
 
 RETURN ( hset( ::hBuffer, cColumn, uValue ) )
-
-//----------------------------------------------------------------------------//
-
-METHOD setColumnOrderFromModel( cType, cName )
-   
-   local cColumnOrder   := SQLConfiguracionVistasModel():getColumnOrder( cType, cName )
-
-   if !empty( cColumnOrder )
-      ::setColumnOrder( cColumnOrder )
-   end if 
-
-RETURN ( self )
-
-//----------------------------------------------------------------------------//
-
-METHOD setColumnOrientationFromModel( cName )
-
-   local cColumnOrientation   := SQLConfiguracionVistasModel():getColumnOrientation( cName )
-
-   if !empty( cColumnOrientation )
-      ::setColumnOrientation( cColumnOrientation )
-   end if 
-
-RETURN ( self )
 
 //----------------------------------------------------------------------------//
 

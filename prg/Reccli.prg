@@ -726,7 +726,7 @@ end if
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmrecCli() )
       oWndBrw:oActiveFilter:SetFilterType( REC_CLI )
    end if

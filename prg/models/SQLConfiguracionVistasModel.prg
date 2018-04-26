@@ -16,32 +16,36 @@ CLASS SQLConfiguracionVistasModel FROM SQLBaseModel
    METHOD get( cViewType, cViewName )
 
    METHOD getNavigator( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
-                                                         INLINE ( ::get( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
+                                                            INLINE ( ::get( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
 
    METHOD getFieldName( cViewName )
    
    METHOD getState( cViewType, cViewName )
-   METHOD getStateNavigator( cViewName )                 INLINE ( ::getState( "navigator", cViewName ) )   
+   METHOD getStateNavigator( cViewName )                    INLINE ( ::getState( "navigator", cViewName ) )   
 
-   METHOD getColumnOrder( cViewType, cViewName )         INLINE ( ::getFieldName( cViewType, cViewName, "column_order" ) )
+   METHOD getColumnOrder( cViewType, cViewName )            INLINE ( ::getFieldName( cViewType, cViewName, "column_order" ) )
+   METHOD getColumnOrderNavigator( cViewName )              INLINE ( ::getFieldName( "navigator", cViewName, "column_order" ) )
+   METHOD getColumnOrderSelector( cViewName )               INLINE ( ::getFieldName( "selector", cViewName, "column_order" ) )
    
-   METHOD getColumnOrientation( cViewType, cViewName )   INLINE ( ::getFieldName( cViewType, cViewName, "column_orientation" ) )
+   METHOD getColumnOrientation( cViewType, cViewName )      INLINE ( ::getFieldName( cViewType, cViewName, "column_orientation" ) )
+   METHOD getColumnOrientationNavigator( cViewName )        INLINE ( ::getFieldName( "navigator", cViewName, "column_orientation" ) )
+   METHOD getColumnOrientationSelector( cViewName )         INLINE ( ::getFieldName( "selector", cViewName, "column_orientation" ) )
 
-   METHOD getId( cViewType, cViewName )                  INLINE ( ::getFieldName( cViewType, cViewName, "id_to_find" ) )
-   METHOD setId( cViewType, cViewName, nId )             INLINE ( ::set( cViewType, cViewName, nil, nil, nil, nId ) ) 
+   METHOD getId( cViewType, cViewName )                     INLINE ( ::getFieldName( cViewType, cViewName, "id_to_find" ) )
+   METHOD setId( cViewType, cViewName, nId )                INLINE ( ::set( cViewType, cViewName, nil, nil, nil, nId ) ) 
 
    METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
    METHOD setNavigator( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
-                                                         INLINE ( ::set( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ))
+                                                            INLINE ( ::set( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
    METHOD setSelector( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
-                                                         INLINE ( ::set( "selector", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ))
+                                                            INLINE ( ::set( "selector", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
    
    METHOD setColumnOrder( cViewType, cViewName, cColumnOrder ) ;
-                                                         INLINE ( ::set( cViewType, cViewName, nil, cColumnOrder ) ) 
+                                                            INLINE ( ::set( cViewType, cViewName, nil, cColumnOrder ) ) 
 
    METHOD setColumnOrientation( cViewType, cViewName, cColumnOrientation ) ;
-                                                         INLINE ( ::set( cViewType, cViewName, nil, nil, cColumnOrientation ) ) 
+                                                            INLINE ( ::set( cViewType, cViewName, nil, nil, cColumnOrientation ) ) 
 
    METHOD delete( cViewType, cViewName )
 

@@ -1392,7 +1392,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       HOTKEY   "S" ;
       ALLOW EXIT ;
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmFacCli() )
       oWndBrw:oActiveFilter:SetFilterType( FAC_CLI )
    end if
@@ -3767,7 +3767,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       */
 
       oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
-      oTransportistaSelector:Activate( 235, 236, fldData )
+      aGet[ _CCODTRN ]  := oTransportistaSelector:Activate( 235, 236, fldData )
 
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;

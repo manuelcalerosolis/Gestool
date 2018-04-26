@@ -131,7 +131,7 @@ METHOD New( oController )
 
    ::oRelacionesEntidades              := RelacionesEntidadesController():New( self )
 
-   ::setEvent( 'activating',           {|| ::oModel:setColumnOrder( "id" ), ::oModel:setColumnOrientation( "D" ) } )
+   ::setEvent( 'activating',           {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
 
    ::setEvent( 'closedDialog',         {|| ::closedDialog() } )
 

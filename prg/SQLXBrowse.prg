@@ -136,7 +136,7 @@ METHOD RButtonDown( nRow, nCol, nFlags )
          
          MenuAddItem()
 
-         MenuAddItem( "Quitar filtro", "", .f., .t., {|| ::oController:buildFilter() }, "gc_funnel_delete_16" )
+         MenuAddItem( "Limpiar filtro", "", .f., .t., {|| ::oController:clearFilter() }, "gc_funnel_broom_16" )
 
       MenuEnd()
 

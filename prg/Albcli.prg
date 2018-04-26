@@ -1241,7 +1241,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       Datos para el filtro-----------------------------------------------------
       */
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() ) // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmAlbCli() )
       oWndBrw:oActiveFilter:SetFilterType( ALB_CLI )
    end if
@@ -1652,7 +1652,7 @@ STATIC FUNCTION OpenFiles()
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      if lAIS() 
+      if .f. // lAIS() 
 
          cFiltroUsuario    := "Field->cSufAlb == '" + Application():CodigoDelegacion() + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
          
@@ -3481,7 +3481,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       // Transportistas--------------------------------------------------------
 
       oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
-      oTransportistaSelector:Activate( 235, 236, oFld:aDialogs[2] )
+      aGet[ _CCODTRN ]  :=  oTransportistaSelector:Activate( 235, 236, oFld:aDialogs[2] )
 
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;

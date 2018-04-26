@@ -41,10 +41,6 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
                                                    ::stampGrupoMovimientoNombre( ::oDialogView:oGetGrupoMovimiento ),;
                                                    .f. ) )
 
-   METHOD validateAgente()          INLINE ( iif(  ::validate( "agente" ),;
-                                                   ::stampAgente( ::oDialogView:oGetAgente ),;
-                                                   .f. ) )
-
    METHOD setFileName( cFileName )  INLINE ( ::cFileName := cFileName )
    METHOD getFileName()             INLINE ( ::cFileName )
 
@@ -55,8 +51,6 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    METHOD stampAlmacenNombre()
 
    METHOD stampGrupoMovimientoNombre()
-
-   METHOD stampAgente()
 
    METHOD stampMarcadores()
 
@@ -82,9 +76,9 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    METHOD jsonToSQL()
 
-   METHOD setSent()                 INLINE ( ::setSender( ::oModel:getSentenceSentFromIds( ::getIdFromRecno( ::getBrowse():aSelected ) ) ) )
-   METHOD setNotSent()              INLINE ( ::setSender( ::oModel:getSentenceNotSentFromIds( ::getIdFromRecno( ::getBrowse():aSelected ) ) ) )
    METHOD setSender( cSentence )
+   METHOD setSent()                 INLINE ( ::setSender( ::oModel:getSentenceSentFromIds(      ::getIdFromRecno( ::getBrowse():aSelected ) ) ) )
+   METHOD setNotSent()              INLINE ( ::setSender( ::oModel:getSentenceNotSentFromIds(   ::getIdFromRecno( ::getBrowse():aSelected ) ) ) )
 
    METHOD isAddedTag( cMarcador )
       METHOD addTag( uuidTag )
@@ -269,17 +263,6 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampAgente( oGetAgente )
-
-   local cCodigoAgente     := oGetAgente:varGet()
-   local cNombreAgente     := AgentesModel():getNombre( cCodigoAgente )
-
-   oGetAgente:oHelpText:cText( cNombreAgente )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-   
 METHOD stampMarcadores( oTagsEver )
    
    local aMarcadores    := TageableRepository():getHashTageableTagsNameAndId( ::oModel:getBuffer( "uuid" ) ) 

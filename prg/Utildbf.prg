@@ -4007,15 +4007,15 @@ RETURN ( cMemo )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION assertUserActive( cNombre )
+FUNCTION assertUserActive( uuidUsuario )
 
    local nHandle
 
-   if file( cPatUsr() + cNombre + ".usr" )
+   if file( cPatUsr() + uuidUsuario + ".usr" )
       RETURN ( .t. )
    end if 
    
-   nHandle        := fcreate( cPatUsr() + cNombre + ".usr", FC_NORMAL )
+   nHandle        := fcreate( cPatUsr() + uuidUsuario + ".usr", FC_NORMAL )
    if ( nHandle != F_ERROR )
       fClose( nHandle )
    end if
@@ -4024,30 +4024,30 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION isUserActive( cNombre, lClose )
+FUNCTION isUserActive( uuidUsuario, lClose )
 
    local nHandle
 
    DEFAULT lClose := .t.   
 
-   assertUserActive( cNombre )
+   assertUserActive( uuidUsuario )
 
-   nHandle        := fopen( cPatUsr() + cNombre + ".usr", FO_EXCLUSIVE )  
+   nHandle        := fopen( cPatUsr() + uuidUsuario + ".usr", FO_EXCLUSIVE )  
    if ( nHandle == F_ERROR )
-      RETURN ( .f. )
+      RETURN ( .t. )
    end if 
 
    if lClose
       fClose( nHandle )
    end if 
 
-RETURN ( .t. )
+RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION setUserActive( cNombre )
+FUNCTION setUserActive( uuidUsuario )
 
-RETURN ( isUserActive( cNombre, .f. ) )
+RETURN ( isUserActive( uuidUsuario, .f. ) )
 
 //----------------------------------------------------------------------------//
 

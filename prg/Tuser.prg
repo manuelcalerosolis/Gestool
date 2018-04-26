@@ -56,7 +56,7 @@ CLASS TUser
    METHOD   lMaster( lNewVal )         INLINE if( isLogic( lNewVal ), ::_Master := lNewVal, ::_Master )
 
    DATA     _Administrador             INIT .f.
-   METHOD   lAdministrador( lNewVal )  INLINE if( isLogic( lNewVal ), ::_Administrador := lNewVal, ::_Administrador )
+   METHOD   lAdministrador( lNewVal )  INLINE ( .t. ) // if( isLogic( lNewVal ), ::_Administrador := lNewVal, ::_Administrador )
 
    METHOD   lNotAllowSales( lNoPermitirVentaSinStock ) ;
                                        INLINE ( !::lAdministrador() .and. lNoPermitirVentaSinStock )

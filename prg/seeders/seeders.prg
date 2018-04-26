@@ -61,6 +61,10 @@ CLASS Seeders
    METHOD SeederEmpresas()
    METHOD insertEmpresas( dbf )
 
+   METHOD SeederAgentes()
+   METHOD insertAgentes( dbf )
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -109,6 +113,9 @@ METHOD runSeederEmpresa()
 
    ::oMsg:SetText( "Ejecutando seeder de transportistas" )
    ::SeederTransportistas()
+
+   ::oMsg:SetText( "Ejecutando seeder de agentes" )
+   ::SeederAgentes()
 
    /*::oMsg:SetText( "Ejecutando seeder de campos extra" )
    ::SeederCamposExtra()
@@ -739,7 +746,7 @@ METHOD SeederFabricantes() CLASS Seeders
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
 
    if !( file( cPath + "Fabric.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\Fabric.Dbf no se ha localizado", "Atención" )  
+      msgStop( "El fichero " + cPath + "\Fabric.Dbf no se ha localizado", "Atención" )
       RETURN ( self )
    end if 
 
@@ -937,5 +944,68 @@ METHOD SeederSqlFiles()
    next
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD SeederAgentes()
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
+
+   if !( file( cPath + "Agentes.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Agentes.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if
+
+   USE ( cPath + "Agentes.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Agentes", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| ::insertAgentes( dbf ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertAgentes( dbf )
+
+   local nId
+   local hBuffer
+
+   hBuffer        := SQLAgentesModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
+   hset( hBuffer, "codigo",            ( dbf )->cCodAge  )
+   hset( hBuffer, "nombre",            ( dbf )->cNbrAge + Space(1) + ( dbf )->cApeAge )
+   hset( hBuffer, "dni",               ( dbf )->cDniNif  )
+   hset( hBuffer, "comision",          ( dbf )->nCom1    )
+   hset( hBuffer, "empresa_uuid",      uuidEmpresa()     )
+
+   nId            := SQLAgentesModel():insertIgnoreBuffer( hBuffer )
+
+   if empty( nId )
+      RETURN ( self )
+   end if
+
+   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hBuffer, "principal",      1                    )
+   hset( hBuffer, "parent_uuid",    ( dbf )->Uuid        )
+   hset( hBuffer, "direccion",      ( dbf )->cDirAge     )
+   hset( hBuffer, "poblacion",      ( dbf )->cPobAge     )
+   hset( hBuffer, "provincia",      ( dbf )->cProv       )
+   hset( hBuffer, "codigo_postal",  ( dbf )->cPtlAge     )
+   hset( hBuffer, "telefono",       ( dbf )->cTfoAge     )
+   hset( hBuffer, "movil",          ( dbf )->cMovAge     )
+   hset( hBuffer, "email",          ( dbf )->cMailAge    )
+                        
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//

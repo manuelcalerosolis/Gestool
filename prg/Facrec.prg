@@ -1832,7 +1832,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
    Datos para el filtro-----------------------------------------------------
    */
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmFacRec() )
       oWndBrw:oActiveFilter:SetFilterType( FAC_REC )
    end if
@@ -3032,7 +3032,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       */
 
          oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
-         oTransportistaSelector:Activate( 235, 236, oFld:aDialogs[2] )
+         aGet[ _CCODTRN ]  :=  oTransportistaSelector:Activate( 235, 236, oFld:aDialogs[2] )
 
 
       	REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;

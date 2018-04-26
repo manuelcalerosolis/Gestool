@@ -175,7 +175,7 @@ METHOD Save( lMessage, nBrowseRecno, nBrowseOrder )
       SQLConfiguracionVistasModel():setNavigator( ::cName, ::saveState() ) //, nBrowseRecno, nBrowseOrder )
 
       if lMessage
-         msgInfo( "Configuración de columnas guardada", "Información" )
+         msgInfo( "Configuración de columnas guardadas.", "Información" )
       end if
 
    RECOVER USING oError

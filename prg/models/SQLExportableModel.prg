@@ -36,10 +36,10 @@ CLASS SQLExportableModel FROM SQLBaseModel
 
    METHOD getSentenceSentFromFetch()      
 
+   METHOD getSentenceSenderFromIds( aIds, uValue )
+
    METHOD getSentenceSentFromIds( aIds )     INLINE ( ::getSentenceSenderFromIds( aIds, toSQLString( hb_datetime() ) ) )
    METHOD getSentenceNotSentFromIds( aIds )  INLINE ( ::getSentenceSenderFromIds( aIds, "null" ) )
-   
-   METHOD getSentenceSenderFromIds( aIds, uValue )
 
 END CLASS
 

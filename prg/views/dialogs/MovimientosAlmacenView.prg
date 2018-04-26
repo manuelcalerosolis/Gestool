@@ -12,7 +12,6 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
 
    DATA oGetNumero
    DATA oGetDivisa
-   DATA oGetAgente
    DATA oGetAlmacenOrigen
    DATA oGetAlmacenDestino
 
@@ -35,7 +34,11 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
                                                       ::oGetAlmacenOrigen:Show(),;
                                                       ::oGetAlmacenOrigen:Hide() ) )
 
-   METHOD getUsuario()              INLINE   (  SQLUsuariosModel():getNombreWhereCodigo( ::oController:oModel:hBuffer[ "usuario" ] ) )
+<<<<<<< HEAD
+   METHOD getUsuario()              INLINE   (  SQLUsuariosModel():getNombreWhereUuid( ::oController:oModel:hBuffer[ "usuario_uuid" ] ) )
+=======
+   METHOD getUsuario()              INLINE   (  SQLUsuariosModel():getNombreWhereCodigo( ::oController:oModel:hBuffer[ "usuario_uuid" ] ) )
+>>>>>>> 12ea2558cc531e45265458f37700e08bcfa02aed
 
    METHOD validateAndGoTo()         
    METHOD validateAndGoDown()       INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDDOWN ), ) )
@@ -135,18 +138,6 @@ METHOD Activate()
       ::oTagsEver             := TTagEver():Redefine( 142, ::oDialog )
       ::oTagsEver:bOnDelete   := {| oTag, oTagItem | ::oController:deleteTag( oTagItem:uCargo ) }
 
-      REDEFINE GET   ::oGetAgente ;
-         VAR         ::oController:oModel:hBuffer[ "agente" ] ;
-         ID          210 ;
-         IDHELP      211 ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-         PICTURE     "@!" ;
-         BITMAP      "Lupa" ;
-         OF          ::oDialog
-
-      ::oGetAgente:bValid := {|| ::oController:validateAgente() }
-      ::oGetAgente:bHelp  := {|| BrwAgentes( ::oGetAgente, ::oGetAgente:oHelpText ) }
-
       // Divisas---------------------------------------------------------------
 
       DivisasView();
@@ -185,8 +176,6 @@ METHOD startActivate()
    ::oController:stampAlmacenNombre( ::oGetAlmacenOrigen )
 
    ::oController:stampAlmacenNombre( ::oGetAlmacenDestino )
-
-   ::oController:stampAgente( ::oGetAgente )
 
    ::oController:stampMarcadores( ::oTagsEver )
 

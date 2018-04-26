@@ -57,7 +57,7 @@ METHOD Activate( idGet, idText, oDlg ) CLASS GetSelector
    ::oGet:bHelp   := {|| ::helpAction() }
    ::oGet:bValid  := {|| ::validAction() }
 
-RETURN ( self )
+RETURN ( ::oGet )
 
 //---------------------------------------------------------------------------//
 

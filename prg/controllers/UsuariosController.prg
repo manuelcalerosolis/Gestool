@@ -250,7 +250,7 @@ METHOD validUserPassword( cUsuario, cPassword )
       RETURN ( .f. )
    end if 
 
-   if !( setUserActive( hget( hUsuario, "nombre" ) ) )
+   if setUserActive( hget( hUsuario, "uuid" ) )
       ::cValidError           := "Usuario actualmente en uso"
       RETURN ( .f. )
    end if 
@@ -424,6 +424,13 @@ METHOD addColumns() CLASS UsuariosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Estado'
+      :nWidth              := 180
+      :bStrData            := {|| if( isUserActive( ::getRowSet():fieldGet( 'uuid' ) ), "En uso", "" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
       :nWidth              := 120
@@ -553,6 +560,8 @@ METHOD Activate() CLASS UsuariosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
+
+   msgalert( len( ::getModel():hBuffer[ "email" ]),  ::getModel():hBuffer[ "email" ] )
 
    REDEFINE GET   ::getModel():hBuffer[ "email" ] ;
       ID          120 ;
