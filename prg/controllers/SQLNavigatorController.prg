@@ -11,6 +11,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA oFilterController 
 
+   DATA oVistaModel
+
    DATA lDocuments                                    INIT .f.
 
    DATA lOthers                                       INIT .f.
@@ -28,12 +30,14 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD setName( cName )                            INLINE ( ::Super:setName( cName ), if( !empty( ::oFilterController ), ::oFilterController:setTableToFilter( cName ), ) ) 
 
-   METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) ) 
+   METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) )
 
-   METHOD ActivateNavigatorView()
+   METHOD buildRowSetSentence() 
 
-   METHOD ActivateSelectorView()
-   METHOD ActivateSelectorViewNoCenter()              INLINE ( ::ActivateSelectorView( .f. ) )
+   METHOD activateNavigatorView()
+
+   METHOD activateSelectorView()
+   METHOD activateSelectorViewNoCenter()              INLINE ( ::ActivateSelectorView( .f. ) )
 
    METHOD closeAllWindows()                           INLINE ( if( !empty( oWnd() ), ( SysRefresh(), oWnd():CloseAll(), SysRefresh() ), ) )
 
@@ -73,6 +77,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD getFilters()                                INLINE ( iif( !empty( ::oFilterController ), ::oFilterController:getFilters(), ) ) 
    METHOD setFilter()                                                                                                       
+   METHOD clearFilter() 
 
    METHOD buildFilter( cExpresion )
    METHOD buildInFilter( cField, cValue )             INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " IN (" + toSqlString( cValue ) + ")", "" ) ) )
@@ -109,6 +114,8 @@ METHOD New( oSenderController )
 
    ::oFilterController                                := SQLFiltrosController():New( self ) 
 
+   ::oVistaModel                                      := SQLConfiguracionVistasModel():New( self )
+
    ::oWindowsBar                                      := oWndBar()
 
 RETURN ( self )
@@ -116,6 +123,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD End()
+
+   cursorWait()
 
    ::DisableWindowsBar()
 
@@ -129,15 +138,37 @@ METHOD End()
       ::oFilterController     := nil
    end if 
 
+   if !empty( ::oVistaModel )
+      ::oVistaModel:End()
+      ::oVistaModel           := nil
+   end if 
+
    ::Super():End()
 
    Self                       := nil
+
+   cursorWE()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActivateNavigatorView()
+METHOD buildRowSetSentence()
+
+   local cColumnOrder
+   local cColumnOrientation 
+
+   cColumnOrder         := ::oVistaModel:getColumnOrderNavigator( ::getName() )
+
+   cColumnOrientation   := ::oVistaModel:getColumnOrientationNavigator( ::getName() )   
+
+   ::oRowSet:build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD activateNavigatorView()
 
    if empty( ::oNavigatorView )
       RETURN ( Self )
@@ -151,11 +182,8 @@ METHOD ActivateNavigatorView()
    cursorWait()
 
    ::closeAllWindows()
-   
-   ::getModel():setNavigatorColumnOrderFromModel( ::getName() )
-   ::getModel():setNavigatorColumnOrientationFromModel( ::getName() )
 
-   ::oRowSet:build( ::getModel():getSelectSentence() )
+   ::buildRowSetSentence()   
 
    if !empty( ::oRowSet:get() )
 
@@ -171,7 +199,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActivateSelectorView( lCenter )
+METHOD activateSelectorView( lCenter )
 
    DEFAULT lCenter   := .t.
 
@@ -184,12 +212,15 @@ METHOD ActivateSelectorView( lCenter )
       RETURN ( nil )
    end if
 
-   ::getModel():setSelectorColumnOrderFromModel( ::getName() )
-   ::getModel():setSelectorColumnOrientationFromModel( ::getName() )
+   ::buildRowSetSentence()   
 
-   ::oRowSet:build( ::getModel():getSelectSentence() )
+   if !empty( ::oRowSet:get() )
+      
+      ::oSelectorView:Activate( lCenter )   
+   
+   end if
 
-RETURN ( ::oSelectorView:Activate( lCenter ) )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -327,9 +358,19 @@ RETURN ( self )
 
 METHOD buildFilter( cFilter )
 
-   DEFAULT cFilter   := ""
-
    ::getModel():insertFilterWhere( cFilter )
+
+   ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
+
+   ::reBuildRowSet()
+   
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD clearFilter()
+
+   ::getModel():clearFilterWhere()
 
    ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
 
@@ -348,7 +389,7 @@ METHOD buildCustomFilter( cField, cValue, cOperator )
       RETURN ( .f. )
    end if 
 
-   cValue      := alltrim( ::oFilterController:oCustomView:getValue() )
+   cValue            := alltrim( ::oFilterController:oCustomView:getValue() )
 
 RETURN ( .t. )
 
@@ -382,7 +423,7 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:setComboBoxChange( {|| ::onChangeCombo() } )
 
-   ::oWindowsBar:setComboBoxItem( ::oBrowseView:getColumnHeaderByOrder( ::getModel():getColumnOrder() ) )
+   ::oWindowsBar:setComboBoxItem( ::oBrowseView:getColumnHeaderByOrder( ::getModel():getOrderBy() ) )
 
    ::oWindowsBar:enableComboFilter( ::getFilters() )
 

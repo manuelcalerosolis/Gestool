@@ -182,6 +182,14 @@ METHOD addColumns() CLASS FabricantesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
       :nWidth              := 300
@@ -248,20 +256,26 @@ METHOD Activate() CLASS FabricantesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      WHEN        ( ::oController:isNotZoomMode()  ) ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+      ID          110 ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "pagina_web" ] ;
-      ID          110 ;
+      ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
    REDEFINE GET   getImagen ;
       VAR         ::getImagenesController():oModel:hBuffer[ "imagen" ] ;
-      ID          120 ;
+      ID          130 ;
       BITMAP      "Folder" ;
       ON HELP     ( GetBmp( getImagen, bmpImagen ) ) ;
       ON CHANGE   ( ChgBmp( getImagen, bmpImagen ) ) ;
@@ -269,7 +283,7 @@ METHOD Activate() CLASS FabricantesView
       OF          ::oDialog
 
    REDEFINE IMAGE bmpImagen ;
-      ID          130 ;
+      ID          140 ;
       FILE        cFileBmpName( ::getImagenesController():oModel:hBuffer[ "imagen" ] ) ;
       OF          ::oDialog
 
@@ -316,7 +330,9 @@ END CLASS
 
 METHOD getValidators() CLASS FabricantesValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
+   ::hValidators  := {  "codigo" =>    {  "required"     => "El codigo es un dato requerido",;
+                                          "unique"       => "El codigo introducido ya existe" } ,;
+                        "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
                                           "unique"       => "El nombre introducido ya existe" } }                  
 
 RETURN ( ::hValidators )
@@ -352,6 +368,11 @@ METHOD getColumns() CLASS SQLFabricantesModel
                                        "default"   => {|| win_uuidcreatestring() } }            )
    
    ::getEmpresaColumns()
+
+   ::getTimeStampColumns()
+
+   hset( ::hColumns, "codigo",      {  "create"    => "VARCHAR( 3 )"                            ,;
+                                       "default"   => {|| space( 3 ) } }                        )
 
    hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 100 )"                          ,;
                                        "default"   => {|| space( 100 ) } }                       )

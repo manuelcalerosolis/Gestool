@@ -677,17 +677,13 @@ RETURN ( atail( aSelectedRecno ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD changeModelOrderAndOrientation( cColumnOrder, cColumnOrientation )
+METHOD changeModelOrderAndOrientation( cOrderBy, cOrientation )
 
-   local nId   := ::oRowSet:fieldGet( ::getModelColumnKey() )
+   local nId            := ::oRowSet:fieldGet( ::getModelColumnKey() )
 
    ::oModel:setFind( "" )
 
-   ::oModel:setColumnOrder( cColumnOrder )
-
-   ::oModel:setColumnOrientation( cColumnOrientation )
-
-   ::oRowSet:build( ::oModel:getSelectSentence() )
+   ::oRowSet:build( ::oModel:getSelectSentence( cOrderBy, cOrientation ) )
 
    ::oRowSet:findId( nId )
 

@@ -567,10 +567,6 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
 
    end if
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
-
-   end if
-
    DEFINE BTNSHELL RESOURCE "Sel" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( FilterRecibos( .t. ) );
@@ -624,7 +620,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmRecPrv() )
       oWndBrw:oActiveFilter:SetFilterType( REC_PRV )
    end if

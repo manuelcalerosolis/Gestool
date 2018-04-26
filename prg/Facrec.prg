@@ -1832,7 +1832,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
    Datos para el filtro-----------------------------------------------------
    */
 
-   if SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
+   if .t. // SQLAjustableModel():getRolNoFiltrarVentas( Auth():rolUuid() )
       oWndBrw:oActiveFilter:SetFields( aItmFacRec() )
       oWndBrw:oActiveFilter:SetFilterType( FAC_REC )
    end if

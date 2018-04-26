@@ -256,9 +256,9 @@ METHOD getColumns() CLASS SQLAlmacenesModel
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
-   
    ::getEmpresaColumns()
 
+   ::getTimeStampColumns()
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                          ,;
                                              "default"   => {|| space( 3 ) } }                       )

@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaController FROM SQLNavigatorController
+CLASS IvaTipoController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -11,29 +11,30 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ArticulosTemporadaController
+METHOD New() CLASS IvaTipoController
 
    ::Super:New()
 
-   ::cTitle                      := "Articulos temporadas"
+   ::cTitle                      := "Tipos de IVA"
 
-   ::cName                       := "articulos_temporadas"
+   ::cName                       := "tipo_iva"
 
-   ::hImage                      := {  "16" => "gc_cloud_sun_16",;
-                                       "32" => "gc_cloud_sun_32",;
-                                       "48" => "gc_cloud_sun_48" }
+   ::hImage                      := {  "16" => "gc_moneybag_16",;
+                                       "32" => "gc_moneybag_32",;
+                                       "48" => "gc_moneybag_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLArticulosTemporadaModel():New( self )
+   ::oModel                         := SQLIvaTipoModel():New( self )
 
-   ::oBrowseView                 := ArticulosTemporadaBrowseView():New( self )
+   ::oBrowseView                    := IvaTipoBrowseView():New( self )
 
-   ::oDialogView                 := ArticulosTemporadaView():New( self )
+   ::oDialogView                    := IvaTipoView():New( self )
 
-   ::oValidator                  := ArticulosTemporadaValidator():New( self, ::oDialogView )
+   ::oValidator                     := IvaTipoValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := ArticulosTemporadaRepository():New( self )
+   ::oRepository                    := IvaTipoRepository():New( self )
+
 
 RETURN ( Self )
 
@@ -47,7 +48,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaBrowseView FROM SQLBrowseView
+CLASS IvaTipoBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -55,7 +56,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ArticulosTemporadaBrowseView
+METHOD addColumns() CLASS IvaTipoBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -91,10 +92,17 @@ METHOD addColumns() CLASS ArticulosTemporadaBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'imagen'
-      :cHeader             := 'Imagen'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'imagen' ) }
+      :cSortOrder          := 'porcentaje'
+      :cHeader             := 'Porcentaje'
+      :nWidth              := 80
+      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'porcentaje' ), "@E 999.99" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+      with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'recargo'
+      :cHeader             := 'Recargo'
+      :nWidth              := 80
+      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'recargo' ), "@E 999.99" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -108,43 +116,25 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaView FROM SQLBaseView
+CLASS IvaTipoView FROM SQLBaseView
   
-   DATA oTipo
-
-   DATA hTipos
-
-   METHOD New()
-
    METHOD Activate()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS ArticulosTemporadaView
+METHOD Activate() CLASS IvaTipoView
 
-   ::Super:New( oController )
-
-   ::hTipos          := {  "Sol"          => "gc_sun_16",;
-                           "Sol y nubes"  => "gc_cloud_sun_16",;
-                           "Nubes"        => "gc_cloud_16",;
-                           "Lluvia"       => "gc_cloud_rain_16",;
-                           "Nieve"        => "gc_snowflake_16" }
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS ArticulosTemporadaView
+   local oBmpGeneral
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ARTICULO_TEMPORADA" ;
-      TITLE       ::LblTitle() + "temporada de articulos"
+      RESOURCE    "IVA_TIPO" ;
+      TITLE       ::LblTitle() + "tipo de IVA"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_cloud_sun_48" ;
+      RESOURCE    "gc_moneybag_48" ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
@@ -165,12 +155,18 @@ METHOD Activate() CLASS ArticulosTemporadaView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:oModel:hBuffer[ "imagen" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "porcentaje" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ITEMS       ( hgetkeys( ::hTipos ) ) ;
-      BITMAPS     ( hgetvalues( ::hTipos ) ) ;
+      PICTURE     "@E 999.99" ;
+      SPINNER ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "recargo" ] ;
+      ID          130 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      PICTURE     "@E 999.99" ;
+      SPINNER ;
       OF          ::oDialog ;
 
    REDEFINE BUTTON ;
@@ -202,17 +198,18 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaValidator FROM SQLBaseValidator
+CLASS IvaTipoValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
+ 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ArticulosTemporadaValidator
+METHOD getValidators() CLASS IvaTipoValidator
 
-   ::hValidators  := {  "nombre " =>               {  "required"     => "El nombre es un dato requerido",;
+   ::hValidators  := {  "nombre" =>                {  "required"     => "El nombre es un dato requerido",;
                                                       "unique"       => "El nombre introducido ya existe" },;
                         "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
                                                       "unique"       => "EL código introducido ya existe"  } }
@@ -223,10 +220,13 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS SQLArticulosTemporadaModel FROM SQLBaseModel
+CLASS SQLIvaTipoModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "articulos_temporada"
+   DATA cTableName               INIT "iva_tipos"
 
    METHOD getColumns()
 
@@ -234,25 +234,25 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLArticulosTemporadaModel
+METHOD getColumns() CLASS SQLIvaTipoModel
 
-   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                    "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                             "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
-                                    "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                             "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getTimeStampColumns()
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 1 )"                            ,;
+                                             "default"   => {|| space( 1 ) } }                        )
 
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 3 )"                            ,;
-                                    "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
-                                    "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "porcentaje",        {  "create"    => "FLOAT( 5,2 )"                            ,;
+                                             "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "imagen",   {  "create"    => "VARCHAR( 40 )"                           ,;
-                                    "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "recargo",           {  "create"    => "FLOAT( 5,2 )"                            ,;
+                                             "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 
@@ -261,11 +261,16 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaRepository FROM SQLBaseRepository
+CLASS IvaTipoRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLComentariosModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLRutasModel():getTableName() ) 
 
 END CLASS
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

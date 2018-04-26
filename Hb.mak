@@ -357,6 +357,8 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+IvaTipoController.prg 														\
+CuentasRemesaController.prg 												\
 BancosController.prg 														\
 RutasController.prg 															\
 ClientesGruposController.prg 												\
@@ -996,6 +998,8 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+IvaTipoController.obj       												\
+CuentasRemesaController.obj       										\
 BancosController.obj       												\
 RutasController.obj       													\
 ClientesGruposController.obj       										\
@@ -1622,6 +1626,8 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\IvaTipoController.obj    											+
+$(OBJ)\CuentasRemesaController.obj    									+
 $(OBJ)\BancosController.obj    											+
 $(OBJ)\RutasController.obj    											+
 $(OBJ)\ClientesGruposController.obj    								+
