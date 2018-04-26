@@ -21410,7 +21410,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Almacén destino", 162, "Static", WS_GROUP, 202, 100, 57, 8
   CONTROL "Número", -1, "Static", WS_GROUP, 54, 99, 30, 8
   CONTROL "Fecha", -1, "Static", WS_GROUP, 54, 112, 25, 8
-  CONTROL "Comentarios", -1, "Static", WS_GROUP, 202, 124, 44, 8
+  CONTROL "Comentarios", -1, "Static", WS_GROUP, 202, 126, 44, 8
   CONTROL "Movimiento", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 48, 74, 146, 65
   CONTROL "Marcadores", -1, "Static", WS_GROUP, 202, 150, 62, 8
   CONTROL "Divisa", -1, "Static", WS_GROUP, 202, 114, 25, 8
