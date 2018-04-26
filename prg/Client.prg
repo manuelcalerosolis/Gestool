@@ -1905,7 +1905,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       */
 
       oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
-      oTransportistaSelector:Activate( 235, 236, fldGeneral )
+      aGet[ _CCODTRN ]  :=  oTransportistaSelector:Activate( 235, 236, fldGeneral )
 
       REDEFINE GET   aGet[ _DALTA ] ;
          VAR         aTmp[ _DALTA ] ;

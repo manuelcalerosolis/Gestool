@@ -34,7 +34,11 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
                                                       ::oGetAlmacenOrigen:Show(),;
                                                       ::oGetAlmacenOrigen:Hide() ) )
 
+<<<<<<< HEAD
    METHOD getUsuario()              INLINE   (  SQLUsuariosModel():getNombreWhereUuid( ::oController:oModel:hBuffer[ "usuario_uuid" ] ) )
+=======
+   METHOD getUsuario()              INLINE   (  SQLUsuariosModel():getNombreWhereCodigo( ::oController:oModel:hBuffer[ "usuario_uuid" ] ) )
+>>>>>>> 12ea2558cc531e45265458f37700e08bcfa02aed
 
    METHOD validateAndGoTo()         
    METHOD validateAndGoDown()       INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDDOWN ), ) )
