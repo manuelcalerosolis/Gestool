@@ -19,6 +19,7 @@ CLASS RolesController FROM SQLNavigatorController
    DATA lConfirmacionEliminacion    AS LOGIC INIT .t.
    DATA lFiltrarVentas              AS LOGIC INIT .t.
    DATA lAbrirCajonPortamonedas     AS LOGIC INIT .t.
+   DATA lAlbaranEntregado           AS LOGIC INIT .t.
    
    METHOD New()
 
@@ -130,6 +131,8 @@ METHOD loadConfig()
 
    ::lAbrirCajonPortamonedas  := ::oAjustableController:oModel:getRolAbrirCajonPortamonedas( ::cUuidRol )
 
+   ::lAlbaranEntregado        := ::oAjustableController:oModel:getRolAlbaranEntregado( ::cUuidRol )
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -147,6 +150,8 @@ METHOD saveConfig()
    ::oAjustableController:oModel:setRolFiltrarVentas( ::lFiltrarVentas, ::cUuidRol )
 
    ::oAjustableController:oModel:setRolAbrirCajonPortamonedas( ::lAbrirCajonPortamonedas, ::cUuidRol )
+
+   ::oAjustableController:oModel:setRolAlbaranEntregado( ::lAlbaranEntregado, ::cUuidRol )
 
 RETURN ( self )
 
@@ -167,6 +172,8 @@ METHOD startingActivate()
    oPanel:addCheckBox( "Filtrar ventas por usuario", @::lFiltrarVentas )
 
    oPanel:addCheckBox( "Abrir cajón portamonedas", @::lAbrirCajonPortamonedas )
+
+   oPanel:addCheckBox( "Estado albarán entregado", @::lAlbaranEntregado )
 
 RETURN ( self )
 

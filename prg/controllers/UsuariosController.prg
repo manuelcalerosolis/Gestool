@@ -428,6 +428,7 @@ METHOD addColumns() CLASS UsuariosBrowseView
       :nWidth              := 180
       :bStrData            := {|| if( isUserActive( ::getRowSet():fieldGet( 'uuid' ) ), "En uso", "" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :Cargo               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )

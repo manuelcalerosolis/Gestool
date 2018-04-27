@@ -423,7 +423,6 @@ METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
                         "fecha_hora" =>         quoted( DateTimeFormatTimestamp( ( dbfRemMov )->dFecRem, ( dbfRemMov )->cTimRem ) ),;
                         "almacen_origen" =>     quoted( ( dbfRemMov )->cAlmOrg ),;
                         "almacen_destino" =>    quoted( ( dbfRemMov )->cAlmDes ),;
-                        "grupo_movimiento" =>   quoted( ( dbfRemMov )->cCodMov ),;
                         "agente" =>             quoted( ( dbfRemMov )->cCodAge ),;
                         "divisa" =>             quoted( ( dbfRemMov )->cCodDiv ),;
                         "divisa_cambio" =>      quoted( ( dbfRemMov )->nVdvDiv ),;

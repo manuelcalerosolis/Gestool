@@ -5881,7 +5881,7 @@ STATIC FUNCTION SelSend( oBrw )
    local oFecEnv
    local dFecEnv  := GetSysDate()
 
-   if SuperUsuarioController():New():isNotDialogViewActivate()
+   if SQLAjustableModel():getRolNoAlbaranEntregado( Auth():rolUuid() )
       msgStop( "Sin autorización para cambio de entrega." )
       RETURN ( nil )
    end if 

@@ -113,7 +113,8 @@ METHOD getInsertAjustesSentence()
    cSentence  +=    "( UUID(), 'confirmacion_eliminacion',  '1',  'boolean',      NULL, NULL ), "
    cSentence  +=    "( UUID(), 'fitrar_ventas_por_usuario', '1',  'boolean',      NULL, NULL ), "
    cSentence  +=    "( UUID(), 'abrir_cajon_portamonedas',  '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'seleccionar_usuarios',      '1',  'boolean',      NULL, NULL )"
+   cSentence  +=    "( UUID(), 'seleccionar_usuarios',      '1',  'boolean',      NULL, NULL ), "
+   cSentence  +=    "( UUID(), 'albaran_entregado',         '1',  'boolean',      NULL, NULL )"
 
 RETURN ( cSentence )
 

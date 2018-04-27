@@ -29,6 +29,7 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD setRolConfirmacionEliminacion( uAjusteValue, cAjustableUuid ) INLINE ( ::setLogic( 'confirmacion_eliminacion', uAjusteValue, 'roles', cAjustableUuid ) )
    METHOD setRolFiltrarVentas( uAjusteValue, cAjustableUuid )           INLINE ( ::setLogic( 'fitrar_ventas_por_usuario', uAjusteValue, 'roles', cAjustableUuid ) )
    METHOD setRolAbrirCajonPortamonedas( uAjusteValue, cAjustableUuid )  INLINE ( ::setLogic( 'abrir_cajon_portamonedas', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolAlbaranEntregado( uAjusteValue, cAjustableUuid )        INLINE ( ::setLogic( 'albaran_entregado', uAjusteValue, 'roles', cAjustableUuid ) )
 
    METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    METHOD getLogic( cUuid, cTipo, cAjuste, lDefault ) 
@@ -60,6 +61,9 @@ CLASS SQLAjustableModel FROM SQLBaseModel
 
    METHOD setEmpresaSeleccionarUsuarios( uAjusteValue, cAjustableUuid ) INLINE ( ::setLogic( 'seleccionar_usuarios', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getEmpresaSeleccionarUsuarios( cUuid )                        INLINE ( ::getLogic( cUuid, 'empresas', 'seleccionar_usuarios', .f. ) )   
+
+   METHOD getRolAlbaranEntregado( cUuid )                               INLINE ( ::getLogic( cUuid, 'roles', 'albaran_entregado', .t. ) )   
+   METHOD getRolNoAlbaranEntregado( cUuid )                             INLINE ( !::getRolAlbaranEntregado( cUuid ) )
 
    // METHOD assertUsuarioFavoritos( cUuid )                               INLINE ( ::getValue( cUuid, 'favoritos', uAjusteValue, 'usuarios', cAjustableUuid ) )
 
