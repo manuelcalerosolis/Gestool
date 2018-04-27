@@ -814,6 +814,8 @@ METHOD loadCurrentBuffer( id )
 
    ::hBuffer            := ::findById( id )
 
+   msgAlert( hb_valtoexp( ::hBuffer ) )
+
    ::fireEvent( 'loadedCurrentBuffer' )
 
 RETURN ( ::hBuffer )
