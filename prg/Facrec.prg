@@ -1713,7 +1713,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       HOTKEY   "C";
       LEVEL    ACC_EDIT
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
 
    DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw GROUP;
       NOBORDER ;
@@ -1769,7 +1769,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 	   ACTION   ( Counter:OpenDialog() ) ;
 	   TOOLTIP  "Establecer contadores" 
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
 
    DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
       NOBORDER ;

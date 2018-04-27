@@ -40,7 +40,6 @@ METHOD getValidators()
                         "almacen_destino"    => {  "required"                    => "El almacén destino es un dato requerido",;
                                                    "existAlmacen"                => "El almacén destino no existe",;
                                                    "diferentAlmacen"             => "El almacén origen debe ser distinto del almacén destino" },;
-                        "grupo_movimiento"   => {  "emptyOrExistGrupoMovimiento" => "El grupo de movimiento no existe" },;
                         "agente"             => {  "emptyOrExistAgente"          => "El agente no existe" },; 
                         "divisa"             => {  "existDivisa"                 => "La divisa no existe" } } 
 

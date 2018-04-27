@@ -1380,6 +1380,10 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          HOTKEY   "C";
          LEVEL    ACC_EDIT
 
+   end if
+
+   if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
+
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;

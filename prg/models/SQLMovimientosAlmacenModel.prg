@@ -95,7 +95,6 @@ METHOD getInitialSelect()
                   "movimientos_almacen.fecha_hora                 AS fecha_hora, "        + ;
                   "movimientos_almacen.almacen_origen             AS almacen_origen, "    + ;
                   "movimientos_almacen.almacen_destino            AS almacen_destino, "   + ;
-                  "movimientos_almacen.grupo_movimiento           AS grupo_movimiento, "  + ;
                   SQLMovimientosAlmacenLineasModel():getSQLSubSentenceSumatorioTotalPrecioLinea( "movimientos_almacen_lineas" ) + ", " +;
                   "movimientos_almacen.divisa                     AS divisa, "            + ;
                   "movimientos_almacen.divisa_cambio              AS divisa_cambio, "     + ;

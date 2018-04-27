@@ -753,7 +753,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          HOTKEY   "Q";
          LEVEL    ACC_IMPR
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
 
       DEFINE BTNSHELL RESOURCE "ChgState" OF oWndBrw ;
          NOBORDER ;
@@ -779,7 +779,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       TOOLTIP  "M(o)neda";
       HOTKEY   "O";
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
 
       //Condicionamos para que sólo el administrador toque los campos
 

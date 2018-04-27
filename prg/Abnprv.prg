@@ -355,11 +355,15 @@ FUNCTION AbnPrv( oWnd )
 			TOOLTIP 	"(B)uscar" ;
 			HOTKEY 	"B"
 
+      if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
+
 		DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;
 			NOBORDER ;
 			ACTION 	( ChgState( oWndBrw:oBrw ) ) ;
 			TOOLTIP 	"Cambiar Es(t)ado" ;
 			HOTKEY 	"T"
+
+      end if
 
       DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBrw ;
 			NOBORDER ;

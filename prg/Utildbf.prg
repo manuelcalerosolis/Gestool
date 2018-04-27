@@ -6,7 +6,6 @@
 #include "DbInfo.ch"
 #include "Factu.ch" 
 #include "RichEdit.ch" 
-#include "hbzebra.ch"
 #include "hbwin.ch"
 
 //----------------------------------------------------------------------------//

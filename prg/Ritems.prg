@@ -477,7 +477,7 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
          HOTKEY   "E" ;
          LEVEL    ACC_DELE
 
-      if oUser():lAdministrador()
+      if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
 
          DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
             NOBORDER ;

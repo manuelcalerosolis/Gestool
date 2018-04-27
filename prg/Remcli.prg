@@ -582,12 +582,16 @@ METHOD Activate()
          HOTKEY   "C";
          LEVEL    4
 
+      if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
+
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF ::oWndBrw ;
 			NOBORDER ;
          ACTION   ( ::SetOrdenNumeroRemesa(), ::SelectRec( {|| ::cambiaEstadoContabilizadoRemesas( ::lChkSelect ) }, "Cambiar estado", "Contabilizado" , .f. ), ::RestoreOrdenNumeroRemesa() ) ;
          TOOLTIP  "Cambiar es(t)ado" ;
          HOTKEY   "T";
          LEVEL    4
+
+      end if
 
       DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF ::oWndBrw ;
          ACTION   ( oRotor:Expand() ) ;

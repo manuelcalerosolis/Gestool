@@ -411,12 +411,16 @@ FUNCTION ExtAge( oMenuItem, oWnd )
          HOTKEY   "E";
          LEVEL    ACC_DELE
 
+      if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
+
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;
 			NOBORDER ;
 			ACTION 	( ChgState( oWndBrw:oBrw ) ) ;
 			TOOLTIP 	"Cambiar Es(t)ado" ;
          HOTKEY   "T";
          LEVEL    ACC_EDIT
+
+      end if
 
 		DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF oWndBrw ;
 			NOBORDER ;

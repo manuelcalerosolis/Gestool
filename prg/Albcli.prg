@@ -1060,7 +1060,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       HOTKEY   "C";
       LEVEL    ACC_APPD
 
-   //if oUser():lAdministrador()
+   if SQLAjustableModel():getRolAsistenteGenerarFacturas( Auth():rolUuid() )
 
       DEFINE BTNSHELL RESOURCE "gc_gearwheel_" GROUP OF oWndBrw ;
          NOBORDER ;
@@ -1075,6 +1075,10 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Importar pedidos clientes";
          LEVEL    ACC_APPD
 
+   end if
+
+   if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
+
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( if( ApoloMsgNoYes( "¿ Está seguro de cambiar el estado del documento ?", "Elija una opción" ), SetFacturadoAlbaranCliente( !lFacturado( D():Get( "AlbCliT", nView ) ), oWndBrw:oBrw ), ) ) ;
@@ -1082,7 +1086,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          HOTKEY   "T";
          LEVEL    ACC_EDIT
 
-   //end if
+   end if
 
    DEFINE BTNSHELL RESOURCE "Sel" OF oWndBrw ;
       NOBORDER ;
@@ -1130,7 +1134,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       TOOLTIP  "M(o)neda";
       HOTKEY   "O"
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
 
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
@@ -5881,7 +5885,7 @@ STATIC FUNCTION SelSend( oBrw )
    local oFecEnv
    local dFecEnv  := GetSysDate()
 
-   if SuperUsuarioController():New():isNotDialogViewActivate()
+   if SQLAjustableModel():getRolNoAlbaranEntregado( Auth():rolUuid() )
       msgStop( "Sin autorización para cambio de entrega." )
       RETURN ( nil )
    end if 

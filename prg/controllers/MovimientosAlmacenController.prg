@@ -37,10 +37,6 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
                                                    ::stampAlmacenNombre( ::oDialogView:oGetAlmacenDestino ),;
                                                    .f. ) )
 
-   METHOD validateGrupoMovimiento() INLINE ( iif(  ::validate( "grupo_movimiento" ),;
-                                                   ::stampGrupoMovimientoNombre( ::oDialogView:oGetGrupoMovimiento ),;
-                                                   .f. ) )
-
    METHOD setFileName( cFileName )  INLINE ( ::cFileName := cFileName )
    METHOD getFileName()             INLINE ( ::cFileName )
 

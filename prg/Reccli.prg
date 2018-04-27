@@ -676,8 +676,8 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       HOTKEY   "C";
       LEVEL    ACC_EDIT
 
-   if oUser():lAdministrador()
-
+   if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
+   
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( dlgContabilizaReciboCliente( oWndBrw:oBrw, "Cambiar estado de recibos", "Contabilizado", .t. ) ) ;
@@ -687,9 +687,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
    end if
 
-#ifndef __PDA__
-
-if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
 
    DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
       NOBORDER ;
@@ -697,9 +695,7 @@ if oUser():lAdministrador()
       TOOLTIP  "Cambiar campos" ;
       LEVEL    ACC_APPD
 
-end if
-
-#endif
+   end if
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
       ACTION   ( oRotor:Expand() ) ;

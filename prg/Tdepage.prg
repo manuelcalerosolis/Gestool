@@ -110,12 +110,16 @@ METHOD Activate()
 
    ::oWndBrw:GralButtons( Self )
 
+   if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
+
    DEFINE BTNSHELL RESOURCE "CHGSTATE" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::ChgState( oWndBrw:oBrw ) ) ;
       TOOLTIP  "Cambiar Es(t)ado" ;
       HOTKEY   "T";
       LEVEL    2
+
+   end if
 
    DEFINE BTNSHELL oBtnEur RESOURCE "gc_currency_euro_" OF ::oWndBrw ;
       NOBORDER ;

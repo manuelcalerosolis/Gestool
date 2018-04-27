@@ -84,14 +84,6 @@ METHOD addColumns()
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'grupo_movimiento'
-      :cHeader             := 'Grupo'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'grupo_movimiento' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'agente'
       :cHeader             := 'Agente'
       :nWidth              := 80

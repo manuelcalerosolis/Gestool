@@ -312,12 +312,16 @@ METHOD Activate() CLASS TCobAge
       HOTKEY   "C";
       LEVEL    ACC_EDIT
 
+   if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
+
    DEFINE BTNSHELL RESOURCE "ChgState" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::SelectRec( {|| ::ChangeConta( ::lChkSelect ) }, "Contabilizar", "Contabilizado" ) );
       TOOLTIP  "Cambiar es(t)ado";
       HOTKEY   "T";
       LEVEL    4
+
+   end if
 
    ::oWndBrw:EndButtons( Self )
 
