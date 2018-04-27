@@ -1555,7 +1555,7 @@ else
       HOTKEY   "N";
       LEVEL    ACC_EDIT
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
 
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw GROUP;
          NOBORDER ;
@@ -1611,7 +1611,7 @@ else
       TOOLTIP  "M(o)neda";
       HOTKEY   "O";
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
 
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;

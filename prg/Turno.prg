@@ -1194,12 +1194,16 @@ METHOD Activate()
       HOTKEY   "O";
       LEVEL    ACC_EDIT
 
+   if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
+
    DEFINE BTNSHELL RESOURCE "CHGSTATE" OF ::oWndBrw ;
       NOBORDER ;
       ACTION   ( ::SelectRec( {|| ::CambiaEstado() }, "Cambiar estado", "Contabilizado" ), ::oWndBrw:Refresh() );
       TOOLTIP  "Cambiar es(t)ado";
       HOTKEY   "T";
       LEVEL    ACC_EDIT
+
+   end if
 
    DEFINE BTNSHELL oSnd RESOURCE "Lbl" OF ::oWndBrw ;
       NOBORDER ;

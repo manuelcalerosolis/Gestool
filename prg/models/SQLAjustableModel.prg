@@ -30,6 +30,9 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD setRolFiltrarVentas( uAjusteValue, cAjustableUuid )           INLINE ( ::setLogic( 'fitrar_ventas_por_usuario', uAjusteValue, 'roles', cAjustableUuid ) )
    METHOD setRolAbrirCajonPortamonedas( uAjusteValue, cAjustableUuid )  INLINE ( ::setLogic( 'abrir_cajon_portamonedas', uAjusteValue, 'roles', cAjustableUuid ) )
    METHOD setRolAlbaranEntregado( uAjusteValue, cAjustableUuid )        INLINE ( ::setLogic( 'albaran_entregado', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolAsistenteGenerarFacturas( uAjusteValue, cAjustableUuid )INLINE ( ::setLogic( 'asistente_generar_facturas', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolCambiarEstado( uAjusteValue, cAjustableUuid )           INLINE ( ::setLogic( 'cambiar_estado', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolCambiarCampos( uAjusteValue, cAjustableUuid )           INLINE ( ::setLogic( 'cambiar_campos', uAjusteValue, 'roles', cAjustableUuid ) )
 
    METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    METHOD getLogic( cUuid, cTipo, cAjuste, lDefault ) 
@@ -64,6 +67,15 @@ CLASS SQLAjustableModel FROM SQLBaseModel
 
    METHOD getRolAlbaranEntregado( cUuid )                               INLINE ( ::getLogic( cUuid, 'roles', 'albaran_entregado', .t. ) )   
    METHOD getRolNoAlbaranEntregado( cUuid )                             INLINE ( !::getRolAlbaranEntregado( cUuid ) )
+
+   METHOD getRolAsistenteGenerarFacturas( cUuid )                       INLINE ( ::getLogic( cUuid, 'roles', 'asistente_generar_facturas', .t. ) )   
+   METHOD getRolNoAsistenteGenerarFacturas( cUuid )                     INLINE ( !::getRolAsistenteGenerarFacturas( cUuid ) )
+
+   METHOD getRolCambiarEstado( cUuid )                                  INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_estado', .t. ) )   
+   METHOD getRolNoCambiarEstado( cUuid )                                INLINE ( !::getRolCambiarEstado( cUuid ) )
+
+   METHOD getRolCambiarCampos( cUuid )                                  INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_campos', .t. ) )   
+   METHOD getRolNoCambiarCampos( cUuid )                                INLINE ( !::getRolCambiarCampos( cUuid ) )
 
    // METHOD assertUsuarioFavoritos( cUuid )                               INLINE ( ::getValue( cUuid, 'favoritos', uAjusteValue, 'usuarios', cAjustableUuid ) )
 

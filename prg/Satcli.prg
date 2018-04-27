@@ -1601,7 +1601,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       TOOLTIP  "M(o)neda";
       HOTKEY   "O";
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
 
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;

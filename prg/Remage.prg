@@ -351,12 +351,16 @@ METHOD Activate()
 
       ::oWndBrw:GralButtons( Self )
 
+      if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
+
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF ::oWndBrw ;
          NOBORDER ;
          ACTION   ( ::SelectRec( {|| ::ChgConta( ::lChkSelect ) }, "Cambiar estado", "Contabilizado" , .f. ) ) ;
          TOOLTIP  "Ca(m)biar estado" ;
          HOTKEY   "M";
          LEVEL    4
+
+      end if
 
       DEFINE BTNSHELL RESOURCE "BMPCONTA" OF ::oWndBrw ;
          NOBORDER ;

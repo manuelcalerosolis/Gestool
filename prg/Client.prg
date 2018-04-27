@@ -1082,6 +1082,10 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
             TOOLTIP  "Cambiar precios" ;
             LEVEL    ACC_APPD
 
+      end if
+
+      if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
+
          DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
             NOBORDER ;
             MENU     This:Toggle() ;

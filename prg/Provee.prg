@@ -610,7 +610,7 @@ FUNCTION Provee( oMenuItem, oWnd )
       HOTKEY   "P";
       LEVEL    ACC_EDIT
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
 
       DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
          NOBORDER ;

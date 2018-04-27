@@ -187,7 +187,7 @@ FUNCTION Agentes( oMenuItem, oWnd )
          HOTKEY   "E" ;
          LEVEL    ACC_DELE
 
-      if oUser():lAdministrador()
+      if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
 
       DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
          NOBORDER ;

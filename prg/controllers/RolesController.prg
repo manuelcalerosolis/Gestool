@@ -20,7 +20,10 @@ CLASS RolesController FROM SQLNavigatorController
    DATA lFiltrarVentas              AS LOGIC INIT .t.
    DATA lAbrirCajonPortamonedas     AS LOGIC INIT .t.
    DATA lAlbaranEntregado           AS LOGIC INIT .t.
-   
+   DATA lAsistenteGenerarFacturas   AS LOGIC INIT .t.
+   DATA lCambiarEstado              AS LOGIC INIT .t.
+   DATA lCambiarCampos              AS LOGIC INIT .t.
+
    METHOD New()
 
    METHOD End()
@@ -113,25 +116,31 @@ RETURN ( self )
 
 METHOD loadConfig()
 
-   ::cUuidRol                 := ::getRowSet():fieldGet( 'uuid' )
+   ::cUuidRol                    := ::getRowSet():fieldGet( 'uuid' )
 
    if empty( ::cUuidRol )
       RETURN ( .f. )
    end if 
 
-   ::lMostrarRentabilidad     := ::oAjustableController:oModel:getRolMostrarRentabilidad( ::cUuidRol )
+   ::lMostrarRentabilidad        := ::oAjustableController:oModel:getRolMostrarRentabilidad( ::cUuidRol )
 
-   ::lCambiarPrecios          := ::oAjustableController:oModel:getRolCambiarPrecios( ::cUuidRol )
+   ::lCambiarPrecios             := ::oAjustableController:oModel:getRolCambiarPrecios( ::cUuidRol )
 
-   ::lVerPreciosCosto         := ::oAjustableController:oModel:getRolVerPreciosCosto( ::cUuidRol )
+   ::lVerPreciosCosto            := ::oAjustableController:oModel:getRolVerPreciosCosto( ::cUuidRol )
 
-   ::lConfirmacionEliminacion := ::oAjustableController:oModel:getRolConfirmacionEliminacion( ::cUuidRol )
+   ::lConfirmacionEliminacion    := ::oAjustableController:oModel:getRolConfirmacionEliminacion( ::cUuidRol )
 
-   ::lFiltrarVentas           := ::oAjustableController:oModel:getRolFiltrarVentas( ::cUuidRol )
+   ::lFiltrarVentas              := ::oAjustableController:oModel:getRolFiltrarVentas( ::cUuidRol )
 
-   ::lAbrirCajonPortamonedas  := ::oAjustableController:oModel:getRolAbrirCajonPortamonedas( ::cUuidRol )
+   ::lAbrirCajonPortamonedas     := ::oAjustableController:oModel:getRolAbrirCajonPortamonedas( ::cUuidRol )
 
-   ::lAlbaranEntregado        := ::oAjustableController:oModel:getRolAlbaranEntregado( ::cUuidRol )
+   ::lAlbaranEntregado           := ::oAjustableController:oModel:getRolAlbaranEntregado( ::cUuidRol )
+
+   ::lAsistenteGenerarFacturas   := ::oAjustableController:oModel:GetRolAsistenteGenerarFacturas( ::cUuidRol )
+
+   ::lCambiarEstado              := ::oAjustableController:oModel:GetRolCambiarEstado( ::cUuidRol )
+
+   ::lCambiarCampos              := ::oAjustableController:oModel:GetRolCambiarCampos( ::cUuidRol )
 
 RETURN ( .t. )
 
@@ -152,6 +161,12 @@ METHOD saveConfig()
    ::oAjustableController:oModel:setRolAbrirCajonPortamonedas( ::lAbrirCajonPortamonedas, ::cUuidRol )
 
    ::oAjustableController:oModel:setRolAlbaranEntregado( ::lAlbaranEntregado, ::cUuidRol )
+
+   ::oAjustableController:oModel:SetRolAsistenteGenerarFacturas( ::lAsistenteGenerarFacturas, ::cUuidRol )
+
+   ::oAjustableController:oModel:SetRolCambiarEstado( ::lCambiarEstado, ::cUuidRol )
+
+   ::oAjustableController:oModel:SetRolCambiarCampos( ::lCambiarCampos, ::cUuidRol )
 
 RETURN ( self )
 
@@ -174,6 +189,12 @@ METHOD startingActivate()
    oPanel:addCheckBox( "Abrir cajón portamonedas", @::lAbrirCajonPortamonedas )
 
    oPanel:addCheckBox( "Estado albarán entregado", @::lAlbaranEntregado )
+
+   oPanel:addCheckBox( "Asistente generar facturas", @::lAsistenteGenerarFacturas )
+
+   oPanel:addCheckBox( "Cambiar estado", @::lCambiarEstado )
+   
+   oPanel:addCheckBox( "Cambiar campos", @::lCambiarCampos )
 
 RETURN ( self )
 

@@ -1015,6 +1015,8 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       HOTKEY   "C";
       LEVEL    ACC_EDIT
 
+   if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
+
    DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw GROUP;
       NOBORDER ;
       ACTION   (  iif(  SuperUsuarioController():New():isDialogViewActivate(),;
@@ -1022,6 +1024,8 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       TOOLTIP  "Cambiar es(t)ado" ;
       HOTKEY   "T";
       LEVEL    ACC_EDIT
+
+   end if
 
    DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw GROUP;
       NOBORDER ;
@@ -1075,7 +1079,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       ACTION   ( Counter:OpenDialog() ) ;
       TOOLTIP  "Establecer contadores" 
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
 
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;

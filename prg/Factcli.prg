@@ -1215,7 +1215,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          HOTKEY   "C";
          LEVEL    ACC_EDIT
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
 
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw GROUP;
          NOBORDER ;
@@ -1277,7 +1277,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Moneda";
          LEVEL    ACC_ZOOM
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
 
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;

@@ -1507,7 +1507,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       HOTKEY   "C";
       LEVEL    ACC_APPD
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
 
       DEFINE BTNSHELL oChangeState RESOURCE "CHGSTATE" OF oWndBrw ;
          NOBORDER ;
@@ -1574,7 +1574,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       TOOLTIP  "M(o)neda";
       HOTKEY   "O";
 
-   if oUser():lAdministrador()
+   if SQLAjustableModel():getRolCambiarCampos( Auth():rolUuid() )
 
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
