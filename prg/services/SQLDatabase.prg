@@ -108,7 +108,7 @@ METHOD New()
 
    ::oConexion                := THDO():new( "mysql" )
 
-   ::oConexion:setAttribute( ATTR_ERRMODE, .t. )
+   ::oConexion:setAttribute( HDO_ATTR_ERRMODE, .t. )
 
 RETURN ( Self )
 
@@ -236,7 +236,7 @@ METHOD selectFetch( cSentence, fetchType, attributePad )
 
       oStatement        := ::Query( cSentence )
 
-      oStatement:setAttribute( ATTR_STR_PAD, attributePad )
+      oStatement:setAttribute( STMT_ATTR_STR_PAD, attributePad )
    
       aFetch            := oStatement:fetchAll( fetchType )
 
