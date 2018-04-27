@@ -288,11 +288,9 @@ METHOD getColumns() CLASS SQLAgentesModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
    
    ::getEmpresaColumns()
-   
-   ::getTimeStampSentColumns()
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(3)"                             ,;
-                                             "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(3) NOT NULL UNIQUE"             ,;
+                                             "default"   => {|| space( 3 )}})
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                         ,;
                                              "default"   => {|| space( 140 ) } }                      )

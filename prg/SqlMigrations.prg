@@ -191,6 +191,10 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
 
+   aadd( ::aModels, SQLDivisasMonetariasModel():New() )
+
+   aadd( ::aModels, SQLImpuestosEspecialesModel():New() )
+
    aadd( ::aModels, SQLIvaTipoModel():New() )
    
    aadd( ::aModels, SQLCuentasRemesaModel():New() )

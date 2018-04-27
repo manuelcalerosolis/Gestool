@@ -15,13 +15,13 @@ METHOD New() CLASS ImpuestosEspecialesController
 
    ::Super:New()
 
-   ::cTitle                      := "Tipos de IVA"
+   ::cTitle                      := "Impuestos Especiales"
 
-   ::cName                       := "tipo_iva"
+   ::cName                       := "impuestos_especiales"
 
-   ::hImage                      := {  "16" => "gc_moneybag_16",;
-                                       "32" => "gc_moneybag_32",;
-                                       "48" => "gc_moneybag_48" }
+   ::hImage                      := {  "16" => "gc_moneybag_euro_16",;
+                                       "32" => "gc_moneybag_euro_32",;
+                                       "48" => "gc_moneybag_euro_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -95,7 +95,15 @@ METHOD addColumns() CLASS ImpuestosEspecialesBrowseView
       :cSortOrder          := 'importe'
       :cHeader             := 'Importe'
       :nWidth              := 120
-      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'importe' ), "@E 999.99" ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'importe' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'subcuenta'
+      :cHeader             := 'Subcuenta'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'subcuenta' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -127,7 +135,7 @@ METHOD Activate() CLASS ImpuestosEspecialesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_moneybag_48" ;
+      RESOURCE    "gc_moneybag_euro_48" ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
@@ -157,7 +165,11 @@ METHOD Activate() CLASS ImpuestosEspecialesView
    REDEFINE GET   ::oController:oModel:hBuffer[ "subcuenta" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      SPINNER ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "subcuenta" ] ;
+      ID          131 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "aplicar" ] ;
@@ -238,8 +250,8 @@ METHOD getColumns() CLASS SQLImpuestosEspecialesModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 1 )"                            ,;
-                                             "default"   => {|| space( 1 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
+                                             "default"   => {|| space( 3 ) } }                        )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )

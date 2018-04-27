@@ -1,0 +1,28 @@
+
+ENTRY: lib\ext\access-bridge.jar
+warning wpt0015: Old File does not exist
+
+
+ENTRY: bin\eula.dll
+warning wpt0015: Old File does not exist
+
+
+ENTRY: bin\JavaAccessBridge.dll
+warning wpt0015: Old File does not exist
+
+
+ENTRY: bin\javacpl.cpl
+warning wpt0015: Old File does not exist
+
+
+ENTRY: bin\JAWTAccessBridge.dll
+warning wpt0015: Old File does not exist
+
+
+ENTRY: bin\WindowsAccessBridge.dll
+warning wpt0015: Old File does not exist
+
+
+ENTRY: release
+warning wpt0015: Old File does not exist
+

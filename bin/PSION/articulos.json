@@ -1,0 +1,27 @@
+{
+  "id" : "9",
+  "nombre" : "Saimaza G.S.Desc. 500g.",
+  "precio_venta" : 8.73,
+  "porcentaje_iva" : 10,
+  "precio_impuestos_incluidos" : 9.60,
+  "uuid" : "2a3fb5b1-c848-481a-a198-da63bc5b35cc",
+  "codigos_barras" : 
+  [
+    "8410055620016",
+    "5012345678900"
+  ]
+},
+{
+  "id" : "10",
+  "nombre" : "Saimaza Cafeteria 75/25-1Kg.",
+  "precio_venta" : 19.63,
+  "porcentaje_iva" : 21,
+  "precio_impuestos_incluidos" : 23.75,
+  "uuid" : "b3300ede-5d63-4469-99a3-b69b885c44da",
+  "codigos_barras" : 
+  [
+    "4047999400134",
+    "7812345678900"
+  ]
+}
+

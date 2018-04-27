@@ -1,13 +1,9 @@
 /*
- * $Id: ads.ch 9189 2008-08-17 15:48:25Z vszakats $
- */
-
-/*
  * Harbour Project source code:
  * Header file for Advantage Database Server RDD
  *
  * Copyright 2000 Alexander S.Kresin <alex@belacy.belgorod.su>
- * www - http://www.harbour-project.org
+ * www - http://harbour-project.org
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this software; see the file COPYING.  If not, write to
+ * along with this software; see the file COPYING.txt.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA (or visit the web site http://www.gnu.org/).
  *
@@ -69,6 +65,9 @@
    2) Set this "define" when compiling rddads:
       -DADS_LIB_VERSION=500
 */
+
+#ifndef ADS_CH_
+#define ADS_CH_
 
 /* Supported file types */
 #define ADS_NTX                           1
@@ -275,10 +274,6 @@
 #define ADS_DD_DFV_NONE                   2
 #define ADS_DD_DFV_VALUES_STORED          3
 
-#define ADS_ASCENDING            0x00000000
-#define ADS_COMPOUND             0x00000002
-#define ADS_DESCENDING           0x00000008
-
 /* Commands */
 
 #command SET FILETYPE TO <x:NTX,CDX,ADT,VFP>                              ;
@@ -298,7 +293,6 @@
 #command SET CHARTYPE TO <x:ANSI,OEM>                                 ;
       => AdsSetCharType( iif( Upper( <(x)> ) == "OEM", ADS_OEM, ADS_ANSI ) )
 
-#command COMMIT                 => AdsWriteAllRecords()
 #command BEGIN TRANSACTION      => AdsBeginTransaction()
 #command COMMIT TRANSACTION     => AdsCommitTransaction()
 #command ROLLBACK TRANSACTION   => AdsRollback()
@@ -314,15 +308,17 @@
       => IF AdsIsServerLoaded( <(db)> ) > 0                                ;
        ;    dbUseArea(                                                     ;
                       <.new.>, <rdd>, <(db)>, <(a)>,                       ;
-                      iif( <.sh.> .OR. <.ex.>, !<.ex.>, NIL ), <.ro.>      ;
+                      iif( <.sh.> .OR. <.ex.>, ! <.ex.>, NIL ), <.ro.>     ;
                      )                                                     ;
             [; dbSetIndex( <(index1)> )]                                   ;
             [; dbSetIndex( <(indexn)> )]                                   ;
        ; ELSE                                                              ;
        ;    dbUseArea(                                                     ;
                       <.new.>, <altrdd>, <(db)>, <(a)>,                    ;
-                      iif( <.sh.> .OR. <.ex.>, !<.ex.>, NIL ), <.ro.>      ;
+                      iif( <.sh.> .OR. <.ex.>, ! <.ex.>, NIL ), <.ro.>     ;
                      )                                                     ;
             [; dbSetIndex( <(index1)> )]                                   ;
             [; dbSetIndex( <(indexn)> )]                                   ;
-       ; ENDIF
+       ; END
+
+#endif

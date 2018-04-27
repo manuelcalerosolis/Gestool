@@ -1,0 +1,22 @@
+[
+  {
+    "id" : 552,
+    "uuid" : "14b4f444-8fc5-4e4a-aee7-cce47a5abd71",
+    "empresa" : "2015",
+    "delegacion" : "",
+    "usuario" : "001",
+    "numero" : "1",
+    "tipo_movimiento" : 2,
+    "fecha_hora" : "20180101232000000",
+    "almacen_origen" : "",
+    "almacen_destino" : "007",
+    "grupo_movimiento" : "EI",
+    "agente" : "",
+    "divisa" : "EUR",
+    "divisa_cambio" : 1.000000,
+    "comentarios" : "este es el comentario",
+    "creado" : "20180125231232000",
+    "modificado" : "20180125231232000",
+    "enviado" : "00000000000000000"
+  }
+]

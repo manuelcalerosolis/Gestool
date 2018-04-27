@@ -1,5 +1,0 @@
-#define GRAPH_TYPE_BAR   1
-#define GRAPH_TYPE_LINE  2
-#define GRAPH_TYPE_POINT 3
-#define GRAPH_TYPE_PIE   4
-#define GRAPH_TYPE_ALL   5

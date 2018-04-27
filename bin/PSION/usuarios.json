@@ -1,0 +1,13 @@
+{
+  "id" : "000",
+  "nombre" : "Administrador"
+},
+{
+  "id" : "001",
+  "nombre" : "Operador"
+},
+{
+  "id" : "002",
+  "nombre" : "Calero"
+}
+

@@ -31,6 +31,8 @@ CLASS SQLBaseRepository
 
    METHOD getUuidWhereColumn( uValue, cColumn, uDefault ) 
    METHOD getUuidWhereNombre( uValue )          INLINE ( ::getUuidWhereColumn( uValue, 'nombre', '' ) )
+   
+   METHOD getColumnWhereNombre( nombre, cColumn ) 
 
    METHOD getColumns( cColumn )
    METHOD getNombres()                          INLINE ( ::getColumns( 'nombre' ) )
@@ -40,6 +42,7 @@ CLASS SQLBaseRepository
 
    METHOD getWhereUuid( Uuid )
    METHOD getWhereCodigo( cCodigo )
+   METHOD getWhereNombre( cNombre )
 
 END CLASS
 
@@ -76,6 +79,16 @@ METHOD getColumnWhereUuid( uuid, cColumn )
 
    local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
                         "WHERE uuid = " + quoted( uuid )                + " " + ;
+                        "LIMIT 1"
+
+RETURN ( ::getDatabase():getValue( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getColumnWhereNombre( nombre, cColumn ) 
+
+   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()     + " " + ;
+                        "WHERE nombre = " + quoted( nombre )               + " " + ;
                         "LIMIT 1"
 
 RETURN ( ::getDatabase():getValue( cSQL ) )
@@ -133,6 +146,16 @@ METHOD getWhereCodigo( cCodigo )
 
    local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
    cSQL        +=    "WHERE codigo = " + quoted( cCodigo )                    + " "    
+   cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereNombre( cNombre )
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
    cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )

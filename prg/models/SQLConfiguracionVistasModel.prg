@@ -37,9 +37,9 @@ CLASS SQLConfiguracionVistasModel FROM SQLBaseModel
    METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
    METHOD setNavigator( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
-                                                            INLINE ( ::set( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ))
+                                                            INLINE ( ::set( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
    METHOD setSelector( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
-                                                            INLINE ( ::set( "selector", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ))
+                                                            INLINE ( ::set( "selector", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
    
    METHOD setColumnOrder( cViewType, cViewName, cColumnOrder ) ;
                                                             INLINE ( ::set( cViewType, cViewName, nil, cColumnOrder ) ) 

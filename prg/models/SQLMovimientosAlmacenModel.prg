@@ -65,12 +65,6 @@ METHOD getColumns()
    hset( ::hColumns, "almacen_destino",   {  "create"    => "CHAR ( 16 )"                             ,;
                                              "default"   => {|| space( 16 ) } }                       )
 
-   hset( ::hColumns, "grupo_movimiento",  {  "create"    => "CHAR ( 2 )"                              ,;
-                                             "default"   => {|| space( 2 ) } }                        )
-
-   hset( ::hColumns, "agente",            {  "create"    => "CHAR ( 3 )"                              ,;
-                                             "default"   => {|| space( 3 ) } }                        )
-
    hset( ::hColumns, "divisa",            {  "create"    => "CHAR ( 3 )"                              ,;
                                              "default"   => {|| cDivEmp() } }                         )
 
@@ -102,7 +96,6 @@ METHOD getInitialSelect()
                   "movimientos_almacen.almacen_origen             AS almacen_origen, "    + ;
                   "movimientos_almacen.almacen_destino            AS almacen_destino, "   + ;
                   "movimientos_almacen.grupo_movimiento           AS grupo_movimiento, "  + ;
-                  "movimientos_almacen.agente                     AS agente, "            + ;
                   SQLMovimientosAlmacenLineasModel():getSQLSubSentenceSumatorioTotalPrecioLinea( "movimientos_almacen_lineas" ) + ", " +;
                   "movimientos_almacen.divisa                     AS divisa, "            + ;
                   "movimientos_almacen.divisa_cambio              AS divisa_cambio, "     + ;
@@ -230,9 +223,6 @@ METHOD Syncronize()
    cSql                    +=    "INNER JOIN " + cEmpresaTableName + " ON " + ::cTableName + ".empresa = " + cEmpresaTableName + ".codigo "
    cSql                    += "SET " + ::cTableName + ".empresa_uuid = " + cEmpresaTableName + ".uuid "
    cSql                    +=    "WHERE " + ::cTableName + ".empresa_uuid = '' "
-
-   msgalert( cSql, "cSql" )
-   logwrite( cSql )
 
    getSQLDatabase():Exec( cSql )
 

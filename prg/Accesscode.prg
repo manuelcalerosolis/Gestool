@@ -67,6 +67,8 @@ METHOD loadTableConfiguration() CLASS AccessCode
       RETURN ( .f. )
    end if 
 
+   Auth():guardWhereCodigo( ::cGetUser )
+
 RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
