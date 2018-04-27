@@ -622,10 +622,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    local oBmpBancos
    local lAppendMode       := ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
-   if ( lAppendMode ) 
+   /*if ( lAppendMode ) 
       msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
       RETURN .f.
-   end if
+   end if*/
 
    cOldCodigoEmpresa       := Space( 4 )
    nSemillaContadores      := 1

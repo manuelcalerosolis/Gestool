@@ -2036,7 +2036,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE CHECKBOX aTmp[ _LCHGPRE ] ;
          ID       140 ;
-         WHEN     ( oUser():lAdministrador() .and. nMode != ZOOM_MODE .and. !aTmp[ _LBLQCLI ] ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. !aTmp[ _LBLQCLI ] ) ;   //oUser():lAdministrador() .and. 
          OF       fldComercial
 
       REDEFINE CHECKBOX aTmp[ _LCRESOL ] ;

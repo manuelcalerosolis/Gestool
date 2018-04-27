@@ -1060,7 +1060,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       HOTKEY   "C";
       LEVEL    ACC_APPD
 
-   if oUser():lAdministrador()
+   //if oUser():lAdministrador()
 
       DEFINE BTNSHELL RESOURCE "gc_gearwheel_" GROUP OF oWndBrw ;
          NOBORDER ;
@@ -1082,7 +1082,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          HOTKEY   "T";
          LEVEL    ACC_EDIT
 
-   end if
+   //end if
 
    DEFINE BTNSHELL RESOURCE "Sel" OF oWndBrw ;
       NOBORDER ;
