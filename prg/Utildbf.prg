@@ -4011,6 +4011,8 @@ FUNCTION assertUserActive( uuidUsuario )
 
    local nHandle
 
+   uuidUsuario    := alltrim( uuidUsuario )
+
    if file( cPatUsr() + uuidUsuario + ".usr" )
       RETURN ( .t. )
    end if 
@@ -4029,6 +4031,8 @@ FUNCTION isUserActive( uuidUsuario, lClose )
    local nHandle
 
    DEFAULT lClose := .t.   
+
+   uuidUsuario    := alltrim( uuidUsuario )
 
    assertUserActive( uuidUsuario )
 

@@ -11,8 +11,11 @@ CLASS AlmacenesController FROM SQLNavigatorController
 
    DATA oProvinciasController
 
+   DATA oZonasController
+
    METHOD New()
 
+   METHOD End()
 
 END CLASS
 
@@ -42,9 +45,12 @@ METHOD New() CLASS AlmacenesController
 
    ::oDireccionesController      := DireccionesController():New( self )
 
+   ::oZonasController            := ZonasController():New( self )
+
    ::oRepository                 := AlmacenesRepository():New( self )
 
    ::oPaisesController           := PaisesController():New( self )
+
    ::oProvinciasController       := ProvinciasController():New( self )
 
    ::oComboSelector              := ComboSelector():New( self )
@@ -61,6 +67,34 @@ METHOD New() CLASS AlmacenesController
    ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End()
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oDireccionesController:End()
+
+   ::oZonasController:End()
+
+   ::oRepository:End()
+
+   ::oPaisesController:End()
+
+   ::oProvinciasController:End()
+
+   ::oComboSelector:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 
@@ -138,6 +172,7 @@ CLASS AlmacenesView FROM SQLBaseView
 END CLASS
 
 //---------------------------------------------------------------------------//
+
 METHOD Activating() CLASS AlmacenesView
 
    if ::oController:isAppendOrDuplicateMode()
@@ -153,6 +188,10 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS AlmacenesView
+
+   local oBtnAppend
+   local oBtnEdit
+   local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ALMACEN_SQL" ;
@@ -182,6 +221,33 @@ METHOD Activate() CLASS AlmacenesView
       OF          ::oDialog
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
+
+   // Zonas--------------------------------------------------------------------
+
+   REDEFINE BUTTON oBtnAppend ;
+      ID          120 ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnAppend:bAction   := {|| ::oController:oZonasController:Append() }
+
+   REDEFINE BUTTON oBtnEdit ;
+      ID          130 ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnEdit:bAction   := {|| ::oController:oZonasController:Edit() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          150 ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnDelete:bAction   := {|| ::oController:oZonasController:Delete() }
+
+   ::oController:oZonasController:Activate( ::oDialog, 160 )
+
+   // Botones almacenes -------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -258,10 +324,11 @@ METHOD getColumns() CLASS SQLAlmacenesModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
-   ::getTimeStampColumns()
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+                                             "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                          ,;
-                                             "default"   => {|| space( 3 ) } }                       )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
+                                             "default"   => {|| space( 3 ) } }                        )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )

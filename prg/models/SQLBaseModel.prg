@@ -483,7 +483,7 @@ METHOD getCreateTableSentence()
 
    end if
 
-   msgAlert( cSQLCreateTable, "cSQLCreateTable " + ::cTableName ) 
+   msgInfo( cSQLCreateTable, "cSQLCreateTable " + ::cTableName, "Create sentence" ) 
 
 RETURN ( cSQLCreateTable )
 
@@ -520,7 +520,7 @@ METHOD getAlterTableSentences( aSchemaColumns )
    end if 
 
    if !empty( hColumns )
-      msgAlert( hb_valtoexp( hColumns ), "getAlterTableSentences " + ::cTableName )
+      msgInfo( hb_valtoexp( hColumns ), "getAlterTableSentences " + ::cTableName, "Alter table" )
    end if 
 
 RETURN ( aAlter )
@@ -667,8 +667,6 @@ METHOD getDeleteSentenceByUuid( aUuid )
 
    cSentence         := chgAtEnd( cSentence, ' )', 2 )
 
-   msgalert( hb_valtoexp( aUuid ) )
-
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
@@ -813,8 +811,6 @@ METHOD loadCurrentBuffer( id )
    ::fireEvent( 'loadingCurrentBuffer' )
 
    ::hBuffer            := ::findById( id )
-
-   msgAlert( hb_valtoexp( ::hBuffer ) )
 
    ::fireEvent( 'loadedCurrentBuffer' )
 

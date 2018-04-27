@@ -679,7 +679,13 @@ RETURN ( atail( aSelectedRecno ) )
 
 METHOD changeModelOrderAndOrientation( cOrderBy, cOrientation )
 
-   local nId            := ::oRowSet:fieldGet( ::getModelColumnKey() )
+   local nId           
+
+   if empty(::oRowSet)
+      RETURN ( self )
+   end if 
+
+   nId                  := ::oRowSet:fieldGet( ::getModelColumnKey() )
 
    ::oModel:setFind( "" )
 
