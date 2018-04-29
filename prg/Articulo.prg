@@ -1983,12 +1983,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
       WHEN        ( .f. ) ;
       OF          fldGeneral
 
-      /*
-      Fabricantes-----------------------------------------------------------
-      */
+   /*
+   Fabricantes-----------------------------------------------------------
+   */
 
-      oFabricantesController:oGetSelector:Bind( bSETGET( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "fab_uuid" ) ) ] ) )
-      oFabricantesController:oGetSelector:Activate( 391, 390, fldGeneral )
+   oFabricantesController:oGetSelector:Bind( bSETGET( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "fab_uuid" ) ) ] ) )
+   oFabricantesController:oGetSelector:Activate( 391, 390, fldGeneral )
 
    REDEFINE SAY ;
          PROMPT   getConfigTraslation( "Familia" );

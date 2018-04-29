@@ -15,13 +15,13 @@ METHOD New() CLASS ArticulosTipoController
 
    ::Super:New()
 
-   ::cTitle                      := "Tipos de artículo"
+   ::cTitle                         := "Tipos de artículo"
 
-   ::cName                       := "articulos_tipo"
+   ::cName                          := "articulos_tipo"
 
-   ::hImage                      := {  "16" => "gc_objects_16",;
-                                       "32" => "gc_objects_32",;
-                                       "48" => "gc_objects_48" }
+   ::hImage                         := {  "16" => "gc_objects_16",;
+                                          "32" => "gc_objects_32",;
+                                          "48" => "gc_objects_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -35,6 +35,7 @@ METHOD New() CLASS ArticulosTipoController
 
    ::oRepository                    := ArticulosTipoRepository():New( self )
 
+   ::oGetSelector                   := GetSelector():New( self )
 
 RETURN ( Self )
 
@@ -64,7 +65,7 @@ METHOD addColumns() CLASS ArticulosTipoBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
+      :lHide               := .f.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -78,16 +79,16 @@ METHOD addColumns() CLASS ArticulosTipoBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'descripcion'
-      :cHeader             := 'Descripción'
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -112,10 +113,10 @@ END CLASS
 METHOD Activate() CLASS ArticulosTipoView
 
    local oDialog
-   local oBmpGeneral
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
+   local oBmpGeneral
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ARTICULO_TIPO" ;
@@ -138,9 +139,9 @@ METHOD Activate() CLASS ArticulosTipoView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
-      VALID       ( ::oController:validate( "descripcion" ) ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -177,17 +178,16 @@ CLASS ArticulosTipoValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
- 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD getValidators() CLASS ArticulosTipoValidator
 
-   ::hValidators  := {  "descripcion" =>          {  "required"     => "La descripción es un dato requerido",;
-                                                      "unique"       => "La descripción introducida ya existe" },;
-                        "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
-                                                      "unique"       => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
+                                          "unique"       => "El nombre introducida ya existe" },;
+                        "codigo" =>    {  "required"     => "El código es un dato requerido" ,;
+                                          "unique"       => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -211,26 +211,23 @@ END CLASS
 
 METHOD getColumns() CLASS SQLArticulosTipoModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                    "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                    "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
+   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 3 )"                            ,;
+                                    "default"   => {|| space( 3 ) } }                        )
+
+   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
+                                    "default"   => {|| space( 200 ) } }                       )
+   
    ::getTimeStampColumns()
-
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
-                                             "default"   => {|| space( 3 ) } }                        )
-
-   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
 
 RETURN ( ::hColumns )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -244,5 +241,8 @@ CLASS ArticulosTipoRepository FROM SQLBaseRepository
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

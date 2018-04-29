@@ -5,6 +5,8 @@
 
 CLASS ArticulosController FROM SQLNavigatorController
 
+   DATA oArticulosTipoController
+
    METHOD New()
 
    METHOD End()
@@ -37,6 +39,9 @@ METHOD New() CLASS ArticulosController
 
    ::oRepository                 := ArticulosRepository():New( self )
 
+   ::oArticulosTipoController    := ArticulosTipoController():New( self )
+   ::oArticulosTipoController:oGetSelector:setKey( "codigo" )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
@@ -54,6 +59,8 @@ METHOD End() CLASS ArticulosController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oArticulosTipoController:End()
 
    ::Super:End()
 
@@ -119,6 +126,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS ArticulosView FROM SQLBaseView
+
+   DATA oGetTipo
   
    METHOD Activate()
 
@@ -153,10 +162,11 @@ METHOD Activate() CLASS ArticulosView
       ID          500 ;
       OF          ::oDialog ;
       PROMPT      "&General";
-      DIALOGS     "CLIENTE_GENERAL" 
+      DIALOGS     "ARTICULO_GENERAL" 
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 18 ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
@@ -166,6 +176,21 @@ METHOD Activate() CLASS ArticulosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
+
+   // REDEFINE GET   ::oGetTipo ;
+   //    VAR         ::oController:oModel:hBuffer[ "articulos_tipo_uuid" ] ;
+   //    ID          130 ;
+   //    IDHELP      131 ;
+   //    WHEN        ( ::oController:isNotZoomMode() ) ;
+   //    PICTURE     "@!" ;
+   //    BITMAP      "Lupa" ;
+   //    OF          ::oFolder:aDialogs[1]
+
+   // ::oGetTipo:bValid   := {|| .t. }
+   // ::oGetTipo:bHelp    := {|| ::oController:oArticulosTipoController:ActivateSelectorView() }
+
+   ::oController:oArticulosTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_tipo_uuid" ] ) )
+   ::oController:oArticulosTipoController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[1] )
 
    // Botones Articulos -------------------------------------------------------
 
@@ -210,8 +235,8 @@ METHOD getValidators() CLASS ArticulosValidator
    ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
                                           "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
-                                          "unique"             => "EL código introducido ya existe",;
-                                          "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
+                                          "unique"             => "El código introducido ya existe",;
+                                          "onlyAlphanumeric"   => "El código no puede contener caracteres especiales" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -232,19 +257,22 @@ END CLASS
 
 METHOD getColumns() CLASS SQLArticulosModel
    
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                                "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                                "default"   => {|| win_uuidcreatestring() } }            )
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 18 )"                           ,;
-                                             "default"   => {|| space( 18 ) } }                       )
+   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 18 )"                           ,;
+                                                "default"   => {|| space( 18 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                "default"   => {|| space( 200 ) } }                      )
+
+   hset( ::hColumns, "articulos_tipo_uuid",  {  "create"    => "VARCHAR( 40 ) "                          ,;
+                                                "default"   => {|| space( 40 ) } }                       )
 
    ::getTimeStampColumns()
 
