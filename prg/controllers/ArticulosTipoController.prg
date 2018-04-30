@@ -131,11 +131,9 @@ END CLASS
 
 METHOD Activate() CLASS ArticulosTipoView
 
-   local oDialog
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
-   local oBmpGeneral
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ARTICULO_TIPO" ;
@@ -203,12 +201,10 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosTipoValidator
 
-
-   ::hValidators  := {  "nombre" =>                {  "required"           => "La descripción es un dato requerido",;
-                                                      "unique"             => "La descripción introducida ya existe" },;
-                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  ,;
-                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "La descripción es un dato requerido",;
+                                          "unique"    => "La descripción introducida ya existe" },;
+                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
+                                          "unique"    => "EL código introducido ya existe" } }
 
 RETURN ( ::hValidators )
 

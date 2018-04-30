@@ -318,18 +318,18 @@ STATIC FUNCTION EdtRec( aTmp, aoGet, dbfDiv, oBrw, bWhen, bValid, nMode, oBander
 
       REDEFINE GET aTmp[_NDINDIV] ;
 			ID 		190 ;
-         SPINNER  MIN 0 MAX 6;
+         SPINNER  MIN 0 MAX 8;
 			PICTURE 	"9" ;
-         VALID    ( aTmp[_NDINDIV] >= 0 .AND. aTmp[_NDINDIV] <= 6 );
+         VALID    ( aTmp[_NDINDIV] >= 0 .AND. aTmp[_NDINDIV] <= 8 );
 			COLOR 	CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
 
       REDEFINE GET aTmp[_NRINDIV] ;
          ID        200 ;
-         SPINNER   MIN 0 MAX 6;
+         SPINNER   MIN 0 MAX 8;
          PICTURE   "9" ;
-         VALID     ( aTmp[ _NRINDIV ] >= 0 .AND. aTmp[ _NRINDIV ] <= 6 );
+         VALID     ( aTmp[ _NRINDIV ] >= 0 .AND. aTmp[ _NRINDIV ] <= 8 );
          COLOR     CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF        oDlg
@@ -349,18 +349,18 @@ STATIC FUNCTION EdtRec( aTmp, aoGet, dbfDiv, oBrw, bWhen, bValid, nMode, oBander
 
       REDEFINE GET aTmp[_NDOUDIV] ;
          ID        220 ;
-         SPINNER   MIN 0 MAX 6;
+         SPINNER   MIN 0 MAX 8;
          PICTURE   "9" ;
-         VALID     ( aTmp[_NDOUDIV] >= 0 .AND. aTmp[_NDOUDIV] <= 6 );
+         VALID     ( aTmp[_NDOUDIV] >= 0 .AND. aTmp[_NDOUDIV] <= 8 );
          COLOR     CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF        oDlg
 
       REDEFINE GET aTmp[_NROUDIV] ;
          ID        230 ;
-         SPINNER   MIN 0 MAX 6;
+         SPINNER   MIN 0 MAX 8;
          PICTURE   "9" ;
-         VALID     ( aTmp[_NROUDIV] >= 0 .AND. aTmp[_NROUDIV] <= 6 );
+         VALID     ( aTmp[_NROUDIV] >= 0 .AND. aTmp[_NROUDIV] <= 8 );
          COLOR     CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF        oDlg
@@ -380,17 +380,17 @@ STATIC FUNCTION EdtRec( aTmp, aoGet, dbfDiv, oBrw, bWhen, bValid, nMode, oBander
 
       REDEFINE GET aTmp[_NDPVDIV] ;
          ID       250 ;
-         SPINNER  MIN 0 MAX 6;
+         SPINNER  MIN 0 MAX 8;
          PICTURE  "9" ;
-         VALID    ( aTmp[_NDPVDIV] >= 0 .AND. aTmp[_NDPVDIV] <= 6 );
+         VALID    ( aTmp[_NDPVDIV] >= 0 .AND. aTmp[_NDPVDIV] <= 8 );
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE GET aTmp[_NRPVDIV] ;
          ID       260 ;
-         SPINNER  MIN 0 MAX 6;
+         SPINNER  MIN 0 MAX 8;
          PICTURE  "9" ;
-         VALID    ( aTmp[_NRPVDIV] >= 0 .AND. aTmp[_NRPVDIV] <= 6 );
+         VALID    ( aTmp[_NRPVDIV] >= 0 .AND. aTmp[_NRPVDIV] <= 8 );
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
@@ -408,17 +408,17 @@ STATIC FUNCTION EdtRec( aTmp, aoGet, dbfDiv, oBrw, bWhen, bValid, nMode, oBander
 
       REDEFINE GET aTmp[ _NDWBDIV ] ;
          ID       310 ;
-         SPINNER  MIN 0 MAX 6;
+         SPINNER  MIN 0 MAX 8;
          PICTURE  "9" ;
-         VALID    ( aTmp[ _NDWBDIV ] >= 0 .AND. aTmp[ _NDWBDIV ] <= 6 );
+         VALID    ( aTmp[ _NDWBDIV ] >= 0 .AND. aTmp[ _NDWBDIV ] <= 8 );
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE GET aTmp[ _NRWBDIV ] ;
          ID       320 ;
-         SPINNER  MIN 0 MAX 6;
+         SPINNER  MIN 0 MAX 8;
          PICTURE  "9" ;
-         VALID    ( aTmp[ _NRWBDIV ] >= 0 .AND. aTmp[ _NRWBDIV ] <= 6 );
+         VALID    ( aTmp[ _NRWBDIV ] >= 0 .AND. aTmp[ _NRWBDIV ] <= 8 );
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
