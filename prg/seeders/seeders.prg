@@ -61,6 +61,8 @@ CLASS Seeders
    METHOD SeederAgentes()
    METHOD insertAgentes( dbf )
 
+   METHOD SeederListin()
+   METHOD insertListin()
 
 END CLASS
 
@@ -76,6 +78,8 @@ RETURN ( self )
 
 METHOD runSeederDatos()
 
+   SincronizaListin()
+
    ::oMsg:SetText( "Datos: Ejecutando seeder de usuarios" )
    ::SeederUsuarios()
 
@@ -87,6 +91,9 @@ METHOD runSeederDatos()
 
    ::oMsg:SetText( "Datos: Ejecutando lenguajes" )
    ::SeederLenguajes()
+
+   ::oMsg:SetText( "Datos: Listín" )
+   ::SeederListin()
 
    ::oMsg:SetText( "Datos: Ejecutando ficheros SQL" )
    ::SeederSqlFiles()
@@ -288,6 +295,67 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+METHOD SeederListin()
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatDat() + "\" )
+
+   if !( file( cPath + "Agenda.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Agenda.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if
+
+   USE ( cPath + "Agenda.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Agenda", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| ::insertListin( dbf ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertListin( dbf )
+
+   local hBuffer
+   local nId
+
+   hBuffer        := SQLListinModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
+   hset( hBuffer, "nombre",            ( dbf )->cApellidos  )
+   hset( hBuffer, "dni",               ( dbf )->cNif  )
+
+   nId            := SQLListinModel():insertIgnoreBuffer( hBuffer )
+
+   if empty( nId )
+      RETURN ( self )
+   end if 
+
+   // Direcciones--------------------------------------------------------------
+
+   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hBuffer, "parent_uuid",    ( dbf )->Uuid         )
+   hset( hBuffer, "nombre",         ( dbf )->cApellidos   )
+   hset( hBuffer, "direccion",      ( dbf )->cDomicilio   )
+   hset( hBuffer, "poblacion",      ( dbf )->cPoblacion   )
+   hset( hBuffer, "provincia",      ( dbf )->cProvincia   )
+   hset( hBuffer, "codigo_postal",  ( dbf )->cCodpostal   )
+   hset( hBuffer, "telefono",       ( dbf )->cTel         )
+                        
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 
 METHOD SeederLenguajes()
 
@@ -781,7 +849,6 @@ RETURN ( Self )
 METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
 
    local hCampos  := {  "empresa" =>            quoted( cCodEmp() ),;
-                        "delegacion" =>         if( !empty( ( dbfRemMov )->cCodDlg ), quoted( ( dbfRemMov )->cCodDlg ), '00' ),;
                         "usuario" =>            quoted( ( dbfRemMov )->cCodUsr ),;
                         "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
                         "numero" =>             quoted( rjust( ( dbfRemMov )->nNumRem, "0", 6 ) ),;
@@ -789,10 +856,10 @@ METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
                         "fecha_hora" =>         quoted( DateTimeFormatTimestamp( ( dbfRemMov )->dFecRem, ( dbfRemMov )->cTimRem ) ),;
                         "almacen_origen" =>     quoted( ( dbfRemMov )->cAlmOrg ),;
                         "almacen_destino" =>    quoted( ( dbfRemMov )->cAlmDes ),;
-                        "agente" =>             quoted( ( dbfRemMov )->cCodAge ),;
                         "divisa" =>             quoted( ( dbfRemMov )->cCodDiv ),;
                         "divisa_cambio" =>      quoted( ( dbfRemMov )->nVdvDiv ),;
-                        "comentarios" =>        quoted( ( dbfRemMov )->cComMov ) }
+                        "comentarios" =>        quoted( ( dbfRemMov )->cComMov ),;
+                        "empresa_uuid" =>       quoted( uuidEmpresa() ) }
 
 RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen" ) )
 
@@ -965,10 +1032,49 @@ STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
 RETURN NIL
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
+FUNCTION SincronizaListin()
 
+   local oBlock
+   local oError
+   local dbfAgenda
+   local cPath    := ( fullCurDir() + cPatDat() + "\" )
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .t., cLocalDriver(), ( cPath + "Agenda.Dbf" ), cCheckArea( "Agenda", @dbfAgenda ), .f. ) 
+   ( dbfAgenda )->( ordListAdd( cPath + "Agenda.Cdx"  ) )
+
+   // Cabeceras-------------------------------------------------------------------
+
+   ( dbfAgenda )->( ordSetFocus( 0 ) )
+
+   ( dbfAgenda )->( dbGoTop() )
+   while !( dbfAgenda )->( eof() )
+
+      if empty( ( dbfAgenda )->Uuid )
+         ( dbfAgenda )->Uuid          := win_uuidcreatestring()
+      end if
+
+      ( dbfAgenda )->( dbSkip() )
+
+   end while
+
+   ( dbfAgenda )->( ordSetFocus( 1 ) )
+
+   RECOVER USING oError
+      msgstop( "Imposible abrir todas las bases de datos de movimientos de almacén" + CRLF + ErrorMessage( oError ) )
+   END SEQUENCE
+   ErrorBlock( oBlock )
+
+   CLOSE ( dbfAgenda )
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
