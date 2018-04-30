@@ -5,7 +5,7 @@
 
 CLASS PropiedadesController FROM SQLNavigatorController
 
-   DATA oPropiedadesTipoController
+   DATA oPropiedadesLineasController
 
    METHOD New()
 
@@ -19,25 +19,27 @@ METHOD New() CLASS PropiedadesController
 
    ::Super:New()
 
-   ::cTitle                      := "Propiedades"
+   ::cTitle                         := "Propiedades"
 
-   ::cName                       := "propiedades"
+   ::cName                          := "propiedades"
 
-   ::hImage                      := {  "16" => "gc_coathanger_16",;
-                                       "32" => "gc_coathanger_32",;
-                                       "48" => "gc_coathanger_48" }
+   ::hImage                         := {  "16" => "gc_coathanger_16",;
+                                          "32" => "gc_coathanger_32",;
+                                          "48" => "gc_coathanger_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLPropiedadesModel():New( self )
+   ::oModel                         := SQLPropiedadesModel():New( self )
 
-   ::oBrowseView                 := PropiedadesBrowseView():New( self )
+   ::oBrowseView                    := PropiedadesBrowseView():New( self )
 
-   ::oDialogView                 := PropiedadesView():New( self )
+   ::oDialogView                    := PropiedadesView():New( self )
 
-   ::oValidator                  := PropiedadesValidator():New( self, ::oDialogView )
+   ::oValidator                     := PropiedadesValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := PropiedadesRepository():New( self )
+   ::oRepository                    := PropiedadesRepository():New( self )
+
+   ::oPropiedadesLineasController   := PropiedadesLineasController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -57,7 +59,7 @@ METHOD End() CLASS PropiedadesController
 
    ::oRepository:End()
 
-   ::oPropiedadesTipoController:End()
+   ::oPropiedadesLineasController:End()
 
    ::Super:End()
 
@@ -141,6 +143,10 @@ END CLASS
 
 METHOD Activate() CLASS PropiedadesView
 
+   local oBtnEdit
+   local oBtnAppend
+   local oBtnDelete
+
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "PROPIEDADES_MEDIUM" ;
       TITLE       ::LblTitle() + "propiedad"
@@ -152,7 +158,7 @@ METHOD Activate() CLASS PropiedadesView
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      PROMPT      "Artículos" ;
+      PROMPT      "Propiedad" ;
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog
@@ -175,7 +181,32 @@ METHOD Activate() CLASS PropiedadesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   // Botones Propiedades -------------------------------------------------------
+   // Lineas de propiedades -------------------------------------------------------
+
+   REDEFINE BUTTON oBtnAppend ;
+      ID          130 ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnAppend:bAction   := {|| ::oController:oPropiedadesLineasController:Append() }
+
+   REDEFINE BUTTON oBtnEdit ;
+      ID          140 ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnEdit:bAction   := {|| ::oController:oPropiedadesLineasController:Edit() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          150 ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnDelete:bAction   := {|| ::oController:oPropiedadesLineasController:Delete() }
+
+   ::oController:oPropiedadesLineasController:Activate( ::oDialog, 160 )
+
+   // Botones------------------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -190,6 +221,9 @@ METHOD Activate() CLASS PropiedadesView
       ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
+      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oPropiedadesLineasController:Append() } )
+      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oPropiedadesLineasController:Edit() } )
+      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oPropiedadesLineasController:Delete() } )
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
@@ -226,8 +260,7 @@ METHOD getValidators() CLASS PropiedadesValidator
    ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
                                           "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
-                                          "unique"             => "El código introducido ya existe",;
-                                          "onlyAlphanumeric"   => "El código no puede contener caracteres especiales" } }
+                                          "unique"             => "El código introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
