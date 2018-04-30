@@ -22597,3 +22597,16 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Tipo", -1, "Static", WS_GROUP, 11, 68, 19, 8
 }
 
+FAMILIA_GENERAL DIALOG DISCARDABLE 35, -50, 456, 270
+STYLE WS_CHILD|DS_3DLOOK
+FONT 8, "Ms Sans Serif"
+{
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 70, 11, 78, 11
+  CONTROL "", 110, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 70, 24, 374, 11
+  CONTROL "Código*", -1, "Static", WS_GROUP, 11, 14, 32, 8
+  CONTROL "Nombre*", -1, "Static", WS_GROUP, 11, 26, 29, 8
+  CONTROL "", -1, "Button", BS_GROUPBOX, 5, 4, 444, 36
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 5, 42, 444, 24
+  CONTROL "Propiedad de tipo color", 120, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 52, 86, 10
+}
+
