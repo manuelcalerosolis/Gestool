@@ -45,10 +45,10 @@ METHOD Activate( lCenter )
 
    DEFINE DIALOG           ::oDialog ;
       RESOURCE             "SELECTOR_VIEW" ;
-      TITLE                ( ::oController:getTitle() )
+      TITLE                ::oController:getTitle()
 
-      REDEFINE GET         ::oGetSearch;
-         VAR               ::cGetSearch;
+      REDEFINE GET         ::oGetSearch ;
+         VAR               ::cGetSearch ; 
          ID                100 ;
          PICTURE           "@!" ;
          BITMAP            "FIND" ;
@@ -75,7 +75,7 @@ METHOD Activate( lCenter )
 
       ::getBrowseView():gotoIdFromModel()
 
-      ::getBrowseView():setColumnOrder( ::getModel():getColumnOrder(), ::getModel():getColumnOrientation() ) 
+      ::getBrowseView():setColumnOrder( ::getModel():getOrderBy(), ::getModel():getOrientation() ) 
 
       // Eventos---------------------------------------------------------------
 
@@ -122,6 +122,8 @@ METHOD Start()
    ::oComboBoxOrder:SetItems( ::getBrowseView():getColumnsHeaders() )
 
    ::oComboBoxOrder:Set( ::getBrowseView():getColumnOrderHeader() )
+
+   ::oGetSearch:setFocus()
 
 RETURN ( Self )
 

@@ -36,16 +36,8 @@ METHOD Activate() CLASS ClientesView
    local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "Cliente" ;
+      RESOURCE    "CONTAINER_MEDIUM" ;
       TITLE       ::LblTitle() + "cliente"
-
-   REDEFINE FOLDER ::oFolder ;
-         ID       500 ;
-         OF       ::oDialog ;
-         PROMPT   "&General",;
-                  "&Direcciones";
-         DIALOGS  "CLIENTE_GENERAL" ,;
-                  "CLIENTE_DIRECCIONES"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -54,9 +46,18 @@ METHOD Activate() CLASS ClientesView
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
+      PROMPT      "Clientes" ;
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog
+
+   REDEFINE FOLDER ::oFolder ;
+      ID          500 ;
+      OF          ::oDialog ;
+      PROMPT      "&General",;
+                  "&Direcciones";
+      DIALOGS     "CLIENTE_GENERAL" ,;
+                  "CLIENTE_DIRECCIONES"
 
    /*
    GENERAL---------------------------------------------------------------------

@@ -3,7 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoController FROM SQLNavigatorController
+CLASS ArticulosController FROM SQLNavigatorController
+
+   DATA oArticulosTipoController
 
    METHOD New()
 
@@ -13,36 +15,40 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ArticulosTipoController
+METHOD New() CLASS ArticulosController
 
    ::Super:New()
 
-   ::cTitle                         := "Tipos de artículo"
+   ::cTitle                      := "Artículos"
 
-   ::cName                          := "articulos_tipo"
+   ::cName                       := "articulos"
 
-   ::hImage                         := {  "16" => "gc_objects_16",;
-                                          "32" => "gc_objects_32",;
-                                          "48" => "gc_objects_48" }
+   ::hImage                      := {  "16" => "gc_object_cube_16",;
+                                       "32" => "gc_object_cube_32",;
+                                       "48" => "gc_object_cube_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                         := SQLArticulosTipoModel():New( self )
+   ::oModel                      := SQLArticulosModel():New( self )
 
-   ::oBrowseView                    := ArticulosTipoBrowseView():New( self )
+   ::oBrowseView                 := ArticulosBrowseView():New( self )
 
-   ::oDialogView                    := ArticulosTipoView():New( self )
+   ::oDialogView                 := ArticulosView():New( self )
 
-   ::oValidator                     := ArticulosTipoValidator():New( self, ::oDialogView )
+   ::oValidator                  := ArticulosValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := ArticulosTipoRepository():New( self )
+   ::oRepository                 := ArticulosRepository():New( self )
 
-   ::oGetSelector                   := GetSelector():New( self )
+   ::oArticulosTipoController    := ArticulosTipoController():New( self )
+   ::oArticulosTipoController:oGetSelector:setKey( "codigo" )
+
+   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-METHOD End() CLASS ArticulosTipoController
+
+METHOD End() CLASS ArticulosController
 
    ::oModel:End()
 
@@ -54,6 +60,8 @@ METHOD End() CLASS ArticulosTipoController
 
    ::oRepository:End()
 
+   ::oArticulosTipoController:End()
+
    ::Super:End()
 
 RETURN ( Self )
@@ -64,11 +72,8 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoBrowseView FROM SQLBrowseView
+CLASS ArticulosBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -76,15 +81,14 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ArticulosTipoBrowseView
+METHOD addColumns() CLASS ArticulosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
       :cHeader             := 'Id'
-      :nWidth              := 80
+      :nWidth              := 60
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .f.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -98,10 +102,10 @@ METHOD addColumns() CLASS ArticulosTipoBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 80
+      :nWidth              := 50
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
+   end with 
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
@@ -121,48 +125,74 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoView FROM SQLBaseView
+CLASS ArticulosView FROM SQLBaseView
+
+   DATA oGetTipo
   
    METHOD Activate()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ArticulosTipoView
-
-   local oDialog
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
-   local oBmpGeneral
+METHOD Activate() CLASS ArticulosView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ARTICULO_TIPO" ;
-      TITLE       ::LblTitle() + "tipo de artículo"
+      RESOURCE    "CONTAINER_MEDIUM" ;
+      TITLE       ::LblTitle() + "articulo"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_objects_48" ;
+      RESOURCE    "gc_object_cube_48" ;
       TRANSPARENT ;
-      OF          ::oDialog ;
+      OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
+      PROMPT      "Artículos" ;
       ID          800 ;
       FONT        getBoldFont() ;
+      OF          ::oDialog
+
+   REDEFINE FOLDER ::oFolder ;
+      ID          500 ;
       OF          ::oDialog ;
-   
+      PROMPT      "&General";
+      DIALOGS     "ARTICULO_GENERAL" 
+
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
+      PICTURE     ( replicate( 'N', 18 ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   // REDEFINE GET   ::oGetTipo ;
+   //    VAR         ::oController:oModel:hBuffer[ "articulos_tipo_uuid" ] ;
+   //    ID          130 ;
+   //    IDHELP      131 ;
+   //    WHEN        ( ::oController:isNotZoomMode() ) ;
+   //    PICTURE     "@!" ;
+   //    BITMAP      "Lupa" ;
+   //    OF          ::oFolder:aDialogs[1]
+
+   // ::oGetTipo:bValid   := {|| .t. }
+   // ::oGetTipo:bHelp    := {|| ::oController:oArticulosTipoController:ActivateSelectorView() }
+
+   ::oController:oArticulosTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_tipo_uuid" ] ) )
+   ::oController:oArticulosTipoController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[1] )
+
+   // Botones Articulos -------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -174,7 +204,7 @@ METHOD Activate() CLASS ArticulosTipoView
       ID          IDCANCEL ;
       OF          ::oDialog ;
       CANCEL ;
-      ACTION     ( ::oDialog:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
@@ -182,7 +212,7 @@ METHOD Activate() CLASS ArticulosTipoView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-  ::oBitmap:end()
+   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -191,25 +221,22 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoValidator FROM SQLBaseValidator
+CLASS ArticulosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
-
+ 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ArticulosTipoValidator
+METHOD getValidators() CLASS ArticulosValidator
 
-
-   ::hValidators  := {  "nombre" =>                {  "required"           => "La descripción es un dato requerido",;
-                                                      "unique"             => "La descripción introducida ya existe" },;
-                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  ,;
-                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
-
+   ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
+                                          "unique"             => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
+                                          "unique"             => "El código introducido ya existe",;
+                                          "onlyAlphanumeric"   => "El código no puede contener caracteres especiales" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -217,13 +244,10 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS SQLArticulosTipoModel FROM SQLBaseModel
+CLASS SQLArticulosModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "articulos_tipo"
+   DATA cTableName               INIT "Articulos"
 
    METHOD getColumns()
 
@@ -231,21 +255,25 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLArticulosTipoModel
+METHOD getColumns() CLASS SQLArticulosModel
+   
+   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                                "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                    "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                                "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                    "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 3 )"                            ,;
-                                    "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 18 )"                           ,;
+                                                "default"   => {|| space( 18 ) } }                       )
 
-   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
-                                    "default"   => {|| space( 200 ) } }                       )
-   
+   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                "default"   => {|| space( 200 ) } }                      )
+
+   hset( ::hColumns, "articulos_tipo_uuid",  {  "create"    => "VARCHAR( 40 ) "                          ,;
+                                                "default"   => {|| space( 40 ) } }                       )
+
    ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
@@ -255,16 +283,12 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS ArticulosTipoRepository FROM SQLBaseRepository
+CLASS ArticulosRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLArticulosTipoModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLArticulosModel():getTableName() ) 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+

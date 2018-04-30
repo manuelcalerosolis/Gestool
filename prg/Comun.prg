@@ -1710,7 +1710,7 @@ FUNCTION CreateAcceso( oWnd )
    // Almacenes----------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 4
+   oGrupo:nBigItems     := 2
    oGrupo:cPrompt       := 'Almacenes'
    oGrupo:cLittleBitmap := "gc_package_16"
    oGrupo:cBigBitmap    := "gc_package_16"
@@ -1724,34 +1724,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmp           := "gc_package_16"
    oItem:cBmpBig        := "gc_package_32"
    oItem:lShow          := .f.
-
-   oItem                := oItemAlmacen:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := "Tipos de movimientos"
-   oItem:cMessage       := "Acceso a los tipos de movimientos de almacén"
-   oItem:bAction        := {|| TMov( "tipos_de_movimientos", oWnd ) }
-   oItem:cId            := "tipos_de_movimientos"
-   oItem:cBmp           := "gc_package_refresh_16"
-   oItem:cBmpBig        := "gc_package_refresh_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemAlmacen:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Ubicaciones'
-   oItem:cMessage       := 'Acceso a las ubicaciones de almacenes'
-   oItem:bAction        := {|| Ubicacion( "ubicaciones_de_almacenes", oWnd ) }
-   oItem:cId            := "ubicaciones_de_almacenes"
-   oItem:cBmp           := "gc_forklift_16"
-   oItem:cBmpBig        := "gc_forklift_32"
-   oItem:lShow          := .f.
-
-   /*
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'Movimientos almacén'
-   oGrupo:cLittleBitmap := "gc_pencil_package_16"
-   oGrupo:cBigBitmap    := "gc_pencil_package_32"
-   */
 
    oItem                := oItemAlmacen:Add()
    oItem:oGroup         := oGrupo
@@ -2702,7 +2674,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 24
+   oGrupo:nBigItems     := 25
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2934,6 +2906,12 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_tape_measure2_16"
    oItem:cBmpBig        := "gc_tape_measure2_32"
+   oItem:cPrompt        := 'Artículos'
+   oItem:cMessage       := 'Artículos'
+   oItem:bAction        := {|| ArticulosController():New():ActivateNavigatorView() }
+   oItem:cId            := "articulos"
+   oItem:cBmp           := "gc_object_cube_16"
+   oItem:cBmpBig        := "gc_object_cube_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

@@ -369,6 +369,7 @@ ClientesGruposController.prg 												\
 ArticulosTemporadaController.prg 										\
 ArticulosCategoriasController.prg 										\
 AlmacenesController.prg 													\
+ArticulosController.prg 													\
 ZonasController.prg 															\
 FabricantesController.prg 													\
 ImagenesController.prg 														\
@@ -1015,6 +1016,7 @@ ClientesGruposController.obj       										\
 ArticulosTemporadaController.obj       								\
 ArticulosCategoriasController.obj       								\
 AlmacenesController.obj       											\
+ArticulosController.obj       											\
 ZonasController.obj       													\
 FabricantesController.obj       											\
 ImagenesController.obj       												\
@@ -1648,6 +1650,7 @@ $(OBJ)\ClientesGruposController.obj    								+
 $(OBJ)\ArticulosTemporadaController.obj    							+
 $(OBJ)\ArticulosCategoriasController.obj    							+
 $(OBJ)\AlmacenesController.obj    										+
+$(OBJ)\ArticulosController.obj    										+
 $(OBJ)\ZonasController.obj    											+
 $(OBJ)\FabricantesController.obj    									+
 $(OBJ)\ImagenesController.obj    										+

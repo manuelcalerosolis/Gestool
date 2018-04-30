@@ -192,6 +192,8 @@ CLASS TDataCenter
 
    METHOD Syncronize()
 
+   METHOD syncronizeModels()
+
    METHOD ActualizaDataTable( oTable )       INLINE  ( ::ActualizaTable( oTable, cPatDat() ) )
    METHOD ActualizaEmpresaTable( oTable )    INLINE  ( ::ActualizaTable( oTable, cPatEmp() ) )
    METHOD ActualizaTable( oTable, cPath )
@@ -725,6 +727,11 @@ METHOD dialogEmpresas()
       ID                610 ;
       OF                ::oDlg
 
+   REDEFINE BUTTON ;
+      ID                200 ;
+      OF                ::oDlg ;
+      ACTION            ( ::syncronizeModels() )
+
    REDEFINE BUTTON ::oBtnOk ;
       ID                IDOK ;
       OF                ::oDlg ;
@@ -913,6 +920,24 @@ METHOD StartAdministratorTask()
 
    MsgInfo( "Proceso finalizado con exito" )
 
+   ::oDlg:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD syncronizeModels()
+
+   ::oDlg:Disable()
+
+   ::oMsg:SetText( "Sincronizando datos de las tablas de MySQL" )
+
+   ::oMsg:SetText( "Sincronizando Movimientos de almacén" )
+   SQLMovimientosAlmacenModel():Syncronize()
+
+   MsgInfo( "Proceso finalizado con exito" )
+
+   ::oDlg:Enable()
    ::oDlg:End()
 
 RETURN ( Self )
