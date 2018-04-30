@@ -13,8 +13,18 @@ CLASS ImagenesController FROM SQLBrowseController
 
    METHOD gettingSelectSentence()
 
-END CLASS
+   METHOD loadPrincipalBlankBuffer()   INLINE ( ::oModel:loadPrincipalBlankBuffer() )
+   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
 
+   METHOD LoadedCurrentBuffer( uuidEntidad )
+   METHOD UpdateBuffer( uuidEntidad )
+
+   METHOD loadedDuplicateCurrentBuffer( uuidEntidad )
+   METHOD loadedDuplicateBuffer( uuidEntidad )
+
+   METHOD deleteBuffer( aUuidEntidades )
+
+END CLASS
 
 //---------------------------------------------------------------------------//
 
@@ -87,8 +97,76 @@ METHOD gettingSelectSentence() CLASS ImagenesController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS ImagenesController
+
+   local idImagen     
+
+   if empty( uuidEntidad )
+      ::oModel:insertBuffer()
+   end if 
+
+   idImagen          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idImagen )
+      idImagen       := ::oModel:insertPrincipalBlankBuffer()
+   end if 
+
+   ::oModel:loadCurrentBuffer( idImagen )
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
+
+METHOD UpdateBuffer( uuidEntidad ) CLASS ImagenesController
+
+   local idImagen     
+
+   idImagen          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idImagen )
+      ::oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+
+   ::oModel:updateBuffer()
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
+
+METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS ImagenesController
+
+   local idImagen     
+
+   idImagen          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idImagen )
+      ::oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+
+   ::oModel:loadDuplicateBuffer( idImagen )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS ImagenesController
+
+   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteBuffer( aUuidEntidades ) CLASS ImagenesController
+
+   if empty( aUuidEntidades )
+      RETURN ( self )
+   end if
+
+   ::oModel:deleteWhereParentUuid( aUuidEntidades )
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -242,6 +320,10 @@ CLASS SQLImagenesModel FROM SQLBaseModel
 
    METHOD getColumns()
 
+   METHOD loadPrincipalBlankBuffer()   INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
+
+   METHOD insertPrincipalBlankBuffer() INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
+
    METHOD getIdWhereParentUuid( uuid )             INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD updateImagenWhereUuid( uValue, uuid )    INLINE ( ::updateFieldWhereUuid( uuid, 'imagen', uValue ) )
@@ -265,6 +347,9 @@ METHOD getColumns() CLASS SQLImagenesModel
 
    hset( ::hColumns, "imagen",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
+
+   hset( ::hColumns, "principal",         {  "create"    => "TINYINT ( 1 )"                           ,;
+                                             "default"   => {|| "0" } }                               )
 
 RETURN ( ::hColumns )
 

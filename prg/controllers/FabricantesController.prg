@@ -11,6 +11,8 @@ CLASS FabricantesController FROM SQLNavigatorController
 
    METHOD New()
 
+<<<<<<< HEAD
+=======
    METHOD End()
 
    METHOD ImagenesControllerLoadCurrentBuffer()
@@ -23,6 +25,7 @@ CLASS FabricantesController FROM SQLNavigatorController
 
    METHOD ImagenesControllerLoadedDuplicateBuffer()
 
+>>>>>>> 28a2b6a2a8a2bfdcc714696461ebb140224b725e
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -57,20 +60,22 @@ METHOD New() CLASS FabricantesController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oImagenesController:oModel:loadBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oImagenesController:oModel:insertBuffer() } )
-   
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::ImagenesControllerLoadCurrentBuffer() } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::ImagenesControllerUpdateBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oImagenesController:loadPrincipalBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::oImagenesController:insertBuffer() } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::ImagenesControllerLoadedDuplicateCurrentBuffer() } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::ImagenesControllerLoadedDuplicateBuffer() } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oImagenesController:loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::oImagenesController:updateBuffer( ::getUuid() ) } )
+
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oImagenesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oImagenesController:loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::ImagenesControllerDeleteBuffer() } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::oImagenesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+<<<<<<< HEAD
+=======
 METHOD End() CLASS FabricantesController
 
    ::oModel:End()
@@ -173,6 +178,7 @@ METHOD ImagenesControllerLoadedDuplicateBuffer()
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
+>>>>>>> 28a2b6a2a8a2bfdcc714696461ebb140224b725e
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

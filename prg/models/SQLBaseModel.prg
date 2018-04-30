@@ -544,7 +544,7 @@ RETURN ( hBuffer )
 //---------------------------------------------------------------------------//
 
 METHOD setCreatedTimeStamp( hBuffer )
-   
+
    if ( hhaskey( hBuffer, "creado" ) )
       hset( hBuffer, "creado", hb_datetime() )
    end if 
