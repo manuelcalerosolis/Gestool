@@ -227,7 +227,9 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosModel():New() )
 
-   aadd( ::aModels, SQLProveedoresModel():New() )
+   aadd( ::aModels, SQLPropiedadesModel():New() )
+
+   aadd( ::aModels, SQLProveedoresModel():New() ) 
 
 RETURN ( ::aModels )
  

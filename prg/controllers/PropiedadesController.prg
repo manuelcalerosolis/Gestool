@@ -142,7 +142,7 @@ END CLASS
 METHOD Activate() CLASS PropiedadesView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTAINER_MEDIUM" ;
+      RESOURCE    "PROPIEDADES_MEDIUM" ;
       TITLE       ::LblTitle() + "propiedad"
 
    REDEFINE BITMAP ::oBitmap ;
@@ -157,27 +157,23 @@ METHOD Activate() CLASS PropiedadesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE FOLDER ::oFolder ;
-      ID          500 ;
-      OF          ::oDialog ;
-      PROMPT      "&General";
-      DIALOGS     "ARTICULO_GENERAL" 
-
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 18 ) ) ;
+      PICTURE     ( replicate( 'N', 4 ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          ::oFolder:aDialogs[1]
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          ::oFolder:aDialogs[1]
+      OF          ::oDialog
 
-   ::oController:oPropiedadesTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "Propiedades_tipo_uuid" ] ) )
-   ::oController:oPropiedadesTipoController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "color" ] ;
+      ID          120 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
 
    // Botones Propiedades -------------------------------------------------------
 
@@ -208,8 +204,6 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 
 METHOD startActivate()
-
-   ::oController:oPropiedadesTipoController:oGetSelector:Start()
 
 RETURN ( self )
 
@@ -254,19 +248,22 @@ END CLASS
 
 METHOD getColumns() CLASS SQLPropiedadesModel
    
-   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                    "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                                "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                    "default"   => {|| win_uuidcreatestring() } }            )
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 18 )"                           ,;
-                                                "default"   => {|| space( 18 ) } }                       )
+   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 4 )"                            ,;
+                                    "default"   => {|| space( 4 ) } }                        )
 
-   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
+                                    "default"   => {|| space( 200 ) } }                      )
+
+   hset( ::hColumns, "color",    {  "create"    => "BIT"                                     ,;
+                                    "default"   => {|| .f. } }                               )
 
    ::getTimeStampColumns()
 
