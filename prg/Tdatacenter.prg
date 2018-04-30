@@ -1804,6 +1804,7 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Agenda.Cdx"
    oDataTable:cDescription := "Agenda"
    oDataTable:bCreateFile  := {| cPath | TAgenda():BuildFiles( cPath ) }
+   oDataTable:bSyncFile    := {|| SincronizaListin() }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable():New( "AgendaUsr", cPathDatos() )
