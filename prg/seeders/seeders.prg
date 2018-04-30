@@ -20,16 +20,13 @@ CLASS Seeders
    METHOD getInsertStatement( hCampos, cDataBaseName )
 
    METHOD SeederUsuarios()
-   METHOD getStatementSeederUsuarios()
+   METHOD insertUsuarios( dbf )
 
    METHOD SeederSituaciones()
    METHOD getStatementSituaciones( dbfSitua )
 
    METHOD SeederTiposImpresoras()
    METHOD getStatementTiposImpresoras( dbfTipImp )
-
-   METHOD SeederTiposVentas()
-   METHOD getStatementTiposVentas( dbfTipVentas )
 
    METHOD SeederMovimientosAlmacen()
    METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
@@ -43,7 +40,7 @@ CLASS Seeders
    METHOD SeederSqlFiles()
 
    METHOD SeederLenguajes()
-   METHOD getStatementLenguajes( dbfLenguajes )
+   METHOD insertLenguaje( dbf )
 
    METHOD SeederTransportistas()
    METHOD insertTransportista( dbfTransportista )
@@ -56,7 +53,7 @@ CLASS Seeders
    METHOD SeederCamposExtraValores()
 
    METHOD SeederFabricantes()
-   METHOD getStatementFabricantes( dbf )
+   METHOD insertFabricantes( dbf )
 
    METHOD SeederEmpresas()
    METHOD insertEmpresas( dbf )
@@ -152,6 +149,8 @@ METHOD getInsertStatement( hCampos, cTableName )
 RETURN cStatement
 
 //---------------------------------------------------------------------------//
+//--LO DEJO CON EL MÉTODO ANTIGUO PORQUE YA SE HA QUITADO EL CÓDIGO DEL TODO-//
+//---------------------------------------------------------------------------//
 
 METHOD SeederSituaciones() CLASS Seeders
 
@@ -190,42 +189,14 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SeederUsuarios() CLASS Seeders
-
-   local dbf
-   local cPath       := cPatDat( .t. )
-
-   if !( file( cPath + "Users.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\Users.Dbf no se ha localizado", "Atención" )  
-      RETURN ( self )
-   end if 
-
-   USE ( cPath + "Users.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Users", @dbf ) )
-   ( dbf )->( ordsetfocus( 0 ) )
-
-   ( dbf )->( dbgotop() )
-   while !( dbf )->( eof() )
-
-      getSQLDatabase():Exec( ::getStatementSeederUsuarios( dbf ) )
-
-      ( dbf )->( dbSkip() )
-
-   end while
-
-   if !empty( dbf )
-      ( dbf )->( dbCloseArea() )
-   end if
-   
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
 METHOD getStatementSituaciones( dbfSitua )
    
    local hCampos        := { "nombre" => quoted( ( dbfSitua )->cSitua ) }
 
 RETURN ( ::getInsertStatement( hCampos, "situaciones" ) )
 
+//---------------------------------------------------------------------------//
+//--LO DEJO CON EL MÉTODO ANTIGUO PORQUE YA SE HA QUITADO EL CÓDIGO DEL TODO-//
 //---------------------------------------------------------------------------//
 
 METHOD SeederTiposImpresoras() CLASS Seeders
@@ -271,50 +242,456 @@ METHOD getStatementTiposImpresoras( dbfTipImp )
 RETURN ( ::getInsertStatement( hCampos, "tipos_impresoras" ) )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD SeederTiposVentas() CLASS Seeders
+METHOD SeederUsuarios()
 
-   local cPath       := cPatDat( .t. )
-   local dbfTipVentas
+   local dbf
+   local cPath    := ( fullCurDir() + cPatDat() + "\" )
 
-   if ( file( cPath + "TVTA.old" ) )
+   if !( file( cPath + "Users.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Users.Dbf no se ha localizado", "Atención" )  
       RETURN ( self )
    end if
 
-   if !( file( cPath + "TVTA.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\TVTA.Dbf no se ha localizado", "Atención" )  
-      RETURN ( self )
-   end if 
+   USE ( cPath + "Users.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Users", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
 
-   USE ( cPath + "TVTA.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTipVentas ) )
-   ( dbfTipVentas )->( ordsetfocus(0) )
-   
-   ( dbfTipVentas )->( dbgotop() )
-   while !( dbfTipVentas )->( eof() )
+   ( dbf )->( dbeval( {|| ::insertUsuarios( dbf ) } ) )
 
-      getSQLDatabase():Exec( ::getStatementTiposVentas( dbfTipVentas ) )
+   ( dbf )->( dbCloseArea() )
 
-      ( dbfTipVentas )->( dbSkip() )
-
-   end while
-
-   if dbfTipVentas != nil
-      ( dbfTipVentas )->( dbCloseArea() )
-   end if
-
-   frename( cPath + "TVTA.dbf", cPath + "TVTA.old" )
-   
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementTiposVentas( dbfTipVentas )
+METHOD insertUsuarios( dbf )
 
-   local hCampos        := { "codigo" => quoted( ( dbfTipVentas )->cCodMov ),;
-                             "nombre"=> quoted( ( dbfTipVentas )->cDesMov ) }
+   local hBuffer
 
-RETURN ( ::getInsertStatement( hCampos, "tipos_ventas" ) )
+   hBuffer        := SQLUsuariosModel():loadBlankBuffer()
 
+   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
+   hset( hBuffer, "codigo",            ( dbf )->cCodUse  )
+   hset( hBuffer, "nombre",            ( dbf )->cNbrUse  )
+   hset( hBuffer, "password",          SQLUsuariosModel():Crypt( ( dbf )->cClvUse )  )
+
+   SQLUsuariosModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD SeederLenguajes()
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatDat() + "\" )
+
+   if !( file( cPath + "LENGUAJE.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\LENGUAJE.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if
+
+   USE ( cPath + "LENGUAJE.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "LENGUAJE", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| ::insertLenguaje( dbf ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertLenguaje( dbf )
+
+   local hBuffer
+
+   hBuffer        := SQLLenguajesModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
+   hset( hBuffer, "codigo",            ( dbf )->cCodLen  )
+   hset( hBuffer, "nombre",            ( dbf )->cNomLen  )
+
+   SQLLenguajesModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD SeederSqlFiles()
+
+   local cStm
+   local aFile
+   local cPath          := cPatConfig() + "sql\"
+   local aDirectory     := directory( cPath + "*.sql" )
+
+   if len( aDirectory ) == 0
+      RETURN ( Self )
+   end if
+
+   for each aFile in aDirectory
+
+      ::oMsg:SetText( "Procesando fichero " + cPath + aFile[1] )
+
+      cStm              := memoread( cPath + aFile[1] )
+
+      if !empty( cStm )
+         getSQLDatabase():Exec( cStm )
+      end if
+
+   next
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD SeederAgentes()
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
+
+   if !( file( cPath + "Agentes.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Agentes.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if
+
+   USE ( cPath + "Agentes.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Agentes", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| ::insertAgentes( dbf ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertAgentes( dbf )
+
+   local nId
+   local hBuffer
+
+   hBuffer        := SQLAgentesModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
+   hset( hBuffer, "codigo",            ( dbf )->cCodAge  )
+   hset( hBuffer, "nombre",            ( dbf )->cNbrAge + Space(1) + ( dbf )->cApeAge )
+   hset( hBuffer, "dni",               ( dbf )->cDniNif  )
+   hset( hBuffer, "comision",          ( dbf )->nCom1    )
+   hset( hBuffer, "empresa_uuid",      uuidEmpresa()     )
+
+   nId            := SQLAgentesModel():insertIgnoreBuffer( hBuffer )
+
+   if empty( nId )
+      RETURN ( self )
+   end if
+
+   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hBuffer, "principal",      1                    )
+   hset( hBuffer, "parent_uuid",    ( dbf )->Uuid        )
+   hset( hBuffer, "direccion",      ( dbf )->cDirAge     )
+   hset( hBuffer, "poblacion",      ( dbf )->cPobAge     )
+   hset( hBuffer, "provincia",      ( dbf )->cProv       )
+   hset( hBuffer, "codigo_postal",  ( dbf )->cPtlAge     )
+   hset( hBuffer, "telefono",       ( dbf )->cTfoAge     )
+   hset( hBuffer, "movil",          ( dbf )->cMovAge     )
+   hset( hBuffer, "email",          ( dbf )->cMailAge    )
+                        
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD SeederTransportistas()
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
+
+   if !( file( cPath + "Transpor.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Transpor.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "Transpor.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Transpor", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| ::insertTransportista( dbf ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertTransportista( dbf )
+
+   local nId
+   local hBuffer
+
+   hBuffer        := SQLTransportistasModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
+   hset( hBuffer, "codigo",            ( dbf )->cCodTrn  )
+   hset( hBuffer, "nombre",            ( dbf )->cNomTrn  )
+   hset( hBuffer, "dni",               ( dbf )->cDniTrn  )
+   hset( hBuffer, "empresa_uuid",      uuidEmpresa()     )
+
+   nId            := SQLTransportistasModel():insertIgnoreBuffer( hBuffer )
+
+   if empty( nId )
+      RETURN ( self )
+   end if
+
+   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hBuffer, "principal",      0                    )
+   hset( hBuffer, "parent_uuid",    ( dbf )->Uuid        )
+   hset( hBuffer, "nombre",         ( dbf )->cNomTrn     )
+   hset( hBuffer, "direccion",      ( dbf )->cDirTrn     )
+   hset( hBuffer, "poblacion",      ( dbf )->cLocTrn     )
+   hset( hBuffer, "provincia",      ( dbf )->cPrvTrn     )
+   hset( hBuffer, "codigo_postal",  ( dbf )->cCdpTrn     )
+   hset( hBuffer, "telefono",       ( dbf )->cTlfTrn     )
+   hset( hBuffer, "movil",          ( dbf )->cMovTrn     )
+                        
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD SeederEmpresas() CLASS Seeders
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatDat() + "\" )
+
+   if !( file( cPath + "Empresa.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Empresa.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "Empresa.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Empresa", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| ::insertEmpresas( dbf ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertEmpresas( dbf ) CLASS Seeders
+
+   local nId
+   local cSql
+   local hBuffer  
+
+   hBuffer        := SQLEmpresasModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              ( dbf )->Uuid      )
+   hset( hBuffer, "codigo",            ( dbf )->CodEmp    )
+   hset( hBuffer, "nombre",            ( dbf )->cNombre   )
+   hset( hBuffer, "nif",               ( dbf )->cNif      )
+   hset( hBuffer, "administrador",     ( dbf )->cAdminis  )
+   hset( hBuffer, "pagina_web",        ( dbf )->web       )
+
+   nId            := SQLEmpresasModel():insertIgnoreBuffer( hBuffer )
+
+   if empty( nId )
+      RETURN ( self )
+   end if 
+
+   // Direcciones--------------------------------------------------------------
+
+   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hBuffer, "principal",      1                     )
+   hset( hBuffer, "parent_uuid",    ( dbf )->Uuid         )
+   hset( hBuffer, "direccion",      ( dbf )->cDomicilio   )
+   hset( hBuffer, "poblacion",      ( dbf )->cPoblacion   )
+   hset( hBuffer, "provincia",      ( dbf )->cProvincia   )
+   hset( hBuffer, "codigo_postal",  ( dbf )->cCodPos      )
+   hset( hBuffer, "telefono",       ( dbf )->cTlf         )
+   hset( hBuffer, "email",          ( dbf )->email        )
+                        
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD SeederFabricantes() CLASS Seeders
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
+
+   if !( file( cPath + "Fabric.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Fabric.Dbf no se ha localizado", "Atención" )
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "Fabric.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Fabric", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| ::insertFabricantes( dbf ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertFabricantes( dbf ) CLASS Seeders
+
+   local nId
+   local cSql
+   local hBuffer  
+
+   hBuffer        := SQLFabricantesModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
+   hset( hBuffer, "codigo",            ( dbf )->cCodFab  )
+   hset( hBuffer, "nombre",            ( dbf )->cNomFab  )
+   hset( hBuffer, "pagina_web",        ( dbf )->cUrlFab  )
+   hset( hBuffer, "empresa_uuid",      uuidEmpresa()     )
+
+   nId            := SQLFabricantesModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD SeederCamposExtra() CLASS Seeders
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
+
+   if !( file( cPath + "CampoExtra.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\CampoExtra.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "CampoExtra.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "CampoExtra", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| getSQLDatabase():Exec( ::getStatementCamposExtra( dbf ) ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementCamposExtra( dbf ) CLASS Seeders
+
+   local aTipo    := {  "Texto", "Número", "Fecha", "Lógico", "Lista" } 
+   local hCampos  := {  "uuid"      => quoted( ( dbf )->Uuid ),;
+                        "nombre"    => quoted( ( dbf )->cNombre ),;
+                        "requerido" => if( ( dbf )->lRequerido, '1', '0' ),;
+                        "tipo"      => quoted( aTipo[ minmax( ( dbf )->nTipo, 1, 5 ) ] ),;
+                        "longitud"  => quoted( ( dbf )->nLongitud ),;
+                        "decimales" => quoted( ( dbf )->nDecimales ),;
+                        "lista"     => quoted( ( dbf )->mDefecto ) }
+
+RETURN ( ::getInsertStatement( hCampos, "campos_extra" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD SeederCamposExtraValores() CLASS Seeders
+
+   local dbf
+   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
+
+   if !( file( cPath + "Detcextra.Dbf" ) )
+      msgStop( "El fichero " + cPath + "\Detcextra.Dbf no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   USE ( cPath + "Detcextra.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Cextra", @dbf ) )
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( {|| getSQLDatabase():Exec( ::getStatementCamposExtraValores( dbf ) ) } ) )
+
+   ( dbf )->( dbCloseArea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getStatementCamposExtraValores( dbf ) CLASS Seeders
+
+   local hCampos  := {  "uuid"                     => quoted( ( dbf )->Uuid ),;
+                        "campo_extra_entidad_uuid" => quoted( CamposExtraModel():getUuid( ( dbf )->cCodTipo ) ),;
+                        "entidad_uuid"             => quoted( ::getEntidadUuid( ( dbf )->cTipDoc, ( dbf )->cClave ) ),;
+                        "valor"                    => quoted( ( dbf )->cValor ) }
+
+RETURN ( ::getInsertStatement( hCampos, "campos_extra_valores" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS Seeders
+
+   local cEntidadUuid   := ""
+
+   cTipoDocumento       := alltrim( cTipoDocumento )
+   cClave               := alltrim( cClave )
+   
+   msgalert( cTipoDocumento, "cTipoDocumento" )
+
+   do case 
+      case cTipoDocumento == "20" // "Artículos" => "20"
+         
+         cEntidadUuid   := ArticulosModel():getUuid( cClave )
+
+      case cTipoDocumento == "21" // "Clientes" => "21"
+         
+         cEntidadUuid   := ClientesModel():getUuid( cClave )
+
+   end case
+
+   msgalert( cEntidadUuid, "cEntidadUuid" )
+
+RETURN ( cEntidadUuid )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD SeederMovimientosAlmacen()
@@ -398,17 +775,6 @@ METHOD SeederMovimientosAlmacenLineas()
    end if
 
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getStatementSeederUsuarios( dbf )
-
-   local hCampos  := {  "uuid" =>               quoted( ( dbf )->Uuid ),;
-                        "nombre" =>             quoted( capitalize( ( dbf )->cNbrUse ) ),;
-                        "codigo" =>             quoted( ( dbf )->cCodUse ),;
-                        "password" =>           quoted( SQLUsuariosModel():Crypt( ( dbf )->cClvUse ) ) }
-
-RETURN ( ::getInsertStatement( hCampos, "usuarios" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -599,412 +965,10 @@ STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
 RETURN NIL
 
 //---------------------------------------------------------------------------//
-
-METHOD SeederLenguajes()
-
-   local cPath       := cPatDat( .t. )
-   local dbfLenguajes
-
-   if ( file( cPath + "LENGUAJE.old" ) )
-      RETURN ( self )
-   end if
-
-   if !( file( cPath + "LENGUAJE.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\LENGUAJE.Dbf no se ha localizado", "Atención" )  
-      RETURN ( self )
-   end if 
-
-   USE ( cPath + "LENGUAJE.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "LENGUAJE", @dbfLenguajes ) )
-   ( dbfLenguajes )->( ordsetfocus(0) )
-   
-   ( dbfLenguajes )->( dbgotop() )
-   while !( dbfLenguajes )->( eof() )
-
-      getSQLDatabase():Exec( ::getStatementLenguajes( dbfLenguajes ) )
-
-      ( dbfLenguajes )->( dbSkip() )
-
-   end while
-
-   if dbfLenguajes != nil
-      ( dbfLenguajes )->( dbCloseArea() )
-   end if
-
-   frename( cPath + "LENGUAJE.dbf", cPath + "LENGUAJE.old" )
-   
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getStatementLenguajes( dbfLenguajes )
-
-   local hCampos  := { "uuid"       => quoted( win_uuidcreatestring() ),;
-                        "codigo"    => quoted( ( dbfLenguajes )->cCodLen ),;
-                        "nombre"    => quoted( ( dbfLenguajes )->cNomLen ) }
-
-RETURN ( ::getInsertStatement( hCampos, "lenguajes" ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD SeederTransportistas()
-
-   local dbf
-   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
-
-   if !( file( cPath + "Transpor.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\Transpor.Dbf no se ha localizado", "Atención" )  
-      RETURN ( self )
-   end if 
-
-   USE ( cPath + "Transpor.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Transpor", @dbf ) )
-   ( dbf )->( ordsetfocus( 0 ) )
-
-   ( dbf )->( dbeval( {|| ::insertTransportista( dbf ) } ) )
-
-   ( dbf )->( dbCloseArea() )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertTransportista( dbf )
-
-   local nId
-   local hBuffer
-
-   hBuffer        := SQLTransportistasModel():loadBlankBuffer()
-
-   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
-   hset( hBuffer, "codigo",            ( dbf )->cCodTrn  )
-   hset( hBuffer, "nombre",            ( dbf )->cNomTrn  )
-   hset( hBuffer, "dni",               ( dbf )->cDniTrn  )
-
-   nId            := SQLTransportistasModel():insertIgnoreBuffer( hBuffer )
-
-   if empty( nId )
-      RETURN ( self )
-   end if
-
-   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
-
-   hset( hBuffer, "principal",      0                    )
-   hset( hBuffer, "parent_uuid",    ( dbf )->Uuid        )
-   hset( hBuffer, "nombre",         ( dbf )->cNomTrn     )
-   hset( hBuffer, "direccion",      ( dbf )->cDirTrn     )
-   hset( hBuffer, "poblacion",      ( dbf )->cLocTrn     )
-   hset( hBuffer, "provincia",      ( dbf )->cPrvTrn     )
-   hset( hBuffer, "codigo_postal",  ( dbf )->cCdpTrn     )
-   hset( hBuffer, "telefono",       ( dbf )->cTlfTrn     )
-   hset( hBuffer, "movil",          ( dbf )->cMovTrn     )
-                        
-   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SeederCamposExtra() CLASS Seeders
-
-   local dbf
-   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
-
-   if !( file( cPath + "CampoExtra.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\CampoExtra.Dbf no se ha localizado", "Atención" )  
-      RETURN ( self )
-   end if 
-
-   USE ( cPath + "CampoExtra.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "CampoExtra", @dbf ) )
-   ( dbf )->( ordsetfocus( 0 ) )
-
-   ( dbf )->( dbeval( {|| getSQLDatabase():Exec( ::getStatementCamposExtra( dbf ) ) } ) )
-
-   ( dbf )->( dbCloseArea() )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getStatementCamposExtra( dbf ) CLASS Seeders
-
-   local aTipo    := {  "Texto", "Número", "Fecha", "Lógico", "Lista" } 
-   local hCampos  := {  "uuid"      => quoted( ( dbf )->Uuid ),;
-                        "nombre"    => quoted( ( dbf )->cNombre ),;
-                        "requerido" => if( ( dbf )->lRequerido, '1', '0' ),;
-                        "tipo"      => quoted( aTipo[ minmax( ( dbf )->nTipo, 1, 5 ) ] ),;
-                        "longitud"  => quoted( ( dbf )->nLongitud ),;
-                        "decimales" => quoted( ( dbf )->nDecimales ),;
-                        "lista"     => quoted( ( dbf )->mDefecto ) }
-
-RETURN ( ::getInsertStatement( hCampos, "campos_extra" ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD SeederFabricantes() CLASS Seeders
-
-   local dbf
-   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
-
-   if !( file( cPath + "Fabric.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\Fabric.Dbf no se ha localizado", "Atención" )
-      RETURN ( self )
-   end if 
-
-   USE ( cPath + "Fabric.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Fabric", @dbf ) )
-   ( dbf )->( ordsetfocus( 0 ) )
-
-   ( dbf )->( dbeval( {|| getSQLDatabase():Exec( ::getStatementFabricantes( dbf ) ) } ) )
-
-   ( dbf )->( dbCloseArea() )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getStatementFabricantes( dbf ) CLASS Seeders
-
-   local hCampos  := {  "uuid"                     => quoted( ( dbf )->Uuid ),;
-                        "nombre"                   => quoted( ( dbf )->cNomFab ),;
-                        "pagina_web"               => quoted( ( dbf )->cUrlFab ) }
-
-RETURN ( ::getInsertStatement( hCampos, "fabricantes" ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD SeederEmpresas() CLASS Seeders
-
-   local dbf
-   local cPath    := ( fullCurDir() + cPatDat() + "\" )
-
-   if !( file( cPath + "Empresa.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\Empresa.Dbf no se ha localizado", "Atención" )  
-      RETURN ( self )
-   end if 
-
-   USE ( cPath + "Empresa.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Empresa", @dbf ) )
-   ( dbf )->( ordsetfocus( 0 ) )
-
-   ( dbf )->( dbeval( {|| ::insertEmpresas( dbf ) } ) )
-
-   ( dbf )->( dbCloseArea() )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertEmpresas( dbf ) CLASS Seeders
-
-   local nId
-   local cSql
-   local hBuffer  
-
-   hBuffer        := SQLEmpresasModel():loadBlankBuffer()
-
-   hset( hBuffer, "uuid",              ( dbf )->Uuid      )
-   hset( hBuffer, "codigo",            ( dbf )->CodEmp    )
-   hset( hBuffer, "nombre",            ( dbf )->cNombre   )
-   hset( hBuffer, "nif",               ( dbf )->cNif      )
-   hset( hBuffer, "administrador",     ( dbf )->cAdminis  )
-   hset( hBuffer, "pagina_web",        ( dbf )->web       )
-
-   nId            := SQLEmpresasModel():insertIgnoreBuffer( hBuffer )
-
-   if empty( nId )
-      RETURN ( self )
-   end if 
-
-   // Direcciones--------------------------------------------------------------
-
-   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
-
-   hset( hBuffer, "principal",      1                     )
-   hset( hBuffer, "parent_uuid",    ( dbf )->Uuid         )
-   hset( hBuffer, "direccion",      ( dbf )->cDomicilio   )
-   hset( hBuffer, "poblacion",      ( dbf )->cPoblacion   )
-   hset( hBuffer, "provincia",      ( dbf )->cProvincia   )
-   hset( hBuffer, "codigo_postal",  ( dbf )->cCodPos      )
-   hset( hBuffer, "telefono",       ( dbf )->cTlf         )
-   hset( hBuffer, "email",          ( dbf )->email        )
-                        
-   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SeederCamposExtraValores() CLASS Seeders
-
-   local dbf
-   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
-
-   if !( file( cPath + "Detcextra.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\Detcextra.Dbf no se ha localizado", "Atención" )  
-      RETURN ( self )
-   end if 
-
-   USE ( cPath + "Detcextra.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Cextra", @dbf ) )
-   ( dbf )->( ordsetfocus( 0 ) )
-
-   ( dbf )->( dbeval( {|| getSQLDatabase():Exec( ::getStatementCamposExtraValores( dbf ) ) } ) )
-
-   ( dbf )->( dbCloseArea() )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getStatementCamposExtraValores( dbf ) CLASS Seeders
-
-   local hCampos  := {  "uuid"                     => quoted( ( dbf )->Uuid ),;
-                        "campo_extra_entidad_uuid" => quoted( CamposExtraModel():getUuid( ( dbf )->cCodTipo ) ),;
-                        "entidad_uuid"             => quoted( ::getEntidadUuid( ( dbf )->cTipDoc, ( dbf )->cClave ) ),;
-                        "valor"                    => quoted( ( dbf )->cValor ) }
-
-RETURN ( ::getInsertStatement( hCampos, "campos_extra_valores" ) )
-
-//---------------------------------------------------------------------------//
-// "Proveedores" => "22",;
-// "Familias" => "37",; 
-// "Agentes" => "38",;
-// "Presupuestos a clientes" => "08",;
-// "Pedidos a clientes" => "09",;
-// "Albaranes a clientes" => "10",;
-// "Lineas de albaranes a clientes" => "35",;
-// "Facturas a clientes" => "11",;
-// "Lineas de facturas a clientes" => "36",;
-// "Facturas de anticipos a clientes" => "13",;
-// "Facturas rectificativa a clientes" => "14",;
-// "Pedidos a proveedores" => "01",;
-// "Lineas pedidos a proveedores" => "41",;
-// "Albaranes a proveedores" => "02",;
-// "Lineas albaranes a proveedores" => "37",;
-// "Facturas a proveedores" => "03",;
-// "Lineas facturas a proveedores" => "38",;
-// "Facturas rectificativa a proveedores" => "04",;
-// "S.A.T" => "32",;
-// "Envases de artículos" => "33" ,;
-// "Grupos de clientes" => "34" ,;
-// "Propiedades" => "39" ,;
-// "Lineas de propiedades" => "40" }
-
-METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS Seeders
-
-   local cEntidadUuid   := ""
-
-   cTipoDocumento       := alltrim( cTipoDocumento )
-   cClave               := alltrim( cClave )
-   
-   msgalert( cTipoDocumento, "cTipoDocumento" )
-
-   do case 
-      case cTipoDocumento == "20" // "Artículos" => "20"
-         
-         cEntidadUuid   := ArticulosModel():getUuid( cClave )
-
-      case cTipoDocumento == "21" // "Clientes" => "21"
-         
-         cEntidadUuid   := ClientesModel():getUuid( cClave )
-
-
-   end case
-
-   msgalert( cEntidadUuid, "cEntidadUuid" )
-
-RETURN ( cEntidadUuid )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederSqlFiles()
 
-   local cStm
-   local aFile
-   local cPath          := cPatConfig() + "sql\"
-   local aDirectory     := directory( cPath + "*.sql" )
-
-   if len( aDirectory ) == 0
-      RETURN ( Self )
-   end if
-
-   for each aFile in aDirectory
-
-      ::oMsg:SetText( "Procesando fichero " + cPath + aFile[1] )
-
-      cStm              := memoread( cPath + aFile[1] )
-
-      if !empty( cStm )
-         getSQLDatabase():Exec( cStm )
-      end if
-
-   next
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-METHOD SeederAgentes()
-
-   local dbf
-   local cPath    := ( fullCurDir() + cPatEmp() + "\" )
-
-   if !( file( cPath + "Agentes.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\Agentes.Dbf no se ha localizado", "Atención" )  
-      RETURN ( self )
-   end if
-
-   USE ( cPath + "Agentes.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Agentes", @dbf ) )
-   ( dbf )->( ordsetfocus( 0 ) )
-
-   ( dbf )->( dbeval( {|| ::insertAgentes( dbf ) } ) )
-
-   ( dbf )->( dbCloseArea() )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertAgentes( dbf )
-
-   local nId
-   local hBuffer
-
-   hBuffer        := SQLAgentesModel():loadBlankBuffer()
-
-   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
-   hset( hBuffer, "codigo",            ( dbf )->cCodAge  )
-   hset( hBuffer, "nombre",            ( dbf )->cNbrAge + Space(1) + ( dbf )->cApeAge )
-   hset( hBuffer, "dni",               ( dbf )->cDniNif  )
-   hset( hBuffer, "comision",          ( dbf )->nCom1    )
-   hset( hBuffer, "empresa_uuid",      uuidEmpresa()     )
-
-   nId            := SQLAgentesModel():insertIgnoreBuffer( hBuffer )
-
-   if empty( nId )
-      RETURN ( self )
-   end if
-
-   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
-
-   hset( hBuffer, "principal",      1                    )
-   hset( hBuffer, "parent_uuid",    ( dbf )->Uuid        )
-   hset( hBuffer, "direccion",      ( dbf )->cDirAge     )
-   hset( hBuffer, "poblacion",      ( dbf )->cPobAge     )
-   hset( hBuffer, "provincia",      ( dbf )->cProv       )
-   hset( hBuffer, "codigo_postal",  ( dbf )->cPtlAge     )
-   hset( hBuffer, "telefono",       ( dbf )->cTfoAge     )
-   hset( hBuffer, "movil",          ( dbf )->cMovAge     )
-   hset( hBuffer, "email",          ( dbf )->cMailAge    )
-                        
-   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//

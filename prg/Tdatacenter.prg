@@ -1917,6 +1917,14 @@ METHOD BuildData()
    oDataTable:bCreateFile  := {| cPath | TCentroCoste():BuildFiles( cPath ) }
    ::AddDataTable( oDataTable )
 
+   oDataTable              := TDataTable():New( "Lenguaje", cPathDatos() )
+   oDataTable:cDataFile    := cPatDat( .t. ) + "Lenguaje.Dbf"
+   oDataTable:cIndexFile   := cPatDat( .t. ) + "Lenguaje.Cdx"
+   oDataTable:cDescription := "Lenguajes"
+   oDataTable:bCreateFile  := {| cPath | TLenguaje():BuildFiles( cPath ) }
+   oDataTable:bSyncFile    := {|| TLenguaje():Create():Syncronize() }
+   ::AddDataTable( oDataTable )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
