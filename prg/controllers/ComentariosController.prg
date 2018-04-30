@@ -9,6 +9,8 @@ CLASS ComentariosController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -39,6 +41,25 @@ METHOD New() CLASS ComentariosController
 
    ::oRepository                    := ComentariosRepository():New( self )
 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS ComentariosController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oComentariosLineasController:End()
+
+   ::oRepository:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 
@@ -214,10 +235,11 @@ END CLASS
 
 METHOD getValidators() CLASS ComentariosValidator
 
-   ::hValidators  := {  "descripcion" =>           {  "required"     => "La descripción es un dato requerido",;
-                                                      "unique"       => "La descripción introducida ya existe" },;
-                        "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
-                                                      "unique"       => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "descripcion" =>           {  "required"           => "La descripción es un dato requerido",;
+                                                      "unique"             => "La descripción introducida ya existe" },;
+                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
+                                                      "unique"             => "EL código introducido ya existe"  ,;
+                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//

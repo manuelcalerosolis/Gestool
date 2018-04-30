@@ -13,6 +13,8 @@ CLASS AgentesController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -60,6 +62,29 @@ METHOD New() CLASS AgentesController
    ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS AgentesController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oDireccionesController:End()
+
+   ::oRepository:End()
+
+   ::oPaisesController:End()
+
+   ::oProvinciasController:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 
@@ -254,10 +279,11 @@ END CLASS
 
 METHOD getValidators() CLASS AgentesValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"     => "El nombre es un dato requerido",;
-                                                      "unique"       => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
-                                                      "unique"       => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
+                                                      "unique"             => "El nombre introducido ya existe" },;
+                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
+                                                      "unique"             => "EL código introducido ya existe"  ,;
+                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//

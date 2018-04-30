@@ -7,6 +7,8 @@ CLASS ImpuestosEspecialesController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -35,6 +37,23 @@ METHOD New() CLASS ImpuestosEspecialesController
 
    ::oRepository                    := ImpuestosEspecialesRepository():New( self )
 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS ImpuestosEspecialesController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oRepository:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 
@@ -217,10 +236,11 @@ END CLASS
 
 METHOD getValidators() CLASS ImpuestosEspecialesValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"     => "El nombre es un dato requerido",;
-                                                      "unique"       => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
-                                                      "unique"       => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
+                                                      "unique"             => "El nombre introducido ya existe" },;
+                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
+                                                      "unique"             => "EL código introducido ya existe"  ,;
+                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//

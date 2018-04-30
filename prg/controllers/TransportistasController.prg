@@ -9,6 +9,8 @@ CLASS TransportistasController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -44,6 +46,29 @@ METHOD New() CLASS TransportistasController
    ::oGetSelector                := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS TransportistasController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oDireccionesController:End()
+
+   ::oRepository:End()
+
+   ::oGetSelector:End()
+
+   ::oComboSelector:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 
@@ -227,10 +252,11 @@ END CLASS
 
 METHOD getValidators() CLASS TransportistasValidator
 
-   ::hValidators  := {  "codigo" =>          {  "required"     => "El código del transportista es un dato requerido",;
-                                                "unique"       => "El código del transportista introducido ya existe" },;
-                        "nombre" =>          {  "required"     => "El nombre del transportista es un dato requerido",;
-                                                "unique"       => "El nombre del transportista introducido ya existe" }}
+   ::hValidators  := {  "codigo" =>          {  "required"           => "El código del transportista es un dato requerido",;
+                                                "unique"             => "El código del transportista introducido ya existe" ,;
+                                                "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } ,;
+                        "nombre" =>          {  "required"           => "El nombre del transportista es un dato requerido",;
+                                                "unique"             => "El nombre del transportista introducido ya existe" } }
 
 RETURN ( ::hValidators )
 

@@ -357,6 +357,8 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+UnidadesMedicionController.prg 											\
+UbicacionesController.prg 													\
 DivisasMonetariasController.prg 											\
 ImpuestosEspecialesController.prg 										\
 IvaTipoController.prg 														\
@@ -1002,6 +1004,8 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+UnidadesMedicionController.obj       									\
+UbicacionesController.obj       											\
 DivisasMonetariasController.obj       									\
 ImpuestosEspecialesController.obj       								\
 IvaTipoController.obj       												\
@@ -1634,6 +1638,8 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\UnidadesMedicionController.obj    								+
+$(OBJ)\UbicacionesController.obj    									+
 $(OBJ)\DivisasMonetariasController.obj    							+
 $(OBJ)\ImpuestosEspecialesController.obj    							+
 $(OBJ)\IvaTipoController.obj    											+

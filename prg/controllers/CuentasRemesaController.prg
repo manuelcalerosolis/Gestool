@@ -7,6 +7,8 @@ CLASS CuentasRemesaController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -34,6 +36,23 @@ METHOD New() CLASS CuentasRemesaController
    ::oValidator                     := CuentasRemesaValidator():New( self, ::oDialogView )
 
    ::oRepository                    := CuentasRemesaRepository():New( self )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS CuentasRemesaController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oRepository:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 
@@ -197,11 +216,13 @@ METHOD Activate() CLASS CuentasRemesaView
    REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_banco" ] ;
       ID          160 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      BITMAP      "LUPA" ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_descuento" ] ;
       ID          170 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      BITMAP      "LUPA" ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "presentador_codigo" ] ;
@@ -284,10 +305,11 @@ END CLASS
 
 METHOD getValidators() CLASS CuentasRemesaValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"     => "El nombre es un dato requerido",;
-                                                      "unique"       => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
-                                                      "unique"       => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
+                                                      "unique"             => "El nombre introducido ya existe" },;
+                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
+                                                      "unique"             => "EL código introducido ya existe"  ,;
+                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//

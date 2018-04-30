@@ -7,6 +7,8 @@ CLASS ImagenesController FROM SQLBrowseController
 
    METHOD New()
 
+   METHOD End()
+
    METHOD loadedBlankBuffer()
 
    METHOD gettingSelectSentence()
@@ -40,6 +42,23 @@ METHOD New( oSenderController ) CLASS ImagenesController
 
    ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS ImagenesController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   /*::oRepository:End()*/
+
+   ::Super:End()
 
 RETURN ( Self )
 

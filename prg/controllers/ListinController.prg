@@ -9,6 +9,8 @@ CLASS ListinController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -38,6 +40,25 @@ METHOD New() CLASS ListinController
    ::oDireccionesController   := DireccionesController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS ListinController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oDireccionesController:End()
+
+   ::oRepository:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 

@@ -10,6 +10,8 @@ CLASS DireccionesController FROM SQLBrowseController
 
    METHOD New()
 
+   METHOD End()
+
    METHOD gettingSelectSentence()
 
    METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
@@ -56,6 +58,27 @@ METHOD New( oSenderController ) CLASS DireccionesController
    ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS DireccionesController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   /*::oRepository:End()*/
+
+   /*::oPaisesController:End()
+
+   ::oProvinciasController:End()*/
+
+   ::Super:End()
 
 RETURN ( Self )
 

@@ -31,9 +31,9 @@ METHOD New() CLASS AlmacenesController
 
    ::cName                       := "almacenes"
 
-   ::hImage                      := {  "16" => "gc_package_16",;
-                                       "32" => "gc_package_32",;
-                                       "48" => "gc_package_48" }
+   ::hImage                      := {  "16" => "gc_warehouse_16",;
+                                       "32" => "gc_warehouse_32",;
+                                       "48" => "gc_warehouse_48" }
 
    ::nLevel                      := Auth():Level( ::cName )
 
@@ -96,7 +96,7 @@ METHOD End() CLASS AlmacenesController
 
    ::oProvinciasController:End()
 
-   ::oComboSelector:End()
+   /*::oComboSelector:End()*/
 
    ::Super:End()
 
@@ -211,7 +211,7 @@ METHOD Activate() CLASS AlmacenesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_package_48" ;
+      RESOURCE    "gc_warehouse_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
