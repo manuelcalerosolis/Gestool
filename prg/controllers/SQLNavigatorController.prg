@@ -214,13 +214,11 @@ METHOD activateSelectorView( lCenter )
 
    ::buildRowSetSentence()   
 
-   if !empty( ::oRowSet:get() )
-      
-      ::oSelectorView:Activate( lCenter )   
-   
+   if empty( ::oRowSet:get() )
+      RETURN ( nil )
    end if
 
-RETURN ( self )
+RETURN ( ::oSelectorView:Activate( lCenter ) )
 
 //---------------------------------------------------------------------------//
 

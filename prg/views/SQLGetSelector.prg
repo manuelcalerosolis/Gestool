@@ -15,14 +15,14 @@ CLASS GetSelector
    DATA oGet
    DATA cGet
 
-   DATA cFieldKey                               INIT "uuid"
+   DATA cKey                                    INIT "uuid"
 
    METHOD New( oSender )
 
-   METHOD setKey( cFieldKey )                   INLINE ( ::cFieldKey := cFieldKey )
-   METHOD getKey()                              INLINE ( ::cFieldKey )
+   METHOD setKey( cKey )                        INLINE ( ::cKey := cKey )
+   METHOD getKey()                              INLINE ( ::cKey )
 
-   METHOD Activate( idLink, idCombobox, oDlg )
+   METHOD Activate( idGet, idText, oDlg )
    METHOD Bind( bValue )                        INLINE ( ::bValue := bValue )
 
    METHOD helpAction()
@@ -48,11 +48,12 @@ METHOD Activate( idGet, idText, oDlg ) CLASS GetSelector
 
    ::cGet         := eval( ::bValue )
 
-   REDEFINE GET ::oGet VAR ::cGet ;
-      ID       idGet ;
-      IDTEXT   idText ;
-      BITMAP   "LUPA" ;
-      OF       oDlg
+   REDEFINE GET   ::oGet ;
+      VAR         ::cGet ;
+      ID          idGet ;
+      IDTEXT      idText ;
+      BITMAP      "Lupa" ;
+      OF          oDlg
 
    ::oGet:bHelp   := {|| ::helpAction() }
    ::oGet:bValid  := {|| ::validAction() }
@@ -65,13 +66,15 @@ METHOD helpAction() CLASS GetSelector
 
    local hResult
 
-   hResult                                   := ::oController:ActivateSelectorViewNoCenter()
+   hResult        := ::oController:ActivateSelectorViewNoCenter()
 
    if hb_isnil( hResult )
       RETURN ( Self )
    end if 
 
-   if hHaskey( hResult, ::getKey() )
+   msgalert( hb_valtoexp( hResult ), "hResult" )
+
+   if hhaskey( hResult, ::getKey() )
 
       ::oGet:cText( hGet( hResult, ::getKey() ) )
 

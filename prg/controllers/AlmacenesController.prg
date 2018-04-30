@@ -17,6 +17,8 @@ CLASS AlmacenesController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD gettingSelectSentence()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -68,11 +70,13 @@ METHOD New() CLASS AlmacenesController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
+   ::oModel:setEvent( 'gettingSelectSentence',        {|| ::gettingSelectSentence() } ) 
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End()
+METHOD End() CLASS AlmacenesController
 
    ::oModel:End()
 
@@ -95,6 +99,14 @@ METHOD End()
    ::oComboSelector:End()
 
    ::Super:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD gettingSelectSentence() CLASS AlmacenesController
+
+   ::oModel:setGeneralWhere( "parent_uuid = ''" )
 
 RETURN ( Self )
 
@@ -239,13 +251,13 @@ METHOD Activate() CLASS AlmacenesView
    oBtnEdit:bAction   := {|| ::oController:oZonasController:Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
-      ID          150 ;
+      ID          140 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
    oBtnDelete:bAction   := {|| ::oController:oZonasController:Delete() }
 
-   ::oController:oZonasController:Activate( ::oDialog, 160 )
+   ::oController:oZonasController:Activate( ::oDialog, 150 ) 
 
    // Botones almacenes -------------------------------------------------------
 
@@ -283,6 +295,8 @@ RETURN ( ::oDialog:nResult )
 CLASS AlmacenesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
+
+   METHOD getUniqueSenctence( uValue )
  
 END CLASS
 
@@ -290,13 +304,27 @@ END CLASS
 
 METHOD getValidators() CLASS AlmacenesValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"     => "El nombre es un dato requerido",;
-                                                      "unique"       => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
-                                                      "unique"       => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
+                                          "unique"             => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
+                                          "unique"             => "EL código introducido ya existe",;
+                                          "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
+
+METHOD getUniqueSenctence( uValue ) CLASS AlmacenesValidator
+
+   local cSQLSentence   := ::Super:getUniqueSenctence( uValue )
+
+   if empty( ::oController ) .or. empty( ::oController:getSenderController() )
+      cSQLSentence      +=    " AND parent_uuid = ''"
+   else 
+      cSQLSentence      +=    " AND parent_uuid = " + quoted( ::oController:getSenderController():getUuid() )
+   end if
+
+RETURN ( cSQLSentence )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -311,6 +339,8 @@ CLASS SQLAlmacenesModel FROM SQLBaseModel
 
    METHOD getColumns()
 
+   METHOD getParentUuidAttribute( value )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -320,11 +350,12 @@ METHOD getColumns() CLASS SQLAlmacenesModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
+
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
@@ -336,6 +367,19 @@ METHOD getColumns() CLASS SQLAlmacenesModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getParentUuidAttribute( value )
+   
+   if empty( ::oController )
+      RETURN ( value )
+   end if
+
+   if empty( ::oController:getSenderController() )
+      RETURN ( value )
+   end if
+
+RETURN ( ::oController:getSenderController():getUuid() )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

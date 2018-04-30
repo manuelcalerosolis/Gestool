@@ -42,9 +42,13 @@ CLASS SQLBaseValidator
    METHOD Required()
    METHOD RequiredOrEmpty( uValue )
 
+   METHOD getUniqueSenctence( uValue )
    METHOD Unique()
+
    METHOD Exist()
    METHOD EmptyOrExist()
+
+   METHOD onlyAlphanumeric( uValue )
 
    METHOD Password( uValue )
    METHOD Mail( uValue )
@@ -157,25 +161,29 @@ RETURN ( ::Required( uValue ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD Unique( uValue )
+METHOD getUniqueSenctence( uValue )
 
    local id
-   local nCount
    local cSQLSentence
 
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
 
    id                := ::oController:getModelBufferColumnKey()
-   if !empty(id)
+   if !empty( id )
       cSQLSentence   +=    "AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )
    end if 
 
-   if ::lDebugMode
-      msgInfo( cSQLSentence, "Unique validator" )
-   end if 
+RETURN ( cSQLSentence )
 
-   nCount            := getSQLDatabase():getValue( cSQLSentence )
+//---------------------------------------------------------------------------//
+
+METHOD Unique( uValue )
+
+   local nCount
+   local cSQLSentence   := ::getUniqueSenctence( uValue )
+
+   nCount               := getSQLDatabase():getValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount == 0 )
 
@@ -225,7 +233,13 @@ RETURN ( hb_regexmatch( "[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}", uValue, .f. ) )
 
 METHOD Password( uValue )
 
-RETURN ( hb_regexmatch( "[a-z0-9_-]{8,18}", uValue, .f. ) )
+RETURN ( hb_regexmatch( "[a-z0-9_-]{8,18}", uValue, .f. ) ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD onlyAlphanumeric( uValue )
+
+RETURN ( hb_regexmatch( "[a-zA-Z0-9]", uValue, .f. ) )
 
 //---------------------------------------------------------------------------//
 

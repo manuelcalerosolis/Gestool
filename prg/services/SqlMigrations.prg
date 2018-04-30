@@ -223,6 +223,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLClientesModel():New() )
 
+   aadd( ::aModels, SQLArticulosModel():New() )
+
    aadd( ::aModels, SQLProveedoresModel():New() )
 
 RETURN ( ::aModels )
