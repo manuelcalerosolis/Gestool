@@ -3,9 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ZonasController FROM SQLBrowseController
-
-   DATA oUbicacionesController
+CLASS UbicacionesController FROM SQLBrowseController
 
    METHOD New()
 
@@ -17,13 +15,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS ZonasController
+METHOD New( oController ) CLASS UbicacionesController
 
    ::Super:New( oController )
 
-   ::cTitle                      := "Zonas"
+   ::cTitle                      := "Ubicaciones"
 
-   ::cName                       := "zonas"
+   ::cName                       := "ubicaciones"
 
    ::oModel                      := SQLAlmacenesModel():New( self )
 
@@ -31,11 +29,9 @@ METHOD New( oController ) CLASS ZonasController
 
    ::oBrowseView                 := AlmacenesBrowseView():New( self )
 
-   ::oDialogView                 := ZonasView():New( self )
+   ::oDialogView                 := UbicacionesView():New( self )
 
    ::oValidator                  := AlmacenesValidator():New( self, ::oDialogView )
-
-   ::oUbicacionesController      := UbicacionesController():New( self )
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
@@ -59,7 +55,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD gettingSelectSentence() CLASS ZonasController
+METHOD gettingSelectSentence() CLASS UbicacionesController
 
    local uuid        := ::getSenderController():getUuid() 
 
@@ -76,7 +72,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ZonasView FROM SQLBaseView
+CLASS UbicacionesView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -86,7 +82,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activating() CLASS ZonasView
+METHOD Activating() CLASS UbicacionesView
 
    if ::oController:isAppendOrDuplicateMode()
       ::oController:oModel:hBuffer()
@@ -100,20 +96,15 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ZonasView
-
-   local oBtnAppend
-   local oBtnEdit
-   local oBtnDelete
-
+METHOD Activate() CLASS UbicacionesView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ZONAS" ;
-      TITLE       ::LblTitle() + "zonas"
+      RESOURCE    "UBICACION_SQL" ;
+      TITLE       ::LblTitle() + "ubicación"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_shelf_full_48" ;
+      RESOURCE    "gc_package_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -133,33 +124,6 @@ METHOD Activate() CLASS ZonasView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
-
-   // Ubicaciones--------------------------------------------------------------------
-
-   REDEFINE BUTTON oBtnAppend ;
-      ID          120 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnAppend:bAction   := {|| ::oController:oUbicacionesController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          130 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnEdit:bAction   := {|| ::oController:oUbicacionesController:Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          140 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnDelete:bAction   := {|| ::oController:oUbicacionesController:Delete() }
-
-   ::oController:oUbicacionesController:Activate( ::oDialog, 150 )
-
-   // Botones zonas -------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;

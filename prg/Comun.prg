@@ -2674,7 +2674,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 23
+   oGrupo:nBigItems     := 25
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2824,8 +2824,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cMessage       := 'Almacenes'
    oItem:bAction        := {|| AlmacenesController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_package_16"
-   oItem:cBmpBig        := "gc_package_32"
+   oItem:cBmp           := "gc_warehouse_16"
+   oItem:cBmpBig        := "gc_warehouse_32"
    oItem:lShow          := .f.
 
    oItem                := oItemAyudas:Add()
@@ -2900,6 +2900,12 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Unidades de medida'
+   oItem:cMessage       := 'Unidades de medida'
+   oItem:bAction        := {|| UnidadesMedicionController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_tape_measure2_16"
+   oItem:cBmpBig        := "gc_tape_measure2_32"
    oItem:cPrompt        := 'Artículos'
    oItem:cMessage       := 'Artículos'
    oItem:bAction        := {|| ArticulosController():New():ActivateNavigatorView() }

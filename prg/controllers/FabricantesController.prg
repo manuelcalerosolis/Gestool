@@ -11,6 +11,21 @@ CLASS FabricantesController FROM SQLNavigatorController
 
    METHOD New()
 
+<<<<<<< HEAD
+=======
+   METHOD End()
+
+   METHOD ImagenesControllerLoadCurrentBuffer()
+
+   METHOD ImagenesControllerUpdateBuffer()
+
+   METHOD ImagenesControllerDeleteBuffer()
+
+   METHOD ImagenesControllerLoadedDuplicateCurrentBuffer()
+
+   METHOD ImagenesControllerLoadedDuplicateBuffer()
+
+>>>>>>> 28a2b6a2a8a2bfdcc714696461ebb140224b725e
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -59,6 +74,111 @@ METHOD New() CLASS FabricantesController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+<<<<<<< HEAD
+=======
+METHOD End() CLASS FabricantesController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oImagenesController:End()
+
+   ::oRepository:End()
+
+   /*::oGetSelector:End()*/
+
+   ::Super:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ImagenesControllerLoadCurrentBuffer()
+
+   local idImagen     
+   local uuidFabricante    := hget( ::oModel:hBuffer, "uuid" )
+
+   if empty( uuidFabricante )
+      ::oImagenesController:oModel:insertBuffer()
+   end if 
+
+   idImagen                := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFabricante )
+   if empty( idImagen )
+      ::oImagenesController:oModel:loadBlankBuffer()
+      idImagen             := ::oImagenesController:oModel:insertBuffer()
+   end if 
+
+   ::oImagenesController:oModel:loadCurrentBuffer( idImagen )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ImagenesControllerUpdateBuffer()
+
+   local idImagen     
+   local uuidFabricante     := hget( ::oModel:hBuffer, "uuid" )
+
+   idImagen                := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFabricante )
+   if empty( idImagen )
+      ::oImagenesController:oModel:loadBlankBuffer()
+      idImagen             := ::oImagenesController:oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+   ::oImagenesController:oModel:updateBuffer()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ImagenesControllerDeleteBuffer()
+
+   local aUuidFabricante   := ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected )
+
+   if empty( aUuidFabricante )
+      RETURN ( self )
+   end if
+
+   ::oImagenesController:oModel:deleteWhereParentUuid( aUuidFabricante )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ImagenesControllerLoadedDuplicateCurrentBuffer()
+
+   local uuidFabricante
+   local idImagen     
+
+   uuidFabricante       := hget( ::oModel:hBuffer, "uuid" )
+
+   idImagen             := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFabricante )
+   if empty( idImagen )
+      ::oImagenesController:oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+
+   ::oImagenesController:oModel:loadDuplicateBuffer( idImagen )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ImagenesControllerLoadedDuplicateBuffer()
+
+   local uuidFabricante    := hget( ::oModel:hBuffer, "uuid" )
+
+   hset( ::oImagenesController:oModel:hBuffer, "parent_uuid", uuidFabricante )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+>>>>>>> 28a2b6a2a8a2bfdcc714696461ebb140224b725e
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -239,10 +359,11 @@ END CLASS
 
 METHOD getValidators() CLASS FabricantesValidator
 
-   ::hValidators  := {  "codigo" =>    {  "required"     => "El codigo es un dato requerido",;
-                                          "unique"       => "El codigo introducido ya existe" } ,;
-                        "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
-                                          "unique"       => "El nombre introducido ya existe" } }                  
+   ::hValidators  := {  "codigo" =>    {  "required"           => "El codigo es un dato requerido",;
+                                          "unique"             => "El codigo introducido ya existe"  ,;
+                                          "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } ,;
+                        "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
+                                          "unique"             => "El nombre introducido ya existe" } }                  
 
 RETURN ( ::hValidators )
 

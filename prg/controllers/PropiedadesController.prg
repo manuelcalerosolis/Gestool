@@ -1,127 +1,292 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
-#include "MesDbf.ch"
 
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesController FROM SQLHeaderController
+CLASS PropiedadesController FROM SQLNavigatorController
 
-	DATA 		oPropiedadesLineasController
+   DATA oPropiedadesTipoController
 
-   METHOD   New()
+   METHOD New()
 
-   METHOD   buildSQLModel( this )         INLINE ( PropiedadesModel():New( this ) )
-   
-   METHOD   buildSQLView( this )				INLINE ( Propiedades():New( this ) )
-  
-   METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "id" ) )
- 
-   METHOD   initAppendMode()              INLINE ( ::oPropiedadesLineasController:oModel:buildRowSetWhitForeignKey( 0 ) )
-
-   METHOD   initEditMode()                INLINE ( ::oPropiedadesLineasController:oModel:buildRowSetWhitForeignKey( ::oModel:hBuffer[ "id" ] ) )
-
-   METHOD   initZoomMode()                INLINE ( ::oPropiedadesLineasController:oModel:buildRowSetWhitForeignKey( ::oModel:hBuffer[ "id" ] ) )
-
-   METHOD   New()
-
-   METHOD   buildSQLModel( this )                  INLINE ( PropiedadesModel():New( this ) )
-   
-   METHOD   buildSQLView( this )				         INLINE ( Propiedades():New( this ) )
-  
-   METHOD   getFieldFromBrowse()                   INLINE ( padr( ::getRowSet():fieldGet( "codigo" ), ::oModel:hColumns[ "codigo" ][ "len" ] ) )
- 
-   METHOD   validCodigo( oGetCodigo )
-
-   METHOD   validNombre( oGetNombre )
-
-   METHOD   createEditControl( uValue, hControl )  INLINE ( ::oView:createEditControl( @uValue, hControl ) )
+   METHOD End()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
-
-   ::idUserMap            				:= "01015"
-
- 	::setTitle( "Propiedades" )
+METHOD New() CLASS PropiedadesController
 
    ::Super:New()
 
-   ::ControllerContainer:add( 'lineas', PropiedadesLineasController():New( Self ) )
+   ::cTitle                      := "Propiedades"
 
-Return ( Self )
+   ::cName                       := "propiedades"
 
-//---------------------------------------------------------------------------//
+   ::hImage                      := {  "16" => "gc_coathanger_16",;
+                                       "32" => "gc_coathanger_32",;
+                                       "48" => "gc_coathanger_48" }
 
-METHOD validCodigo( oGetCodigo )
+   ::nLevel                      := Auth():Level( ::cName )
 
-   local idCodigo
-   local cErrorText  := ""
+   ::oModel                      := SQLPropiedadesModel():New( self )
 
-   oGetCodigo:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+   ::oBrowseView                 := PropiedadesBrowseView():New( self )
 
-   if empty( ::oModel:hBuffer[ "codigo" ] )
-      cErrorText     += "El código de la propiedad no puede estar vacío." 
-   end if
+   ::oDialogView                 := PropiedadesView():New( self )
 
-   idCodigo          := ::oModel:ChecksForValid( "codigo" )
-   
-   if ( !empty( idCodigo ) )
+   ::oValidator                  := PropiedadesValidator():New( self, ::oDialogView )
 
-      if ( idCodigo != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-         cErrorText  += "El código de la propiedad ya existe." 
-      end if
-   
-      if ( idCodigo == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
-         cErrorText  += "El código de la propiedad ya existe."
-      end if
-   
-   end if
+   ::oRepository                 := PropiedadesRepository():New( self )
 
-   if !empty( cErrorText )
-      msgStop( cErrorText )
-      oGetCodigo:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
-      oGetCodigo:setFocus()
-      RETURN ( .f. )
-   end if
+   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-RETURN ( .t. )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validNombre( oGetNombre )
+METHOD End() CLASS PropiedadesController
 
-   local idNombre
-   local cErrorText  := ""
+   ::oModel:End()
 
-   oGetNombre:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+   ::oBrowseView:End()
 
-   if empty( ::oModel:hBuffer[ "nombre" ] )
-      cErrorText     += "El nombre de la propiedad no puede estar vacío." 
-   end if
+   ::oDialogView:End()
 
-   idNombre          := ::oModel:ChecksForValid( "nombre" )
-   
-   if ( !empty( idNombre ) )
+   ::oValidator:End()
 
-      if ( idNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-         cErrorText  += "El nombre de la propiedad ya existe." 
-      end if
-   
-      if ( idNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
-         cErrorText  += "El nombre de la propiedad ya existe."
-      end if
-   
-   end if
+   ::oRepository:End()
 
-   if !empty( cErrorText )
-      msgStop( cErrorText )
-      oGetNombre:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
-   end if
+   ::oPropiedadesTipoController:End()
 
-RETURN ( .t. )
+   ::Super:End()
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS PropiedadesBrowseView FROM SQLBrowseView
+
+   METHOD addColumns()                       
+
+ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD addColumns() CLASS PropiedadesBrowseView
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'id'
+      :cHeader             := 'Id'
+      :nWidth              := 60
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Uuid'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
+      :nWidth              := 50
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS PropiedadesView FROM SQLBaseView
+
+   DATA oGetTipo
+  
+   METHOD Activate()
+
+   METHOD startActivate()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS PropiedadesView
+
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "CONTAINER_MEDIUM" ;
+      TITLE       ::LblTitle() + "propiedad"
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    "gc_coathanger_48" ;
+      TRANSPARENT ;
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      PROMPT      "Artículos" ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
+
+   REDEFINE FOLDER ::oFolder ;
+      ID          500 ;
+      OF          ::oDialog ;
+      PROMPT      "&General";
+      DIALOGS     "ARTICULO_GENERAL" 
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+      ID          100 ;
+      PICTURE     ( replicate( 'N', 18 ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+      ID          110 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   ::oController:oPropiedadesTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "Propiedades_tipo_uuid" ] ) )
+   ::oController:oPropiedadesTipoController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
+
+   // Botones Propiedades -------------------------------------------------------
+
+   REDEFINE BUTTON ;
+      ID          IDOK ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+
+   REDEFINE BUTTON ;
+      ID          IDCANCEL ;
+      OF          ::oDialog ;
+      CANCEL ;
+      ACTION      ( ::oDialog:end() )
+
+   if ::oController:isNotZoomMode() 
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+   end if
+
+   ::oDialog:bStart  := {|| ::startActivate() }
+
+   ACTIVATE DIALOG ::oDialog CENTER
+
+   ::oBitmap:end()
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate()
+
+   ::oController:oPropiedadesTipoController:oGetSelector:Start()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS PropiedadesValidator FROM SQLBaseValidator
+
+   METHOD getValidators()
+ 
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getValidators() CLASS PropiedadesValidator
+
+   ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
+                                          "unique"             => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
+                                          "unique"             => "El código introducido ya existe",;
+                                          "onlyAlphanumeric"   => "El código no puede contener caracteres especiales" } }
+RETURN ( ::hValidators )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLPropiedadesModel FROM SQLBaseModel
+
+   DATA cTableName               INIT "Propiedades"
+
+   METHOD getColumns()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getColumns() CLASS SQLPropiedadesModel
+   
+   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                                "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                                "default"   => {|| win_uuidcreatestring() } }            )
+
+   ::getEmpresaColumns()
+
+   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 18 )"                           ,;
+                                                "default"   => {|| space( 18 ) } }                       )
+
+   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                "default"   => {|| space( 200 ) } }                      )
+
+   ::getTimeStampColumns()
+
+RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS PropiedadesRepository FROM SQLBaseRepository
+
+   METHOD getTableName()                  INLINE ( SQLPropiedadesModel():getTableName() ) 
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+

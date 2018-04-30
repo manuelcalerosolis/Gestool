@@ -7,6 +7,8 @@ CLASS ComentariosLineasController FROM SQLBrowseController
 
    METHOD New()
 
+   METHOD End()
+
    METHOD loadedBlankBuffer()
 
    METHOD gettingSelectSentence()
@@ -39,6 +41,23 @@ METHOD New( oSenderController ) CLASS ComentariosLineasController
 
    ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS ComentariosLineasController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   /*::oRepository:End()*/
+
+   ::Super:End()
 
 RETURN ( Self )
 

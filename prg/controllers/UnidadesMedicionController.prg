@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaController FROM SQLNavigatorController
+CLASS UnidadesMedicionController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -13,34 +13,35 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ArticulosTemporadaController
+METHOD New() CLASS UnidadesMedicionController
 
    ::Super:New()
 
-   ::cTitle                      := "Articulos temporadas"
+   ::cTitle                      := "Unidades de medidas"
 
-   ::cName                       := "articulos_temporadas"
+   ::cName                       := "unidades_medida"
 
-   ::hImage                      := {  "16" => "gc_cloud_sun_16",;
-                                       "32" => "gc_cloud_sun_32",;
-                                       "48" => "gc_cloud_sun_48" }
+   ::hImage                      := {  "16" => "gc_tape_measure2_16",;
+                                       "32" => "gc_tape_measure2_32",;
+                                       "48" => "gc_tape_measure2_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLArticulosTemporadaModel():New( self )
+   ::oModel                         := SQLUnidadesMedicionModel():New( self )
 
-   ::oBrowseView                 := ArticulosTemporadaBrowseView():New( self )
+   ::oBrowseView                    := UnidadesMedicionBrowseView():New( self )
 
-   ::oDialogView                 := ArticulosTemporadaView():New( self )
+   ::oDialogView                    := UnidadesMedicionView():New( self )
 
-   ::oValidator                  := ArticulosTemporadaValidator():New( self, ::oDialogView )
+   ::oValidator                     := UnidadesMedicionValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := ArticulosTemporadaRepository():New( self )
+   ::oRepository                    := UnidadesMedicionRepository():New( self )
+
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-METHOD End() CLASS ArticulosTemporadaController
+METHOD End() CLASS UnidadesMedicionController
 
    ::oModel:End()
 
@@ -66,7 +67,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaBrowseView FROM SQLBrowseView
+CLASS UnidadesMedicionBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -74,7 +75,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ArticulosTemporadaBrowseView
+METHOD addColumns() CLASS UnidadesMedicionBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -110,10 +111,10 @@ METHOD addColumns() CLASS ArticulosTemporadaBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'imagen'
-      :cHeader             := 'Imagen'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'imagen' ) }
+      :cSortOrder          := 'codigo_iso'
+      :cHeader             := 'Codigo_iso'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_iso' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -127,43 +128,29 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaView FROM SQLBaseView
+CLASS UnidadesMedicionView FROM SQLBaseView
   
-   DATA oTipo
-
-   DATA hTipos
-
-   METHOD New()
-
    METHOD Activate()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS ArticulosTemporadaView
+METHOD Activate() CLASS UnidadesMedicionView
 
-   ::Super:New( oController )
-
-   ::hTipos          := {  "Sol"          => "gc_sun_16",;
-                           "Sol y nubes"  => "gc_cloud_sun_16",;
-                           "Nubes"        => "gc_cloud_16",;
-                           "Lluvia"       => "gc_cloud_rain_16",;
-                           "Nieve"        => "gc_snowflake_16" }
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS ArticulosTemporadaView
+   local oDialog
+   local oBmpGeneral
+   local oBtnEdit
+   local oBtnAppend
+   local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ARTICULO_TEMPORADA" ;
-      TITLE       ::LblTitle() + "temporada de articulos"
+      RESOURCE    "UNIDAD_MEDICION" ;
+      TITLE       ::LblTitle() + "unidad de medida"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_cloud_sun_48" ;
+      RESOURCE    "gc_tape_measure2_48" ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
@@ -184,12 +171,10 @@ METHOD Activate() CLASS ArticulosTemporadaView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:oModel:hBuffer[ "imagen" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_iso" ] ;
       ID          120 ;
+      VALID       ( ::oController:validate( "codigo_iso" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ITEMS       ( hgetkeys( ::hTipos ) ) ;
-      BITMAPS     ( hgetvalues( ::hTipos ) ) ;
       OF          ::oDialog ;
 
    REDEFINE BUTTON ;
@@ -221,18 +206,19 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaValidator FROM SQLBaseValidator
+CLASS UnidadesMedicionValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
+ 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ArticulosTemporadaValidator
+METHOD getValidators() CLASS UnidadesMedicionValidator
 
-   ::hValidators  := {  "nombre " =>               {  "required"           => "El nombre es un dato requerido",;
-                                                      "unique"             => "El nombre introducido ya existe" },;
+   ::hValidators  := {  "descripcion" =>          {  "required"            => "La descripción es un dato requerido",;
+                                                      "unique"             => "La descripción introducida ya existe" },;
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
                                                       "unique"             => "EL código introducido ya existe"  ,;
                                                       "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
@@ -243,10 +229,13 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS SQLArticulosTemporadaModel FROM SQLBaseModel
+CLASS SQLUnidadesMedicionModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "articulos_temporada"
+   DATA cTableName               INIT "unidades_medicion"
 
    METHOD getColumns()
 
@@ -254,25 +243,23 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLArticulosTemporadaModel
+METHOD getColumns() CLASS SQLUnidadesMedicionModel
 
-   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                    "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                             "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
-                                    "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                             "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
-   ::getTimeStampColumns()
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 2 )"                            ,;
+                                             "default"   => {|| space( 2 ) } }                        )
 
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 3 )"                            ,;
-                                    "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
-                                    "default"   => {|| space( 200 ) } }                       )
-
-   hset( ::hColumns, "imagen",   {  "create"    => "VARCHAR( 40 )"                           ,;
-                                    "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "codigo_iso",        {  "create"    => "VARCHAR( 6 )"                            ,;
+                                             "default"   => {|| space( 6 ) } }                         )
 
 RETURN ( ::hColumns )
 
@@ -281,11 +268,16 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaRepository FROM SQLBaseRepository
+CLASS UnidadesMedicionRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLComentariosModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLUnidadesMedicionModel():getTableName() ) 
 
 END CLASS
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

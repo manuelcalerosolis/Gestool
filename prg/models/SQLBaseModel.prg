@@ -974,6 +974,9 @@ METHOD updateBuffer( hBuffer )
    ::fireEvent( 'updatingBuffer' )
 
    if !empty( ::cSQLUpdate )
+
+      msgalert( ::cSQLUpdate, "::cSQLUpdate" )
+
       ::getDatabase():Execs( ::cSQLUpdate )
    end if
 

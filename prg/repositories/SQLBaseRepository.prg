@@ -28,9 +28,11 @@ CLASS SQLBaseRepository
 
    METHOD getColumnWhereUuid( uuid, cColumn ) 
    METHOD getNombreWhereUuid( uuid )            INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) )
+   METHOD getCodigoWhereUuid( uuid )            INLINE ( ::getColumnWhereUuid( uuid, 'codigo' ) )
 
    METHOD getUuidWhereColumn( uValue, cColumn, uDefault ) 
    METHOD getUuidWhereNombre( uValue )          INLINE ( ::getUuidWhereColumn( uValue, 'nombre', '' ) )
+   METHOD getUuidWhereCodigo( uValue )          INLINE ( ::getUuidWhereColumn( uValue, 'codigo', '' ) )
    
    METHOD getColumnWhereNombre( nombre, cColumn ) 
 

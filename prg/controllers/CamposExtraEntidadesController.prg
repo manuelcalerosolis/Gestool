@@ -35,6 +35,8 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
 
    METHOD New( oController )
 
+   METHOD End()
+
    METHOD getNombresEntidades()
 
    METHOD getNombreWhereEntidad( cEntidad )
@@ -80,6 +82,24 @@ METHOD New( oController ) CLASS CamposExtraEntidadesController
    ::setEvent( 'appending',            {|| ::assertAppend() } )
    ::setEvent( 'appended',             {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',     {|| ::oBrowseView:Refresh() } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS CamposExtraEntidadesController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oRepository:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 

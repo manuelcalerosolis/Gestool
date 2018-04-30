@@ -7,6 +7,8 @@ CLASS LenguajesController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
    METHOD SetSelectorToGet( oGet, oSay )
 
    METHOD validLenguajeFromGet( oGet, oSay )
@@ -40,6 +42,23 @@ METHOD New() CLASS LenguajesController
    ::oRepository              := LenguajesRepository():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS LenguajesController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oRepository:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 
@@ -230,10 +249,11 @@ END CLASS
 
 METHOD getValidators() CLASS LenguajesValidator
 
-   ::hValidators  := {     "codigo" =>          {  "required"     => "El código es un dato requerido",;
-                                                   "unique"       => "El código introducido ya existe" },;
-                           "nombre" =>          {  "required"     => "El nombre es un datos requerido",;
-                                                   "unique"       => "El nombre introducido ya existe" } }                      
+   ::hValidators  := {     "codigo" =>          {  "required"           => "El código es un dato requerido",;
+                                                   "unique"             => "El código introducido ya existe" ,;
+                                                   "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } ,;
+                           "nombre" =>          {  "required"           => "El nombre es un datos requerido",;
+                                                   "unique"             => "El nombre introducido ya existe" } }                      
 
 
 RETURN ( ::hValidators )
