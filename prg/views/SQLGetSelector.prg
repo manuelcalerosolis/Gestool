@@ -5,9 +5,6 @@ CLASS GetSelector
 
    DATA oController
 
-   DATA idGet
-   DATA idHelpGet
-
    DATA oDialog
 
    DATA bValue
@@ -17,10 +14,14 @@ CLASS GetSelector
 
    DATA cKey                                    INIT "uuid"
 
+   DATA oView
+
    METHOD New( oSender )
 
    METHOD setKey( cKey )                        INLINE ( ::cKey := cKey )
    METHOD getKey()                              INLINE ( ::cKey )
+
+   METHOD setView( oView )                      INLINE ( ::oView := oView )
 
    METHOD Activate( idGet, idText, oDlg )
    METHOD Bind( bValue )                        INLINE ( ::bValue := bValue )
@@ -30,7 +31,9 @@ CLASS GetSelector
 
    METHOD start()                               INLINE ( ::validAction() )
 
-   METHOD saveValue( value )                    INLINE ( eval( ::bValue, value ) )
+   METHOD evalValue( value )                    INLINE ( eval( ::bValue, value ) )
+
+   METHOD showMessage()
 
 END CLASS
 
@@ -38,7 +41,7 @@ END CLASS
 
 METHOD New( oSender ) CLASS GetSelector
 
-   ::oController     := oSender
+   ::oController  := oSender
 
 RETURN ( Self )
 
@@ -69,16 +72,15 @@ METHOD helpAction() CLASS GetSelector
    hResult        := ::oController:ActivateSelectorViewNoCenter()
 
    if hb_isnil( hResult )
-      RETURN ( Self )
+      ::oGet:cText( "" )
+      RETURN ( .f. )
    end if 
-
-   msgalert( hb_valtoexp( hResult ), "hResult" )
 
    if hhaskey( hResult, ::getKey() )
 
       ::oGet:cText( hGet( hResult, ::getKey() ) )
 
-      ::saveValue( hGet( hResult, ::getKey() ) )
+      ::evalValue( hGet( hResult, ::getKey() ) )
 
    end if
 
@@ -86,32 +88,55 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validAction() CLASS GetSelector
+METHOD validAction( lSilenceMode ) CLASS GetSelector
 
-   local value
+   local value             := ""
 
-   if Empty( ::oGet )
-      return ( .f. )
+   DEFAULT lSilenceMode    := .f.
+
+   if empty( ::oGet )
+      RETURN ( .t. )
    end if
 
-   if Empty( ::oGet:VarGet() )
-      Return ( .t. )
+   ::evalValue( ::oGet:VarGet() )
+
+   ::oGet:oHelptext:cText( value )
+
+   if empty( ::oGet:VarGet() )
+      RETURN ( .t. )
    end if
 
-   value       := ::oController:oModel:getField( "nombre", ::getKey(), ::oGet:VarGet() )
+   value                   := ::oController:oModel:getField( "nombre", ::getKey(), ::oGet:VarGet() )
 
-   if Empty( value )
-      MsgStop( ::oController:cTitle + " no encontrado" )
-      return ( .f. )
+   if empty( value )
+      ::showMessage( lSilenceMode )
+      RETURN ( .f. )
+   end if
+
+   ::evalValue( ::oGet:VarGet() )
+
+   ::oGet:oHelptext:cText( value )
+
+   ::oGet:Refresh()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD showMessage( lSilenceMode )
+
+   if lSilenceMode 
+      RETURN ( self )
+   end if 
+
+   if empty( ::oView ) .or. empty( ::oView:oMessage )
+      msgStop( ::oController:cTitle + " no encontrado" )
    else
-      ::saveValue( ::oGet:VarGet() )
-      ::oGet:oHelptext:cText( value )
-      ::oGet:Refresh()
-   end if
+      ::oView:showMessage( ::oController:cTitle + " no encontrado" )
+   end if 
 
-RETURN ( .t. )
+RETURN ( self )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

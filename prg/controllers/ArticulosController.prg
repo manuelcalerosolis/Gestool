@@ -41,6 +41,7 @@ METHOD New() CLASS ArticulosController
 
    ::oArticulosTipoController    := ArticulosTipoController():New( self )
    ::oArticulosTipoController:oGetSelector:setKey( "codigo" )
+   ::oArticulosTipoController:oGetSelector:setView( ::oDialogView )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -131,6 +132,8 @@ CLASS ArticulosView FROM SQLBaseView
   
    METHOD Activate()
 
+   METHOD startActivate()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -177,20 +180,8 @@ METHOD Activate() CLASS ArticulosView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   // REDEFINE GET   ::oGetTipo ;
-   //    VAR         ::oController:oModel:hBuffer[ "articulos_tipo_uuid" ] ;
-   //    ID          130 ;
-   //    IDHELP      131 ;
-   //    WHEN        ( ::oController:isNotZoomMode() ) ;
-   //    PICTURE     "@!" ;
-   //    BITMAP      "Lupa" ;
-   //    OF          ::oFolder:aDialogs[1]
-
-   // ::oGetTipo:bValid   := {|| .t. }
-   // ::oGetTipo:bHelp    := {|| ::oController:oArticulosTipoController:ActivateSelectorView() }
-
    ::oController:oArticulosTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_tipo_uuid" ] ) )
-   ::oController:oArticulosTipoController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[1] )
+   ::oController:oArticulosTipoController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
 
    // Botones Articulos -------------------------------------------------------
 
@@ -210,11 +201,21 @@ METHOD Activate() CLASS ArticulosView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
+   ::oDialog:bStart  := {|| ::startActivate() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate()
+
+   ::oController:oArticulosTipoController:oGetSelector:Start()
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -251,6 +252,10 @@ CLASS SQLArticulosModel FROM SQLBaseModel
 
    METHOD getColumns()
 
+   METHOD getArticulosTipoUuidAttribute()
+
+   METHOD setArticulosTipoUuidAttribute()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -279,6 +284,26 @@ METHOD getColumns() CLASS SQLArticulosModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getArticulosTipoUuidAttribute( uValue ) CLASS SQLArticulosModel
+
+   if empty( uValue )
+      RETURN ( space( 3 ) )
+   end if 
+
+RETURN ( ArticulosTipoRepository():getCodigoWhereUuid( uValue ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD setArticulosTipoUuidAttribute( uValue ) CLASS SQLArticulosModel
+
+   if empty( uValue )
+      RETURN ( uValue )
+   end if 
+
+RETURN ( ArticulosTipoRepository():getUuidWhereCodigo( uValue ) )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -290,5 +315,9 @@ CLASS ArticulosRepository FROM SQLBaseRepository
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
