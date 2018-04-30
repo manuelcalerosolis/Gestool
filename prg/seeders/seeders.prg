@@ -356,7 +356,6 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-
 METHOD SeederLenguajes()
 
    local dbf
@@ -459,7 +458,7 @@ METHOD insertAgentes( dbf )
 
    hset( hBuffer, "uuid",              ( dbf )->Uuid     )
    hset( hBuffer, "codigo",            ( dbf )->cCodAge  )
-   hset( hBuffer, "nombre",            ( dbf )->cNbrAge + Space(1) + ( dbf )->cApeAge )
+   hset( hBuffer, "nombre",            AllTrim( ( dbf )->cNbrAge ) + Space(1) + AllTrim( ( dbf )->cApeAge ) )
    hset( hBuffer, "dni",               ( dbf )->cDniNif  )
    hset( hBuffer, "comision",          ( dbf )->nCom1    )
    hset( hBuffer, "empresa_uuid",      uuidEmpresa()     )
