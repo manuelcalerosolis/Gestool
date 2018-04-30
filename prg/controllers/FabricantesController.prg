@@ -11,6 +11,8 @@ CLASS FabricantesController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
    METHOD ImagenesControllerLoadCurrentBuffer()
 
    METHOD ImagenesControllerUpdateBuffer()
@@ -65,6 +67,27 @@ METHOD New() CLASS FabricantesController
    ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::ImagenesControllerLoadedDuplicateBuffer() } )
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::ImagenesControllerDeleteBuffer() } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS FabricantesController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oImagenesController:End()
+
+   ::oRepository:End()
+
+   ::oGetSelector:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 
@@ -330,10 +353,11 @@ END CLASS
 
 METHOD getValidators() CLASS FabricantesValidator
 
-   ::hValidators  := {  "codigo" =>    {  "required"     => "El codigo es un dato requerido",;
-                                          "unique"       => "El codigo introducido ya existe" } ,;
-                        "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
-                                          "unique"       => "El nombre introducido ya existe" } }                  
+   ::hValidators  := {  "codigo" =>    {  "required"           => "El codigo es un dato requerido",;
+                                          "unique"             => "El codigo introducido ya existe"  ,;
+                                          "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } ,;
+                        "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
+                                          "unique"             => "El nombre introducido ya existe" } }                  
 
 RETURN ( ::hValidators )
 

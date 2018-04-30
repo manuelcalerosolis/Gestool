@@ -9,6 +9,8 @@ CLASS CodigosPostalesController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -38,6 +40,25 @@ METHOD New() CLASS CodigosPostalesController
    ::oProvinciasController    := ProvinciasController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS CodigosPostalesController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oRepository:End()
+
+   ::oProvinciasController:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 
@@ -210,9 +231,10 @@ END CLASS
 
 METHOD getValidators() CLASS CodigosPostalesValidator
 
-   ::hValidators  := {     "codigo"       =>    {  "required"     => "El código es un dato requerido" },;
-                           "poblacion"    =>    {  "required"     => "La población es un dato requerido" },;
-                           "provincia"    =>    {  "required"     => "La provincia es un campo requerido" } }
+   ::hValidators  := {     "codigo"       =>    {  "required"           => "El código es un dato requerido" ,;
+                                                   "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } ,;
+                           "poblacion"    =>    {  "required"           => "La población es un dato requerido" },;
+                           "provincia"    =>    {  "required"           => "La provincia es un campo requerido" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//

@@ -7,6 +7,8 @@ CLASS ArticulosTipoController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -35,6 +37,23 @@ METHOD New() CLASS ArticulosTipoController
 
    ::oRepository                    := ArticulosTipoRepository():New( self )
 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS ArticulosTipoController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oRepository:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 
@@ -184,10 +203,11 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosTipoValidator
 
-   ::hValidators  := {  "descripcion" =>          {  "required"     => "La descripción es un dato requerido",;
-                                                      "unique"       => "La descripción introducida ya existe" },;
-                        "codigo" =>                {  "required"     => "El código es un dato requerido" ,;
-                                                      "unique"       => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "descripcion" =>          {  "required"            => "La descripción es un dato requerido",;
+                                                      "unique"             => "La descripción introducida ya existe" },;
+                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
+                                                      "unique"             => "EL código introducido ya existe"  ,;
+                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//

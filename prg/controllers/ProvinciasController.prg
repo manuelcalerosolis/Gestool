@@ -7,6 +7,8 @@ CLASS ProvinciasController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
    METHOD getSelectorProvincia( oGet )
 
 END CLASS
@@ -36,6 +38,23 @@ METHOD New() CLASS ProvinciasController
    ::oValidator               := ProvinciasValidator():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS ProvinciasController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oRepository:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 
@@ -187,10 +206,11 @@ END CLASS
 
 METHOD getValidators() CLASS ProvinciasValidator
 
-   ::hValidators  := {     "codigo"    =>       {  "required"     => "El código es un dato requerido",;
-                                                   "unique"       => "El código introducido ya existe" },;
-                           "provincia" =>       {  "required"     => "La provincia es un datos requerido",;
-                                                   "unique"       => "La provincia introducida ya existe" } }                      
+   ::hValidators  := {     "codigo"    =>       {  "required"           => "El código es un dato requerido",;
+                                                   "unique"             => "El código introducido ya existe" ,;
+                                                   "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } ,;
+                           "provincia" =>       {  "required"           => "La provincia es un datos requerido",;
+                                                   "unique"             => "La provincia introducida ya existe" } }                      
 
 
 RETURN ( ::hValidators )

@@ -9,6 +9,8 @@ CLASS CamposExtraController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
    METHOD deleteEntitiesWhereEmpty()
 
 END CLASS
@@ -50,6 +52,25 @@ METHOD New() CLASS CamposExtraController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+METHOD End() CLASS CamposExtraController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oCamposExtraEntidadesController:End()
+
+   ::oRepository:End()
+
+   ::Super:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
 
 METHOD deleteEntitiesWhereEmpty()
    
@@ -58,6 +79,7 @@ METHOD deleteEntitiesWhereEmpty()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -408,12 +430,13 @@ END CLASS
 
 METHOD getValidators() CLASS CamposExtraValidator
 
-   ::hValidators  := {     "codigo" =>    {  "required"     => "El codigo es un dato requerido",;
-                                             "unique"       => "El codigo introducido ya existe" } ,;
-                           "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
-                                             "unique"       => "El nombre introducido ya existe" } ,;   
-                           "tipo"     =>  {  "required"     => "El tipo es un dato requerido" } ,; 
-                           "longitud" =>  {  "required"     => "La longitud es un dato requerido" } }
+   ::hValidators  := {     "codigo" =>    {  "required"           => "El codigo es un dato requerido",;
+                                             "unique"             => "El codigo introducido ya existe" ,;
+                                             "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } ,;
+                           "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
+                                             "unique"             => "El nombre introducido ya existe" } ,;   
+                           "tipo"     =>  {  "required"           => "El tipo es un dato requerido" } ,; 
+                           "longitud" =>  {  "required"           => "La longitud es un dato requerido" } }
 
 RETURN ( ::hValidators )
 

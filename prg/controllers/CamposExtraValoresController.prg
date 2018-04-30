@@ -12,6 +12,9 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
    DATA oCamposExtraValoresController
 
    METHOD New( cEntidad, uuidEntidad )
+
+   METHOD End()
+
    METHOD NewArticulo( cEntidad, uuidEntidad )              INLINE ( ::New( 'articulos', uuidEntidad ) )
 
    METHOD Edit() 
@@ -55,6 +58,23 @@ METHOD New( cEntidad, uuidEntidad ) CLASS CamposExtraValoresController
    ::oValidator                        := CamposExtraValoresValidator():New( self, ::oDialogView )
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )   
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+METHOD End() CLASS CamposExtraValoresController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oRepository:End()
+
+   ::Super:End()
 
 RETURN ( Self )
 

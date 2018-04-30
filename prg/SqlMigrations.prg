@@ -191,6 +191,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
 
+   aadd( ::aModels, SQLUnidadesMedicionModel():New() )
+
    aadd( ::aModels, SQLDivisasMonetariasModel():New() )
 
    aadd( ::aModels, SQLImpuestosEspecialesModel():New() )
