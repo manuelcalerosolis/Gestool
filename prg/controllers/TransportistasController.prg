@@ -35,7 +35,7 @@ METHOD New() CLASS TransportistasController
 
    ::oDialogView                 := TransportistasView():New( self )
 
-   ::oValidator                  := TransportistasValidator():New( self )
+   ::oValidator                  := TransportistasValidator():New( self, ::oDialogView )
 
    ::oDireccionesController      := DireccionesController():New( self )
 
@@ -63,8 +63,6 @@ METHOD End() CLASS TransportistasController
    ::oDireccionesController:End()
 
    ::oRepository:End()
-
-   ::oGetSelector:End()
 
    ::oComboSelector:End()
 
@@ -110,7 +108,7 @@ METHOD addColumns() CLASS TransportistasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
-      :cHeader             := 'C贸digo'
+      :cHeader             := 'C骴igo'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -152,88 +150,94 @@ END CLASS
 
 METHOD Activate() CLASS TransportistasView
 
-   local oDlg
-   local oBmpGeneral
+   local oGetDni
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
-   local oGetDni
 
-   DEFINE DIALOG  oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TRANSPORTISTA" ;
       TITLE       ::LblTitle() + "transportistas"
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
       RESOURCE    "gc_small_truck_48" ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      PROMPT      "Transportista" ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 9 ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
-   REDEFINE GET   oGetDni VAR ::oController:oModel:hBuffer[ "dni" ] ;
+   REDEFINE GET   oGetDni ;
+      VAR         ::oController:oModel:hBuffer[ "dni" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( CheckCif( oGetDni ) ) ;
-      OF          oDlg
+      VALID       ( checkCif( oGetDni ) ) ;
+      OF          ::oDialog
 
    REDEFINE BUTTON oBtnAppend ;
       ID          130 ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
    oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
 
    REDEFINE BUTTON oBtnEdit ;
       ID          140 ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
    oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
       ID          150 ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
    oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
 
-   ::oController:oDireccionesController:Activate( oDlg, 160 )
+   ::oController:oDireccionesController:Activate( ::oDialog, 160 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F2, {|| ::oController:oDireccionesController:Append() } )
-      oDlg:AddFastKey( VK_F3, {|| ::oController:oDireccionesController:Edit() } )
-      oDlg:AddFastKey( VK_F4, {|| ::oController:oDireccionesController:Delete() } )
-      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oDireccionesController:Append() } )
+      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oDireccionesController:Edit() } )
+      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oDireccionesController:Delete() } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG ::oDialog CENTER
 
-   oBmpGeneral:end()
+   ::oBitmap:end()
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -252,11 +256,10 @@ END CLASS
 
 METHOD getValidators() CLASS TransportistasValidator
 
-   ::hValidators  := {  "codigo" =>          {  "required"           => "El c贸digo del transportista es un dato requerido",;
-                                                "unique"             => "El c贸digo del transportista introducido ya existe" ,;
-                                                "onlyAlphanumeric"   => "EL c贸digo no puede contener caracteres especiales" } ,;
-                        "nombre" =>          {  "required"           => "El nombre del transportista es un dato requerido",;
-                                                "unique"             => "El nombre del transportista introducido ya existe" } }
+   ::hValidators  := {  "codigo" =>          {  "required"     => "El c骴igo del transportista es un dato requerido",;
+                                                "unique"       => "El c骴igo del transportista introducido ya existe" } ,;
+                        "nombre" =>          {  "required"     => "El nombre del transportista es un dato requerido",;
+                                                "unique"       => "El nombre del transportista introducido ya existe" } } 
 
 RETURN ( ::hValidators )
 

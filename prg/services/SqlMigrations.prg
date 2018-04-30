@@ -229,6 +229,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLPropiedadesModel():New() )
 
+   aadd( ::aModels, SQLPropiedadesLineasModel():New() )
+
    aadd( ::aModels, SQLProveedoresModel():New() ) 
 
 RETURN ( ::aModels )
