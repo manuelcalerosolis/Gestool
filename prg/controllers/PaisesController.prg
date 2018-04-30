@@ -54,7 +54,7 @@ METHOD End() CLASS PaisesController
 
    ::oValidator:End()
 
-   ::oRepository:End()
+   /*::oRepository:End()*/
 
    ::Super:End()
 

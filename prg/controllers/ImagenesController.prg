@@ -56,7 +56,7 @@ METHOD End() CLASS ImagenesController
 
    ::oValidator:End()
 
-   ::oRepository:End()
+   /*::oRepository:End()*/
 
    ::Super:End()
 

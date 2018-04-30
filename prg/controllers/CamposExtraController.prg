@@ -64,7 +64,7 @@ METHOD End() CLASS CamposExtraController
 
    ::oCamposExtraEntidadesController:End()
 
-   ::oRepository:End()
+   /*::oRepository:End()*/
 
    ::Super:End()
 

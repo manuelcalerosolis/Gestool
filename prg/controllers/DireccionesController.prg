@@ -72,11 +72,11 @@ METHOD End() CLASS DireccionesController
 
    ::oValidator:End()
 
-   ::oRepository:End()
+   /*::oRepository:End()*/
 
-   ::oPaisesController:End()
+   /*::oPaisesController:End()
 
-   ::oProvinciasController:End()
+   ::oProvinciasController:End()*/
 
    ::Super:End()
 

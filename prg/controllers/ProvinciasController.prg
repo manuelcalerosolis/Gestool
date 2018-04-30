@@ -52,7 +52,7 @@ METHOD End() CLASS ProvinciasController
 
    ::oValidator:End()
 
-   ::oRepository:End()
+   /*::oRepository:End()*/
 
    ::Super:End()
 

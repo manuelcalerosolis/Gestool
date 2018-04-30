@@ -84,7 +84,7 @@ METHOD End() CLASS BancosController
 
    ::oProvinciasController:End()
 
-   ::oComboSelector:End()
+   /*::oComboSelector:End()*/
 
    ::Super:End()
 

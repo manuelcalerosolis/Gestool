@@ -55,7 +55,7 @@ METHOD End() CLASS ComentariosLineasController
 
    ::oValidator:End()
 
-   ::oRepository:End()
+   /*::oRepository:End()*/
 
    ::Super:End()
 

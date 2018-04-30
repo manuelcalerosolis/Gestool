@@ -96,7 +96,7 @@ METHOD End() CLASS AlmacenesController
 
    ::oProvinciasController:End()
 
-   ::oComboSelector:End()
+   /*::oComboSelector:End()*/
 
    ::Super:End()
 

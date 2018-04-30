@@ -85,7 +85,7 @@ METHOD End() CLASS FabricantesController
 
    ::oRepository:End()
 
-   ::oGetSelector:End()
+   /*::oGetSelector:End()*/
 
    ::Super:End()
 
