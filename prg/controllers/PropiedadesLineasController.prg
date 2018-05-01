@@ -9,13 +9,15 @@ CLASS PropiedadesLineasController FROM SQLBrowseController
 
    METHOD End()
 
+   METHOD isNotColorProperty()   INLINE ( !::oSenderController:isColorProperty() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS PropiedadesLineasController
+METHOD New( oController ) CLASS PropiedadesLineasController
 
-   ::Super:New()
+   ::Super:New( oController )
 
    ::cTitle                      := "Propiedades lineas"
 
@@ -218,7 +220,6 @@ METHOD changeColorRGB() CLASS PropiedadesLineasView
    if !empty( nColorRGB )
       ::oColorRGB:setColor( nColorRGB, nColorRGB )
       ::oColorRGB:cText( nColorRGB )
-      // ::oColorRGB:Refresh()
    end if 
 
 RETURN ( self )
@@ -226,6 +227,10 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD startActivate() CLASS PropiedadesLineasView
+
+   if ::oController:isNotColorProperty()
+      ::oColorRGB:Hide()
+   end if 
 
 RETURN ( self )
 

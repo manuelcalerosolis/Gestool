@@ -11,6 +11,8 @@ CLASS PropiedadesController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD isColorProperty()         INLINE ( iif( !empty(::oModel) .and. !empty(::oModel:hBuffer), ::oModel:hBuffer[ "color" ], .f. ) ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
