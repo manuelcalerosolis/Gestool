@@ -293,6 +293,7 @@ METHOD selectHashList( cSentence )
    local oError
    local oHashList
    local oStatement
+   local oStatementFetch
 
    if ::isParseError( cSentence )
       RETURN ( nil )  
@@ -300,10 +301,18 @@ METHOD selectHashList( cSentence )
 
    try 
 
-      oStatement     := ::Query( cSentence )
+      oStatement           := ::Query( cSentence )
 
-      oHashList      := THashList():new( oStatement:fetchAll( FETCH_HASH ) ) 
-   
+      if !empty( oStatement )
+
+          oStatementFetch  := oStatement:fetchAll( FETCH_HASH )
+
+          if !empty( oStatementFetch )
+            oHashList      := THashList():new( oStatementFetch ) 
+         end if 
+         
+      end if 
+
    catch oError
 
       eval( errorBlock(), oError )

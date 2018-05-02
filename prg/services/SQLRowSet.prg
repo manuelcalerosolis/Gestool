@@ -99,9 +99,9 @@ METHOD Build( cSentence )
 
    cursorWait()
 
-   ::oEvents:fire( 'buildingRowSet')
+   ::oEvents:fire( 'buildingRowSet' )
 
-   try
+   try 
 
       ::freeRowSet()
 
@@ -119,7 +119,7 @@ METHOD Build( cSentence )
 
    ::oRowSet:goTop()
 
-   ::oEvents:fire( 'builtRowSet')
+   ::oEvents:fire( 'builtRowSet' )
 
    cursorWE()
    

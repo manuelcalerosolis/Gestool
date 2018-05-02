@@ -347,9 +347,29 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadTreeRelaciones()
+METHOD loadTreeRelaciones( oNode, parentUuid )
 
+   local oHashList
 
+   DEFAULT oNode        := ::oTreeRelaciones
+   DEFAULT parentUuid   := ''
+
+   oHashList            := ::oController:oModel:getRowSetWhereParentUuid( parentUuid )
+
+   if hb_isnil( oHashList )
+      RETURN ( self )
+   end if 
+
+   while !( oHashList:Eof() )
+
+      oNode             := oNode:Add( oHashList:fieldGet( 'nombre' ) )
+      oNode:Cargo       := oHashList:fieldGet( 'uuid' )
+
+      ::loadTreeRelaciones( oNode, oNode:Cargo )
+
+      oHashList:Skip()
+
+   end while
 
 RETURN ( self )
 
@@ -375,7 +395,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosFamiliaValidator FROM SQLBaseValidator
+CLASS ArticulosFamiliaValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -388,8 +408,7 @@ METHOD getValidators() CLASS ArticulosFamiliaValidator
    ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
                                           "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
-                                          "unique"             => "El código introducido ya existe",;
-                                          "onlyAlphanumeric"   => "El código no puede contener caracteres especiales" } }
+                                          "unique"             => "El código introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -471,9 +490,23 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getRowSetWhereParentUuid( uuid )                                 
+METHOD getRowSetWhereParentUuid( parentUuid )
 
-RETURN ( )
+   local cSQL      
+   local oHashList
+
+   cSQL                 := "SELECT uuid, nombre FROM " + ::cTableName + " "
+   cSQL                 +=    "WHERE parent_uuid = " + quoted( parentUuid )
+
+   oHashList            := getSQLDatabase():selectHashList( cSQL ) 
+
+   if hb_isnil( oHashList )
+      RETURN ( nil )
+   end if 
+
+   oHashList:goTop()
+
+RETURN ( oHashList )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -491,4 +524,3 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-

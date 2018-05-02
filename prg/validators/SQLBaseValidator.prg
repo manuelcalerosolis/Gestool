@@ -288,3 +288,46 @@ METHOD existTipoArticulo( uValue )
 RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
+
+CLASS SQLCompanyValidator FROM SQLBaseValidator
+
+   METHOD getUniqueSenctence( uValue )
+
+   METHOD Exist( uValue )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getUniqueSenctence( uValue ) CLASS SQLCompanyValidator
+
+   local id
+   local cSQLSentence
+
+   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
+   cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
+   cSQLSentence      +=    "AND empresa_uuid = " + quoted( Company():Uuid() )             + space( 1 ) 
+
+   id                := ::oController:getModelBufferColumnKey()
+   if !empty( id )
+      cSQLSentence   +=    "AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )
+   end if 
+
+RETURN ( cSQLSentence )
+
+//---------------------------------------------------------------------------//
+
+METHOD Exist( uValue ) CLASS SQLCompanyValidator
+
+   local nCount
+   local cSQLSentence
+
+   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
+   cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
+   cSQLSentence      +=    "AND empresa_uuid = " + quoted( Company():Uuid() )              
+
+   nCount            := getSQLDatabase():getValue( cSQLSentence )
+
+RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
+
+//---------------------------------------------------------------------------//
