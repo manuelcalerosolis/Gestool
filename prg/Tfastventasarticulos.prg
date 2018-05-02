@@ -3225,9 +3225,9 @@ METHOD AddMovimientoAlmacen() CLASS TFastVentasArticulos
 
       ::oDbf:cSerDoc    := ""
       ::oDbf:cNumDoc    := alltrim( oRowSet:fieldget( 'numero' ) )
-      ::oDbf:cSufDoc    := oRowSet:fieldget( 'delegacion' )
+      ::oDbf:cSufDoc    := ""
 
-      ::oDbf:cIdeDoc    := oRowSet:fieldget( 'numero' ) + oRowSet:fieldget( 'delegacion' )
+      ::oDbf:cIdeDoc    := oRowSet:fieldget( 'numero' )
       ::oDbf:nNumLin    := oRowSet:fieldget( 'id' )
 
       ::oDbf:dFecDoc    := oRowSet:fieldget( 'fecha' )

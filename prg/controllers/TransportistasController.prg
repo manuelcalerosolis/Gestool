@@ -278,7 +278,7 @@ CLASS SQLTransportistasModel FROM SQLBaseModel
 
    MESSAGE getNombre( uuid )                 INLINE ( ::getField( "nombre", "uuid", uuid ) )
 
-   MESSAGE getNombreWhereCodigo( codigo )   INLINE ( ::getField( "nombre", "codigo", codigo ) )
+   MESSAGE getNombreWhereCodigo( codigo )    INLINE ( ::getField( "nombre", "codigo", codigo ) )
 
    METHOD getColumns()
 

@@ -233,7 +233,9 @@ RETURN ( hb_regexmatch( "[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}", uValue, .f. ) )
 
 METHOD Password( uValue )
 
-RETURN ( hb_regexmatch( "[a-z0-9_-]{8,18}", uValue, .f. ) ) 
+//RETURN ( hb_regexmatch( "^(?=(?:.*\d){2})(?=(?:.*[A-Z]){2})(?=(?:.*[a-z]){2})\S{8,}$", uValue, .f. ) ) 
+
+RETURN ( Len( uValue) >= 8 .and. Len( uValue) <= 18 ) 
 
 //---------------------------------------------------------------------------//
 

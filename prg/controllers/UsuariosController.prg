@@ -562,8 +562,6 @@ METHOD Activate() CLASS UsuariosView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   msgalert( len( ::getModel():hBuffer[ "email" ]),  ::getModel():hBuffer[ "email" ] )
-
    REDEFINE GET   ::getModel():hBuffer[ "email" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
