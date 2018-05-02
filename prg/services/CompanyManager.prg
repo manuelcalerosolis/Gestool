@@ -62,7 +62,7 @@ RETURN ( self )
 
 METHOD guardWhereUuid( uuid )
 
-   local hCompany    := EmpresasRepository():getWhereUuid( Uuid )
+   local hCompany    := SQLEmpresasModel():getWhereUuid( Uuid )
 
    if hb_ishash( hCompany )
       ::guard( hCompany )
@@ -74,7 +74,7 @@ RETURN ( self )
 
 METHOD guardWhereCodigo( cCodigo )
 
-   local hCompany    := EmpresasRepository():getWhereCodigo( cCodigo )
+   local hCompany    := SQLEmpresasModel():getWhereCodigo( cCodigo )
 
    if hb_ishash( hCompany )
       ::guard( hCompany )

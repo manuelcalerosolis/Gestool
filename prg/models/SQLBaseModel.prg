@@ -153,6 +153,8 @@ CLASS SQLBaseModel
 
    METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa_uuid" ) )
 
+   METHOD addEmpresaWhereUuid()                       INLINE ( if( ::isEmpresaColumn(), "AND empresa_uuid = " + quoted( Company():Uuid() ) + " ", "" ) )
+
    // Get edit value for xbrowse-----------------------------------------------
 
    METHOD getEditValue()
@@ -198,6 +200,31 @@ CLASS SQLBaseModel
 
    METHOD updateFieldWhereId( id, cField, uValue )
    METHOD updateFieldWhereUuid( uuid, cField, uValue )
+
+   // Metodos de consulta------------------------------------------------------
+
+   METHOD getUuidWhereColumn( uValue, cColumn, uDefault ) 
+   METHOD getUuidWhereNombre( uValue )          INLINE ( ::getUuidWhereColumn( uValue, 'nombre', '' ) )
+   METHOD getUuidWhereCodigo( uValue )          INLINE ( ::getUuidWhereColumn( uValue, 'codigo', '' ) )
+
+
+   METHOD getWhereUuid( Uuid )
+   METHOD getWhereCodigo( cCodigo )
+   METHOD getWhereNombre( cNombre )
+
+   METHOD getColumnWhereId( id, cColumn )
+   METHOD getNombreWhereId( id )                INLINE ( ::getColumnWhereId( id, 'nombre' ) )
+
+   METHOD getColumnWhereUuid( uuid, cColumn ) 
+   METHOD getNombreWhereUuid( uuid )            INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) )
+   METHOD getCodigoWhereUuid( uuid )            INLINE ( ::getColumnWhereUuid( uuid, 'codigo' ) )
+
+   METHOD getColumnWhereId( id, cColumn ) 
+   METHOD getColumnWhereUuid( uuid, cColumn ) 
+
+   METHOD getArrayColumns( cColumn ) 
+   METHOD getArrayNombres( cColumn )            INLINE ( ::getArrayColumns( 'nombre' ) )
+   METHOD getArrayColumnsWithBlank( cColumn ) 
 
 END CLASS
 
@@ -1109,7 +1136,7 @@ Return ( ::getDatabase():Exec( cSql ) )
 METHOD updateFieldWhereUuid( uuid, cField, uValue )
 
    local cSql  := "UPDATE " + ::cTableName + " "
-   cSql        +=    "SET " + cField + " = " + toSqlString( uValue ) + " "
+   cSql        +=    "SET " + cField + " = " + toSqlString( uValue )    + " "
    cSql        +=    "WHERE uuid = " + toSqlString( uuid )
 
 Return ( ::getDatabase():Exec( cSql ) )
@@ -1118,12 +1145,104 @@ Return ( ::getDatabase():Exec( cSql ) )
 
 METHOD getField( cField, cBy, cId )
 
-   local cSql
-
-   cSql              := "SELECT " + cField + " "                              
-   cSql              +=    "FROM " + ::cTableName + " "
-   cSql              +=    "WHERE " + cBy + " = " + quoted( cId ) 
+   local cSql  := "SELECT " + cField                                    + " "                              
+   cSql        +=    "FROM " + ::cTableName                             + " "
+   cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
+   cSQL        +=    ::addEmpresaWhereUuid()
 
 Return ( ::getDatabase():getValue( cSql ) )
 
 //----------------------------------------------------------------------------//
+
+METHOD getUuidWhereColumn( uValue, cColumn, uDefault ) 
+
+   local uuid
+   local cSQL  := "SELECT uuid FROM " + ::getTableName()                + " " 
+   cSQL        +=    "WHERE " + cColumn + " = " + toSqlString( uValue ) + " " 
+   cSQL        +=    ::addEmpresaWhereUuid()
+   cSQL        +=    "LIMIT 1"
+
+   uuid        := ::getDatabase():getValue( cSQL )
+   if !empty( uuid )
+      RETURN ( uuid )
+   end if 
+
+RETURN ( uDefault )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereUuid( Uuid )
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE uuid = " + quoted( uuid )                         + " "    
+   cSQL        +=    ::addEmpresaWhereUuid()
+   cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereCodigo( cCodigo )
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE codigo = " + quoted( cCodigo )                    + " " 
+   cSQL        +=    ::addEmpresaWhereUuid()
+   cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereNombre( cNombre )
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
+   cSQL        +=    ::addEmpresaWhereUuid()
+   cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getColumnWhereId( id, cColumn ) 
+
+   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
+                        "WHERE id = " + quoted( id )                    + " " + ;
+                        "LIMIT 1"
+
+RETURN ( ::getDatabase():getValue( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getColumnWhereUuid( uuid, cColumn ) 
+
+   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
+                        "WHERE uuid = " + quoted( uuid )                + " " + ;
+                        "LIMIT 1"
+
+RETURN ( ::getDatabase():getValue( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getArrayColumns( cColumn ) 
+
+   local cSQL     := "SELECT " + cColumn + "  FROM " + ::getTableName()
+   cSQL           +=    ::addEmpresaWhereUuid()
+   
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getArrayColumnsWithBlank( cColumn ) 
+
+   local aColumns                
+   local cSQL     := "SELECT " + cColumn + "  FROM " + ::getTableName()
+   cSQL           +=    ::addEmpresaWhereUuid()
+   
+   aColumns       := ::getDatabase():selectFetchArrayOneColumn( cSQL )
+
+   ains( aColumns, 1, "", .t. )
+   
+RETURN ( aColumns )
+
+//---------------------------------------------------------------------------//

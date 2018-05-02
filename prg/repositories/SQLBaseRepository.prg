@@ -22,29 +22,6 @@ CLASS SQLBaseRepository
    METHOD getModelTableName()                   INLINE ( ::getController():getModelTableName()  )
    
    METHOD getAll()
-   
-   METHOD getColumnWhereId( id, cColumn )
-   METHOD getNombreWhereId( id )                INLINE ( ::getColumnWhereId( id, 'nombre' ) )
-
-   METHOD getColumnWhereUuid( uuid, cColumn ) 
-   METHOD getNombreWhereUuid( uuid )            INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) )
-   METHOD getCodigoWhereUuid( uuid )            INLINE ( ::getColumnWhereUuid( uuid, 'codigo' ) )
-
-   METHOD getUuidWhereColumn( uValue, cColumn, uDefault ) 
-   METHOD getUuidWhereNombre( uValue )          INLINE ( ::getUuidWhereColumn( uValue, 'nombre', '' ) )
-   METHOD getUuidWhereCodigo( uValue )          INLINE ( ::getUuidWhereColumn( uValue, 'codigo', '' ) )
-   
-   METHOD getColumnWhereNombre( nombre, cColumn ) 
-
-   METHOD getColumns( cColumn )
-   METHOD getNombres()                          INLINE ( ::getColumns( 'nombre' ) )
-
-   METHOD getColumnsWithBlank( cColumn )
-   METHOD getNombresWithBlank()                 INLINE ( ::getColumnsWithBlank( 'nombre' ) )
-
-   METHOD getWhereUuid( Uuid )
-   METHOD getWhereCodigo( cCodigo )
-   METHOD getWhereNombre( cNombre )
 
 END CLASS
 
@@ -67,57 +44,7 @@ RETURN ( hResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumnWhereId( id, cColumn ) 
-
-   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
-                        "WHERE id = " + quoted( id )                    + " " + ;
-                        "LIMIT 1"
-
-RETURN ( ::getDatabase():getValue( cSQL ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getColumnWhereUuid( uuid, cColumn ) 
-
-   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
-                        "WHERE uuid = " + quoted( uuid )                + " " + ;
-                        "LIMIT 1"
-
-RETURN ( ::getDatabase():getValue( cSQL ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getColumnWhereNombre( nombre, cColumn ) 
-
-   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()     + " " + ;
-                        "WHERE nombre = " + quoted( nombre )               + " " + ;
-                        "LIMIT 1"
-
-RETURN ( ::getDatabase():getValue( cSQL ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getColumns( cColumn ) 
-
-   local cSQL     := "SELECT " + cColumn + "  FROM " + ::getTableName()
-   
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getColumnsWithBlank( cColumn ) 
-
-   local aColumns                
-   local cSQL     := "SELECT " + cColumn + "  FROM " + ::getTableName()
-   
-   aColumns       := ::getDatabase():selectFetchArrayOneColumn( cSQL )
-
-   ains( aColumns, 1, "", .t. )
-   
-RETURN ( aColumns )
-
-//---------------------------------------------------------------------------//
-
+/*
 METHOD getUuidWhereColumn( uValue, cColumn, uDefault ) 
 
    local uuid
@@ -163,4 +90,4 @@ METHOD getWhereNombre( cNombre )
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
-
+*/

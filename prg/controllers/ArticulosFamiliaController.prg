@@ -9,21 +9,13 @@ CLASS ArticulosFamiliaController FROM SQLNavigatorController
 
    DATA oComentariosController
 
-   DATA oGetSelector
+   DATA oPrimeraPropiedadController
+
+   DATA oSegundaPropiedadController
 
    METHOD New()
 
    METHOD End()
-
-   METHOD ImagenesControllerLoadCurrentBuffer()
-
-   METHOD ImagenesControllerUpdateBuffer()
-
-   METHOD ImagenesControllerDeleteBuffer()
-
-   METHOD ImagenesControllerLoadedDuplicateCurrentBuffer()
-
-   METHOD ImagenesControllerLoadedDuplicateBuffer()
 
 END CLASS
 
@@ -53,24 +45,26 @@ METHOD New() CLASS ArticulosFamiliaController
 
    ::oRepository                 := ArticulosFamiliaRepository():New( self )
 
+   ::oPrimeraPropiedadController := PropiedadesController():New( self )
+
+   ::oSegundaPropiedadController := PropiedadesController():New( self )
+
    ::oImagenesController         := ImagenesController():New( self )
 
    ::oComentariosController      := ComentariosController():New( self )
-   /*::oArticulosTipoController:oGetSelector:setKey( "codigo" )
-   ::oArticulosTipoController:oGetSelector:setView( ::oDialogView )*/
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oImagenesController:oModel:loadBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oImagenesController:oModel:insertBuffer() } )
-   
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::ImagenesControllerLoadCurrentBuffer() } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::ImagenesControllerUpdateBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oImagenesController:loadPrincipalBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::oImagenesController:insertBuffer() } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::ImagenesControllerLoadedDuplicateCurrentBuffer() } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::ImagenesControllerLoadedDuplicateBuffer() } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oImagenesController:loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::oImagenesController:updateBuffer( ::getUuid() ) } )
+
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oImagenesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oImagenesController:loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::ImagenesControllerDeleteBuffer() } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::oImagenesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -95,88 +89,6 @@ METHOD End() CLASS ArticulosFamiliaController
    ::Super:End()
 
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ImagenesControllerLoadCurrentBuffer()
-
-   local idImagen     
-   local uuidFamilia    := hget( ::oModel:hBuffer, "uuid" )
-
-   if empty( uuidFamilia )
-      ::oImagenesController:oModel:insertBuffer()
-   end if 
-
-   idImagen                := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFamilia )
-   if empty( idImagen )
-      ::oImagenesController:oModel:loadBlankBuffer()
-      idImagen             := ::oImagenesController:oModel:insertBuffer()
-   end if 
-
-   ::oImagenesController:oModel:loadCurrentBuffer( idImagen )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ImagenesControllerUpdateBuffer()
-
-   local idImagen     
-   local uuidFamilia     := hget( ::oModel:hBuffer, "uuid" )
-
-   idImagen                := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFamilia )
-   if empty( idImagen )
-      ::oImagenesController:oModel:loadBlankBuffer()
-      idImagen             := ::oImagenesController:oModel:insertBuffer()
-      RETURN ( self )
-   end if 
-   ::oImagenesController:oModel:updateBuffer()
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ImagenesControllerDeleteBuffer()
-
-   local aUuidFamilia   := ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected )
-
-   if empty( aUuidFamilia )
-      RETURN ( self )
-   end if
-
-   ::oImagenesController:oModel:deleteWhereParentUuid( aUuidFamilia )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ImagenesControllerLoadedDuplicateCurrentBuffer()
-
-   local uuidFamilia
-   local idImagen     
-
-   uuidFamilia       := hget( ::oModel:hBuffer, "uuid" )
-
-   idImagen             := ::oImagenesController:oModel:getIdWhereParentUuid( uuidFamilia )
-   if empty( idImagen )
-      ::oImagenesController:oModel:insertBuffer()
-      RETURN ( self )
-   end if 
-
-   ::oImagenesController:oModel:loadDuplicateBuffer( idImagen )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ImagenesControllerLoadedDuplicateBuffer()
-
-   local uuidFamilia   := hget( ::oModel:hBuffer, "uuid" )
-
-   hset( ::oImagenesController:oModel:hBuffer, "parent_uuid", uuidFamilia )
-
-RETURN ( self )
-
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -239,13 +151,19 @@ RETURN ( self )
 
 CLASS ArticulosFamiliaView FROM SQLBaseView
 
+   DATA oGetCodigo
+
    DATA oGetTipo
+
+   DATA oColorRGB
   
    METHOD Activate()
 
    METHOD startActivate()
 
-   METHOD getImagenesController()   INLINE ( ::oController:oImagenesController )
+   METHOD changeColorRGB() 
+
+   METHOD getImagenesController()      INLINE ( ::oController:oImagenesController )
 
    METHOD getComentariosController()   INLINE ( ::oController:oComentariosController )
 
@@ -259,6 +177,9 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ArticulosFamiliaView
+
+   local oBmpImagen
+   local oGetImagen
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM" ;
@@ -284,7 +205,8 @@ METHOD Activate() CLASS ArticulosFamiliaView
                   "FAMILIA_RELACIONES",;
                   "FAMILIA_LENGUAJE_SQL"
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oGetCodigo ;
+      VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     ( replicate( 'N', 18 ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -297,26 +219,52 @@ METHOD Activate() CLASS ArticulosFamiliaView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "propiedad1" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
+   // Primera propiedad -------------------------------------------------------
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "propiedad2" ] ;
-      ID          130 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
+   ::oController:oPrimeraPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "primera_propiedad_uuid" ] ) )
+   ::oController:oPrimeraPropiedadController:oGetSelector:Activate( 120, 121, ::oFolder:aDialogs[ 1 ] )
+
+   // Segunda propiedad -------------------------------------------------------
+
+   ::oController:oSegundaPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "segunda_propiedad_uuid" ] ) )
+   ::oController:oSegundaPropiedadController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
 
    REDEFINE CHECKBOX   ::oController:oModel:hBuffer[ "incluir_tpv_tactil" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "color_boton" ] ;
+   // Color-------------------------------------------------------------------
+
+   REDEFINE GET   ::oColorRGB ;
+      VAR         ::oController:oModel:hBuffer[ "color_rgb" ] ;
       ID          150 ;
+      BITMAP      "gc_photographic_filters_16" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      BITMAP      "LUPA" ;
       OF          ::oFolder:aDialogs[1]
+
+   ::oColorRGB:setColor( ::oController:oModel:hBuffer[ "color_rgb" ], ::oController:oModel:hBuffer[ "color_rgb" ] )
+   ::oColorRGB:bHelp := {|| ::changeColorRGB() }
+
+   // Imagen-------------------------------------------------------------------
+
+   REDEFINE GET   oGetImagen ;
+      VAR         ::getImagenesController():oModel:hBuffer[ "imagen" ] ;
+      ID          160 ;
+      BITMAP      "Folder" ;
+      ON HELP     ( GetBmp( oGetImagen, oBmpImagen ) ) ;
+      ON CHANGE   ( ChgBmp( oGetImagen, oBmpImagen ) ) ;
+      WHEN        ( ::getImagenesController():isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   REDEFINE IMAGE oBmpImagen ;
+      ID          1010 ;
+      FILE        cFileBmpName( ::getImagenesController():oModel:hBuffer[ "imagen" ] ) ;
+      OF          ::oFolder:aDialogs[1]
+
+      oBmpImagen:SetColor( , getsyscolor( 15 ) )
+      oBmpImagen:bLClicked   := {|| ShowImage( oBmpImagen ) }
+      oBmpImagen:bRClicked   := {|| ShowImage( oBmpImagen ) }
 
    REDEFINE GET   ::oController:oImagenesController:oModel:hBuffer[ "imagen" ] ;
       ID          1010 ;
@@ -347,7 +295,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   ::oController:oArticulosFamiliaController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
+//   ::oController:oArticulosFamiliaController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
 
    // Botones Familia -------------------------------------------------------
 
@@ -373,13 +321,32 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    ::oBitmap:end()
 
+   ::oBmpImagen:End()
+
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeColorRGB() 
+
+   local nColorRGB   := ChooseColor()
+
+   if !empty( nColorRGB )
+      ::oColorRGB:setColor( nColorRGB, nColorRGB )
+      ::oColorRGB:cText( nColorRGB )
+   end if 
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD startActivate()
 
-   ::oController:oArticulosFamiliaController:oGetSelector:Start()
+   ::oController:oPrimeraPropiedadController:oGetSelector:Start()
+
+   ::oController:oSegundaPropiedadController:oGetSelector:Start()
+
+   ::oGetCodigo:setFocus()
 
 RETURN ( self )
 
@@ -418,9 +385,11 @@ CLASS SQLArticulosFamiliaModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   /*METHOD getArticulosTipoUuidAttribute()
+   METHOD getPrimeraPropiedadUuidAttribute( uuid ) ; 
+                                 INLINE ( if( empty( uuid ), space( 18 ), SQLPropiedadesModel():getCodigoWhereUuid( uuid ) ) )
 
-   METHOD setArticulosTipoUuidAttribute()*/
+   METHOD setPrimeraPropiedadUuidAttribute( codigo ) ;
+                                 INLINE ( if( empty( codigo ), "", SQLPropiedadesModel():getUuidWhereCodigo( codigo ) ) )
 
 END CLASS
 
@@ -434,7 +403,7 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
    hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR( 40 )"                           ,;
                                                          "default"   => {|| space( 40 ) } }                       )
 
    ::getEmpresaColumns()
@@ -445,17 +414,17 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
    hset( ::hColumns, "nombre",                        {  "create"    => "VARCHAR( 200 )"                          ,;
                                                          "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "propiedad1",                    {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                         "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "primera_propiedad_uuid",        {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                         "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "propiedad2",                    {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                         "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "segunda_propiedad_uuid",        {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                         "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "incluir_tpv_tactil",            {  "create"    => "BIT"                                     ,;
                                                          "default"   => {|| .f. } }                               )
 
-   hset( ::hColumns, "color_boton",                   {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                         "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "color_rgb",                     {  "create"    => "INT UNSIGNED"                            ,;
+                                                         "default"   => {|| rgb( 255, 255, 255 ) } }              )
 
    hset( ::hColumns, "posicion",                      {  "create"    => "INTEGER( 5 )"                            ,;
                                                          "default"   => {|| space( 5 ) } }                        )
@@ -466,30 +435,9 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
    hset( ::hColumns, "mostrar_ventana_comentarios",   {  "create"    => "BIT"                                     ,;
                                                          "default"   => {|| .f. } }                               )
 
-
    ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
-
-//---------------------------------------------------------------------------//
-
-/*METHOD getArticulosTipoUuidAttribute( uValue ) CLASS SQLArticulosModel
-
-   if empty( uValue )
-      RETURN ( space( 3 ) )
-   end if 
-
-RETURN ( ArticulosTipoRepository():getCodigoWhereUuid( uValue ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD setArticulosTipoUuidAttribute( uValue ) CLASS SQLArticulosModel
-
-   if empty( uValue )
-      RETURN ( uValue )
-   end if 
-
-RETURN ( ArticulosTipoRepository():getUuidWhereCodigo( uValue ) )*/
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -499,7 +447,7 @@ RETURN ( ArticulosTipoRepository():getUuidWhereCodigo( uValue ) )*/
 
 CLASS ArticulosFamiliaRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLArticulosModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLArticulosFamiliaModel():getTableName() ) 
 
 END CLASS
 

@@ -21,7 +21,7 @@ METHOD New( oController ) CLASS PropiedadesLineasController
 
    ::cTitle                      := "Propiedades lineas"
 
-   ::cName                       := "propiedades_lineas"
+   ::cName                       := "articulos_propiedades_lineas"
 
    ::oModel                      := SQLPropiedadesLineasModel():New( self )
 
@@ -264,7 +264,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLPropiedadesLineasModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "Propiedades_lineas"
+   DATA cTableName               INIT "articulos_propiedades_lineas"
 
    METHOD getColumns()
 
@@ -296,7 +296,7 @@ METHOD getColumns() CLASS SQLPropiedadesLineasModel
                                           "default"   => {|| space( 4 ) } }                        )
 
    hset( ::hColumns, "color_rgb",      {  "create"    => "INT UNSIGNED"                            ,;
-                                          "default"   => {|| 0 } }                                 )
+                                          "default"   => {|| rgb( 255, 255, 255 ) } }              )
 
 RETURN ( ::hColumns )
 

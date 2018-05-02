@@ -273,16 +273,16 @@ CLASS SQLArticulosModel FROM SQLBaseModel
    METHOD getColumns()
 
    METHOD getArticulosTipoUuidAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 3 ), ArticulosTipoRepository():getCodigoWhereUuid( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosTipoModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setArticulosTipoUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), space( 3 ), ArticulosTipoRepository():getUuidWhereCodigo( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosTipoModel():getUuidWhereCodigo( uValue ) ) )
 
    METHOD getArticulosCategoriaUuidAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 3 ), ArticulosCategoriasRepository():getCodigoWhereUuid( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosCategoriasModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setArticulosCategoriaUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), space( 3 ), ArticulosCategoriasRepository():getUuidWhereCodigo( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosCategoriasModel():getUuidWhereCodigo( uValue ) ) )
 
 END CLASS
 

@@ -2675,11 +2675,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
-<<<<<<< HEAD
-   oGrupo:nBigItems     := 26
-=======
    oGrupo:nBigItems     := 3
->>>>>>> a4c5729fe7a4ac6e7313929c419ad5ae0f5d3986
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2936,8 +2932,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_object_cube_32"
    oItem:lShow          := .f.
 
-<<<<<<< HEAD
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Familia de articulos'
    oItem:cMessage       := 'Familia de articulos'
@@ -2947,7 +2942,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_currency_euro_32"
    oItem:lShow          := .f.
 
-=======
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Propiedades'
@@ -2958,8 +2952,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_coathanger_32"
    oItem:lShow          := .f.
 
-
->>>>>>> a4c5729fe7a4ac6e7313929c419ad5ae0f5d3986
 RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
