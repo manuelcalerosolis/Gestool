@@ -72,7 +72,7 @@ CLASS SQLBaseModel
 
    // Columns-------------------------------------------------------------------
 
-   METHOD getColumns()                                VIRTUAL
+   METHOD getColumns()                                INLINE ( ::hColumns )
    METHOD getTableColumns() 
 
    METHOD getEmpresaColumns()
@@ -508,7 +508,7 @@ METHOD getCreateTableSentence()
 
    end if
 
-   msgInfo( cSQLCreateTable, "cSQLCreateTable " + ::cTableName, "Create sentence" ) 
+   //msgInfo( cSQLCreateTable, "cSQLCreateTable " + ::cTableName, "Create sentence" ) 
 
 RETURN ( cSQLCreateTable )
 
