@@ -2674,7 +2674,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 25
+   oGrupo:nBigItems     := 26
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2912,6 +2912,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "articulos"
    oItem:cBmp           := "gc_object_cube_16"
    oItem:cBmpBig        := "gc_object_cube_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Familia de articulos'
+   oItem:cMessage       := 'Familia de articulos'
+   oItem:bAction        := {|| ArticulosFamiliaController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_currency_euro_16"
+   oItem:cBmpBig        := "gc_currency_euro_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

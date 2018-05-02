@@ -357,6 +357,7 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+ArticulosFamiliaController.prg 											\
 UnidadesMedicionController.prg 											\
 UbicacionesController.prg 													\
 DivisasMonetariasController.prg 											\
@@ -1004,6 +1005,7 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+ArticulosFamiliaController.obj       									\
 UnidadesMedicionController.obj       									\
 UbicacionesController.obj       											\
 DivisasMonetariasController.obj       									\
@@ -1638,6 +1640,7 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\ArticulosFamiliaController.obj    								+
 $(OBJ)\UnidadesMedicionController.obj    								+
 $(OBJ)\UbicacionesController.obj    									+
 $(OBJ)\DivisasMonetariasController.obj    							+
