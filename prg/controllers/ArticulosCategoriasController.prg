@@ -17,9 +17,9 @@ METHOD New() CLASS ArticulosCategoriasController
 
    ::Super:New()
 
-   ::cTitle                      := "Articulos temporadas"
+   ::cTitle                      := "Articulos categorias"
 
-   ::cName                       := "articulos_temporadas"
+   ::cName                       := "articulos_categorias"
 
    ::hImage                      := {  "16" => "gc_photographic_filters_16",;
                                        "32" => "gc_photographic_filters_32",;
@@ -37,6 +37,8 @@ METHOD New() CLASS ArticulosCategoriasController
 
    ::oRepository                 := ArticulosCategoriasRepository():New( self )
 
+   ::oGetSelector                := GetSelector():New( self )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -51,6 +53,8 @@ METHOD End() CLASS ArticulosCategoriasController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 
@@ -181,6 +185,7 @@ METHOD Activate() CLASS ArticulosCategoriasView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 3 ) ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -270,8 +275,6 @@ METHOD getColumns() CLASS SQLArticulosCategoriasModel
                                     "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
-   ::getTimeStampColumns()
-
    hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 3 )"                            ,;
                                     "default"   => {|| space( 3 ) } }                        )
 
@@ -280,6 +283,8 @@ METHOD getColumns() CLASS SQLArticulosCategoriasModel
 
    hset( ::hColumns, "imagen",   {  "create"    => "VARCHAR( 40 )"                           ,;
                                     "default"   => {|| space( 40 ) } }                       )
+   
+   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
@@ -291,7 +296,7 @@ RETURN ( ::hColumns )
 
 CLASS ArticulosCategoriasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLComentariosModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLArticulosCategoriasModel():getTableName() ) 
 
 END CLASS
 

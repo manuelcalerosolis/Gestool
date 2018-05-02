@@ -1,295 +1,320 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
-#include "MesDbf.ch"
 
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesLineasController FROM SQLBaseController
+CLASS PropiedadesLineasController FROM SQLBrowseController
 
-   METHOD   New()
+   METHOD New()
 
-   METHOD   buildSQLModel( this )         INLINE ( PropiedadesLineasModel():New( this ) )
-   
-   METHOD   buildSQLView( this )				INLINE ( PropiedadesLineas():New( this ) )
-  
-   METHOD   getFieldFromBrowse()          INLINE ( ::getRowSet():fieldGet( "id" ) )
- 
-   METHOD   validCodigo( oGetCodigo )
+   METHOD End()
 
-   METHOD   validNombre( oGetNombre )
-
-   METHOD   validOrden( oGetOrden )
-
-   METHOD   initAppendMode()
-
-   METHOD   UpDet()
-
-   METHOD   DownDet()
-
-   METHOD   changeOrdenOnUpdate()
-
-   METHOD   changeOrdenOnInsert()
-
-   METHOD   endEditModePreUpdate()         INLINE ( ::changeOrdenOnUpdate() )
-
-   METHOD   endAppendModePreInsert()       INLINE ( ::changeOrdenOnInsert() )
-
-   METHOD   endDeleteModePosDelete()       INLINE ( ::oModel:reOrder() )
-
-   METHOD   addColumnsForBrowse( oCombobox, k, h )
+   METHOD isNotColorProperty()   INLINE ( !::oSenderController:isColorProperty() )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( oController ) CLASS PropiedadesLineasController
 
-   ::setTitle( "Propiedades de lineas" )
+   ::Super:New( oController )
 
-   ::Super:New()
+   ::cTitle                      := "Propiedades lineas"
+
+   ::cName                       := "propiedades_lineas"
+
+   ::oModel                      := SQLPropiedadesLineasModel():New( self )
+
+   ::oBrowseView                 := PropiedadesLineasBrowseView():New( self )
+
+   ::oDialogView                 := PropiedadesLineasView():New( self )
+
+   ::oValidator                  := PropiedadesLineasValidator():New( self, ::oDialogView )
+
+   ::oRepository                 := PropiedadesLineasRepository():New( self )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validCodigo( oGetCodigo )
+METHOD End() CLASS PropiedadesLineasController
 
-   local idCodigo
-   local cErrorText  := ""
+   ::oModel:End()
 
-   oGetCodigo:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+   ::oBrowseView:End()
 
-   if empty( ::oModel:hBuffer[ "codigo" ] )
-      cErrorText     += "El código de la propiedad no puede estar vacío." 
-   end if
+   ::oDialogView:End()
 
-   idCodigo          := ::oModel:ChecksForValid( "codigo" )
-   
-   if ( !empty( idCodigo ) )
+   ::oValidator:End()
 
-      if ( idCodigo != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-         cErrorText  += "El código de la propiedad ya existe." 
-      end if
-   
-      if ( idCodigo == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
-         cErrorText  += "El código de la propiedad ya existe."
-      end if
-   
-   end if
+   ::oRepository:End()
 
-   if !empty( cErrorText )
-      msgStop( cErrorText )
-      oGetCodigo:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
-      oGetCodigo:setFocus()
-      RETURN ( .f. )
-   end if
+   ::Super:End()
 
-RETURN ( .t. )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD validNombre( oGetNombre )
-
-   local idNombre
-   local cErrorText  := ""
-
-   oGetNombre:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-
-   if empty( ::oModel:hBuffer[ "nombre" ] )
-      cErrorText     += "El nombre de la propiedad no puede estar vacío." 
-   end if
-
-   idNombre          := ::oModel:ChecksForValid( "nombre" )
-   
-   if ( !empty( idNombre ) )
-
-      if ( idNombre != ::oModel:hBuffer[ "id" ] .and. !::isDuplicateMode() )
-         cErrorText  += "El nombre de la propiedad ya existe." 
-      end if
-   
-      if ( idNombre == ::oModel:hBuffer[ "id" ] .and. ::isDuplicateMode() )
-         cErrorText  += "El nombre de la propiedad ya existe."
-      end if
-   
-   end if
-
-   if !empty( cErrorText )
-      msgStop( cErrorText )
-      oGetNombre:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
-      oGetNombre:setFocus()
-      RETURN ( .f. )
-   end if
-
-RETURN ( .t. )
-
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD validOrden( oGetOrden )
+CLASS PropiedadesLineasBrowseView FROM SQLBrowseView
 
-   local cErrorText  := ""
+   METHOD addColumns()                       
 
-   oGetOrden:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+ENDCLASS
 
-   if ( ::oModel:hBuffer[ "orden" ] < 1 )
+//----------------------------------------------------------------------------//
 
-      cErrorText     += "El orden de la propiedad debe ser mayor que 0"
+METHOD addColumns() CLASS PropiedadesLineasBrowseView
 
-   else
-      if ( ::isDuplicateMode() .or. ::isAppendMode())
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'id'
+      :cHeader             := 'Id'
+      :nWidth              := 60
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
 
-         if ( ::oModel:hBuffer[ "orden" ] > ::getRowSet():reccount() +1 )
-             
-            cErrorText     += "El orden de la propiedad debe ser menor que " + alltrim( str( ::getRowSet():reccount() +2 ) )
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Uuid'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
 
-         endif
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
+      :nWidth              := 50
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
 
-      else
-
-         if ( ::oModel:hBuffer[ "orden" ] > ::getRowSet():reccount() )
-
-            cErrorText     += "El orden de la propiedad debe ser menor que " + alltrim( str( ::getRowSet():reccount() + 1 ) )
-             
-         endif
-
-      endif
-      
-   endif
-   
-   if empty( ::oModel:hBuffer[ "orden" ] )
-      cErrorText     += "El orden de la propiedad no puede estar vacío." 
-   end if
-
-   if !empty( cErrorText )
-      msgStop( cErrorText )
-      oGetOrden:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
-      oGetOrden:setFocus()
-      RETURN ( .f. )
-   end if
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD   UpDet()
-
-   local newPosition
-   local Operation := "orden + 1"
-
-   newPosition := ::getRowSet():fieldget( "orden" ) - 1
-   if (newPosition < 1 )
-       RETURN ( self )
-   endif
-
-   ::oModel:setIdToFind( ::getIdfromRowset() )
-
-   ::oModel:updateOrden( Operation, newPosition )
-
-   if !empty( ::oView:getoBrowse() )
-      ::oView:getoBrowse():refreshCurrent()
-      ::oView:getoBrowse():setFocus()
-   end if
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD   DownDet()
-
-   local newPosition
-   local Operation := "orden - 1"
-
-   newPosition := ::getRowSet():fieldget( "orden" ) + 1
-   if (newPosition > ::getRowSet():reccount() )
-    RETURN ( self )
-   endif
-
-   ::oModel:setIdToFind( ::getIdfromRowset() )
-
-   ::oModel:updateOrden( Operation, newPosition )
-
-   if !empty( ::oView:getoBrowse() )
-      ::oView:getoBrowse():refreshCurrent()
-      ::oView:getoBrowse():setFocus()
-   end if
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD initAppendMode()
-
-   hset( ::oModel:hBuffer, "orden", ::getRowSet():reccount() + 1 )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD   changeOrdenOnInsert()
-
-   local newPosition := ::oModel:hBuffer[ "orden" ]
-   local Operation
-   local Conditions
-
-   if ( newPosition > ::getRowSet():reccount() .or. newPosition < 1 )
-       RETURN( self )
-   endif
-
-   Operation   := "orden + 1"
-   Conditions  := " >= " + toSQLString( newPosition )
-
-   ::oModel:largeUpdateOrden( Operation, Conditions )   
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD changeOrdenOnUpdate()
-
-   local Operation
-   local Conditions
-   local oldPosition := ::getRowSet():fieldget( "orden" )
-   local newPosition := ::oModel:hBuffer[ "orden" ]
-
-   if ( newPosition > ::getRowSet():reccount() .or. newPosition < 1 )
-       RETURN( self )
-   endif
-
-   if ( oldPosition == newPosition )
-      RETURN( self )   
-   end if 
-   
-   if ( oldPosition > newPosition )
-
-      Operation   := "orden + 1"
-      Conditions  := "BETWEEN " + toSQLString( newPosition ) + " AND " + toSQLString( oldPosition )
-
-   else 
-
-      Operation   := "orden - 1"
-      Conditions  := "BETWEEN " + toSQLString( oldPosition ) + " AND " + toSQLString( newPosition ) 
-
-   end if
-
-   ::oModel:largeUpdateOrden( Operation, Conditions )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD addColumnsForBrowse( oCombobox )
-
-   with object ( ::oView:getoBrowse():AddCol() )
-      :Adjust()
-      :cHeader             := "Color"
-      :bFooter             := {|| "" }
-      :bStrData            := {|| "" }
-      :nWidth              := 75
-      :bClrStd             := {|| { ::getRowSet():fieldget("color"), ::getRowSet():fieldget("color") } }
-      :bClrSel             := {|| { ::getRowSet():fieldget("color"), ::getRowSet():fieldget("color") } }
-      :bClrSelFocus        := {|| { ::getRowSet():fieldget("color"), ::getRowSet():fieldget("color") } }
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
 RETURN ( self )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS PropiedadesLineasView FROM SQLBaseView
+
+   DATA oColorRGB
+  
+   METHOD Activate()
+
+   METHOD startActivate()
+
+   METHOD changeColorRGB() 
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS PropiedadesLineasView
+
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "PROPIEDADES_LINEAS" ;
+      TITLE       ::LblTitle() + "lineas de propiedades"
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    "gc_coathanger_48" ;
+      TRANSPARENT ;
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      PROMPT      "Lineas de propiedades" ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+      ID          100 ;
+      PICTURE     ( replicate( 'N', 4 ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+      ID          110 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "orden" ] ;
+      ID          120 ;
+      SPINNER     ;
+      MIN         0 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_barras" ] ;
+      ID          130 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oColorRGB ;
+      VAR         ::oController:oModel:hBuffer[ "color_rgb" ] ;
+      ID          140 ;
+      IDSAY       141 ;
+      BITMAP      "gc_photographic_filters_16" ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog 
+
+   ::oColorRGB:setColor( ::oController:oModel:hBuffer[ "color_rgb" ], ::oController:oModel:hBuffer[ "color_rgb" ] )
+   ::oColorRGB:bHelp := {|| ::changeColorRGB() }
+
+   // Botones PropiedadesLineas -------------------------------------------------------
+
+   REDEFINE BUTTON ;
+      ID          IDOK ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+
+   REDEFINE BUTTON ;
+      ID          IDCANCEL ;
+      OF          ::oDialog ;
+      CANCEL ;
+      ACTION      ( ::oDialog:end() )
+
+   if ::oController:isNotZoomMode() 
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+   end if
+
+   ::oDialog:bStart  := {|| ::startActivate() }
+
+   ACTIVATE DIALOG ::oDialog CENTER
+
+   ::oBitmap:end()
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeColorRGB() CLASS PropiedadesLineasView
+
+   local nColorRGB   := ChooseColor()
+
+   if !empty( nColorRGB )
+      ::oColorRGB:setColor( nColorRGB, nColorRGB )
+      ::oColorRGB:cText( nColorRGB )
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS PropiedadesLineasView
+
+   if ::oController:isNotColorProperty()
+      ::oColorRGB:Hide()
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS PropiedadesLineasValidator FROM SQLBaseValidator
+
+   METHOD getValidators()
+ 
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getValidators() CLASS PropiedadesLineasValidator
+
+   ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
+                                          "unique"             => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
+                                          "unique"             => "El código introducido ya existe" } }
+RETURN ( ::hValidators )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLPropiedadesLineasModel FROM SQLBaseModel
+
+   DATA cTableName               INIT "Propiedades_lineas"
+
+   METHOD getColumns()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getColumns() CLASS SQLPropiedadesLineasModel
+   
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                          "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                          "default"   => {|| win_uuidcreatestring() } }            )
+
+   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 )"                           ,;
+                                          "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 4 )"                            ,;
+                                          "default"   => {|| space( 4 ) } }                        )
+
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
+                                          "default"   => {|| space( 200 ) } }                      )
+
+   hset( ::hColumns, "orden",          {  "create"    => "SMALLINT UNSIGNED"                       ,;
+                                          "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "codigo_barras",  {  "create"    => "VARCHAR( 4 )"                            ,;
+                                          "default"   => {|| space( 4 ) } }                        )
+
+   hset( ::hColumns, "color_rgb",      {  "create"    => "INT UNSIGNED"                            ,;
+                                          "default"   => {|| 0 } }                                 )
+
+RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS PropiedadesLineasRepository FROM SQLBaseRepository
+
+   METHOD getTableName()                  INLINE ( SQLPropiedadesLineasModel():getTableName() ) 
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 

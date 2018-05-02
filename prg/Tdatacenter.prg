@@ -1804,6 +1804,7 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Agenda.Cdx"
    oDataTable:cDescription := "Agenda"
    oDataTable:bCreateFile  := {| cPath | TAgenda():BuildFiles( cPath ) }
+   oDataTable:bSyncFile    := {|| SincronizaListin() }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable():New( "AgendaUsr", cPathDatos() )
@@ -1915,6 +1916,14 @@ METHOD BuildData()
    oDataTable:bSyncFile    := {|| SynCentroCoste() }
    oDataTable:cDescription := "Centro de coste"
    oDataTable:bCreateFile  := {| cPath | TCentroCoste():BuildFiles( cPath ) }
+   ::AddDataTable( oDataTable )
+
+   oDataTable              := TDataTable():New( "Lenguaje", cPathDatos() )
+   oDataTable:cDataFile    := cPatDat( .t. ) + "Lenguaje.Dbf"
+   oDataTable:cIndexFile   := cPatDat( .t. ) + "Lenguaje.Cdx"
+   oDataTable:cDescription := "Lenguajes"
+   oDataTable:bCreateFile  := {| cPath | TLenguaje():BuildFiles( cPath ) }
+   oDataTable:bSyncFile    := {|| TLenguaje():Create():Syncronize() }
    ::AddDataTable( oDataTable )
 
 RETURN ( Self )

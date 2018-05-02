@@ -17,19 +17,22 @@ CLASS TLenguaje FROM TMant
    METHOD Resource( nMode )
       METHOD lValidResource()
 
+   METHOD Syncronize()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cDriver )
 
-   DEFAULT cPath        := ::cPath
+   DEFAULT cPath        := cPatDat()
    DEFAULT cDriver      := cDriver()
 
    DEFINE DATABASE ::oDbf FILE "LENGUAJE.DBF" CLASS "LENGUAJE" PATH ( cPath ) VIA ( cDriver ) COMMENT "Lenguajes"
 
       FIELD NAME "cCodLen"    TYPE "C" LEN   4  DEC 0  COMMENT "Código"  DEFAULT Space( 4 )     COLSIZE 80  OF ::oDbf
       FIELD NAME "cNomLen"    TYPE "C" LEN  50  DEC 0  COMMENT "Nombre"  DEFAULT Space( 200 )   COLSIZE 200 OF ::oDbf
+      FIELD NAME "uuid"       TYPE "C" LEN  40  DEC 0  COMMENT "Uuid"    HIDE                               OF ::oDbf
 
       INDEX TO "LENGUAJE.CDX" TAG "CCODLEN" ON "CCODLEN" COMMENT "Código" NODELETED OF ::oDbf
       INDEX TO "LENGUAJE.CDX" TAG "CNOMLEN" ON "CNOMLEN" COMMENT "Nombre" NODELETED OF ::oDbf
@@ -104,3 +107,24 @@ RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD Syncronize()
+
+   if ::OpenService()
+
+      while !::oDbf:Eof()
+
+         if empty( ::oDbf:uuid )
+            ::oDbf:FieldPutByName( "uuid", win_uuidcreatestring() )
+         end if
+
+         ::oDbf:Skip()
+
+      end while
+
+      ::CloseService()
+
+   end if
+
+RETURN .t.
+
+//---------------------------------------------------------------------------//

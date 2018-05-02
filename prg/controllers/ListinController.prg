@@ -56,8 +56,6 @@ METHOD End() CLASS ListinController
 
    ::oDireccionesController:End()
 
-   ::oRepository:End()
-
    ::Super:End()
 
 RETURN ( Self )

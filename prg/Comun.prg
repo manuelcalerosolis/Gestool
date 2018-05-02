@@ -1105,6 +1105,7 @@ FUNCTION CreateAcceso( oWnd )
    local oItemHerramientas
    local oItemAyudas
    local oItemReporting
+   local oItemSQL
 
    oAcceso              := TAcceso():New()
 
@@ -2674,7 +2675,11 @@ FUNCTION CreateAcceso( oWnd )
    oItemAyudas:lShow    := .t.
 
    oGrupo               := TGrupoAcceso()
+<<<<<<< HEAD
    oGrupo:nBigItems     := 26
+=======
+   oGrupo:nBigItems     := 3
+>>>>>>> a4c5729fe7a4ac6e7313929c419ad5ae0f5d3986
    oGrupo:cPrompt       := 'Ayudas'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2709,7 +2714,21 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   // SQL----------------------------------------------------------------------
+
+   oItemSQL             := oAcceso:Add()
+   oItemSQL:cPrompt     := 'SQL'
+   oItemSQL:cBmp        := "gc_folder_open_16"
+   oItemSQL:cBmpBig     := "gc_folder_open_32"
+   oItemSQL:lShow       := .t.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 25
+   oGrupo:cPrompt       := 'SQL'
+   oGrupo:cLittleBitmap := "gc_lifebelt_16"
+   oGrupo:cBigBitmap    := "gc_lifebelt_32"
+
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Campos extra'
    oItem:cMessage       := 'Solicitar campos extra'
@@ -2719,7 +2738,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Campos extra valores'
    oItem:cMessage       := 'Solicitar campos extra'
@@ -2729,7 +2748,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Agentes'
    oItem:cMessage       := 'Solicitar agente'
@@ -2739,7 +2758,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_businessman2_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Fabricantes'
    oItem:cMessage       := 'Solicitar fabricante'
@@ -2749,7 +2768,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_wrench_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Comentarios'
    oItem:cMessage       := 'Solicitar comentario'
@@ -2758,7 +2777,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmp           := "gc_message_16"
    oItem:cBmpBig        := "gc_message_32"
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Clientes'
    oItem:cMessage       := 'Solicitar cliente'
@@ -2768,7 +2787,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_user_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Proveedores'
    oItem:cMessage       := 'Solicitar proveedor'
@@ -2778,7 +2797,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_businessman_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Empresa'
    oItem:cMessage       := 'Empresas'
@@ -2788,7 +2807,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_factory_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Tipos de artículo'
    oItem:cMessage       := 'Tipos de artículo'
@@ -2798,7 +2817,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_objects_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Temporadas de artículo'
    oItem:cMessage       := 'Temporadas de artículo'
@@ -2808,7 +2827,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_cloud_sun_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Categorias de artículo'
    oItem:cMessage       := 'Categorias de artículo'
@@ -2818,7 +2837,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_photographic_filters_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Almacenes'
    oItem:cMessage       := 'Almacenes'
@@ -2828,7 +2847,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_warehouse_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Grupos de clientes'
    oItem:cMessage       := 'Grupos de clientes'
@@ -2838,7 +2857,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_users3_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Rutas'
    oItem:cMessage       := 'Rutas'
@@ -2848,7 +2867,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_signpost3_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Bancos'
    oItem:cMessage       := 'Bancos'
@@ -2858,7 +2877,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_central_bank_euro_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cuentas de remesa'
    oItem:cMessage       := 'Cuentas de remesa'
@@ -2868,7 +2887,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_notebook2_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Tipos de IVA'
    oItem:cMessage       := 'Tipos de IVA'
@@ -2878,7 +2897,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_moneybag_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Impuestos especiales'
    oItem:cMessage       := 'Impuestos especiales'
@@ -2888,7 +2907,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_moneybag_euro_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Divisas monetarias'
    oItem:cMessage       := 'Divisas monetarias'
@@ -2898,7 +2917,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_currency_euro_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemAyudas:Add()
+   oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Unidades de medida'
    oItem:cMessage       := 'Unidades de medida'
@@ -2906,6 +2925,9 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_tape_measure2_16"
    oItem:cBmpBig        := "gc_tape_measure2_32"
+
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Artículos'
    oItem:cMessage       := 'Artículos'
    oItem:bAction        := {|| ArticulosController():New():ActivateNavigatorView() }
@@ -2914,6 +2936,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_object_cube_32"
    oItem:lShow          := .f.
 
+<<<<<<< HEAD
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Familia de articulos'
@@ -2924,6 +2947,19 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_currency_euro_32"
    oItem:lShow          := .f.
 
+=======
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Propiedades'
+   oItem:cMessage       := 'Propiedades'
+   oItem:bAction        := {|| PropiedadesController():New():ActivateNavigatorView() }
+   oItem:cId            := "propiedades"
+   oItem:cBmp           := "gc_coathanger_16"
+   oItem:cBmpBig        := "gc_coathanger_32"
+   oItem:lShow          := .f.
+
+
+>>>>>>> a4c5729fe7a4ac6e7313929c419ad5ae0f5d3986
 RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//

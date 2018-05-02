@@ -87,6 +87,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cDesfax"      TYPE "C" LEN  20  DEC 0 COMMENT "Nombre fax"                                COLSIZE 100 OF ::oDbf
       FIELD NAME "mObserva"     TYPE "M" LEN  10  DEC 0 COMMENT "Observaciones"   DEFAULT "Observaciones"   HIDE        OF ::oDbf
       FIELD NAME "lSelect"      TYPE "L" LEN   1  DEC 0 COMMENT ""                                          HIDE        OF ::oDbf
+      FIELD NAME "uuid"         TYPE "C" LEN  40  DEC 0 COMMENT "uuid"                                      HIDE        OF ::oDbf
 
       INDEX TO "Agenda.Cdx" TAG "CAPELLIDOS" ON "UPPER( CAPELLIDOS )" NODELETED COMMENT "Nombre"         OF ::oDbf
       INDEX TO "Agenda.Cdx" TAG "CNIF"       ON "CNIF"                NODELETED COMMENT "Nif"            OF ::oDbf

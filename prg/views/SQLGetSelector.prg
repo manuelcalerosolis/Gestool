@@ -12,16 +12,18 @@ CLASS GetSelector
    DATA oGet
    DATA cGet
 
-   DATA cKey                                    INIT "uuid"
+   DATA cKey                                    INIT  "codigo"
 
    DATA oView
 
    METHOD New( oSender )
+   METHOD End()                                 VIRTUAL 
 
    METHOD setKey( cKey )                        INLINE ( ::cKey := cKey )
    METHOD getKey()                              INLINE ( ::cKey )
 
    METHOD setView( oView )                      INLINE ( ::oView := oView )
+   METHOD getView()                             INLINE ( iif( hb_isnil( ::oView ), ::oController:oDialogView, ::oView ) )
 
    METHOD Activate( idGet, idText, oDlg )
    METHOD Bind( bValue )                        INLINE ( ::bValue := bValue )
@@ -39,9 +41,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSender ) CLASS GetSelector
+METHOD New( oController ) CLASS GetSelector
 
-   ::oController  := oSender
+   ::oController  := oController
 
 RETURN ( Self )
 
@@ -129,14 +131,16 @@ METHOD showMessage( lSilenceMode )
       RETURN ( self )
    end if 
 
-   if empty( ::oView ) .or. empty( ::oView:oMessage )
+   if empty( ::getView() ) .or. empty( ::getView():oMessage )
       msgStop( ::oController:cTitle + " no encontrado" )
    else
-      ::oView:showMessage( ::oController:cTitle + " no encontrado" )
+      ::getView():showMessage( ::oController:cTitle + " no encontrado" )
    end if 
 
 RETURN ( self )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
