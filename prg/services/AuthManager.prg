@@ -100,7 +100,7 @@ RETURN ( __permission_full__ )
 
 METHOD guardWhereUuid( uuid )
 
-   local hUser    := UsuariosRepository():getWhereUuid( Uuid )
+   local hUser    := SQLUsuariosModel():getWhereUuid( Uuid )
 
    if hb_ishash( hUser )
       ::guard( hUser )
@@ -112,7 +112,7 @@ RETURN ( self )
 
 METHOD guardWhereCodigo( cNombre )
 
-   local hUser    := UsuariosRepository():getWhereNombre( cNombre )
+   local hUser    := SQLUsuariosModel():getWhereNombre( cNombre )
 
    if hb_ishash( hUser )
       ::guard( hUser )

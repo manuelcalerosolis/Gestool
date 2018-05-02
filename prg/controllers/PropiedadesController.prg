@@ -11,6 +11,8 @@ CLASS PropiedadesController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD isColorProperty()         INLINE ( iif( !empty(::oModel) .and. !empty(::oModel:hBuffer), ::oModel:hBuffer[ "color" ], .f. ) ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -21,7 +23,7 @@ METHOD New() CLASS PropiedadesController
 
    ::cTitle                         := "Propiedades"
 
-   ::cName                          := "propiedades"
+   ::cName                          := "articulos_propiedades"
 
    ::hImage                         := {  "16" => "gc_coathanger_16",;
                                           "32" => "gc_coathanger_32",;
@@ -40,6 +42,8 @@ METHOD New() CLASS PropiedadesController
    ::oRepository                    := PropiedadesRepository():New( self )
 
    ::oPropiedadesLineasController   := PropiedadesLineasController():New( self )
+
+   ::oGetSelector                   := GetSelector():New( self )   
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -271,7 +275,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLPropiedadesModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "Propiedades"
+   DATA cTableName               INIT "articulos_propiedades"
 
    METHOD getColumns()
 

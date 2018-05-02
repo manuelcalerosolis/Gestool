@@ -2934,6 +2934,16 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Familia de articulos'
+   oItem:cMessage       := 'Familia de articulos'
+   oItem:bAction        := {|| ArticulosFamiliaController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_currency_euro_16"
+   oItem:cBmpBig        := "gc_currency_euro_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Propiedades'
    oItem:cMessage       := 'Propiedades'
    oItem:bAction        := {|| PropiedadesController():New():ActivateNavigatorView() }
@@ -2941,7 +2951,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmp           := "gc_coathanger_16"
    oItem:cBmpBig        := "gc_coathanger_32"
    oItem:lShow          := .f.
-
 
 RETURN ( oAcceso )
 

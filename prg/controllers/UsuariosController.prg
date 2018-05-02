@@ -243,7 +243,7 @@ METHOD validUserPassword( cUsuario, cPassword )
 
    local hUsuario
 
-   hUsuario                   := ::oRepository:validUserPassword( cUsuario, cPassword )
+   hUsuario                   := ::oModel:validUserPassword( cUsuario, cPassword )
 
    if empty( hUsuario )
       ::cValidError           := "Usuario y contraseña con coinciden" 
@@ -325,6 +325,14 @@ CLASS SQLUsuariosModel FROM SQLBaseModel
    METHOD getNombreWhereCodigo( cCodigo ) INLINE ( ::getField( 'nombre', 'codigo', cCodigo ) )
    METHOD getNombreWhereUuid( uuid )      INLINE ( ::getField( 'nombre', 'uuid', uuid ) )
 
+   METHOD validUserPassword( cNombre, cPassword )
+
+   METHOD validSuperUserPassword( cPassword ) 
+
+   METHOD fetchDirect() 
+
+   METHOD getNombreUsuarioWhereNetName( cNetName ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -364,7 +372,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertUsuariosSentence()
+METHOD getInsertUsuariosSentence() CLASS SQLUsuariosModel
 
    local cSQL  
    local cUuidRol
@@ -389,6 +397,52 @@ METHOD getInsertUsuariosSentence()
    cSQL        +=    quoted( cUuidRol ) + " )"
 
 RETURN ( cSQL )
+
+//---------------------------------------------------------------------------//
+
+METHOD validUserPassword( cNombre, cPassword ) CLASS SQLUsuariosModel
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
+   if ( alltrim( cPassword ) != __encryption_key__ ) .and. !( "NOPASSWORD" $ appParamsMain() )
+      cSQL     +=     "AND password = " + quoted( ::Crypt( cPassword ) )      + " " 
+   end if 
+   cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD validSuperUserPassword( cPassword ) CLASS SQLUsuariosModel
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE super_user = 1"                                   + " "    
+   if ( alltrim( cPassword ) != __encryption_key__ ) 
+      cSQL     +=       "AND password = " + quoted( ::Crypt( cPassword ) )    + " " 
+   end if 
+   cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD fetchDirect() CLASS SQLUsuariosModel
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()
+
+RETURN ( ::getDatabase():Query( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNombreUsuarioWhereNetName( cNetName ) CLASS SQLUsuariosModel
+
+   local cSQL  := "SELECT usuarios.nombre FROM " + ::getTableName() + " "   
+   cSQL        +=    "INNER JOIN ajustables "
+   cSQL        +=       "ON usuarios.uuid = ajustables.ajustable_uuid "
+   cSQL        +=    "WHERE ajustables.ajuste_valor = " + quoted( cNetName ) + " "    
+   cSQL        +=       "AND ajustables.ajustable_tipo = 'usuarios'"
+
+RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -696,63 +750,7 @@ CLASS UsuariosRepository FROM SQLBaseRepository
 
    METHOD getTableName()         INLINE ( SQLUsuariosModel():getTableName() ) 
 
-   METHOD validUserPassword() 
-
-   METHOD validSuperUserPassword( cPassword )
-
-   METHOD fetchDirect()
-
-   METHOD Crypt( cPassword )     INLINE ( hb_crypt( alltrim( cPassword ), __encryption_key__ ) )
-
-   METHOD getNombreUsuarioWhereNetName( cNetName )
-
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD validUserPassword( cNombre, cPassword ) CLASS UsuariosRepository
-
-   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
-   cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
-   if ( alltrim( cPassword ) != __encryption_key__ ) .and. !( "NOPASSWORD" $ appParamsMain() )
-      cSQL     +=     "AND password = " + quoted( ::Crypt( cPassword ) )      + " " 
-   end if 
-   cSQL        +=    "LIMIT 1"
-
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD validSuperUserPassword( cPassword ) CLASS UsuariosRepository
-
-   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
-   cSQL        +=    "WHERE super_user = 1"                                   + " "    
-   if ( alltrim( cPassword ) != __encryption_key__ ) 
-      cSQL     +=       "AND password = " + quoted( ::Crypt( cPassword ) )    + " " 
-   end if 
-   cSQL        +=    "LIMIT 1"
-
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD fetchDirect() CLASS UsuariosRepository
-
-   local cSQL  := "SELECT * FROM " + ::getTableName()
-
-RETURN ( ::getDatabase():Query( cSQL ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getNombreUsuarioWhereNetName( cNetName )
-
-   local cSQL  := "SELECT usuarios.nombre FROM " + ::getTableName() + " "   
-   cSQL        +=    "INNER JOIN ajustables "
-   cSQL        +=       "ON usuarios.uuid = ajustables.ajustable_uuid "
-   cSQL        +=    "WHERE ajustables.ajuste_valor = " + quoted( cNetName ) + " "    
-   cSQL        +=       "AND ajustables.ajustable_tipo = 'usuarios'"
-
-RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -784,8 +782,8 @@ END CLASS
 METHOD onActivate() CLASS UsuariosLoginView
 
    ::cGetPassword          := space( 100 )
-   ::aComboUsuarios        := ::oController:oRepository:getNombres()
-   ::cComboUsuario         := ::oController:oRepository:getNombreUsuarioWhereNetName( netname() )
+   ::aComboUsuarios        := ::oController:oModel:getArrayNombres()
+   ::cComboUsuario         := ::oController:oModel:getNombreUsuarioWhereNetName( netname() )
 
 RETURN ( self )
 

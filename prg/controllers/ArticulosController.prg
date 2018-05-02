@@ -7,6 +7,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oArticulosTipoController
 
+   DATA oArticulosCategoriasController
+
    METHOD New()
 
    METHOD End()
@@ -40,8 +42,10 @@ METHOD New() CLASS ArticulosController
    ::oRepository                 := ArticulosRepository():New( self )
 
    ::oArticulosTipoController    := ArticulosTipoController():New( self )
-   ::oArticulosTipoController:oGetSelector:setKey( "codigo" )
-   ::oArticulosTipoController:oGetSelector:setView( ::oDialogView )
+   // ::oArticulosTipoController:oGetSelector:setView( ::oDialogView )
+
+   ::oArticulosCategoriasController    := ArticulosCategoriasController():New( self )
+   // ::oArticulosCategoriasController:oGetSelector:setView( ::oDialogView )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -62,6 +66,8 @@ METHOD End() CLASS ArticulosController
    ::oRepository:End()
 
    ::oArticulosTipoController:End()
+
+   ::oArticulosCategoriasController:End()
 
    ::Super:End()
 
@@ -128,6 +134,8 @@ RETURN ( self )
 
 CLASS ArticulosView FROM SQLBaseView
 
+   DATA oGetCodigo
+
    DATA oGetTipo
   
    METHOD Activate()
@@ -167,7 +175,8 @@ METHOD Activate() CLASS ArticulosView
       PROMPT      "&General";
       DIALOGS     "ARTICULO_GENERAL" 
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oGetCodigo ;
+      VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     ( replicate( 'N', 18 ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -180,8 +189,15 @@ METHOD Activate() CLASS ArticulosView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
+   // Tipos de articulos -------------------------------------------------------
+
    ::oController:oArticulosTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_tipo_uuid" ] ) )
    ::oController:oArticulosTipoController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
+
+   // Categorias de articulos---------------------------------------------------
+
+   ::oController:oArticulosCategoriasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_categoria_uuid" ] ) )
+   ::oController:oArticulosCategoriasController:oGetSelector:Activate( 140, 141, ::oFolder:aDialogs[ 1 ] )
 
    // Botones Articulos -------------------------------------------------------
 
@@ -214,6 +230,10 @@ RETURN ( ::oDialog:nResult )
 METHOD startActivate()
 
    ::oController:oArticulosTipoController:oGetSelector:Start()
+
+   ::oController:oArticulosCategoriasController:oGetSelector:Start()
+
+   ::oGetCodigo:SetFocus()
 
 RETURN ( self )
 
@@ -252,9 +272,17 @@ CLASS SQLArticulosModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   METHOD getArticulosTipoUuidAttribute()
+   METHOD getArticulosTipoUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosTipoModel():getCodigoWhereUuid( uValue ) ) )
 
-   METHOD setArticulosTipoUuidAttribute()
+   METHOD setArticulosTipoUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosTipoModel():getUuidWhereCodigo( uValue ) ) )
+
+   METHOD getArticulosCategoriaUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosCategoriasModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setArticulosCategoriaUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosCategoriasModel():getUuidWhereCodigo( uValue ) ) )
 
 END CLASS
 
@@ -262,47 +290,31 @@ END CLASS
 
 METHOD getColumns() CLASS SQLArticulosModel
    
-   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                                      "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                                "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                                      "default"   => {|| win_uuidcreatestring() } }            )
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 18 )"                           ,;
-                                                "default"   => {|| space( 18 ) } }                       )
+   hset( ::hColumns, "codigo",                     {  "create"    => "VARCHAR( 18 )"                           ,;
+                                                      "default"   => {|| space( 18 ) } }                       )
 
-   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "nombre",                     {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                      "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "articulos_tipo_uuid",  {  "create"    => "VARCHAR( 40 ) "                          ,;
-                                                "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "articulos_tipo_uuid",        {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "articulos_categoria_uuid",   {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 40 ) } }                       )
 
    ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
-
-METHOD getArticulosTipoUuidAttribute( uValue ) CLASS SQLArticulosModel
-
-   if empty( uValue )
-      RETURN ( space( 3 ) )
-   end if 
-
-RETURN ( ArticulosTipoRepository():getCodigoWhereUuid( uValue ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD setArticulosTipoUuidAttribute( uValue ) CLASS SQLArticulosModel
-
-   if empty( uValue )
-      RETURN ( uValue )
-   end if 
-
-RETURN ( ArticulosTipoRepository():getUuidWhereCodigo( uValue ) )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

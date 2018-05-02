@@ -9,17 +9,19 @@ CLASS PropiedadesLineasController FROM SQLBrowseController
 
    METHOD End()
 
+   METHOD isNotColorProperty()   INLINE ( !::oSenderController:isColorProperty() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS PropiedadesLineasController
+METHOD New( oController ) CLASS PropiedadesLineasController
 
-   ::Super:New()
+   ::Super:New( oController )
 
    ::cTitle                      := "Propiedades lineas"
 
-   ::cName                       := "propiedades_lineas"
+   ::cName                       := "articulos_propiedades_lineas"
 
    ::oModel                      := SQLPropiedadesLineasModel():New( self )
 
@@ -112,11 +114,13 @@ RETURN ( self )
 
 CLASS PropiedadesLineasView FROM SQLBaseView
 
-   DATA oGetTipo
+   DATA oColorRGB
   
    METHOD Activate()
 
    METHOD startActivate()
+
+   METHOD changeColorRGB() 
 
 END CLASS
 
@@ -131,7 +135,7 @@ METHOD Activate() CLASS PropiedadesLineasView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "PROPIEDADES_LINEAS" ;
-      TITLE       ::LblTitle() + "propiedad"
+      TITLE       ::LblTitle() + "lineas de propiedades"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -140,7 +144,7 @@ METHOD Activate() CLASS PropiedadesLineasView
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      PROMPT      "Propiedad" ;
+      PROMPT      "Lineas de propiedades" ;
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog
@@ -158,10 +162,28 @@ METHOD Activate() CLASS PropiedadesLineasView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "color_rgb" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "orden" ] ;
       ID          120 ;
+      SPINNER     ;
+      MIN         0 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_barras" ] ;
+      ID          130 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oColorRGB ;
+      VAR         ::oController:oModel:hBuffer[ "color_rgb" ] ;
+      ID          140 ;
+      IDSAY       141 ;
+      BITMAP      "gc_photographic_filters_16" ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog 
+
+   ::oColorRGB:setColor( ::oController:oModel:hBuffer[ "color_rgb" ], ::oController:oModel:hBuffer[ "color_rgb" ] )
+   ::oColorRGB:bHelp := {|| ::changeColorRGB() }
 
    // Botones PropiedadesLineas -------------------------------------------------------
 
@@ -191,7 +213,24 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD startActivate()
+METHOD changeColorRGB() CLASS PropiedadesLineasView
+
+   local nColorRGB   := ChooseColor()
+
+   if !empty( nColorRGB )
+      ::oColorRGB:setColor( nColorRGB, nColorRGB )
+      ::oColorRGB:cText( nColorRGB )
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS PropiedadesLineasView
+
+   if ::oController:isNotColorProperty()
+      ::oColorRGB:Hide()
+   end if 
 
 RETURN ( self )
 
@@ -225,7 +264,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLPropiedadesLineasModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "Propiedades_lineas"
+   DATA cTableName               INIT "articulos_propiedades_lineas"
 
    METHOD getColumns()
 
@@ -235,23 +274,29 @@ END CLASS
 
 METHOD getColumns() CLASS SQLPropiedadesLineasModel
    
-   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                       "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                       "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid", {  "create"    => "VARCHAR( 40 )"                           ,;
-                                       "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 )"                           ,;
+                                          "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "codigo",      {  "create"    => "VARCHAR( 4 )"                            ,;
-                                       "default"   => {|| space( 4 ) } }                        )
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 4 )"                            ,;
+                                          "default"   => {|| space( 4 ) } }                        )
 
-   hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 200 )"                          ,;
-                                       "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
+                                          "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "color_rgb",   {  "create"    => "INT UNSIGNED"                            ,;
-                                       "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "orden",          {  "create"    => "SMALLINT UNSIGNED"                       ,;
+                                          "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "codigo_barras",  {  "create"    => "VARCHAR( 4 )"                            ,;
+                                          "default"   => {|| space( 4 ) } }                        )
+
+   hset( ::hColumns, "color_rgb",      {  "create"    => "INT UNSIGNED"                            ,;
+                                          "default"   => {|| rgb( 255, 255, 255 ) } }              )
 
 RETURN ( ::hColumns )
 

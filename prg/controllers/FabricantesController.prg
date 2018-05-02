@@ -171,8 +171,8 @@ RETURN ( self )
 
 METHOD Activate() CLASS FabricantesView
 
-   local getImagen
-   local bmpImagen
+   local oGetImagen
+   local oBmpImagen
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "FABRICANTES" ;
@@ -206,43 +206,45 @@ METHOD Activate() CLASS FabricantesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   getImagen ;
+   REDEFINE GET   oGetImagen ;
       VAR         ::getImagenesController():oModel:hBuffer[ "imagen" ] ;
       ID          130 ;
       BITMAP      "Folder" ;
-      ON HELP     ( GetBmp( getImagen, bmpImagen ) ) ;
-      ON CHANGE   ( ChgBmp( getImagen, bmpImagen ) ) ;
+      ON HELP     ( GetBmp( oGetImagen, oBmpImagen ) ) ;
+      ON CHANGE   ( ChgBmp( oGetImagen, oBmpImagen ) ) ;
       WHEN        ( ::getImagenesController():isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE IMAGE bmpImagen ;
+   REDEFINE IMAGE oBmpImagen ;
       ID          140 ;
       FILE        cFileBmpName( ::getImagenesController():oModel:hBuffer[ "imagen" ] ) ;
       OF          ::oDialog
 
-      bmpImagen:SetColor( , getsyscolor( 15 ) )
-      bmpImagen:bLClicked   := {|| ShowImage( bmpImagen ) }
-      bmpImagen:bRClicked   := {|| ShowImage( bmpImagen ) }
+      oBmpImagen:SetColor( , getsyscolor( 15 ) )
+      oBmpImagen:bLClicked   := {|| ShowImage( oBmpImagen ) }
+      oBmpImagen:bRClicked   := {|| ShowImage( oBmpImagen ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:End( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
       OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( ::oDialog:end() )
+      ACTION      ( ::oDialog:End() )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:End( IDOK ), ) } )
    end if
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-  ::oBitmap:end()
+  ::oBitmap:End()
+
+  oBmpImagen:End()
 
 RETURN ( ::oDialog:nResult )
 
