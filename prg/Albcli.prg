@@ -902,14 +902,14 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bEditBlock       := {|| oTrans:Buscar( ( D():Get( "AlbCliT", nView ) )->cCodTrn ) }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
-      end with
+      end with*/
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre transportista"
-         :bEditValue       := {|| oTrans:GetField( ( D():Get( "AlbCliT", nView ) )->cCodTrn, "cNomTrn" ) }
+         :bEditValue       := {|| SQLTransportistasModel():getNombreWhereCodigo( ( D():Get( "AlbCliT", nView ) )->cCodTrn ) }
          :nWidth           := 180
          :lHide            := .t.
-      end with*/
+      end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Centro de coste"
