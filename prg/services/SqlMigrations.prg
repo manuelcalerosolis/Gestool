@@ -19,7 +19,7 @@ CLASS SQLMigrations
 
    METHOD checkValues()
 
-   METHOD getSchemaColumns( oModel )   
+   METHOD getSchemaColumns( oModel )    
 
 ENDCLASS
 
@@ -178,6 +178,8 @@ METHOD addModels()
    aadd( ::aModels, SQLComentariosLineasModel():New() )
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
+
+   aadd( ::aModels, SQLArticulosFamiliaModel():New() )
 
    aadd( ::aModels, SQLUnidadesMedicionModel():New() )
 
