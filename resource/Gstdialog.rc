@@ -22611,9 +22611,9 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 70, 121, 300, 11
   CONTROL "", 160, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 70, 134, 300, 11
   CONTROL "", 170, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 147, 50, 11
-  CONTROL "", 1020, "Edit", WS_BORDER|WS_TABSTOP, 70, 160, 78, 11
-  CONTROL "Artículos no acumulables", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 173, 117, 10
-  CONTROL "Mostrar ventana comentarios", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 186, 117, 10
+  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 70, 160, 78, 11
+  CONTROL "Artículos no acumulables", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 175, 117, 10
+  CONTROL "Mostrar ventana comentarios", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 188, 117, 10
   CONTROL "Código*", -1, "Static", WS_GROUP, 11, 23, 32, 8
   CONTROL "Nombre*", -1, "Static", WS_GROUP, 11, 35, 29, 8
   CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 5, 6, 368, 43
@@ -22628,7 +22628,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Propiedades táctil", -1, "Button", BS_GROUPBOX, 5, 97, 368, 108
   CONTROL "Posición", -1, "Static", WS_GROUP, 11, 149, 45, 8
   CONTROL "Comentario", -1, "Static", WS_GROUP, 11, 162, 45, 8
-  CONTROL "", 4005, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 149, 160, 220, 11
+  CONTROL "", 181, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 149, 160, 220, 11
 }
 
 FAMILIA_RELACIONES DIALOG DISCARDABLE 35, -50, 456, 327

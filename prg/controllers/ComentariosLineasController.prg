@@ -154,7 +154,6 @@ CLASS ComentariosLineasView FROM SQLBaseView
 
    METHOD Activate()
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -227,7 +226,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLComentariosLineasModel FROM SQLBaseModel
 
-   DATA cTableName                     INIT "comentarios_lineas"
+   DATA cTableName                     INIT "articulos_familias_comentarios_lineas"
 
    METHOD getColumns()
 
@@ -245,12 +244,11 @@ METHOD getColumns() CLASS SQLComentariosLineasModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL "                   ,;
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL"                   ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
- 
 
 RETURN ( ::hColumns )
 

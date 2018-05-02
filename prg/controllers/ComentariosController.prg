@@ -41,10 +41,12 @@ METHOD New() CLASS ComentariosController
 
    ::oRepository                    := ComentariosRepository():New( self )
 
+   ::oGetSelector                   := GetSelector():New( self )   
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS ComentariosController
 
    ::oModel:End()
@@ -109,10 +111,10 @@ METHOD addColumns() CLASS ComentariosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'descripcion'
-      :cHeader             := 'Descripcion'
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -163,9 +165,9 @@ METHOD Activate() CLASS ComentariosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
-      VALID       ( ::oController:validate( "descripcion" ) ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -235,8 +237,8 @@ END CLASS
 
 METHOD getValidators() CLASS ComentariosValidator
 
-   ::hValidators  := {  "descripcion" =>           {  "required"           => "La descripción es un dato requerido",;
-                                                      "unique"             => "La descripción introducida ya existe" },;
+   ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
+                                                      "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
                                                       "unique"             => "EL código introducido ya existe"  ,;
                                                       "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
@@ -253,7 +255,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLComentariosModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "comentarios"
+   DATA cTableName               INIT "articulos_familias_comentarios"
 
    METHOD getColumns()
 
@@ -270,13 +272,13 @@ METHOD getColumns() CLASS SQLComentariosModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
-   ::getTimeStampColumns()
-
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
                                              "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
+
+   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
