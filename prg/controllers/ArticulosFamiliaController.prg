@@ -262,42 +262,34 @@ METHOD Activate() CLASS ArticulosFamiliaView
       FILE        cFileBmpName( ::getImagenesController():oModel:hBuffer[ "imagen" ] ) ;
       OF          ::oFolder:aDialogs[1]
 
-      oBmpImagen:SetColor( , getsyscolor( 15 ) )
-      oBmpImagen:bLClicked   := {|| ShowImage( oBmpImagen ) }
-      oBmpImagen:bRClicked   := {|| ShowImage( oBmpImagen ) }
-
-   REDEFINE GET   ::oController:oImagenesController:oModel:hBuffer[ "imagen" ] ;
-      ID          1010 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      BITMAP      "FOLDER" ;
-      OF          ::oFolder:aDialogs[1]
+   oBmpImagen:SetColor( , getsyscolor( 15 ) )
+   oBmpImagen:bLClicked   := {|| ShowImage( oBmpImagen ) }
+   oBmpImagen:bRClicked   := {|| ShowImage( oBmpImagen ) }
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "posicion" ] ;
       ID          170 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
-      MIN         1;
+      MIN         1 ;
+      VALID       ( ::oController:oModel:hBuffer[ "posicion" ] > 0 ) ;
       OF          ::oFolder:aDialogs[1]
-/*
-   REDEFINE GET   ::oController:oComentariosController:oModel:hBuffer[ "comentario" ] ;
-      ID          1020 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      BITMAP      "LUPA" ;
-      OF          ::oFolder:aDialogs[1]
-*/
-   REDEFINE CHECKBOX   ::oController:oModel:hBuffer[ "articulo_no_acumulable" ] ;
+
+   // Comentarios -----------------------------------------------------------------
+
+   ::oController:oComentariosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "comentario_uuid" ] ) )
+   ::oController:oComentariosController:oGetSelector:Activate( 180, 181, ::oFolder:aDialogs[ 1 ] )
+
+   REDEFINE CHECKBOX   ::oController:oModel:hBuffer[ "mostrar_ventana_comentarios" ] ;
       ID          190 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE CHECKBOX   ::oController:oModel:hBuffer[ "mostrar_ventana_comentarios" ] ;
+   REDEFINE CHECKBOX   ::oController:oModel:hBuffer[ "articulo_no_acumulable" ] ;
       ID          200 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-//   ::oController:oArticulosFamiliaController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
-
-   // Botones Familia -------------------------------------------------------
+   // Botones --------------------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -321,7 +313,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    ::oBitmap:end()
 
-   ::oBmpImagen:End()
+   oBmpImagen:End()
 
 RETURN ( ::oDialog:nResult )
 
@@ -345,6 +337,8 @@ METHOD startActivate()
    ::oController:oPrimeraPropiedadController:oGetSelector:Start()
 
    ::oController:oSegundaPropiedadController:oGetSelector:Start()
+
+   ::oController:oComentariosController:oGetSelector:Start()
 
    ::oGetCodigo:setFocus()
 
@@ -391,6 +385,12 @@ CLASS SQLArticulosFamiliaModel FROM SQLBaseModel
    METHOD setPrimeraPropiedadUuidAttribute( codigo ) ;
                                  INLINE ( if( empty( codigo ), "", SQLPropiedadesModel():getUuidWhereCodigo( codigo ) ) )
 
+   METHOD getComentarioUuidAttribute( uuid ) ; 
+                                 INLINE ( if( empty( uuid ), space( 3 ), SQLComentariosModel():getCodigoWhereUuid( uuid ) ) )
+
+   METHOD setComentarioUuidAttribute( codigo ) ;
+                                 INLINE ( if( empty( codigo ), "", SQLComentariosModel():getUuidWhereCodigo( codigo ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -428,6 +428,9 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
 
    hset( ::hColumns, "posicion",                      {  "create"    => "INTEGER( 5 )"                            ,;
                                                          "default"   => {|| space( 5 ) } }                        )
+
+   hset( ::hColumns, "comentario_uuid",               {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                         "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "articulo_no_acumulable",        {  "create"    => "BIT"                                     ,;
                                                          "default"   => {|| .f. } }                               )
