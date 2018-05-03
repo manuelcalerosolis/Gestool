@@ -168,7 +168,6 @@ METHOD getUniqueSenctence( uValue )
 
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
-   cSQLSentence      += ::oController:getModel():addEmpresaWhereUuid()
 
    id                := ::oController:getModelBufferColumnKey()
    if !empty( id )
@@ -197,7 +196,6 @@ METHOD Exist( uValue )
 
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
-   cSQLSentence      += ::addEmpresaWhereUuid()
 
    nCount            := getSQLDatabase():getValue( cSQLSentence )
 
@@ -287,6 +285,11 @@ METHOD existTipoArticulo( uValue )
 
 RETURN ( .f. )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 CLASS SQLCompanyValidator FROM SQLBaseValidator
