@@ -156,6 +156,8 @@ CLASS ArticulosFamiliaView FROM SQLBaseView
    DATA oGetTipo
 
    DATA oColorRGB
+
+   DATA oTreeRelaciones
   
    METHOD Activate()
 
@@ -163,9 +165,9 @@ CLASS ArticulosFamiliaView FROM SQLBaseView
 
    METHOD changeColorRGB() 
 
-   METHOD getImagenesController()      INLINE ( ::oController:oImagenesController )
+   METHOD changeTreeRelaciones()
 
-   METHOD getComentariosController()   INLINE ( ::oController:oComentariosController )
+   METHOD loadTreeRelaciones()
 
 END CLASS
 
@@ -200,9 +202,11 @@ METHOD Activate() CLASS ArticulosFamiliaView
    REDEFINE FOLDER ::oFolder ;
       ID          500 ;
       OF          ::oDialog ;
-      PROMPT      "&General";
-      DIALOGS     "FAMILIA_GENERAL",;
-                  "FAMILIA_RELACIONES",;
+      PROMPT      "&General" ,;
+                  "&Relaciones" ,;
+                  "&Lenguaje" ;
+      DIALOGS     "FAMILIA_GENERAL" ,;
+                  "FAMILIA_RELACIONES" ,;
                   "FAMILIA_LENGUAJE_SQL"
 
    REDEFINE GET   ::oGetCodigo ;
@@ -249,17 +253,17 @@ METHOD Activate() CLASS ArticulosFamiliaView
    // Imagen-------------------------------------------------------------------
 
    REDEFINE GET   oGetImagen ;
-      VAR         ::getImagenesController():oModel:hBuffer[ "imagen" ] ;
+      VAR         ::oController:oImagenesController:oModel:hBuffer[ "imagen" ] ;
       ID          160 ;
       BITMAP      "Folder" ;
       ON HELP     ( GetBmp( oGetImagen, oBmpImagen ) ) ;
       ON CHANGE   ( ChgBmp( oGetImagen, oBmpImagen ) ) ;
-      WHEN        ( ::getImagenesController():isNotZoomMode() ) ;
+      WHEN        ( ::oController:oImagenesController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE IMAGE oBmpImagen ;
       ID          1010 ;
-      FILE        cFileBmpName( ::getImagenesController():oModel:hBuffer[ "imagen" ] ) ;
+      FILE        cFileBmpName( ::oController:oImagenesController:oModel:hBuffer[ "imagen" ] ) ;
       OF          ::oFolder:aDialogs[1]
 
    oBmpImagen:SetColor( , getsyscolor( 15 ) )
@@ -277,7 +281,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
    // Comentarios -----------------------------------------------------------------
 
    ::oController:oComentariosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "comentario_uuid" ] ) )
-   ::oController:oComentariosController:oGetSelector:Activate( 180, 181, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oComentariosController:oGetSelector:Activate( 180, 181, ::oFolder:aDialogs[1] )
 
    REDEFINE CHECKBOX   ::oController:oModel:hBuffer[ "mostrar_ventana_comentarios" ] ;
       ID          190 ;
@@ -289,7 +293,12 @@ METHOD Activate() CLASS ArticulosFamiliaView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   // Botones --------------------------------------------------------------------
+   // Relaciones --------------------------------------------------------------
+
+   ::oTreeRelaciones                     := TTreeView():Redefine( 100, ::oFolder:aDialogs[2] )
+   ::oTreeRelaciones:bItemSelectChanged  := {|| ::changeTreeRelaciones() }
+
+   // Botones -----------------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -332,6 +341,40 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD changeTreeRelaciones()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadTreeRelaciones( oNode, parentUuid )
+
+   local oHashList
+
+   DEFAULT oNode        := ::oTreeRelaciones
+   DEFAULT parentUuid   := ''
+
+   oHashList            := ::oController:oModel:getRowSetWhereParentUuid( parentUuid )
+
+   if hb_isnil( oHashList )
+      RETURN ( self )
+   end if 
+
+   while !( oHashList:Eof() )
+
+      oNode             := oNode:Add( oHashList:fieldGet( 'nombre' ) )
+      oNode:Cargo       := oHashList:fieldGet( 'uuid' )
+
+      ::loadTreeRelaciones( oNode, oNode:Cargo )
+
+      oHashList:Skip()
+
+   end while
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD startActivate()
 
    ::oController:oPrimeraPropiedadController:oGetSelector:Start()
@@ -339,6 +382,8 @@ METHOD startActivate()
    ::oController:oSegundaPropiedadController:oGetSelector:Start()
 
    ::oController:oComentariosController:oGetSelector:Start()
+
+   ::loadTreeRelaciones()
 
    ::oGetCodigo:setFocus()
 
@@ -350,7 +395,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosFamiliaValidator FROM SQLBaseValidator
+CLASS ArticulosFamiliaValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -372,7 +417,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosFamiliaModel FROM SQLBaseModel
+CLASS SQLArticulosFamiliaModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_familia"
 
@@ -389,6 +434,8 @@ CLASS SQLArticulosFamiliaModel FROM SQLBaseModel
 
    METHOD setComentarioUuidAttribute( codigo ) ;
                                  INLINE ( if( empty( codigo ), "", SQLComentariosModel():getUuidWhereCodigo( codigo ) ) )
+
+   METHOD getRowSetWhereParentUuid( uuid )                                 
 
 END CLASS
 
@@ -442,6 +489,25 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getRowSetWhereParentUuid( parentUuid )
+
+   local cSQL      
+   local oHashList
+
+   cSQL                 := "SELECT uuid, nombre FROM " + ::cTableName + " "
+   cSQL                 +=    "WHERE parent_uuid = " + quoted( parentUuid )
+
+   oHashList            := getSQLDatabase():selectHashList( cSQL ) 
+
+   if hb_isnil( oHashList )
+      RETURN ( nil )
+   end if 
+
+   oHashList:goTop()
+
+RETURN ( oHashList )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -458,4 +524,3 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-
