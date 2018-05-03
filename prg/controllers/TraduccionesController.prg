@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesController FROM SQLBrowseController
+CLASS TraduccionesController FROM SQLBrowseController
 
    METHOD New()
 
@@ -13,13 +13,8 @@ CLASS ImagenesController FROM SQLBrowseController
 
    METHOD gettingSelectSentence()
 
-   METHOD loadPrincipalBlankBuffer()   INLINE ( ::oModel:loadPrincipalBlankBuffer() )
    METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
 
-   METHOD LoadedCurrentBuffer( uuidEntidad )
-   METHOD UpdateBuffer( uuidEntidad )
-
-   METHOD loadedDuplicateCurrentBuffer( uuidEntidad )
    METHOD loadedDuplicateBuffer( uuidEntidad )
 
    METHOD deleteBuffer( aUuidEntidades )
@@ -28,23 +23,23 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ImagenesController
+METHOD New( oSenderController ) CLASS TraduccionesController
 
    ::Super:New( oSenderController )
 
    ::lTransactional        := .t.
 
-   ::cTitle                := "Imagenes"
+   ::cTitle                := "Traducciones"
 
-   ::cName                 := "imagenes"
+   ::cName                 := "traducciones"
 
-   ::oModel                := SQLImagenesModel():New( self )
+   ::oModel                := SQLTraduccionesModel():New( self )
 
-   ::oBrowseView           := ImagenesBrowseView():New( self )
+   ::oBrowseView           := TraduccionesBrowseView():New( self )
 
-   ::oDialogView           := ImagenesView():New( self )
+   ::oDialogView           := TraduccionesView():New( self )
 
-   ::oValidator            := ImagenesValidator():New( self, ::oDialogView )
+   ::oValidator            := TraduccionesValidator():New( self, ::oDialogView )
 
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
@@ -57,7 +52,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS ImagenesController
+METHOD End() CLASS TraduccionesController
 
    ::oModel:End()
 
@@ -73,7 +68,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() CLASS ImagenesController
+METHOD loadedBlankBuffer() CLASS TraduccionesController
 
    local uuid        := ::getSenderController():getUuid() 
 
@@ -85,7 +80,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD gettingSelectSentence() CLASS ImagenesController
+METHOD gettingSelectSentence() CLASS TraduccionesController
 
    local uuid        := ::getSenderController():getUuid() 
 
@@ -97,58 +92,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS ImagenesController
-
-   local idImagen     
-
-   if empty( uuidEntidad )
-      ::oModel:insertBuffer()
-   end if 
-
-   idImagen          := ::oModel:getIdWhereParentUuid( uuidEntidad )
-   if empty( idImagen )
-      idImagen       := ::oModel:insertPrincipalBlankBuffer()
-   end if 
-
-   ::oModel:loadCurrentBuffer( idImagen )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD UpdateBuffer( uuidEntidad ) CLASS ImagenesController
-
-   local idImagen     
-
-   idImagen          := ::oModel:getIdWhereParentUuid( uuidEntidad )
-   if empty( idImagen )
-      ::oModel:insertBuffer()
-      RETURN ( self )
-   end if 
-
-   ::oModel:updateBuffer()
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS ImagenesController
-
-   local idImagen     
-
-   idImagen          := ::oModel:getIdWhereParentUuid( uuidEntidad )
-   if empty( idImagen )
-      ::oModel:insertBuffer()
-      RETURN ( self )
-   end if 
-
-   ::oModel:loadDuplicateBuffer( idImagen )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS ImagenesController
+METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS TraduccionesController
 
    hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
 
@@ -156,7 +100,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteBuffer( aUuidEntidades ) CLASS ImagenesController
+METHOD deleteBuffer( aUuidEntidades ) CLASS TraduccionesController
 
    if empty( aUuidEntidades )
       RETURN ( self )
@@ -172,7 +116,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesBrowseView FROM SQLBrowseView
+CLASS TraduccionesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -180,7 +124,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ImagenesBrowseView
+METHOD addColumns() CLASS TraduccionesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -209,10 +153,18 @@ METHOD addColumns() CLASS ImagenesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'imagen'
-      :cHeader             := 'Imagen'
+      :cSortOrder          := 'lenguaje_uuid'
+      :cHeader             := 'Lenguaje'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'imagen' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'lenguaje_uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'texto'
+      :cHeader             := 'Texto'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'texto' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -226,7 +178,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesView FROM SQLBaseView
+CLASS TraduccionesView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -234,11 +186,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ImagenesView
+METHOD Activate() CLASS TraduccionesView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "IMAGEN" ;
-      TITLE       ::LblTitle() + "imagenes"
+      RESOURCE    "TRADUCCIONES" ;
+      TITLE       ::LblTitle() + "traducciones"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -288,7 +240,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesValidator FROM SQLBaseValidator
+CLASS TraduccionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -296,11 +248,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ImagenesValidator
+METHOD getValidators() CLASS TraduccionesValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido" },; 
-                        "direccion" =>       {  "required"        => "La dirección es un dato requerido" },; 
-                        "email" =>           {  "mail"            => "El email no es valido" } }
+   ::hValidators  := {  "texto"  => {  "required"  => "El texto de la traducción es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -313,83 +263,41 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLImagenesModel FROM SQLBaseModel
+CLASS SQLTraduccionesModel FROM SQLBaseModel
 
-   DATA cTableName                                 INIT "imagenes"
+   DATA cTableName                                 INIT "traducciones"
 
    METHOD getColumns()
-
-   METHOD loadPrincipalBlankBuffer()   INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
-
-   METHOD insertPrincipalBlankBuffer() INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
-
-   METHOD getIdWhereParentUuid( uuid )             INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
-
-   METHOD updateImagenWhereUuid( uValue, uuid )    INLINE ( ::updateFieldWhereUuid( uuid, 'imagen', uValue ) )
-   
-   METHOD SetImagenAttribute( uValue )             
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLImagenesModel
+METHOD getColumns() CLASS SQLTraduccionesModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL "                   ,;
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "imagen",            {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "lenguaje_uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+                                             "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "texto",             {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "principal",         {  "create"    => "TINYINT ( 1 )"                           ,;
-                                             "default"   => {|| "0" } }                               )
+   hset( ::hColumns, "texto_extendido",   {  "create"    => "TEXT"                                    ,;
+                                             "default"   => {|| "" } }                                )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
-
-METHOD SetImagenAttribute( uValue )
-
-   local cNombreImagen
-
-   if empty( uValue ) .or. isImageInApplicationStorage( uValue )
-      RETURN ( uValue )
-   end if       
-
-   if empty( ::oController ) .or. empty( ::oController:oSenderController )
-      RETURN ( uValue )
-   end if       
-
-   cNombreImagen           := alltrim( ::oController:oSenderController:oModel:hBuffer[ "nombre" ] ) 
-   cNombreImagen           += '(' + alltrim( ::hBuffer[ "uuid" ] ) + ')' + '.' 
-   cNombreImagen           += lower( getFileExt( uValue ) ) 
-
-   if !( copyfile( uValue, cPathImageApplicationStorage() + cNombreImagen ) )
-      RETURN ( uValue )
-   end if      
-
-RETURN ( cRelativeImageApplicationStorage() + cNombreImagen )
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesRepository FROM SQLBaseRepository
-
-   METHOD getTableName()         INLINE ( SQLDireccionesModel():getTableName() ) 
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
