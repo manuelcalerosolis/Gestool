@@ -83,6 +83,7 @@ RETURN Self
 METHOD Open( nView )
 
    msgalert( ::cApertura, "openCajon" )
+   msgalert( ::cPrinter, "cPrinter" )
 
    PrintEscCode( ::cApertura, ::cPrinter )
 
