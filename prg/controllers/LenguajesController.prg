@@ -200,6 +200,7 @@ METHOD Activate() CLASS LenguajesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 10 ) ) ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          oDlg
@@ -250,8 +251,7 @@ END CLASS
 METHOD getValidators() CLASS LenguajesValidator
 
    ::hValidators  := {     "codigo" =>          {  "required"           => "El código es un dato requerido",;
-                                                   "unique"             => "El código introducido ya existe" ,;
-                                                   "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } ,;
+                                                   "unique"             => "El código introducido ya existe" } ,;
                            "nombre" =>          {  "required"           => "El nombre es un datos requerido",;
                                                    "unique"             => "El nombre introducido ya existe" } }                      
 

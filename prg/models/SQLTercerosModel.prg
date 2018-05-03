@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS SQLTercerosModel FROM SQLBaseModel
+CLASS SQLTercerosModel FROM SQLCompanyModel
 
    DATA cConstraints             INIT "PRIMARY KEY (id), KEY (codigo)"
 

@@ -223,6 +223,7 @@ METHOD Activate() CLASS BancosView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 3 ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
@@ -287,7 +288,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS BancosValidator FROM SQLBaseValidator
+CLASS BancosValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -300,8 +301,7 @@ METHOD getValidators() CLASS BancosValidator
    ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
                                                       "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  ,;
-                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
+                                                      "unique"             => "EL código introducido ya existe"  } }
 
 RETURN ( ::hValidators )
 
@@ -314,7 +314,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLBancosModel FROM SQLBaseModel
+CLASS SQLBancosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "bancos"
 

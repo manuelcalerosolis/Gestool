@@ -271,7 +271,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLTransportistasModel FROM SQLBaseModel
+CLASS SQLTransportistasModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "transportistas"
 
