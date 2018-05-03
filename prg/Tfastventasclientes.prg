@@ -837,8 +837,6 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::setFilterAgentId()
 
-      ::setFilterUserId()
-
       ::setFilterAlmacenId()
 
       // Procesando SAT----------------------------------------------------------
@@ -963,8 +961,6 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::setFilterAgentId()
       
-      ::setFilterUserId()
-
       ::setFilterAlmacenId()
 
       // procesando presupuestos-------------------------------------------------
@@ -1090,8 +1086,6 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::setFilterAgentId()
       
-      ::setFilterUserId()
-
       ::setFilterAlmacenId()
 
    // Procesando pedidos------------------------------------------------
@@ -1229,8 +1223,6 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
 
       ::setFilterAgentId()
       
-      ::setFilterUserId()
-
       ::setFilterAlmacenId()
 
       // Procesando albaranes-----------------------------------------------------
@@ -1364,8 +1356,6 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::setFilterAgentId()
       
-      ::setFilterUserId()
-
       ::setFilterAlmacenId()
 
       // procesando facturas------------------------------------------------
@@ -1484,8 +1474,6 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
       ::setFilterAgentId()
       
-      ::setFilterUserId()
-
       ::setFilterAlmacenId()
 
       // Procesando facturas recitificativas-------------------------------------
@@ -1723,8 +1711,6 @@ METHOD AddRecibosCliente( cFieldOrder ) CLASS TFastVentasClientes
 
       ::setFilterAgentId()
       
-      ::setFilterUserId()
-
       // Procesando recibos------------------------------------------------------
 
       ::setMeterText( "Procesando recibos" )
@@ -1919,8 +1905,6 @@ METHOD insertFacturaCliente()
 
       ::setFilterAgentId()
       
-      ::setFilterUserId()
-
       ::setFilterAlmacenId()
 
       // Procesando facturas-----------------------------------------------------
@@ -2048,8 +2032,6 @@ METHOD insertRectificativa()
 
       ::setFilterAgentId()
       
-      ::setFilterUserId()
-
       ::setFilterAlmacenId()
 
       // Procesando facturas rectificativas--------------------------------------
