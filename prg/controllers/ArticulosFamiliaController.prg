@@ -169,6 +169,8 @@ CLASS ArticulosFamiliaView FROM SQLBaseView
 
    METHOD loadTreeRelaciones()
 
+   METHOD setTreeRelaciones( uuidParent, oNode )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -208,6 +210,8 @@ METHOD Activate() CLASS ArticulosFamiliaView
       DIALOGS     "FAMILIA_GENERAL" ,;
                   "FAMILIA_RELACIONES" ,;
                   "FAMILIA_LENGUAJE_SQL"
+
+   ::oFolder:aDialogs[2]:bGotFocus  := {|| ::setTreeRelaciones() }
 
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -295,8 +299,8 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    // Relaciones --------------------------------------------------------------
 
-   ::oTreeRelaciones                     := TTreeView():Redefine( 100, ::oFolder:aDialogs[2] )
-   ::oTreeRelaciones:bItemSelectChanged  := {|| ::changeTreeRelaciones() }
+   ::oTreeRelaciones                      := TTreeView():Redefine( 100, ::oFolder:aDialogs[2] )
+   ::oTreeRelaciones:bItemSelectChanged   := {|| ::changeTreeRelaciones() }
 
    // Botones -----------------------------------------------------------------
 
@@ -343,7 +347,9 @@ RETURN ( self )
 
 METHOD changeTreeRelaciones()
 
-RETURN ( self )
+   msgalert( "changeTreeRelaciones" )
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -360,20 +366,57 @@ METHOD loadTreeRelaciones( oNode, parentUuid )
       RETURN ( self )
    end if 
 
+   // msgalert( oHashList:reccount() )
+
    while !( oHashList:Eof() )
+
+      // msgalert( oHashList:fieldGet( 'nombre' ), "nombre" )
 
       oNode             := oNode:Add( oHashList:fieldGet( 'nombre' ) )
       oNode:Cargo       := oHashList:fieldGet( 'uuid' )
 
       ::loadTreeRelaciones( oNode, oNode:Cargo )
 
-      oHashList:Skip()
+      oHashList:Next()
 
    end while
 
    oNode:Expand()
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setTreeRelaciones( uuidParent, aItems )
+
+   local oItem
+
+   DEFAULT uuidParent   := ::oController:oModel:hBuffer[ "parent_uuid" ]
+   DEFAULT aItems       := ::oTreeRelaciones:aItems
+   
+   if empty( uuidParent )
+      RETURN ( nil )
+   end if 
+
+   if empty( aItems )
+      RETURN ( nil )
+   end if 
+
+   for each oItem in aItems
+
+      if alltrim( oItem:Cargo ) == alltrim( uuidParent )
+         ::oTreeRelaciones:Select( oItem )
+         ::oTreeRelaciones:SetCheck( oItem, .t. )
+         sysrefresh()
+      end if 
+
+      if !empty( oItem:aItems )
+         ::setTreeRelaciones( uuidParent, oItem:aItems )
+      end if 
+
+   next
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
