@@ -5,6 +5,8 @@
 
 CLASS TraduccionesController FROM SQLBrowseController
 
+   DATA oLenguajesController
+
    METHOD New()
 
    METHOD End()
@@ -41,6 +43,8 @@ METHOD New( oSenderController ) CLASS TraduccionesController
 
    ::oValidator            := TraduccionesValidator():New( self, ::oDialogView )
 
+   ::oLenguajesController  := LenguajesController():New( self )
+
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
@@ -61,6 +65,8 @@ METHOD End() CLASS TraduccionesController
    ::oDialogView:End()
 
    ::oValidator:End()
+
+   ::oLenguajesController:End()
 
    ::Super:End()
 
@@ -153,10 +159,18 @@ METHOD addColumns() CLASS TraduccionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'lenguaje_uuid'
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
+      :nWidth              := 60
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo'
       :cHeader             := 'Lenguaje'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'lenguaje_uuid' ) }
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -182,6 +196,8 @@ CLASS TraduccionesView FROM SQLBaseView
   
    METHOD Activate()
 
+   METHOD startActivate()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -203,9 +219,20 @@ METHOD Activate() CLASS TraduccionesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "imagen" ] ;
-      ID          100 ;
+   ::oController:oLenguajesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "lenguaje_uuid" ] ) )
+   ::oController:oLenguajesController:oGetSelector:Activate( 100, 101, ::oDialog )
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "texto" ] ;
+      ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "texto" ) ) ;
+      OF          ::oDialog
+      
+   REDEFINE GET   ::oController:oModel:hBuffer[ "texto_extendido" ] ;
+      ID          120 ;
+      MEMO ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "texto_extendido" ) ) ;
       OF          ::oDialog
 
    REDEFINE BUTTON ;
@@ -224,11 +251,25 @@ METHOD Activate() CLASS TraduccionesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
+   ::oDialog:bStart  := {|| ::startActivate() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate()
+
+   CursorWait()
+
+   ::oController:oLenguajesController:oGetSelector:Start()
+
+   CursorWE()
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -269,7 +310,30 @@ CLASS SQLTraduccionesModel FROM SQLBaseModel
 
    METHOD getColumns()
 
+   METHOD getInitialSelect()
+
+   METHOD getLenguajeUuidAttribute( uuid )         INLINE ( if( empty( uuid ), space( 3 ), SQLLenguajesModel():getCodigoWhereUuid( uuid ) ) )
+
+   METHOD setLenguajeUuidAttribute( codigo )       INLINE ( if( empty( codigo ), "", SQLLenguajesModel():getUuidWhereCodigo( codigo ) ) )
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLTraduccionesModel
+
+   local cSelect  := "SELECT traducciones.id, "                               + ;
+                        "traducciones.uuid, "                                 + ;
+                        "traducciones.parent_uuid, "                          + ;
+                        "lenguajes.codigo, "                                  + ;
+                        "lenguajes.nombre, "                                  + ;
+                        "traducciones.texto, "                                + ;
+                        "LEFT( traducciones.texto_extendido, 256 ) "          + ;
+                        "FROM traducciones AS traducciones "                  + ;
+                        "INNER JOIN lenguajes AS lenguajes "                  + ;
+                           "ON lenguajes.uuid = traducciones.lenguaje_uuid"
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 

@@ -41,6 +41,8 @@ METHOD New() CLASS LenguajesController
 
    ::oRepository              := LenguajesRepository():New( self )
 
+   ::oGetSelector             := GetSelector():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
@@ -58,6 +60,8 @@ METHOD End() CLASS LenguajesController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 
