@@ -363,8 +363,7 @@ METHOD getValidators() CLASS ArticulosFamiliaValidator
    ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
                                           "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
-                                          "unique"             => "El código introducido ya existe",;
-                                          "onlyAlphanumeric"   => "El código no puede contener caracteres especiales" } }
+                                          "unique"             => "El código introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//

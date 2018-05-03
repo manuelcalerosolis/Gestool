@@ -256,7 +256,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosCategoriasModel FROM SQLBaseModel
+CLASS SQLArticulosCategoriasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_categoria"
 

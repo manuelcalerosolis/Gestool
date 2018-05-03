@@ -191,6 +191,7 @@ METHOD Activate() CLASS FabricantesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 3 ) ) ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
@@ -266,8 +267,7 @@ END CLASS
 METHOD getValidators() CLASS FabricantesValidator
 
    ::hValidators  := {  "codigo" =>    {  "required"           => "El codigo es un dato requerido",;
-                                          "unique"             => "El codigo introducido ya existe"  ,;
-                                          "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } ,;
+                                          "unique"             => "El codigo introducido ya existe"  } ,;
                         "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
                                           "unique"             => "El nombre introducido ya existe" } }                  
 
@@ -282,7 +282,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLFabricantesModel FROM SQLBaseModel
+CLASS SQLFabricantesModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "fabricantes"
 

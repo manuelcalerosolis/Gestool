@@ -149,6 +149,7 @@ METHOD Activate() CLASS RutasView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 4 ) ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -202,8 +203,7 @@ METHOD getValidators() CLASS RutasValidator
    ::hValidators  := {  "ruta" =>                  {  "required"           => "La ruta es un dato requerido",;
                                                       "unique"             => "La ruta introducida ya existe" },;
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  ,;
-                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
+                                                      "unique"             => "EL código introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -215,7 +215,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLRutasModel FROM SQLBaseModel
+CLASS SQLRutasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "rutas"
 

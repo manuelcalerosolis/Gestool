@@ -152,6 +152,7 @@ METHOD Activate() CLASS ArticulosTipoView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 3 ) ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -217,7 +218,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosTipoModel FROM SQLBaseModel
+CLASS SQLArticulosTipoModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_tipo"
 

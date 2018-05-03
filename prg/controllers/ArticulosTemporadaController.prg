@@ -174,6 +174,7 @@ METHOD Activate() CLASS ArticulosTemporadaView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 3 ) ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -244,7 +245,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosTemporadaModel FROM SQLBaseModel
+CLASS SQLArticulosTemporadaModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_temporada"
 
