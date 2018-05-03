@@ -80,7 +80,7 @@ METHOD cargaDatos() CLASS ComboSelector
 
    ::aComboBox       := ::oController:oRepository:getNombres()
 
-   ::cComboBox       := ::oController:oRepository:getNombreWhereUuid( eval( ::bValue ) ) 
+   ::cComboBox       := ::oController:oModel:getNombreWhereUuid( eval( ::bValue ) ) 
 
 RETURN ( Self )
 

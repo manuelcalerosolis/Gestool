@@ -48,8 +48,6 @@ METHOD New() CLASS BancosController
    ::oPaisesController           := PaisesController():New( self )
    ::oProvinciasController       := ProvinciasController():New( self )
 
-   ::oComboSelector              := ComboSelector():New( self )
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
@@ -83,8 +81,6 @@ METHOD End() CLASS BancosController
    ::oPaisesController:End()
 
    ::oProvinciasController:End()
-
-   /*::oComboSelector:End()*/
 
    ::Super:End()
 

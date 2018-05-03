@@ -55,8 +55,6 @@ METHOD New() CLASS AlmacenesController
 
    ::oProvinciasController       := ProvinciasController():New( self )
 
-   ::oComboSelector              := ComboSelector():New( self )
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
@@ -95,8 +93,6 @@ METHOD End() CLASS AlmacenesController
    ::oPaisesController:End()
 
    ::oProvinciasController:End()
-
-   /*::oComboSelector:End()*/
 
    ::Super:End()
 
