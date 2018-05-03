@@ -201,7 +201,7 @@ METHOD Activate() CLASS LenguajesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 10 ) ) ;
+      PICTURE     "@! NNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          oDlg

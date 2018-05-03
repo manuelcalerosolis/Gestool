@@ -304,7 +304,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfCajT )->( FieldPos( "nCopCie" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ]     := str( 1, 6 )
    else 
-      cComboCajonPortamonedas                            := CajonesPortamonedasRepository():getNombreWhereUuid( aTmp[ ( dbfCajT )->( FieldPos( "cajon_uuid" ) ) ] )
+      cComboCajonPortamonedas                            := SQLCajonesPortamonedasModel():getNombreWhereUuid( aTmp[ ( dbfCajT )->( FieldPos( "cajon_uuid" ) ) ] )
    end if
 
    if BeginTrans( aTmp )
@@ -1003,7 +1003,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
          VAR      cComboCajonPortamonedas ;
          ID       310 ;
          UPDATE ;
-         ITEMS    CajonesPortamonedasRepository():getNombresWithBlank() ;
+         ITEMS    SqlCajonesPortamonedasModel():getNombresWithBlank() ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -1169,7 +1169,7 @@ Static FUNCTION SavRec( aTmp, aGet, cComboCajonPortamonedas, oBrw, oDlg, nMode )
    // Asignacin a la variable de texto----------------------------------------
 
    aTmp[ ( dbfCajT )->( FieldPos( "cNumTur" ) ) ]     := Str( nNumTur, 6 )
-   aTmp[ ( dbfCajT )->( FieldPos( "cajon_uuid" ) ) ]  := CajonesPortamonedasRepository():getUuidWhereNombre( cComboCajonPortamonedas )
+   aTmp[ ( dbfCajT )->( FieldPos( "cajon_uuid" ) ) ]  := SQLCajonesPortamonedasModel():getUuidWhereNombre( cComboCajonPortamonedas )
 
    // Guardamos el registro definitivo-----------------------------------------
 

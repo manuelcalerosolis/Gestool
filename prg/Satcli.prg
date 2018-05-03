@@ -733,9 +733,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      oTransportistaSelector     := TransportistasController():New():oGetSelector
-      oTransportistaSelector:setKey( "codigo" )
-
+      oTransportistaSelector     := TransportistasController():New()
+      
       /*
       Recursos y fuente--------------------------------------------------------
       */
@@ -1044,6 +1043,10 @@ STATIC FUNCTION CloseFiles()
    if !empty( oMailingOperario )
       oMailingOperario:End()
    end if 
+
+   if !Empty( oTransportistaSelector )
+      oTransportistaSelector:End()
+   end if
 
    D():DeleteView( nView )
 
@@ -2833,8 +2836,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       Transportistas-----------------------------------------------------------
       */
 
-      oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
-      aGet[ _CCODTRN ]  :=  oTransportistaSelector:Activate( 235, 236, oFld:aDialogs[2] )
+      oTransportistaSelector:oGetSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
+      aGet[ _CCODTRN ]        := oTransportistaSelector:oGetSelector:Activate( 235, 236, oFld:aDialogs[2] )
+      aGet[ _CCODTRN ]:bWhen  := {|| nMode != ZOOM_MODE }
 
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;
@@ -3136,16 +3140,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid() ), oDlg:End() ), oTransportistaSelector:start() }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid() ), oDlg:End() ), aGet[ _CCODTRN ]:lValid() }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) ), oDlg:End() ) , oTransportistaSelector:start() }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) ), oDlg:End() ) , aGet[ _CCODTRN ]:lValid() }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ), oTransportistaSelector:start() }
+         oDlg:bStart := {|| aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ), aGet[ _CCODTRN ]:lValid() }
 
       otherwise
-         oDlg:bStart := {|| StartEdtRec( oBrwLin ), oTransportistaSelector:start() }
+         oDlg:bStart := {|| StartEdtRec( oBrwLin ), aGet[ _CCODTRN ]:lValid() }
 
    end case
 

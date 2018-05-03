@@ -41,8 +41,6 @@ METHOD New() CLASS TransportistasController
 
    ::oRepository                 := TransportistasRepository():New( self )
 
-   ::oComboSelector              := ComboSelector():New( self )
-
    ::oGetSelector                := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
@@ -64,6 +62,8 @@ METHOD End() CLASS TransportistasController
    ::oDireccionesController:End()
 
    ::oRepository:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 
@@ -172,7 +172,7 @@ METHOD Activate() CLASS TransportistasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 9 ) ) ;
+      PICTURE     "@! NNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog

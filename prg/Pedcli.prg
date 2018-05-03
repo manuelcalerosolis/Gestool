@@ -813,9 +813,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       Counter           := TCounter():New( nView, "nPedCli" )
 
-      oTransportistaSelector     := TransportistasController():New():oGetSelector
-      oTransportistaSelector:setKey( "codigo" )
-
+      oTransportistaSelector     := TransportistasController():New()
+      
       /*
       Recursos y fuente--------------------------------------------------------
       */
@@ -3009,8 +3008,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       Transportistas-----------------------------------------------------------
       */
       
-      oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
-      aGet[ _CCODTRN ]  :=  oTransportistaSelector:Activate( 235, 236, oFld:aDialogs[2] )
+      oTransportistaSelector:oGetSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
+      aGet[ _CCODTRN ]        :=  oTransportistaSelector:oGetSelector:Activate( 235, 236, oFld:aDialogs[2] )
+      aGet[ _CCODTRN ]:bWhen  := {|| nMode != ZOOM_MODE }
       
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          ID       237 ;
@@ -3644,7 +3644,9 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin,
 
 	end if
 
-   oTransportistaSelector:start()
+   if !Empty( aGet[ _CCODTRN ] )
+      aGet[ _CCODTRN ]:lValid()
+   end if
 
    if uFieldempresa( "lServicio" )
       aGet[ _DFECENTR ]:Show()
@@ -7622,6 +7624,10 @@ STATIC FUNCTION CloseFiles()
    if !empty( oMailing )
       oMailing:end()
    end if 
+
+   if !Empty( oTransportistaSelector )
+      oTransportistaSelector:End()
+   end if
 
    D():DeleteView( nView )
 

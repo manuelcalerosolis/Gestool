@@ -224,6 +224,8 @@ CLASS SQLBaseModel
    METHOD getArrayNombres( cColumn )            INLINE ( ::getArrayColumns( 'nombre' ) )
    METHOD getArrayColumnsWithBlank( cColumn ) 
 
+   METHOD getNombresWithBlank()                 INLINE ( ::getArrayColumnsWithBlank( 'nombre' ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -1225,7 +1227,7 @@ RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getArrayColumnsWithBlank( cColumn ) 
+METHOD getArrayColumnsWithBlank( cColumn )
 
    local aColumns                
    local cSQL     := "SELECT " + cColumn + "  FROM " + ::getTableName()

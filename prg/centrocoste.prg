@@ -7,7 +7,7 @@
 CLASS TCentroCoste FROM TMant
 
    DATA cMru               INIT     "gc_folder_open_money_16"
-   DATA cName              INIT     "CentroCoste"
+   //DATA cName              INIT     "centro_de_costes"
 
    DATA aTipo              INIT {   "Clientes", "Artículos", "Proveedores" }
    DATA cTipo              INIT     "Artículos"
@@ -54,12 +54,13 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cPath, cDriver )
+METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    DEFAULT cPath        := cPatDat()
    DEFAULT cDriver      := cDriver()
+   DEFAULT oWndParent   := oWnd()
 
-   ::Super:New( cPath, cDriver )
+   ::Super:New( cPath, cDriver, oWndParent, oMenuItem )
 
    ::Default()
 
@@ -126,7 +127,6 @@ RETURN ( ::oDbf )
 //----------------------------------------------------------------------------//
 
 METHOD Activate() CLASS TCentroCoste
-
 
    local oScript
 

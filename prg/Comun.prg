@@ -1518,7 +1518,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Centro de costes"
    oItem:cMessage       := "Acceso al centro de coste"
-   oItem:bAction        := {|| TCentroCoste():New( cPatDat(), oWnd, "centro_de_costes" ):Activate() }
+   oItem:bAction        := {|| TCentroCoste():New( cPatDat(), cDriver(), oWnd, "centro_de_costes" ):Activate() }
    oItem:cId            := "centro_de_costes"
    oItem:cBmp           := "gc_folder_open_money_16"
    oItem:cBmpBig        := "gc_folder_open_money_32"

@@ -43,7 +43,7 @@ METHOD New() CLASS FabricantesController
 
    ::oRepository                 := FabricantesRepository():New( self )
 
-   ::oGetSelector                := ComboSelector():New( self )
+   ::oGetSelector                := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -76,7 +76,7 @@ METHOD End() CLASS FabricantesController
 
    ::oRepository:End()
 
-   /*::oGetSelector:End()*/
+   ::oGetSelector:End()
 
    ::Super:End()
 
@@ -191,7 +191,7 @@ METHOD Activate() CLASS FabricantesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 3 ) ) ;
+      PICTURE     "@! NNN" ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog

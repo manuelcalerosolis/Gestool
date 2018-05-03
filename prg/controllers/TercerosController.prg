@@ -37,8 +37,6 @@ METHOD New() CLASS TercerosController
 
    ::oRepository                 := TercerosRepository():New( self )
 
-   ::oComboSelector              := ComboSelector():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
