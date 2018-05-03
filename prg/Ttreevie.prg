@@ -253,7 +253,7 @@ METHOD Add( cPrompt, nImage, nValue ) CLASS TTreeView
 
    local oItem
 
-   oItem := TTVItem():New( TVInsertItem( ::hWnd, cPrompt,, nImage, nValue ), Self )
+   oItem := TTVItem():New( TVInsertItem( ::hWnd, cPrompt, , nImage, nValue ), Self )
 
    oItem:cPrompt := cPrompt
    oItem:nImage  := nImage

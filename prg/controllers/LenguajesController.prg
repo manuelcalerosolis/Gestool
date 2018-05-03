@@ -37,7 +37,7 @@ METHOD New() CLASS LenguajesController
 
    ::oDialogView              := LenguajesView():New( self )
 
-   ::oValidator               := LenguajesValidator():New( self )
+   ::oValidator               := LenguajesValidator():New( self, ::oDialogView )
 
    ::oRepository              := LenguajesRepository():New( self )
 
@@ -46,6 +46,7 @@ METHOD New() CLASS LenguajesController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS LenguajesController
 
    ::oModel:End()
