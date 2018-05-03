@@ -11,16 +11,16 @@ CLASS TCajon
    DATA  cPrinter
    DATA  cApertura                  INIT ""
 
-   Method Create()                  CONSTRUCTOR
+   METHOD Create()                  CONSTRUCTOR
 
-   Method New( cApertura, cPrinter )
+   METHOD New( cApertura, cPrinter )
 
-   Method Open( nView )
-   Method OpenTest()                INLINE ( ::Open() )
+   METHOD Open( nView )
+   METHOD OpenTest()                INLINE ( ::Open() )
 
-   Method End()                     VIRTUAL
+   METHOD End()                     VIRTUAL
 
-   Method LogCajon()
+   METHOD LogCajon()
 
 END CLASS
 
@@ -68,7 +68,7 @@ RETURN Self
 
 //---------------------------------------------------------------------------//
 
-Method New( cApertura, cPrinter ) CLASS TCajon
+METHOD New( cApertura, cPrinter ) CLASS TCajon
 
    DEFAULT cApertura    := "27 112 0 60 240"
    DEFAULT cPrinter     := ""
@@ -81,6 +81,8 @@ RETURN Self
 //---------------------------------------------------------------------------//
 
 METHOD Open( nView )
+
+   msgalert( ::cApertura, "openCajon" )
 
    PrintEscCode( ::cApertura, ::cPrinter )
 
