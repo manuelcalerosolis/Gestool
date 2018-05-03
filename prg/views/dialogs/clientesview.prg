@@ -65,7 +65,7 @@ METHOD Activate() CLASS ClientesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( "N", 12 ) ) ;
+      PICTURE     ( "@! NNNNNNNNNNNN" ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
