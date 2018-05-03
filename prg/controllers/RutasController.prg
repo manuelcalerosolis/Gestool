@@ -149,7 +149,7 @@ METHOD Activate() CLASS RutasView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 4 ) ) ;
+      PICTURE     "@! NNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;

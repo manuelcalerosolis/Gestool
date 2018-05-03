@@ -223,7 +223,7 @@ METHOD Activate() CLASS BancosView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 3 ) ) ;
+      PICTURE     "@! NNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog

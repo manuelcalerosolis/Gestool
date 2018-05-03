@@ -172,7 +172,7 @@ METHOD Activate() CLASS TransportistasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 9 ) ) ;
+      PICTURE     "@! NNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog

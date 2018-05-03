@@ -54,8 +54,6 @@ METHOD End() CLASS CodigosPostalesController
 
    ::oValidator:End()
 
-   ::oRepository:End()
-
    ::oProvinciasController:End()
 
    ::Super:End()
@@ -157,7 +155,7 @@ METHOD Activate() CLASS CodigosPostalesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 10 ) ) ;
+      PICTURE     "@! NNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          oDlg

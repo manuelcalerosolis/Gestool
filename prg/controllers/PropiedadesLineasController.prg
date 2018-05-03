@@ -151,7 +151,7 @@ METHOD Activate() CLASS PropiedadesLineasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 4 ) ) ;
+      PICTURE     "@! NNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
