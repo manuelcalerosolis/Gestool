@@ -421,7 +421,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraValidator FROM SQLBaseValidator
+CLASS CamposExtraValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  

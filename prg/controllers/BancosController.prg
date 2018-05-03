@@ -288,7 +288,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS BancosValidator FROM SQLBaseValidator
+CLASS BancosValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  

@@ -256,7 +256,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FabricantesValidator FROM SQLBaseValidator
+CLASS FabricantesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  

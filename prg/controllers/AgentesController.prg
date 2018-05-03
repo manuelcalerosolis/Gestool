@@ -270,7 +270,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesValidator FROM SQLBaseValidator
+CLASS AgentesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
