@@ -240,8 +240,8 @@ METHOD getColumns() CLASS SQLPaisesModel
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                          ,;
                                              "default"   => {|| space( 3 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 100 )"                        ,;
-                                             "default"   => {|| space( 100 ) } }                     )
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                        ,;
+                                             "default"   => {|| space( 200 ) } }                     )
 
 RETURN ( ::hColumns )
 

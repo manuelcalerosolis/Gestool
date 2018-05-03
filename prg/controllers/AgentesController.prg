@@ -213,7 +213,7 @@ METHOD Activate() CLASS AgentesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 3 ) ) ;
+      PICTURE     "@! NNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
@@ -283,8 +283,7 @@ METHOD getValidators() CLASS AgentesValidator
    ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
                                                       "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  ,;
-                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
+                                                      "unique"             => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
