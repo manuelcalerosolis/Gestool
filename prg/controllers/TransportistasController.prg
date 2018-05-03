@@ -245,7 +245,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TransportistasValidator FROM SQLBaseValidator
+CLASS TransportistasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
