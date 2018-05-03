@@ -256,6 +256,7 @@ METHOD Activate() CLASS EmpresasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 4 ) ) ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog

@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS ProveedoresView FROM SQLBaseView
+CLASS ProveedoresView FROM Activate
   
    DATA oGetProvincia
    DATA oGetPoblacion
@@ -35,7 +35,7 @@ METHOD Activate() CLASS TercerosView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "AGENTE" ;
-      TITLE       ::LblTitle() + "agente"
+      TITLE       ::LblTitle() + "proveedor"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;

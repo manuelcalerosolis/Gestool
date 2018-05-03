@@ -905,8 +905,8 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       end with*/
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Nombre transportista"
-         :bEditValue       := {|| SQLTransportistasModel():getNombreWhereCodigo( ( D():Get( "AlbCliT", nView ) )->cCodTrn ) }
+         :cHeader          := "Transportista"
+         :bEditValue       := {|| AllTrim( ( D():Get( "AlbCliT", nView ) )->cCodTrn ) + " - " + SQLTransportistasModel():getNombreWhereCodigo( ( D():Get( "AlbCliT", nView ) )->cCodTrn ) }
          :nWidth           := 180
          :lHide            := .t.
       end with

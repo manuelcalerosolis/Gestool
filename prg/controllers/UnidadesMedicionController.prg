@@ -161,6 +161,7 @@ METHOD Activate() CLASS UnidadesMedicionView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 2 ) ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -220,8 +221,7 @@ METHOD getValidators() CLASS UnidadesMedicionValidator
    ::hValidators  := {  "descripcion" =>          {  "required"            => "La descripción es un dato requerido",;
                                                       "unique"             => "La descripción introducida ya existe" },;
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  ,;
-                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
+                                                      "unique"             => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -233,7 +233,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLUnidadesMedicionModel FROM SQLBaseModel
+CLASS SQLUnidadesMedicionModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "unidades_medicion"
 

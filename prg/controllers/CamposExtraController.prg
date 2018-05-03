@@ -281,6 +281,7 @@ METHOD Activate() CLASS CamposExtraView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 3 ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[ 1 ] 
@@ -420,7 +421,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraValidator FROM SQLBaseValidator
+CLASS CamposExtraValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -431,8 +432,7 @@ END CLASS
 METHOD getValidators() CLASS CamposExtraValidator
 
    ::hValidators  := {     "codigo" =>    {  "required"           => "El codigo es un dato requerido",;
-                                             "unique"             => "El codigo introducido ya existe" ,;
-                                             "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } ,;
+                                             "unique"             => "El codigo introducido ya existe"  } ,;
                            "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
                                              "unique"             => "El nombre introducido ya existe" } ,;   
                            "tipo"     =>  {  "required"           => "El tipo es un dato requerido" } ,; 
@@ -449,7 +449,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCamposExtraModel FROM SQLBaseModel
+CLASS SQLCamposExtraModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "campos_extra"
 

@@ -157,6 +157,7 @@ METHOD Activate() CLASS CodigosPostalesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 10 ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          oDlg
@@ -231,8 +232,7 @@ END CLASS
 
 METHOD getValidators() CLASS CodigosPostalesValidator
 
-   ::hValidators  := {     "codigo"       =>    {  "required"           => "El código es un dato requerido" ,;
-                                                   "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } ,;
+   ::hValidators  := {     "codigo"       =>    {  "required"           => "El código es un dato requerido"  } ,;
                            "poblacion"    =>    {  "required"           => "La población es un dato requerido" },;
                            "provincia"    =>    {  "required"           => "La provincia es un campo requerido" } }
 RETURN ( ::hValidators )

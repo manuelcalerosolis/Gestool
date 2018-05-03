@@ -213,6 +213,7 @@ METHOD Activate() CLASS AgentesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 3 ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
@@ -269,7 +270,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesValidator FROM SQLBaseValidator
+CLASS AgentesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -295,7 +296,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLAgentesModel FROM SQLBaseModel
+CLASS SQLAgentesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "agentes"
 

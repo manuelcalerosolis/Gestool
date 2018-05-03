@@ -165,6 +165,7 @@ METHOD Activate() CLASS ImpuestosEspecialesView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
+      PICTURE     ( replicate( 'N', 3 ) ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -239,8 +240,7 @@ METHOD getValidators() CLASS ImpuestosEspecialesValidator
    ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
                                                       "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  ,;
-                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
+                                                      "unique"             => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
