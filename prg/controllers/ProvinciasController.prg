@@ -156,6 +156,7 @@ METHOD Activate() CLASS ProvinciasView
       OF          oDlg
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+      PICTURE     "@! NNNNNNNNNN" ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;

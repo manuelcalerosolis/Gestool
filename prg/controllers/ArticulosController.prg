@@ -178,7 +178,7 @@ METHOD Activate() CLASS ArticulosView
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 18 ) ) ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]

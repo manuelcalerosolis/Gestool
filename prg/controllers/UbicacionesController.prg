@@ -115,7 +115,7 @@ METHOD Activate() CLASS UbicacionesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 18 ) ) ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog

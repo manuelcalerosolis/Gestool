@@ -164,7 +164,7 @@ METHOD Activate() CLASS IvaTipoView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 1 ) ) ;
+      PICTURE     "@! N" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;

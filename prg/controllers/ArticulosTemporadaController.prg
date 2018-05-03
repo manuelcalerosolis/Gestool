@@ -174,7 +174,7 @@ METHOD Activate() CLASS ArticulosTemporadaView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     ( replicate( 'N', 3 ) ) ;
+      PICTURE     "@! NNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
