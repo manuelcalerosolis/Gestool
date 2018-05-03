@@ -371,11 +371,15 @@ METHOD loadTreeRelaciones( oNode, parentUuid )
 
    end while
 
+   oNode:Expand()
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD startActivate()
+
+   CursorWait()
 
    ::oController:oPrimeraPropiedadController:oGetSelector:Start()
 
@@ -386,6 +390,8 @@ METHOD startActivate()
    ::loadTreeRelaciones()
 
    ::oGetCodigo:setFocus()
+
+   CursorWE()
 
 RETURN ( self )
 
