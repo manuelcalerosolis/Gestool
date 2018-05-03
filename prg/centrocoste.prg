@@ -7,7 +7,7 @@
 CLASS TCentroCoste FROM TMant
 
    DATA cMru               INIT     "gc_folder_open_money_16"
-   //DATA cName              INIT     "centro_de_costes"
+   DATA cName              INIT     "CentroCoste"
 
    DATA aTipo              INIT {   "Clientes", "Artículos", "Proveedores" }
    DATA cTipo              INIT     "Artículos"
