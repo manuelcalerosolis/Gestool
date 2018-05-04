@@ -459,7 +459,7 @@ CLASS RolesRepository FROM SQLBaseRepository
    METHOD getNombre( uuid )            INLINE ( SQLRolesModel():getColumnWhereUuid( uuid, 'nombre' ) ) 
 
    METHOD getUuid( nombre )
-   METHOD getUuidWhereNombre( nombre ) INLINE ( ::getUuid( nombre ) ) 
+   METHOD getUuidWhereNombre( nombre ) INLINE ( ::getUuid( nombre ) )
 
 END CLASS
 
