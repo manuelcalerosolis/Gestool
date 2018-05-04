@@ -456,10 +456,10 @@ CLASS RolesRepository FROM SQLBaseRepository
 
    METHOD getNombres() 
 
-   METHOD getNombre( uuid )            INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) ) 
+   METHOD getNombre( uuid )            INLINE ( SQLRolesModel():getColumnWhereUuid( uuid, 'nombre' ) ) 
 
    METHOD getUuid( nombre )
-   METHOD getUuidWhereNombre( nombre ) INLINE ( ::getUuid( nombre ) ) 
+   METHOD getUuidWhereNombre( nombre ) INLINE ( ::getUuid( nombre ) )
 
 END CLASS
 
