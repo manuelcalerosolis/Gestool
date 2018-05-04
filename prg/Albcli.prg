@@ -1610,9 +1610,8 @@ STATIC FUNCTION OpenFiles()
 
       Counter                    := TCounter():New( nView, "nAlbCli" ) 
 
-      oTransportistaSelector     := TransportistasController():New():oGetSelector
-      oTransportistaSelector:setKey( "codigo" )
-
+      oTransportistaSelector     := TransportistasController():New()
+      
       /*
       Declaración de variables públicas----------------------------------------
       */
@@ -1912,6 +1911,10 @@ STATIC FUNCTION CloseFiles()
    end if 
 
    TComercio:end()
+
+   if !Empty( oTransportistaSelector )
+      oTransportistaSelector:End()
+   end if
 
    D():DeleteView( nView )
 
@@ -3484,8 +3487,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       // Transportistas--------------------------------------------------------
 
-      oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
-      aGet[ _CCODTRN ]        := oTransportistaSelector:Activate( 235, 236, oFld:aDialogs[2] )
+      oTransportistaSelector:oGetSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
+      aGet[ _CCODTRN ]        := oTransportistaSelector:oGetSelector:Activate( 235, 236, oFld:aDialogs[2] )
       aGet[ _CCODTRN ]:bWhen  := {|| lWhen }
 
       REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
@@ -4109,13 +4112,11 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
          aGet[ _CCENTROCOSTE ]:lValid()
       endif
 
+      if !empty( aGet[ _CCODTRN ] )
+         aGet[ _CCODTRN ]:lValid()
+      endif
+
    end if 
-
-   /*
-   Cargamos valores al iniciar el diálogo--------------------------------------
-   */
-
-   oTransportistaSelector:start()
 
    /*
    Muestra y oculta las rentabilidades-----------------------------------------

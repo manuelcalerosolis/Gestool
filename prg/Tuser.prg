@@ -94,11 +94,11 @@ CLASS TUser
    DATA     _UltAuto                   INIT cTod( "" )
    METHOD   dUltAuto( lNewVal )
 
-   DATA     _lNoOpenCajon              INIT ".f."
-   METHOD   lNoOpenCajon( cNewVal )    INLINE if( cNewVal != nil, ::_lNoOpenCajon := cNewVal, ::_lNoOpenCajon )
+   DATA     _lNoOpenCajon              INIT     .f.
+   METHOD   lNoOpenCajon( cNewVal )    INLINE   if( cNewVal != nil, ::_lNoOpenCajon := cNewVal, ::_lNoOpenCajon )
 
    DATA     _NotInicioGrupo
-   METHOD   lNotInicioGrupo( lNewVal ) INLINE if( isLogic( lNewVal ), ::_NotInicioGrupo := lNewVal, ::_NotInicioGrupo )
+   METHOD   lNotInicioGrupo( lNewVal ) INLINE   if( isLogic( lNewVal ), ::_NotInicioGrupo := lNewVal, ::_NotInicioGrupo )
 
    DATA     _FiltroVentas              INIT     .f.
    METHOD   lFiltroVentas( lNewVal )   INLINE   ( if( isLogic( lNewVal ), ::_FiltroVentas := lNewVal, ::_FiltroVentas ) )
@@ -109,10 +109,10 @@ CLASS TUser
    DATA     _EnUso                     INIT     .f.
    METHOD   lEnUso( lNewVal )          INLINE   ( if( isLogic( lNewVal ), ::_EnUso := lNewVal, ::_EnUso ) )
 
-   DATA     _CodigoSala                INIT ""
-   METHOD   SalaVenta( cNewVal )       INLINE if( cNewVal != nil, ::_CodigoSala := cNewVal, ::_CodigoSala )
+   DATA     _CodigoSala                INIT     ""
+   METHOD   SalaVenta( cNewVal )       INLINE   if( cNewVal != nil, ::_CodigoSala := cNewVal, ::_CodigoSala )
 
-   DATA     _DelegacionUsuario         INIT ""
+   DATA     _DelegacionUsuario         INIT     ""
    METHOD   DelegacionUsuario( cNewVal ) INLINE if( cNewVal != nil, ::_DelegacionUsuario := cNewVal, ::_DelegacionUsuario )
 
    //------------------------------------------------------------------------//

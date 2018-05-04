@@ -37,15 +37,18 @@ METHOD New() CLASS LenguajesController
 
    ::oDialogView              := LenguajesView():New( self )
 
-   ::oValidator               := LenguajesValidator():New( self )
+   ::oValidator               := LenguajesValidator():New( self, ::oDialogView )
 
    ::oRepository              := LenguajesRepository():New( self )
+
+   ::oGetSelector             := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS LenguajesController
 
    ::oModel:End()
@@ -57,6 +60,8 @@ METHOD End() CLASS LenguajesController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 

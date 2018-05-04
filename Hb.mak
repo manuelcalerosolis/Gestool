@@ -375,6 +375,7 @@ ArticulosController.prg 													\
 ZonasController.prg 															\
 FabricantesController.prg 													\
 ImagenesController.prg 														\
+TraduccionesController.prg 												\
 AgentesController.prg 														\
 MovimientosAlmacenView.prg													\
 MovimientosAlmacenBrowseView.prg											\
@@ -1025,6 +1026,7 @@ ArticulosController.obj       											\
 ZonasController.obj       													\
 FabricantesController.obj       											\
 ImagenesController.obj       												\
+TraduccionesController.obj 												\
 AgentesController.obj     		  											\
 MovimientosAlmacenesLineasModel.obj 									\
 FacturasClientesLineasModel.obj 											\
@@ -1662,6 +1664,7 @@ $(OBJ)\ArticulosController.obj    										+
 $(OBJ)\ZonasController.obj    											+
 $(OBJ)\FabricantesController.obj    									+
 $(OBJ)\ImagenesController.obj    										+
+$(OBJ)\TraduccionesController.obj    									+
 $(OBJ)\AgentesController.obj    											+
 $(OBJ)\MovimientosAlmacenView.obj 										+
 $(OBJ)\MovimientosAlmacenBrowseView.obj								+

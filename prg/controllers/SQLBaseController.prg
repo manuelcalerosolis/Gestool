@@ -45,8 +45,6 @@ CLASS SQLBaseController
 
    DATA cDirectory 
 
-   DATA oComboSelector
-
    DATA oGetSelector
 
    METHOD New()

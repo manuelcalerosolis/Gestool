@@ -3,7 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesController FROM SQLBrowseController
+CLASS TraduccionesController FROM SQLBrowseController
+
+   DATA oLenguajesController
 
    METHOD New()
 
@@ -13,13 +15,8 @@ CLASS ImagenesController FROM SQLBrowseController
 
    METHOD gettingSelectSentence()
 
-   METHOD loadPrincipalBlankBuffer()   INLINE ( ::oModel:loadPrincipalBlankBuffer() )
    METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
 
-   METHOD LoadedCurrentBuffer( uuidEntidad )
-   METHOD UpdateBuffer( uuidEntidad )
-
-   METHOD loadedDuplicateCurrentBuffer( uuidEntidad )
    METHOD loadedDuplicateBuffer( uuidEntidad )
 
    METHOD deleteBuffer( aUuidEntidades )
@@ -28,23 +25,25 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ImagenesController
+METHOD New( oSenderController ) CLASS TraduccionesController
 
    ::Super:New( oSenderController )
 
    ::lTransactional        := .t.
 
-   ::cTitle                := "Imagenes"
+   ::cTitle                := "Traducciones"
 
-   ::cName                 := "imagenes"
+   ::cName                 := "traducciones"
 
-   ::oModel                := SQLImagenesModel():New( self )
+   ::oModel                := SQLTraduccionesModel():New( self )
 
-   ::oBrowseView           := ImagenesBrowseView():New( self )
+   ::oBrowseView           := TraduccionesBrowseView():New( self )
 
-   ::oDialogView           := ImagenesView():New( self )
+   ::oDialogView           := TraduccionesView():New( self )
 
-   ::oValidator            := ImagenesValidator():New( self, ::oDialogView )
+   ::oValidator            := TraduccionesValidator():New( self, ::oDialogView )
+
+   ::oLenguajesController  := LenguajesController():New( self )
 
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
@@ -57,7 +56,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS ImagenesController
+METHOD End() CLASS TraduccionesController
 
    ::oModel:End()
 
@@ -67,13 +66,15 @@ METHOD End() CLASS ImagenesController
 
    ::oValidator:End()
 
+   ::oLenguajesController:End()
+
    ::Super:End()
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() CLASS ImagenesController
+METHOD loadedBlankBuffer() CLASS TraduccionesController
 
    local uuid        := ::getSenderController():getUuid() 
 
@@ -85,7 +86,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD gettingSelectSentence() CLASS ImagenesController
+METHOD gettingSelectSentence() CLASS TraduccionesController
 
    local uuid        := ::getSenderController():getUuid() 
 
@@ -97,58 +98,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS ImagenesController
-
-   local idImagen     
-
-   if empty( uuidEntidad )
-      ::oModel:insertBuffer()
-   end if 
-
-   idImagen          := ::oModel:getIdWhereParentUuid( uuidEntidad )
-   if empty( idImagen )
-      idImagen       := ::oModel:insertPrincipalBlankBuffer()
-   end if 
-
-   ::oModel:loadCurrentBuffer( idImagen )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD UpdateBuffer( uuidEntidad ) CLASS ImagenesController
-
-   local idImagen     
-
-   idImagen          := ::oModel:getIdWhereParentUuid( uuidEntidad )
-   if empty( idImagen )
-      ::oModel:insertBuffer()
-      RETURN ( self )
-   end if 
-
-   ::oModel:updateBuffer()
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS ImagenesController
-
-   local idImagen     
-
-   idImagen          := ::oModel:getIdWhereParentUuid( uuidEntidad )
-   if empty( idImagen )
-      ::oModel:insertBuffer()
-      RETURN ( self )
-   end if 
-
-   ::oModel:loadDuplicateBuffer( idImagen )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS ImagenesController
+METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS TraduccionesController
 
    hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
 
@@ -156,7 +106,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteBuffer( aUuidEntidades ) CLASS ImagenesController
+METHOD deleteBuffer( aUuidEntidades ) CLASS TraduccionesController
 
    if empty( aUuidEntidades )
       RETURN ( self )
@@ -172,7 +122,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesBrowseView FROM SQLBrowseView
+CLASS TraduccionesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -180,7 +130,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ImagenesBrowseView
+METHOD addColumns() CLASS TraduccionesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -209,10 +159,26 @@ METHOD addColumns() CLASS ImagenesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'imagen'
-      :cHeader             := 'Imagen'
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
+      :nWidth              := 60
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Lenguaje'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'texto'
+      :cHeader             := 'Texto'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'imagen' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'texto' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -226,19 +192,21 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesView FROM SQLBaseView
+CLASS TraduccionesView FROM SQLBaseView
   
    METHOD Activate()
+
+   METHOD startActivate()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ImagenesView
+METHOD Activate() CLASS TraduccionesView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "IMAGEN" ;
-      TITLE       ::LblTitle() + "imagenes"
+      RESOURCE    "TRADUCCIONES" ;
+      TITLE       ::LblTitle() + "traducciones"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -251,9 +219,20 @@ METHOD Activate() CLASS ImagenesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "imagen" ] ;
-      ID          100 ;
+   ::oController:oLenguajesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "lenguaje_uuid" ] ) )
+   ::oController:oLenguajesController:oGetSelector:Activate( 100, 101, ::oDialog )
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "texto" ] ;
+      ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "texto" ) ) ;
+      OF          ::oDialog
+      
+   REDEFINE GET   ::oController:oModel:hBuffer[ "texto_extendido" ] ;
+      ID          120 ;
+      MEMO ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "texto_extendido" ) ) ;
       OF          ::oDialog
 
    REDEFINE BUTTON ;
@@ -272,6 +251,8 @@ METHOD Activate() CLASS ImagenesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
+   ::oDialog:bStart  := {|| ::startActivate() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()
@@ -279,6 +260,18 @@ METHOD Activate() CLASS ImagenesView
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD startActivate()
+
+   CursorWait()
+
+   ::oController:oLenguajesController:oGetSelector:Start()
+
+   CursorWE()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -288,7 +281,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesValidator FROM SQLBaseValidator
+CLASS TraduccionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -296,11 +289,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ImagenesValidator
+METHOD getValidators() CLASS TraduccionesValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido" },; 
-                        "direccion" =>       {  "required"        => "La dirección es un dato requerido" },; 
-                        "email" =>           {  "mail"            => "El email no es valido" } }
+   ::hValidators  := {  "texto"  => {  "required"  => "El texto de la traducción es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -313,83 +304,64 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLImagenesModel FROM SQLBaseModel
+CLASS SQLTraduccionesModel FROM SQLBaseModel
 
-   DATA cTableName                                 INIT "imagenes"
+   DATA cTableName                                 INIT "traducciones"
 
    METHOD getColumns()
 
-   METHOD loadPrincipalBlankBuffer()   INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
+   METHOD getInitialSelect()
 
-   METHOD insertPrincipalBlankBuffer() INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
+   METHOD getLenguajeUuidAttribute( uuid )         INLINE ( if( empty( uuid ), space( 3 ), SQLLenguajesModel():getCodigoWhereUuid( uuid ) ) )
 
-   METHOD getIdWhereParentUuid( uuid )             INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
-
-   METHOD updateImagenWhereUuid( uValue, uuid )    INLINE ( ::updateFieldWhereUuid( uuid, 'imagen', uValue ) )
-   
-   METHOD SetImagenAttribute( uValue )             
+   METHOD setLenguajeUuidAttribute( codigo )       INLINE ( if( empty( codigo ), "", SQLLenguajesModel():getUuidWhereCodigo( codigo ) ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLImagenesModel
+METHOD getInitialSelect() CLASS SQLTraduccionesModel
+
+   local cSelect  := "SELECT traducciones.id, "                               + ;
+                        "traducciones.uuid, "                                 + ;
+                        "traducciones.parent_uuid, "                          + ;
+                        "lenguajes.codigo, "                                  + ;
+                        "lenguajes.nombre, "                                  + ;
+                        "traducciones.texto, "                                + ;
+                        "LEFT( traducciones.texto_extendido, 256 ) "          + ;
+                        "FROM traducciones AS traducciones "                  + ;
+                        "INNER JOIN lenguajes AS lenguajes "                  + ;
+                           "ON lenguajes.uuid = traducciones.lenguaje_uuid"
+
+RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getColumns() CLASS SQLTraduccionesModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL "                   ,;
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "imagen",            {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "lenguaje_uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+                                             "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "texto",             {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "principal",         {  "create"    => "TINYINT ( 1 )"                           ,;
-                                             "default"   => {|| "0" } }                               )
+   hset( ::hColumns, "texto_extendido",   {  "create"    => "TEXT"                                    ,;
+                                             "default"   => {|| "" } }                                )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
-
-METHOD SetImagenAttribute( uValue )
-
-   local cNombreImagen
-
-   if empty( uValue ) .or. isImageInApplicationStorage( uValue )
-      RETURN ( uValue )
-   end if       
-
-   if empty( ::oController ) .or. empty( ::oController:oSenderController )
-      RETURN ( uValue )
-   end if       
-
-   cNombreImagen           := alltrim( ::oController:oSenderController:oModel:hBuffer[ "nombre" ] ) 
-   cNombreImagen           += '(' + alltrim( ::hBuffer[ "uuid" ] ) + ')' + '.' 
-   cNombreImagen           += lower( getFileExt( uValue ) ) 
-
-   if !( copyfile( uValue, cPathImageApplicationStorage() + cNombreImagen ) )
-      RETURN ( uValue )
-   end if      
-
-RETURN ( cRelativeImageApplicationStorage() + cNombreImagen )
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesRepository FROM SQLBaseRepository
-
-   METHOD getTableName()         INLINE ( SQLDireccionesModel():getTableName() ) 
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//

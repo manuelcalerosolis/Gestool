@@ -421,7 +421,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          aTiposImpresoras  := SQLTiposImpresorasModel():getArrayNombres()  
       end if
 
-      oFabricantesController  := FabricantesController():New()
+      oFabricantesController     := FabricantesController():New()
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
@@ -928,14 +928,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       :lHide            := .t. 
       AddResourceTipoTemporada( hb_QWith() ) 
-      :lHide            := .t. 
-   end with
-
-   with object ( oWndBrw:AddXCol() )
-      :cHeader          := "Fabricante"
-      :bStrData         := {|| oFabricantesController:oModel:getNombreWhereUuid( ( D():Articulos( nView ) )->fab_uuid ) }
-      :nWidth           := 140
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       :lHide            := .t. 
    end with
 
@@ -1987,8 +1979,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cArticulo, oBrw, bWhen, bValid, nMode )
    Fabricantes-----------------------------------------------------------
    */
 
-   oFabricantesController:oGetSelector:Bind( bSETGET( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "fab_uuid" ) ) ] ) )
-   oFabricantesController:oGetSelector:Activate( 391, 390, fldGeneral )
+   oFabricantesController:oGetSelector:Bind( bSETGET( aTmp[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ] ) )
+   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ]        := oFabricantesController:oGetSelector:Activate( 235, 236, fldGeneral )
+   aGet[ ( D():Articulos( nView ) )->( fieldpos( "cCodFab" ) ) ]:bWhen  := {|| nMode != ZOOM_MODE }
 
    REDEFINE SAY ;
          PROMPT   getConfigTraslation( "Familia" );

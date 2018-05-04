@@ -237,6 +237,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLProveedoresModel():New() ) 
 
+   aadd( ::aModels, SQLTraduccionesModel():New() ) 
+
 RETURN ( ::aModels )
  
 //----------------------------------------------------------------------------//

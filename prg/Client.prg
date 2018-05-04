@@ -482,8 +482,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       CodigosPostales():GetInstance():OpenFiles()
 
-      oTransportistaSelector     := TransportistasController():New():oGetSelector
-      oTransportistaSelector:setKey( "codigo" )
+      oTransportistaSelector     := TransportistasController():New()
 
       oEnvases              := TFrasesPublicitarias():Create( cPatEmp() )
       if !oEnvases:OpenFiles()
@@ -582,6 +581,10 @@ STATIC FUNCTION CloseFiles( lDestroy )
    if !empty(oMailing)
       oMailing:end()
    end if 
+
+   if !Empty( oTransportistaSelector )
+      oTransportistaSelector:End()
+   end if
 
    CodigosPostales():GetInstance():CloseFiles()
 
@@ -1908,8 +1911,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       Transportistas-----------------------------------------------------------
       */
 
-      oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
-      aGet[ _CCODTRN ]  :=  oTransportistaSelector:Activate( 235, 236, fldGeneral )
+      oTransportistaSelector:oGetSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
+      aGet[ _CCODTRN ]        :=  oTransportistaSelector:oGetSelector:Activate( 235, 236, fldGeneral )
+      aGet[ _CCODTRN ]:bWhen  := {|| nMode != ZOOM_MODE }
 
       REDEFINE GET   aGet[ _DALTA ] ;
          VAR         aTmp[ _DALTA ] ;
@@ -3823,7 +3827,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                            if( !empty( nTab ), oFld:setOption( nTab ), ),;
                            lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ),;
                            LoadPageClient( aTmp[ _COD ] ),;
-                           oTransportistaSelector:start() }
+                           aGet[ _CCODTRN ]:lValid() }
          
       CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CODPOSTAL ], "Poblacion" => aGet[ _POBLACION ], "Provincia" => aGet[ _PROVINCIA ] } )
 

@@ -43,7 +43,7 @@ METHOD New() CLASS FabricantesController
 
    ::oRepository                 := FabricantesRepository():New( self )
 
-   ::oGetSelector                := ComboSelector():New( self )
+   ::oGetSelector                := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -76,7 +76,7 @@ METHOD End() CLASS FabricantesController
 
    ::oRepository:End()
 
-   /*::oGetSelector:End()*/
+   ::oGetSelector:End()
 
    ::Super:End()
 

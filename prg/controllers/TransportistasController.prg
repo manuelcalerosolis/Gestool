@@ -41,8 +41,6 @@ METHOD New() CLASS TransportistasController
 
    ::oRepository                 := TransportistasRepository():New( self )
 
-   ::oComboSelector              := ComboSelector():New( self )
-
    ::oGetSelector                := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
@@ -64,6 +62,8 @@ METHOD End() CLASS TransportistasController
    ::oDireccionesController:End()
 
    ::oRepository:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 

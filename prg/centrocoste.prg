@@ -54,12 +54,13 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cPath, cDriver )
+METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    DEFAULT cPath        := cPatDat()
    DEFAULT cDriver      := cDriver()
+   DEFAULT oWndParent   := oWnd()
 
-   ::Super:New( cPath, cDriver )
+   ::Super:New( cPath, cDriver, oWndParent, oMenuItem )
 
    ::Default()
 
@@ -126,7 +127,6 @@ RETURN ( ::oDbf )
 //----------------------------------------------------------------------------//
 
 METHOD Activate() CLASS TCentroCoste
-
 
    local oScript
 

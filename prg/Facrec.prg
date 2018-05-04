@@ -821,8 +821,7 @@ STATIC FUNCTION OpenFiles( lExt )
      
       Counter           := TCounter():New( nView, "nFacRec" )
 
-      oTransportistaSelector     := TransportistasController():New():oGetSelector
-      oTransportistaSelector:setKey( "codigo" )
+      oTransportistaSelector     := TransportistasController():New()
 
       /*
       Declaración de variables publicas----------------------------------------
@@ -1177,6 +1176,10 @@ STATIC FUNCTION CloseFiles()
    end if 
 
    TComercio:end()
+
+   if !Empty( oTransportistaSelector )
+      oTransportistaSelector:End()
+   end if
 
    D():DeleteView( nView )
 
@@ -3031,9 +3034,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       Transportistas-----------------------------------------------------------
       */
 
-         oTransportistaSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
-         aGet[ _CCODTRN ]  :=  oTransportistaSelector:Activate( 235, 236, oFld:aDialogs[2] )
-
+         oTransportistaSelector:oGetSelector:Bind( bSETGET( aTmp[ _CCODTRN ] ) )
+         aGet[ _CCODTRN ]  :=  oTransportistaSelector:oGetSelector:Activate( 235, 236, oFld:aDialogs[2] )
+         aGet[ _CCODTRN ]:bWhen  := {|| nMode != ZOOM_MODE }
 
       	REDEFINE GET aGet[ _NKGSTRN ] VAR aTmp[ _NKGSTRN ] ;
          	ID       237 ;
@@ -3585,17 +3588,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), , oDlg:End() ), oTransportistaSelector:start() }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), , oDlg:End() ), aGet[ _CCODTRN ]:lValid() }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ), oDlg:End() ), oTransportistaSelector:start() }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ] ), AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ), oDlg:End() ), aGet[ _CCODTRN ]:lValid() }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !empty( cCodArt )
-         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ), oTransportistaSelector:start() }
+         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ), aGet[ _CCODTRN ]:lValid() }
 
       otherwise
          oDlg:bStart := {|| StartEdtRec( aGet, nMode ),;
-         					ShowKit( D():FacturasRectificativas( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, aTmp[ _CCODCLI ], D():Clientes( nView ), nil, aGet, oSayGetRnt ), oTransportistaSelector:start() }
+         					ShowKit( D():FacturasRectificativas( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, aTmp[ _CCODCLI ], D():Clientes( nView ), nil, aGet, oSayGetRnt ), aGet[ _CCODTRN ]:lValid() }
    end case
 
    ACTIVATE DIALOG oDlg ;
