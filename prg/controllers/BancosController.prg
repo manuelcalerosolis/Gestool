@@ -48,6 +48,10 @@ METHOD New() CLASS BancosController
    ::oPaisesController           := PaisesController():New( self )
    ::oProvinciasController       := ProvinciasController():New( self )
 
+   ::oComboSelector              := ComboSelector():New( self )
+
+   ::oGetSelector                := GetSelector():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
@@ -81,6 +85,10 @@ METHOD End() CLASS BancosController
    ::oPaisesController:End()
 
    ::oProvinciasController:End()
+
+   /*::oComboSelector:End()*/
+
+   ::oGetSelector :End()
 
    ::Super:End()
 
@@ -177,21 +185,11 @@ CLASS BancosView FROM SQLBaseView
 
    METHOD Activate()
 
-   METHOD Activating()
-
    METHOD getDireccionesController()   INLINE ( ::oController:oDireccionesController )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
-METHOD Activating() CLASS BancosView
-
-   if ::oController:isAppendOrDuplicateMode()
-      ::oController:oModel:hBuffer()
-   end if 
-
-RETURN ( self )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
