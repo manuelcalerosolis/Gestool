@@ -187,6 +187,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLImpuestosEspecialesModel():New() )
 
+   aadd( ::aModels, SQLFormaPagoModel():New() )
+
    aadd( ::aModels, SQLIvaTipoModel():New() )
    
    aadd( ::aModels, SQLCuentasRemesaModel():New() )

@@ -29,9 +29,9 @@ METHOD New() CLASS ArticulosFamiliaController
 
    ::cName                       := "articulos_familia"
 
-   ::hImage                      := {  "16" => "gc_object_cube_16",;
-                                       "32" => "gc_object_cube_32",;
-                                       "48" => "gc_object_cube_48" }
+   ::hImage                      := {  "16" => "gc_cubes_16",;
+                                       "32" => "gc_cubes_32",;
+                                       "48" => "gc_cubes_48" }
 
    ::nLevel                      := Auth():Level( ::cName )
 

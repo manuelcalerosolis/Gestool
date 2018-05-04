@@ -2719,7 +2719,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemSQL:lShow       := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 25
+   oGrupo:nBigItems     := 26
    oGrupo:cPrompt       := 'SQL'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2938,8 +2938,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cMessage       := 'Familia de articulos'
    oItem:bAction        := {|| ArticulosFamiliaController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_currency_euro_16"
-   oItem:cBmpBig        := "gc_currency_euro_32"
+   oItem:cBmp           := "gc_cubes_16"
+   oItem:cBmpBig        := "gc_cubes_32"
    oItem:lShow          := .f.
 
    oItem                := oItemSQL:Add()
@@ -2950,6 +2950,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "propiedades"
    oItem:cBmp           := "gc_coathanger_16"
    oItem:cBmpBig        := "gc_coathanger_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Formas de pago'
+   oItem:cMessage       := 'Formas de pago'
+   oItem:bAction        := {|| FormaPagoController():New():ActivateNavigatorView() }
+   oItem:cId            := "forma pago"
+   oItem:cBmp           := "gc_credit_cards_16"
+   oItem:cBmpBig        := "gc_credit_cards_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

@@ -114,10 +114,10 @@ METHOD addColumns() CLASS ArticulosCategoriasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'imagen'
-      :cHeader             := 'Imagen'
+      :cSortOrder          := 'icono'
+      :cHeader             := 'Icono'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'imagen' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'icono' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -197,7 +197,7 @@ METHOD Activate() CLASS ArticulosCategoriasView
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:oModel:hBuffer[ "imagen" ] ;
+      VAR         ::oController:oModel:hBuffer[ "icono" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ITEMS       ( hgetkeys( ::hTipos ) ) ;
@@ -281,7 +281,7 @@ METHOD getColumns() CLASS SQLArticulosCategoriasModel
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
                                     "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "imagen",   {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "icono",    {  "create"    => "VARCHAR( 40 )"                           ,;
                                     "default"   => {|| space( 40 ) } }                       )
    
    ::getTimeStampColumns()
