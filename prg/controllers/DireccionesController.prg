@@ -32,9 +32,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS DireccionesController
+METHOD New( oController ) CLASS DireccionesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::lTransactional                 := .t.
 
@@ -57,7 +57,7 @@ METHOD New( oSenderController ) CLASS DireccionesController
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
 
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 RETURN ( Self )
 

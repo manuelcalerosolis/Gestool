@@ -35,7 +35,7 @@ METHOD New() CLASS FormaPagoController
 
    ::oDialogView                 := FormaPagoView():New( self )
 
-   ::oBancosController           := BancosController():new( self )
+   ::oBancosController           := CuentasBancariasController():new( self )
 
    ::oValidator                  := FormaPagoValidator():New( self, ::oDialogView )
 
@@ -118,7 +118,7 @@ METHOD addColumns() CLASS FormaPagoBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tactil'
       :cHeader             := 'Tactil'
-      :nWidth              := 300
+      :nWidth              := 50
       :bEditValue          := {|| ::getRowSet():fieldGet( 'incluir_en_terminal' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -126,7 +126,7 @@ METHOD addColumns() CLASS FormaPagoBrowseView
       with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'posicion'
       :cHeader             := 'Posición'
-      :nWidth              := 300
+      :nWidth              := 50
       :bEditValue          := {|| ::getRowSet():fieldGet( 'posicion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -228,6 +228,7 @@ METHOD Activate() CLASS FormaPagoView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "comision" ] ;
       ID          130 ;
+      PICTURE     "@E 999.99" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -264,9 +265,11 @@ METHOD Activate() CLASS FormaPagoView
       MIN         0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
-      //Banco-------------------------------------------------------------------------------------//
+      
+   //Banco-------------------------------------------------------------------------------------//
+
       ::oController:oBancosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "banco_uuid" ] ) )
-      ::oController:oBancosController:oGetSelector:Activate( 190, 200, /*201, 202, 203, 204, 205,*/ ::oDialog )
+      ::oController:oBancosController:oGetSelector:Activate( 190, 200/*, 201, 202, 203, 204, 205*/, ::oDialog )
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "subcuenta_cobro" ] ;
       ID          210 ;
