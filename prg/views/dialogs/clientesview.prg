@@ -8,11 +8,15 @@ CLASS ClientesView FROM SQLBaseView
    DATA oGetPoblacion
    DATA oGetPais
 
+   DATA oGetAgentes
+
    METHOD Activate()
 
    METHOD Activating()
 
    METHOD getDireccionesController()   INLINE ( ::oController:oDireccionesController )
+
+   METHOD startDialog()
 
 END CLASS
 
@@ -130,7 +134,7 @@ METHOD Activate() CLASS ClientesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ::oDialog:bStart := {|| ::oController:oDireccionesController:externalStartDialog() }
+   ::oDialog:bStart := {|| ::startDialog() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -139,6 +143,15 @@ METHOD Activate() CLASS ClientesView
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD startDialog()
+
+   ::oController:oAgentesController:oGetSelector:Start()
+
+   ::oController:oDireccionesController:externalStartDialog()
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
