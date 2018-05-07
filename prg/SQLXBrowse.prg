@@ -369,7 +369,7 @@ METHOD getFirstVisibleColumn()
    local oCol
 
    for each oCol in ::aCols
-      if !oCol:lHide
+      if !empty( oCol:cHeader ) .and. !( oCol:lHide )
          RETURN ( oCol )
       end if 
    next
