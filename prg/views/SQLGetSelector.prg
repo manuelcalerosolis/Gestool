@@ -16,6 +16,8 @@ CLASS GetSelector
 
    DATA oView
 
+   DATA oEvents
+
    METHOD New( oSender )
    METHOD End()                                 
 
@@ -149,7 +151,7 @@ METHOD validAction( lSilenceMode ) CLASS GetSelector
 
    if empty( value )
 
-      ::fireEvent( 'validatedError' ) )
+      ::fireEvent( 'validatedError' )
 
       ::showMessage( lSilenceMode )
 

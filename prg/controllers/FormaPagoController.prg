@@ -157,11 +157,19 @@ CLASS FormaPagoView FROM SQLBaseView
 
    DATA oGetCodigo
 
+   DATA oGetIBANCodigoPais
+   DATA cGetIBANCodigoPais       INIT ""
+
+   DATA oGetIBANDigitoControl
+   DATA cGetIBANDigitoControl    INIT ""
+
    METHOD New()
 
    METHOD Activate()
 
    METHOD startActivate()
+
+   METHOD bancosControllerValidated()
 
 END CLASS
 
@@ -266,10 +274,27 @@ METHOD Activate() CLASS FormaPagoView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
       
-   //Banco-------------------------------------------------------------------------------------//
+   // Banco--------------------------------------------------------------------
 
-      ::oController:oBancosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "banco_uuid" ] ) )
-      ::oController:oBancosController:oGetSelector:Activate( 190, 191, ::oDialog )
+   ::oController:oBancosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "banco_uuid" ] ) )
+   
+   ::oController:oBancosController:oGetSelector:setEvent( 'validated', {|| ::bancosControllerValidated() } )
+
+   ::oController:oBancosController:oGetSelector:Activate( 190, 191, ::oDialog )
+
+   REDEFINE GET   ::oGetIBANCodigoPais ;
+      VAR         ::cGetIBANCodigoPais ;
+      ID          200 ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oGetIBANDigitoControl ;
+      VAR         ::cGetIBANDigitoControl ;
+      ID          201 ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog ;
+
+   // Contabilidad-------------------------------------------------------------
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "subcuenta_cobro" ] ;
       ID          210 ;
@@ -349,6 +374,22 @@ METHOD Activate() CLASS FormaPagoView
 
 RETURN ( ::oDialog:nResult )
 
+//---------------------------------------------------------------------------//
+
+METHOD bancosControllerValidated()
+
+   local cCodigo  := ::oController:oModel:hBuffer[ "banco_uuid" ]
+   local hColumns := ::oController:oBancosController:oModel:getWhereCodigo( cCodigo )  
+
+   msgalert( hb_valtoexp( hColumns ) )
+
+   ::oGetIBANCodigoPais:cText( hget( hColumns, "iban_codigo_pais" ) )
+
+   ::oGetIBANDigitoControl:cText( hget( hColumns, "iban_digito_control" ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

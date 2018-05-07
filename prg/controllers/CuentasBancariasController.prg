@@ -105,8 +105,6 @@ METHOD End() CLASS CuentasBancariasController
 
    ::oContactosController:End()
 
-   /*::oComboSelector:End()*/
-
    ::oGetSelector :End()
 
    ::Super:End()
@@ -350,7 +348,7 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
    ::getTimeStampColumns()
 
    hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR(3) NOT NULL UNIQUE"             ,;
-                                                   "default"   => {|| space( 3 )}})
+                                                   "default"   => {|| space( 3 ) } } )
 
    hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 140 )"                          ,;
                                                    "default"   => {|| space( 140 ) } }                       )
@@ -388,6 +386,7 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
