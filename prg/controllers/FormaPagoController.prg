@@ -269,7 +269,7 @@ METHOD Activate() CLASS FormaPagoView
    //Banco-------------------------------------------------------------------------------------//
 
       ::oController:oBancosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "banco_uuid" ] ) )
-      ::oController:oBancosController:oGetSelector:Activate( 190, 200/*, 201, 202, 203, 204, 205*/, ::oDialog )
+      ::oController:oBancosController:oGetSelector:Activate( 190, 191, ::oDialog )
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "subcuenta_cobro" ] ;
       ID          210 ;
@@ -404,25 +404,25 @@ METHOD getColumns() CLASS SQLFormaPagoModel
                                                 "default"   => {|| space( 200 ) } }                         )
 
    hset( ::hColumns, "tipo_pago",            {  "create"    => "INTEGER( 1 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                           )
+                                                "default"   => {|| ( 0 ) } }                                )
 
    hset( ::hColumns, "comision",             {  "create"    => "FLOAT( 5,2 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                           )
+                                                "default"   => {|| ( 0 ) } }                                )
 
    hset( ::hColumns, "emitir",               {  "create"    => "INTEGER( 1 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                           )
+                                                "default"   => {|| ( 0 ) } }                                )
 
    hset( ::hColumns, "numero_plazos",        {  "create"    => "INTEGER( 5 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                           )
+                                                "default"   => {|| ( 0 ) } }                                )
 
    hset( ::hColumns, "primer_plazo",         {  "create"    => "INTEGER( 5 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                           )
+                                                "default"   => {|| ( 0 ) } }                                )
 
    hset( ::hColumns, "entre_plazo",          {  "create"    => "INTEGER( 5 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                           )
+                                                "default"   => {|| ( 0 ) } }                                )
 
    hset( ::hColumns, "ultimo_plazo",         {  "create"    => "INTEGER( 5 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                           )
+                                                "default"   => {|| ( 0 ) } }                                )
 
    hset( ::hColumns, "banco_uuid",           {  "create"    => "VARCHAR( 40 )"                              ,;                                  
                                                 "default"   => {|| space( 40 ) } }                          )
