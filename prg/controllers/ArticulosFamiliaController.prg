@@ -164,6 +164,8 @@ CLASS ArticulosFamiliaView FROM SQLBaseView
    DATA oColorRGB
 
    DATA oTreeRelaciones
+
+   DATA uuidSelected
   
    METHOD Activate()
 
@@ -177,13 +179,12 @@ CLASS ArticulosFamiliaView FROM SQLBaseView
 
    METHOD setTreeRelaciones( uuidParent, oNode )
 
+   METHOD getSelectedUuidTreeRelaciones()
+
+   METHOD endActivate()
+
 END CLASS
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ArticulosFamiliaView
@@ -205,7 +206,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      PROMPT      "Artículos" ;
+      PROMPT      "Familia" ;
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog
@@ -288,7 +289,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
       MIN         1 ;
-      VALID       ( ::oController:oModel:hBuffer[ "posicion" ] > 0 ) ;
+      VALID       ( ::oController:oModel:hBuffer[ "posicion" ] >= 0 ) ;
       OF          ::oFolder:aDialogs[1]
 
    // Comentarios -----------------------------------------------------------------
@@ -310,6 +311,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    ::oTreeRelaciones                      := TTreeView():Redefine( 100, ::oFolder:aDialogs[2] )
    ::oTreeRelaciones:bItemSelectChanged   := {|| ::changeTreeRelaciones() }
+   ::oTreeRelaciones:bValid               := {|| ::oController:validate( "relaciones" ) }
 
    // Relaciones --------------------------------------------------------------
 
@@ -342,7 +344,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
       ID          IDOK ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+      ACTION      ( ::endActivate() )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -351,7 +353,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
       ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| ::endActivate() } )
    end if
 
    ::oDialog:bStart  := {|| ::startActivate() }
@@ -363,6 +365,20 @@ METHOD Activate() CLASS ArticulosFamiliaView
    oBmpImagen:End()
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD endActivate()
+
+   if validateDialog( ::oFolder:aDialogs )
+
+      ::uuidSelected    := ::getSelectedUuidTreeRelaciones()
+
+      ::oDialog:end( IDOK )
+
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -379,9 +395,16 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD changeTreeRelaciones()
+METHOD changeTreeRelaciones( aItems )
 
-   msgalert( "changeTreeRelaciones" )
+   if empty( aItems )
+      aItems      := ::oTreeRelaciones:aItems
+   end if
+
+   aeval( aItems, {|oItem| ::oTreeRelaciones:setCheck( oItem, .f. ),;
+                           iif( len( oItem:aItems ) > 0, ::changeTreeRelaciones( oItem:aItems ), ) } )
+
+   sysrefresh()
 
 RETURN ( .t. )
 
@@ -451,6 +474,32 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSelectedUuidTreeRelaciones( aItems, uuidSelected )
+
+   local oItem
+
+   DEFAULT ::uuidSelected     := ""
+
+   if empty( aItems )
+      aItems                  := ::oTreeRelaciones:aItems
+   end if
+
+   for each oItem in aItems
+
+      if ::oTreeRelaciones:GetCheck( oItem )
+         uuidSelected         := oItem:Cargo
+      end if
+
+      if len( oItem:aItems ) > 0
+         ::getSelectedUuidTreeRelaciones( oItem:aItems, @uuidSelected )
+      end if
+
+   next
+
+RETURN ( uuidSelected )
+
+//---------------------------------------------------------------------------//
+
 METHOD startActivate()
 
    CursorWait()
@@ -478,6 +527,8 @@ RETURN ( self )
 CLASS ArticulosFamiliaValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
+
+   METHOD sameFamily()
  
 END CLASS
 
@@ -485,13 +536,30 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosFamiliaValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
-                                          "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
-                                          "unique"             => "El código introducido ya existe" } }
+   ::hValidators  := {  "nombre" =>       {  "required"           => "El nombre es un dato requerido",;
+                                             "unique"             => "El nombre introducido ya existe" },;
+                        "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
+                                             "unique"             => "El código introducido ya existe" },;
+                        "relaciones" =>   {  "samefamily"         => "Familia relacionada no puede ser la misma" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
+
+METHOD sameFamily()
+
+   local uuidSelected := ::oController:oDialogView:getSelectedUuidTreeRelaciones()
+
+   if empty( uuidSelected )
+      RETURN ( .t. )
+   end if 
+
+   if alltrim( ::oController:oModel:hBuffer[ "uuid" ] ) == alltrim( uuidSelected ) 
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -514,6 +582,8 @@ CLASS SQLArticulosFamiliaModel FROM SQLCompanyModel
 
    METHOD setComentarioUuidAttribute( codigo ) ;
                                  INLINE ( if( empty( codigo ), "", SQLComentariosModel():getUuidWhereCodigo( codigo ) ) )
+
+   METHOD setParentUuidAttribute( value )
 
    METHOD getRowSetWhereParentUuid( uuid )                                 
 
@@ -570,6 +640,20 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
+METHOD setParentUuidAttribute( value )
+
+   if empty( ::oController )
+      RETURN ( value )
+   end if 
+
+   if empty( ::oController:oDialogView )
+      RETURN ( value )
+   end if 
+
+RETURN ( ::oController:oDialogView:uuidSelected )
+
+//---------------------------------------------------------------------------//
+
 METHOD getRowSetWhereParentUuid( parentUuid )
 
    local cSQL      
@@ -588,6 +672,8 @@ METHOD getRowSetWhereParentUuid( parentUuid )
 
 RETURN ( oHashList )
 
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

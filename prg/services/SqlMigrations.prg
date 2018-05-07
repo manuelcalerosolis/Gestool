@@ -179,6 +179,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
 
+   aadd( ::aModels, SQLContactosModel():New() )
+
    aadd( ::aModels, SQLArticulosFamiliaModel():New() )
 
    aadd( ::aModels, SQLUnidadesMedicionModel():New() )
@@ -193,7 +195,7 @@ METHOD addModels()
    
    aadd( ::aModels, SQLCuentasRemesaModel():New() )
 
-   aadd( ::aModels, SQLBancosModel():New() )
+   aadd( ::aModels, SQLCuentasBancariasModel():New() )
 
    aadd( ::aModels, SQLRutasModel():New() )
 

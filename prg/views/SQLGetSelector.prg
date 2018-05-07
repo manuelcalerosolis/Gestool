@@ -17,7 +17,7 @@ CLASS GetSelector
    DATA oView
 
    METHOD New( oSender )
-   METHOD End()                                 VIRTUAL 
+   METHOD End()                                 
 
    METHOD setKey( cKey )                        INLINE ( ::cKey := cKey )
    METHOD getKey()                              INLINE ( ::cKey )
@@ -37,6 +37,11 @@ CLASS GetSelector
 
    METHOD showMessage()
 
+   // Events-------------------------------------------------------------------
+
+   METHOD setEvent( cEvent, bEvent )            INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
+   METHOD fireEvent( cEvent )                   INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -45,11 +50,27 @@ METHOD New( oController ) CLASS GetSelector
 
    ::oController  := oController
 
+   ::oEvents      := Events():New()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD End()
+
+   if !empty( ::oEvents )
+      ::oEvents:End()
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD Activate( idGet, idText, oDlg ) CLASS GetSelector
+
+   if isFalse( ::fireEvent( 'activating' ) )
+      RETURN ( .f. )
+   end if
 
    ::cGet         := eval( ::bValue )
 
@@ -63,6 +84,8 @@ METHOD Activate( idGet, idText, oDlg ) CLASS GetSelector
    ::oGet:bHelp   := {|| ::helpAction() }
    ::oGet:bValid  := {|| ::validAction() }
 
+   ::fireEvent( 'activated' ) 
+
 RETURN ( ::oGet )
 
 //---------------------------------------------------------------------------//
@@ -70,6 +93,10 @@ RETURN ( ::oGet )
 METHOD helpAction() CLASS GetSelector
 
    local hResult
+
+   if isFalse( ::fireEvent( 'helping' ) )
+      RETURN ( .f. )
+   end if
 
    hResult        := ::oController:ActivateSelectorViewNoCenter()
 
@@ -86,6 +113,8 @@ METHOD helpAction() CLASS GetSelector
 
    end if
 
+   ::fireEvent( 'helped' ) 
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -100,18 +129,7 @@ METHOD validAction( lSilenceMode ) CLASS GetSelector
       RETURN ( .t. )
    end if
 
-   ::evalValue( ::oGet:VarGet() )
-
-   ::oGet:oHelptext:cText( value )
-
-   if empty( ::oGet:VarGet() )
-      RETURN ( .t. )
-   end if
-
-   value                   := ::oController:oModel:getField( "nombre", ::getKey(), ::oGet:VarGet() )
-
-   if empty( value )
-      ::showMessage( lSilenceMode )
+   if isFalse( ::fireEvent( 'validating' ) )
       RETURN ( .f. )
    end if
 
@@ -119,7 +137,33 @@ METHOD validAction( lSilenceMode ) CLASS GetSelector
 
    ::oGet:oHelptext:cText( value )
 
+   if empty( ::oGet:VarGet() )
+
+      ::fireEvent( 'validatingEmpty' )
+      
+      RETURN ( .t. )
+
+   end if
+
+   value                   := ::oController:oModel:getField( "nombre", ::getKey(), ::oGet:VarGet() )
+
+   if empty( value )
+
+      ::fireEvent( 'validatedError' ) )
+
+      ::showMessage( lSilenceMode )
+
+      RETURN ( .f. )
+
+   end if
+
+   ::evalValue( ::oGet:VarGet() )
+
+   ::oGet:oHelptext:cText( value )
+
    ::oGet:Refresh()
+
+   ::fireEvent( 'validated' ) 
 
 RETURN ( .t. )
 

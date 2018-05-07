@@ -357,6 +357,7 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+ContactosController.prg 													\
 FormaPagoController.prg 													\
 ArticulosFamiliaController.prg 											\
 UnidadesMedicionController.prg 											\
@@ -365,7 +366,7 @@ DivisasMonetariasController.prg 											\
 ImpuestosEspecialesController.prg 										\
 IvaTipoController.prg 														\
 CuentasRemesaController.prg 												\
-BancosController.prg 														\
+CuentasBancariasController.prg 											\
 RutasController.prg 															\
 ClientesGruposController.prg 												\
 ArticulosTemporadaController.prg 										\
@@ -1008,6 +1009,7 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+ContactosController.obj       											\
 FormaPagoController.obj       											\
 ArticulosFamiliaController.obj       									\
 UnidadesMedicionController.obj       									\
@@ -1016,7 +1018,7 @@ DivisasMonetariasController.obj       									\
 ImpuestosEspecialesController.obj       								\
 IvaTipoController.obj       												\
 CuentasRemesaController.obj       										\
-BancosController.obj       												\
+CuentasBancariasController.obj       									\
 RutasController.obj       													\
 ClientesGruposController.obj       										\
 ArticulosTemporadaController.obj       								\
@@ -1646,6 +1648,7 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\ContactosController.obj    										+
 $(OBJ)\FormaPagoController.obj 	   									+
 $(OBJ)\ArticulosFamiliaController.obj    								+
 $(OBJ)\UnidadesMedicionController.obj    								+
@@ -1654,7 +1657,7 @@ $(OBJ)\DivisasMonetariasController.obj    							+
 $(OBJ)\ImpuestosEspecialesController.obj    							+
 $(OBJ)\IvaTipoController.obj    											+
 $(OBJ)\CuentasRemesaController.obj    									+
-$(OBJ)\BancosController.obj    											+
+$(OBJ)\CuentasBancariasController.obj    								+
 $(OBJ)\RutasController.obj    											+
 $(OBJ)\ClientesGruposController.obj    								+
 $(OBJ)\ArticulosTemporadaController.obj    							+
