@@ -284,11 +284,11 @@ RETURN ( ::hColumns )
 
 METHOD getTimeStampColumns()
 
-   hset( ::hColumns, "created_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
-                                       "default"   => {|| hb_datetime() } }         )
+   hset( ::hColumns, "created_at",     {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
+                                          "default"   => {|| hb_datetime() } }         )
 
-   hset( ::hColumns, "updated_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
-                                       "default"   => {|| hb_datetime() } }         )
+   hset( ::hColumns, "updated_at",     {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
+                                          "default"   => {|| hb_datetime() } }         )
 
 RETURN ( ::hColumns )
 

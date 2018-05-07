@@ -343,7 +343,7 @@ METHOD getColumnOrder( cSortOrder )
    if !empty( cSortOrder )
       nPosition   := ascan( ::aCols, {|o| o:cSortOrder == cSortOrder } )
    else 
-      nPosition   := ascan( ::aCols, {|o| !empty( o:cOrder ) } )
+      nPosition   := ascan( ::aCols, {|o| !empty( o:cSortOrder ) .and. !( o:lHide ) } )
    end if 
 
    nPosition      := max( nPosition, 1 )

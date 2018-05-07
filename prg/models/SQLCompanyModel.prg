@@ -99,7 +99,7 @@ METHOD getArrayColumnsWithBlank( cColumn )
 
    local aColumns                
    local cSQL     := "SELECT " + cColumn + "  FROM " + ::getTableName()
-   cSQL        +=    "AND empresa_uuid = " + quoted( Company():Uuid() ) + " " 
+   cSQL           +=    "AND empresa_uuid = " + quoted( Company():Uuid() ) + " " 
    
    aColumns       := ::getDatabase():selectFetchArrayOneColumn( cSQL )
 
@@ -108,3 +108,4 @@ METHOD getArrayColumnsWithBlank( cColumn )
 RETURN ( aColumns )
 
 //---------------------------------------------------------------------------//
+

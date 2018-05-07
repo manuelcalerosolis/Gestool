@@ -2758,7 +2758,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Fabricantes'
    oItem:cMessage       := 'Solicitar fabricante'
-   oItem:bAction        := {|| FabricantesController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| ArticulosFabricantesController():New():ActivateNavigatorView() }
    oItem:cId            := "asistencia_remota"
    oItem:cBmp           := "gc_wrench_16"
    oItem:cBmpBig        := "gc_wrench_32"

@@ -374,7 +374,7 @@ ArticulosCategoriasController.prg 										\
 AlmacenesController.prg 													\
 ArticulosController.prg 													\
 ZonasController.prg 															\
-FabricantesController.prg 													\
+ArticulosFabricantesController.prg 										\
 ImagenesController.prg 														\
 TraduccionesController.prg 												\
 AgentesController.prg 														\
@@ -1026,7 +1026,7 @@ ArticulosCategoriasController.obj       								\
 AlmacenesController.obj       											\
 ArticulosController.obj       											\
 ZonasController.obj       													\
-FabricantesController.obj       											\
+ArticulosFabricantesController.obj       								\
 ImagenesController.obj       												\
 TraduccionesController.obj 												\
 AgentesController.obj     		  											\
@@ -1665,7 +1665,7 @@ $(OBJ)\ArticulosCategoriasController.obj    							+
 $(OBJ)\AlmacenesController.obj    										+
 $(OBJ)\ArticulosController.obj    										+
 $(OBJ)\ZonasController.obj    											+
-$(OBJ)\FabricantesController.obj    									+
+$(OBJ)\ArticulosFabricantesController.obj    						+
 $(OBJ)\ImagenesController.obj    										+
 $(OBJ)\TraduccionesController.obj    									+
 $(OBJ)\AgentesController.obj    											+

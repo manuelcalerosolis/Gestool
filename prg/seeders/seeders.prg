@@ -645,7 +645,7 @@ METHOD insertFabricantes( dbf ) CLASS Seeders
    local cSql
    local hBuffer  
 
-   hBuffer        := SQLFabricantesModel():loadBlankBuffer()
+   hBuffer        := SQLArticulosFabricantesModel():loadBlankBuffer()
 
    hset( hBuffer, "uuid",              ( dbf )->Uuid     )
    hset( hBuffer, "codigo",            ( dbf )->cCodFab  )
@@ -653,7 +653,7 @@ METHOD insertFabricantes( dbf ) CLASS Seeders
    hset( hBuffer, "pagina_web",        ( dbf )->cUrlFab  )
    hset( hBuffer, "empresa_uuid",      uuidEmpresa()     )
 
-   nId            := SQLFabricantesModel():insertIgnoreBuffer( hBuffer )
+   nId            := SQLArticulosFabricantesModel():insertIgnoreBuffer( hBuffer )
 
 RETURN ( Self )
 
