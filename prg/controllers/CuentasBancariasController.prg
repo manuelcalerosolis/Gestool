@@ -3,13 +3,15 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS BancosController FROM SQLNavigatorController
+CLASS CuentasBancariasController FROM SQLNavigatorController
 
    DATA oDireccionesController
 
    DATA oPaisesController
 
    DATA oProvinciasController
+
+   DATA oContactosController
 
    METHOD New()
 
@@ -19,13 +21,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS BancosController
+METHOD New() CLASS CuentasBancariasController
 
    ::Super:New()
 
-   ::cTitle                      := "Bancos"
+   ::cTitle                      := "Cuentas bancarias"
 
-   ::cName                       := "bancos"
+   ::cName                       := "cuenta_bancaria"
 
    ::hImage                      := {  "16" => "gc_central_bank_euro_16",;
                                        "32" => "gc_central_bank_euro_32",;
@@ -33,22 +35,25 @@ METHOD New() CLASS BancosController
 
    ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                      := SQLBancosModel():New( self )
+   ::oModel                      := SQLCuentasBancariasModel():New( self )
 
-   ::oBrowseView                 := BancosBrowseView():New( self )
+   ::oBrowseView                 := CuentasBancariasBrowseView():New( self )
 
-   ::oDialogView                 := BancosView():New( self )
+   ::oDialogView                 := CuentasBancariasView():New( self )
 
-   ::oValidator                  := BancosValidator():New( self, ::oDialogView )
+   ::oValidator                  := CuentasBancariasValidator():New( self, ::oDialogView )
 
    ::oDireccionesController      := DireccionesController():New( self )
 
-   ::oRepository                 := BancosRepository():New( self )
+   ::oRepository                 := CuentasBancariasRepository():New( self )
 
    ::oPaisesController           := PaisesController():New( self )
    ::oProvinciasController       := ProvinciasController():New( self )
 
-   ::oComboSelector              := ComboSelector():New( self )
+   ::oContactosController        := ContactosController():New( self )
+
+
+   /*::oComboSelector              := ComboSelector():New( self )*/
 
    ::oGetSelector                := GetSelector():New( self )
 
@@ -65,10 +70,22 @@ METHOD New() CLASS BancosController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oContactosController:loadBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::oContactosController:insertBuffer() } )
+   
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oContactosController:loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::oContactosController:updateBuffer( ::getUuid() ) } )
+
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oContactosController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oContactosController:loadedDuplicateBuffer( ::getUuid() ) } )
+   
+   ::oModel:setEvent( 'deletedSelection',             {|| ::oContactosController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-METHOD End() CLASS BancosController
+METHOD End() CLASS CuentasBancariasController
 
    ::oModel:End()
 
@@ -86,6 +103,8 @@ METHOD End() CLASS BancosController
 
    ::oProvinciasController:End()
 
+   ::oContactosController:End()
+
    /*::oComboSelector:End()*/
 
    ::oGetSelector :End()
@@ -100,7 +119,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS BancosBrowseView FROM SQLBrowseView
+CLASS CuentasBancariasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -108,12 +127,12 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS BancosBrowseView
+METHOD addColumns() CLASS CuentasBancariasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
       :cHeader             := 'Id'
-      :nWidth              := 80
+      :nWidth              := 50
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -150,22 +169,6 @@ METHOD addColumns() CLASS BancosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'entidad'
-      :cHeader             := 'Entidad'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'entidad' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'oficina'
-      :cHeader             := 'Oficina'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'oficina' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -176,7 +179,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS BancosView FROM SQLBaseView
+CLASS CuentasBancariasView FROM SQLBaseView
   
    DATA oGetProvincia
    DATA oGetPoblacion
@@ -196,13 +199,13 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS BancosView
+METHOD Activate() CLASS CuentasBancariasView
 
    local oGetDni
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "BANCOS_SQL" ;
-      TITLE       ::LblTitle() + "banco"
+      TITLE       ::LblTitle() + "cuenta bancaria"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -233,23 +236,40 @@ METHOD Activate() CLASS BancosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "entidad" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "iban_codigo_pais" ] ;
       ID          130 ;
+      PICTURE     "@!" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
+      OF          ::oDialog ;
 
-   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "oficina" ] ;
-      ID          140 ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "iban_digito_control" ] ;
+      ID          131 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
+      OF          ::oDialog ;
 
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_codigo_entidad" ] ;
+      ID          132 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_codigo_oficina" ] ;
+      ID          133 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_digito_control" ] ;
+      ID          134 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_numero" ] ;
+      ID          135 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
 
-      REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "contacto" ] ;
-      ID          150 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
+   ::oController:oContactosController:oDialogView:ExternalRedefine( ::oDialog )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -282,7 +302,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS BancosValidator FROM SQLCompanyValidator
+CLASS CuentasBancariasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -290,7 +310,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS BancosValidator
+METHOD getValidators() CLASS CuentasBancariasValidator
 
    ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
                                                       "unique"             => "El nombre introducido ya existe" },;
@@ -308,9 +328,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLBancosModel FROM SQLCompanyModel
+CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "bancos"
+   DATA cTableName               INIT "cuentas_bancarias"
 
    METHOD getColumns()
 
@@ -318,34 +338,52 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLBancosModel
+METHOD getColumns() CLASS SQLCuentasBancariasModel
    
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+                                                   "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
    ::getTimeStampColumns()
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(3) NOT NULL UNIQUE"             ,;
-                                             "default"   => {|| space( 3 )}})
+   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR(3) NOT NULL UNIQUE"             ,;
+                                                   "default"   => {|| space( 3 )}})
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
-                                             "default"   => {|| space( 140 ) } }                       )
+   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 140 )"                          ,;
+                                                   "default"   => {|| space( 140 ) } }                       )
 
-   hset( ::hColumns, "sucursal",          {  "create"    => "VARCHAR( 20 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "sucursal",                {  "create"    => "VARCHAR( 20 )"                          ,;
+                                                   "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "entidad",            { "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "entidad",                 { "create"    => "VARCHAR( 200 )"                          ,;
+                                                   "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "oficina",            { "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "iban_codigo_pais",        {  "create"    => "VARCHAR( 2 )"                            ,;
+                                                   "default"   => {|| space( 2 ) } }                        )
 
-   hset( ::hColumns, "contacto",            { "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "iban_digito_control",     {  "create"    => "VARCHAR( 2 )"                            ,;
+                                                   "default"   => {|| space( 2 ) } }                        )
+
+   hset( ::hColumns, "cuenta_codigo_entidad",   {  "create"    => "VARCHAR( 4 )"                            ,;
+                                                   "default"   => {|| space( 4 ) } }                        )
+
+   hset( ::hColumns, "cuenta_codigo_oficina",   {  "create"    => "VARCHAR( 4 )"                            ,;
+                                                   "default"   => {|| space( 4 ) } }                        )
+
+   hset( ::hColumns, "cuenta_digito_control",   {  "create"    => "VARCHAR( 2 )"                            ,;
+                                                   "default"   => {|| space( 2 ) } }                        )
+
+   hset( ::hColumns, "cuenta_numero",           {  "create"    => "VARCHAR( 9 )"                            ,;
+                                                   "default"   => {|| space( 9 ) } }                        )
+
+   hset( ::hColumns, "oficina",                 { "create"    => "VARCHAR( 200 )"                          ,;
+                                                   "default"   => {|| space( 200 ) } }                       )
+
+   hset( ::hColumns, "contacto",                { "create"    => "VARCHAR( 200 )"                          ,;
+                                                   "default"   => {|| space( 200 ) } }                       )
 
 RETURN ( ::hColumns )
 
@@ -359,9 +397,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS BancosRepository FROM SQLBaseRepository
+CLASS CuentasBancariasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLBancosModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLCuentasBancariasModel():getTableName() ) 
 
    METHOD getNombres()
 
@@ -373,7 +411,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getNombres() CLASS BancosRepository
+METHOD getNombres() CLASS CuentasBancariasRepository
 
    local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
    local aResult     := {}

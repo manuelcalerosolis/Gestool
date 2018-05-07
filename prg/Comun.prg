@@ -2719,7 +2719,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemSQL:lShow       := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 26
+   oGrupo:nBigItems     := 27
    oGrupo:cPrompt       := 'SQL'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2865,9 +2865,9 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Bancos'
-   oItem:cMessage       := 'Bancos'
-   oItem:bAction        := {|| BancosController():New():ActivateNavigatorView() }
+   oItem:cPrompt        := 'Cuentas bancarias'
+   oItem:cMessage       := 'Cuentas bancarias'
+   oItem:bAction        := {|| CuentasBancariasController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_central_bank_euro_16"
    oItem:cBmpBig        := "gc_central_bank_euro_32"
@@ -2961,6 +2961,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmp           := "gc_credit_cards_16"
    oItem:cBmpBig        := "gc_credit_cards_32"
    oItem:lShow          := .f.
+
 
 RETURN ( oAcceso )
 
