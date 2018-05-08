@@ -13,9 +13,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ClientesGruposController
+METHOD New( oSenderController ) CLASS ClientesGruposController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Grupos de clientes"
 
@@ -37,6 +37,7 @@ METHOD New() CLASS ClientesGruposController
 
    ::oRepository                    := ClientesGruposRepository():New( self )
 
+   ::oGetSelector                   := GetSelector():New( self )
 
 RETURN ( Self )
 

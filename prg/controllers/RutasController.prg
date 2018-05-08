@@ -13,9 +13,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS RutasController
+METHOD New( oSenderController ) CLASS RutasController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Rutas"
 
@@ -37,6 +37,7 @@ METHOD New() CLASS RutasController
 
    ::oRepository                    := RutasRepository():New( self )
 
+   ::oGetSelector                   := GetSelector():New( self )
 
 RETURN ( Self )
 
@@ -103,10 +104,10 @@ METHOD addColumns() CLASS RutasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'ruta'
-      :cHeader             := 'Ruta'
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'ruta' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -154,9 +155,9 @@ METHOD Activate() CLASS RutasView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "ruta" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
-      VALID       ( ::oController:validate( "ruta" ) ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -200,7 +201,7 @@ END CLASS
 
 METHOD getValidators() CLASS RutasValidator
 
-   ::hValidators  := {  "ruta" =>                  {  "required"           => "La ruta es un dato requerido",;
+   ::hValidators  := {  "nombre" =>                {  "required"           => "La ruta es un dato requerido",;
                                                       "unique"             => "La ruta introducida ya existe" },;
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
                                                       "unique"             => "EL código introducido ya existe" } }
@@ -234,13 +235,13 @@ METHOD getColumns() CLASS SQLRutasModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
-   ::getTimeStampColumns()
-
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 4 )"                            ,;
                                              "default"   => {|| space( 4 ) } }                        )
 
-   hset( ::hColumns, "ruta",              {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "nombre",           {  "create"    => "VARCHAR( 200 )"                           ,;
+                                             "default"  => {|| space( 200 ) } }                       )
+   
+   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
