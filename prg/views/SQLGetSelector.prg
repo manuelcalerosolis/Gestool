@@ -98,6 +98,7 @@ METHOD Activate( idGet, idText, oDlg, idSay ) CLASS GetSelector
       IDTEXT      idText ;
       IDSAY       idSay ;
       BITMAP      "Lupa" ;
+      WHEN        ( ::oController:getSenderController():isNotZoomMode() ) ;
       OF          oDlg
 
    ::oGet:bHelp   := {|| ::helpAction() }
