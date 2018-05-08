@@ -175,7 +175,6 @@ METHOD redefineGeneral() CLASS ClientesView
 
    TBtnBmp():ReDefine( 180, "gc_recycle_16",,,,,{|| ::loadFechaLlamada() }, ::oFolder:aDialogs[1], .f., , .f.,  )
 
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
