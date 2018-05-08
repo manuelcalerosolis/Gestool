@@ -202,29 +202,28 @@ CLASS SQLBaseModel
    // Metodos de consulta------------------------------------------------------
 
    METHOD getUuidWhereColumn( uValue, cColumn, uDefault ) 
-   METHOD getUuidWhereNombre( uValue )          INLINE ( ::getUuidWhereColumn( uValue, 'nombre', '' ) )
-   METHOD getUuidWhereCodigo( uValue )          INLINE ( ::getUuidWhereColumn( uValue, 'codigo', '' ) )
-
+   METHOD getUuidWhereNombre( uValue )                INLINE ( ::getUuidWhereColumn( uValue, 'nombre', '' ) )
+   METHOD getUuidWhereCodigo( uValue )                INLINE ( ::getUuidWhereColumn( uValue, 'codigo', '' ) )
 
    METHOD getWhereUuid( Uuid )
    METHOD getWhereCodigo( cCodigo )
    METHOD getWhereNombre( cNombre )
 
    METHOD getColumnWhereId( id, cColumn )
-   METHOD getNombreWhereId( id )                INLINE ( ::getColumnWhereId( id, 'nombre' ) )
+   METHOD getNombreWhereId( id )                      INLINE ( ::getColumnWhereId( id, 'nombre' ) )
 
    METHOD getColumnWhereUuid( uuid, cColumn ) 
-   METHOD getNombreWhereUuid( uuid )            INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) )
-   METHOD getCodigoWhereUuid( uuid )            INLINE ( ::getColumnWhereUuid( uuid, 'codigo' ) )
+   METHOD getNombreWhereUuid( uuid )                  INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) )
+   METHOD getCodigoWhereUuid( uuid )                  INLINE ( ::getColumnWhereUuid( uuid, 'codigo' ) )
 
    METHOD getColumnWhereId( id, cColumn ) 
    METHOD getColumnWhereUuid( uuid, cColumn ) 
 
    METHOD getArrayColumns( cColumn ) 
-   METHOD getArrayNombres( cColumn )            INLINE ( ::getArrayColumns( 'nombre' ) )
+   METHOD getArrayNombres( cColumn )                  INLINE ( ::getArrayColumns( 'nombre' ) )
    METHOD getArrayColumnsWithBlank( cColumn ) 
 
-   METHOD getNombresWithBlank()                 INLINE ( ::getArrayColumnsWithBlank( 'nombre' ) )
+   METHOD getNombresWithBlank()                       INLINE ( ::getArrayColumnsWithBlank( 'nombre' ) )
 
 END CLASS
 
@@ -685,14 +684,19 @@ RETURN ( cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentenceByUuid( aUuid )
+METHOD getDeleteSentenceByUuid( uUuid )
 
    local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
                            "WHERE uuid IN ( " 
 
-   aeval( aUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+   if hb_isarray( uUuid )
+      aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+      cSentence      := chgAtEnd( cSentence, ' )', 2 )
+   end if 
 
-   cSentence         := chgAtEnd( cSentence, ' )', 2 )
+   if hb_ischar( uUuid )
+      cSentence      += quoted( uUuid ) + ' )'
+   end if 
 
 RETURN ( cSentence )
 

@@ -259,8 +259,6 @@ END CLASS
 
 METHOD Activate() CLASS ContactosView
 
-   local oBmpGeneral
-
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTACTO" ;
       TITLE       ::LblTitle() + "Contacto"
@@ -271,10 +269,10 @@ METHOD Activate() CLASS ContactosView
       TRANSPARENT ;
       OF          ::oDialog ;
 
-   REDEFINE SAY   ::oMessage ;
+    REDEFINE SAY   ::oMessage ;
       ID          800 ;
       FONT        getBoldFont() ;
-      OF          ::oDialog ;
+      OF          ::oDialog
    
    ::ExternalRedefine( ::oDialog )
 
@@ -288,7 +286,7 @@ METHOD Activate() CLASS ContactosView
       ID          IDCANCEL ;
       OF          ::oDialog ;
       CANCEL ;
-      ACTION     ( ::oDialog:end() )
+      ACTION      ( ::oDialog:end() )
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -341,9 +339,7 @@ END CLASS
 
 METHOD getValidators() CLASS ContactosValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
-                                                      "unique"             => "El nombre introducido ya existe" },;
-                        "email" =>                 {  "mail"               => "El email no es valido" } }
+   ::hValidators  := { "email" =>                 {  "mail"               => "El email no es valido" } }
 
 RETURN ( ::hValidators )
 

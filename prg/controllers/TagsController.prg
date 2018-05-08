@@ -9,13 +9,15 @@ CLASS TagsController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD insertTag()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS TagsController
+METHOD New( oController ) CLASS TagsController
 
-   ::Super:New()
+   ::Super:New( oController )
 
    ::cTitle                := "Marcadores"
 
@@ -29,8 +31,6 @@ METHOD New() CLASS TagsController
 
    ::oModel                := SQLTagsModel():New( self )
 
-   ::oRepository           := TagsRepository():New( self )
-
    ::oBrowseView           := TagsBrowseView():New( self )
 
    ::oDialogView           := TagsView():New( self )
@@ -43,7 +43,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End()
+METHOD End() CLASS TagsController
 
    if !empty(::oModel)
       ::oModel:End()
@@ -64,6 +64,27 @@ METHOD End()
    ::Super:End()
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertTag( tageableUuid, tagUuid ) CLASS TagsController
+
+   local hBuffer              
+
+   if empty( tageableUuid )
+      RETURN ( .f. )
+   end if 
+
+   if empty( tagUuid )
+      RETURN ( .f. )
+   end if 
+
+   hBuffer                    := SQLTageableModel():loadBlankBuffer()
+   hBuffer[ "tageable_uuid" ] := tageableUuid
+   hBuffer[ "tag_uuid"]       := tagUuid
+   SQLTageableModel():insertBuffer( hBuffer )
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -114,7 +135,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLTagsModel FROM SQLBaseModel
+CLASS SQLTagsModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "Tags"
 
@@ -134,8 +155,7 @@ METHOD getColumns() CLASS SQLTagsModel
    hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                     "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "empresa",  {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
-                                    "default"   => {|| cCodEmp() } }                         )
+   ::getEmpresaColumns()
 
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 50 )"                          ,;
                                     "default"   => {|| space( 50 ) } }                       )
@@ -154,9 +174,23 @@ CLASS TagsView FROM SQLBaseView
 
    DATA cEditControl 
 
+   DATA oGetMarcador
+
+   DATA cGetMarcador
+
+   DATA oBtnTags
+
+   DATA oTagsEver
+
    METHOD Activate()
-   
-   METHOD createEditControl( hControl )
+
+   METHOD externalRedefine( hControl, oDialog )
+
+   METHOD Start()
+      
+      METHOD validateAndAddTag( cMarcador )
+      METHOD selectorAndAddTag()
+
       METHOD selectorEditControl()
       METHOD assertEditControl()
 
@@ -166,91 +200,143 @@ END CLASS
 
 METHOD Activate() CLASS TagsView
 
-   local oDlg
-   local oBtnOk
-   local oGetNombre
+   local oDialog
 
-   DEFINE DIALOG oDlg RESOURCE "MARCADOR" TITLE ::lblTitle() + "marcador"
+   DEFINE DIALOG  oDialog ;
+      RESOURCE    "MARCADOR" ;
+      TITLE       ::lblTitle() + "marcador"
 
-   REDEFINE GET   oGetNombre ;
-      VAR         ::getModel():hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::getModel():hBuffer[ "nombre" ] ;
       ID          100 ;
       WHEN        ( !::oController:isZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
+      OF          oDialog
 
-   REDEFINE BUTTON oBtnOk ;
+   REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          oDialog ;
       WHEN        ( !::oController:isZoomMode() ) ;   
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( oDialog ), oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( oDialog:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| oBtnOk:Click() } )
+   oDialog:AddFastKey( VK_F5, {|| if( validateDialog( oDialog ), oDialog:end( IDOK ), ) } )
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG oDialog CENTER
 
-RETURN ( oDlg:nResult )
+RETURN ( oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD createEditControl( hControl, uValue ) CLASS TagsView
+METHOD externalRedefine( hControl, oDialog ) CLASS TagsView
 
-   local oError
-
-   if !hhaskey( hControl, "idGet" )    .or.  ;
-      !hhaskey( hControl, "idSay" )    .or.  ;
-      !hhaskey( hControl, "idText" )   .or.  ;
-      !hhaskey( hControl, "dialog" )   .or.  ;
-      !hhaskey( hControl, "when" )
+   if !hhaskey( hControl, "idGet" )       .or.  ;
+      !hhaskey( hControl, "idButton" )    .or.  ;
+      !hhaskey( hControl, "idTags" )      
       RETURN ( Self )
    end if 
 
-   if hb_isnil( uValue )
+   if hb_isnil( oDialog )
       RETURN ( Self )
    end if 
 
-   try 
+   REDEFINE GET            ::oGetMarcador ;
+      VAR                  ::cGetMarcador ;
+      ID                   ( hget( hControl, "idGet" ) ) ;
+      WHEN                 ( ::oController:getSenderController():isNotZoomMode() ) ;
+      PICTURE              "@!" ;
+      BITMAP               "gc_navigate_plus_16" ;
+      OF                   oDialog
 
-      REDEFINE GET   ::oEditControl ;
-         VAR         uValue ;
-         BITMAP      "Lupa" ;
-         ID          ( hGet( hControl, "idGet" ) ) ;
-         IDSAY       ( hGet( hControl, "idSay" ) ) ;
-         IDTEXT      ( hGet( hControl, "idText" ) ) ;
-         OF          ( hGet( hControl, "dialog" ) )
+   ::oGetMarcador:bHelp    := {|| iif( ::validateAndAddTag( ::cGetMarcador ), ::oGetMarcador:cText( space( 100 ) ), ) }
 
-      ::oEditControl:bWhen    := hGet( hControl, "when" ) 
-      ::oEditControl:bHelp    := {|| ::selectorEditControl() }
-      ::oEditControl:bValid   := {|| ::assertEditControl() }
+   REDEFINE BTNBMP         ::oBtnTags ;
+      ID                   ( hget( hControl, "idButton" ) ) ;
+      RESOURCE             "lupa" ;
+      WHEN                 ( ::oController:getSenderController():isNotZoomMode() ) ;
+      OF                   oDialog 
 
-      ::oEditControl:oHelpText:cText( ::getController():getRepository():getColumnWhereId( uValue ) )
+   ::oBtnTags:bAction      := {|| ::selectorAndAddTag() }
 
-   catch oError
-
-      msgStop( "Imposible crear el control de marcadores." + CRLF + ErrorMessage( oError ) )
-
-   end
+   ::oTagsEver             := TTagEver():Redefine( hget( hControl, "idTags" ), oDialog )
+   ::oTagsEver:bOnDelete   := {| oTag, oTagItem | SQLTageableModel():deleteByUuid( oTagItem:uCargo ) }
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD validateAndAddTag( cMarcador ) CLASS TagsView
+
+   local uuidTag
+
+   cMarcador      := alltrim( cMarcador )
+
+   if empty( cMarcador )
+      RETURN ( .f. )
+   end if 
+
+   if ascan( ::oTagsEver:aItems, {|oItem| upper( oItem:cText ) == upper( cMarcador ) } ) != 0
+      msgStop( "Este marcador ya está incluido" )
+      RETURN ( .f. )
+   end if 
+
+   uuidTag        := ::oController:oModel:getUuidWhereNombre( cMarcador ) 
+   if empty( uuidTag )
+      msgStop( "Este marcador : " + cMarcador + " , no existe" )
+      RETURN ( .f. )
+   end if 
+
+   ::oController:insertTag( ::oController:getSenderController():getUuid(), uuidTag )
+
+   ::oTagsEver:addItem( cMarcador )
+   ::oTagsEver:Refresh()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectorAndAddTag() CLASS TagsView
+
+   local hMarcador   := ::oController:activateSelectorView()
+
+   if !empty( hMarcador ) 
+      ::validateAndAddTag( hget( hMarcador, "nombre" ) )
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
 METHOD selectorEditControl() CLASS TagsView
 
-   local hBuffer     := ::oController:activateSelectorView()
+   local hMarcador   := ::oController:activateSelectorView()
 
-   if !empty( hBuffer )
-      ::oEditControl:cText( hget( hBuffer, "id" ) )
-      ::oEditControl:oHelpText:cText( hget( hBuffer, "nombre" ) )
+   if !empty( hMarcador )
+      ::oEditControl:cText( hget( hMarcador, "id" ) )
+      ::oEditControl:oHelpText:cText( hget( hMarcador, "nombre" ) )
    end if 
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Start()
+   
+   local aTags       := TageableRepository():getHashTageableTags( ::oController:getSenderController():getUuid() ) 
+
+   if empty( aTags )
+      RETURN ( .t. )
+   end if 
+
+   aeval( aTags, {|h| ::oTagsEver:addItem( hget( h, "nombre" ), hget( h, "uuid" ) ) } )
+
+   ::oTagsEver:Refresh()
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -303,26 +389,3 @@ RETURN ( ::hAsserts )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TagsRepository FROM SQLBaseRepository
-
-   METHOD getTableName()      INLINE ( SQLTagsModel():getTableName() ) 
-
-   METHOD getUuidWhereName( cTag )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD getUuidWhereName( cTag ) CLASS TagsRepository 
-
-   local cSql     := "SELECT uuid FROM " + ::getTableName()          + " " + ;
-                        "WHERE nombre = " + quoted( cTag )           + " " + ;
-                        "LIMIT 1"
-
-RETURN ( ::getDatabase():getValue( cSql ) ) 
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//

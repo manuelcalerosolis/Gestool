@@ -51,6 +51,7 @@ METHOD New( oController ) CLASS DireccionesController
    ::oValidator                     := DireccionesValidator():New( self, ::oDialogView )
 
    ::oPaisesController              := PaisesController():New( self )
+
    ::oProvinciasController          := ProvinciasController():New( self )
 
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
@@ -62,6 +63,7 @@ METHOD New( oController ) CLASS DireccionesController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS DireccionesController
 
    ::oModel:End()
@@ -72,11 +74,9 @@ METHOD End() CLASS DireccionesController
 
    ::oValidator:End()
 
-   /*::oRepository:End()*/
+   ::oPaisesController:End()
 
-   /*::oPaisesController:End()
-
-   ::oProvinciasController:End()*/
+   ::oProvinciasController:End()
 
    ::Super:End()
 

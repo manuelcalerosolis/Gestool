@@ -160,10 +160,22 @@ CLASS FormaPagoView FROM SQLBaseView
    DATA oGetCodigo
 
    DATA oGetIBANCodigoPais
-   DATA cGetIBANCodigoPais       INIT ""
+   DATA cGetIBANCodigoPais          INIT ""
 
    DATA oGetIBANDigitoControl
-   DATA cGetIBANDigitoControl    INIT ""
+   DATA cGetIBANDigitoControl       INIT ""
+
+   DATA oGetCuentaCodigoEntidad
+   DATA cGetCuentaCodigoEntidad     INIT ""
+
+   DATA oGetCuentaCodigoOficina
+   DATA cGetCuentaCodigoOficina     INIT ""
+
+   DATA oGetCuentaDigitoControl
+   DATA cGetCuentaDigitoControl     INIT ""
+
+   DATA oGetCuentaNumero
+   DATA cGetCuentaNumero            INIT ""
 
    METHOD New()
 
@@ -238,8 +250,10 @@ METHOD Activate() CLASS FormaPagoView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "comision" ] ;
       ID          130 ;
+      SPINNER  ;
+      MIN         0;
       PICTURE     "@E 999.99" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) .AND. ::oController:oModel:hBuffer[ "tipo_pago" ] == 3;
       OF          ::oDialog ;
 
    REDEFINE RADIO ::oEmitir ;
@@ -295,6 +309,31 @@ METHOD Activate() CLASS FormaPagoView
       ID          201 ;
       WHEN        ( .f. ) ;
       OF          ::oDialog ;
+
+   REDEFINE GET   ::oGetCuentaCodigoEntidad ;
+      VAR         ::cGetCuentaCodigoEntidad ;
+      ID          202 ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oGetCuentaCodigoOficina ;
+      VAR         ::cGetCuentaCodigoOficina ;
+      ID          203 ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oGetCuentaDigitoControl ;
+      VAR         ::cGetCuentaDigitoControl ;
+      ID          204 ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oGetCuentaNumero ;
+      VAR         ::cGetCuentaNumero ;
+      ID          205 ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog ;
+      
 
    // Contabilidad-------------------------------------------------------------
 
@@ -383,11 +422,17 @@ METHOD bancosControllerValidated()
    local cCodigo  := ::oController:oModel:hBuffer[ "banco_uuid" ]
    local hColumns := ::oController:oBancosController:oModel:getWhereCodigo( cCodigo )  
 
-   msgalert( hb_valtoexp( hColumns ) )
-
    ::oGetIBANCodigoPais:cText( hget( hColumns, "iban_codigo_pais" ) )
 
    ::oGetIBANDigitoControl:cText( hget( hColumns, "iban_digito_control" ) )
+
+   ::oGetCuentaCodigoEntidad:cText( hget( hColumns, "cuenta_codigo_entidad" ) )
+
+   ::oGetCuentaCodigoOficina:cText( hget( hColumns, "cuenta_codigo_oficina" ) )
+
+   ::oGetCuentaDigitoControl:cText( hget( hColumns, "cuenta_digito_control" ) )
+
+   ::oGetCuentaNumero:cText( hget( hColumns, "cuenta_numero" ) )
 
 RETURN ( nil )
 
@@ -426,6 +471,12 @@ CLASS SQLFormaPagoModel FROM SQLCompanyModel
    DATA cTableName               INIT "forma_pago"
 
    METHOD getColumns()
+
+   METHOD getBancoUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 3 ), ::oController:oBancosController:oModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setBancoUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", ::oController:oBancosController:oModel():getUuidWhereCodigo( uValue ) ) )
 
 END CLASS
 

@@ -13,6 +13,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oArticulosFabricantesController
 
+   DATA oTagsController
+
    METHOD New()
 
    METHOD End()
@@ -25,25 +27,27 @@ METHOD New() CLASS ArticulosController
 
    ::Super:New()
 
-   ::cTitle                      := "Artículos"
+   ::cTitle                            := "Artículos"
 
-   ::cName                       := "articulos"
+   ::cName                             := "articulos"
 
-   ::hImage                      := {  "16" => "gc_object_cube_16",;
-                                       "32" => "gc_object_cube_32",;
-                                       "48" => "gc_object_cube_48" }
+   ::hImage                            := {  "16" => "gc_object_cube_16",;
+                                             "32" => "gc_object_cube_32",;
+                                             "48" => "gc_object_cube_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
 
-   ::oModel                      := SQLArticulosModel():New( self )
+   ::oModel                            := SQLArticulosModel():New( self )
 
-   ::oBrowseView                 := ArticulosBrowseView():New( self )
+   ::oBrowseView                       := ArticulosBrowseView():New( self )
 
-   ::oDialogView                 := ArticulosView():New( self )
+   ::oDialogView                       := ArticulosView():New( self )
 
-   ::oValidator                  := ArticulosValidator():New( self, ::oDialogView )
+   ::oValidator                        := ArticulosValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := ArticulosRepository():New( self )
+   ::oRepository                       := ArticulosRepository():New( self )
+
+   ::oTagsController                   := TagsController():New( self )
 
    ::oArticulosFamiliaController       := ArticulosFamiliaController():New( self )
 
@@ -70,6 +74,8 @@ METHOD End() CLASS ArticulosController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oTagsController:End()
 
    ::oArticulosFamiliaController:End()
 
@@ -119,7 +125,7 @@ METHOD addColumns() CLASS ArticulosBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
@@ -147,10 +153,22 @@ CLASS ArticulosView FROM SQLBaseView
    DATA oGetCodigo
 
    DATA oGetTipo
+
+   DATA oGetMarcador
+
+   DATA cGetMarcador
+
+   DATA oBtnTags
+
+   DATA oTagsEver      
   
    METHOD Activate()
 
    METHOD startActivate()
+
+   METHOD validateAndAddMarcador()
+
+   METHOD selectorAndAddMarcador()
 
 END CLASS
 
@@ -219,6 +237,10 @@ METHOD Activate() CLASS ArticulosView
    ::oController:oArticulosFabricantesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_fabricante_uuid" ] ) )
    ::oController:oArticulosFabricantesController:oGetSelector:Activate( 150, 151, ::oFolder:aDialogs[ 1 ] )
 
+   // Marcadores---------------------------------------------------------------
+
+   ::oController:oTagsController:oDialogView:ExternalRedefine( { "idGet" => 160, "idButton" => 161, "idTags" => 162 }, ::oFolder:aDialogs[ 1 ] )
+
    // Botones Articulos -------------------------------------------------------
 
    REDEFINE BUTTON ;
@@ -257,9 +279,48 @@ METHOD startActivate()
 
    ::oController:oArticulosFabricantesController:oGetSelector:Start()
 
+   ::oController:oTagsController:oDialogView:Start()
+
    ::oGetCodigo:SetFocus()
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD validateAndAddMarcador( cMarcador )
+
+   cMarcador      := alltrim( cMarcador )
+
+   if empty( cMarcador )
+      RETURN ( .f. )
+   end if 
+
+   if ascan( ::oTagsEver:aItems, {|oItem| upper( oItem:cText ) == upper( cMarcador ) } ) != 0
+      msgStop( "Este marcador ya está incluido" )
+      RETURN ( .f. )
+   end if 
+
+   if !( ::oController:oTagsController:tagUuid( ::oController:getUuid(), cMarcador ) )
+      msgStop( "Este marcador : " + cMarcador + " , no existe" )
+      RETURN ( .f. )
+   end if 
+
+   ::oTagsEver:addItem( cMarcador )
+   ::oTagsEver:Refresh()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectorAndAddMarcador()
+
+   local hMarcador   := ::oController:oTagsController:ActivateSelectorView()
+
+   if !empty( hMarcador ) .and. !empty( hget( hMarcador, "nombre" ) )
+      ::validateAndAddMarcador( hget( hMarcador, "nombre" ) )
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

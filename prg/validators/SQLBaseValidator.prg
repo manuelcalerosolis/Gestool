@@ -20,7 +20,7 @@ CLASS SQLBaseValidator
    DATA uValue
   
    METHOD New()
-   METHOD End()
+   METHOD End()                           VIRTUAL
 
    METHOD setValue( uValue )              INLINE   ( ::uValue := uValue )
 
@@ -57,7 +57,7 @@ CLASS SQLBaseValidator
    METHOD existFamilia( uValue )
    METHOD existTipoArticulo( uValue )
 
-   METHOD setDialog( oView )                 INLINE ( ::oView := oView )
+   METHOD setDialog( oView )              INLINE ( ::oView := oView )
 
 END CLASS
 
@@ -70,12 +70,6 @@ METHOD New( oController, oView )
    ::oView                       := oView
 
 Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD End()
-   
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
