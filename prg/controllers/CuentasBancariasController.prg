@@ -13,6 +13,10 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
 
    DATA oContactosController
 
+   METHOD CalculaIBAN()
+
+   METHOD CalculaDigitoControl()
+
    METHOD New()
 
    METHOD End()
@@ -21,7 +25,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS CuentasBancariasController
+METHOD New( oSenderController ) CLASS CuentasBancariasController
 
    ::Super:New()
 
@@ -44,14 +48,16 @@ METHOD New() CLASS CuentasBancariasController
    ::oValidator                  := CuentasBancariasValidator():New( self, ::oDialogView )
 
    ::oDireccionesController      := DireccionesController():New( self )
+   ::oDireccionesController:oValidator:setDialog( ::oDialogView )
 
    ::oRepository                 := CuentasBancariasRepository():New( self )
 
    ::oPaisesController           := PaisesController():New( self )
+
    ::oProvinciasController       := ProvinciasController():New( self )
 
    ::oContactosController        := ContactosController():New( self )
-
+   ::oContactosController:oValidator:setDialog( ::oDialogView )
 
    /*::oComboSelector              := ComboSelector():New( self )*/
 
@@ -85,6 +91,34 @@ METHOD New() CLASS CuentasBancariasController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD CalculaIBAN()
+
+   lIbanDigit( ::oModel:hBuffer[ "iban_codigo_pais" ],;
+               ::oModel:hBuffer[ "cuenta_codigo_entidad" ] ,;
+               ::oModel:hBuffer[ "cuenta_codigo_oficina" ],;
+               ::oModel:hBuffer[ "cuenta_digito_control" ],;
+               ::oModel:hBuffer[ "cuenta_numero" ],;
+               ::oDialogView:oIBAN ) 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD CalculaDigitoControl()
+
+   lCalcDC( ::oModel:hBuffer[ "cuenta_codigo_entidad" ],;
+            ::oModel:hBuffer[ "cuenta_codigo_oficina" ],;
+            ::oModel:hBuffer[ "cuenta_digito_control" ],;
+            ::oModel:hBuffer[ "cuenta_numero" ],;
+            ::oDialogView:oDigitoControl )
+
+   ::oDialogView:oIBAN:lValid() 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD End() CLASS CuentasBancariasController
 
    ::oModel:End()
@@ -184,6 +218,9 @@ CLASS CuentasBancariasView FROM SQLBaseView
    DATA oGetPais
    DATA oGetDni
 
+   DATA oIBAN 
+   DATA oDigitoControl
+
    METHOD Activate()
 
    METHOD getDireccionesController()   INLINE ( ::oController:oDireccionesController )
@@ -198,8 +235,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS CuentasBancariasView
-
-   local oGetDni
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "BANCOS_SQL" ;
@@ -229,7 +264,7 @@ METHOD Activate() CLASS CuentasBancariasView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "sucursal" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "sucursal" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
@@ -237,31 +272,39 @@ METHOD Activate() CLASS CuentasBancariasView
    REDEFINE GET   ::oController:oModel:hBuffer[ "iban_codigo_pais" ] ;
       ID          130 ;
       PICTURE     "@!" ;
+      VALID       ::oController:CalculaIBAN() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "iban_digito_control" ] ;
+   REDEFINE GET    ::oIBAN  ;
+      VAR         ::oController:oModel:hBuffer[ "iban_digito_control" ] ;
       ID          131 ;
+      VALID       ::oController:CalculaIBAN() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_codigo_entidad" ] ;
       ID          132 ;
+      VALID       ::oController:CalculaDigitoControl() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_codigo_oficina" ] ;
       ID          133 ;
+      VALID       ::oController:CalculaDigitoControl() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_digito_control" ] ;
+   REDEFINE GET   ::oDigitoControl ;
+      VAR         ::oController:oModel:hBuffer[ "cuenta_digito_control" ];
       ID          134 ;
+      VALID       ::oController:CalculaDigitoControl() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_numero" ] ;
       ID          135 ;
+      VALID      ::oController:CalculaDigitoControl() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -374,14 +417,14 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
    hset( ::hColumns, "cuenta_digito_control",   {  "create"    => "VARCHAR( 2 )"                            ,;
                                                    "default"   => {|| space( 2 ) } }                        )
 
-   hset( ::hColumns, "cuenta_numero",           {  "create"    => "VARCHAR( 9 )"                            ,;
-                                                   "default"   => {|| space( 9 ) } }                        )
+   hset( ::hColumns, "cuenta_numero",           {  "create"    => "VARCHAR( 10 )"                            ,;
+                                                   "default"   => {|| space( 10 ) } }                        )
 
    hset( ::hColumns, "oficina",                 { "create"    => "VARCHAR( 200 )"                          ,;
-                                                   "default"   => {|| space( 200 ) } }                       )
+                                                   "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "contacto",                { "create"    => "VARCHAR( 200 )"                          ,;
-                                                   "default"   => {|| space( 200 ) } }                       )
+                                                   "default"   => {|| space( 200 ) } }                      )
 
 RETURN ( ::hColumns )
 
@@ -405,6 +448,7 @@ CLASS CuentasBancariasRepository FROM SQLBaseRepository
    METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
 
    METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )
+
 
 END CLASS
 
