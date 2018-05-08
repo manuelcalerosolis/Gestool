@@ -151,7 +151,7 @@ METHOD addModels()
 
    aadd( ::aModels, SQLAgentesModel():New() )
 
-   aadd( ::aModels, SQLFabricantesModel():New() )
+   aadd( ::aModels, SQLArticulosFabricantesModel():New() )
 
    aadd( ::aModels, SQLImagenesModel():New() )
 

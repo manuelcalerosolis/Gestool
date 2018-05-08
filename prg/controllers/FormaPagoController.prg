@@ -15,9 +15,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS FormaPagoController
+METHOD New( oSenderController ) CLASS FormaPagoController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Formas de pago"
 
@@ -40,6 +40,8 @@ METHOD New() CLASS FormaPagoController
    ::oValidator                  := FormaPagoValidator():New( self, ::oDialogView )
 
    ::oRepository                 := FormaPagoRepository():New( self )
+
+   ::oGetSelector                := GetSelector():New( self )
 
 RETURN ( Self )
 

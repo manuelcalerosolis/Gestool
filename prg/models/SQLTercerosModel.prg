@@ -30,6 +30,12 @@ METHOD getColumns() CLASS SQLTercerosModel
    hset( ::hColumns, "dni",                  {  "create"    => "VARCHAR( 20 )"                        ,;
                                                 "default"   => {|| space( 20 ) } }                    )
 
+   hset( ::hColumns, "forma_pago_uuid",      {  "create"    => "VARCHAR( 40 )"                        ,;
+                                                "default"   => {|| space( 40 ) } }                    )
+
+   hset( ::hColumns, "web",                  {  "create"    => "VARCHAR( 150 )"                       ,;
+                                                "default"   => {|| space( 150 ) } }                   )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//

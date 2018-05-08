@@ -17,7 +17,7 @@ METHOD New() CLASS ClientesController
 
    ::cTitle                      := "Clientes"
 
-   ::cName                       := "clientes"
+   ::cName                       := "clientes_sql"
 
    ::hImage                      := {  "16" => "gc_user_16",;
                                        "32" => "gc_user_32",;
@@ -29,7 +29,15 @@ METHOD New() CLASS ClientesController
 
    ::oValidator                  := ClientesValidator():New( self, ::oDialogView )
 
-   ::oAgentesController          := AgentesController():New()
+   ::oAgentesController          := AgentesController():New( self )
+
+   ::oFormasdePagoController     := FormaPagoController():New( self )
+
+   ::oCuentasRemesasController   := CuentasRemesaController():New( self )
+
+   ::oRutasController            := RutasController():New( self )
+
+   ::oClientesGruposController   := ClientesGruposController():New( self )
 
    ::oDireccionesController      := DireccionesController():New( self )
    ::oDireccionesController:oValidator:setDialog( ::oDialogView )

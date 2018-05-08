@@ -370,7 +370,7 @@ METHOD ExternalCoreRedefine( oDialog )
    REDEFINE GET   ::oGetDireccion ;
       VAR         ::oController:oModel:hBuffer[ "direccion" ] ;
       ID          1010 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getSenderController():isNotZoomMode() ) ;
       BITMAP      "gc_earth_lupa_16" ;
       OF          oDialog
 
@@ -378,20 +378,20 @@ METHOD ExternalCoreRedefine( oDialog )
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
       ID          1020 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getSenderController():isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo_postal" ) ) ;
       OF          oDialog 
 
    REDEFINE GET   ::oGetPoblacion ;
       VAR         ::oController:oModel:hBuffer[ "poblacion" ] ;
       ID          1030 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getSenderController():isNotZoomMode() ) ;
       OF          oDialog
 
    REDEFINE GET   ::oGetCodigoProvincia ;
       VAR         ::oController:oModel:hBuffer[ "codigo_provincia" ] ;
       ID          1040 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getSenderController():isNotZoomMode() ) ;
       BITMAP      "LUPA" ;
       VALID       ( ::oController:validate( "codigo_provincia" ) ) ;
       OF          oDialog
@@ -401,7 +401,7 @@ METHOD ExternalCoreRedefine( oDialog )
    REDEFINE GET   ::oGetProvincia ;
       VAR         ::oController:oModel:hBuffer[ "provincia" ] ;
       ID          1050 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getSenderController():isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "provincia" ) ) ;
       OF          oDialog
 
@@ -409,7 +409,7 @@ METHOD ExternalCoreRedefine( oDialog )
       VAR         ::oController:oModel:hBuffer[ "codigo_pais" ] ;
       ID          1060 ;
       IDTEXT      1061 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getSenderController():isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo_pais" ) ) ;
       BITMAP      "LUPA" ;
       OF          oDialog
@@ -424,17 +424,17 @@ METHOD ExternalContactRedefine( oDialog )
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
       ID          1070 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getSenderController():isNotZoomMode() ) ;
       OF          oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "movil" ] ;
       ID          1080 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getSenderController():isNotZoomMode() ) ;
       OF          oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "email" ] ;
       ID          1090 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getSenderController():isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "email" ) ) ;
       OF          oDialog
 

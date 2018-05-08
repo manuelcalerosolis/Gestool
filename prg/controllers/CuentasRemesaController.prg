@@ -15,9 +15,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS CuentasRemesaController
+METHOD New( oSenderController ) CLASS CuentasRemesaController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                         := "Cuentas de remesa"
 
@@ -40,6 +40,8 @@ METHOD New() CLASS CuentasRemesaController
    ::oValidator                     := CuentasRemesaValidator():New( self, ::oDialogView )
 
    ::oRepository                    := CuentasRemesaRepository():New( self )
+
+   ::oGetSelector                   := GetSelector():New( self )
 
 RETURN ( Self )
 

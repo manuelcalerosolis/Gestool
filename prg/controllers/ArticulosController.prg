@@ -9,6 +9,12 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oArticulosCategoriasController
 
+   DATA oArticulosFamiliaController
+
+   DATA oArticulosFabricantesController
+
+   DATA oTagsController
+
    METHOD New()
 
    METHOD End()
@@ -21,31 +27,35 @@ METHOD New() CLASS ArticulosController
 
    ::Super:New()
 
-   ::cTitle                      := "Artículos"
+   ::cTitle                            := "Artículos"
 
-   ::cName                       := "articulos"
+   ::cName                             := "articulos"
 
-   ::hImage                      := {  "16" => "gc_object_cube_16",;
-                                       "32" => "gc_object_cube_32",;
-                                       "48" => "gc_object_cube_48" }
+   ::hImage                            := {  "16" => "gc_object_cube_16",;
+                                             "32" => "gc_object_cube_32",;
+                                             "48" => "gc_object_cube_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                            := Auth():Level( ::cName )
 
-   ::oModel                      := SQLArticulosModel():New( self )
+   ::oModel                            := SQLArticulosModel():New( self )
 
-   ::oBrowseView                 := ArticulosBrowseView():New( self )
+   ::oBrowseView                       := ArticulosBrowseView():New( self )
 
-   ::oDialogView                 := ArticulosView():New( self )
+   ::oDialogView                       := ArticulosView():New( self )
 
-   ::oValidator                  := ArticulosValidator():New( self, ::oDialogView )
+   ::oValidator                        := ArticulosValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := ArticulosRepository():New( self )
+   ::oRepository                       := ArticulosRepository():New( self )
 
-   ::oArticulosTipoController    := ArticulosTipoController():New( self )
-   // ::oArticulosTipoController:oGetSelector:setView( ::oDialogView )
+   ::oTagsController                   := TagsController():New( self )
+
+   ::oArticulosFamiliaController       := ArticulosFamiliaController():New( self )
+
+   ::oArticulosTipoController          := ArticulosTipoController():New( self )
 
    ::oArticulosCategoriasController    := ArticulosCategoriasController():New( self )
-   // ::oArticulosCategoriasController:oGetSelector:setView( ::oDialogView )
+
+   ::oArticulosFabricantesController   := ArticulosFabricantesController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -65,9 +75,15 @@ METHOD End() CLASS ArticulosController
 
    ::oRepository:End()
 
+   ::oTagsController:End()
+
+   ::oArticulosFamiliaController:End()
+
    ::oArticulosTipoController:End()
 
    ::oArticulosCategoriasController:End()
+
+   ::oArticulosFabricantesController:End()
 
    ::Super:End()
 
@@ -109,7 +125,7 @@ METHOD addColumns() CLASS ArticulosBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
@@ -137,10 +153,22 @@ CLASS ArticulosView FROM SQLBaseView
    DATA oGetCodigo
 
    DATA oGetTipo
+
+   DATA oGetMarcador
+
+   DATA cGetMarcador
+
+   DATA oBtnTags
+
+   DATA oTagsEver      
   
    METHOD Activate()
 
    METHOD startActivate()
+
+   METHOD validateAndAddMarcador()
+
+   METHOD selectorAndAddMarcador()
 
 END CLASS
 
@@ -189,15 +217,29 @@ METHOD Activate() CLASS ArticulosView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   // Tipos de articulos -------------------------------------------------------
+   // Familias de articulos ---------------------------------------------------
+
+   ::oController:oArticulosFamiliaController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_familia_uuid" ] ) )
+   ::oController:oArticulosFamiliaController:oGetSelector:Activate( 120, 121, ::oFolder:aDialogs[ 1 ] )
+
+   // Tipos de articulos ------------------------------------------------------
 
    ::oController:oArticulosTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_tipo_uuid" ] ) )
    ::oController:oArticulosTipoController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
 
-   // Categorias de articulos---------------------------------------------------
+   // Categorias de articulos--------------------------------------------------
 
    ::oController:oArticulosCategoriasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_categoria_uuid" ] ) )
    ::oController:oArticulosCategoriasController:oGetSelector:Activate( 140, 141, ::oFolder:aDialogs[ 1 ] )
+   
+   // Fabricantes de articulos--------------------------------------------------
+
+   ::oController:oArticulosFabricantesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_fabricante_uuid" ] ) )
+   ::oController:oArticulosFabricantesController:oGetSelector:Activate( 150, 151, ::oFolder:aDialogs[ 1 ] )
+
+   // Marcadores---------------------------------------------------------------
+
+   ::oController:oTagsController:oDialogView:ExternalRedefine( { "idGet" => 160, "idButton" => 161, "idTags" => 162 }, ::oFolder:aDialogs[ 1 ] )
 
    // Botones Articulos -------------------------------------------------------
 
@@ -229,13 +271,56 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate()
 
+   ::oController:oArticulosFamiliaController:oGetSelector:Start()
+
    ::oController:oArticulosTipoController:oGetSelector:Start()
 
    ::oController:oArticulosCategoriasController:oGetSelector:Start()
 
+   ::oController:oArticulosFabricantesController:oGetSelector:Start()
+
+   ::oController:oTagsController:oDialogView:Start()
+
    ::oGetCodigo:SetFocus()
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD validateAndAddMarcador( cMarcador )
+
+   cMarcador      := alltrim( cMarcador )
+
+   if empty( cMarcador )
+      RETURN ( .f. )
+   end if 
+
+   if ascan( ::oTagsEver:aItems, {|oItem| upper( oItem:cText ) == upper( cMarcador ) } ) != 0
+      msgStop( "Este marcador ya está incluido" )
+      RETURN ( .f. )
+   end if 
+
+   if !( ::oController:oTagsController:tagUuid( ::oController:getUuid(), cMarcador ) )
+      msgStop( "Este marcador : " + cMarcador + " , no existe" )
+      RETURN ( .f. )
+   end if 
+
+   ::oTagsEver:addItem( cMarcador )
+   ::oTagsEver:Refresh()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectorAndAddMarcador()
+
+   local hMarcador   := ::oController:oTagsController:ActivateSelectorView()
+
+   if !empty( hMarcador ) .and. !empty( hget( hMarcador, "nombre" ) )
+      ::validateAndAddMarcador( hget( hMarcador, "nombre" ) )
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -256,8 +341,7 @@ METHOD getValidators() CLASS ArticulosValidator
    ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
                                           "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
-                                          "unique"             => "El código introducido ya existe",;
-                                          "onlyAlphanumeric"   => "El código no puede contener caracteres especiales" } }
+                                          "unique"             => "El código introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -272,17 +356,29 @@ CLASS SQLArticulosModel FROM SQLBaseModel
 
    METHOD getColumns()
 
+   METHOD getArticulosFamiliaUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 18 ), SQLArticulosFamiliaModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setArticulosFamiliaUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLArticulosFamiliaModel():getUuidWhereCodigo( uValue ) ) )
+
    METHOD getArticulosTipoUuidAttribute( uValue ) ; 
                                  INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosTipoModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setArticulosTipoUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosTipoModel():getUuidWhereCodigo( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), "", SQLArticulosTipoModel():getUuidWhereCodigo( uValue ) ) )
 
    METHOD getArticulosCategoriaUuidAttribute( uValue ) ; 
                                  INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosCategoriasModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setArticulosCategoriaUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosCategoriasModel():getUuidWhereCodigo( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), "", SQLArticulosCategoriasModel():getUuidWhereCodigo( uValue ) ) )
+
+   METHOD getArticulosFabricanteUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLArticulosFabricantesModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setArticulosFabricanteUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLArticulosFabricantesModel():getUuidWhereCodigo( uValue ) ) )
 
 END CLASS
 
@@ -304,10 +400,16 @@ METHOD getColumns() CLASS SQLArticulosModel
    hset( ::hColumns, "nombre",                     {  "create"    => "VARCHAR( 200 )"                          ,;
                                                       "default"   => {|| space( 200 ) } }                      )
 
+   hset( ::hColumns, "articulos_familia_uuid",     {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 40 ) } }                       )
+
    hset( ::hColumns, "articulos_tipo_uuid",        {  "create"    => "VARCHAR( 40 )"                           ,;
                                                       "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "articulos_categoria_uuid",   {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "articulos_fabricante_uuid",  {  "create"    => "VARCHAR( 40 )"                           ,;
                                                       "default"   => {|| space( 40 ) } }                       )
 
    ::getTimeStampColumns()

@@ -43,24 +43,28 @@ CLASS TageableRepository FROM SQLBaseRepository
 
    METHOD getTableName()      INLINE ( SQLTageableModel():getTableName() ) 
 
-   METHOD getHashTageableTagsNameAndId( tageableUuid ) ;
-                              INLINE ( ::getDatabase():selectTrimedFetchHash( ::getSQLTageableTagsNameAndId( tageableUuid ) ) )
-   METHOD getSQLTageableTagsNameAndId( tageableUuid )
+   METHOD getHashTageableTags( tageableUuid ) ;
+                              INLINE ( ::getDatabase():selectTrimedFetchHash( ::getSQLTageableTags( tageableUuid ) ) )
+
+   METHOD getSQLTageableTags( tageableUuid )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLTageableTagsNameAndId( tageableUuid ) CLASS TageableRepository 
+METHOD getSQLTageableTags( tageableUuid ) CLASS TageableRepository 
 
    local cSql
 
-   cSql  := "SELECT " + SQLTagsModel():getTableName() + ".nombre, "           + ;
-                  SQLTageableModel():getTableName() + ".id "                  + ; 
+   cSql  := "SELECT " + SQLTagsModel():getTableName() + ".nombre,"      + " " + ;
+                  SQLTageableModel():getTableName() + ".id,"            + " " + ; 
+                  SQLTageableModel():getTableName() + ".uuid"           + " " + ; 
                "FROM " + SQLTageableModel():getTableName()              + " " + ;
                "INNER JOIN " + SQLTagsModel():getTableName()            + " " + ;
                   "ON " + SQLTagsModel():getTableName() + ".uuid = " + SQLTageableModel():getTableName() + ".tag_uuid " + ;
                "WHERE " + SQLTageableModel():getTableName() + ".tageable_uuid = " + quoted( tageableUuid )
+
+   logwrite( cSql )
 
 RETURN ( cSql ) 
 

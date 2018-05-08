@@ -15,13 +15,6 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
    DATA oGetAlmacenOrigen
    DATA oGetAlmacenDestino
 
-   DATA oGetMarcador
-   DATA cGetMarcador                INIT     space( 100 )
-
-   DATA oTagsEver
-   
-   DATA oBtnTags
-   
    DATA oRadioTipoMovimento
 
    DATA idGoTo                      INIT     0
@@ -39,10 +32,6 @@ CLASS MovimientosAlmacenView FROM SQLBaseView
    METHOD validateAndGoTo()         
    METHOD validateAndGoDown()       INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDDOWN ), ) )
    METHOD validateAndGoUp()         INLINE   (  iif( validateDialog( ::oDialog ), ::oDialog:end( IDOKANDUP ), ) )
-
-   METHOD validateAndAddMarcador()
-
-   METHOD selectorAndAddMarcador()
 
 END CLASS
 
@@ -112,27 +101,9 @@ METHOD Activate()
       ::oGetAlmacenDestino:bValid   := {|| ::oController:validateAlmacenDestino() }
       ::oGetAlmacenDestino:bHelp    := {|| brwAlmacen( ::oGetAlmacenDestino, ::oGetAlmacenDestino:oHelpText ) }
 
-      REDEFINE GET   ::oGetMarcador ;
-         VAR         ::cGetMarcador ;
-         ID          140 ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-         PICTURE     "@!" ;
-         BITMAP      "gc_navigate_plus_16" ;
-         OF          ::oDialog
+      // Marcadores---------------------------------------------------------------
 
-      ::oGetMarcador:bValid   := {|| .t. }
-      ::oGetMarcador:bHelp    := {|| iif( ::validateAndAddMarcador( ::cGetMarcador ), ::oGetMarcador:cText( space( 100 ) ), ) }
-
-      REDEFINE BTNBMP ::oBtnTags ;
-         ID          141 ;
-         OF          ::oDialog ;
-         RESOURCE    "lupa" ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-
-      ::oBtnTags:bAction      := {|| ::selectorAndAddMarcador() }
-
-      ::oTagsEver             := TTagEver():Redefine( 142, ::oDialog )
-      ::oTagsEver:bOnDelete   := {| oTag, oTagItem | ::oController:deleteTag( oTagItem:uCargo ) }
+      ::oController:oTagsController:oDialogView:ExternalRedefine( { "idGet" => 140, "idButton" => 141, "idTags" => 142 }, ::oDialog )
 
       // Divisas---------------------------------------------------------------
 
@@ -158,7 +129,6 @@ METHOD Activate()
 
    ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } ) 
 
-   ::oTagsEver:End()
    ::oOfficeBar:End()
 
 RETURN ( ::oDialog:nResult )
@@ -173,7 +143,7 @@ METHOD startActivate()
 
    ::oController:stampAlmacenNombre( ::oGetAlmacenDestino )
 
-   ::oController:stampMarcadores( ::oTagsEver )
+   ::oController:oTagsController:oDialogView:Start()
 
    ::oController:oLineasController:oBrowseView:getBrowse():makeTotals()
    ::oController:oLineasController:oBrowseView:getBrowse():goTop()
@@ -231,39 +201,3 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validateAndAddMarcador( cMarcador )
-
-   cMarcador      := alltrim( cMarcador )
-
-   if empty( cMarcador )
-      RETURN ( .f. )
-   end if 
-
-   if ascan( ::oTagsEver:aItems, {|oItem| upper( oItem:cText ) == upper( cMarcador ) } ) != 0
-      msgStop( "Este marcador ya está incluido" )
-      RETURN ( .f. )
-   end if 
-
-   if !( ::oController:isAddedTag( cMarcador ) )
-      msgStop( "Este marcador : " + cMarcador + " , no existe" )
-      RETURN ( .f. )
-   end if 
-
-   ::oTagsEver:addItem( cMarcador )
-   ::oTagsEver:Refresh()
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD selectorAndAddMarcador()
-
-   local hMarcador   := ::oController:oTagsController:ActivateSelectorView()
-
-   if !empty( hMarcador ) .and. !empty( hget( hMarcador, "nombre" ) )
-      ::validateAndAddMarcador( hget( hMarcador, "nombre" ) )
-   end if 
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//

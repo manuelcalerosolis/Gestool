@@ -286,7 +286,7 @@ METHOD Activate() CLASS ContactosView
       ID          IDCANCEL ;
       OF          ::oDialog ;
       CANCEL ;
-      ACTION     ( ::oDialog:end() )
+      ACTION      ( ::oDialog:end() )
 
    ACTIVATE DIALOG ::oDialog CENTER
 

@@ -158,9 +158,9 @@ METHOD buildRowSetSentence()
    local cColumnOrder
    local cColumnOrientation 
 
-   cColumnOrder         := ::oVistaModel:getColumnOrderNavigator( ::getName() )
+   cColumnOrder               := ::oVistaModel:getColumnOrderNavigator( ::getName() )
 
-   cColumnOrientation   := ::oVistaModel:getColumnOrientationNavigator( ::getName() )   
+   cColumnOrientation         := ::oVistaModel:getColumnOrientationNavigator( ::getName() )   
 
    ::oRowSet:build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
 
