@@ -51,7 +51,8 @@ METHOD getColumns() CLASS SQLClientesModel
    hset( ::hColumns, "bloqueado",                  {  "create"    => "BIT"                 ,;
                                                       "default"   => {|| .f. } }           )
 
-   hset( ::hColumns, "fecha_bloqueo",              {  "create"    => "DATE" }              )
+   hset( ::hColumns, "fecha_bloqueo",              {  "create"    => "DATE"                ,;
+                                                      "default"   => {|| ctod( "" ) } }    )
 
    hset( ::hColumns, "causa_bloqueo",              {  "create"    => "VARCHAR( 100 )"      ,;
                                                       "default"   => {|| space( 100 ) } }  )
@@ -62,7 +63,8 @@ METHOD getColumns() CLASS SQLClientesModel
    hset( ::hColumns, "no_editar_datos",            {  "create"    => "BIT"                 ,;
                                                       "default"   => {|| .f. } }           )
 
-   hset( ::hColumns, "fecha_ultima_llamada",       {  "create"    => "DATE" }              )
+   hset( ::hColumns, "fecha_ultima_llamada",       {  "create"    => "DATE"                ,;
+                                                      "default"   => {|| ctod( "" ) } }    )
 
    hset( ::hColumns, "autorizado_venta_credito",   {  "create"    => "BIT"                 ,;
                                                       "default"   => {|| .f. } }           )
@@ -70,9 +72,11 @@ METHOD getColumns() CLASS SQLClientesModel
    hset( ::hColumns, "bloquear_riesgo_alcanzado",  {  "create"    => "BIT"                 ,;
                                                       "default"   => {|| .f. } }           )
 
-   hset( ::hColumns, "fecha_peticion_riesgo",      {  "create"    => "DATE" }              )
+   hset( ::hColumns, "fecha_peticion_riesgo",      {  "create"    => "DATE"                ,;
+                                                      "default"   => {|| ctod( "" ) } }    )
 
-   hset( ::hColumns, "fecha_concesion_riesgo",     {  "create"    => "DATE" }              )
+   hset( ::hColumns, "fecha_concesion_riesgo",     {  "create"    => "DATE"                ,;
+                                                      "default"   => {|| ctod( "" ) } }    )
 
    hset( ::hColumns, "riesgo",                     {  "create"    => "DECIMAL(19,6)"       ,;
                                                       "default"   => {|| 0 } }             )
