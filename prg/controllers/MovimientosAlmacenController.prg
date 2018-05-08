@@ -261,7 +261,7 @@ RETURN ( .t. )
 
 METHOD stampMarcadores( oTagsEver )
    
-   local aMarcadores    := TageableRepository():getHashTageableTagsNameAndId( ::oModel:getBuffer( "uuid" ) ) 
+   local aMarcadores    := TageableRepository():getHashTageableTags( ::oModel:getBuffer( "uuid" ) ) 
 
    if empty( aMarcadores )
       RETURN ( .t. )
@@ -454,7 +454,7 @@ METHOD isAddedTag( cMarcador )
 
    local uuidTag
 
-   uuidTag                    := TagsRepository():getUuidWhereName( cMarcador ) 
+   uuidTag                    := SQLTagsModel():getUuidWhereNombre( cMarcador ) 
 
    if empty( uuidTag )
       RETURN ( .f. )
@@ -472,7 +472,6 @@ METHOD addTag( uuidTag )
 
    hBuffer                    := SQLTageableModel():loadBlankBuffer()
    hBuffer[ "tag_uuid"]       := uuidTag
-   hBuffer[ "tageable_type" ] := ::getName()
    hBuffer[ "tageable_uuid" ] := ::oModel:getBuffer( "uuid" )
    SQLTageableModel():insertBuffer( hBuffer )
 

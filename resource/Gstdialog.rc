@@ -22607,10 +22607,14 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Nombre*", -1, "Static", WS_GROUP, 11, 26, 29, 8
   CONTROL "Familia", -1, "Static", WS_GROUP, 11, 56, 27, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 5, 4, 444, 36
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 5, 42, 444, 131
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 5, 42, 444, 113
   CONTROL "Tipo", -1, "Static", WS_GROUP, 11, 68, 19, 8
   CONTROL "Categoría", -1, "Static", WS_GROUP, 11, 81, 37, 8
   CONTROL "Fabricantes", -1, "Static", WS_GROUP, 11, 94, 42, 8
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 70, 104, 360, 11
+  CONTROL "", 161, "TBtnBmp", 0x00000000, 432, 104, 12, 11
+  CONTROL "", 162, "TTagEver", WS_TABSTOP|0x00800000, 70, 117, 374, 32
+  CONTROL "Marcadores", -1, "Static", WS_GROUP, 11, 107, 42, 8
 }
 
 FAMILIA_GENERAL DIALOG DISCARDABLE 35, -50, 456, 270
