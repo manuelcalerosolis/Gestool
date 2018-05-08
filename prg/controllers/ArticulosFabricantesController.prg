@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FabricantesController FROM SQLNavigatorController
+CLASS ArticulosFabricantesController FROM SQLNavigatorController
 
    DATA oImagenesController
 
@@ -17,7 +17,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS FabricantesController
+METHOD New() CLASS ArticulosFabricantesController
 
    ::Super:New()
 
@@ -31,17 +31,17 @@ METHOD New() CLASS FabricantesController
 
    ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                      := SQLFabricantesModel():New( self )
+   ::oModel                      := SQLArticulosFabricantesModel():New( self )
 
-   ::oBrowseView                 := FabricantesBrowseView():New( self )
+   ::oBrowseView                 := ArticulosFabricantesBrowseView():New( self )
 
-   ::oDialogView                 := FabricantesView():New( self )
+   ::oDialogView                 := ArticulosFabricantesView():New( self )
 
-   ::oValidator                  := FabricantesValidator():New( self, ::oDialogView )
+   ::oValidator                  := ArticulosFabricantesValidator():New( self, ::oDialogView )
 
    ::oImagenesController         := ImagenesController():New( self )
 
-   ::oRepository                 := FabricantesRepository():New( self )
+   ::oRepository                 := ArticulosFabricantesRepository():New( self )
 
    ::oGetSelector                := GetSelector():New( self )
 
@@ -62,7 +62,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS FabricantesController
+METHOD End() CLASS ArticulosFabricantesController
 
    ::oModel:End()
 
@@ -88,7 +88,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FabricantesBrowseView FROM SQLBrowseView
+CLASS ArticulosFabricantesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -96,7 +96,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS FabricantesBrowseView
+METHOD addColumns() CLASS ArticulosFabricantesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -148,7 +148,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FabricantesView FROM SQLBaseView
+CLASS ArticulosFabricantesView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -160,7 +160,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activating() CLASS FabricantesView
+METHOD Activating() CLASS ArticulosFabricantesView
 
    if ::oController:isAppendOrDuplicateMode()
       ::oController:oModel:hBuffer()
@@ -169,7 +169,7 @@ METHOD Activating() CLASS FabricantesView
 RETURN ( self )
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS FabricantesView
+METHOD Activate() CLASS ArticulosFabricantesView
 
    local oGetImagen
    local oBmpImagen
@@ -256,7 +256,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FabricantesValidator FROM SQLCompanyValidator
+CLASS ArticulosFabricantesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -264,10 +264,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS FabricantesValidator
+METHOD getValidators() CLASS ArticulosFabricantesValidator
 
-   ::hValidators  := {  "codigo" =>    {  "required"           => "El codigo es un dato requerido",;
-                                          "unique"             => "El codigo introducido ya existe"  } ,;
+   ::hValidators  := {  "codigo" =>    {  "required"           => "El código es un dato requerido",;
+                                          "unique"             => "El código introducido ya existe" } ,;
                         "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
                                           "unique"             => "El nombre introducido ya existe" } }                  
 
@@ -282,9 +282,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLFabricantesModel FROM SQLCompanyModel
+CLASS SQLArticulosFabricantesModel FROM SQLCompanyModel
 
-   DATA cTableName                     INIT "fabricantes"
+   DATA cTableName                     INIT "articulos_fabricantes"
 
    METHOD getColumns()
 
@@ -294,7 +294,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLFabricantesModel
+METHOD getColumns() CLASS SQLArticulosFabricantesModel
 
 
    hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
@@ -305,8 +305,6 @@ METHOD getColumns() CLASS SQLFabricantesModel
    
    ::getEmpresaColumns()
 
-   ::getTimeStampColumns()
-
    hset( ::hColumns, "codigo",      {  "create"    => "VARCHAR( 3 )"                            ,;
                                        "default"   => {|| space( 3 ) } }                        )
 
@@ -315,6 +313,8 @@ METHOD getColumns() CLASS SQLFabricantesModel
 
    hset( ::hColumns, "pagina_web",  {  "create"    => "VARCHAR( 200 )"                          ,;
                                        "default"   => {|| space( 200 ) } }                       )
+   
+   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
@@ -329,9 +329,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FabricantesRepository FROM SQLBaseRepository
+CLASS ArticulosFabricantesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLFabricantesModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLArticulosFabricantesModel():getTableName() ) 
 
    METHOD getNombres()                    
 
@@ -348,10 +348,15 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD getNombres() CLASS FabricantesRepository
+METHOD getNombres() CLASS ArticulosFabricantesRepository
 
-   local cSentence     := "SELECT nombre FROM " + ::getTableName() + " ORDER BY nombre ASC"
-   local aNombres      := ::getDatabase():selectFetchArrayOneColumn( cSentence )
+   local cSQL
+   local aNombres       
+
+   cSQL                 := "SELECT nombre FROM " + ::getTableName() + " "
+   cSQL                 +=    "ORDER BY nombre ASC"
+
+   aNombres             := ::getDatabase():selectFetchArrayOneColumn( cSQL )
 
    ains( aNombres, 1, "", .t. )
 

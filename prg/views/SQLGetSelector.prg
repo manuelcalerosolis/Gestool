@@ -27,6 +27,8 @@ CLASS GetSelector
    METHOD setView( oView )                      INLINE ( ::oView := oView )
    METHOD getView()                             INLINE ( iif( hb_isnil( ::oView ), ::oController:oDialogView, ::oView ) )
 
+   METHOD Build( hBuilder )
+
    METHOD Activate( idGet, idText, oDlg )
    METHOD Bind( bValue )                        INLINE ( ::bValue := bValue )
 
@@ -38,6 +40,9 @@ CLASS GetSelector
    METHOD evalValue( value )                    INLINE ( eval( ::bValue, value ) )
 
    METHOD showMessage()
+
+   METHOD Hide()                                INLINE ( if( !empty( ::oGet ), ::oGet:Hide(), ) )
+   METHOD Show()                                INLINE ( if( !empty( ::oGet ), ::oGet:Show(), ) )
 
    // Events-------------------------------------------------------------------
 
@@ -68,10 +73,21 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate( idGet, idText, oDlg ) CLASS GetSelector
+METHOD Build( hBuilder ) CLASS GetSelector
+
+   local idGet    := if( hhaskey( hBuilder, "idGet" ),   hBuilder[ "idGet" ],    nil )
+   local idText   := if( hhaskey( hBuilder, "idText" ),  hBuilder[ "idText" ],   nil )
+   local idSay    := if( hhaskey( hBuilder, "idSay" ),   hBuilder[ "idSay"],     nil )
+   local oDlg     := if( hhaskey( hBuilder, "oDialog" ), hBuilder[ "oDialog" ],  nil )
+
+RETURN ( ::Activate( idGet, idText, oDlg, idSay ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate( idGet, idText, oDlg, idSay ) CLASS GetSelector
 
    if isFalse( ::fireEvent( 'activating' ) )
-      RETURN ( .f. )
+      RETURN ( nil )
    end if
 
    ::cGet         := eval( ::bValue )
@@ -80,6 +96,7 @@ METHOD Activate( idGet, idText, oDlg ) CLASS GetSelector
       VAR         ::cGet ;
       ID          idGet ;
       IDTEXT      idText ;
+      IDSAY       idSay ;
       BITMAP      "Lupa" ;
       WHEN        ( ::oController:getSenderController():isNotZoomMode() ) ;
       OF          oDlg

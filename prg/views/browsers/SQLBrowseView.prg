@@ -201,8 +201,14 @@ RETURN ( aHeaders )
 
 METHOD getFirstColumnHeader()
 
+   local oCol
+
    if hb_isarray( ::oBrowse:aCols )
-      RETURN ( ::oBrowse:aCols[ 1 ]:cHeader )
+      for each oCol in ::oBrowse:aCols 
+         if !( oCol:lHide ) .and. !empty( oCol:cHeader )
+            RETURN ( oCol:cHeader )
+         end if 
+      next
    end if 
 
 RETURN ( "" )
@@ -398,7 +404,7 @@ METHOD getColumnHeaderByOrder( cSortOrder )
 
    local oColumn
 
-   oColumn           := ::getColumnOrder( cSortOrder )
+   oColumn                    := ::getColumnOrder( cSortOrder )
 
    if empty( oColumn )
       RETURN ( "" )

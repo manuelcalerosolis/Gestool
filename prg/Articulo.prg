@@ -421,7 +421,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          aTiposImpresoras  := SQLTiposImpresorasModel():getArrayNombres()  
       end if
 
-      oFabricantesController     := FabricantesController():New()
+      oFabricantesController     := ArticulosFabricantesController():New()
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------

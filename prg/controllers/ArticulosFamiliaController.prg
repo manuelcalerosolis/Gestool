@@ -57,6 +57,8 @@ METHOD New() CLASS ArticulosFamiliaController
 
    ::oTraduccionesController     := TraduccionesController():New( self )
 
+   ::oGetSelector                := GetSelector():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oImagenesController:loadPrincipalBlankBuffer() } )
@@ -161,7 +163,17 @@ CLASS ArticulosFamiliaView FROM SQLBaseView
 
    DATA oGetTipo
 
-   DATA oColorRGB
+   DATA oGetColorRGB
+
+   DATA oGetImagen
+
+   DATA oBmpImagen
+
+   DATA oGetPosicion
+
+   DATA oCheckBoxMostrarComentario
+
+   DATA oCheckBoxArticuloNoAcumulable   
 
    DATA oTreeRelaciones
 
@@ -181,6 +193,8 @@ CLASS ArticulosFamiliaView FROM SQLBaseView
 
    METHOD getSelectedUuidTreeRelaciones()
 
+   METHOD changeIncluirTPVTactil()
+
    METHOD endActivate()
 
 END CLASS
@@ -190,8 +204,6 @@ END CLASS
 METHOD Activate() CLASS ArticulosFamiliaView
 
    local oBtnEdit
-   local oBmpImagen
-   local oGetImagen
    local oBtnAppend
    local oBtnDelete   
 
@@ -247,45 +259,52 @@ METHOD Activate() CLASS ArticulosFamiliaView
    ::oController:oSegundaPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "segunda_propiedad_uuid" ] ) )
    ::oController:oSegundaPropiedadController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
 
+   // Tactil-------------------------------------------------------------------
+
    REDEFINE CHECKBOX   ::oController:oModel:hBuffer[ "incluir_tpv_tactil" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      ON CHANGE   ( ::changeIncluirTPVTactil() ) ;
       OF          ::oFolder:aDialogs[1]
 
    // Color-------------------------------------------------------------------
 
-   REDEFINE GET   ::oColorRGB ;
+   REDEFINE GET   ::oGetColorRGB ;
       VAR         ::oController:oModel:hBuffer[ "color_rgb" ] ;
       ID          150 ;
+      IDSAY       151 ;
       BITMAP      "gc_photographic_filters_16" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   ::oColorRGB:setColor( ::oController:oModel:hBuffer[ "color_rgb" ], ::oController:oModel:hBuffer[ "color_rgb" ] )
-   ::oColorRGB:bHelp := {|| ::changeColorRGB() }
+   ::oGetColorRGB:setColor( ::oController:oModel:hBuffer[ "color_rgb" ], ::oController:oModel:hBuffer[ "color_rgb" ] )
+   ::oGetColorRGB:bHelp := {|| ::changeColorRGB() }
 
    // Imagen-------------------------------------------------------------------
 
-   REDEFINE GET   oGetImagen ;
+   REDEFINE GET   ::oGetImagen ;
       VAR         ::oController:oImagenesController:oModel:hBuffer[ "imagen" ] ;
       ID          160 ;
+      IDSAY       161 ;
       BITMAP      "Folder" ;
-      ON HELP     ( GetBmp( oGetImagen, oBmpImagen ) ) ;
-      ON CHANGE   ( ChgBmp( oGetImagen, oBmpImagen ) ) ;
+      ON HELP     ( GetBmp( ::oGetImagen, ::oBmpImagen ) ) ;
+      ON CHANGE   ( ChgBmp( ::oGetImagen, ::oBmpImagen ) ) ;
       WHEN        ( ::oController:oImagenesController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE IMAGE oBmpImagen ;
+   REDEFINE IMAGE ::oBmpImagen ;
       ID          1010 ;
       FILE        cFileBmpName( ::oController:oImagenesController:oModel:hBuffer[ "imagen" ] ) ;
       OF          ::oFolder:aDialogs[1]
 
-   oBmpImagen:SetColor( , getsyscolor( 15 ) )
-   oBmpImagen:bLClicked   := {|| ShowImage( oBmpImagen ) }
-   oBmpImagen:bRClicked   := {|| ShowImage( oBmpImagen ) }
+   ::oBmpImagen:SetColor( , getsyscolor( 15 ) )
+   ::oBmpImagen:bLClicked   := {|| ShowImage( ::oBmpImagen ) }
+   ::oBmpImagen:bRClicked   := {|| ShowImage( ::oBmpImagen ) }
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "posicion" ] ;
+   REDEFINE GET   ::oGetPosicion ;
+      VAR         ::oController:oModel:hBuffer[ "posicion" ] ;
       ID          170 ;
+      IDSAY       171 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
       MIN         1 ;
@@ -295,14 +314,16 @@ METHOD Activate() CLASS ArticulosFamiliaView
    // Comentarios -----------------------------------------------------------------
 
    ::oController:oComentariosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "comentario_uuid" ] ) )
-   ::oController:oComentariosController:oGetSelector:Activate( 180, 181, ::oFolder:aDialogs[1] )
+   ::oController:oComentariosController:oGetSelector:Build( { "idGet" => 180, "idText" => 181, "idSay" => 182, "oDialog" => ::oFolder:aDialogs[1] } )
 
-   REDEFINE CHECKBOX   ::oController:oModel:hBuffer[ "mostrar_ventana_comentarios" ] ;
+   REDEFINE CHECKBOX ::oCheckBoxMostrarComentario ;
+      VAR         ::oController:oModel:hBuffer[ "mostrar_ventana_comentarios" ] ;
       ID          190 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE CHECKBOX   ::oController:oModel:hBuffer[ "articulo_no_acumulable" ] ;
+   REDEFINE CHECKBOX ::oCheckBoxArticuloNoAcumulable ;
+      VAR         ::oController:oModel:hBuffer[ "articulo_no_acumulable" ] ;
       ID          200 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
@@ -362,7 +383,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    ::oBitmap:end()
 
-   oBmpImagen:End()
+   ::oBmpImagen:End()
 
 RETURN ( ::oDialog:nResult )
 
@@ -382,13 +403,37 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD changeIncluirTPVTactil()
+
+   if ::oController:oModel:hBuffer[ "incluir_tpv_tactil" ]
+      ::oGetColorRGB:Show()
+      ::oGetImagen:Show()
+      ::oBmpImagen:Show()
+      ::oGetPosicion:Show()
+      ::oCheckBoxMostrarComentario:Show()
+      ::oCheckBoxArticuloNoAcumulable:Show()
+      ::oController:oComentariosController:oGetSelector:Show()
+   else
+      ::oGetColorRGB:Hide()
+      ::oGetImagen:Hide()
+      ::oBmpImagen:Hide()
+      ::oGetPosicion:Hide()
+      ::oCheckBoxMostrarComentario:Hide()
+      ::oCheckBoxArticuloNoAcumulable:Hide()
+      ::oController:oComentariosController:oGetSelector:Hide()
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD changeColorRGB() 
 
    local nColorRGB   := ChooseColor()
 
    if !empty( nColorRGB )
-      ::oColorRGB:setColor( nColorRGB, nColorRGB )
-      ::oColorRGB:cText( nColorRGB )
+      ::oGetColorRGB:setColor( nColorRGB, nColorRGB )
+      ::oGetColorRGB:cText( nColorRGB )
    end if 
 
 RETURN ( self )
@@ -478,7 +523,7 @@ METHOD getSelectedUuidTreeRelaciones( aItems, uuidSelected )
 
    local oItem
 
-   DEFAULT ::uuidSelected     := ""
+   DEFAULT uuidSelected       := ""
 
    if empty( aItems )
       aItems                  := ::oTreeRelaciones:aItems
@@ -511,6 +556,8 @@ METHOD startActivate()
    ::oController:oComentariosController:oGetSelector:Start()
 
    ::loadTreeRelaciones()
+
+   ::changeIncluirTPVTactil()
 
    ::oGetCodigo:setFocus()
 
@@ -623,7 +670,7 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
                                                          "default"   => {|| rgb( 255, 255, 255 ) } }              )
 
    hset( ::hColumns, "posicion",                      {  "create"    => "INTEGER( 5 )"                            ,;
-                                                         "default"   => {|| space( 5 ) } }                        )
+                                                         "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "comentario_uuid",               {  "create"    => "VARCHAR( 40 )"                           ,;
                                                          "default"   => {|| space( 40 ) } }                       )
@@ -659,8 +706,9 @@ METHOD getRowSetWhereParentUuid( parentUuid )
    local cSQL      
    local oHashList
 
-   cSQL                 := "SELECT uuid, nombre FROM " + ::cTableName + " "
-   cSQL                 +=    "WHERE parent_uuid = " + quoted( parentUuid )
+   cSQL                 := "SELECT uuid, nombre FROM " + ::cTableName            + " "
+   cSQL                 +=    "WHERE parent_uuid = " + quoted( parentUuid )      + " "
+   cSQL                 +=    "AND empresa_uuid = " + quoted( Company():Uuid() ) + " " 
 
    oHashList            := getSQLDatabase():selectHashList( cSQL ) 
 
@@ -671,7 +719,6 @@ METHOD getRowSetWhereParentUuid( parentUuid )
    oHashList:goTop()
 
 RETURN ( oHashList )
-
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

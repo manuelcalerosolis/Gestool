@@ -22552,6 +22552,8 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 131, "Edit", WS_BORDER|WS_TABSTOP, 148, 65, 296, 11
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 70, 78, 76, 11
   CONTROL "", 141, "Edit", WS_BORDER|WS_TABSTOP, 148, 78, 296, 11
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 70, 91, 76, 11
+  CONTROL "", 151, "Edit", WS_BORDER|WS_TABSTOP, 148, 91, 296, 11
   CONTROL "Código*", -1, "Static", WS_GROUP, 11, 14, 32, 8
   CONTROL "Nombre*", -1, "Static", WS_GROUP, 11, 26, 29, 8
   CONTROL "Familia", -1, "Static", WS_GROUP, 11, 56, 27, 8
@@ -22559,6 +22561,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 5, 42, 444, 131
   CONTROL "Tipo", -1, "Static", WS_GROUP, 11, 68, 19, 8
   CONTROL "Categoría", -1, "Static", WS_GROUP, 11, 81, 37, 8
+  CONTROL "Fabricantes", -1, "Static", WS_GROUP, 11, 94, 42, 8
 }
 
 FAMILIA_GENERAL DIALOG DISCARDABLE 35, -50, 456, 270
@@ -22569,7 +22572,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 110, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 70, 32, 300, 11
   CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 70, 64, 78, 11
   CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 70, 77, 78, 11
-  CONTROL "Incluir en TPV táctil", 140, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 108, 81, 10
+  CONTROL "Incluir en TPV táctil", 140, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 11, 108, 81, 10
   CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 70, 121, 300, 11
   CONTROL "", 160, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 70, 134, 300, 11
   CONTROL "", 170, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 147, 50, 11
@@ -22585,11 +22588,11 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 121, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 150, 64, 220, 11
   CONTROL "", 131, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 150, 77, 220, 11
   CONTROL "", 1010, "Static", SS_BITMAP|SS_CENTERIMAGE|WS_BORDER, 381, 10, 60, 56
-  CONTROL "Color botón", -1, "Static", WS_GROUP, 11, 123, 43, 8
-  CONTROL "Imagen", -1, "Static", WS_GROUP, 11, 136, 29, 8
+  CONTROL "Color botón", 151, "Static", WS_GROUP, 11, 123, 43, 8
+  CONTROL "Imagen", 161, "Static", WS_GROUP, 11, 136, 29, 8
   CONTROL "Propiedades táctil", -1, "Button", BS_GROUPBOX, 5, 97, 368, 108
-  CONTROL "Posición", -1, "Static", WS_GROUP, 11, 149, 45, 8
-  CONTROL "Comentario", -1, "Static", WS_GROUP, 11, 162, 45, 8
+  CONTROL "Posición", 171, "Static", WS_GROUP, 11, 149, 45, 8
+  CONTROL "Comentario", 182, "Static", WS_GROUP, 11, 162, 45, 8
   CONTROL "", 181, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 149, 160, 220, 11
 }
 
