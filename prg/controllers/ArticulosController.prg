@@ -13,6 +13,10 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oArticulosFabricantesController
 
+   DATA oIvaTipoController
+
+   DATA oImpuestosEspecialesController
+
    DATA oTagsController
 
    METHOD New()
@@ -57,6 +61,10 @@ METHOD New() CLASS ArticulosController
 
    ::oArticulosFabricantesController   := ArticulosFabricantesController():New( self )
 
+   ::oIvaTipoController                := IvaTipoController():New( self )
+
+   ::oImpuestosEspecialesController    := ImpuestosEspecialesController():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
@@ -84,6 +92,10 @@ METHOD End() CLASS ArticulosController
    ::oArticulosCategoriasController:End()
 
    ::oArticulosFabricantesController:End()
+
+   ::oIvaTipoController:End()
+
+   ::oImpuestosEspecialesController:End()
 
    ::Super:End()
 
@@ -166,10 +178,6 @@ CLASS ArticulosView FROM SQLBaseView
 
    METHOD startActivate()
 
-   METHOD validateAndAddMarcador()
-
-   METHOD selectorAndAddMarcador()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -237,9 +245,19 @@ METHOD Activate() CLASS ArticulosView
    ::oController:oArticulosFabricantesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_fabricante_uuid" ] ) )
    ::oController:oArticulosFabricantesController:oGetSelector:Activate( 150, 151, ::oFolder:aDialogs[ 1 ] )
 
+   // Tipo de IVA--------------------------------------------------------------
+
+   ::oController:oIvaTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "iva_tipo_uuid" ] ) )
+   ::oController:oIvaTipoController:oGetSelector:Activate( 160, 161, ::oFolder:aDialogs[ 1 ] )
+
+   // Tipo de IVA--------------------------------------------------------------
+
+   ::oController:oImpuestosEspecialesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "impuesto_especial_uuid" ] ) )
+   ::oController:oImpuestosEspecialesController:oGetSelector:Activate( 170, 171, ::oFolder:aDialogs[ 1 ] )
+
    // Marcadores---------------------------------------------------------------
 
-   ::oController:oTagsController:oDialogView:ExternalRedefine( { "idGet" => 160, "idButton" => 161, "idTags" => 162 }, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oTagsController:oDialogView:ExternalRedefine( { "idGet" => 180, "idButton" => 181, "idTags" => 182 }, ::oFolder:aDialogs[ 1 ] )
 
    // Botones Articulos -------------------------------------------------------
 
@@ -279,48 +297,15 @@ METHOD startActivate()
 
    ::oController:oArticulosFabricantesController:oGetSelector:Start()
 
+   ::oController:oIvaTipoController:oGetSelector:Start()
+
+   ::oController:oImpuestosEspecialesController:oGetSelector:Start()
+
    ::oController:oTagsController:oDialogView:Start()
 
    ::oGetCodigo:SetFocus()
 
 RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD validateAndAddMarcador( cMarcador )
-
-   cMarcador      := alltrim( cMarcador )
-
-   if empty( cMarcador )
-      RETURN ( .f. )
-   end if 
-
-   if ascan( ::oTagsEver:aItems, {|oItem| upper( oItem:cText ) == upper( cMarcador ) } ) != 0
-      msgStop( "Este marcador ya está incluido" )
-      RETURN ( .f. )
-   end if 
-
-   if !( ::oController:oTagsController:tagUuid( ::oController:getUuid(), cMarcador ) )
-      msgStop( "Este marcador : " + cMarcador + " , no existe" )
-      RETURN ( .f. )
-   end if 
-
-   ::oTagsEver:addItem( cMarcador )
-   ::oTagsEver:Refresh()
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD selectorAndAddMarcador()
-
-   local hMarcador   := ::oController:oTagsController:ActivateSelectorView()
-
-   if !empty( hMarcador ) .and. !empty( hget( hMarcador, "nombre" ) )
-      ::validateAndAddMarcador( hget( hMarcador, "nombre" ) )
-   end if 
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -342,6 +327,7 @@ METHOD getValidators() CLASS ArticulosValidator
                                           "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
                                           "unique"             => "El código introducido ya existe" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -380,6 +366,18 @@ CLASS SQLArticulosModel FROM SQLBaseModel
    METHOD setArticulosFabricanteUuidAttribute( uValue ) ;
                                  INLINE ( if( empty( uValue ), "", SQLArticulosFabricantesModel():getUuidWhereCodigo( uValue ) ) )
 
+   METHOD getIvaTipoUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 1 ), SQLIvaTiposModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setIvaTipoUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLIvaTiposModel():getUuidWhereCodigo( uValue ) ) )
+
+   METHOD getImpuestoEspecialAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLImpuestosEspecialesModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setImpuestoEspecialAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLImpuestosEspecialesModel():getUuidWhereCodigo( uValue ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -410,6 +408,12 @@ METHOD getColumns() CLASS SQLArticulosModel
                                                       "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "articulos_fabricante_uuid",  {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "iva_tipo_uuid",              {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "impuesto_especial_uuid",     {  "create"    => "VARCHAR( 40 )"                           ,;
                                                       "default"   => {|| space( 40 ) } }                       )
 
    ::getTimeStampColumns()

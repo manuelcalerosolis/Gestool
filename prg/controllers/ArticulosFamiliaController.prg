@@ -23,9 +23,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ArticulosFamiliaController
+METHOD New( oSenderController ) CLASS ArticulosFamiliaController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Familia de artículos"
 

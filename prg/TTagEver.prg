@@ -153,7 +153,7 @@ RETURN Self
 
 METHOD loadBitmap()
 
-   ::hBmp         := loadBitmap( getResources(), "GC_TAG_CLOSE_12" )
+   ::hBmp         := loadBitmap( getResources(), "gc_tag_close_12" )
 
    if ::hBmp == 0
       RETURN ( self )
@@ -182,9 +182,7 @@ RETURN ( self )
 
 METHOD addItem( cText, uCargo ) CLASS TTagEver
 
-   aadd( ::aItems, TTagItem():New( cText, uCargo ) )
-
-RETURN nil //oItem
+RETURN ( aadd( ::aItems, TTagItem():New( cText, uCargo ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -402,6 +400,7 @@ ENDCLASS
 METHOD New( cText, uCargo ) CLASS TTagItem
 
    ::cText  := cText
+
    ::uCargo := uCargo
 
 RETURN ( self )

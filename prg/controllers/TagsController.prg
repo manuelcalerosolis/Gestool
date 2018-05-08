@@ -263,6 +263,7 @@ METHOD externalRedefine( hControl, oDialog ) CLASS TagsView
    ::oBtnTags:bAction      := {|| ::selectorAndAddTag() }
 
    ::oTagsEver             := TTagEver():Redefine( hget( hControl, "idTags" ), oDialog )
+   ::oTagsEver:bWhen       := {|| ::oController:getSenderController():isNotZoomMode() }
    ::oTagsEver:bOnDelete   := {| oTag, oTagItem | SQLTageableModel():deleteByUuid( oTagItem:uCargo ) }
 
 RETURN ( Self )

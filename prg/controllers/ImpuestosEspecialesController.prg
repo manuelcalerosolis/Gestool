@@ -13,9 +13,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ImpuestosEspecialesController
+METHOD New( oSenederController ) CLASS ImpuestosEspecialesController
 
-   ::Super:New()
+   ::Super:New( oSenederController )
 
    ::cTitle                      := "Impuestos Especiales"
 
@@ -37,6 +37,7 @@ METHOD New() CLASS ImpuestosEspecialesController
 
    ::oRepository                    := ImpuestosEspecialesRepository():New( self )
 
+   ::oGetSelector                   := GetSelector():New( self )
 
 RETURN ( Self )
 
@@ -52,6 +53,8 @@ METHOD End() CLASS ImpuestosEspecialesController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 
