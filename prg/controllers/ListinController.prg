@@ -188,7 +188,7 @@ METHOD Activate() CLASS ListinView
 
    oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
 
-   ::oController:oDireccionesController:Activate( ::oDialog, 160 )
+   ::oController:oDireccionesController:Activate( 160, ::oDialog )
 
    REDEFINE BUTTON ;
       ID          IDOK ;

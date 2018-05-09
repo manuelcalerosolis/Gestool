@@ -24,9 +24,6 @@ CLASS ClientesView FROM SQLBaseView
    DATA oRiesgoAlcanzado
    DATA nRiesgoAlcanzado   INIT 0
 
-   DATA aMeses             INIT { "Ninguno", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" }
-   DATA aRegimenIva        INIT { "General", "Unión Europea", "Excento", "Exportación" }
-
    METHOD Activate()
 
    METHOD Activating()
@@ -38,6 +35,7 @@ CLASS ClientesView FROM SQLBaseView
    METHOD redefineGeneral()
    METHOD redefineComercial()
    METHOD redefineDirecciones()
+   METHOD redefineContactos()
 
    METHOD changeBloqueo()
 
@@ -80,18 +78,22 @@ METHOD Activate() CLASS ClientesView
    REDEFINE FOLDER ::oFolder ;
       ID          500 ;
       OF          ::oDialog ;
-      PROMPT      "&General",;
-                  "&Comercial",;
-                  "&Direcciones";
+      PROMPT      "General",;
+                  "Comercial",;
+                  "Direcciones",;
+                  "Contactos";
       DIALOGS     "CLIENTE_GENERAL" ,;
                   "CLIENTE_COMERCIAL",;
-                  "CLIENTE_DIRECCIONES"
+                  "CLIENTE_DIRECCIONES",;
+                  "CLIENTE_CONTACTOS"
 
    ::redefineGeneral()   
 
    ::redefineComercial()
 
    ::redefineDirecciones()
+
+   ::redefineContactos()
 
    /*
    Botones generales-----------------------------------------------------------
@@ -214,13 +216,13 @@ METHOD redefineComercial() CLASS ClientesView
       OF       ::oFolder:aDialogs[2]
 
    REDEFINE COMBOBOX ::oController:oModel:hBuffer[ "mes_vacaciones" ];
-      ITEMS    ::aMeses ;
+      ITEMS    AMESES ;
       ID       180 ;
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
    REDEFINE COMBOBOX ::oController:oModel:hBuffer[ "regimen_iva" ];
-      ITEMS    ::aRegimenIva ;
+      ITEMS    AREGIMENIVA ;
       ID       190 ;
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
@@ -334,7 +336,40 @@ METHOD redefineDirecciones() CLASS ClientesView
 
    oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
 
-   ::oController:oDireccionesController:Activate( ::oFolder:aDialogs[3], 130 )
+   ::oController:oDireccionesController:Activate( 130, ::oFolder:aDialogs[3] )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD redefineContactos() CLASS ClientesView
+
+   local oBtnAppend
+   local oBtnEdit
+   local oBtnDelete
+
+   REDEFINE BUTTON oBtnAppend ;
+      ID          100 ;
+      OF          ::oFolder:aDialogs[4] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnAppend:bAction   := {|| ::oController:oContactosController:Append() }
+
+   REDEFINE BUTTON oBtnEdit ;
+      ID          110 ;
+      OF          ::oFolder:aDialogs[4] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnEdit:bAction   := {|| ::oController:oContactosController:Edit() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          120 ;
+      OF          ::oFolder:aDialogs[4] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnDelete:bAction   := {|| ::oController:oContactosController:Delete() }
+
+   ::oController:oContactosController:Activate( 130, ::oFolder:aDialogs[4] )
 
 RETURN ( self )
 
