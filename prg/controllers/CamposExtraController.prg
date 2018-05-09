@@ -371,7 +371,7 @@ METHOD Activate() CLASS CamposExtraView
 
    oBtnDelete:bAction   := {|| ::oController:oCamposExtraEntidadesController:Delete( ::oController:oCamposExtraEntidadesController:oBrowseView:oBrowse:aSelected ) }
 
-   ::oController:oCamposExtraEntidadesController:Activate( ::oFolder:aDialogs[ 2 ], 120 )
+   ::oController:oCamposExtraEntidadesController:Activate( 120, ::oFolder:aDialogs[ 2 ] )
 
    // Botones ------------------------------------------------------------------
 

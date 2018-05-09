@@ -193,7 +193,7 @@ METHOD Activate() CLASS ComentariosView
 
   oBtnDelete:bAction   := {|| ::oController:oComentariosLineasController:Delete() }
 
-   ::oController:oComentariosLineasController:Activate( ::oDialog, 160 )
+   ::oController:oComentariosLineasController:Activate( 160, ::oDialog )
 
    REDEFINE BUTTON ;
       ID          IDOK ;

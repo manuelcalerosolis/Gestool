@@ -208,7 +208,7 @@ METHOD Activate() CLASS PropiedadesView
 
    oBtnDelete:bAction   := {|| ::oController:oPropiedadesLineasController:Delete() }
 
-   ::oController:oPropiedadesLineasController:Activate( ::oDialog, 160 )
+   ::oController:oPropiedadesLineasController:Activate( 160, ::oDialog )
 
    // Botones------------------------------------------------------------------
 

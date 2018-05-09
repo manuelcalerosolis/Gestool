@@ -81,6 +81,12 @@ METHOD getColumns() CLASS SQLClientesModel
    hset( ::hColumns, "riesgo",                     {  "create"    => "DECIMAL(19,6)"       ,;
                                                       "default"   => {|| 0 } }             )
 
+   hset( ::hColumns, "observaciones",              {  "create"    => "TEXT"                ,;
+                                                      "default"   => {|| "" } }            )
+
+   hset( ::hColumns, "mostrar_observaciones",      {  "create"    => "BIT"                 ,;
+                                                      "default"   => {|| .f. } }           )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//

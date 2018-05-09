@@ -17,6 +17,19 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
 
    METHOD CalculaDigitoControl()
 
+   METHOD gettingSelectSentence()
+
+   METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
+   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
+
+   METHOD loadedCurrentBuffer( uuidEntidad ) 
+   METHOD updateBuffer( uuidEntidad )
+
+   METHOD loadedDuplicateCurrentBuffer( uuidEntidad )
+   METHOD loadedDuplicateBuffer( uuidEntidad )
+
+   METHOD deleteBuffer( aUuidEntidades )
+
    METHOD New()
 
    METHOD End()
@@ -27,7 +40,7 @@ END CLASS
 
 METHOD New( oSenderController ) CLASS CuentasBancariasController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Cuentas bancarias"
 
@@ -47,45 +60,13 @@ METHOD New( oSenderController ) CLASS CuentasBancariasController
 
    ::oValidator                  := CuentasBancariasValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController      := DireccionesController():New( self )
-   ::oDireccionesController:oValidator:setDialog( ::oDialogView )
-
-   ::oRepository                 := CuentasBancariasRepository():New( self )
-
-   ::oPaisesController           := PaisesController():New( self )
-
-   ::oProvinciasController       := ProvinciasController():New( self )
-
-   ::oContactosController        := ContactosController():New( self )
-   ::oContactosController:oValidator:setDialog( ::oDialogView )
-
-   /*::oComboSelector              := ComboSelector():New( self )*/
-
    ::oGetSelector                := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
-   
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:updateBuffer( ::getUuid() ) } )
-
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
-   
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
-
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oContactosController:loadBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oContactosController:insertBuffer() } )
-   
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oContactosController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oContactosController:updateBuffer( ::getUuid() ) } )
-
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oContactosController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oContactosController:loadedDuplicateBuffer( ::getUuid() ) } )
-   
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oContactosController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::setEvent( 'appended',                            {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'edited',                              {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'deletedSelection',                    {|| ::oBrowseView:Refresh() } ) 
 
 
 RETURN ( Self )
@@ -144,6 +125,89 @@ METHOD End() CLASS CuentasBancariasController
    ::Super:End()
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD gettingSelectSentence() CLASS CuentasBancariasController
+
+   local uuid        := ::getSenderController():getUuid() 
+
+   if !empty( uuid )
+      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS CuentasBancariasController
+
+   local idCuentaBanco     
+
+   if empty( uuidEntidad )
+      ::oModel:insertBuffer()
+   end if 
+
+   idCuentaBanco          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idCuentaBanco )
+      idCuentaBanco       := ::oModel:insertBlankBuffer()
+   end if 
+
+   ::oModel:loadCurrentBuffer( idCuentaBanco )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD UpdateBuffer( uuidEntidad ) CLASS CuentasBancariasController
+
+   local idCuentaBanco    
+
+   idCuentaBanco          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idCuentaBanco )
+      ::oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+
+   ::oModel:updateBuffer()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS CuentasBancariasController
+
+   local idCuentaBanco    
+
+   idCuentaBanco          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idCuentaBanco )
+      ::oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+
+   ::oModel:loadDuplicateBuffer( idCuentaBanco )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS CuentasBancariasController
+
+   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteBuffer( aUuidEntidades ) CLASS CuentasBancariasController
+
+   if empty( aUuidEntidades )
+      RETURN ( self )
+   end if
+
+   ::oModel:deleteWhereParentUuid( aUuidEntidades )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -223,7 +287,7 @@ CLASS CuentasBancariasView FROM SQLBaseView
 
    METHOD Activate()
 
-   METHOD getDireccionesController()   INLINE ( ::oController:oDireccionesController )
+   METHOD ExternalRedefine( oDialog )
 
 END CLASS
 
@@ -251,67 +315,6 @@ METHOD Activate() CLASS CuentasBancariasView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
-      ID          100 ;
-      PICTURE     "@! NNN" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "sucursal" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "iban_codigo_pais" ] ;
-      ID          130 ;
-      PICTURE     "@!" ;
-      VALID       ::oController:CalculaIBAN() ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET    ::oIBAN  ;
-      VAR         ::oController:oModel:hBuffer[ "iban_digito_control" ] ;
-      ID          131 ;
-      VALID       ::oController:CalculaIBAN() ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_codigo_entidad" ] ;
-      ID          132 ;
-      VALID       ::oController:CalculaDigitoControl() ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_codigo_oficina" ] ;
-      ID          133 ;
-      VALID       ::oController:CalculaDigitoControl() ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oDigitoControl ;
-      VAR         ::oController:oModel:hBuffer[ "cuenta_digito_control" ];
-      ID          134 ;
-      VALID       ::oController:CalculaDigitoControl() ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_numero" ] ;
-      ID          135 ;
-      VALID      ::oController:CalculaDigitoControl() ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
-
-   ::oController:oContactosController:oDialogView:ExternalRedefine( ::oDialog )
-
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
@@ -335,6 +338,57 @@ METHOD Activate() CLASS CuentasBancariasView
    ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD ExternalRedefine( oDialog ) CLASS CuentasBancariasView
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre_banco" ] ;
+      ID          1010 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "nombre_banco" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "iban_codigo_pais" ] ;
+      ID          1020 ;
+      PICTURE     "@!" ;
+      VALID       ::oController:CalculaIBAN() ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET    ::oIBAN  ;
+      VAR         ::oController:oModel:hBuffer[ "iban_digito_control" ] ;
+      ID          1021 ;
+      VALID       ::oController:CalculaIBAN() ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_codigo_entidad" ] ;
+      ID          1022 ;
+      VALID       ::oController:CalculaDigitoControl() ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_codigo_oficina" ] ;
+      ID          1023 ;
+      VALID       ::oController:CalculaDigitoControl() ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oDigitoControl ;
+      VAR         ::oController:oModel:hBuffer[ "cuenta_digito_control" ];
+      ID          1024 ;
+      VALID       ::oController:CalculaDigitoControl() ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_numero" ] ;
+      ID          1025 ;
+      VALID      ::oController:CalculaDigitoControl() ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -369,9 +423,13 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
+CLASS SQLCuentasBancariasModel FROM SQLBaseModel
 
    DATA cTableName               INIT "cuentas_bancarias"
+
+   METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+
+   METHOD getParentUuidAttribute( value )
 
    METHOD getColumns()
 
@@ -386,21 +444,12 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
 
    hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                                    "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
 
-   ::getTimeStampColumns()
+   hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+                                                   "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR(3) NOT NULL UNIQUE"             ,;
-                                                   "default"   => {|| space( 3 ) } } )
-
-   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 140 )"                          ,;
+   hset( ::hColumns, "nombre_banco",            {  "create"    => "VARCHAR( 140 )"                          ,;
                                                    "default"   => {|| space( 140 ) } }                       )
-
-   hset( ::hColumns, "sucursal",                {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                   "default"   => {|| space( 20 ) } }                       )
-
-   hset( ::hColumns, "entidad",                 { "create"    => "VARCHAR( 200 )"                          ,;
-                                                   "default"   => {|| space( 200 ) } }                       )
 
    hset( ::hColumns, "iban_codigo_pais",        {  "create"    => "VARCHAR( 2 )"                            ,;
                                                    "default"   => {|| space( 2 ) } }                        )
@@ -420,15 +469,21 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
    hset( ::hColumns, "cuenta_numero",           {  "create"    => "VARCHAR( 10 )"                            ,;
                                                    "default"   => {|| space( 10 ) } }                        )
 
-   hset( ::hColumns, "oficina",                 { "create"    => "VARCHAR( 200 )"                          ,;
-                                                   "default"   => {|| space( 200 ) } }                      )
-
-   hset( ::hColumns, "contacto",                { "create"    => "VARCHAR( 200 )"                          ,;
-                                                   "default"   => {|| space( 200 ) } }                      )
-
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getParentUuidAttribute( value ) CLASS SQLCuentasBancariasModel
+
+   if empty( ::oController )
+      RETURN ( value )
+   end if
+
+   if empty( ::oController:oSenderController )
+      RETURN ( value )
+   end if
+
+RETURN ( ::oController:oSenderController:getUuid() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

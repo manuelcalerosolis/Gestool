@@ -254,7 +254,7 @@ METHOD Activate() CLASS AlmacenesView
 
    oBtnDelete:bAction   := {|| ::oController:oZonasController:Delete() }
 
-   ::oController:oZonasController:Activate( ::oDialog, 150 ) 
+   ::oController:oZonasController:Activate( 150, ::oDialog ) 
 
    // Botones almacenes -------------------------------------------------------
 

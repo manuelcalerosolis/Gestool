@@ -2865,16 +2865,6 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cuentas bancarias'
-   oItem:cMessage       := 'Cuentas bancarias'
-   oItem:bAction        := {|| CuentasBancariasController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_central_bank_euro_16"
-   oItem:cBmpBig        := "gc_central_bank_euro_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cuentas de remesa'
    oItem:cMessage       := 'Cuentas de remesa'
    oItem:bAction        := {|| CuentasRemesaController():New():ActivateNavigatorView() }

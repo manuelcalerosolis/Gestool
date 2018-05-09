@@ -112,16 +112,32 @@ METHOD addColumns() CLASS IvaTipoBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'porcentaje'
-      :cHeader             := 'Porcentaje'
-      :nWidth              := 80
+      :cHeader             := 'Porcentaje IVA'
+      :nWidth              := 130
       :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'porcentaje' ), "@E 999.99" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
       with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'recargo'
-      :cHeader             := 'Recargo'
-      :nWidth              := 80
+      :cHeader             := 'Recargo equivalencia'
+      :nWidth              := 130
       :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'recargo' ), "@E 999.99" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'cuenta_compra'
+      :cHeader             := 'Cuenta de compra'
+      :nWidth              := 130
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cuenta_compra' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'cuenta_venta'
+      :cHeader             := 'Cuenta de venta'
+      :nWidth              := 130
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cuenta_venta' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -185,6 +201,18 @@ METHOD Activate() CLASS IvaTipoView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       PICTURE     "@E 999.99" ;
       SPINNER ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_compra" ] ;
+      ID          140 ;
+      VALID       ( ::oController:validate( "cuenta_compra" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_venta" ] ;
+      ID          150 ;
+      VALID       ( ::oController:validate( "cuenta_venta" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE BUTTON ;
@@ -267,6 +295,12 @@ METHOD getColumns() CLASS SQLIvaTiposModel
 
    hset( ::hColumns, "recargo",           {  "create"    => "FLOAT( 5,2 )"                            ,;
                                              "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "cuenta_compra",     {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                             "default"   => {|| space( 20 ) } }                       )
+
+   hset( ::hColumns, "cuenta_venta",     {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                             "default"   => {|| space( 20 ) } }                       )
 
 RETURN ( ::hColumns )
 
