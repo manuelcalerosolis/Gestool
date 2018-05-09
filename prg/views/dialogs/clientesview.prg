@@ -248,8 +248,9 @@ METHOD redefineComercial() CLASS ClientesView
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "recargo_equivalencia" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "recargo_equivalencia" ] ;
       ID       200 ;
+      IDSAY    202 ;
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
@@ -260,8 +261,9 @@ METHOD redefineComercial() CLASS ClientesView
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "bloqueado" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "bloqueado" ] ;
       ID       220 ;
+      IDSAY    222 ;
       WHEN     ( ::oController:isNotZoomMode() ) ;
       ON CHANGE( ::changeBloqueo() ) ;
       OF       ::oFolder:aDialogs[2]
@@ -281,8 +283,9 @@ METHOD redefineComercial() CLASS ClientesView
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "autorizado_venta_credito" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "autorizado_venta_credito" ] ;
       ID       250 ;
+      IDSAY    252 ;
       WHEN     ( ::oController:isNotZoomMode() ) ;
       ON CHANGE( ::changeAutorizacioncredito() ) ;
       OF       ::oFolder:aDialogs[2]
@@ -303,9 +306,10 @@ METHOD redefineComercial() CLASS ClientesView
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-   REDEFINE CHECKBOX ::oBloqueoRiesgo ;
+   REDEFINE SAYCHECKBOX ::oBloqueoRiesgo ;
       VAR      ::oController:oModel:hBuffer[ "bloquear_riesgo_alcanzado" ] ;
       ID       280 ;
+      IDSAY    282 ;
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
