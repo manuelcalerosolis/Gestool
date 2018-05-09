@@ -24,8 +24,8 @@ METHOD New( oSenderController ) CLASS CuentasRemesaController
    ::cName                          := "cuentas_remesa"
 
    ::hImage                         := {  "16" => "gc_notebook2_16",;
-                                       "32" => "gc_notebook2_32",;
-                                       "48" => "gc_notebook2_48" }
+                                          "32" => "gc_notebook2_32",;
+                                          "48" => "gc_notebook2_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -46,6 +46,7 @@ METHOD New( oSenderController ) CLASS CuentasRemesaController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS CuentasRemesaController
 
    ::oModel:End()
@@ -113,15 +114,15 @@ METHOD addColumns() CLASS CuentasRemesaBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
-
+/*
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'cuenta bancaria'
       :cHeader             := 'Cuenta Bancaria'
       :nWidth              := 300
-      :bEditValue          := {|| ::oController:oRepository:GetCuentaBancoWhereCodigo( ::getRowSet():fieldGet( "banco_uuid" ) )   } 
+      :bEditValue          := {|| ::oController:oRepository:GetCuentaBancoWhereCodigo( ::getRowSet():fieldGet( "banco_uuid" ) ) } 
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
-
+*/
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -171,9 +172,6 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS CuentasRemesaView
-
-   local oDialog
-   local oBmpGeneral
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CUENTA_REMESA" ;
@@ -246,7 +244,8 @@ METHOD Activate() CLASS CuentasRemesaView
       ID          135 ;
       WHEN        ( .f. ) ;
       OF          ::oDialog ;
-//-----------------------------------------------------------------------------
+
+   //-----------------------------------------------------------------------------
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "sufijo" ] ;
       ID          140 ;
@@ -339,8 +338,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD bancosControllerValidated()
 
-   local cCodigo  := ::oController:oModel:hBuffer[ "banco_uuid" ]
-   local hColumns := ::oController:oBancosController:oModel:getWhereCodigo( cCodigo )  
+   local hColumns := ::oController:oBancosController:oModel:getWhereCodigo( ::oController:oModel:hBuffer[ "banco_uuid" ] )  
 
    ::oGetIBANCodigoPais:cText( hget( hColumns, "iban_codigo_pais" ) )
 
@@ -355,6 +353,7 @@ METHOD bancosControllerValidated()
    ::oGetCuentaNumero:cText( hget( hColumns, "cuenta_numero" ) )
 
 RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -365,8 +364,7 @@ CLASS CuentasRemesaValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
- 
-END CLASS
+ END CLASS
 
 //---------------------------------------------------------------------------//
 
@@ -391,6 +389,8 @@ CLASS SQLCuentasRemesaModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cuentas_remesa"
 
+   METHOD getInitialSelect() 
+
    METHOD getColumns()
 
    METHOD getBancoUuidAttribute( uValue ) ; 
@@ -400,6 +400,18 @@ CLASS SQLCuentasRemesaModel FROM SQLCompanyModel
                                  INLINE ( if( empty( uValue ), "", ::oController:oBancosController:oModel():getUuidWhereCodigo( uValue ) ) )
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLCuentasRemesaModel
+
+   local cSelect  := "SELECT cuentas_remesa.id,"               + " " + ;
+                        "cuentas_remesa.uuid,"                 + " " + ;
+                        "cuentas_remesa.codigo,"               + " " + ;
+                        "cuentas_remesa.nombre"                + " " + ;
+                     "FROM cuentas_remesa"                     + " " 
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 
@@ -484,8 +496,8 @@ END CLASS
 
 METHOD getCuentaBancoWhereCodigo( cUuid ) 
 
-   local cSQL  := "SELECT concat(iban_codigo_pais,'-', iban_digito_control,'-', cuenta_codigo_entidad,'-', cuenta_codigo_oficina,'-', cuenta_digito_control,'-', cuenta_numero) as cuenta FROM cuentas_bancarias"+ " "    
-   cSQL        +=    "WHERE uuid = " +  quoted( cUuid )  + "AND empresa_uuid = "+ quoted(uuidEmpresa()) +" "     
+   local cSQL  := "SELECT concat( iban_codigo_pais,'-', iban_digito_control,'-', cuenta_codigo_entidad,'-', cuenta_codigo_oficina,'-', cuenta_digito_control,'-', cuenta_numero) as cuenta FROM cuentas_bancarias"+ " "    
+   cSQL        +=    "WHERE uuid = " +  quoted( cUuid )  + " AND empresa_uuid = "+ quoted( uuidEmpresa() ) +" "     
    cSQL        +=    "LIMIT 1"
 
    IF empty ( cUuid )
