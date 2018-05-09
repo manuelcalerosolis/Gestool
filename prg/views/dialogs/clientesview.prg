@@ -36,6 +36,7 @@ CLASS ClientesView FROM SQLBaseView
    METHOD redefineComercial()
    METHOD redefineDirecciones()
    METHOD redefineContactos()
+   METHOD redefineObservaciones()
 
    METHOD changeBloqueo()
 
@@ -81,11 +82,13 @@ METHOD Activate() CLASS ClientesView
       PROMPT      "General",;
                   "Comercial",;
                   "Direcciones",;
-                  "Contactos";
+                  "Contactos",;
+                  "Observaciones";
       DIALOGS     "CLIENTE_GENERAL" ,;
                   "CLIENTE_COMERCIAL",;
                   "CLIENTE_DIRECCIONES",;
-                  "CLIENTE_CONTACTOS"
+                  "CLIENTE_CONTACTOS",;
+                  "CLIENTE_OBSERVACIONES"
 
    ::redefineGeneral()   
 
@@ -94,6 +97,8 @@ METHOD Activate() CLASS ClientesView
    ::redefineDirecciones()
 
    ::redefineContactos()
+
+   ::redefineObservaciones()
 
    /*
    Botones generales-----------------------------------------------------------
@@ -127,6 +132,20 @@ RETURN ( ::oDialog:nResult )
 
 METHOD redefineGeneral() CLASS ClientesView
 
+   local oSay
+
+   
+
+   /*REDEFINE SAY oSay ;
+      ID       15 ;
+      OF       ::oFolder:aDialogs[1]
+
+   oSay:lWantClick   := .t.
+   oSay:bLClicked    := {|| MsgInfo( "Prueba de click" )  }*/
+
+   
+
+
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     ( "@! NNNNNNNNNNNN" ) ;
@@ -158,13 +177,15 @@ METHOD redefineGeneral() CLASS ClientesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "excluir_fidelizacion" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "excluir_fidelizacion" ] ;
       ID          150 ;
+      IDSAY       152 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "no_editar_datos" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "no_editar_datos" ] ;
       ID          160 ;
+      IDSAY       162 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
@@ -370,6 +391,24 @@ METHOD redefineContactos() CLASS ClientesView
    oBtnDelete:bAction   := {|| ::oController:oContactosController:Delete() }
 
    ::oController:oContactosController:Activate( 130, ::oFolder:aDialogs[4] )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD redefineObservaciones()
+
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "mostrar_observaciones" ] ;
+      ID       100 ;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      OF       ::oFolder:aDialogs[5]
+
+
+   REDEFINE GET ::oController:oModel:hBuffer[ "observaciones" ] ;
+      ID       110 ;
+      MEMO ;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      OF       ::oFolder:aDialogs[5]
 
 RETURN ( self )
 
