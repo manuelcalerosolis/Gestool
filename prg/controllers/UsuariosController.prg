@@ -875,8 +875,11 @@ METHOD startActivate() CLASS UsuariosLoginTactilView
    local oStatement
 
    oStatement  := UsuariosRepository():fetchDirect()
+   
    if !empty( oStatement )
+
       while oStatement:fetchDirect()
+   
          with object ( TListViewItem():New() )
             :Cargo   := oStatement:fieldget( "nombre" )
             :cText   := Capitalize( oStatement:fieldget( "nombre" ) )
@@ -884,8 +887,11 @@ METHOD startActivate() CLASS UsuariosLoginTactilView
             :nGroup  := 1
             :Create( ::oListView )
          end with
+   
       end while
+   
       oStatement:free()
+   
    end if 
 
    ::oListView:Refresh()

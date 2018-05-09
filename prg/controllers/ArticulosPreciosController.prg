@@ -17,10 +17,10 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosPreciosValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
-                                          "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
-                                          "unique"             => "El código introducido ya existe" } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido",;
+                                          "unique"    => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
+                                          "unique"    => "El código introducido ya existe" } }
 
 RETURN ( ::hValidators )
 

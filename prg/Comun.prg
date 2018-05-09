@@ -2956,7 +2956,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Tarifas'
    oItem:cMessage       := 'Tarifas'
-   oItem:bAction        := {|| TarifasController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| ArticulosTarifasController():New():ActivateNavigatorView() }
    oItem:cId            := "tarifas"
    oItem:cBmp           := "gc_money_interest_16"
    oItem:cBmpBig        := "gc_money_interest_32"
