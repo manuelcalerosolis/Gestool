@@ -120,9 +120,12 @@ METHOD addColumns() CLASS FormaPagoBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tactil'
       :cHeader             := 'Tactil'
-      :nWidth              := 50
+      :nWidth              := 20
+      :nHeadBmpNo       := 3
       :bEditValue          := {|| ::getRowSet():fieldGet( 'incluir_en_terminal' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :SetCheck( { "Sel16", "Nil16" } )
+      :AddResource( "TACTIL16" )
    end with
 
       with object ( ::oBrowse:AddCol() )
