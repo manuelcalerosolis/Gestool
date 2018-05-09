@@ -27,7 +27,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate( oDialog, nId )
+METHOD Activate( nId, oDialog )
 
    if empty( ::oBrowseView )
       RETURN ( Self )

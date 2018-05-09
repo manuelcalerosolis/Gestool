@@ -357,7 +357,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    oBtnDelete:bAction   := {|| ::oController:oTraduccionesController:Delete() }
 
-   ::oController:oTraduccionesController:Activate( ::oFolder:aDialogs[3], 130 )
+   ::oController:oTraduccionesController:Activate( 130, ::oFolder:aDialogs[3] )
 
    // Botones -----------------------------------------------------------------
 

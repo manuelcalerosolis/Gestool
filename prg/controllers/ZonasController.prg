@@ -158,7 +158,7 @@ METHOD Activate() CLASS ZonasView
 
    oBtnDelete:bAction   := {|| ::oController:oUbicacionesController:Delete() }
 
-   ::oController:oUbicacionesController:Activate( ::oDialog, 150 )
+   ::oController:oUbicacionesController:Activate( 150, ::oDialog )
 
    // Botones zonas -------------------------------------------------------
 

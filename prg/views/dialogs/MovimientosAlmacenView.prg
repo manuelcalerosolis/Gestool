@@ -121,7 +121,7 @@ METHOD Activate()
 
       // Buttons lineas--------------------------------------------------------
 
-      ::oController:oLineasController:Activate( ::oDialog, 180 )
+      ::oController:oLineasController:Activate( 180, ::oDialog )
 
       // Dialog activate-------------------------------------------------------
 
