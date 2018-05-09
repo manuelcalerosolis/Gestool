@@ -173,10 +173,16 @@ CLASS ArticulosView FROM SQLBaseView
    DATA oBtnTags
 
    DATA oTagsEver      
+
+   DATA oComboPeriodoCaducidad
+
+   DATA oGetLoteActual
   
    METHOD Activate()
 
    METHOD startActivate()
+
+   METHOD changeLote()           INLINE ( iif( ::oController:oModel:hBuffer[ "lote" ], ::oGetLoteActual:Show(), ::oGetLoteActual:Hide() ) )
 
 END CLASS
 
@@ -259,6 +265,46 @@ METHOD Activate() CLASS ArticulosView
 
    ::oController:oTagsController:oDialogView:ExternalRedefine( { "idGet" => 180, "idButton" => 181, "idTags" => 182 }, ::oFolder:aDialogs[ 1 ] )
 
+   // Obsoleto-----------------------------------------------------------------
+
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "obsoleto" ] ;
+      ID          200 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   // Caducidad----------------------------------------------------------------
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "caducidad" ] ;
+      ID          190 ;
+      PICTURE     "999" ;
+      SPINNER ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:oModel:hBuffer[ "caducidad" ] >= 0 ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   REDEFINE COMBOBOX ::oComboPeriodoCaducidad ;
+      VAR         ::oController:oModel:hBuffer[ "periodo_caducidad" ] ;
+      ITEMS       { "Dia(s)", "Mes(es)", "Año(s)" };
+      ID          191 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   // lote----------------------------------------------------------------
+
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "lote" ] ;
+      ID          210 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      ON CHANGE   ( ::changeLote() ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   REDEFINE GET   ::oGetLoteActual ;
+      VAR         ::oController:oModel:hBuffer[ "lote_actual" ] ;
+      ID          220 ;
+      IDSAY       221 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
+
+
    // Botones Articulos -------------------------------------------------------
 
    REDEFINE BUTTON ;
@@ -289,6 +335,8 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate()
 
+   SendMessage( ::oComboPeriodoCaducidad:hWnd, 0x0153, -1, 14 )
+
    ::oController:oArticulosFamiliaController:oGetSelector:Start()
 
    ::oController:oArticulosTipoController:oGetSelector:Start()
@@ -302,6 +350,8 @@ METHOD startActivate()
    ::oController:oImpuestosEspecialesController:oGetSelector:Start()
 
    ::oController:oTagsController:oDialogView:Start()
+
+   ::changeLote()
 
    ::oGetCodigo:SetFocus()
 
@@ -336,7 +386,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosModel FROM SQLBaseModel
+CLASS SQLArticulosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "Articulos"
 
@@ -415,6 +465,21 @@ METHOD getColumns() CLASS SQLArticulosModel
 
    hset( ::hColumns, "impuesto_especial_uuid",     {  "create"    => "VARCHAR( 40 )"                           ,;
                                                       "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "obsoleto",                   {  "create"    => "BIT"                                     ,;
+                                                      "default"   => {|| .f. } }                               )
+
+   hset( ::hColumns, "caducidad",                  {  "create"    => "INTEGER"                                 ,;
+                                                      "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "periodo_caducidad",          {  "create"    => "VARCHAR( 20 )"                           ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
+
+   hset( ::hColumns, "lote",                       {  "create"    => "BIT"                                     ,;
+                                                      "default"   => {|| .f. } }                               )
+
+   hset( ::hColumns, "lote_actual",                {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
 
    ::getTimeStampColumns()
 
