@@ -2533,7 +2533,7 @@ FUNCTION validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
       ( cAlias )->( dbSetFilter( {|| &cFilter }, cFilter ) )
    end if
 
-RETURN lReturn
+RETURN lRETURN
 
 //-------------------------------------------------------------------------//
 
@@ -4231,7 +4231,7 @@ RETURN ( aFetch )
 FUNCTION externalObjectSender( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 
    local nPos
-   local uReturn
+   local uRETURN
    local cObject
 
    if empty( cMsg )
@@ -4250,7 +4250,7 @@ FUNCTION externalObjectSender( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 
    try 
 
-      uReturn  := apoloSender( &( cObject ), cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+      uRETURN  := apoloSender( &( cObject ), cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 
    catch
 
@@ -4258,11 +4258,11 @@ FUNCTION externalObjectSender( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 
    end
 
-RETURN ( uReturn )
+RETURN ( uRETURN )
 
 //---------------------------------------------------------------------------//
 
-function ApoloSender( oObject, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
+FUNCTION ApoloSender( oObject, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
 
    cMsg           := StrTran( cMsg, "()", "" )
 
@@ -4409,7 +4409,7 @@ RETURN ( file( cFile ) )
 
 //---------------------------------------------------------------------------//
 
-Function ShowImage( oBmpImage )
+FUNCTION ShowImage( oBmpImage )
 
    local oDlg
    local oBmp
@@ -4435,11 +4435,11 @@ Function ShowImage( oBmpImage )
 
    end if
 
-Return nil
+RETURN nil
 
 //---------------------------------------------------------------------------//
 
-Function ShowImageFile( cImageFile )
+FUNCTION ShowImageFile( cImageFile )
 
    local oDlg
    local oBmp
@@ -4460,13 +4460,18 @@ Function ShowImageFile( cImageFile )
 
    end if
 
-Return nil
+RETURN nil
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 
 /*
-Function QrCodeToHBmp( nLineWidth, nLineHeight, cVar, cFileName, cFlags, nColor, nColorBack  )
+FUNCTION QrCodeToHBmp( nLineWidth, nLineHeight, cVar, cFileName, cFlags, nColor, nColorBack  )
 
    local oBmp
    local hBmp

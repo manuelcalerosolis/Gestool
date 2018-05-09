@@ -375,6 +375,7 @@ ArticulosTemporadaController.prg 										\
 ArticulosCategoriasController.prg 										\
 AlmacenesController.prg 													\
 ArticulosController.prg 													\
+ArticulosPreciosController.prg 											\
 ZonasController.prg 															\
 ArticulosFabricantesController.prg 										\
 ImagenesController.prg 														\
@@ -1029,6 +1030,7 @@ ArticulosTemporadaController.obj       								\
 ArticulosCategoriasController.obj       								\
 AlmacenesController.obj       											\
 ArticulosController.obj       											\
+ArticulosPreciosController.obj       									\
 ZonasController.obj       													\
 ArticulosFabricantesController.obj       								\
 ImagenesController.obj       												\
@@ -1670,6 +1672,7 @@ $(OBJ)\ArticulosTemporadaController.obj    							+
 $(OBJ)\ArticulosCategoriasController.obj    							+
 $(OBJ)\AlmacenesController.obj    										+
 $(OBJ)\ArticulosController.obj    										+
+$(OBJ)\ArticulosPreciosController.obj    								+
 $(OBJ)\ZonasController.obj    											+
 $(OBJ)\ArticulosFabricantesController.obj    						+
 $(OBJ)\ImagenesController.obj    										+
