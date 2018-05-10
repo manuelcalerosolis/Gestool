@@ -395,6 +395,7 @@ METHOD getColumns() CLASS SQLIncidenciasModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
 METHOD getParentUuidAttribute( value ) CLASS SQLIncidenciasModel
 
    if empty( ::oController )
