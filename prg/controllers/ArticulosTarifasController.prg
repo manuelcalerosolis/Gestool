@@ -297,11 +297,7 @@ RETURN ( cSentence )
 
 CLASS ArticulosTarifasRepository FROM SQLBaseRepository
 
-<<<<<<< HEAD:prg/controllers/TarifasController.prg
-   METHOD getTableName()                  INLINE ( SQLTarifasModel():getTableName() ) 
-=======
    METHOD getTableNameSQL()               INLINE ( SQLArticulosTarifasModel():getTableName() ) 
->>>>>>> 3cdbcd0c0e960eaed246d91148b86284d67685e2:prg/controllers/ArticulosTarifasController.prg
 
 END CLASS
 
