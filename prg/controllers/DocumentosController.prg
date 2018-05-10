@@ -26,9 +26,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS DocumentosController
+METHOD New( oSenderController ) CLASS DocumentosController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Documentos"
 

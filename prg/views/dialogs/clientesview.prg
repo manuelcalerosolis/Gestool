@@ -503,7 +503,7 @@ METHOD redefineDocumentos()
 
    oBtnDelete:bAction   := {|| ::oController:oDocumentosController:Delete() }
 
-   ::oController:oIncidenciasController:Activate( 140, ::oFolder:aDialogs[7] )
+   ::oController:oDocumentosController:Activate( 140, ::oFolder:aDialogs[7] )
 
 RETURN ( self )
 
