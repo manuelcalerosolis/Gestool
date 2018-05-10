@@ -38,6 +38,7 @@ CLASS ClientesView FROM SQLBaseView
    METHOD redefineContactos()
    METHOD redefineObservaciones()
    METHOD redefineIncidencias()
+   METHOD redefineDocumentos()
 
    METHOD changeBloqueo()
 
@@ -85,13 +86,15 @@ METHOD Activate() CLASS ClientesView
                   "Direcciones",;
                   "Contactos",;
                   "Observaciones",;
-                  "Incidencias";
+                  "Incidencias",;
+                  "Documentos";
       DIALOGS     "CLIENTE_GENERAL" ,;
                   "CLIENTE_COMERCIAL",;
-                  "CLIENTE_DIRECCIONES",;
-                  "CLIENTE_CONTACTOS",;
+                  "CLIENTE_AUXILIARTABLE",;
+                  "CLIENTE_AUXILIARTABLE",;
                   "CLIENTE_OBSERVACIONES",;
-                  "CLIENTE_INCIDENCIAS"
+                  "CLIENTE_AUXILIARTABLE",;
+                  "CLIENTE_AUXILIARTABLE"
 
    ::redefineGeneral()   
 
@@ -104,6 +107,8 @@ METHOD Activate() CLASS ClientesView
    ::redefineObservaciones()
 
    ::redefineIncidencias()
+
+   ::redefineDocumentos()
 
    /*
    Botones generales-----------------------------------------------------------
@@ -138,18 +143,6 @@ RETURN ( ::oDialog:nResult )
 METHOD redefineGeneral() CLASS ClientesView
 
    local oSay
-
-   
-
-   /*REDEFINE SAY oSay ;
-      ID       15 ;
-      OF       ::oFolder:aDialogs[1]
-
-   oSay:lWantClick   := .t.
-   oSay:bLClicked    := {|| MsgInfo( "Prueba de click" )  }*/
-
-   
-
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
@@ -343,30 +336,37 @@ METHOD redefineDirecciones() CLASS ClientesView
 
    local oBtnAppend
    local oBtnEdit
+   local oBtnZoom
    local oBtnDelete
 
    REDEFINE BUTTON oBtnAppend ;
       ID          100 ;
       OF          ::oFolder:aDialogs[3] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() )
 
    oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
 
    REDEFINE BUTTON oBtnEdit ;
       ID          110 ;
       OF          ::oFolder:aDialogs[3] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() )
 
    oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
 
-   REDEFINE BUTTON oBtnDelete ;
+   REDEFINE BUTTON oBtnZoom ;
       ID          120 ;
+      OF          ::oFolder:aDialogs[3]
+
+   oBtnZoom:bAction   := {|| ::oController:oDireccionesController:Zoom() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          130 ;
       OF          ::oFolder:aDialogs[3] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() )
 
    oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
 
-   ::oController:oDireccionesController:Activate( 130, ::oFolder:aDialogs[3] )
+   ::oController:oDireccionesController:Activate( 140, ::oFolder:aDialogs[3] )
 
 RETURN ( self )
 
@@ -376,30 +376,37 @@ METHOD redefineContactos() CLASS ClientesView
 
    local oBtnAppend
    local oBtnEdit
+   local oBtnZoom
    local oBtnDelete
 
    REDEFINE BUTTON oBtnAppend ;
       ID          100 ;
       OF          ::oFolder:aDialogs[4] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() )
 
    oBtnAppend:bAction   := {|| ::oController:oContactosController:Append() }
 
    REDEFINE BUTTON oBtnEdit ;
       ID          110 ;
       OF          ::oFolder:aDialogs[4] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() )
 
    oBtnEdit:bAction   := {|| ::oController:oContactosController:Edit() }
 
-   REDEFINE BUTTON oBtnDelete ;
+   REDEFINE BUTTON oBtnZoom ;
       ID          120 ;
+      OF          ::oFolder:aDialogs[4]
+
+   oBtnZoom:bAction   := {|| ::oController:oContactosController:Zoom() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          130 ;
       OF          ::oFolder:aDialogs[4] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() )
 
    oBtnDelete:bAction   := {|| ::oController:oContactosController:Delete() }
 
-   ::oController:oContactosController:Activate( 130, ::oFolder:aDialogs[4] )
+   ::oController:oContactosController:Activate( 140, ::oFolder:aDialogs[4] )
 
 RETURN ( self )
 
@@ -426,30 +433,77 @@ METHOD redefineIncidencias()
 
    local oBtnAppend
    local oBtnEdit
+   local oBtnZoom
    local oBtnDelete
 
    REDEFINE BUTTON oBtnAppend ;
       ID          100 ;
       OF          ::oFolder:aDialogs[6] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() )
 
    oBtnAppend:bAction   := {|| ::oController:oIncidenciasController:Append() }
 
    REDEFINE BUTTON oBtnEdit ;
       ID          110 ;
       OF          ::oFolder:aDialogs[6] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() )
 
    oBtnEdit:bAction   := {|| ::oController:oIncidenciasController:Edit() }
 
-   REDEFINE BUTTON oBtnDelete ;
+   REDEFINE BUTTON oBtnZoom ;
       ID          120 ;
+      OF          ::oFolder:aDialogs[6]
+
+   oBtnZoom:bAction   := {|| ::oController:oIncidenciasController:Zoom() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          130 ;
       OF          ::oFolder:aDialogs[6] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() )
 
    oBtnDelete:bAction   := {|| ::oController:oIncidenciasController:Delete() }
 
-   ::oController:oIncidenciasController:Activate( 130, ::oFolder:aDialogs[6] )
+   ::oController:oIncidenciasController:Activate( 140, ::oFolder:aDialogs[6] )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD redefineDocumentos()
+
+   local oBtnAppend
+   local oBtnEdit
+   local oBtnZoom
+   local oBtnDelete
+
+   REDEFINE BUTTON oBtnAppend ;
+      ID          100 ;
+      OF          ::oFolder:aDialogs[7] ;
+      WHEN        ( ::oController:isNotZoomMode() )
+
+   oBtnAppend:bAction   := {|| ::oController:oDocumentosController:Append() }
+
+   REDEFINE BUTTON oBtnEdit ;
+      ID          110 ;
+      OF          ::oFolder:aDialogs[7] ;
+      WHEN        ( ::oController:isNotZoomMode() )
+
+   oBtnEdit:bAction   := {|| ::oController:oDocumentosController:Edit() }
+
+   REDEFINE BUTTON oBtnZoom ;
+      ID          120 ;
+      OF          ::oFolder:aDialogs[7]
+
+   oBtnZoom:bAction   := {|| ::oController:oDocumentosController:Zoom() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          130 ;
+      OF          ::oFolder:aDialogs[7] ;
+      WHEN        ( ::oController:isNotZoomMode() )
+
+   oBtnDelete:bAction   := {|| ::oController:oDocumentosController:Delete() }
+
+   ::oController:oIncidenciasController:Activate( 140, ::oFolder:aDialogs[7] )
 
 RETURN ( self )
 

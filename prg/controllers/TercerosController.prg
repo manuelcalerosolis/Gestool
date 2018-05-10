@@ -25,6 +25,8 @@ CLASS TercerosController FROM SQLNavigatorController
 
    DATA oIncidenciasController
 
+   DATA oDocumentosController
+
    METHOD New()
 
    METHOD DireccionesControllerLoadCurrentBuffer()

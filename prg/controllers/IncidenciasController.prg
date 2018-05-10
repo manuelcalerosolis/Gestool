@@ -244,7 +244,13 @@ RETURN ( self )
 
 CLASS IncidenciasView FROM SQLBaseView
   
+   DATA oGetFechaResolucion
+
    METHOD Activate()
+
+   METHOD startDialog()
+
+   METHOD changeFechaResolucion()
 
 END CLASS
 
@@ -263,41 +269,43 @@ METHOD Activate() CLASS IncidenciasView
       ID          900 ;
       RESOURCE    "gc_hint_48" ;
       TRANSPARENT ;
-      OF          ::oDialog ;
+      OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
       FONT        getBoldFont() ;
-      OF          ::oDialog ;
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      OF          ::oDialog
 
    REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "mostrar" ] ;
       ID          110 ;
       IDSAY       112 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
       ID          120 ;
       MEMO ;
       VALID       ( ::oController:validate( "descripcion" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      OF          ::oDialog
 
    REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "resuelta" ] ;
       ID          130 ;
       IDSAY       132 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      ON CHANGE   ( ::changeFechaResolucion() ) ;
+      OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora_resolucion" ] ;
+   REDEFINE GET   ::oGetFechaResolucion ;
+      VAR         ::oController:oModel:hBuffer[ "fecha_hora_resolucion" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -315,11 +323,44 @@ METHOD Activate() CLASS IncidenciasView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
+   ::oDialog:bStart := {|| ::startDialog() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD startDialog() CLASS IncidenciasView
+
+   if !::oController:oModel:hBuffer[ "resuelta" ]
+      ::oGetFechaResolucion:Hide()
+      ::oGetFechaResolucion:Refresh()
+   end if
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeFechaResolucion() CLASS IncidenciasView
+
+   if ::oController:oModel:hBuffer[ "resuelta" ]
+
+      hSet( ::oController:oModel:hBuffer, "fecha_hora_resolucion", hb_datetime() )
+      ::oGetFechaResolucion:Show()
+
+   else
+
+      hSet( ::oController:oModel:hBuffer, "fecha_hora_resolucion", hb_StrToTS( "" ) )
+      ::oGetFechaResolucion:Hide()
+
+   end if
+
+   ::oGetFechaResolucion:Refresh()
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -331,7 +372,6 @@ RETURN ( ::oDialog:nResult )
 CLASS IncidenciasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
-
  
 END CLASS
 
