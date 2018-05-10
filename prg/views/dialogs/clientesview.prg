@@ -37,6 +37,7 @@ CLASS ClientesView FROM SQLBaseView
    METHOD redefineDirecciones()
    METHOD redefineContactos()
    METHOD redefineObservaciones()
+   METHOD redefineIncidencias()
 
    METHOD changeBloqueo()
 
@@ -83,12 +84,14 @@ METHOD Activate() CLASS ClientesView
                   "Comercial",;
                   "Direcciones",;
                   "Contactos",;
-                  "Observaciones";
+                  "Observaciones",;
+                  "Incidencias";
       DIALOGS     "CLIENTE_GENERAL" ,;
                   "CLIENTE_COMERCIAL",;
                   "CLIENTE_DIRECCIONES",;
                   "CLIENTE_CONTACTOS",;
-                  "CLIENTE_OBSERVACIONES"
+                  "CLIENTE_OBSERVACIONES",;
+                  "CLIENTE_INCIDENCIAS"
 
    ::redefineGeneral()   
 
@@ -99,6 +102,8 @@ METHOD Activate() CLASS ClientesView
    ::redefineContactos()
 
    ::redefineObservaciones()
+
+   ::redefineIncidencias()
 
    /*
    Botones generales-----------------------------------------------------------
@@ -412,6 +417,39 @@ METHOD redefineObservaciones()
       MEMO ;
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[5]
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD redefineIncidencias()
+
+   local oBtnAppend
+   local oBtnEdit
+   local oBtnDelete
+
+   REDEFINE BUTTON oBtnAppend ;
+      ID          100 ;
+      OF          ::oFolder:aDialogs[6] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnAppend:bAction   := {|| ::oController:oIncidenciasController:Append() }
+
+   REDEFINE BUTTON oBtnEdit ;
+      ID          110 ;
+      OF          ::oFolder:aDialogs[6] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnEdit:bAction   := {|| ::oController:oIncidenciasController:Edit() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          120 ;
+      OF          ::oFolder:aDialogs[6] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnDelete:bAction   := {|| ::oController:oIncidenciasController:Delete() }
+
+   ::oController:oIncidenciasController:Activate( 130, ::oFolder:aDialogs[6] )
 
 RETURN ( self )
 

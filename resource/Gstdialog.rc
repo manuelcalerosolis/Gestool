@@ -22925,3 +22925,14 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Incidencia", 800, "Static", WS_GROUP, 40, 3, 388, 24
 }
 
+CLIENTE_INCIDENCIAS DIALOG DISCARDABLE 35, -50, 456, 270
+STYLE WS_CHILD|DS_3DLOOK
+FONT 8, "Ms Sans Serif"
+{
+  CONTROL "Aña&dir [F2]", 100, "Button", WS_TABSTOP, 11, 12, 50, 14
+  CONTROL "&Modificar [F3]", 110, "Button", WS_TABSTOP, 66, 12, 50, 14
+  CONTROL "&Eliminar [F4]", 120, "Button", WS_TABSTOP, 121, 12, 50, 14
+  CONTROL "", 130, "TXBrowse", WS_TABSTOP|0x00200000, 11, 30, 433, 228
+  CONTROL "", -1, "Button", BS_GROUPBOX, 5, 2, 444, 263
+}
+

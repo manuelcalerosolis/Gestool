@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS IncidenciasController FROM SQLNavigatorController
+CLASS IncidenciasController FROM SQLBrowseController
 
    METHOD New()
 
@@ -70,7 +70,6 @@ METHOD End() CLASS IncidenciasController
 
 RETURN ( Self )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD gettingSelectSentence() CLASS IncidenciasController
@@ -257,7 +256,7 @@ METHOD Activate() CLASS IncidenciasView
    local oBmpGeneral
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "Incidencias" ;
+      RESOURCE    "INCIDENCIA_SQL" ;
       TITLE       ::LblTitle() + "incidencia"
 
    REDEFINE BITMAP ::oBitmap ;
@@ -284,6 +283,7 @@ METHOD Activate() CLASS IncidenciasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
       ID          120 ;
+      MEMO ;
       VALID       ( ::oController:validate( "descripcion" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -339,8 +339,8 @@ END CLASS
 
 METHOD getValidators() CLASS IncidenciasValidator
 
-   ::hValidators  := {  "descripcion" =>           {  "required"              => "La descripción es un dato requerido",;
-                                                      "unique"                => "La descripción introducida ya existe" } }
+   ::hValidators  := {  "descripcion" =>           {  "required"              => "La descripción es un dato requerido" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -390,7 +390,7 @@ METHOD getColumns() CLASS SQLIncidenciasModel
                                                    "default"   => {|| .f. } }                                )
 
    hset( ::hColumns, "fecha_hora_resolucion",   {  "create"    => "TIMESTAMP"                                ,;
-                                                   "default"   => {||  "" } }                                 )
+                                                   "default"   => {|| hb_StrToTS( "" ) } }                   )
 
 RETURN ( ::hColumns )
 
