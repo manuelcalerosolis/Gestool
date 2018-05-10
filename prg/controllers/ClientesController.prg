@@ -55,6 +55,10 @@ METHOD New() CLASS ClientesController
 
    ::oContactosController      := ContactosController():New( self )
 
+   ::oIncidenciasController    := IncidenciasController():New( self )
+
+   ::oDocumentosController     := DocumentosController():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )

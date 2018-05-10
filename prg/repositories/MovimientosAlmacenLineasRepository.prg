@@ -175,7 +175,7 @@ METHOD getSQLSentenceFechaHoraConsolidacion( cCodigoArticulo, cCodigoAlmacen, cC
                      "cabecera.fecha_hora "                                                              + ;
                   "FROM movimientos_almacen_lineas lineas "                                              + ;
                      "INNER JOIN movimientos_almacen cabecera ON lineas.parent_uuid = cabecera.uuid "    + ;
-                  "WHERE empresa = " + quoted( cCodEmp() ) + " "                                         + ;
+                  "WHERE empresa_uuid = " + quoted( uuidEmpresa() ) + " "                                         + ;
                      "AND lineas.codigo_articulo = " + quoted( cCodigoArticulo ) + " "                   + ;
                      "AND cabecera.tipo_movimiento = 4 "                                                 
 

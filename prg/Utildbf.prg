@@ -4326,21 +4326,32 @@ RETURN ( .f. )
 Selecciona el fichero de un grafico
 */
 
-FUNCTION GetBmp( aGet )
+FUNCTION GetBmp( aGet, cMask, cPath )
 
-   local cFile := Upper( cGetFile( "Imagenes (*.bmp,jpg,png,gif)|*.bmp;*.jpg;*.png;*.gif|", "Seleccione el fichero", 1, Rtrim( cPatImg() ) ) )
+   local cFile 
 
-   if aGet != nil .and. !Empty( cFile )
+   DEFAULT cMask  := "Imagenes (*.bmp,jpg,png,gif)|*.bmp;*.jpg;*.png;*.gif|"
+   DEFAULT cPath  := rtrim( cPatImg() )
 
-      aGet:cText( Padr( cFile, 254 ) )
+   cFile          := upper( cGetFile( cMask, "Seleccione el fichero", 1, cPath ) )
 
-      if !Empty( aGet:bChange )
-         Eval( aGet:bChange )
+   if aGet != nil .and. !empty( cFile )
+
+      aGet:cText( padr( cFile, 254 ) )
+
+      if !empty( aGet:bChange )
+         eval( aGet:bChange )
       end if
 
    end if
 
 RETURN ( cFile )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION GetDocumento( aGet )
+
+RETURN ( GetBmp( aGet, "Documento (*.*)|*.*|" ) )
 
 //---------------------------------------------------------------------------//
 

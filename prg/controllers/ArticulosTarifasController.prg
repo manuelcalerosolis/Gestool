@@ -155,6 +155,10 @@ METHOD addColumns() CLASS ArticulosTarifasBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'iva_incluido'
       :cHeader             := 'IVA incluido'
+<<<<<<< HEAD
+=======
+      :SetCheck( { "Sel16", "Nil16" } )
+>>>>>>> c4f49107de77c70212abdb4731787fc5bb168e21
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'iva_incluido' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -198,7 +202,7 @@ METHOD Activate() CLASS ArticulosTarifasView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NN" ;
+      PICTURE     "@! NNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -211,6 +215,7 @@ METHOD Activate() CLASS ArticulosTarifasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "margen_predefinido" ] ;
       ID          120 ;
+      SPINNER ;
       PICTURE     "@E 9999.9999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -296,8 +301,8 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
    
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 2 )"                            ,;
-                                                "default"   => {|| space( 2 ) } }                        )
+   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 3 )"                            ,;
+                                                "default"   => {|| space( 3 ) } }                        )
 
    hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
                                                 "default"   => {|| space( 200 ) } }                      )
