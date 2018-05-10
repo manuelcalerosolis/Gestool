@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TarifasController FROM SQLNavigatorController
+CLASS ArticulosTarifasController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -13,35 +13,36 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS TarifasController
+METHOD New() CLASS ArticulosTarifasController
 
    ::Super:New()
 
-   ::cTitle                      := "Tarifas"
+   ::cTitle                         := "Tarifas"
 
-   ::cName                       := "tarifas"
+   ::cName                          := "tarifas"
 
-   ::hImage                      := {  "16" => "gc_money_interest_16",;
-                                       "32" => "gc_money_interest_32",;
-                                       "48" => "gc_money_interest_48" }
+   ::hImage                         := {  "16" => "gc_money_interest_16",;
+                                          "32" => "gc_money_interest_32",;
+                                          "48" => "gc_money_interest_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLTarifasModel():New( self )
+   ::oModel                         := SQLArticulosTarifasModel():New( self )
 
-   ::oBrowseView                    := TarifasBrowseView():New( self )
+   ::oBrowseView                    := ArticulosTarifasBrowseView():New( self )
 
-   ::oDialogView                    := TarifasView():New( self )
+   ::oDialogView                    := ArticulosTarifasView():New( self )
 
-   ::oValidator                     := TarifasValidator():New( self, ::oDialogView )
+   ::oValidator                     := ArticulosTarifasValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := TarifasRepository():New( self )
+   ::oRepository                    := ArticulosTarifasRepository():New( self )
 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-METHOD End() CLASS TarifasController
+
+METHOD End() CLASS ArticulosTarifasController
 
    ::oModel:End()
 
@@ -62,12 +63,8 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS TarifasBrowseView FROM SQLBrowseView
+CLASS ArticulosTarifasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -75,7 +72,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS TarifasBrowseView
+METHOD addColumns() CLASS ArticulosTarifasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -114,7 +111,7 @@ METHOD addColumns() CLASS TarifasBrowseView
       :cSortOrder          := 'margen_predefinido'
       :cHeader             := 'Margen predefinido'
       :nWidth              := 130
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'margen_predefinido' ) }
+      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'margen_predefinido' ), "@E 9999.9999" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -134,10 +131,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS TarifasView FROM SQLBaseView
+CLASS ArticulosTarifasView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -145,10 +140,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS TarifasView
-
-   local oDialog
-   local oBmpGeneral
+METHOD Activate() CLASS ArticulosTarifasView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TARIFA" ;
@@ -201,7 +193,7 @@ METHOD Activate() CLASS TarifasView
       ID          IDCANCEL ;
       OF          ::oDialog ;
       CANCEL ;
-      ACTION     ( ::oDialog:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
@@ -218,23 +210,22 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS TarifasValidator FROM SQLBaseValidator
+CLASS ArticulosTarifasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
-
  
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS TarifasValidator
+METHOD getValidators() CLASS ArticulosTarifasValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"              => "El nombre es un dato requerido",;
-                                                      "unique"                => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"              => "El código es un dato requerido" ,;
-                                                      "unique"                => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido",;
+                                          "unique"    => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
+                                          "unique"    => "EL código introducido ya existe"  } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -242,26 +233,27 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS SQLTarifasModel FROM SQLCompanyModel
+CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "articulos_tarifas"
+   DATA cTableName                           INIT "articulos_tarifas"
+
+   DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( empresa_uuid, codigo )"
 
    METHOD getColumns()
+
+   METHOD getInsertArticulosTarifasSentence()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLTarifasModel
+METHOD getColumns() CLASS SQLArticulosTarifasModel
 
    hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                                 "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"             ,;                                  
                                                 "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
@@ -276,25 +268,45 @@ METHOD getColumns() CLASS SQLTarifasModel
 
    hset( ::hColumns, "iva_incluido",         {  "create"    => "BIT"                                      ,;
                                                 "default"   => {|| .f. } }                                )
+
+   hset( ::hColumns, "sistema",              {  "create"    => "BIT"                                      ,;
+                                                "default"   => {|| .f. } }                                )
+
    ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+METHOD getInsertArticulosTarifasSentence()
+
+   local cSentence 
+
+   cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
+   cSentence  +=    "( uuid, empresa_uuid, usuario_uuid, codigo, nombre, sistema ) "
+   cSentence  += "SELECT UUID(), empresas.uuid, '', '1', 'General', '1' "
+   cSentence  +=    "FROM empresas"
+
+RETURN ( cSentence )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TarifasRepository FROM SQLBaseRepository
+CLASS ArticulosTarifasRepository FROM SQLBaseRepository
 
+<<<<<<< HEAD:prg/controllers/TarifasController.prg
    METHOD getTableName()                  INLINE ( SQLTarifasModel():getTableName() ) 
+=======
+   METHOD getTableNameSQL()               INLINE ( SQLArticulosTarifasModel():getTableName() ) 
+>>>>>>> 3cdbcd0c0e960eaed246d91148b86284d67685e2:prg/controllers/ArticulosTarifasController.prg
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
