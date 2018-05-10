@@ -58,8 +58,6 @@ METHOD End() CLASS FormaPagoController
 
    ::oRepository:End()
 
-   ::oBancosController:End()
-
    ::Super:End()
 
 RETURN ( Self )
@@ -121,7 +119,7 @@ METHOD addColumns() CLASS FormaPagoBrowseView
       :cSortOrder          := 'tactil'
       :cHeader             := 'Tactil'
       :nWidth              := 20
-      :nHeadBmpNo       := 3
+      :nHeadBmpNo          := 3
       :bEditValue          := {|| ::getRowSet():fieldGet( 'incluir_en_terminal' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :SetCheck( { "Sel16", "Nil16" } )

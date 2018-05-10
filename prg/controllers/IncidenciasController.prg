@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TarifasController FROM SQLNavigatorController
+CLASS IncidenciasController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -13,7 +13,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS TarifasController
+METHOD New() CLASS IncidenciasController
 
    ::Super:New()
 
@@ -27,21 +27,21 @@ METHOD New() CLASS TarifasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLTarifasModel():New( self )
+   ::oModel                         := SQLIncidenciasModel():New( self )
 
-   ::oBrowseView                    := TarifasBrowseView():New( self )
+   ::oBrowseView                    := IncidenciasBrowseView():New( self )
 
-   ::oDialogView                    := TarifasView():New( self )
+   ::oDialogView                    := IncidenciasView():New( self )
 
-   ::oValidator                     := TarifasValidator():New( self, ::oDialogView )
+   ::oValidator                     := IncidenciasValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := TarifasRepository():New( self )
+   ::oRepository                    := IncidenciasRepository():New( self )
 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-METHOD End() CLASS TarifasController
+METHOD End() CLASS IncidenciasController
 
    ::oModel:End()
 
@@ -67,7 +67,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TarifasBrowseView FROM SQLBrowseView
+CLASS IncidenciasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -75,7 +75,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS TarifasBrowseView
+METHOD addColumns() CLASS IncidenciasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -137,7 +137,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TarifasView FROM SQLBaseView
+CLASS IncidenciasView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -145,7 +145,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS TarifasView
+METHOD Activate() CLASS IncidenciasView
 
    local oDialog
    local oBmpGeneral
@@ -220,7 +220,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TarifasValidator FROM SQLBaseValidator
+CLASS IncidenciasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -229,7 +229,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS TarifasValidator
+METHOD getValidators() CLASS IncidenciasValidator
 
    ::hValidators  := {  "nombre" =>                {  "required"              => "El nombre es un dato requerido",;
                                                       "unique"                => "El nombre introducido ya existe" },;
@@ -246,9 +246,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLTarifasModel FROM SQLCompanyModel
+CLASS SQLIncidenciasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "articulos_tarifas"
+   DATA cTableName               INIT "incidencias"
 
    METHOD getColumns()
 
@@ -256,27 +256,31 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLTarifasModel
+METHOD getColumns() CLASS SQLIncidenciasModel
 
-   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                                "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                                "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                                   "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 3 )"                            ,;
-                                                "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                   ,;
+                                                   "default"   => {|| space( 40 ) } }                        )
 
-   hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                   "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "margen_predefinido",   {  "create"    => "FLOAT( 8,4 )"                            ,;
-                                                "default"   => {|| 0 } }                                  )
+   hset( ::hColumns, "descripcion",             {  "create"    => "VARCHAR( 200 )"                          ,;
+                                                   "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "iva_incluido",         {  "create"    => "BIT"                                      ,;
-                                                "default"   => {|| .f. } }                                )
-   ::getTimeStampColumns()
+   hset( ::hColumns, "fecha_hora",              {  "create"    => "TIMESTAMP"                            ,;
+                                                   "default"   => {|| 0 } }                                  )
+
+   hset( ::hColumns, "resuelta",                {  "create"    => "BIT"                                      ,;
+                                                   "default"   => {|| .f. } }                                )
+
+   hset( ::hColumns, "fecha_hora_resolucion",   {  "create"    => "TIMESTAMP"                            ,;
+                                                   "default"   => {|| 0 } }                                  )
 
 RETURN ( ::hColumns )
 
@@ -290,9 +294,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TarifasRepository FROM SQLBaseRepository
+CLASS IncidenciasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLTarifasModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLIncidenciasModel():getTableName() ) 
 
 END CLASS
 
