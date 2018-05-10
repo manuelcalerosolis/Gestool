@@ -1303,6 +1303,19 @@ RETURN ( ".\Imagen\" )
 
 //---------------------------------------------------------------------------//
 
+Function cPathDocumentApplicationStorage()
+
+RETURN ( FullCurDir() + "Documento\" )
+
+//---------------------------------------------------------------------------//
+
+Function cRelativeDocumentApplicationStorage()
+
+RETURN ( ".\Documento\" )
+
+//---------------------------------------------------------------------------//
+
+
 /*
 Devuelve el numero de digitos de proveedores de la empresa activa--------------
 */

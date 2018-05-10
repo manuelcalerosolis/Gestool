@@ -181,6 +181,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
 
+   aadd( ::aModels, SQLDocumentosModel():New() )
+
    aadd( ::aModels, SQLIncidenciasModel():New() )
 
    aadd( ::aModels, SQLArticulosTarifasModel():New() )
