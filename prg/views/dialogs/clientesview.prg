@@ -407,7 +407,6 @@ METHOD redefineObservaciones()
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[5]
 
-
    REDEFINE GET ::oController:oModel:hBuffer[ "observaciones" ] ;
       ID       110 ;
       MEMO ;
