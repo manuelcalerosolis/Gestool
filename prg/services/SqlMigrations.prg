@@ -181,6 +181,11 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
 
+<<<<<<< HEAD
+   aadd( ::aModels, SQLIncidenciasModel():New() )
+
+=======
+>>>>>>> 9a6ad78261dffd2187ca4cbc90ef196e40a69224
    aadd( ::aModels, SQLArticulosTarifasModel():New() )
 
    aadd( ::aModels, SQLArticulosPreciosModel():New() )
