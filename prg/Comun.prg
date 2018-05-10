@@ -2952,6 +2952,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_credit_cards_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Tarifas'
+   oItem:cMessage       := 'Tarifas'
+   oItem:bAction        := {|| ArticulosTarifasController():New():ActivateNavigatorView() }
+   oItem:cId            := "tarifas"
+   oItem:cBmp           := "gc_money_interest_16"
+   oItem:cBmpBig        := "gc_money_interest_32"
+   oItem:lShow          := .f.
+
 
 RETURN ( oAcceso )
 

@@ -76,6 +76,8 @@ METHOD checkValues()
 
    getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
 
+   getSQLDatabase():Exec( SQLArticulosTarifasModel():getInsertArticulosTarifasSentence() )
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -178,6 +180,12 @@ METHOD addModels()
    aadd( ::aModels, SQLComentariosLineasModel():New() )
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
+
+<<<<<<< HEAD
+   aadd( ::aModels, SQLTarifasModel():New() )
+=======
+   aadd( ::aModels, SQLArticulosTarifasModel():New() )
+>>>>>>> 3cdbcd0c0e960eaed246d91148b86284d67685e2
 
    aadd( ::aModels, SQLArticulosPreciosModel():New() )
 

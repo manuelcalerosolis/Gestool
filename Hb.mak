@@ -358,6 +358,7 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+ArticulosTarifasController.prg 											\
 ContactosController.prg 													\
 FormaPagoController.prg 													\
 ArticulosFamiliaController.prg 											\
@@ -1012,6 +1013,7 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+ArticulosTarifasController.obj       									\
 ContactosController.obj       											\
 FormaPagoController.obj       											\
 ArticulosFamiliaController.obj       									\
@@ -1653,6 +1655,7 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\ArticulosTarifasController.obj    								+
 $(OBJ)\ContactosController.obj    										+
 $(OBJ)\FormaPagoController.obj 	   									+
 $(OBJ)\ArticulosFamiliaController.obj    								+
