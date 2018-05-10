@@ -181,11 +181,9 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
 
-<<<<<<< HEAD
-   aadd( ::aModels, SQLTarifasModel():New() )
-=======
+   aadd( ::aModels, SQLIncidenciasModel():New() )
+
    aadd( ::aModels, SQLArticulosTarifasModel():New() )
->>>>>>> 3cdbcd0c0e960eaed246d91148b86284d67685e2
 
    aadd( ::aModels, SQLArticulosPreciosModel():New() )
 

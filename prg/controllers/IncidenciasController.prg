@@ -7,6 +7,19 @@ CLASS IncidenciasController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD gettingSelectSentence()
+
+   METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
+   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
+
+   METHOD loadedCurrentBuffer( uuidEntidad ) 
+   METHOD updateBuffer( uuidEntidad )
+
+   METHOD loadedDuplicateCurrentBuffer( uuidEntidad )
+   METHOD loadedDuplicateBuffer( uuidEntidad )
+
+   METHOD deleteBuffer( aUuidEntidades )
+
    METHOD End()
 
 END CLASS
@@ -17,13 +30,13 @@ METHOD New() CLASS IncidenciasController
 
    ::Super:New()
 
-   ::cTitle                      := "Tarifas"
+   ::cTitle                      := "Incidencias"
 
-   ::cName                       := "tarifas"
+   ::cName                       := "incidencias"
 
-   ::hImage                      := {  "16" => "gc_money_interest_16",;
-                                       "32" => "gc_money_interest_32",;
-                                       "48" => "gc_money_interest_48" }
+   ::hImage                      := {  "16" => "gc_hint_16",;
+                                       "32" => "gc_hint_32",;
+                                       "48" => "gc_hint_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -56,6 +69,90 @@ METHOD End() CLASS IncidenciasController
    ::Super:End()
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD gettingSelectSentence() CLASS IncidenciasController
+
+   local uuid        := ::getSenderController():getUuid() 
+
+   if !empty( uuid )
+      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS IncidenciasController
+
+   local idIncidencia     
+
+   if empty( uuidEntidad )
+      ::oModel:insertBuffer()
+   end if 
+
+   idIncidencia          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idIncidencia )
+      idIncidencia       := ::oModel:insertBlankBuffer()
+   end if 
+
+   ::oModel:loadCurrentBuffer( idIncidencia )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD UpdateBuffer( uuidEntidad ) CLASS IncidenciasController
+
+   local idIncidencia     
+
+   idIncidencia          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idIncidencia )
+      ::oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+
+   ::oModel:updateBuffer()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS IncidenciasController
+
+   local idIncidencia     
+
+   idIncidencia          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   if empty( idIncidencia )
+      ::oModel:insertBuffer()
+      RETURN ( self )
+   end if 
+
+   ::oModel:loadDuplicateBuffer( idIncidencia )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS IncidenciasController
+
+   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteBuffer( aUuidEntidades ) CLASS IncidenciasController
+
+   if empty( aUuidEntidades )
+      RETURN ( self )
+   end if
+
+   ::oModel:deleteWhereParentUuid( aUuidEntidades )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -95,35 +192,44 @@ METHOD addColumns() CLASS IncidenciasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
-      :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'margen_predefinido'
-      :cHeader             := 'Margen predefinido'
+      :cSortOrder          := 'fecha_hora'
+      :cHeader             := 'Fecha y hora'
       :nWidth              := 130
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'margen_predefinido' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_hora' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'iva_incluido'
-      :cHeader             := 'IVA incluido'
+      :cSortOrder          := 'mostrar'
+      :cHeader             := 'Mostrar'
       :SetCheck( { "Sel16", "Nil16" } )
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'iva_incluido' ) }
+      :nWidth              := 50
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'mostrar' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'descripcion'
+      :cHeader             := 'Descripcion'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'resuelta'
+      :cHeader             := 'Resuelta'
+      :SetCheck( { "Sel16", "Nil16" } )
+      :nWidth              := 50
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'resuelta' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'fecha_hora_resolucion'
+      :cHeader             := 'Fecha y hora de resolución'
+      :nWidth              := 130
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_hora_resolucion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -151,12 +257,12 @@ METHOD Activate() CLASS IncidenciasView
    local oBmpGeneral
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "TARIFA" ;
-      TITLE       ::LblTitle() + "tarifa"
+      RESOURCE    "Incidencias" ;
+      TITLE       ::LblTitle() + "incidencia"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_money_interest_48" ;
+      RESOURCE    "gc_hint_48" ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
@@ -164,30 +270,32 @@ METHOD Activate() CLASS IncidenciasView
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog ;
-   
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "mostrar" ] ;
       ID          110 ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
+      IDSAY       112 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "margen_predefinido" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
       ID          120 ;
-      SPINNER ;
-      PICTURE     "@E 9999.9999" ;
+      VALID       ( ::oController:validate( "descripcion" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-    REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "iva_incluido" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "resuelta" ] ;
       ID          130 ;
       IDSAY       132 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora_resolucion" ] ;
+      ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -231,10 +339,8 @@ END CLASS
 
 METHOD getValidators() CLASS IncidenciasValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"              => "El nombre es un dato requerido",;
-                                                      "unique"                => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"              => "El código es un dato requerido" ,;
-                                                      "unique"                => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "descripcion" =>           {  "required"              => "La descripción es un dato requerido",;
+                                                      "unique"                => "La descripción introducida ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -246,11 +352,15 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLIncidenciasModel FROM SQLCompanyModel
+CLASS SQLIncidenciasModel FROM SQLBaseModel
 
    DATA cTableName               INIT "incidencias"
 
    METHOD getColumns()
+
+   METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+
+   METHOD getParentUuidAttribute( value )
 
 END CLASS
 
@@ -267,24 +377,35 @@ METHOD getColumns() CLASS SQLIncidenciasModel
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                   ,;
                                                    "default"   => {|| space( 40 ) } }                        )
 
-   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                   "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "descripcion",             {  "create"    => "TEXT"                                    ,;
+                                                   "default"   => {|| "" } }                                  )
 
-   hset( ::hColumns, "descripcion",             {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                   "default"   => {|| space( 200 ) } }                       )
-
-   hset( ::hColumns, "fecha_hora",              {  "create"    => "TIMESTAMP"                            ,;
-                                                   "default"   => {|| 0 } }                                  )
+   hset( ::hColumns, "fecha_hora",              {  "create"    => "TIMESTAMP"                               ,;
+                                                   "default"   => {|| hb_datetime() } }                     )
+   
+   hset( ::hColumns, "mostrar",                {  "create"    => "BIT"                                      ,;
+                                                   "default"   => {|| .f. } }                                )
 
    hset( ::hColumns, "resuelta",                {  "create"    => "BIT"                                      ,;
                                                    "default"   => {|| .f. } }                                )
 
-   hset( ::hColumns, "fecha_hora_resolucion",   {  "create"    => "TIMESTAMP"                            ,;
-                                                   "default"   => {|| 0 } }                                  )
+   hset( ::hColumns, "fecha_hora_resolucion",   {  "create"    => "TIMESTAMP"                                ,;
+                                                   "default"   => {||  "" } }                                 )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+METHOD getParentUuidAttribute( value ) CLASS SQLIncidenciasModel
+
+   if empty( ::oController )
+      RETURN ( value )
+   end if
+
+   if empty( ::oController:oSenderController )
+      RETURN ( value )
+   end if
+
+RETURN ( ::oController:oSenderController:getUuid() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
