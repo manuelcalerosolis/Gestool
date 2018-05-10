@@ -107,7 +107,7 @@ METHOD Build( cSentence )
 
       ::oRowSet      := getSQLDatabase():RowSet( cSentence )
 
-      ::oRowSet:setAttribute( STMT_ATTR_STR_PAD, .t. ) 
+      ::oRowSet:setAttribute( STMT_ATTR_STR_PAD, .f. ) 
       
       ::oRowSet:Load()
 

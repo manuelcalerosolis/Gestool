@@ -23,6 +23,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD insertPreciosWhereArticulo()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -67,6 +69,10 @@ METHOD New() CLASS ArticulosController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
+   ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::insertPreciosWhereArticulo() } )
+   
+   ::oModel:setEvent( 'loadedCurrentBuffer', {|| ::insertPreciosWhereArticulo() } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -98,6 +104,22 @@ METHOD End() CLASS ArticulosController
    ::oImpuestosEspecialesController:End()
 
    ::Super:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertPreciosWhereArticulo()
+
+   local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
+
+   msgalert( hget( ::oModel:hBuffer, "uuid" ) ) 
+
+   if empty( uuidArticulo )
+      RETURN ( Self )
+   end if 
+
+   SQLArticulosPreciosModel():insertPreciosWhereArticulo( uuidArticulo )   
 
 RETURN ( Self )
 
@@ -177,6 +199,10 @@ CLASS ArticulosView FROM SQLBaseView
    DATA oComboPeriodoCaducidad
 
    DATA oGetLoteActual
+
+   DATA oGetPrecioCosto
+
+   DATA oSayCodificacionProveedores
   
    METHOD Activate()
 
@@ -214,8 +240,10 @@ METHOD Activate() CLASS ArticulosView
    REDEFINE FOLDER ::oFolder ;
       ID          500 ;
       OF          ::oDialog ;
-      PROMPT      "&General";
-      DIALOGS     "ARTICULO_GENERAL" 
+      PROMPT      "&General",;
+                  "Precios";
+      DIALOGS     "ARTICULO_GENERAL",;
+                  "ARTICULO_PRECIO"  
 
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -304,6 +332,24 @@ METHOD Activate() CLASS ArticulosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
+   // Precios -----------------------------------------------------------------
+
+   REDEFINE GET   ::oGetPrecioCosto ;
+      VAR         ::oController:oModel:hBuffer[ "precio_costo" ] ;
+      ID          100 ;
+      PICTURE     "@E 99999999.999999" ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[2]
+
+   REDEFINE SAY   ::oSayCodificacionProveedores ;
+      PROMPT      "Codificación de proveedores..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 58, 182, 247 ) ;
+      ID          110 ;
+      OF          ::oFolder:aDialogs[2]
+
+   ::oSayCodificacionProveedores:lWantClick  := .t.
+   ::oSayCodificacionProveedores:OnClick     := {|| msgalert( "Codificación de proveedores..." ) }
 
    // Botones Articulos -------------------------------------------------------
 
@@ -480,6 +526,9 @@ METHOD getColumns() CLASS SQLArticulosModel
 
    hset( ::hColumns, "lote_actual",                {  "create"    => "VARCHAR( 40 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
+
+   hset( ::hColumns, "precio_costo",               {  "create"    => "FLOAT( 16, 6 )"                          ,;
+                                                      "default"   => {|| 0 } }                                 )
 
    ::getTimeStampColumns()
 

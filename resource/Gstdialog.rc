@@ -22899,7 +22899,19 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Tarifa", 800, "Static", WS_GROUP, 44, 3, 481, 24
   CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 57, 46, 8
   CONTROL "Margen predefinido", -1, "Static", WS_GROUP, 50, 70, 63, 8
-  CONTROL "IVA incluido", 132, "Static", WS_GROUP, 49, 83, 47, 8
+  CONTROL "IVA incluido", 132, "Static", WS_GROUP, 50, 83, 43, 8
   CONTROL "%", -1, "Static", WS_GROUP, 185, 70, 11, 8
+}
+
+ARTICULO_PRECIO DIALOG DISCARDABLE 35, -50, 456, 270
+STYLE WS_CHILD|DS_3DLOOK
+FONT 8, "Ms Sans Serif"
+{
+  CONTROL "", 100, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 12, 90, 12
+  CONTROL "", 130, "TXBrowse", WS_TABSTOP|0x00300000, 11, 44, 432, 216
+  CONTROL "Costo", -1, "Static", WS_GROUP, 11, 16, 32, 8
+  CONTROL "Compras", -1, "Button", BS_GROUPBOX, 5, 4, 444, 27
+  CONTROL "Ventas", -1, "Button", BS_GROUPBOX, 5, 33, 444, 233
+  CONTROL "Codificación de proveedores...", 110, "Static", SS_RIGHT|WS_GROUP, 307, 16, 137, 8
 }
 
