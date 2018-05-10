@@ -155,10 +155,6 @@ METHOD addColumns() CLASS ArticulosTarifasBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'iva_incluido'
       :cHeader             := 'IVA incluido'
-<<<<<<< HEAD
-=======
-      :SetCheck( { "Sel16", "Nil16" } )
->>>>>>> c4f49107de77c70212abdb4731787fc5bb168e21
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'iva_incluido' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }

@@ -99,11 +99,9 @@ METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
 
    cSQL           := "INSERT IGNORE INTO articulos_precios"                                                                + " "  
    cSQL           +=    "( uuid, tarifa_uuid, articulo_uuid, margen, precio_base, precio_iva_incluido )"                   + " "  
-   cSQL           += "SELECT uuid(), articulos_tarifas.uuid, articulos.uuid, articulos_tarifas.margen_predefinido, 0, 0"   + " "  
-   cSQL           +=    "FROM articulos"                                                                                   + " "  
-   cSQL           += "INNER JOIN articulos_tarifas ON articulos_tarifas.empresa_uuid = articulos.empresa_uuid"             + " "  
-   cSQL           += "WHERE articulos.empresa_uuid = " + quoted( Company():Uuid() )                                        + " "
-   cSQL           +=    "AND articulos.uuid = " + quoted( uuidArticulo )
+   cSQL           += "SELECT uuid(), articulos_tarifas.uuid, " + quoted( uuidArticulo ) + ", articulos_tarifas.margen_predefinido, 0, 0"   + " "  
+   cSQL           +=    "FROM articulos_tarifas"                                                                           + " "  
+   cSQL           += "WHERE articulos_tarifas.empresa_uuid = " + quoted( Company():Uuid() )                                 
 
    msgalert( cSQL, "cSQL" )
 
