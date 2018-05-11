@@ -22882,11 +22882,8 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Tarifa", 800, "Static", WS_GROUP, 44, 3, 481, 24
   CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 57, 46, 8
   CONTROL "Margen predefinido", -1, "Static", WS_GROUP, 50, 70, 63, 8
-<<<<<<< HEAD
   CONTROL "IVA incluido", 132, "Static", WS_GROUP, 50, 83, 47, 8
-=======
   CONTROL "IVA incluido", 132, "Static", WS_GROUP, 50, 83, 43, 8
->>>>>>> 8ffef52cb9a36f11e962d71ecdd340ffd9aea6e2
   CONTROL "%", -1, "Static", WS_GROUP, 185, 70, 11, 8
 }
 
