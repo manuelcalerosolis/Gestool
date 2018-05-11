@@ -26,9 +26,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS IncidenciasController
+METHOD New( oSenderController ) CLASS IncidenciasController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Incidencias"
 
@@ -49,6 +49,12 @@ METHOD New() CLASS IncidenciasController
    ::oValidator                     := IncidenciasValidator():New( self, ::oDialogView )
 
    ::oRepository                    := IncidenciasRepository():New( self )
+
+   ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
+
+   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 
 RETURN ( Self )

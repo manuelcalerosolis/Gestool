@@ -4382,6 +4382,33 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION ChgDoc( aGet, docFile )
+
+   local cFile    := ""
+
+   do case
+      case hb_isobject( aGet )
+         cFile    := cFileBmpName( Rtrim( aGet:VarGet() ) )
+      case hb_ischar( aGet )
+         cFile    := Rtrim( aGet )
+   end case
+
+   if empty( docFile )
+      RETURN ( .t. )
+   end if 
+
+   if !file( cFile )
+      docFile:Hide()
+      RETURN ( .t. )
+   end if
+
+   docFile:LoadBmp( cFile )
+   docFile:Show()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION cFileBmpName( cFile, lEmptyImage )
 
    DEFAULT lEmptyImage  := .f.
@@ -4415,6 +4442,22 @@ FUNCTION isImageInApplicationStorage( cFile )
    end if
 
    cFile       := rtrim( cPatImg() ) + rtrim( cFile )
+
+RETURN ( file( cFile ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION isDocumentInApplicationStorage( cFile  )
+
+   if empty( cFile )
+      RETURN ( .f. )
+   end if
+
+   if empty( cPatDoc() )
+      RETURN ( .f. )
+   end if
+
+   cFile       := rtrim( cPatDoc() ) + rtrim( cFile )
 
 RETURN ( file( cFile ) )
 

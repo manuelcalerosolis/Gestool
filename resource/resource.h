@@ -12,3 +12,4 @@
 
 #define MANIFEST       24
 
+#define Cos  65535

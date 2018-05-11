@@ -2962,15 +2962,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_money_interest_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Documento'
-   oItem:cMessage       := 'Documento'
-   oItem:bAction        := {|| DocumentosController():New():ActivateNavigatorView() }
-   oItem:cId            := "tarifas"
-   oItem:cBmp           := "gc_document_text_gear_16"
-   oItem:cBmpBig        := "gc_document_text_gear_32"
-   oItem:lShow          := .f.
 
 RETURN ( oAcceso )
 

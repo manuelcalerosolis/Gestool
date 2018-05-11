@@ -9,6 +9,10 @@ CLASS ArticulosTarifasController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD Delete( aSelectedRecno )
+
+   METHOD insertPreciosWhereTarifa()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -37,6 +41,7 @@ METHOD New() CLASS ArticulosTarifasController
 
    ::oRepository                    := ArticulosTarifasRepository():New( self )
 
+   ::setEvent( 'appended', {|| ::insertPreciosWhereTarifa() } )
 
 RETURN ( Self )
 
@@ -55,6 +60,36 @@ METHOD End() CLASS ArticulosTarifasController
    ::oRepository:End()
 
    ::Super:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Delete( aSelectedRecno ) CLASS ArticulosTarifasController
+
+   if len( aSelectedRecno ) > 1
+      msgStop( "No se pueden realizar eliminaciones multiples en tarifas." )
+      RETURN .f.
+   end if 
+
+   if ( ::getRowSet():fieldGet( 'uuid' ) == Company():Uuid() ) 
+      msgStop( "No se puede eliminar la tarifa General." )
+      RETURN .f.
+   end if 
+
+RETURN ( ::Super:Delete( aSelectedRecno ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertPreciosWhereTarifa() CLASS ArticulosTarifasController
+
+   local uuidTarifa  := hget( ::oModel:hBuffer, "uuid" )
+
+   if empty( uuidTarifa )
+      RETURN ( Self )
+   end if 
+
+   SQLArticulosPreciosModel():insertPreciosWhereTarifa( uuidTarifa )
 
 RETURN ( Self )
 
@@ -109,19 +144,23 @@ METHOD addColumns() CLASS ArticulosTarifasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'margen_predefinido'
-      :cHeader             := 'Margen predefinido'
+      :cHeader             := 'Margen predefinido %'
       :nWidth              := 130
       :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'margen_predefinido' ), "@E 9999.9999" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'iva_incluido'
       :cHeader             := 'IVA incluido'
-      :SetCheck( { "Sel16", "Nil16" } )
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'iva_incluido' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :SetCheck( { "Sel16", "Nil16" } )
    end with
 
 RETURN ( self )
@@ -211,7 +250,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTarifasValidator FROM SQLBaseValidator
+CLASS ArticulosTarifasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -253,24 +292,25 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
    hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                                 "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"             ,;                                  
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                                 "default"   => {|| win_uuidcreatestring() } }            )
+   
    ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 3 )"                            ,;
                                                 "default"   => {|| space( 3 ) } }                        )
 
    hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                "default"   => {|| space( 200 ) } }                       )
+                                                "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "margen_predefinido",   {  "create"    => "FLOAT( 8,4 )"                            ,;
-                                                "default"   => {|| 0 } }                                  )
+                                                "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "iva_incluido",         {  "create"    => "BIT"                                      ,;
-                                                "default"   => {|| .f. } }                                )
+   hset( ::hColumns, "iva_incluido",         {  "create"    => "BIT"                                     ,;
+                                                "default"   => {|| .f. } }                               )
 
-   hset( ::hColumns, "sistema",              {  "create"    => "BIT"                                      ,;
-                                                "default"   => {|| .f. } }                                )
+   hset( ::hColumns, "sistema",              {  "create"    => "BIT"                                     ,;
+                                                "default"   => {|| .f. } }                               )
 
    ::getTimeStampColumns()
 
@@ -284,7 +324,7 @@ METHOD getInsertArticulosTarifasSentence()
 
    cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
    cSentence  +=    "( uuid, empresa_uuid, usuario_uuid, codigo, nombre, sistema ) "
-   cSentence  += "SELECT UUID(), empresas.uuid, '', '1', 'General', '1' "
+   cSentence  += "SELECT empresas.uuid, empresas.uuid, '', '1', 'General', '1' "
    cSentence  +=    "FROM empresas"
 
 RETURN ( cSentence )

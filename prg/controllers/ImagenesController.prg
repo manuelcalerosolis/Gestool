@@ -358,6 +358,7 @@ METHOD SetImagenAttribute( uValue )
 
    local cNombreImagen
 
+    msgalert(::oController:oSenderController:classname() )
    if empty( uValue ) .or. isImageInApplicationStorage( uValue )
       RETURN ( uValue )
    end if       

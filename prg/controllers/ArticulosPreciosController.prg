@@ -2,6 +2,195 @@
 #include "Factu.ch" 
 
 //---------------------------------------------------------------------------//
+
+CLASS ArticulosPreciosController FROM SQLBrowseController
+
+   METHOD New()
+
+   METHOD End()
+
+   METHOD gettingSelectSentence()
+
+   METHOD setMargen( oCol, nMargen )
+
+   METHOD setPrecioBase( oCol, nPrecioBase )
+   
+   METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oController ) CLASS ArticulosPreciosController
+
+   ::Super:New( oController )
+
+   ::lTransactional                 := .t.
+
+   ::cTitle                         := "Precios de artículos"
+
+   ::cName                          := "articulos_precios"
+
+   ::oModel                         := SQLArticulosPreciosModel():New( self )
+
+   ::oBrowseView                    := ArticulosPreciosBrowseView():New( self )
+
+   ::oValidator                     := ArticulosPreciosValidator():New( self )
+
+   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS ArticulosPreciosController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oValidator:End()
+
+   ::Super:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD gettingSelectSentence() CLASS ArticulosPreciosController
+
+   local uuid        := ::getSenderController():getUuid() 
+
+   if !empty( uuid )
+      ::oModel:setGeneralWhere( "articulo_uuid = " + quoted( uuid ) )
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setMargen( oCol, nMargen ) CLASS ArticulosPreciosController
+
+   local uuid        := ::getRowSet():fieldGet( 'uuid' )
+
+   if ::oValidator:validate( 'margen', nMargen )
+      ::oModel:updateFieldWhereUuid( uuid, 'margen', nMargen )
+      ::getRowSet():Refresh()
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
+
+   local uuid        := ::getRowSet():fieldGet( 'uuid' )
+
+   ::oModel:updateFieldWhereUuid( uuid, 'precio_base', nPrecioBase )
+
+   ::getRowSet():Refresh()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) CLASS ArticulosPreciosController
+
+   local uuid        := ::getRowSet():fieldGet( 'uuid' )
+
+   ::oModel:updateFieldWhereUuid( uuid, 'precio_iva_incluido', nPrecioIVAIncluido )
+
+   ::getRowSet():Refresh()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ArticulosPreciosBrowseView FROM SQLBrowseView
+
+   DATA lFastEdit             INIT .t.
+
+   DATA lMultiSelect          INIT .f.
+
+   DATA nMarqueeStyle         INIT 3
+
+   METHOD addColumns()                    
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD addColumns() CLASS ArticulosPreciosBrowseView
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'id'
+      :cHeader             := 'Id'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'uuid'
+      :cHeader             := 'Uuid'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'margen'
+      :cHeader             := 'Margen'
+      :nWidth              := 100
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+
+      :nEditType           := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'margen' ) }
+      :bEditBlock          := {|| ::getRowSet():fieldGet( 'margen' ) }
+      :cEditPicture        := "@E 9999.9999"
+      :bOnPostEdit         := {|oCol, nMargen| ::oController:setMargen( oCol, nMargen ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'precio_base'
+      :cHeader             := 'Precio'
+      :nWidth              := 100
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+
+      :nEditType           := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_base' ) }
+      :bEditBlock          := {|| ::getRowSet():fieldGet( 'precio_base' ) }
+      :cEditPicture        := "@E 9999.9999"
+      :bOnPostEdit         := {|oCol, nPrecioBase| ::oController:setPrecioBase( oCol, nPrecioBase ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'precio_iva_incluido'
+      :cHeader             := 'Precio IVA inc.'
+      :nWidth              := 100
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+
+      :nEditType           := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_iva_incluido' ) }
+      :bEditBlock          := {|| ::getRowSet():fieldGet( 'precio_iva_incluido' ) }
+      :cEditPicture        := "@E 9999.9999"
+      :bOnPostEdit         := {|oCol, nPrecioIVAIncluido| ::oController:setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) }
+   end with
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -17,10 +206,7 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosPreciosValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido",;
-                                          "unique"    => "El nombre introducido ya existe" },;
-                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
-                                          "unique"    => "El código introducido ya existe" } }
+   ::hValidators  := {  "margen" =>    {  "Positive"  => "El valor debe ser mayor o igual a cero" } }
 
 RETURN ( ::hValidators )
 
@@ -34,7 +220,17 @@ CLASS SQLArticulosPreciosModel FROM SQLBaseModel
 
    DATA cTableName               INIT "articulos_precios"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( tarifa_uuid, articulo_uuid )"
+
    METHOD getColumns()
+
+   METHOD getSQLInsertPreciosWhereTarifa( uuidTarifa )
+
+   METHOD insertPreciosWhereTarifa( uuidTarifa )        INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereTarifa( uuidTarifa ) ) )
+
+   METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
+
+   METHOD insertPreciosWhereArticulo( uuidArticulo )     INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereArticulo( uuidArticulo ) ) )
 
 END CLASS
 
@@ -64,6 +260,36 @@ METHOD getColumns() CLASS SQLArticulosPreciosModel
                                                       "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLInsertPreciosWhereTarifa( uuidTarifa )
+
+   local cSQL
+
+   cSQL           := "INSERT IGNORE INTO articulos_precios"                                                                + " "  
+   cSQL           +=    "( uuid, tarifa_uuid, articulo_uuid, margen, precio_base, precio_iva_incluido )"                   + " "  
+   cSQL           += "SELECT uuid(), articulos_tarifas.uuid, articulos.uuid, articulos_tarifas.margen_predefinido, 0, 0"   + " "  
+   cSQL           +=    "FROM articulos"                                                                                   + " "  
+   cSQL           += "INNER JOIN articulos_tarifas ON articulos_tarifas.empresa_uuid = articulos.empresa_uuid"             + " "  
+   cSQL           += "WHERE articulos.empresa_uuid = " + quoted( Company():Uuid() )                                        + " "
+   cSQL           +=    "AND articulos_tarifas.uuid = " + quoted( uuidTarifa )
+
+RETURN ( cSQL )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
+
+   local cSQL
+
+   cSQL           := "INSERT IGNORE INTO articulos_precios"                                                                + " "  
+   cSQL           +=    "( uuid, tarifa_uuid, articulo_uuid, margen, precio_base, precio_iva_incluido )"                   + " "  
+   cSQL           += "SELECT uuid(), articulos_tarifas.uuid, " + quoted( uuidArticulo ) + ", articulos_tarifas.margen_predefinido, 0, 0"   + " "  
+   cSQL           +=    "FROM articulos_tarifas"                                                                           + " "  
+   cSQL           += "WHERE articulos_tarifas.empresa_uuid = " + quoted( Company():Uuid() )                                 
+
+RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

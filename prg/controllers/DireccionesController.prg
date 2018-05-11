@@ -54,10 +54,6 @@ METHOD New( oController ) CLASS DireccionesController
 
    ::oProvinciasController          := ProvinciasController():New( self )
 
-   ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
-
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 RETURN ( Self )

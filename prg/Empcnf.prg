@@ -1291,6 +1291,23 @@ RETURN ( cPatImg )
 
 //---------------------------------------------------------------------------//
 
+//----------------------------------------------------------------------------//
+
+ FUNCTION cPatDoc( cPath )
+
+   local cPatDoc  := Rtrim( aEmp()[ _CDIRIMG ] )
+
+   if !Empty( cPatDoc )
+      if Right( cPatDoc, 1 ) != "\"
+         cPatDoc  := cPatDoc += "\"
+      end if
+   end if
+
+RETURN ( cPatDoc )
+
+//---------------------------------------------------------------------------//
+
+
 Function cPathImageApplicationStorage()
 
 RETURN ( FullCurDir() + "Imagen\" )

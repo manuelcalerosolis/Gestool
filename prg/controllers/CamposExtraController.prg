@@ -52,6 +52,7 @@ METHOD New() CLASS CamposExtraController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS CamposExtraController
 
    ::oModel:End()
@@ -63,8 +64,6 @@ METHOD End() CLASS CamposExtraController
    ::oValidator:End()
 
    ::oCamposExtraEntidadesController:End()
-
-   /*::oRepository:End()*/
 
    ::Super:End()
 
@@ -79,7 +78,6 @@ METHOD deleteEntitiesWhereEmpty()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -301,8 +299,9 @@ METHOD Activate() CLASS CamposExtraView
 
    ::oTipo:bChange   := {|| ::ChangeTipo( ::oController:oModel:hBuffer[ "tipo" ] ) }
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "requerido" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "requerido" ] ;
       ID          130 ;
+      IDSAY       132;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[ 1 ]
 
