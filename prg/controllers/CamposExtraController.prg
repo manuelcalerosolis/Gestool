@@ -301,8 +301,9 @@ METHOD Activate() CLASS CamposExtraView
 
    ::oTipo:bChange   := {|| ::ChangeTipo( ::oController:oModel:hBuffer[ "tipo" ] ) }
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "requerido" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "requerido" ] ;
       ID          130 ;
+      IDSAY       132;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[ 1 ]
 

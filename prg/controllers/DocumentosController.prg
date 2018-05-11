@@ -12,6 +12,8 @@ CLASS DocumentosController FROM SQLBrowseController
    METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
    METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
 
+   METHOD loadedBlankBuffer()
+
    METHOD loadedCurrentBuffer( uuidEntidad ) 
    METHOD updateBuffer( uuidEntidad )
 
@@ -54,13 +56,13 @@ METHOD New( oSenderController ) CLASS DocumentosController
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS DocumentosController
 
    ::oModel:End()
@@ -79,14 +81,23 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD gettingSelectSentence() CLASS DocumentosController
+METHOD loadedBlankBuffer() CLASS DocumentosController
 
    local uuid        := ::getSenderController():getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      hset( ::oModel:hBuffer, "parent_uuid", uuid )
    end if 
 
+RETURN ( Self )
+//---------------------------------------------------------------------------//
+
+METHOD gettingSelectSentence() CLASS DocumentosController
+
+   local uuid        := ::getSenderController():getUuid()  
+   if !empty( uuid )
+      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+   end if 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -206,10 +217,10 @@ METHOD addColumns() CLASS DocumentosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'ruta_documento'
+      :cSortOrder          := 'documento'
       :cHeader             := 'Documento'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'ruta_documento' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'documento' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -267,10 +278,11 @@ METHOD Activate() CLASS DocumentosView
       OF          ::oDialog 
 
    REDEFINE GET   oGetDocumento ;
-      VAR         ::oController:oModel:hBuffer[ "ruta" ] ;
+      VAR         ::oController:oModel:hBuffer[ "documento" ] ;
       ID          110 ;
       BITMAP      "Folder" ;
-      ON HELP     ( GetBmp( oGetDocumento, oDocumento ) ) ;
+      ON HELP     ( GetDocumento( oGetDocumento, oDocumento ) ) ;
+      ON CHANGE   ( ChgDoc( oGetDocumento, oDocumento ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
@@ -339,7 +351,7 @@ CLASS SQLDocumentosModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   /*METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )*/
+   METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD updateDocumentoWhereUuid( uValue, uuid )    INLINE ( ::updateFieldWhereUuid( uuid, 'ruta_documento', uValue ) )
 
@@ -365,7 +377,7 @@ METHOD getColumns() CLASS SQLDocumentosModel
    hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 )"                            ,;
                                                    "default"   => {|| space( 200 ) } }                        )
 
-   hset( ::hColumns, "ruta_documento",          {  "create"    => "VARCHAR ( 200 )"                           ,;
+   hset( ::hColumns, "documento",               {  "create"    => "VARCHAR ( 200 )"                           ,;
                                                    "default"   => {|| space( 200 ) } }                        )
 
    hset( ::hColumns, "observacion",             {  "create"    => "TEXT"                                      ,;
@@ -373,6 +385,7 @@ METHOD getColumns() CLASS SQLDocumentosModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
 METHOD getParentUuidAttribute( value ) CLASS SQLDocumentosModel
 
    if empty( ::oController )
@@ -391,10 +404,9 @@ METHOD SetDocumentoAttribute( uValue )
 
    local cNombreDocumento
 
-   if empty( uValue ) .or. isImageInApplicationStorage( uValue )
+   if empty( uValue ) .or. isDocumentInApplicationStorage( uValue )
       RETURN ( uValue )
-   end if       
-
+   end if      
    if empty( ::oController ) .or. empty( ::oController:oSenderController )
       RETURN ( uValue )
    end if       
@@ -403,11 +415,12 @@ METHOD SetDocumentoAttribute( uValue )
    cNombreDocumento           += '(' + alltrim( ::hBuffer[ "uuid" ] ) + ')' + '.' 
    cNombreDocumento           += lower( getFileExt( uValue ) ) 
 
-   if !( copyfile( uValue, cPathImageApplicationStorage() + cNombreDocumento ) )
+   if !( copyfile( uValue, cPathDocumentApplicationStorage() + cNombreDocumento ) )
+   
       RETURN ( uValue )
    end if      
 
-RETURN ( cRelativeImageApplicationStorage() + cNombreDocumento )
+RETURN ( cRelativeDocumentApplicationStorage() + cNombreDocumento )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

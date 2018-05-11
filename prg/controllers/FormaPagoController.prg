@@ -360,8 +360,9 @@ METHOD Activate() CLASS FormaPagoView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE CHECKBOX   ::oController:oModel:hBuffer[ "incluir_en_terminal" ] ;
+   REDEFINE SAYCHECKBOX   ::oController:oModel:hBuffer[ "incluir_en_terminal" ] ;
       ID          250 ;
+      IDSAY       252 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
