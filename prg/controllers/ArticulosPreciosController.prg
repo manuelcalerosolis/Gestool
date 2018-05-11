@@ -2,6 +2,133 @@
 #include "Factu.ch" 
 
 //---------------------------------------------------------------------------//
+
+CLASS ArticulosPreciosController FROM SQLBrowseController
+
+   METHOD New()
+
+   METHOD End()
+
+   METHOD gettingSelectSentence()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oController ) CLASS ArticulosPreciosController
+
+   ::Super:New( oController )
+
+   ::lTransactional                 := .t.
+
+   ::cTitle                         := "Precios de artículos"
+
+   ::cName                          := "articulos_precios"
+
+   ::oModel                         := SQLArticulosPreciosModel():New( self )
+
+   ::oBrowseView                    := ArticulosPreciosBrowseView():New( self )
+
+   ::oValidator                     := ArticulosPreciosValidator():New( self )
+
+   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS ArticulosPreciosController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::Super:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD gettingSelectSentence() CLASS ArticulosPreciosController
+
+   local uuid        := ::getSenderController():getUuid() 
+
+   if !empty( uuid )
+      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ArticulosPreciosBrowseView FROM SQLBrowseView
+
+   METHOD addColumns()                       
+
+ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD addColumns() CLASS ArticulosPreciosBrowseView
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'id'
+      :cHeader             := 'Id'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'uuid'
+      :cHeader             := 'Uuid'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'margen'
+      :cHeader             := 'Margen'
+      :nWidth              := 100
+      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'margen' ), "@E 9999.9999" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'precio_base'
+      :cHeader             := 'Precio'
+      :nWidth              := 100
+      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'precio_base' ), "@E 9999.9999" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'precio_iva_incluido'
+      :cHeader             := 'Precio IVA inc.'
+      :nWidth              := 100
+      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'precio_iva_incluido' ), "@E 9999.9999" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+   end with
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -102,8 +229,6 @@ METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
    cSQL           += "SELECT uuid(), articulos_tarifas.uuid, " + quoted( uuidArticulo ) + ", articulos_tarifas.margen_predefinido, 0, 0"   + " "  
    cSQL           +=    "FROM articulos_tarifas"                                                                           + " "  
    cSQL           += "WHERE articulos_tarifas.empresa_uuid = " + quoted( Company():Uuid() )                                 
-
-   msgalert( cSQL, "cSQL" )
 
 RETURN ( cSQL )
 

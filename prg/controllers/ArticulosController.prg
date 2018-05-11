@@ -13,6 +13,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oArticulosFabricantesController
 
+   DATA oArticulosPreciosController
+
    DATA oIvaTipoController
 
    DATA oImpuestosEspecialesController
@@ -63,6 +65,8 @@ METHOD New() CLASS ArticulosController
 
    ::oArticulosFabricantesController   := ArticulosFabricantesController():New( self )
 
+   ::oArticulosPreciosController       := ArticulosPreciosController():New( self )
+
    ::oIvaTipoController                := IvaTipoController():New( self )
 
    ::oImpuestosEspecialesController    := ImpuestosEspecialesController():New( self )
@@ -70,7 +74,7 @@ METHOD New() CLASS ArticulosController
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::insertPreciosWhereArticulo() } )
-   
+
    ::oModel:setEvent( 'loadedCurrentBuffer', {|| ::insertPreciosWhereArticulo() } )
 
 RETURN ( Self )
@@ -98,6 +102,8 @@ METHOD End() CLASS ArticulosController
    ::oArticulosCategoriasController:End()
 
    ::oArticulosFabricantesController:End()
+
+   ::oArticulosPreciosController:End()
 
    ::oIvaTipoController:End()
 
@@ -350,6 +356,8 @@ METHOD Activate() CLASS ArticulosView
 
    ::oSayCodificacionProveedores:lWantClick  := .t.
    ::oSayCodificacionProveedores:OnClick     := {|| msgalert( "Codificación de proveedores..." ) }
+
+   ::oController:oArticulosPreciosController:Activate( 130, ::oFolder:aDialogs[2] )
 
    // Botones Articulos -------------------------------------------------------
 

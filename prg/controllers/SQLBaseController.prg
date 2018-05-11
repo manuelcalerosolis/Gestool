@@ -131,6 +131,8 @@ CLASS SQLBaseController
    METHOD getBrowseView()                             INLINE ( ::oBrowseView )
    METHOD getBrowse()                                 INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:getBrowse(), ) )
 
+   METHOD refreshBrowseView()                         INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
+
    METHOD startBrowse( oCombobox )
    METHOD restoreBrowseState()
 
@@ -357,6 +359,8 @@ METHOD Append()
             ::refreshRowSet()
          end if 
 
+         ::refreshBrowseView()
+
          ::fireEvent( 'appended' ) 
 
          if ::isContinuousAppend()
@@ -432,6 +436,8 @@ METHOD Duplicate( nId )
       
       ::fireEvent( 'duplicated' ) 
 
+      ::refreshBrowseView()
+
    else 
    
       lDuplicate     := .f.
@@ -488,6 +494,8 @@ METHOD Edit( nId )
       ::commitTransactionalMode()
 
       ::refreshRowSetAndFindId( nId )
+
+      ::refreshBrowseView()
 
       ::fireEvent( 'edited' ) 
 
@@ -648,6 +656,8 @@ METHOD Delete( aSelectedRecno )
       ::gotoRowSetRecno( ::priorRecnoToDelete( aSelectedRecno ) )
 
       ::refreshRowSet()
+
+      ::refreshBrowseView()
 
       lDelete           := .t.
 
