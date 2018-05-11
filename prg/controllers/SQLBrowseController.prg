@@ -21,7 +21,7 @@ END CLASS
 
 METHOD New( oSenderController )
 
-   ::Super:New( oSenderController ) 
+   ::Super:New( oSenderController )
 
 RETURN ( self )
 

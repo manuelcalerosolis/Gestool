@@ -13,6 +13,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oArticulosFabricantesController
 
+   DATA oArticulosPreciosController
+
    DATA oIvaTipoController
 
    DATA oImpuestosEspecialesController
@@ -41,6 +43,8 @@ METHOD New() CLASS ArticulosController
                                              "32" => "gc_object_cube_32",;
                                              "48" => "gc_object_cube_48" }
 
+   ::lTransactional                    := .t.
+
    ::nLevel                            := Auth():Level( ::cName )
 
    ::oModel                            := SQLArticulosModel():New( self )
@@ -63,6 +67,8 @@ METHOD New() CLASS ArticulosController
 
    ::oArticulosFabricantesController   := ArticulosFabricantesController():New( self )
 
+   ::oArticulosPreciosController       := ArticulosPreciosController():New( self )
+
    ::oIvaTipoController                := IvaTipoController():New( self )
 
    ::oImpuestosEspecialesController    := ImpuestosEspecialesController():New( self )
@@ -70,7 +76,7 @@ METHOD New() CLASS ArticulosController
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::insertPreciosWhereArticulo() } )
-   
+
    ::oModel:setEvent( 'loadedCurrentBuffer', {|| ::insertPreciosWhereArticulo() } )
 
 RETURN ( Self )
@@ -99,6 +105,8 @@ METHOD End() CLASS ArticulosController
 
    ::oArticulosFabricantesController:End()
 
+   ::oArticulosPreciosController:End()
+
    ::oIvaTipoController:End()
 
    ::oImpuestosEspecialesController:End()
@@ -112,8 +120,6 @@ RETURN ( Self )
 METHOD insertPreciosWhereArticulo()
 
    local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
-
-   msgalert( hget( ::oModel:hBuffer, "uuid" ) ) 
 
    if empty( uuidArticulo )
       RETURN ( Self )
@@ -346,12 +352,14 @@ METHOD Activate() CLASS ArticulosView
    REDEFINE SAY   ::oSayCodificacionProveedores ;
       PROMPT      "Codificación de proveedores..." ;
       FONT        getBoldFont() ; 
-      COLOR       rgb( 58, 182, 247 ) ;
+      COLOR       rgb( 10, 152, 234 ) ;
       ID          110 ;
       OF          ::oFolder:aDialogs[2]
 
    ::oSayCodificacionProveedores:lWantClick  := .t.
    ::oSayCodificacionProveedores:OnClick     := {|| msgalert( "Codificación de proveedores..." ) }
+
+   ::oController:oArticulosPreciosController:Activate( 130, ::oFolder:aDialogs[2] )
 
    // Botones Articulos -------------------------------------------------------
 

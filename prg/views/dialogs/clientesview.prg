@@ -3,6 +3,7 @@
 
 CLASS ClientesView FROM SQLBaseView
   
+   DATA oExplorerBar
    DATA oGetDni
    DATA oGetProvincia
    DATA oGetPoblacion
@@ -33,11 +34,20 @@ CLASS ClientesView FROM SQLBaseView
    METHOD startDialog()
 
    METHOD redefineGeneral()
+
    METHOD redefineComercial()
+
    METHOD redefineDirecciones()
+
    METHOD redefineContactos()
+
    METHOD redefineIncidencias()
+
    METHOD redefineDocumentos()
+
+   METHOD redefineExplorerBar()
+
+   METHOD addLinksToExplorerBar()
 
    METHOD changeBloqueo()
 
@@ -101,7 +111,7 @@ METHOD Activate() CLASS ClientesView
 
    ::redefineContactos()
 
-   ::redefineIncidencias()
+   //::redefineIncidencias()
 
    ::redefineDocumentos()
 
@@ -120,6 +130,8 @@ METHOD Activate() CLASS ClientesView
       OF          ::oDialog ;
       CANCEL ;
       ACTION      ( ::oDialog:end() )
+
+   ::redefineExplorerBar()
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) } )
@@ -489,6 +501,8 @@ RETURN ( self )
 
 METHOD startDialog()
 
+   ::addLinksToExplorerBar()
+
    ::oController:oAgentesController:oGetSelector:Start()
 
    ::oController:oFormasdePagoController:oGetSelector:Start()
@@ -513,6 +527,33 @@ METHOD startDialog()
       ::oRiesgo:Hide()
       ::oRiesgoAlcanzado:Hide()
    end if
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD redefineExplorerBar() CLASS ClientesView
+
+   REDEFINE EXPLORERBAR ::oExplorerBar ;
+         ID             100 ;
+         OF             ::oDialog
+
+      ::oExplorerBar:nBottomColor  := RGB( 255, 255, 255 )
+      ::oExplorerBar:nTopColor     := RGB( 255, 255, 255 )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD addLinksToExplorerBar() CLASS ClientesView
+
+   local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   oPanel:AddLink( "Direcciones...",      {|| MsgInfo( "Entro en direcciones" ) }, "gc_user_16" )
+   oPanel:AddLink( "Contactos...",        {|| MsgInfo( "Entro en contactos" ) }, "gc_user_16" )
+   oPanel:AddLink( "Cuentas bancarias...",{|| MsgInfo( "Entro en cuentas bancarias" ) }, "gc_user_16" )
+   oPanel:AddLink( "Incidencias...",      {|| ::oController:oIncidenciasController:activateDialogView() }, "gc_user_16" )
+   oPanel:AddLink( "Documentos...",       {|| MsgInfo( "Entro en documentos" ) }, "gc_user_16" )
 
 RETURN ( self )
 
@@ -582,7 +623,7 @@ METHOD changeAutorizacioncredito()
    ::oGetFechaConcesion:Refresh()
    ::oBloqueoRiesgo:Refresh()
    ::oRiesgo:Refresh()
-   ::oRiesgoAlcanzado:Refresh()
+   ::oRiesgoAlcanzado:Refresh() 
 
 Return ( self )
 

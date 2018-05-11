@@ -9,6 +9,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA oNavigatorView
 
+   DATA oDialogModalView
+
    DATA oFilterController 
 
    DATA oVistaModel
@@ -35,6 +37,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
    METHOD buildRowSetSentence() 
 
    METHOD activateNavigatorView()
+
+   METHOD activateDialogView()
 
    METHOD activateSelectorView()
    METHOD activateSelectorViewNoCenter()              INLINE ( ::ActivateSelectorView( .f. ) )
@@ -111,6 +115,8 @@ METHOD New( oSenderController )
    ::oNavigatorView                                   := SQLNavigatorView():New( self )
 
    ::oSelectorView                                    := SQLSelectorView():New( self )
+
+   ::oDialogModalView                                 := SQLDialogView():New( self )
 
    ::oFilterController                                := SQLFiltrosController():New( self ) 
 
@@ -219,6 +225,27 @@ METHOD activateSelectorView( lCenter )
    end if
 
 RETURN ( ::oSelectorView:Activate( lCenter ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD activateDialogView()
+
+   if empty( ::oDialogModalView )
+      RETURN ( nil )
+   end if 
+
+   if ::notUserAccess()
+      msgStop( "Acceso no permitido." )
+      RETURN ( nil )
+   end if
+
+   /*::buildRowSetSentence()   
+
+   if empty( ::oRowSet:get() )
+      RETURN ( nil )
+   end if*/
+
+RETURN ( ::oDialogModalView:Activate() )
 
 //---------------------------------------------------------------------------//
 
