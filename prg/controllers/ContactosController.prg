@@ -49,6 +49,8 @@ METHOD New( oController ) CLASS ContactosController
    ::oValidator                     := ContactosValidator():New( self, ::oDialogView )
 
    ::oRepository                    := ContactosRepository():New( self )
+
+   ::oGetSelector                := GetSelector():New( self )
    
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )

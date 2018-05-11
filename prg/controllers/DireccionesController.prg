@@ -392,7 +392,7 @@ METHOD ExternalCoreRedefine( oDialog )
       VAR         ::oController:oModel:hBuffer[ "codigo_provincia" ] ;
       ID          1040 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      BITMAP      "LUPA" ;
+      BITMAP      "Lupa" ;
       VALID       ( ::oController:validate( "codigo_provincia" ) ) ;
       OF          oDialog
 
@@ -527,6 +527,31 @@ METHOD codigoPais( value )
    ::oController:oDialogView:oGetPais:oHelpText:cText( SQLPaisesModel():getField( "nombre", "codigo", value ) )
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+CLASS DireccionesEntidadesValidator FROM DireccionesValidator
+
+   METHOD getValidators()
+ 
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getValidators() CLASS DireccionesEntidadesValidator
+
+   ::hValidators  := {  "codigo_postal" =>      {  "codigoPostal"    => "El código postal erroneo",;
+                                                   "required"        => "El código postal es un dato requerido" },;
+                        "codigo_provincia" =>   {  "codigoProvincia" => "El código de provincia erroneo",;
+                                                   "required"        => "El código postal es un dato requerido" },;
+                        "codigo_pais" =>        {  "codigoPais"      => "Código de país erroneo",;
+                                                   "required"        => "El código de páis es un dato requerido" },;
+                        "direccion" =>          {  "required"        => "La dirección es un dato requerido" } ,; 
+                        "poblacion" =>          {  "required"        => "La población es un dato requerido" } ,;
+                        "provincia" =>          {  "required"        => "La provincia es un dato requerido" } ,; 
+                        "pais" =>               {  "required"        => "El país es un dato requerido" } }                      
+
+RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

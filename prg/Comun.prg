@@ -2962,6 +2962,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_money_interest_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Entidades'
+   oItem:cMessage       := 'Entidades'
+   oItem:bAction        := {||EntidadesController():New():ActivateNavigatorView() }
+   oItem:cId            := "entidades"
+   oItem:cBmp           := "gc_office_building2_16"
+   oItem:cBmpBig        := "gc_office_building2_32"
+   oItem:lShow          := .f.
+
 
 RETURN ( oAcceso )
 

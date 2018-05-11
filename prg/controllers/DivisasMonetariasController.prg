@@ -205,8 +205,9 @@ METHOD Activate() CLASS DivisasMonetariasView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "texto_masculino" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "texto_masculino" ] ;
       ID          150 ;
+      IDSAY       152 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
