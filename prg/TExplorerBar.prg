@@ -4,7 +4,8 @@
 
 // Class TExplorerBar
 
-#define COLOR_BTNFACE    15
+#define COLOR_BTNFACE   15
+#define COLOR_LINK      RGB( 10, 152, 234 )
 
 #define TME_LEAVE         2
 #define WM_MOUSELEAVE   675
@@ -359,6 +360,7 @@ CLASS TTaskPanel FROM TControl
    DATA   hRegion
    DATA   aBitmaps
    DATA   hBmpPanel
+   DATA   nClrLink         INIT COLOR_LINK
 
    CLASSDATA lRegistered AS LOGICAL
 
@@ -443,7 +445,7 @@ RETURN Self
 
 METHOD getTopControl()
 
-RETURN ( ::nHeight + 3 )
+RETURN ( ::nHeight + 5 )
 
 //----------------------------------------------------------------------------//
 
@@ -462,14 +464,16 @@ METHOD AddLink( cPrompt, bAction, cBitmap ) CLASS TTaskPanel
 
    local oUrlLink
 
-   oUrlLink          := TUrlLink():New( ::getTopControl(), 33, Self, .t., .F., ::oFont, "", cPrompt )
+   oUrlLink             := TUrlLink():New( ::getTopControl(), 33, Self, .t., .F., ::oFont, "", cPrompt )
 
-   oUrlLink:SetColor( ::nClrHover, ::nClrPane )
-   oUrlLink:nClrOver := ::nClrHover
-   oUrlLink:bAction  := bAction
+   oUrlLink:SetColor( ::nClrLink, ::nClrPane )
+   oUrlLink:nClrInit    := ::nClrLink
+   oUrlLink:nClrOver    := ::nClrLink
+   oUrlLink:nClrVisit   := ::nClrLink
+   oUrlLink:bAction     := bAction
 
    if !empty( cBitmap )
-      oUrlLink:hBmp  := LoadBitmap( GetResources(), cBitmap )
+      oUrlLink:hBmp     := LoadBitmap( GetResources(), cBitmap )
    endif
 
    ::setHeight( oUrlLink:nTop, oUrlLink:nHeight )

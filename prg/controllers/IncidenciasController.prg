@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS IncidenciasController FROM SQLBrowseController
+CLASS IncidenciasController FROM SQLNavigatorController
 
    METHOD New()
 
