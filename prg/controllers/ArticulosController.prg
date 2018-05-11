@@ -350,7 +350,7 @@ METHOD Activate() CLASS ArticulosView
    REDEFINE SAY   ::oSayCodificacionProveedores ;
       PROMPT      "Codificación de proveedores..." ;
       FONT        getBoldFont() ; 
-      COLOR       rgb( 58, 182, 247 ) ;
+      COLOR       rgb( 10, 152, 234 ) ;
       ID          110 ;
       OF          ::oFolder:aDialogs[2]
 

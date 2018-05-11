@@ -58,7 +58,7 @@ METHOD gettingSelectSentence() CLASS ArticulosPreciosController
    local uuid        := ::getSenderController():getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      ::oModel:setGeneralWhere( "articulo_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( Self )
