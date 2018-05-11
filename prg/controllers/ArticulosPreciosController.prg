@@ -11,6 +11,12 @@ CLASS ArticulosPreciosController FROM SQLBrowseController
 
    METHOD gettingSelectSentence()
 
+   METHOD setMargen( oCol, nMargen )
+
+   METHOD setPrecioBase( oCol, nPrecioBase )
+   
+   METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -43,8 +49,6 @@ METHOD End() CLASS ArticulosPreciosController
 
    ::oBrowseView:End()
 
-   ::oDialogView:End()
-
    ::oValidator:End()
 
    ::Super:End()
@@ -64,6 +68,43 @@ METHOD gettingSelectSentence() CLASS ArticulosPreciosController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD setMargen( oCol, nMargen ) CLASS ArticulosPreciosController
+
+   local uuid        := ::getRowSet():fieldGet( 'uuid' )
+
+   if ::oValidator:validate( 'margen', nMargen )
+      ::oModel:updateFieldWhereUuid( uuid, 'margen', nMargen )
+      ::getRowSet():Refresh()
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
+
+   local uuid        := ::getRowSet():fieldGet( 'uuid' )
+
+   ::oModel:updateFieldWhereUuid( uuid, 'precio_base', nPrecioBase )
+
+   ::getRowSet():Refresh()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) CLASS ArticulosPreciosController
+
+   local uuid        := ::getRowSet():fieldGet( 'uuid' )
+
+   ::oModel:updateFieldWhereUuid( uuid, 'precio_iva_incluido', nPrecioIVAIncluido )
+
+   ::getRowSet():Refresh()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -71,11 +112,17 @@ RETURN ( Self )
 
 CLASS ArticulosPreciosBrowseView FROM SQLBrowseView
 
-   METHOD addColumns()                       
+   DATA lFastEdit             INIT .t.
+
+   DATA lMultiSelect          INIT .f.
+
+   DATA nMarqueeStyle         INIT 3
+
+   METHOD addColumns()                    
 
 ENDCLASS
 
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 METHOD addColumns() CLASS ArticulosPreciosBrowseView
 
@@ -100,30 +147,45 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :cSortOrder          := 'margen'
       :cHeader             := 'Margen'
       :nWidth              := 100
-      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'margen' ), "@E 9999.9999" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
+
+      :nEditType           := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'margen' ) }
+      :bEditBlock          := {|| ::getRowSet():fieldGet( 'margen' ) }
+      :cEditPicture        := "@E 9999.9999"
+      :bOnPostEdit         := {|oCol, nMargen| ::oController:setMargen( oCol, nMargen ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'precio_base'
       :cHeader             := 'Precio'
       :nWidth              := 100
-      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'precio_base' ), "@E 9999.9999" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
+
+      :nEditType           := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_base' ) }
+      :bEditBlock          := {|| ::getRowSet():fieldGet( 'precio_base' ) }
+      :cEditPicture        := "@E 9999.9999"
+      :bOnPostEdit         := {|oCol, nPrecioBase| ::oController:setPrecioBase( oCol, nPrecioBase ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'precio_iva_incluido'
       :cHeader             := 'Precio IVA inc.'
       :nWidth              := 100
-      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'precio_iva_incluido' ), "@E 9999.9999" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
+
+      :nEditType           := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_iva_incluido' ) }
+      :bEditBlock          := {|| ::getRowSet():fieldGet( 'precio_iva_incluido' ) }
+      :cEditPicture        := "@E 9999.9999"
+      :bOnPostEdit         := {|oCol, nPrecioIVAIncluido| ::oController:setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) }
    end with
 
 RETURN ( self )
@@ -144,10 +206,7 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosPreciosValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido",;
-                                          "unique"    => "El nombre introducido ya existe" },;
-                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
-                                          "unique"    => "El código introducido ya existe" } }
+   ::hValidators  := {  "margen" =>    {  "Positive"  => "El valor debe ser mayor o igual a cero" } }
 
 RETURN ( ::hValidators )
 

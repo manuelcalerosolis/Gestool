@@ -6,13 +6,16 @@
 
 CLASS SQLBrowseView
 
+   DATA oModel
+
    DATA oBrowse
 
    DATA oController
 
-   DATA oModel
-
    DATA lFooter                              INIT .f.
+   DATA lFastEdit                            INIT .f.
+   DATA lMultiSelect                         INIT .t.
+   DATA nMarqueeStyle                        INIT MARQSTYLE_HIGHLROWRC
 
    METHOD New( oController )
    METHOD End()
@@ -151,13 +154,14 @@ METHOD Create( oWindow )
    ::oBrowse:lRecordSelector  := .t.
    ::oBrowse:lAutoSort        := .t.
    ::oBrowse:lSortDescend     := .f.  
-   ::oBrowse:lMultiSelect     := .t.
 
    ::oBrowse:lFooter          := ::lFooter
+   ::oBrowse:lFastEdit        := ::lFastEdit
+   ::oBrowse:lMultiSelect     := ::lMultiSelect
 
    // Propiedades del control--------------------------------------------------
 
-   ::oBrowse:nMarqueeStyle    := MARQSTYLE_HIGHLROWRC
+   ::oBrowse:nMarqueeStyle    := ::nMarqueeStyle
 
    ::oBrowse:bClrStd          := {|| { CLR_BLACK, CLR_WHITE } }
    ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }

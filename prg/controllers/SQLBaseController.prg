@@ -583,6 +583,10 @@ RETURN ( .t. )
 
 METHOD DialogViewActivate()
 
+   if empty( ::oDialogView )
+      RETURN ( .f. )
+   end if 
+
    ::oDialogView:Activating()
 
    ::uDialogResult         := ::oDialogView:Activate()

@@ -43,6 +43,8 @@ METHOD New() CLASS ArticulosController
                                              "32" => "gc_object_cube_32",;
                                              "48" => "gc_object_cube_48" }
 
+   ::lTransactional                    := .t.
+
    ::nLevel                            := Auth():Level( ::cName )
 
    ::oModel                            := SQLArticulosModel():New( self )
@@ -118,8 +120,6 @@ RETURN ( Self )
 METHOD insertPreciosWhereArticulo()
 
    local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
-
-   msgalert( hget( ::oModel:hBuffer, "uuid" ) ) 
 
    if empty( uuidArticulo )
       RETURN ( Self )

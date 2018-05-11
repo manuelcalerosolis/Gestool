@@ -57,6 +57,8 @@ CLASS SQLBaseValidator
    METHOD existFamilia( uValue )
    METHOD existTipoArticulo( uValue )
 
+   METHOD Positive( uValue )
+
    METHOD setDialog( oView )              INLINE ( ::oView := oView )
 
 END CLASS
@@ -280,6 +282,11 @@ METHOD existTipoArticulo( uValue )
 RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
+
+METHOD Positive( uValue )
+
+RETURN ( hb_isnumeric( uValue ) .and. ( uValue >= 0 ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
