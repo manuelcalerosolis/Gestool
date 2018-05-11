@@ -21922,7 +21922,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 77, 10, 200, 11
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 77, 23, 200, 11
   CONTROL "", 120, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 77, 36, 100, 99
-  CONTROL "Entrada obligatoria", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 77, 51, 72, 11
+  CONTROL "", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 77, 51, 72, 11
   CONTROL "", 140, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 77, 65, 50, 11
   CONTROL "", 150, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 77, 78, 50, 11
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 77, 91, 176, 11
@@ -21936,6 +21936,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Nombre *", -1, "Static", WS_GROUP, 7, 26, 33, 8
   CONTROL "Lista de valores", 151, "Static", WS_GROUP, 7, 94, 55, 8
   CONTROL "Código *", -1, "Static", WS_GROUP, 7, 13, 33, 8
+  CONTROL "Entrada obligatoria", 132, "Static", WS_GROUP, 7, 53, 59, 8
 }
 
 CAMPOS_EXTRA_ENTIDADES DIALOG DISCARDABLE 193, 47, 286, 204
@@ -22687,7 +22688,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 203, "Edit", WS_BORDER|WS_TABSTOP, 219, 199, 39, 11
   CONTROL "", 204, "Edit", WS_BORDER|WS_TABSTOP, 259, 199, 26, 11
   CONTROL "", 205, "Edit", WS_BORDER|WS_TABSTOP, 287, 199, 105, 11
-  CONTROL "Incluir en terminal punto de venta", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 305, 122, 10
+  CONTROL "", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 120, 306, 12, 10
   CONTROL "Generar documento como presupuesto", 290, "Button", BS_RADIOBUTTON, 49, 378, 142, 10
   CONTROL "Generar documento como pedido", 291, "Button", BS_RADIOBUTTON, 49, 391, 127, 10
   CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 56, 32, 8
@@ -22720,6 +22721,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Configuración forma de pago", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 350, 354, 55
   CONTROL "Forma de pago", -1, "Static", WS_GROUP, 50, 365, 53, 8
   CONTROL "", 191, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 209, 186, 183, 11
+  CONTROL "Incluir", 252, "Static", WS_GROUP, 50, 307, 63, 8
 }
 
 TRADUCCIONES DIALOG DISCARDABLE 140, 65, 504, 163
@@ -22880,6 +22882,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Tarifa", 800, "Static", WS_GROUP, 44, 3, 481, 24
   CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 57, 46, 8
   CONTROL "Margen predefinido", -1, "Static", WS_GROUP, 50, 70, 63, 8
+  CONTROL "IVA incluido", 132, "Static", WS_GROUP, 50, 83, 47, 8
   CONTROL "IVA incluido", 132, "Static", WS_GROUP, 50, 83, 43, 8
   CONTROL "%", -1, "Static", WS_GROUP, 185, 70, 11, 8
 }

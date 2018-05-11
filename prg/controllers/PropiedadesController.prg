@@ -180,8 +180,9 @@ METHOD Activate() CLASS PropiedadesView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "color" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "color" ] ;
       ID          120 ;
+      IDSAY       122 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
