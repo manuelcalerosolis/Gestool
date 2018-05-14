@@ -11,13 +11,17 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
 
    DATA oCamposExtraValoresController
 
-   METHOD New( cEntidad, uuidEntidad )
+   METHOD New( self )
 
    METHOD End()
 
+   METHOD setEntidad( cEntidad )                            INLINE ( ::cEntidad := cEntidad )
+
+   METHOD setUuidEntidad( uuidEntidad )                     INLINE ( ::uuidEntidad := uuidEntidad )
+
    METHOD NewArticulo( cEntidad, uuidEntidad )              INLINE ( ::New( 'articulos', uuidEntidad ) )
 
-   METHOD Edit() 
+   METHOD Edit( uuidEntidad ) 
 
    METHOD assertCamposExtraValores()
 
@@ -29,13 +33,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cEntidad, uuidEntidad ) CLASS CamposExtraValoresController
+METHOD New( oSenderController ) CLASS CamposExtraValoresController
 
-   ::Super:New()
-
-   ::cEntidad                          := cEntidad
-
-   ::uuidEntidad                       := uuidEntidad
+   ::Super:New( oSenderController )
 
    ::cTitle                            := "Campos extra valores"
 
@@ -62,6 +62,7 @@ METHOD New( cEntidad, uuidEntidad ) CLASS CamposExtraValoresController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS CamposExtraValoresController
 
    ::oModel:End()
@@ -80,7 +81,13 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Edit() CLASS CamposExtraValoresController
+METHOD Edit( uuidEntidad ) CLASS CamposExtraValoresController
+
+   if empty( uuidEntidad )
+      RETURN .f.
+   end if 
+
+   ::setUuidEntidad( uuidEntidad )
 
    ::setEditMode()
 

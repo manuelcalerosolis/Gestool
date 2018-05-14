@@ -33,26 +33,27 @@ METHOD New( oSenderController ) CLASS AgentesController
                                        "32" => "gc_businessman2_32",;
                                        "48" => "gc_businessman2_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLAgentesModel():New( self )
+   ::oModel                         := SQLAgentesModel():New( self )
 
-   ::oBrowseView                 := AgentesBrowseView():New( self )
+   ::oBrowseView                    := AgentesBrowseView():New( self )
 
-   ::oDialogView                 := AgentesView():New( self )
+   ::oDialogView                    := AgentesView():New( self )
 
-   ::oValidator                  := AgentesValidator():New( self, ::oDialogView )
+   ::oValidator                     := AgentesValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController      := DireccionesController():New( self )
+   ::oDireccionesController         := DireccionesController():New( self )
 
-   ::oCamposExtraValoresController := CamposExtraValoresController():New( self )
+   ::oRepository                    := AgentesRepository():New( self )
 
-   ::oRepository                 := AgentesRepository():New( self )
+   ::oPaisesController              := PaisesController():New( self )
+   ::oProvinciasController          := ProvinciasController():New( self )
 
-   ::oPaisesController           := PaisesController():New( self )
-   ::oProvinciasController       := ProvinciasController():New( self )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self )
+   ::oCamposExtraValoresController:setEntidad( 'agentes' )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -278,10 +279,7 @@ METHOD StartActivate() CLASS AgentesView
 
    local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   msginfo( CamposExtraValoresController():New( 'agente', ::oController:getUuid()):Edit()  )
-
-   oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:oDialogView:activate() }, "gc_user_16" )
-
+   oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, "gc_user_16" )
 
    ::oController:oDireccionesController:oDialogView:StartDialog()
 
