@@ -11,6 +11,8 @@ CLASS AgentesController FROM SQLNavigatorController
 
    DATA oProvinciasController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -42,6 +44,8 @@ METHOD New( oSenderController ) CLASS AgentesController
    ::oValidator                  := AgentesValidator():New( self, ::oDialogView )
 
    ::oDireccionesController      := DireccionesController():New( self )
+
+   ::oCamposExtraValoresController := CamposExtraValoresController():New( self )
 
    ::oRepository                 := AgentesRepository():New( self )
 
@@ -274,7 +278,10 @@ METHOD StartActivate() CLASS AgentesView
 
    local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   oPanel:AddLink( "Campos extra...",  {|| {|| CamposExtraValoresController():New( 'agente', ::oController:getUuid() ):Edit() } }, "gc_user_16" )
+   msginfo( CamposExtraValoresController():New( 'agente', ::oController:getUuid()):Edit()  )
+
+   oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:oDialogView:activate() }, "gc_user_16" )
+
 
    ::oController:oDireccionesController:oDialogView:StartDialog()
 

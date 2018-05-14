@@ -29,9 +29,9 @@ METHOD New() CLASS CamposExtraController
 
    ::nLevel                            := Auth():Level( ::getName() )
 
-   ::hImage                            := {  "16" => "gc_user_message_16",;
-                                             "32" => "gc_user_message_32",;
-                                             "48" => "gc_user_message_48" }
+   ::hImage                            := {  "16" => "gc_form_plus2_16",;
+                                             "32" => "gc_form_plus2_32",;
+                                             "48" => "gc_form_plus2_48" }
 
    ::oModel                            := SQLCamposExtraModel():New( self )
 

@@ -2730,8 +2730,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cMessage       := 'Solicitar campos extra'
    oItem:bAction        := {|| CamposExtraController():New():ActivateNavigatorView() }
    oItem:cId            := "asistencia_remota"
-   oItem:cBmp           := "gc_user_headset_16"
-   oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:cBmp           := "gc_form_plus2_16"
+   oItem:cBmpBig        := "gc_form_plus2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemSQL:Add()
