@@ -39,7 +39,8 @@ CLASS SQLRowSet
    METHOD FindString( nId )
    METHOD FindId( nId )
 
-   METHOD Build( cSentence )                    
+   METHOD Build( cSentence )          
+   METHOD BuildPad( cSentence )                       INLINE ::Build( cSentence, .t. )          
 
    METHOD refreshAndFindId( nId )                     INLINE ( ::Refresh(), ::FindId( nId ) )
    METHOD buildAndFindId( nId )                       INLINE ( ::Build(), ::FindId( nId ) )
@@ -82,9 +83,11 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Build( cSentence )
+METHOD Build( cSentence, lPad )
 
    local oError
+
+   DEFAULT lPad   := .f.
 
    if empty( cSentence )
       msgStop( "La sentencia esta vacia" )
@@ -107,7 +110,7 @@ METHOD Build( cSentence )
 
       ::oRowSet      := getSQLDatabase():RowSet( cSentence )
 
-      ::oRowSet:setAttribute( STMT_ATTR_STR_PAD, .f. ) 
+      ::oRowSet:setAttribute( STMT_ATTR_STR_PAD, lPad ) 
       
       ::oRowSet:Load()
 

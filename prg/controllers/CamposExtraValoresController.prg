@@ -97,7 +97,7 @@ METHOD Edit( uuidEntidad ) CLASS CamposExtraValoresController
       RETURN .f.
    end if 
 
-   ::oRowSet:build( ::oModel:getSelectSentence() )
+   ::oRowSet:buildPad( ::oModel:getSelectSentence() )
 
    ::beginTransactionalMode()
 
@@ -255,7 +255,7 @@ METHOD ChangeBrowse() CLASS CamposExtraValoresBrowseView
       case ( ::fieldGetTipoTexto() )
 
          ::setColType( EDIT_GET )
-         ::setColPicture( "" )
+         ::setColPicture( "@!" )
 
       case ( ::fieldGetTipoNumerico() )
 
