@@ -311,6 +311,10 @@ METHOD Activate() CLASS EntidadesView
 
       ::oDialog:bStart  := {|| ::StartDialog() }
 
+   if ::oController:isNotZoomMode() 
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+   end if
+
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()

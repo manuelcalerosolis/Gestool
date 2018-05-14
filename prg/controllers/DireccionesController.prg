@@ -440,10 +440,8 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD StartDialog()
-   
-   ::oGetCodigoProvincia:lValid()
 
-   ::oGetPais:lValid()
+   ::oGetPais:oHelpText:cText( SQLPaisesModel():getField( "nombre", "codigo", ::oController:oModel:hBuffer[ "codigo_pais" ] ) )
 
 RETURN ( Self )
 

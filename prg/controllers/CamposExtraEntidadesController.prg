@@ -227,7 +227,7 @@ METHOD addColumns() CLASS CamposExtraEntidadesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'entidad'
       :cHeader             := 'Entidad'
-      :nWidth              := 380
+      :nWidth              := 320
       :bEditValue          := {|| ::oController:getNombreWhereEntidad( ::getRowSet():fieldGet( 'entidad' ) )  }
       :nEditType           := EDIT_LISTBOX
       :cEditPicture        := ""

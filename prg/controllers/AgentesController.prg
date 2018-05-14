@@ -171,13 +171,16 @@ CLASS AgentesView FROM SQLBaseView
 
    METHOD Activate()
 
+      METHOD StartActivate()
+
    METHOD Activating()
 
-   METHOD getDireccionesController()   INLINE ( ::oController:oDireccionesController )
+   METHOD getDireccionesController()      INLINE ( ::oController:oDireccionesController )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
+
 METHOD Activating() CLASS AgentesView
 
    if ::oController:isAppendOrDuplicateMode()
@@ -239,6 +242,8 @@ METHOD Activate() CLASS AgentesView
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
 
+   ::redefineExplorerBar( 200 )
+
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
@@ -255,7 +260,7 @@ METHOD Activate() CLASS AgentesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ::oDialog:bStart  := {|| ::oController:oDireccionesController:oDialogView:StartDialog() }
+   ::oDialog:bStart  := {|| ::StartActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -264,6 +269,17 @@ METHOD Activate() CLASS AgentesView
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD StartActivate() CLASS AgentesView
+
+   local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   oPanel:AddLink( "Campos extra...",  {|| {|| CamposExtraValoresController():New( 'agente', ::oController:getUuid() ):Edit() } }, "gc_user_16" )
+
+   ::oController:oDireccionesController:oDialogView:StartDialog()
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
