@@ -7,6 +7,8 @@ CLASS ArticulosFabricantesController FROM SQLNavigatorController
 
    DATA oImagenesController
 
+   DATA oCamposExtraValoresController
+
    DATA oGetSelector
 
    METHOD New()
@@ -29,21 +31,23 @@ METHOD New( oSenderController ) CLASS ArticulosFabricantesController
                                        "32" => "gc_businessman2_32",;
                                        "48" => "gc_businessman2_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLArticulosFabricantesModel():New( self )
+   ::oModel                         := SQLArticulosFabricantesModel():New( self )
 
-   ::oBrowseView                 := ArticulosFabricantesBrowseView():New( self )
+   ::oBrowseView                    := ArticulosFabricantesBrowseView():New( self )
 
-   ::oDialogView                 := ArticulosFabricantesView():New( self )
+   ::oDialogView                    := ArticulosFabricantesView():New( self )
 
-   ::oValidator                  := ArticulosFabricantesValidator():New( self, ::oDialogView )
+   ::oValidator                     := ArticulosFabricantesValidator():New( self, ::oDialogView )
 
-   ::oImagenesController         := ImagenesController():New( self )
+   ::oImagenesController            := ImagenesController():New( self )
 
-   ::oRepository                 := ArticulosFabricantesRepository():New( self )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'fabricantes' )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oRepository                    := ArticulosFabricantesRepository():New( self )
+
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -73,6 +77,8 @@ METHOD End() CLASS ArticulosFabricantesController
    ::oValidator:End()
 
    ::oImagenesController:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::oRepository:End()
 
@@ -154,6 +160,8 @@ CLASS ArticulosFabricantesView FROM SQLBaseView
 
    METHOD Activating()
 
+    DATA oSayCamposExtra
+
    METHOD getImagenesController()   INLINE ( ::oController:oImagenesController )
 
 END CLASS
@@ -173,6 +181,7 @@ METHOD Activate() CLASS ArticulosFabricantesView
 
    local oGetImagen
    local oBmpImagen
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "FABRICANTES" ;
@@ -224,6 +233,16 @@ METHOD Activate() CLASS ArticulosFabricantesView
       oBmpImagen:SetColor( , getsyscolor( 15 ) )
       oBmpImagen:bLClicked   := {|| ShowImage( oBmpImagen ) }
       oBmpImagen:bRClicked   := {|| ShowImage( oBmpImagen ) }
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          150 ;
+      OF          ::oDialog
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

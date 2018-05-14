@@ -50,8 +50,7 @@ METHOD New( oSenderController ) CLASS AgentesController
    ::oPaisesController              := PaisesController():New( self )
    ::oProvinciasController          := ProvinciasController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self )
-   ::oCamposExtraValoresController:setEntidad( 'agentes' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'agentes')
 
    ::oGetSelector                   := GetSelector():New( self )
 
@@ -144,16 +143,42 @@ METHOD addColumns() CLASS AgentesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'dni'
       :cHeader             := 'DNI/CIF'
-      :nWidth              := 300
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'dni' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'comision'
-      :cHeader             := 'Comisión'
-      :nWidth              := 300
+      :cHeader             := 'Comisión %'
+      :nWidth              := 60
+      :nHeadStrAlign       := AL_RIGHT
+      :nDataStrAlign       := AL_RIGHT
       :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'comision' ), "@E 999.99" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'telefono'
+      :cHeader             := 'Teléfono'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'telefono' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'movil'
+      :cHeader             := 'Móvil'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movil' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'email'
+      :cHeader             := 'Email'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'email' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -279,7 +304,7 @@ METHOD StartActivate() CLASS AgentesView
 
    local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, "gc_user_16" )
+   oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, "gc_form_plus2_16" )
 
    ::oController:oDireccionesController:oDialogView:StartDialog()
 
@@ -322,7 +347,27 @@ CLASS SQLAgentesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getInitialSelect()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLAgentesModel
+
+   local cSelect  := "SELECT agentes.id,"                                                               + " " + ;
+                        "agentes.uuid,"                                                                 + " " + ;
+                        "agentes.codigo,"                                                               + " " + ;
+                        "agentes.nombre,"                                                               + " " + ;
+                        "agentes.dni,"                                                                  + " " + ;
+                        "agentes.comision,"                                                             + " " + ;
+                        "direcciones.telefono as telefono,"                                             + " " + ;
+                        "direcciones.movil as movil,"                                                   + " " + ;
+                        "direcciones.email as email"                                                    + " " + ;
+                     "FROM  agentes"                                                                    + " " + ;
+                        "INNER JOIN direcciones ON agentes.uuid = direcciones.parent_uuid"              + " "
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 
