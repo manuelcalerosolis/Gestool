@@ -33,9 +33,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS CamposExtraValoresController
+METHOD New( oSenderController, cEntidad ) CLASS CamposExtraValoresController
 
    ::Super:New( oSenderController )
+
+   ::setEntidad( cEntidad ) 
 
    ::cTitle                            := "Campos extra valores"
 
@@ -43,9 +45,9 @@ METHOD New( oSenderController ) CLASS CamposExtraValoresController
 
    ::lTransactional                    := .t.
 
-   ::hImage                            := {  "16" => "gc_user_message_16",;
-                                             "32" => "gc_user_message_32",;
-                                             "48" => "gc_user_message_48" }
+   ::hImage                            := {  "16" => "gc_form_plus2_16",;
+                                             "32" => "gc_form_plus2_32",;
+                                             "48" => "gc_form_plus2_48" }
 
    ::oModel                            := SQLCamposExtraValoresModel():New( self )
 
@@ -218,7 +220,7 @@ METHOD Create( oDialog ) CLASS CamposExtraValoresBrowseView
 
    ::oBrowse:setRowSet( ::getRowSet() )
 
-   ::oBrowse:nColSel          := 2
+   ::oBrowse:nColSel          := 3
 
 RETURN ( Self )
 
