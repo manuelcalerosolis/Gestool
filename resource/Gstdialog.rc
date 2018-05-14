@@ -22963,19 +22963,9 @@ FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 120, 40, 50, 11
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 120, 53, 298, 11
-  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 316, 303, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 374, 303, 50, 14
-  CONTROL "Entidad", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 379, 66
-  CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
-  CONTROL "Entidad", 800, "Static", WS_GROUP, 44, 3, 380, 24
-  CONTROL "Codigo *", -1, "Static", WS_GROUP, 50, 43, 46, 8
-  CONTROL "Descripción *", -1, "Static", WS_GROUP, 50, 56, 46, 8
   CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 120, 66, 298, 11
-  CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 69, 46, 8
   CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 120, 80, 80, 11
-  CONTROL "GNL físcio *", -1, "Static", WS_GROUP, 50, 83, 46, 8
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 265, 80, 153, 11
-  CONTROL "Punto lógico op. *", -1, "Static", WS_GROUP, 203, 83, 58, 8
   CONTROL "", 1010, "Edit", WS_BORDER|WS_TABSTOP, 120, 108, 298, 11
   CONTROL "", 1020, "Edit", WS_BORDER|WS_TABSTOP, 120, 121, 90, 11
   CONTROL "", 1030, "Edit", WS_BORDER|WS_TABSTOP, 120, 134, 298, 11
@@ -22983,6 +22973,24 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 1050, "Edit", WS_BORDER|WS_TABSTOP, 120, 160, 298, 11
   CONTROL "", 1060, "Edit", WS_BORDER|WS_TABSTOP, 120, 173, 90, 11
   CONTROL "", 1061, "Edit", WS_BORDER|WS_TABSTOP, 212, 173, 206, 11
+  CONTROL "", 2010, "Edit", WS_BORDER|WS_TABSTOP, 120, 203, 299, 11
+  CONTROL "", 2020, "Edit", WS_BORDER|WS_TABSTOP, 120, 216, 102, 11
+  CONTROL "", 2030, "Edit", WS_BORDER|WS_TABSTOP, 120, 229, 102, 11
+  CONTROL "", 2040, "Edit", WS_BORDER|WS_TABSTOP, 120, 242, 299, 11
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 120, 255, 299, 11
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 120, 268, 80, 11
+  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 251, 268, 168, 11
+  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 120, 282, 299, 11
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 316, 303, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 374, 303, 50, 14
+  CONTROL "Entidad", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 379, 66
+  CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Entidad", 800, "Static", WS_GROUP, 44, 3, 380, 24
+  CONTROL "Codigo *", -1, "Static", WS_GROUP, 50, 43, 46, 8
+  CONTROL "Descripción *", -1, "Static", WS_GROUP, 50, 56, 46, 8
+  CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 69, 46, 8
+  CONTROL "GNL físcio *", -1, "Static", WS_GROUP, 50, 83, 46, 8
+  CONTROL "Punto lógico op. *", -1, "Static", WS_GROUP, 203, 83, 58, 8
   CONTROL "Domicilio", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 99, 379, 91
   CONTROL "Dirección *", -1, "Static", WS_GROUP, 50, 111, 38, 8
   CONTROL "Población *", -1, "Static", WS_GROUP, 50, 137, 32, 8
@@ -22990,22 +22998,14 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Código postal *", -1, "Static", WS_GROUP, 50, 124, 52, 8
   CONTROL "País *", -1, "Static", WS_GROUP, 50, 176, 19, 8
   CONTROL "Provincia *", -1, "Static", WS_GROUP, 50, 163, 58, 8
-  CONTROL "", 2010, "Edit", WS_BORDER|WS_TABSTOP, 120, 203, 299, 11
-  CONTROL "", 2020, "Edit", WS_BORDER|WS_TABSTOP, 120, 216, 102, 11
-  CONTROL "", 2030, "Edit", WS_BORDER|WS_TABSTOP, 120, 229, 102, 11
-  CONTROL "", 2040, "Edit", WS_BORDER|WS_TABSTOP, 120, 242, 299, 11
   CONTROL "Datos", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 194, 379, 104
   CONTROL "Contacto", -1, "Static", WS_GROUP, 50, 206, 46, 8
   CONTROL "Teléfono 1", -1, "Static", WS_GROUP, 50, 219, 46, 8
   CONTROL "Teléfono 2", -1, "Static", WS_GROUP, 50, 232, 46, 8
   CONTROL "Email", -1, "Static", WS_GROUP, 50, 245, 46, 8
-  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 120, 255, 299, 11
   CONTROL "Web", -1, "Static", WS_GROUP, 50, 258, 46, 8
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 120, 268, 80, 11
   CONTROL "Código INE", -1, "Static", WS_GROUP, 50, 271, 46, 8
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 251, 268, 168, 11
   CONTROL "CNO/CNAE", -1, "Static", WS_GROUP, 204, 271, 41, 8
-  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 120, 282, 299, 11
   CONTROL "Otros", -1, "Static", WS_GROUP, 50, 285, 46, 8
 }
 

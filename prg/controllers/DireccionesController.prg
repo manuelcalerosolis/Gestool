@@ -367,6 +367,7 @@ METHOD ExternalCoreRedefine( oDialog )
       VAR         ::oController:oModel:hBuffer[ "direccion" ] ;
       ID          1010 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "direccion" ) ) ;
       BITMAP      "gc_earth_lupa_16" ;
       OF          oDialog
 

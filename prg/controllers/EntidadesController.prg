@@ -21,9 +21,9 @@ METHOD New() CLASS EntidadesController
 
    ::Super:New()
 
-   ::cTitle                      := "Transportistas"
+   ::cTitle                      := "Entidades"
 
-   ::cName                       := "transportistas"
+   ::cName                       := "entidades"
 
    ::hImage                      := {  "16" => "gc_office_building2_16",;
                                        "32" => "gc_office_building2_32",;
@@ -42,8 +42,6 @@ METHOD New() CLASS EntidadesController
    ::oDireccionesController               := DireccionesController():New( self )
 
    ::oDireccionesController:oValidator    := DireccionesEntidadesValidator():New( ::oDireccionesController, ::oDialogView )
-
-   msgalert( hb_valtoexp( ::oDireccionesController:oValidator:getValidators() ), "hValidators" )
 
    ::oContactosController        := ContactosController():New( self )
 
@@ -165,7 +163,7 @@ METHOD addColumns() CLASS EntidadesBrowseView
       :cSortOrder          := 'direccion'
       :cHeader             := 'Dirección'
       :nWidth              := 200
-      :bEditValue          := {|| ::oDireccionesController:o:getRowSet():fieldGet( 'direccion' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "direccion" )  }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -173,7 +171,7 @@ METHOD addColumns() CLASS EntidadesBrowseView
       :cSortOrder          := 'codigo_postal'
       :cHeader             := 'Código postal'
       :nWidth              := 80
-      :bEditValue          := {|| ::oDireccionesController:getRowSet():fieldGet( 'codigo_postal' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_postal' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -181,7 +179,7 @@ METHOD addColumns() CLASS EntidadesBrowseView
       :cSortOrder          := 'poblacion'
       :cHeader             := 'Población'
       :nWidth              := 200
-      :bEditValue          := {|| ::oDireccionesController:getRowSet():fieldGet( 'poblacion' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'poblacion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -189,7 +187,7 @@ METHOD addColumns() CLASS EntidadesBrowseView
       :cSortOrder          := 'provincia'
       :cHeader             := 'Provincia'
       :nWidth              := 100
-      :bEditValue          := {|| ::oDireccionesController:getRowSet():fieldGet( 'provincia' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'provincia' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -197,7 +195,7 @@ METHOD addColumns() CLASS EntidadesBrowseView
       :cSortOrder          := 'pais'
       :cHeader             := 'País'
       :nWidth              := 100
-      :bEditValue          := {|| ::oDireccionesController:getRowSet():fieldGet( 'pais' ) }
+      :bEditValue          := {|| SQLPaisesModel():getNombreWhereCodigo( ::getRowSet():fieldGet( 'codigo_pais' )  ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -214,6 +212,8 @@ RETURN ( self )
 CLASS EntidadesView FROM SQLBaseView
   
    METHOD Activate()
+   
+   METHOD StartDialog()
 
 END CLASS
 
@@ -309,14 +309,23 @@ METHOD Activate() CLASS EntidadesView
       CANCEL ;
       ACTION      ( ::oDialog:end() )
 
-      ::oDialog:bStart  := {|| ::oController:oDireccionesController:oDialogView:StartDialog() }
-      ::oDialog:bStart  := {|| ::oController:oContactosController:oDialogView( ::oDialog ) }
+      ::oDialog:bStart  := {|| ::StartDialog() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartDialog()
+
+   ::oController:oDireccionesController:oDialogView:StartDialog() 
+   
+   ::oController:oContactosController:oDialogView( ::oDialog ) 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -337,7 +346,7 @@ METHOD getValidators() CLASS EntidadesValidator
 
    ::hValidators  := {  "codigo" =>          {  "required"     => "El código es un dato requerido",;
                                                 "unique"       => "El código introducido ya existe" } ,;
-                        "descripción" =>     {  "required"     => "La descripción es un dato requerido" } ,;
+                        "descripcion" =>     {  "required"     => "La descripción es un dato requerido" } ,;
                         "gnl_fisico" =>      {  "required"     => "GNL físico es un dato requerido" } ,;
                         "punto_logico_op" => {  "required"     => "Punto lógico op es un dato requerido" } ,;
                         "nombre" =>          {  "required"     => "El nombre es un dato requerido"  },;
@@ -360,7 +369,34 @@ CLASS SQLEntidadesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getInitialSelect()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLEntidadesModel
+
+   local cSelect  := "SELECT entidades.id,"                                                               + " " + ;
+                        "entidades.uuid,"                                                                 + " " + ;
+                        "entidades.codigo,"                                                               + " " + ;
+                        "entidades.descripcion,"                                                          + " " + ;
+                        "entidades.nombre,"                                                               + " " + ;
+                        "entidades.gnl_fisico,"                                                           + " " + ;
+                        "entidades.punto_logico_op,"                                                      + " " + ;
+                        "entidades.web,"                                                                  + " " + ;
+                        "entidades.codigo_ine,"                                                           + " " + ;
+                        "entidades.cno_cnae,"                                                             + " " + ;
+                        "entidades.otros,"                                                                + " " + ;
+                        "direcciones.direccion as direccion,"                                             + " " + ;
+                        "direcciones.codigo_postal as codigo_postal,"                                     + " " + ;
+                        "direcciones.poblacion as poblacion,"                                             + " " + ;
+                        "direcciones.provincia as provincia,"                                             + " " + ;
+                        "direcciones.codigo_pais as codigo_pais"                                          + " " + ;
+                     "FROM  entidades"                                                                    + " " + ;
+                        "INNER JOIN direcciones ON entidades.uuid = direcciones.parent_uuid"              + " "
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 
