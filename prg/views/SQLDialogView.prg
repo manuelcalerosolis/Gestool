@@ -6,6 +6,9 @@
 CLASS SQLDialogView FROM SQLBrowseableView 
 
    DATA oDialog
+   DATA oMessage
+
+   DATA oBitmap
 
    DATA oGetSearch
    DATA cGetSearch                        INIT space( 200 )
@@ -15,8 +18,6 @@ CLASS SQLDialogView FROM SQLBrowseableView
 
    DATA bInitActivate
 
-   DATA hSelectedBuffer
-
    METHOD End()
 
    METHOD Activate( bInitActivate )
@@ -24,8 +25,6 @@ CLASS SQLDialogView FROM SQLBrowseableView
       METHOD initActivate()               INLINE ( .t. )
 
    METHOD isActive()                      INLINE ( ::oDialog != nil )
-
-   METHOD Select()
 
    METHOD Start()
 
@@ -35,25 +34,36 @@ CLASS SQLDialogView FROM SQLBrowseableView
 
    METHOD getSelectedBuffer()             INLINE ( ::hSelectedBuffer )
 
+   METHOD Tittle()                        INLINE ( ::oController:cTitle + " de " + ;
+                                                   lower( ::oController:oSenderController:cTitle ) + ": " +;
+                                                   AllTrim( ::oController:oSenderController:oModel:hBuffer[ "codigo" ] ) + " - " + ;
+                                                   ::oController:oSenderController:oModel:hBuffer[ "nombre" ] )
+
+   METHOD Select()                        INLINE ( nil )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
 METHOD Activate()
 
-   MsgInfo( "Entro en el Activate a levantar la ventana" )
-
-   MsgInfo( ::oController:ClassName() , "Classname" )
-
-   MsgInfo( ::oController:oSenderController:ClassName() , "Classname" )
-
    DEFINE DIALOG           ::oDialog ;
-      RESOURCE             "SELECTOR_VIEW"
-
-      /* ;
+      RESOURCE             "SELECTOR_DIALOG" ;
       TITLE                ::oController:getTitle()
 
-      /*REDEFINE GET         ::oGetSearch ;
+      REDEFINE BITMAP ::oBitmap ;
+         ID          900 ;
+         RESOURCE    hGet( ::oController:hImage, "48" ) ;
+         TRANSPARENT ;
+         OF          ::oDialog
+
+      REDEFINE SAY   ::oMessage ;
+         PROMPT      ::Tittle() ;
+         ID          800 ;
+         FONT        getBoldFont() ;
+         OF          ::oDialog
+
+      REDEFINE GET         ::oGetSearch ;
          VAR               ::cGetSearch ; 
          ID                100 ;
          PICTURE           "@!" ;
@@ -75,23 +85,38 @@ METHOD Activate()
 
       ::getBrowseView():ActivateDialog( ::oDialog, 130 )
 
-      ::getBrowseView():setLDblClick( {|| ::Select() } ) 
-
       ::getBrowseView():restoreStateFromModel() 
 
       ::getBrowseView():gotoIdFromModel()
 
       ::getBrowseView():setColumnOrder( ::getModel():getOrderBy(), ::getModel():getOrientation() ) 
 
+      /*
+      Botones generales-----------------------------------------------------------
+      */
+
+      REDEFINE BUTTON ;
+         ID          IDOK ;
+         OF          ::oDialog ;
+         ACTION      ( ::oDialog:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID          IDCANCEL ;
+         OF          ::oDialog ;
+         CANCEL ;
+         ACTION      ( ::oDialog:end() )
+
       // Eventos---------------------------------------------------------------
 
       ::oDialog:bStart              := {|| ::Start() }
 
-      ::getGetSearch():bChange      := {|| ::onChangeSearch() } */
+      ::getGetSearch():bChange      := {|| ::onChangeSearch() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-RETURN ( ::getSelectedBuffer() )
+   ::oBitmap:End()
+
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -107,23 +132,11 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD Select()
-
-   ::hSelectedBuffer    := ::getModel():loadCurrentBuffer( ::getBrowseView():getRowSet():fieldGet( 'id' ) )
-
-   ::oDialog:End( IDOK )
-
-RETURN ( nil )
-
-//----------------------------------------------------------------------------//
-
 METHOD Start()
-
-   ::hSelectedBuffer    := nil      
 
    ::oMenuTreeView:Default()
 
-   ::oMenuTreeView:AddSelectorButtons()
+   ::oMenuTreeView:addDialogButtons()
 
    ::oComboBoxOrder:SetItems( ::getBrowseView():getColumnsHeaders() )
 
@@ -134,4 +147,3 @@ METHOD Start()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
-

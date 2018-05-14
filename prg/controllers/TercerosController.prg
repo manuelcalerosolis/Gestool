@@ -51,6 +51,8 @@ METHOD New() CLASS TercerosController
 
    ::oRepository                 := TercerosRepository():New( self )
 
+   ::lTransactional              := .t.
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
