@@ -11,13 +11,17 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
 
    DATA oCamposExtraValoresController
 
-   METHOD New( cEntidad, uuidEntidad )
+   METHOD New( self )
 
    METHOD End()
 
+   METHOD setEntidad( cEntidad )                            INLINE ( ::cEntidad := cEntidad )
+
+   METHOD setUuidEntidad( uuidEntidad )                     INLINE ( ::uuidEntidad := uuidEntidad )
+
    METHOD NewArticulo( cEntidad, uuidEntidad )              INLINE ( ::New( 'articulos', uuidEntidad ) )
 
-   METHOD Edit() 
+   METHOD Edit( uuidEntidad ) 
 
    METHOD assertCamposExtraValores()
 
@@ -29,13 +33,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cEntidad, uuidEntidad ) CLASS CamposExtraValoresController
+METHOD New( oSenderController, cEntidad ) CLASS CamposExtraValoresController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
-   ::cEntidad                          := cEntidad
-
-   ::uuidEntidad                       := uuidEntidad
+   ::setEntidad( cEntidad ) 
 
    ::cTitle                            := "Campos extra valores"
 
@@ -43,9 +45,9 @@ METHOD New( cEntidad, uuidEntidad ) CLASS CamposExtraValoresController
 
    ::lTransactional                    := .t.
 
-   ::hImage                            := {  "16" => "gc_user_message_16",;
-                                             "32" => "gc_user_message_32",;
-                                             "48" => "gc_user_message_48" }
+   ::hImage                            := {  "16" => "gc_form_plus2_16",;
+                                             "32" => "gc_form_plus2_32",;
+                                             "48" => "gc_form_plus2_48" }
 
    ::oModel                            := SQLCamposExtraValoresModel():New( self )
 
@@ -62,6 +64,7 @@ METHOD New( cEntidad, uuidEntidad ) CLASS CamposExtraValoresController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS CamposExtraValoresController
 
    ::oModel:End()
@@ -80,7 +83,13 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Edit() CLASS CamposExtraValoresController
+METHOD Edit( uuidEntidad ) CLASS CamposExtraValoresController
+
+   if empty( uuidEntidad )
+      RETURN .f.
+   end if 
+
+   ::setUuidEntidad( uuidEntidad )
 
    ::setEditMode()
 
@@ -88,7 +97,7 @@ METHOD Edit() CLASS CamposExtraValoresController
       RETURN .f.
    end if 
 
-   ::oRowSet:build( ::oModel:getSelectSentence() )
+   ::oRowSet:buildPad( ::oModel:getSelectSentence() )
 
    ::beginTransactionalMode()
 
@@ -211,7 +220,7 @@ METHOD Create( oDialog ) CLASS CamposExtraValoresBrowseView
 
    ::oBrowse:setRowSet( ::getRowSet() )
 
-   ::oBrowse:nColSel          := 2
+   ::oBrowse:nColSel          := 3
 
 RETURN ( Self )
 
@@ -246,7 +255,7 @@ METHOD ChangeBrowse() CLASS CamposExtraValoresBrowseView
       case ( ::fieldGetTipoTexto() )
 
          ::setColType( EDIT_GET )
-         ::setColPicture( "" )
+         ::setColPicture( "@!" )
 
       case ( ::fieldGetTipoNumerico() )
 

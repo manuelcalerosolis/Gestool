@@ -561,9 +561,17 @@ RETURN ( "DROP TABLE " + ::cTableName )
 
 METHOD findById( id )
 
-   local hBuffer  := atail( ::getDatabase():selectPadedFetchHash( ::getIdSelect( id ) ) )
+   local hBuffer  
 
-   heval( hBuffer, {|k,v| hset( hBuffer, k, ::getAttribute( k, v ) ) } )
+   if !hb_isnumeric( id )
+      RETURN ( nil )
+   end if 
+
+   hBuffer        := atail( ::getDatabase():selectPadedFetchHash( ::getIdSelect( id ) ) )
+
+   if hb_ishash( hBuffer )
+      heval( hBuffer, {|k,v| hset( hBuffer, k, ::getAttribute( k, v ) ) } )
+   end if 
 
 RETURN ( hBuffer )
 

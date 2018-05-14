@@ -301,8 +301,9 @@ METHOD Activate() CLASS ArticulosView
 
    // Obsoleto-----------------------------------------------------------------
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "obsoleto" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "obsoleto" ] ;
       ID          200 ;
+      IDSAY       202 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
@@ -325,8 +326,9 @@ METHOD Activate() CLASS ArticulosView
 
    // lote----------------------------------------------------------------
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "lote" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "lote" ] ;
       ID          210 ;
+      IDSAY       212 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ON CHANGE   ( ::changeLote() ) ;
       OF          ::oFolder:aDialogs[1]

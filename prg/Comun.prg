@@ -2730,8 +2730,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cMessage       := 'Solicitar campos extra'
    oItem:bAction        := {|| CamposExtraController():New():ActivateNavigatorView() }
    oItem:cId            := "asistencia_remota"
-   oItem:cBmp           := "gc_user_headset_16"
-   oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:cBmp           := "gc_form_plus2_16"
+   oItem:cBmpBig        := "gc_form_plus2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemSQL:Add()
@@ -2960,6 +2960,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "tarifas"
    oItem:cBmp           := "gc_money_interest_16"
    oItem:cBmpBig        := "gc_money_interest_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Entidades'
+   oItem:cMessage       := 'Entidades'
+   oItem:bAction        := {||EntidadesController():New():ActivateNavigatorView() }
+   oItem:cId            := "entidades"
+   oItem:cBmp           := "gc_office_building2_16"
+   oItem:cBmpBig        := "gc_office_building2_32"
    oItem:lShow          := .f.
 
 

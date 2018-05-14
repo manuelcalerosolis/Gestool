@@ -32,6 +32,8 @@ CLASS SQLBaseView
                                                                __zoom_mode__        => "Visualizando ",;
                                                                __duplicate_mode__   => "Duplicando " }
 
+   DATA oExplorerBar
+
    METHOD New()
    METHOD End()      
 
@@ -55,6 +57,8 @@ CLASS SQLBaseView
    METHOD getSenderController()                       INLINE ( ::oController:oSenderController )    
 
    METHOD getComboBoxOrder()                          VIRTUAL
+
+   METHOD redefineExplorerBar( idExplorerBar ) 
 
    // Events-------------------------------------------------------------------
 
@@ -186,3 +190,17 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD redefineExplorerBar( idExplorerBar ) 
+
+   DEFAULT idExplorerBar   := 100
+
+   REDEFINE EXPLORERBAR    ::oExplorerBar ;
+      ID                   idExplorerBar ;
+      OF                   ::oDialog
+
+   ::oExplorerBar:nBottomColor  := rgb( 255, 255, 255 )
+   ::oExplorerBar:nTopColor     := rgb( 255, 255, 255 )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//

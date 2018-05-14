@@ -11,6 +11,8 @@ CLASS AgentesController FROM SQLNavigatorController
 
    DATA oProvinciasController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -31,24 +33,26 @@ METHOD New( oSenderController ) CLASS AgentesController
                                        "32" => "gc_businessman2_32",;
                                        "48" => "gc_businessman2_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLAgentesModel():New( self )
+   ::oModel                         := SQLAgentesModel():New( self )
 
-   ::oBrowseView                 := AgentesBrowseView():New( self )
+   ::oBrowseView                    := AgentesBrowseView():New( self )
 
-   ::oDialogView                 := AgentesView():New( self )
+   ::oDialogView                    := AgentesView():New( self )
 
-   ::oValidator                  := AgentesValidator():New( self, ::oDialogView )
+   ::oValidator                     := AgentesValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController      := DireccionesController():New( self )
+   ::oDireccionesController         := DireccionesController():New( self )
 
-   ::oRepository                 := AgentesRepository():New( self )
+   ::oRepository                    := AgentesRepository():New( self )
 
-   ::oPaisesController           := PaisesController():New( self )
-   ::oProvinciasController       := ProvinciasController():New( self )
+   ::oPaisesController              := PaisesController():New( self )
+   ::oProvinciasController          := ProvinciasController():New( self )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'agentes')
+
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -139,16 +143,42 @@ METHOD addColumns() CLASS AgentesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'dni'
       :cHeader             := 'DNI/CIF'
-      :nWidth              := 300
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'dni' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'comision'
-      :cHeader             := 'Comisión'
-      :nWidth              := 300
+      :cHeader             := 'Comisión %'
+      :nWidth              := 60
+      :nHeadStrAlign       := AL_RIGHT
+      :nDataStrAlign       := AL_RIGHT
       :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'comision' ), "@E 999.99" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'telefono'
+      :cHeader             := 'Teléfono'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'telefono' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'movil'
+      :cHeader             := 'Móvil'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'movil' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'email'
+      :cHeader             := 'Email'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'email' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
@@ -171,13 +201,16 @@ CLASS AgentesView FROM SQLBaseView
 
    METHOD Activate()
 
+      METHOD StartActivate()
+
    METHOD Activating()
 
-   METHOD getDireccionesController()   INLINE ( ::oController:oDireccionesController )
+   METHOD getDireccionesController()      INLINE ( ::oController:oDireccionesController )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
+
 METHOD Activating() CLASS AgentesView
 
    if ::oController:isAppendOrDuplicateMode()
@@ -239,6 +272,8 @@ METHOD Activate() CLASS AgentesView
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
 
+   ::redefineExplorerBar( 200 )
+
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
@@ -255,7 +290,7 @@ METHOD Activate() CLASS AgentesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ::oDialog:bStart  := {|| ::oController:oDireccionesController:oDialogView:StartDialog() }
+   ::oDialog:bStart  := {|| ::StartActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -264,6 +299,17 @@ METHOD Activate() CLASS AgentesView
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD StartActivate() CLASS AgentesView
+
+   local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, "gc_form_plus2_16" )
+
+   ::oController:oDireccionesController:oDialogView:StartDialog()
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -301,7 +347,27 @@ CLASS SQLAgentesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getInitialSelect()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLAgentesModel
+
+   local cSelect  := "SELECT agentes.id,"                                                               + " " + ;
+                        "agentes.uuid,"                                                                 + " " + ;
+                        "agentes.codigo,"                                                               + " " + ;
+                        "agentes.nombre,"                                                               + " " + ;
+                        "agentes.dni,"                                                                  + " " + ;
+                        "agentes.comision,"                                                             + " " + ;
+                        "direcciones.telefono as telefono,"                                             + " " + ;
+                        "direcciones.movil as movil,"                                                   + " " + ;
+                        "direcciones.email as email"                                                    + " " + ;
+                     "FROM  agentes"                                                                    + " " + ;
+                        "INNER JOIN direcciones ON agentes.uuid = direcciones.parent_uuid"              + " "
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 

@@ -16,7 +16,7 @@ IMG2PDFLIB           = 	\img2Pdf
 
 OBJ                  = 	obj1705
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Commands;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	.\C
 
 PPO 					   = 	ppo1705
@@ -358,6 +358,7 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+EntidadesController.prg 													\
 DocumentosController.prg 													\
 IncidenciasController.prg 													\
 ArticulosTarifasController.prg 											\
@@ -676,6 +677,7 @@ ClientesView.prg 																\
 ClientesValidator.prg 														\
 SqlGetSelector.prg 															\
 SQLDialogView.prg 															\
+CalculaPrecioCommand.prg 													\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1016,6 +1018,7 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+EntidadesController.obj       											\
 DocumentosController.obj       											\
 IncidenciasController.obj      	 										\
 ArticulosTarifasController.obj       									\
@@ -1328,6 +1331,7 @@ ClientesView.obj 																\
 ClientesValidator.obj 														\
 SqlGetSelector.obj 															\
 SQLDialogView.obj 															\
+CalculaPrecioCommand.obj 													\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1661,6 +1665,7 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\EntidadesController.obj    										+
 $(OBJ)\DocumentosController.obj    										+
 $(OBJ)\IncidenciasController.obj    									+
 $(OBJ)\ArticulosTarifasController.obj    								+
@@ -1969,6 +1974,7 @@ $(OBJ)\ClientesView.obj 													+
 $(OBJ)\ClientesValidator.obj 												+
 $(OBJ)\SqlGetSelector.obj 													+
 $(OBJ)\SQLDialogView.obj 													+
+$(OBJ)\CalculaPrecioCommand.obj 											+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

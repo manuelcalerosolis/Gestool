@@ -29,9 +29,9 @@ METHOD New() CLASS CamposExtraController
 
    ::nLevel                            := Auth():Level( ::getName() )
 
-   ::hImage                            := {  "16" => "gc_user_message_16",;
-                                             "32" => "gc_user_message_32",;
-                                             "48" => "gc_user_message_48" }
+   ::hImage                            := {  "16" => "gc_form_plus2_16",;
+                                             "32" => "gc_form_plus2_32",;
+                                             "48" => "gc_form_plus2_48" }
 
    ::oModel                            := SQLCamposExtraModel():New( self )
 
@@ -180,7 +180,9 @@ CLASS CamposExtraView FROM SQLBaseView
 
    DATA aTipos 
 
-   DATA hTipos
+   DATA hBehavior
+
+   DATA hOnChange
 
    DATA oLista
 
@@ -208,7 +210,9 @@ CLASS CamposExtraView FROM SQLBaseView
 
    METHOD disableDefecto()             INLINE ( ::verticalHide( ::oLista ), ::verticalHide( ::oListaValores ), ::oAddListaValores:Hide(), ::oDelListaValores:Hide() )
 
-   METHOD changeTipo( cTipo )          INLINE ( if( hhaskey( ::hTipos, cTipo ), eval( hGet( ::hTipos, cTipo ) ), ) )
+   METHOD changeBehavior( cTipo )      INLINE ( iif( hhaskey( ::hBehavior, cTipo ), eval( hGet( ::hBehavior, cTipo ) ), ) )
+
+   METHOD changeTipo( cTipo )          INLINE ( iif( hhaskey( ::hOnChange, cTipo ), eval( hGet( ::hOnChange, cTipo ) ), ), ::changeBehavior( cTipo ) )
 
    METHOD addListaValores()
 
@@ -225,11 +229,17 @@ METHOD New( oController ) CLASS CamposExtraView
 
    ::aTipos          := {  "Texto", "Número", "Fecha", "Lógico", "Lista" }
 
-   ::hTipos          := {  "Texto"  => {|| ::verticalShow( ::oLongitud ), ::verticalHide( ::oDecimales ), ::setLongitud( 100, 0 ), ::disableDefecto() },;
-                           "Número" => {|| ::enableLongitud(), ::disableDefecto(), ::setLongitud( 16, 6 ) },;
-                           "Fecha"  => {|| ::disableLongitud(), ::setLongitud( 8, 0 ), ::disableDefecto() },;
-                           "Lógico" => {|| ::disableLongitud(), ::setLongitud( 1, 0 ), ::disableDefecto() },;
-                           "Lista"  => {|| ::disableLongitud(), ::setLongitud( 10, 0 ), ::enableDefecto() } }
+   ::hBehavior       := {  "Texto"  => {|| ::verticalShow( ::oLongitud ), ::verticalHide( ::oDecimales ), ::disableDefecto() },;
+                           "Número" => {|| ::enableLongitud(), ::disableDefecto() },;
+                           "Fecha"  => {|| ::disableLongitud(), ::disableDefecto() },;
+                           "Lógico" => {|| ::disableLongitud(), ::disableDefecto() },;
+                           "Lista"  => {|| ::disableLongitud(), ::enableDefecto() } }
+
+   ::hOnChange       := {  "Texto"  => {|| ::setLongitud( 100, 0 ) },;
+                           "Número" => {|| ::setLongitud( 16, 6 ) },;
+                           "Fecha"  => {|| ::setLongitud( 8, 0 ) },;
+                           "Lógico" => {|| ::setLongitud( 1, 0 ) },;
+                           "Lista"  => {|| ::setLongitud( 10, 0 ) } }
 
    ::cLista          := space( 200 )
 
@@ -386,7 +396,7 @@ METHOD Activate() CLASS CamposExtraView
       CANCEL ;
       ACTION      ( ::oDialog:end() )
 
-   ::oDialog:bStart  := {|| ::ChangeTipo( alltrim( ::oController:oModel:hBuffer[ "tipo" ] ) ) }
+   ::oDialog:bStart  := {|| ::changeBehavior( alltrim( ::oController:oModel:hBuffer[ "tipo" ] ) ) }
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs[ 1 ] ), ::oDialog:end( IDOK ), ) } )
@@ -472,8 +482,6 @@ METHOD getColumns() CLASS SQLCamposExtraModel
 
    ::getEmpresaColumns()
 
-   ::getTimeStampColumns()
-
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
                                              "default"   => {|| space( 3 ) } }                        )
 
@@ -486,14 +494,16 @@ METHOD getColumns() CLASS SQLCamposExtraModel
    hset( ::hColumns, "tipo",              {  "create"    => "VARCHAR( 10 )"                           ,;
                                              "default"   => {|| space( 10 ) } }                       )
 
-   hset( ::hColumns, "longitud",          {  "create"    => "TINYINT"                                 ,;
+   hset( ::hColumns, "longitud",          {  "create"    => "SMALLINT UNSIGNED"                       ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "decimales",         {  "create"    => "TINYINT"                                 ,;
+   hset( ::hColumns, "decimales",         {  "create"    => "SMALLINT UNSIGNED"                       ,;
                                              "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "lista",             {  "create"    => "TEXT"                                    ,;
                                              "default"   => {|| space( 200 ) } }                      )
+   
+   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 

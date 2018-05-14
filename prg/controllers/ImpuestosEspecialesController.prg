@@ -195,8 +195,9 @@ METHOD Activate() CLASS ImpuestosEspecialesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "aplicar" ] ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "aplicar" ] ;
       ID          140 ;
+      IDSAY       142 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 

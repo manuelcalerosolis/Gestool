@@ -227,6 +227,8 @@ CLASS SQLPaisesModel FROM SQLBaseModel
 
    METHOD getColumns()
 
+   METHOD getNombreWhereCodigo( codigo ) INLINE ( ::getField( 'nombre', 'codigo', codigo ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

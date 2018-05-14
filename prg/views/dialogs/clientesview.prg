@@ -43,8 +43,6 @@ CLASS ClientesView FROM SQLBaseView
 
    METHOD redefineDocumentos()
 
-   METHOD redefineExplorerBar()
-
    METHOD addLinksToExplorerBar()
 
    METHOD changeBloqueo()
@@ -109,6 +107,8 @@ METHOD Activate() CLASS ClientesView
 
    ::redefineDocumentos()
 
+   ::redefineExplorerBar()
+
    /*
    Botones generales-----------------------------------------------------------
    */
@@ -124,8 +124,6 @@ METHOD Activate() CLASS ClientesView
       OF          ::oDialog ;
       CANCEL ;
       ACTION      ( ::oDialog:end() )
-
-   ::redefineExplorerBar()
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) } )
@@ -481,19 +479,6 @@ METHOD startDialog()
       ::oRiesgo:Hide()
       ::oRiesgoAlcanzado:Hide()
    end if
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD redefineExplorerBar() CLASS ClientesView
-
-   REDEFINE EXPLORERBAR ::oExplorerBar ;
-         ID             100 ;
-         OF             ::oDialog
-
-      ::oExplorerBar:nBottomColor  := RGB( 255, 255, 255 )
-      ::oExplorerBar:nTopColor     := RGB( 255, 255, 255 )
 
 RETURN ( self )
 
