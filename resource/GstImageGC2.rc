@@ -364,7 +364,11 @@ GC_ID_BADGE_32 BITMAP "..\\bmp\\gc_id_badge_32.bmp"
 GC_ID_BADGE_16 BITMAP "..\\bmp\\gc_id_badge_16.bmp"
 
 GC_ID_CARDS_48 BITMAP "..\\bmp\\gc_id_cards_48.bmp"
-GC_ID_CARDS_32 BITMAP "..\\bmp\\gc_id_cards_32.bmp"
+GC_ID_CARDS_32 BITMAP "..\\bmp\\gc_id_cards_32.bmp" 
 GC_ID_CARDS_16 BITMAP "..\\bmp\\gc_id_cards_16.bmp"
 
 GC_BUSINESSPEOPLE_48 BITMAP "..\\bmp\\gc_businesspeople_48.bmp"
+
+GC_MAP_ROUTE_16 BITMAP "..\\bmp\\gc_map_route_16.bmp"
+GC_MAP_ROUTE_32 BITMAP "..\\bmp\\gc_map_route_32.bmp"
+GC_MAP_ROUTE_48 BITMAP "..\\bmp\\gc_map_route_48.bmp"

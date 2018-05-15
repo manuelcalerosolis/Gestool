@@ -61,6 +61,8 @@ METHOD New() CLASS ClientesController
 
    ::oCuentasBancariasController := CuentasBancariasController():New( self )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'clientes')
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )

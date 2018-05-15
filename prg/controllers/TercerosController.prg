@@ -29,6 +29,8 @@ CLASS TercerosController FROM SQLNavigatorController
 
    DATA oCuentasBancariasController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD DireccionesControllerLoadCurrentBuffer()

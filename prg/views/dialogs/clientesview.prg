@@ -37,9 +37,7 @@ CLASS ClientesView FROM SQLBaseView
 
    METHOD redefineComercial()
 
-   METHOD redefineDirecciones()
-
-   METHOD redefineContactos()
+   //METHOD redefineDirecciones()
 
    METHOD addLinksToExplorerBar()
 
@@ -85,21 +83,13 @@ METHOD Activate() CLASS ClientesView
       ID          500 ;
       OF          ::oDialog ;
       PROMPT      "General",;
-                  "Comercial",;
-                  "Direcciones",;
-                  "Contactos";
+                  "Comercial";
       DIALOGS     "CLIENTE_GENERAL" ,;
-                  "CLIENTE_COMERCIAL",;
-                  "CLIENTE_AUXILIARTABLE",;
-                  "CLIENTE_AUXILIARTABLE"
+                  "CLIENTE_COMERCIAL"
 
    ::redefineGeneral()   
 
    ::redefineComercial()
-
-   ::redefineDirecciones()
-
-   ::redefineContactos()
 
    ::redefineExplorerBar()
 
@@ -325,86 +315,6 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD redefineDirecciones() CLASS ClientesView
-
-   local oBtnAppend
-   local oBtnEdit
-   local oBtnZoom
-   local oBtnDelete
-
-   REDEFINE BUTTON oBtnAppend ;
-      ID          100 ;
-      OF          ::oFolder:aDialogs[3] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          110 ;
-      OF          ::oFolder:aDialogs[3] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
-
-   REDEFINE BUTTON oBtnZoom ;
-      ID          120 ;
-      OF          ::oFolder:aDialogs[3]
-
-   oBtnZoom:bAction   := {|| ::oController:oDireccionesController:Zoom() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          130 ;
-      OF          ::oFolder:aDialogs[3] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
-
-   ::oController:oDireccionesController:Activate( 140, ::oFolder:aDialogs[3] )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD redefineContactos() CLASS ClientesView
-
-   local oBtnAppend
-   local oBtnEdit
-   local oBtnZoom
-   local oBtnDelete
-
-   REDEFINE BUTTON oBtnAppend ;
-      ID          100 ;
-      OF          ::oFolder:aDialogs[4] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnAppend:bAction   := {|| ::oController:oContactosController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          110 ;
-      OF          ::oFolder:aDialogs[4] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnEdit:bAction   := {|| ::oController:oContactosController:Edit() }
-
-   REDEFINE BUTTON oBtnZoom ;
-      ID          120 ;
-      OF          ::oFolder:aDialogs[4]
-
-   oBtnZoom:bAction   := {|| ::oController:oContactosController:Zoom() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          130 ;
-      OF          ::oFolder:aDialogs[4] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnDelete:bAction   := {|| ::oController:oContactosController:Delete() }
-
-   ::oController:oContactosController:Activate( 140, ::oFolder:aDialogs[4] )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD startDialog()
 
    ::addLinksToExplorerBar()
@@ -440,13 +350,14 @@ RETURN ( self )
 
 METHOD addLinksToExplorerBar() CLASS ClientesView
 
-   local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+   local oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   oPanel:AddLink( "Direcciones...",      {|| MsgInfo( "Entro en direcciones" ) }, "gc_user_16" )
-   oPanel:AddLink( "Contactos...",        {|| MsgInfo( "Entro en contactos" ) }, "gc_user_16" )
-   oPanel:AddLink( "Cuentas bancarias...",{|| ::oController:oCuentasBancariasController:activateDialogView() }, "gc_user_16" )
-   oPanel:AddLink( "Incidencias...",      {|| ::oController:oIncidenciasController:activateDialogView() }, "gc_user_16" )
-   oPanel:AddLink( "Documentos...",       {|| ::oController:oDocumentosController:activateDialogView() }, "gc_user_16" )
+   oPanel:AddLink( "Direcciones...",      {|| ::oController:oDireccionesController:activateDialogView() }, ::oController:oDireccionesController:getImage( "16" ) )
+   oPanel:AddLink( "Contactos...",        {|| ::oController:oContactosController:activateDialogView() }, ::oController:oContactosController:getImage( "16" ) )
+   oPanel:AddLink( "Cuentas bancarias...",{|| ::oController:oCuentasBancariasController:activateDialogView() }, ::oController:oCuentasBancariasController:getImage( "16" ) )
+   oPanel:AddLink( "Incidencias...",      {|| ::oController:oIncidenciasController:activateDialogView() }, ::oController:oIncidenciasController:getImage( "16" ) )
+   oPanel:AddLink( "Documentos...",       {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
+   oPanel:AddLink( "Campos extra...",     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
 RETURN ( self )
 

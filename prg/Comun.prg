@@ -2859,8 +2859,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cMessage       := 'Rutas'
    oItem:bAction        := {|| RutasController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_signpost3_16"
-   oItem:cBmpBig        := "gc_signpost3_32"
+   oItem:cBmp           := "gc_map_route_16"
+   oItem:cBmpBig        := "gc_map_route_32"
    oItem:lShow          := .f.
 
    oItem                := oItemSQL:Add()
