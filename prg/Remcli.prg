@@ -248,11 +248,14 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath, oMenuItem, oWndParent )
+METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    DEFAULT cPath           := cPatEmp()
    DEFAULT oWndParent      := GetWndFrame()
-   DEFAULT oMenuItem       := "01060"
+   DEFAULT cDriver         := cDriver()
+   DEFAULT oMenuItem       := "remesas_bancarias"
+
+   ::cDriver               := cDriver
 
    ::nLevel                := Auth():Level( oMenuItem )
 
@@ -499,118 +502,115 @@ METHOD Activate()
 
    local oRotor
 
-   if nAnd( ::nLevel, 1 ) == 0
-
-      /*
-      Cerramos todas las ventanas----------------------------------------------
-      */
-
-      if ::oWndParent != nil
-         ::oWndParent:CloseAll()
-      end if
-
-      if !::OpenFiles()
-         return nil
-      end if
-
-      ::CreateShell( ::nLevel )
-
-      DEFINE BTNSHELL RESOURCE "BUS" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:SearchSetFocus() ) ;
-         TOOLTIP  "(B)uscar" ;
-         HOTKEY   "B";
-
-         ::oWndBrw:AddSeaBar()
-
-      DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecAdd() );
-         ON DROP  ( ::oWndBrw:RecAdd() );
-         TOOLTIP  "(A)ñadir";
-         BEGIN GROUP ;
-         HOTKEY   "A" ;
-         LEVEL    ACC_APPD
-
-      DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecEdit() );
-         TOOLTIP  "(M)odificar";
-         HOTKEY   "M" ;
-         LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecZoom() );
-         TOOLTIP  "(Z)oom";
-         HOTKEY   "Z" ;
-         LEVEL    ACC_ZOOM
-
-     DEFINE BTNSHELL RESOURCE "DEL" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecDel() );
-         TOOLTIP  "(E)liminar";
-         MRU ;
-         HOTKEY   "E";
-         LEVEL    ACC_DELE
-
-      DEFINE BTNSHELL RESOURCE "IMP" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::Report() ) ;
-         TOOLTIP  "(L)istado" ;
-         HOTKEY   "L" ;
-         LEVEL    ACC_IMPR
-
-      DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( if( validRunReport( "01120" ), TFastVentasRecibos():New():Play(), ) );
-         TOOLTIP  "(R)eporting";
-         HOTKEY   "R";
-         LEVEL    ACC_IMPR
-
-      DEFINE BTNSHELL RESOURCE "BmpExptar" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::SaveModelo() ) ;
-         TOOLTIP  "E(x)portar" ;
-         HOTKEY   "X";
-         LEVEL    4
-
-      DEFINE BTNSHELL RESOURCE "BmpConta" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::SetOrdenNumeroRemesa(), ::SelectRec( {|| ::contabilizaRemesas( ::lChkSelect ) }, "Contabilizar remesas", "Simular" , .f. ), ::RestoreOrdenNumeroRemesa() ) ;
-         TOOLTIP  "(C)ontabilizar" ;
-         HOTKEY   "C";
-         LEVEL    4
-
-      if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
-
-      DEFINE BTNSHELL RESOURCE "CHGSTATE" OF ::oWndBrw ;
-			NOBORDER ;
-         ACTION   ( ::SetOrdenNumeroRemesa(), ::SelectRec( {|| ::cambiaEstadoContabilizadoRemesas( ::lChkSelect ) }, "Cambiar estado", "Contabilizado" , .f. ), ::RestoreOrdenNumeroRemesa() ) ;
-         TOOLTIP  "Cambiar es(t)ado" ;
-         HOTKEY   "T";
-         LEVEL    4
-
-      end if
-
-      DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF ::oWndBrw ;
-         ACTION   ( oRotor:Expand() ) ;
-         TOOLTIP  "Rotor" ;
-
-         DEFINE BTNSHELL RESOURCE "GC_DICTIONARY_" OF ::oWndBrw ;
-            ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacía" ) ) );
-            TOOLTIP  "Modificar cuenta" ;
-            FROM     oRotor ;
-
-      ::oWndBrw:EndButtons( Self )
-
-      ::oWndBrw:Activate( , , , , , , , , , , , , , , , , {|| ::CloseFiles() } )
-
-   else
-
+   if nAnd( ::nLevel, 1 ) = 0
       msgStop( "Acceso no permitido." )
+      RETURN NIL
+   end if
+
+   /*
+   Cerramos todas las ventanas----------------------------------------------
+   */
+
+   if ::oWndParent != nil
+      ::oWndParent:CloseAll()
+   end if
+
+   if !::OpenFiles()
+      return nil
+   end if
+
+   ::CreateShell( ::nLevel )
+
+   DEFINE BTNSHELL RESOURCE "BUS" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:SearchSetFocus() ) ;
+      TOOLTIP  "(B)uscar" ;
+      HOTKEY   "B";
+
+      ::oWndBrw:AddSeaBar()
+
+   DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecAdd() );
+      ON DROP  ( ::oWndBrw:RecAdd() );
+      TOOLTIP  "(A)ñadir";
+      BEGIN GROUP ;
+      HOTKEY   "A" ;
+      LEVEL    ACC_APPD
+
+   DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecEdit() );
+      TOOLTIP  "(M)odificar";
+      HOTKEY   "M" ;
+      LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecZoom() );
+      TOOLTIP  "(Z)oom";
+      HOTKEY   "Z" ;
+      LEVEL    ACC_ZOOM
+
+  DEFINE BTNSHELL RESOURCE "DEL" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecDel() );
+      TOOLTIP  "(E)liminar";
+      MRU ;
+      HOTKEY   "E";
+      LEVEL    ACC_DELE
+
+   DEFINE BTNSHELL RESOURCE "IMP" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::Report() ) ;
+      TOOLTIP  "(L)istado" ;
+      HOTKEY   "L" ;
+      LEVEL    ACC_IMPR
+
+   DEFINE BTNSHELL RESOURCE "gc_document_empty_chart_" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( if( validRunReport( "01120" ), TFastVentasRecibos():New():Play(), ) );
+      TOOLTIP  "(R)eporting";
+      HOTKEY   "R";
+      LEVEL    ACC_IMPR
+
+   DEFINE BTNSHELL RESOURCE "BmpExptar" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::SaveModelo() ) ;
+      TOOLTIP  "E(x)portar" ;
+      HOTKEY   "X";
+      LEVEL    4
+
+   DEFINE BTNSHELL RESOURCE "BmpConta" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::SetOrdenNumeroRemesa(), ::SelectRec( {|| ::contabilizaRemesas( ::lChkSelect ) }, "Contabilizar remesas", "Simular" , .f. ), ::RestoreOrdenNumeroRemesa() ) ;
+      TOOLTIP  "(C)ontabilizar" ;
+      HOTKEY   "C";
+      LEVEL    4
+
+   if SQLAjustableModel():getRolCambiarEstado( Auth():rolUuid() )
+
+   DEFINE BTNSHELL RESOURCE "CHGSTATE" OF ::oWndBrw ;
+		NOBORDER ;
+      ACTION   ( ::SetOrdenNumeroRemesa(), ::SelectRec( {|| ::cambiaEstadoContabilizadoRemesas( ::lChkSelect ) }, "Cambiar estado", "Contabilizado" , .f. ), ::RestoreOrdenNumeroRemesa() ) ;
+      TOOLTIP  "Cambiar es(t)ado" ;
+      HOTKEY   "T";
+      LEVEL    4
 
    end if
+
+   DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF ::oWndBrw ;
+      ACTION   ( oRotor:Expand() ) ;
+      TOOLTIP  "Rotor" ;
+
+      DEFINE BTNSHELL RESOURCE "GC_DICTIONARY_" OF ::oWndBrw ;
+         ACTION   ( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacía" ) ) );
+         TOOLTIP  "Modificar cuenta" ;
+         FROM     oRotor ;
+
+   ::oWndBrw:EndButtons( Self )
+
+   ::oWndBrw:Activate( , , , , , , , , , , , , , , , , {|| ::CloseFiles() } )
 
 RETURN NIL
 

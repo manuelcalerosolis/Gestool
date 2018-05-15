@@ -36,6 +36,9 @@ METHOD getColumns() CLASS SQLClientesModel
    hset( ::hColumns, "segundo_dia_pago",           {  "create"    => "INT UNSIGNED"        ,;
                                                       "default"   => {|| 0 } }             )
 
+   hset( ::hColumns, "tercer_dia_pago",            {  "create"    => "INT UNSIGNED"        ,;
+                                                      "default"   => {|| 0 } }             )
+
    hset( ::hColumns, "mes_vacaciones",             {  "create"    => "VARCHAR( 15 )"       ,;
                                                       "default"   => {|| padr( "Ninguno", 15 ) } }   )
 
@@ -80,6 +83,15 @@ METHOD getColumns() CLASS SQLClientesModel
 
    hset( ::hColumns, "riesgo",                     {  "create"    => "DECIMAL(19,6)"       ,;
                                                       "default"   => {|| 0 } }             )
+
+   hset( ::hColumns, "subcuenta",                  {  "create"    => "VARCHAR( 12 )"       ,;
+                                                      "default"   => {|| space( 12 ) } }   )
+
+   hset( ::hColumns, "cuenta_venta",               {  "create"    => "VARCHAR( 3 )"        ,;
+                                                      "default"   => {|| space( 3 ) } }    )
+
+   hset( ::hColumns, "subcuenta_descuento",        {  "create"    => "VARCHAR( 12 )"       ,;
+                                                      "default"   => {|| space( 12 ) } }   )
    
 RETURN ( ::hColumns )
 

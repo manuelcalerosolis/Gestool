@@ -25,6 +25,19 @@ CLASS ClientesView FROM SQLBaseView
    DATA oRiesgoAlcanzado
    DATA nRiesgoAlcanzado   INIT 0
 
+   DATA oInfoSubCuenta
+   DATA oInfoSubCuentaDescuento
+
+   DATA oGetSubcuenta
+   DATA oGetCuentaVenta
+   DATA oGetSubcuentaDescuento
+
+   DATA oSaldoSubcuenta
+   DATA nSaldoSubcuenta
+
+   DATA oSaldoSubcuentaDescuento
+   DATA nSaldoSubcuentaDescuento
+
    METHOD Activate()
 
    METHOD Activating()
@@ -36,8 +49,6 @@ CLASS ClientesView FROM SQLBaseView
    METHOD redefineGeneral()
 
    METHOD redefineComercial()
-
-   //METHOD redefineDirecciones()
 
    METHOD addLinksToExplorerBar()
 
@@ -211,9 +222,13 @@ METHOD redefineComercial() CLASS ClientesView
       ID       170;
       PICTURE  "99" ;
       SPINNER ;
-      VALID    ( if( ( ::oController:oModel:hBuffer[ "segundo_dia_pago" ] != 0 .and. ::oController:oModel:hBuffer[ "segundo_dia_pago" ] <= ::oController:oModel:hBuffer[ "primer_dia_pago" ] ),;
-                   ( msgStop( "Segundo día de pago debe ser mayor que el primero" ), .f. ),;
-                   .t. ) ) ;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      OF       ::oFolder:aDialogs[2]
+
+   REDEFINE GET ::oController:oModel:hBuffer[ "tercer_dia_pago" ] ;
+      ID       310;
+      PICTURE  "99" ;
+      SPINNER ;
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
@@ -311,6 +326,68 @@ METHOD redefineComercial() CLASS ClientesView
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
+
+
+
+   REDEFINE SAY ::oInfoSubCuenta ;
+      PROMPT   "Subcuenta" ;
+      FONT     getBoldFont() ; 
+      COLOR    rgb( 10, 152, 234 ) ;
+      ID       320 ;
+      OF       ::oFolder:aDialogs[2]
+
+   ::oInfoSubCuenta:lWantClick  := .t.
+   ::oInfoSubCuenta:OnClick     := {|| msgalert( "Informe subcuenta del cliente" ) }
+
+   REDEFINE GET ::oGetSubcuenta ; 
+      VAR      ::oController:oModel:hBuffer[ "subcuenta" ] ;
+      ID       330 ;
+      IDTEXT   331 ;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      ON HELP  ( MsgInfo( "Conectar con Contaplus" ) ) ;
+      BITMAP   "LUPA" ;
+      OF       ::oFolder:aDialogs[2]
+
+   REDEFINE GET ::oSaldoSubcuenta ; 
+      VAR      ::nSaldoSubcuenta ;
+      ID       340;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      OF       ::oFolder:aDialogs[2]
+
+   REDEFINE GET ::oGetCuentaVenta ; 
+      VAR      ::oController:oModel:hBuffer[ "cuenta_venta" ] ;
+      ID       350 ;
+      IDTEXT   351 ;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      ON HELP  ( MsgInfo( "Conectar con Contaplus" ) ) ;
+      BITMAP   "LUPA" ;
+      OF       ::oFolder:aDialogs[2]
+
+   REDEFINE SAY ::oInfoSubCuentaDescuento ;
+      PROMPT   "Descuento" ;
+      FONT     getBoldFont() ; 
+      COLOR    rgb( 10, 152, 234 ) ;
+      ID       360 ;
+      OF       ::oFolder:aDialogs[2]
+
+   ::oInfoSubCuentaDescuento:lWantClick  := .t.
+   ::oInfoSubCuentaDescuento:OnClick     := {|| msgalert( "Informe subcuenta dedescuento" ) }
+
+   REDEFINE GET ::oGetSubcuentaDescuento ; 
+      VAR      ::oController:oModel:hBuffer[ "cuenta_venta" ] ;
+      ID       370 ;
+      IDTEXT   371 ;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      ON HELP  ( MsgInfo( "Conectar con Contaplus" ) ) ;
+      BITMAP   "LUPA" ;
+      OF       ::oFolder:aDialogs[2]
+
+   REDEFINE GET ::oSaldoSubcuentaDescuento ; 
+      VAR      ::nSaldoSubcuentaDescuento ;
+      ID       380;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      OF       ::oFolder:aDialogs[2]
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -352,11 +429,13 @@ METHOD addLinksToExplorerBar() CLASS ClientesView
 
    local oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
+   oPanel:AddLink( "Tarifas...",          {|| MsgInfo( "Tarifas" ) }, ::oController:oDireccionesController:getImage( "16" ) )
    oPanel:AddLink( "Direcciones...",      {|| ::oController:oDireccionesController:activateDialogView() }, ::oController:oDireccionesController:getImage( "16" ) )
    oPanel:AddLink( "Contactos...",        {|| ::oController:oContactosController:activateDialogView() }, ::oController:oContactosController:getImage( "16" ) )
    oPanel:AddLink( "Cuentas bancarias...",{|| ::oController:oCuentasBancariasController:activateDialogView() }, ::oController:oCuentasBancariasController:getImage( "16" ) )
    oPanel:AddLink( "Incidencias...",      {|| ::oController:oIncidenciasController:activateDialogView() }, ::oController:oIncidenciasController:getImage( "16" ) )
    oPanel:AddLink( "Documentos...",       {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
+   oPanel:AddLink( "Facturae...",         {|| MsgInfo( "Facturae" ) }, ::oController:oDocumentosController:getImage( "16" ) )
    oPanel:AddLink( "Campos extra...",     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
 RETURN ( self )
@@ -431,6 +510,8 @@ METHOD changeAutorizacioncredito()
 
 Return ( self )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
