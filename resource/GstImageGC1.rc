@@ -388,6 +388,7 @@ GC_FUNNEL_16 BITMAP "..\\bmp\\gc_funnel_16.bmp"
 GC_FUNNEL_32 BITMAP "..\\bmp\\gc_funnel_32.bmp"
 
 BUS16 BITMAP "..\\bmp\\gc_magnifying_glass2_16.bmp"
+GC_PENCIL_16 BITMAP "..\\bmp\\gc_pencil_16.bmp"
 EDIT16 BITMAP "..\\bmp\\gc_pencil_16.bmp"
 STOPWATCH_REFRESH_32 BITMAP "..\\bmp\\gc_clock_refresh_32.bmp"
 STOPWATCH_REFRESH_16 BITMAP "..\\bmp\\gc_clock_refresh_16.bmp"

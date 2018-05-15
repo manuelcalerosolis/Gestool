@@ -39,6 +39,10 @@ CLASS CalculaPrecioCommand
 
    // Calculos-----------------------------------------------------------------
 
+   METHOD caclculaPreciosUsandoMargen()
+
+   METHOD caclculaPreciosUsandoBase()
+
    METHOD caclculaMargen()             INLINE ( ::Margen( ( ::PrecioBase() - ::Costo() ) / ::Costo() * 100 ) )
 
    METHOD caclculaMargenReal()         INLINE ( ::MargenReal( ( ::PrecioBase() - ::Costo() ) / ::PrecioBase() * 100 ) )
@@ -92,6 +96,30 @@ METHOD Build( hBuilder ) CLASS CalculaPrecioCommand
    if hhaskey( hBuilder, "Margen" )
       ::Margen( hBuilder[ "Margen" ] )
    end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD caclculaPreciosUsandoMargen()
+
+   ::caclculaPrecioBaseSobreCosto()
+
+   ::caclculaPrecioIVAIncluido()
+
+   ::caclculaMargenReal()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD caclculaPreciosUsandoBase()
+
+   ::caclculaMargen()
+   
+   ::caclculaMargenReal()
+
+   ::caclculaPrecioIVAIncluido()
 
 RETURN ( self )
 

@@ -81,11 +81,12 @@ METHOD setMargen( oCol, nMargen ) CLASS ArticulosPreciosController
       oCommand    := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
                                                       'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
                                                       'Margen'          => nMargen } )
+      oCommand:caclculaPreciosUsandoMargen()
 
-      ::oModel:updateFieldsWhereUuid( uuid,  {  'margen'                => nMargen,;
-                                                'margen_real'           => oCommand:caclculaMargenReal(),;
-                                                'precio_base'           => oCommand:caclculaPrecioBaseSobreCosto(),;   
-                                                'precio_iva_incluido'   => oCommand:caclculaPrecioIVAIncluido() } )
+      ::oModel:updateFieldsWhereUuid( uuid,  {  'margen'                => oCommand:Margen(),;
+                                                'margen_real'           => oCommand:MargenReal(),;
+                                                'precio_base'           => oCommand:PrecioBase(),;   
+                                                'precio_iva_incluido'   => oCommand:PrecioIVAIncluido() } )
 
       ::getRowSet():Refresh()
 
@@ -105,6 +106,7 @@ METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
    oCommand       := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
                                                       'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
                                                       'PrecioBase'      => nPrecioBase } )
+   oCommand:caclculaPreciosUsandoBase()
 
    ::oModel:updateFieldsWhereUuid( uuid,  {  'precio_base'              => nPrecioBase,;  
                                              'margen'                   => oCommand:caclculaMargen(),; 
@@ -198,11 +200,13 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'margen'
-      :cHeader             := 'Margen'
-      :nWidth              := 70
+      :cHeader             := 'Margen %'
+      :nWidth              := 75
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nHeadBmpNo          := 1
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
+      :AddResource( "gc_pencil_16" )
 
       :nEditType           := 1
       :bEditValue          := {|| ::getRowSet():fieldGet( 'margen' ) }
@@ -213,8 +217,8 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'margen_real'
-      :cHeader             := 'Markup'
-      :nWidth              := 70
+      :cHeader             := 'Markup %'
+      :nWidth              := 75
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
@@ -227,8 +231,10 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :cHeader             := 'Precio'
       :nWidth              := 100
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nHeadBmpNo          := 1
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
+      :AddResource( "gc_pencil_16" )
 
       :nEditType           := 1
       :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_base' ) }
@@ -242,8 +248,10 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :cHeader             := 'Precio IVA inc.'
       :nWidth              := 100
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nHeadBmpNo          := 1
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
+      :AddResource( "gc_pencil_16" )
 
       :nEditType           := 1
       :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_iva_incluido' ) }
@@ -390,7 +398,46 @@ CLASS ArticulosPreciosRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLArticulosPreciosModel():getTableName() ) 
 
+   METHOD getSQLFunctions()               INLINE ( { ::createFunctionPriceUsingMargin() } )
+
+   METHOD createFunctionPriceUsingMargin()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionPriceUsingMargin() CLASS ArticulosPreciosRepository
+   
+   local cSQL 
+
+   cSQL        := "DROP FUNCTION IF EXISTS CalculatePriceUsingMargin;"                                   + CRLF
+   
+   cSQL        += "DELIMITER ;;"                                                                         + CRLF
+   
+   cSQL        += "CREATE FUNCTION CalculatePriceUsingMargin( PrecioCosto INT, Margen INT, PorcentajeIVA INT, UuidPrecio CHAR ) RETURNS INT" + CRLF
+   
+   cSQL        += "BEGIN"                                                                                + CRLF
+   cSQL        +=    "DECLARE PrecioBase INT;"                                                           + CRLF
+   cSQL        +=    "DECLARE PrecioIVAIncluido INT;"                                                    + CRLF
+   cSQL        +=    "DECLARE MargenReal INT;"                                                           + CRLF
+   
+   cSQL        +=    "SET PrecioBase = PrecioCosto + ( PrecioCosto * Margen / 100 );"                    + CRLF
+   cSQL        +=    "SET PrecioIVAIncluido = PrecioBase + ( PrecioBase * PorcentajeIVA / 100 );"        + CRLF
+   cSQL        +=    "SET MargenReal = ( PrecioBase - PrecioCosto ) / PrecioCosto * 100;"                + CRLF
+
+   cSql        +=    "UPDATE " + ::getTableName() + " SET "                                              + CRLF
+   cSql        +=       "precio_base = PrecioBase, "                                                     + CRLF
+   cSql        +=       "precio_iva_incluido = PrecioIVAIncluido, "                                      + CRLF
+   cSql        +=       "margen_real = MargenReal "                                                      + CRLF
+   cSql        +=    "WHERE uuid = UuidPrecio;"                                                          + CRLF
+
+   cSQL        +=    "RETURN PrecioBase;"                                                                + CRLF
+   cSQL        += "END;"                                                                                 + CRLF
+   cSQL        += ";;"                                                                                   + CRLF
+
+   logwrite( cSQL )
+
+RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
