@@ -21,9 +21,9 @@ METHOD New( oSenderController ) CLASS RutasController
 
    ::cName                       := "rutas"
 
-   ::hImage                      := {  "16" => "gc_signpost3_16",;
-                                       "32" => "gc_signpost3_32",;
-                                       "48" => "gc_signpost3_48" }
+   ::hImage                      := {  "16" => "gc_map_route_16",;
+                                       "32" => "gc_map_route_32",;
+                                       "48" => "gc_map_route_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -139,7 +139,7 @@ METHOD Activate() CLASS RutasView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_signpost3_48" ;
+      RESOURCE    ::oController:GetImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog ;
 

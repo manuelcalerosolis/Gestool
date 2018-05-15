@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS DocumentosController FROM SQLBrowseController
+CLASS DocumentosController FROM SQLNavigatorController
 
    METHOD New()
 

@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesController FROM SQLBrowseController
+CLASS DireccionesController FROM SQLNavigatorController
 
    DATA oPaisesController
    DATA oProvinciasController
@@ -41,6 +41,10 @@ METHOD New( oController ) CLASS DireccionesController
    ::cTitle                         := "Direcciones"
 
    ::cName                          := "direcciones"
+
+   ::hImage                      := {  "16" => "gc_signpost3_16",;
+                                       "32" => "gc_signpost3_32",;
+                                       "48" => "gc_signpost3_48" }
 
    ::oModel                         := SQLDireccionesModel():New( self )
 

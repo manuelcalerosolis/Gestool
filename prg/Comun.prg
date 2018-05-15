@@ -2114,7 +2114,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Remesas bancarias'
    oItem:cMessage       := 'Acceso a las remesas bancarias'
-   oItem:bAction        := {|| TRemesas():New( cPatEmp(), "remesas_bancarias", oWnd ):Activate() }
+   oItem:bAction        := {|| TRemesas():New( cPatEmp(), cDriver(), oWnd, "remesas_bancarias" ):Activate() }
    oItem:cId            := "remesas_bancarias"
    oItem:cBmp           := "gc_briefcase2_document_16"
    oItem:cBmpBig        := "gc_briefcase2_document_32"
@@ -2859,8 +2859,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cMessage       := 'Rutas'
    oItem:bAction        := {|| RutasController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_signpost3_16"
-   oItem:cBmpBig        := "gc_signpost3_32"
+   oItem:cBmp           := "gc_map_route_16"
+   oItem:cBmpBig        := "gc_map_route_32"
    oItem:lShow          := .f.
 
    oItem                := oItemSQL:Add()
