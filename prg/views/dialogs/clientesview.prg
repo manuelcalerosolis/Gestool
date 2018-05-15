@@ -41,8 +41,6 @@ CLASS ClientesView FROM SQLBaseView
 
    METHOD redefineContactos()
 
-   METHOD redefineDocumentos()
-
    METHOD addLinksToExplorerBar()
 
    METHOD changeBloqueo()
@@ -89,11 +87,9 @@ METHOD Activate() CLASS ClientesView
       PROMPT      "General",;
                   "Comercial",;
                   "Direcciones",;
-                  "Contactos",;
-                  "Documentos";
+                  "Contactos";
       DIALOGS     "CLIENTE_GENERAL" ,;
                   "CLIENTE_COMERCIAL",;
-                  "CLIENTE_AUXILIARTABLE",;
                   "CLIENTE_AUXILIARTABLE",;
                   "CLIENTE_AUXILIARTABLE"
 
@@ -104,8 +100,6 @@ METHOD Activate() CLASS ClientesView
    ::redefineDirecciones()
 
    ::redefineContactos()
-
-   ::redefineDocumentos()
 
    ::redefineExplorerBar()
 
@@ -411,46 +405,6 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD redefineDocumentos()
-
-   local oBtnAppend
-   local oBtnEdit
-   local oBtnZoom
-   local oBtnDelete
-
-   REDEFINE BUTTON oBtnAppend ;
-      ID          100 ;
-      OF          ::oFolder:aDialogs[5] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnAppend:bAction   := {|| ::oController:oDocumentosController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          110 ;
-      OF          ::oFolder:aDialogs[5] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnEdit:bAction   := {|| ::oController:oDocumentosController:Edit() }
-
-   REDEFINE BUTTON oBtnZoom ;
-      ID          120 ;
-      OF          ::oFolder:aDialogs[5]
-
-   oBtnZoom:bAction   := {|| ::oController:oDocumentosController:Zoom() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          130 ;
-      OF          ::oFolder:aDialogs[5] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnDelete:bAction   := {|| ::oController:oDocumentosController:Delete() }
-
-   ::oController:oDocumentosController:Activate( 140, ::oFolder:aDialogs[5] )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD startDialog()
 
    ::addLinksToExplorerBar()
@@ -490,9 +444,9 @@ METHOD addLinksToExplorerBar() CLASS ClientesView
 
    oPanel:AddLink( "Direcciones...",      {|| MsgInfo( "Entro en direcciones" ) }, "gc_user_16" )
    oPanel:AddLink( "Contactos...",        {|| MsgInfo( "Entro en contactos" ) }, "gc_user_16" )
-   oPanel:AddLink( "Cuentas bancarias...",{|| MsgInfo( "Entro en cuentas bancarias" ) }, "gc_user_16" )
+   oPanel:AddLink( "Cuentas bancarias...",{|| ::oController:oCuentasBancariasController:activateDialogView() }, "gc_user_16" )
    oPanel:AddLink( "Incidencias...",      {|| ::oController:oIncidenciasController:activateDialogView() }, "gc_user_16" )
-   oPanel:AddLink( "Documentos...",       {|| MsgInfo( "Entro en documentos" ) }, "gc_user_16" )
+   oPanel:AddLink( "Documentos...",       {|| ::oController:oDocumentosController:activateDialogView() }, "gc_user_16" )
 
 RETURN ( self )
 
