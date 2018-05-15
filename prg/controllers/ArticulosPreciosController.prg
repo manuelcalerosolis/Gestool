@@ -71,11 +71,24 @@ RETURN ( Self )
 
 METHOD setMargen( oCol, nMargen ) CLASS ArticulosPreciosController
 
-   local uuid        := ::getRowSet():fieldGet( 'uuid' )
+   local uuid        
+   local oCommand
+
+   uuid           := ::getRowSet():fieldGet( 'uuid' )
 
    if ::oValidator:validate( 'margen', nMargen )
-      ::oModel:updateFieldWhereUuid( uuid, 'margen', nMargen )
+
+      oCommand    := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
+                                                      'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
+                                                      'Margen'          => nMargen } )
+
+      ::oModel:updateFieldsWhereUuid( uuid,  {  'margen'                => nMargen,;
+                                                'margen_real'           => oCommand:caclculaMargenReal(),;
+                                                'precio_base'           => oCommand:caclculaPrecioBaseSobreCosto(),;   
+                                                'precio_iva_incluido'   => oCommand:caclculaPrecioIVAIncluido() } )
+
       ::getRowSet():Refresh()
+
    end if 
 
 RETURN ( self )
@@ -84,9 +97,19 @@ RETURN ( self )
 
 METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
 
-   local uuid        := ::getRowSet():fieldGet( 'uuid' )
+   local uuid     
+   local oCommand   
 
-   ::oModel:updateFieldWhereUuid( uuid, 'precio_base', nPrecioBase )
+   uuid           := ::getRowSet():fieldGet( 'uuid' )
+
+   oCommand       := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
+                                                      'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
+                                                      'PrecioBase'      => nPrecioBase } )
+
+   ::oModel:updateFieldsWhereUuid( uuid,  {  'precio_base'              => nPrecioBase,;  
+                                             'margen'                   => oCommand:caclculaMargen(),; 
+                                             'margen_real'              => oCommand:caclculaMargenReal(),;
+                                             'precio_iva_incluido'      => oCommand:caclculaPrecioIVAIncluido() } )
 
    ::getRowSet():Refresh()
 
@@ -96,7 +119,19 @@ RETURN ( self )
 
 METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) CLASS ArticulosPreciosController
 
-   local uuid        := ::getRowSet():fieldGet( 'uuid' )
+   local uuid     
+   local oCommand   
+
+   uuid           := ::getRowSet():fieldGet( 'uuid' )
+
+   oCommand       := CalculaPrecioCommand():Build( {  'Costo'              => ::oSenderController:getPrecioCosto(),;
+                                                      'PorcentajeIVA'      => ::oSenderController:getPorcentajeIVA(),;
+                                                      'PrecioIVAIncluido'  => nPrecioIVAIncluido } )
+
+   ::oModel:updateFieldsWhereUuid( uuid,  {  'precio_iva_incluido'      => nPrecioIVAIncluido,;
+                                             'precio_base'              => oCommand:caclculaPrecioBaseSobrePrecioIVA(),;   
+                                             'margen'                   => oCommand:caclculaMargen(),; 
+                                             'margen_real'              => oCommand:caclculaMargenReal() } )
 
    ::oModel:updateFieldWhereUuid( uuid, 'precio_iva_incluido', nPrecioIVAIncluido )
 
@@ -132,6 +167,7 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -144,9 +180,26 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Tarifa'
+      :nWidth              := 160
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Costo'
+      :nWidth              := 80
+      :bEditValue          := {|| ::oController:oSenderController:getPrecioCosto() }
+      :cEditPicture        := "@E 9999.9999"
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'margen'
       :cHeader             := 'Margen'
-      :nWidth              := 100
+      :nWidth              := 70
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
@@ -156,6 +209,17 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :bEditBlock          := {|| ::getRowSet():fieldGet( 'margen' ) }
       :cEditPicture        := "@E 9999.9999"
       :bOnPostEdit         := {|oCol, nMargen| ::oController:setMargen( oCol, nMargen ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'margen_real'
+      :cHeader             := 'Markup'
+      :nWidth              := 70
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'margen_real' ) }
+      :cEditPicture        := "@E 9999.9999"
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -222,17 +286,39 @@ CLASS SQLArticulosPreciosModel FROM SQLBaseModel
 
    DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( tarifa_uuid, articulo_uuid )"
 
+   METHOD getInitialSelect()
+
    METHOD getColumns()
 
    METHOD getSQLInsertPreciosWhereTarifa( uuidTarifa )
 
-   METHOD insertPreciosWhereTarifa( uuidTarifa )        INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereTarifa( uuidTarifa ) ) )
+   METHOD insertPreciosWhereTarifa( uuidTarifa )         INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereTarifa( uuidTarifa ) ) )
 
    METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
 
    METHOD insertPreciosWhereArticulo( uuidArticulo )     INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereArticulo( uuidArticulo ) ) )
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLArticulosPreciosModel
+
+   local cSelect  := "SELECT articulos_precios.id,"                        + " " + ;
+                        "articulos_precios.uuid,"                          + " " + ;
+                        "articulos_precios.tarifa_uuid,"                   + " " + ;
+                        "articulos_precios.articulo_uuid,"                 + " " + ;
+                        "articulos_precios.margen,"                        + " " + ;
+                        "articulos_precios.margen_real,"                   + " " + ;
+                        "articulos_precios.precio_base,"                   + " " + ;
+                        "articulos_precios.precio_iva_incluido,"           + " " + ;
+                        "articulos_tarifas.nombre,"                        + " " + ;
+                        "articulos_tarifas.margen_predefinido,"            + " " + ;
+                        "articulos_tarifas.iva_incluido"                   + " " + ;
+                     "FROM articulos_precios"                              + " " + ;
+                        "INNER JOIN articulos_tarifas ON articulos_tarifas.uuid = articulos_precios.tarifa_uuid"     + " "
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 
@@ -251,6 +337,9 @@ METHOD getColumns() CLASS SQLArticulosPreciosModel
                                                       "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "margen",                     {  "create"    => "FLOAT( 8, 4 )"                           ,;
+                                                      "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "margen_real",                {  "create"    => "FLOAT( 8, 4 )"                           ,;
                                                       "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "precio_base",                {  "create"    => "FLOAT( 16, 6 )"                          ,;

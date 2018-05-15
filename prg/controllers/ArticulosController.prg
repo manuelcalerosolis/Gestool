@@ -27,6 +27,10 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    METHOD insertPreciosWhereArticulo()
 
+   METHOD getPrecioCosto()        
+
+   METHOD getPorcentajeIVA()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -114,6 +118,34 @@ METHOD End() CLASS ArticulosController
    ::Super:End()
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getPrecioCosto()
+
+   if empty(::oModel)
+      RETURN ( 0 )
+   end if 
+
+   if empty(::oModel:hBuffer)
+      RETURN ( 0 )
+   end if 
+
+RETURN ( ::oModel:hBuffer[ "precio_costo" ] )
+
+//---------------------------------------------------------------------------//
+
+METHOD getPorcentajeIVA()
+
+   if empty(::oModel)
+      RETURN ( 0 )
+   end if 
+
+   if empty(::oModel:hBuffer)
+      RETURN ( 0 )
+   end if 
+
+RETURN ( ::oIvaTipoController:oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[ "iva_tipo_uuid" ] ) )
 
 //---------------------------------------------------------------------------//
 
