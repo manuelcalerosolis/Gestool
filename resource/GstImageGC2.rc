@@ -372,3 +372,7 @@ GC_BUSINESSPEOPLE_48 BITMAP "..\\bmp\\gc_businesspeople_48.bmp"
 GC_MAP_ROUTE_16 BITMAP "..\\bmp\\gc_map_route_16.bmp"
 GC_MAP_ROUTE_32 BITMAP "..\\bmp\\gc_map_route_32.bmp"
 GC_MAP_ROUTE_48 BITMAP "..\\bmp\\gc_map_route_48.bmp"
+
+GC_UNIVERSITY_16 BITMAP "..\\bmp\\gc_university_16.bmp"
+GC_UNIVERSITY_32 BITMAP "..\\bmp\\gc_university_32.bmp"
+GC_UNIVERSITY_48 BITMAP "..\\bmp\\gc_university_48.bmp"

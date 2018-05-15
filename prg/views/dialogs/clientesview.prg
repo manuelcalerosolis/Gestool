@@ -326,11 +326,8 @@ METHOD redefineComercial() CLASS ClientesView
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-
-
-
    REDEFINE SAY ::oInfoSubCuenta ;
-      PROMPT   "Subcuenta" ;
+      PROMPT   "Subcuenta..." ;
       FONT     getBoldFont() ; 
       COLOR    rgb( 10, 152, 234 ) ;
       ID       320 ;
@@ -364,7 +361,7 @@ METHOD redefineComercial() CLASS ClientesView
       OF       ::oFolder:aDialogs[2]
 
    REDEFINE SAY ::oInfoSubCuentaDescuento ;
-      PROMPT   "Descuento" ;
+      PROMPT   "Descuento..." ;
       FONT     getBoldFont() ; 
       COLOR    rgb( 10, 152, 234 ) ;
       ID       360 ;
@@ -429,14 +426,14 @@ METHOD addLinksToExplorerBar() CLASS ClientesView
 
    local oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   oPanel:AddLink( "Tarifas...",          {|| MsgInfo( "Tarifas" ) }, ::oController:oDireccionesController:getImage( "16" ) )
-   oPanel:AddLink( "Direcciones...",      {|| ::oController:oDireccionesController:activateDialogView() }, ::oController:oDireccionesController:getImage( "16" ) )
-   oPanel:AddLink( "Contactos...",        {|| ::oController:oContactosController:activateDialogView() }, ::oController:oContactosController:getImage( "16" ) )
-   oPanel:AddLink( "Cuentas bancarias...",{|| ::oController:oCuentasBancariasController:activateDialogView() }, ::oController:oCuentasBancariasController:getImage( "16" ) )
-   oPanel:AddLink( "Incidencias...",      {|| ::oController:oIncidenciasController:activateDialogView() }, ::oController:oIncidenciasController:getImage( "16" ) )
-   oPanel:AddLink( "Documentos...",       {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
-   oPanel:AddLink( "Facturae...",         {|| MsgInfo( "Facturae" ) }, ::oController:oDocumentosController:getImage( "16" ) )
-   oPanel:AddLink( "Campos extra...",     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+   oPanel:AddLink( "Tarifas...",             {|| MsgInfo( "Tarifas" ) }, "gc_money_interest_16" )
+   oPanel:AddLink( "Direcciones...",         {|| ::oController:oDireccionesController:activateDialogView() }, ::oController:oDireccionesController:getImage( "16" ) )
+   oPanel:AddLink( "Contactos...",           {|| ::oController:oContactosController:activateDialogView() }, ::oController:oContactosController:getImage( "16" ) )
+   oPanel:AddLink( "Cuentas bancarias...",   {|| ::oController:oCuentasBancariasController:activateDialogView() }, ::oController:oCuentasBancariasController:getImage( "16" ) )
+   oPanel:AddLink( "Incidencias...",         {|| ::oController:oIncidenciasController:activateDialogView() }, ::oController:oIncidenciasController:getImage( "16" ) )
+   oPanel:AddLink( "Documentos...",          {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
+   oPanel:AddLink( "Entidades facturae...",  {|| MsgInfo( "Facturae" ) }, "gc_university_16" )
+   oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
 RETURN ( self )
 
