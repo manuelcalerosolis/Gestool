@@ -246,7 +246,6 @@ RETURN ( ::oDialog:nResult )
 CLASS IvaTipoValidator FROM SQLBaseValidator
 
    METHOD getValidators()
-
  
 END CLASS
 
@@ -268,9 +267,11 @@ RETURN ( ::hValidators )
 
 CLASS SQLIvaTiposModel FROM SQLBaseModel
 
-   DATA cTableName                        INIT "iva_tipos"
+   DATA cTableName                              INIT "iva_tipos"
 
    METHOD getColumns()
+
+   METHOD getPorcentajeWhereCodigo( cCodigo )   INLINE ( ::getField( "porcentaje", "codigo", cCodigo ) )
 
 END CLASS
 

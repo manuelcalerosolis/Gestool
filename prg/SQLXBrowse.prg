@@ -292,7 +292,7 @@ RETURN ( Self )
 
 METHOD getColumnByHeaders()
 
-   ::aHeaders := {}
+   ::aHeaders  := {}
 
    aeval( ::aCols, { |o| if( !empty( o:cHeader ), aadd( ::aHeaders, o:cHeader ), ) } )
 
