@@ -282,28 +282,9 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-/* 
-   local oUrlLink
-   local oUrlLinkFolder
-   local oDlg
-   local oFld
 
-   DEFINE DIALOG oDlg RESOURCE "test" COLOR "N/B"
+   ArticulosPreciosRepository():createFunctionPriceUsingMargin()
 
-   REDEFINE FOLDER oFld ;
-         ID       500 ;
-         OF       oDlg ;
-         PROMPT   "&Folder"   ;
-         DIALOGS  "TEST_FOLDER"
-
-   oUrlLink = TUrlLink():Redefine( 100, oDlg,,, "www.fivetechsoft.com",, CLR_GRAY, CLR_WHITE, CLR_YELLOW, .T. )
-   oUrlLink:bAction = { || MsgInfo( "click" ) }
-
-   oUrlLink = TUrlLink():Redefine( 100, oFld:aDialogs[1],,, "www.gestool.com",, CLR_GRAY, CLR_WHITE, CLR_YELLOW, .T. )
-   oUrlLink:bAction = { || MsgInfo( "click" ) }
-
-   ACTIVATE DIALOG oDlg CENTERED  
-*/
 RETURN nil
 
 //----------------------------------------------------------------------------//

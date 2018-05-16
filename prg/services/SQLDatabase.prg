@@ -77,7 +77,8 @@ CLASS SQLDatabase
       METHOD exportTable( hFileName, cTable )
 
    METHOD checkModels()   
-   METHOD checkModel( oModel )   
+   METHOD checkModel( oModel ) 
+
    METHOD getSchemaColumns()
 
    METHOD getListTables()
