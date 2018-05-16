@@ -190,9 +190,9 @@ METHOD Exec( cSentence )
    local lExec    := .t.
    local oError
 
-   if ::isParseError( cSentence )
-      RETURN ( .f. )  
-   end if 
+   // if ::isParseError( cSentence )
+   //    RETURN ( .f. )  
+   // end if 
 
    try
    

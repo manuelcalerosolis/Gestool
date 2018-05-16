@@ -37,6 +37,8 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::oValidator                     := ArticulosPreciosValidator():New( self )
 
+   ::oRepository                    := ArticulosPreciosRepository():New( self )
+
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 RETURN ( Self )
@@ -50,6 +52,8 @@ METHOD End() CLASS ArticulosPreciosController
    ::oBrowseView:End()
 
    ::oValidator:End()
+
+   ::oRepository:End()
 
    ::Super:End()
 
@@ -71,22 +75,17 @@ RETURN ( Self )
 
 METHOD setMargen( oCol, nMargen ) CLASS ArticulosPreciosController
 
-   local uuid        
    local oCommand
-
-   uuid           := ::getRowSet():fieldGet( 'uuid' )
 
    if ::oValidator:validate( 'margen', nMargen )
 
       oCommand    := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
                                                       'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
                                                       'Margen'          => nMargen } )
+
       oCommand:caclculaPreciosUsandoMargen()
 
-      ::oModel:updateFieldsWhereUuid( uuid,  {  'margen'                => oCommand:Margen(),;
-                                                'margen_real'           => oCommand:MargenReal(),;
-                                                'precio_base'           => oCommand:PrecioBase(),;   
-                                                'precio_iva_incluido'   => oCommand:PrecioIVAIncluido() } )
+      ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
 
       ::getRowSet():Refresh()
 
@@ -98,20 +97,12 @@ RETURN ( self )
 
 METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
 
-   local uuid     
-   local oCommand   
-
-   uuid           := ::getRowSet():fieldGet( 'uuid' )
-
-   oCommand       := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
+   local oCommand := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
                                                       'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
                                                       'PrecioBase'      => nPrecioBase } )
    oCommand:caclculaPreciosUsandoBase()
 
-   ::oModel:updateFieldsWhereUuid( uuid,  {  'precio_base'              => nPrecioBase,;  
-                                             'margen'                   => oCommand:caclculaMargen(),; 
-                                             'margen_real'              => oCommand:caclculaMargenReal(),;
-                                             'precio_iva_incluido'      => oCommand:caclculaPrecioIVAIncluido() } )
+   ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
 
    ::getRowSet():Refresh()
 
@@ -121,21 +112,13 @@ RETURN ( self )
 
 METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) CLASS ArticulosPreciosController
 
-   local uuid     
-   local oCommand   
-
-   uuid           := ::getRowSet():fieldGet( 'uuid' )
-
-   oCommand       := CalculaPrecioCommand():Build( {  'Costo'              => ::oSenderController:getPrecioCosto(),;
+   local oCommand := CalculaPrecioCommand():Build( {  'Costo'              => ::oSenderController:getPrecioCosto(),;
                                                       'PorcentajeIVA'      => ::oSenderController:getPorcentajeIVA(),;
                                                       'PrecioIVAIncluido'  => nPrecioIVAIncluido } )
 
-   ::oModel:updateFieldsWhereUuid( uuid,  {  'precio_iva_incluido'      => nPrecioIVAIncluido,;
-                                             'precio_base'              => oCommand:caclculaPrecioBaseSobrePrecioIVA(),;   
-                                             'margen'                   => oCommand:caclculaMargen(),; 
-                                             'margen_real'              => oCommand:caclculaMargenReal() } )
+   oCommand:caclculaPreciosUsandoIVAIncluido()
 
-   ::oModel:updateFieldWhereUuid( uuid, 'precio_iva_incluido', nPrecioIVAIncluido )
+   ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
 
    ::getRowSet():Refresh()
 
@@ -306,6 +289,11 @@ CLASS SQLArticulosPreciosModel FROM SQLBaseModel
 
    METHOD insertPreciosWhereArticulo( uuidArticulo )     INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereArticulo( uuidArticulo ) ) )
 
+   METHOD updateFieldsCommandWhereUuid( oCommand, uuid ) INLINE ( ::updateFieldsWhereUuid( uuid,   {  'margen'                => oCommand:Margen(),; 
+                                                                                                      'margen_real'           => oCommand:MargenReal(),;
+                                                                                                      'precio_base'           => oCommand:PrecioBase(),;
+                                                                                                      'precio_iva_incluido'   => oCommand:PrecioIVAIncluido() } ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -398,42 +386,77 @@ CLASS ArticulosPreciosRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLArticulosPreciosModel():getTableName() ) 
 
-   METHOD getSQLFunctions()               INLINE ( { ::createFunctionPriceUsingMargin() } )
+   METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionPriceUsingMargin(),;
+                                                      ::createFunctionPriceUsingMargin(),;
+                                                      ::dropFunctionTest(),;
+                                                      ::createFunctionTest() } )
+
+   METHOD selectFunctionPriceUsingMargin()
+   
+   METHOD dropFunctionPriceUsingMargin()  INLINE ( "DROP FUNCTION IF EXISTS CalculatePriceUsingMargin;" )
 
    METHOD createFunctionPriceUsingMargin()
+
+   METHOD dropFunctionTest()              INLINE ( "DROP FUNCTION IF EXISTS Test;" )
+
+   METHOD createFunctionTest()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD selectFunctionPriceUsingMargin( precioCosto, porcentajeIVA, Margen, id ) CLASS ArticulosPreciosRepository
+
+   local cSQL  := "SELECT CalculatePriceUsingMargin( "
+   cSQL        +=    toSQLString( precioCosto ) + ", "
+   cSQL        +=    toSQLString( porcentajeIVA ) + ", "
+   cSQL        +=    toSQLString( Margen ) + ", "
+   cSQL        +=    toSQLString( id ) + " )"
+
+   logwrite( cSQL )
+
+RETURN ( getSQLDatabase():Exec( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD createFunctionPriceUsingMargin() CLASS ArticulosPreciosRepository
    
-   local cSQL 
+   local cSQL  := "CREATE FUNCTION CalculatePriceUsingMargin( PrecioCosto INT, PorcentajeIVA INT, Margen INT, idPrecio INT ) RETURNS INT DETERMINISTIC" + space( 1 )
+   
+   cSQL        += "BEGIN"                                                                                + space( 1 )
+   cSQL        +=    "DECLARE PrecioBase INT;"                                                           + space( 1 )
+   cSQL        +=    "DECLARE PrecioIVAIncluido INT;"                                                    + space( 1 )
+   cSQL        +=    "DECLARE MargenReal INT;"                                                           + space( 1 )
+   
+   cSQL        +=    "SET PrecioBase = PrecioCosto + ( PrecioCosto * Margen / 100 );"                    + space( 1 )
+   cSQL        +=    "SET PrecioIVAIncluido = PrecioBase + ( PrecioBase * PorcentajeIVA / 100 );"        + space( 1 )
+   cSQL        +=    "SET MargenReal = ( PrecioBase - PrecioCosto ) / PrecioCosto * 100;"                + space( 1 )
 
-   cSQL        := "DROP FUNCTION IF EXISTS CalculatePriceUsingMargin;"                                   + CRLF
-   
-   cSQL        += "DELIMITER ;;"                                                                         + CRLF
-   
-   cSQL        += "CREATE FUNCTION CalculatePriceUsingMargin( PrecioCosto INT, Margen INT, PorcentajeIVA INT, UuidPrecio CHAR ) RETURNS INT" + CRLF
-   
-   cSQL        += "BEGIN"                                                                                + CRLF
-   cSQL        +=    "DECLARE PrecioBase INT;"                                                           + CRLF
-   cSQL        +=    "DECLARE PrecioIVAIncluido INT;"                                                    + CRLF
-   cSQL        +=    "DECLARE MargenReal INT;"                                                           + CRLF
-   
-   cSQL        +=    "SET PrecioBase = PrecioCosto + ( PrecioCosto * Margen / 100 );"                    + CRLF
-   cSQL        +=    "SET PrecioIVAIncluido = PrecioBase + ( PrecioBase * PorcentajeIVA / 100 );"        + CRLF
-   cSQL        +=    "SET MargenReal = ( PrecioBase - PrecioCosto ) / PrecioCosto * 100;"                + CRLF
+   cSql        +=    "UPDATE " + ::getTableName() + " SET"                                               + space( 1 )
+   cSql        +=       "precio_base = PrecioBase,"                                                      + space( 1 )
+   cSql        +=       "precio_iva_incluido = PrecioIVAIncluido,"                                       + space( 1 )
+   cSql        +=       "margen_real = MargenReal"                                                       + space( 1 )
+   cSql        +=    "WHERE id = idPrecio;"                                                              + space( 1 )
 
-   cSql        +=    "UPDATE " + ::getTableName() + " SET "                                              + CRLF
-   cSql        +=       "precio_base = PrecioBase, "                                                     + CRLF
-   cSql        +=       "precio_iva_incluido = PrecioIVAIncluido, "                                      + CRLF
-   cSql        +=       "margen_real = MargenReal "                                                      + CRLF
-   cSql        +=    "WHERE uuid = UuidPrecio;"                                                          + CRLF
+   cSQL        +=    "RETURN PrecioBase;"                                                                + space( 1 )
+   cSQL        += "END;"                                                                                 + space( 1 )
 
-   cSQL        +=    "RETURN PrecioBase;"                                                                + CRLF
-   cSQL        += "END;"                                                                                 + CRLF
-   cSQL        += ";;"                                                                                   + CRLF
+   logwrite( cSQL )
+
+RETURN ( cSQL )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionTest() CLASS ArticulosPreciosRepository
+   
+   local cSQL  := "CREATE FUNCTION Test( idPrecio INT ) RETURNS INT DETERMINISTIC" + space( 1 )
+   
+   cSQL        += "BEGIN"                                                                                + space( 1 )
+   cSql        +=    "UPDATE " + ::getTableName() + " SET"                                               + space( 1 )
+   cSql        +=       "precio_base = 1234"                                                             + space( 1 )
+   cSql        +=    "WHERE id = @idPrecio;"                                                             + space( 1 )
+   cSQL        +=    "RETURN 1;"                                                                         + space( 1 )
+   cSQL        += "END;"                                                                                 + space( 1 )
 
    logwrite( cSQL )
 
