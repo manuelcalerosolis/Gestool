@@ -3953,7 +3953,7 @@ FUNCTION SelSysDate( oMenuItem )
    Obtenemos el nivel de acceso
    */
 
-   if nAnd( Auth():Level( oMenuItem ), 1 ) != 0
+   if nAnd( Auth():Level( oMenuItem ), 1 ) == 0
       msgStop( "Acceso no permitido." )
    else
       dSysDate       := Calendario( dSysDate, "Fecha de trabajo" )
