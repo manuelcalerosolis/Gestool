@@ -32,7 +32,7 @@ METHOD New( oSenderController ) CLASS IncidenciasController
 
    ::cTitle                      := "Incidencias"
 
-   ::cName                       := "incidencias"
+   ::cName                       := "incidencias_sql"
 
    ::hImage                      := {  "16" => "gc_hint_16",;
                                        "32" => "gc_hint_32",;
@@ -197,20 +197,12 @@ METHOD addColumns() CLASS IncidenciasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'fecha_hora'
-      :cHeader             := 'Fecha y hora'
-      :nWidth              := 130
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_hora' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'mostrar'
       :cHeader             := 'Mostrar'
-      :SetCheck( { "Sel16", "Nil16" } )
-      :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'mostrar' ) }
+      :nWidth              := 60
+      :bEditValue          := {|| if( ::getRowSet():fieldGet( 'mostrar' ), "Mostrar", ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -222,20 +214,29 @@ METHOD addColumns() CLASS IncidenciasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'fecha_hora'
+      :cHeader             := 'Fecha y hora'
+      :nWidth              := 130
+      :bEditValue          := {|| hb_TSToStr( ::getRowSet():fieldGet( 'fecha_hora' ) ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'resuelta'
       :cHeader             := 'Resuelta'
-      :SetCheck( { "Sel16", "Nil16" } )
-      :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'resuelta' ) }
+      :nWidth              := 60
+      :bEditValue          := {|| if( ::getRowSet():fieldGet( 'resuelta' ), "Resuelta", ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'fecha_hora_resolucion'
       :cHeader             := 'Fecha y hora de resolución'
       :nWidth              := 130
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_hora_resolucion' ) }
+      :bEditValue          := {|| hb_TSToStr( ::getRowSet():fieldGet( 'fecha_hora_resolucion' ) ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
 RETURN ( self )

@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ContactosController FROM SQLBrowseController
+CLASS ContactosController FROM SQLNavigatorController
 
    METHOD New()
 

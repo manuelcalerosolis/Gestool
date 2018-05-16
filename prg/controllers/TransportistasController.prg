@@ -211,7 +211,7 @@ METHOD Activate() CLASS TransportistasView
 
    oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
 
-   ::oController:oDireccionesController:Activate( 160, ::oDialogs )
+   ::oController:oDireccionesController:Activate( 160, ::oDialog )
 
    REDEFINE BUTTON ;
       ID          IDOK ;

@@ -280,6 +280,10 @@ RETURN ( self )
 
 METHOD insertSelectedColumn()
 
+   if !( ::oBrowse:lMultiSelect )
+      RETURN ( self )
+   end if 
+
    with object (::oBrowse:InsCol( 1 ) )
       :Cargo         := .t.
       :bEditValue    := { || ascan( ::oBrowse:aSelected, ::oBrowse:BookMark ) > 0 }

@@ -25,6 +25,19 @@ CLASS ClientesView FROM SQLBaseView
    DATA oRiesgoAlcanzado
    DATA nRiesgoAlcanzado   INIT 0
 
+   DATA oInfoSubCuenta
+   DATA oInfoSubCuentaDescuento
+
+   DATA oGetSubcuenta
+   DATA oGetCuentaVenta
+   DATA oGetSubcuentaDescuento
+
+   DATA oSaldoSubcuenta
+   DATA nSaldoSubcuenta
+
+   DATA oSaldoSubcuentaDescuento
+   DATA nSaldoSubcuentaDescuento
+
    METHOD Activate()
 
    METHOD Activating()
@@ -36,14 +49,6 @@ CLASS ClientesView FROM SQLBaseView
    METHOD redefineGeneral()
 
    METHOD redefineComercial()
-
-   METHOD redefineDirecciones()
-
-   METHOD redefineContactos()
-
-   METHOD redefineIncidencias()
-
-   METHOD redefineDocumentos()
 
    METHOD addLinksToExplorerBar()
 
@@ -89,29 +94,13 @@ METHOD Activate() CLASS ClientesView
       ID          500 ;
       OF          ::oDialog ;
       PROMPT      "General",;
-                  "Comercial",;
-                  "Direcciones",;
-                  "Contactos",;
-                  "Incidencias",;
-                  "Documentos";
+                  "Comercial";
       DIALOGS     "CLIENTE_GENERAL" ,;
-                  "CLIENTE_COMERCIAL",;
-                  "CLIENTE_AUXILIARTABLE",;
-                  "CLIENTE_AUXILIARTABLE",;
-                  "CLIENTE_AUXILIARTABLE",;
-                  "CLIENTE_AUXILIARTABLE"
+                  "CLIENTE_COMERCIAL"
 
    ::redefineGeneral()   
 
    ::redefineComercial()
-
-   ::redefineDirecciones()
-
-   ::redefineContactos()
-
-   //::redefineIncidencias()
-
-   ::redefineDocumentos()
 
    ::redefineExplorerBar()
 
@@ -233,9 +222,13 @@ METHOD redefineComercial() CLASS ClientesView
       ID       170;
       PICTURE  "99" ;
       SPINNER ;
-      VALID    ( if( ( ::oController:oModel:hBuffer[ "segundo_dia_pago" ] != 0 .and. ::oController:oModel:hBuffer[ "segundo_dia_pago" ] <= ::oController:oModel:hBuffer[ "primer_dia_pago" ] ),;
-                   ( msgStop( "Segundo día de pago debe ser mayor que el primero" ), .f. ),;
-                   .t. ) ) ;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      OF       ::oFolder:aDialogs[2]
+
+   REDEFINE GET ::oController:oModel:hBuffer[ "tercer_dia_pago" ] ;
+      ID       310;
+      PICTURE  "99" ;
+      SPINNER ;
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
@@ -333,165 +326,64 @@ METHOD redefineComercial() CLASS ClientesView
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
-RETURN ( self )
+   REDEFINE SAY ::oInfoSubCuenta ;
+      PROMPT   "Subcuenta..." ;
+      FONT     getBoldFont() ; 
+      COLOR    rgb( 10, 152, 234 ) ;
+      ID       320 ;
+      OF       ::oFolder:aDialogs[2]
 
-//---------------------------------------------------------------------------//
+   ::oInfoSubCuenta:lWantClick  := .t.
+   ::oInfoSubCuenta:OnClick     := {|| msgalert( "Informe subcuenta del cliente" ) }
 
-METHOD redefineDirecciones() CLASS ClientesView
+   REDEFINE GET ::oGetSubcuenta ; 
+      VAR      ::oController:oModel:hBuffer[ "subcuenta" ] ;
+      ID       330 ;
+      IDTEXT   331 ;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      ON HELP  ( MsgInfo( "Conectar con Contaplus" ) ) ;
+      BITMAP   "LUPA" ;
+      OF       ::oFolder:aDialogs[2]
 
-   local oBtnAppend
-   local oBtnEdit
-   local oBtnZoom
-   local oBtnDelete
+   REDEFINE GET ::oSaldoSubcuenta ; 
+      VAR      ::nSaldoSubcuenta ;
+      ID       340;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      OF       ::oFolder:aDialogs[2]
 
-   REDEFINE BUTTON oBtnAppend ;
-      ID          100 ;
-      OF          ::oFolder:aDialogs[3] ;
-      WHEN        ( ::oController:isNotZoomMode() )
+   REDEFINE GET ::oGetCuentaVenta ; 
+      VAR      ::oController:oModel:hBuffer[ "cuenta_venta" ] ;
+      ID       350 ;
+      IDTEXT   351 ;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      ON HELP  ( MsgInfo( "Conectar con Contaplus" ) ) ;
+      BITMAP   "LUPA" ;
+      OF       ::oFolder:aDialogs[2]
 
-   oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
+   REDEFINE SAY ::oInfoSubCuentaDescuento ;
+      PROMPT   "Descuento..." ;
+      FONT     getBoldFont() ; 
+      COLOR    rgb( 10, 152, 234 ) ;
+      ID       360 ;
+      OF       ::oFolder:aDialogs[2]
 
-   REDEFINE BUTTON oBtnEdit ;
-      ID          110 ;
-      OF          ::oFolder:aDialogs[3] ;
-      WHEN        ( ::oController:isNotZoomMode() )
+   ::oInfoSubCuentaDescuento:lWantClick  := .t.
+   ::oInfoSubCuentaDescuento:OnClick     := {|| msgalert( "Informe subcuenta dedescuento" ) }
 
-   oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
+   REDEFINE GET ::oGetSubcuentaDescuento ; 
+      VAR      ::oController:oModel:hBuffer[ "cuenta_venta" ] ;
+      ID       370 ;
+      IDTEXT   371 ;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      ON HELP  ( MsgInfo( "Conectar con Contaplus" ) ) ;
+      BITMAP   "LUPA" ;
+      OF       ::oFolder:aDialogs[2]
 
-   REDEFINE BUTTON oBtnZoom ;
-      ID          120 ;
-      OF          ::oFolder:aDialogs[3]
-
-   oBtnZoom:bAction   := {|| ::oController:oDireccionesController:Zoom() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          130 ;
-      OF          ::oFolder:aDialogs[3] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
-
-   ::oController:oDireccionesController:Activate( 140, ::oFolder:aDialogs[3] )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD redefineContactos() CLASS ClientesView
-
-   local oBtnAppend
-   local oBtnEdit
-   local oBtnZoom
-   local oBtnDelete
-
-   REDEFINE BUTTON oBtnAppend ;
-      ID          100 ;
-      OF          ::oFolder:aDialogs[4] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnAppend:bAction   := {|| ::oController:oContactosController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          110 ;
-      OF          ::oFolder:aDialogs[4] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnEdit:bAction   := {|| ::oController:oContactosController:Edit() }
-
-   REDEFINE BUTTON oBtnZoom ;
-      ID          120 ;
-      OF          ::oFolder:aDialogs[4]
-
-   oBtnZoom:bAction   := {|| ::oController:oContactosController:Zoom() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          130 ;
-      OF          ::oFolder:aDialogs[4] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnDelete:bAction   := {|| ::oController:oContactosController:Delete() }
-
-   ::oController:oContactosController:Activate( 140, ::oFolder:aDialogs[4] )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD redefineIncidencias()
-
-   local oBtnAppend
-   local oBtnEdit
-   local oBtnZoom
-   local oBtnDelete
-
-   REDEFINE BUTTON oBtnAppend ;
-      ID          100 ;
-      OF          ::oFolder:aDialogs[5] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnAppend:bAction   := {|| ::oController:oIncidenciasController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          110 ;
-      OF          ::oFolder:aDialogs[5] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnEdit:bAction   := {|| ::oController:oIncidenciasController:Edit() }
-
-   REDEFINE BUTTON oBtnZoom ;
-      ID          120 ;
-      OF          ::oFolder:aDialogs[5]
-
-   oBtnZoom:bAction   := {|| ::oController:oIncidenciasController:Zoom() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          130 ;
-      OF          ::oFolder:aDialogs[5] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnDelete:bAction   := {|| ::oController:oIncidenciasController:Delete() }
-
-   ::oController:oIncidenciasController:Activate( 140, ::oFolder:aDialogs[5] )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD redefineDocumentos()
-
-   local oBtnAppend
-   local oBtnEdit
-   local oBtnZoom
-   local oBtnDelete
-
-   REDEFINE BUTTON oBtnAppend ;
-      ID          100 ;
-      OF          ::oFolder:aDialogs[6] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnAppend:bAction   := {|| ::oController:oDocumentosController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          110 ;
-      OF          ::oFolder:aDialogs[6] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnEdit:bAction   := {|| ::oController:oDocumentosController:Edit() }
-
-   REDEFINE BUTTON oBtnZoom ;
-      ID          120 ;
-      OF          ::oFolder:aDialogs[6]
-
-   oBtnZoom:bAction   := {|| ::oController:oDocumentosController:Zoom() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          130 ;
-      OF          ::oFolder:aDialogs[6] ;
-      WHEN        ( ::oController:isNotZoomMode() )
-
-   oBtnDelete:bAction   := {|| ::oController:oDocumentosController:Delete() }
-
-   ::oController:oDocumentosController:Activate( 140, ::oFolder:aDialogs[6] )
+   REDEFINE GET ::oSaldoSubcuentaDescuento ; 
+      VAR      ::nSaldoSubcuentaDescuento ;
+      ID       380;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      OF       ::oFolder:aDialogs[2]
 
 RETURN ( self )
 
@@ -532,13 +424,17 @@ RETURN ( self )
 
 METHOD addLinksToExplorerBar() CLASS ClientesView
 
-   local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+   local oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   oPanel:AddLink( "Direcciones...",      {|| MsgInfo( "Entro en direcciones" ) }, "gc_user_16" )
-   oPanel:AddLink( "Contactos...",        {|| MsgInfo( "Entro en contactos" ) }, "gc_user_16" )
-   oPanel:AddLink( "Cuentas bancarias...",{|| MsgInfo( "Entro en cuentas bancarias" ) }, "gc_user_16" )
-   oPanel:AddLink( "Incidencias...",      {|| ::oController:oIncidenciasController:activateDialogView() }, "gc_user_16" )
-   oPanel:AddLink( "Documentos...",       {|| MsgInfo( "Entro en documentos" ) }, "gc_user_16" )
+   oPanel:AddLink( "Tarifas...",             {|| MsgInfo( "Tarifas" ) }, "gc_money_interest_16" )
+   oPanel:AddLink( "Direcciones...",         {|| ::oController:oDireccionesController:activateDialogView() }, ::oController:oDireccionesController:getImage( "16" ) )
+   oPanel:AddLink( "Contactos...",           {|| ::oController:oContactosController:activateDialogView() }, ::oController:oContactosController:getImage( "16" ) )
+   oPanel:AddLink( "Cuentas bancarias...",   {|| ::oController:oCuentasBancariasController:activateDialogView() }, ::oController:oCuentasBancariasController:getImage( "16" ) )
+   oPanel:AddLink( "Incidencias...",         {|| ::oController:oIncidenciasController:activateDialogView() }, ::oController:oIncidenciasController:getImage( "16" ) )
+   oPanel:AddLink( "Documentos...",          {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
+   oPanel:AddLink( "Entidades facturae...",  {|| MsgInfo( "Facturae" ) }, "gc_university_16" )
+   oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+   oPanel:AddLink( "Descuentos...",          {|| ::oController:oDescuentosController:activateDialogView( ::oController:getUuid() ) }, ::oController:oDescuentosController:getImage( "16" ) )
 
 RETURN ( self )
 
@@ -612,6 +508,8 @@ METHOD changeAutorizacioncredito()
 
 Return ( self )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

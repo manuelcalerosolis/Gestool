@@ -239,11 +239,11 @@ METHOD activateDialogView()
       RETURN ( nil )
    end if
 
-   /*::buildRowSetSentence()   
+   ::buildRowSetSentence()   
 
    if empty( ::oRowSet:get() )
       RETURN ( nil )
-   end if*/
+   end if
 
 RETURN ( ::oDialogModalView:Activate() )
 

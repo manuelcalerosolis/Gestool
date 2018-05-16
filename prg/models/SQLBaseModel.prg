@@ -198,6 +198,7 @@ CLASS SQLBaseModel
 
    METHOD updateFieldWhereId( id, cField, uValue )
    METHOD updateFieldWhereUuid( uuid, cField, uValue )
+   METHOD updateFieldsWhereUuid( uuid, hFields )
 
    // Metodos de consulta------------------------------------------------------
 
@@ -1151,9 +1152,28 @@ METHOD updateFieldWhereUuid( uuid, cField, uValue )
    cSql        +=    "SET " + cField + " = " + toSqlString( uValue )    + " "
    cSql        +=    "WHERE uuid = " + toSqlString( uuid )
 
-Return ( ::getDatabase():Exec( cSql ) )
+RETURN ( ::getDatabase():Exec( cSql ) )
 
 //----------------------------------------------------------------------------//
+
+METHOD updateFieldsWhereUuid( uuid, hFields )
+
+   local cSql  
+   local uValue
+
+   cSql           := "UPDATE " + ::cTableName + " SET "
+
+   for each uValue in hFields
+      cSql        += uValue:__enumKey() + " = " + toSQLString( uValue ) + ", "
+   next
+
+   cSql           := chgAtEnd( cSql, '', 2 ) + " "
+
+   cSql           +=    "WHERE uuid = " + toSqlString( uuid )
+
+RETURN ( ::getDatabase():Exec( cSql ) )
+
+//---------------------------------------------------------------------------//
 
 METHOD getField( cField, cBy, cId )
 

@@ -27,6 +27,12 @@ CLASS TercerosController FROM SQLNavigatorController
 
    DATA oDocumentosController
 
+   DATA oCuentasBancariasController
+
+   DATA oCamposExtraValoresController
+
+   DATA oDescuentosController
+
    METHOD New()
 
    METHOD DireccionesControllerLoadCurrentBuffer()
@@ -50,6 +56,8 @@ METHOD New() CLASS TercerosController
    ::oBrowseView                 := TercerosBrowseView():New( self )
 
    ::oRepository                 := TercerosRepository():New( self )
+
+   ::lTransactional              := .t.
 
 RETURN ( Self )
 

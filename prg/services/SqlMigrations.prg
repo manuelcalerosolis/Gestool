@@ -7,6 +7,8 @@ CLASS SQLMigrations
 
    DATA aModels                           INIT {}
 
+   DATA aRepositories                     INIT {}
+
    METHOD Run()
    
    METHOD createDatabase()
@@ -16,6 +18,12 @@ CLASS SQLMigrations
    METHOD checkModels()   
 
    METHOD checkModel( oModel )
+
+   METHOD addRepositories()
+
+   METHOD checkRepositories()
+
+   METHOD checkRepository( oRepository )
 
    METHOD checkValues()
 
@@ -32,6 +40,10 @@ METHOD Run()
    ::addModels()
 
    ::checkModels()
+
+   ::addRepositories()
+
+   ::checkRepositories()
 
    ::checkValues()
 
@@ -64,6 +76,20 @@ METHOD checkModel( oModel )
       getSQLDatabase():Execs( oModel:getAlterTableSentences( aSchemaColumns ) )
    end if 
   
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD checkRepositories()
+
+RETURN ( aeval( ::aRepositories, {|oRepository| ::checkRepository( oRepository ) } ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD checkRepository( oRepository )
+
+   getSQLDatabase():Execs( oRepository:getSQLFunctions() )
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -255,6 +281,16 @@ METHOD addModels()
 
    aadd( ::aModels, SQLTraduccionesModel():New() ) 
 
+   aadd( ::aModels, SQLDescuentosModel():New() ) 
+
 RETURN ( ::aModels )
+ 
+//----------------------------------------------------------------------------//
+
+METHOD addRepositories()
+
+   aadd( ::aRepositories, ArticulosPreciosRepository():New() )
+
+RETURN ( ::aRepositories )
  
 //----------------------------------------------------------------------------//

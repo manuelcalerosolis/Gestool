@@ -77,7 +77,8 @@ CLASS SQLDatabase
       METHOD exportTable( hFileName, cTable )
 
    METHOD checkModels()   
-   METHOD checkModel( oModel )   
+   METHOD checkModel( oModel ) 
+
    METHOD getSchemaColumns()
 
    METHOD getListTables()
@@ -189,9 +190,9 @@ METHOD Exec( cSentence )
    local lExec    := .t.
    local oError
 
-   if ::isParseError( cSentence )
-      RETURN ( .f. )  
-   end if 
+   // if ::isParseError( cSentence )
+   //    RETURN ( .f. )  
+   // end if 
 
    try
    

@@ -219,6 +219,8 @@ CLASS CuentasBancariasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
+   METHOD formatoCuenta()
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -242,30 +244,39 @@ METHOD addColumns() CLASS CuentasBancariasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
-      :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
+      :cSortOrder          := 'nombre_banco'
       :cHeader             := 'Nombre'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_banco' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'sucursal'
-      :cHeader             := 'Sucursal'
+      :cHeader             := 'Cuenta'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'sucursal' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :bEditValue          := {|| ::formatoCuenta() }
    end with 
 
-RETURN ( self )
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD formatoCuenta() CLASS CuentasBancariasBrowseView
+
+   local cCuenta  := ""
+
+      cCuenta     += ::getRowSet():fieldGet( 'iban_codigo_pais' )
+      cCuenta     += ::getRowSet():fieldGet( 'iban_digito_control' )
+      cCuenta     += " - "
+      cCuenta     += ::getRowSet():fieldGet( 'cuenta_codigo_entidad' )
+      cCuenta     += " - "
+      cCuenta     += ::getRowSet():fieldGet( 'cuenta_codigo_oficina' )
+      cCuenta     += " - "
+      cCuenta     += ::getRowSet():fieldGet( 'cuenta_digito_control' )
+      cCuenta     += " - "
+      cCuenta     += ::getRowSet():fieldGet( 'cuenta_numero' )
+
+RETURN ( cCuenta )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -315,6 +326,8 @@ METHOD Activate() CLASS CuentasBancariasView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
+   ::ExternalRedefine( ::oDialog )
+
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
@@ -330,8 +343,6 @@ METHOD Activate() CLASS CuentasBancariasView
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
-
-   ::oDialog:bStart  := {|| ::oController:oDireccionesController:oDialogView:StartDialog() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -356,7 +367,7 @@ METHOD ExternalRedefine( oDialog ) CLASS CuentasBancariasView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET    ::oIBAN  ;
+   REDEFINE GET   ::oIBAN  ;
       VAR         ::oController:oModel:hBuffer[ "iban_digito_control" ] ;
       ID          1021 ;
       VALID       ::oController:CalculaIBAN() ;
@@ -384,7 +395,7 @@ METHOD ExternalRedefine( oDialog ) CLASS CuentasBancariasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_numero" ] ;
       ID          1025 ;
-      VALID      ::oController:CalculaDigitoControl() ;
+      VALID       ::oController:CalculaDigitoControl() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -407,10 +418,8 @@ END CLASS
 
 METHOD getValidators() CLASS CuentasBancariasValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
-                                                      "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre_banco" =>         {  "required"           => "El nombre es un dato requerido",;
+                                                      "unique"             => "El nombre introducido ya existe" } }
 
 RETURN ( ::hValidators )
 
@@ -448,8 +457,10 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                    "default"   => {|| space( 40 ) } }                       )
 
+   ::getEmpresaColumns()
+
    hset( ::hColumns, "nombre_banco",            {  "create"    => "VARCHAR( 140 )"                          ,;
-                                                   "default"   => {|| space( 140 ) } }                       )
+                                                   "default"   => {|| space( 140 ) } }                      )
 
    hset( ::hColumns, "iban_codigo_pais",        {  "create"    => "VARCHAR( 2 )"                            ,;
                                                    "default"   => {|| space( 2 ) } }                        )
@@ -466,8 +477,8 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
    hset( ::hColumns, "cuenta_digito_control",   {  "create"    => "VARCHAR( 2 )"                            ,;
                                                    "default"   => {|| space( 2 ) } }                        )
 
-   hset( ::hColumns, "cuenta_numero",           {  "create"    => "VARCHAR( 10 )"                            ,;
-                                                   "default"   => {|| space( 10 ) } }                        )
+   hset( ::hColumns, "cuenta_numero",           {  "create"    => "VARCHAR( 10 )"                           ,;
+                                                   "default"   => {|| space( 10 ) } }                       )
 
 RETURN ( ::hColumns )
 
@@ -503,7 +514,6 @@ CLASS CuentasBancariasRepository FROM SQLBaseRepository
    METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
 
    METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )
-
 
 END CLASS
 

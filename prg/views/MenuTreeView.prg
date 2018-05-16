@@ -108,6 +108,12 @@ CLASS MenuTreeView
                                                    ::oButtonMain:Expand(),;
                                                    ::fireEvent( 'addedSelectorButton' ) )
 
+   METHOD addDialogButtons()              INLINE ( ::fireEvent( 'addingSelectorButton' ),;
+                                                   ::addGeneralButton(),;
+                                                   ::addCloseButton(),;
+                                                   ::oButtonMain:Expand(),;
+                                                   ::fireEvent( 'addedSelectorButton' ) )
+
    METHOD addPrintSerialButton()
 
    METHOD addPrintButtons()               

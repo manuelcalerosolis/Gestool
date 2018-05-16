@@ -37,6 +37,8 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::oValidator                     := ArticulosPreciosValidator():New( self )
 
+   ::oRepository                    := ArticulosPreciosRepository():New( self )
+
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 RETURN ( Self )
@@ -50,6 +52,8 @@ METHOD End() CLASS ArticulosPreciosController
    ::oBrowseView:End()
 
    ::oValidator:End()
+
+   ::oRepository:End()
 
    ::Super:End()
 
@@ -71,11 +75,20 @@ RETURN ( Self )
 
 METHOD setMargen( oCol, nMargen ) CLASS ArticulosPreciosController
 
-   local uuid        := ::getRowSet():fieldGet( 'uuid' )
+   local oCommand
 
    if ::oValidator:validate( 'margen', nMargen )
-      ::oModel:updateFieldWhereUuid( uuid, 'margen', nMargen )
+
+      oCommand    := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
+                                                      'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
+                                                      'Margen'          => nMargen } )
+
+      oCommand:caclculaPreciosUsandoMargen()
+
+      ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
+
       ::getRowSet():Refresh()
+
    end if 
 
 RETURN ( self )
@@ -84,9 +97,12 @@ RETURN ( self )
 
 METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
 
-   local uuid        := ::getRowSet():fieldGet( 'uuid' )
+   local oCommand := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
+                                                      'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
+                                                      'PrecioBase'      => nPrecioBase } )
+   oCommand:caclculaPreciosUsandoBase()
 
-   ::oModel:updateFieldWhereUuid( uuid, 'precio_base', nPrecioBase )
+   ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
 
    ::getRowSet():Refresh()
 
@@ -96,9 +112,13 @@ RETURN ( self )
 
 METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) CLASS ArticulosPreciosController
 
-   local uuid        := ::getRowSet():fieldGet( 'uuid' )
+   local oCommand := CalculaPrecioCommand():Build( {  'Costo'              => ::oSenderController:getPrecioCosto(),;
+                                                      'PorcentajeIVA'      => ::oSenderController:getPorcentajeIVA(),;
+                                                      'PrecioIVAIncluido'  => nPrecioIVAIncluido } )
 
-   ::oModel:updateFieldWhereUuid( uuid, 'precio_iva_incluido', nPrecioIVAIncluido )
+   oCommand:caclculaPreciosUsandoIVAIncluido()
+
+   ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
 
    ::getRowSet():Refresh()
 
@@ -132,6 +152,7 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -144,12 +165,31 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'margen'
-      :cHeader             := 'Margen'
-      :nWidth              := 100
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Tarifa'
+      :nWidth              := 160
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Costo'
+      :nWidth              := 80
+      :bEditValue          := {|| ::oController:oSenderController:getPrecioCosto() }
+      :cEditPicture        := "@E 9999.9999"
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'margen'
+      :cHeader             := 'Margen %'
+      :nWidth              := 75
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nHeadBmpNo          := 1
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :AddResource( "gc_pencil_16" )
 
       :nEditType           := 1
       :bEditValue          := {|| ::getRowSet():fieldGet( 'margen' ) }
@@ -159,12 +199,25 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'margen_real'
+      :cHeader             := 'Markup %'
+      :nWidth              := 75
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'margen_real' ) }
+      :cEditPicture        := "@E 9999.9999"
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'precio_base'
       :cHeader             := 'Precio'
       :nWidth              := 100
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nHeadBmpNo          := 1
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
+      :AddResource( "gc_pencil_16" )
 
       :nEditType           := 1
       :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_base' ) }
@@ -178,8 +231,10 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :cHeader             := 'Precio IVA inc.'
       :nWidth              := 100
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nHeadBmpNo          := 1
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
+      :AddResource( "gc_pencil_16" )
 
       :nEditType           := 1
       :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_iva_incluido' ) }
@@ -222,17 +277,44 @@ CLASS SQLArticulosPreciosModel FROM SQLBaseModel
 
    DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( tarifa_uuid, articulo_uuid )"
 
+   METHOD getInitialSelect()
+
    METHOD getColumns()
 
    METHOD getSQLInsertPreciosWhereTarifa( uuidTarifa )
 
-   METHOD insertPreciosWhereTarifa( uuidTarifa )        INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereTarifa( uuidTarifa ) ) )
+   METHOD insertPreciosWhereTarifa( uuidTarifa )         INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereTarifa( uuidTarifa ) ) )
 
    METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
 
    METHOD insertPreciosWhereArticulo( uuidArticulo )     INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereArticulo( uuidArticulo ) ) )
 
+   METHOD updateFieldsCommandWhereUuid( oCommand, uuid ) INLINE ( ::updateFieldsWhereUuid( uuid,   {  'margen'                => oCommand:Margen(),; 
+                                                                                                      'margen_real'           => oCommand:MargenReal(),;
+                                                                                                      'precio_base'           => oCommand:PrecioBase(),;
+                                                                                                      'precio_iva_incluido'   => oCommand:PrecioIVAIncluido() } ) )
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLArticulosPreciosModel
+
+   local cSelect  := "SELECT articulos_precios.id,"                        + " " + ;
+                        "articulos_precios.uuid,"                          + " " + ;
+                        "articulos_precios.tarifa_uuid,"                   + " " + ;
+                        "articulos_precios.articulo_uuid,"                 + " " + ;
+                        "articulos_precios.margen,"                        + " " + ;
+                        "articulos_precios.margen_real,"                   + " " + ;
+                        "articulos_precios.precio_base,"                   + " " + ;
+                        "articulos_precios.precio_iva_incluido,"           + " " + ;
+                        "articulos_tarifas.nombre,"                        + " " + ;
+                        "articulos_tarifas.margen_predefinido,"            + " " + ;
+                        "articulos_tarifas.iva_incluido"                   + " " + ;
+                     "FROM articulos_precios"                              + " " + ;
+                        "INNER JOIN articulos_tarifas ON articulos_tarifas.uuid = articulos_precios.tarifa_uuid"     + " "
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 
@@ -251,6 +333,9 @@ METHOD getColumns() CLASS SQLArticulosPreciosModel
                                                       "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "margen",                     {  "create"    => "FLOAT( 8, 4 )"                           ,;
+                                                      "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "margen_real",                {  "create"    => "FLOAT( 8, 4 )"                           ,;
                                                       "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "precio_base",                {  "create"    => "FLOAT( 16, 6 )"                          ,;
@@ -301,7 +386,81 @@ CLASS ArticulosPreciosRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLArticulosPreciosModel():getTableName() ) 
 
+   METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionPriceUsingMargin(),;
+                                                      ::createFunctionPriceUsingMargin(),;
+                                                      ::dropFunctionTest(),;
+                                                      ::createFunctionTest() } )
+
+   METHOD selectFunctionPriceUsingMargin()
+   
+   METHOD dropFunctionPriceUsingMargin()  INLINE ( "DROP FUNCTION IF EXISTS CalculatePriceUsingMargin;" )
+
+   METHOD createFunctionPriceUsingMargin()
+
+   METHOD dropFunctionTest()              INLINE ( "DROP FUNCTION IF EXISTS Test;" )
+
+   METHOD createFunctionTest()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD selectFunctionPriceUsingMargin( precioCosto, porcentajeIVA, Margen, id ) CLASS ArticulosPreciosRepository
+
+   local cSQL  := "SELECT CalculatePriceUsingMargin( "
+   cSQL        +=    toSQLString( precioCosto ) + ", "
+   cSQL        +=    toSQLString( porcentajeIVA ) + ", "
+   cSQL        +=    toSQLString( Margen ) + ", "
+   cSQL        +=    toSQLString( id ) + " )"
+
+   logwrite( cSQL )
+
+RETURN ( getSQLDatabase():Exec( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionPriceUsingMargin() CLASS ArticulosPreciosRepository
+   
+   local cSQL  := "CREATE FUNCTION CalculatePriceUsingMargin( PrecioCosto INT, PorcentajeIVA INT, Margen INT, idPrecio INT ) RETURNS INT DETERMINISTIC" + space( 1 )
+   
+   cSQL        += "BEGIN"                                                                                + space( 1 )
+   cSQL        +=    "DECLARE PrecioBase INT;"                                                           + space( 1 )
+   cSQL        +=    "DECLARE PrecioIVAIncluido INT;"                                                    + space( 1 )
+   cSQL        +=    "DECLARE MargenReal INT;"                                                           + space( 1 )
+   
+   cSQL        +=    "SET PrecioBase = PrecioCosto + ( PrecioCosto * Margen / 100 );"                    + space( 1 )
+   cSQL        +=    "SET PrecioIVAIncluido = PrecioBase + ( PrecioBase * PorcentajeIVA / 100 );"        + space( 1 )
+   cSQL        +=    "SET MargenReal = ( PrecioBase - PrecioCosto ) / PrecioCosto * 100;"                + space( 1 )
+
+   cSql        +=    "UPDATE " + ::getTableName() + " SET"                                               + space( 1 )
+   cSql        +=       "precio_base = PrecioBase,"                                                      + space( 1 )
+   cSql        +=       "precio_iva_incluido = PrecioIVAIncluido,"                                       + space( 1 )
+   cSql        +=       "margen_real = MargenReal"                                                       + space( 1 )
+   cSql        +=    "WHERE id = idPrecio;"                                                              + space( 1 )
+
+   cSQL        +=    "RETURN PrecioBase;"                                                                + space( 1 )
+   cSQL        += "END;"                                                                                 + space( 1 )
+
+   logwrite( cSQL )
+
+RETURN ( cSQL )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionTest() CLASS ArticulosPreciosRepository
+   
+   local cSQL  := "CREATE FUNCTION Test( idPrecio INT ) RETURNS INT DETERMINISTIC" + space( 1 )
+   
+   cSQL        += "BEGIN"                                                                                + space( 1 )
+   cSql        +=    "UPDATE " + ::getTableName() + " SET"                                               + space( 1 )
+   cSql        +=       "precio_base = 1234"                                                             + space( 1 )
+   cSql        +=    "WHERE id = @idPrecio;"                                                             + space( 1 )
+   cSQL        +=    "RETURN 1;"                                                                         + space( 1 )
+   cSQL        += "END;"                                                                                 + space( 1 )
+
+   logwrite( cSQL )
+
+RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

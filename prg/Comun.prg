@@ -282,28 +282,9 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-/* 
-   local oUrlLink
-   local oUrlLinkFolder
-   local oDlg
-   local oFld
 
-   DEFINE DIALOG oDlg RESOURCE "test" COLOR "N/B"
+   ArticulosPreciosRepository():createFunctionPriceUsingMargin()
 
-   REDEFINE FOLDER oFld ;
-         ID       500 ;
-         OF       oDlg ;
-         PROMPT   "&Folder"   ;
-         DIALOGS  "TEST_FOLDER"
-
-   oUrlLink = TUrlLink():Redefine( 100, oDlg,,, "www.fivetechsoft.com",, CLR_GRAY, CLR_WHITE, CLR_YELLOW, .T. )
-   oUrlLink:bAction = { || MsgInfo( "click" ) }
-
-   oUrlLink = TUrlLink():Redefine( 100, oFld:aDialogs[1],,, "www.gestool.com",, CLR_GRAY, CLR_WHITE, CLR_YELLOW, .T. )
-   oUrlLink:bAction = { || MsgInfo( "click" ) }
-
-   ACTIVATE DIALOG oDlg CENTERED  
-*/
 RETURN nil
 
 //----------------------------------------------------------------------------//
@@ -2114,7 +2095,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Remesas bancarias'
    oItem:cMessage       := 'Acceso a las remesas bancarias'
-   oItem:bAction        := {|| TRemesas():New( cPatEmp(), "remesas_bancarias", oWnd ):Activate() }
+   oItem:bAction        := {|| TRemesas():New( cPatEmp(), cDriver(), oWnd, "remesas_bancarias" ):Activate() }
    oItem:cId            := "remesas_bancarias"
    oItem:cBmp           := "gc_briefcase2_document_16"
    oItem:cBmpBig        := "gc_briefcase2_document_32"
@@ -2859,8 +2840,8 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cMessage       := 'Rutas'
    oItem:bAction        := {|| RutasController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_signpost3_16"
-   oItem:cBmpBig        := "gc_signpost3_32"
+   oItem:cBmp           := "gc_map_route_16"
+   oItem:cBmpBig        := "gc_map_route_32"
    oItem:lShow          := .f.
 
    oItem                := oItemSQL:Add()
@@ -3982,7 +3963,7 @@ FUNCTION SelSysDate( oMenuItem )
    Obtenemos el nivel de acceso
    */
 
-   if nAnd( Auth():Level( oMenuItem ), 1 ) != 0
+   if nAnd( Auth():Level( oMenuItem ), 1 ) == 0
       msgStop( "Acceso no permitido." )
    else
       dSysDate       := Calendario( dSysDate, "Fecha de trabajo" )
