@@ -358,6 +358,7 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+ClientesEntidadesController.prg 											\
 EntidadesController.prg 													\
 DocumentosController.prg 													\
 IncidenciasController.prg 													\
@@ -678,6 +679,7 @@ ClientesValidator.prg 														\
 SqlGetSelector.prg 															\
 SQLDialogView.prg 															\
 CalculaPrecioCommand.prg 													\
+DescuentosController.prg 													\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1018,6 +1020,7 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+ClientesEntidadesController.obj       									\
 EntidadesController.obj       											\
 DocumentosController.obj       											\
 IncidenciasController.obj      	 										\
@@ -1332,6 +1335,7 @@ ClientesValidator.obj 														\
 SqlGetSelector.obj 															\
 SQLDialogView.obj 															\
 CalculaPrecioCommand.obj 													\
+DescuentosController.obj 													\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1665,6 +1669,7 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\ClientesEntidadesController.obj    							+
 $(OBJ)\EntidadesController.obj    										+
 $(OBJ)\DocumentosController.obj    										+
 $(OBJ)\IncidenciasController.obj    									+
@@ -1975,6 +1980,7 @@ $(OBJ)\ClientesValidator.obj 												+
 $(OBJ)\SqlGetSelector.obj 													+
 $(OBJ)\SQLDialogView.obj 													+
 $(OBJ)\CalculaPrecioCommand.obj 											+
+$(OBJ)\DescuentosController.obj 											+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

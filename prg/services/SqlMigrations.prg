@@ -207,6 +207,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
 
+   aadd( ::aModels, SQLClientesEntidadesModel():New() )
+
    aadd( ::aModels, SQLEntidadesModel():New() )
 
    aadd( ::aModels, SQLDocumentosModel():New() )
@@ -278,6 +280,8 @@ METHOD addModels()
    aadd( ::aModels, SQLProveedoresModel():New() ) 
 
    aadd( ::aModels, SQLTraduccionesModel():New() ) 
+
+   aadd( ::aModels, SQLDescuentosModel():New() ) 
 
 RETURN ( ::aModels )
  

@@ -456,7 +456,7 @@ END CLASS
 
 METHOD getValidators() CLASS FormaPagoValidator
 
-   ::hValidators  := {  "nombre " =>               {  "required"           => "El nombre es un dato requerido",;
+   ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
                                                       "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
                                                       "unique"             => "EL código introducido ya existe" } }
