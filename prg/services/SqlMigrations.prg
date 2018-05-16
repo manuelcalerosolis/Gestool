@@ -43,7 +43,7 @@ METHOD Run()
 
    ::addRepositories()
 
-   ::checkRepository()
+   ::checkRepositories()
 
    ::checkValues()
 
@@ -88,9 +88,7 @@ RETURN ( aeval( ::aRepositories, {|oRepository| ::checkRepository( oRepository )
 
 METHOD checkRepository( oRepository )
 
-   msgalert( hb_valtoexp( oRepository:getSQLFunctions() ), "checkRepository" )
-
-   // ::Exec( oModel:getCreateTableSentence() )
+   getSQLDatabase():Execs( oRepository:getSQLFunctions() )
 
 RETURN ( Self )
 
