@@ -279,9 +279,9 @@ METHOD Activate() CLASS ArticulosView
       ID          500 ;
       OF          ::oDialog ;
       PROMPT      "&General",;
-                  "Precios";
+                  "&Precios" ;
       DIALOGS     "ARTICULO_GENERAL",;
-                  "ARTICULO_PRECIO"  
+                  "ARTICULO_PRECIO"    
 
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -392,6 +392,10 @@ METHOD Activate() CLASS ArticulosView
    ::oSayCodificacionProveedores:OnClick     := {|| msgalert( "Codificación de proveedores..." ) }
 
    ::oController:oArticulosPreciosController:Activate( 130, ::oFolder:aDialogs[2] )
+
+   // Táctil ------------------------------------------------------------------
+
+
 
    // Botones Articulos -------------------------------------------------------
 

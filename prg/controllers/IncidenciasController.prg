@@ -164,10 +164,6 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS IncidenciasBrowseView FROM SQLBrowseView
 
@@ -395,9 +391,6 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS SQLIncidenciasModel FROM SQLBaseModel
 
@@ -406,8 +399,6 @@ CLASS SQLIncidenciasModel FROM SQLBaseModel
    METHOD getColumns()
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
-
-   METHOD getParentUuidAttribute( value )
 
 END CLASS
 
@@ -421,42 +412,26 @@ METHOD getColumns() CLASS SQLIncidenciasModel
    hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                                    "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                   ,;
-                                                   "default"   => {|| space( 40 ) } }                        )
+   hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+                                                   "default"   => {|| ::getSenderControllerParentUuid() } } )
 
    hset( ::hColumns, "descripcion",             {  "create"    => "TEXT"                                    ,;
-                                                   "default"   => {|| "" } }                                  )
+                                                   "default"   => {|| "" } }                                )
 
    hset( ::hColumns, "fecha_hora",              {  "create"    => "TIMESTAMP"                               ,;
                                                    "default"   => {|| hb_datetime() } }                     )
    
    hset( ::hColumns, "mostrar",                {  "create"    => "BIT"                                      ,;
-                                                   "default"   => {|| .f. } }                                )
+                                                   "default"   => {|| .f. } }                               )
 
-   hset( ::hColumns, "resuelta",                {  "create"    => "BIT"                                      ,;
-                                                   "default"   => {|| .f. } }                                )
+   hset( ::hColumns, "resuelta",                {  "create"    => "BIT"                                     ,;
+                                                   "default"   => {|| .f. } }                               )
 
-   hset( ::hColumns, "fecha_hora_resolucion",   {  "create"    => "TIMESTAMP"                                ,;
-                                                   "default"   => {|| hb_StrToTS( "" ) } }                   )
+   hset( ::hColumns, "fecha_hora_resolucion",   {  "create"    => "TIMESTAMP"                               ,;
+                                                   "default"   => {|| hb_StrToTS( "" ) } }                  )
 
 RETURN ( ::hColumns )
 
-//---------------------------------------------------------------------------//
-
-METHOD getParentUuidAttribute( value ) CLASS SQLIncidenciasModel
-
-   if empty( ::oController )
-      RETURN ( value )
-   end if
-
-   if empty( ::oController:oSenderController )
-      RETURN ( value )
-   end if
-
-RETURN ( ::oController:oSenderController:getUuid() )
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

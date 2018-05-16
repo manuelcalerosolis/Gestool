@@ -245,7 +245,7 @@ METHOD getColumns() CLASS SQLComentariosLineasModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL"                   ,;
-                                             "default"   => {|| space( 40 ) } }                       )
+                                             "default"   => {|| ::getSenderControllerParentUuid() } }                       )
 
    hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
