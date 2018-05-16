@@ -434,6 +434,7 @@ METHOD addLinksToExplorerBar() CLASS ClientesView
    oPanel:AddLink( "Documentos...",          {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
    oPanel:AddLink( "Entidades facturae...",  {|| MsgInfo( "Facturae" ) }, "gc_university_16" )
    oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+   oPanel:AddLink( "Descuentos...",          {|| ::oController:oDescuentosController:activateDialogView( ::oController:getUuid() ) }, ::oController:oDescuentosController:getImage( "16" ) )
 
 RETURN ( self )
 

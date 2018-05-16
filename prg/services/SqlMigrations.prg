@@ -281,6 +281,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLTraduccionesModel():New() ) 
 
+   aadd( ::aModels, SQLDescuentosModel():New() ) 
+
 RETURN ( ::aModels )
  
 //----------------------------------------------------------------------------//
