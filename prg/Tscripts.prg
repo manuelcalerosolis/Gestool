@@ -126,98 +126,95 @@ METHOD Activate() CLASS TScripts
    ::EndTimer()
  
    if nAnd( ::nLevel, 1 ) == 0
-
-      /*
-      Cerramos todas las ventanas----------------------------------------------
-      */
-
-      if ::oWndParent != nil
-         ::oWndParent:CloseAll()
-      end if
-
-      if Empty( ::oDbf )
-         if !::OpenFiles()
-            return nil
-         end if
-      end if
-
-      /*
-      Creamos el Shell---------------------------------------------------------
-      */
-
-      if !::lCreateShell
-         ::CreateShell( ::nLevel )
-      end if
-
-      DEFINE BTNSHELL RESOURCE "BUS" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:SearchSetFocus() ) ;
-         TOOLTIP  "(B)uscar" ;
-         HOTKEY   "B";
-
-         ::oWndBrw:AddSeaBar()
-
-      DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecAdd() );
-         ON DROP  ( ::oWndBrw:RecAdd() );
-         TOOLTIP  "(A)ñadir";
-         BEGIN GROUP ;
-         HOTKEY   "A" ;
-         LEVEL    ACC_APPD
-
-      DEFINE BTNSHELL RESOURCE "DUP" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecDup() );
-         TOOLTIP  "(D)uplicar";
-         HOTKEY   "D" ;
-         LEVEL    ACC_APPD
-
-      DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecEdit() );
-         TOOLTIP  "(M)odificar";
-         HOTKEY   "M" ;
-         LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecZoom() );
-         TOOLTIP  "(Z)oom";
-         HOTKEY   "Z" ;
-         LEVEL    ACC_ZOOM
-
-      DEFINE BTNSHELL RESOURCE "DEL" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecDel() );
-         TOOLTIP  "(E)liminar";
-         MRU ;
-         HOTKEY   "E";
-         LEVEL    ACC_DELE
-
-      DEFINE BTNSHELL ;
-         RESOURCE "gc_flash_" ;
-         OF       ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::CompilarEjecutarCodigoScript( ::oDbf:cCodScr ) ) ;
-         TOOLTIP  "E(j)ecutar";
-         HOTKEY   "J" ;
-         LEVEL    ACC_ZOOM
-
-      ::oWndBrw:EndButtons( Self )
-
-      if ::cHtmlHelp != nil
-         ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
-      end if
-
-      ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles(), ::StartTimer() } )
-
-   else
-
       msgStop( "Acceso no permitido." )
-
+      Return ( Self )
    end if
-   
+
+   /*
+   Cerramos todas las ventanas----------------------------------------------
+   */
+
+   if ::oWndParent != nil
+      ::oWndParent:CloseAll()
+   end if
+
+   if Empty( ::oDbf )
+      if !::OpenFiles()
+         return nil
+      end if
+   end if
+
+   /*
+   Creamos el Shell---------------------------------------------------------
+   */
+
+   if !::lCreateShell
+      ::CreateShell( ::nLevel )
+   end if
+
+   DEFINE BTNSHELL RESOURCE "BUS" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:SearchSetFocus() ) ;
+      TOOLTIP  "(B)uscar" ;
+      HOTKEY   "B";
+
+      ::oWndBrw:AddSeaBar()
+
+   DEFINE BTNSHELL RESOURCE "NEW" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecAdd() );
+      ON DROP  ( ::oWndBrw:RecAdd() );
+      TOOLTIP  "(A)ñadir";
+      BEGIN GROUP ;
+      HOTKEY   "A" ;
+      LEVEL    ACC_APPD
+
+   DEFINE BTNSHELL RESOURCE "DUP" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecDup() );
+      TOOLTIP  "(D)uplicar";
+      HOTKEY   "D" ;
+      LEVEL    ACC_APPD
+
+   DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecEdit() );
+      TOOLTIP  "(M)odificar";
+      HOTKEY   "M" ;
+      LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecZoom() );
+      TOOLTIP  "(Z)oom";
+      HOTKEY   "Z" ;
+      LEVEL    ACC_ZOOM
+
+   DEFINE BTNSHELL RESOURCE "DEL" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::oWndBrw:RecDel() );
+      TOOLTIP  "(E)liminar";
+      MRU ;
+      HOTKEY   "E";
+      LEVEL    ACC_DELE
+
+   DEFINE BTNSHELL ;
+      RESOURCE "gc_flash_" ;
+      OF       ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::CompilarEjecutarCodigoScript( ::oDbf:cCodScr ) ) ;
+      TOOLTIP  "E(j)ecutar";
+      HOTKEY   "J" ;
+      LEVEL    ACC_ZOOM
+
+   ::oWndBrw:EndButtons( Self )
+
+   if ::cHtmlHelp != nil
+      ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
+   end if
+
+   ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles(), ::StartTimer() } )
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
