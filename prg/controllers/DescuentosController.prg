@@ -35,8 +35,8 @@ METHOD New( oSenderController ) CLASS DescuentosController
    ::cName                       := "descuentos"
 
    ::hImage                      := {  "16" => "gc_symbol_percent_16",;
-                                       "32" => "gc_hint_32",;
-                                       "48" => "gc_hint_48" }
+                                       "32" => "gc_symbol_percent_32",;
+                                       "48" => "gc_symbol_percent_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -235,18 +235,26 @@ METHOD Activate() CLASS DescuentosView
    local oBmpGeneral
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "INCIDENCIA_SQL" ;
-      TITLE       ::LblTitle() + "incidencia"
+      RESOURCE    "DESCUENTOS" ;
+      TITLE       ::LblTitle() + "descuento"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_hint_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
       FONT        getBoldFont() ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "descuento" ] ;
+      ID          100 ;
+      SPINNER ;
+      PICTURE     "@E 999.9999" ;
+      VALID       ( ::oController:validate( "descuento" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
    /*REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
@@ -278,7 +286,7 @@ METHOD Activate() CLASS DescuentosView
       VAR         ::oController:oModel:hBuffer[ "fecha_hora_resolucion" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
+      OF          ::oDialog*/
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -290,7 +298,7 @@ METHOD Activate() CLASS DescuentosView
       ID          IDCANCEL ;
       OF          ::oDialog ;
       CANCEL ;
-      ACTION     ( ::oDialog:end() )*/
+      ACTION     ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
@@ -352,7 +360,7 @@ END CLASS
 
 METHOD getValidators() CLASS DescuentosValidator
 
-   ::hValidators  := {  "nombre" =>           {  "required"              => "La descripción es un dato requerido" } }
+   ::hValidators  := {  "descuento" =>           {  "required"              => "El porcentaje de descuento es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -401,7 +409,7 @@ METHOD getColumns() CLASS SQLDescuentosModel
    hset( ::hColumns, "fecha_fin",               {  "create"    => "DATE"                                    ,;
                                                    "default"   => {|| ctod( "" ) } }                        )
 
-   hset( ::hColumns, "descuento",               {  "create"    => "DECIMAL(19,6)"                           ,;
+   hset( ::hColumns, "descuento",               {  "create"    => "DECIMAL(3,4)"                           ,;
                                                    "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "cantidad_minima",         {  "create"    => "INT UNSIGNED"                            ,;
