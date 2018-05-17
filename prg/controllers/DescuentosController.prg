@@ -217,7 +217,7 @@ RETURN ( self )
 
 CLASS DescuentosView FROM SQLBaseView
   
-   DATA oGetFechaResolucion
+   DATA oGetDescuento
 
    METHOD Activate()
 
@@ -249,7 +249,8 @@ METHOD Activate() CLASS DescuentosView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descuento" ] ;
+   REDEFINE GET   ::oGetDescuento ;
+      VAR         ::oController:oModel:hBuffer[ "descuento" ] ;
       ID          100 ;
       SPINNER ;
       PICTURE     "@E 999.9999" ;
@@ -316,10 +317,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startDialog() CLASS DescuentosView
 
-   /*if !::oController:oModel:hBuffer[ "resuelta" ]
-      ::oGetFechaResolucion:Hide()
-      ::oGetFechaResolucion:Refresh()
-   end if*/
+   ::oGetDescuento:SetFocus()
 
 RETURN ( self )
 
