@@ -371,7 +371,8 @@ METHOD getInitialSelect() CLASS SQLClientesEntidadesModel
                         "entidades.codigo as codigo_entidad,"                                                      + " " + ;
                         "entidades.nombre as nombre_entidad"                                                       + " " + ;
                      "FROM clientes_entidades"                                                                     + " " + ;
-                        "INNER JOIN entidades ON clientes_entidades.parent_uuid = entidades.uuid"  + " "
+                        "INNER JOIN entidades ON clientes_entidades.entidad_uuid = entidades.uuid"                 + " " + ;
+                        "INNER JOIN clientes ON clientes_entidades.parent_uuid = clientes.uuid"  + " "
 
 RETURN ( cSelect )
 
