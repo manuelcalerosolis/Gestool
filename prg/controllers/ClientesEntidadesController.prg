@@ -357,6 +357,8 @@ CLASS SQLClientesEntidadesModel FROM SQLCompanyModel
 
    METHOD getParentUuidAttribute( value )
 
+   METHOD addEmpresaWhere( cSQLSelect )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -374,7 +376,21 @@ METHOD getInitialSelect() CLASS SQLClientesEntidadesModel
                         "INNER JOIN entidades ON clientes_entidades.entidad_uuid = entidades.uuid"                 + " " + ;
                         "INNER JOIN clientes ON clientes_entidades.parent_uuid = clientes.uuid"  + " "
 
+   logwrite( cSelect )
+
 RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD addEmpresaWhere( cSQLSelect ) CLASS SQLClientesEntidadesModel
+
+   if !::isEmpresaColumn()
+      RETURN ( cSQLSelect )
+   end if 
+
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "clientes_entidades.empresa_uuid = " + toSQLString( uuidEmpresa() )
+
+RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
