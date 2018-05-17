@@ -17,9 +17,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS EntidadesController
+METHOD New( oSenderController ) CLASS EntidadesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Entidades"
 

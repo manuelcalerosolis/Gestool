@@ -92,6 +92,9 @@ METHOD Activate( idGet, idText, oDlg, idSay ) CLASS GetSelector
 
    ::cGet         := eval( ::bValue )
 
+   MsgInfo( ::oController:ClassName(), "oController" ) 
+   MsgInfo( ::oController:getSenderController():ClassName(), "oSender" ) 
+
    REDEFINE GET   ::oGet ;
       VAR         ::cGet ;
       ID          idGet ;

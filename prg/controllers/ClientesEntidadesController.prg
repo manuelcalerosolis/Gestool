@@ -281,7 +281,7 @@ METHOD Activate() CLASS ClientesEntidadesView
       FONT        getBoldFont() ;
       OF          ::oDialog 
 
-   ::oController:oEntidadesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "codigo_entidad" ] ) )
+   ::oController:oEntidadesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "entidad_uuid" ] ) )
    ::oController:oEntidadesController:oGetSelector:Activate( 100, 101, ::oDialog )
 
    REDEFINE COMBOBOX ::aRol ;
@@ -349,19 +349,19 @@ CLASS SQLClientesEntidadesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getInitialSelect()
+   //METHOD getInitialSelect()
 
    METHOD getCodigoWhereParentUuid( uuid ) INLINE ( ::getField( 'codigo', 'parent_uuid', uuid ) )          
 
    METHOD getParentUuidAttribute( value )
 
-   METHOD addEmpresaWhere( cSQLSelect )
+   //METHOD addEmpresaWhere( cSQLSelect )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect() CLASS SQLClientesEntidadesModel
+/*METHOD getInitialSelect() CLASS SQLClientesEntidadesModel
 
    local cSelect  := "SELECT clientes_entidades.id,"                                                               + " " + ;
                         "clientes_entidades.uuid,"                                                                 + " " + ;
@@ -388,7 +388,7 @@ METHOD addEmpresaWhere( cSQLSelect ) CLASS SQLClientesEntidadesModel
 
    cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "clientes_entidades.empresa_uuid = " + toSQLString( uuidEmpresa() )
 
-RETURN ( cSQLSelect )
+RETURN ( cSQLSelect )*/
 
 //---------------------------------------------------------------------------//
 
@@ -397,7 +397,7 @@ METHOD getColumns() CLASS SQLClientesEntidadesModel
    hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"             ,;
                                                    "default"   => {|| 0 } }                                   )
    
-   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"               ,;                                  
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"               ,;
                                                    "default"   => {|| win_uuidcreatestring() } }              )
    ::getEmpresaColumns()
 
