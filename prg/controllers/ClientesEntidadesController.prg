@@ -396,7 +396,7 @@ RETURN ( cSQLSelect )
 
 METHOD getColumns() CLASS SQLClientesEntidadesModel
 
-   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"             ,;                          
+   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"             ,;
                                                    "default"   => {|| 0 } }                                   )
    
    hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"               ,;                                  
