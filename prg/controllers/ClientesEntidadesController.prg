@@ -274,7 +274,7 @@ METHOD Activate() CLASS ClientesEntidadesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_document_text_gear_48" ;
+      RESOURCE    ::oController:getimage("16") ;
       TRANSPARENT ;
       OF          ::oDialog 
 
@@ -333,8 +333,7 @@ CLASS ClientesEntidadesValidator FROM SQLBaseValidator
 
 METHOD getValidators() CLASS ClientesEntidadesValidator
 
-   ::hValidators  := {  "entidad" =>               {  "required"           => "La entidad es un dato requerido",;
-                                                      "unique"             => "La entidad introducida ya existe" }  }
+   ::hValidators  := {  "entidad" =>               {  "required"           => "La entidad es un dato requerido" }  }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
