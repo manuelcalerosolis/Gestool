@@ -65,6 +65,8 @@ METHOD New() CLASS ClientesController
 
    ::oDescuentosController          := DescuentosController():New( self )
 
+   ::oClientesEntidadesController   := ClientesEntidadesController():New( self )
+   
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )

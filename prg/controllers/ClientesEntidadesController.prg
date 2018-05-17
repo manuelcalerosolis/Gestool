@@ -38,9 +38,9 @@ METHOD New( oSenderController ) CLASS ClientesEntidadesController
 
    ::cName                       := "Clientes Entidades"
 
-   ::hImage                      := {  "16" => "gc_document_text_gear_16",;
-                                       "32" => "gc_document_text_gear_32",;
-                                       "48" => "gc_document_text_gear_48" }
+   ::hImage                      := {  "16" => "gc_university_16",;
+                                       "32" => "gc_university_32",;
+                                       "48" => "gc_university_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
