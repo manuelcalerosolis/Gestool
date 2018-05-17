@@ -33,6 +33,8 @@ METHOD New( oController ) CLASS PropiedadesLineasController
 
    ::oRepository                 := PropiedadesLineasRepository():New( self )
 
+   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::oModel:gettingSelectSentence() } ) 
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -53,6 +55,7 @@ METHOD End() CLASS PropiedadesLineasController
 
 RETURN ( Self )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -100,6 +103,17 @@ METHOD addColumns() CLASS PropiedadesLineasBrowseView
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'orden'
+      :cHeader             := 'Orden'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'orden' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :cEditPicture        := "9999"
    end with
 
 RETURN ( self )
@@ -240,7 +254,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesLineasValidator FROM SQLBaseValidator
+CLASS PropiedadesLineasValidator FROM SQLParentValidator
 
    METHOD getValidators()
  
@@ -250,10 +264,10 @@ END CLASS
 
 METHOD getValidators() CLASS PropiedadesLineasValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
-                                          "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
-                                          "unique"             => "El código introducido ya existe" } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido",;
+                                          "unique"    => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
+                                          "unique"    => "El código introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -281,7 +295,7 @@ METHOD getColumns() CLASS SQLPropiedadesLineasModel
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 )"                           ,;
-                                          "default"   => {|| space( 40 ) } }                       )
+                                          "default"   => {|| ::getSenderControllerParentUuid() } }                       )
 
    hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 4 )"                            ,;
                                           "default"   => {|| space( 4 ) } }                        )

@@ -87,6 +87,8 @@ METHOD setMargen( oCol, nMargen ) CLASS ArticulosPreciosController
 
       ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
 
+      // ::oRepository:selectFunctionPriceUsingMargin( ::oSenderController:getPrecioCosto(), ::oSenderController:getPorcentajeIVA(), nMargen, ::getRowSet():fieldGet( 'uuid' ) )
+
       ::getRowSet():Refresh()
 
    end if 
@@ -405,14 +407,15 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD selectFunctionPriceUsingMargin( precioCosto, porcentajeIVA, Margen, id ) CLASS ArticulosPreciosRepository
+METHOD selectFunctionPriceUsingMargin( precioCosto, porcentajeIVA, Margen, uuid ) CLASS ArticulosPreciosRepository
 
    local cSQL  := "SELECT CalculatePriceUsingMargin( "
    cSQL        +=    toSQLString( precioCosto ) + ", "
    cSQL        +=    toSQLString( porcentajeIVA ) + ", "
    cSQL        +=    toSQLString( Margen ) + ", "
-   cSQL        +=    toSQLString( id ) + " )"
+   cSQL        +=    toSQLString( uuid ) + " )"
 
+   msgalert( cSQL )
    logwrite( cSQL )
 
 RETURN ( getSQLDatabase():Exec( cSQL ) )
@@ -421,12 +424,12 @@ RETURN ( getSQLDatabase():Exec( cSQL ) )
 
 METHOD createFunctionPriceUsingMargin() CLASS ArticulosPreciosRepository
    
-   local cSQL  := "CREATE FUNCTION CalculatePriceUsingMargin( PrecioCosto INT, PorcentajeIVA INT, Margen INT, idPrecio INT ) RETURNS INT DETERMINISTIC" + space( 1 )
+   local cSQL  := "CREATE FUNCTION CalculatePriceUsingMargin( PrecioCosto FLOAT, PorcentajeIVA FLOAT, Margen FLOAT, PrecioUuid CHAR ) RETURNS FLOAT" + space( 1 )
    
    cSQL        += "BEGIN"                                                                                + space( 1 )
-   cSQL        +=    "DECLARE PrecioBase INT;"                                                           + space( 1 )
-   cSQL        +=    "DECLARE PrecioIVAIncluido INT;"                                                    + space( 1 )
-   cSQL        +=    "DECLARE MargenReal INT;"                                                           + space( 1 )
+   cSQL        +=    "DECLARE PrecioBase FLOAT;"                                                           + space( 1 )
+   cSQL        +=    "DECLARE PrecioIVAIncluido FLOAT;"                                                    + space( 1 )
+   cSQL        +=    "DECLARE MargenReal FLOAT;"                                                           + space( 1 )
    
    cSQL        +=    "SET PrecioBase = PrecioCosto + ( PrecioCosto * Margen / 100 );"                    + space( 1 )
    cSQL        +=    "SET PrecioIVAIncluido = PrecioBase + ( PrecioBase * PorcentajeIVA / 100 );"        + space( 1 )
@@ -436,7 +439,7 @@ METHOD createFunctionPriceUsingMargin() CLASS ArticulosPreciosRepository
    cSql        +=       "precio_base = PrecioBase,"                                                      + space( 1 )
    cSql        +=       "precio_iva_incluido = PrecioIVAIncluido,"                                       + space( 1 )
    cSql        +=       "margen_real = MargenReal"                                                       + space( 1 )
-   cSql        +=    "WHERE id = idPrecio;"                                                              + space( 1 )
+   cSql        +=    "WHERE uuid = PrecioUuid;"                                                          + space( 1 )
 
    cSQL        +=    "RETURN PrecioBase;"                                                                + space( 1 )
    cSQL        += "END;"                                                                                 + space( 1 )

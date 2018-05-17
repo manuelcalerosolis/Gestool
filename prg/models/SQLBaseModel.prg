@@ -226,6 +226,10 @@ CLASS SQLBaseModel
 
    METHOD getNombresWithBlank()                       INLINE ( ::getArrayColumnsWithBlank( 'nombre' ) )
 
+   METHOD gettingSelectSentence()
+
+   METHOD getSenderControllerParentUuid()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -1269,5 +1273,41 @@ METHOD getArrayColumnsWithBlank( cColumn )
    ains( aColumns, 1, "", .t. )
    
 RETURN ( aColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD gettingSelectSentence() 
+
+   local uuid        
+
+   if empty( ::oController )
+      RETURN ( nil )
+   end if
+
+   if empty( ::oController:getSenderController() )
+      RETURN ( nil )
+   end if
+
+   uuid           := ::oController:getSenderController():getUuid() 
+
+   if !empty( uuid )
+      ::setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSenderControllerParentUuid() 
+
+   if empty( ::oController )
+      RETURN ( space( 40 ) )
+   end if
+
+   if empty( ::oController:getSenderController() )
+      RETURN ( space( 40 ) )
+   end if
+
+RETURN ( ::oController:getSenderController():getUuid() )
 
 //---------------------------------------------------------------------------//
