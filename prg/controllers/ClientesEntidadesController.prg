@@ -240,20 +240,22 @@ RETURN ( self )
 
 CLASS ClientesEntidadesView FROM SQLBaseView
 
-   CLASSDATA aRol INIT  {  "Fiscal" => "fiscal"                               ,;
-                           "Oficina contable" =>"oficina_contable"            ,;
-                           "Receptor" => "receptor"                           ,;
-                           "Órgano Gestor" => "organo_gestor"                 ,;
-                           "Tercero" => "tercero"                             ,;
-                           "Pagador" => "pagador"                             ,; 
-                           "Unidad tramitadora" => "unidad_tramitadora"       ,; 
-                           "Comprador" =>"comprador"                          ,; 
-                           "Órgano proponente" => "organo_proponente"         ,; 
-                           "Cobrador" => "cobrador"                           ,; 
-                           "Vendedor" => "vendedor"                           ,; 
-                           "Receptor del pago" => "receptor_pago"             ,; 
-                           "Receptor del cobro" => "receptor_cobro"           ,;
-                            "Emisor"=> "emisor" }   
+   CLASSDATA aRol INIT  {  "Fiscal",;
+                           "Oficina contable",;
+                           "Receptor",;
+                           "Órgano Gestor",;
+                           "Tercero",;
+                           "Pagador",; 
+                           "Unidad tramitadora",; 
+                           "Comprador",; 
+                           "Órgano proponente",; 
+                           "Cobrador",; 
+                           "Vendedor",; 
+                           "Receptor del pago",; 
+                           "Receptor del cobro",;
+                            "Emisor" }   
+
+   DATA oRol
   
    METHOD Activate()
 
@@ -284,9 +286,10 @@ METHOD Activate() CLASS ClientesEntidadesView
    ::oController:oEntidadesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "entidad_uuid" ] ) )
    ::oController:oEntidadesController:oGetSelector:Activate( 100, 101, ::oDialog )
 
-   REDEFINE COMBOBOX ::aRol ;
+   REDEFINE COMBOBOX ::oRol ;
       VAR         ::oController:oModel:hBuffer[ "rol" ] ;
       ID          110 ;
+      ITEMS       ::aRol;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -351,7 +354,7 @@ CLASS SQLClientesEntidadesModel FROM SQLCompanyModel
 
    //METHOD getInitialSelect()
 
-   METHOD getCodigoWhereParentUuid( uuid ) INLINE ( ::getField( 'codigo', 'parent_uuid', uuid ) )          
+   METHOD getNombreWhereCodigo( codigo ) INLINE ( ::getField( 'nombre', 'codigo', codigo ) )          
 
    METHOD getParentUuidAttribute( value )
 
@@ -401,7 +404,7 @@ METHOD getColumns() CLASS SQLClientesEntidadesModel
                                                    "default"   => {|| win_uuidcreatestring() } }              )
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "entidad_uuid",            {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"               ,;                                  
+   hset( ::hColumns, "entidad_uuid",            {  "create"    => "VARCHAR(40) NOT NULL"                       ,;                                  
                                                    "default"   => {|| space( 40 ) } }                          )
 
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                    ,;
