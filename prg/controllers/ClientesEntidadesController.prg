@@ -50,8 +50,6 @@ METHOD New( oSenderController ) CLASS ClientesEntidadesController
 
    ::oDialogView                    := ClientesEntidadesView():New( self )
 
-   ::oValidator                     := ClientesEntidadesValidator():New( self, ::oDialogView )
-
    ::oRepository                    := ClientesEntidadesRepository():New( self )
 
    ::oEntidadesController           := EntidadesController():New( self )
@@ -74,8 +72,6 @@ METHOD End() CLASS ClientesEntidadesController
    ::oBrowseView:End()
 
    ::oDialogView:End()
-
-   ::oValidator:End()
 
    ::oRepository:End()
 
@@ -213,14 +209,6 @@ METHOD addColumns() CLASS ClientesEntidadesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'entidad'
-      :cHeader             := 'Entidad'
-      :nWidth              := 130
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_entidad' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'rol'
       :cHeader             := 'Rol'
       :nWidth              := 200
@@ -240,23 +228,22 @@ RETURN ( self )
 
 CLASS ClientesEntidadesView FROM SQLBaseView
 
-   CLASSDATA aRol INIT  {  "Fiscal",;
-                           "Oficina contable",;
-                           "Receptor",;
-                           "Órgano Gestor",;
-                           "Tercero",;
-                           "Pagador",; 
-                           "Unidad tramitadora",; 
-                           "Comprador",; 
-                           "Órgano proponente",; 
-                           "Cobrador",; 
-                           "Vendedor",; 
-                           "Receptor del pago",; 
-                           "Receptor del cobro",;
-                            "Emisor" }   
-
    DATA oRol
-  
+   DATA aRol INIT  {    "Fiscal",;
+                        "Oficina contable",;
+                        "Receptor",;
+                        "Órgano Gestor",;
+                        "Tercero",;
+                        "Pagador",; 
+                        "Unidad tramitadora",; 
+                        "Comprador",; 
+                        "Órgano proponente",; 
+                        "Cobrador",; 
+                        "Vendedor",; 
+                        "Receptor del pago",; 
+                        "Receptor del cobro",;
+                        "Emisor" }   
+
    METHOD Activate()
 
 END CLASS
@@ -322,75 +309,17 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ClientesEntidadesValidator FROM SQLBaseValidator
-
-   METHOD getValidators()
-
-
- END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD getValidators() CLASS ClientesEntidadesValidator
-
-   ::hValidators  := {  "entidad" =>               {  "required"           => "La entidad es un dato requerido" }  }
-RETURN ( ::hValidators )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
 CLASS SQLClientesEntidadesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "clientes_entidades"
 
    METHOD getColumns()
 
-   //METHOD getInitialSelect()
-
    METHOD getNombreWhereCodigo( codigo ) INLINE ( ::getField( 'nombre', 'codigo', codigo ) )          
 
    METHOD getParentUuidAttribute( value )
 
-   //METHOD addEmpresaWhere( cSQLSelect )
-
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-/*METHOD getInitialSelect() CLASS SQLClientesEntidadesModel
-
-   local cSelect  := "SELECT clientes_entidades.id,"                                                               + " " + ;
-                        "clientes_entidades.uuid,"                                                                 + " " + ;
-                        "clientes_entidades.rol,"                                                                  + " " + ;
-                        "clientes_entidades.parent_uuid,"                                                          + " " + ;
-                        "entidades.uuid,"                                                                          + " " + ;
-                        "entidades.codigo as codigo_entidad,"                                                      + " " + ;
-                        "entidades.nombre as nombre_entidad"                                                       + " " + ;
-                     "FROM clientes_entidades"                                                                     + " " + ;
-                        "INNER JOIN entidades ON clientes_entidades.entidad_uuid = entidades.uuid"                 + " " + ;
-                        "INNER JOIN clientes ON clientes_entidades.parent_uuid = clientes.uuid"  + " "
-
-   logwrite( cSelect )
-
-RETURN ( cSelect )
-
-//---------------------------------------------------------------------------//
-
-METHOD addEmpresaWhere( cSQLSelect ) CLASS SQLClientesEntidadesModel
-
-   if !::isEmpresaColumn()
-      RETURN ( cSQLSelect )
-   end if 
-
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "clientes_entidades.empresa_uuid = " + toSQLString( uuidEmpresa() )
-
-RETURN ( cSQLSelect )*/
 
 //---------------------------------------------------------------------------//
 
