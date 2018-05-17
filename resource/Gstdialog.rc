@@ -23026,9 +23026,6 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Otros", -1, "Static", WS_GROUP, 50, 285, 46, 8
 }
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 ARTICULO_TACTIL DIALOG DISCARDABLE 35, -50, 456, 270
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "Ms Sans Serif"
@@ -23048,9 +23045,8 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Texto táctil", 111, "Static", WS_GROUP, 11, 27, 41, 8
   CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 70, 37, 375, 12
   CONTROL "Color botón", 121, "Static", WS_GROUP, 11, 40, 41, 8
-=======
-<<<<<<< HEAD
->>>>>>> cd35f8f2983a36f30b4fc7d73b619ff95eb466a3
+}
+
 DESCUENTOS DIALOG DISCARDABLE 193, 47, 430, 139
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Descuentos"
@@ -23088,10 +23084,5 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Entidad*", -1, "Static", WS_GROUP, 50, 43, 46, 8
   CONTROL "Rol *", -1, "Static", WS_GROUP, 50, 56, 46, 8
   CONTROL "", 101, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 202, 40, 216, 11
-<<<<<<< HEAD
-=======
->>>>>>> 133e8ec81ce7d10e1c5f3b0735d05c4d6f0d40d2
->>>>>>> 5375381960fe73060e5dc8c95292a1b1b27c594e
->>>>>>> cd35f8f2983a36f30b4fc7d73b619ff95eb466a3
 }
 
