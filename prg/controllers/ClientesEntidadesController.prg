@@ -282,7 +282,7 @@ METHOD Activate() CLASS ClientesEntidadesView
       OF          ::oDialog 
 
    ::oController:oEntidadesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "codigo_entidad" ] ) )
-   ::oController:oEntidadesController:oGetSelector:Activate( 100, 101, ::oDialog)
+   ::oController:oEntidadesController:oGetSelector:Activate( 100, 101, ::oDialog )
 
    REDEFINE COMBOBOX ::aRol ;
       VAR         ::oController:oModel:hBuffer[ "rol" ] ;
@@ -305,8 +305,6 @@ METHOD Activate() CLASS ClientesEntidadesView
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
-
-   ::oController:oEntidadesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "entidad_uuid" ] ) )
 
    ACTIVATE DIALOG ::oDialog CENTER
 
