@@ -409,7 +409,7 @@ METHOD getColumns() CLASS SQLDescuentosModel
    hset( ::hColumns, "fecha_fin",               {  "create"    => "DATE"                                    ,;
                                                    "default"   => {|| ctod( "" ) } }                        )
 
-   hset( ::hColumns, "descuento",               {  "create"    => "DECIMAL(3,4)"                           ,;
+   hset( ::hColumns, "descuento",               {  "create"    => "FLOAT(7,4)"                              ,;
                                                    "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "cantidad_minima",         {  "create"    => "INT UNSIGNED"                            ,;
