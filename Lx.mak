@@ -176,7 +176,6 @@ Talbtip.prg             \
 Tarifa.prg              \
 Tarray.prg              \
 Tartalb.prg             \
-Tblconv.prg             \
 Tbuscar.prg             \
 Tcajon.prg              \
 Tchgcode.prg            \
@@ -1101,7 +1100,6 @@ Talbtip.obj             \
 Tarifa.obj              \
 Tarray.obj              \
 Tartalb.obj             \
-Tblconv.obj             \
 Tbuscar.obj             \
 Tcajon.obj              \
 Tchgcode.obj            \
@@ -2036,7 +2034,6 @@ $(OBJ)\Talbtip.obj              +
 $(OBJ)\Tarifa.obj               +
 $(OBJ)\Tarray.obj               +
 $(OBJ)\Tartalb.obj              +
-$(OBJ)\Tblconv.obj              +
 $(OBJ)\Tbuscar.obj              +
 $(OBJ)\Tcajon.obj               +
 $(OBJ)\Tchgcode.obj             +
