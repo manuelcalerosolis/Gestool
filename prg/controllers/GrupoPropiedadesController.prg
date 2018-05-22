@@ -155,7 +155,7 @@ METHOD Activate() CLASS GrupoPropiedadesView
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
-      RESOURCE    "gc_box_open_48" ;
+      RESOURCE    ::oController:getImage( "16" ) ;
       TRANSPARENT ;
       OF          ::oDialog
 

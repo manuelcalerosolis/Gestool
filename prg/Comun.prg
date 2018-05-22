@@ -2953,6 +2953,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_office_building2_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Orden de comandas'
+   oItem:cMessage       := 'Orden de comandas'
+   oItem:bAction        := {||OrdenComandasController():New():ActivateNavigatorView() }
+   oItem:cId            := "orden_comandas"
+   oItem:cBmp           := "gc_sort_az_descending_16"
+   oItem:cBmpBig        := "gc_sort_az_descending_32"
+   oItem:lShow          := .f.
+
 
 
 RETURN ( oAcceso )

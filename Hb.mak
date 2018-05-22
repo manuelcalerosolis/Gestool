@@ -358,6 +358,7 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+OrdenComandasController.prg 												\
 ClientesEntidadesController.prg 											\
 EntidadesController.prg 													\
 DocumentosController.prg 													\
@@ -1020,6 +1021,7 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+OrdenComandasController.obj       										\
 ClientesEntidadesController.obj       									\
 EntidadesController.obj       											\
 DocumentosController.obj       											\
@@ -1669,6 +1671,7 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\OrdenComandasController.obj    									+
 $(OBJ)\ClientesEntidadesController.obj    							+
 $(OBJ)\EntidadesController.obj    										+
 $(OBJ)\DocumentosController.obj    										+

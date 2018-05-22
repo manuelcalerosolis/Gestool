@@ -199,7 +199,7 @@ METHOD Activate() CLASS LenguajesView
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
-      RESOURCE    "gc_user_message_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          oDlg
 
