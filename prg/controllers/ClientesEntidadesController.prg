@@ -209,6 +209,14 @@ METHOD addColumns() CLASS ClientesEntidadesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre_entidad'
+      :cHeader             := 'Entidad'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_entidad' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'rol'
       :cHeader             := 'Rol'
       :nWidth              := 200
@@ -246,6 +254,8 @@ CLASS ClientesEntidadesView FROM SQLBaseView
 
    METHOD Activate()
 
+   METHOD startActivate()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -261,7 +271,7 @@ METHOD Activate() CLASS ClientesEntidadesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    ::oController:getimage("16") ;
+      RESOURCE    ::oController:getimage("48") ;
       TRANSPARENT ;
       OF          ::oDialog 
 
@@ -296,12 +306,23 @@ METHOD Activate() CLASS ClientesEntidadesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
+   ::oDialog:bStart  := {|| ::startActivate() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
+//---------------------------------------------------------------------------//
+
+METHOD startActivate()
+
+   ::oController:oEntidadesController:oGetSelector:Start()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -315,11 +336,50 @@ CLASS SQLClientesEntidadesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getNombreWhereCodigo( codigo ) INLINE ( ::getField( 'nombre', 'codigo', codigo ) )          
+   METHOD getNombreWhereCodigo( codigo ) INLINE ( ::getField( 'nombre', 'codigo', codigo ) )
+
+   METHOD setEntidadUuidAttribute( uValue ) ;
+                                        INLINE ( if( empty( uValue ), "", SQLEntidadesModel():getUuidWhereCodigo( uValue ) ) )
+             
+
+   METHOD getEntidadUuidAttribute( uValue ) ; 
+                                        INLINE ( if( empty( uValue ), space( 3 ), SQLEntidadesModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD getParentUuidAttribute( value )
 
+   METHOD addEmpresaWhere( cSQLSelect )
+
+   METHOD getInitialSelect()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLClientesEntidadesModel
+
+   local cSelect  := "SELECT clientes_entidades.id,"                                               + " " + ;
+                        "clientes_entidades.uuid,"                                                 + " " + ;
+                        "clientes_entidades.rol,"                                                  + " " + ;
+                        "clientes_entidades.parent_uuid,"                                          + " " + ;
+                        "entidades.uuid,"                                                          + " " + ;
+                        "entidades.nombre as nombre_entidad"                                       + " " + ;
+                     "FROM clientes_entidades"                                                     + " " + ;
+                     "INNER JOIN entidades ON clientes_entidades.entidad_uuid = entidades.uuid"    + " " + ;
+                     "INNER JOIN clientes ON clientes_entidades.parent_uuid = clientes.uuid"       + " "
+
+RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD addEmpresaWhere( cSQLSelect ) CLASS SQLClientesEntidadesModel
+
+   if !::isEmpresaColumn()
+      RETURN ( cSQLSelect )
+   end if 
+
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "clientes_entidades.empresa_uuid = " + toSQLString( uuidEmpresa() )
+
+RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 

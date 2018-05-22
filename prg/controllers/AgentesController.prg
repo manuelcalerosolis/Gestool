@@ -235,7 +235,7 @@ METHOD Activate() CLASS AgentesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_businessman2_48" ;
+      RESOURCE    ::oController:getimage("48") ;
       TRANSPARENT ;
       OF          ::oDialog
 

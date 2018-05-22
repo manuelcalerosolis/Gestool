@@ -27,9 +27,9 @@ METHOD New( oSenderController ) CLASS ArticulosFabricantesController
 
    ::cName                       := "fabricantes"
 
-   ::hImage                      := {  "16" => "gc_businessman2_16",;
-                                       "32" => "gc_businessman2_32",;
-                                       "48" => "gc_businessman2_48" }
+   ::hImage                      := {  "16" => "gc_bolt_16",;
+                                       "32" => "gc_bolt_32",;
+                                       "48" => "gc_bolt_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -189,7 +189,7 @@ METHOD Activate() CLASS ArticulosFabricantesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_wrench_48" ;
+      RESOURCE    ::oController:getimage("48")  ;
       TRANSPARENT ;
       OF          ::oDialog
 

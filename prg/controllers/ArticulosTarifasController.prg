@@ -187,7 +187,7 @@ METHOD Activate() CLASS ArticulosTarifasView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_money_interest_48" ;
+      RESOURCE    ::oController:getimage("48")  ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
