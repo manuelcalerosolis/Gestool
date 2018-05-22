@@ -42,7 +42,7 @@ METHOD New( oSenderController ) CLASS CuentasBancariasController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Cuentas bancarias"
+   ::cTitle                      := "Cuentas"
 
    ::cName                       := "cuenta_bancaria"
 
