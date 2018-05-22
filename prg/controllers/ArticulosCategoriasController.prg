@@ -174,7 +174,7 @@ METHOD Activate() CLASS ArticulosCategoriasView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_photographic_filters_48" ;
+      RESOURCE    ::oController:getimage("48")  ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
