@@ -68,6 +68,13 @@ Function Main( cCodEmp, cCodUsr, cInitOptions )
 
    appLoadAds()
 
+   // Conexión con MySql------------------------------------------------------
+
+   if !( getSQLDatabase():Connect() )
+      msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
+      RETURN ( nil )
+   end if 
+
    // Motor de bases de datos--------------------------------------------------
  
    if !( appConnectADS() )
@@ -102,6 +109,10 @@ Function Main( cCodEmp, cCodUsr, cInitOptions )
    // Apertura de ventana------------------------------------------------------
 
    reportBar()
+
+   // Conexión con SQL---------------------------------------------------------
+
+   getSQLDatabase():Disconnect() 
 
 Return nil
 
@@ -2160,9 +2171,6 @@ Function TIPOSNOTASCONTROLLER()
 Return nil
 
 Function STARTTFACAUTOMATICA()
-Return nil
-
-FUNCTION GETSQLDATABASE()
 Return nil
 
 FUNCTION FWOPENPNGFILE()

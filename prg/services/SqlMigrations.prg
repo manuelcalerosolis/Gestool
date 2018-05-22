@@ -207,6 +207,10 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
 
+   aadd( ::aModels, SQLArticulosEnvasadoModel():New() )
+
+   aadd( ::aModels, SQLOrdenComandasModel():New() )
+
    aadd( ::aModels, SQLClientesEntidadesModel():New() )
 
    aadd( ::aModels, SQLEntidadesModel():New() )

@@ -42,7 +42,7 @@ METHOD New( oSenderController ) CLASS CuentasBancariasController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Cuentas bancarias"
+   ::cTitle                      := "Cuentas"
 
    ::cName                       := "cuenta_bancaria"
 
@@ -317,7 +317,7 @@ METHOD Activate() CLASS CuentasBancariasView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_central_bank_euro_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog
 

@@ -263,7 +263,7 @@ METHOD Activate() CLASS DocumentosView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_document_text_gear_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog 
 

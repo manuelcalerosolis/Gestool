@@ -36,8 +36,7 @@ METHOD New( oSenderController ) CLASS DescuentosController
 
    ::hImage                      := {  "16" => "gc_symbol_percent_16",;
                                        "32" => "gc_symbol_percent_32",;
-                                       "48" => "gc_symbol_percent_48",;
-                                       "64" => "gc_symbol_percent_64" }
+                                       "48" => "gc_symbol_percent_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 

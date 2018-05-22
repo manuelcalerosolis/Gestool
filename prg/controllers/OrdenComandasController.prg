@@ -3,51 +3,51 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosController FROM SQLNavigatorController
-
-   DATA oComentariosLineasController
+CLASS OrdenComandasController FROM SQLNavigatorController
 
    METHOD New()
 
    METHOD End()
 
+   METHOD VerifyOrden()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ComentariosController
+METHOD New() CLASS OrdenComandasController
 
    ::Super:New()
 
-   ::cTitle                      := "Comentarios"
+   ::cTitle                      := "Ordenes de comanda"
 
-   ::cName                       := "comentarios"
+   ::cName                       := "Orden_comandas"
 
-   ::hImage                      := {  "16" => "gc_message_16",;
-                                       "32" => "gc_message_32",;
-                                       "48" => "gc_message_48" }
+   ::hImage                      := {  "16" => "gc_sort_az_descending_16",;
+                                       "32" => "gc_sort_az_descending_32",;
+                                       "48" => "gc_sort_az_descending_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                         := SQLComentariosModel():New( self )
+   ::oModel                      := SQLOrdenComandasModel():New( self )
 
-   ::oBrowseView                    := ComentariosBrowseView():New( self )
+   ::oBrowseView                 := OrdenComandasBrowseView():New( self )
 
-   ::oDialogView                    := ComentariosView():New( self )
+   ::oDialogView                 := OrdenComandasView():New( self )
 
-   ::oComentariosLineasController   := ComentariosLineasController():New( self )
+   ::oValidator                  := OrdenComandasValidator():New( self, ::oDialogView )
 
-   ::oValidator                     := ComentariosValidator():New( self, ::oDialogView )
+   ::oRepository                 := OrdenComandasRepository():New( self )
 
-   ::oRepository                    := ComentariosRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )   
+   ::setEvent( 'closedDialog', {|| ::VerifyOrden() } ) 
+   // ::setEvent( 'appended',    {|| ::VerifyOrden() } )
+   // ::setEvent( 'duplicated',  {|| ::VerifyOrden() } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS ComentariosController
+METHOD End() CLASS OrdenComandasController
 
    ::oModel:End()
 
@@ -57,8 +57,6 @@ METHOD End() CLASS ComentariosController
 
    ::oValidator:End()
 
-   ::oComentariosLineasController:End()
-
    ::oRepository:End()
 
    ::Super:End()
@@ -66,6 +64,13 @@ METHOD End() CLASS ComentariosController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD VerifyOrden()
+
+   local cSQL           := "UPDATE orden_comandas SET orden = orden + 1 WHERE orden >= " + toSQLString( ::oModel:hBuffer[ "orden" ] )
+
+RETURN ( getSQLDatabase():Exec( cSQL ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -75,7 +80,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosBrowseView FROM SQLBrowseView
+CLASS OrdenComandasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -83,7 +88,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ComentariosBrowseView
+METHOD addColumns() CLASS OrdenComandasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -111,10 +116,18 @@ METHOD addColumns() CLASS ComentariosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
+      :cSortOrder          := 'descripcion'
+      :cHeader             := 'Descripcion'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'orden'
+      :cHeader             := 'Orden'
+      :nWidth              := 70
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'orden' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -128,7 +141,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosView FROM SQLBaseView
+CLASS OrdenComandasView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -136,17 +149,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ComentariosView
+METHOD Activate() CLASS OrdenComandasView
 
    local oDialog 
-   local oBmpGeneral
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "COMENTARIO" ;
-      TITLE       ::LblTitle() + "Comentario"
+      RESOURCE    "ORDEN_COMANDA" ;
+      TITLE       ::LblTitle() + "Orden de comanda"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -161,39 +170,23 @@ METHOD Activate() CLASS ComentariosView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
+      PICTURE     "@! NN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
       ID          110 ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
+      VALID       ( ::oController:validate( "descripcion" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE BUTTON oBtnAppend ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "orden" ] ;
       ID          120 ;
-      OF          ::oDialog ;
+      SPINNER ;
+      MIN         1;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-
-  oBtnAppend:bAction   := {|| ::oController:oComentariosLineasController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          130 ;
       OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnEdit:bAction   := {|| ::oController:oComentariosLineasController:Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          150 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-  oBtnDelete:bAction   := {|| ::oController:oComentariosLineasController:Delete() }
-
-   ::oController:oComentariosLineasController:Activate( 160, ::oDialog )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -206,13 +199,6 @@ METHOD Activate() CLASS ComentariosView
       OF          ::oDialog ;
       CANCEL ;
       ACTION     ( ::oDialog:end() )
-
-   if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oComentariosLineasController:Append() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oComentariosLineasController:Edit() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oComentariosLineasController:Delete() } )
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
-   end if
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -227,7 +213,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosValidator FROM SQLCompanyValidator
+CLASS OrdenComandasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -236,10 +222,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ComentariosValidator
+METHOD getValidators() CLASS OrdenComandasValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
-                                                      "unique"             => "El nombre introducido ya existe" },;
+   ::hValidators  := {  "descripcion" =>           {  "required"           => "La descripcion es un dato requerido",;
+                                                      "unique"             => "La descripcion introducido ya existe" },;
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
                                                       "unique"             => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
@@ -253,17 +239,19 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLComentariosModel FROM SQLCompanyModel
+CLASS SQLOrdenComandasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "articulos_familias_comentarios"
+   DATA cTableName               INIT "orden_comandas"
 
    METHOD getColumns()
+
+   METHOD getOrden()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLComentariosModel
+METHOD getColumns() CLASS SQLOrdenComandasModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                              "default"   => {|| 0 } }                                 )
@@ -275,14 +263,34 @@ METHOD getColumns() CLASS SQLComentariosModel
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
                                              "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
+
+   hset( ::hColumns, "orden",             {  "create"    => "INTEGER "                                  ,;
+                                             "default"   => { || ::getOrden() } }                       )
 
    ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getOrden() CLASS SQLOrdenComandasModel
+
+   local cSQL 
+   local nOrden   
+
+   cSQL           := "SELECT orden FROM orden_comandas ORDER BY orden DESC LIMIT 1"
+
+   nOrden         := getSQLDatabase():getValue( cSQL )
+
+
+   if hb_isnumeric( nOrden )
+      RETURN ( nOrden + 1 )
+   end if 
+
+RETURN ( 1 )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -292,13 +300,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosRepository FROM SQLBaseRepository
+CLASS OrdenComandasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLComentariosModel():getTableName() ) 
-
-   METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
-
-   METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )
+   METHOD getTableName()                  INLINE ( SQLOrdenComandasModel():getTableName() ) 
 
 END CLASS
 
