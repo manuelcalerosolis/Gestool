@@ -34,7 +34,7 @@ METHOD New( oSenderController ) CLASS ClientesEntidadesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Clientes Entidades"
+   ::cTitle                      := "Clientes entidades"
 
    ::cName                       := "Clientes Entidades"
 

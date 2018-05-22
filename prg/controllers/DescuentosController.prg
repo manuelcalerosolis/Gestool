@@ -36,7 +36,8 @@ METHOD New( oSenderController ) CLASS DescuentosController
 
    ::hImage                      := {  "16" => "gc_symbol_percent_16",;
                                        "32" => "gc_symbol_percent_32",;
-                                       "48" => "gc_symbol_percent_48" }
+                                       "48" => "gc_symbol_percent_48",;
+                                       "64" => "gc_symbol_percent_64" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -198,11 +199,46 @@ METHOD addColumns() CLASS DescuentosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'descuento'
+      :cHeader             := 'Descuento'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'cantidad_minima'
+      :cHeader             := 'Mínimo'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad_minima' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'fecha_inicio'
+      :cHeader             := 'Inicio'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_inicio' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'fecha_fin'
+      :cHeader             := 'Fin'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_fin' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
 RETURN ( self )
@@ -217,13 +253,7 @@ RETURN ( self )
 
 CLASS DescuentosView FROM SQLBaseView
   
-   DATA oGetDescuento
-
    METHOD Activate()
-
-   METHOD startDialog()
-
-   METHOD changeFechaResolucion()
 
 END CLASS
 
@@ -249,8 +279,7 @@ METHOD Activate() CLASS DescuentosView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oGetDescuento ;
-      VAR         ::oController:oModel:hBuffer[ "descuento" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "descuento" ] ;
       ID          100 ;
       SPINNER ;
       PICTURE     "@E 999.9999" ;
@@ -258,36 +287,29 @@ METHOD Activate() CLASS DescuentosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   /*REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
-      ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "mostrar" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
-      IDSAY       112 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cantidad_minima" ] ;
       ID          120 ;
-      MEMO ;
-      VALID       ( ::oController:validate( "descripcion" ) ) ;
+      SPINNER ;
+      PICTURE     "@E 999999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "resuelta" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_inicio" ] ;
       ID          130 ;
-      IDSAY       132 ;
+      SPINNER ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ON CHANGE   ( ::changeFechaResolucion() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oGetFechaResolucion ;
-      VAR         ::oController:oModel:hBuffer[ "fecha_hora_resolucion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_fin" ] ;
       ID          140 ;
+      SPINNER ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog*/
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -305,41 +327,11 @@ METHOD Activate() CLASS DescuentosView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ::oDialog:bStart := {|| ::startDialog() }
-
    ACTIVATE DIALOG ::oDialog CENTER
 
   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD startDialog() CLASS DescuentosView
-
-   ::oGetDescuento:SetFocus()
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD changeFechaResolucion() CLASS DescuentosView
-
-   /*if ::oController:oModel:hBuffer[ "resuelta" ]
-
-      hSet( ::oController:oModel:hBuffer, "fecha_hora_resolucion", hb_datetime() )
-      ::oGetFechaResolucion:Show()
-
-   else
-
-      hSet( ::oController:oModel:hBuffer, "fecha_hora_resolucion", hb_StrToTS( "" ) )
-      ::oGetFechaResolucion:Hide()
-
-   end if
-
-   ::oGetFechaResolucion:Refresh()*/
-
-Return ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
