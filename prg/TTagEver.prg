@@ -133,6 +133,8 @@ RETURN Self
 
 METHOD End()
 
+   msgalert("end TTagEver")
+
    ::deleteBitmap()
 
 RETURN Self
@@ -151,7 +153,9 @@ RETURN Self
 
 //---------------------------------------------------------------------------//
 
-METHOD loadBitmap()
+METHOD loadBitmap() CLASS TTagEver
+
+   ::deleteBitmap()
 
    ::hBmp         := loadBitmap( getResources(), "gc_tag_close_12" )
 

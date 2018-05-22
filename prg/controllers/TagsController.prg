@@ -183,11 +183,13 @@ CLASS TagsView FROM SQLBaseView
    DATA oTagsEver
 
    METHOD Activate()
+   
+   METHOD End()
 
    METHOD externalRedefine( hControl, oDialog )
 
    METHOD Start()
-      
+
       METHOD validateAndAddTag( cMarcador )
       METHOD selectorAndAddTag()
 
@@ -229,6 +231,22 @@ METHOD Activate() CLASS TagsView
    ACTIVATE DIALOG oDialog CENTER
 
 RETURN ( oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS TagsView
+
+   ::Super:end()
+
+   if !empty( ::oBtnTags )
+      ::oBtnTags:End()
+   end if 
+
+   if !empty( ::oTagsEver )
+      ::oTagsEver:End()
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
