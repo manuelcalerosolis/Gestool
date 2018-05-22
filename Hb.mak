@@ -379,6 +379,7 @@ RutasController.prg 															\
 ClientesGruposController.prg 												\
 ArticulosTemporadaController.prg 										\
 ArticulosCategoriasController.prg 										\
+ArticulosUnidadesMedicionController.prg								\
 AlmacenesController.prg 													\
 ArticulosController.prg 													\
 ArticulosPreciosController.prg 											\
@@ -1043,6 +1044,7 @@ RutasController.obj       													\
 ClientesGruposController.obj       										\
 ArticulosTemporadaController.obj       								\
 ArticulosCategoriasController.obj       								\
+ArticulosUnidadesMedicionController.obj 								\
 AlmacenesController.obj       											\
 ArticulosController.obj       											\
 ArticulosPreciosController.obj       									\
@@ -1694,6 +1696,7 @@ $(OBJ)\RutasController.obj    											+
 $(OBJ)\ClientesGruposController.obj    								+
 $(OBJ)\ArticulosTemporadaController.obj    							+
 $(OBJ)\ArticulosCategoriasController.obj    							+
+$(OBJ)\ArticulosUnidadesMedicionController.obj    					+
 $(OBJ)\AlmacenesController.obj    										+
 $(OBJ)\ArticulosController.obj    										+
 $(OBJ)\ArticulosPreciosController.obj    								+

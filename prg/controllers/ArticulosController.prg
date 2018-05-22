@@ -19,6 +19,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oImpuestosEspecialesController
 
+   DATA oCamposExtraValoresController
+
    DATA oTagsController
 
    DATA oPrimeraPropiedadController
@@ -65,6 +67,8 @@ METHOD New() CLASS ArticulosController
 
    ::oRepository                       := ArticulosRepository():New( self )
 
+   ::oCamposExtraValoresController     := CamposExtraValoresController():New( self, 'clientes' )
+
    ::oTagsController                   := TagsController():New( self )
 
    ::oArticulosFamiliaController       := ArticulosFamiliaController():New( self )
@@ -107,6 +111,8 @@ METHOD End() CLASS ArticulosController
 
    ::oRepository:End()
 
+   ::oCamposExtraValoresController:End()
+
    ::oTagsController:End()
 
    ::oArticulosFamiliaController:End()
@@ -133,7 +139,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getPrecioCosto()
+METHOD getPrecioCosto() CLASS ArticulosController
 
    if empty(::oModel)
       RETURN ( 0 )
@@ -147,7 +153,7 @@ RETURN ( ::oModel:hBuffer[ "precio_costo" ] )
 
 //---------------------------------------------------------------------------//
 
-METHOD getPorcentajeIVA()
+METHOD getPorcentajeIVA() CLASS ArticulosController
 
    if empty(::oModel)
       RETURN ( 0 )
@@ -161,7 +167,7 @@ RETURN ( ::oIvaTipoController:oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[
 
 //---------------------------------------------------------------------------//
 
-METHOD insertPreciosWhereArticulo()
+METHOD insertPreciosWhereArticulo() CLASS ArticulosController
 
    local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
 
@@ -256,9 +262,9 @@ CLASS ArticulosView FROM SQLBaseView
   
    METHOD Activate()
 
-   METHOD End()
-
    METHOD startActivate()
+
+   METHOD addLinksToExplorerBar()
 
    METHOD changeLote()           INLINE ( iif( ::oController:oModel:hBuffer[ "lote" ], ::oGetLoteActual:Show(), ::oGetLoteActual:Hide() ) )
 
@@ -274,7 +280,7 @@ END CLASS
 METHOD Activate() CLASS ArticulosView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTAINER_MEDIUM" ;
+      RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
       TITLE       ::LblTitle() + "articulo"
 
    REDEFINE BITMAP ::oBitmap ;
@@ -296,6 +302,8 @@ METHOD Activate() CLASS ArticulosView
                   "&Precios" ;
       DIALOGS     "ARTICULO_GENERAL",;
                   "ARTICULO_PRECIO"    
+
+   ::redefineExplorerBar()
 
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -449,9 +457,11 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD startActivate()
+METHOD startActivate() CLASS ArticulosView
 
    SendMessage( ::oComboPeriodoCaducidad:hWnd, 0x0153, -1, 14 )
+
+   ::addLinksToExplorerBar()
 
    ::oController:oArticulosFamiliaController:oGetSelector:Start()
 
@@ -479,15 +489,13 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End()
+METHOD addLinksToExplorerBar() CLASS ArticulosView
 
-   MSGALERT( "End" )
+   local oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   if !empty( ::oController:oTagsController:oDialogView )
-      ::oController:oTagsController:oDialogView:End()
-   end if 
+   oPanel:AddLink( "Campos extra...",  {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
-RETURN ( ::Super:End() )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

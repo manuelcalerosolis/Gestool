@@ -23,7 +23,7 @@ CLASS ClientesView FROM SQLBaseView
    DATA oRiesgo
    
    DATA oRiesgoAlcanzado
-   DATA nRiesgoAlcanzado   INIT 0
+   DATA nRiesgoAlcanzado               INIT 0
 
    DATA oInfoSubCuenta
    DATA oInfoSubCuentaDescuento
@@ -460,6 +460,7 @@ METHOD changeBloqueo() CLASS ClientesView
    end if
 
    ::oGetFechaBloqueo:Refresh()
+   
    ::oGetCausaBloqueo:Refresh()
 
 Return ( self )

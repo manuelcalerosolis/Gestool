@@ -54,7 +54,7 @@ RETURN ( Self )
 METHOD createDatabase()
 
    getSQLDatabase():oConexion:Exec( "CREATE DATABASE IF NOT EXISTS " + getSQLDatabase():cDatabaseMySQL + ";" )
-   
+
    getSQLDatabase():oConexion:Exec( "USE " + getSQLDatabase():cDatabaseMySQL + ";" )
        
 RETURN ( self )    
@@ -231,6 +231,8 @@ METHOD addModels()
    aadd( ::aModels, SQLArticulosFamiliaModel():New() )
 
    aadd( ::aModels, SQLUnidadesMedicionModel():New() )
+
+   aadd( ::aModels, SQLArticulosUnidadesMedicionModel():New() )
 
    aadd( ::aModels, SQLDivisasMonetariasModel():New() )
 
