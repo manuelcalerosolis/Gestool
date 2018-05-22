@@ -126,8 +126,8 @@ METHOD Start()
       oBoton               := TDotNetButton():New( 60, oGrupo, "gc_lock2_32",                "Zoom",           6, {|| ::oController:Zoom(), ::Refresh() }, , , .f., .f., .f. )
       oBoton               := TDotNetButton():New( 60, oGrupo, "Del32",                      "Eliminar",       7, {|| ::oController:Delete( ::getBrowse():aSelected ), ::Refresh() }, , , .f., .f., .f. )
 
-   oGrupo                  := TDotNetGroup():New( oCarpeta, 128, "", .f. ) 
-      oBoton               := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",           "Salir",          2, {|| ::oDialog:end() }, , , .f., .f., .f. )
+   oGrupo                  := TDotNetGroup():New( oCarpeta, 68, "", .f. ) 
+      oBoton               := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",           "Salir",          1, {|| ::oDialog:end() }, , , .f., .f., .f. )
 
 
    ::oComboBoxOrder:SetItems( ::getBrowseView():getColumnsHeaders() )
