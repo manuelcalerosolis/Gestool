@@ -9,6 +9,10 @@ CLASS UnidadesMedicionController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ),;
+                                             ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ),;
+                                             .t. ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -25,22 +29,24 @@ METHOD New() CLASS UnidadesMedicionController
                                        "32" => "gc_tape_measure2_32",;
                                        "48" => "gc_tape_measure2_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                         := SQLUnidadesMedicionModel():New( self )
+   ::oModel                      := SQLUnidadesMedicionModel():New( self )
 
-   ::oBrowseView                    := UnidadesMedicionBrowseView():New( self )
+   ::oBrowseView                 := UnidadesMedicionBrowseView():New( self )
 
-   ::oDialogView                    := UnidadesMedicionView():New( self )
+   ::oDialogView                 := UnidadesMedicionView():New( self )
 
-   ::oValidator                     := UnidadesMedicionValidator():New( self, ::oDialogView )
+   ::oValidator                  := UnidadesMedicionValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := UnidadesMedicionRepository():New( self )
+   ::oRepository                 := UnidadesMedicionRepository():New( self )
 
+   ::setEvents( { 'appending', 'duplicating', 'editing', 'deleting' }, {|| ::isSystemRegister() } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS UnidadesMedicionController
 
    ::oModel:End()
@@ -57,10 +63,6 @@ METHOD End() CLASS UnidadesMedicionController
 
 RETURN ( Self )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -112,7 +114,7 @@ METHOD addColumns() CLASS UnidadesMedicionBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo_iso'
-      :cHeader             := 'Codigo_iso'
+      :cHeader             := 'Código ISO'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_iso' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -120,8 +122,6 @@ METHOD addColumns() CLASS UnidadesMedicionBrowseView
 
 RETURN ( self )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -139,10 +139,10 @@ END CLASS
 METHOD Activate() CLASS UnidadesMedicionView
 
    local oDialog
-   local oBmpGeneral
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
+   local oBmpGeneral
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "UNIDAD_MEDICION" ;
@@ -161,7 +161,7 @@ METHOD Activate() CLASS UnidadesMedicionView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NN" ;
+      PICTURE     "@! NNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -188,7 +188,7 @@ METHOD Activate() CLASS UnidadesMedicionView
       ID          IDCANCEL ;
       OF          ::oDialog ;
       CANCEL ;
-      ACTION     ( ::oDialog:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
@@ -205,12 +205,10 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS UnidadesMedicionValidator FROM SQLBaseValidator
 
    METHOD getValidators()
-
  
 END CLASS
 
@@ -218,10 +216,10 @@ END CLASS
 
 METHOD getValidators() CLASS UnidadesMedicionValidator
 
-   ::hValidators  := {  "descripcion" =>          {  "required"            => "La descripción es un dato requerido",;
-                                                      "unique"             => "La descripción introducida ya existe" },;
-                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "descripcion" =>  {  "required"           => "La descripción es un dato requerido",;
+                                             "unique"             => "La descripción introducida ya existe" },;
+                        "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
+                                             "unique"             => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -229,15 +227,14 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS SQLUnidadesMedicionModel FROM SQLCompanyModel
+CLASS SQLUnidadesMedicionModel FROM SQLBaseModel
 
    DATA cTableName               INIT "unidades_medicion"
 
    METHOD getColumns()
+
+   METHOD getInsertUnidadesMedicionSentence()
 
 END CLASS
 
@@ -245,28 +242,39 @@ END CLASS
 
 METHOD getColumns() CLASS SQLUnidadesMedicionModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                             "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
+                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 2 )"                            ,;
-                                             "default"   => {|| space( 2 ) } }                        )
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 8 )"                            ,;
+                                          "default"   => {|| space( 8 ) } }                        )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
+                                          "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "codigo_iso",        {  "create"    => "VARCHAR( 6 )"                            ,;
-                                             "default"   => {|| space( 6 ) } }                         )
+   hset( ::hColumns, "codigo_iso",     {  "create"    => "VARCHAR( 6 )"                            ,;
+                                          "default"   => {|| space( 6 ) } }                        )
+
+   hset( ::hColumns, "sistema",        {  "create"    => "BIT"                                     ,;
+                                          "default"   => {|| .t. } }                               )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+METHOD getInsertUnidadesMedicionSentence() CLASS SQLUnidadesMedicionModel
+
+   local cSentence 
+
+   cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
+   cSentence  +=    "( uuid, codigo, nombre, codigo_iso, sistema ) "
+   cSentence  += "VALUES "
+   cSentence  +=    "( UUID(), 'UDS', 'Unidades', 'UDS', 1 )"
+
+RETURN ( cSentence )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -279,5 +287,8 @@ CLASS UnidadesMedicionRepository FROM SQLBaseRepository
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

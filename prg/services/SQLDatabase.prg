@@ -107,15 +107,6 @@ METHOD New()
    ::cPasswordMySQL           := GetPvProfString(  "MySQL",    "Password", "",            cIniAplication() )
    ::nPortMySQL               := GetPvProfInt(     "MySQL",    "Port",     3306,          cIniAplication() )
 
-
-   MsgInfo( ::cDatabaseMySQL, "::cDatabaseMySQL" )
-   MsgInfo( ::cIpMySQL, "::cIpMySQL" )
-   MsgInfo( ::cUserMySQL, "::cUserMySQL" )
-   MsgInfo( ::cPasswordMySQL, "::cPasswordMySQL" )
-   MsgInfo( ::nPortMySQL, "::nPortMySQL" )
-
-   MsgInfo( THDO():ClassName(), "className" )
-
    ::oConexion                := THDO():new( "mysql" )
 
    ::oConexion:setAttribute( HDO_ATTR_ERRMODE, .t. )
