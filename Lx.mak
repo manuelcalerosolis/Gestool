@@ -937,6 +937,7 @@ SQLBaseReport.prg 							\
 MovimientosAlmacenRepository.prg			\
 MovimientosAlmacenLineasRepository.prg	\
 SQLBaseRepository.prg 						\
+SQLDataBase.prg 								\
 
 C               =       \
 Metafi32.c              \
@@ -1864,6 +1865,7 @@ SQLBaseReport.obj 							\
 MovimientosAlmacenRepository.obj			\
 MovimientosAlmacenLineasRepository.obj	\
 SQLBaseRepository.obj 						\
+SQLDataBase.obj 								\
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -2796,13 +2798,17 @@ $(OBJ)\MovimientosAlmacenRepository.obj			+
 $(OBJ)\MovimientosAlmacenLineasRepository.obj 	+
 $(OBJ)\SQLBaseReport.obj 								+
 $(OBJ)\SQLBaseRepository.obj 							+
+$(OBJ)\SQLDataBase.obj 									+
 $(OBJ)\EstadoSat.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +
 $(FWLIB)\FiveHC.lib              +
-$(HBLIB)\Eagle1.lib              +
-$(FWLIB)\libmysql.lib            +
 $(HBLIB)\hbwin.lib               +
+$(HBLIB)\hdo.lib               	+
+$(HBLIB)\mylist.lib 					+
+$(HBLIB)\rdlmysql.lib 				+
+$(HBLIB)\libmysql.lib            +
+$(HBLIB)\Eagle1.lib              +
 $(HBLIB)\gtwin.lib               + 
 $(HBLIB)\gtgui.lib               + 
 $(HBLIB)\hbrtl.lib               + 
