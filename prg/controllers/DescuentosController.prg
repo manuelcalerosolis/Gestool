@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS DocumentosController FROM SQLNavigatorController
+CLASS DescuentosController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -11,8 +11,6 @@ CLASS DocumentosController FROM SQLNavigatorController
 
    METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
    METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
-
-   METHOD loadedBlankBuffer()
 
    METHOD loadedCurrentBuffer( uuidEntidad ) 
    METHOD updateBuffer( uuidEntidad )
@@ -28,29 +26,29 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS DocumentosController
+METHOD New( oSenderController ) CLASS DescuentosController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Documentos"
+   ::cTitle                      := "Descuentos"
 
-   ::cName                       := "documentos"
+   ::cName                       := "descuentos"
 
-   ::hImage                      := {  "16" => "gc_document_text_gear_16",;
-                                       "32" => "gc_document_text_gear_32",;
-                                       "48" => "gc_document_text_gear_48" }
+   ::hImage                      := {  "16" => "gc_symbol_percent_16",;
+                                       "32" => "gc_symbol_percent_32",;
+                                       "48" => "gc_symbol_percent_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLDocumentosModel():New( self )
+   ::oModel                         := SQLDescuentosModel():New( self )
 
-   ::oBrowseView                    := DocumentosBrowseView():New( self )
+   ::oBrowseView                    := DescuentosBrowseView():New( self )
 
-   ::oDialogView                    := DocumentosView():New( self )
+   ::oDialogView                    := DescuentosView():New( self )
 
-   ::oValidator                     := DocumentosValidator():New( self, ::oDialogView )
+   ::oValidator                     := DescuentosValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := DocumentosRepository():New( self )
+   ::oRepository                    := DescuentosRepository():New( self )
 
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
@@ -63,7 +61,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS DocumentosController
+METHOD End() CLASS DescuentosController
 
    ::oModel:End()
 
@@ -81,52 +79,43 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() CLASS DocumentosController
+METHOD gettingSelectSentence() CLASS DescuentosController
 
    local uuid        := ::getSenderController():getUuid() 
 
    if !empty( uuid )
-      hset( ::oModel:hBuffer, "parent_uuid", uuid )
-   end if 
-
-RETURN ( Self )
-//---------------------------------------------------------------------------//
-
-METHOD gettingSelectSentence() CLASS DocumentosController
-
-   local uuid        := ::getSenderController():getUuid()  
-   if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS DocumentosController
+METHOD LoadedCurrentBuffer( uuiddescuento ) CLASS DescuentosController
 
-   local idDocumento     
+   local idDescuento     
 
-   if empty( uuidEntidad )
+   if empty( uuiddescuento )
       ::oModel:insertBuffer()
    end if 
 
-   idDocumento          := ::oModel:getIdWhereParentUuid( uuidEntidad )
-   if empty( idDocumento )
-      idDocumento      := ::oModel:insertBlankBuffer()
+   idDescuento          := ::oModel:getIdWhereParentUuid( uuiddescuento )
+   if empty( idDescuento )
+      idDescuento       := ::oModel:insertBlankBuffer()
    end if 
 
-   ::oModel:loadCurrentBuffer( idDocumento )
+   ::oModel:loadCurrentBuffer( idDescuento )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD UpdateBuffer( uuidEntidad ) CLASS DocumentosController
+METHOD UpdateBuffer( uuidDescuento ) CLASS DescuentosController
 
-   local idDocumento     
+   local idDescuento     
 
-   idDocumento          := ::oModel:getIdWhereParentUuid( uuidEntidad )
-   if empty( idDocumento )
+   idDescuento          := ::oModel:getIdWhereParentUuid( uuidDescuento )
+   if empty( idDescuento )
       ::oModel:insertBuffer()
       RETURN ( self )
    end if 
@@ -137,31 +126,31 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DocumentosController
+METHOD loadedDuplicateCurrentBuffer( uuidDescuento ) CLASS DescuentosController
 
-   local idDocumento     
+   local idDescuento     
 
-   idDocumento          := ::oModel:getIdWhereParentUuid( uuidEntidad )
-   if empty( idDocumento )
+   idDescuento          := ::oModel:getIdWhereParentUuid( uuidDescuento )
+   if empty( idDescuento )
       ::oModel:insertBuffer()
       RETURN ( self )
    end if 
 
-   ::oModel:loadDuplicateBuffer( idDocumento )
+   ::oModel:loadDuplicateBuffer( idDescuento )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS DocumentosController
+METHOD loadedDuplicateBuffer( uuidDescuento ) CLASS DescuentosController
 
-   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+   hset( ::oModel:hBuffer, "parent_uuid", uuidDescuento )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteBuffer( aUuidEntidades ) CLASS DocumentosController
+METHOD deleteBuffer( aUuidEntidades ) CLASS DescuentosController
 
    if empty( aUuidEntidades )
       RETURN ( self )
@@ -181,7 +170,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DocumentosBrowseView FROM SQLBrowseView
+CLASS DescuentosBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -189,7 +178,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS DocumentosBrowseView
+METHOD addColumns() CLASS DescuentosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -209,27 +198,46 @@ METHOD addColumns() CLASS DocumentosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'descuento'
+      :cHeader             := 'Descuento'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
-      :nWidth              := 130
+      :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'documento'
-      :cHeader             := 'Documento'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'documento' ) }
+      :cSortOrder          := 'cantidad_minima'
+      :cHeader             := 'Mínimo'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad_minima' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'observacion'
-      :cHeader             := 'Observación'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'observacion' ) }
+      :cSortOrder          := 'fecha_inicio'
+      :cHeader             := 'Inicio'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_inicio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'fecha_fin'
+      :cHeader             := 'Fin'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_fin' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
 RETURN ( self )
@@ -242,7 +250,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DocumentosView FROM SQLBaseView
+CLASS DescuentosView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -250,47 +258,57 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS DocumentosView
+METHOD Activate() CLASS DescuentosView
 
    local oDialog
-   local oGetDocumento
-   local oDocumento
    local oBmpGeneral
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "DOCUMENTO" ;
-      TITLE       ::LblTitle() + "documento"
+      RESOURCE    "DESCUENTOS" ;
+      TITLE       ::LblTitle() + "descuento"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
       RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
-      OF          ::oDialog 
+      OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
       FONT        getBoldFont() ;
-      OF          ::oDialog 
+      OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "descuento" ] ;
       ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog 
-
-   REDEFINE GET   oGetDocumento ;
-      VAR         ::oController:oModel:hBuffer[ "documento" ] ;
-      ID          110 ;
-      BITMAP      "Folder" ;
-      ON HELP     ( GetDocumento( oGetDocumento, oDocumento ) ) ;
-      ON CHANGE   ( ChgDoc( oGetDocumento, oDocumento ) ) ;
+      SPINNER ;
+      PICTURE     "@E 999.9999" ;
+      VALID       ( ::oController:validate( "descuento" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "observacion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+      ID          110 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "cantidad_minima" ] ;
       ID          120 ;
-      MEMO ;
-      WHEN        (::oController:isNotZoomMode() ) ;
-      OF          ::oDialog 
+      SPINNER ;
+      PICTURE     "@E 999999" ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_inicio" ] ;
+      ID          130 ;
+      SPINNER ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_fin" ] ;
+      ID          140 ;
+      SPINNER ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -321,18 +339,17 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DocumentosValidator FROM SQLBaseValidator
+CLASS DescuentosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
-
  
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS DocumentosValidator
+METHOD getValidators() CLASS DescuentosValidator
 
-   ::hValidators  := {  "nombre" =>           {  "required"              => "El nombre es un dato requerido" } }
+   ::hValidators  := {  "descuento" =>           {  "required"              => "El porcentaje de descuento es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -345,17 +362,13 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLDocumentosModel FROM SQLBaseModel
+CLASS SQLDescuentosModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "documentos"
+   DATA cTableName               INIT "descuentos"
 
    METHOD getColumns()
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
-
-   METHOD updateDocumentoWhereUuid( uValue, uuid )    INLINE ( ::updateFieldWhereUuid( uuid, 'ruta_documento', uValue ) )
-
-   METHOD SetDocumentoAttribute( uValue )             
 
    METHOD getParentUuidAttribute( value )
 
@@ -363,30 +376,39 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLDocumentosModel
+METHOD getColumns() CLASS SQLDescuentosModel
 
-   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"             ,;                          
-                                                   "default"   => {|| 0 } }                                   )
+   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"               ,;                                  
-                                                   "default"   => {|| win_uuidcreatestring() } }              )
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                                   "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                    ,;
-                                                   "default"   => {|| space( 40 ) } }                         )
+   hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+                                                   "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 )"                            ,;
-                                                   "default"   => {|| space( 200 ) } }                        )
+   ::getEmpresaColumns()
 
-   hset( ::hColumns, "documento",               {  "create"    => "VARCHAR ( 200 )"                           ,;
-                                                   "default"   => {|| space( 200 ) } }                        )
+   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
+                                                   "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "observacion",             {  "create"    => "TEXT"                                      ,;
-                                                   "default"   => {|| "" } }                                  )
+   hset( ::hColumns, "fecha_inicio",            {  "create"    => "DATE"                                    ,;
+                                                   "default"   => {|| ctod( "" ) } }                        )
+
+   hset( ::hColumns, "fecha_fin",               {  "create"    => "DATE"                                    ,;
+                                                   "default"   => {|| ctod( "" ) } }                        )
+
+   hset( ::hColumns, "descuento",               {  "create"    => "FLOAT(7,4)"                              ,;
+                                                   "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "cantidad_minima",         {  "create"    => "INT UNSIGNED"                            ,;
+                                                   "default"   => {|| 0 } }                                 )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getParentUuidAttribute( value ) CLASS SQLDocumentosModel
+METHOD getParentUuidAttribute( value ) CLASS SQLDescuentosModel
 
    if empty( ::oController )
       RETURN ( value )
@@ -399,29 +421,6 @@ METHOD getParentUuidAttribute( value ) CLASS SQLDocumentosModel
 RETURN ( ::oController:oSenderController:getUuid() )
 
 //---------------------------------------------------------------------------//
-
-METHOD SetDocumentoAttribute( uValue )
-
-   local cNombreDocumento
-
-   if empty( uValue ) .or. isDocumentInApplicationStorage( uValue )
-      RETURN ( uValue )
-   end if      
-   if empty( ::oController ) .or. empty( ::oController:oSenderController )
-      RETURN ( uValue )
-   end if       
-
-   cNombreDocumento           := alltrim( ::oController:oSenderController:oModel:hBuffer[ "nombre" ] ) 
-   cNombreDocumento           += '(' + alltrim( ::hBuffer[ "uuid" ] ) + ')' + '.' 
-   cNombreDocumento           += lower( getFileExt( uValue ) ) 
-
-   if !( copyfile( uValue, cPathDocumentApplicationStorage() + cNombreDocumento ) )
-   
-      RETURN ( uValue )
-   end if      
-
-RETURN ( cRelativeDocumentApplicationStorage() + cNombreDocumento )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -430,9 +429,9 @@ RETURN ( cRelativeDocumentApplicationStorage() + cNombreDocumento )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DocumentosRepository FROM SQLBaseRepository
+CLASS DescuentosRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLDocumentosModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLDescuentosModel():getTableName() ) 
 
 END CLASS
 

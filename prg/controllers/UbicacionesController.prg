@@ -23,6 +23,10 @@ METHOD New( oController ) CLASS UbicacionesController
 
    ::cName                       := "ubicaciones"
 
+   ::hImage                      := {  "16" => "gc_package_16",;
+                                       "32" => "gc_package_32",;
+                                       "48" => "gc_package_48" }
+
    ::oModel                      := SQLAlmacenesModel():New( self )
 
    ::oRepository                 := AlmacenesRepository():New( self )
@@ -104,7 +108,7 @@ METHOD Activate() CLASS UbicacionesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_package_48" ;
+      RESOURCE    ::oController:getimage("48")  ;
       TRANSPARENT ;
       OF          ::oDialog
 

@@ -4057,8 +4057,8 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
    ::disableDialog()
 
-   /*oBlock                     := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock                     := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
       ::ftpConnect()
 
@@ -4078,10 +4078,10 @@ METHOD controllerExportPrestashop( idProduct ) Class TComercio
 
       ::ftpDisConnect()
 
-   /*RECOVER USING oError
+   RECOVER USING oError
       msgStop( ErrorMessage( oError ), "Error en modulo Prestashop." )
    END SEQUENCE
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    ::EnableDialog()
 

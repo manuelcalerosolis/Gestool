@@ -17,9 +17,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS EntidadesController
+METHOD New( oSenderController ) CLASS EntidadesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Entidades"
 
@@ -227,7 +227,7 @@ METHOD Activate() CLASS EntidadesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_office_building2_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog ;
 

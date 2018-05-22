@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosFabricantesController FROM SQLNavigatorController
+CLASS ArticulosEnvasadoController FROM SQLNavigatorController
 
    DATA oImagenesController
 
@@ -19,54 +19,42 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ArticulosFabricantesController
+METHOD New( oSenderController ) CLASS ArticulosEnvasadoController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Fabricantes"
+   ::cTitle                      := "Envasado"
 
-   ::cName                       := "fabricantes"
+   ::cName                       := "envasado"
 
-   ::hImage                      := {  "16" => "gc_bolt_16",;
-                                       "32" => "gc_bolt_32",;
-                                       "48" => "gc_bolt_48" }
+   ::hImage                      := {  "16" => "gc_box_closed_16",;
+                                       "32" => "gc_box_closed_32",;
+                                       "48" => "gc_box_closed_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLArticulosFabricantesModel():New( self )
+   ::oModel                         := SQLArticulosEnvasadoModel():New( self )
 
-   ::oBrowseView                    := ArticulosFabricantesBrowseView():New( self )
+   ::oBrowseView                    := ArticulosEnvasadoBrowseView():New( self )
 
-   ::oDialogView                    := ArticulosFabricantesView():New( self )
+   ::oDialogView                    := ArticulosEnvasadoView():New( self )
 
-   ::oValidator                     := ArticulosFabricantesValidator():New( self, ::oDialogView )
+   ::oValidator                     := ArticulosEnvasadoValidator():New( self, ::oDialogView )
 
-   ::oImagenesController            := ImagenesController():New( self )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'envases_articulos' )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'fabricantes' )
-
-   ::oRepository                    := ArticulosFabricantesRepository():New( self )
+   ::oRepository                    := ArticulosEnvasadoRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oImagenesController:loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oImagenesController:insertBuffer() } )
-
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oImagenesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oImagenesController:updateBuffer( ::getUuid() ) } )
-
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oImagenesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oImagenesController:loadedDuplicateBuffer( ::getUuid() ) } )
-   
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oImagenesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS ArticulosFabricantesController
+METHOD End() CLASS ArticulosEnvasadoController
 
    ::oModel:End()
 
@@ -75,8 +63,6 @@ METHOD End() CLASS ArticulosFabricantesController
    ::oDialogView:End()
 
    ::oValidator:End()
-
-   ::oImagenesController:End()
 
    ::oCamposExtraValoresController:End()
 
@@ -94,7 +80,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosFabricantesBrowseView FROM SQLBrowseView
+CLASS ArticulosEnvasadoBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -102,7 +88,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ArticulosFabricantesBrowseView
+METHOD addColumns() CLASS ArticulosEnvasadoBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -134,14 +120,6 @@ METHOD addColumns() CLASS ArticulosFabricantesBrowseView
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'pagina_web'
-      :cHeader             := 'Página web'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'pagina_web' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
 RETURN ( self )
@@ -154,7 +132,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosFabricantesView FROM SQLBaseView
+CLASS ArticulosEnvasadoView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -162,13 +140,12 @@ CLASS ArticulosFabricantesView FROM SQLBaseView
 
     DATA oSayCamposExtra
 
-   METHOD getImagenesController()   INLINE ( ::oController:oImagenesController )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activating() CLASS ArticulosFabricantesView
+METHOD Activating() CLASS ArticulosEnvasadoView
 
    if ::oController:isAppendOrDuplicateMode()
       ::oController:oModel:hBuffer()
@@ -177,15 +154,13 @@ METHOD Activating() CLASS ArticulosFabricantesView
 RETURN ( self )
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ArticulosFabricantesView
+METHOD Activate() CLASS ArticulosEnvasadoView
 
-   local oGetImagen
-   local oBmpImagen
    local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "FABRICANTES" ;
-      TITLE       ::LblTitle() + "fabricante"
+      RESOURCE    "ARTICULO_ENVASADO" ;
+      TITLE       ::LblTitle() + "envasado"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -211,34 +186,11 @@ METHOD Activate() CLASS ArticulosFabricantesView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pagina_web" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   oGetImagen ;
-      VAR         ::getImagenesController():oModel:hBuffer[ "imagen" ] ;
-      ID          130 ;
-      BITMAP      "Folder" ;
-      ON HELP     ( GetBmp( oGetImagen, oBmpImagen ) ) ;
-      ON CHANGE   ( ChgBmp( oGetImagen, oBmpImagen ) ) ;
-      WHEN        ( ::getImagenesController():isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE IMAGE oBmpImagen ;
-      ID          140 ;
-      FILE        cFileBmpName( ::getImagenesController():oModel:hBuffer[ "imagen" ] ) ;
-      OF          ::oDialog
-
-      oBmpImagen:SetColor( , getsyscolor( 15 ) )
-      oBmpImagen:bLClicked   := {|| ShowImage( oBmpImagen ) }
-      oBmpImagen:bRClicked   := {|| ShowImage( oBmpImagen ) }
-
    REDEFINE SAY   ::oSayCamposExtra ;
       PROMPT      "Campos extra..." ;
       FONT        getBoldFont() ; 
       COLOR       rgb( 10, 152, 234 ) ;
-      ID          150 ;
+      ID          120 ;
       OF          ::oDialog
 
    ::oSayCamposExtra:lWantClick  := .t.
@@ -264,8 +216,6 @@ METHOD Activate() CLASS ArticulosFabricantesView
 
   ::oBitmap:End()
 
-  oBmpImagen:End()
-
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
@@ -275,7 +225,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosFabricantesValidator FROM SQLCompanyValidator
+CLASS ArticulosEnvasadoValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -283,12 +233,12 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ArticulosFabricantesValidator
+METHOD getValidators() CLASS ArticulosEnvasadoValidator
 
    ::hValidators  := {  "codigo" =>    {  "required"           => "El código es un dato requerido",;
                                           "unique"             => "El código introducido ya existe" } ,;
                         "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
-                                          "unique"             => "El nombre introducido ya existe" } }                  
+                                          "unique"             => "El nombre introducido ya existe" } }                
 
 RETURN ( ::hValidators )
 
@@ -301,19 +251,19 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosFabricantesModel FROM SQLCompanyModel
+CLASS SQLArticulosEnvasadoModel FROM SQLBaseModel
 
-   DATA cTableName                     INIT "articulos_fabricantes"
+   DATA cTableName                     INIT "articulos_envasado"
 
    METHOD getColumns()
 
-   METHOD getNombreWhereUuid( uuid )   INLINE ( ::getField( "nombre", "uuid", uuid ) )
+   /*METHOD getNombreWhereUuid( uuid )   INLINE ( ::getField( "nombre", "uuid", uuid ) )*/
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLArticulosFabricantesModel
+METHOD getColumns() CLASS SQLArticulosEnvasadoModel
 
 
    hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
@@ -321,19 +271,12 @@ METHOD getColumns() CLASS SQLArticulosFabricantesModel
 
    hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                        "default"   => {|| win_uuidcreatestring() } }            )
-   
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",      {  "create"    => "VARCHAR( 3 )"                            ,;
                                        "default"   => {|| space( 3 ) } }                        )
 
    hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 100 )"                          ,;
                                        "default"   => {|| space( 100 ) } }                       )
-
-   hset( ::hColumns, "pagina_web",  {  "create"    => "VARCHAR( 200 )"                          ,;
-                                       "default"   => {|| space( 200 ) } }                       )
-   
-   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
@@ -348,15 +291,15 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosFabricantesRepository FROM SQLBaseRepository
+CLASS ArticulosEnvasadoRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLArticulosFabricantesModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLArticulosEnvasadoModel():getTableName() ) 
 
-   METHOD getNombres()                    
+   /*METHOD getNombres()                 
 
    METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
 
-   METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )
+   METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )*/
 
 END CLASS
 
@@ -367,7 +310,7 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD getNombres() CLASS ArticulosFabricantesRepository
+/*METHOD getNombres() CLASS ArticulosEnvasadoRepository
 
    local cSQL
    local aNombres       
@@ -379,6 +322,6 @@ METHOD getNombres() CLASS ArticulosFabricantesRepository
 
    ains( aNombres, 1, "", .t. )
 
-RETURN ( aNombres )
+RETURN ( aNombres )*/
 
 //---------------------------------------------------------------------------//

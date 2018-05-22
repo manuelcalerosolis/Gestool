@@ -25,6 +25,10 @@ METHOD New( oController ) CLASS ZonasController
 
    ::cName                       := "zonas"
 
+   ::hImage                      := {  "16" => "gc_shelf_full_16",;
+                                       "32" => "gc_shelf_full_32",;
+                                       "48" => "gc_shelf_full_48" }
+
    ::oModel                      := SQLAlmacenesModel():New( self )
 
    ::oRepository                 := AlmacenesRepository():New( self )
@@ -113,7 +117,7 @@ METHOD Activate() CLASS ZonasView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_shelf_full_48" ;
+      RESOURCE    ::oController:getimage("48")  ;
       TRANSPARENT ;
       OF          ::oDialog
 

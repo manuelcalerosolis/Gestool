@@ -3,46 +3,51 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosCategoriasController FROM SQLNavigatorController
+CLASS OrdenComandasController FROM SQLNavigatorController
 
    METHOD New()
 
    METHOD End()
 
+   METHOD VerifyOrden()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ArticulosCategoriasController
+METHOD New() CLASS OrdenComandasController
 
-   ::Super:New( oSenderController )
+   ::Super:New()
 
-   ::cTitle                      := "Articulos categorias"
+   ::cTitle                      := "Ordenes de comanda"
 
-   ::cName                       := "articulos_categorias"
+   ::cName                       := "Orden_comandas"
 
-   ::hImage                      := {  "16" => "gc_photographic_filters_16",;
-                                       "32" => "gc_photographic_filters_32",;
-                                       "48" => "gc_photographic_filters_48" }
+   ::hImage                      := {  "16" => "gc_sort_az_descending_16",;
+                                       "32" => "gc_sort_az_descending_32",;
+                                       "48" => "gc_sort_az_descending_48" }
 
    ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                      := SQLArticulosCategoriasModel():New( self )
+   ::oModel                      := SQLOrdenComandasModel():New( self )
 
-   ::oBrowseView                 := ArticulosCategoriasBrowseView():New( self )
+   ::oBrowseView                 := OrdenComandasBrowseView():New( self )
 
-   ::oDialogView                 := ArticulosCategoriasView():New( self )
+   ::oDialogView                 := OrdenComandasView():New( self )
 
-   ::oValidator                  := ArticulosCategoriasValidator():New( self, ::oDialogView )
+   ::oValidator                  := OrdenComandasValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := ArticulosCategoriasRepository():New( self )
+   ::oRepository                 := OrdenComandasRepository():New( self )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::setEvent( 'closedDialog', {|| ::VerifyOrden() } ) 
+   // ::setEvent( 'appended',    {|| ::VerifyOrden() } )
+   // ::setEvent( 'duplicated',  {|| ::VerifyOrden() } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-METHOD End() CLASS ArticulosCategoriasController
+
+METHOD End() CLASS OrdenComandasController
 
    ::oModel:End()
 
@@ -54,13 +59,18 @@ METHOD End() CLASS ArticulosCategoriasController
 
    ::oRepository:End()
 
-   ::oGetSelector:End()
-
    ::Super:End()
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD VerifyOrden()
+
+   local cSQL           := "UPDATE orden_comandas SET orden = orden + 1 WHERE orden >= " + toSQLString( ::oModel:hBuffer[ "orden" ] )
+
+RETURN ( getSQLDatabase():Exec( cSQL ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -70,7 +80,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosCategoriasBrowseView FROM SQLBrowseView
+CLASS OrdenComandasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -78,7 +88,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ArticulosCategoriasBrowseView
+METHOD addColumns() CLASS OrdenComandasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -106,18 +116,18 @@ METHOD addColumns() CLASS ArticulosCategoriasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
+      :cSortOrder          := 'descripcion'
+      :cHeader             := 'Descripcion'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'icono'
-      :cHeader             := 'Icono'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'icono' ) }
+      :cSortOrder          := 'orden'
+      :cHeader             := 'Orden'
+      :nWidth              := 70
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'orden' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -131,50 +141,25 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosCategoriasView FROM SQLBaseView
+CLASS OrdenComandasView FROM SQLBaseView
   
-   DATA oTipo
-
-   DATA hTipos
-
-   METHOD New()
-
    METHOD Activate()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS ArticulosCategoriasView
+METHOD Activate() CLASS OrdenComandasView
 
-   ::Super:New( oController )
-
-   ::hTipos          := {  "Círculo azul"          => "bullet_ball_glass_blue_16",;
-                           "Círculo verde"         => "bullet_ball_glass_green_16",;
-                           "Cículo rojo"           => "bullet_ball_glass_red_16",;
-                           "Cículo amarillo"       => "bullet_ball_glass_yellow_16",;
-                           "Cuadrado azul"         => "bullet_square_blue_16",;
-                           "Cuadrado verde"        => "bullet_square_green_16",;
-                           "Cuadrado rojo"         => "bullet_square_red_16",;
-                           "Cuadrado amarillo"     => "bullet_square_yellow_16",;
-                           "Triángulo azul"        => "bullet_triangle_blue_16",;
-                           "Triángulo verde"       => "bullet_triangle_green_16",;
-                           "Triángulo rojo"        => "bullet_triangle_red_16",;
-                           "Triángulo amarillo"    => "bullet_triangle_yellow_16" }
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS ArticulosCategoriasView
+   local oDialog 
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ARTICULO_CATEGORIA" ;
-      TITLE       ::LblTitle() + "categoria de articulos"
+      RESOURCE    "ORDEN_COMANDA" ;
+      TITLE       ::LblTitle() + "Orden de comanda"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    ::oController:getimage("48")  ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
@@ -185,23 +170,22 @@ METHOD Activate() CLASS ArticulosCategoriasView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
+      PICTURE     "@! NN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
       ID          110 ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
+      VALID       ( ::oController:validate( "descripcion" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:oModel:hBuffer[ "icono" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "orden" ] ;
       ID          120 ;
+      SPINNER ;
+      MIN         1;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ITEMS       ( hgetkeys( ::hTipos ) ) ;
-      BITMAPS     ( hgetvalues( ::hTipos ) ) ;
       OF          ::oDialog ;
 
    REDEFINE BUTTON ;
@@ -216,10 +200,6 @@ METHOD Activate() CLASS ArticulosCategoriasView
       CANCEL ;
       ACTION     ( ::oDialog:end() )
 
-   if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
-   end if
-
    ACTIVATE DIALOG ::oDialog CENTER
 
   ::oBitmap:end()
@@ -233,21 +213,21 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosCategoriasValidator FROM SQLCompanyValidator
+CLASS OrdenComandasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
+ 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ArticulosCategoriasValidator
+METHOD getValidators() CLASS OrdenComandasValidator
 
-   ::hValidators  := {  "nombre " =>               {  "required"           => "El nombre es un dato requerido",;
-                                                      "unique"             => "El nombre introducido ya existe" },;
+   ::hValidators  := {  "descripcion" =>           {  "required"           => "La descripcion es un dato requerido",;
+                                                      "unique"             => "La descripcion introducido ya existe" },;
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  ,;
-                                                      "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } }
+                                                      "unique"             => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -255,49 +235,76 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS SQLArticulosCategoriasModel FROM SQLCompanyModel
+CLASS SQLOrdenComandasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "articulos_categoria"
+   DATA cTableName               INIT "orden_comandas"
 
    METHOD getColumns()
+
+   METHOD getOrden()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLArticulosCategoriasModel
+METHOD getColumns() CLASS SQLOrdenComandasModel
 
-   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                    "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                             "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
-                                    "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                             "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 3 )"                            ,;
-                                    "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
+                                             "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
-                                    "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "icono",    {  "create"    => "VARCHAR( 40 )"                           ,;
-                                    "default"   => {|| space( 40 ) } }                       )
-   
+   hset( ::hColumns, "orden",             {  "create"    => "INTEGER "                                  ,;
+                                             "default"   => { || ::getOrden() } }                       )
+
    ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getOrden() CLASS SQLOrdenComandasModel
+
+   local cSQL 
+   local nOrden   
+
+   cSQL           := "SELECT orden FROM orden_comandas ORDER BY orden DESC LIMIT 1"
+
+   nOrden         := getSQLDatabase():getValue( cSQL )
+
+
+   if hb_isnumeric( nOrden )
+      RETURN ( nOrden + 1 )
+   end if 
+
+RETURN ( 1 )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosCategoriasRepository FROM SQLBaseRepository
+CLASS OrdenComandasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLArticulosCategoriasModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLOrdenComandasModel():getTableName() ) 
 
 END CLASS
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

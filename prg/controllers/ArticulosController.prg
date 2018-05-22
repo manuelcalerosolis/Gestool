@@ -21,6 +21,10 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oTagsController
 
+   DATA oPrimeraPropiedadController
+
+   DATA oSegundaPropiedadController
+
    METHOD New()
 
    METHOD End()
@@ -77,6 +81,10 @@ METHOD New() CLASS ArticulosController
 
    ::oImpuestosEspecialesController    := ImpuestosEspecialesController():New( self )
 
+   ::oPrimeraPropiedadController       := PropiedadesController():New( self )
+
+   ::oSegundaPropiedadController       := PropiedadesController():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::insertPreciosWhereArticulo() } )
@@ -114,6 +122,10 @@ METHOD End() CLASS ArticulosController
    ::oIvaTipoController:End()
 
    ::oImpuestosEspecialesController:End()
+
+   ::oPrimeraPropiedadController:End()
+
+   ::oSegundaPropiedadController:End()
 
    ::Super:End()
 
@@ -244,6 +256,8 @@ CLASS ArticulosView FROM SQLBaseView
   
    METHOD Activate()
 
+   METHOD End()
+
    METHOD startActivate()
 
    METHOD changeLote()           INLINE ( iif( ::oController:oModel:hBuffer[ "lote" ], ::oGetLoteActual:Show(), ::oGetLoteActual:Hide() ) )
@@ -265,7 +279,7 @@ METHOD Activate() CLASS ArticulosView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_object_cube_48" ;
+      RESOURCE    ::oController:getimage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -279,9 +293,9 @@ METHOD Activate() CLASS ArticulosView
       ID          500 ;
       OF          ::oDialog ;
       PROMPT      "&General",;
-                  "Precios";
+                  "&Precios" ;
       DIALOGS     "ARTICULO_GENERAL",;
-                  "ARTICULO_PRECIO"  
+                  "ARTICULO_PRECIO"    
 
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -326,6 +340,16 @@ METHOD Activate() CLASS ArticulosView
 
    ::oController:oImpuestosEspecialesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "impuesto_especial_uuid" ] ) )
    ::oController:oImpuestosEspecialesController:oGetSelector:Activate( 170, 171, ::oFolder:aDialogs[ 1 ] )
+
+   // Primera propiedad--------------------------------------------------------
+
+   ::oController:oPrimeraPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "primera_propiedad_uuid" ] ) )
+   ::oController:oPrimeraPropiedadController:oGetSelector:Activate( 230, 231, ::oFolder:aDialogs[ 1 ] )
+
+   // Segunda propiedad--------------------------------------------------------
+
+   ::oController:oSegundaPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "segunda_propiedad_uuid" ] ) )
+   ::oController:oSegundaPropiedadController:oGetSelector:Activate( 240, 241, ::oFolder:aDialogs[ 1 ] )
 
    // Marcadores---------------------------------------------------------------
 
@@ -393,6 +417,10 @@ METHOD Activate() CLASS ArticulosView
 
    ::oController:oArticulosPreciosController:Activate( 130, ::oFolder:aDialogs[2] )
 
+   // Táctil ------------------------------------------------------------------
+
+
+
    // Botones Articulos -------------------------------------------------------
 
    REDEFINE BUTTON ;
@@ -437,6 +465,10 @@ METHOD startActivate()
 
    ::oController:oImpuestosEspecialesController:oGetSelector:Start()
 
+   ::oController:oPrimeraPropiedadController:oGetSelector:Start()
+   
+   ::oController:oSegundaPropiedadController:oGetSelector:Start()
+
    ::oController:oTagsController:oDialogView:Start()
 
    ::changeLote()
@@ -444,6 +476,18 @@ METHOD startActivate()
    ::oGetCodigo:SetFocus()
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End()
+
+   MSGALERT( "End" )
+
+   if !empty( ::oController:oTagsController:oDialogView )
+      ::oController:oTagsController:oDialogView:End()
+   end if 
+
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -516,6 +560,18 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
    METHOD setImpuestoEspecialAttribute( uValue ) ;
                                  INLINE ( if( empty( uValue ), "", SQLImpuestosEspecialesModel():getUuidWhereCodigo( uValue ) ) )
 
+   METHOD getPrimeraPropiedadUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 20 ), SQLPropiedadesModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setPrimeraPropiedadUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLPropiedadesModel():getUuidWhereCodigo( uValue ) ) )
+
+   METHOD getSegundaPropiedadUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 20 ), SQLPropiedadesModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setSegundaPropiedadUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLPropiedadesModel():getUuidWhereCodigo( uValue ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -571,6 +627,12 @@ METHOD getColumns() CLASS SQLArticulosModel
 
    hset( ::hColumns, "precio_costo",               {  "create"    => "FLOAT( 16, 6 )"                          ,;
                                                       "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "primera_propiedad_uuid",     {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "segunda_propiedad_uuid",     {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 40 ) } }                       )
 
    ::getTimeStampColumns()
 

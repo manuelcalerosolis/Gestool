@@ -43,7 +43,7 @@ METHOD Run()
 
    ::addRepositories()
 
-   ::checkRepository()
+   ::checkRepositories()
 
    ::checkValues()
 
@@ -88,9 +88,7 @@ RETURN ( aeval( ::aRepositories, {|oRepository| ::checkRepository( oRepository )
 
 METHOD checkRepository( oRepository )
 
-   msgalert( hb_valtoexp( oRepository:getSQLFunctions() ), "checkRepository" )
-
-   // ::Exec( oModel:getCreateTableSentence() )
+   getSQLDatabase():Execs( oRepository:getSQLFunctions() )
 
 RETURN ( Self )
 
@@ -209,6 +207,12 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
 
+   aadd( ::aModels, SQLArticulosEnvasadoModel():New() )
+
+   aadd( ::aModels, SQLOrdenComandasModel():New() )
+
+   aadd( ::aModels, SQLClientesEntidadesModel():New() )
+
    aadd( ::aModels, SQLEntidadesModel():New() )
 
    aadd( ::aModels, SQLDocumentosModel():New() )
@@ -280,6 +284,8 @@ METHOD addModels()
    aadd( ::aModels, SQLProveedoresModel():New() ) 
 
    aadd( ::aModels, SQLTraduccionesModel():New() ) 
+
+   aadd( ::aModels, SQLDescuentosModel():New() ) 
 
 RETURN ( ::aModels )
  

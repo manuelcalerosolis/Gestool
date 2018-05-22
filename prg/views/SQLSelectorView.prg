@@ -91,6 +91,10 @@ RETURN ( ::getSelectedBuffer() )
 
 METHOD End()
 
+   if !empty( ::oMenuTreeView )
+      ::oMenuTreeView:End() 
+   end if 
+
    if !empty( ::oDialog )
       ::oDialog:End()
    end if 

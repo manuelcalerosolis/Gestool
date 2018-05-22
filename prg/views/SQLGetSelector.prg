@@ -118,7 +118,7 @@ METHOD helpAction() CLASS GetSelector
       RETURN ( .f. )
    end if
 
-   hResult        := ::oController:ActivateSelectorViewNoCenter()
+   hResult        := ::oController:ActivateSelectorView()
 
    if hb_isnil( hResult )
       ::oGet:cText( "" )

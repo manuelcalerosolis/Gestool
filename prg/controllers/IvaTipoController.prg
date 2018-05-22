@@ -167,7 +167,7 @@ METHOD Activate() CLASS IvaTipoView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_moneybag_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog ;
 

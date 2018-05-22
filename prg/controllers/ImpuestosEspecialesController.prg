@@ -157,7 +157,7 @@ METHOD Activate() CLASS ImpuestosEspecialesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_moneybag_euro_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog ;
 

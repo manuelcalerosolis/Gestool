@@ -207,7 +207,7 @@ METHOD Activate() CLASS AlmacenesView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_warehouse_48" ;
+      RESOURCE    ::oController:getimage("48")  ;
       TRANSPARENT ;
       OF          ::oDialog
 

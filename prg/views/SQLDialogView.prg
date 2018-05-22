@@ -8,7 +8,7 @@ CLASS SQLDialogView FROM SQLBrowseableView
    DATA oDialog
    DATA oMessage
 
-   DATA oBitmap
+   DATA oOfficeBar
 
    DATA oGetSearch
    DATA cGetSearch                        INIT space( 200 )
@@ -34,8 +34,12 @@ CLASS SQLDialogView FROM SQLBrowseableView
 
    METHOD getSelectedBuffer()             INLINE ( ::hSelectedBuffer )
 
-   METHOD Tittle()                        INLINE ( ::oController:cTitle + " de " + ;
-                                                   lower( ::oController:oSenderController:cTitle ) + ": " +;
+   METHOD TittleCliente()                 INLINE ( ::oController:oSenderController:cTitle + ": " + ;
+                                                   AllTrim( ::oController:oSenderController:oModel:hBuffer[ "codigo" ] ) + " - " + ;
+                                                   ::oController:oSenderController:oModel:hBuffer[ "nombre" ] )
+
+   METHOD Tittle()                        INLINE ( ::oController:getTitle() + space( 1 ) + ;
+                                                   lower( ::oController:oSenderController:cTitle ) + ": " + ;
                                                    AllTrim( ::oController:oSenderController:oModel:hBuffer[ "codigo" ] ) + " - " + ;
                                                    ::oController:oSenderController:oModel:hBuffer[ "nombre" ] )
 
@@ -49,19 +53,13 @@ METHOD Activate()
 
    DEFINE DIALOG           ::oDialog ;
       RESOURCE             "SELECTOR_DIALOG" ;
-      TITLE                ::oController:getTitle()
+      TITLE                ::Tittle()
 
-      REDEFINE BITMAP ::oBitmap ;
-         ID          900 ;
-         RESOURCE    hGet( ::oController:hImage, "48" ) ;
-         TRANSPARENT ;
-         OF          ::oDialog
-
-      REDEFINE SAY   ::oMessage ;
-         PROMPT      ::Tittle() ;
-         ID          800 ;
-         FONT        getBoldFont() ;
-         OF          ::oDialog
+      REDEFINE SAY         ::oMessage ;
+         PROMPT            ::TittleCliente() ;
+         ID                800 ;
+         FONT              getBoldFont() ;
+         OF                ::oDialog
 
       REDEFINE GET         ::oGetSearch ;
          VAR               ::cGetSearch ; 
@@ -77,10 +75,6 @@ METHOD Activate()
 
       ::oComboBoxOrder:bChange      := {|| ::onChangeCombo() } 
 
-      // Menu------------------------------------------------------------------
-
-      ::oMenuTreeView:ActivateDialog( ::oDialog, 120 )
-
       // Browse-----------------------------------------------------------------
 
       ::getBrowseView():ActivateDialog( ::oDialog, 130 )
@@ -91,21 +85,6 @@ METHOD Activate()
 
       ::getBrowseView():setColumnOrder( ::getModel():getOrderBy(), ::getModel():getOrientation() ) 
 
-      /*
-      Botones generales-----------------------------------------------------------
-      */
-
-      REDEFINE BUTTON ;
-         ID          IDOK ;
-         OF          ::oDialog ;
-         ACTION      ( ::oDialog:end( IDOK ) )
-
-      REDEFINE BUTTON ;
-         ID          IDCANCEL ;
-         OF          ::oDialog ;
-         CANCEL ;
-         ACTION      ( ::oDialog:end() )
-
       // Eventos---------------------------------------------------------------
 
       ::oDialog:bStart              := {|| ::Start() }
@@ -113,8 +92,6 @@ METHOD Activate()
       ::getGetSearch():bChange      := {|| ::onChangeSearch() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   ::oBitmap:End()
 
 RETURN ( nil )
 
@@ -134,9 +111,33 @@ RETURN ( nil )
 
 METHOD Start()
 
-   ::oMenuTreeView:Default()
+   local oBoton
+   local oGrupo
+   local oCarpeta
 
-   ::oMenuTreeView:addDialogButtons()
+   ::oOfficeBar            := TDotNetBar():New( 0, 0, 2020, 118, ::oDialog, 1 )
+   ::oOfficeBar:lPaintAll  := .f.
+   ::oOfficeBar:lDisenio   := .f.
+   ::oOfficeBar:SetStyle( 1 )
+
+   ::oDialog:oTop          := ::oOfficeBar
+
+   oCarpeta                := TCarpeta():New( ::oOfficeBar, ::oController:cTitle )
+
+   oGrupo                  := TDotNetGroup():New( oCarpeta, 68, ::oController:cTitle, .f. )
+      oBoton               := TDotNetButton():New( 60, oGrupo, ::oController:getImage( "48" ), "", 1, {|| ::RefreshRowSet() }, , , .f., .f., .f. )
+
+   oGrupo                  := TDotNetGroup():New( oCarpeta, 368, "Opciones", .f. ) 
+      oBoton               := TDotNetButton():New( 60, oGrupo, "LUPA_32",                    "Buscar",         1, {|| ::getGetSearch():setFocus() }, , , .f., .f., .f. )
+      oBoton               := TDotNetButton():New( 60, oGrupo, "New32",                      "Añadir",         2, {|| ::oController:Append(), ::Refresh() }, , , .f., .f., .f. )
+      oBoton               := TDotNetButton():New( 60, oGrupo, "gc_document_text_plus2_32",  "Duplicar",       3, {|| ::oController:Duplicate(), ::Refresh() }, , , .f., .f., .f. )
+      oBoton               := TDotNetButton():New( 60, oGrupo, "gc_pencil__32",              "Modificar",      4, {|| ::oController:Edit(), ::Refresh() }, , , .f., .f., .f. )
+      oBoton               := TDotNetButton():New( 60, oGrupo, "gc_lock2_32",                "Zoom",           5, {|| ::oController:Zoom(), ::Refresh() }, , , .f., .f., .f. )
+      oBoton               := TDotNetButton():New( 60, oGrupo, "Del32",                      "Eliminar",       6, {|| ::oController:Delete( ::getBrowse():aSelected ), ::Refresh() }, , , .f., .f., .f. )
+
+   oGrupo                  := TDotNetGroup():New( oCarpeta, 68, "", .f. )
+      oBoton               := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",           "Salir",          1, {|| ::oDialog:end() }, , , .f., .f., .f. )
+
 
    ::oComboBoxOrder:SetItems( ::getBrowseView():getColumnsHeaders() )
 

@@ -17,9 +17,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS PropiedadesController
+METHOD New( oSenderController ) CLASS PropiedadesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                         := "Propiedades"
 
@@ -252,7 +252,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesValidator FROM SQLBaseValidator
+CLASS PropiedadesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -294,8 +294,8 @@ METHOD getColumns() CLASS SQLPropiedadesModel
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 4 )"                            ,;
-                                    "default"   => {|| space( 4 ) } }                        )
+   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
+                                    "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
                                     "default"   => {|| space( 200 ) } }                      )

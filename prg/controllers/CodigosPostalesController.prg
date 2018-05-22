@@ -149,7 +149,7 @@ METHOD Activate() CLASS CodigosPostalesView
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
-      RESOURCE    "gc_postage_stamp_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          oDlg
 

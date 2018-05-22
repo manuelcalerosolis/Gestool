@@ -53,16 +53,20 @@ METHOD New() CLASS ClientesController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
-   ::oContactosController        := ContactosController():New( self )
+   ::oContactosController           := ContactosController():New( self )
 
-   ::oIncidenciasController      := IncidenciasController():New( self )
+   ::oIncidenciasController         := IncidenciasController():New( self )
 
-   ::oDocumentosController       := DocumentosController():New( self )
+   ::oDocumentosController          := DocumentosController():New( self )
 
-   ::oCuentasBancariasController := CuentasBancariasController():New( self )
+   ::oCuentasBancariasController    := CuentasBancariasController():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'clientes')
 
+   ::oDescuentosController          := DescuentosController():New( self )
+
+   ::oClientesEntidadesController   := ClientesEntidadesController():New( self )
+   
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )

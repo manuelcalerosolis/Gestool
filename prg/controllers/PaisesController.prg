@@ -150,7 +150,7 @@ METHOD Activate() CLASS PaisesView
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
-      RESOURCE    "gc_globe_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          oDlg
 
