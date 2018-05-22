@@ -2700,7 +2700,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemSQL:lShow       := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 27
+   oGrupo:nBigItems     := 28
    oGrupo:cPrompt       := 'SQL'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2961,6 +2961,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "orden_comandas"
    oItem:cBmp           := "gc_sort_az_descending_16"
    oItem:cBmpBig        := "gc_sort_az_descending_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Envasado'
+   oItem:cMessage       := 'Envasado'
+   oItem:bAction        := {||ArticulosEnvasadoController():New():ActivateNavigatorView() }
+   oItem:cId            := "envasado_articulo"
+   oItem:cBmp           := "gc_box_closed_16"
+   oItem:cBmpBig        := "gc_box_closed_32"
    oItem:lShow          := .f.
 
 
