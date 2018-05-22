@@ -34,9 +34,9 @@ METHOD New( oSenderController ) CLASS ClientesEntidadesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Clientes entidades"
+   ::cTitle                      := "Entidades"
 
-   ::cName                       := "Clientes Entidades"
+   ::cName                       := "Entidades"
 
    ::hImage                      := {  "16" => "gc_university_16",;
                                        "32" => "gc_university_32",;
