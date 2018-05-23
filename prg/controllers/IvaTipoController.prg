@@ -5,6 +5,8 @@
 
 CLASS IvaTipoController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -35,6 +37,8 @@ METHOD New( oSenderController ) CLASS IvaTipoController
 
    ::oValidator                     := IvaTipoValidator():New( self, ::oDialogView )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'tipo_iva' )
+
    ::oRepository                    := IvaTipoRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
@@ -54,6 +58,8 @@ METHOD End() CLASS IvaTipoController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::oGetSelector:End()
 
@@ -150,6 +156,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS IvaTipoView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
 
@@ -160,6 +168,7 @@ END CLASS
 METHOD Activate() CLASS IvaTipoView
 
    local oBmpGeneral
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "IVA_TIPO" ;
@@ -214,6 +223,16 @@ METHOD Activate() CLASS IvaTipoView
       VALID       ( ::oController:validate( "cuenta_venta" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          160 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

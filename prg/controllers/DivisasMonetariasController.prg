@@ -5,6 +5,8 @@
 
 CLASS DivisasMonetariasController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -33,6 +35,8 @@ METHOD New() CLASS DivisasMonetariasController
 
    ::oDialogView                    := DivisasMonetariasView():New( self )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'divisas_monetarias' )
+
    ::oValidator                     := DivisasMonetariasValidator():New( self, ::oDialogView )
 
    ::oRepository                    := DivisasMonetariasRepository():New( self )
@@ -52,6 +56,8 @@ METHOD End() CLASS DivisasMonetariasController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -149,6 +155,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS DivisasMonetariasView FROM SQLBaseView
+
+   DATA oSayCamposExtra
 
    METHOD Activate()
 
@@ -282,6 +290,16 @@ METHOD Activate() CLASS DivisasMonetariasView
       MIN         0 ;
       MAX         8 ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          250 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

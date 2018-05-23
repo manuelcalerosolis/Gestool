@@ -7,6 +7,8 @@ CLASS ComentariosController FROM SQLNavigatorController
 
    DATA oComentariosLineasController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -37,6 +39,8 @@ METHOD New() CLASS ComentariosController
 
    ::oComentariosLineasController   := ComentariosLineasController():New( self )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'comentarios' )
+
    ::oValidator                     := ComentariosValidator():New( self, ::oDialogView )
 
    ::oRepository                    := ComentariosRepository():New( self )
@@ -58,6 +62,8 @@ METHOD End() CLASS ComentariosController
    ::oValidator:End()
 
    ::oComentariosLineasController:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::oRepository:End()
 
@@ -129,6 +135,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS ComentariosView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
 
@@ -140,6 +148,7 @@ METHOD Activate() CLASS ComentariosView
 
    local oDialog 
    local oBmpGeneral
+   local oSayCamposExtra
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
@@ -171,6 +180,16 @@ METHOD Activate() CLASS ComentariosView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          170 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON oBtnAppend ;
       ID          120 ;

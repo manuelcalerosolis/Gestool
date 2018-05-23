@@ -5,6 +5,8 @@
 
 CLASS OrdenComandasController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -37,11 +39,11 @@ METHOD New() CLASS OrdenComandasController
 
    ::oValidator                  := OrdenComandasValidator():New( self, ::oDialogView )
 
+    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'orden_comandas' )
+
    ::oRepository                 := OrdenComandasRepository():New( self )
 
    ::setEvent( 'closedDialog', {|| ::VerifyOrden() } ) 
-   // ::setEvent( 'appended',    {|| ::VerifyOrden() } )
-   // ::setEvent( 'duplicated',  {|| ::VerifyOrden() } )
 
 RETURN ( Self )
 
@@ -58,6 +60,8 @@ METHOD End() CLASS OrdenComandasController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -142,6 +146,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS OrdenComandasView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
 
@@ -152,6 +158,7 @@ END CLASS
 METHOD Activate() CLASS OrdenComandasView
 
    local oDialog 
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ORDEN_COMANDA" ;
@@ -187,6 +194,16 @@ METHOD Activate() CLASS OrdenComandasView
       MIN         1;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          130 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
