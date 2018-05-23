@@ -104,7 +104,7 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    if hb_isnil( ::SelectedCol():Cargo )
 
-   MenuAddItem( "Filtro rápido", "Establecer fitro rápido en columna actual", .f., .t., , , "gc_table_selection_column_16", oMenu )
+   MenuAddItem( "Filtro rápido", "Establecer fitro rápido en columna actual", .f., .t., , , "gc_funnel_add_16", oMenu )
 
       MenuBegin( .f., , , .f., .f., , , , , , , , , , , , .f., .t., .f., .t. )
 
