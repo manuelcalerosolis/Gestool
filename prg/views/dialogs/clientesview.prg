@@ -188,7 +188,7 @@ METHOD redefineGeneral() CLASS ClientesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   TBtnBmp():ReDefine( 180, "gc_recycle_16",,,,,{|| ::loadFechaLlamada() }, ::oFolder:aDialogs[1], .f., , .f.,  )
+   TBtnBmp():ReDefine( 180, "gc_recycle_16",,,,,{|| ::loadFechaLlamada() }, ::oFolder:aDialogs[1], .f., {|| ::oController:isNotZoomMode() }, .f. )
 
 RETURN ( self )
 
@@ -334,7 +334,7 @@ METHOD redefineComercial() CLASS ClientesView
       OF       ::oFolder:aDialogs[2]
 
    ::oInfoSubCuenta:lWantClick  := .t.
-   ::oInfoSubCuenta:OnClick     := {|| msgalert( "Informe subcuenta del cliente" ) }
+   ::oInfoSubCuenta:OnClick     := {|| if( ::oController:isNotZoomMode(),  msgalert( "Informe subcuenta del cliente" ), ) }
 
    REDEFINE GET ::oGetSubcuenta ; 
       VAR      ::oController:oModel:hBuffer[ "subcuenta" ] ;
@@ -368,7 +368,7 @@ METHOD redefineComercial() CLASS ClientesView
       OF       ::oFolder:aDialogs[2]
 
    ::oInfoSubCuentaDescuento:lWantClick  := .t.
-   ::oInfoSubCuentaDescuento:OnClick     := {|| msgalert( "Informe subcuenta dedescuento" ) }
+   ::oInfoSubCuentaDescuento:OnClick     := {|| if( ::oController:isNotZoomMode(), msgalert( "Informe subcuenta dedescuento" ), ) }
 
    REDEFINE GET ::oGetSubcuentaDescuento ; 
       VAR      ::oController:oModel:hBuffer[ "cuenta_venta" ] ;
@@ -392,7 +392,7 @@ RETURN ( self )
 METHOD startDialog()
 
    ::addLinksToExplorerBar()
-
+   
    ::oController:oAgentesController:oGetSelector:Start()
 
    ::oController:oFormasdePagoController:oGetSelector:Start()
@@ -424,7 +424,13 @@ RETURN ( self )
 
 METHOD addLinksToExplorerBar() CLASS ClientesView
 
-   local oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+   local oPanel
+
+   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   if ::oController:isZoomMode()
+      RETURN ( self )
+   end if
 
    oPanel:AddLink( "Tarifas...",             {|| MsgInfo( "Tarifas" ) }, "gc_money_interest_16" )
    oPanel:AddLink( "Direcciones...",         {|| ::oController:oDireccionesController:activateDialogView() }, ::oController:oDireccionesController:getImage( "16" ) )

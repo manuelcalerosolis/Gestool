@@ -238,6 +238,10 @@ CLASS SQLBaseController
    
    METHOD sendData( oInternet )                       INLINE ( ::oExportableController:isSendData( oInternet ) )
 
+   // Validador para las columnas editables del browseview---------------------
+
+   METHOD validColumnBrowse( uValue, nKey, oModel, cFieldName )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -781,3 +785,31 @@ RETURN ( ::aDocuments )
 
 //---------------------------------------------------------------------------//
 
+METHOD validColumnBrowse( uValue, nKey, oModel, cFieldName )
+   
+   local uuid       := ""
+
+   if !hb_IsNumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_IsNil( uValue )
+      Return ( .t. )
+   end if
+
+   if hb_ishash( uValue )
+      uuid          := hGet( uValue, "uuid" )
+   end if
+
+   if hb_ischar( uValue )
+      uuid          := oModel:getUuidWhereCodigo( AllTrim( uValue ) )
+   end if
+
+   if Empty( uuid )
+      msgStop( "valor no encontrado." )
+      Return .t.
+   end if
+
+   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cFieldName, uuid )
+
+   ::RefreshRowSet()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
