@@ -35,7 +35,7 @@ METHOD New() CLASS ArticulosTemporadaController
 
    ::oDialogView                 := ArticulosTemporadaView():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'temporada_articulos' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'articulos_temporadas' )
 
    ::oValidator                  := ArticulosTemporadaValidator():New( self, ::oDialogView )
 

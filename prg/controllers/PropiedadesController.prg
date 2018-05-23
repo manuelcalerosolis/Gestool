@@ -7,6 +7,8 @@ CLASS PropiedadesController FROM SQLNavigatorController
 
    DATA oPropiedadesLineasController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -43,6 +45,8 @@ METHOD New( oSenderController ) CLASS PropiedadesController
 
    ::oPropiedadesLineasController   := PropiedadesLineasController():New( self )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'propiedades' )
+
    ::oGetSelector                   := GetSelector():New( self )   
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
@@ -64,6 +68,8 @@ METHOD End() CLASS PropiedadesController
    ::oRepository:End()
 
    ::oPropiedadesLineasController:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -130,6 +136,8 @@ RETURN ( self )
 
 CLASS PropiedadesView FROM SQLBaseView
 
+   DATA oSayCamposExtra
+
    DATA oGetTipo
   
    METHOD Activate()
@@ -147,6 +155,7 @@ END CLASS
 
 METHOD Activate() CLASS PropiedadesView
 
+   local oSayCamposExtra
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
@@ -210,6 +219,16 @@ METHOD Activate() CLASS PropiedadesView
    oBtnDelete:bAction   := {|| ::oController:oPropiedadesLineasController:Delete() }
 
    ::oController:oPropiedadesLineasController:Activate( 160, ::oDialog )
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          170 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    // Botones------------------------------------------------------------------
 

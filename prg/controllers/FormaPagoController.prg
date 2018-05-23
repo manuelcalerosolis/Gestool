@@ -7,6 +7,8 @@ CLASS FormaPagoController FROM SQLNavigatorController
 
    DATA oBancosController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -39,6 +41,8 @@ METHOD New( oSenderController ) CLASS FormaPagoController
 
    ::oValidator                  := FormaPagoValidator():New( self, ::oDialogView )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'forma_pago' )
+
    ::oRepository                 := FormaPagoRepository():New( self )
 
    ::oGetSelector                := GetSelector():New( self )
@@ -57,6 +61,8 @@ METHOD End() CLASS FormaPagoController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -146,6 +152,8 @@ RETURN ( self )
 
 CLASS FormaPagoView FROM SQLBaseView
 
+   DATA oSayCamposExtra
+
    DATA oTipoPago
 
    DATA oEmitir
@@ -214,6 +222,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS FormaPagoView
+
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "FORMA_PAGO" ;
@@ -391,6 +401,16 @@ METHOD Activate() CLASS FormaPagoView
       ID          290, 291;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          300 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
 
    REDEFINE BUTTON ;

@@ -5,6 +5,8 @@
 
 CLASS ArticulosTarifasController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -39,6 +41,8 @@ METHOD New() CLASS ArticulosTarifasController
 
    ::oValidator                     := ArticulosTarifasValidator():New( self, ::oDialogView )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'tarifas' )
+
    ::oRepository                    := ArticulosTarifasRepository():New( self )
 
    ::setEvent( 'appended', {|| ::insertPreciosWhereTarifa() } )
@@ -58,6 +62,8 @@ METHOD End() CLASS ArticulosTarifasController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -172,6 +178,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS ArticulosTarifasView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
 
@@ -180,6 +188,8 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ArticulosTarifasView
+
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TARIFA" ;
@@ -221,6 +231,16 @@ METHOD Activate() CLASS ArticulosTarifasView
       IDSAY       132 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          140 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

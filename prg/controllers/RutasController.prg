@@ -5,6 +5,8 @@
 
 CLASS RutasController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -35,6 +37,8 @@ METHOD New( oSenderController ) CLASS RutasController
 
    ::oValidator                     := RutasValidator():New( self, ::oDialogView )
 
+    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'rutas' )
+
    ::oRepository                    := RutasRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
@@ -53,6 +57,8 @@ METHOD End() CLASS RutasController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -122,6 +128,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS RutasView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
 
@@ -132,6 +140,7 @@ END CLASS
 METHOD Activate() CLASS RutasView
 
    local oBmpGeneral
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "RUTAS" ;
@@ -160,6 +169,16 @@ METHOD Activate() CLASS RutasView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          120 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
