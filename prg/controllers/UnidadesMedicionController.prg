@@ -65,11 +65,9 @@ METHOD End() CLASS UnidadesMedicionController
 
    ::oRepository:End()
 
-<<<<<<< HEAD
    ::oGetSelector:End()
-=======
+
    ::oCamposExtraValoresController:End()
->>>>>>> 9f880a51fbf0c4dea22915cc94812034ee5843c0
 
    ::Super:End()
 
