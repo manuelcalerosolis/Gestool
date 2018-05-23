@@ -3,7 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosUnidadesMedicionController FROM SQLBrowseController
+CLASS ArticulosUnidadesMedicionController FROM SQLNavigatorController
+
+   DATA oUnidadesMedicionController
 
    METHOD New()
 
@@ -23,13 +25,21 @@ METHOD New( oController ) CLASS ArticulosUnidadesMedicionController
 
    ::cName                          := "articulos_unidades_medicion"
 
+   ::hImage                         := {  "16" => "gc_tape_measure2_16",;
+                                          "32" => "gc_tape_measure2_32",;
+                                          "48" => "gc_tape_measure2_48" }
+
    ::oModel                         := SQLArticulosUnidadesMedicionModel():New( self )
+
+   ::oDialogView                    := ArticulosUnidadesMedicionView():New( self )
 
    ::oBrowseView                    := ArticulosUnidadesMedicionBrowseView():New( self )
 
    ::oValidator                     := ArticulosUnidadesMedicionValidator():New( self )
 
    ::oRepository                    := ArticulosUnidadesMedicionRepository():New( self )
+
+   ::oUnidadesMedicionController    := UnidadesMedicionController():New( self )
 
 RETURN ( Self )
 
@@ -39,11 +49,15 @@ METHOD End() CLASS ArticulosUnidadesMedicionController
 
    ::oModel:End()
 
+   ::oDialogView:End()
+
    ::oBrowseView:End()
 
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oUnidadesMedicionController:End()
 
    ::Super:End()
 
@@ -56,12 +70,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 CLASS ArticulosUnidadesMedicionBrowseView FROM SQLBrowseView
-
-   DATA lFastEdit             INIT .t.
-
-   DATA lMultiSelect          INIT .f.
-
-   DATA nMarqueeStyle         INIT 3
 
    METHOD addColumns()                    
 
@@ -90,85 +98,90 @@ METHOD addColumns() CLASS ArticulosUnidadesMedicionBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Tarifa'
-      :nWidth              := 160
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :cSortOrder          := 'unidades_medicion_codigo'
+      :cHeader             := 'Código'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidades_medicion_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Costo'
-      :nWidth              := 80
-      :bEditValue          := {|| ::oController:oSenderController:getPrecioCosto() }
-      :cEditPicture        := "@E 9999.9999"
-      :nDataStrAlign       := 1
-      :nHeadStrAlign       := 1
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'margen'
-      :cHeader             := 'Margen %'
-      :nWidth              := 75
+      :cSortOrder          := 'unidades_medicion_nombre'
+      :cHeader             := 'Nombre'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidades_medicion_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nHeadBmpNo          := 1
-      :nDataStrAlign       := 1
-      :nHeadStrAlign       := 1
-      :AddResource( "gc_pencil_16" )
-
-      :nEditType           := 1
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'margen' ) }
-      :bEditBlock          := {|| ::getRowSet():fieldGet( 'margen' ) }
-      :cEditPicture        := "@E 9999.9999"
-      :bOnPostEdit         := {|oCol, nMargen| ::oController:setMargen( oCol, nMargen ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'margen_real'
-      :cHeader             := 'Markup %'
-      :nWidth              := 75
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nDataStrAlign       := 1
-      :nHeadStrAlign       := 1
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'margen_real' ) }
-      :cEditPicture        := "@E 9999.9999"
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'precio_base'
-      :cHeader             := 'Precio'
-      :nWidth              := 100
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nHeadBmpNo          := 1
-      :nDataStrAlign       := 1
-      :nHeadStrAlign       := 1
-      :AddResource( "gc_pencil_16" )
-
-      :nEditType           := 1
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_base' ) }
-      :bEditBlock          := {|| ::getRowSet():fieldGet( 'precio_base' ) }
-      :cEditPicture        := "@E 9999.9999"
-      :bOnPostEdit         := {|oCol, nPrecioBase| ::oController:setPrecioBase( oCol, nPrecioBase ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'precio_iva_incluido'
-      :cHeader             := 'Precio IVA inc.'
-      :nWidth              := 100
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nHeadBmpNo          := 1
-      :nDataStrAlign       := 1
-      :nHeadStrAlign       := 1
-      :AddResource( "gc_pencil_16" )
-
-      :nEditType           := 1
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_iva_incluido' ) }
-      :bEditBlock          := {|| ::getRowSet():fieldGet( 'precio_iva_incluido' ) }
-      :cEditPicture        := "@E 9999.9999"
-      :bOnPostEdit         := {|oCol, nPrecioIVAIncluido| ::oController:setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) }
    end with
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ArticulosUnidadesMedicionView FROM SQLBaseView
+  
+   METHOD Activate()
+
+   METHOD StartDialog()
+   
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS ArticulosUnidadesMedicionView
+
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "ARTICULOS_UNIDADES_MEDICION" ;
+      TITLE       ::LblTitle() + "unidades de medición"
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    ::oController:getImage( "48" ) ;
+      TRANSPARENT ;
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
+
+   ::oController:oUnidadesMedicionController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_medicion_uuid" ] ) )
+   ::oController:oUnidadesMedicionController:oGetSelector:Activate( 100, 101, ::oDialog )
+
+   REDEFINE BUTTON ;
+      ID          IDOK ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+
+   REDEFINE BUTTON ;
+      ID          IDCANCEL ;
+      OF          ::oDialog ;
+      CANCEL ;
+      ACTION      ( ::oDialog:end() )
+
+   if ::oController:isNotZoomMode() 
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+   end if
+
+   ::oDialog:bStart     := {|| ::StartDialog() }
+
+   ACTIVATE DIALOG ::oDialog CENTER
+
+   ::oBitmap:end()
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartDialog()
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -202,9 +215,33 @@ CLASS SQLArticulosUnidadesMedicionModel FROM SQLBaseModel
 
    DATA cConstraints             INIT "PRIMARY KEY ( id )"
 
+   METHOD getInitialSelect()
+
    METHOD getColumns()
 
+   METHOD getUnidadMedicionUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 8 ), SQLUnidadesMedicionModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setUnidadMedicionUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLUnidadesMedicionModel():getUuidWhereCodigo( uValue ) ) )
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLArticulosUnidadesMedicionModel
+
+   local cSelect  := "SELECT articulos_unidades_medicion.id,"                                            + " " + ;
+                        "articulos_unidades_medicion.uuid,"                                              + " " + ;
+                        "articulos_unidades_medicion.operar,"                                            + " " + ;
+                        "articulos_unidades_medicion.defecto,"                                           + " " + ;
+                        "unidades_medicion.codigo as unidades_medicion_codigo,"                          + " " + ;
+                        "unidades_medicion.nombre as unidades_medicion_nombre,"                          + " " + ;
+                        "unidades_medicion.uuid as unidades_medicion_uuid"                               + " " + ;
+                     "FROM articulos_unidades_medicion"                                                  + " " + ;
+                        "INNER JOIN unidades_medicion ON articulos_unidades_medicion.uuid = articulos_unidades_medicion.uuid"
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 

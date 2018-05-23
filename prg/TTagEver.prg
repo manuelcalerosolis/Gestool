@@ -133,8 +133,6 @@ RETURN Self
 
 METHOD End()
 
-   msgalert("end TTagEver")
-
    ::deleteBitmap()
 
 RETURN Self
