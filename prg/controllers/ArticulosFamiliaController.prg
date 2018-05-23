@@ -348,7 +348,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
       OF          ::oFolder:aDialogs[3] ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnEdit:bAction   := {|| ::oController:oTraduccionesController:Edit() }
+   oBtnEdit:bAction     := {|| ::oController:oTraduccionesController:Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
       ID          120 ;
