@@ -404,7 +404,7 @@ METHOD addEmpresaWhere( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "empresa_uuid = " + toSQLString( uuidEmpresa() )
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cTableName + ".empresa_uuid = " + toSQLString( uuidEmpresa() )
 
 RETURN ( cSQLSelect )
 
@@ -1018,7 +1018,9 @@ METHOD updateBuffer( hBuffer )
    ::fireEvent( 'updatingBuffer' )
 
    if !empty( ::cSQLUpdate )
+
       ::getDatabase():Execs( ::cSQLUpdate )
+
    end if
 
    ::fireEvent( 'updatedBuffer' )

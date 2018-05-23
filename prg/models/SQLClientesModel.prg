@@ -9,6 +9,36 @@ CLASS SQLClientesModel FROM SQLTercerosModel
 
    METHOD getInitialSelect()
 
+   METHOD getAgenteUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLAgentesModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setAgenteUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLAgentesModel():getUuidWhereCodigo( uValue ) ) )
+   
+   METHOD getCuentaRemesaUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasRemesaModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setCuentaRemesaUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLCuentasRemesaModel():getUuidWhereCodigo( uValue ) ) )
+
+   METHOD getRutaUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 4 ), SQLRutasModel():getCodigoWhereUuid( uValue ) ) )
+   
+   METHOD setRutaUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLRutasModel():getUuidWhereCodigo( uValue ) ) )
+
+   METHOD getClienteGrupoUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 4 ), SQLClientesGruposModel():getCodigoWhereUuid( uValue ) ) )
+   
+   METHOD setClienteGrupoUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLClientesGruposModel():getUuidWhereCodigo( uValue ) ) )
+
+   METHOD getFormaPagoUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 3 ), SQLFormaPagoModel():getCodigoWhereUuid( uValue ) ) )
+   
+   METHOD setFormaPagoUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLFormaPagoModel():getUuidWhereCodigo( uValue ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -108,15 +138,19 @@ METHOD getInitialSelect() CLASS SQLClientesModel
                         "clientes.dni AS dni,"                                                                             + " " + ;
                         "clientes.establecimiento AS establecimiento,"                                                     + " " + ;
                         "clientes.fecha_ultima_llamada AS fecha_ultima_llamada,"                                           + " " + ;
+                        "clientes.agente_uuid AS agente_uuid,"                                                             + " " + ;
                         "direcciones.direccion AS direccion,"                                                              + " " + ;
                         "direcciones.poblacion AS poblacion,"                                                              + " " + ;
                         "direcciones.provincia AS provincia,"                                                              + " " + ;
                         "direcciones.codigo_postal AS codigo_postal,"                                                      + " " + ;
                         "direcciones.telefono AS telefono,"                                                                + " " + ;
                         "direcciones.movil AS movil,"                                                                      + " " + ;
-                        "direcciones.email AS email"                                                                       + " " + ;
+                        "direcciones.email AS email,"                                                                      + " " + ;
+                        "agentes.codigo AS codigo_agente,"                                                                 + " " + ;
+                        "agentes.nombre AS nombre_agente"                                                                  + " " + ;
                      "FROM  clientes"                                                                                      + " " + ;
-                        "INNER JOIN direcciones ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"  + " "
+                        "LEFT JOIN direcciones ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"       + " " + ;
+                        "LEFT JOIN agentes ON clientes.agente_uuid = agentes.uuid"                                         + " "
 
 RETURN ( cSelect )
 

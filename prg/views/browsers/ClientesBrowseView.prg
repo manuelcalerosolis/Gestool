@@ -82,6 +82,31 @@ METHOD addColumns() CLASS ClientesBrowseView
       :lHide               := .t.
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'fecha_ultima_llamada'
+      :cHeader             := 'Última llamada'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_ultima_llamada' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo_agente'
+      :cHeader             := 'Cod. Agente'
+      :nWidth              := 65
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_agente' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre_agente'
+      :cHeader             := 'Agente'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_agente' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
