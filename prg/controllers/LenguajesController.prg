@@ -17,9 +17,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS LenguajesController
+METHOD New( oSenderController ) CLASS LenguajesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                   := "Lenguajes"
 
@@ -187,56 +187,50 @@ END CLASS
 
 METHOD Activate() CLASS LenguajesView
 
-   local oDlg
-   local oBmpGeneral
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
-
-   DEFINE DIALOG  oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "LENGUAJE" ;
       TITLE       ::LblTitle() + "lenguajes"
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBmpGeneral ;
       ID          900 ;
       RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG ::oDialog CENTER
 
-   oBmpGeneral:end()
+   ::oBmpGeneral:end()
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -255,11 +249,10 @@ END CLASS
 
 METHOD getValidators() CLASS LenguajesValidator
 
-   ::hValidators  := {     "codigo" =>          {  "required"           => "El código es un dato requerido",;
-                                                   "unique"             => "El código introducido ya existe" } ,;
-                           "nombre" =>          {  "required"           => "El nombre es un datos requerido",;
-                                                   "unique"             => "El nombre introducido ya existe" } }                      
-
+   ::hValidators  := {     "codigo" =>    {  "required"     => "El código es un dato requerido",;
+                                             "unique"       => "El código introducido ya existe" } ,;
+                           "nombre" =>    {  "required"     => "El nombre es un datos requerido",;
+                                             "unique"       => "El nombre introducido ya existe" } }                      
 
 RETURN ( ::hValidators )
 
@@ -314,7 +307,7 @@ RETURN ( ::hColumns )
 
 CLASS LenguajesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), SQLTiposImpresorasModel():getTableName() ) )
+   METHOD getTableName()         INLINE ( SQLLenguajesModel():getTableName() )
 
 END CLASS
 

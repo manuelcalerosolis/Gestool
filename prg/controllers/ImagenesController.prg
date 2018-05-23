@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesController FROM SQLBrowseController
+CLASS ImagenesController FROM SQLNavigatorController
 
    METHOD New()
 

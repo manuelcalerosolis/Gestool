@@ -172,7 +172,8 @@ METHOD Activate() CLASS ArticulosUnidadesMedicionView
 
    ::oController:oUnidadesMedicionController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_medicion_uuid" ] ) )
    ::oController:oUnidadesMedicionController:oGetSelector:Activate( 100, 101, ::oDialog )
-   ::oController:oUnidadesMedicionController:oGetSelector:setValid( {| uValue | msgalert( uValue, "dentro de setValid" ), ::oController:validate( "codigo", uValue  ) } )
+   ::oController:oUnidadesMedicionController:oGetSelector:setView( ::oDialogView )
+   // ::oController:oUnidadesMedicionController:oGetSelector:setValid( {| uValue | msgalert( uValue, "dentro de setValid" ), ::oController:validate( "unidad_medicion_uuid", uValue  ) } )
 
    REDEFINE GET   ::oGetCantidad ;
       VAR         ::oController:oModel:hBuffer[ "cantidad" ] ;
@@ -236,8 +237,8 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosUnidadesMedicionValidator
 
-   ::hValidators  := {  "codigo" =>    {  "required"  => "El código es un dato requerido",;
-                                          "unique"    => "El código introducido ya existe" } }
+   ::hValidators  := {  "unidad_medicion_uuid" =>  {  "required"  => "El código es un dato requerido",;
+                                                      "unique"    => "El código introducido ya existe" } }
 
 RETURN ( ::hValidators )
 
@@ -300,7 +301,7 @@ METHOD getColumns() CLASS SQLArticulosUnidadesMedicionModel
    hset( ::hColumns, "operar",                     {  "create"    => "BIT"                                     ,;
                                                       "default"   => {|| .t. } }                               )
 
-   hset( ::hColumns, "cantidad",                    {  "create"    => "FLOAT( 16, 6 )"                          ,;
+   hset( ::hColumns, "cantidad",                   {  "create"    => "FLOAT( 16, 6 )"                          ,;
                                                       "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
