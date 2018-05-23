@@ -5,6 +5,8 @@
 
 CLASS ArticulosTemporadaController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -32,6 +34,8 @@ METHOD New() CLASS ArticulosTemporadaController
    ::oBrowseView                 := ArticulosTemporadaBrowseView():New( self )
 
    ::oDialogView                 := ArticulosTemporadaView():New( self )
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'articulos_temporadas' )
 
    ::oValidator                  := ArticulosTemporadaValidator():New( self, ::oDialogView )
 
@@ -128,6 +132,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS ArticulosTemporadaView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    DATA oTipo
 
@@ -156,6 +162,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ArticulosTemporadaView
+
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ARTICULO_TEMPORADA" ;
@@ -192,6 +200,16 @@ METHOD Activate() CLASS ArticulosTemporadaView
       ITEMS       ( hgetkeys( ::hTipos ) ) ;
       BITMAPS     ( hgetvalues( ::hTipos ) ) ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          130 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

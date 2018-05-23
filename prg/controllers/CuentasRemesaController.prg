@@ -5,6 +5,8 @@
 
 CLASS CuentasRemesaController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    DATA oBancosController
 
    METHOD New()
@@ -39,6 +41,8 @@ METHOD New( oSenderController ) CLASS CuentasRemesaController
 
    ::oValidator                     := CuentasRemesaValidator():New( self, ::oDialogView )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'cuentas_remesa' )
+
    ::oRepository                    := CuentasRemesaRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
@@ -69,6 +73,8 @@ METHOD End() CLASS CuentasRemesaController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -146,6 +152,7 @@ RETURN ( self )
 
 CLASS CuentasRemesaView FROM SQLBaseView
 
+   DATA oSayCamposExtra
 
    METHOD Activate()
 
@@ -164,6 +171,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS CuentasRemesaView
+   
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CUENTA_REMESA" ;
@@ -192,6 +201,16 @@ METHOD Activate() CLASS CuentasRemesaView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          120 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    //Banco---------------------------------------------------------------------
    ::oController:oBancosController:oDialogView:ExternalRedefine( ::oDialog )

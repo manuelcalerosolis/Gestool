@@ -4271,9 +4271,7 @@ RETURN ( aItmCom )
 
 FUNCTION aEmpresa( cCodigoEmpresa )
 
-   ?"1"
    setArrayEmpresa( EmpresasModel():scatter( cCodigoEmpresa ) )
-   ?"2"
 
    /*
    Configuraciones desde el usuario-----------------------------------------

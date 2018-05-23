@@ -5,6 +5,8 @@
 
 CLASS ClientesGruposController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -35,6 +37,8 @@ METHOD New( oSenderController ) CLASS ClientesGruposController
 
    ::oValidator                     := ClientesGruposValidator():New( self, ::oDialogView )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'clientes_grupo' )
+
    ::oRepository                    := ClientesGruposRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
@@ -53,6 +57,8 @@ METHOD End() CLASS ClientesGruposController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -122,6 +128,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS ClientesGruposView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
 
@@ -160,6 +168,16 @@ METHOD Activate() CLASS ClientesGruposView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          120 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

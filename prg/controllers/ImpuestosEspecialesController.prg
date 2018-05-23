@@ -5,6 +5,8 @@
 
 CLASS ImpuestosEspecialesController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -35,6 +37,8 @@ METHOD New( oSenederController ) CLASS ImpuestosEspecialesController
 
    ::oValidator                     := ImpuestosEspecialesValidator():New( self, ::oDialogView )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'impuestos_especiales' )
+
    ::oRepository                    := ImpuestosEspecialesRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
@@ -53,6 +57,8 @@ METHOD End() CLASS ImpuestosEspecialesController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::oGetSelector:End()
 
@@ -140,6 +146,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS ImpuestosEspecialesView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
 
@@ -150,6 +158,7 @@ END CLASS
 METHOD Activate() CLASS ImpuestosEspecialesView
 
    local oBmpGeneral
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "IMPUESTO_ESPECIAL" ;
@@ -200,6 +209,16 @@ METHOD Activate() CLASS ImpuestosEspecialesView
       IDSAY       142 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          150 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

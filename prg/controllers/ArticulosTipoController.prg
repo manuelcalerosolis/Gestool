@@ -5,6 +5,8 @@
 
 CLASS ArticulosTipoController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -37,6 +39,8 @@ METHOD New( oSenderController ) CLASS ArticulosTipoController
 
    ::oRepository                    := ArticulosTipoRepository():New( self )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'tipos_articulos' )
+
    ::oGetSelector                   := GetSelector():New( self )
 
 RETURN ( Self )
@@ -51,6 +55,8 @@ METHOD End() CLASS ArticulosTipoController
    ::oDialogView:End()
 
    ::oValidator:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::oRepository:End()
 
@@ -122,6 +128,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS ArticulosTipoView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
 
@@ -162,6 +170,16 @@ METHOD Activate() CLASS ArticulosTipoView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          120 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

@@ -683,6 +683,8 @@ SqlGetSelector.prg 															\
 SQLDialogView.prg 															\
 CalculaPrecioCommand.prg 													\
 DescuentosController.prg 													\
+ClientesBrowseView.prg 														\
+TercerosBrowseView.prg 														\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1342,6 +1344,8 @@ SqlGetSelector.obj 															\
 SQLDialogView.obj 															\
 CalculaPrecioCommand.obj 													\
 DescuentosController.obj 													\
+ClientesBrowseView.obj 														\
+TercerosBrowseView.obj 														\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1990,6 +1994,8 @@ $(OBJ)\SqlGetSelector.obj 													+
 $(OBJ)\SQLDialogView.obj 													+
 $(OBJ)\CalculaPrecioCommand.obj 											+
 $(OBJ)\DescuentosController.obj 											+
+$(OBJ)\ClientesBrowseView.obj 											+
+$(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

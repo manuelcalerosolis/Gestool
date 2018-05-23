@@ -5,6 +5,8 @@
 
 CLASS EntidadesController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    DATA oDireccionesController
 
    DATA oContactosController
@@ -21,33 +23,36 @@ METHOD New( oSenderController ) CLASS EntidadesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Entidades"
+   ::cTitle                               := "Entidades"
 
-   ::cName                       := "entidades"
+   ::cName                                := "entidades"
 
-   ::hImage                      := {  "16" => "gc_office_building2_16",;
-                                       "32" => "gc_office_building2_32",;
-                                       "48" => "gc_office_building2_48" }
+   ::hImage                               := {  "16" => "gc_office_building2_16",;
+                                                "32" => "gc_office_building2_32",;
+                                                "48" => "gc_office_building2_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                               := Auth():Level( ::cName )
 
-   ::oModel                      := SQLEntidadesModel():New( self )
+   ::oModel                               := SQLEntidadesModel():New( self )
 
-   ::oBrowseView                 := EntidadesBrowseView():New( self )
+   ::oBrowseView                          := EntidadesBrowseView():New( self )
 
-   ::oDialogView                 := EntidadesView():New( self )
+   ::oDialogView                          := EntidadesView():New( self )
 
-   ::oValidator                  := EntidadesValidator():New( self, ::oDialogView )
+   ::oValidator                           := EntidadesValidator():New( self, ::oDialogView )
 
    ::oDireccionesController               := DireccionesController():New( self )
 
    ::oDireccionesController:oValidator    := DireccionesEntidadesValidator():New( ::oDireccionesController, ::oDialogView )
 
-   ::oContactosController        := ContactosController():New( self )
+   ::oCamposExtraValoresController        := CamposExtraValoresController():New( self, 'entidades' )
 
-   ::oRepository                 := TransportistasRepository():New( self )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oContactosController                 := ContactosController():New( self )
+
+   ::oRepository                          := TransportistasRepository():New( self )
+
+   ::oGetSelector                         := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -90,6 +95,8 @@ METHOD End() CLASS EntidadesController
    ::oDireccionesController:End()
 
    ::oContactosController:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::oRepository:End()
 
@@ -210,6 +217,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS EntidadesView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
    
@@ -220,6 +229,8 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS EntidadesView
+
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ENTIDAD" ;
@@ -295,7 +306,15 @@ METHOD Activate() CLASS EntidadesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          190 ;
+      OF          ::oDialog ;
 
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

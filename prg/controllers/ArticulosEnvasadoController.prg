@@ -5,8 +5,6 @@
 
 CLASS ArticulosEnvasadoController FROM SQLNavigatorController
 
-   DATA oImagenesController
-
    DATA oCamposExtraValoresController
 
    DATA oGetSelector
@@ -257,8 +255,6 @@ CLASS SQLArticulosEnvasadoModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   /*METHOD getNombreWhereUuid( uuid )   INLINE ( ::getField( "nombre", "uuid", uuid ) )*/
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -295,12 +291,6 @@ CLASS ArticulosEnvasadoRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLArticulosEnvasadoModel():getTableName() ) 
 
-   /*METHOD getNombres()                 
-
-   METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
-
-   METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )*/
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -309,19 +299,4 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-
-/*METHOD getNombres() CLASS ArticulosEnvasadoRepository
-
-   local cSQL
-   local aNombres       
-
-   cSQL                 := "SELECT nombre FROM " + ::getTableName() + " "
-   cSQL                 +=    "ORDER BY nombre ASC"
-
-   aNombres             := ::getDatabase():selectFetchArrayOneColumn( cSQL )
-
-   ains( aNombres, 1, "", .t. )
-
-RETURN ( aNombres )*/
-
 //---------------------------------------------------------------------------//

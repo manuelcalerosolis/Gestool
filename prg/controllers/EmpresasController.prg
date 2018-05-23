@@ -9,6 +9,8 @@ CLASS EmpresasController FROM SQLNavigatorController
 
    DATA oDireccionesController
 
+   DATA oCamposExtraValoresController
+
    DATA cUuidEmpresa
 
    DATA oAjustableController
@@ -45,23 +47,25 @@ METHOD New() CLASS EmpresasController
                                        "32" => "gc_factory_32",;
                                        "48" => "gc_factory_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLEmpresasModel():New( self )
+   ::oModel                         := SQLEmpresasModel():New( self )
 
-   ::oBrowseView                 := EmpresasBrowseView():New( self )
+   ::oBrowseView                    := EmpresasBrowseView():New( self )
 
-   ::oDialogView                 := EmpresasView():New( self )
+   ::oDialogView                    := EmpresasView():New( self )
 
-   ::oValidator                  := EmpresasValidator():New( self, ::oDialogView )
+   ::oValidator                     := EmpresasValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := EmpresasRepository():New( self )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'empresas' )
 
-   ::oGetSelector                := ComboSelector():New( self )
+   ::oRepository                    := EmpresasRepository():New( self )
 
-   ::oAjustableController        := AjustableController():New( self )
+   ::oGetSelector                   := ComboSelector():New( self )
 
-   ::oDireccionesController      := DireccionesController():New( self )
+   ::oAjustableController           := AjustableController():New( self )
+
+   ::oDireccionesController         := DireccionesController():New( self )
    ::oDireccionesController:oValidator:setDialog( ::oDialogView )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
@@ -213,6 +217,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS EmpresasView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
 
@@ -299,6 +305,16 @@ METHOD Activate() CLASS EmpresasView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
       OF          ::oDialog
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          180 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
 
