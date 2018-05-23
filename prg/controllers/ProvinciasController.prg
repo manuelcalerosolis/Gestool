@@ -151,7 +151,7 @@ METHOD Activate() CLASS ProvinciasView
 
    REDEFINE BITMAP oBmpGeneral ;
       ID          900 ;
-      RESOURCE    "gc_flag_spain_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          oDlg
 

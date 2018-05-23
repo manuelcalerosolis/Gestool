@@ -3,51 +3,51 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS UnidadesMedicionController FROM SQLNavigatorController
+CLASS OrdenComandasController FROM SQLNavigatorController
 
    METHOD New()
 
    METHOD End()
 
-   METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ),;
-                                             ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ),;
-                                             .t. ) )
+   METHOD VerifyOrden()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS UnidadesMedicionController
+METHOD New() CLASS OrdenComandasController
 
    ::Super:New()
 
-   ::cTitle                      := "Unidades de medidas"
+   ::cTitle                      := "Ordenes de comanda"
 
-   ::cName                       := "unidades_medida"
+   ::cName                       := "Orden_comandas"
 
-   ::hImage                      := {  "16" => "gc_tape_measure2_16",;
-                                       "32" => "gc_tape_measure2_32",;
-                                       "48" => "gc_tape_measure2_48" }
+   ::hImage                      := {  "16" => "gc_sort_az_descending_16",;
+                                       "32" => "gc_sort_az_descending_32",;
+                                       "48" => "gc_sort_az_descending_48" }
 
    ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                      := SQLUnidadesMedicionModel():New( self )
+   ::oModel                      := SQLOrdenComandasModel():New( self )
 
-   ::oBrowseView                 := UnidadesMedicionBrowseView():New( self )
+   ::oBrowseView                 := OrdenComandasBrowseView():New( self )
 
-   ::oDialogView                 := UnidadesMedicionView():New( self )
+   ::oDialogView                 := OrdenComandasView():New( self )
 
-   ::oValidator                  := UnidadesMedicionValidator():New( self, ::oDialogView )
+   ::oValidator                  := OrdenComandasValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := UnidadesMedicionRepository():New( self )
+   ::oRepository                 := OrdenComandasRepository():New( self )
 
-   ::setEvents( { 'appending', 'duplicating', 'editing', 'deleting' }, {|| ::isSystemRegister() } )
+   ::setEvent( 'closedDialog', {|| ::VerifyOrden() } ) 
+   // ::setEvent( 'appended',    {|| ::VerifyOrden() } )
+   // ::setEvent( 'duplicated',  {|| ::VerifyOrden() } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS UnidadesMedicionController
+METHOD End() CLASS OrdenComandasController
 
    ::oModel:End()
 
@@ -64,12 +64,23 @@ METHOD End() CLASS UnidadesMedicionController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD VerifyOrden()
+
+   local cSQL           := "UPDATE orden_comandas SET orden = orden + 1 WHERE orden >= " + toSQLString( ::oModel:hBuffer[ "orden" ] )
+
+RETURN ( getSQLDatabase():Exec( cSQL ) )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UnidadesMedicionBrowseView FROM SQLBrowseView
+CLASS OrdenComandasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -77,7 +88,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS UnidadesMedicionBrowseView
+METHOD addColumns() CLASS OrdenComandasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -105,18 +116,18 @@ METHOD addColumns() CLASS UnidadesMedicionBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
+      :cSortOrder          := 'descripcion'
+      :cHeader             := 'Descripcion'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo_iso'
-      :cHeader             := 'Código ISO'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_iso' ) }
+      :cSortOrder          := 'orden'
+      :cHeader             := 'Orden'
+      :nWidth              := 70
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'orden' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -127,8 +138,10 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS UnidadesMedicionView FROM SQLBaseView
+CLASS OrdenComandasView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -136,17 +149,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS UnidadesMedicionView
+METHOD Activate() CLASS OrdenComandasView
 
-   local oDialog
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
-   local oBmpGeneral
+   local oDialog 
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "UNIDAD_MEDICION" ;
-      TITLE       ::LblTitle() + "unidad de medida"
+      RESOURCE    "ORDEN_COMANDA" ;
+      TITLE       ::LblTitle() + "Orden de comanda"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -161,20 +170,21 @@ METHOD Activate() CLASS UnidadesMedicionView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNNNNNN" ;
+      PICTURE     "@! NN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
       ID          110 ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
+      VALID       ( ::oController:validate( "descripcion" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_iso" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "orden" ] ;
       ID          120 ;
-      VALID       ( ::oController:validate( "codigo_iso" ) ) ;
+      SPINNER ;
+      MIN         1;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -188,11 +198,7 @@ METHOD Activate() CLASS UnidadesMedicionView
       ID          IDCANCEL ;
       OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( ::oDialog:end() )
-
-   if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
-   end if
+      ACTION     ( ::oDialog:end() )
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -205,21 +211,23 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS UnidadesMedicionValidator FROM SQLBaseValidator
+CLASS OrdenComandasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
+
  
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS UnidadesMedicionValidator
+METHOD getValidators() CLASS OrdenComandasValidator
 
-   ::hValidators  := {  "descripcion" =>  {  "required"           => "La descripción es un dato requerido",;
-                                             "unique"             => "La descripción introducida ya existe" },;
-                        "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
-                                             "unique"             => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "descripcion" =>           {  "required"           => "La descripcion es un dato requerido",;
+                                                      "unique"             => "La descripcion introducido ya existe" },;
+                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
+                                                      "unique"             => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -227,68 +235,76 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS SQLUnidadesMedicionModel FROM SQLBaseModel
+CLASS SQLOrdenComandasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "unidades_medicion"
+   DATA cTableName               INIT "orden_comandas"
 
    METHOD getColumns()
 
-   METHOD getInsertUnidadesMedicionSentence()
+   METHOD getOrden()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLUnidadesMedicionModel
+METHOD getColumns() CLASS SQLOrdenComandasModel
 
-   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                          "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                             "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
-                                          "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                             "default"   => {|| win_uuidcreatestring() } }            )
+   ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 8 )"                            ,;
-                                          "default"   => {|| space( 8 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
+                                             "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
-                                          "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "codigo_iso",     {  "create"    => "VARCHAR( 6 )"                            ,;
-                                          "default"   => {|| space( 6 ) } }                        )
+   hset( ::hColumns, "orden",             {  "create"    => "INTEGER "                                  ,;
+                                             "default"   => { || ::getOrden() } }                       )
 
-   hset( ::hColumns, "sistema",        {  "create"    => "BIT"                                     ,;
-                                          "default"   => {|| .t. } }                               )
+   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertUnidadesMedicionSentence() CLASS SQLUnidadesMedicionModel
+METHOD getOrden() CLASS SQLOrdenComandasModel
 
-   local cSentence 
+   local cSQL 
+   local nOrden   
 
-   cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cSentence  +=    "( uuid, codigo, nombre, codigo_iso, sistema ) "
-   cSentence  += "VALUES "
-   cSentence  +=    "( UUID(), 'UDS', 'Unidades', 'UDS', 1 )"
+   cSQL           := "SELECT orden FROM orden_comandas ORDER BY orden DESC LIMIT 1"
 
-RETURN ( cSentence )
+   nOrden         := getSQLDatabase():getValue( cSQL )
+
+
+   if hb_isnumeric( nOrden )
+      RETURN ( nOrden + 1 )
+   end if 
+
+RETURN ( 1 )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS UnidadesMedicionRepository FROM SQLBaseRepository
+CLASS OrdenComandasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLUnidadesMedicionModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLOrdenComandasModel():getTableName() ) 
 
 END CLASS
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

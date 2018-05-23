@@ -366,7 +366,7 @@ METHOD Activate() CLASS CamposExtraValoresView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_form_plus2_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog
 

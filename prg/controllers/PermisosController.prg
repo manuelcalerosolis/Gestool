@@ -32,9 +32,7 @@ METHOD New() CLASS PermisosController
 
    ::lTransactional        := .t.
 
-   ::lConfig               := .t.
-
-   ::hImage                := { "16" => "GC_ID_BADGE_16" }
+   ::hImage                := { "16" => "gc_id_badge_16" }
 
    ::oModel                := SQLPermisosModel():New( self )
    
@@ -48,7 +46,8 @@ METHOD New() CLASS PermisosController
 
    ::oValidator            := PermisosValidator():New( self )
 
-   ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } )  
+   ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } ) 
+    
    ::setEvent( 'closedDialog',   {|| ::oDialogView:closedDialog() } )  
 
 RETURN ( Self )
@@ -311,7 +310,7 @@ METHOD Activate() CLASS PermisosView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "GC_ID_BADGE_48" ;
+      RESOURCE    "gc_id_badge_48" ;
       TRANSPARENT ;
       OF          ::oDialog
 

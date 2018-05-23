@@ -150,7 +150,7 @@ METHOD Activate() CLASS ComentariosView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_message_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog ;
 

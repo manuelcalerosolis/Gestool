@@ -19,7 +19,13 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oImpuestosEspecialesController
 
+   DATA oCamposExtraValoresController
+
    DATA oTagsController
+
+   DATA oPrimeraPropiedadController
+
+   DATA oSegundaPropiedadController
 
    METHOD New()
 
@@ -61,6 +67,8 @@ METHOD New() CLASS ArticulosController
 
    ::oRepository                       := ArticulosRepository():New( self )
 
+   ::oCamposExtraValoresController     := CamposExtraValoresController():New( self, 'clientes' )
+
    ::oTagsController                   := TagsController():New( self )
 
    ::oArticulosFamiliaController       := ArticulosFamiliaController():New( self )
@@ -76,6 +84,10 @@ METHOD New() CLASS ArticulosController
    ::oIvaTipoController                := IvaTipoController():New( self )
 
    ::oImpuestosEspecialesController    := ImpuestosEspecialesController():New( self )
+
+   ::oPrimeraPropiedadController       := PropiedadesController():New( self )
+
+   ::oSegundaPropiedadController       := PropiedadesController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -99,6 +111,8 @@ METHOD End() CLASS ArticulosController
 
    ::oRepository:End()
 
+   ::oCamposExtraValoresController:End()
+
    ::oTagsController:End()
 
    ::oArticulosFamiliaController:End()
@@ -115,13 +129,17 @@ METHOD End() CLASS ArticulosController
 
    ::oImpuestosEspecialesController:End()
 
+   ::oPrimeraPropiedadController:End()
+
+   ::oSegundaPropiedadController:End()
+
    ::Super:End()
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getPrecioCosto()
+METHOD getPrecioCosto() CLASS ArticulosController
 
    if empty(::oModel)
       RETURN ( 0 )
@@ -135,7 +153,7 @@ RETURN ( ::oModel:hBuffer[ "precio_costo" ] )
 
 //---------------------------------------------------------------------------//
 
-METHOD getPorcentajeIVA()
+METHOD getPorcentajeIVA() CLASS ArticulosController
 
    if empty(::oModel)
       RETURN ( 0 )
@@ -149,7 +167,7 @@ RETURN ( ::oIvaTipoController:oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[
 
 //---------------------------------------------------------------------------//
 
-METHOD insertPreciosWhereArticulo()
+METHOD insertPreciosWhereArticulo() CLASS ArticulosController
 
    local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
 
@@ -246,6 +264,8 @@ CLASS ArticulosView FROM SQLBaseView
 
    METHOD startActivate()
 
+   METHOD addLinksToExplorerBar()
+
    METHOD changeLote()           INLINE ( iif( ::oController:oModel:hBuffer[ "lote" ], ::oGetLoteActual:Show(), ::oGetLoteActual:Hide() ) )
 
 END CLASS
@@ -260,12 +280,12 @@ END CLASS
 METHOD Activate() CLASS ArticulosView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTAINER_MEDIUM" ;
+      RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
       TITLE       ::LblTitle() + "articulo"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    ::oController:getimage("48")  ;
+      RESOURCE    ::oController:getimage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -282,6 +302,8 @@ METHOD Activate() CLASS ArticulosView
                   "&Precios" ;
       DIALOGS     "ARTICULO_GENERAL",;
                   "ARTICULO_PRECIO"    
+
+   ::redefineExplorerBar()
 
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -326,6 +348,16 @@ METHOD Activate() CLASS ArticulosView
 
    ::oController:oImpuestosEspecialesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "impuesto_especial_uuid" ] ) )
    ::oController:oImpuestosEspecialesController:oGetSelector:Activate( 170, 171, ::oFolder:aDialogs[ 1 ] )
+
+   // Primera propiedad--------------------------------------------------------
+
+   ::oController:oPrimeraPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "primera_propiedad_uuid" ] ) )
+   ::oController:oPrimeraPropiedadController:oGetSelector:Activate( 230, 231, ::oFolder:aDialogs[ 1 ] )
+
+   // Segunda propiedad--------------------------------------------------------
+
+   ::oController:oSegundaPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "segunda_propiedad_uuid" ] ) )
+   ::oController:oSegundaPropiedadController:oGetSelector:Activate( 240, 241, ::oFolder:aDialogs[ 1 ] )
 
    // Marcadores---------------------------------------------------------------
 
@@ -425,9 +457,11 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD startActivate()
+METHOD startActivate() CLASS ArticulosView
 
    SendMessage( ::oComboPeriodoCaducidad:hWnd, 0x0153, -1, 14 )
+
+   ::addLinksToExplorerBar()
 
    ::oController:oArticulosFamiliaController:oGetSelector:Start()
 
@@ -441,11 +475,25 @@ METHOD startActivate()
 
    ::oController:oImpuestosEspecialesController:oGetSelector:Start()
 
+   ::oController:oPrimeraPropiedadController:oGetSelector:Start()
+   
+   ::oController:oSegundaPropiedadController:oGetSelector:Start()
+
    ::oController:oTagsController:oDialogView:Start()
 
    ::changeLote()
 
    ::oGetCodigo:SetFocus()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD addLinksToExplorerBar() CLASS ArticulosView
+
+   local oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   oPanel:AddLink( "Campos extra...",  {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
 RETURN ( self )
 
@@ -520,6 +568,18 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
    METHOD setImpuestoEspecialAttribute( uValue ) ;
                                  INLINE ( if( empty( uValue ), "", SQLImpuestosEspecialesModel():getUuidWhereCodigo( uValue ) ) )
 
+   METHOD getPrimeraPropiedadUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 20 ), SQLPropiedadesModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setPrimeraPropiedadUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLPropiedadesModel():getUuidWhereCodigo( uValue ) ) )
+
+   METHOD getSegundaPropiedadUuidAttribute( uValue ) ; 
+                                 INLINE ( if( empty( uValue ), space( 20 ), SQLPropiedadesModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setSegundaPropiedadUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLPropiedadesModel():getUuidWhereCodigo( uValue ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -575,6 +635,12 @@ METHOD getColumns() CLASS SQLArticulosModel
 
    hset( ::hColumns, "precio_costo",               {  "create"    => "FLOAT( 16, 6 )"                          ,;
                                                       "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "primera_propiedad_uuid",     {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "segunda_propiedad_uuid",     {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 40 ) } }                       )
 
    ::getTimeStampColumns()
 

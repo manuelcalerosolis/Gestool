@@ -205,6 +205,7 @@ CLASS SQLBaseController
 
    // Events-------------------------------------------------------------------
 
+   METHOD setEvents( aEvents, bEvent )                
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
@@ -726,6 +727,12 @@ METHOD findInRowSet( uValue, cColumn )
    end if 
 
 RETURN ( ::oRowSet:findString( uValue, cColumn ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD setEvents( aEvents, bEvent )
+
+RETURN ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
 
 //----------------------------------------------------------------------------//
 

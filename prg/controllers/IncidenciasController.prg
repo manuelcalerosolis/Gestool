@@ -270,7 +270,7 @@ METHOD Activate() CLASS IncidenciasView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_hint_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog
 

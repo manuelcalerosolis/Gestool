@@ -358,6 +358,8 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+ArticulosEnvasadoController.prg 											\
+OrdenComandasController.prg 												\
 ClientesEntidadesController.prg 											\
 EntidadesController.prg 													\
 DocumentosController.prg 													\
@@ -377,6 +379,7 @@ RutasController.prg 															\
 ClientesGruposController.prg 												\
 ArticulosTemporadaController.prg 										\
 ArticulosCategoriasController.prg 										\
+ArticulosUnidadesMedicionController.prg								\
 AlmacenesController.prg 													\
 ArticulosController.prg 													\
 ArticulosPreciosController.prg 											\
@@ -1022,6 +1025,8 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+ArticulosEnvasadoController.obj       									\
+OrdenComandasController.obj       										\
 ClientesEntidadesController.obj       									\
 EntidadesController.obj       											\
 DocumentosController.obj       											\
@@ -1041,6 +1046,7 @@ RutasController.obj       													\
 ClientesGruposController.obj       										\
 ArticulosTemporadaController.obj       								\
 ArticulosCategoriasController.obj       								\
+ArticulosUnidadesMedicionController.obj 								\
 AlmacenesController.obj       											\
 ArticulosController.obj       											\
 ArticulosPreciosController.obj       									\
@@ -1673,6 +1679,8 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\ArticulosEnvasadoController.obj    							+
+$(OBJ)\OrdenComandasController.obj    									+
 $(OBJ)\ClientesEntidadesController.obj    							+
 $(OBJ)\EntidadesController.obj    										+
 $(OBJ)\DocumentosController.obj    										+
@@ -1692,6 +1700,7 @@ $(OBJ)\RutasController.obj    											+
 $(OBJ)\ClientesGruposController.obj    								+
 $(OBJ)\ArticulosTemporadaController.obj    							+
 $(OBJ)\ArticulosCategoriasController.obj    							+
+$(OBJ)\ArticulosUnidadesMedicionController.obj    					+
 $(OBJ)\AlmacenesController.obj    										+
 $(OBJ)\ArticulosController.obj    										+
 $(OBJ)\ArticulosPreciosController.obj    								+

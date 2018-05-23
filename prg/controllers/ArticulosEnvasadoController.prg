@@ -3,55 +3,58 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesController FROM SQLNavigatorController
+CLASS ArticulosEnvasadoController FROM SQLNavigatorController
 
-   DATA oPropiedadesLineasController
+   DATA oImagenesController
+
+   DATA oCamposExtraValoresController
+
+   DATA oGetSelector
 
    METHOD New()
 
    METHOD End()
 
-   METHOD isColorProperty()         INLINE ( iif( !empty(::oModel) .and. !empty(::oModel:hBuffer), ::oModel:hBuffer[ "color" ], .f. ) ) 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS PropiedadesController
+METHOD New( oSenderController ) CLASS ArticulosEnvasadoController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                         := "Propiedades"
+   ::cTitle                      := "Envasado"
 
-   ::cName                          := "articulos_propiedades"
+   ::cName                       := "envasado"
 
-   ::hImage                         := {  "16" => "gc_coathanger_16",;
-                                          "32" => "gc_coathanger_32",;
-                                          "48" => "gc_coathanger_48" }
+   ::hImage                      := {  "16" => "gc_box_closed_16",;
+                                       "32" => "gc_box_closed_32",;
+                                       "48" => "gc_box_closed_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLPropiedadesModel():New( self )
+   ::oModel                         := SQLArticulosEnvasadoModel():New( self )
 
-   ::oBrowseView                    := PropiedadesBrowseView():New( self )
+   ::oBrowseView                    := ArticulosEnvasadoBrowseView():New( self )
 
-   ::oDialogView                    := PropiedadesView():New( self )
+   ::oDialogView                    := ArticulosEnvasadoView():New( self )
 
-   ::oValidator                     := PropiedadesValidator():New( self, ::oDialogView )
+   ::oValidator                     := ArticulosEnvasadoValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := PropiedadesRepository():New( self )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'envases_articulos' )
 
-   ::oPropiedadesLineasController   := PropiedadesLineasController():New( self )
+   ::oRepository                    := ArticulosEnvasadoRepository():New( self )
 
-   ::oGetSelector                   := GetSelector():New( self )   
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS PropiedadesController
+METHOD End() CLASS ArticulosEnvasadoController
 
    ::oModel:End()
 
@@ -61,9 +64,11 @@ METHOD End() CLASS PropiedadesController
 
    ::oValidator:End()
 
+   ::oCamposExtraValoresController:End()
+
    ::oRepository:End()
 
-   ::oPropiedadesLineasController:End()
+   ::oGetSelector:End()
 
    ::Super:End()
 
@@ -74,9 +79,8 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS PropiedadesBrowseView FROM SQLBrowseView
+CLASS ArticulosEnvasadoBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -84,19 +88,19 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS PropiedadesBrowseView
+METHOD addColumns() CLASS ArticulosEnvasadoBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
       :cHeader             := 'Id'
-      :nWidth              := 60
+      :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Uuid'
-      :nWidth              := 300
+      :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
@@ -105,10 +109,10 @@ METHOD addColumns() CLASS PropiedadesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
@@ -116,7 +120,7 @@ METHOD addColumns() CLASS PropiedadesBrowseView
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
+   end with 
 
 RETURN ( self )
 
@@ -128,131 +132,100 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesView FROM SQLBaseView
-
-   DATA oGetTipo
+CLASS ArticulosEnvasadoView FROM SQLBaseView
   
    METHOD Activate()
 
-   METHOD startActivate()
+   METHOD Activating()
+
+    DATA oSayCamposExtra
+
 
 END CLASS
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+METHOD Activating() CLASS ArticulosEnvasadoView
+
+   if ::oController:isAppendOrDuplicateMode()
+      ::oController:oModel:hBuffer()
+   end if 
+
+RETURN ( self )
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS PropiedadesView
+METHOD Activate() CLASS ArticulosEnvasadoView
 
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "PROPIEDADES_MEDIUM" ;
-      TITLE       ::LblTitle() + "propiedad"
+      RESOURCE    "ARTICULO_ENVASADO" ;
+      TITLE       ::LblTitle() + "envasado"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_coathanger_48" ;
+      RESOURCE    ::oController:getimage("48")  ;
       TRANSPARENT ;
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      PROMPT      "Propiedad" ;
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNN" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      PICTURE     "@! NNN" ;
+      WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "color" ] ;
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
       ID          120 ;
-      IDSAY       122 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      OF          ::oDialog
 
-   // Lineas de propiedades -------------------------------------------------------
-
-   REDEFINE BUTTON oBtnAppend ;
-      ID          130 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnAppend:bAction   := {|| ::oController:oPropiedadesLineasController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          140 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnEdit:bAction   := {|| ::oController:oPropiedadesLineasController:Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          150 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnDelete:bAction   := {|| ::oController:oPropiedadesLineasController:Delete() }
-
-   ::oController:oPropiedadesLineasController:Activate( 160, ::oDialog )
-
-   // Botones------------------------------------------------------------------
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:End( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
       OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( ::oDialog:end() )
+      ACTION      ( ::oDialog:End() )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oPropiedadesLineasController:Append() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oPropiedadesLineasController:Edit() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oPropiedadesLineasController:Delete() } )
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:End( IDOK ), ) } )
    end if
-
-   ::oDialog:bStart  := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBitmap:end()
+  ::oBitmap:End()
 
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
-
-METHOD startActivate()
-
-RETURN ( self )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesValidator FROM SQLCompanyValidator
+CLASS ArticulosEnvasadoValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -260,12 +233,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS PropiedadesValidator
+METHOD getValidators() CLASS ArticulosEnvasadoValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
-                                          "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
-                                          "unique"             => "El código introducido ya existe" } }
+   ::hValidators  := {  "codigo" =>    {  "required"           => "El código es un dato requerido",;
+                                          "unique"             => "El código introducido ya existe" } ,;
+                        "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
+                                          "unique"             => "El nombre introducido ya existe" } }                
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -273,49 +247,59 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS SQLPropiedadesModel FROM SQLCompanyModel
+CLASS SQLArticulosEnvasadoModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "articulos_propiedades"
+   DATA cTableName                     INIT "articulos_envasado"
 
    METHOD getColumns()
+
+   /*METHOD getNombreWhereUuid( uuid )   INLINE ( ::getField( "nombre", "uuid", uuid ) )*/
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLPropiedadesModel
-   
-   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                    "default"   => {|| 0 } }                                 )
+METHOD getColumns() CLASS SQLArticulosEnvasadoModel
 
-   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                    "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getEmpresaColumns()
+   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                       "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
-                                    "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                       "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
-                                    "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "codigo",      {  "create"    => "VARCHAR( 3 )"                            ,;
+                                       "default"   => {|| space( 3 ) } }                        )
 
-   hset( ::hColumns, "color",    {  "create"    => "BIT"                                     ,;
-                                    "default"   => {|| .f. } }                               )
-
-   ::getTimeStampColumns()
+   hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 100 )"                          ,;
+                                       "default"   => {|| space( 100 ) } }                       )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesRepository FROM SQLBaseRepository
+CLASS ArticulosEnvasadoRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLPropiedadesModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLArticulosEnvasadoModel():getTableName() ) 
+
+   /*METHOD getNombres()                 
+
+   METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
+
+   METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )*/
 
 END CLASS
 
@@ -324,4 +308,20 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
+/*METHOD getNombres() CLASS ArticulosEnvasadoRepository
+
+   local cSQL
+   local aNombres       
+
+   cSQL                 := "SELECT nombre FROM " + ::getTableName() + " "
+   cSQL                 +=    "ORDER BY nombre ASC"
+
+   aNombres             := ::getDatabase():selectFetchArrayOneColumn( cSQL )
+
+   ains( aNombres, 1, "", .t. )
+
+RETURN ( aNombres )*/
+
+//---------------------------------------------------------------------------//

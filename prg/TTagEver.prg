@@ -11,6 +11,10 @@ CLASS TTagEver FROM TControl
 
    CLASSDATA lRegistered            AS LOGICAL
 
+   CLASSDATA hBmp                   
+   CLASSDATA nWidthBmp              
+   CLASSDATA nHeightBmp             
+
    DATA aItems                      AS ARRAY    INIT {} 
 
    DATA aCoors                      AS ARRAY    INIT {} 
@@ -29,10 +33,6 @@ CLASS TTagEver FROM TControl
    
    DATA bOnClick
    DATA bOnDelete
-
-   DATA hBmp                        AS NUMERIC  INIT 0
-   DATA nWidthBmp                   AS NUMERIC  INIT 0
-   DATA nHeightBmp                  AS NUMERIC  INIT 0
    
    METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, oFont, nClrBorder, aItems, nClrPane ) CONSTRUCTOR
    METHOD Redefine( nId, oWnd, oFont, aItems ) CONSTRUCTOR
@@ -133,6 +133,8 @@ RETURN Self
 
 METHOD End()
 
+   msgalert("end TTagEver")
+
    ::deleteBitmap()
 
 RETURN Self
@@ -151,7 +153,11 @@ RETURN Self
 
 //---------------------------------------------------------------------------//
 
-METHOD loadBitmap()
+METHOD loadBitmap() CLASS TTagEver
+
+   if !empty( ::hBmp )
+      RETURN ( self )
+   end if 
 
    ::hBmp         := loadBitmap( getResources(), "gc_tag_close_12" )
 
