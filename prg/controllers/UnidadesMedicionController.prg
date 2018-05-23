@@ -5,6 +5,8 @@
 
 CLASS UnidadesMedicionController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -39,6 +41,8 @@ METHOD New() CLASS UnidadesMedicionController
 
    ::oValidator                  := UnidadesMedicionValidator():New( self, ::oDialogView )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'unidades_medicion' )
+
    ::oRepository                 := UnidadesMedicionRepository():New( self )
 
    ::setEvents( { 'appending', 'duplicating', 'editing', 'deleting' }, {|| ::isSystemRegister() } )
@@ -58,6 +62,8 @@ METHOD End() CLASS UnidadesMedicionController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -129,6 +135,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS UnidadesMedicionView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
 
@@ -138,6 +146,7 @@ END CLASS
 
 METHOD Activate() CLASS UnidadesMedicionView
 
+   local oSayCamposExtra
    local oDialog
    local oBtnEdit
    local oBtnAppend
@@ -177,6 +186,16 @@ METHOD Activate() CLASS UnidadesMedicionView
       VALID       ( ::oController:validate( "codigo_iso" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          130 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

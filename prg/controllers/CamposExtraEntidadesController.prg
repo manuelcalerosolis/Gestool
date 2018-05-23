@@ -41,11 +41,13 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "almacenes" =>                            { "nombre" => "Almacenes", "icono" => "gc_warehouse_16"                                        } ,;
                                  "empresas" =>                             { "nombre" => "Empresas", "icono" => "gc_factory_16"                                           } ,;
                                  "entidades" =>                            { "nombre" => "Entidades", "icono" => "gc_office_building2_16"                                 } ,;
+                                 "cuentas_remesa" =>                       { "nombre" => "Cuentas de remesa", "icono" => "gc_notebook2_16"                                } ,;
                                  "tarifas" =>                              { "nombre" => "Tarifas", "icono" => "gc_money_interest_16"                                     } ,;
                                  "tipo_iva" =>                             { "nombre" => "Tipos de IVA", "icono" => "gc_moneybag_16"                                      } ,;
                                  "impuestos_especiales" =>                 { "nombre" => "Impuestos especiales", "icono" => "gc_moneybag_euro_16"                         } ,;
                                  "orden_comandas" =>                       { "nombre" => "Orden de comandas", "icono" => "gc_sort_az_descending_16"                       } ,;
                                  "divisas_monetarias" =>                   { "nombre" => "Divisas monetarias", "icono" => "gc_currency_euro_16"                           } ,;
+                                 "unidades_medicion" =>                    { "nombre" => "Unidades de medicion", "icono" => "gc_tape_measure2_16"                         } ,;
                                  "rutas" =>                                { "nombre" => "Rutas", "icono" => "gc_map_route_16"                                            } ,;
                                  "lineas_propiedades" =>                   { "nombre" => "Líneas de propiedades",  "icono" => "gc_coathanger_16"                          } }   
 
