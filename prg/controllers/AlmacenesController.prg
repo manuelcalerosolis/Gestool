@@ -13,6 +13,8 @@ CLASS AlmacenesController FROM SQLNavigatorController
 
    DATA oZonasController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -48,6 +50,8 @@ METHOD New() CLASS AlmacenesController
    ::oDireccionesController      := DireccionesController():New( self )
 
    ::oZonasController            := ZonasController():New( self )
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'almacenes' )
 
    ::oRepository                 := AlmacenesRepository():New( self )
 
@@ -170,6 +174,7 @@ CLASS AlmacenesView FROM SQLBaseView
    DATA oGetProvincia
    DATA oGetPoblacion
    DATA oGetPais
+   DATA oSayCamposExtra
 
    METHOD Activate()
 
@@ -200,6 +205,7 @@ METHOD Activate() CLASS AlmacenesView
    local oBtnAppend
    local oBtnEdit
    local oBtnDelete
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ALMACEN_SQL" ;
@@ -228,6 +234,16 @@ METHOD Activate() CLASS AlmacenesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          160 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
 

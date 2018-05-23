@@ -30,8 +30,13 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "grupos_clientes" =>                      { "nombre" => "Grupos de clientes",  "icono" => "gc_users3_16"                                 } ,;
                                  "propiedades" =>                          { "nombre" => "Propiedades",  "icono" => "gc_coathanger_16"                                    } ,;
                                  "movimientos_almacen" =>                  { "nombre" => "Movimientos de almacén",  "icono" => "gc_pencil_package_16"                     } ,;
-                                 "movimientos_almacen_lineas" =>           { "nombre" => "Movimientos de almacén lineas", "icono" => "gc_pencil_package_16"              } ,;
-                                 "fabricantes" =>                          { "nombre" => "Fabricantes", "icono" => "gc_pencil_package_16"                                  } ,;
+                                 "movimientos_almacen_lineas" =>           { "nombre" => "Movimientos de almacén lineas", "icono" => "gc_pencil_package_16"               } ,;
+                                 "fabricantes" =>                          { "nombre" => "Fabricantes", "icono" => "gc_pencil_package_16"                                 } ,;
+                                 "comentarios" =>                          { "nombre" => "Comentarios", "icono" => "gc_message_16"                                        } ,;
+                                 "almacenes" =>                            { "nombre" => "Almacenes", "icono" => "gc_warehouse_16"                                        } ,;
+                                 "empresas" =>                             { "nombre" => "Empresas", "icono" => "gc_factory_16"                                           } ,;
+                                 "tipos_articulos" =>                      { "nombre" => "Tipos de artículos", "icono" => "gc_objects_16"                                 } ,;
+                                 "temporada_articulos" =>                  { "nombre" => "Temporadas de artículos", "icono" => "gc_cloud_sun_16"                                 } ,;
                                  "lineas_propiedades" =>                   { "nombre" => "Líneas de propiedades",  "icono" => "gc_coathanger_16"                          } }   
 
    METHOD New( oController )
