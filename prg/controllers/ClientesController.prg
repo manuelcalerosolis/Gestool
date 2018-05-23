@@ -29,6 +29,8 @@ METHOD New() CLASS ClientesController
 
    ::oValidator                  := ClientesValidator():New( self, ::oDialogView )
 
+   ::oBrowseView                 := ClientesBrowseView():New( self )
+
    ::oAgentesController          := AgentesController():New( self )
 
    ::oFormasdePagoController     := FormaPagoController():New( self )

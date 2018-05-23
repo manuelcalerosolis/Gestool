@@ -159,12 +159,12 @@ METHOD redefineGeneral() CLASS ClientesView
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oFolder:aDialogs[1] )
 
-   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "web" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "web" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "establecimiento" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "establecimiento" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]

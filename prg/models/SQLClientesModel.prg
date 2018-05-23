@@ -7,6 +7,8 @@ CLASS SQLClientesModel FROM SQLTercerosModel
 
    METHOD getColumns()
 
+   METHOD getInitialSelect()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -94,5 +96,28 @@ METHOD getColumns() CLASS SQLClientesModel
                                                       "default"   => {|| space( 12 ) } }   )
    
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLClientesModel
+
+   local cSelect  := "SELECT clientes.id AS id,"                                                                           + " " + ;
+                        "clientes.uuid AS uuid,"                                                                           + " " + ;
+                        "clientes.codigo AS codigo,"                                                                       + " " + ;
+                        "clientes.nombre AS nombre,"                                                                       + " " + ;
+                        "clientes.dni AS dni,"                                                                             + " " + ;
+                        "clientes.establecimiento AS establecimiento,"                                                     + " " + ;
+                        "clientes.fecha_ultima_llamada AS fecha_ultima_llamada,"                                           + " " + ;
+                        "direcciones.direccion AS direccion,"                                                              + " " + ;
+                        "direcciones.poblacion AS poblacion,"                                                              + " " + ;
+                        "direcciones.provincia AS provincia,"                                                              + " " + ;
+                        "direcciones.codigo_postal AS codigo_postal,"                                                      + " " + ;
+                        "direcciones.telefono AS telefono,"                                                                + " " + ;
+                        "direcciones.movil AS movil,"                                                                      + " " + ;
+                        "direcciones.email AS email"                                                                       + " " + ;
+                     "FROM  clientes"                                                                                      + " " + ;
+                        "INNER JOIN direcciones ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"  + " "
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
