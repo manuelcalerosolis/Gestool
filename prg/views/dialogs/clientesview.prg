@@ -23,7 +23,7 @@ CLASS ClientesView FROM SQLBaseView
    DATA oRiesgo
    
    DATA oRiesgoAlcanzado
-   DATA nRiesgoAlcanzado   INIT 0
+   DATA nRiesgoAlcanzado               INIT 0
 
    DATA oInfoSubCuenta
    DATA oInfoSubCuentaDescuento
@@ -159,12 +159,12 @@ METHOD redefineGeneral() CLASS ClientesView
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oFolder:aDialogs[1] )
 
-   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "web" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "web" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "establecimiento" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "establecimiento" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
@@ -460,6 +460,7 @@ METHOD changeBloqueo() CLASS ClientesView
    end if
 
    ::oGetFechaBloqueo:Refresh()
+   
    ::oGetCausaBloqueo:Refresh()
 
 Return ( self )

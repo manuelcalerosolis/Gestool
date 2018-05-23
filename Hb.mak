@@ -379,6 +379,7 @@ RutasController.prg 															\
 ClientesGruposController.prg 												\
 ArticulosTemporadaController.prg 										\
 ArticulosCategoriasController.prg 										\
+ArticulosUnidadesMedicionController.prg								\
 AlmacenesController.prg 													\
 ArticulosController.prg 													\
 ArticulosPreciosController.prg 											\
@@ -682,6 +683,8 @@ SqlGetSelector.prg 															\
 SQLDialogView.prg 															\
 CalculaPrecioCommand.prg 													\
 DescuentosController.prg 													\
+ClientesBrowseView.prg 														\
+TercerosBrowseView.prg 														\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1043,6 +1046,7 @@ RutasController.obj       													\
 ClientesGruposController.obj       										\
 ArticulosTemporadaController.obj       								\
 ArticulosCategoriasController.obj       								\
+ArticulosUnidadesMedicionController.obj 								\
 AlmacenesController.obj       											\
 ArticulosController.obj       											\
 ArticulosPreciosController.obj       									\
@@ -1340,6 +1344,8 @@ SqlGetSelector.obj 															\
 SQLDialogView.obj 															\
 CalculaPrecioCommand.obj 													\
 DescuentosController.obj 													\
+ClientesBrowseView.obj 														\
+TercerosBrowseView.obj 														\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1694,6 +1700,7 @@ $(OBJ)\RutasController.obj    											+
 $(OBJ)\ClientesGruposController.obj    								+
 $(OBJ)\ArticulosTemporadaController.obj    							+
 $(OBJ)\ArticulosCategoriasController.obj    							+
+$(OBJ)\ArticulosUnidadesMedicionController.obj    					+
 $(OBJ)\AlmacenesController.obj    										+
 $(OBJ)\ArticulosController.obj    										+
 $(OBJ)\ArticulosPreciosController.obj    								+
@@ -1987,6 +1994,8 @@ $(OBJ)\SqlGetSelector.obj 													+
 $(OBJ)\SQLDialogView.obj 													+
 $(OBJ)\CalculaPrecioCommand.obj 											+
 $(OBJ)\DescuentosController.obj 											+
+$(OBJ)\ClientesBrowseView.obj 											+
+$(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

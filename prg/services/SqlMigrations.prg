@@ -43,7 +43,7 @@ METHOD Run()
 
    ::addRepositories()
 
-   ::checkRepositories()
+   // ::checkRepositories()
 
    ::checkValues()
 
@@ -54,6 +54,7 @@ RETURN ( Self )
 METHOD createDatabase()
 
    getSQLDatabase():oConexion:Exec( "CREATE DATABASE IF NOT EXISTS " + getSQLDatabase():cDatabaseMySQL + ";" )
+
    getSQLDatabase():oConexion:Exec( "USE " + getSQLDatabase():cDatabaseMySQL + ";" )
        
 RETURN ( self )    
@@ -95,6 +96,8 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD checkValues()
+
+   getSQLDatabase():Exec( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )
 
    getSQLDatabase():Exec( SQLRolesModel():getInsertRolesSentence() )
 
@@ -228,6 +231,8 @@ METHOD addModels()
    aadd( ::aModels, SQLArticulosFamiliaModel():New() )
 
    aadd( ::aModels, SQLUnidadesMedicionModel():New() )
+
+   aadd( ::aModels, SQLArticulosUnidadesMedicionModel():New() )
 
    aadd( ::aModels, SQLDivisasMonetariasModel():New() )
 

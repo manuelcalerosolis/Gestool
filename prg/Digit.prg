@@ -1238,8 +1238,10 @@ FUNCTION CheckCif( oGet )
             cLetra    := Right( cCif, 1 )
 
             if cLetra != Cif( cNumero )
+
                cCif   := cNumero + Cif( cNumero )
                oGet:cText( cCif )
+
             end if
 
       end case

@@ -29,6 +29,8 @@ METHOD New() CLASS ClientesController
 
    ::oValidator                  := ClientesValidator():New( self, ::oDialogView )
 
+   ::oBrowseView                 := ClientesBrowseView():New( self )
+
    ::oAgentesController          := AgentesController():New( self )
 
    ::oFormasdePagoController     := FormaPagoController():New( self )
@@ -61,7 +63,7 @@ METHOD New() CLASS ClientesController
 
    ::oCuentasBancariasController    := CuentasBancariasController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'clientes')
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'clientes' )
 
    ::oDescuentosController          := DescuentosController():New( self )
 
@@ -72,3 +74,4 @@ METHOD New() CLASS ClientesController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+

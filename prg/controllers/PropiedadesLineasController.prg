@@ -295,7 +295,7 @@ METHOD getColumns() CLASS SQLPropiedadesLineasModel
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 )"                           ,;
-                                          "default"   => {|| ::getSenderControllerParentUuid() } }                       )
+                                          "default"   => {|| ::getSenderControllerParentUuid() } } )
 
    hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 4 )"                            ,;
                                           "default"   => {|| space( 4 ) } }                        )
