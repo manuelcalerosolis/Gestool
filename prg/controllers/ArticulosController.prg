@@ -23,6 +23,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oTagsController
 
+   DATA oArticulosUnidadesMedicionController
+
    DATA oPrimeraPropiedadController
 
    DATA oSegundaPropiedadController
@@ -85,15 +87,15 @@ METHOD New() CLASS ArticulosController
 
    ::oImpuestosEspecialesController    := ImpuestosEspecialesController():New( self )
 
-   ::oPrimeraPropiedadController       := PropiedadesController():New( self )
+   ::oPrimeraPropiedadController             := PropiedadesController():New( self )
 
-   ::oSegundaPropiedadController       := PropiedadesController():New( self )
+   ::oSegundaPropiedadController             := PropiedadesController():New( self )
+   
+   ::oArticulosUnidadesMedicionController    := ArticulosUnidadesMedicionController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::insertPreciosWhereArticulo() } )
-
-   ::oModel:setEvent( 'loadedCurrentBuffer', {|| ::insertPreciosWhereArticulo() } )
+   ::oModel:setEvents( { 'loadedBlankBuffer', 'loadedCurrentBuffer' }, {|| ::insertPreciosWhereArticulo() } )
 
 RETURN ( Self )
 
@@ -132,6 +134,8 @@ METHOD End() CLASS ArticulosController
    ::oPrimeraPropiedadController:End()
 
    ::oSegundaPropiedadController:End()
+
+   ::oArticulosUnidadesMedicionController:End()
 
    ::Super:End()
 
@@ -493,7 +497,13 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
 
    local oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   oPanel:AddLink( "Campos extra...",  {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+   oPanel:AddLink(   "Campos extra...",;
+                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
+                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
+   
+   oPanel:AddLink(   "Unidades de medición...",;
+                     {|| ::oController:oArticulosUnidadesMedicionController:activateDialogView() },;
+                     ::oController:oArticulosUnidadesMedicionController:getImage( "16" ) )
 
 RETURN ( self )
 

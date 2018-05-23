@@ -193,6 +193,7 @@ CLASS SQLBaseModel
 
    // Events-------------------------------------------------------------------
 
+   METHOD setEvents( aEvents, bEvent )
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
@@ -1311,3 +1312,9 @@ METHOD getSenderControllerParentUuid()
 RETURN ( ::oController:getSenderController():getUuid() )
 
 //---------------------------------------------------------------------------//
+
+METHOD setEvents( aEvents, bEvent )
+
+RETURN ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
+
+//----------------------------------------------------------------------------//

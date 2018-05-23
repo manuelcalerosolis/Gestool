@@ -17,9 +17,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS UnidadesMedicionController
+METHOD New( oSenderController ) CLASS UnidadesMedicionController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Unidades de medidas"
 
@@ -41,6 +41,8 @@ METHOD New() CLASS UnidadesMedicionController
 
    ::oRepository                 := UnidadesMedicionRepository():New( self )
 
+   ::oGetSelector                := GetSelector():New( self )
+
    ::setEvents( { 'appending', 'duplicating', 'editing', 'deleting' }, {|| ::isSystemRegister() } )
 
 RETURN ( Self )
@@ -58,6 +60,8 @@ METHOD End() CLASS UnidadesMedicionController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 
@@ -248,7 +252,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 8 )"                            ,;
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 8 ) UNIQUE"                     ,;
                                           "default"   => {|| space( 8 ) } }                        )
 
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
