@@ -17,9 +17,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ComentariosController
+METHOD New( oSenderController ) CLASS ComentariosController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Comentarios"
 
