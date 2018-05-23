@@ -145,6 +145,8 @@ RETURN ( self )
 
 METHOD Required( uValue )
 
+   msgalert( uValue, "desde Required" )
+
 RETURN ( !empty( uValue ) )
 
 //---------------------------------------------------------------------------//
