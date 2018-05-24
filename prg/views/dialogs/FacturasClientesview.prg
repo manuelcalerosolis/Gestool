@@ -30,7 +30,7 @@ RETURN ( self )
 METHOD Activate() CLASS FacturasClientesView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
+      RESOURCE    "TRANSACION_COMERCIAL" ;
       TITLE       ::LblTitle() + "cliente"
 
    REDEFINE BITMAP ::oBitmap ;
