@@ -7,6 +7,18 @@ CLASS ClientesController FROM TercerosController
 
    METHOD New()
 
+   METHOD End()
+
+   METHOD validColumnAgentesBrowse( uValue, nKey )             INLINE ( ::validColumnBrowse( uValue, nKey, ::oAgentesController:oModel, "agente_uuid" ) )
+
+   METHOD validColumnFormasdePagoBrowse( uValue, nKey )        INLINE ( ::validColumnBrowse( uValue, nKey, ::oFormasdePagoController:oModel, "forma_pago_uuid" ) )
+
+   METHOD validColumnRutasBrowse( uValue, nKey )               INLINE ( ::validColumnBrowse( uValue, nKey, ::oRutasController:oModel, "ruta_uuid" ) )
+
+   METHOD validColumnGruposBrowse( uValue, nKey )              INLINE ( ::validColumnBrowse( uValue, nKey, ::oClientesGruposController:oModel, "cliente_grupo_uuid" ) )
+
+   METHOD validColumnCuentasRemesasBrowse( uValue, nKey )      INLINE ( ::validColumnBrowse( uValue, nKey, ::oCuentasRemesasController:oModel, "cuenta_remesa_uuid" ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -75,3 +87,36 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD End() CLASS ClientesController
+
+   ::oContactosController:End()
+
+   ::oIncidenciasController:End()
+
+   ::oDocumentosController:End()
+
+   ::oCuentasBancariasController:End()
+
+   ::oCamposExtraValoresController:End()
+
+   ::oDescuentosController:End()
+
+   ::oClientesEntidadesController:End()
+
+   ::oAgentesController:End()
+
+   ::oFormasdePagoController:End()
+
+   ::oCuentasRemesasController:End()
+
+   ::oRutasController:End()
+
+   ::oClientesGruposController :End()
+
+   ::oDireccionesController:End()
+
+   ::Super:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//

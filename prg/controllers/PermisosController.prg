@@ -495,7 +495,7 @@ CLASS PermisosRepository FROM SQLBaseRepository
 
    METHOD getNombres() 
 
-   METHOD getNombre( uuid )   INLINE ( ::getColumnWhereUuid( uuid, 'nombre' ) ) 
+   METHOD getNombre( uuid )   INLINE ( SQLPermisosModel():getColumnWhereUuid( uuid, 'nombre' ) ) 
 
    METHOD getUuid()
 

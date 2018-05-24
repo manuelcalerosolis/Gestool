@@ -294,6 +294,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLDescuentosModel():New() ) 
 
+   aadd( ::aModels, SQLFacturasClientesModel():New() ) 
+
 RETURN ( ::aModels )
  
 //----------------------------------------------------------------------------//

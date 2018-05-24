@@ -5,14 +5,6 @@
 
 CLASS CuentasBancariasController FROM SQLNavigatorController
 
-   DATA oDireccionesController
-
-   DATA oPaisesController
-
-   DATA oProvinciasController
-
-   DATA oContactosController
-
    METHOD CalculaIBAN()
 
    METHOD CalculaDigitoControl()
@@ -110,17 +102,7 @@ METHOD End() CLASS CuentasBancariasController
 
    ::oValidator:End()
 
-   ::oDireccionesController:End()
-
-   ::oRepository:End()
-
-   ::oPaisesController:End()
-
-   ::oProvinciasController:End()
-
-   ::oContactosController:End()
-
-   ::oGetSelector :End()
+   ::oGetSelector:End()
 
    ::Super:End()
 

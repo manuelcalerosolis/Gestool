@@ -383,6 +383,10 @@ ArticulosCategoriasController.prg 										\
 ArticulosUnidadesMedicionController.prg								\
 AlmacenesController.prg 													\
 ArticulosController.prg 													\
+ArticulosBrowseView.prg 													\
+ArticulosView.prg 															\
+ArticulosValidator.prg 														\
+SQLArticulosModel.prg 														\
 ArticulosPreciosController.prg 											\
 ZonasController.prg 															\
 ArticulosFabricantesController.prg 										\
@@ -686,6 +690,9 @@ CalculaPrecioCommand.prg 													\
 DescuentosController.prg 													\
 ClientesBrowseView.prg 														\
 TercerosBrowseView.prg 														\
+SqlFacturasClientesModel.prg 												\
+FacturasClientesController.prg 											\
+FacturasClientesView.prg 													\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1051,6 +1058,10 @@ ArticulosCategoriasController.obj       								\
 ArticulosUnidadesMedicionController.obj 								\
 AlmacenesController.obj       											\
 ArticulosController.obj       											\
+ArticulosBrowseView.obj 													\
+ArticulosView.obj 															\
+ArticulosValidator.obj 														\
+SQLArticulosModel.obj 														\
 ArticulosPreciosController.obj       									\
 ZonasController.obj       													\
 ArticulosFabricantesController.obj       								\
@@ -1348,6 +1359,9 @@ CalculaPrecioCommand.obj 													\
 DescuentosController.obj 													\
 ClientesBrowseView.obj 														\
 TercerosBrowseView.obj 														\
+SqlFacturasClientesModel.obj 												\
+FacturasClientesController.obj 											\
+FacturasClientesView.obj 													\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1706,6 +1720,10 @@ $(OBJ)\ArticulosCategoriasController.obj    							+
 $(OBJ)\ArticulosUnidadesMedicionController.obj    					+
 $(OBJ)\AlmacenesController.obj    										+
 $(OBJ)\ArticulosController.obj    										+
+$(OBJ)\ArticulosBrowseView.obj    										+
+$(OBJ)\ArticulosView.obj    												+
+$(OBJ)\ArticulosValidator.obj												+
+$(OBJ)\SQLArticulosModel.obj												+
 $(OBJ)\ArticulosPreciosController.obj    								+
 $(OBJ)\ZonasController.obj    											+
 $(OBJ)\ArticulosFabricantesController.obj    						+
@@ -1999,6 +2017,9 @@ $(OBJ)\CalculaPrecioCommand.obj 											+
 $(OBJ)\DescuentosController.obj 											+
 $(OBJ)\ClientesBrowseView.obj 											+
 $(OBJ)\TercerosBrowseView.obj 											+
+$(OBJ)\SqlFacturasClientesModel.obj 				    				+
+$(OBJ)\FacturasClientesController.obj 									+
+$(OBJ)\FacturasClientesView.obj 											+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+
