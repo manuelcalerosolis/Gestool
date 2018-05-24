@@ -164,7 +164,7 @@ RETURN ( lConnect )
 METHOD isParseError( cSentence )
 
    if empty( cSentence )
-      msgstop( "La sentencia esta vacia" )
+      msgstop( "La sentencia esta vacia", "SQLDatabase" )
       RETURN ( .t. )  
    end if  
 

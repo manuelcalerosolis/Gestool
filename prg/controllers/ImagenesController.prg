@@ -11,8 +11,6 @@ CLASS ImagenesController FROM SQLNavigatorController
 
    METHOD loadedBlankBuffer()
 
-   METHOD gettingSelectSentence()
-
    METHOD loadPrincipalBlankBuffer()   INLINE ( ::oModel:loadPrincipalBlankBuffer() )
    METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
 
@@ -38,6 +36,10 @@ METHOD New( oSenderController ) CLASS ImagenesController
 
    ::cName                 := "imagenes"
 
+   ::hImage                := {  "16" => "gc_photo_landscape_16",;
+                                 "32" => "gc_photo_landscape_32",;
+                                 "48" => "gc_photo_landscape_48" }
+
    ::oModel                := SQLImagenesModel():New( self )
 
    ::oBrowseView           := ImagenesBrowseView():New( self )
@@ -46,12 +48,12 @@ METHOD New( oSenderController ) CLASS ImagenesController
 
    ::oValidator            := ImagenesValidator():New( self, ::oDialogView )
 
-   ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
+   // ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
+   // ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
+   // ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+   // ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
+   // ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
 RETURN ( Self )
 
@@ -79,18 +81,6 @@ METHOD loadedBlankBuffer() CLASS ImagenesController
 
    if !empty( uuid )
       hset( ::oModel:hBuffer, "parent_uuid", uuid )
-   end if 
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD gettingSelectSentence() CLASS ImagenesController
-
-   local uuid        := ::getSenderController():getUuid() 
-
-   if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( Self )
@@ -174,11 +164,24 @@ RETURN ( self )
 
 CLASS ImagenesBrowseView FROM SQLBrowseView
 
+   METHOD Create( oWindow ) 
+
    METHOD addColumns()                       
 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
+
+METHOD Create( oWindow ) CLASS ImagenesBrowseView
+
+   ::Super:Create( oWindow )
+
+   ::oBrowse:nRowHeight       := 100
+   ::oBrowse:nDataLines       := 2
+
+RETURN ( ::oBrowse )
+
+//---------------------------------------------------------------------------//
 
 METHOD addColumns() CLASS ImagenesBrowseView
 
@@ -211,15 +214,23 @@ METHOD addColumns() CLASS ImagenesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'imagen'
       :cHeader             := 'Imagen'
-      :nWidth              := 300
+      :nWidth              := 400
       :bEditValue          := {|| ::getRowSet():fieldGet( 'imagen' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := ""
+      :nEditType           := TYPE_IMAGE
+      :lBmpStretch         := .f.
+      :lBmpTransparent     := .t.
+      :bStrImage           := {|| cFileBmpName( ::getRowSet():fieldGet( 'imagen' ) ) }
+      :nDataBmpAlign       := AL_CENTER
+      :nWidth              := 100
+   end with
+
 RETURN ( self )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -236,13 +247,16 @@ END CLASS
 
 METHOD Activate() CLASS ImagenesView
 
+   local oGetImagen
+   local oBmpImagen
+
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "IMAGEN" ;
       TITLE       ::LblTitle() + "imagenes"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_signpost3_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -251,10 +265,24 @@ METHOD Activate() CLASS ImagenesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "imagen" ] ;
+   REDEFINE GET   oGetImagen ;
+      VAR         ::oController:oModel:hBuffer[ "imagen" ] ;
       ID          100 ;
+      BITMAP      "Folder" ;
+      ON HELP     ( GetBmp( oGetImagen, oBmpImagen ) ) ;
+      ON CHANGE   ( ChgBmp( oGetImagen, oBmpImagen ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "imagen" ) ) ;
       OF          ::oDialog
+
+   REDEFINE IMAGE oBmpImagen ;
+      ID          110 ;
+      FILE        cFileBmpName( ::oController:oModel:hBuffer[ "imagen" ] ) ;
+      OF          ::oDialog
+
+   oBmpImagen:setColor( , getsyscolor( 15 ) )
+   oBmpImagen:bLClicked   := {|| ShowImage( oBmpImagen ) }
+   oBmpImagen:bRClicked   := {|| ShowImage( oBmpImagen ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -283,10 +311,6 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS ImagenesValidator FROM SQLBaseValidator
 
@@ -298,15 +322,10 @@ END CLASS
 
 METHOD getValidators() CLASS ImagenesValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"        => "El nombre es un dato requerido" },; 
-                        "direccion" =>       {  "required"        => "La dirección es un dato requerido" },; 
-                        "email" =>           {  "mail"            => "El email no es valido" } }
+   ::hValidators  := {  "imagen" => {  "required"  => "La imagen es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -319,15 +338,15 @@ CLASS SQLImagenesModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   METHOD loadPrincipalBlankBuffer()   INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
+   METHOD loadPrincipalBlankBuffer()               INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
 
-   METHOD insertPrincipalBlankBuffer() INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
+   METHOD insertPrincipalBlankBuffer()             INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
 
    METHOD getIdWhereParentUuid( uuid )             INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD updateImagenWhereUuid( uValue, uuid )    INLINE ( ::updateFieldWhereUuid( uuid, 'imagen', uValue ) )
    
-   METHOD SetImagenAttribute( uValue )             
+   METHOD setImagenAttribute( uValue )             
 
 END CLASS
 
@@ -338,17 +357,17 @@ METHOD getColumns() CLASS SQLImagenesModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL "                   ,;
-                                             "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL "                 ,;
+                                             "default"   => {|| ::getSenderControllerParentUuid() } } )
 
    hset( ::hColumns, "imagen",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "principal",         {  "create"    => "TINYINT ( 1 )"                           ,;
-                                             "default"   => {|| "0" } }                               )
+   hset( ::hColumns, "principal",         {  "create"    => "BIT"                                     ,;
+                                             "default"   => {|| .f. } }                               )
 
 RETURN ( ::hColumns )
 
@@ -358,7 +377,6 @@ METHOD SetImagenAttribute( uValue )
 
    local cNombreImagen
 
-    msgalert(::oController:oSenderController:classname() )
    if empty( uValue ) .or. isImageInApplicationStorage( uValue )
       RETURN ( uValue )
    end if       
@@ -367,7 +385,7 @@ METHOD SetImagenAttribute( uValue )
       RETURN ( uValue )
    end if       
 
-   cNombreImagen           := alltrim( ::oController:oSenderController:oModel:hBuffer[ "nombre" ] ) 
+   cNombreImagen           := alltrim( ::oController:oSenderController:getModel():hBuffer[ "nombre" ] ) 
    cNombreImagen           += '(' + alltrim( ::hBuffer[ "uuid" ] ) + ')' + '.' 
    cNombreImagen           += lower( getFileExt( uValue ) ) 
 

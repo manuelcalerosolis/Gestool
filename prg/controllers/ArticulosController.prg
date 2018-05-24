@@ -202,7 +202,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-
 CLASS ArticulosRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLArticulosModel():getTableName() ) 

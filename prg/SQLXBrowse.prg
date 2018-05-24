@@ -80,8 +80,8 @@ METHOD New( oController, oWnd )
 
    ::lAutoSort       := .t.
    ::l2007           := .f.
-   ::bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   ::bClrSel         := {|| { CLR_BLACK, Rgb( 221, 221, 221 ) } }
+   ::bClrSelFocus    := {|| { CLR_BLACK, Rgb( 221, 221, 221 ) } }
    ::lSortDescend    := .f. 
 
 RETURN ( Self )
