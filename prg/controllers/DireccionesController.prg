@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesController FROM SQLBrowseController
+CLASS DireccionesController FROM SQLNavigatorController
 
    DATA oPaisesController
    DATA oProvinciasController
