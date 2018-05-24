@@ -100,7 +100,7 @@ METHOD addColumns() CLASS ArticulosUnidadesMedicionBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'unidades_medicion_codigo'
       :cHeader             := 'Código'
-      :nWidth              := 200
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidades_medicion_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -111,6 +111,24 @@ METHOD addColumns() CLASS ArticulosUnidadesMedicionBrowseView
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidades_medicion_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'cantidad'
+      :cHeader             := 'Cantidad'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'operar'
+      :cHeader             := 'Operar'
+      :nWidth              := 60
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'operar' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :SetCheck( { "Sel16", "Nil16" } )
+      :AddResource( "Tactil16" )
    end with
 
 RETURN ( self )
@@ -124,6 +142,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS ArticulosUnidadesMedicionView FROM SQLBaseView
+
+   DATA oGetCantidad
   
    METHOD Activate()
 
@@ -152,6 +172,22 @@ METHOD Activate() CLASS ArticulosUnidadesMedicionView
 
    ::oController:oUnidadesMedicionController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_medicion_uuid" ] ) )
    ::oController:oUnidadesMedicionController:oGetSelector:Activate( 100, 101, ::oDialog )
+   ::oController:oUnidadesMedicionController:oGetSelector:setView( ::oDialogView )
+   // ::oController:oUnidadesMedicionController:oGetSelector:setValid( {| uValue | msgalert( uValue, "dentro de setValid" ), ::oController:validate( "unidad_medicion_uuid", uValue  ) } )
+
+   REDEFINE GET   ::oGetCantidad ;
+      VAR         ::oController:oModel:hBuffer[ "cantidad" ] ;
+      ID          110 ;
+      PICTURE     "@E 99999999.999999" ;
+      SPINNER ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "operar" ] ;
+      ID          120 ;
+      IDSAY       121 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -181,6 +217,8 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartDialog()
 
+   ::oController:oUnidadesMedicionController:oGetSelector:Start()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -199,7 +237,8 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosUnidadesMedicionValidator
 
-   ::hValidators  := {  "margen" =>    {  "Positive"  => "El valor debe ser mayor o igual a cero" } }
+   ::hValidators  := {  "unidad_medicion_uuid" =>  {  "required"  => "El código es un dato requerido",;
+                                                      "unique"    => "El código introducido ya existe" } }
 
 RETURN ( ::hValidators )
 
@@ -234,12 +273,12 @@ METHOD getInitialSelect() CLASS SQLArticulosUnidadesMedicionModel
    local cSelect  := "SELECT articulos_unidades_medicion.id,"                                            + " " + ;
                         "articulos_unidades_medicion.uuid,"                                              + " " + ;
                         "articulos_unidades_medicion.operar,"                                            + " " + ;
-                        "articulos_unidades_medicion.defecto,"                                           + " " + ;
+                        "articulos_unidades_medicion.cantidad,"                                          + " " + ;
                         "unidades_medicion.codigo as unidades_medicion_codigo,"                          + " " + ;
                         "unidades_medicion.nombre as unidades_medicion_nombre,"                          + " " + ;
                         "unidades_medicion.uuid as unidades_medicion_uuid"                               + " " + ;
                      "FROM articulos_unidades_medicion"                                                  + " " + ;
-                        "INNER JOIN unidades_medicion ON articulos_unidades_medicion.uuid = articulos_unidades_medicion.uuid"
+                        "INNER JOIN unidades_medicion ON articulos_unidades_medicion.unidad_medicion_uuid = unidades_medicion.uuid"
 
 RETURN ( cSelect )
 
@@ -262,7 +301,7 @@ METHOD getColumns() CLASS SQLArticulosUnidadesMedicionModel
    hset( ::hColumns, "operar",                     {  "create"    => "BIT"                                     ,;
                                                       "default"   => {|| .t. } }                               )
 
-   hset( ::hColumns, "defecto",                    {  "create"    => "FLOAT( 16, 6 )"                          ,;
+   hset( ::hColumns, "cantidad",                   {  "create"    => "FLOAT( 16, 6 )"                          ,;
                                                       "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )

@@ -9,6 +9,8 @@ CLASS GetSelector
 
    DATA bValue
 
+   DATA bValid
+
    DATA oGet
    DATA cGet
 
@@ -31,11 +33,16 @@ CLASS GetSelector
 
    METHOD Activate( idGet, idText, oDlg )
    METHOD Bind( bValue )                        INLINE ( ::bValue := bValue )
+   
+   METHOD setValid( bValid )                    INLINE ( ::bValid := bValid )
 
    METHOD helpAction()
+
    METHOD validAction()
 
-   METHOD start()                               INLINE ( ::validAction() )
+   METHOD loadHelpText()
+
+   METHOD start()                               INLINE ( ::loadHelpText( .t. ) )
 
    METHOD evalValue( value )                    INLINE ( eval( ::bValue, value ) )
 
@@ -139,7 +146,17 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validAction( lSilenceMode ) CLASS GetSelector
+METHOD validAction()
+
+   if empty( ::bValid ) .or. eval( ::bValid, ::cGet )
+      RETURN ( ::loadHelpText() )
+   end if 
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadHelpText( lSilenceMode ) CLASS GetSelector
 
    local value             := ""
 
@@ -149,27 +166,27 @@ METHOD validAction( lSilenceMode ) CLASS GetSelector
       RETURN ( .t. )
    end if
 
-   if isFalse( ::fireEvent( 'validating' ) )
+   if isFalse( ::fireEvent( 'loading' ) )
       RETURN ( .f. )
    end if
 
-   ::evalValue( ::oGet:VarGet() )
+   ::evalValue( ::oGet:varGet() )
 
    ::oGet:oHelptext:cText( value )
 
-   if empty( ::oGet:VarGet() )
+   if empty( ::oGet:varGet() )
 
-      ::fireEvent( 'validatingEmpty' )
+      ::fireEvent( 'loadingEmpty' )
       
       RETURN ( .t. )
 
    end if
 
-   value                   := ::oController:oModel:getField( "nombre", ::getKey(), ::oGet:VarGet() )
+   value                   := ::oController:oModel:getField( "nombre", ::getKey(), ::oGet:varGet() )
 
    if empty( value )
 
-      ::fireEvent( 'validatedError' )
+      ::fireEvent( 'loadedError' )
 
       ::showMessage( lSilenceMode )
 
@@ -177,13 +194,13 @@ METHOD validAction( lSilenceMode ) CLASS GetSelector
 
    end if
 
-   ::evalValue( ::oGet:VarGet() )
+   ::evalValue( ::oGet:varGet() )
 
    ::oGet:oHelptext:cText( value )
 
    ::oGet:Refresh()
 
-   ::fireEvent( 'validated' ) 
+   ::fireEvent( 'loaded' ) 
 
 RETURN ( .t. )
 
