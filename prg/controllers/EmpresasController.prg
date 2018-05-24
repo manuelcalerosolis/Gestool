@@ -57,7 +57,7 @@ METHOD New() CLASS EmpresasController
 
    ::oValidator                     := EmpresasValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'empresas' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := EmpresasRepository():New( self )
 

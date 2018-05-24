@@ -51,7 +51,7 @@ METHOD New() CLASS AlmacenesController
 
    ::oZonasController            := ZonasController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'almacenes' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                 := AlmacenesRepository():New( self )
 

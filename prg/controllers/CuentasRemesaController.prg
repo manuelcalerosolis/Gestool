@@ -41,7 +41,7 @@ METHOD New( oSenderController ) CLASS CuentasRemesaController
 
    ::oValidator                     := CuentasRemesaValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'cuentas_remesa' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := CuentasRemesaRepository():New( self )
 

@@ -35,7 +35,7 @@ METHOD New() CLASS DivisasMonetariasController
 
    ::oDialogView                    := DivisasMonetariasView():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'divisas_monetarias' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oValidator                     := DivisasMonetariasValidator():New( self, ::oDialogView )
 

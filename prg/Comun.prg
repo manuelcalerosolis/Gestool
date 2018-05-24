@@ -2876,8 +2876,8 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Unidades de medida'
-   oItem:cMessage       := 'Unidades de medida'
+   oItem:cPrompt        := 'Unidades de medición'
+   oItem:cMessage       := 'Unidades de medición'
    oItem:bAction        := {|| UnidadesMedicionController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_tape_measure2_16"

@@ -37,7 +37,7 @@ METHOD New( oSenderController ) CLASS ClientesGruposController
 
    ::oValidator                     := ClientesGruposValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'clientes_grupo' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := ClientesGruposRepository():New( self )
 

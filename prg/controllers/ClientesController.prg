@@ -63,7 +63,7 @@ METHOD New() CLASS ClientesController
 
    ::oCuentasBancariasController    := CuentasBancariasController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'clientes' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oDescuentosController          := DescuentosController():New( self )
 

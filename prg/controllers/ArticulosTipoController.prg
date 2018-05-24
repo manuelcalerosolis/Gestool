@@ -39,7 +39,7 @@ METHOD New( oSenderController ) CLASS ArticulosTipoController
 
    ::oRepository                    := ArticulosTipoRepository():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'tipos_articulos' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oGetSelector                   := GetSelector():New( self )
 

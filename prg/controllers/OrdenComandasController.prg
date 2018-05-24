@@ -39,7 +39,7 @@ METHOD New() CLASS OrdenComandasController
 
    ::oValidator                  := OrdenComandasValidator():New( self, ::oDialogView )
 
-    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'orden_comandas' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                 := OrdenComandasRepository():New( self )
 
@@ -192,6 +192,7 @@ METHOD Activate() CLASS OrdenComandasView
       ID          120 ;
       SPINNER ;
       MIN         1;
+      VALID       ( ::oController:validate( "orden" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -244,7 +245,8 @@ METHOD getValidators() CLASS OrdenComandasValidator
    ::hValidators  := {  "descripcion" =>           {  "required"           => "La descripcion es un dato requerido",;
                                                       "unique"             => "La descripcion introducido ya existe" },;
                         "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  } }
+                                                      "unique"             => "EL código introducido ya existe"  },;
+                        "orden" =>                 {  "unique"             => "El orden introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
