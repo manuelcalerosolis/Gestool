@@ -2700,7 +2700,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemSQL:lShow       := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 28
+   oGrupo:nBigItems     := 26
    oGrupo:cPrompt       := 'SQL'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2973,6 +2973,12 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_cash_register_refresh_32"
    oItem:lShow          := .f.
 
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 26
+   oGrupo:cPrompt       := 'SQL 2 '
+   oGrupo:cLittleBitmap := "gc_lifebelt_16"
+   oGrupo:cBigBitmap    := "gc_lifebelt_32"
+
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Facturas de clientes'
@@ -2981,6 +2987,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "facturas_clientes"
    oItem:cBmp           := "gc_cash_register_refresh_16"
    oItem:cBmpBig        := "gc_cash_register_refresh_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Delegaciones'
+   oItem:cMessage       := 'Delegaciones'
+   oItem:bAction        := {|| DelegacionesController():New():ActivateNavigatorView() }
+   oItem:cId            := "delegaciones"
+   oItem:cBmp           := "gc_warehouse_16"
+   oItem:cBmpBig        := "gc_warehouse_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )
