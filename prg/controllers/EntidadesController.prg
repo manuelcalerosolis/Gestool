@@ -45,7 +45,7 @@ METHOD New( oSenderController ) CLASS EntidadesController
 
    ::oDireccionesController:oValidator    := DireccionesEntidadesValidator():New( ::oDireccionesController, ::oDialogView )
 
-   ::oCamposExtraValoresController        := CamposExtraValoresController():New( self, 'entidades' )
+   ::oCamposExtraValoresController        := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
 
    ::oContactosController                 := ContactosController():New( self )

@@ -15,6 +15,8 @@ CLASS ArticulosFamiliaController FROM SQLNavigatorController
 
    DATA oTraduccionesController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -27,37 +29,39 @@ METHOD New( oSenderController ) CLASS ArticulosFamiliaController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Familia de artículos"
+   ::cTitle                         := "Familia de artículos"
 
-   ::cName                       := "articulos_familia"
+   ::cName                          := "articulos_familia"
 
-   ::hImage                      := {  "16" => "gc_cubes_16",;
-                                       "32" => "gc_cubes_32",;
-                                       "48" => "gc_cubes_48" }
+   ::hImage                         := {  "16" => "gc_cubes_16",;
+                                          "32" => "gc_cubes_32",;
+                                          "48" => "gc_cubes_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLArticulosFamiliaModel():New( self )
+   ::oModel                         := SQLArticulosFamiliaModel():New( self )
 
-   ::oBrowseView                 := ArticulosFamiliaBrowseView():New( self )
+   ::oBrowseView                    := ArticulosFamiliaBrowseView():New( self )
 
-   ::oDialogView                 := ArticulosFamiliaView():New( self )
+   ::oDialogView                    := ArticulosFamiliaView():New( self )
 
-   ::oValidator                  := ArticulosFamiliaValidator():New( self, ::oDialogView )
+   ::oValidator                     := ArticulosFamiliaValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := ArticulosFamiliaRepository():New( self )
+   ::oRepository                    := ArticulosFamiliaRepository():New( self )
 
-   ::oPrimeraPropiedadController := PropiedadesController():New( self )
+   ::oPrimeraPropiedadController    := PropiedadesController():New( self )
 
-   ::oSegundaPropiedadController := PropiedadesController():New( self )
+   ::oSegundaPropiedadController    := PropiedadesController():New( self )
 
-   ::oImagenesController         := ImagenesController():New( self )
+   ::oImagenesController            := ImagenesController():New( self )
 
-   ::oComentariosController      := ComentariosController():New( self )
+   ::oComentariosController         := ComentariosController():New( self )
 
-   ::oTraduccionesController     := TraduccionesController():New( self )
+   ::oTraduccionesController        := TraduccionesController():New( self )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -93,6 +97,8 @@ METHOD End() CLASS ArticulosFamiliaController
    ::oComentariosController:End()
 
    ::oTraduccionesController:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -159,6 +165,8 @@ RETURN ( self )
 
 CLASS ArticulosFamiliaView FROM SQLBaseView
 
+   DATA oSayCamposExtra
+
    DATA oGetCodigo
 
    DATA oGetTipo
@@ -205,7 +213,8 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    local oBtnEdit
    local oBtnAppend
-   local oBtnDelete   
+   local oBtnDelete 
+   local oSayCamposExtra  
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM" ;
@@ -248,6 +257,16 @@ METHOD Activate() CLASS ArticulosFamiliaView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          210 ;
+      OF          ::oFolder:aDialogs [1];
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    // Primera propiedad -------------------------------------------------------
 

@@ -43,7 +43,7 @@ METHOD New( oSenderController ) CLASS ArticulosFabricantesController
 
    ::oImagenesController            := ImagenesController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'fabricantes' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := ArticulosFabricantesRepository():New( self )
 

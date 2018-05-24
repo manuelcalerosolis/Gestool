@@ -37,7 +37,7 @@ METHOD New( oSenderController ) CLASS RutasController
 
    ::oValidator                     := RutasValidator():New( self, ::oDialogView )
 
-    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'rutas' )
+    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := RutasRepository():New( self )
 

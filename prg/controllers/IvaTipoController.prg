@@ -37,7 +37,7 @@ METHOD New( oSenderController ) CLASS IvaTipoController
 
    ::oValidator                     := IvaTipoValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'tipo_iva' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := IvaTipoRepository():New( self )
 

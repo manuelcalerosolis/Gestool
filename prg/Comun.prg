@@ -2876,8 +2876,8 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Unidades de medida'
-   oItem:cMessage       := 'Unidades de medida'
+   oItem:cPrompt        := 'Unidades de medición'
+   oItem:cMessage       := 'Unidades de medición'
    oItem:bAction        := {|| UnidadesMedicionController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_tape_measure2_16"
@@ -2973,7 +2973,15 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_cash_register_refresh_32"
    oItem:lShow          := .f.
 
-
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Facturas de clientes'
+   oItem:cMessage       := 'Facturas de clientes'
+   oItem:bAction        := {||FacturasClientesController():New():ActivateNavigatorView() }
+   oItem:cId            := "facturas_clientes"
+   oItem:cBmp           := "gc_cash_register_refresh_16"
+   oItem:cBmpBig        := "gc_cash_register_refresh_32"
+   oItem:lShow          := .f.
 
 RETURN ( oAcceso )
 

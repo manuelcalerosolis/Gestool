@@ -690,6 +690,9 @@ CalculaPrecioCommand.prg 													\
 DescuentosController.prg 													\
 ClientesBrowseView.prg 														\
 TercerosBrowseView.prg 														\
+SqlFacturasClientesModel.prg 												\
+FacturasClientesController.prg 											\
+FacturasClientesView.prg 													\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1356,6 +1359,9 @@ CalculaPrecioCommand.obj 													\
 DescuentosController.obj 													\
 ClientesBrowseView.obj 														\
 TercerosBrowseView.obj 														\
+SqlFacturasClientesModel.obj 												\
+FacturasClientesController.obj 											\
+FacturasClientesView.obj 													\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -2011,6 +2017,9 @@ $(OBJ)\CalculaPrecioCommand.obj 											+
 $(OBJ)\DescuentosController.obj 											+
 $(OBJ)\ClientesBrowseView.obj 											+
 $(OBJ)\TercerosBrowseView.obj 											+
+$(OBJ)\SqlFacturasClientesModel.obj 				    				+
+$(OBJ)\FacturasClientesController.obj 									+
+$(OBJ)\FacturasClientesView.obj 											+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

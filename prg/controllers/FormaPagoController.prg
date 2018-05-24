@@ -41,7 +41,7 @@ METHOD New( oSenderController ) CLASS FormaPagoController
 
    ::oValidator                  := FormaPagoValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'forma_pago' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                 := FormaPagoRepository():New( self )
 

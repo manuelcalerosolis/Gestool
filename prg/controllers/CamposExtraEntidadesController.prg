@@ -6,15 +6,17 @@
 CLASS CamposExtraEntidadesController FROM SQLBrowseController
 
    CLASSDATA aEntidades INIT  {  "articulos" =>                            { "nombre" => "Artículos",  "icono" => "gc_object_cube_16"                                     } ,;
-                                 "articulos_temporadas" =>                 { "nombre" => "Temporadas", "icono" => "gc_cloud_sun_16"                                       } ,;
-                                 "articulos_categorias" =>                 { "nombre" => "Categorias", "icono" => "gc_photographic_filters_16"                            } ,;
-                                 "propiedades" =>                          { "nombre" => "Propiedades", "icono" => "gc_coathanger_16"                                     } ,;
-                                 "familias" =>                             { "nombre" => "Familias",  "icono" => "gc_cubes_16"                                            } ,;
-                                 "tipos_articulos" =>                      { "nombre" => "Tipos de artículos", "icono" => "gc_objects_16"                                 } ,;
+                                 "articulos_temporada" =>                  { "nombre" => "Temporadas", "icono" => "gc_cloud_sun_16"                                       } ,;
+                                 "articulos_categoria" =>                  { "nombre" => "Categorias", "icono" => "gc_photographic_filters_16"                            } ,;
+                                 "articulos_propiedades" =>                { "nombre" => "Propiedades", "icono" => "gc_coathanger_16"                                     } ,;
+                                 "articulos_familia" =>                    { "nombre" => "Familias",  "icono" => "gc_cubes_16"                                            } ,;
+                                 "articulos_tipo" =>                       { "nombre" => "Tipos de artículos", "icono" => "gc_objects_16"                                 } ,;
+                                 "articulos_tarifas" =>                    { "nombre" => "Tarifas", "icono" => "gc_money_interest_16"                                     } ,;
                                  "clientes" =>                             { "nombre" => "Clientes",  "icono" => "gc_user_16"                                             } ,;
-                                 "clientes_grupo" =>                       { "nombre" => "Grupo de clientes",  "icono" => "gc_users3_16"                                  } ,;
+                                 "clientes_grupos" =>                      { "nombre" => "Grupo de clientes",  "icono" => "gc_users3_16"                                  } ,;
                                  "proveedores" =>                          { "nombre" => "Proveedores",  "icono" => "gc_businessman_16"                                   } ,;
                                  "agentes" =>                              { "nombre" => "Agentes",  "icono" => "gc_businessman2_16"                                      } ,;
+                                 "transportistas" =>                       { "nombre" => "Transportistas",  "icono" => "gc_small_truck_16"                                } ,;
                                  "presupuestos_clientes" =>                { "nombre" => "Presupuestos a clientes",  "icono" => "gc_notebook_user_16"                     } ,;
                                  "pedidos_clientes" =>                     { "nombre" => "Pedidos a clientes",  "icono" => "gc_clipboard_empty_user_16"                   } ,;
                                  "albaranes_clientes" =>                   { "nombre" => "Albaranes a clientes",  "icono" => "gc_document_empty_16"                       } ,;
@@ -36,19 +38,19 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "grupos_clientes" =>                      { "nombre" => "Grupos de clientes",  "icono" => "gc_users3_16"                                 } ,;
                                  "movimientos_almacen" =>                  { "nombre" => "Movimientos de almacén",  "icono" => "gc_pencil_package_16"                     } ,;
                                  "movimientos_almacen_lineas" =>           { "nombre" => "Movimientos de almacén lineas", "icono" => "gc_pencil_package_16"               } ,;
-                                 "fabricantes" =>                          { "nombre" => "Fabricantes", "icono" => "gc_pencil_package_16"                                 } ,;
-                                 "comentarios" =>                          { "nombre" => "Comentarios", "icono" => "gc_message_16"                                        } ,;
+                                 "articulos_fabricantes" =>                { "nombre" => "Fabricantes", "icono" => "gc_pencil_package_16"                                 } ,;
+                                 "articulos_familias_comentarios" =>       { "nombre" => "Comentarios", "icono" => "gc_message_16"                                        } ,;
                                  "almacenes" =>                            { "nombre" => "Almacenes", "icono" => "gc_warehouse_16"                                        } ,;
                                  "empresas" =>                             { "nombre" => "Empresas", "icono" => "gc_factory_16"                                           } ,;
                                  "entidades" =>                            { "nombre" => "Entidades", "icono" => "gc_office_building2_16"                                 } ,;
                                  "cuentas_remesa" =>                       { "nombre" => "Cuentas de remesa", "icono" => "gc_notebook2_16"                                } ,;
-                                 "tarifas" =>                              { "nombre" => "Tarifas", "icono" => "gc_money_interest_16"                                     } ,;
-                                 "tipo_iva" =>                             { "nombre" => "Tipos de IVA", "icono" => "gc_moneybag_16"                                      } ,;
+                                 "iva_tipos" =>                            { "nombre" => "Tipos de IVA", "icono" => "gc_moneybag_16"                                      } ,;
                                  "impuestos_especiales" =>                 { "nombre" => "Impuestos especiales", "icono" => "gc_moneybag_euro_16"                         } ,;
                                  "orden_comandas" =>                       { "nombre" => "Orden de comandas", "icono" => "gc_sort_az_descending_16"                       } ,;
                                  "divisas_monetarias" =>                   { "nombre" => "Divisas monetarias", "icono" => "gc_currency_euro_16"                           } ,;
-                                 "unidades_medicion" =>                    { "nombre" => "Unidades de medicion", "icono" => "gc_tape_measure2_16"                         } ,;
+                                 "unidades_medicion" =>                    { "nombre" => "Unidades de medición", "icono" => "gc_tape_measure2_16"                         } ,;
                                  "rutas" =>                                { "nombre" => "Rutas", "icono" => "gc_map_route_16"                                            } ,;
+                                 "entradas_salidas" =>                     { "nombre" => "Entradas y salidas de caja", "icono" => "gc_cash_register_refresh_16"           } ,;
                                  "lineas_propiedades" =>                   { "nombre" => "Líneas de propiedades",  "icono" => "gc_coathanger_16"                          } }   
 
    METHOD New( oController )
