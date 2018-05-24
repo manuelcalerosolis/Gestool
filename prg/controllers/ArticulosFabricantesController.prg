@@ -23,13 +23,13 @@ METHOD New( oSenderController ) CLASS ArticulosFabricantesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Fabricantes"
+   ::cTitle                         := "Fabricantes"
 
-   ::cName                       := "fabricantes"
+   ::cName                          := "fabricantes"
 
-   ::hImage                      := {  "16" => "gc_bolt_16",;
-                                       "32" => "gc_bolt_32",;
-                                       "48" => "gc_bolt_48" }
+   ::hImage                         := {  "16" => "gc_bolt_16",;
+                                          "32" => "gc_bolt_32",;
+                                          "48" => "gc_bolt_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -43,7 +43,7 @@ METHOD New( oSenderController ) CLASS ArticulosFabricantesController
 
    ::oImagenesController            := ImagenesController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'fabricantes' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := ArticulosFabricantesRepository():New( self )
 

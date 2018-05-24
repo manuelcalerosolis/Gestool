@@ -29,35 +29,35 @@ METHOD New() CLASS AlmacenesController
 
    ::Super:New()
 
-   ::cTitle                      := "Almacenes"
+   ::cTitle                         := "Almacenes"
 
-   ::cName                       := "almacenes"
+   ::cName                          := "almacenes"
 
-   ::hImage                      := {  "16" => "gc_warehouse_16",;
-                                       "32" => "gc_warehouse_32",;
-                                       "48" => "gc_warehouse_48" }
+   ::hImage                         := {  "16" => "gc_warehouse_16",;
+                                          "32" => "gc_warehouse_32",;
+                                          "48" => "gc_warehouse_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLAlmacenesModel():New( self )
+   ::oModel                         := SQLAlmacenesModel():New( self )
 
-   ::oBrowseView                 := AlmacenesBrowseView():New( self )
+   ::oBrowseView                    := AlmacenesBrowseView():New( self )
 
-   ::oDialogView                 := AlmacenesView():New( self )
+   ::oDialogView                    := AlmacenesView():New( self )
 
-   ::oValidator                  := AlmacenesValidator():New( self, ::oDialogView )
+   ::oValidator                     := AlmacenesValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController      := DireccionesController():New( self )
+   ::oDireccionesController         := DireccionesController():New( self )
 
-   ::oZonasController            := ZonasController():New( self )
+   ::oZonasController               := ZonasController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'almacenes' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
-   ::oRepository                 := AlmacenesRepository():New( self )
+   ::oRepository                    := AlmacenesRepository():New( self )
 
-   ::oPaisesController           := PaisesController():New( self )
+   ::oPaisesController              := PaisesController():New( self )
 
-   ::oProvinciasController       := ProvinciasController():New( self )
+   ::oProvinciasController          := ProvinciasController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 

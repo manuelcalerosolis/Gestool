@@ -5,6 +5,8 @@
 
 CLASS TransportistasController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    DATA oDireccionesController
 
    METHOD New()
@@ -41,6 +43,8 @@ METHOD New( oSenderController ) CLASS TransportistasController
 
    ::oRepository                 := TransportistasRepository():New( self )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+
    ::oGetSelector                := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
@@ -62,6 +66,8 @@ METHOD End() CLASS TransportistasController
    ::oDireccionesController:End()
 
    ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::oGetSelector:End()
 
@@ -140,6 +146,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS TransportistasView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
 
@@ -149,6 +157,7 @@ END CLASS
 
 METHOD Activate() CLASS TransportistasView
 
+   local oSayCamposExtra
    local oGetDni
    local oBtnEdit
    local oBtnAppend
@@ -208,6 +217,16 @@ METHOD Activate() CLASS TransportistasView
       ID          150 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          170 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
 

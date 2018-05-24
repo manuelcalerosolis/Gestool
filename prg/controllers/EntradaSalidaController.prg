@@ -23,9 +23,9 @@ METHOD New() CLASS EntradaSalidaController
 
    ::cName                       := "entradas_salidas"
 
-   ::hImage                      := {  "16" => "gc_message_16",;
-                                       "32" => "gc_message_32",;
-                                       "48" => "gc_message_48" }
+   ::hImage                      := {  "16" => "gc_cash_register_refresh_16",;
+                                       "32" => "gc_cash_register_refresh_32",;
+                                       "48" => "gc_cash_register_refresh_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -35,7 +35,7 @@ METHOD New() CLASS EntradaSalidaController
 
    ::oDialogView                    := EntradaSalidaView():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'entradas_salidas' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oValidator                     := EntradaSalidaValidator():New( self, ::oDialogView )
 
@@ -85,7 +85,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS EntradaSalidaBrowseView
 
-  /* with object ( ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
       :cHeader             := 'Id'
       :nWidth              := 80
@@ -111,12 +111,28 @@ METHOD addColumns() CLASS EntradaSalidaBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'sesion'
+      :cHeader             := 'Sesión'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'sesion' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+      with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'caja_uuid'
+      :cHeader             := 'Caja'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'caja_uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with*/
+   end with
 
 RETURN ( self )
 
@@ -131,6 +147,8 @@ RETURN ( self )
 CLASS EntradaSalidaView FROM SQLBaseView
 
    DATA oSayCamposExtra
+
+   DATA oTipoMovimiento
   
    METHOD Activate()
 
@@ -139,17 +157,12 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS EntradaSalidaView
-/*
-  local oDialog 
-   local oBmpGeneral
-   local oSayCamposExtra
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
+
+   msgalert( hb_valtoexp( ::oController:oModel:hBuffer[ "tipo" ] ), "tipo" )
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "COMENTARIO" ;
-      TITLE       ::LblTitle() + "Comentario"
+      RESOURCE    "ENTRADA_SALIDA" ;
+      TITLE       ::LblTitle() + "Entrada o salida de caja"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -169,9 +182,37 @@ METHOD Activate() CLASS EntradaSalidaView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "sesion" ] ;
       ID          110 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "caja_uuid" ] ;
+      ID          120 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+  REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
+      ID          130 ;
+      SPINNER ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+      ID          140 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
+      ID          150 ;
+      VALID       ( ::oController:validate( "importe" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE RADIO ::oTipoMovimiento ;
+      VAR         ::oController:oModel:hBuffer[ "tipo" ] ;
+      ID          160, 161 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -179,34 +220,11 @@ METHOD Activate() CLASS EntradaSalidaView
       PROMPT      "Campos extra..." ;
       FONT        getBoldFont() ; 
       COLOR       rgb( 10, 152, 234 ) ;
-      ID          170 ;
+      ID          180 ;
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
    ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
-
-   REDEFINE BUTTON oBtnAppend ;
-      ID          120 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-  oBtnAppend:bAction   := {|| ::oController:oComentariosLineasController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          130 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnEdit:bAction   := {|| ::oController:oComentariosLineasController:Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          150 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-  oBtnDelete:bAction   := {|| ::oController:oComentariosLineasController:Delete() }
-
-   ::oController:oComentariosLineasController:Activate( 160, ::oDialog )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -220,17 +238,10 @@ METHOD Activate() CLASS EntradaSalidaView
       CANCEL ;
       ACTION     ( ::oDialog:end() )
 
-   if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oComentariosLineasController:Append() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oComentariosLineasController:Edit() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oComentariosLineasController:Delete() } )
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
-   end if
-
    ACTIVATE DIALOG ::oDialog CENTER
 
   ::oBitmap:end()
-*/
+
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
@@ -288,20 +299,27 @@ METHOD getColumns() CLASS SQLEntradaSalidaModel
 
    ::getEmpresaColumns()
 
+
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
                                              "default"   => {|| space( 3 ) } }                        )
+
+   hset( ::hColumns, "sesion",            {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
+
+   hset( ::hColumns, "fecha_hora",        {  "create"    => "TIMESTAMP"                               ,;
+                                             "default"   => {|| hb_datetime() } }         )
+
+   hset( ::hColumns, "caja_uuid",         {  "create"   => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "tipo",              { "create"     => "enum('Entrada', 'Salida')"                ,;
-                                            "default"    =>{|| 'Entrada'   }  }                        )
+   hset( ::hColumns, "tipo",              {  "create"     => "ENUM( 'Entrada', 'Salida' )"             ,;
+                                             "default"    => {|| 'Entrada' }  }                        )
 
-   hset( ::hColumns, "importte",          { "create"     => "FLOAT( 10,3 )"                            ,;
-                                            "default"    =>{|| space( 200 )  } }                        )
-
-   
-
+   hset( ::hColumns, "importe",           {  "create"     => "FLOAT( 10, 3 )"                            ,;
+                                             "default"    => {|| 0  } }                        )
 
    ::getTimeStampColumns()
 

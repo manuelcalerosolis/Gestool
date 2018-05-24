@@ -45,7 +45,7 @@ METHOD New( oSenderController ) CLASS PropiedadesController
 
    ::oPropiedadesLineasController   := PropiedadesLineasController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'propiedades' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oGetSelector                   := GetSelector():New( self )   
 

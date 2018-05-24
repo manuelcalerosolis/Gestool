@@ -124,7 +124,8 @@ CLASS SQLBaseModel
    METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
    METHOD addGeneralWhere( cSQLSelect )
    
-   METHOD addEmpresaWhere()                           
+   METHOD addEmpresaWhere()
+   METHOD addParentUuidWhere()                           
 
    METHOD setOthersWhere( cWhere )                    INLINE ( ::cOthersWhere   := cWhere )
    METHOD addOthersWhere( cSQLSelect )
@@ -152,6 +153,7 @@ CLASS SQLBaseModel
    // Where for columns--------------------------------------------------------
 
    METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa_uuid" ) )
+   METHOD isParentUuidColumn()                        INLINE ( hb_hhaskey( ::hColumns, "parent_uuid" ) )
 
    // Get edit value for xbrowse-----------------------------------------------
 
@@ -226,8 +228,6 @@ CLASS SQLBaseModel
    METHOD getArrayColumnsWithBlank( cColumn ) 
 
    METHOD getNombresWithBlank()                       INLINE ( ::getArrayColumnsWithBlank( 'nombre' ) )
-
-   METHOD gettingSelectSentence()
 
    METHOD getSenderControllerParentUuid()
 
@@ -327,6 +327,8 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addEmpresaWhere( cSQLSelect )
 
+   cSQLSelect              := ::addParentUuidWhere( cSQLSelect )
+
    cSQLSelect              := ::addFilterWhere( cSQLSelect )
 
    cSQLSelect              := ::addGroupBy( cSQLSelect )
@@ -406,6 +408,32 @@ METHOD addEmpresaWhere( cSQLSelect )
    end if 
 
    cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cTableName + ".empresa_uuid = " + toSQLString( uuidEmpresa() )
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD addParentUuidWhere( cSQLSelect ) 
+
+   local uuid        
+
+   if !::isParentUuidColumn()
+      RETURN ( cSQLSelect )
+   end if 
+
+   if empty( ::oController )
+      RETURN ( cSQLSelect )
+   end if
+
+   if empty( ::oController:getSenderController() )
+      RETURN ( cSQLSelect )
+   end if
+
+   uuid           := ::oController:getSenderController():getUuid() 
+
+   if !empty( uuid )
+      cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::cTableName + ".parent_uuid = " + quoted( uuid )
+   end if 
 
 RETURN ( cSQLSelect )
 
@@ -1276,28 +1304,6 @@ METHOD getArrayColumnsWithBlank( cColumn )
    ains( aColumns, 1, "", .t. )
    
 RETURN ( aColumns )
-
-//---------------------------------------------------------------------------//
-
-METHOD gettingSelectSentence() 
-
-   local uuid        
-
-   if empty( ::oController )
-      RETURN ( nil )
-   end if
-
-   if empty( ::oController:getSenderController() )
-      RETURN ( nil )
-   end if
-
-   uuid           := ::oController:getSenderController():getUuid() 
-
-   if !empty( uuid )
-      ::setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
-   end if 
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

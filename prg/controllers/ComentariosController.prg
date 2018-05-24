@@ -39,7 +39,7 @@ METHOD New( oSenderController ) CLASS ComentariosController
 
    ::oComentariosLineasController   := ComentariosLineasController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'comentarios' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oValidator                     := ComentariosValidator():New( self, ::oDialogView )
 

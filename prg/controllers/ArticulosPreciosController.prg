@@ -9,8 +9,6 @@ CLASS ArticulosPreciosController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD gettingSelectSentence()
-
    METHOD setMargen( oCol, nMargen )
 
    METHOD setPrecioBase( oCol, nPrecioBase )
@@ -39,8 +37,6 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::oRepository                    := ArticulosPreciosRepository():New( self )
 
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -56,18 +52,6 @@ METHOD End() CLASS ArticulosPreciosController
    ::oRepository:End()
 
    ::Super:End()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD gettingSelectSentence() CLASS ArticulosPreciosController
-
-   local uuid        := ::getSenderController():getUuid() 
-
-   if !empty( uuid )
-      ::oModel:setGeneralWhere( "articulo_uuid = " + quoted( uuid ) )
-   end if 
 
 RETURN ( Self )
 

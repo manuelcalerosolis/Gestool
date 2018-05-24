@@ -41,7 +41,7 @@ METHOD New() CLASS ArticulosTarifasController
 
    ::oValidator                     := ArticulosTarifasValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'tarifas' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := ArticulosTarifasRepository():New( self )
 

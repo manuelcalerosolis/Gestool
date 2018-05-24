@@ -37,7 +37,7 @@ METHOD New( oSenderController ) CLASS ArticulosCategoriasController
 
    ::oValidator                  := ArticulosCategoriasValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'articulos_categorias' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                 := ArticulosCategoriasRepository():New( self )
 

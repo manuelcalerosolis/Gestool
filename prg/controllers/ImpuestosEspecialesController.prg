@@ -37,7 +37,7 @@ METHOD New( oSenederController ) CLASS ImpuestosEspecialesController
 
    ::oValidator                     := ImpuestosEspecialesValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'impuestos_especiales' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := ImpuestosEspecialesRepository():New( self )
 
