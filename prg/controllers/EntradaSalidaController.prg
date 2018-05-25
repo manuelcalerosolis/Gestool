@@ -7,6 +7,8 @@ CLASS EntradaSalidaController FROM SQLNavigatorController
 
    DATA oCamposExtraValoresController
 
+   DATA oDocumentosController
+
    METHOD New()
 
    METHOD End()
@@ -37,6 +39,8 @@ METHOD New() CLASS EntradaSalidaController
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
+   ::oDocumentosController          := DocumentosController():New( self, ::oModel:cTableName )
+
    ::oValidator                     := EntradaSalidaValidator():New( self, ::oDialogView )
 
    ::oRepository                    := EntradaSalidaRepository():New( self )
@@ -58,6 +62,8 @@ METHOD End() CLASS EntradaSalidaController
    ::oValidator:End()
 
    ::oCamposExtraValoresController:End()
+
+   ::oDocumentosController:End()
 
    ::oRepository:End()
 
@@ -103,10 +109,10 @@ METHOD addColumns() CLASS EntradaSalidaBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
+      :cSortOrder          := 'tipo'
+      :cHeader             := 'Tipo'
       :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tipo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -148,7 +154,11 @@ CLASS EntradaSalidaView FROM SQLBaseView
 
    DATA oSayCamposExtra
 
-   DATA oTipoMovimiento
+   DATA oTipo
+
+   DATA aTipo INIT { "Entrada", "Salida" }
+
+   METHOD StartActivate()
   
    METHOD Activate()
 
@@ -157,8 +167,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS EntradaSalidaView
-
-   msgalert( hb_valtoexp( ::oController:oModel:hBuffer[ "tipo" ] ), "tipo" )
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ENTRADA_SALIDA" ;
@@ -174,57 +182,45 @@ METHOD Activate() CLASS EntradaSalidaView
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog ;
-   
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+
+   REDEFINE COMBOBOX ::oTipo ;
+      VAR         ::oController:oModel:hBuffer[ "tipo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "sesion" ] ;
-      ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "caja_uuid" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-  REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
-      ID          130 ;
-      SPINNER ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          140 ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
+      ITEMS       ::aTipo;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
-      ID          150 ;
+      ID          110 ;
       VALID       ( ::oController:validate( "importe" ) ) ;
+      SPINNER ;
+      PICTURE     "@E 9999999.999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE RADIO ::oTipoMovimiento ;
-      VAR         ::oController:oModel:hBuffer[ "tipo" ] ;
-      ID          160, 161 ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+      ID          120 ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE SAY   ::oSayCamposExtra ;
-      PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
-      COLOR       rgb( 10, 152, 234 ) ;
-      ID          180 ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "sesion" ] ;
+      ID          130 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   REDEFINE GET   ::oController:oModel:hBuffer[ "caja_uuid" ] ;
+      ID          140 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+  
+  REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
+      ID          150 ;
+      SPINNER ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+      ::redefineExplorerBar( 160 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -238,13 +234,29 @@ METHOD Activate() CLASS EntradaSalidaView
       CANCEL ;
       ACTION     ( ::oDialog:end() )
 
-   ACTIVATE DIALOG ::oDialog CENTER
+   ::oDialog:bStart  := {|| ::StartActivate() }
 
-  ::oBitmap:end()
+   ACTIVATE DIALOG ::oDialog CENTER
+   
 
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD StartActivate() CLASS EntradaSalidaView
+
+   local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   oPanel:AddLink(   "Campos extra...",;
+                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
+                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
+
+   oPanel:AddLink(   "Documentos...",;
+                     {|| ::oController:oDocumentosController:activateDialogView() },;
+                     ::oController:oDocumentosController:getImage( "16" ) )
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -264,8 +276,6 @@ METHOD getValidators() CLASS EntradaSalidaValidator
 
    ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido"    ,;
                                                       "unique"             => "El nombre introducido ya existe"   },;
-                        "codigo" =>                {  "required"           => "El código es un dato requerido"    ,;
-                                                      "unique"             => "EL código introducido ya existe"   },;
                         "tipos"  =>                {  "required"           => "El tipo es un datos requerido"     },;
                         "Importe"  =>              {  "required"           => "El importe es un datos requerido"  } }
 RETURN ( ::hValidators )
@@ -299,9 +309,6 @@ METHOD getColumns() CLASS SQLEntradaSalidaModel
 
    ::getEmpresaColumns()
 
-
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
-                                             "default"   => {|| space( 3 ) } }                        )
 
    hset( ::hColumns, "sesion",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )

@@ -40,9 +40,7 @@ CLASS SQLDialogView FROM SQLBrowseableView
    METHOD setTitle( cTitle )              INLINE ( ::cTitle := cTitle )
    METHOD getTitle()                      INLINE ( iif( empty( ::cTitle ), ::defaultTitle(), ::cTitle ) )
 
-   METHOD defaultTitle()                  INLINE ( ::oController:getTitle() + space( 1 ) + " : " + ;
-                                                   alltrim( ::oController:oSenderController:oModel:hBuffer[ "codigo" ] ) + " - " + ;
-                                                   ::oController:oSenderController:oModel:hBuffer[ "nombre" ] )
+   METHOD defaultTitle()                  
 
    METHOD Select()                        INLINE ( nil )
 
@@ -143,3 +141,17 @@ METHOD Start()
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
+METHOD defaultTitle()
+
+   local cTitle   := ::oController:getTitle() + space( 1 ) + " : "  
+
+   if hhaskey( ::oController:oSenderController:oModel:hBuffer, "codigo" ) 
+      cTitle      += alltrim( ::oController:oSenderController:oModel:hBuffer[ "codigo" ] ) + " - "
+   end if 
+   
+   if hhaskey( ::oController:oSenderController:oModel:hBuffer, "nombre" ) 
+      cTitle      += alltrim( ::oController:oSenderController:oModel:hBuffer[ "nombre" ] ) 
+   end if 
+
+RETURN ( cTitle )
