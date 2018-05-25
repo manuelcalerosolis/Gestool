@@ -8259,7 +8259,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
    oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
    oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
 
-   oDlg:bStart                := {|| oBrw:Load() }
+   oDlg:bStart                := {|| if ( !IsReport(), oBrw:Load(), ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -11724,7 +11724,7 @@ FUNCTION BrwCli( oGet, oGet2, dbfCli )
    oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
    oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
 
-   oDlg:bStart             :=    {|| oBrw:Load() }
+   oDlg:bStart             :=    {|| if( !IsReport(), oBrw:Load(), ) }
 
    ACTIVATE DIALOG oDlg CENTER
 

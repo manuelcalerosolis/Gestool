@@ -2270,9 +2270,6 @@ Return nil
 FUNCTION AjustableView
 Return nil
 
-FUNCTION auth
-Return nil
-
 FUNCTION sqlrolesmodel
 Return nil
 
@@ -2587,6 +2584,16 @@ RETURN nil
 
 FUNCTION DELEGACIONESCONTROLLER()
 RETURN nil
+
+FUNCTION SQLIMPRESORASMODEL()
+RETURN nil
+
+FUNCTION SQLCAJASMODEL()
+RETURN nil
+
+FUNCTION CAJASCONTROLLER()
+RETURN nil
+
 
 //------------------------------------------------------------------//
 

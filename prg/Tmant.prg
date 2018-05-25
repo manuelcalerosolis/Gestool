@@ -720,7 +720,7 @@ METHOD Buscar( oGet, cField, oGetField ) CLASS TMant
 
    TButton():ReDefine( IDCANCEL, {|| oDlg:end() }, oDlg, , , .f. )
 
-   oDlg:bStart             := {|| oBrw:Load(), if( !Empty( oGet ) .and. IsObject( oGet ), oGet:SetFocus(), ) }
+   oDlg:bStart             := {||  if( !IsReport(), oBrw:Load(), ), if( !Empty( oGet ) .and. IsObject( oGet ), oGet:SetFocus(), ) }
 
    if !IsReport()
       oDlg:AddFastKey( VK_F2, {|| ::Append( oBrw ) } )

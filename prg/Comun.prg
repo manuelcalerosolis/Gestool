@@ -2989,20 +2989,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_document_text_user_32"
    oItem:lShow          := .f.
 
-<<<<<<< HEAD
-=======
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Delegaciones'
-   oItem:cMessage       := 'Delegaciones'
-   oItem:bAction        := {|| DelegacionesController():New():ActivateNavigatorView() }
-   oItem:cId            := "delegaciones"
-   oItem:cBmp           := "gc_warehouse_16"
-   oItem:cBmpBig        := "gc_warehouse_32"
-   oItem:lShow          := .f.
->>>>>>> 0073518d53720f5ee57c8bd81f293b26fdd591cf
-
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cajas'
