@@ -4,19 +4,6 @@
 #include "Factu.ch" 
 #include "Ads.ch"
 
-#ifdef __ADS__
-   REQUEST ADS, DBFCDX
-
-   REQUEST AdsKeyNo
-   REQUEST AdsKeyCount
-   REQUEST AdsGetRelKeyPos
-   REQUEST AdsSetRelKeyPos
-#endif
-
-#ifndef __ADS__
-   REQUEST DBFCDX, DBFFPT
-#endif
-
 #define TVS_HASBUTTONS       1
 #define TVS_HASLINES         2
 #define TVS_LINESATROOT      4
@@ -50,12 +37,35 @@ static aInforme         := {}
 
 //---------------------------------------------------------------------------//
 
+PROCEDURE RddInit()
+
+   ANNOUNCE RDDSYS
+
+   REQUEST DBFCDX
+   REQUEST DBFFPT
+   REQUEST ADS
+
+   REQUEST RDLMYSQL 
+
+   REQUEST OrdKeyCount
+   REQUEST OrdKeyNo
+   REQUEST OrdKeyGoto
+
+   REQUEST AdsKeyNo
+   REQUEST AdsKeyCount
+   REQUEST AdsGetRelKeyPos 
+   REQUEST AdsSetRelKeyPos
+
+RETURN
+
+//---------------------------------------------------------------------------//
+
 Function Main( cCodEmp, cCodUsr, cInitOptions )
 
    local nError
    local cError
 
-   DEFAULT cCodEmp   := alltrim( str( year( date() ) ) )
+   DEFAULT cCodEmp   := alltrim( str( year( date() ) ) ) 
    DEFAULT cCodUsr   := "000"
 
    appSettings()
@@ -2545,6 +2555,38 @@ RETURN nil
 FUNCTION ENTIDADESCONTROLLER()
 RETURN nil
 
+FUNCTION SQLENTRADASALIDAMODEL()
+RETURN nil
+
+FUNCTION SQLARTICULOSENVASADOMODEL()
+RETURN nil
+
+FUNCTION SQLORDENCOMANDASMODEL()
+RETURN nil
+
+FUNCTION SQLARTICULOSUNIDADESMEDICIONMODEL()
+RETURN nil
+
+FUNCTION SQLFACTURASCLIENTESMODEL()
+RETURN nil
+
+FUNCTION ARTICULOSENVASADOCONTROLLER()
+RETURN nil
+
+FUNCTION ENTRADASALIDACONTROLLER()
+RETURN nil
+
+FUNCTION FACTURASCLIENTESCONTROLLER()
+RETURN nil
+
+FUNCTION ORDENCOMANDASCONTROLLER()
+RETURN nil
+
+FUNCTION SQLDELEGACIONESMODEL()
+RETURN nil
+
+FUNCTION DELEGACIONESCONTROLLER()
+RETURN nil
 
 //------------------------------------------------------------------//
 

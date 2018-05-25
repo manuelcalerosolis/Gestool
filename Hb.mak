@@ -1,7 +1,7 @@
 HB                   = 	\harbour_bcc582\
 
 HBINCLUDE            = 	\harbour_bcc582\include
-FWINCLUDE            = 	\fwh1705\Include
+FWINCLUDE            = 	\fwh1705\include
 GTINCLUDE            = 	.\Include
 
 HBLIB                = 	\harbour_bcc582\lib
@@ -383,6 +383,7 @@ ArticulosTemporadaController.prg 										\
 ArticulosCategoriasController.prg 										\
 ArticulosUnidadesMedicionController.prg								\
 AlmacenesController.prg 													\
+DelegacionesController.prg 												\
 ArticulosController.prg 													\
 ArticulosBrowseView.prg 													\
 ArticulosView.prg 															\
@@ -1059,6 +1060,7 @@ ArticulosTemporadaController.obj       								\
 ArticulosCategoriasController.obj       								\
 ArticulosUnidadesMedicionController.obj 								\
 AlmacenesController.obj       											\
+DelegacionesController.obj       										\
 ArticulosController.obj       											\
 ArticulosBrowseView.obj 													\
 ArticulosView.obj 															\
@@ -1376,7 +1378,7 @@ $(EXE)                  : $( PRG:.PRG=.OBJ )
 
 $(EXE)                  : $( C:.C=.OBJ )
 
-$(EXE) : $(RESOURCE)\GstDialog.Res $(OBJS)
+$(EXE) 						: $(RESOURCE)\GstDialog.Res $(OBJS)
   	$(BORLAND)\Bin\iLink32 @&&|
   	-Gn -aa -Tpe -s -r -m -V4.0                              	+
 (BORLAND)\lib\c0w32.obj                                     	+
@@ -1722,6 +1724,7 @@ $(OBJ)\ArticulosTemporadaController.obj    							+
 $(OBJ)\ArticulosCategoriasController.obj    							+
 $(OBJ)\ArticulosUnidadesMedicionController.obj    					+
 $(OBJ)\AlmacenesController.obj    										+
+$(OBJ)\DelegacionesController.obj    									+
 $(OBJ)\ArticulosController.obj    										+
 $(OBJ)\ArticulosBrowseView.obj    										+
 $(OBJ)\ArticulosView.obj    												+

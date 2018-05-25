@@ -107,9 +107,17 @@ METHOD New()
    ::cPasswordMySQL           := GetPvProfString(  "MySQL",    "Password", "",            cIniAplication() )
    ::nPortMySQL               := GetPvProfInt(     "MySQL",    "Port",     3306,          cIniAplication() )
 
+   // msgalert( ::cDatabaseMySQL, "cDatabaseMySQL" )
+   // msgalert( ::cIpMySQL, "cIpMySQL" )
+   // msgalert( ::cUserMySQL, "cUserMySQL" )
+   // msgalert( ::cPasswordMySQL, "cPasswordMySQL" )
+   // msgalert( ::nPortMySQL, "nPortMySQL" )
+
    ::oConexion                := THDO():new( "mysql" )
 
    ::oConexion:setAttribute( HDO_ATTR_ERRMODE, .t. )
+
+   ::oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. )
 
 RETURN ( Self )
 
@@ -122,8 +130,6 @@ METHOD Connect()
    try
    
       if !empty( ::oConexion )
-         
-         ::oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. )
 
          lConnect    := ::oConexion:Connect( ::cDatabaseMySQL, ::cIpMySQL, ::cUserMySQL, ::cPasswordMySQL, ::nPortMySQL )
 
@@ -164,7 +170,7 @@ RETURN ( lConnect )
 METHOD isParseError( cSentence )
 
    if empty( cSentence )
-      msgstop( "La sentencia esta vacia" )
+      msgstop( "La sentencia esta vacia", "SQLDatabase" )
       RETURN ( .t. )  
    end if  
 

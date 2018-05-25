@@ -3,15 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS AlmacenesController FROM SQLNavigatorController
+CLASS DelegacionesController FROM SQLNavigatorController
 
    DATA oDireccionesController
-
-   DATA oPaisesController
-
-   DATA oProvinciasController
-
-   DATA oZonasController
 
    DATA oCamposExtraValoresController
 
@@ -19,19 +13,17 @@ CLASS AlmacenesController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD gettingSelectSentence()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS AlmacenesController
+METHOD New( oSenderController ) CLASS DelegacionesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
-   ::cTitle                         := "Almacenes"
+   ::cTitle                         := "Delegaciones"
 
-   ::cName                          := "almacenes"
+   ::cName                          := "delegaciones"
 
    ::hImage                         := {  "16" => "gc_warehouse_16",;
                                           "32" => "gc_warehouse_32",;
@@ -39,25 +31,19 @@ METHOD New() CLASS AlmacenesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLAlmacenesModel():New( self )
+   ::oModel                         := SQLDelegacionesModel():New( self )
 
-   ::oBrowseView                    := AlmacenesBrowseView():New( self )
+   ::oBrowseView                    := DelegacionesBrowseView():New( self )
 
-   ::oDialogView                    := AlmacenesView():New( self )
+   ::oDialogView                    := DelegacionesView():New( self )
 
-   ::oValidator                     := AlmacenesValidator():New( self, ::oDialogView )
+   ::oValidator                     := DelegacionesValidator():New( self, ::oDialogView )
 
    ::oDireccionesController         := DireccionesController():New( self )
 
-   ::oZonasController               := ZonasController():New( self )
-
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
-   ::oRepository                    := AlmacenesRepository():New( self )
-
-   ::oPaisesController              := PaisesController():New( self )
-
-   ::oProvinciasController          := ProvinciasController():New( self )
+   ::oRepository                    := DelegacionesRepository():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -72,13 +58,11 @@ METHOD New() CLASS AlmacenesController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
-   ::oModel:setEvent( 'gettingSelectSentence',        {|| ::gettingSelectSentence() } ) 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS AlmacenesController
+METHOD End() CLASS DelegacionesController
 
    ::oModel:End()
 
@@ -94,30 +78,18 @@ METHOD End() CLASS AlmacenesController
 
    ::oRepository:End()
 
-   ::oPaisesController:End()
-
-   ::oProvinciasController:End()
-
    ::Super:End()
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD gettingSelectSentence() CLASS AlmacenesController
-
-   ::oModel:setGeneralWhere( "parent_uuid = ''" )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AlmacenesBrowseView FROM SQLBrowseView
+CLASS DelegacionesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -125,7 +97,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS AlmacenesBrowseView
+METHOD addColumns() CLASS DelegacionesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -169,7 +141,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AlmacenesView FROM SQLBaseView
+CLASS DelegacionesView FROM SQLBaseView
   
    DATA oGetProvincia
    DATA oGetPoblacion
@@ -180,13 +152,11 @@ CLASS AlmacenesView FROM SQLBaseView
 
    METHOD Activating()
 
-   METHOD getDireccionesController()   INLINE ( ::oController:oDireccionesController )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activating() CLASS AlmacenesView
+METHOD Activating() CLASS DelegacionesView
 
    if ::oController:isAppendOrDuplicateMode()
       ::oController:oModel:hBuffer()
@@ -200,12 +170,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS AlmacenesView
-
-   local oBtnAppend
-   local oBtnEdit
-   local oBtnDelete
-   local oSayCamposExtra
+METHOD Activate() CLASS DelegacionesView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ALMACEN_SQL" ;
@@ -247,32 +212,7 @@ METHOD Activate() CLASS AlmacenesView
 
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
 
-   // Zonas--------------------------------------------------------------------
-
-   REDEFINE BUTTON oBtnAppend ;
-      ID          120 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnAppend:bAction   := {|| ::oController:oZonasController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          130 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnEdit:bAction   := {|| ::oController:oZonasController:Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          140 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnDelete:bAction   := {|| ::oController:oZonasController:Delete() }
-
-   ::oController:oZonasController:Activate( 150, ::oDialog ) 
-
-   // Botones almacenes -------------------------------------------------------
+   // Botones Delegaciones -------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -305,17 +245,15 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AlmacenesValidator FROM SQLCompanyValidator
+CLASS DelegacionesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
-   METHOD getUniqueSenctence( uValue )
- 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS AlmacenesValidator
+METHOD getValidators() CLASS DelegacionesValidator
 
    ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
                                           "unique"             => "El nombre introducido ya existe" },;
@@ -324,20 +262,6 @@ METHOD getValidators() CLASS AlmacenesValidator
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
-
-METHOD getUniqueSenctence( uValue ) CLASS AlmacenesValidator
-
-   local cSQLSentence   := ::Super:getUniqueSenctence( uValue )
-
-   if empty( ::oController ) .or. empty( ::oController:getSenderController() )
-      cSQLSentence      +=    " AND parent_uuid = ''"
-   else 
-      cSQLSentence      +=    " AND parent_uuid = " + quoted( ::oController:getSenderController():getUuid() )
-   end if
-
-RETURN ( cSQLSentence )
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -345,30 +269,28 @@ RETURN ( cSQLSentence )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLAlmacenesModel FROM SQLCompanyModel
+CLASS SQLDelegacionesModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "almacenes"
+   DATA cTableName               INIT "delegaciones"
 
    METHOD getColumns()
-
-   METHOD getParentUuidAttribute( value )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLAlmacenesModel
+METHOD getColumns() CLASS SQLDelegacionesModel
    
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+                                             "default"   => {|| win_uuidcreatestring() } } )
 
    ::getEmpresaColumns()
 
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                             "default"   => {|| space( 40 ) } }                       )
+                                             "default"   => {|| ::getSenderControllerParentUuid() } }                       )
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
                                              "default"   => {|| space( 3 ) } }                        )
@@ -379,51 +301,16 @@ METHOD getColumns() CLASS SQLAlmacenesModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
-
-METHOD getParentUuidAttribute( value )
-   
-   if empty( ::oController )
-      RETURN ( value )
-   end if
-
-   if empty( ::oController:getSenderController() )
-      RETURN ( value )
-   end if
-
-RETURN ( ::oController:getSenderController():getUuid() )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AlmacenesRepository FROM SQLBaseRepository
+CLASS DelegacionesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLAlmacenesModel():getTableName() ) 
-
-   METHOD getNombres()
-
-   METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
-
-   METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )
+   METHOD getTableName()                  INLINE ( SQLDelegacionesModel():getTableName() ) 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getNombres() CLASS AlmacenesRepository
-
-   local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
-   local aResult     := {}
-
-   if !empty( aNombres )
-      aeval( aNombres, {| h | aadd( aResult, alltrim( hGet( h, "nombre" ) ) ) } )
-   end if 
-
-RETURN ( aResult )
-
-//---------------------------------------------------------------------------//

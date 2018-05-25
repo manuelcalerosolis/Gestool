@@ -260,6 +260,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLAlmacenesModel():New() )
 
+   aadd( ::aModels, SQLDelegacionesModel():New() )
+
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
    aadd( ::aModels, SQLTageableModel():New() )

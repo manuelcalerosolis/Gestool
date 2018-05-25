@@ -21,9 +21,9 @@ METHOD New() CLASS FacturasClientesController
 
    ::cName                       := "facturas_clientes"
 
-   ::hImage                      := {  "16" => "gc_user_16",;
-                                       "32" => "gc_user_32",;
-                                       "48" => "gc_user2_48" }
+   ::hImage                      := {  "16" => "gc_document_text_user_16",;
+                                       "32" => "gc_document_text_user_32",;
+                                       "48" => "gc_document_text_user_48" }
 
    ::oModel                      := SQLFacturasClientesModel():New( self )
 
