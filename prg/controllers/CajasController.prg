@@ -173,7 +173,7 @@ METHOD Activate() CLASS CajasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
@@ -286,8 +286,8 @@ METHOD getColumns() CLASS SQLCajasModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                             ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                             ,;
+                                             "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre_caja",       {  "create"    => "VARCHAR( 200 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )

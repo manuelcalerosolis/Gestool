@@ -345,8 +345,8 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 3 )"                            ,;
-                                          "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 20 )"                            ,;
+                                          "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
                                           "default"   => {|| space( 100 ) } }                      )

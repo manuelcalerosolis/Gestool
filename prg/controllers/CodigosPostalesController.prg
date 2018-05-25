@@ -155,7 +155,7 @@ METHOD Activate() CLASS CodigosPostalesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNNNNNNNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          oDlg
@@ -262,8 +262,8 @@ METHOD getColumns() CLASS SQLCodigosPostalesModel
                                              "text"      => "Identificador"                        ,;
                                              "default"   => {|| 0 } }                               )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 10 )"                        ,;
-                                             "default"   => {|| space( 10 ) } }                     )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                        ,;
+                                             "default"   => {|| space( 20 ) } }                     )
 
    hset( ::hColumns, "poblacion",         {  "create"    => "VARCHAR( 100 )"                       ,;
                                              "default"   => {|| space( 100 ) } }                    )

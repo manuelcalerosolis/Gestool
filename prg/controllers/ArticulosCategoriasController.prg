@@ -193,7 +193,7 @@ METHOD Activate() CLASS ArticulosCategoriasView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -293,8 +293,8 @@ METHOD getColumns() CLASS SQLArticulosCategoriasModel
                                     "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 3 )"                            ,;
-                                    "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                            ,;
+                                    "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
                                     "default"   => {|| space( 200 ) } }                       )
