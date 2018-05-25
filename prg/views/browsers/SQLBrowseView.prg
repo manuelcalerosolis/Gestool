@@ -176,7 +176,7 @@ METHOD Create( oWindow )
    ::oBrowse:bKeyChar         := {|nKey| ::getController():onKeyChar( nKey ) }
 
    if ::isNotSenderControllerZoomMode() 
-      ::oBrowse:bLDblClick    := {|| ::getController():Edit(), ::Refresh() }
+      ::setLDblClick( {|| ::getController():Edit(), ::Refresh() } )
    end if 
 
 RETURN ( ::oBrowse )

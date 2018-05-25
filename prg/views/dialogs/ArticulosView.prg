@@ -60,6 +60,8 @@ METHOD Activate() CLASS ArticulosView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
+   ::redefineExplorerBar()
+
    REDEFINE FOLDER ::oFolder ;
       ID          500 ;
       OF          ::oDialog ;
@@ -67,8 +69,6 @@ METHOD Activate() CLASS ArticulosView
                   "&Precios" ;
       DIALOGS     "ARTICULO_GENERAL",;
                   "ARTICULO_PRECIO"    
-
-   ::redefineExplorerBar()
 
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;

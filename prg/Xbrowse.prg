@@ -11690,8 +11690,14 @@ METHOD PostEdit( xValue, lButton, lDirectAssign ) CLASS TXBrwColumn
       case ::nEditType == EDIT_GET_BUTTON
          if ! lButton
             if ::oEditGet != nil
+
+            msgalert("entra por aki " )
+
                Eval( bOnPostEdit, Self, Eval( ::oEditGet:bSetGet ), ::oEditGet:nLastKey )
                nLastKey    := ::oEditGet:nLastKey
+
+               msgalert( nLastKey, "nLastKey" )
+
                ::oEditGet:End()
                ::oEditGet := nil
             endif
@@ -11701,7 +11707,12 @@ METHOD PostEdit( xValue, lButton, lDirectAssign ) CLASS TXBrwColumn
          endif
    endcase
 
+  msgalert( lDirectAssign, "lDirectAssign" )
+  msgalert( AScan( { VK_RETURN, VK_DOWN, VK_UP, VK_TAB }, nLastKey ) > 0, "ascan(aArray, expSearch)" )
+
    lGoNext := !lDirectAssign .and. ( AScan( { VK_RETURN, VK_DOWN, VK_UP, VK_TAB }, nLastKey ) > 0 )
+   
+  msgalert( lGoNext, "lGoNext" )
 
    ::oBrw:SaveData()
    ::oBrw:Unlock()

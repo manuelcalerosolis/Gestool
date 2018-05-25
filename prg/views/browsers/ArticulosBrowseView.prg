@@ -1,9 +1,12 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
+#include "InKey.ch"
 
 //---------------------------------------------------------------------------//
 
 CLASS ArticulosBrowseView FROM SQLBrowseView
+
+   DATA lFastEdit                            INIT .t.
 
    METHOD addColumns()                       
 
@@ -12,6 +15,8 @@ ENDCLASS
 //----------------------------------------------------------------------------//
 
 METHOD addColumns() CLASS ArticulosBrowseView
+
+   local oColumn
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -43,19 +48,21 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :bLDClickData        := {|| ::getController():Edit(), ::Refresh() }
    end with
 
-   with object ( ::oBrowse:AddCol() )
+   with object ( oColumn := ::oBrowse:AddCol() )
       :cSortOrder          := 'articulos_familia_codigo'
       :cHeader             := 'Código familia'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_familia_codigo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
       
       if ::oController:isUserEdit()
          :nEditType        := 5
-         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnArticulosFamiliaBrowse( uNewValue, nKey ) }
+         // :bLDClickData     := {|| oColumn:Edit( 1 ) }
+         // :bKeyDown         := {|nKey| if( nKey == VK_RETURN, ( oColumn:Edit( 1 ), 0 ), nil ) }
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnArticulosFamiliaBrowse( oCol, uNewValue, nKey ) }
          :bEditBlock       := {|| ::oController:oArticulosFamiliaController:ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )

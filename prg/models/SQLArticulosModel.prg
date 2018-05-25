@@ -138,13 +138,11 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
                         "articulos.periodo_caducidad AS periodo_caducidad, "  + ;
                         "articulos.lote AS lote, "                            + ;
                         "articulos.lote_actual AS lote_actual, "              + ;
-                        "articulos.precio_costo AS precio_costo, "                  + ;
-                        "articulos_familia.codigo AS articulos_familia_codigo,"     + ;
+                        "articulos.precio_costo AS precio_costo, "                           + ;
+                        "RPAD( IFNULL( articulos_familia.codigo, ''), 18, ' ' ) AS articulos_familia_codigo, "    + ;
                         "articulos_familia.nombre AS articulos_familia_nombre "     + ;
                      "FROM articulos "                                              + ;
-                        "LEFT JOIN articulos_familia ON articulos.uuid = articulos_familia.parent_uuid " 
-
-   logwrite( cSelect )                        
+                        "LEFT JOIN articulos_familia ON articulos.articulos_familia_uuid = articulos_familia.uuid " 
 
 RETURN ( cSelect )
 
