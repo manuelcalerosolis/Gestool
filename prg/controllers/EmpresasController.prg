@@ -17,6 +17,12 @@ CLASS EmpresasController FROM SQLNavigatorController
 
    DATA lSolicitarUsuario 
 
+   DATA oDelegacionesController
+
+   DATA cUuidDelegacionDefecto
+   DATA cDelegacionDefecto
+   DATA aDelegaciones
+
    METHOD New()
 
    METHOD End()
@@ -81,6 +87,8 @@ METHOD New() CLASS EmpresasController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
+   ::oDelegacionesController        := DelegacionesController():New( self )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -105,7 +113,7 @@ METHOD setConfig()
 
       ::saveConfig()
 
-   end if 
+   end if
    
 RETURN ( self )
 
@@ -121,6 +129,12 @@ METHOD loadConfig()
 
    ::lSolicitarUsuario           := ::oAjustableController:oModel:getEmpresaSeleccionarUsuarios( ::cUuidEmpresa )
 
+   ::aDelegaciones               := SQLDelegacionesModel():aNombres()
+
+   ::cUuidDelegacionDefecto      := ::oAjustableController:oModel:getEmpresaDelegacionDefecto( ::cUuidEmpresa )
+
+   ::cDelegacionDefecto          := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionDefecto )
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -128,6 +142,10 @@ RETURN ( .t. )
 METHOD saveConfig()
 
    ::oAjustableController:oModel:setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, ::cUuidEmpresa )
+   
+   ::cUuidDelegacionDefecto    := SQLDelegacionesModel():getUuidFromNombre( ::cDelegacionDefecto )
+
+   ::oAjustableController:oModel:setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, ::cUuidEmpresa )
 
 RETURN ( self )
 
@@ -138,6 +156,8 @@ METHOD startingActivate()
    local oPanel                  := ::oAjustableController:oDialogView:oExplorerBar:AddPanel( "Propiedades empresa", nil, 1 ) 
 
    oPanel:AddCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
+   
+   oPanel:addComboBox( "Delegación defecto", @::cDelegacionDefecto, ::aDelegaciones )
 
 RETURN ( self )
 
@@ -218,6 +238,8 @@ RETURN ( self )
 
 CLASS EmpresasView FROM SQLBaseView
 
+   DATA oExplorerBar
+
    DATA oSayCamposExtra
   
    METHOD Activate()
@@ -225,6 +247,10 @@ CLASS EmpresasView FROM SQLBaseView
    METHOD Activating()
 
    METHOD getImagenesController()   INLINE ( ::oController:oImagenesController )
+
+   METHOD addLinksToExplorerBar()
+
+   METHOD StartDialog()
 
 END CLASS
 
@@ -306,17 +332,14 @@ METHOD Activate() CLASS EmpresasView
       SPINNER ;
       OF          ::oDialog
 
-   REDEFINE SAY   ::oSayCamposExtra ;
-      PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
-      COLOR       rgb( 10, 152, 234 ) ;
-      ID          180 ;
-      OF          ::oDialog ;
-
-   ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
-
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
+
+   REDEFINE EXPLORERBAR ::oExplorerBar ;
+      ID          700 ;
+      OF          ::oDialog
+
+   ::oExplorerBar:nBottomColor  := RGB( 255, 255, 255 )
+   ::oExplorerBar:nTopColor     := RGB( 255, 255, 255 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -330,7 +353,7 @@ METHOD Activate() CLASS EmpresasView
       CANCEL ;
       ACTION      ( ::oDialog:end() )
 
-   ::oDialog:bStart  := {|| ::oController:oDireccionesController:oDialogView:StartDialog() }
+   ::oDialog:bStart  := {|| ::StartDialog() }
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
@@ -341,6 +364,36 @@ METHOD Activate() CLASS EmpresasView
   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartDialog() CLASS EmpresasView
+
+   ::oController:oDireccionesController:oDialogView:StartDialog()
+
+   ::addLinksToExplorerBar()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD addLinksToExplorerBar() CLASS EmpresasView
+
+   local oPanel
+
+   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   if ::oController:isNotZoomMode()
+      oPanel:AddLink( "Delegaciones...",        {|| ::oController:oDelegacionesController:activateDialogView() }, ::oController:oDelegacionesController:getImage( "16" ) )
+   end if
+
+   oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
+
+   if ::oController:isNotZoomMode()
+      oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+   end if
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

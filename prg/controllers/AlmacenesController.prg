@@ -209,7 +209,7 @@ METHOD Activate() CLASS AlmacenesView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ALMACEN_SQL" ;
-      TITLE       ::LblTitle() + "almacen"
+      TITLE       ::LblTitle() + "almacén"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;

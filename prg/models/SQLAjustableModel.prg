@@ -79,6 +79,9 @@ CLASS SQLAjustableModel FROM SQLBaseModel
 
    // METHOD assertUsuarioFavoritos( cUuid )                               INLINE ( ::getValue( cUuid, 'favoritos', uAjusteValue, 'usuarios', cAjustableUuid ) )
 
+   METHOD setEmpresaDelegacionDefecto( uAjusteValue, cAjustableUuid )   INLINE ( ::setValue( 'delegacion_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getEmpresaDelegacionDefecto( cUuid )                          INLINE ( ::getValue( cUuid, 'empresas', 'delegacion_defecto', space( 40 ) ) )   
+
 END CLASS
 
 //---------------------------------------------------------------------------//
