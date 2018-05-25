@@ -144,6 +144,8 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
                      "FROM articulos "                                              + ;
                         "LEFT JOIN articulos_familia ON articulos.uuid = articulos_familia.parent_uuid " 
 
+   logwrite( cSelect )                        
+
 RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
