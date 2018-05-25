@@ -181,6 +181,7 @@ METHOD Activate() CLASS CajasView
 REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_sesion" ] ;
       ID          120 ;
       SPINNER  ;
+      MIN 0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 

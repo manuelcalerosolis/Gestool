@@ -2989,8 +2989,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_cash_register_refresh_32"
    oItem:lShow          := .f.
 
-<<<<<<< HEAD
-=======
+
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Delegaciones'
@@ -3000,7 +2999,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmp           := "gc_warehouse_16"
    oItem:cBmpBig        := "gc_warehouse_32"
    oItem:lShow          := .f.
->>>>>>> 3efa17c1b636210e68a7d8eca5a860095519c97b
+
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Cajas'
+   oItem:cMessage       := 'Cajas'
+   oItem:bAction        := {||CajasController():New():ActivateNavigatorView() }
+   oItem:cId            := "cajas"
+   oItem:cBmp           := "gc_cash_register_16"
+   oItem:cBmpBig        := "gc_cash_register_32"
+   oItem:lShow          := .f.
 
 RETURN ( oAcceso )
 

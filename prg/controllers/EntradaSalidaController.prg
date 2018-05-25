@@ -247,7 +247,9 @@ METHOD StartActivate() CLASS EntradaSalidaView
 
    local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, "gc_form_plus2_16" )
+   oPanel:AddLink(   "Campos extra...",;
+                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
+                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
    oPanel:AddLink(   "Documentos...",;
                      {|| ::oController:oDocumentosController:activateDialogView() },;
