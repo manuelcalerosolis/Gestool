@@ -3010,6 +3010,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_cash_register_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Impresoras'
+   oItem:cMessage       := 'Impresoras'
+   oItem:bAction        := {||CajasController():New():ActivateNavigatorView() }
+   oItem:cId            := "impresoras"
+   oItem:cBmp           := "gc_printer2_16"
+   oItem:cBmpBig        := "gc_printer2_32"
+   oItem:lShow          := .f.
+
 RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
