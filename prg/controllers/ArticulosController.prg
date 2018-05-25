@@ -43,6 +43,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    METHOD getPorcentajeIVA()
 
+   METHOD validColumnArticulosFamiliaBrowse( uValue, nKey )    INLINE ( ::validColumnBrowse( uValue, nKey, ::oArticulosFamiliaController:oModel, "articulos_familia_codigo" ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

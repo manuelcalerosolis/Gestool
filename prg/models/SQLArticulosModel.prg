@@ -9,6 +9,8 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getInitialSelect()
+
    METHOD getArticulosFamiliaUuidAttribute( uValue ) ; 
                                  INLINE ( if( empty( uValue ), space( 18 ), SQLArticulosFamiliaModel():getCodigoWhereUuid( uValue ) ) )
 
@@ -122,6 +124,27 @@ METHOD getColumns() CLASS SQLArticulosModel
    ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLArticulosModel
+
+   local cSelect  := "SELECT articulos.id AS id, "                            + ;
+                        "articulos.uuid AS uuid, "                            + ;
+                        "articulos.codigo AS codigo, "                        + ;
+                        "articulos.nombre AS nombre, "                        + ;
+                        "articulos.obsoleto AS obsoleto, "                    + ;
+                        "articulos.caducidad AS caducidad, "                  + ;
+                        "articulos.periodo_caducidad AS periodo_caducidad, "  + ;
+                        "articulos.lote AS lote, "                            + ;
+                        "articulos.lote_actual AS lote_actual, "              + ;
+                        "articulos.precio_costo AS precio_costo, "                  + ;
+                        "articulos_familia.codigo AS articulos_familia_codigo,"     + ;
+                        "articulos_familia.nombre AS articulos_familia_nombre "     + ;
+                     "FROM articulos "                                              + ;
+                        "LEFT JOIN articulos_familia ON articulos.uuid = articulos_familia.parent_uuid " 
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
