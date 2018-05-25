@@ -311,7 +311,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       RETURN .f.
    end if
 
-   DEFINE DIALOG oDlg RESOURCE "CAJAS" TITLE LblTitle( nMode ) + "cajas"
+   DEFINE DIALOG oDlg ;
+      RESOURCE "CAJAS_00" ;
+      TITLE    LblTitle( nMode ) + "cajas"
 
    REDEFINE FOLDER oFld ;
       ID       100 ;
