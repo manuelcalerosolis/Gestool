@@ -96,6 +96,9 @@ METHOD getColumns() CLASS SQLTiposImpresorasModel
                                        "text"      => "Identificador"                          ,;
                                        "default"   => {|| 0 } }                                 )
 
+   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                       "default"   => {|| win_uuidcreatestring() } }            )
+
    hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 50 )"                          ,;
                                        "default"   => {|| space( 50 ) } }                       )
 

@@ -3014,7 +3014,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Impresoras'
    oItem:cMessage       := 'Impresoras'
-   oItem:bAction        := {||CajasController():New():ActivateNavigatorView() }
+   oItem:bAction        := {||ImpresorasController():New():ActivateNavigatorView() }
    oItem:cId            := "impresoras"
    oItem:cBmp           := "gc_printer2_16"
    oItem:cBmpBig        := "gc_printer2_32"
