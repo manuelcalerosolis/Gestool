@@ -45,6 +45,32 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'articulos_familia_codigo'
+      :cHeader             := 'Código familia'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_familia_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+      
+      if ::oController:isUserEdit()
+         :nEditType        := 5
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnArticulosFamiliaBrowse( uNewValue, nKey ) }
+         :bEditBlock       := {|| ::oController:oArticulosFamiliaController:ActivateSelectorView() }
+         :nBtnBmp          := 1
+         :AddResource( "Lupa" )
+      end if
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'articulos_familia_nombre'
+      :cHeader             := 'Familia'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_familia_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

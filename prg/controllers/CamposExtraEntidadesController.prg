@@ -48,6 +48,7 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "impuestos_especiales" =>                 { "nombre" => "Impuestos especiales", "icono" => "gc_moneybag_euro_16"                         } ,;
                                  "orden_comandas" =>                       { "nombre" => "Orden de comandas", "icono" => "gc_sort_az_descending_16"                       } ,;
                                  "divisas_monetarias" =>                   { "nombre" => "Divisas monetarias", "icono" => "gc_currency_euro_16"                           } ,;
+                                 "cajas" =>                                { "nombre" => "Cajas", "icono" => "gc_cash_register_16"                                        } ,;
                                  "unidades_medicion" =>                    { "nombre" => "Unidades de medición", "icono" => "gc_tape_measure2_16"                         } ,;
                                  "rutas" =>                                { "nombre" => "Rutas", "icono" => "gc_map_route_16"                                            } ,;
                                  "entradas_salidas" =>                     { "nombre" => "Entradas y salidas de caja", "icono" => "gc_cash_register_refresh_16"           } ,;

@@ -2700,7 +2700,7 @@ FUNCTION CreateAcceso( oWnd )
    oItemSQL:lShow       := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 26
+   oGrupo:nBigItems     := 28
    oGrupo:cPrompt       := 'SQL'
    oGrupo:cLittleBitmap := "gc_lifebelt_16"
    oGrupo:cBigBitmap    := "gc_lifebelt_32"
@@ -2989,6 +2989,39 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_document_text_user_32"
    oItem:lShow          := .f.
 
+<<<<<<< HEAD
+=======
+
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Delegaciones'
+   oItem:cMessage       := 'Delegaciones'
+   oItem:bAction        := {|| DelegacionesController():New():ActivateNavigatorView() }
+   oItem:cId            := "delegaciones"
+   oItem:cBmp           := "gc_warehouse_16"
+   oItem:cBmpBig        := "gc_warehouse_32"
+   oItem:lShow          := .f.
+>>>>>>> 0073518d53720f5ee57c8bd81f293b26fdd591cf
+
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Cajas'
+   oItem:cMessage       := 'Cajas'
+   oItem:bAction        := {||CajasController():New():ActivateNavigatorView() }
+   oItem:cId            := "cajas"
+   oItem:cBmp           := "gc_cash_register_16"
+   oItem:cBmpBig        := "gc_cash_register_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Impresoras'
+   oItem:cMessage       := 'Impresoras'
+   oItem:bAction        := {||CajasController():New():ActivateNavigatorView() }
+   oItem:cId            := "impresoras"
+   oItem:cBmp           := "gc_printer2_16"
+   oItem:cBmpBig        := "gc_printer2_32"
+   oItem:lShow          := .f.
 
 RETURN ( oAcceso )
 
