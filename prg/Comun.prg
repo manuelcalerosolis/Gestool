@@ -2983,6 +2983,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_cash_register_refresh_32"
    oItem:lShow          := .f.
 
+
 RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
