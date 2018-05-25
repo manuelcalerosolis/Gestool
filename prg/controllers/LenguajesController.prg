@@ -199,7 +199,7 @@ METHOD Activate() CLASS LenguajesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNNNNNNNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
@@ -287,8 +287,8 @@ METHOD getColumns() CLASS SQLLenguajesModel
                                              "text"      => "Uuid"                                    ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 10 )"                          ,;
-                                             "default"   => {|| space( 10 ) } }                       )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                          ,;
+                                             "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 20 )"                          ,;
                                              "default"   => {|| space( 20 ) } }                       )

@@ -2989,6 +2989,19 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_document_text_user_32"
    oItem:lShow          := .f.
 
+<<<<<<< HEAD
+=======
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Delegaciones'
+   oItem:cMessage       := 'Delegaciones'
+   oItem:bAction        := {|| DelegacionesController():New():ActivateNavigatorView() }
+   oItem:cId            := "delegaciones"
+   oItem:cBmp           := "gc_warehouse_16"
+   oItem:cBmpBig        := "gc_warehouse_32"
+   oItem:lShow          := .f.
+
+>>>>>>> 2ae18123ce93a2fc1c9dc912d1de7e99f6d2aec2
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cajas'
@@ -3003,7 +3016,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Impresoras'
    oItem:cMessage       := 'Impresoras'
-   oItem:bAction        := {||CajasController():New():ActivateNavigatorView() }
+   oItem:bAction        := {||ImpresorasController():New():ActivateNavigatorView() }
    oItem:cId            := "impresoras"
    oItem:cBmp           := "gc_printer2_16"
    oItem:cBmpBig        := "gc_printer2_32"

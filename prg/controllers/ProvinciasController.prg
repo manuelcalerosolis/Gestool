@@ -156,7 +156,7 @@ METHOD Activate() CLASS ProvinciasView
       OF          oDlg
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
-      PICTURE     "@! NNNNNNNNNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
@@ -241,8 +241,8 @@ METHOD getColumns() CLASS SQLProvinciasModel
                                              "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 10 ) NOT NULL UNIQUE"           ,;
-                                             "default"   => {|| space( 10 ) } }                       )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
+                                             "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 50 )"                          ,;
                                              "default"   => {|| space( 50 ) } }                       )

@@ -247,7 +247,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNNNNNNNNNNNNNNNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
@@ -670,8 +670,8 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR( 18 )"                           ,;
-                                                         "default"   => {|| space( 18 ) } }                       )
+   hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR( 20 )"                           ,;
+                                                         "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",                        {  "create"    => "VARCHAR( 200 )"                          ,;
                                                          "default"   => {|| space( 200 ) } }                      )

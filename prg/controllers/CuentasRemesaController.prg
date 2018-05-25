@@ -191,7 +191,7 @@ METHOD Activate() CLASS CuentasRemesaView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -377,8 +377,8 @@ METHOD getColumns() CLASS SQLCuentasRemesaModel
    ::getEmpresaColumns()
 
 
-   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 3 )"                            ,;
-                                                   "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 )"                            ,;
+                                                   "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 )"                          ,;
                                                    "default"   => {|| space( 200 ) } }                      )

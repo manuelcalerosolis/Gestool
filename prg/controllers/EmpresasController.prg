@@ -288,7 +288,7 @@ METHOD Activate() CLASS EmpresasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
@@ -450,8 +450,8 @@ METHOD getColumns() CLASS SQLEmpresasModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 4 )"                            ,;
-                                             "default"   => {|| space( 4 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
+                                             "default"   => {|| space( 20 ) } }                        )
    
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 100 )"                          ,;
                                              "default"   => {|| space( 100 ) } }                       )

@@ -7,6 +7,8 @@ CLASS CajasController FROM SQLNavigatorController
 
    DATA oCamposExtraValoresController
 
+   DATA oImpresorasController
+
    METHOD New()
 
    METHOD End()
@@ -41,6 +43,8 @@ METHOD New() CLASS CajasController
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
+   ::oImpresorasController  := ImpresorasController():New( self, ::oModel:cTableName )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
@@ -58,6 +62,8 @@ METHOD End() CLASS CajasController
    ::oValidator:End()
 
    ::oCamposExtraValoresController:End()
+
+   ::oImpresorasController:End()
 
    ::oRepository:End()
 
@@ -167,7 +173,7 @@ METHOD Activate() CLASS CajasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
@@ -219,7 +225,13 @@ METHOD StartActivate() CLASS CajasView
 
    local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+   oPanel:AddLink( "Campos extra...",;
+                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
+                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
+
+    oPanel:AddLink(   "Impresoras...",;
+                     {|| ::oController:oImpresorasController:activateDialogView() },;
+                     ::oController:oImpresorasController:getImage( "16" ) )
 
 
 RETURN ( self )
@@ -231,7 +243,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CajasValidator FROM SQLCompanyValidator
+CLASS CajasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -256,7 +268,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCajasModel FROM SQLCompanyModel
+CLASS SQLCajasModel FROM SQLBaseModel
 
    DATA cTableName               INIT "cajas"
 
@@ -274,8 +286,8 @@ METHOD getColumns() CLASS SQLCajasModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                             ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                             ,;
+                                             "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre_caja",       {  "create"    => "VARCHAR( 200 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
