@@ -381,8 +381,8 @@ METHOD getColumns() CLASS SQLAgentesModel
    
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(3) NOT NULL UNIQUE"             ,;
-                                             "default"   => {|| space( 3 )}})
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(20) NOT NULL UNIQUE"             ,;
+                                             "default"   => {|| space( 20 )}})
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                         ,;
                                              "default"   => {|| space( 140 ) } }                      )

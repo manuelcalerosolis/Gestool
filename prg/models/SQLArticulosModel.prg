@@ -73,8 +73,8 @@ METHOD getColumns() CLASS SQLArticulosModel
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",                     {  "create"    => "VARCHAR( 18 )"                           ,;
-                                                      "default"   => {|| space( 18 ) } }                       )
+   hset( ::hColumns, "codigo",                     {  "create"    => "VARCHAR( 20 )"                           ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",                     {  "create"    => "VARCHAR( 200 )"                          ,;
                                                       "default"   => {|| space( 200 ) } }                      )

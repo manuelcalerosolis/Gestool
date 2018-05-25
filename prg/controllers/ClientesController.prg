@@ -89,6 +89,16 @@ RETURN ( Self )
 
 METHOD End() CLASS ClientesController
 
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oRepository:End()
+
    ::oContactosController:End()
 
    ::oIncidenciasController:End()

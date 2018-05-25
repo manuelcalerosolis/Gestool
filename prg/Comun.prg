@@ -2963,6 +2963,12 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_box_closed_32"
    oItem:lShow          := .f.
 
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 26
+   oGrupo:cPrompt       := 'SQL 2 '
+   oGrupo:cLittleBitmap := "gc_lifebelt_16"
+   oGrupo:cBigBitmap    := "gc_lifebelt_32"
+
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Entradas y salidas'
@@ -2973,23 +2979,18 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_cash_register_refresh_32"
    oItem:lShow          := .f.
 
-   oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 26
-   oGrupo:cPrompt       := 'SQL 2 '
-   oGrupo:cLittleBitmap := "gc_lifebelt_16"
-   oGrupo:cBigBitmap    := "gc_lifebelt_32"
-
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Facturas de clientes'
    oItem:cMessage       := 'Facturas de clientes'
    oItem:bAction        := {||FacturasClientesController():New():ActivateNavigatorView() }
    oItem:cId            := "facturas_clientes"
-   oItem:cBmp           := "gc_cash_register_refresh_16"
-   oItem:cBmpBig        := "gc_cash_register_refresh_32"
+   oItem:cBmp           := "gc_document_text_user_16"
+   oItem:cBmpBig        := "gc_document_text_user_32"
    oItem:lShow          := .f.
 
-
+<<<<<<< HEAD
+=======
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Delegaciones'
@@ -3000,6 +3001,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_warehouse_32"
    oItem:lShow          := .f.
 
+>>>>>>> 2ae18123ce93a2fc1c9dc912d1de7e99f6d2aec2
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cajas'
@@ -3008,6 +3010,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "cajas"
    oItem:cBmp           := "gc_cash_register_16"
    oItem:cBmpBig        := "gc_cash_register_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Impresoras'
+   oItem:cMessage       := 'Impresoras'
+   oItem:bAction        := {||ImpresorasController():New():ActivateNavigatorView() }
+   oItem:cId            := "impresoras"
+   oItem:cBmp           := "gc_printer2_16"
+   oItem:cBmpBig        := "gc_printer2_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

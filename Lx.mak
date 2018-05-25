@@ -938,6 +938,8 @@ MovimientosAlmacenRepository.prg			\
 MovimientosAlmacenLineasRepository.prg	\
 SQLBaseRepository.prg 						\
 SQLDataBase.prg 								\
+AuthManager.prg 								\
+SQLPermisosOpcionesModel.prg 				\
 
 C               =       \
 Metafi32.c              \
@@ -1866,6 +1868,8 @@ MovimientosAlmacenRepository.obj			\
 MovimientosAlmacenLineasRepository.obj	\
 SQLBaseRepository.obj 						\
 SQLDataBase.obj 								\
+AuthManager.obj 								\
+SQLPermisosOpcionesModel.obj 				\
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -2799,6 +2803,8 @@ $(OBJ)\MovimientosAlmacenLineasRepository.obj 	+
 $(OBJ)\SQLBaseReport.obj 								+
 $(OBJ)\SQLBaseRepository.obj 							+
 $(OBJ)\SQLDataBase.obj 									+
+$(OBJ)\AuthManager.obj 									+
+$(OBJ)\SQLPermisosOpcionesModel.obj 				+
 $(OBJ)\EstadoSat.obj
 $<,$*
 $(FWLIB)\FiveH.lib               										+

@@ -25,9 +25,9 @@ METHOD New( oSenderController ) CLASS DelegacionesController
 
    ::cName                          := "delegaciones"
 
-   ::hImage                         := {  "16" => "gc_warehouse_16",;
-                                          "32" => "gc_warehouse_32",;
-                                          "48" => "gc_warehouse_48" }
+   ::hImage                         := {  "16" => "gc_factory_group_16",;
+                                          "32" => "gc_factory_group_32",;
+                                          "48" => "gc_factory_group_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -73,8 +73,6 @@ METHOD End() CLASS DelegacionesController
    ::oValidator:End()
 
    ::oDireccionesController:End()
-
-   ::oZonasController:End()
 
    ::oRepository:End()
 
@@ -152,6 +150,10 @@ CLASS DelegacionesView FROM SQLBaseView
 
    METHOD Activating()
 
+   METHOD StartDialog()
+
+   METHOD addLinksToExplorerBar()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -173,8 +175,8 @@ RETURN ( self )
 METHOD Activate() CLASS DelegacionesView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ALMACEN_SQL" ;
-      TITLE       ::LblTitle() + "almacen"
+      RESOURCE    "DELEGACIONES" ;
+      TITLE       ::LblTitle() + "delegación"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -189,7 +191,7 @@ METHOD Activate() CLASS DelegacionesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNNNNNNNNNNNNNNNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
@@ -200,17 +202,14 @@ METHOD Activate() CLASS DelegacionesView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE SAY   ::oSayCamposExtra ;
-      PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
-      COLOR       rgb( 10, 152, 234 ) ;
-      ID          160 ;
-      OF          ::oDialog ;
-
-   ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
-
    ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
+
+   REDEFINE EXPLORERBAR ::oExplorerBar ;
+      ID          700 ;
+      OF          ::oDialog
+
+   ::oExplorerBar:nBottomColor  := RGB( 255, 255, 255 )
+   ::oExplorerBar:nTopColor     := RGB( 255, 255, 255 )
 
    // Botones Delegaciones -------------------------------------------------------
 
@@ -230,7 +229,7 @@ METHOD Activate() CLASS DelegacionesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ::oDialog:bStart  := {|| ::oController:oDireccionesController:oDialogView:StartDialog() }
+   ::oDialog:bStart  := {|| ::StartDialog() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -239,6 +238,29 @@ METHOD Activate() CLASS DelegacionesView
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD StartDialog() CLASS DelegacionesView
+
+   ::oController:oDireccionesController:oDialogView:StartDialog()
+
+   ::addLinksToExplorerBar()
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD addLinksToExplorerBar() CLASS DelegacionesView
+
+   local oPanel
+
+   oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
+
+   if ::oController:isNotZoomMode()
+      oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+   end if
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -266,14 +288,18 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS SQLDelegacionesModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "delegaciones"
+   DATA cTableName                        INIT "delegaciones"
 
    METHOD getColumns()
+
+   METHOD aNombres()
+
+   METHOD getNombreFromUuid( cUuid )      INLINE ( ::getField( 'nombre', 'uuid', cUuid ) )
+
+   METHOD getUuidFromNombre( cNombre )    INLINE ( ::getField( 'uuid', 'nombre', cNombre ) )
 
 END CLASS
 
@@ -285,20 +311,30 @@ METHOD getColumns() CLASS SQLDelegacionesModel
                                              "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                             "default"   => {|| win_uuidcreatestring() } } )
+                                             "default"   => {|| win_uuidcreatestring() } }            )
 
    ::getEmpresaColumns()
 
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                             "default"   => {|| ::getSenderControllerParentUuid() } }                       )
+                                             "default"   => {|| ::getSenderControllerParentUuid() } } )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
-                                             "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
+                                             "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+                                             "default"   => {|| space( 200 ) } }                      )
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD aNombres() CLASS SQLDelegacionesModel
+
+   local cSelect  := ""
+
+   cSelect        += "SELECT nombre FROM " + ::cTableName
+
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSelect ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -177,7 +177,7 @@ METHOD Activate() CLASS OrdenComandasView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -279,8 +279,8 @@ METHOD getColumns() CLASS SQLOrdenComandasModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
-                                             "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
+                                             "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
