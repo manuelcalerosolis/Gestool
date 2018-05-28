@@ -3,11 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS EntradaSalidaController FROM SQLNavigatorController
-
-   DATA oCamposExtraValoresController
-
-   DATA oDocumentosController
+CLASS BalanzasController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -17,33 +13,29 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS EntradaSalidaController
+METHOD New() CLASS BalanzasController
 
    ::Super:New()
 
-   ::cTitle                      := "Entradas y salidas"
+   ::cTitle                      := "Balanzas"
 
-   ::cName                       := "entradas_salidas"
+   ::cName                       := "balanzas"
 
-   ::hImage                      := {  "16" => "gc_cash_register_refresh_16",;
-                                       "32" => "gc_cash_register_refresh_32",;
-                                       "48" => "gc_cash_register_refresh_48" }
+   ::hImage                      := {  "16" => "gc_balance_16",;
+                                       "32" => "gc_balance_32",;
+                                       "48" => "gc_balance_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLEntradaSalidaModel():New( self )
+   ::oModel                         := SQLBalanzasModel():New( self )
 
-   ::oBrowseView                    := EntradaSalidaBrowseView():New( self )
+   ::oBrowseView                    := BalanzasBrowseView():New( self )
 
-   ::oDialogView                    := EntradaSalidaView():New( self )
+   ::oDialogView                    := BalanzasView():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+   ::oValidator                     := BalanzasValidator():New( self, ::oDialogView )
 
-   ::oDocumentosController          := DocumentosController():New( self, ::oModel:cTableName )
-
-   ::oValidator                     := EntradaSalidaValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := EntradaSalidaRepository():New( self )
+   ::oRepository                    := BalanzasRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )   
 
@@ -51,7 +43,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS EntradaSalidaController
+METHOD End() CLASS BalanzasController
 
    ::oModel:End()
 
@@ -60,10 +52,6 @@ METHOD End() CLASS EntradaSalidaController
    ::oDialogView:End()
 
    ::oValidator:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::oDocumentosController:End()
 
    ::oRepository:End()
 
@@ -81,7 +69,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS EntradaSalidaBrowseView FROM SQLBrowseView
+CLASS BalanzasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -89,7 +77,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS EntradaSalidaBrowseView
+METHOD addColumns() CLASS BalanzasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -109,33 +97,17 @@ METHOD addColumns() CLASS EntradaSalidaBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'tipo'
-      :cHeader             := 'Tipo'
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
       :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'tipo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'sesion'
-      :cHeader             := 'Sesión'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'sesion' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-      with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'caja_uuid'
-      :cHeader             := 'Caja'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'caja_uuid' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
-      :nWidth              := 300
+      :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -150,15 +122,29 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS EntradaSalidaView FROM SQLBaseView
+CLASS BalanzasView FROM SQLBaseView
 
-   DATA oSayCamposExtra
+   DATA oPuerto
 
-   DATA oTipo
+   DATA aPuerto INIT { "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",;
+                      "COM10", "COM11", "COM12", "COM13", "COM14", "COM15", "COM16", "COM17", "COM18" }
 
-   DATA aTipo INIT { "Entrada", "Salida" }
+   DATA oBPS
 
-   METHOD StartActivate()
+   DATA aBPS INIT { "2400", "4800", "9600", "19200", "38400", "57600", "115200", "203400", "460800", "921600" }
+
+   DATA oParada
+
+   DATA aParada INIT { "0", "1", "2" }
+
+   DATA oDatos
+
+   DATA aDatos INIT { "7", "8" }
+
+   DATA oParidad
+
+   DATA aParidad INIT { "Sin paridad", "Paridad par", "Paridad impar" }
+
   
    METHOD Activate()
 
@@ -166,11 +152,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS EntradaSalidaView
+METHOD Activate() CLASS BalanzasView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ENTRADA_SALIDA" ;
-      TITLE       ::LblTitle() + "Entrada o salida de caja"
+      RESOURCE    "BALANZA_SQL" ;
+      TITLE       ::LblTitle() + "balanzas"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -183,44 +169,84 @@ METHOD Activate() CLASS EntradaSalidaView
       FONT        getBoldFont() ;
       OF          ::oDialog ;
 
-   REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:oModel:hBuffer[ "tipo" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNN" ;
       ID          100 ;
-      ITEMS       ::aTipo;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
-      ID          110 ;
-      VALID       ( ::oController:validate( "importe" ) ) ;
-      SPINNER ;
-      PICTURE     "@E 9999999.999" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          120 ;
+      ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "sesion" ] ;
+    REDEFINE COMBOBOX ::oPuerto ;
+      VAR         ::oController:oModel:hBuffer[ "puerto" ] ;
+      ID          120 ;
+      ITEMS       ::aPuerto;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE COMBOBOX ::oBPS ;
+      VAR         ::oController:oModel:hBuffer[ "bits_segundo" ] ;
       ID          130 ;
+      ITEMS       ::aBPS;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "caja_uuid" ] ;
+   REDEFINE COMBOBOX ::oParada ;
+      VAR         ::oController:oModel:hBuffer[ "bits_parada" ] ;
       ID          140 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-  
-  REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
-      ID          150 ;
-      SPINNER ;
+      ITEMS       ::aParada;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-      ::redefineExplorerBar( 160 )
+   REDEFINE COMBOBOX ::oDatos ;
+      VAR         ::oController:oModel:hBuffer[ "bits_datos" ] ;
+      ID          150 ;
+      ITEMS       ::aDatos;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE COMBOBOX ::oParidad ;
+      VAR         ::oController:oModel:hBuffer[ "paridad" ] ;
+      ID          160 ;
+      ITEMS       ::aParidad;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "inicializacion" ] ;
+      ID          170 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "retardo" ] ;
+      ID          180 ;
+      SPINNER ;
+      MIN  0;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "entubamiento" ] ;
+      ID          190 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "abrir_puerto" ] ;
+      ID          200 ;
+      IDSAY       202 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+//Botones text y defecto------------------------------------------------------//
+   REDEFINE BUTTON ;
+      ID          220 ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      ACTION      ( ::oController:oModel:hBuffer[ "inicializacion" ] := 98000001 )
+
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -234,7 +260,6 @@ METHOD Activate() CLASS EntradaSalidaView
       CANCEL ;
       ACTION     ( ::oDialog:end() )
 
-   ::oDialog:bStart  := {|| ::StartActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
    
@@ -242,28 +267,13 @@ METHOD Activate() CLASS EntradaSalidaView
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
-
-METHOD StartActivate() CLASS EntradaSalidaView
-
-   local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
-
-   oPanel:AddLink(   "Campos extra...",;
-                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
-
-   oPanel:AddLink(   "Documentos...",;
-                     {|| ::oController:oDocumentosController:activateDialogView() },;
-                     ::oController:oDocumentosController:getImage( "16" ) )
-
-RETURN ( self )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS EntradaSalidaValidator FROM SQLCompanyValidator
+CLASS BalanzasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -272,12 +282,12 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS EntradaSalidaValidator
+METHOD getValidators() CLASS BalanzasValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido"    ,;
-                                                      "unique"             => "El nombre introducido ya existe"   },;
-                        "tipos"  =>                {  "required"           => "El tipo es un datos requerido"     },;
-                        "Importe"  =>              {  "required"           => "El importe es un datos requerido"  } }
+   ::hValidators  := {  "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
+                                                      "unique"             => "EL código introducido ya existe" },;
+                        "nombre" =>                {  "required"           => "El nombre es un dato requerido"    ,;
+                                                      "unique"             => "El nombre introducido ya existe"   }  }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -289,9 +299,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLEntradaSalidaModel FROM SQLCompanyModel
+CLASS SQLBalanzasModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "entradas_salidas"
+   DATA cTableName               INIT "balanzas"
 
    METHOD getColumns()
 
@@ -299,7 +309,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLEntradaSalidaModel
+METHOD getColumns() CLASS SQLBalanzasModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                              "default"   => {|| 0 } }                                 )
@@ -307,28 +317,40 @@ METHOD getColumns() CLASS SQLEntradaSalidaModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getEmpresaColumns()
-
-
-   hset( ::hColumns, "sesion",            {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
-
-   hset( ::hColumns, "fecha_hora",        {  "create"    => "TIMESTAMP"                               ,;
-                                             "default"   => {|| hb_datetime() } }         )
-
-   hset( ::hColumns, "caja_uuid",         {  "create"   => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                           ,;
+                                             "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "tipo",              {  "create"     => "ENUM( 'Entrada', 'Salida' )"             ,;
-                                             "default"    => {|| 'Entrada' }  }                        )
+   hset( ::hColumns, "puerto",            {  "create"   => "VARCHAR( 200 )"                           ,;
+                                             "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "importe",           {  "create"     => "FLOAT( 10, 3 )"                            ,;
-                                             "default"    => {|| 0  } }                        )
+   hset( ::hColumns, "bits_segundo",      {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {||  space( 200 ) } }                      )
 
-   ::getTimeStampColumns()
+   hset( ::hColumns, "bits_parada",       {  "create"    => "VARCHAR( 200 )"                           ,;
+                                             "default"   => {||  space( 200 )  } }                     )
+
+   hset( ::hColumns, "bits_datos",        {  "create"    => "VARCHAR( 200 )"                           ,;
+                                             "default"   => {|| space( 200 )  } }                      )
+
+   hset( ::hColumns, "paridad",           {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
+
+   hset( ::hColumns, "inicializacion",    {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 ) } }                       )
+
+   hset( ::hColumns, "retardo",           {  "create"    => "INTEGER"                                 ,;
+                                             "default"   => {||  0  } }                                )
+
+   hset( ::hColumns, "entubamiento",      {  "create"    => "VARCHAR( 1 )"                          ,;
+                                             "default"   => {|| space( 1 ) } }                       )
+
+   hset( ::hColumns, "abrir_puerto",      {  "create"    => "BIT"                                     ,;
+                                             "default"   => {|| .f. } }                               )
+
+
 
 RETURN ( ::hColumns )
 
@@ -342,13 +364,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS EntradaSalidaRepository FROM SQLBaseRepository
+CLASS BalanzasRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLEntradaSalidaModel():getTableName() ) 
-
-   METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
-
-   METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )
+   METHOD getTableName()                  INLINE ( SQLBalanzasModel():getTableName() ) 
 
 END CLASS
 
