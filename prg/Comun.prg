@@ -2848,7 +2848,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Tipos de IVA'
    oItem:cMessage       := 'Tipos de IVA'
-   oItem:bAction        := {|| IvaTipoController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| TipoIvaController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_moneybag_16"
    oItem:cBmpBig        := "gc_moneybag_32"
@@ -2897,7 +2897,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Familia de articulos'
    oItem:cMessage       := 'Familia de articulos'
-   oItem:bAction        := {|| ArticulosFamiliaController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| ArticulosFamiliasController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_cubes_16"
    oItem:cBmpBig        := "gc_cubes_32"

@@ -248,7 +248,7 @@ METHOD addModels()
 
    aadd( ::aModels, SQLFormaPagoModel():New() )
 
-   aadd( ::aModels, SQLIVATiposModel():New() )
+   aadd( ::aModels, SQLTiposIvaModel():New() )
    
    aadd( ::aModels, SQLCuentasRemesaModel():New() )
 

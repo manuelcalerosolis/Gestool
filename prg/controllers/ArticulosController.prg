@@ -9,13 +9,13 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oArticulosCategoriasController
 
-   DATA oArticulosFamiliaController
+   DATA oArticulosFamiliasController
 
    DATA oArticulosFabricantesController
 
    DATA oArticulosPreciosController
 
-   DATA oIvaTipoController
+   DATA oTipoIvaController
 
    DATA oImpuestosEspecialesController
 
@@ -44,13 +44,22 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD getPorcentajeIVA()
 
    METHOD validColumnArticulosFamiliaBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFamiliaController:oModel, "articulos_familia_uuid" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFamiliasController:oModel, "articulo_familia_uuid" ) )
 
    METHOD validColumnArticulosTipoBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosTipoController:oModel, "articulos_tipo_uuid" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosTipoController:oModel, "articulo_tipo_uuid" ) )
 
    METHOD validColumnArticulosCategoriasBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosCategoriasController:oModel, "articulos_categoria_uuid" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosCategoriasController:oModel, "articulo_categoria_uuid" ) )
+
+   METHOD validColumnArticulosFabricantesBrowse( oCol, uValue, nKey ) ;
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFabricantesController:oModel, "articulo_fabricante_uuid" ) )
+
+   METHOD validColumnTiposIvaBrowse( oCol, uValue, nKey ) ;
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oTipoIvaController:oModel, "tipo_iva_uuid" ) )
+
+   METHOD validColumnImpuestosEspecialesBrowse( oCol, uValue, nKey ) ;
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oImpuestosEspecialesController:oModel, "impuesto_especial_uuid" ) )
 
 END CLASS
 
@@ -86,7 +95,7 @@ METHOD New() CLASS ArticulosController
 
    ::oTagsController                   := TagsController():New( self )
 
-   ::oArticulosFamiliaController       := ArticulosFamiliaController():New( self )
+   ::oArticulosFamiliasController      := ArticulosFamiliasController():New( self )
 
    ::oArticulosTipoController          := ArticulosTipoController():New( self )
 
@@ -94,11 +103,11 @@ METHOD New() CLASS ArticulosController
 
    ::oArticulosFabricantesController   := ArticulosFabricantesController():New( self )
 
-   ::oArticulosPreciosController       := ArticulosPreciosController():New( self )
-
-   ::oIvaTipoController                := IvaTipoController():New( self )
+   ::oTipoIvaController                := TipoIvaController():New( self )
 
    ::oImpuestosEspecialesController    := ImpuestosEspecialesController():New( self )
+
+   ::oArticulosPreciosController       := ArticulosPreciosController():New( self )
 
    ::oPrimeraPropiedadController             := PropiedadesController():New( self )
 
@@ -134,7 +143,7 @@ METHOD End() CLASS ArticulosController
 
    ::oTagsController:End()
 
-   ::oArticulosFamiliaController:End()
+   ::oArticulosFamiliasController:End()
 
    ::oArticulosTipoController:End()
 
@@ -144,7 +153,7 @@ METHOD End() CLASS ArticulosController
 
    ::oArticulosPreciosController:End()
 
-   ::oIvaTipoController:End()
+   ::oTipoIvaController:End()
 
    ::oImpuestosEspecialesController:End()
 
@@ -188,7 +197,7 @@ METHOD getPorcentajeIVA() CLASS ArticulosController
       RETURN ( 0 )
    end if 
 
-RETURN ( ::oIvaTipoController:oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[ "iva_tipo_uuid" ] ) )
+RETURN ( ::oTipoIvaController:oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[ "tipo_iva_uuid" ] ) )
 
 //---------------------------------------------------------------------------//
 

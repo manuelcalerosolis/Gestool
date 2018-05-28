@@ -7,10 +7,10 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
 
    CLASSDATA aEntidades INIT  {  "articulos" =>                            { "nombre" => "Artículos",  "icono" => "gc_object_cube_16"                                     } ,;
                                  "articulos_temporada" =>                  { "nombre" => "Temporadas", "icono" => "gc_cloud_sun_16"                                       } ,;
-                                 "articulos_categoria" =>                  { "nombre" => "Categorias", "icono" => "gc_photographic_filters_16"                            } ,;
+                                 "articulos_categorias" =>                 { "nombre" => "Categorias", "icono" => "gc_photographic_filters_16"                            } ,;
                                  "articulos_propiedades" =>                { "nombre" => "Propiedades", "icono" => "gc_coathanger_16"                                     } ,;
-                                 "articulos_familia" =>                    { "nombre" => "Familias",  "icono" => "gc_cubes_16"                                            } ,;
-                                 "articulos_tipo" =>                       { "nombre" => "Tipos de artículos", "icono" => "gc_objects_16"                                 } ,;
+                                 "articulos_familias" =>                   { "nombre" => "Familias",  "icono" => "gc_cubes_16"                                            } ,;
+                                 "articulos_tipos" =>                      { "nombre" => "Tipos de artículos", "icono" => "gc_objects_16"                                 } ,;
                                  "articulos_tarifas" =>                    { "nombre" => "Tarifas", "icono" => "gc_money_interest_16"                                     } ,;
                                  "clientes" =>                             { "nombre" => "Clientes",  "icono" => "gc_user_16"                                             } ,;
                                  "clientes_grupos" =>                      { "nombre" => "Grupo de clientes",  "icono" => "gc_users3_16"                                  } ,;
