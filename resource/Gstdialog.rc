@@ -23171,11 +23171,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Mensajes", 800, "Static", WS_GROUP, 43, 3, 453, 24
 }
 
-<<<<<<< HEAD
-ENTRADA_SALIDA DIALOG DISCARDABLE 193, 47, 470, 227
-=======
 ENTRADA_SALIDA DIALOG DISCARDABLE 193, 47, 664, 165
->>>>>>> 19eb7cdc425c13c714518abc21f31449a41f2e45
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Entrdas o Salidas"
 FONT 8, "Ms Sans Serif"
@@ -23257,10 +23253,6 @@ FONT 8, "Ms Sans Serif"
   CONTROL "País", -1, "Static", WS_GROUP, 49, 150, 19, 8
   CONTROL "Provincia", -1, "Static", WS_GROUP, 49, 137, 60, 8
   CONTROL "", 700, "TEXPLORERBAR", 0x02000000, 502, 30, 160, 184
-<<<<<<< HEAD
-=======
-  CONTROL "Delegaciones", 800, "Static", WS_GROUP, 43, 3, 453, 24
->>>>>>> 19eb7cdc425c13c714518abc21f31449a41f2e45
 }
 
 IMPRESORA DIALOG DISCARDABLE 193, 47, 430, 150
@@ -23284,8 +23276,6 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Comandas", -1, "Static", WS_GROUP, 50, 100, 62, 8
   CONTROL "Anulación", -1, "Static", WS_GROUP, 50, 113, 60, 8
   CONTROL "Rutas", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 43, 87, 379, 39
-<<<<<<< HEAD
-=======
 }
 
 BALANZA_SQL DIALOG DISCARDABLE 193, 47, 310, 253
@@ -23324,6 +23314,5 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Retardo", -1, "Static", WS_GROUP, 49, 189, 41, 8
   CONTROL "Entubamiento", -1, "Static", WS_GROUP, 49, 202, 60, 8
   CONTROL "Abrir puerto/lectura", 202, "Static", WS_GROUP, 50, 213, 67, 8
->>>>>>> 19eb7cdc425c13c714518abc21f31449a41f2e45
 }
 

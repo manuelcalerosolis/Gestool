@@ -2991,18 +2991,6 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
-<<<<<<< HEAD
-=======
-   oItem:cPrompt        := 'Facturas de clientes'
-   oItem:cMessage       := 'Facturas de clientes'
-   oItem:bAction        := {||FacturasClientesController():New():ActivateNavigatorView() }
-   oItem:cId            := "facturas_clientes"
-   oItem:cBmp           := "gc_document_text_user_16"
-   oItem:cBmpBig        := "gc_document_text_user_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Delegaciones'
    oItem:cMessage       := 'Delegaciones'
    oItem:bAction        := {|| DelegacionesController():New():ActivateNavigatorView() }
@@ -3013,7 +3001,6 @@ FUNCTION CreateAcceso( oWnd )
 
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
->>>>>>> 19eb7cdc425c13c714518abc21f31449a41f2e45
    oItem:cPrompt        := 'Cajas'
    oItem:cMessage       := 'Cajas'
    oItem:bAction        := {||CajasController():New():ActivateNavigatorView() }

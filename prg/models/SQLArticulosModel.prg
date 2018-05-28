@@ -150,7 +150,7 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
                      "FROM articulos "                                              + ;
                         "LEFT JOIN articulos_familia ON articulos.articulos_familia_uuid = articulos_familia.uuid "  + ; 
                         "LEFT JOIN articulos_tipo ON articulos.articulos_tipo_uuid = articulos_tipo.uuid "           + ;
-                        "LEFT JOIN articulos_categoria ON articulos.articulos_categoria_uuid = articulos_categoria.uuid " 
+                        "LEFT JOIN articulos_categoria ON articulos.articulos_categoria_uuid = articulos_categoria.uuid " + ;
                         "LEFT JOIN articulos_fabricante ON articulos.articulos_fabricante_uuid = articulos_fabricante.uuid " 
 
 RETURN ( cSelect )
