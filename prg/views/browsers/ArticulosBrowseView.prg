@@ -6,7 +6,7 @@
 
 CLASS ArticulosBrowseView FROM SQLBrowseView
 
-   // DATA lFastEdit                            INIT .t.
+   DATA lFastEdit                            INIT .t.
 
    METHOD addColumns()                       
 
@@ -96,6 +96,31 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :cHeader             := 'Tipo'
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_tipo_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( oColumn := ::oBrowse:AddCol() )
+      :cSortOrder          := 'articulos_categoria_codigo'
+      :cHeader             := 'Código categoria'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_categoria_codigo' ) }
+      :lHide               := .t.
+      
+      if ::oController:isUserEdit()
+         :nEditType        := 5
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnArticulosCategoriasBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::oController:oArticulosCategoriasController:ActivateSelectorView() }
+         :nBtnBmp          := 1
+         :AddResource( "Lupa" )
+      end if
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'articulos_categoria_nombre'
+      :cHeader             := 'Categoria'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_categoria_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with

@@ -23171,11 +23171,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Mensajes", 800, "Static", WS_GROUP, 43, 3, 453, 24
 }
 
-<<<<<<< HEAD
-ENTRADA_SALIDA DIALOG DISCARDABLE 193, 47, 666, 227
-=======
 ENTRADA_SALIDA DIALOG DISCARDABLE 193, 47, 470, 227
->>>>>>> 2ae18123ce93a2fc1c9dc912d1de7e99f6d2aec2
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Entrdas o Salidas"
 FONT 8, "Ms Sans Serif"
@@ -23263,15 +23259,8 @@ FONT 8, "Ms Sans Serif"
   CONTROL "País", -1, "Static", WS_GROUP, 49, 150, 19, 8
   CONTROL "Provincia", -1, "Static", WS_GROUP, 49, 137, 60, 8
   CONTROL "", 700, "TEXPLORERBAR", 0x02000000, 502, 30, 160, 184
-<<<<<<< HEAD
-=======
   CONTROL "Cajas", 800, "Static", WS_GROUP, 43, 3, 453, 24
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 73, 452, 29
-  CONTROL "Código *", -1, "Static", WS_GROUP, 50, 43, 32, 8
-  CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 57, 41, 7
-  CONTROL "Identificación", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 452, 40
-  CONTROL "Próxima sessión", -1, "Static", WS_GROUP, 50, 87, 58, 8
-  CONTROL "Cajas", 800, "Static", WS_GROUP, 44, 3, 353, 25
 }
 
 IMPRESORA DIALOG DISCARDABLE 193, 47, 430, 150
@@ -23295,6 +23284,5 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Comandas", -1, "Static", WS_GROUP, 50, 100, 62, 8
   CONTROL "Anulación", -1, "Static", WS_GROUP, 50, 113, 60, 8
   CONTROL "Rutas", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 43, 87, 379, 39
->>>>>>> 2ae18123ce93a2fc1c9dc912d1de7e99f6d2aec2
 }
 
