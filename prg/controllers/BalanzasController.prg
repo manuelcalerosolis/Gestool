@@ -145,6 +145,9 @@ CLASS BalanzasView FROM SQLBaseView
 
    DATA aParidad INIT { "Sin paridad", "Paridad par", "Paridad impar" }
 
+   DATA oInicializacion
+
+   METHOD SetDefault()
   
    METHOD Activate()
 
@@ -217,7 +220,8 @@ METHOD Activate() CLASS BalanzasView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "inicializacion" ] ;
+   REDEFINE GET   ::oInicializacion ; 
+      VAR         ::oController:oModel:hBuffer[ "inicializacion" ] ;
       ID          170 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -241,11 +245,18 @@ METHOD Activate() CLASS BalanzasView
       OF          ::oDialog ;
 
 //Botones text y defecto------------------------------------------------------//
+
+   REDEFINE BUTTON ;
+      ID          210 ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      ACTION      ( msgalert("test") )
+
    REDEFINE BUTTON ;
       ID          220 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( ::oController:oModel:hBuffer[ "inicializacion" ] := 98000001 )
+      ACTION      ( ::SetDefault() )
 
 
    REDEFINE BUTTON ;
@@ -267,6 +278,14 @@ METHOD Activate() CLASS BalanzasView
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD SetDefault() CLASS BalanzasView
+
+   ::oController:oModel:hBuffer[ "inicializacion" ] := 98000001
+   ::oInicializacion:refresh()
+
+RETURN( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

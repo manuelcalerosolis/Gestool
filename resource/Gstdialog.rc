@@ -23253,7 +23253,6 @@ FONT 8, "Ms Sans Serif"
   CONTROL "País", -1, "Static", WS_GROUP, 49, 150, 19, 8
   CONTROL "Provincia", -1, "Static", WS_GROUP, 49, 137, 60, 8
   CONTROL "", 700, "TEXPLORERBAR", 0x02000000, 502, 30, 160, 184
-  CONTROL "Delegaciones", 800, "Static", WS_GROUP, 43, 3, 453, 24
 }
 
 IMPRESORA DIALOG DISCARDABLE 193, 47, 430, 150
@@ -23301,7 +23300,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 254, 234, 50, 14
   CONTROL "General", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 260, 41
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
-  CONTROL "Balanza", 800, "Static", WS_GROUP, 44, 3, 481, 24
+  CONTROL "Balanza", 800, "Static", WS_GROUP, 44, 3, 260, 24
   CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 56, 46, 8
   CONTROL "Código *", -1, "Static", WS_GROUP, 49, 43, 60, 8
   CONTROL "Puerto", -1, "Static", WS_GROUP, 50, 87, 62, 8
@@ -23315,5 +23314,50 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Retardo", -1, "Static", WS_GROUP, 49, 189, 41, 8
   CONTROL "Entubamiento", -1, "Static", WS_GROUP, 49, 202, 60, 8
   CONTROL "Abrir puerto/lectura", 202, "Static", WS_GROUP, 50, 213, 67, 8
+}
+
+RECIBO_GENERAL DIALOG DISCARDABLE 35, -50, 456, 265
+STYLE WS_CHILD|DS_3DLOOK
+FONT 8, "Ms Sans Serif"
+{
+  CONTROL "", 100, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 119, 38, 98, 12
+  CONTROL "", 110, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 119, 51, 98, 12
+  CONTROL "", 120, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 364, 38, 11, 10
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 363, 53, 80, 11
+  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 120, 81, 98, 11
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 120, 94, 98, 11
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 120, 107, 98, 11
+  CONTROL "", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 120, 139, 11, 10
+  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 120, 152, 98, 11
+  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 120, 183, 98, 11
+  CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 120, 197, 98, 11
+  CONTROL "", 220, "Edit", WS_BORDER|WS_TABSTOP, 120, 210, 98, 11
+  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 120, 224, 323, 11
+  CONTROL "", 240, "Edit", WS_BORDER|WS_TABSTOP, 120, 239, 323, 11
+  CONTROL "", 180, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 138, 138, 80, 12
+  CONTROL "Fechas", -1, "Button", BS_GROUPBOX, 43, 28, 404, 39
+  CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Recibos general", 800, "Static", WS_GROUP, 44, 1, 405, 24
+  CONTROL "Expedición", -1, "Static", WS_GROUP, 50, 42, 41, 8
+  CONTROL "Vencimiento", -1, "Static", WS_GROUP, 49, 55, 41, 8
+  CONTROL "No incluir en arqueo", 122, "Static", WS_GROUP, 286, 39, 67, 8
+  CONTROL "Sesión", -1, "Static", WS_GROUP, 287, 54, 41, 8
+  CONTROL "Importes", -1, "Button", BS_GROUPBOX, 43, 71, 404, 53
+  CONTROL "Importe", -1, "Static", WS_GROUP, 50, 84, 41, 8
+  CONTROL "Cobro", -1, "Static", WS_GROUP, 50, 97, 41, 8
+  CONTROL "Gasto", -1, "Static", WS_GROUP, 50, 110, 41, 8
+  CONTROL "Estado", -1, "Button", BS_GROUPBOX, 44, 128, 404, 41
+  CONTROL "Cobrado", 172, "Static", WS_GROUP, 50, 140, 67, 8
+  CONTROL "Código caja ", -1, "Static", WS_GROUP, 50, 152, 41, 8
+  CONTROL "", 192, "Edit", WS_BORDER|WS_TABSTOP, 220, 152, 224, 11
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 172, 404, 89
+  CONTROL "Cliente", -1, "Static", WS_GROUP, 49, 183, 41, 8
+  CONTROL "", 202, "Edit", WS_BORDER|WS_TABSTOP, 220, 183, 223, 11
+  CONTROL "Forma de pago", -1, "Static", WS_GROUP, 49, 197, 54, 8
+  CONTROL "", 212, "Edit", WS_BORDER|WS_TABSTOP, 220, 197, 223, 11
+  CONTROL "Agente", -1, "Static", WS_GROUP, 50, 210, 41, 8
+  CONTROL "", 222, "Edit", WS_BORDER|WS_TABSTOP, 220, 210, 223, 11
+  CONTROL "Concepto", -1, "Static", WS_GROUP, 50, 224, 41, 8
+  CONTROL "Pagado por", -1, "Static", WS_GROUP, 50, 239, 41, 8
 }
 

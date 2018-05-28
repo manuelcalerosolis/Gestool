@@ -12,4 +12,5 @@
 
 #define MANIFEST       24
 
-#define Cos  65535
+
+#define Fechas  65535
