@@ -23253,7 +23253,6 @@ FONT 8, "Ms Sans Serif"
   CONTROL "País", -1, "Static", WS_GROUP, 49, 150, 19, 8
   CONTROL "Provincia", -1, "Static", WS_GROUP, 49, 137, 60, 8
   CONTROL "", 700, "TEXPLORERBAR", 0x02000000, 502, 30, 160, 184
-  CONTROL "Delegaciones", 800, "Static", WS_GROUP, 43, 3, 453, 24
 }
 
 IMPRESORA DIALOG DISCARDABLE 193, 47, 430, 150
