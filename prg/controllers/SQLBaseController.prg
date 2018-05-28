@@ -133,6 +133,8 @@ CLASS SQLBaseController
 
    METHOD refreshBrowseView()                         INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
 
+   METHOD isBrowseColumnEdit()                        
+
    METHOD startBrowse( oCombobox )
    METHOD restoreBrowseState()
 
@@ -275,6 +277,24 @@ METHOD End()
    Self           := nil
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD isBrowseColumnEdit()
+
+   local oSelectedColumn   
+
+   if !empty( ::oBrowseView ) 
+
+      oSelectedColumn   := ::oBrowseView:getSelectedCol()
+   
+      if !empty( oSelectedColumn )
+         RETURN ( oSelectedColumn:nEditType != 0 )
+      end if 
+   
+   end if 
+
+RETURN ( .f. )   
 
 //---------------------------------------------------------------------------//
 
@@ -464,6 +484,10 @@ RETURN ( lDuplicate )
 METHOD Edit( nId ) 
 
    local lEdit    := .t. 
+
+   if ::isBrowseColumnEdit()
+      RETURN ( .f. )
+   end if   
 
    if empty( nId )
       nId         := ::getIdFromRowSet()
@@ -785,12 +809,12 @@ RETURN ( ::aDocuments )
 
 //---------------------------------------------------------------------------//
 
-METHOD validColumnBrowse( uValue, nKey, oModel, cFieldName )
+METHOD validColumnBrowse( oCol, uValue, nKey, oModel, cFieldName )
    
-   local uuid       := ""
+   local uuid              := ""
 
-   if !hb_IsNumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_IsNil( uValue )
-      Return ( .t. )
+   if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
+      RETURN ( .t. )
    end if
 
    if hb_ishash( uValue )
@@ -798,12 +822,12 @@ METHOD validColumnBrowse( uValue, nKey, oModel, cFieldName )
    end if
 
    if hb_ischar( uValue )
-      uuid          := oModel:getUuidWhereCodigo( AllTrim( uValue ) )
+      uuid          := oModel:getUuidWhereCodigo( alltrim( uValue ) )
    end if
 
-   if Empty( uuid )
+   if empty( uuid )
       msgStop( "valor no encontrado." )
-      Return .t.
+      RETURN .t.
    end if
 
    ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cFieldName, uuid )

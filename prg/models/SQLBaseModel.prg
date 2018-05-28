@@ -333,6 +333,8 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addGroupBy( cSQLSelect )
 
+   logwrite( cSQLSelect )
+
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//

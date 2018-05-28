@@ -1186,7 +1186,7 @@ METHOD ClearString( cString ) CLASS TCommPort
    */
 
    if SubStr( cString, 1, 1 ) == ::cEntubamiento
-      cClearString      := SubStr( cString, 2 )
+      cClearString      := SubStr( cString, 2 ) 
    else
       cClearString      := cString
    end if

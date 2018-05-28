@@ -11690,8 +11690,10 @@ METHOD PostEdit( xValue, lButton, lDirectAssign ) CLASS TXBrwColumn
       case ::nEditType == EDIT_GET_BUTTON
          if ! lButton
             if ::oEditGet != nil
+
                Eval( bOnPostEdit, Self, Eval( ::oEditGet:bSetGet ), ::oEditGet:nLastKey )
                nLastKey    := ::oEditGet:nLastKey
+
                ::oEditGet:End()
                ::oEditGet := nil
             endif
