@@ -139,7 +139,6 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
                         "articulos.lote AS lote, "                                  + ;
                         "articulos.lote_actual AS lote_actual, "                    + ;
                         "articulos.precio_costo AS precio_costo, "                  + ;
-<<<<<<< HEAD
                         "RPAD( IFNULL( articulos_familias.codigo, '' ), 20, ' ' ) AS articulo_familia_codigo, "               + ;
                         "articulos_familias.nombre AS articulo_familia_nombre, "                                              + ;
                         "RPAD( IFNULL( articulos_tipos.codigo, '' ), 20, ' ' ) AS articulo_tipo_codigo, "                     + ;
@@ -159,21 +158,6 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
                         "LEFT JOIN articulos_fabricantes ON articulos.articulo_fabricante_uuid = articulos_fabricantes.uuid " + ;
                         "LEFT JOIN tipos_iva ON articulos.tipo_iva_uuid = tipos_iva.uuid "                                    + ;
                         "LEFT JOIN impuestos_especiales ON articulos.impuesto_especial_uuid = impuestos_especiales.uuid " 
-=======
-                        "RPAD( IFNULL( articulos_familia.codigo, '' ), 20, ' ' ) AS articulos_familia_codigo, "      + ;
-                        "articulos_familia.nombre AS articulos_familia_nombre, "    + ;
-                        "RPAD( IFNULL( articulos_tipo.codigo, '' ), 20, ' ' ) AS articulos_tipo_codigo, "            + ;
-                        "articulos_tipo.nombre AS articulos_tipo_nombre, "          + ;
-                        "RPAD( IFNULL( articulos_categoria.codigo, '' ), 20, ' ' ) AS articulos_categoria_codigo, "  + ;
-                        "articulos_categoria.nombre AS articulos_categoria_nombre, "          + ;
-                        "RPAD( IFNULL( articulos_fabricante.codigo, '' ), 20, ' ' ) AS articulos_fabricante_codigo, "  + ;
-                        "articulos_fabricante.nombre AS articulos_fabricante_nombre "           + ;
-                     "FROM articulos "                                              + ;
-                        "LEFT JOIN articulos_familia ON articulos.articulos_familia_uuid = articulos_familia.uuid "  + ; 
-                        "LEFT JOIN articulos_tipo ON articulos.articulos_tipo_uuid = articulos_tipo.uuid "           + ;
-                        "LEFT JOIN articulos_categoria ON articulos.articulos_categoria_uuid = articulos_categoria.uuid " + ;
-                        "LEFT JOIN articulos_fabricante ON articulos.articulos_fabricante_uuid = articulos_fabricante.uuid " 
->>>>>>> 2d0ffb78ce5a5899d3bdfea67eb2ee592f662821
 
 RETURN ( cSelect )
 
