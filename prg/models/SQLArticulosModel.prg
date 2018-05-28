@@ -144,11 +144,14 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
                         "RPAD( IFNULL( articulos_tipo.codigo, '' ), 20, ' ' ) AS articulos_tipo_codigo, "            + ;
                         "articulos_tipo.nombre AS articulos_tipo_nombre, "          + ;
                         "RPAD( IFNULL( articulos_categoria.codigo, '' ), 20, ' ' ) AS articulos_categoria_codigo, "  + ;
-                        "articulos_categoria.nombre AS articulos_categoria_nombre "           + ;
+                        "articulos_categoria.nombre AS articulos_categoria_nombre, "          + ;
+                        "RPAD( IFNULL( articulos_fabricante.codigo, '' ), 20, ' ' ) AS articulos_fabricante_codigo, "  + ;
+                        "articulos_fabricante.nombre AS articulos_fabricante_nombre "           + ;
                      "FROM articulos "                                              + ;
                         "LEFT JOIN articulos_familia ON articulos.articulos_familia_uuid = articulos_familia.uuid "  + ; 
                         "LEFT JOIN articulos_tipo ON articulos.articulos_tipo_uuid = articulos_tipo.uuid "           + ;
                         "LEFT JOIN articulos_categoria ON articulos.articulos_categoria_uuid = articulos_categoria.uuid " 
+                        "LEFT JOIN articulos_fabricante ON articulos.articulos_fabricante_uuid = articulos_fabricante.uuid " 
 
 RETURN ( cSelect )
 
