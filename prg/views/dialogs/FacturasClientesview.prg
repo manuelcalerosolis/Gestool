@@ -88,7 +88,7 @@ RETURN ( ::oDialog:nResult )
 METHOD startDialog() CLASS FacturasClientesView
 
    ::addLinksToExplorerBar()
-   
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
