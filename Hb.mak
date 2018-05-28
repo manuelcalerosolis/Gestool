@@ -358,6 +358,7 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+BalanzasController.prg 														\
 ImpresorasController.prg 													\
 CajasController.prg 															\
 EntradaSalidaController.prg 												\
@@ -1036,6 +1037,7 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+BalanzasController.obj       												\
 ImpresorasController.obj       											\
 CajasController.obj       													\
 EntradaSalidaController.obj       										\
@@ -1701,6 +1703,7 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\BalanzasController.obj    										+	
 $(OBJ)\ImpresorasController.obj    										+
 $(OBJ)\CajasController.obj    											+
 $(OBJ)\EntradaSalidaController.obj    									+

@@ -3019,6 +3019,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_printer2_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Balanzas'
+   oItem:cMessage       := 'Balanzas'
+   oItem:bAction        := {||BalanzasController():New():ActivateNavigatorView() }
+   oItem:cId            := "balanzas"
+   oItem:cBmp           := "gc_balance_16"
+   oItem:cBmpBig        := "gc_balance_32"
+   oItem:lShow          := .f.
+
 RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
