@@ -291,7 +291,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLDelegacionesModel FROM SQLCompanyModel
 
-   DATA cTableName                        INIT "delegaciones"
+   DATA cTableName                        INIT "empresas_delegaciones"
 
    METHOD getColumns()
 
