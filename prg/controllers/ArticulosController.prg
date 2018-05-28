@@ -46,6 +46,9 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD validColumnArticulosFamiliaBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFamiliaController:oModel, "articulos_familia_uuid" ) )
 
+   METHOD validColumnArticulosTipoBrowse( oCol, uValue, nKey ) ;
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosTipoController:oModel, "articulos_tipo_uuid" ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

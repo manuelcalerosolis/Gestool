@@ -133,6 +133,8 @@ CLASS SQLBaseController
 
    METHOD refreshBrowseView()                         INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
 
+   METHOD isBrowseColumnEdit()                        
+
    METHOD startBrowse( oCombobox )
    METHOD restoreBrowseState()
 
@@ -275,6 +277,24 @@ METHOD End()
    Self           := nil
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD isBrowseColumnEdit()
+
+   local oSelectedColumn   
+
+   if !empty( ::oBrowseView ) 
+
+      oSelectedColumn   := ::oBrowseView:getSelectedCol()
+   
+      if !empty( oSelectedColumn )
+         RETURN ( oSelectedColumn:nEditType != 0 )
+      end if 
+   
+   end if 
+
+RETURN ( .f. )   
 
 //---------------------------------------------------------------------------//
 
@@ -464,6 +484,10 @@ RETURN ( lDuplicate )
 METHOD Edit( nId ) 
 
    local lEdit    := .t. 
+
+   if ::isBrowseColumnEdit()
+      RETURN ( .f. )
+   end if   
 
    if empty( nId )
       nId         := ::getIdFromRowSet()
@@ -788,8 +812,6 @@ RETURN ( ::aDocuments )
 METHOD validColumnBrowse( oCol, uValue, nKey, oModel, cFieldName )
    
    local uuid              := ""
-
-   oCol:oEditGet:nLastKey  := 0
 
    if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
       RETURN ( .t. )

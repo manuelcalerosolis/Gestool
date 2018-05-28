@@ -52,6 +52,7 @@ CLASS SQLBrowseView
    METHOD createFromResource( id )           INLINE ( ::oBrowse:CreateFromResource( id ) )
 
    METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick := bLDblClick )
+   METHOD setLDClickDatas( bLDClickDatas )   INLINE ( ::oBrowse:bLDClickDatas := bLDClickDatas )
 
    METHOD Refresh()                          INLINE ( ::oBrowse:makeTotals(), ::oBrowse:Refresh() )
    METHOD goTop()                            INLINE ( ::oBrowse:goTop() )
@@ -91,6 +92,8 @@ CLASS SQLBrowseView
    METHOD getVisibleColumnsHeaders()   
 
    METHOD getFirstColumnHeader()
+
+   METHOD getSelectedCol()                   INLINE ( if( !empty( ::oBrowse ), ::oBrowse:SelectedCol(), nil ) )
 
    // Events---------------------------------------------------------------------
 

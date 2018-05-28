@@ -2989,8 +2989,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_document_text_user_32"
    oItem:lShow          := .f.
 
-<<<<<<< HEAD
-=======
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Delegaciones'
@@ -3001,7 +2999,6 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_warehouse_32"
    oItem:lShow          := .f.
 
->>>>>>> 2ae18123ce93a2fc1c9dc912d1de7e99f6d2aec2
    oItem                := oItemSQL:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cajas'

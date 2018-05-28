@@ -129,20 +129,23 @@ RETURN ( ::hColumns )
 
 METHOD getInitialSelect() CLASS SQLArticulosModel
 
-   local cSelect  := "SELECT articulos.id AS id, "                            + ;
-                        "articulos.uuid AS uuid, "                            + ;
-                        "articulos.codigo AS codigo, "                        + ;
-                        "articulos.nombre AS nombre, "                        + ;
-                        "articulos.obsoleto AS obsoleto, "                    + ;
-                        "articulos.caducidad AS caducidad, "                  + ;
-                        "articulos.periodo_caducidad AS periodo_caducidad, "  + ;
-                        "articulos.lote AS lote, "                            + ;
-                        "articulos.lote_actual AS lote_actual, "              + ;
-                        "articulos.precio_costo AS precio_costo, "                           + ;
-                        "RPAD( IFNULL( articulos_familia.codigo, ''), 18, ' ' ) AS articulos_familia_codigo, "    + ;
-                        "articulos_familia.nombre AS articulos_familia_nombre "     + ;
+   local cSelect  := "SELECT articulos.id AS id, "                                  + ;
+                        "articulos.uuid AS uuid, "                                  + ;
+                        "articulos.codigo AS codigo, "                              + ;
+                        "articulos.nombre AS nombre, "                              + ;
+                        "articulos.obsoleto AS obsoleto, "                          + ;
+                        "articulos.caducidad AS caducidad, "                        + ;
+                        "articulos.periodo_caducidad AS periodo_caducidad, "        + ;
+                        "articulos.lote AS lote, "                                  + ;
+                        "articulos.lote_actual AS lote_actual, "                    + ;
+                        "articulos.precio_costo AS precio_costo, "                  + ;
+                        "RPAD( IFNULL( articulos_familia.codigo, '' ), 20, ' ' ) AS articulos_familia_codigo, "   + ;
+                        "articulos_familia.nombre AS articulos_familia_nombre, "    + ;
+                        "RPAD( IFNULL( articulos_tipo.codigo, '' ), 20, ' ' ) AS articulos_tipo_codigo, "         + ;
+                        "articulos_tipo.nombre AS articulos_tipo_nombre "           + ;
                      "FROM articulos "                                              + ;
-                        "LEFT JOIN articulos_familia ON articulos.articulos_familia_uuid = articulos_familia.uuid " 
+                        "LEFT JOIN articulos_familia ON articulos.articulos_familia_uuid = articulos_familia.uuid "  + ; 
+                        "LEFT JOIN articulos_tipo ON articulos.articulos_tipo_uuid = articulos_tipo.uuid " 
 
 RETURN ( cSelect )
 

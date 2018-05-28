@@ -6,7 +6,7 @@
 
 CLASS ArticulosBrowseView FROM SQLBrowseView
 
-   DATA lFastEdit                            INIT .t.
+   // DATA lFastEdit                            INIT .t.
 
    METHOD addColumns()                       
 
@@ -48,7 +48,6 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :bLDClickData        := {|| ::getController():Edit(), ::Refresh() }
    end with
 
    with object ( oColumn := ::oBrowse:AddCol() )
@@ -60,8 +59,6 @@ METHOD addColumns() CLASS ArticulosBrowseView
       
       if ::oController:isUserEdit()
          :nEditType        := 5
-         // :bLDClickData     := {|| oColumn:Edit( 1 ) }
-         // :bKeyDown         := {|nKey| if( nKey == VK_RETURN, ( oColumn:Edit( 1 ), 0 ), nil ) }
          :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnArticulosFamiliaBrowse( oCol, uNewValue, nKey ) }
          :bEditBlock       := {|| ::oController:oArticulosFamiliaController:ActivateSelectorView() }
          :nBtnBmp          := 1
@@ -74,6 +71,31 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :cHeader             := 'Familia'
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_familia_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( oColumn := ::oBrowse:AddCol() )
+      :cSortOrder          := 'articulos_tipo_codigo'
+      :cHeader             := 'Código tipo'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_tipo_codigo' ) }
+      :lHide               := .t.
+      
+      if ::oController:isUserEdit()
+         :nEditType        := 5
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnArticulosTipoBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::oController:oArticulostipoController:ActivateSelectorView() }
+         :nBtnBmp          := 1
+         :AddResource( "Lupa" )
+      end if
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'articulos_tipo_nombre'
+      :cHeader             := 'Tipo'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_tipo_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with

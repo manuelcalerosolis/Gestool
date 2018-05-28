@@ -68,6 +68,8 @@ CLASS SQLXBrowse FROM TXBrowse
 
    METHOD setFilterInRowSet( cFilterExpresion )
 
+   METHOD getSelectedCol()                      INLINE ::SelectedCol()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
