@@ -5,6 +5,8 @@
 
 CLASS FacturasClientesController FROM SQLNavigatorController
 
+   DATA oClientesController
+
    METHOD New()
 
    METHOD End()
@@ -35,6 +37,8 @@ METHOD New() CLASS FacturasClientesController
 
    ::oRepository                 := FacturasClientesRepository():New( self )
 
+   ::oClientesController         := ClientesController():New( self )
+
    ::lTransactional              := .t.
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
@@ -44,6 +48,8 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS FacturasClientesController
+
+   ::oClientesController:End()
 
    ::Super:End()
 
@@ -77,8 +83,8 @@ END CLASS
 
 METHOD getValidators() CLASS FacturasClientesValidator
 
-   ::hValidators  := {  "codigo" =>          {  "required"           => "El código del cliente es un dato requerido"  } ,;  
-                        "nombre" =>          {  "required"           => "El nombre del cliente es un dato requerido" }  }
+   ::hValidators  := {  "codigo" =>    {  "required"   => "El código del cliente es un dato requerido"  } ,;  
+                        "nombre" =>    {  "required"   => "El nombre del cliente es un dato requerido" }  }
 
 RETURN ( ::hValidators )
 

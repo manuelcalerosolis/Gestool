@@ -33,7 +33,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TRANSACION_COMERCIAL" ;
-      TITLE       ::LblTitle() + "cliente"
+      TITLE       ::LblTitle() + "factura cliente"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -57,9 +57,12 @@ METHOD Activate() CLASS FacturasClientesView
 
    ::redefineExplorerBar()
 
-   /*
-   Botones generales-----------------------------------------------------------
-   */
+   // Cliente------------------------------------------------------------------
+
+   ::oController:oClientesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_uuid" ] ) )
+   ::oController:oClientesController:oGetSelector:Build( { "idGet" => 170, "idText" => 180, "idNif" => 181, "oDialog" => ::oFolder:aDialogs[1] } )
+
+   // Botones generales--------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -90,6 +93,8 @@ RETURN ( ::oDialog:nResult )
 METHOD startDialog() CLASS FacturasClientesView
 
    ::addLinksToExplorerBar()
+
+   ::oController:oClientesController:oGetSelector:Start()
 
 RETURN ( self )
 

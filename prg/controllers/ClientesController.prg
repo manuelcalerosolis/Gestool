@@ -69,6 +69,8 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oDescuentosController          := DescuentosController():New( self )
 
    ::oClientesEntidadesController   := ClientesEntidadesController():New( self )
+
+   ::oGetSelector                   := ClientGetSelector():New( self )
    
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -124,6 +126,8 @@ METHOD End() CLASS ClientesController
    ::oClientesGruposController :End()
 
    ::oDireccionesController:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 

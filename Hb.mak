@@ -690,6 +690,7 @@ SQLProveedoresModel.prg 		  											\
 ClientesView.prg 																\
 ClientesValidator.prg 														\
 SqlGetSelector.prg 															\
+SqlClientGetSelector.prg													\
 SQLDialogView.prg 															\
 CalculaPrecioCommand.prg 													\
 DescuentosController.prg 													\
@@ -1364,6 +1365,7 @@ SQLProveedoresModel.obj 		  											\
 ClientesView.obj 																\
 ClientesValidator.obj 														\
 SqlGetSelector.obj 															\
+SqlClientGetSelector.obj 													\
 SQLDialogView.obj 															\
 CalculaPrecioCommand.obj 													\
 DescuentosController.obj 													\
@@ -2027,6 +2029,7 @@ $(OBJ)\SQLProveedoresModel.obj 		  									+
 $(OBJ)\ClientesView.obj 													+
 $(OBJ)\ClientesValidator.obj 												+
 $(OBJ)\SqlGetSelector.obj 													+
+$(OBJ)\SqlClientGetSelector.obj											+
 $(OBJ)\SQLDialogView.obj 													+
 $(OBJ)\CalculaPrecioCommand.obj 											+
 $(OBJ)\DescuentosController.obj 											+
