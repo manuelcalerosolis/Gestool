@@ -53,15 +53,17 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS TercerosController
+METHOD New( oSenderController) CLASS TercerosController
 
-   ::Super:New()
+   ::Super:New( oSenderController)
 
    ::oBrowseView                 := TercerosBrowseView():New( self )
 
    ::oRepository                 := TercerosRepository():New( self )
 
    ::lTransactional              := .t.
+
+   ::oGetSelector                := GetSelector():New( self )
 
 RETURN ( Self )
 

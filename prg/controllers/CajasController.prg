@@ -17,9 +17,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS CajasController
+METHOD New( oSenderController) CLASS CajasController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Cajas"
 
@@ -45,6 +45,8 @@ METHOD New() CLASS CajasController
 
    ::oImpresorasController  := ImpresorasController():New( self, ::oModel:cTableName )
 
+   ::oGetSelector                := GetSelector():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
@@ -66,6 +68,8 @@ METHOD End() CLASS CajasController
    ::oImpresorasController:End()
 
    ::oRepository:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 
@@ -117,7 +121,7 @@ METHOD addColumns() CLASS CajasBrowseView
       :cSortOrder          := 'nombre_caja'
       :cHeader             := 'Nombre'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_caja' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -178,10 +182,10 @@ METHOD Activate() CLASS CajasView
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre_caja" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre_caja" ) ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
 REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_sesion" ] ;
@@ -289,7 +293,7 @@ METHOD getColumns() CLASS SQLCajasModel
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                             ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre_caja",       {  "create"    => "VARCHAR( 200 ) NOT NULL"                  ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "codigo_sesion",     {  "create"    => "INTEGER UNSIGNED"                        ,;

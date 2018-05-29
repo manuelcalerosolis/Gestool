@@ -23,9 +23,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ClientesController
+METHOD New( oSenderController ) CLASS ClientesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                         := "Clientes"
 
