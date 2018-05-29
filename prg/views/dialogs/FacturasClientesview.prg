@@ -29,6 +29,8 @@ RETURN ( self )
 
 METHOD Activate() CLASS FacturasClientesView
 
+   local cSeleccion := "aaa"
+
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TRANSACION_COMERCIAL" ;
       TITLE       ::LblTitle() + "cliente"
@@ -50,7 +52,7 @@ METHOD Activate() CLASS FacturasClientesView
       OF          ::oDialog ;
       PROMPT      "General",;
                   "Comercial";
-      DIALOGS     "CLIENTE_GENERAL" ,;
+      DIALOGS     "TRANSACION_GENERAL" ,;
                   "CLIENTE_COMERCIAL"
 
    ::redefineExplorerBar()
