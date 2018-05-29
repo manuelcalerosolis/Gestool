@@ -4,6 +4,8 @@
 CLASS FacturasClientesView FROM SQLBaseView
   
    DATA oExplorerBar
+
+   DATA oGetNumero
    
    METHOD Activate()
 
@@ -60,7 +62,17 @@ METHOD Activate() CLASS FacturasClientesView
    // Cliente------------------------------------------------------------------
 
    ::oController:oClientesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_uuid" ] ) )
-   ::oController:oClientesController:oGetSelector:Build( { "idGet" => 170, "idText" => 180, "idNif" => 181, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oClientesController:oGetSelector:Build( { "idGet" => 170, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
+
+   // Cliente------------------------------------------------------------------
+
+   REDEFINE GET   ::oGetNumero ;
+      VAR         ::oController:oModel:hBuffer[ "numero" ] ;
+      ID          100 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   ::oGetNumero:bValid   := {|| ::oController:validateNumero() }
 
    // Botones generales--------------------------------------------------------
 

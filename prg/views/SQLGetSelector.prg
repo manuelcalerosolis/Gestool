@@ -62,6 +62,9 @@ CLASS GetSelector
    METHOD setEvent( cEvent, bEvent )            INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                   INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
+
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//

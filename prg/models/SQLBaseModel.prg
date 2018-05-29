@@ -1179,7 +1179,7 @@ METHOD updateFieldWhereId( id, cField, uValue )
    cSql        +=    "SET " + cField + " = " + toSqlString( uValue ) + " "
    cSql        +=    "WHERE id = " + toSqlString( id )
 
-Return ( ::getDatabase():Exec( cSql ) )
+RETURN ( ::getDatabase():Exec( cSql ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1218,7 +1218,7 @@ METHOD getField( cField, cBy, cId )
    cSql        +=    "FROM " + ::cTableName                             + " "
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
 
-Return ( ::getDatabase():getValue( cSql ) )
+RETURN ( ::getDatabase():getValue( cSql ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1228,7 +1228,7 @@ METHOD getHash( cBy, cId )
    cSql        +=    "FROM " + ::cTableName                             + " "
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
 
-Return ( atail( ::getDatabase():selectTrimedFetchHash( cSql ) ) )
+RETURN ( atail( ::getDatabase():selectTrimedFetchHash( cSql ) ) )
 
 //----------------------------------------------------------------------------//
 

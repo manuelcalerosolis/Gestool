@@ -10,8 +10,8 @@ CLASS SQLBaseValidator
 
    DATA oView
 
-   DATA hValidators
    DATA hAsserts
+   DATA hValidators
 
    DATA cColumnToProced
 
@@ -60,6 +60,8 @@ CLASS SQLBaseValidator
    METHOD Positive( uValue )
 
    METHOD getSenderControllerUuid()
+
+   METHOD numeroDocumento( value )
 
    METHOD setDialog( oView )              INLINE ( ::oView := oView )
 
@@ -374,7 +376,7 @@ METHOD getUniqueSenctence( uValue ) CLASS SQLParentValidator
 
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
-   cSQLSentence      +=    "AND parent_uuid = " + quoted( ::getSenderControllerUuid() )             + space( 1 ) 
+   cSQLSentence      +=    "AND parent_uuid = " + quoted( ::getSenderControllerUuid() )   + space( 1 ) 
 
    id                := ::oController:getModelBufferColumnKey()
    if !empty( id )
@@ -392,10 +394,35 @@ METHOD Exist( uValue ) CLASS SQLParentValidator
 
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
-   cSQLSentence      +=    "AND parent_uuid = " + quoted( ::getSenderControllerUuid() )             + space( 1 ) 
+   cSQLSentence      +=    "AND parent_uuid = " + quoted( ::getSenderControllerUuid() )   + space( 1 ) 
 
    nCount            := getSQLDatabase():getValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 
 //---------------------------------------------------------------------------//
+
+METHOD numeroDocumento( value )
+
+   local nAt
+   local cSerie   := ""
+   local nNumero
+
+   value          := alltrim( value )
+
+   nAt            := rat( "/", value )
+   if nAt != 0
+      nNumero     := substr( value, nAt + 1 )
+      cSerie      := substr( value, 1, nAt  )
+   else
+      nNumero     := value
+   end if  
+
+   if !hb_regexlike( "^[0-9]{1,6}$", nNumero )
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
