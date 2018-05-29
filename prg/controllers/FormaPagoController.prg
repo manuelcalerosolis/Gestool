@@ -495,7 +495,7 @@ CLASS SQLFormaPagoModel FROM SQLCompanyModel
    METHOD getColumns()
 
    METHOD getBancoUuidAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 3 ), ::oController:oBancosController:oModel():getCodigoWhereUuid( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oBancosController:oModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setBancoUuidAttribute( uValue ) ;
                                  INLINE ( if( empty( uValue ), "", ::oController:oBancosController:oModel():getUuidWhereCodigo( uValue ) ) )
