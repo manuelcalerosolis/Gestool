@@ -18,6 +18,8 @@ CLASS GetSelector
 
    DATA oView
 
+   DATA uFields
+
    DATA oEvents
 
    METHOD New( oSender )
@@ -41,7 +43,11 @@ CLASS GetSelector
    METHOD validAction()
 
    METHOD loadHelpText()
+      METHOD cleanHelpText()                    INLINE ( ::oGet:oHelptext:cText( "" ) )
+      METHOD setHelpText( value )               INLINE ( ::oGet:oHelptext:cText( value ) )
 
+   METHOD getFields()                           INLINE ( ::uFields   := ::oController:oModel:getField( "nombre", ::getKey(), ::oGet:varGet() ) )
+   
    METHOD start()                               INLINE ( ::loadHelpText( .t. ) )
 
    METHOD evalValue( value )                    INLINE ( eval( ::bValue, value ) )
@@ -172,19 +178,19 @@ METHOD loadHelpText( lSilenceMode ) CLASS GetSelector
 
    ::evalValue( ::oGet:varGet() )
 
-   ::oGet:oHelptext:cText( value )
+   ::cleanHelpText()
 
    if empty( ::oGet:varGet() )
 
       ::fireEvent( 'loadingEmpty' )
-      
+
       RETURN ( .t. )
 
    end if
 
-   value                   := ::oController:oModel:getField( "nombre", ::getKey(), ::oGet:varGet() )
+   ::getFields()
 
-   if empty( value )
+   if empty( ::uFields )
 
       ::fireEvent( 'loadedError' )
 
@@ -194,9 +200,7 @@ METHOD loadHelpText( lSilenceMode ) CLASS GetSelector
 
    end if
 
-   ::evalValue( ::oGet:varGet() )
-
-   ::oGet:oHelptext:cText( value )
+   ::setHelpText( ::uFields )
 
    ::oGet:Refresh()
 

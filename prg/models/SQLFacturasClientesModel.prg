@@ -24,7 +24,7 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
    ::getEmpresaColumns()
 
    hset( ::hColumns, "delegacion_uuid",               {  "create"    => "VARCHAR( 40 )"                        ,;
-                                                         "default"   => {|| Company():delegacion_uuid() } }    )
+                                                         "default"   => {|| Company():delegacionUuid() } }    )
 
    hset( ::hColumns, "numero",                        {  "create"    => "VARCHAR( 50 )"                        ,;
                                                          "default"   => {|| space( 50 ) } }                    )

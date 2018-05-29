@@ -99,6 +99,7 @@ CLASS SQLBaseModel
    METHOD getInitialSelect()                          INLINE ( "SELECT * FROM " + ::getTableName() )
 
    METHOD getField( cField, cBy, cId )
+   METHOD getHash( cField, cBy, cId )
 
    METHOD getIdSelect( id )
    METHOD getWhereSelect( cWhere )
@@ -1218,6 +1219,16 @@ METHOD getField( cField, cBy, cId )
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
 
 Return ( ::getDatabase():getValue( cSql ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD getHash( cBy, cId )
+
+   local cSql  := "SELECT * " 
+   cSql        +=    "FROM " + ::cTableName                             + " "
+   cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
+
+Return ( atail( ::getDatabase():selectTrimedFetchHash( cSql ) ) )
 
 //----------------------------------------------------------------------------//
 
