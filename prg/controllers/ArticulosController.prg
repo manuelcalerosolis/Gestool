@@ -33,6 +33,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oImagenesController
 
+   DATA oArticulosTemporadasController
+
    METHOD New()
 
    METHOD End()
@@ -55,6 +57,9 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD validColumnArticulosFabricantesBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFabricantesController:oModel, "articulo_fabricante_uuid" ) )
 
+   METHOD validColumnArticulosTemporadasBrowse( oCol, uValue, nKey ) ;
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosTemporadasController:oModel, "articulo_temporada_uuid" ) )
+
    METHOD validColumnTiposIvaBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oTipoIvaController:oModel, "tipo_iva_uuid" ) )
 
@@ -75,45 +80,45 @@ METHOD New() CLASS ArticulosController
 
    ::Super:New()
 
-   ::cTitle                            := "Artículos"
+   ::cTitle                                  := "Artículos"
 
-   ::cName                             := "articulos"
+   ::cName                                   := "articulos"
 
-   ::hImage                            := {  "16" => "gc_object_cube_16",;
+   ::hImage                                  := {  "16" => "gc_object_cube_16",;
                                              "32" => "gc_object_cube_32",;
                                              "48" => "gc_object_cube_48" }
 
-   ::lTransactional                    := .t.
+   ::lTransactional                          := .t.
 
-   ::nLevel                            := Auth():Level( ::cName )
+   ::nLevel                                  := Auth():Level( ::cName )
 
-   ::oModel                            := SQLArticulosModel():New( self )
+   ::oModel                                  := SQLArticulosModel():New( self )
 
-   ::oBrowseView                       := ArticulosBrowseView():New( self )
+   ::oBrowseView                             := ArticulosBrowseView():New( self )
 
-   ::oDialogView                       := ArticulosView():New( self )
+   ::oDialogView                             := ArticulosView():New( self )
 
-   ::oValidator                        := ArticulosValidator():New( self, ::oDialogView )
+   ::oValidator                              := ArticulosValidator():New( self, ::oDialogView )
 
-   ::oRepository                       := ArticulosRepository():New( self )
+   ::oRepository                             := ArticulosRepository():New( self )
 
-   ::oCamposExtraValoresController     := CamposExtraValoresController():New( self, 'clientes' )
+   ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, 'clientes' )
 
-   ::oTagsController                   := TagsController():New( self )
+   ::oTagsController                         := TagsController():New( self )
 
-   ::oArticulosFamiliasController      := ArticulosFamiliasController():New( self )
+   ::oArticulosFamiliasController            := ArticulosFamiliasController():New( self )
 
-   ::oArticulosTipoController          := ArticulosTipoController():New( self )
+   ::oArticulosTipoController                := ArticulosTipoController():New( self )
 
-   ::oArticulosCategoriasController    := ArticulosCategoriasController():New( self )
+   ::oArticulosCategoriasController          := ArticulosCategoriasController():New( self )
 
-   ::oArticulosFabricantesController   := ArticulosFabricantesController():New( self )
+   ::oArticulosFabricantesController         := ArticulosFabricantesController():New( self )
 
-   ::oTipoIvaController                := TipoIvaController():New( self )
+   ::oTipoIvaController                      := TipoIvaController():New( self )
 
-   ::oImpuestosEspecialesController    := ImpuestosEspecialesController():New( self )
+   ::oImpuestosEspecialesController          := ImpuestosEspecialesController():New( self )
 
-   ::oArticulosPreciosController       := ArticulosPreciosController():New( self )
+   ::oArticulosPreciosController             := ArticulosPreciosController():New( self )
 
    ::oPrimeraPropiedadController             := PropiedadesController():New( self )
 
@@ -124,6 +129,8 @@ METHOD New() CLASS ArticulosController
    ::oImagenesController                     := ImagenesController():New( self )
 
    ::oTraduccionesController                 := TraduccionesController():New( self )
+
+   ::oArticulosTemporadasController          := ArticulosTemporadasController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -172,6 +179,8 @@ METHOD End() CLASS ArticulosController
    ::oImagenesController:End()
 
    ::oTraduccionesController:End()
+
+   ::oArticulosTemporadasController:End()
 
    ::Super:End()
 

@@ -2788,7 +2788,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Temporadas de artículo'
    oItem:cMessage       := 'Temporadas de artículo'
-   oItem:bAction        := {|| ArticulosTemporadaController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| ArticulosTemporadasController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_cloud_sun_16"
    oItem:cBmpBig        := "gc_cloud_sun_32"

@@ -59,6 +59,12 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
    METHOD setSegundaPropiedadUuidAttribute( uValue ) ;
                                  INLINE ( if( empty( uValue ), "", SQLPropiedadesModel():getUuidWhereCodigo( uValue ) ) )
 
+   METHOD getArticuloTemporadaUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), space( 20 ), SQLArticulosTemporadasModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setArticuloTemporadaUuidAttribute( uValue ) ;
+                                 INLINE ( if( empty( uValue ), "", SQLArticulosTemporadasModel():getUuidWhereCodigo( uValue ) ) )
+                                    
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -89,6 +95,9 @@ METHOD getColumns() CLASS SQLArticulosModel
                                                       "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "articulo_fabricante_uuid",   {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "articulo_temporada_uuid",    {  "create"    => "VARCHAR( 40 )"                           ,;
                                                       "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "tipo_iva_uuid",              {  "create"    => "VARCHAR( 40 )"                           ,;
@@ -154,13 +163,16 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
                         "RPAD( IFNULL( primera_propiedad.codigo, '' ), 20, ' ' ) AS primera_propiedad_codigo, "                              + ;
                         "primera_propiedad.nombre AS primera_propiedad_nombre, "                                                             + ;
                         "RPAD( IFNULL( segunda_propiedad.codigo, '' ), 20, ' ' ) AS segunda_propiedad_codigo, "                              + ;
-                        "segunda_propiedad.nombre AS segunda_propiedad_nombre "                                                              + ;
+                        "segunda_propiedad.nombre AS segunda_propiedad_nombre, "                                                             + ;
+                        "RPAD( IFNULL( articulos_temporadas.codigo, '' ), 20, ' ' ) AS articulo_temporada_codigo, "                          + ;
+                        "articulos_temporadas.nombre AS articulo_temporada_nombre "                                                          + ;
                      "FROM articulos "                                                                                                       + ;
                         "LEFT JOIN articulos_familias ON articulos.articulo_familia_uuid = articulos_familias.uuid "                         + ; 
                         "LEFT JOIN articulos_tipos ON articulos.articulo_tipo_uuid = articulos_tipos.uuid "                                  + ;
                         "LEFT JOIN articulos_categorias ON articulos.articulo_categoria_uuid = articulos_categorias.uuid "                   + ; 
                         "LEFT JOIN articulos_fabricantes ON articulos.articulo_fabricante_uuid = articulos_fabricantes.uuid "                + ;
                         "LEFT JOIN tipos_iva ON articulos.tipo_iva_uuid = tipos_iva.uuid "                                                   + ;
+                        "LEFT JOIN articulos_temporadas ON articulos.articulo_temporada_uuid = articulos_temporadas.uuid "                   + ;
                         "LEFT JOIN impuestos_especiales ON articulos.impuesto_especial_uuid = impuestos_especiales.uuid "                    + ;
                         "LEFT JOIN articulos_propiedades AS primera_propiedad ON articulos.primera_propiedad_uuid = primera_propiedad.uuid " + ; 
                         "LEFT JOIN articulos_propiedades AS segunda_propiedad ON articulos.segunda_propiedad_uuid = segunda_propiedad.uuid " 
