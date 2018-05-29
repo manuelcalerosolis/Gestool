@@ -431,7 +431,7 @@ METHOD addLinksToExplorerBar() CLASS RecibosView
    end if
 
    oPanel:AddLink(   "Incidencias...",;
-                     {|| ::oController:oIncidenciasController:Edit( ::oController:getUuid() ) },;
+                     {|| ::oController:oIncidenciasController:activateDialogView( ::oController:getUuid() ) },;
                      ::oController:oIncidenciasController:getImage( "16" ) )
    
    oPanel:AddLink(   "Documentos...",;
