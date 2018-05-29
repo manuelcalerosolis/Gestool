@@ -109,7 +109,7 @@ METHOD Activate() CLASS ArticulosView
    ::oController:oTipoIvaController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_iva_uuid" ] ) )
    ::oController:oTipoIvaController:oGetSelector:Activate( 160, 161, ::oFolder:aDialogs[ 1 ] )
 
-   // Tipo de IVA--------------------------------------------------------------
+   // Impuestos especiales-----------------------------------------------------
 
    ::oController:oImpuestosEspecialesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "impuesto_especial_uuid" ] ) )
    ::oController:oImpuestosEspecialesController:oGetSelector:Activate( 170, 171, ::oFolder:aDialogs[ 1 ] )
@@ -123,6 +123,11 @@ METHOD Activate() CLASS ArticulosView
 
    ::oController:oSegundaPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "segunda_propiedad_uuid" ] ) )
    ::oController:oSegundaPropiedadController:oGetSelector:Activate( 240, 241, ::oFolder:aDialogs[ 1 ] )
+
+   // Segunda propiedad--------------------------------------------------------
+
+   ::oController:oArticulosTemporadasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_temporada_uuid" ] ) )
+   ::oController:oArticulosTemporadasController:oGetSelector:Activate( 250, 251, ::oFolder:aDialogs[ 1 ] )
 
    // Marcadores---------------------------------------------------------------
 
@@ -178,20 +183,9 @@ METHOD Activate() CLASS ArticulosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[2]
 
-   REDEFINE SAY   ::oSayCodificacionProveedores ;
-      PROMPT      "Codificación de proveedores..." ;
-      FONT        getBoldFont() ; 
-      COLOR       rgb( 10, 152, 234 ) ;
-      ID          110 ;
-      OF          ::oFolder:aDialogs[2]
-
-   ::oSayCodificacionProveedores:lWantClick  := .t.
-   ::oSayCodificacionProveedores:OnClick     := {|| msgalert( "Codificación de proveedores..." ) }
-
    ::oController:oArticulosPreciosController:Activate( 130, ::oFolder:aDialogs[2] )
 
    // Táctil ------------------------------------------------------------------
-
 
 
    // Botones Articulos -------------------------------------------------------
@@ -244,6 +238,8 @@ METHOD startActivate() CLASS ArticulosView
    
    ::oController:oSegundaPropiedadController:oGetSelector:Start()
 
+   ::oController:oArticulosTemporadasController:oGetSelector:Start()
+
    ::oController:oTagsController:oDialogView:Start()
 
    ::changeLote()
@@ -264,10 +260,10 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
       RETURN ( self )
    end if
 
-   oPanel:AddLink(   "Campos extra...",;
-                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
-   
+   oPanel:AddLink(   "Codificación de proveedores...",;
+                     {|| msgalert( "todo" ) },;
+                     ::oController:oArticulosUnidadesMedicionController:getImage( "16" ) )
+ 
    oPanel:AddLink(   "Unidades de medición...",;
                      {|| ::oController:oArticulosUnidadesMedicionController:activateDialogView() },;
                      ::oController:oArticulosUnidadesMedicionController:getImage( "16" ) )
@@ -279,6 +275,12 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
    oPanel:AddLink(   "Traducciones...",;
                      {|| ::oController:oTraduccionesController:activateDialogView() },;
                      ::oController:oTraduccionesController:getImage( "16" ) )
+
+   oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
+
+   oPanel:AddLink(   "Campos extra...",;
+                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
+                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
 RETURN ( self )
 

@@ -16,7 +16,6 @@ ENDCLASS
 
 METHOD addColumns() CLASS ArticulosBrowseView
 
-   local oColumn
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -50,7 +49,7 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-   with object ( oColumn := ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'articulo_familia_codigo'
       :cHeader             := 'Código familia'
       :nWidth              := 100
@@ -75,7 +74,7 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :lHide               := .t.
    end with
 
-   with object ( oColumn := ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'articulo_tipo_codigo'
       :cHeader             := 'Código tipo'
       :nWidth              := 100
@@ -102,7 +101,7 @@ METHOD addColumns() CLASS ArticulosBrowseView
 
    // Categoria----------------------------------------------------------------
 
-   with object ( oColumn := ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'articulo_categoria_codigo'
       :cHeader             := 'Código categoría'
       :nWidth              := 100
@@ -129,7 +128,7 @@ METHOD addColumns() CLASS ArticulosBrowseView
 
    // Fabricante----------------------------------------------------------------
 
-   with object ( oColumn := ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'articulo_fabricante_codigo'
       :cHeader             := 'Código fabricante'
       :nWidth              := 100
@@ -154,9 +153,36 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :lHide               := .t.
    end with
 
+   // Temporada----------------------------------------------------------------
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'articulo_temporada_codigo'
+      :cHeader             := 'Código temporada'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_temporada_codigo' ) }
+      :lHide               := .t.
+      
+      if ::oController:isUserEdit()
+         :nEditType        := 5
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnArticulosTemporadasBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::oController:oArticulosTemporadasController:ActivateSelectorView() }
+         :nBtnBmp          := 1
+         :AddResource( "Lupa" )
+      end if
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'articulo_temporada_nombre'
+      :cHeader             := 'Temporada'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_temporada_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
    // IVA----------------------------------------------------------------------
 
-   with object ( oColumn := ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'iva_tipo_codigo'
       :cHeader             := 'Código IVA'
       :nWidth              := 100
@@ -183,7 +209,7 @@ METHOD addColumns() CLASS ArticulosBrowseView
 
    // Impuestos especiales-----------------------------------------------------
 
-   with object ( oColumn := ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'impuesto_especial_codigo'
       :cHeader             := 'Código impuesto especial'
       :nWidth              := 100
@@ -210,7 +236,7 @@ METHOD addColumns() CLASS ArticulosBrowseView
 
    // primera propiedad--------------------------------------------------------
 
-   with object ( oColumn := ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'primera_propiedad_codigo'
       :cHeader             := 'Código primera propiedad'
       :nWidth              := 100
@@ -237,7 +263,7 @@ METHOD addColumns() CLASS ArticulosBrowseView
 
    // segunda propiedad--------------------------------------------------------
 
-   with object ( oColumn := ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'segunda_propiedad_codigo'
       :cHeader             := 'Código segunda propiedad'
       :nWidth              := 100
@@ -261,7 +287,6 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
-
 
 RETURN ( self )
 
