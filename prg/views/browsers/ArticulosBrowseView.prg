@@ -208,6 +208,61 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :lHide               := .t.
    end with
 
+   // primera propiedad--------------------------------------------------------
+
+   with object ( oColumn := ::oBrowse:AddCol() )
+      :cSortOrder          := 'primera_propiedad_codigo'
+      :cHeader             := 'Código primera propiedad'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'primera_propiedad_codigo' ) }
+      :lHide               := .t.
+      
+      if ::oController:isUserEdit()
+         :nEditType        := 5
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validPrimeraPropiedadBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::oController:oPrimeraPropiedadController:ActivateSelectorView() }
+         :nBtnBmp          := 1
+         :AddResource( "Lupa" )
+      end if
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'primera_propiedad_nombre'
+      :cHeader             := 'Primera propiedad'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'primera_propiedad_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   // segunda propiedad--------------------------------------------------------
+
+   with object ( oColumn := ::oBrowse:AddCol() )
+      :cSortOrder          := 'segunda_propiedad_codigo'
+      :cHeader             := 'Código segunda propiedad'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'segunda_propiedad_codigo' ) }
+      :lHide               := .t.
+      
+      if ::oController:isUserEdit()
+         :nEditType        := 5
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validsegundaPropiedadBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::oController:osegundaPropiedadController:ActivateSelectorView() }
+         :nBtnBmp          := 1
+         :AddResource( "Lupa" )
+      end if
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'segunda_propiedad_nombre'
+      :cHeader             := 'Segunda propiedad'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'segunda_propiedad_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
