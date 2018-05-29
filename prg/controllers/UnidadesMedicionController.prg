@@ -23,31 +23,31 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Unidades de medidas"
+   ::cTitle                         := "Unidades de medición"
 
-   ::cName                       := "unidades_medida"
+   ::cName                          := "unidades_medicion"
 
-   ::hImage                      := {  "16" => "gc_tape_measure2_16",;
-                                       "32" => "gc_tape_measure2_32",;
-                                       "48" => "gc_tape_measure2_48" }
+   ::hImage                         := {  "16" => "gc_tape_measure2_16",;
+                                          "32" => "gc_tape_measure2_32",;
+                                          "48" => "gc_tape_measure2_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLUnidadesMedicionModel():New( self )
+   ::oModel                         := SQLUnidadesMedicionModel():New( self )
 
-   ::oBrowseView                 := UnidadesMedicionBrowseView():New( self )
+   ::oBrowseView                    := UnidadesMedicionBrowseView():New( self )
 
-   ::oDialogView                 := UnidadesMedicionView():New( self )
+   ::oDialogView                    := UnidadesMedicionView():New( self )
 
-   ::oValidator                  := UnidadesMedicionValidator():New( self, ::oDialogView )
+   ::oValidator                     := UnidadesMedicionValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'unidades_medicion' )
+   ::oRepository                    := UnidadesMedicionRepository():New( self )
 
-   ::oRepository                 := UnidadesMedicionRepository():New( self )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oGetSelector                   := GetSelector():New( self )
 
-   ::setEvents( { 'appending', 'duplicating', 'editing', 'deleting' }, {|| ::isSystemRegister() } )
+   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
 
 RETURN ( Self )
 
@@ -159,7 +159,7 @@ METHOD Activate() CLASS UnidadesMedicionView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "UNIDAD_MEDICION" ;
-      TITLE       ::LblTitle() + "unidad de medida"
+      TITLE       ::LblTitle() + "unidad de medición"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -174,7 +174,7 @@ METHOD Activate() CLASS UnidadesMedicionView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNNNNNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -271,8 +271,8 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 8 ) UNIQUE"                     ,;
-                                          "default"   => {|| space( 8 ) } }                        )
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 20 ) UNIQUE"                     ,;
+                                          "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
                                           "default"   => {|| space( 200 ) } }                      )
@@ -281,7 +281,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
                                           "default"   => {|| space( 6 ) } }                        )
 
    hset( ::hColumns, "sistema",        {  "create"    => "BIT"                                     ,;
-                                          "default"   => {|| .t. } }                               )
+                                          "default"   => {|| .f. } }                               )
 
 RETURN ( ::hColumns )
 

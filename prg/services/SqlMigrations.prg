@@ -210,6 +210,16 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
 
+   aadd( ::aModels, SQLRecibosModel():New() )
+
+   aadd( ::aModels, SQLBalanzasModel():New() )
+
+   aadd( ::aModels, SQLImpresorasModel():New() )
+
+   aadd( ::aModels, SQLCajasModel():New() )
+
+    aadd( ::aModels, SQLEntradaSalidaModel():New() )
+
    aadd( ::aModels, SQLArticulosEnvasadoModel():New() )
 
    aadd( ::aModels, SQLOrdenComandasModel():New() )
@@ -240,7 +250,7 @@ METHOD addModels()
 
    aadd( ::aModels, SQLFormaPagoModel():New() )
 
-   aadd( ::aModels, SQLIVATiposModel():New() )
+   aadd( ::aModels, SQLTiposIvaModel():New() )
    
    aadd( ::aModels, SQLCuentasRemesaModel():New() )
 
@@ -255,6 +265,8 @@ METHOD addModels()
    aadd( ::aModels, SQLArticulosCategoriasModel():New() )
 
    aadd( ::aModels, SQLAlmacenesModel():New() )
+
+   aadd( ::aModels, SQLDelegacionesModel():New() )
 
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
@@ -291,6 +303,8 @@ METHOD addModels()
    aadd( ::aModels, SQLTraduccionesModel():New() ) 
 
    aadd( ::aModels, SQLDescuentosModel():New() ) 
+
+   aadd( ::aModels, SQLFacturasClientesModel():New() ) 
 
 RETURN ( ::aModels )
  

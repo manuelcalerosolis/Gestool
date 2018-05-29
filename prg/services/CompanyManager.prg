@@ -11,6 +11,7 @@ CLASS CompanyManager
    DATA uuid
    DATA nombre
    DATA codigo
+   DATA delegacion_uuid
 
    METHOD New()
 
@@ -19,6 +20,8 @@ CLASS CompanyManager
 
    METHOD guardWhereUuid( uuid )
    METHOD guardWhereCodigo( cCodigo )
+
+   METHOD getDefaultDelegacion()
 
 END CLASS
 
@@ -41,20 +44,22 @@ METHOD guard( hCompany )
    end if 
 
    if hhaskey( hCompany, "id" )
-      ::id        := hget( hCompany, "id" ) 
+      ::id              := hget( hCompany, "id" ) 
    end if 
 
    if hhaskey( hCompany, "uuid" )
-      ::uuid      := hget( hCompany, "uuid" ) 
+      ::uuid            := hget( hCompany, "uuid" ) 
    end if 
    
    if hhaskey( hCompany, "nombre" )
-      ::nombre    := hget( hCompany, "nombre" ) 
+      ::nombre          := hget( hCompany, "nombre" ) 
    end if 
 
    if hhaskey( hCompany, "codigo" )
-      ::codigo    := hget( hCompany, "codigo" ) 
+      ::codigo          := hget( hCompany, "codigo" ) 
    end if 
+
+   ::delegacion_uuid    := ::getDefaultDelegacion()
 
 RETURN ( self )
 
@@ -81,6 +86,22 @@ METHOD guardWhereCodigo( cCodigo )
    endif 
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDefaultDelegacion()
+
+   local delegacion_uuid   := ""
+   
+   delegacion_uuid         := SQLAjustableModel():getUsuarioEmpresaExclusiva( Auth():Uuid() )
+
+   if Empty( delegacion_uuid )
+
+      delegacion_uuid      := SQLAjustableModel():getEmpresaDelegacionDefecto( ::uuid )
+
+   end if
+
+Return delegacion_uuid
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

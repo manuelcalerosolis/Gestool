@@ -35,7 +35,7 @@ METHOD New() CLASS DivisasMonetariasController
 
    ::oDialogView                    := DivisasMonetariasView():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'divisas_monetarias' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oValidator                     := DivisasMonetariasValidator():New( self, ::oDialogView )
 
@@ -185,7 +185,7 @@ METHOD Activate() CLASS DivisasMonetariasView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -374,8 +374,8 @@ METHOD getColumns() CLASS SQLDivisasMonetariasModel
    hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                                    "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 3 )"                            ,;
-                                                   "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 )"                            ,;
+                                                   "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 )"                          ,;
                                                    "default"   => {|| space( 200 ) } }                      )

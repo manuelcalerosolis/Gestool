@@ -661,7 +661,9 @@ STATIC FUNCTION CloseFiles( lDestroy )
       TComercioConfig():DestroyInstance()
    end if
 
-   oFabricantesController:End()
+   if !Empty( oFabricantesController )
+      oFabricantesController:End()
+   end if
 
    dbfProv           := nil
    dbfCatalogo       := nil
@@ -15866,16 +15868,20 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
          :lHide            := .t.
       end with
 
-      if ( SQLAjustableModel():getRolVerPreciosCosto( Auth():rolUuid() ) )
+      if !IsReport()
 
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Costo"
-         :bStrData         := {|| nCosto( nil, D():Articulos( nView ), dbfArtKit, .t., if( lEuro, cDivChg(), cDivEmp() ), dbfDiv ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
+         if ( SQLAjustableModel():getRolVerPreciosCosto( Auth():rolUuid() ) )
+
+            with object ( oBrw:AddCol() )
+               :cHeader          := "Costo"
+               :bStrData         := {|| nCosto( nil, D():Articulos( nView ), dbfArtKit, .t., if( lEuro, cDivChg(), cDivEmp() ), dbfDiv ) }
+               :nWidth           := 80
+               :nDataStrAlign    := AL_RIGHT
+               :nHeadStrAlign    := AL_RIGHT
+               :lHide            := .t.
+            end with
+
+         end if
 
       end if
 
@@ -16170,17 +16176,19 @@ return .t.
 //---------------------------------------------------------------------------//
 
 Static Function StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropiedades, oBmpImage, cCodAlm )
-
-   if !empty( oBrw )
-      oBrw:Load()
-   end if
-
-   if !empty( oBrwStock )
-      oBrwStock:Load() 
-   end if
-
+   
    if !IsReport()
+
+      if !empty( oBrw )
+         oBrw:Load()
+      end if
+
+      if !empty( oBrwStock )
+         oBrwStock:Load() 
+      end if
+
       LoadBrwArt( oBrwStock, oBmpImage, cCodAlm )
+
    end if
 
    if !empty( oBtnAceptarpropiedades )

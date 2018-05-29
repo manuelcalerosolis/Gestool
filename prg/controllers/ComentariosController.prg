@@ -17,9 +17,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ComentariosController
+METHOD New( oSenderController ) CLASS ComentariosController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Comentarios"
 
@@ -39,7 +39,7 @@ METHOD New() CLASS ComentariosController
 
    ::oComentariosLineasController   := ComentariosLineasController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'comentarios' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oValidator                     := ComentariosValidator():New( self, ::oDialogView )
 
@@ -170,7 +170,7 @@ METHOD Activate() CLASS ComentariosView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -291,8 +291,8 @@ METHOD getColumns() CLASS SQLComentariosModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                            ,;
-                                             "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
+                                             "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )

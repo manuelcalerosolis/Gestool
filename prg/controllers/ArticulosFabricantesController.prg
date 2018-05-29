@@ -23,13 +23,13 @@ METHOD New( oSenderController ) CLASS ArticulosFabricantesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Fabricantes"
+   ::cTitle                         := "Fabricantes"
 
-   ::cName                       := "fabricantes"
+   ::cName                          := "fabricantes"
 
-   ::hImage                      := {  "16" => "gc_bolt_16",;
-                                       "32" => "gc_bolt_32",;
-                                       "48" => "gc_bolt_48" }
+   ::hImage                         := {  "16" => "gc_bolt_16",;
+                                          "32" => "gc_bolt_32",;
+                                          "48" => "gc_bolt_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -43,7 +43,7 @@ METHOD New( oSenderController ) CLASS ArticulosFabricantesController
 
    ::oImagenesController            := ImagenesController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'fabricantes' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := ArticulosFabricantesRepository():New( self )
 
@@ -200,7 +200,7 @@ METHOD Activate() CLASS ArticulosFabricantesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
@@ -324,8 +324,8 @@ METHOD getColumns() CLASS SQLArticulosFabricantesModel
    
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",      {  "create"    => "VARCHAR( 3 )"                            ,;
-                                       "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",      {  "create"    => "VARCHAR( 20 )"                            ,;
+                                       "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 100 )"                          ,;
                                        "default"   => {|| space( 100 ) } }                       )

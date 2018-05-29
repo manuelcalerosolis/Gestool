@@ -192,10 +192,10 @@ METHOD Exist( uValue )
    local nCount
    local cSQLSentence
 
-   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
-   cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
+   cSQLSentence         := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
+   cSQLSentence         +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
-   nCount            := getSQLDatabase():getValue( cSQLSentence )
+   nCount               := getSQLDatabase():getValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 
@@ -210,10 +210,10 @@ METHOD EmptyOrExist( uValue )
       RETURN ( .t. )
    end if 
 
-   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
-   cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
+   cSQLSentence         := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
+   cSQLSentence         +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
-   nCount            := getSQLDatabase():getValue( cSQLSentence )
+   nCount               := getSQLDatabase():getValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 

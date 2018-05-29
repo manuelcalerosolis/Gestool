@@ -53,7 +53,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD reBuildRowSet()
 
-   METHOD getComboBoxOrder()                          INLINE ( if( !empty( ::oSelectorView ) .and. ::oSelectorView:isActive(), ::oSelectorView:getComboBoxOrder(), ::oWindowsBar:oComboBox() ) )
+   METHOD getComboBoxOrder()                          
 
    METHOD onChangeCombo( oColumn )
 
@@ -103,7 +103,6 @@ CLASS SQLNavigatorController FROM SQLBaseController
                                                                      ::buildSmallerFilter( cField, cValue ), ) )
    METHOD buildCustomLikeFilter( cField, cValue )     INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
                                                                      ::buildLikeFilter( cField, cValue ), ) )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -544,5 +543,17 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getComboBoxOrder()
 
+   if !empty( ::oSelectorView ) .and. ::oSelectorView:isActive()
+      RETURN ( ::oSelectorView:getComboBoxOrder() )
+   end if 
+
+   if !empty( ::oDialogModalView ) .and. ::oDialogModalView:isActive()
+      RETURN ( ::oDialogModalView:getComboBoxOrder() )
+   end if 
+
+RETURN ( ::oWindowsBar:oComboBox() ) 
+
+//---------------------------------------------------------------------------//
    

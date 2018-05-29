@@ -68,6 +68,8 @@ CLASS SQLXBrowse FROM TXBrowse
 
    METHOD setFilterInRowSet( cFilterExpresion )
 
+   METHOD getSelectedCol()                      INLINE ::SelectedCol()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -80,8 +82,8 @@ METHOD New( oController, oWnd )
 
    ::lAutoSort       := .t.
    ::l2007           := .f.
-   ::bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   ::bClrSel         := {|| { CLR_BLACK, Rgb( 221, 221, 221 ) } }
+   ::bClrSelFocus    := {|| { CLR_BLACK, Rgb( 221, 221, 221 ) } }
    ::lSortDescend    := .f. 
 
 RETURN ( Self )
@@ -104,7 +106,7 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    if hb_isnil( ::SelectedCol():Cargo )
 
-   MenuAddItem( "Filtro rápido", "Establecer fitro rápido en columna actual", .f., .t., , , "gc_table_selection_column_16", oMenu )
+   MenuAddItem( "Filtro rápido", "Establecer fitro rápido en columna actual", .f., .t., , , "gc_funnel_add_16", oMenu )
 
       MenuBegin( .f., , , .f., .f., , , , , , , , , , , , .f., .t., .f., .t. )
 

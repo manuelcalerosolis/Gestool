@@ -156,7 +156,7 @@ METHOD Activate() CLASS PaisesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          oDlg
@@ -239,8 +239,8 @@ METHOD getColumns() CLASS SQLPaisesModel
                                              "text"      => "Identificador"                         ,;
                                              "default"   => {|| 0 } }                                )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 3 )"                          ,;
-                                             "default"   => {|| space( 3 ) } }                       )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                          ,;
+                                             "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                        ,;
                                              "default"   => {|| space( 200 ) } }                     )

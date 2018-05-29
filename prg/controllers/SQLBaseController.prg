@@ -133,6 +133,8 @@ CLASS SQLBaseController
 
    METHOD refreshBrowseView()                         INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
 
+   METHOD isBrowseColumnEdit()                        
+
    METHOD startBrowse( oCombobox )
    METHOD restoreBrowseState()
 
@@ -179,6 +181,7 @@ CLASS SQLBaseController
    METHOD isAppendOrDuplicateMode()                   INLINE ( ::isAppendMode() .or. ::isDuplicateMode() )
 
    METHOD Edit()
+   METHOD EditReturn()
       METHOD setEditMode()                            INLINE ( ::setMode( __edit_mode__ ) )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
       METHOD isNotEditMode()                          INLINE ( ::nMode != __edit_mode__ )
@@ -238,6 +241,10 @@ CLASS SQLBaseController
    
    METHOD sendData( oInternet )                       INLINE ( ::oExportableController:isSendData( oInternet ) )
 
+   // Validador para las columnas editables del browseview---------------------
+
+   METHOD validColumnBrowse( uValue, nKey, oModel, cFieldName )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -271,6 +278,24 @@ METHOD End()
    Self           := nil
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD isBrowseColumnEdit()
+
+   local oSelectedColumn   
+
+   if !empty( ::oBrowseView ) 
+
+      oSelectedColumn   := ::oBrowseView:getSelectedCol()
+   
+      if !empty( oSelectedColumn )
+         RETURN ( oSelectedColumn:nEditType != 0 )
+      end if 
+   
+   end if 
+
+RETURN ( .f. )   
 
 //---------------------------------------------------------------------------//
 
@@ -454,6 +479,16 @@ METHOD Duplicate( nId )
    ::fireEvent( 'exitDuplicated' ) 
 
 RETURN ( lDuplicate )
+
+//----------------------------------------------------------------------------//
+
+METHOD EditReturn( nId )
+
+   if ::isBrowseColumnEdit()
+      RETURN ( .f. )
+   end if   
+
+RETURN ( ::Edit( nId ) )
 
 //----------------------------------------------------------------------------//
 
@@ -781,3 +816,31 @@ RETURN ( ::aDocuments )
 
 //---------------------------------------------------------------------------//
 
+METHOD validColumnBrowse( oCol, uValue, nKey, oModel, cFieldName )
+   
+   local uuid              := ""
+
+   if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
+      RETURN ( .t. )
+   end if
+
+   if hb_ishash( uValue )
+      uuid          := hGet( uValue, "uuid" )
+   end if
+
+   if hb_ischar( uValue )
+      uuid          := oModel:getUuidWhereCodigo( alltrim( uValue ) )
+   end if
+
+   if empty( uuid )
+      msgStop( "valor no encontrado." )
+      RETURN .t.
+   end if
+
+   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cFieldName, uuid )
+
+   ::RefreshRowSet()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//

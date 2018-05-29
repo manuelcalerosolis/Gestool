@@ -35,7 +35,7 @@ METHOD New() CLASS ArticulosTemporadaController
 
    ::oDialogView                 := ArticulosTemporadaView():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'articulos_temporadas' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oValidator                  := ArticulosTemporadaValidator():New( self, ::oDialogView )
 
@@ -182,7 +182,7 @@ METHOD Activate() CLASS ArticulosTemporadaView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -279,18 +279,19 @@ METHOD getColumns() CLASS SQLArticulosTemporadaModel
 
    hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                     "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
 
-   ::getTimeStampColumns()
-
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 3 )"                            ,;
-                                    "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                            ,;
+                                    "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
                                     "default"   => {|| space( 200 ) } }                       )
 
    hset( ::hColumns, "icono",    {  "create"    => "VARCHAR( 40 )"                           ,;
                                     "default"   => {|| space( 40 ) } }                       )
+
+   ::getEmpresaColumns()
+
+   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 

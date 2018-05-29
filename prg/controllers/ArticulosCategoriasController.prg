@@ -37,7 +37,7 @@ METHOD New( oSenderController ) CLASS ArticulosCategoriasController
 
    ::oValidator                  := ArticulosCategoriasValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'articulos_categorias' )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                 := ArticulosCategoriasRepository():New( self )
 
@@ -193,7 +193,7 @@ METHOD Activate() CLASS ArticulosCategoriasView
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -276,7 +276,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLArticulosCategoriasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "articulos_categoria"
+   DATA cTableName               INIT "articulos_categorias"
 
    METHOD getColumns()
 
@@ -293,8 +293,8 @@ METHOD getColumns() CLASS SQLArticulosCategoriasModel
                                     "default"   => {|| win_uuidcreatestring() } }            )
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 3 )"                            ,;
-                                    "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                            ,;
+                                    "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
                                     "default"   => {|| space( 200 ) } }                       )

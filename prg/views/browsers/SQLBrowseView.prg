@@ -52,6 +52,7 @@ CLASS SQLBrowseView
    METHOD createFromResource( id )           INLINE ( ::oBrowse:CreateFromResource( id ) )
 
    METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick := bLDblClick )
+   METHOD setLDClickDatas( bLDClickDatas )   INLINE ( ::oBrowse:bLDClickDatas := bLDClickDatas )
 
    METHOD Refresh()                          INLINE ( ::oBrowse:makeTotals(), ::oBrowse:Refresh() )
    METHOD goTop()                            INLINE ( ::oBrowse:goTop() )
@@ -91,6 +92,8 @@ CLASS SQLBrowseView
    METHOD getVisibleColumnsHeaders()   
 
    METHOD getFirstColumnHeader()
+
+   METHOD getSelectedCol()                   INLINE ( if( !empty( ::oBrowse ), ::oBrowse:SelectedCol(), nil ) )
 
    // Events---------------------------------------------------------------------
 
@@ -165,7 +168,7 @@ METHOD Create( oWindow )
 
    ::oBrowse:bClrStd          := {|| { CLR_BLACK, CLR_WHITE } }
    ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 221, 221, 221 ) } }
 
    ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
@@ -176,7 +179,7 @@ METHOD Create( oWindow )
    ::oBrowse:bKeyChar         := {|nKey| ::getController():onKeyChar( nKey ) }
 
    if ::isNotSenderControllerZoomMode() 
-      ::oBrowse:bLDblClick    := {|| ::getController():Edit(), ::Refresh() }
+      ::setLDblClick( {|| ::getController():Edit(), ::Refresh() } )
    end if 
 
 RETURN ( ::oBrowse )

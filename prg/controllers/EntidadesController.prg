@@ -45,7 +45,7 @@ METHOD New( oSenderController ) CLASS EntidadesController
 
    ::oDireccionesController:oValidator    := DireccionesEntidadesValidator():New( ::oDireccionesController, ::oDialogView )
 
-   ::oCamposExtraValoresController        := CamposExtraValoresController():New( self, 'entidades' )
+   ::oCamposExtraValoresController        := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
 
    ::oContactosController                 := ContactosController():New( self )
@@ -249,7 +249,7 @@ METHOD Activate() CLASS EntidadesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNNNNNNNNNNNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
@@ -433,8 +433,8 @@ METHOD getColumns() CLASS SQLEntidadesModel
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 14 ) NOT NULL"                   ,;
-                                             "default"   => {|| space( 14 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                   ,;
+                                             "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )

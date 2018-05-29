@@ -5,6 +5,8 @@
 
 CLASS TransportistasController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    DATA oDireccionesController
 
    METHOD New()
@@ -15,9 +17,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS TransportistasController
+METHOD New( oSenderController ) CLASS TransportistasController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                      := "Transportistas"
 
@@ -41,6 +43,8 @@ METHOD New() CLASS TransportistasController
 
    ::oRepository                 := TransportistasRepository():New( self )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+
    ::oGetSelector                := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
@@ -62,6 +66,8 @@ METHOD End() CLASS TransportistasController
    ::oDireccionesController:End()
 
    ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::oGetSelector:End()
 
@@ -140,6 +146,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS TransportistasView FROM SQLBaseView
+
+   DATA oSayCamposExtra
   
    METHOD Activate()
 
@@ -149,6 +157,7 @@ END CLASS
 
 METHOD Activate() CLASS TransportistasView
 
+   local oSayCamposExtra
    local oGetDni
    local oBtnEdit
    local oBtnAppend
@@ -172,7 +181,7 @@ METHOD Activate() CLASS TransportistasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNNNNNNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
@@ -208,6 +217,16 @@ METHOD Activate() CLASS TransportistasView
       ID          150 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          170 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
 
@@ -316,8 +335,8 @@ METHOD getColumns() CLASS SQLTransportistasModel
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 9 ) NOT NULL"                   ,;
-                                             "default"   => {|| space( 9 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                   ,;
+                                             "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
                                              "default"   => {|| space( 140 ) } }                      )

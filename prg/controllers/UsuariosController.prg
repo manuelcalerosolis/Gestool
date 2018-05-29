@@ -178,9 +178,9 @@ METHOD loadConfig()
    ::cUuidAlmacenExclusivo       := ::oAjustableController:oModel:getUsuarioAlmacenExclusivo( ::cUuidUsuario )
    ::cNombreAlmacenExclusivo     := AlmacenesModel():getNombreFromUuid( ::cUuidAlmacenExclusivo )
 
-   ::aDelegaciones               := DelegacionesModel():aNombresSeleccionables()
+   ::aDelegaciones               := SQLDelegacionesModel():aNombres()
    ::cUuidDelegacionExclusiva    := ::oAjustableController:oModel:getUsuarioDelegacionExclusiva( ::cUuidUsuario )
-   ::cNombreDelegacionExclusiva  := DelegacionesModel():getNombreFromUuid( ::cUuidDelegacionExclusiva )
+   ::cNombreDelegacionExclusiva  := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionExclusiva )
 
 RETURN ( .t. )
 
@@ -191,7 +191,7 @@ METHOD saveConfig()
    ::cCodigoEmpresaExclusiva     := EmpresasModel():getCodigoFromNombre( ::cNombreEmpresaExclusiva )
    ::cUuidCajaExclusiva          := CajasModel():getUuidFromNombre( ::cNombreCajaExclusiva )
    ::cUuidAlmacenExclusivo       := AlmacenesModel():getUuidFromNombre( ::cNombreAlmacenExclusivo )
-   ::cUuidDelegacionExclusiva    := DelegacionesModel():getUuidFromNombre( ::cNombreDelegacionExclusiva )
+   ::cUuidDelegacionExclusiva    := SQLDelegacionesModel():getUuidFromNombre( ::cNombreDelegacionExclusiva )
 
    ::oAjustableController:oModel:setUsuarioEmpresaExclusiva( ::cCodigoEmpresaExclusiva, ::cUuidUsuario )
    ::oAjustableController:oModel:setUsuarioCajaExclusiva( ::cUuidCajaExclusiva, ::cUuidUsuario )
@@ -345,8 +345,8 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 3 )"                            ,;
-                                          "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 20 )"                            ,;
+                                          "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
                                           "default"   => {|| space( 100 ) } }                      )

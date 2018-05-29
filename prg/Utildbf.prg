@@ -2709,10 +2709,11 @@ FUNCTION cGetNewFileName( cName, cExt, lExt, cPath )
    local cTemp
    local nId      := Val( Auth():Codigo() )
 
+
    DEFAULT cExt   := { "Dbf", "Cdx", "Fpt" }
    DEFAULT lExt   := .f.
    DEFAULT cPath  := ""
-
+ 
    cTemp          := cName + Auth():Codigo()
 
    if Valtype( cExt ) == "A"

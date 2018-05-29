@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosFamiliaController FROM SQLNavigatorController
+CLASS ArticulosFamiliasController FROM SQLNavigatorController
 
    DATA oImagenesController
 
@@ -15,6 +15,8 @@ CLASS ArticulosFamiliaController FROM SQLNavigatorController
 
    DATA oTraduccionesController
 
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -23,41 +25,43 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ArticulosFamiliaController
+METHOD New( oSenderController ) CLASS ArticulosFamiliasController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Familia de artículos"
+   ::cTitle                         := "Familia de artículos"
 
-   ::cName                       := "articulos_familia"
+   ::cName                          := "articulos_familias"
 
-   ::hImage                      := {  "16" => "gc_cubes_16",;
-                                       "32" => "gc_cubes_32",;
-                                       "48" => "gc_cubes_48" }
+   ::hImage                         := {  "16" => "gc_cubes_16",;
+                                          "32" => "gc_cubes_32",;
+                                          "48" => "gc_cubes_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLArticulosFamiliaModel():New( self )
+   ::oModel                         := SQLArticulosFamiliaModel():New( self )
 
-   ::oBrowseView                 := ArticulosFamiliaBrowseView():New( self )
+   ::oBrowseView                    := ArticulosFamiliaBrowseView():New( self )
 
-   ::oDialogView                 := ArticulosFamiliaView():New( self )
+   ::oDialogView                    := ArticulosFamiliaView():New( self )
 
-   ::oValidator                  := ArticulosFamiliaValidator():New( self, ::oDialogView )
+   ::oValidator                     := ArticulosFamiliaValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := ArticulosFamiliaRepository():New( self )
+   ::oRepository                    := ArticulosFamiliaRepository():New( self )
 
-   ::oPrimeraPropiedadController := PropiedadesController():New( self )
+   ::oPrimeraPropiedadController    := PropiedadesController():New( self )
 
-   ::oSegundaPropiedadController := PropiedadesController():New( self )
+   ::oSegundaPropiedadController    := PropiedadesController():New( self )
 
-   ::oImagenesController         := ImagenesController():New( self )
+   ::oImagenesController            := ImagenesController():New( self )
 
-   ::oComentariosController      := ComentariosController():New( self )
+   ::oComentariosController         := ComentariosController():New( self )
 
-   ::oTraduccionesController     := TraduccionesController():New( self )
+   ::oTraduccionesController        := TraduccionesController():New( self )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -76,7 +80,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS ArticulosFamiliaController
+METHOD End() CLASS ArticulosFamiliasController
 
    ::oModel:End()
 
@@ -93,6 +97,8 @@ METHOD End() CLASS ArticulosFamiliaController
    ::oComentariosController:End()
 
    ::oTraduccionesController:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -183,6 +189,8 @@ CLASS ArticulosFamiliaView FROM SQLBaseView
 
    METHOD startActivate()
 
+   METHOD addLinksToExplorerBar()
+
    METHOD changeColorRGB() 
 
    METHOD changeTreeRelaciones()
@@ -203,12 +211,10 @@ END CLASS
 
 METHOD Activate() CLASS ArticulosFamiliaView
 
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete   
+   local oSayCamposExtra  
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTAINER_MEDIUM" ;
+      RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
       TITLE       ::LblTitle() + "familia"
 
    REDEFINE BITMAP ::oBitmap ;
@@ -223,22 +229,22 @@ METHOD Activate() CLASS ArticulosFamiliaView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
+   ::redefineExplorerBar()
+
    REDEFINE FOLDER ::oFolder ;
       ID          500 ;
       OF          ::oDialog ;
       PROMPT      "&General" ,;
-                  "&Relaciones" ,;
-                  "&Lenguaje" ;
+                  "&Relaciones" ;
       DIALOGS     "FAMILIA_GENERAL" ,;
-                  "FAMILIA_RELACIONES" ,;
-                  "FAMILIA_TRADUCCIONES"
+                  "FAMILIA_RELACIONES" 
 
    ::oFolder:aDialogs[2]:bGotFocus  := {|| ::setTreeRelaciones() }
 
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNNNNNNNNNNNNNNNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
@@ -261,7 +267,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    // Tactil-------------------------------------------------------------------
 
-   REDEFINE CHECKBOX   ::oController:oModel:hBuffer[ "incluir_tpv_tactil" ] ;
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "incluir_tpv_tactil" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ON CHANGE   ( ::changeIncluirTPVTactil() ) ;
@@ -287,10 +293,11 @@ METHOD Activate() CLASS ArticulosFamiliaView
       ID          160 ;
       IDSAY       161 ;
       BITMAP      "Folder" ;
-      ON HELP     ( GetBmp( ::oGetImagen, ::oBmpImagen ) ) ;
-      ON CHANGE   ( ChgBmp( ::oGetImagen, ::oBmpImagen ) ) ;
       WHEN        ( ::oController:oImagenesController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
+
+   ::oGetImagen:bHelp      := {|| GetBmp( ::oGetImagen, ::oBmpImagen ) }
+   ::oGetImagen:bChange    := {|| ChgBmp( ::oGetImagen, ::oBmpImagen ) }
 
    REDEFINE IMAGE ::oBmpImagen ;
       ID          1010 ;
@@ -334,31 +341,6 @@ METHOD Activate() CLASS ArticulosFamiliaView
    ::oTreeRelaciones:bItemSelectChanged   := {|| ::changeTreeRelaciones() }
    ::oTreeRelaciones:bValid               := {|| ::oController:validate( "relaciones" ) }
 
-   // Relaciones --------------------------------------------------------------
-
-   REDEFINE BUTTON oBtnAppend ;
-      ID          100 ;
-      OF          ::oFolder:aDialogs[3] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnAppend:bAction   := {|| ::oController:oTraduccionesController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          110 ;
-      OF          ::oFolder:aDialogs[3] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnEdit:bAction   := {|| ::oController:oTraduccionesController:Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          120 ;
-      OF          ::oFolder:aDialogs[3] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnDelete:bAction   := {|| ::oController:oTraduccionesController:Delete() }
-
-   ::oController:oTraduccionesController:Activate( 130, ::oFolder:aDialogs[3] )
-
    // Botones -----------------------------------------------------------------
 
    REDEFINE BUTTON ;
@@ -388,6 +370,31 @@ METHOD Activate() CLASS ArticulosFamiliaView
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD addLinksToExplorerBar() CLASS ArticulosFamiliaView
+
+   local oPanel            
+
+   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   if ::oController:isZoomMode()
+      RETURN ( self )
+   end if
+  
+   oPanel:AddLink(   "Traducciones...",;
+                     {|| ::oController:oTraduccionesController:activateDialogView() },;
+                     ::oController:oTraduccionesController:getImage( "16" ) )
+
+   oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
+
+   oPanel:AddLink(   "Campos extra...",;
+                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
+                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD endActivate()
 
@@ -455,15 +462,15 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadTreeRelaciones( oTree, parentUuid )
+METHOD loadTreeRelaciones( oTree, familiaUuid )
 
    local oNode
    local oHashList
 
    DEFAULT oTree        := ::oTreeRelaciones
-   DEFAULT parentUuid   := ''
+   DEFAULT familiaUuid   := ''
 
-   oHashList            := ::oController:oModel:getRowSetWhereParentUuid( parentUuid )
+   oHashList            := ::oController:oModel:getRowSetWhereFamiliaUuid( familiaUuid )
 
    if hb_isnil( oHashList )
       RETURN ( self )
@@ -490,7 +497,7 @@ METHOD setTreeRelaciones( uuidParent, aItems )
 
    local oItem
 
-   DEFAULT uuidParent   := ::oController:oModel:hBuffer[ "parent_uuid" ]
+   DEFAULT uuidParent   := ::oController:oModel:hBuffer[ "familia_uuid" ]
    DEFAULT aItems       := ::oTreeRelaciones:aItems
    
    if empty( uuidParent )
@@ -548,6 +555,8 @@ RETURN ( uuidSelected )
 METHOD startActivate()
 
    CursorWait()
+
+   ::addLinksToExplorerBar()
 
    ::oController:oPrimeraPropiedadController:oGetSelector:Start()
 
@@ -614,7 +623,7 @@ RETURN ( .t. )
 
 CLASS SQLArticulosFamiliaModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "articulos_familia"
+   DATA cTableName               INIT "articulos_familias"
 
    METHOD getColumns()
 
@@ -630,9 +639,9 @@ CLASS SQLArticulosFamiliaModel FROM SQLCompanyModel
    METHOD setComentarioUuidAttribute( codigo ) ;
                                  INLINE ( if( empty( codigo ), "", SQLComentariosModel():getUuidWhereCodigo( codigo ) ) )
 
-   METHOD setParentUuidAttribute( value )
+   METHOD setFamiliaUuidAttribute( value )
 
-   METHOD getRowSetWhereParentUuid( uuid )                                 
+   METHOD getRowSetWhereFamiliaUuid( uuid )                                 
 
 END CLASS
 
@@ -646,13 +655,13 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
    hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "familia_uuid",                  {  "create"    => "VARCHAR( 40 )"                           ,;
                                                          "default"   => {|| space( 40 ) } }                       )
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR( 18 )"                           ,;
-                                                         "default"   => {|| space( 18 ) } }                       )
+   hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR( 20 )"                           ,;
+                                                         "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",                        {  "create"    => "VARCHAR( 200 )"                          ,;
                                                          "default"   => {|| space( 200 ) } }                      )
@@ -687,7 +696,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD setParentUuidAttribute( value )
+METHOD setFamiliaUuidAttribute( value )
 
    if empty( ::oController )
       RETURN ( value )
@@ -701,13 +710,13 @@ RETURN ( ::oController:oDialogView:uuidSelected )
 
 //---------------------------------------------------------------------------//
 
-METHOD getRowSetWhereParentUuid( parentUuid )
+METHOD getRowSetWhereFamiliaUuid( familiaUuid )
 
    local cSQL      
    local oHashList
 
    cSQL                 := "SELECT uuid, nombre FROM " + ::cTableName            + " "
-   cSQL                 +=    "WHERE parent_uuid = " + quoted( parentUuid )      + " "
+   cSQL                 +=    "WHERE familia_uuid = " + quoted( familiaUuid )    + " "
    cSQL                 +=    "AND empresa_uuid = " + quoted( Company():Uuid() ) + " " 
 
    oHashList            := getSQLDatabase():selectHashList( cSQL ) 

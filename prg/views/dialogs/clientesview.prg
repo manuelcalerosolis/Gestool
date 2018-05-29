@@ -188,7 +188,7 @@ METHOD redefineGeneral() CLASS ClientesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   TBtnBmp():ReDefine( 180, "gc_recycle_16",,,,,{|| ::loadFechaLlamada() }, ::oFolder:aDialogs[1], .f., , .f.,  )
+   TBtnBmp():ReDefine( 180, "gc_recycle_16",,,,,{|| ::loadFechaLlamada() }, ::oFolder:aDialogs[1], .f., {|| ::oController:isNotZoomMode() }, .f. )
 
 RETURN ( self )
 
@@ -334,7 +334,7 @@ METHOD redefineComercial() CLASS ClientesView
       OF       ::oFolder:aDialogs[2]
 
    ::oInfoSubCuenta:lWantClick  := .t.
-   ::oInfoSubCuenta:OnClick     := {|| msgalert( "Informe subcuenta del cliente" ) }
+   ::oInfoSubCuenta:OnClick     := {|| if( ::oController:isNotZoomMode(),  msgalert( "Informe subcuenta del cliente" ), ) }
 
    REDEFINE GET ::oGetSubcuenta ; 
       VAR      ::oController:oModel:hBuffer[ "subcuenta" ] ;
@@ -368,7 +368,7 @@ METHOD redefineComercial() CLASS ClientesView
       OF       ::oFolder:aDialogs[2]
 
    ::oInfoSubCuentaDescuento:lWantClick  := .t.
-   ::oInfoSubCuentaDescuento:OnClick     := {|| msgalert( "Informe subcuenta dedescuento" ) }
+   ::oInfoSubCuentaDescuento:OnClick     := {|| if( ::oController:isNotZoomMode(), msgalert( "Informe subcuenta dedescuento" ), ) }
 
    REDEFINE GET ::oGetSubcuentaDescuento ; 
       VAR      ::oController:oModel:hBuffer[ "cuenta_venta" ] ;
@@ -392,7 +392,7 @@ RETURN ( self )
 METHOD startDialog()
 
    ::addLinksToExplorerBar()
-
+   
    ::oController:oAgentesController:oGetSelector:Start()
 
    ::oController:oFormasdePagoController:oGetSelector:Start()
@@ -424,17 +424,26 @@ RETURN ( self )
 
 METHOD addLinksToExplorerBar() CLASS ClientesView
 
-   local oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+   local oPanel
 
-   oPanel:AddLink( "Tarifas...",             {|| MsgInfo( "Tarifas" ) }, "gc_money_interest_16" )
-   oPanel:AddLink( "Direcciones...",         {|| ::oController:oDireccionesController:activateDialogView() }, ::oController:oDireccionesController:getImage( "16" ) )
-   oPanel:AddLink( "Contactos...",           {|| ::oController:oContactosController:activateDialogView() }, ::oController:oContactosController:getImage( "16" ) )
-   oPanel:AddLink( "Cuentas bancarias...",   {|| ::oController:oCuentasBancariasController:activateDialogView() }, ::oController:oCuentasBancariasController:getImage( "16" ) )
-   oPanel:AddLink( "Incidencias...",         {|| ::oController:oIncidenciasController:activateDialogView() }, ::oController:oIncidenciasController:getImage( "16" ) )
-   oPanel:AddLink( "Documentos...",          {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
-   oPanel:AddLink( "Entidades facturae...",  {|| ::oController:oClientesEntidadesController:activateDialogView() }, ::oController:oClientesEntidadesController:getImage( "16" ) )
-   oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
-   oPanel:AddLink( "Descuentos...",          {|| ::oController:oDescuentosController:activateDialogView( ::oController:getUuid() ) }, ::oController:oDescuentosController:getImage( "16" ) )
+   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   if ::oController:isNotZoomMode()
+      oPanel:AddLink( "Tarifas...",             {|| MsgInfo( "Tarifas" ) }, "gc_money_interest_16" )
+      oPanel:AddLink( "Direcciones...",         {|| ::oController:oDireccionesController:activateDialogView() }, ::oController:oDireccionesController:getImage( "16" ) )
+      oPanel:AddLink( "Contactos...",           {|| ::oController:oContactosController:activateDialogView() }, ::oController:oContactosController:getImage( "16" ) )
+      oPanel:AddLink( "Cuentas bancarias...",   {|| ::oController:oCuentasBancariasController:activateDialogView() }, ::oController:oCuentasBancariasController:getImage( "16" ) )
+      oPanel:AddLink( "Incidencias...",         {|| ::oController:oIncidenciasController:activateDialogView() }, ::oController:oIncidenciasController:getImage( "16" ) )
+      oPanel:AddLink( "Documentos...",          {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
+      oPanel:AddLink( "Entidades facturae...",  {|| ::oController:oClientesEntidadesController:activateDialogView() }, ::oController:oClientesEntidadesController:getImage( "16" ) )
+      oPanel:AddLink( "Descuentos...",          {|| ::oController:oDescuentosController:activateDialogView( ::oController:getUuid() ) }, ::oController:oDescuentosController:getImage( "16" ) )
+   end if
+
+   oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
+
+   if ::oController:isNotZoomMode()
+      oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+   end if
 
 RETURN ( self )
 

@@ -1,7 +1,7 @@
 HB                   = 	\harbour_bcc582\
 
 HBINCLUDE            = 	\harbour_bcc582\include
-FWINCLUDE            = 	\fwh1705\Include
+FWINCLUDE            = 	\fwh1705\include
 GTINCLUDE            = 	.\Include
 
 HBLIB                = 	\harbour_bcc582\lib
@@ -358,6 +358,11 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+RecibosController.prg 														\
+BalanzasController.prg 														\
+ImpresorasController.prg 													\
+CajasController.prg 															\
+EntradaSalidaController.prg 												\
 ArticulosEnvasadoController.prg 											\
 OrdenComandasController.prg 												\
 ClientesEntidadesController.prg 											\
@@ -381,7 +386,12 @@ ArticulosTemporadaController.prg 										\
 ArticulosCategoriasController.prg 										\
 ArticulosUnidadesMedicionController.prg								\
 AlmacenesController.prg 													\
+DelegacionesController.prg 												\
 ArticulosController.prg 													\
+ArticulosBrowseView.prg 													\
+ArticulosView.prg 															\
+ArticulosValidator.prg 														\
+SQLArticulosModel.prg 														\
 ArticulosPreciosController.prg 											\
 ZonasController.prg 															\
 ArticulosFabricantesController.prg 										\
@@ -685,6 +695,9 @@ CalculaPrecioCommand.prg 													\
 DescuentosController.prg 													\
 ClientesBrowseView.prg 														\
 TercerosBrowseView.prg 														\
+SqlFacturasClientesModel.prg 												\
+FacturasClientesController.prg 											\
+FacturasClientesView.prg 													\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1025,6 +1038,11 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+RecibosController.obj    		   										\
+BalanzasController.obj       												\
+ImpresorasController.obj       											\
+CajasController.obj       													\
+EntradaSalidaController.obj       										\
 ArticulosEnvasadoController.obj       									\
 OrdenComandasController.obj       										\
 ClientesEntidadesController.obj       									\
@@ -1048,7 +1066,12 @@ ArticulosTemporadaController.obj       								\
 ArticulosCategoriasController.obj       								\
 ArticulosUnidadesMedicionController.obj 								\
 AlmacenesController.obj       											\
+DelegacionesController.obj       										\
 ArticulosController.obj       											\
+ArticulosBrowseView.obj 													\
+ArticulosView.obj 															\
+ArticulosValidator.obj 														\
+SQLArticulosModel.obj 														\
 ArticulosPreciosController.obj       									\
 ZonasController.obj       													\
 ArticulosFabricantesController.obj       								\
@@ -1346,6 +1369,9 @@ CalculaPrecioCommand.obj 													\
 DescuentosController.obj 													\
 ClientesBrowseView.obj 														\
 TercerosBrowseView.obj 														\
+SqlFacturasClientesModel.obj 												\
+FacturasClientesController.obj 											\
+FacturasClientesView.obj 													\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1358,7 +1384,7 @@ $(EXE)                  : $( PRG:.PRG=.OBJ )
 
 $(EXE)                  : $( C:.C=.OBJ )
 
-$(EXE) : $(RESOURCE)\GstDialog.Res $(OBJS)
+$(EXE) 						: $(RESOURCE)\GstDialog.Res $(OBJS)
   	$(BORLAND)\Bin\iLink32 @&&|
   	-Gn -aa -Tpe -s -r -m -V4.0                              	+
 (BORLAND)\lib\c0w32.obj                                     	+
@@ -1679,6 +1705,11 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\RecibosController.obj    											+
+$(OBJ)\BalanzasController.obj    										+	
+$(OBJ)\ImpresorasController.obj    										+
+$(OBJ)\CajasController.obj    											+
+$(OBJ)\EntradaSalidaController.obj    									+
 $(OBJ)\ArticulosEnvasadoController.obj    							+
 $(OBJ)\OrdenComandasController.obj    									+
 $(OBJ)\ClientesEntidadesController.obj    							+
@@ -1702,7 +1733,12 @@ $(OBJ)\ArticulosTemporadaController.obj    							+
 $(OBJ)\ArticulosCategoriasController.obj    							+
 $(OBJ)\ArticulosUnidadesMedicionController.obj    					+
 $(OBJ)\AlmacenesController.obj    										+
+$(OBJ)\DelegacionesController.obj    									+
 $(OBJ)\ArticulosController.obj    										+
+$(OBJ)\ArticulosBrowseView.obj    										+
+$(OBJ)\ArticulosView.obj    												+
+$(OBJ)\ArticulosValidator.obj												+
+$(OBJ)\SQLArticulosModel.obj												+
 $(OBJ)\ArticulosPreciosController.obj    								+
 $(OBJ)\ZonasController.obj    											+
 $(OBJ)\ArticulosFabricantesController.obj    						+
@@ -1996,6 +2032,9 @@ $(OBJ)\CalculaPrecioCommand.obj 											+
 $(OBJ)\DescuentosController.obj 											+
 $(OBJ)\ClientesBrowseView.obj 											+
 $(OBJ)\TercerosBrowseView.obj 											+
+$(OBJ)\SqlFacturasClientesModel.obj 				    				+
+$(OBJ)\FacturasClientesController.obj 									+
+$(OBJ)\FacturasClientesView.obj 											+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

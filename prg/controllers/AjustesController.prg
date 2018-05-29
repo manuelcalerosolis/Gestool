@@ -117,7 +117,8 @@ METHOD getInsertAjustesSentence()
    cSentence  +=    "( UUID(), 'albaran_entregado',         '1',  'boolean',      NULL, NULL ), "
    cSentence  +=    "( UUID(), 'asistente_generar_facturas','1',  'boolean',      NULL, NULL ), "
    cSentence  +=    "( UUID(), 'cambiar_estado',            '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'cambiar_campos',            '1',  'boolean',      NULL, NULL )"
+   cSentence  +=    "( UUID(), 'cambiar_campos',            '1',  'boolean',      NULL, NULL ), "
+   cSentence  +=    "( UUID(), 'delegacion_defecto',        '1',  'alphanumeric', NULL, NULL )"
 
 RETURN ( cSentence )
 

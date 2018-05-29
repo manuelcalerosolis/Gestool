@@ -37,6 +37,8 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD New()
 
+   METHOD End()
+
    METHOD DireccionesControllerLoadCurrentBuffer()
 
    METHOD DireccionesControllerUpdateBuffer()
@@ -60,6 +62,14 @@ METHOD New() CLASS TercerosController
    ::oRepository                 := TercerosRepository():New( self )
 
    ::lTransactional              := .t.
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS TercerosController
+
+   ::Super:End()
 
 RETURN ( Self )
 
