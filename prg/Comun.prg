@@ -3029,6 +3029,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_balance_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Recidbos'
+   oItem:cMessage       := 'Recidbos'
+   oItem:bAction        := {||RecibosController():New():ActivateNavigatorView() }
+   oItem:cId            := "recibos"
+   oItem:cBmp           := "gc_briefcase2_user_16"
+   oItem:cBmpBig        := "gc_briefcase2_user_32"
+   oItem:lShow          := .f.
+
 RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
