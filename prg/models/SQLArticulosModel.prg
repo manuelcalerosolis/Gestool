@@ -41,10 +41,10 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
    METHOD setTipoIvaUuidAttribute( uValue ) ;
                                  INLINE ( if( empty( uValue ), "", SQLTiposIvaModel():getUuidWhereCodigo( uValue ) ) )
 
-   METHOD getImpuestoEspecialAttribute( uValue ) ; 
+   METHOD getImpuestoEspecialUuidAttribute( uValue ) ; 
                                  INLINE ( if( empty( uValue ), space( 20 ), SQLImpuestosEspecialesModel():getCodigoWhereUuid( uValue ) ) )
 
-   METHOD setImpuestoEspecialAttribute( uValue ) ;
+   METHOD setImpuestoEspecialUuidAttribute( uValue ) ;
                                  INLINE ( if( empty( uValue ), "", SQLImpuestosEspecialesModel():getUuidWhereCodigo( uValue ) ) )
 
    METHOD getPrimeraPropiedadUuidAttribute( uValue ) ; 
@@ -129,35 +129,41 @@ RETURN ( ::hColumns )
 
 METHOD getInitialSelect() CLASS SQLArticulosModel
 
-   local cSelect  := "SELECT articulos.id AS id, "                                  + ;
-                        "articulos.uuid AS uuid, "                                  + ;
-                        "articulos.codigo AS codigo, "                              + ;
-                        "articulos.nombre AS nombre, "                              + ;
-                        "articulos.obsoleto AS obsoleto, "                          + ;
-                        "articulos.caducidad AS caducidad, "                        + ;
-                        "articulos.periodo_caducidad AS periodo_caducidad, "        + ;
-                        "articulos.lote AS lote, "                                  + ;
-                        "articulos.lote_actual AS lote_actual, "                    + ;
-                        "articulos.precio_costo AS precio_costo, "                  + ;
-                        "RPAD( IFNULL( articulos_familias.codigo, '' ), 20, ' ' ) AS articulo_familia_codigo, "               + ;
-                        "articulos_familias.nombre AS articulo_familia_nombre, "                                              + ;
-                        "RPAD( IFNULL( articulos_tipos.codigo, '' ), 20, ' ' ) AS articulo_tipo_codigo, "                     + ;
-                        "articulos_tipos.nombre AS articulo_tipo_nombre, "                                                    + ;
-                        "RPAD( IFNULL( articulos_categorias.codigo, '' ), 20, ' ' ) AS articulo_categoria_codigo, "           + ;
-                        "articulos_categorias.nombre AS articulo_categoria_nombre, "                                          + ;
-                        "RPAD( IFNULL( articulos_fabricantes.codigo, '' ), 20, ' ' ) AS articulo_fabricante_codigo, "         + ;
-                        "articulos_fabricantes.nombre AS articulo_fabricante_nombre, "                                        + ;
-                        "RPAD( IFNULL( tipos_iva.codigo, '' ), 20, ' ' ) AS tipo_iva_codigo, "                                + ;
-                        "tipos_iva.nombre AS tipo_iva_nombre, "                                                               + ;
-                        "RPAD( IFNULL( impuestos_especiales.codigo, '' ), 20, ' ' ) AS impuesto_especial_codigo, "            + ;
-                        "impuestos_especiales.nombre AS impuesto_especial_nombre "                                            + ;
-                     "FROM articulos "                                                                                        + ;
-                        "LEFT JOIN articulos_familias ON articulos.articulo_familia_uuid = articulos_familias.uuid "          + ; 
-                        "LEFT JOIN articulos_tipos ON articulos.articulo_tipo_uuid = articulos_tipos.uuid "                   + ;
-                        "LEFT JOIN articulos_categorias ON articulos.articulo_categoria_uuid = articulos_categorias.uuid "    + ; 
-                        "LEFT JOIN articulos_fabricantes ON articulos.articulo_fabricante_uuid = articulos_fabricantes.uuid " + ;
-                        "LEFT JOIN tipos_iva ON articulos.tipo_iva_uuid = tipos_iva.uuid "                                    + ;
-                        "LEFT JOIN impuestos_especiales ON articulos.impuesto_especial_uuid = impuestos_especiales.uuid " 
+   local cSelect  := "SELECT articulos.id AS id, "                                                                                           + ;
+                        "articulos.uuid AS uuid, "                                                                                           + ;
+                        "articulos.codigo AS codigo, "                                                                                       + ;
+                        "articulos.nombre AS nombre, "                                                                                       + ;
+                        "articulos.obsoleto AS obsoleto, "                                                                                   + ;
+                        "articulos.caducidad AS caducidad, "                                                                                 + ;
+                        "articulos.periodo_caducidad AS periodo_caducidad, "                                                                 + ;
+                        "articulos.lote AS lote, "                                                                                           + ;
+                        "articulos.lote_actual AS lote_actual, "                                                                             + ;
+                        "articulos.precio_costo AS precio_costo, "                                                                           + ;
+                        "RPAD( IFNULL( articulos_familias.codigo, '' ), 20, ' ' ) AS articulo_familia_codigo, "                              + ;
+                        "articulos_familias.nombre AS articulo_familia_nombre, "                                                             + ;
+                        "RPAD( IFNULL( articulos_tipos.codigo, '' ), 20, ' ' ) AS articulo_tipo_codigo, "                                    + ;
+                        "articulos_tipos.nombre AS articulo_tipo_nombre, "                                                                   + ;
+                        "RPAD( IFNULL( articulos_categorias.codigo, '' ), 20, ' ' ) AS articulo_categoria_codigo, "                          + ;
+                        "articulos_categorias.nombre AS articulo_categoria_nombre, "                                                         + ;
+                        "RPAD( IFNULL( articulos_fabricantes.codigo, '' ), 20, ' ' ) AS articulo_fabricante_codigo, "                        + ;
+                        "articulos_fabricantes.nombre AS articulo_fabricante_nombre, "                                                       + ;
+                        "RPAD( IFNULL( tipos_iva.codigo, '' ), 20, ' ' ) AS tipo_iva_codigo, "                                               + ;
+                        "tipos_iva.nombre AS tipo_iva_nombre, "                                                                              + ;
+                        "RPAD( IFNULL( impuestos_especiales.codigo, '' ), 20, ' ' ) AS impuesto_especial_codigo, "                           + ;
+                        "impuestos_especiales.nombre AS impuesto_especial_nombre, "                                                          + ;
+                        "RPAD( IFNULL( primera_propiedad.codigo, '' ), 20, ' ' ) AS primera_propiedad_codigo, "                              + ;
+                        "primera_propiedad.nombre AS primera_propiedad_nombre, "                                                             + ;
+                        "RPAD( IFNULL( segunda_propiedad.codigo, '' ), 20, ' ' ) AS segunda_propiedad_codigo, "                              + ;
+                        "segunda_propiedad.nombre AS segunda_propiedad_nombre "                                                              + ;
+                     "FROM articulos "                                                                                                       + ;
+                        "LEFT JOIN articulos_familias ON articulos.articulo_familia_uuid = articulos_familias.uuid "                         + ; 
+                        "LEFT JOIN articulos_tipos ON articulos.articulo_tipo_uuid = articulos_tipos.uuid "                                  + ;
+                        "LEFT JOIN articulos_categorias ON articulos.articulo_categoria_uuid = articulos_categorias.uuid "                   + ; 
+                        "LEFT JOIN articulos_fabricantes ON articulos.articulo_fabricante_uuid = articulos_fabricantes.uuid "                + ;
+                        "LEFT JOIN tipos_iva ON articulos.tipo_iva_uuid = tipos_iva.uuid "                                                   + ;
+                        "LEFT JOIN impuestos_especiales ON articulos.impuesto_especial_uuid = impuestos_especiales.uuid "                    + ;
+                        "LEFT JOIN articulos_propiedades AS primera_propiedad ON articulos.primera_propiedad_uuid = primera_propiedad.uuid " + ; 
+                        "LEFT JOIN articulos_propiedades AS segunda_propiedad ON articulos.segunda_propiedad_uuid = segunda_propiedad.uuid " 
 
 RETURN ( cSelect )
 

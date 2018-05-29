@@ -61,6 +61,12 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD validColumnImpuestosEspecialesBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oImpuestosEspecialesController:oModel, "impuesto_especial_uuid" ) )
 
+   METHOD validPrimeraPropiedadBrowse( oCol, uValue, nKey ) ;
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oPrimeraPropiedadController:oModel, "primera_propiedad_uuid" ) )
+
+   METHOD validSegundaPropiedadBrowse( oCol, uValue, nKey ) ;
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oSegundaPropiedadController:oModel, "segunda_propiedad_uuid" ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
