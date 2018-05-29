@@ -21,7 +21,7 @@ METHOD New( oSenderController ) CLASS ArticulosTipoController
 
    ::cTitle                         := "Tipos de artículo"
 
-   ::cName                          := "articulos_tipo"
+   ::cName                          := "articulos_tipos"
 
    ::hImage                         := {  "16" => "gc_objects_16",;
                                           "32" => "gc_objects_32",;
@@ -238,7 +238,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLArticulosTipoModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "articulos_tipo"
+   DATA cTableName               INIT "articulos_tipos"
 
    METHOD getColumns()
 
@@ -251,17 +251,17 @@ METHOD getColumns() CLASS SQLArticulosTipoModel
    hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                     "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                     "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                            ,;
-                                    "default"   => {|| space( 20 ) } }                        )
+   ::getEmpresaColumns()
+
+   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
+                                    "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
-                                    "default"   => {|| space( 200 ) } }                       )
-   
-   ::getEmpresaColumns()
-   
+                                    "default"   => {|| space( 200 ) } }                      )
+      
    ::getTimeStampColumns()
 
 RETURN ( ::hColumns )

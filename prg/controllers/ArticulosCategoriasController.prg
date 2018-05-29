@@ -276,7 +276,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLArticulosCategoriasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "articulos_categoria"
+   DATA cTableName               INIT "articulos_categorias"
 
    METHOD getColumns()
 

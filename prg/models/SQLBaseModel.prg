@@ -221,7 +221,6 @@ CLASS SQLBaseModel
    METHOD getCodigoWhereUuid( uuid )                  INLINE ( ::getColumnWhereUuid( uuid, 'codigo' ) )
 
    METHOD getColumnWhereId( id, cColumn ) 
-   METHOD getColumnWhereUuid( uuid, cColumn ) 
 
    METHOD getArrayColumns( cColumn ) 
    METHOD getArrayNombres( cColumn )                  INLINE ( ::getArrayColumns( 'nombre' ) )

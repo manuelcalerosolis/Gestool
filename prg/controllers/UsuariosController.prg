@@ -246,7 +246,7 @@ METHOD validUserPassword( cUsuario, cPassword )
    hUsuario                   := ::oModel:validUserPassword( cUsuario, cPassword )
 
    if empty( hUsuario )
-      ::cValidError           := "Usuario y contraseña con coinciden" 
+      ::cValidError           := "Usuario y contraseña no coinciden" 
       RETURN ( .f. )
    end if 
 

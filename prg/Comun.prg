@@ -2848,7 +2848,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Tipos de IVA'
    oItem:cMessage       := 'Tipos de IVA'
-   oItem:bAction        := {|| IvaTipoController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| TipoIvaController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_moneybag_16"
    oItem:cBmpBig        := "gc_moneybag_32"
@@ -2897,7 +2897,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Familia de articulos'
    oItem:cMessage       := 'Familia de articulos'
-   oItem:bAction        := {|| ArticulosFamiliaController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| ArticulosFamiliasController():New():ActivateNavigatorView() }
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_cubes_16"
    oItem:cBmpBig        := "gc_cubes_32"
@@ -3027,6 +3027,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "balanzas"
    oItem:cBmp           := "gc_balance_16"
    oItem:cBmpBig        := "gc_balance_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Recidbos'
+   oItem:cMessage       := 'Recidbos'
+   oItem:bAction        := {||RecibosController():New():ActivateNavigatorView() }
+   oItem:cId            := "recibos"
+   oItem:cBmp           := "gc_briefcase2_user_16"
+   oItem:cBmpBig        := "gc_briefcase2_user_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )
