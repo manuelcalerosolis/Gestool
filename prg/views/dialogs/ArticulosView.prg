@@ -86,28 +86,28 @@ METHOD Activate() CLASS ArticulosView
 
    // Familias de articulos ---------------------------------------------------
 
-   ::oController:oArticulosFamiliaController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_familia_uuid" ] ) )
-   ::oController:oArticulosFamiliaController:oGetSelector:Activate( 120, 121, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oArticulosFamiliasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_familia_uuid" ] ) )
+   ::oController:oArticulosFamiliasController:oGetSelector:Activate( 120, 121, ::oFolder:aDialogs[ 1 ] )
 
    // Tipos de articulos ------------------------------------------------------
 
-   ::oController:oArticulosTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_tipo_uuid" ] ) )
+   ::oController:oArticulosTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_tipo_uuid" ] ) )
    ::oController:oArticulosTipoController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
 
    // Categorias de articulos--------------------------------------------------
 
-   ::oController:oArticulosCategoriasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_categoria_uuid" ] ) )
+   ::oController:oArticulosCategoriasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_categoria_uuid" ] ) )
    ::oController:oArticulosCategoriasController:oGetSelector:Activate( 140, 141, ::oFolder:aDialogs[ 1 ] )
    
    // Fabricantes de articulos--------------------------------------------------
 
-   ::oController:oArticulosFabricantesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulos_fabricante_uuid" ] ) )
+   ::oController:oArticulosFabricantesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_fabricante_uuid" ] ) )
    ::oController:oArticulosFabricantesController:oGetSelector:Activate( 150, 151, ::oFolder:aDialogs[ 1 ] )
 
    // Tipo de IVA--------------------------------------------------------------
 
-   ::oController:oIvaTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "iva_tipo_uuid" ] ) )
-   ::oController:oIvaTipoController:oGetSelector:Activate( 160, 161, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oTipoIvaController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_iva_uuid" ] ) )
+   ::oController:oTipoIvaController:oGetSelector:Activate( 160, 161, ::oFolder:aDialogs[ 1 ] )
 
    // Tipo de IVA--------------------------------------------------------------
 
@@ -228,7 +228,7 @@ METHOD startActivate() CLASS ArticulosView
 
    ::addLinksToExplorerBar()
 
-   ::oController:oArticulosFamiliaController:oGetSelector:Start()
+   ::oController:oArticulosFamiliasController:oGetSelector:Start()
 
    ::oController:oArticulosTipoController:oGetSelector:Start()
 
@@ -236,7 +236,7 @@ METHOD startActivate() CLASS ArticulosView
 
    ::oController:oArticulosFabricantesController:oGetSelector:Start()
 
-   ::oController:oIvaTipoController:oGetSelector:Start()
+   ::oController:oTipoIvaController:oGetSelector:Start()
 
    ::oController:oImpuestosEspecialesController:oGetSelector:Start()
 

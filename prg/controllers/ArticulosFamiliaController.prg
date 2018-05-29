@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosFamiliaController FROM SQLNavigatorController
+CLASS ArticulosFamiliasController FROM SQLNavigatorController
 
    DATA oImagenesController
 
@@ -25,13 +25,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ArticulosFamiliaController
+METHOD New( oSenderController ) CLASS ArticulosFamiliasController
 
    ::Super:New( oSenderController )
 
    ::cTitle                         := "Familia de artículos"
 
-   ::cName                          := "articulos_familia"
+   ::cName                          := "articulos_familias"
 
    ::hImage                         := {  "16" => "gc_cubes_16",;
                                           "32" => "gc_cubes_32",;
@@ -80,7 +80,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS ArticulosFamiliaController
+METHOD End() CLASS ArticulosFamiliasController
 
    ::oModel:End()
 
@@ -623,7 +623,7 @@ RETURN ( .t. )
 
 CLASS SQLArticulosFamiliaModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "articulos_familia"
+   DATA cTableName               INIT "articulos_familias"
 
    METHOD getColumns()
 

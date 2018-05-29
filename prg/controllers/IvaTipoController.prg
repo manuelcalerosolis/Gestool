@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS IvaTipoController FROM SQLNavigatorController
+CLASS TipoIvaController FROM SQLNavigatorController
 
    DATA oCamposExtraValoresController
 
@@ -15,7 +15,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS IvaTipoController
+METHOD New( oSenderController ) CLASS TipoIvaController
 
    ::Super:New( oSenderController )
 
@@ -29,17 +29,17 @@ METHOD New( oSenderController ) CLASS IvaTipoController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLIvaTiposModel():New( self )
+   ::oModel                         := SQLTiposIvaModel():New( self )
 
-   ::oBrowseView                    := IvaTipoBrowseView():New( self )
+   ::oBrowseView                    := TipoIvaBrowseView():New( self )
 
-   ::oDialogView                    := IvaTipoView():New( self )
+   ::oDialogView                    := TipoIvaView():New( self )
 
-   ::oValidator                     := IvaTipoValidator():New( self, ::oDialogView )
+   ::oValidator                     := TipoIvaValidator():New( self, ::oDialogView )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
-   ::oRepository                    := IvaTipoRepository():New( self )
+   ::oRepository                    := TipoIvaRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
 
@@ -47,7 +47,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS IvaTipoController
+METHOD End() CLASS TipoIvaController
 
    ::oModel:End()
 
@@ -73,7 +73,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS IvaTipoBrowseView FROM SQLBrowseView
+CLASS TipoIvaBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -81,7 +81,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS IvaTipoBrowseView
+METHOD addColumns() CLASS TipoIvaBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -155,7 +155,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS IvaTipoView FROM SQLBaseView
+CLASS TipoIvaView FROM SQLBaseView
 
    DATA oSayCamposExtra
   
@@ -165,7 +165,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS IvaTipoView
+METHOD Activate() CLASS TipoIvaView
 
    local oBmpGeneral
    local oSayCamposExtra
@@ -262,7 +262,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS IvaTipoValidator FROM SQLBaseValidator
+CLASS TipoIvaValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -270,12 +270,12 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS IvaTipoValidator
+METHOD getValidators() CLASS TipoIvaValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
-                                                      "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe" } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido",;
+                                          "unique"    => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
+                                          "unique"    => "EL código introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -284,9 +284,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLIvaTiposModel FROM SQLBaseModel
+CLASS SQLTiposIvaModel FROM SQLBaseModel
 
-   DATA cTableName                              INIT "iva_tipos"
+   DATA cTableName                              INIT "tipos_iva"
 
    METHOD getColumns()
 
@@ -296,7 +296,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLIvaTiposModel
+METHOD getColumns() CLASS SQLTiposIvaModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                              "default"   => {|| 0 } }                                 )
@@ -319,7 +319,7 @@ METHOD getColumns() CLASS SQLIvaTiposModel
    hset( ::hColumns, "cuenta_compra",     {  "create"    => "VARCHAR ( 20 )"                          ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "cuenta_venta",     {  "create"    => "VARCHAR ( 20 )"                          ,;
+   hset( ::hColumns, "cuenta_venta",      {  "create"    => "VARCHAR ( 20 )"                          ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
 RETURN ( ::hColumns )
@@ -330,9 +330,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS IvaTipoRepository FROM SQLBaseRepository
+CLASS TipoIvaRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLRutasModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLTiposIvaModel():getTableName() ) 
 
 END CLASS
 

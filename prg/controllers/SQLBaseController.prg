@@ -181,6 +181,7 @@ CLASS SQLBaseController
    METHOD isAppendOrDuplicateMode()                   INLINE ( ::isAppendMode() .or. ::isDuplicateMode() )
 
    METHOD Edit()
+   METHOD EditReturn()
       METHOD setEditMode()                            INLINE ( ::setMode( __edit_mode__ ) )
       METHOD isEditMode()                             INLINE ( ::nMode == __edit_mode__ )
       METHOD isNotEditMode()                          INLINE ( ::nMode != __edit_mode__ )
@@ -481,13 +482,19 @@ RETURN ( lDuplicate )
 
 //----------------------------------------------------------------------------//
 
-METHOD Edit( nId ) 
-
-   local lEdit    := .t. 
+METHOD EditReturn( nId )
 
    if ::isBrowseColumnEdit()
       RETURN ( .f. )
    end if   
+
+RETURN ( ::Edit( nId ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD Edit( nId ) 
+
+   local lEdit    := .t. 
 
    if empty( nId )
       nId         := ::getIdFromRowSet()
