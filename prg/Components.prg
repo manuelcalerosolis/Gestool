@@ -131,12 +131,13 @@ METHOD New( nView ) CLASS PrintSeries
    ::oSufijoInicio         := GetSufijo():New( 140, Self )
    ::oSufijoFin            := GetSufijo():New( 150, Self )
 
+
    ::oFechaInicio          := GetFecha():New( 210, Self )
    ::oFechaInicio:FirstDayYear()
 
    ::oFechaFin             := GetFecha():New( 220, Self )
 
-   ::oFormatoDocumento     := GetDocumento():New( 90, 91, 92, Self )
+   ::oFormatoDocumento     := GetDocumentoComponent():New( 90, 91, 92, Self )
 
    ::oImpresora            := GetPrinter():New( 160, 161, Self )
 
@@ -181,20 +182,13 @@ METHOD SetVentas()
 
    // Clientes-----------------------------------------------------------------
 
-   ?"entro en setventas"
-   ?"1"
-
    ::oClienteInicio        := GetCliente():New( 300, 310, 301, Self )
    ::oClienteInicio:SetText( "Desde cliente" )
    ::oClienteInicio:First()
 
-   ?"2"
-
    ::oClienteFin           := GetCliente():New( 320, 330, 321, Self )
    ::oClienteFin:SetText( "Hasta cliente" )
    ::oClienteFin:Last()
-
-   ?"3"
 
    // Agentes-----------------------------------------------------------------
 
@@ -202,13 +196,9 @@ METHOD SetVentas()
    ::oAgenteInicio:SetText( "Desde agente" )
    ::oAgenteInicio:First()
 
-   ?"4"
-
    ::oAgenteFin           := GetAgente():New( 420, 430, 421, Self )
    ::oAgenteFin:SetText( "Hasta agente" )
    ::oAgenteFin:Last()
-
-   ?"5"
 
    // Grupo de cliente---------------------------------------------------------
 
@@ -216,13 +206,9 @@ METHOD SetVentas()
    ::oGrupoClienteInicio:SetText( "Desde grupo cliente" )
    ::oGrupoClienteInicio:First()
 
-   ?"6"
-
    ::oGrupoClienteFin      := GetGrupoCliente():New( 360, 370, 361, Self )
    ::oGrupoClienteFin:SetText( "Hasta grupo cliente" )
    ::oGrupoClienteFin:Last()
-
-   ?"7"
 
 Return ( Self )
 
@@ -1039,7 +1025,7 @@ Return ( Self )
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 
-CLASS GetDocumento FROM ComponentGetSay
+CLASS GetDocumentoComponent FROM ComponentGetSay
 
    DATA idBtn
    DATA cTypeDocumento              INIT Space( 2 )
@@ -1052,7 +1038,7 @@ CLASS GetDocumento FROM ComponentGetSay
 
 END CLASS 
 
-METHOD New( idGet, idSay, idBtn, oContainer ) CLASS GetDocumento
+METHOD New( idGet, idSay, idBtn, oContainer ) CLASS GetDocumentoComponent
 
    ::Super:New( idGet, idSay, nil, oContainer )
 
@@ -1065,7 +1051,7 @@ METHOD New( idGet, idSay, idBtn, oContainer ) CLASS GetDocumento
 
 Return ( Self )
 
-METHOD Resource(oDlg) CLASS GetDocumento
+METHOD Resource(oDlg) CLASS GetDocumentoComponent
 
    ::Super:Resource(oDlg)
 
