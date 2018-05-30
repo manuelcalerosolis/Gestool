@@ -365,6 +365,7 @@ CLASS SQLParentValidator FROM SQLBaseValidator
 
    METHOD Exist( uValue )
 
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -402,7 +403,7 @@ RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 
 //---------------------------------------------------------------------------//
 
-METHOD numeroDocumento( value )
+METHOD numeroDocumento( value ) 
 
    local nAt
    local cSerie   := ""
