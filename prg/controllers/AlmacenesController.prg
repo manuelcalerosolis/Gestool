@@ -25,9 +25,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS AlmacenesController
+METHOD New( oSenderController ) CLASS AlmacenesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                         := "Almacenes"
 
@@ -58,6 +58,8 @@ METHOD New() CLASS AlmacenesController
    ::oPaisesController              := PaisesController():New( self )
 
    ::oProvinciasController          := ProvinciasController():New( self )
+
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -97,6 +99,8 @@ METHOD End() CLASS AlmacenesController
    ::oPaisesController:End()
 
    ::oProvinciasController:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 
@@ -171,9 +175,9 @@ RETURN ( self )
 
 CLASS AlmacenesView FROM SQLBaseView
   
+   DATA oGetPais
    DATA oGetProvincia
    DATA oGetPoblacion
-   DATA oGetPais
    DATA oSayCamposExtra
 
    METHOD Activate()
@@ -202,8 +206,8 @@ RETURN ( self )
 
 METHOD Activate() CLASS AlmacenesView
 
-   local oBtnAppend
    local oBtnEdit
+   local oBtnAppend
    local oBtnDelete
    local oSayCamposExtra
 

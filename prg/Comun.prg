@@ -283,7 +283,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   ArticulosPreciosRepository():createFunctionPriceUsingMargin()
+   FacturasClientesController():New():ActivateNavigatorView()
 
 RETURN nil
 
@@ -2917,7 +2917,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Formas de pago'
    oItem:cMessage       := 'Formas de pago'
-   oItem:bAction        := {|| FormaPagoController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| FormasPagosController():New():ActivateNavigatorView() }
    oItem:cId            := "forma pago"
    oItem:cBmp           := "gc_credit_cards_16"
    oItem:cBmpBig        := "gc_credit_cards_32"
@@ -2957,7 +2957,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Envasado'
    oItem:cMessage       := 'Envasado'
-   oItem:bAction        := {||ArticulosEnvasadoController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| ArticulosEnvasadoController():New():ActivateNavigatorView() }
    oItem:cId            := "envasado_articulo"
    oItem:cBmp           := "gc_box_closed_16"
    oItem:cBmpBig        := "gc_box_closed_32"
@@ -2967,7 +2967,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Facturas de clientes'
    oItem:cMessage       := 'Facturas de clientes'
-   oItem:bAction        := {||FacturasClientesController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| FacturasClientesController():New():ActivateNavigatorView() }
    oItem:cId            := "facturas_clientes"
    oItem:cBmp           := "gc_document_text_user_16"
    oItem:cBmpBig        := "gc_document_text_user_32"

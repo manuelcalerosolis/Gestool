@@ -48,13 +48,8 @@ METHOD Activate()
          ID          200 ;
          OF          ::oDialog
 
-      REDEFINE GET   ::oGetNumero ;
-         VAR         ::oController:oModel:hBuffer[ "numero" ] ;
-         ID          100 ;
-         WHEN        ( ::oController:isNotZoomMode() ) ;
-         OF          ::oDialog
-
-      ::oGetNumero:bValid   := {|| ::oController:validateNumero() }
+      ::oController:oNumeroDocumentoController:BindValue( bSETGET( ::oController:oModel:hBuffer[ "numero" ] ) )
+      ::oController:oNumeroDocumentoController:Activate( 100, ::oDialog )
 
       REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
          ID          120 ;

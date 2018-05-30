@@ -11,7 +11,7 @@ CLASS ClientesController FROM TercerosController
 
    METHOD validColumnAgentesBrowse( uValue, nKey )             INLINE ( ::validColumnBrowse( uValue, nKey, ::oAgentesController:oModel, "agente_uuid" ) )
 
-   METHOD validColumnFormasdePagoBrowse( uValue, nKey )        INLINE ( ::validColumnBrowse( uValue, nKey, ::oFormasdePagoController:oModel, "forma_pago_uuid" ) )
+   METHOD validColumnFormasdePagoBrowse( uValue, nKey )        INLINE ( ::validColumnBrowse( uValue, nKey, ::oFormasPagoController:oModel, "forma_pago_uuid" ) )
 
    METHOD validColumnRutasBrowse( uValue, nKey )               INLINE ( ::validColumnBrowse( uValue, nKey, ::oRutasController:oModel, "ruta_uuid" ) )
 
@@ -45,7 +45,7 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::oAgentesController             := AgentesController():New( self )
 
-   ::oFormasdePagoController        := FormaPagoController():New( self )
+   ::oFormasPagoController          := FormasPagosController():New( self )
 
    ::oCuentasRemesasController      := CuentasRemesaController():New( self )
 
@@ -117,7 +117,7 @@ METHOD End() CLASS ClientesController
 
    ::oAgentesController:End()
 
-   ::oFormasdePagoController:End()
+   ::oFormasPagoController:End()
 
    ::oCuentasRemesasController:End()
 

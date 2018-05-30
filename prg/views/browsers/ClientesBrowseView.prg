@@ -129,7 +129,7 @@ METHOD addColumns() CLASS ClientesBrowseView
       if ::oController:isUserEdit()
          :nEditType        := 5
          :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnFormasdePagoBrowse( uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oFormasdePagoController:ActivateSelectorView() }
+         :bEditBlock       := {|| ::oController:oFormasPagoController:ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if

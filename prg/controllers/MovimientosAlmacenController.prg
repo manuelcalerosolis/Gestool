@@ -22,6 +22,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oImprimirSeriesController
 
+   DATA oNumeroDocumentoController
+
    DATA oReport
 
    METHOD New()
@@ -90,7 +92,7 @@ METHOD New()
 
    ::cTitle                      := "Movimientos de almacén" 
 
-   ::setName( "movimientos_de_almacen" )
+   ::setName( "movimientos_almacen" )
 
    ::cDirectory                  := cPatDocuments( "Movimientos almacen" ) 
 
@@ -132,7 +134,9 @@ METHOD New()
 
    ::oConfiguracionesController  := ConfiguracionesController():New( self )
 
-   ::oReport                     := MovimientosAlmacenReport():New( Self )
+   ::oReport                     := MovimientosAlmacenReport():New( self )
+
+   ::oNumeroDocumentoController  := NumeroDocumentoController():New( self )
 
    ::loadDocuments()
 
@@ -169,6 +173,8 @@ METHOD End()
    ::oReport:End()
 
    ::oConfiguracionesController:End()
+
+   ::oNumeroDocumentoController:End()
 
    ::Super:End()
 
