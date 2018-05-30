@@ -16696,18 +16696,12 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
    local oPrinter   
    local cPrinterFactura   := cPrinterFactura( Application():CodigoCaja(), dbfCajT )
 
-   ?"1"
-
    DEFAULT nDevice         := IS_PRINTER
    DEFAULT lExt            := .f.
 
    // Cremaos el dialogo-------------------------------------------------------
 
-   ?"2"
-
    oPrinter                := PrintSeries():New( nView ):SetVentas()
-
-   ?"21"
 
    // Establecemos sus valores-------------------------------------------------
 
@@ -16715,26 +16709,18 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
    oPrinter:Documento(     ( D():FacturasClientes( nView ) )->nNumFac )
    oPrinter:Sufijo(        ( D():FacturasClientes( nView ) )->cSufFac )
 
-   ?"3"
-
-   if lExt
+   if lExt  
 
       oPrinter:oFechaInicio:cText( ( D():FacturasClientes( nView ) )->dFecFac )
       oPrinter:oFechaFin:cText( ( D():FacturasClientes( nView ) )->dFecFac )
 
    end if
 
-   ?"4"
-
    oPrinter:oFormatoDocumento:TypeDocumento( "FC" )   
-
-   ?"5"
 
    // Formato de documento-----------------------------------------------------
 
    oPrinter:oFormatoDocumento:cText( cFormatoFacturasClientes() )
-
-   ?"6"
 
    // Codeblocks para que trabaje----------------------------------------------
 
