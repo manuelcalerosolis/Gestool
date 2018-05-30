@@ -300,7 +300,7 @@ METHOD Activate() CLASS RecibosView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "sesion" ] ;
       ID          130 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( .f. ) ;
       OF          ::oFolder:aDialogs[1]
 
   REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
