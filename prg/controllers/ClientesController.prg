@@ -50,11 +50,13 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oCuentasRemesasController      := CuentasRemesaController():New( self )
 
    ::oRutasController               := RutasController():New( self )
+   ::oRutasController:setView( ::oDialogView )
 
    ::oClientesGruposController      := ClientesGruposController():New( self )
+   ::oClientesGruposController:setView( ::oDialogView )
 
    ::oDireccionesController         := DireccionesController():New( self )
-   ::oDireccionesController:oValidator:setDialog( ::oDialogView )
+   ::oDireccionesController:setView( ::oDialogView )
 
    ::oContactosController           := ContactosController():New( self )
 
