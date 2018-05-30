@@ -44,10 +44,13 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oBrowseView                    := ClientesBrowseView():New( self )
 
    ::oAgentesController             := AgentesController():New( self )
+   ::oAgentesController:setView( ::oDialogView )
 
    ::oFormasPagoController          := FormasPagosController():New( self )
+   ::oFormasPagoController:setView( ::oDialogView )
 
    ::oCuentasRemesasController      := CuentasRemesaController():New( self )
+   ::oCuentasRemesasController:setView( ::oDialogView )
 
    ::oRutasController               := RutasController():New( self )
    ::oRutasController:setView( ::oDialogView )
