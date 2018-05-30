@@ -208,8 +208,8 @@ METHOD redefineComercial() CLASS ClientesView
    ::oController:oClientesGruposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_grupo_uuid" ] ) )
    ::oController:oClientesGruposController:oGetSelector:Activate( 140, 141, ::oFolder:aDialogs[2] )
 
-   ::oController:oFormasdePagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_uuid" ] ) )
-   ::oController:oFormasdePagoController:oGetSelector:Activate( 150, 151, ::oFolder:aDialogs[2] )
+   ::oController:oFormasPagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_uuid" ] ) )
+   ::oController:oFormasPagoController:oGetSelector:Activate( 150, 151, ::oFolder:aDialogs[2] )
 
    REDEFINE GET ::oController:oModel:hBuffer[ "primer_dia_pago" ] ;
       ID       160;
@@ -395,7 +395,7 @@ METHOD startDialog()
    
    ::oController:oAgentesController:oGetSelector:Start()
 
-   ::oController:oFormasdePagoController:oGetSelector:Start()
+   ::oController:oFormasPagoController:oGetSelector:Start()
 
    ::oController:oCuentasRemesasController:oGetSelector:Start()
 

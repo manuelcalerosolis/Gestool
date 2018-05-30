@@ -30,7 +30,7 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
                                                          "default"   => {|| space( 50 ) } }                    )
 
    hset( ::hColumns, "fecha",                         {  "create"    => "DATE"                                 ,;
-                                                         "default"   => {|| ctod( "" ) } }                     )
+                                                         "default"   => {|| date() } }                         )
 
    hset( ::hColumns, "fecha_valor_stock",             {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"   ,;
                                                          "default"   => {|| hb_datetime() } }                  )

@@ -7,6 +7,14 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oClientesController
 
+   DATA oNumeroDocumentoController
+
+   DATA oFormasPagoController
+
+   DATA oRutasController
+
+   DATA oAgentesController
+
    METHOD New()
 
    METHOD End()
@@ -39,6 +47,14 @@ METHOD New() CLASS FacturasClientesController
 
    ::oClientesController         := ClientesController():New( self )
 
+   ::oNumeroDocumentoController  := NumeroDocumentoController():New( self )
+
+   ::oFormasPagoController       := FormasPagosController():New( self )   
+
+   ::oRutasController            := RutasController():New( self )
+
+   ::oAgentesController          := AgentesController():New( self )
+
    ::lTransactional              := .t.
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
@@ -50,6 +66,14 @@ RETURN ( Self )
 METHOD End() CLASS FacturasClientesController
 
    ::oClientesController:End()
+
+   ::oNumeroDocumentoController:End()
+
+   ::oFormasPagoController:End()
+
+   ::oRutasController:End()
+
+   ::oAgentesController:End()
 
    ::Super:End()
 

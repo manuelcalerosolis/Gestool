@@ -2917,7 +2917,7 @@ FUNCTION CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Formas de pago'
    oItem:cMessage       := 'Formas de pago'
-   oItem:bAction        := {|| FormaPagoController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| FormasPagosController():New():ActivateNavigatorView() }
    oItem:cId            := "forma pago"
    oItem:cBmp           := "gc_credit_cards_16"
    oItem:cBmpBig        := "gc_credit_cards_32"

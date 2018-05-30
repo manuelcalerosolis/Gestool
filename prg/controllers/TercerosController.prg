@@ -13,7 +13,7 @@ CLASS TercerosController FROM SQLNavigatorController
 
    DATA oAgentesController
 
-   DATA oFormasdePagoController
+   DATA oFormasPagoController
 
    DATA oCuentasRemesasController
 

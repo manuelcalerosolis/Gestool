@@ -9,7 +9,7 @@ CLASS RecibosController FROM SQLNavigatorController
 
    DATA oClientesController
 
-   DATA oFormaPagoController
+   DATA oFormasPagosController
 
    DATA oAgentesController
 
@@ -51,7 +51,7 @@ METHOD New( oSenderController ) CLASS RecibosController
 
    ::oClientesController            := ClientesController():new( self )
 
-   ::oFormaPagoController           := FormaPagoController():new( self )
+   ::oFormasPagosController           := FormasPagosController():new( self )
 
    ::oAgentesController             := AgentesController():new( self )
 
@@ -81,7 +81,7 @@ METHOD End() CLASS RecibosController
 
    ::oClientesController:End()
 
-   ::oFormaPagoController:End()
+   ::oFormasPagosController:End()
 
    ::oAgentesController:End()
 
@@ -352,11 +352,11 @@ METHOD Activate() CLASS RecibosView
 
    // Forma de pago-----------------------------------------------------------------------------------------------------//
 
-   ::oController:oFormaPagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago" ] ) )
+   ::oController:oFormasPagosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago" ] ) )
    
-   ::oController:oFormaPagoController:oGetSelector:setEvent( 'validated', {|| ::FormaPagoControllerValidated() } )
+   ::oController:oFormasPagosController:oGetSelector:setEvent( 'validated', {|| ::FormasPagosControllerValidated() } )
 
-   ::oController:oFormaPagoController:oGetSelector:Activate( 210, 212, ::oFolder:aDialogs[1] )
+   ::oController:oFormasPagosController:oGetSelector:Activate( 210, 212, ::oFolder:aDialogs[1] )
 
 //Agentes---------------------------------------------------------------------------------------------------------//
 
@@ -412,7 +412,7 @@ METHOD StartActivate() CLASS RecibosView
 
 ::oController:oClientesController:oGetSelector:Start()
 
-::oController:oFormaPagoController:oGetSelector:Start()
+::oController:oFormasPagosController:oGetSelector:Start()
 
 ::oController:oAgentesController:oGetSelector:Start()
 
@@ -492,10 +492,10 @@ CLASS SQLRecibosModel FROM SQLBaseModel
                                  INLINE ( if( empty( uValue ), "", ::oController:oClientesController:oModel():getUuidWhereCodigo( uValue ) ) )
 
    METHOD getFormapagoAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oFormapagoController:oModel():getCodigoWhereUuid( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oFormasPagosController:oModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setFormapagoAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:oFormapagoController:oModel():getUuidWhereCodigo( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), "", ::oController:oFormasPagosController:oModel():getUuidWhereCodigo( uValue ) ) )
    METHOD getAgenteAttribute( uValue ) ; 
                                  INLINE ( if( empty( uValue ), space( 40 ), ::oController:oAgentesController:oModel():getCodigoWhereUuid( uValue ) ) )
 

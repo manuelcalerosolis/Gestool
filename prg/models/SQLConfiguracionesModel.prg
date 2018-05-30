@@ -18,6 +18,8 @@ CLASS SQLConfiguracionesModel FROM SQLExportableModel
 
    METHOD getSQLSentenceValue( cDocumento, cClave )
 
+   METHOD getSQLSentenceId( cDocumento, cClave )
+
    METHOD getValue( cDocumento, cClave, uDefault )
 
    METHOD getNumeric( cDocumento, cClave, uDefault )
@@ -46,33 +48,30 @@ END CLASS
 
 METHOD getColumns()
 
-   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
-                                       "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "empresa",     {  "create"    => "CHAR ( 4 ) NOT NULL"                     ,;
-                                       "default"   => {|| cCodEmp() } }                         )
+   hset( ::hColumns, "empresa_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"                 ,;
+                                          "default"   => {|| Company():Uuid() } }                  )
 
-   hset( ::hColumns, "usuario",     {  "create"    => "VARCHAR(3) NOT NULL"                     ,;
-                                       "default"   => {|| space( 3 ) } }                        )
+   hset( ::hColumns, "documento",      {  "create"    => "VARCHAR ( 250 )"                         ,;
+                                          "default"   => {|| space( 250 ) } }                      )
 
-   hset( ::hColumns, "documento",   {  "create"    => "VARCHAR ( 250 )"                         ,;
-                                       "default"   => {|| space( 250 ) } }                      )
+   hset( ::hColumns, "clave",          {  "create"    => "VARCHAR ( 250 )"                         ,;
+                                          "default"   => {|| space( 250 ) } }                      )
 
-   hset( ::hColumns, "clave",       {  "create"    => "VARCHAR ( 250 )"                         ,;
-                                       "default"   => {|| space( 250 ) } }                      )
-
-   hset( ::hColumns, "valor",       {  "create"    => "VARCHAR ( 250 )"                         ,;
-                                       "default"   => {|| space( 250 ) } }                      )
+   hset( ::hColumns, "valor",          {  "create"    => "VARCHAR ( 250 )"                         ,;
+                                          "default"   => {|| space( 250 ) } }                      )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceValue( cDocumento, cClave )
+METHOD getSQLSentenceValue( cDocumento, cClave, uValor )
 
-   local cSentence   := "SELECT id, valor FROM " + ::getTableName()           + space( 1 ) 
+   local cSentence   := "SELECT valor FROM " + ::getTableName()               + space( 1 ) 
 
-   cSentence         +=    "WHERE empresa = " + toSQLString( cCodEmp() )      + space( 1 )
+   cSentence         +=    "WHERE empresa_uuid = " + quoted( Company():Uuid() ) + " " 
 
    if !empty( cDocumento )
       cSentence      +=       "AND documento = " + toSQLString( cDocumento )  + space( 1 ) 
@@ -82,29 +81,60 @@ METHOD getSQLSentenceValue( cDocumento, cClave )
       cSentence      +=       "AND clave = " + toSQLString( cClave )          + space( 1 ) 
    end if 
 
+   if !empty( uValor )
+      cSentence      +=       "AND valor = " + toSQLString( uValor )          + space( 1 ) 
+   end if 
+
    cSentence         +=    "LIMIT 1"                                         
 
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValue( cDocumento, cClave, uDefault )
+METHOD getSQLSentenceId( cDocumento, cClave, uValor )
 
-   local cSentence   := ::getSQLSentenceValue( cDocumento, cClave )
+   local cSentence   := "SELECT id FROM " + ::getTableName()                  + space( 1 ) 
 
-   local aSelect     := getSQLDataBase():selectFetchHash( cSentence )
+   cSentence         +=    "WHERE empresa_uuid = " + quoted( Company():Uuid() ) + " " 
 
-   if !empty( aSelect )
-      RETURN ( hget( atail( aSelect ), "valor" ) )
+   if !empty( cDocumento )
+      cSentence      +=       "AND documento = " + toSQLString( cDocumento )  + space( 1 ) 
+   end if 
+
+   if !empty( cClave )
+      cSentence      +=       "AND clave = " + toSQLString( cClave )          + space( 1 ) 
+   end if 
+
+   if !empty( uValor )
+      cSentence      +=       "AND valor = " + toSQLString( uValor )          + space( 1 ) 
+   end if 
+
+   cSentence         +=    "LIMIT 1"                                         
+
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
+
+METHOD getValue( cDocumento, cClave, uValor, uDefault )
+
+   local valor
+   local cSentence   
+
+   cSentence         := ::getSQLSentenceValue( cDocumento, cClave, uValor )
+
+   valor             := getSQLDataBase():getValue( cSentence )
+
+   if !empty( valor )
+      RETURN ( valor )
    end if 
 
 RETURN ( uDefault )
 
 //---------------------------------------------------------------------------//
 
-METHOD getNumeric( cDocumento, cClave, uDefault )
+METHOD getNumeric( cDocumento, cClave, uValor, uDefault )
 
-   local uValue      := ::getValue( cDocumento, cClave, uDefault ) 
+   local uValue      := ::getValue( cDocumento, cClave, uValor, uDefault ) 
 
    if hb_isstring( uValue )
       RETURN ( val( uValue ) )
@@ -114,18 +144,18 @@ RETURN ( uValue )
        
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceInsertValue( cDocumento, cClave, uValue )
+METHOD getSQLSentenceInsertValue( cDocumento, cClave, uValor )
 
    local cSentence   := "INSERT INTO " + ::getTableName()                  + space( 1 )   + ;
-                        "( empresa,"                                       + space( 1 )   + ;
+                        "( empresa_uuid,"                                  + space( 1 )   + ;
                            "documento,"                                    + space( 1 )   + ;
                            "clave,"                                        + space( 1 )   + ;
                            "valor )"                                       + space( 1 )   + ;
                         "VALUES"                                           + space( 1 )   + ;
-                        "( " + toSQLString( cCodEmp() ) + ","              + space( 1 )   + ;
+                        "( " + toSQLString( Company():Uuid() ) + ","       + space( 1 )   + ;
                            toSQLString( cDocumento ) + ","                 + space( 1 )   + ;
                            toSQLString( cClave ) + ","                     + space( 1 )   + ;
-                           toSQLString( uValue ) + " )" 
+                           toSQLString( uValor ) + " )" 
 
 RETURN ( cSentence )
 
@@ -142,31 +172,24 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD setValue( cDocumento, cClave, uValue )
+METHOD setValue( cDocumento, cClave, uValor )
 
-   local nId
-   local aSelect     
+   local nId     
    local cSentence   
 
-   uValue            := cvaltostr( uValue )
+   uValor            := alltrim( cvaltostr( uValor ) )
 
-   cSentence         := ::getSQLSentenceValue( cDocumento, cClave )
+   cSentence         := ::getSQLSentenceId( cDocumento, cClave, uValor )
 
-   aSelect           := getSQLDataBase():selectFetchHash( cSentence )
+   nId               := getSQLDataBase():getValue( cSentence )
 
-   if empty( aSelect )
+   if empty( nId )
 
-      cSentence      := ::getSQLSentenceInsertValue( cDocumento, cClave, uValue )
+      cSentence      := ::getSQLSentenceInsertValue( cDocumento, cClave, uValor )
 
    else 
 
-      nId            := hget( atail( aSelect ), "id" )
-
-      if empty( nId )
-         RETURN ( self )
-      end if 
-
-      cSentence      := ::getSQLSentenceUpdateValue( nId, uValue )
+      cSentence      := ::getSQLSentenceUpdateValue( nId, uValor )
 
    end if 
 

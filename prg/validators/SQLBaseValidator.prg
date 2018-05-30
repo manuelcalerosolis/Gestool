@@ -306,6 +306,30 @@ METHOD getSenderControllerUuid()
 RETURN ( ::oController:getSenderController():getUuid() )
 
 //---------------------------------------------------------------------------//
+
+METHOD numeroDocumento( value )
+
+   local nAt
+   local cSerie   := ""
+   local nNumero
+
+   value          := alltrim( value )
+
+   nAt            := rat( "/", value )
+   if nAt != 0
+      nNumero     := substr( value, nAt + 1 )
+      cSerie      := substr( value, 1, nAt  )
+   else
+      nNumero     := value
+   end if  
+
+   if !hb_regexlike( "^[0-9]{1,6}$", nNumero )
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -399,30 +423,6 @@ METHOD Exist( uValue ) CLASS SQLParentValidator
    nCount            := getSQLDatabase():getValue( cSQLSentence )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
-
-//---------------------------------------------------------------------------//
-
-METHOD numeroDocumento( value )
-
-   local nAt
-   local cSerie   := ""
-   local nNumero
-
-   value          := alltrim( value )
-
-   nAt            := rat( "/", value )
-   if nAt != 0
-      nNumero     := substr( value, nAt + 1 )
-      cSerie      := substr( value, 1, nAt  )
-   else
-      nNumero     := value
-   end if  
-
-   if !hb_regexlike( "^[0-9]{1,6}$", nNumero )
-      RETURN ( .f. )
-   end if 
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
