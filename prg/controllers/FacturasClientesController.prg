@@ -52,12 +52,16 @@ METHOD New() CLASS FacturasClientesController
    ::oNumeroDocumentoController  := NumeroDocumentoController():New( self )
 
    ::oFormasPagoController       := FormasPagosController():New( self )   
+   ::oFormasPagoController:oValidator:setDialog( ::oDialogView )
 
    ::oRutasController            := RutasController():New( self )
+   ::oRutasController:oValidator:setDialog( ::oDialogView )
 
    ::oAgentesController          := AgentesController():New( self )
+   ::oAgentesController:oValidator:setDialog( ::oDialogView )
 
    ::oAlmacenesController        := AlmacenesController():New( self )
+   ::oAlmacenesController:oValidator:setDialog( ::oDialogView )
 
    ::lTransactional              := .t.
 
