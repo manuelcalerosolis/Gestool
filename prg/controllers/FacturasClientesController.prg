@@ -5,6 +5,18 @@
 
 CLASS FacturasClientesController FROM SQLNavigatorController
 
+   DATA oClientesController
+
+   DATA oNumeroDocumentoController
+
+   DATA oFormasPagoController
+
+   DATA oRutasController
+
+   DATA oAgentesController
+
+   DATA oAlmacenesController
+
    METHOD New()
 
    METHOD End()
@@ -35,6 +47,18 @@ METHOD New() CLASS FacturasClientesController
 
    ::oRepository                 := FacturasClientesRepository():New( self )
 
+   ::oClientesController         := ClientesController():New( self )
+
+   ::oNumeroDocumentoController  := NumeroDocumentoController():New( self )
+
+   ::oFormasPagoController       := FormasPagosController():New( self )   
+
+   ::oRutasController            := RutasController():New( self )
+
+   ::oAgentesController          := AgentesController():New( self )
+
+   ::oAlmacenesController        := AlmacenesController():New( self )
+
    ::lTransactional              := .t.
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
@@ -44,6 +68,18 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS FacturasClientesController
+
+   ::oClientesController:End()
+
+   ::oNumeroDocumentoController:End()
+
+   ::oFormasPagoController:End()
+
+   ::oRutasController:End()
+
+   ::oAgentesController:End()
+
+   ::oAlmacenesController:End()
 
    ::Super:End()
 
@@ -77,8 +113,8 @@ END CLASS
 
 METHOD getValidators() CLASS FacturasClientesValidator
 
-   ::hValidators  := {  "codigo" =>          {  "required"           => "El código del cliente es un dato requerido"  } ,;  
-                        "nombre" =>          {  "required"           => "El nombre del cliente es un dato requerido" }  }
+   ::hValidators  := {  "codigo" =>    {  "required"   => "El código del cliente es un dato requerido"  } ,;  
+                        "nombre" =>    {  "required"   => "El nombre del cliente es un dato requerido" }  }
 
 RETURN ( ::hValidators )
 

@@ -9,6 +9,11 @@ CLASS SQLClientesModel FROM SQLTercerosModel
 
    METHOD getInitialSelect()
 
+   METHOD getSentenceClienteDireccionPrincipal( cBy, cId )
+
+   METHOD getClienteDireccionPrincipal( cBy, cId ) ;
+                                 INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccionPrincipal( cBy, cId ) ) ) )
+
    METHOD getAgenteUuidAttribute( uValue ) ; 
                                  INLINE ( if( empty( uValue ), space( 3 ), SQLAgentesModel():getCodigoWhereUuid( uValue ) ) )
 
@@ -72,10 +77,10 @@ METHOD getColumns() CLASS SQLClientesModel
                                                       "default"   => {|| 0 } }             )
 
    hset( ::hColumns, "mes_vacaciones",             {  "create"    => "VARCHAR( 15 )"       ,;
-                                                      "default"   => {|| padr( "Ninguno", 15 ) } }   )
+                                                      "default"   => {|| space( 15 ) } }   )
 
    hset( ::hColumns, "regimen_iva",                {  "create"    => "VARCHAR( 15 )"       ,;
-                                                      "default"   => {|| padr( "General", 15 ) } }   )
+                                                      "default"   => {|| space( 15 ) } }   )
 
    hset( ::hColumns, "recargo_equivalencia",       {  "create"    => "BIT"                 ,;
                                                       "default"   => {|| .f. } }           )
@@ -171,3 +176,28 @@ METHOD getInitialSelect() CLASS SQLClientesModel
 RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
+
+METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLClientesModel
+
+   local cSelect  := "SELECT clientes.id AS id,"                                                                           + " " + ;
+                        "clientes.uuid AS uuid,"                                                                           + " " + ;
+                        "clientes.codigo AS codigo,"                                                                       + " " + ;
+                        "clientes.nombre AS nombre,"                                                                       + " " + ;
+                        "clientes.dni AS dni,"                                                                             + " " + ;
+                        "direcciones.direccion AS direccion,"                                                              + " " + ;
+                        "direcciones.poblacion AS poblacion,"                                                              + " " + ;
+                        "direcciones.provincia AS provincia,"                                                              + " " + ;
+                        "direcciones.codigo_postal AS codigo_postal,"                                                      + " " + ;
+                        "direcciones.telefono AS telefono,"                                                                + " " + ;
+                        "direcciones.movil AS movil,"                                                                      + " " + ;
+                        "direcciones.email AS email"                                                                       + " " + ;
+                     "FROM clientes"                                                                                       + " " + ;
+                        "LEFT JOIN direcciones ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"       + " " + ;
+                     "WHERE clientes." + cBy + " = " + quoted( cId ) 
+
+   cSelect        := ::addEmpresaWhere( cSelect )    
+
+RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
+

@@ -99,6 +99,7 @@ CLASS SQLBaseModel
    METHOD getInitialSelect()                          INLINE ( "SELECT * FROM " + ::getTableName() )
 
    METHOD getField( cField, cBy, cId )
+   METHOD getHash( cField, cBy, cId )
 
    METHOD getIdSelect( id )
    METHOD getWhereSelect( cWhere )
@@ -301,10 +302,10 @@ RETURN ( ::hColumns )
 METHOD getEmpresaColumns()
    
    hset( ::hColumns, "empresa_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
-                                          "default"   => {|| uuidEmpresa() } }            )
+                                          "default"   => {|| Company():Uuid() } }        )
 
    hset( ::hColumns, "usuario_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
-                                          "default"   => {|| Auth():Uuid() } }            )
+                                          "default"   => {|| Auth():Uuid() } }           )
 
 RETURN ( ::hColumns )
 
@@ -1178,7 +1179,7 @@ METHOD updateFieldWhereId( id, cField, uValue )
    cSql        +=    "SET " + cField + " = " + toSqlString( uValue ) + " "
    cSql        +=    "WHERE id = " + toSqlString( id )
 
-Return ( ::getDatabase():Exec( cSql ) )
+RETURN ( ::getDatabase():Exec( cSql ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1217,7 +1218,17 @@ METHOD getField( cField, cBy, cId )
    cSql        +=    "FROM " + ::cTableName                             + " "
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
 
-Return ( ::getDatabase():getValue( cSql ) )
+RETURN ( ::getDatabase():getValue( cSql ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD getHash( cBy, cId )
+
+   local cSql  := "SELECT * " 
+   cSql        +=    "FROM " + ::cTableName                             + " "
+   cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
+
+RETURN ( atail( ::getDatabase():selectTrimedFetchHash( cSql ) ) )
 
 //----------------------------------------------------------------------------//
 

@@ -11,7 +11,7 @@ CLASS ClientesController FROM TercerosController
 
    METHOD validColumnAgentesBrowse( uValue, nKey )             INLINE ( ::validColumnBrowse( uValue, nKey, ::oAgentesController:oModel, "agente_uuid" ) )
 
-   METHOD validColumnFormasdePagoBrowse( uValue, nKey )        INLINE ( ::validColumnBrowse( uValue, nKey, ::oFormasdePagoController:oModel, "forma_pago_uuid" ) )
+   METHOD validColumnFormasdePagoBrowse( uValue, nKey )        INLINE ( ::validColumnBrowse( uValue, nKey, ::oFormasPagoController:oModel, "forma_pago_uuid" ) )
 
    METHOD validColumnRutasBrowse( uValue, nKey )               INLINE ( ::validColumnBrowse( uValue, nKey, ::oRutasController:oModel, "ruta_uuid" ) )
 
@@ -23,9 +23,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ClientesController
+METHOD New( oSenderController ) CLASS ClientesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                         := "Clientes"
 
@@ -45,7 +45,7 @@ METHOD New() CLASS ClientesController
 
    ::oAgentesController             := AgentesController():New( self )
 
-   ::oFormasdePagoController        := FormaPagoController():New( self )
+   ::oFormasPagoController          := FormasPagosController():New( self )
 
    ::oCuentasRemesasController      := CuentasRemesaController():New( self )
 
@@ -69,6 +69,8 @@ METHOD New() CLASS ClientesController
    ::oDescuentosController          := DescuentosController():New( self )
 
    ::oClientesEntidadesController   := ClientesEntidadesController():New( self )
+
+   ::oGetSelector                   := ClientGetSelector():New( self )
    
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -115,7 +117,7 @@ METHOD End() CLASS ClientesController
 
    ::oAgentesController:End()
 
-   ::oFormasdePagoController:End()
+   ::oFormasPagoController:End()
 
    ::oCuentasRemesasController:End()
 
@@ -124,6 +126,8 @@ METHOD End() CLASS ClientesController
    ::oClientesGruposController :End()
 
    ::oDireccionesController:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 

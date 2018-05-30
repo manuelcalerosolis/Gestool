@@ -40,7 +40,7 @@ METHOD createEditControl( hControl )
 
    try 
 
-      REDEFINE GET oGetDivisa ;
+      REDEFINE GET   oGetDivisa ;
          VAR         ::oController:oModel:hBuffer[ "divisa" ] ;
          WHEN        ( ::oController:isNotZoomMode() ) ;
          PICTURE     "@!" ;
