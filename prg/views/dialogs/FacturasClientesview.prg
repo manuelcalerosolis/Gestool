@@ -91,7 +91,12 @@ METHOD Activate() CLASS FacturasClientesView
    // Agentes------------------------------------------------------------------
 
    ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_uuid" ] ) )
-   ::oController:oAgentesController:oGetSelector:Activate( 250, 251, ::oFolder:aDialogs[2] )
+   ::oController:oAgentesController:oGetSelector:Activate( 250, 251, ::oFolder:aDialogs[1] )
+
+   // Almacenes-----------------------------------------------------------------
+
+   ::oController:oAlmacenesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_uuid" ] ) )
+   ::oController:oAlmacenesController:oGetSelector:Activate( 230, 231, ::oFolder:aDialogs[1] )
 
    // Botones generales--------------------------------------------------------
 
