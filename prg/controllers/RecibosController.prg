@@ -143,13 +143,13 @@ METHOD addColumns() CLASS RecibosBrowseView
       :AddResource( "GC_MONEY2_16" )
    end with
 
-   /*with object ( ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'sesion'
       :cHeader             := 'Sesión'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'sesion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with*/
+   end with
 
      with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'cliente'
@@ -300,7 +300,7 @@ METHOD Activate() CLASS RecibosView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "sesion" ] ;
       ID          130 ;
-      WHEN         ( ::oController:isNotZoomMode() ) ;
+      WHEN         ( .f. );
       OF          ::oFolder:aDialogs[1]
 
   REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
