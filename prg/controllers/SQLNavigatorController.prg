@@ -23,6 +23,8 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA lConfig                                       INIT .f.
 
+   DATA lEnableWindowsBar                             INIT .f.
+
    DATA hFastKey                                      INIT {=>}
 
    DATA oWindowsBar
@@ -131,7 +133,9 @@ METHOD End()
 
    cursorWait()
 
-   ::DisableWindowsBar()
+   if ::lEnableWindowsBar
+      ::DisableWindowsBar()
+   end if
 
    if !empty( ::oSelectorView )
       ::oSelectorView:End()
@@ -464,6 +468,8 @@ METHOD EnableWindowsBar()
    ::oWindowsBar:setGetChange( {|| ::onChangeSearch() } )
 
    ::oNavigatorView:Refresh()
+
+   ::lEnableWindowsBar  := .t.
 
 RETURN ( Self )
 
