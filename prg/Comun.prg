@@ -180,6 +180,68 @@ RETURN nil
 
 //-----------------------------------------------------------------------------//
 
+FUNCTION CreateMainSqlWindow( oIconApp )
+
+   if !( lInitCheck() )
+      RETURN nil
+   end if 
+
+   // Carga o no la imagen de fondo--------------------------------------------
+
+   DEFINE WINDOW oWnd ;
+      FROM                    0, 0 TO 26, 82;
+      TITLE                   __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
+      MDI ;
+      COLORS                  Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
+      ICON                    oIconApp ;
+      MENU                    ( BuildMenu() )
+
+   oWndBar                    := CreateAccesoSQL( oWnd )
+   oWndBar:CreateButtonBar( oWnd )
+
+   // Set the bar messages-----------------------------------------------------
+
+   oWnd:Cargo                 := appParamsMain()
+
+   oWnd:bKeyDown              := { | nKey | StdKey( nKey ) }  
+
+   // Mensajes-----------------------------------------------------------------
+
+   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
+   oWnd:oMsgBar:setFont( oFontLittelTitle() )
+
+   oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100, , , , .t. )
+
+   oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( dtoc( getsysdate() ) ) + 12,,,, .t., { || SelSysDate() } )
+   oWnd:oMsgBar:oDate:lTimer  := .t.
+   oWnd:oMsgBar:oDate:bMsg    := {|| GetSysDate() }
+   oWnd:oMsgBar:CheckTimer()
+
+   oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( Auth():Nombre() ), 200,,,, .t. )
+
+   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():codigoDelegacion() ), 100,,,, .t., {|| SelectDelegacion(), chkTurno() } )
+
+   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Application():codigoCaja(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
+   
+   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( Application():codigoAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
+
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : ", 100,,,, .t., {|| dbDialog() } ) 
+
+   // Abrimos la ventana-------------------------------------------------------
+
+   ACTIVATE WINDOW oWnd ;
+      MAXIMIZED ;
+      ON PAINT                ( WndPaint( hDC, oWnd ) ); 
+      ON RESIZE               ( WndResize( oWnd ) );
+      ON INIT                 ( lStartCheck() );
+      VALID                   ( EndApp() ) 
+
+   SysRefresh()
+
+RETURN nil
+
+//-----------------------------------------------------------------------------//
+
 FUNCTION BuildMenu()
 
    local oMenu
@@ -291,7 +353,7 @@ FUNCTION Test()
 
    // msgalert( hb_valtoexp( SQLContadoresModel():getLastCounter( "movimientos_almacen" ) ), "getLastCounter" )
 
-   FacturasClientesController():New():ActivateNavigatorView()
+   //FacturasClientesController():New():ActivateNavigatorView()
 
 RETURN nil
 
@@ -2699,80 +2761,59 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
 
-   // SQL----------------------------------------------------------------------
+RETURN ( oAcceso )
 
-   oItemSQL             := oAcceso:Add()
-   oItemSQL:cPrompt     := 'SQL'
-   oItemSQL:cBmp        := "gc_folder_open_16"
-   oItemSQL:cBmpBig     := "gc_folder_open_32"
-   oItemSQL:lShow       := .t.
+//---------------------------------------------------------------------------//
+
+FUNCTION CreateAccesoSQL( oWnd )
+
+   local oAcceso
+   local oGrupo
+
+   local oItem
+   local oItemArchivo
+   local oItemCompras
+   local oItemAlmacen
+   local oItemProduccion
+   local oItemExpediente
+   local oItemVentas
+   local oItemTpv
+   local oItemHerramientas
+   local oItemAyudas
+   local oItemReporting
+   local oItemSQL
+
+   oAcceso              := TAcceso():New()
+
+   oItemArchivo         := oAcceso:Add()
+   oItemArchivo:cPrompt := 'ARCHIVOS'
+   oItemArchivo:cBmp    := "gc_folder_open_16"
+   oItemArchivo:cBmpBig := "gc_folder_open_32"
+   oItemArchivo:lShow   := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 28
-   oGrupo:cPrompt       := 'SQL'
-   oGrupo:cLittleBitmap := "gc_lifebelt_16"
-   oGrupo:cBigBitmap    := "gc_lifebelt_32"
+   oGrupo:nBigItems     := 1
+   oGrupo:cPrompt       := 'Inicio'
+   oGrupo:cLittleBitmap := "gc_clock_16"
+   oGrupo:cBigBitmap    := "gc_clock_32"
 
-   oItem                := oItemSQL:Add()
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Campos extra'
-   oItem:cMessage       := 'Solicitar campos extra'
-   oItem:bAction        := {|| CamposExtraController():New():ActivateNavigatorView() }
-   oItem:cId            := "asistencia_remota"
-   oItem:cBmp           := "gc_form_plus2_16"
-   oItem:cBmpBig        := "gc_form_plus2_32"
+   oItem:cPrompt        := 'Sesiones'
+   oItem:cMessage       := 'Sesiones'
+   oItem:bAction        := {||SesionesController():New():ActivateNavigatorView() }
+   oItem:cId            := "sesiones"
+   oItem:cBmp           := "gc_clock_16"
+   oItem:cBmpBig        := "gc_clock_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Agentes'
-   oItem:cMessage       := 'Solicitar agente'
-   oItem:bAction        := {|| AgentesController():New():ActivateNavigatorView() }
-   oItem:cId            := "asistencia_remota"
-   oItem:cBmp           := "gc_businessman2_16"
-   oItem:cBmpBig        := "gc_businessman2_32"
-   oItem:lShow          := .f.
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 1
+   oGrupo:cPrompt       := 'Empresa'
+   oGrupo:cLittleBitmap := "gc_factory_16"
+   oGrupo:cBigBitmap    := "gc_factory_32"
 
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Fabricantes'
-   oItem:cMessage       := 'Solicitar fabricante'
-   oItem:bAction        := {|| ArticulosFabricantesController():New():ActivateNavigatorView() }
-   oItem:cId            := "asistencia_remota"
-   oItem:cBmp           := "gc_wrench_16"
-   oItem:cBmpBig        := "gc_wrench_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Comentarios'
-   oItem:cMessage       := 'Solicitar comentario'
-   oItem:bAction        := {|| ComentariosController():New():ActivateNavigatorView() }
-   oItem:cId            := "asistencia_remota"
-   oItem:cBmp           := "gc_message_16"
-   oItem:cBmpBig        := "gc_message_32"
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Clientes'
-   oItem:cMessage       := 'Solicitar cliente'
-   oItem:bAction        := {|| ClientesController():New():ActivateNavigatorView() }
-   oItem:cId            := "asistencia_remota"
-   oItem:cBmp           := "gc_user_16"
-   oItem:cBmpBig        := "gc_user_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Proveedores'
-   oItem:cMessage       := 'Solicitar proveedor'
-   oItem:bAction        := {|| ProveedoresController():New():ActivateNavigatorView() }
-   oItem:cId            := "asistencia_remota"
-   oItem:cBmp           := "gc_businessman_16"
-   oItem:cBmpBig        := "gc_businessman_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Empresa'
    oItem:cMessage       := 'Empresas'
@@ -2782,116 +2823,26 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_factory_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemSQL:Add()
+   // Articulos----------------------------------------------------------------
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 2
+   oGrupo:nLittleItems  := 3
+   oGrupo:cPrompt       := 'Artículos'
+   oGrupo:cLittleBitmap := "gc_object_cube_16"
+   oGrupo:cBigBitmap    := "gc_object_cube_32"
+
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Tipos de artículo'
-   oItem:cMessage       := 'Tipos de artículo'
-   oItem:bAction        := {|| ArticulosTipoController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_objects_16"
-   oItem:cBmpBig        := "gc_objects_32"
+   oItem:cPrompt        := 'Familia de articulos'
+   oItem:cMessage       := 'Familia de articulos'
+   oItem:bAction        := {|| ArticulosFamiliasController():New():ActivateNavigatorView() }
+   oItem:cId            := "familias_articulos"
+   oItem:cBmp           := "gc_cubes_16"
+   oItem:cBmpBig        := "gc_cubes_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Temporadas de artículo'
-   oItem:cMessage       := 'Temporadas de artículo'
-   oItem:bAction        := {|| ArticulosTemporadasController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_cloud_sun_16"
-   oItem:cBmpBig        := "gc_cloud_sun_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Categorias de artículo'
-   oItem:cMessage       := 'Categorias de artículo'
-   oItem:bAction        := {|| ArticulosCategoriasController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_photographic_filters_16"
-   oItem:cBmpBig        := "gc_photographic_filters_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Almacenes'
-   oItem:cMessage       := 'Almacenes'
-   oItem:bAction        := {|| AlmacenesController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_warehouse_16"
-   oItem:cBmpBig        := "gc_warehouse_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Grupos de clientes'
-   oItem:cMessage       := 'Grupos de clientes'
-   oItem:bAction        := {|| ClientesGruposController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_users3_16"
-   oItem:cBmpBig        := "gc_users3_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Rutas'
-   oItem:cMessage       := 'Rutas'
-   oItem:bAction        := {|| RutasController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_map_route_16"
-   oItem:cBmpBig        := "gc_map_route_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cuentas de remesa'
-   oItem:cMessage       := 'Cuentas de remesa'
-   oItem:bAction        := {|| CuentasRemesaController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_notebook2_16"
-   oItem:cBmpBig        := "gc_notebook2_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Tipos de IVA'
-   oItem:cMessage       := 'Tipos de IVA'
-   oItem:bAction        := {|| TipoIvaController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_moneybag_16"
-   oItem:cBmpBig        := "gc_moneybag_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Impuestos especiales'
-   oItem:cMessage       := 'Impuestos especiales'
-   oItem:bAction        := {|| ImpuestosEspecialesController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_moneybag_euro_16"
-   oItem:cBmpBig        := "gc_moneybag_euro_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Divisas monetarias'
-   oItem:cMessage       := 'Divisas monetarias'
-   oItem:bAction        := {|| DivisasMonetariasController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_currency_euro_16"
-   oItem:cBmpBig        := "gc_currency_euro_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Unidades de medición'
-   oItem:cMessage       := 'Unidades de medición'
-   oItem:bAction        := {|| UnidadesMedicionController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_tape_measure2_16"
-   oItem:cBmpBig        := "gc_tape_measure2_32"
-
-   oItem                := oItemSQL:Add()
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Artículos'
    oItem:cMessage       := 'Artículos'
@@ -2899,19 +2850,30 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "articulos"
    oItem:cBmp           := "gc_object_cube_16"
    oItem:cBmpBig        := "gc_object_cube_32"
-   oItem:lShow          := .f.
+   oItem:lShow          := .t.
 
-   oItem                := oItemSQL:Add()
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Familia de articulos'
-   oItem:cMessage       := 'Familia de articulos'
-   oItem:bAction        := {|| ArticulosFamiliasController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "gc_cubes_16"
-   oItem:cBmpBig        := "gc_cubes_32"
+   oItem:cPrompt        := 'Fabricantes'
+   oItem:cMessage       := 'Solicitar fabricante'
+   oItem:bAction        := {|| ArticulosFabricantesController():New():ActivateNavigatorView() }
+   oItem:cId            := "fabricantes"
+   oItem:cBmp           := "gc_wrench_16"
+   oItem:cBmpBig        := "gc_wrench_32"
    oItem:lShow          := .f.
+   oItem:lLittle        := .t.
 
-   oItem                := oItemSQL:Add()
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Comentarios'
+   oItem:cMessage       := 'Solicitar comentario'
+   oItem:bAction        := {|| ComentariosController():New():ActivateNavigatorView() }
+   oItem:cId            := "comentarios"
+   oItem:cBmp           := "gc_message_16"
+   oItem:cBmpBig        := "gc_message_32"
+   oItem:lLittle        := .t.
+
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Propiedades'
    oItem:cMessage       := 'Propiedades'
@@ -2920,18 +2882,72 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmp           := "gc_coathanger_16"
    oItem:cBmpBig        := "gc_coathanger_32"
    oItem:lShow          := .f.
+   oItem:lLittle        := .t.
 
-   oItem                := oItemSQL:Add()
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Formas de pago'
-   oItem:cMessage       := 'Formas de pago'
-   oItem:bAction        := {|| FormasPagosController():New():ActivateNavigatorView() }
-   oItem:cId            := "forma pago"
-   oItem:cBmp           := "gc_credit_cards_16"
-   oItem:cBmpBig        := "gc_credit_cards_32"
+   oItem:cPrompt        := 'Unidades de medición'
+   oItem:cMessage       := 'Unidades de medición'
+   oItem:bAction        := {|| UnidadesMedicionController():New():ActivateNavigatorView() }
+   oItem:cId            := "unidades_medicion"
+   oItem:cBmp           := "gc_tape_measure2_16"
+   oItem:cBmpBig        := "gc_tape_measure2_32"
    oItem:lShow          := .f.
+   oItem:lLittle        := .t.
 
-   oItem                := oItemSQL:Add()
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Tipos de artículo'
+   oItem:cMessage       := 'Tipos de artículo'
+   oItem:bAction        := {|| ArticulosTipoController():New():ActivateNavigatorView() }
+   oItem:cId            := "tipo_articulos"
+   oItem:cBmp           := "gc_objects_16"
+   oItem:cBmpBig        := "gc_objects_32"
+   oItem:lShow          := .f.
+   oItem:lLittle        := .t.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Temporadas de artículo'
+   oItem:cMessage       := 'Temporadas de artículo'
+   oItem:bAction        := {|| ArticulosTemporadasController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "temporadas"
+   oItem:cBmpBig        := "gc_cloud_sun_32"
+   oItem:lShow          := .f.
+   oItem:lLittle        := .t.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Envasado'
+   oItem:cMessage       := 'Envasado'
+   oItem:bAction        := {|| ArticulosEnvasadoController():New():ActivateNavigatorView() }
+   oItem:cId            := "envasado_articulo"
+   oItem:cBmp           := "gc_box_closed_16"
+   oItem:cBmpBig        := "gc_box_closed_32"
+   oItem:lShow          := .f.
+   oItem:lLittle        := .t.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Categorias de artículo'
+   oItem:cMessage       := 'Categorias de artículo'
+   oItem:bAction        := {|| ArticulosCategoriasController():New():ActivateNavigatorView() }
+   oItem:cId            := "categorias"
+   oItem:cBmp           := "gc_photographic_filters_16"
+   oItem:cBmpBig        := "gc_photographic_filters_32"
+   oItem:lShow          := .f.
+   oItem:lLittle        := .t.
+
+   // Tarifas------------------------------------------------------------------
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 1
+   oGrupo:cPrompt       := 'Tarifas'
+   oGrupo:cLittleBitmap := "gc_symbol_percent_16"
+   oGrupo:cBigBitmap    := "gc_symbol_percent_32"
+
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Tarifas'
    oItem:cMessage       := 'Tarifas'
@@ -2941,73 +2957,81 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_money_interest_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Entidades'
-   oItem:cMessage       := 'Entidades'
-   oItem:bAction        := {||EntidadesController():New():ActivateNavigatorView() }
-   oItem:cId            := "entidades"
-   oItem:cBmp           := "gc_office_building2_16"
-   oItem:cBmpBig        := "gc_office_building2_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Orden de comandas'
-   oItem:cMessage       := 'Orden de comandas'
-   oItem:bAction        := {||OrdenComandasController():New():ActivateNavigatorView() }
-   oItem:cId            := "orden_comandas"
-   oItem:cBmp           := "gc_sort_az_descending_16"
-   oItem:cBmpBig        := "gc_sort_az_descending_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Envasado'
-   oItem:cMessage       := 'Envasado'
-   oItem:bAction        := {|| ArticulosEnvasadoController():New():ActivateNavigatorView() }
-   oItem:cId            := "envasado_articulo"
-   oItem:cBmp           := "gc_box_closed_16"
-   oItem:cBmpBig        := "gc_box_closed_32"
-   oItem:lShow          := .f.
-
-   oItem                := oItemSQL:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Facturas de clientes'
-   oItem:cMessage       := 'Facturas de clientes'
-   oItem:bAction        := {|| FacturasClientesController():New():ActivateNavigatorView() }
-   oItem:cId            := "facturas_clientes"
-   oItem:cBmp           := "gc_document_text_user_16"
-   oItem:cBmpBig        := "gc_document_text_user_32"
-   oItem:lShow          := .f.
+   // Impuestos----------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 26
-   oGrupo:cPrompt       := 'SQL 2 '
-   oGrupo:cLittleBitmap := "gc_lifebelt_16"
-   oGrupo:cBigBitmap    := "gc_lifebelt_32"
+   oGrupo:nBigItems     := 2
+   oGrupo:cPrompt       := 'Impuestos'
+   oGrupo:cLittleBitmap := "gc_moneybag_16"
+   oGrupo:cBigBitmap    := "gc_moneybag_32"
 
-   oItem                := oItemSQL:Add()
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Entradas y salidas'
-   oItem:cMessage       := 'Entradas y salidas'
-   oItem:bAction        := {||EntradaSalidaController():New():ActivateNavigatorView() }
-   oItem:cId            := "entradas_salidas"
-   oItem:cBmp           := "gc_cash_register_refresh_16"
-   oItem:cBmpBig        := "gc_cash_register_refresh_32"
+   oItem:cPrompt        := 'Tipos de IVA'
+   oItem:cMessage       := 'Tipos de IVA'
+   oItem:bAction        := {|| TipoIvaController():New():ActivateNavigatorView() }
+   oItem:cId            := "tipos_iva"
+   oItem:cBmp           := "gc_moneybag_16"
+   oItem:cBmpBig        := "gc_moneybag_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemSQL:Add()
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Delegaciones'
-   oItem:cMessage       := 'Delegaciones'
-   oItem:bAction        := {|| DelegacionesController():New():ActivateNavigatorView() }
-   oItem:cId            := "delegaciones"
-   oItem:cBmp           := "gc_warehouse_16"
-   oItem:cBmpBig        := "gc_warehouse_32"
+   oItem:cPrompt        := 'Impuestos especiales'
+   oItem:cMessage       := 'Impuestos especiales'
+   oItem:bAction        := {|| ImpuestosEspecialesController():New():ActivateNavigatorView() }
+   oItem:cId            := "impuestos_especiales"
+   oItem:cBmp           := "gc_moneybag_euro_16"
+   oItem:cBmpBig        := "gc_moneybag_euro_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemSQL:Add()
+   // Impuestos----------------------------------------------------------------
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 3
+   oGrupo:cPrompt       := 'Pagos'
+   oGrupo:cLittleBitmap := "gc_currency_euro_16"
+   oGrupo:cBigBitmap    := "gc_currency_euro_32"
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Divisas monetarias'
+   oItem:cMessage       := 'Divisas monetarias'
+   oItem:bAction        := {|| DivisasMonetariasController():New():ActivateNavigatorView() }
+   oItem:cId            := "divisas"
+   oItem:cBmp           := "gc_currency_euro_16"
+   oItem:cBmpBig        := "gc_currency_euro_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Formas de pago'
+   oItem:cMessage       := 'Formas de pago'
+   oItem:bAction        := {|| FormasPagosController():New():ActivateNavigatorView() }
+   oItem:cId            := "forma_pago"
+   oItem:cBmp           := "gc_credit_cards_16"
+   oItem:cBmpBig        := "gc_credit_cards_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Cuentas de remesa'
+   oItem:cMessage       := 'Cuentas de remesa'
+   oItem:bAction        := {|| CuentasRemesaController():New():ActivateNavigatorView() }
+   oItem:cId            := "cuentas_remesas"
+   oItem:cBmp           := "gc_notebook2_16"
+   oItem:cBmpBig        := "gc_notebook2_32"
+   oItem:lShow          := .f.
+
+   // Otros--------------------------------------------------------------------
+
+   oGrupo               := TGrupoAcceso() 
+   oGrupo:nBigItems     := 9
+   oGrupo:cPrompt       := 'Global'
+   oGrupo:cLittleBitmap := "gc_folder2_16"
+   oGrupo:cBigBitmap    := "gc_folder2_32"
+
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cajas'
    oItem:cMessage       := 'Cajas'
@@ -3017,27 +3041,235 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_cash_register_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemSQL:Add()
+   oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Impresoras'
-   oItem:cMessage       := 'Impresoras'
-   oItem:bAction        := {||ImpresorasController():New():ActivateNavigatorView() }
-   oItem:cId            := "impresoras"
+   oItem:cPrompt        := 'Codigos postales'
+   oItem:cMessage       := 'Acceso al fichero de codigos postales'
+   oItem:bAction        := {|| CodigosPostalesController():New():ActivateNavigatorView() }
+   oItem:cId            := "codigos_postales"
+   oItem:cBmp           := "gc_postage_stamp_16"
+   oItem:cBmpBig        := "gc_postage_stamp_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Provincias'
+   oItem:cMessage       := 'Acceso al fichero de grupos de provincias'
+   oItem:bAction        := {|| ProvinciasController():New():ActivateNavigatorView() }
+   oItem:cId            := "provincias"
+   oItem:cBmp           := "gc_flag_spain_16"
+   oItem:cBmpBig        := "gc_flag_spain_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := "Paises"
+   oItem:cMessage       := "Acceso a los paises"
+   oItem:bAction        := {|| PaisesController():New():ActivateNavigatorView() }
+   oItem:cId            := "paises"
+   oItem:cBmp           := "gc_globe_16"
+   oItem:cBmpBig        := "gc_globe_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := "Lenguajes"
+   oItem:cMessage       := "Acceso a los lenguajes"
+   oItem:bAction        := {|| LenguajesController():New():ActivateNavigatorView() }
+   oItem:cId            := "lenguajes"
+   oItem:cBmp           := "gc_user_message_16"
+   oItem:cBmpBig        := "gc_user_message_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := "Transportistas"
+   oItem:cMessage       := "Acceso a los transportistas"
+   oItem:bAction        := {|| TransportistasController():New():ActivateNavigatorView() }
+   oItem:cId            := "transportistas"
+   oItem:cBmp           := "gc_small_truck_16"
+   oItem:cBmpBig        := "gc_small_truck_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := "Situaciones"
+   oItem:cMessage       := "Acceso a los tipos de situaciones"
+   oItem:bAction        := {|| SituacionesController():New():ActivateNavigatorView() }
+   oItem:cId            := "situaciones"
+   oItem:cBmp           := "gc_document_attachment_16"
+   oItem:cBmpBig        := "gc_document_attachment_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Marcadores'
+   oItem:cMessage       := 'Marcadores'
+   oItem:bAction        := {|| TagsController():New():ActivateNavigatorView() }
+   oItem:cId            := "marcadores"
+   oItem:cBmp           := "gc_bookmarks_16"
+   oItem:cBmpBig        := "gc_bookmarks_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := "Tipos de impresoras"
+   oItem:cMessage       := "Acceso a los tipos de impresoras"
+   oItem:bAction        := {|| TiposImpresorasController():New():ActivateNavigatorView() }
+   oItem:cId            := "tipos_de_impresoras"
    oItem:cBmp           := "gc_printer2_16"
    oItem:cBmpBig        := "gc_printer2_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemSQL:Add()
+   // Compras-------------------------------------------------------------------
+
+   oItemCompras         := oAcceso:Add()
+   oItemCompras:cPrompt := 'COMPRAS'
+   oItemCompras:cBmp    := "gc_folder_open_16"
+   oItemCompras:cBmpBig := "gc_folder_open_32"
+   oItemCompras:lShow   := .t.
+
+   // Proveedores--------------------------------------------------------------
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 1
+   oGrupo:cPrompt       := 'Proveedores'
+   oGrupo:cLittleBitmap := "gc_businessmen2_16"
+   oGrupo:cBigBitmap    := "gc_businessmen2_32"
+
+   oItem                := oItemCompras:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Balanzas'
-   oItem:cMessage       := 'Balanzas'
-   oItem:bAction        := {||BalanzasController():New():ActivateNavigatorView() }
-   oItem:cId            := "balanzas"
-   oItem:cBmp           := "gc_balance_16"
-   oItem:cBmpBig        := "gc_balance_32"
+   oItem:cPrompt        := 'Proveedores'
+   oItem:cMessage       := 'Solicitar proveedor'
+   oItem:bAction        := {|| ProveedoresController():New():ActivateNavigatorView() }
+   oItem:cId            := "proveedores"
+   oItem:cBmp           := "gc_businessman_16"
+   oItem:cBmpBig        := "gc_businessman_32"
+   oItem:lShow          := .t.
+
+   oItemAlmacen         := oAcceso:Add()
+   oItemAlmacen:cPrompt := 'ALMACENES'
+   oItemAlmacen:cBmp    := "gc_folder_open_16"
+   oItemAlmacen:cBmpBig := "gc_folder_open_32"
+   oItemAlmacen:lShow   := .t.
+
+   // Almacenes----------------------------------------------------------------
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 2
+   oGrupo:cPrompt       := 'Almacenes'
+   oGrupo:cLittleBitmap := "gc_package_16"
+   oGrupo:cBigBitmap    := "gc_package_16"
+
+   oItem                := oItemAlmacen:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Almacenes'
+   oItem:cMessage       := 'Almacenes'
+   oItem:bAction        := {|| AlmacenesController():New():ActivateNavigatorView() }
+   oItem:cId            := "almacenes"
+   oItem:cBmp           := "gc_warehouse_16"
+   oItem:cBmpBig        := "gc_warehouse_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemSQL:Add()
+   oItem                := oItemAlmacen:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Movimientos almacén'
+   oItem:cMessage       := 'Acceso a los movimientos de almacén'
+   oItem:bAction        := {|| MovimientosAlmacenController():New():ActivateNavigatorView() }
+   oItem:cId            := "movimientos_de_almacen"
+   oItem:cBmp           := "gc_pencil_package_16"
+   oItem:cBmpBig        := "gc_pencil_package_32"
+   oItem:lShow          := .f.
+
+   // Ventas-------------------------------------------------------------------
+
+   oItemVentas          := oAcceso:Add()
+   oItemVentas:cPrompt  := 'VENTAS'
+   oItemVentas:cBmp     := "gc_folder_open_16"
+   oItemVentas:cBmpBig  := "gc_folder_open_32"
+   oItemVentas:lShow    := .t.
+
+   // Clientes----------------------------------------------------------------
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 5
+   oGrupo:cPrompt       := 'Clientes'
+   oGrupo:cLittleBitmap := "gc_user_16"
+   oGrupo:cBigBitmap    := "gc_user_32"
+
+   oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Grupos de clientes'
+   oItem:cMessage       := 'Grupos de clientes'
+   oItem:bAction        := {|| ClientesGruposController():New():ActivateNavigatorView() }
+   oItem:cId            := "grupos_clientes"
+   oItem:cBmp           := "gc_users3_16"
+   oItem:cBmpBig        := "gc_users3_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Rutas'
+   oItem:cMessage       := 'Rutas'
+   oItem:bAction        := {|| RutasController():New():ActivateNavigatorView() }
+   oItem:cId            := "rutas"
+   oItem:cBmp           := "gc_map_route_16"
+   oItem:cBmpBig        := "gc_map_route_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Clientes'
+   oItem:cMessage       := 'Solicitar cliente'
+   oItem:bAction        := {|| ClientesController():New():ActivateNavigatorView() }
+   oItem:cId            := "clientes"
+   oItem:cBmp           := "gc_user_16"
+   oItem:cBmpBig        := "gc_user_32"
+   oItem:lShow          := .t.
+
+   oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Agentes'
+   oItem:cMessage       := 'Solicitar agente'
+   oItem:bAction        := {|| AgentesController():New():ActivateNavigatorView() }
+   oItem:cId            := "agentes"
+   oItem:cBmp           := "gc_businessman2_16"
+   oItem:cBmpBig        := "gc_businessman2_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Entidades'
+   oItem:cMessage       := 'Entidades'
+   oItem:bAction        := {||EntidadesController():New():ActivateNavigatorView() }
+   oItem:cId            := "entidades"
+   oItem:cBmp           := "gc_office_building2_16"
+   oItem:cBmpBig        := "gc_office_building2_32"
+   oItem:lShow          := .f.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 1
+   oGrupo:cPrompt       := 'Ventas'
+   oGrupo:cLittleBitmap := "gc_notebook_user_16"
+   oGrupo:cBigBitmap    := "gc_notebook_user_32"
+
+   oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Facturas de clientes'
+   oItem:cMessage       := 'Facturas de clientes'
+   oItem:bAction        := {|| FacturasClientesController():New():ActivateNavigatorView() }
+   oItem:cId            := "facturas_clientes"
+   oItem:cBmp           := "gc_document_text_user_16"
+   oItem:cBmpBig        := "gc_document_text_user_32"
+   oItem:lShow          := .t.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 1
+   oGrupo:cPrompt       := 'Cobros'
+   oGrupo:cLittleBitmap := "gc_briefcase2_user_16"
+   oGrupo:cBigBitmap    := "gc_briefcase2_user_32"
+
+   oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Recidbos'
    oItem:cMessage       := 'Recidbos'
@@ -3045,16 +3277,182 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cId            := "recibos"
    oItem:cBmp           := "gc_briefcase2_user_16"
    oItem:cBmpBig        := "gc_briefcase2_user_32"
+   oItem:lShow          := .t.
+
+   // TPV----------------------------------------------------------------------
+
+   oItemTpv             := oAcceso:Add()
+   oItemTpv:cPrompt     := 'T.P.V.'
+   oItemTpv:cBmp        := "gc_folder_open_16"
+   oItemTpv:cBmpBig     := "gc_folder_open_32"
+   oItemTpv:lShow       := .t.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 2
+   oGrupo:cPrompt       := 'T.P.V.'
+   oGrupo:cLittleBitmap := "gc_cash_register_user_16"
+   oGrupo:cBigBitmap    := "gc_cash_register_user_32"
+
+   oItem                := oItemTpv:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Entradas y salidas'
+   oItem:cMessage       := 'Entradas y salidas'
+   oItem:bAction        := {||EntradaSalidaController():New():ActivateNavigatorView() }
+   oItem:cId            := "entradas_salidas"
+   oItem:cBmp           := "gc_cash_register_refresh_16"
+   oItem:cBmpBig        := "gc_cash_register_refresh_32"
    oItem:lShow          := .f.
 
-   oItem                := oItemSQL:Add()
+   oItem                := oItemTPV:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Sesiones'
-   oItem:cMessage       := 'Sesiones'
-   oItem:bAction        := {||SesionesController():New():ActivateNavigatorView() }
-   oItem:cId            := "sesiones"
-   oItem:cBmp           := "gc_clock_16"
-   oItem:cBmpBig        := "gc_clock_32"
+   oItem:cPrompt        := 'Orden de comandas'
+   oItem:cMessage       := 'Orden de comandas'
+   oItem:bAction        := {||OrdenComandasController():New():ActivateNavigatorView() }
+   oItem:cId            := "orden_comandas"
+   oItem:cBmp           := "gc_sort_az_descending_16"
+   oItem:cBmpBig        := "gc_sort_az_descending_32"
+   oItem:lShow          := .f.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nLittleItems  := 1
+   oGrupo:cPrompt       := 'Útiles'
+   oGrupo:cLittleBitmap := "gc_window_pencil_16"
+   oGrupo:cBigBitmap    := "gc_window_pencil_32"
+
+   oItem                := oItemTPV:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Balanzas'
+   oItem:cMessage       := 'Balanzas'
+   oItem:bAction        := {||BalanzasController():New():ActivateNavigatorView() }
+   oItem:cId            := "balanzas"
+   oItem:cBmp           := "gc_balance_16"
+   oItem:cBmpBig        := "gc_balance_32"
+   oItem:lLittle        := .t.
+
+   oItem                := oItemTPV:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Cajón portamonedas'
+   oItem:cMessage       := 'Cajón portamonedas'
+   oItem:bAction        := {|| CajonesPortamonedasController():New():ActivateNavigatorView() }
+   oItem:cId            := "cajon_portamonedas"
+   oItem:cBmp           := "gc_modem_screw_16"
+   oItem:cBmpBig        := "gc_modem_screw_32"
+   oItem:lShow          := .f.
+   oItem:lLittle        := .t.
+
+   // Herramientas-------------------------------------------------------------
+
+   oItemHerramientas          := oAcceso:Add()
+   oItemHerramientas:cPrompt  := 'HERRAMIENTAS'
+   oItemHerramientas:cBmp     := "gc_folder_open_16"
+   oItemHerramientas:cBmpBig  := "gc_folder_open_32"
+   oItemHerramientas:lShow    := .t.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 3
+
+   oGrupo:cPrompt       := 'Usuarios, roles y permisos'
+   oGrupo:cLittleBitmap := "gc_document_text_screw_16"
+   oGrupo:cBigBitmap    := "gc_document_text_screw_32"
+
+   oItem                := oItemHerramientas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Usuarios'
+   oItem:cMessage       := 'Acceso a los usuarios del programa'
+   oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios"
+   oItem:cBmp           := "gc_businesspeople_16"
+   oItem:cBmpBig        := "gc_businesspeople_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemHerramientas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Roles'
+   oItem:cMessage       := 'Roles'
+   oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios_roles"
+   oItem:cBmp           := "GC_ID_CARDS_16"
+   oItem:cBmpBig        := "GC_ID_CARDS_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemHerramientas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Permisos'
+   oItem:cMessage       := 'Permisos'
+   oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios_permisos"
+   oItem:cBmp           := "GC_ID_BADGE_16"
+   oItem:cBmpBig        := "GC_ID_BADGE_32"
+   oItem:lShow          := .f.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 2
+   oGrupo:cPrompt       := 'Útiles'
+   oGrupo:cLittleBitmap := "gc_notebook2_16"
+   oGrupo:cBigBitmap    := "gc_notebook2_32"
+
+   oItem                := oItemHerramientas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Campos extra'
+   oItem:cMessage       := 'Solicitar campos extra'
+   oItem:bAction        := {|| CamposExtraController():New():ActivateNavigatorView() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_form_plus2_16"
+   oItem:cBmpBig        := "gc_form_plus2_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemHerramientas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Listín telefónico'
+   oItem:cMessage       := 'Acceso al listín telefónico'
+   oItem:bAction        := {|| ListinController():New():ActivateNavigatorView() }
+   oItem:cId            := "listin_telefonico"
+   oItem:cBmp           := "gc_book_telephone_16"
+   oItem:cBmpBig        := "gc_book_telephone_32"
+   oItem:lShow          := .f.
+
+   // Ayudas-------------------------------------------------------------------
+
+   oItemAyudas          := oAcceso:Add()
+   oItemAyudas:cPrompt  := 'AYUDAS'
+   oItemAyudas:cBmp     := "gc_folder_open_16"
+   oItemAyudas:cBmpBig  := "gc_folder_open_32"
+   oItemAyudas:lShow    := .t.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 3
+   oGrupo:cPrompt       := 'Ayudas'
+   oGrupo:cLittleBitmap := "gc_lifebelt_16"
+   oGrupo:cBigBitmap    := "gc_lifebelt_32"
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Visitar web'
+   oItem:cMessage       := 'Visitar web'
+   oItem:bAction        := {|| goWeb( __GSTWEB__ ) }
+   oItem:cId            := "visitar_web"
+   oItem:cBmp           := "gc_earth_16"
+   oItem:cBmpBig        := "gc_earth_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Acerca de...'
+   oItem:cMessage       := 'Datos sobre el autor'
+   oItem:bAction        := {|| About() }
+   oItem:cId            := "acerca_de"
+   oItem:cBmp           := "gc_question_16"
+   oItem:cBmpBig        := "gc_question_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemAyudas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Asistencia remota'
+   oItem:cMessage       := 'Solicitar asistencia remota'
+   oItem:bAction        := {|| RunAsistenciaRemota() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_user_headset_16"
+   oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )

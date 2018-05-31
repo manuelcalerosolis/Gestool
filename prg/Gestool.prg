@@ -195,7 +195,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
       case ( "SQL" $ appParamsMain() ) 
 
-         if AccessCode():loadTableConfiguration()
+         if UsuariosController():New():isLogin()
             CreateMainSqlWindow( oIconApp )
          end if
 
