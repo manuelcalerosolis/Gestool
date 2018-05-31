@@ -488,32 +488,52 @@ METHOD Export( cFileName )
    local hFileName   
    local aListTables 
 
+   ?"Entro en el Export"
+
    hFileName         := fcreate( cFileName )
    if ferror() <> 0
       msgStop( "Error creando fichero de backup : " + cFileName + ", error " + alltrim( str(  ferror() ) ), "Error" )
       RETURN ( .f. )
    endif
 
+   ?"1"
+
    aListTables       := ::getListTables()
    if empty( aListTables )
       RETURN ( .f. )
    endif
 
+   ?"2"
+
    cString           := "USE `" + ::cDatabaseMySQL + "`;" + hb_osnewline() + hb_osnewline()
 
+   ?"3"
+
    fwrite( hFileName, cString )
+
+   ?"4"
+
+   MsgInfo( hb_valToExp( aListTables ), "aListTables" )
 
    aeval( aListTables,;
       {|aTables| aeval( aTables,;
          {|cTable| ::exportTable( hFileName, cTable ) } ) } )
 
+   ?"5"
+
    cString           := "--  " + hb_OSNewLine()
    cString           += "--  Fin del procesado de la base de datos " + ::cDatabaseMySQL + hb_OSNewLine()
    cString           += "--  " + hb_OSNewLine() + hb_OSNewLine()
 
+   ?"6"
+
    fwrite( hFileName, cString )
 
+   ?"7"
+
    fclose( hFileName )
+
+   ?"8"
 
 RETURN ( self )
 
@@ -523,14 +543,20 @@ METHOD exportTable( hFileName, cTable )
 
    local cString
 
+   MsgInfo( cTable, "cTable" )
+
    cString        := "--  Datos de la tabla " + cTable + hb_osnewline()
    cString        += "INSERT INTO `" + cTable + "` VALUES " + hb_osnewline()
+
+   MsgInfo( cString, "cString" )
 
    fwrite( hFileName, cString )
 
    hdo_rowprocess( ::oConexion:getHandle(), hFileName, cTable )  // Hacerlo en lenguaje C
    
    cString        :=  hb_osnewline() + "--  Fin de datos de la tabla " + cTable + hb_osnewline() + hb_osnewline()
+
+   MsgInfo( cString, "cString" )
 
    fwrite( hFileName, cString )
 

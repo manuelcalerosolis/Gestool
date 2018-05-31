@@ -3,15 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ListinController FROM SQLNavigatorController
-
-   DATA oIncidenciasController
-
-   DATA oDocumentosController
-
-   DATA oCamposExtraValoresController
-
-   DATA oDireccionesController
+CLASS SesionesController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -21,54 +13,39 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ListinController
+METHOD New( oSenderController) CLASS SesionesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
-   ::cTitle                   := "Listín"
+   ::cTitle                      := "Sesiones"
 
-   ::cName                    := "listin_telefonico"
+   ::cName                       := "sesiones"
 
-   ::hImage                   := {  "16" => "gc_book_telephone_16",;
-                                    "32" => "gc_book_telephone_32",;
-                                    "48" => "gc_book_telephone_48" }
+   ::hImage                      := {  "16" => "gc_clock_16",;
+                                       "32" => "gc_clock_32",;
+                                       "48" => "gc_clock_48" }
 
-   ::nLevel                   := Auth():Level( ::cName )
+   ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                   := SQLListinModel():New( self )
+   ::oModel                      := SQLSesionesModel():New( self )
 
-   ::oBrowseView              := ListinBrowseView():New( self )
+   ::oBrowseView                 := SesionesBrowseView():New( self )
 
-   ::oDialogView              := ListinView():New( self )
+   ::oDialogView                 := SesionesView():New( self )
 
-   ::oValidator               := ListinValidator():New( self, ::oDialogView )
+   ::oValidator                  := SesionesValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController   := DireccionesController():New( self )
-   ::oDireccionesController:setView( ::oDialogView )
+   ::oRepository                 := SesionesRepository():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+   ::oGetSelector                := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
-   
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:updateBuffer( ::getUuid() ) } )
-
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
-   
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
-
-   ::oIncidenciasController   := IncidenciasController():New( self )
-
-   ::oDocumentosController    := DocumentosController():New( self )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-METHOD End() CLASS ListinController
+
+METHOD End() CLASS SesionesController
 
    ::oModel:End()
 
@@ -78,7 +55,9 @@ METHOD End() CLASS ListinController
 
    ::oValidator:End()
 
-   ::oDireccionesController:End()
+   ::oRepository:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 
@@ -91,22 +70,21 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS ListinBrowseView FROM SQLBrowseView
+CLASS SesionesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
-ENDCLASS
+END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS ListinBrowseView
+METHOD addColumns() CLASS SesionesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
+   /*with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
       :cHeader             := 'Id'
-      :nWidth              := 80
+      :nWidth              := 60
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -120,7 +98,15 @@ METHOD addColumns() CLASS ListinBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
+      :nWidth              := 50
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre_caja'
       :cHeader             := 'Nombre'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
@@ -128,13 +114,13 @@ METHOD addColumns() CLASS ListinBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'dni'
-      :cHeader             := 'DNI/CIF'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'dni' ) }
+      :cSortOrder          := 'codigo_sesion'
+      :cHeader             := 'Código de sesión'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_sesion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-
+   end with
+*/
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -145,27 +131,28 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ListinView FROM SQLBaseView
-  
+CLASS SesionesView FROM SQLBaseView
+
    METHOD Activate()
-
-   METHOD StartDialog()
-
-   METHOD addLinksToExplorerBar()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ListinView
+METHOD Activate() CLASS SesionesView
 
-   DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "LISTIN" ;
-      TITLE       ::LblTitle() + "contacto"
+   /*DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "CAJAS" ;
+      TITLE       ::LblTitle() + "cajas"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    ::oController:getImage( "48" ) ;
+      RESOURCE    ::oController:getimage("48")  ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -174,9 +161,11 @@ METHOD Activate() CLASS ListinView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "id" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      WHEN        ( .f. ) ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -185,16 +174,16 @@ METHOD Activate() CLASS ListinView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "dni" ] ;
+REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_sesion" ] ;
       ID          120 ;
+      SPINNER  ;
+      MIN 0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "dni" ) ) ;
       OF          ::oDialog
 
+       ::redefineExplorerBar( 200 )
 
-   ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
-
-   ::redefineExplorerBar( 700 )
+   // Botones caja -------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -212,47 +201,15 @@ METHOD Activate() CLASS ListinView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ::oDialog:bStart := {|| ::StartDialog() }
+   ::oDialog:bStart  := {|| ::StartActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBitmap:end()
+   ::oBitmap:end()*/
 
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
-
-METHOD StartDialog() CLASS ListinView
-
-   ::oController:oDireccionesController:externalStartDialog()
-
-   ::addLinksToExplorerBar()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD addLinksToExplorerBar() CLASS ListinView
-
-   local oPanel
-
-   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
-
-   if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Incidencias...",         {|| ::oController:oIncidenciasController:activateDialogView() }, ::oController:oIncidenciasController:getImage( "16" ) )
-      oPanel:AddLink( "Documentos...",          {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
-   end if
-
-   oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
-
-   if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
-   end if
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -260,7 +217,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ListinValidator FROM SQLBaseValidator
+CLASS SesionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -268,11 +225,12 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS ListinValidator
+METHOD getValidators() CLASS SesionesValidator
 
-   ::hValidators  := {  "nombre" =>          {  "required"     => "El nombre es un dato requerido",;
-                                                "unique"       => "El nombre introducido ya existe" }}
-
+   /*::hValidators  := {  "nombre_caja" =>  {  "required"           => "El nombre es un dato requerido",;
+                                             "unique"             => "El nombre introducido ya existe" },;
+                        "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
+                                             "unique"             => "EL código introducido ya existe" } }*/
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -284,9 +242,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLListinModel FROM SQLBaseModel
+CLASS SQLSesionesModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "listin"
+   DATA cTableName               INIT "cajas_sesiones"
 
    METHOD getColumns()
 
@@ -294,21 +252,28 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLListinModel
+METHOD getColumns() CLASS SQLSesionesModel
+   
+   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                                      "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "text"      => "Identificador"                           ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                                      "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "text"      => "Uuid"                                    ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "caja_uuid",                  {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {||space( 40 ) } }                        )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
-                                             "default"   => {|| space( 140 ) } }                       )
+   hset( ::hColumns, "codigo",                     {  "create"    => "INTEGER"                                 ,;
+                                                      "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                          ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "fecha_hora_inicio",          {  "create"    => "TIMESTAMP"                               ,;
+                                                      "default"   => {||hb_datetime() } }                      )
+
+   hset( ::hColumns, "fecha_hora_cierre",          {  "create"    => "TIMESTAMP"                               ,;
+                                                      "default"   => {|| ctod( "" ) } }                        )
+
+
+
 
 RETURN ( ::hColumns )
 
@@ -322,15 +287,12 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ListinRepository FROM SQLBaseRepository
+CLASS SesionesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()         INLINE ( SQLListinModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLSesionesModel():getTableName() ) 
+
 
 END CLASS
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

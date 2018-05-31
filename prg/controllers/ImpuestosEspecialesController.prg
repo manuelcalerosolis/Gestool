@@ -190,6 +190,7 @@ METHOD Activate() CLASS ImpuestosEspecialesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
       ID          120 ;
+      PICTURE     "@! 9.999999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
       OF          ::oDialog ;

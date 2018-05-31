@@ -247,7 +247,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CajasValidator FROM SQLBaseValidator
+CLASS CajasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -272,7 +272,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCajasModel FROM SQLBaseModel
+CLASS SQLCajasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cajas"
 
@@ -298,6 +298,8 @@ METHOD getColumns() CLASS SQLCajasModel
 
    hset( ::hColumns, "codigo_sesion",     {  "create"    => "INTEGER UNSIGNED"                        ,;
                                              "default"   => {|| 0 } }                                 )
+
+   ::getEmpresaColumns()
 
 
 RETURN ( ::hColumns )
