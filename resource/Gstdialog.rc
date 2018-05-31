@@ -22293,6 +22293,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Cuenta bancaria", 800, "Static", WS_GROUP, 43, 3, 353, 26
   CONTROL "Cuenta bancaria", -1, "Static", WS_GROUP, 49, 56, 60, 8
+  CONTROL "<a>Campos extra...</a>", 200, "SysLink", WS_TABSTOP, 44, 72, 88, 10
 }
 
 CUENTA_REMESA DIALOG DISCARDABLE 193, 47, 405, 296
