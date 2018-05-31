@@ -349,6 +349,8 @@ METHOD getValue( cSentence )
    try 
 
       oStatement     := ::Query( cSentence )
+
+      oStatement:setAttribute( STMT_ATTR_STR_PAD, .t. )
       
       if oStatement:fetchDirect()
          uValue      := oStatement:getValue( 1 ) 
@@ -364,7 +366,7 @@ METHOD getValue( cSentence )
          oStatement:Free()
       end if 
 
-      oStatement  := nil
+      oStatement     := nil
 
    end
 

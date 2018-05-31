@@ -8,8 +8,6 @@ CLASS SQLBaseValidator
 
    DATA oController
 
-   DATA oView
-
    DATA hAsserts
    DATA hValidators
 
@@ -63,17 +61,15 @@ CLASS SQLBaseValidator
 
    METHOD numeroDocumento( value )
 
-   METHOD setDialog( oView )              INLINE ( ::oView := oView )
+   METHOD getView()                       INLINE ( ::oController:getView() )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController, oView )
+METHOD New( oController )
 
    ::oController                 := oController
-
-   ::oView                       := oView
 
 Return ( Self )
 
@@ -134,12 +130,12 @@ METHOD sayMessage( cMessage )
 
    local cText    := strtran( cMessage, "{value}", alltrim( cvaltostr( ::uValue ) ) )
 
-   if empty( ::oView ) .or. empty( ::oView:oMessage )
+   if empty( ::getView() ) .or. empty( ::getView():oMessage )
       msgstop( cText, "Error" )
       RETURN ( self )
    end if 
 
-   ::oView:showMessage( cText )
+   ::getView():showMessage( cText )
 
 RETURN ( self )
 

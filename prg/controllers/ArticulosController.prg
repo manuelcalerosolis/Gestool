@@ -106,31 +106,42 @@ METHOD New() CLASS ArticulosController
 
    ::oTagsController                         := TagsController():New( self )
 
-   ::oArticulosFamiliasController            := ArticulosFamiliasController():New( self )
-
-   ::oArticulosTipoController                := ArticulosTipoController():New( self )
-
-   ::oArticulosCategoriasController          := ArticulosCategoriasController():New( self )
-
-   ::oArticulosFabricantesController         := ArticulosFabricantesController():New( self )
-
-   ::oTipoIvaController                      := TipoIvaController():New( self )
-
-   ::oImpuestosEspecialesController          := ImpuestosEspecialesController():New( self )
-
-   ::oArticulosPreciosController             := ArticulosPreciosController():New( self )
-
-   ::oPrimeraPropiedadController             := PropiedadesController():New( self )
-
-   ::oSegundaPropiedadController             := PropiedadesController():New( self )
-   
-   ::oArticulosUnidadesMedicionController    := ArticulosUnidadesMedicionController():New( self )
-
    ::oImagenesController                     := ImagenesController():New( self )
 
    ::oTraduccionesController                 := TraduccionesController():New( self )
 
+   ::oArticulosFamiliasController            := ArticulosFamiliasController():New( self )
+   ::oArticulosFamiliasController:setView( ::oDialogView )
+
+   ::oArticulosTipoController                := ArticulosTipoController():New( self )
+   ::oArticulosTipoController:setView( ::oDialogView )
+
+   ::oArticulosCategoriasController          := ArticulosCategoriasController():New( self )
+   ::oArticulosCategoriasController:setView( ::oDialogView )
+
+   ::oArticulosFabricantesController         := ArticulosFabricantesController():New( self )
+   ::oArticulosFabricantesController:setView( ::oDialogView )
+
+   ::oTipoIvaController                      := TipoIvaController():New( self )
+   ::oTipoIvaController:setView( ::oDialogView )
+
+   ::oImpuestosEspecialesController          := ImpuestosEspecialesController():New( self )
+   ::oImpuestosEspecialesController:setView( ::oDialogView )
+
+   ::oArticulosPreciosController             := ArticulosPreciosController():New( self )
+   ::oArticulosPreciosController:setView( ::oDialogView )
+
+   ::oPrimeraPropiedadController             := PropiedadesController():New( self )
+   ::oPrimeraPropiedadController:setView( ::oDialogView )
+
+   ::oSegundaPropiedadController             := PropiedadesController():New( self )
+   ::oSegundaPropiedadController:setView( ::oDialogView )
+   
+   ::oArticulosUnidadesMedicionController    := ArticulosUnidadesMedicionController():New( self )
+   ::oArticulosUnidadesMedicionController:setView( ::oDialogView )
+
    ::oArticulosTemporadasController          := ArticulosTemporadasController():New( self )
+   ::oArticulosTemporadasController:setView( ::oDialogView )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 

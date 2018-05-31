@@ -22555,7 +22555,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Nombre*", -1, "Static", WS_GROUP, 11, 26, 29, 8
   CONTROL "Familia", -1, "Static", WS_GROUP, 11, 39, 27, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 5, 2, 444, 200
-  CONTROL "Tipo", -1, "Static", WS_GROUP, 11, 54, 19, 8
+  CONTROL "Tipo", -1, "Static", WS_GROUP, 11, 52, 19, 8
   CONTROL "Categoría", -1, "Static", WS_GROUP, 11, 65, 37, 8
   CONTROL "Fabricantes", -1, "Static", WS_GROUP, 11, 78, 42, 8
   CONTROL "Marcadores", -1, "Static", WS_GROUP, 11, 156, 42, 8

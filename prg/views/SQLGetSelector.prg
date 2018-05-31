@@ -16,8 +16,6 @@ CLASS GetSelector
 
    DATA cKey                                    INIT  "codigo"
 
-   DATA oView
-
    DATA uFields
 
    DATA oEvents
@@ -28,8 +26,7 @@ CLASS GetSelector
    METHOD setKey( cKey )                        INLINE ( ::cKey := cKey )
    METHOD getKey()                              INLINE ( ::cKey )
 
-   METHOD setView( oView )                      INLINE ( ::oView := oView )
-   METHOD getView()                             INLINE ( iif( hb_isnil( ::oView ), ::oController:oDialogView, ::oView ) )
+   METHOD getView()                             INLINE ( ::oController:getView() )
 
    METHOD Build( hBuilder )
 

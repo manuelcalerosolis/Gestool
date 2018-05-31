@@ -69,20 +69,20 @@ RETURN ( ::hColumns )
 
 METHOD getSQLSentenceValue( cDocumento, cClave, uValor )
 
-   local cSentence   := "SELECT valor FROM " + ::getTableName()               + space( 1 ) 
+   local cSentence   := "SELECT valor FROM " + ::getTableName()                  + space( 1 ) 
 
-   cSentence         +=    "WHERE empresa_uuid = " + quoted( Company():Uuid() ) + " " 
+   cSentence         +=    "WHERE empresa_uuid = " + quoted( Company():Uuid() )  + space( 1 ) 
 
    if !empty( cDocumento )
-      cSentence      +=       "AND documento = " + toSQLString( cDocumento )  + space( 1 ) 
+      cSentence      +=       "AND documento = " + toSQLString( cDocumento )     + space( 1 ) 
    end if 
 
    if !empty( cClave )
-      cSentence      +=       "AND clave = " + toSQLString( cClave )          + space( 1 ) 
+      cSentence      +=       "AND clave = " + toSQLString( cClave )             + space( 1 ) 
    end if 
 
    if !empty( uValor )
-      cSentence      +=       "AND valor = " + toSQLString( uValor )          + space( 1 ) 
+      cSentence      +=       "AND valor = " + toSQLString( uValor )             + space( 1 ) 
    end if 
 
    cSentence         +=    "LIMIT 1"                                         
@@ -93,20 +93,20 @@ RETURN ( cSentence )
 
 METHOD getSQLSentenceId( cDocumento, cClave, uValor )
 
-   local cSentence   := "SELECT id FROM " + ::getTableName()                  + space( 1 ) 
+   local cSentence   := "SELECT id FROM " + ::getTableName()                     + space( 1 ) 
 
-   cSentence         +=    "WHERE empresa_uuid = " + quoted( Company():Uuid() ) + " " 
+   cSentence         +=    "WHERE empresa_uuid = " + quoted( Company():Uuid() )  + space( 1 ) 
 
    if !empty( cDocumento )
-      cSentence      +=       "AND documento = " + toSQLString( cDocumento )  + space( 1 ) 
+      cSentence      +=       "AND documento = " + toSQLString( cDocumento )     + space( 1 ) 
    end if 
 
    if !empty( cClave )
-      cSentence      +=       "AND clave = " + toSQLString( cClave )          + space( 1 ) 
+      cSentence      +=       "AND clave = " + toSQLString( cClave )             + space( 1 ) 
    end if 
 
    if !empty( uValor )
-      cSentence      +=       "AND valor = " + toSQLString( uValor )          + space( 1 ) 
+      cSentence      +=       "AND valor = " + toSQLString( uValor )             + space( 1 ) 
    end if 
 
    cSentence         +=    "LIMIT 1"                                         

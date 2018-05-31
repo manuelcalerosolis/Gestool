@@ -47,6 +47,8 @@ CLASS SQLBaseController
 
    DATA oGetSelector
 
+   DATA oView
+
    METHOD New()
    METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
    METHOD End()
@@ -244,6 +246,9 @@ CLASS SQLBaseController
    // Validador para las columnas editables del browseview---------------------
 
    METHOD validColumnBrowse( uValue, nKey, oModel, cFieldName )
+
+   METHOD setView( oView )                            INLINE ( ::oView := oView )
+   METHOD getView()                                   INLINE ( if( empty( ::oView ), ::oDialogView, ::oView ) )
 
 END CLASS
 

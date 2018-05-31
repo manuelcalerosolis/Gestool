@@ -110,7 +110,7 @@ RETURN ( Self )
 
 METHOD gettingSelectSentence() CLASS AlmacenesController
 
-   ::oModel:setGeneralWhere( "parent_uuid = ''" )
+   ::oModel:setGeneralWhere( "almacen_uuid = ''" )
 
 RETURN ( Self )
 
@@ -321,10 +321,10 @@ END CLASS
 
 METHOD getValidators() CLASS AlmacenesValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
-                                          "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
-                                          "unique"             => "EL código introducido ya existe" } }
+   ::hValidators  := {  "nombre" =>    {  "required"     => "El nombre es un dato requerido",;
+                                          "unique"       => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"     => "El código es un dato requerido" ,;
+                                          "unique"       => "EL código introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -334,9 +334,9 @@ METHOD getUniqueSenctence( uValue ) CLASS AlmacenesValidator
    local cSQLSentence   := ::Super:getUniqueSenctence( uValue )
 
    if empty( ::oController ) .or. empty( ::oController:getSenderController() )
-      cSQLSentence      +=    " AND parent_uuid = ''"
+      cSQLSentence      +=    " AND almacen_uuid = ''"
    else 
-      cSQLSentence      +=    " AND parent_uuid = " + quoted( ::oController:getSenderController():getUuid() )
+      cSQLSentence      +=    " AND almacen_uuid = " + quoted( ::oController:getSenderController():getUuid() )
    end if
 
 RETURN ( cSQLSentence )
@@ -355,7 +355,7 @@ CLASS SQLAlmacenesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getParentUuidAttribute( value )
+   METHOD getAlmacenUuidAttribute( value )
 
 END CLASS
 
@@ -371,7 +371,7 @@ METHOD getColumns() CLASS SQLAlmacenesModel
 
    ::getEmpresaColumns()
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "almacen_uuid",      {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
@@ -384,7 +384,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getParentUuidAttribute( value )
+METHOD getAlmacenUuidAttribute( value )
    
    if empty( ::oController )
       RETURN ( value )
@@ -396,9 +396,6 @@ METHOD getParentUuidAttribute( value )
 
 RETURN ( ::oController:getSenderController():getUuid() )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -421,8 +418,11 @@ END CLASS
 
 METHOD getNombres() CLASS AlmacenesRepository
 
-   local aNombres    := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
-   local aResult     := {}
+   local aResult     
+   local aNombres
+
+   aResult           := {}
+   aNombres          := ::getDatabase():selectFetchHash( "SELECT nombre FROM " + ::getTableName() )
 
    if !empty( aNombres )
       aeval( aNombres, {| h | aadd( aResult, alltrim( hGet( h, "nombre" ) ) ) } )

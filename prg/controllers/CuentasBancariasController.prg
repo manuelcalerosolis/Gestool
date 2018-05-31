@@ -422,6 +422,8 @@ CLASS SQLCuentasBancariasModel FROM SQLBaseModel
 
    METHOD getParentUuidAttribute( value )
 
+   METHOD getSelectByOrder( cSQLSelect )  INLINE (cSQLSelect)
+
    METHOD getColumns()
 
 END CLASS
@@ -479,6 +481,8 @@ METHOD getParentUuidAttribute( value ) CLASS SQLCuentasBancariasModel
 RETURN ( ::oController:oSenderController:getUuid() )
 
 //---------------------------------------------------------------------------//
+
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
