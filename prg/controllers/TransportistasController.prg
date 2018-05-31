@@ -5,6 +5,10 @@
 
 CLASS TransportistasController FROM SQLNavigatorController
 
+   DATA oIncidenciasController
+
+   DATA oDocumentosController
+
    DATA oCamposExtraValoresController
 
    DATA oDireccionesController
@@ -21,33 +25,49 @@ METHOD New( oSenderController ) CLASS TransportistasController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Transportistas"
+   ::cTitle                         := "Transportistas"
 
-   ::cName                       := "transportistas"
+   ::cName                          := "transportistas"
 
-   ::hImage                      := {  "16" => "gc_small_truck_16",;
+   ::hImage                         := {  "16" => "gc_small_truck_16",;
                                        "32" => "gc_small_truck_32",;
                                        "48" => "gc_small_truck_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLTransportistasModel():New( self )
+   ::oModel                         := SQLTransportistasModel():New( self )
 
-   ::oBrowseView                 := TransportistasBrowseView():New( self )
+   ::oBrowseView                    := TransportistasBrowseView():New( self )
 
-   ::oDialogView                 := TransportistasView():New( self )
+   ::oDialogView                    := TransportistasView():New( self )
 
-   ::oValidator                  := TransportistasValidator():New( self, ::oDialogView )
+   ::oValidator                     := TransportistasValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController      := DireccionesController():New( self )
+   ::oDireccionesController         := DireccionesController():New( self )
+   ::oDireccionesController:setView( ::oDialogView )
 
-   ::oRepository                 := TransportistasRepository():New( self )
+   ::oRepository                    := TransportistasRepository():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
+   
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:updateBuffer( ::getUuid() ) } )
+
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
+   
+   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+
+   ::oIncidenciasController         := IncidenciasController():New( self )
+
+   ::oDocumentosController          := DocumentosController():New( self )
 
 RETURN ( Self )
 
@@ -146,10 +166,12 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS TransportistasView FROM SQLBaseView
-
-   DATA oSayCamposExtra
   
    METHOD Activate()
+
+   METHOD StartDialog()
+
+   METHOD addLinksToExplorerBar()
 
 END CLASS
 
@@ -158,6 +180,7 @@ END CLASS
 METHOD Activate() CLASS TransportistasView
 
    local oSayCamposExtra
+   local oSayT
    local oGetDni
    local oBtnEdit
    local oBtnAppend
@@ -199,38 +222,9 @@ METHOD Activate() CLASS TransportistasView
       VALID       ( checkCif( oGetDni ) ) ;
       OF          ::oDialog
 
-   REDEFINE BUTTON oBtnAppend ;
-      ID          130 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+   ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
 
-   oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
-
-   REDEFINE BUTTON oBtnEdit ;
-      ID          140 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          150 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   REDEFINE SAY   ::oSayCamposExtra ;
-      PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
-      COLOR       rgb( 10, 152, 234 ) ;
-      ID          170 ;
-      OF          ::oDialog ;
-
-   ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
-
-   oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
-
-   ::oController:oDireccionesController:Activate( 160, ::oDialog )
+   ::redefineExplorerBar( 700 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -251,11 +245,46 @@ METHOD Activate() CLASS TransportistasView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
+   ::oDialog:bStart  := {|| ::StartDialog() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartDialog() CLASS TransportistasView
+
+   ::oController:oDireccionesController:externalStartDialog()
+
+   ::addLinksToExplorerBar()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD addLinksToExplorerBar() CLASS TransportistasView
+
+   local oPanel
+
+   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   if ::oController:isNotZoomMode()
+      oPanel:AddLink( "Incidencias...",         {|| ::oController:oIncidenciasController:activateDialogView() }, ::oController:oIncidenciasController:getImage( "16" ) )
+      oPanel:AddLink( "Documentos...",          {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
+   end if
+
+   oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
+
+   if ::oController:isNotZoomMode()
+      oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+   end if
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
