@@ -795,12 +795,18 @@ METHOD ZipFiles()
    ::oProgreso:cText    := "Copiando datos de SQL"
 
    cZip                 := cPatSafe() + "gestool"
+
    if ::lDate
       cZip              += dtos( date() )
    end if
+
    cZip                 += ".sql"
 
+   ?"Antes de exportar"
+
    getSQLDataBase():Export( cZip )
+
+   ?"Despues de exportar"
 
    aadd( aFil, cZip )
 
