@@ -190,7 +190,7 @@ METHOD Activate() CLASS ImpuestosEspecialesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
       ID          120 ;
-      PICTURE     "@! 9.999999" ;
+      PICTURE     "@! 9999999.999999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
       OF          ::oDialog ;
@@ -300,7 +300,7 @@ METHOD getColumns() CLASS SQLImpuestosEspecialesModel
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "importe",           {  "create"    => "FLOAT( 7,6 )"                            ,;
+   hset( ::hColumns, "importe",           {  "create"    => "FLOAT( 14,6 )"                            ,;
                                              "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "subcuenta",         {  "create"    => "VARCHAR( 200 )"                          ,;

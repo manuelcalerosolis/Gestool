@@ -272,6 +272,13 @@ METHOD getColumns() CLASS SQLSesionesModel
    hset( ::hColumns, "fecha_hora_cierre",          {  "create"    => "TIMESTAMP"                               ,;
                                                       "default"   => {|| ctod( "" ) } }                        )
 
+   hset( ::hColumns, "estado",                     {  "create"     => "ENUM( 'Abierta', 'Cerrada' )"           ,;
+                                                      "default"    => {|| 'Abierta' }  }                       )
+
+   hset( ::hColumns, "delegacion_uuid",            {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {||space( 40 ) } }                        )
+
+
 
 
 
