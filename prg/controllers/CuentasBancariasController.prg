@@ -5,6 +5,8 @@
 
 CLASS CuentasBancariasController FROM SQLNavigatorController
 
+   DATA oCamposExtraValoresController
+
    METHOD CalculaIBAN()
 
    METHOD CalculaDigitoControl()
@@ -51,6 +53,8 @@ METHOD New( oSenderController ) CLASS CuentasBancariasController
    ::oDialogView                 := CuentasBancariasView():New( self )
 
    ::oValidator                  := CuentasBancariasValidator():New( self, ::oDialogView )
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oGetSelector                := GetSelector():New( self )
 
@@ -103,6 +107,8 @@ METHOD End() CLASS CuentasBancariasController
    ::oValidator:End()
 
    ::oGetSelector:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -275,6 +281,8 @@ CLASS CuentasBancariasView FROM SQLBaseView
    DATA oGetPais
    DATA oGetDni
 
+   DATA oSayCamposExtra
+
    DATA oIBAN 
    DATA oDigitoControl
 
@@ -290,8 +298,11 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS CuentasBancariasView
+
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "BANCOS_SQL" ;
@@ -309,6 +320,16 @@ METHOD Activate() CLASS CuentasBancariasView
       OF          ::oDialog
 
    ::ExternalRedefine( ::oDialog )
+
+      REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          200 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -380,6 +401,7 @@ METHOD ExternalRedefine( oDialog ) CLASS CuentasBancariasView
       VALID       ::oController:CalculaDigitoControl() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
+
 
 RETURN ( Self )
 
