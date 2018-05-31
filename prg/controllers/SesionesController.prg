@@ -3,11 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS CajasController FROM SQLNavigatorController
-
-   DATA oCamposExtraValoresController
-
-   DATA oImpresorasController
+CLASS SesionesController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -17,33 +13,29 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController) CLASS CajasController
+METHOD New( oSenderController) CLASS SesionesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Cajas"
+   ::cTitle                      := "Sesiones"
 
-   ::cName                       := "cajas"
+   ::cName                       := "sesiones"
 
-   ::hImage                      := {  "16" => "gc_cash_register_16",;
-                                       "32" => "gc_cash_register_32",;
-                                       "48" => "gc_cash_register_48" }
+   ::hImage                      := {  "16" => "gc_clock_16",;
+                                       "32" => "gc_clock_32",;
+                                       "48" => "gc_clock_48" }
 
    ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                      := SQLCajasModel():New( self )
+   ::oModel                      := SQLSesionesModel():New( self )
 
-   ::oBrowseView                 := CajasBrowseView():New( self )
+   ::oBrowseView                 := SesionesBrowseView():New( self )
 
-   ::oDialogView                 := CajasView():New( self )
+   ::oDialogView                 := SesionesView():New( self )
 
-   ::oValidator                  := CajasValidator():New( self, ::oDialogView )
+   ::oValidator                  := SesionesValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := CajasRepository():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oImpresorasController  := ImpresorasController():New( self, ::oModel:cTableName )
+   ::oRepository                 := SesionesRepository():New( self )
 
    ::oGetSelector                := GetSelector():New( self )
 
@@ -53,7 +45,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS CajasController
+METHOD End() CLASS SesionesController
 
    ::oModel:End()
 
@@ -62,10 +54,6 @@ METHOD End() CLASS CajasController
    ::oDialogView:End()
 
    ::oValidator:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::oImpresorasController:End()
 
    ::oRepository:End()
 
@@ -83,17 +71,17 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CajasBrowseView FROM SQLBrowseView
+CLASS SesionesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
-ENDCLASS
+END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS CajasBrowseView
+METHOD addColumns() CLASS SesionesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
+   /*with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
       :cHeader             := 'Id'
       :nWidth              := 60
@@ -132,7 +120,7 @@ METHOD addColumns() CLASS CajasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_sesion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
-
+*/
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -143,11 +131,9 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CajasView FROM SQLBaseView
+CLASS SesionesView FROM SQLBaseView
 
    METHOD Activate()
-
-   METHOD StartActivate()
 
 END CLASS
 
@@ -158,9 +144,9 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS CajasView
+METHOD Activate() CLASS SesionesView
 
-   DEFINE DIALOG  ::oDialog ;
+   /*DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CAJAS" ;
       TITLE       ::LblTitle() + "cajas"
 
@@ -219,27 +205,11 @@ REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_sesion" ] ;
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBitmap:end()
+   ::oBitmap:end()*/
 
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
-
-METHOD StartActivate() CLASS CajasView
-
-   local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
-
-   oPanel:AddLink( "Campos extra...",;
-                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
-
-    oPanel:AddLink(   "Impresoras...",;
-                     {|| ::oController:oImpresorasController:activateDialogView() },;
-                     ::oController:oImpresorasController:getImage( "16" ) )
-
-
-RETURN ( self )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -247,7 +217,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CajasValidator FROM SQLCompanyValidator
+CLASS SesionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -255,12 +225,12 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS CajasValidator
+METHOD getValidators() CLASS SesionesValidator
 
-   ::hValidators  := {  "nombre_caja" =>  {  "required"           => "El nombre es un dato requerido",;
+   /*::hValidators  := {  "nombre_caja" =>  {  "required"           => "El nombre es un dato requerido",;
                                              "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
-                                             "unique"             => "EL código introducido ya existe" } }
+                                             "unique"             => "EL código introducido ya existe" } }*/
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -272,9 +242,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCajasModel FROM SQLCompanyModel
+CLASS SQLSesionesModel FROM SQLBaseModel
 
-   DATA cTableName               INIT "cajas"
+   DATA cTableName               INIT "cajas_sesiones"
 
    METHOD getColumns()
 
@@ -282,24 +252,27 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLCajasModel
+METHOD getColumns() CLASS SQLSesionesModel
    
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                                      "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
+                                                      "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                             ,;
-                                             "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "caja_uuid",                  {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {||space( 40 ) } }                        )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) NOT NULL"                  ,;
-                                             "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "codigo",                     {  "create"    => "INTEGER"                                 ,;
+                                                      "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "codigo_sesion",     {  "create"    => "INTEGER UNSIGNED"                        ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "fecha_hora_inicio",          {  "create"    => "TIMESTAMP"                               ,;
+                                                      "default"   => {||hb_datetime() } }                      )
 
-   ::getEmpresaColumns()
+   hset( ::hColumns, "fecha_hora_cierre",          {  "create"    => "TIMESTAMP"                               ,;
+                                                      "default"   => {|| ctod( "" ) } }                        )
+
+
 
 
 RETURN ( ::hColumns )
@@ -314,9 +287,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CajasRepository FROM SQLBaseRepository
+CLASS SesionesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLCajasModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLSesionesModel():getTableName() ) 
 
 
 END CLASS

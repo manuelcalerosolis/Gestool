@@ -210,6 +210,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLArticulosTipoModel():New() )
 
+   aadd( ::aModels, SQLSesionesModel():New() )
+
    aadd( ::aModels, SQLRecibosModel():New() )
 
    aadd( ::aModels, SQLBalanzasModel():New() )

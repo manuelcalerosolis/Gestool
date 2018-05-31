@@ -3039,6 +3039,15 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_briefcase2_user_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Sesiones'
+   oItem:cMessage       := 'Sesiones'
+   oItem:bAction        := {||SesionesController():New():ActivateNavigatorView() }
+   oItem:cId            := "sesiones"
+   oItem:cBmp           := "gc_clock_16"
+   oItem:cBmpBig        := "gc_clock_32"
+   oItem:lShow          := .f.
 
 RETURN ( oAcceso )
 
