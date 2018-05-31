@@ -597,6 +597,7 @@ ReindexaView.prg                                      			\
 BaseModel.prg 																	\
 SQLBaseModel.prg 																\
 SQLCompanyModel.prg															\
+SQLContadoresModel.prg														\
 SQLBaseController.prg 														\
 SQLNavigatorController.prg													\
 SQLBrowseController.prg														\
@@ -1284,6 +1285,7 @@ ReindexaView.obj                                   				\
 BaseModel.obj 																	\
 SQLBaseModel.Obj 																\
 SQLCompanyModel.Obj 															\
+SQLContadoresModel.Obj 														\
 SQLBaseController.Obj 														\
 SQLNavigatorController.obj 												\
 SQLBrowseController.obj 													\
@@ -1954,6 +1956,7 @@ $(OBJ)\ViewReporting.obj 													+
 $(OBJ)\BaseModel.obj 														+
 $(OBJ)\SQLBaseModel.obj 													+
 $(OBJ)\SQLCompanyModel.obj 												+
+$(OBJ)\SQLContadoresModel.obj 											+
 $(OBJ)\SQLBaseController.obj 												+
 $(OBJ)\SQLNavigatorController.obj										+
 $(OBJ)\SQLBrowseController.obj											+
