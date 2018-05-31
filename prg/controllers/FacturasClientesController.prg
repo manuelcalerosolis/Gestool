@@ -17,9 +17,13 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oAlmacenesController
 
+   DATA oContadoresModel
+
    METHOD New()
 
    METHOD End()
+
+   METHOD loadedBlankBuffer() 
 
 END CLASS
 
@@ -32,12 +36,16 @@ METHOD New() CLASS FacturasClientesController
    ::cTitle                      := "Facturas de clientes"
 
    ::cName                       := "facturas_clientes"
+   
+   ::lTransactional              := .t.
 
    ::hImage                      := {  "16" => "gc_document_text_user_16",;
                                        "32" => "gc_document_text_user_32",;
                                        "48" => "gc_document_text_user_48" }
 
    ::oModel                      := SQLFacturasClientesModel():New( self )
+
+   ::oContadoresModel            := SQLContadoresModel():New( self )
 
    ::oDialogView                 := FacturasClientesView():New( self )
 
@@ -63,9 +71,9 @@ METHOD New() CLASS FacturasClientesController
    ::oAlmacenesController        := AlmacenesController():New( self )
    ::oAlmacenesController:setView( ::oDialogView )
 
-   ::lTransactional              := .t.
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
+   ::oModel:setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } )
 
 RETURN ( Self )
 
@@ -90,6 +98,13 @@ METHOD End() CLASS FacturasClientesController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD loadedBlankBuffer() 
+
+   hset( ::oModel:hBuffer, "numero", padr( ::oContadoresModel:getDocumentCounter( ::cName ), 50 ) )
+
+RETURN ( Self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -161,3 +176,4 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+

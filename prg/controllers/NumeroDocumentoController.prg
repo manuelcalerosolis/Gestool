@@ -43,8 +43,6 @@ METHOD New( oSenderController ) CLASS NumeroDocumentoController
 
    ::oValidator                     := SQLBaseValidator():New()
 
-   ::oConfiguracionesModel          := SQLConfiguracionesModel():New()
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -52,8 +50,6 @@ RETURN ( Self )
 METHOD End() CLASS NumeroDocumentoController
 
    ::oValidator:End()
-
-   ::oConfiguracionesModel:End()
 
 RETURN ( Self )
 
@@ -124,12 +120,12 @@ METHOD checkSerie() CLASS NumeroDocumentoController
 
    cSerie         := upper( substr( cNumero, 1, nAt - 1 ) )
 
-   if ::oConfiguracionesModel:isSerie( ::oSenderController:cName, cSerie )
+   if ::oSenderController:oContadoresModel:isSerie( ::oSenderController:cName, cSerie )
       RETURN ( .t. )
    end if
 
    if msgYesNo( "La serie " + cSerie + ", no existe.", "¿ Desea crear una nueva serie ?" )
-      ::oConfiguracionesModel:setSerie( ::oSenderController:cName, cSerie ) 
+      ::oSenderController:oContadoresModel:insertSerie( ::oSenderController:cName, cSerie ) 
    else 
       RETURN ( .f. )
    end if 

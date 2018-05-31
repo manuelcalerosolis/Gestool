@@ -7,8 +7,6 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   //METHOD getInitialSelect()
-
 END CLASS
 
 //---------------------------------------------------------------------------//

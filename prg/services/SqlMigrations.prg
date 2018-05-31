@@ -174,6 +174,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLAjustableModel():New() )
 
+   aadd( ::aModels, SQLContadoresModel():New() )
+
    aadd( ::aModels, SQLSituacionesModel():New() )
 
    aadd( ::aModels, SQLCajonesPortamonedasModel():New() )

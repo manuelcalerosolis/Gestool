@@ -182,6 +182,7 @@ CLASS SQLBaseModel
    METHOD insertIgnoreBuffer( hBuffer )                    
    METHOD updateBuffer( hBuffer )
    METHOD insertOnDuplicate( hBuffer )
+   METHOD insertOnDuplicateTransactional( hBuffer )   INLINE ( ::insertOnDuplicate( hBuffer, .t. ) )
    METHOD deleteSelection( aIds )
    METHOD deleteById( uId )
    METHOD deleteByUuid( uUuid )
@@ -1060,11 +1061,17 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertOnDuplicate( hBuffer, lDebug )
+METHOD insertOnDuplicate( hBuffer, lTransactional )
+
+   DEFAULT lTransactional  := .f.
 
    ::fireEvent( 'insertingOnDuplicatingBuffer' )
 
-   ::getDatabase():Execs( ::getInsertOnDuplicateSentence( hBuffer, lDebug ) )
+   if lTransactional 
+      ::getDatabase():TransactionalExec( ::getInsertOnDuplicateSentence( hBuffer ) )
+   else
+      ::getDatabase():Execs( ::getInsertOnDuplicateSentence( hBuffer ) )
+   end  if 
 
    ::fireEvent( 'insertedOnDuplicatedBuffer' )
 
