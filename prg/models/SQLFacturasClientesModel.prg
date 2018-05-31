@@ -24,8 +24,11 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
    hset( ::hColumns, "delegacion_uuid",               {  "create"    => "VARCHAR( 40 )"                        ,;
                                                          "default"   => {|| Company():delegacionUuid() } }    )
 
-   hset( ::hColumns, "numero",                        {  "create"    => "VARCHAR( 50 )"                        ,;
-                                                         "default"   => {|| space( 50 ) } }                    )
+   hset( ::hColumns, "serie",                         {  "create"    => "VARCHAR( 20 )"                        ,;
+                                                         "default"   => {|| space( 20 ) } }                    )
+
+   hset( ::hColumns, "numero",                        {  "create"    => "INT UNSIGNED"                         ,;
+                                                         "default"   => {|| 0 } }                              )
 
    hset( ::hColumns, "fecha",                         {  "create"    => "DATE"                                 ,;
                                                          "default"   => {|| date() } }                         )

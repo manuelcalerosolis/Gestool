@@ -64,10 +64,15 @@ METHOD Activate() CLASS FacturasClientesView
    ::oController:oClientesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_uuid" ] ) )
    ::oController:oClientesController:oGetSelector:Build( { "idGet" => 170, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
 
+   // Serie-------------------------------------------------------------------
+
+   ::oController:oSerieDocumentoComponent:BindValue( bSETGET( ::oController:oModel:hBuffer[ "serie" ] ) )
+   ::oController:oSerieDocumentoComponent:Activate( 4005, ::oFolder:aDialogs[1] )
+
    // Numero-------------------------------------------------------------------
 
-   ::oController:oNumeroDocumentoController:BindValue( bSETGET( ::oController:oModel:hBuffer[ "numero" ] ) )
-   ::oController:oNumeroDocumentoController:Activate( 110, ::oFolder:aDialogs[1] )
+   ::oController:oNumeroDocumentoComponent:BindValue( bSETGET( ::oController:oModel:hBuffer[ "numero" ] ) )
+   ::oController:oNumeroDocumentoComponent:Activate( 110, ::oFolder:aDialogs[1] )
 
    // Fecha--------------------------------------------------------------------
 

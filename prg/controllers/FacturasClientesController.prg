@@ -7,7 +7,9 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oClientesController
 
-   DATA oNumeroDocumentoController
+   DATA oSerieDocumentoComponent
+
+   DATA oNumeroDocumentoComponent
 
    DATA oFormasPagoController
 
@@ -24,6 +26,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    METHOD End()
 
    METHOD loadedBlankBuffer() 
+
+   METHOD insertedBuffer()
 
 END CLASS
 
@@ -57,7 +61,9 @@ METHOD New() CLASS FacturasClientesController
 
    ::oClientesController         := ClientesController():New( self )
 
-   ::oNumeroDocumentoController  := NumeroDocumentoController():New( self )
+   ::oNumeroDocumentoComponent   := NumeroDocumentoComponent():New( self )
+
+   ::oSerieDocumentoComponent    := SerieDocumentoComponent():New( self )
 
    ::oFormasPagoController       := FormasPagosController():New( self )   
    ::oFormasPagoController:setView( ::oDialogView )
@@ -73,7 +79,8 @@ METHOD New() CLASS FacturasClientesController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',      {|| ::insertedBuffer() } )
 
 RETURN ( Self )
 
@@ -82,8 +89,6 @@ RETURN ( Self )
 METHOD End() CLASS FacturasClientesController
 
    ::oClientesController:End()
-
-   ::oNumeroDocumentoController:End()
 
    ::oFormasPagoController:End()
 
@@ -102,6 +107,14 @@ RETURN ( Self )
 METHOD loadedBlankBuffer() 
 
    hset( ::oModel:hBuffer, "numero", padr( ::oContadoresModel:getDocumentCounter( ::cName ), 50 ) )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertedBuffer() 
+
+   // padr( ::oContadoresModel:insertDocumentCounter( ::cName ), 50 ) )
 
 RETURN ( Self )
 

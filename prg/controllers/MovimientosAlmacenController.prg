@@ -22,7 +22,7 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oImprimirSeriesController
 
-   DATA oNumeroDocumentoController
+   DATA oNumeroDocumentoComponent
 
    DATA oReport
 
@@ -136,7 +136,7 @@ METHOD New()
 
    ::oReport                     := MovimientosAlmacenReport():New( self )
 
-   ::oNumeroDocumentoController  := NumeroDocumentoController():New( self )
+   ::oNumeroDocumentoComponent   := NumeroDocumentoComponent():New( self )
 
    ::loadDocuments()
 
@@ -174,7 +174,7 @@ METHOD End()
 
    ::oConfiguracionesController:End()
 
-   ::oNumeroDocumentoController:End()
+   ::oNumeroDocumentoComponent:End()
 
    ::Super:End()
 

@@ -196,7 +196,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
       case ( "SQL" $ appParamsMain() ) 
 
          if AccessCode():loadTableConfiguration()
-            CreateMainSqlWindow( oIconApp )
+            // CreateMainSqlWindow( oIconApp )
          end if
 
       otherwise
