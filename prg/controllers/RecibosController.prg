@@ -143,13 +143,13 @@ METHOD addColumns() CLASS RecibosBrowseView
       :AddResource( "GC_MONEY2_16" )
    end with
 
-   with object ( ::oBrowse:AddCol() )
+   /*with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'sesion'
       :cHeader             := 'Sesión'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'sesion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
+   end with*/
 
      with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'cliente'
@@ -300,7 +300,7 @@ METHOD Activate() CLASS RecibosView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "sesion" ] ;
       ID          130 ;
-      WHEN        ( .f. ) ;
+      WHEN         ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
   REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
@@ -345,10 +345,8 @@ METHOD Activate() CLASS RecibosView
    // cliente------------------------------------------------------------------------------------------------------------//
 
    ::oController:oClientesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente" ] ) )
-   
-   ::oController:oClientesController:oGetSelector:setEvent( 'validated', {|| ::ClientesControllerValidated() } )
 
-   ::oController:oClientesController:oGetSelector:Activate( 200, 202, ::oFolder:aDialogs[1] )
+   ::oController:oClientesController:oGetSelector:Build( { "idGet" => 200, "idText" => 202, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Forma de pago-----------------------------------------------------------------------------------------------------//
 
@@ -569,18 +567,18 @@ METHOD getColumns() CLASS SQLRecibosModel
                                                       "default"   => {|| .f. } }                                  )
 
    hset( ::hColumns, "fecha_cobro",                {  "create"    => "DATE"                                       ,;
-                                                      "default"   => {||  0 } }                                    )
+                                                      "default"   => {|| ctod( "" ) } }                            )
 
-   hset( ::hColumns, "codigo_caja",                {  "create"    => "VARCHAR( 40 )"                              ,;
+   hset( ::hColumns, "codigo_caja",                {  "create"    => "VARCHAR( 20 )"                              ,;
                                                       "default"   => {|| space( 40 ) } }                          )
 
-   hset( ::hColumns, "cliente",                    {  "create"    => "VARCHAR( 40 )"                               ,;
+   hset( ::hColumns, "cliente",                    {  "create"    => "VARCHAR( 20 )"                               ,;
                                                       "default"   => {|| space( 40 ) } }                           )
 
    hset( ::hColumns, "forma_pago",                 {  "create"    => "VARCHAR( 40 )"                               ,;
                                                       "default"   => {|| space( 40 ) } }                           )
 
-   hset( ::hColumns, "agente",                     {  "create"    => "VARCHAR( 40 )"                               ,;
+   hset( ::hColumns, "agente",                     {  "create"    => "VARCHAR( 20 )"                               ,;
                                                       "default"   => {|| space( 40 ) } }                           )
 
    hset( ::hColumns, "concepto",                   {  "create"    => "VARCHAR( 200 )"                              ,;
