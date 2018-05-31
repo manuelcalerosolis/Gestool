@@ -467,7 +467,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FormaPagoValidator FROM SQLBaseValidator
+CLASS FormaPagoValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -570,6 +570,8 @@ METHOD getColumns() CLASS SQLFormaPagoModel
 
    hset( ::hColumns, "generar_documento",    {  "create"    => "INTEGER( 1 )"                               ,;
                                                 "default"   => {|| ( 0 ) } }                           )
+   
+   ::getEmpresaColumns()
    
    ::getTimeStampColumns()
 

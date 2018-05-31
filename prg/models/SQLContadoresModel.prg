@@ -34,8 +34,8 @@ METHOD getColumns()
    hset( ::hColumns, "documento",      {  "create"    => "VARCHAR ( 250 )"                         ,;
                                           "default"   => {|| space( 250 ) } }                      )
 
-   hset( ::hColumns, "serie",          {  "create"    => "VARCHAR ( 250 )"                         ,;
-                                          "default"   => {|| space( 250 ) } }                      )
+   hset( ::hColumns, "serie",          {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                          "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "contador",       {  "create"    => "INT UNSIGNED"                            ,;
                                           "default"   => {|| 0 } }                                 )
@@ -88,12 +88,19 @@ RETURN ( ::getDatabase():firstTrimedFetchHash( cSql ) )
    
 METHOD getDocumentCounter( cDocumento )                          
 
+   local cDocument   := ""
    local hDocument   := ::getLastCounter( cDocumento )
 
    if empty( hDocument )
-      RETURN ( "000001" )
+      RETURN ( padl( "1", 6, "0" ) )
    end if
 
-RETURN ( hget( hDocument, "serie" ) + "/" + hget( hDocument, "contador" )  )
+   if !empty( hget( hDocument, "serie" ) )
+      cDocument      := hget( hDocument, "serie" ) + "/"
+   end if 
+
+   cDocument         += alltrim( padl( hget( hDocument, "contador" ) + 1, 6, "0" ) )
+
+RETURN ( cDocument )
 
 //---------------------------------------------------------------------------//
