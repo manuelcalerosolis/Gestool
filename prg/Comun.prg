@@ -3039,6 +3039,16 @@ FUNCTION CreateAcceso( oWnd )
    oItem:cBmpBig        := "gc_briefcase2_user_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemSQL:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Cuenta banco'
+   oItem:cMessage       := 'Cuenta banco'
+   oItem:bAction        := {||CuentasBancariasController():New():ActivateNavigatorView() }
+   oItem:cId            := "recibos"
+   oItem:cBmp           := "gc_briefcase2_user_16"
+   oItem:cBmpBig        := "gc_briefcase2_user_32"
+   oItem:lShow          := .f.
+
 RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
