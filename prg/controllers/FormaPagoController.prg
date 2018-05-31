@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FormaPagoController FROM SQLNavigatorController
+CLASS FormasPagosController FROM SQLNavigatorController
 
    DATA oBancosController
 
@@ -17,7 +17,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS FormaPagoController
+METHOD New( oSenderController ) CLASS FormasPagosController
 
    ::Super:New( oSenderController )
 
@@ -50,7 +50,8 @@ METHOD New( oSenderController ) CLASS FormaPagoController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-METHOD End() CLASS FormaPagoController
+
+METHOD End() CLASS FormasPagosController
 
    ::oModel:End()
 
@@ -495,7 +496,7 @@ CLASS SQLFormaPagoModel FROM SQLCompanyModel
    METHOD getColumns()
 
    METHOD getBancoUuidAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 3 ), ::oController:oBancosController:oModel():getCodigoWhereUuid( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oBancosController:oModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setBancoUuidAttribute( uValue ) ;
                                  INLINE ( if( empty( uValue ), "", ::oController:oBancosController:oModel():getUuidWhereCodigo( uValue ) ) )

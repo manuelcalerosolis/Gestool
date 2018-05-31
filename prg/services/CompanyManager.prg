@@ -11,7 +11,7 @@ CLASS CompanyManager
    DATA uuid
    DATA nombre
    DATA codigo
-   DATA delegacion_uuid
+   DATA delegacionUuid
 
    METHOD New()
 
@@ -59,7 +59,7 @@ METHOD guard( hCompany )
       ::codigo          := hget( hCompany, "codigo" ) 
    end if 
 
-   ::delegacion_uuid    := ::getDefaultDelegacion()
+   ::delegacionUuid     := ::getDefaultDelegacion()
 
 RETURN ( self )
 
@@ -91,17 +91,15 @@ RETURN ( self )
 
 METHOD getDefaultDelegacion()
 
-   local delegacion_uuid   := ""
+   local delegacionUuid    
    
-   delegacion_uuid         := SQLAjustableModel():getUsuarioEmpresaExclusiva( Auth():Uuid() )
+   delegacionUuid          := SQLAjustableModel():getUsuarioEmpresaExclusiva( Auth():Uuid() )
 
-   if Empty( delegacion_uuid )
-
-      delegacion_uuid      := SQLAjustableModel():getEmpresaDelegacionDefecto( ::uuid )
-
+   if empty( delegacionUuid )
+      delegacionUuid       := SQLAjustableModel():getEmpresaDelegacionDefecto( ::uuid )
    end if
 
-Return delegacion_uuid
+RETURN ( delegacionUuid )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

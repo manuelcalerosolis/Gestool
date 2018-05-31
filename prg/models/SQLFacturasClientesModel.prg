@@ -24,13 +24,13 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
    ::getEmpresaColumns()
 
    hset( ::hColumns, "delegacion_uuid",               {  "create"    => "VARCHAR( 40 )"                        ,;
-                                                         "default"   => {|| Company():delegacion_uuid() } }    )
+                                                         "default"   => {|| Company():delegacionUuid() } }    )
 
    hset( ::hColumns, "numero",                        {  "create"    => "VARCHAR( 50 )"                        ,;
                                                          "default"   => {|| space( 50 ) } }                    )
 
    hset( ::hColumns, "fecha",                         {  "create"    => "DATE"                                 ,;
-                                                         "default"   => {|| ctod( "" ) } }                     )
+                                                         "default"   => {|| date() } }                         )
 
    hset( ::hColumns, "fecha_valor_stock",             {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"   ,;
                                                          "default"   => {|| hb_datetime() } }                  )

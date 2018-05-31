@@ -8,8 +8,6 @@ CLASS MovimientosAlmacenValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
-   METHOD numeroDocumento( value )
-
    METHOD requiredAlmacenOrigen()
 
    METHOD existAlmacenOrigen( value )
@@ -44,30 +42,6 @@ METHOD getValidators()
                         "divisa"             => {  "existDivisa"                 => "La divisa no existe" } } 
 
 RETURN ( ::hValidators )
-
-//---------------------------------------------------------------------------//
-
-METHOD numeroDocumento( value )
-
-   local nAt
-   local cSerie   := ""
-   local nNumero
-
-   value          := alltrim( value )
-
-   nAt            := rat( "/", value )
-   if nAt != 0
-      nNumero     := substr( value, nAt + 1 )
-      cSerie      := substr( value, 1, nAt  )
-   else
-      nNumero     := value
-   end if  
-
-   if !hb_regexlike( "^[0-9]{1,6}$", nNumero )
-      RETURN ( .f. )
-   end if 
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

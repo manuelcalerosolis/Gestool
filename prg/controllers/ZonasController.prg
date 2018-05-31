@@ -68,7 +68,7 @@ METHOD gettingSelectSentence() CLASS ZonasController
    local uuid        := ::getSenderController():getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      ::oModel:setGeneralWhere( "almacen_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( Self )

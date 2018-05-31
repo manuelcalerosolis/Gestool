@@ -33,6 +33,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oImagenesController
 
+   DATA oArticulosTemporadasController
+
    METHOD New()
 
    METHOD End()
@@ -55,6 +57,9 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD validColumnArticulosFabricantesBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFabricantesController:oModel, "articulo_fabricante_uuid" ) )
 
+   METHOD validColumnArticulosTemporadasBrowse( oCol, uValue, nKey ) ;
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosTemporadasController:oModel, "articulo_temporada_uuid" ) )
+
    METHOD validColumnTiposIvaBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oTipoIvaController:oModel, "tipo_iva_uuid" ) )
 
@@ -75,55 +80,68 @@ METHOD New() CLASS ArticulosController
 
    ::Super:New()
 
-   ::cTitle                            := "Artículos"
+   ::cTitle                                  := "Artículos"
 
-   ::cName                             := "articulos"
+   ::cName                                   := "articulos"
 
-   ::hImage                            := {  "16" => "gc_object_cube_16",;
+   ::hImage                                  := {  "16" => "gc_object_cube_16",;
                                              "32" => "gc_object_cube_32",;
                                              "48" => "gc_object_cube_48" }
 
-   ::lTransactional                    := .t.
+   ::lTransactional                          := .t.
 
-   ::nLevel                            := Auth():Level( ::cName )
+   ::nLevel                                  := Auth():Level( ::cName )
 
-   ::oModel                            := SQLArticulosModel():New( self )
+   ::oModel                                  := SQLArticulosModel():New( self )
 
-   ::oBrowseView                       := ArticulosBrowseView():New( self )
+   ::oBrowseView                             := ArticulosBrowseView():New( self )
 
-   ::oDialogView                       := ArticulosView():New( self )
+   ::oDialogView                             := ArticulosView():New( self )
 
-   ::oValidator                        := ArticulosValidator():New( self, ::oDialogView )
+   ::oValidator                              := ArticulosValidator():New( self, ::oDialogView )
 
-   ::oRepository                       := ArticulosRepository():New( self )
+   ::oRepository                             := ArticulosRepository():New( self )
 
-   ::oCamposExtraValoresController     := CamposExtraValoresController():New( self, 'clientes' )
+   ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, 'clientes' )
 
-   ::oTagsController                   := TagsController():New( self )
-
-   ::oArticulosFamiliasController      := ArticulosFamiliasController():New( self )
-
-   ::oArticulosTipoController          := ArticulosTipoController():New( self )
-
-   ::oArticulosCategoriasController    := ArticulosCategoriasController():New( self )
-
-   ::oArticulosFabricantesController   := ArticulosFabricantesController():New( self )
-
-   ::oTipoIvaController                := TipoIvaController():New( self )
-
-   ::oImpuestosEspecialesController    := ImpuestosEspecialesController():New( self )
-
-   ::oArticulosPreciosController       := ArticulosPreciosController():New( self )
-
-   ::oPrimeraPropiedadController             := PropiedadesController():New( self )
-
-   ::oSegundaPropiedadController             := PropiedadesController():New( self )
-   
-   ::oArticulosUnidadesMedicionController    := ArticulosUnidadesMedicionController():New( self )
+   ::oTagsController                         := TagsController():New( self )
 
    ::oImagenesController                     := ImagenesController():New( self )
 
    ::oTraduccionesController                 := TraduccionesController():New( self )
+
+   ::oArticulosFamiliasController            := ArticulosFamiliasController():New( self )
+   ::oArticulosFamiliasController:setView( ::oDialogView )
+
+   ::oArticulosTipoController                := ArticulosTipoController():New( self )
+   ::oArticulosTipoController:setView( ::oDialogView )
+
+   ::oArticulosCategoriasController          := ArticulosCategoriasController():New( self )
+   ::oArticulosCategoriasController:setView( ::oDialogView )
+
+   ::oArticulosFabricantesController         := ArticulosFabricantesController():New( self )
+   ::oArticulosFabricantesController:setView( ::oDialogView )
+
+   ::oTipoIvaController                      := TipoIvaController():New( self )
+   ::oTipoIvaController:setView( ::oDialogView )
+
+   ::oImpuestosEspecialesController          := ImpuestosEspecialesController():New( self )
+   ::oImpuestosEspecialesController:setView( ::oDialogView )
+
+   ::oArticulosPreciosController             := ArticulosPreciosController():New( self )
+   ::oArticulosPreciosController:setView( ::oDialogView )
+
+   ::oPrimeraPropiedadController             := PropiedadesController():New( self )
+   ::oPrimeraPropiedadController:setView( ::oDialogView )
+
+   ::oSegundaPropiedadController             := PropiedadesController():New( self )
+   ::oSegundaPropiedadController:setView( ::oDialogView )
+   
+   ::oArticulosUnidadesMedicionController    := ArticulosUnidadesMedicionController():New( self )
+   ::oArticulosUnidadesMedicionController:setView( ::oDialogView )
+
+   ::oArticulosTemporadasController          := ArticulosTemporadasController():New( self )
+   ::oArticulosTemporadasController:setView( ::oDialogView )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -172,6 +190,8 @@ METHOD End() CLASS ArticulosController
    ::oImagenesController:End()
 
    ::oTraduccionesController:End()
+
+   ::oArticulosTemporadasController:End()
 
    ::Super:End()
 

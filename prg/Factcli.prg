@@ -16696,7 +16696,6 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
    local oPrinter   
    local cPrinterFactura   := cPrinterFactura( Application():CodigoCaja(), dbfCajT )
 
-
    DEFAULT nDevice         := IS_PRINTER
    DEFAULT lExt            := .f.
 
@@ -16710,7 +16709,7 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
    oPrinter:Documento(     ( D():FacturasClientes( nView ) )->nNumFac )
    oPrinter:Sufijo(        ( D():FacturasClientes( nView ) )->cSufFac )
 
-   if lExt
+   if lExt  
 
       oPrinter:oFechaInicio:cText( ( D():FacturasClientes( nView ) )->dFecFac )
       oPrinter:oFechaFin:cText( ( D():FacturasClientes( nView ) )->dFecFac )

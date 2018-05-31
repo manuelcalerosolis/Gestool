@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaController FROM SQLNavigatorController
+CLASS ArticulosTemporadasController FROM SQLNavigatorController
 
    DATA oCamposExtraValoresController
 
@@ -15,36 +15,39 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ArticulosTemporadaController
+METHOD New( oSenderController ) CLASS ArticulosTemporadasController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
-   ::cTitle                      := "Articulos temporadas"
+   ::cTitle                         := "Articulos temporadas"
 
-   ::cName                       := "articulos_temporadas"
+   ::cName                          := "articulos_temporadas"
 
-   ::hImage                      := {  "16" => "gc_cloud_sun_16",;
-                                       "32" => "gc_cloud_sun_32",;
-                                       "48" => "gc_cloud_sun_48" }
+   ::hImage                         := {  "16" => "gc_cloud_sun_16",;
+                                          "32" => "gc_cloud_sun_32",;
+                                          "48" => "gc_cloud_sun_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLArticulosTemporadaModel():New( self )
+   ::oModel                         := SQLArticulosTemporadasModel():New( self )
 
-   ::oBrowseView                 := ArticulosTemporadaBrowseView():New( self )
+   ::oBrowseView                    := ArticulosTemporadaBrowseView():New( self )
 
-   ::oDialogView                 := ArticulosTemporadaView():New( self )
+   ::oDialogView                    := ArticulosTemporadaView():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
-   ::oValidator                  := ArticulosTemporadaValidator():New( self, ::oDialogView )
+   ::oValidator                     := ArticulosTemporadaValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := ArticulosTemporadaRepository():New( self )
+   ::oRepository                    := ArticulosTemporadaRepository():New( self )
+
+   ::oGetSelector                   := GetSelector():New( self )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-METHOD End() CLASS ArticulosTemporadaController
+
+METHOD End() CLASS ArticulosTemporadasController
 
    ::oModel:End()
 
@@ -55,6 +58,8 @@ METHOD End() CLASS ArticulosTemporadaController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 
@@ -221,7 +226,7 @@ METHOD Activate() CLASS ArticulosTemporadaView
       ID          IDCANCEL ;
       OF          ::oDialog ;
       CANCEL ;
-      ACTION     ( ::oDialog:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
@@ -250,10 +255,10 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosTemporadaValidator
 
-   ::hValidators  := {  "nombre " =>               {  "required"           => "El nombre es un dato requerido",;
-                                                      "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre " =>   {  "required"  => "El nombre es un dato requerido",;
+                                          "unique"    => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
+                                          "unique"    => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -262,9 +267,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosTemporadaModel FROM SQLCompanyModel
+CLASS SQLArticulosTemporadasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "articulos_temporada"
+   DATA cTableName               INIT "articulos_temporadas"
 
    METHOD getColumns()
 
@@ -272,13 +277,15 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLArticulosTemporadaModel
+METHOD getColumns() CLASS SQLArticulosTemporadasModel
 
    hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                     "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                     "default"   => {|| win_uuidcreatestring() } }            )
+
+   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                            ,;
                                     "default"   => {|| space( 20 ) } }                        )
@@ -288,8 +295,6 @@ METHOD getColumns() CLASS SQLArticulosTemporadaModel
 
    hset( ::hColumns, "icono",    {  "create"    => "VARCHAR( 40 )"                           ,;
                                     "default"   => {|| space( 40 ) } }                       )
-
-   ::getEmpresaColumns()
 
    ::getTimeStampColumns()
 
@@ -303,7 +308,7 @@ RETURN ( ::hColumns )
 
 CLASS ArticulosTemporadaRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLComentariosModel():getTableName() ) 
+   METHOD getTableName()         INLINE ( SQLArticulosTemporadasModel():getTableName() ) 
 
 END CLASS
 

@@ -44,6 +44,7 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "empresas" =>                             { "nombre" => "Empresas", "icono" => "gc_factory_16"                                           } ,;
                                  "entidades" =>                            { "nombre" => "Entidades", "icono" => "gc_office_building2_16"                                 } ,;
                                  "cuentas_remesa" =>                       { "nombre" => "Cuentas de remesa", "icono" => "gc_notebook2_16"                                } ,;
+                                 "cuentas_bancarias" =>                    { "nombre" => "Cuentas bancarias", "icono" => "gc_central_bank_euro_16"                        } ,;
                                  "iva_tipos" =>                            { "nombre" => "Tipos de IVA", "icono" => "gc_moneybag_16"                                      } ,;
                                  "impuestos_especiales" =>                 { "nombre" => "Impuestos especiales", "icono" => "gc_moneybag_euro_16"                         } ,;
                                  "orden_comandas" =>                       { "nombre" => "Orden de comandas", "icono" => "gc_sort_az_descending_16"                       } ,;

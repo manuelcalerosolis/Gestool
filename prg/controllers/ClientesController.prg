@@ -11,7 +11,7 @@ CLASS ClientesController FROM TercerosController
 
    METHOD validColumnAgentesBrowse( uValue, nKey )             INLINE ( ::validColumnBrowse( uValue, nKey, ::oAgentesController:oModel, "agente_uuid" ) )
 
-   METHOD validColumnFormasdePagoBrowse( uValue, nKey )        INLINE ( ::validColumnBrowse( uValue, nKey, ::oFormasdePagoController:oModel, "forma_pago_uuid" ) )
+   METHOD validColumnFormasdePagoBrowse( uValue, nKey )        INLINE ( ::validColumnBrowse( uValue, nKey, ::oFormasPagoController:oModel, "forma_pago_uuid" ) )
 
    METHOD validColumnRutasBrowse( uValue, nKey )               INLINE ( ::validColumnBrowse( uValue, nKey, ::oRutasController:oModel, "ruta_uuid" ) )
 
@@ -23,9 +23,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ClientesController
+METHOD New( oSenderController ) CLASS ClientesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                         := "Clientes"
 
@@ -44,17 +44,22 @@ METHOD New() CLASS ClientesController
    ::oBrowseView                    := ClientesBrowseView():New( self )
 
    ::oAgentesController             := AgentesController():New( self )
+   ::oAgentesController:setView( ::oDialogView )
 
-   ::oFormasdePagoController        := FormaPagoController():New( self )
+   ::oFormasPagoController          := FormasPagosController():New( self )
+   ::oFormasPagoController:setView( ::oDialogView )
 
    ::oCuentasRemesasController      := CuentasRemesaController():New( self )
+   ::oCuentasRemesasController:setView( ::oDialogView )
 
    ::oRutasController               := RutasController():New( self )
+   ::oRutasController:setView( ::oDialogView )
 
    ::oClientesGruposController      := ClientesGruposController():New( self )
+   ::oClientesGruposController:setView( ::oDialogView )
 
    ::oDireccionesController         := DireccionesController():New( self )
-   ::oDireccionesController:oValidator:setDialog( ::oDialogView )
+   ::oDireccionesController:setView( ::oDialogView )
 
    ::oContactosController           := ContactosController():New( self )
 
@@ -69,6 +74,8 @@ METHOD New() CLASS ClientesController
    ::oDescuentosController          := DescuentosController():New( self )
 
    ::oClientesEntidadesController   := ClientesEntidadesController():New( self )
+
+   ::oGetSelector                   := ClientGetSelector():New( self )
    
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -115,7 +122,7 @@ METHOD End() CLASS ClientesController
 
    ::oAgentesController:End()
 
-   ::oFormasdePagoController:End()
+   ::oFormasPagoController:End()
 
    ::oCuentasRemesasController:End()
 
@@ -124,6 +131,8 @@ METHOD End() CLASS ClientesController
    ::oClientesGruposController :End()
 
    ::oDireccionesController:End()
+
+   ::oGetSelector:End()
 
    ::Super:End()
 

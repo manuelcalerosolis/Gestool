@@ -131,12 +131,13 @@ METHOD New( nView ) CLASS PrintSeries
    ::oSufijoInicio         := GetSufijo():New( 140, Self )
    ::oSufijoFin            := GetSufijo():New( 150, Self )
 
+
    ::oFechaInicio          := GetFecha():New( 210, Self )
    ::oFechaInicio:FirstDayYear()
 
    ::oFechaFin             := GetFecha():New( 220, Self )
 
-   ::oFormatoDocumento     := GetDocumento():New( 90, 91, 92, Self )
+   ::oFormatoDocumento     := GetDocumentoComponent():New( 90, 91, 92, Self )
 
    ::oImpresora            := GetPrinter():New( 160, 161, Self )
 
@@ -1024,7 +1025,7 @@ Return ( Self )
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 
-CLASS GetDocumento FROM ComponentGetSay
+CLASS GetDocumentoComponent FROM ComponentGetSay
 
    DATA idBtn
    DATA cTypeDocumento              INIT Space( 2 )
@@ -1037,7 +1038,7 @@ CLASS GetDocumento FROM ComponentGetSay
 
 END CLASS 
 
-METHOD New( idGet, idSay, idBtn, oContainer ) CLASS GetDocumento
+METHOD New( idGet, idSay, idBtn, oContainer ) CLASS GetDocumentoComponent
 
    ::Super:New( idGet, idSay, nil, oContainer )
 
@@ -1050,7 +1051,7 @@ METHOD New( idGet, idSay, idBtn, oContainer ) CLASS GetDocumento
 
 Return ( Self )
 
-METHOD Resource(oDlg) CLASS GetDocumento
+METHOD Resource(oDlg) CLASS GetDocumentoComponent
 
    ::Super:Resource(oDlg)
 
