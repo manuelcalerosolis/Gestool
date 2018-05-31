@@ -5,6 +5,12 @@
 
 CLASS ListinController FROM SQLNavigatorController
 
+   DATA oIncidenciasController
+
+   DATA oDocumentosController
+
+   DATA oCamposExtraValoresController
+
    DATA oDireccionesController
 
    METHOD New()
@@ -38,8 +44,26 @@ METHOD New() CLASS ListinController
    ::oValidator               := ListinValidator():New( self, ::oDialogView )
 
    ::oDireccionesController   := DireccionesController():New( self )
+   ::oDireccionesController:setView( ::oDialogView )
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
+   
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:updateBuffer( ::getUuid() ) } )
+
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
+   
+   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+
+   ::oIncidenciasController   := IncidenciasController():New( self )
+
+   ::oDocumentosController    := DocumentosController():New( self )
 
 RETURN ( Self )
 
@@ -125,15 +149,15 @@ CLASS ListinView FROM SQLBaseView
   
    METHOD Activate()
 
+   METHOD StartDialog()
+
+   METHOD addLinksToExplorerBar()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ListinView
-
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "LISTIN" ;
@@ -167,28 +191,10 @@ METHOD Activate() CLASS ListinView
       VALID       ( ::oController:validate( "dni" ) ) ;
       OF          ::oDialog
 
-   REDEFINE BUTTON oBtnAppend ;
-      ID          130 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnAppend:bAction   := {|| ::oController:oDireccionesController:Append() }
+   ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
 
-   REDEFINE BUTTON oBtnEdit ;
-      ID          140 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnEdit:bAction   := {|| ::oController:oDireccionesController:Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          150 ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-
-   oBtnDelete:bAction   := {|| ::oController:oDireccionesController:Delete() }
-
-   ::oController:oDireccionesController:Activate( 160, ::oDialog )
+   ::redefineExplorerBar( 700 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -206,11 +212,46 @@ METHOD Activate() CLASS ListinView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
+   ::oDialog:bStart := {|| ::StartDialog() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartDialog() CLASS ListinView
+
+   ::oController:oDireccionesController:externalStartDialog()
+
+   ::addLinksToExplorerBar()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD addLinksToExplorerBar() CLASS ListinView
+
+   local oPanel
+
+   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   if ::oController:isNotZoomMode()
+      oPanel:AddLink( "Incidencias...",         {|| ::oController:oIncidenciasController:activateDialogView() }, ::oController:oIncidenciasController:getImage( "16" ) )
+      oPanel:AddLink( "Documentos...",          {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
+   end if
+
+   oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
+
+   if ::oController:isNotZoomMode()
+      oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+   end if
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
