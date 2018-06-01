@@ -261,7 +261,7 @@ CLASS SQLArticulosPreciosModel FROM SQLBaseModel
 
    DATA cTableName               INIT "articulos_precios"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( tarifa_codigo, articulo_codigo )"
+   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( parent_uuid, tarifa_codigo )"
 
    METHOD getInitialSelect()
 

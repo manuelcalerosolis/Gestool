@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS UnidadesMedicionGruposLineasController FROM SQLNavigatorController
+CLASS UnidadesMedicionGruposLineasController FROM SQLBrowseController
 
    DATA oUnidadesMedicionController
 
@@ -13,10 +13,6 @@ CLASS UnidadesMedicionGruposLineasController FROM SQLNavigatorController
 
    METHOD End()
 
-   /*METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ),;
-                                             ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ),;
-                                             .t. ) )*/
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -25,7 +21,7 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposLineasController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                         := "Grupos de unidades de medición"
+   ::cTitle                         := "Equivalencia de unidades de medición"
 
    ::cName                          := "unidades_medicion_grupos"
 
@@ -50,8 +46,6 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposLineasController
    ::oUnidadesMedicionController2    := UnidadesMedicionController():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
-
-   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
 
 RETURN ( Self )
 
@@ -94,7 +88,7 @@ ENDCLASS
 //----------------------------------------------------------------------------//
 
 METHOD addColumns() CLASS UnidadesMedicionGruposLineasBrowseView
-/*
+
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
       :cHeader             := 'Id'
@@ -113,29 +107,55 @@ METHOD addColumns() CLASS UnidadesMedicionGruposLineasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
-      :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :cSortOrder          := 'cantidad_alternativa'
+      :cHeader             := 'Cantidad'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad_alternativa' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :cSortOrder          := 'unidad_alternativa_codigo'
+      :cHeader             := 'Código de Unidad alternativa'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_alternativa_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'unidad_alternativa_nombre'
+      :cHeader             := 'Nombre de Unidad alternativa'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_alternativa_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo_iso'
-      :cHeader             := 'Código ISO'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_iso' ) }
+      :cSortOrder          := 'cantidad_base'
+      :cHeader             := 'Cantidad'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad_base' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
-*/
+
+      with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'unidad_base_codigo'
+      :cHeader             := 'Código de Unidad base'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_base_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+  with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'unidad_base_nombre'
+      :cHeader             := 'Nombre de Unidad base'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_base_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -147,6 +167,8 @@ RETURN ( self )
 CLASS UnidadesMedicionGruposLineasView FROM SQLBaseView
 
    METHOD Activate()
+
+    METHOD StartActivate()
 
 END CLASS
 
@@ -219,6 +241,8 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
+   ::oDialog:bStart  := {|| ::StartActivate() }
+   
    ACTIVATE DIALOG ::oDialog CENTER
 
   ::oBitmap:end()
@@ -227,6 +251,15 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD StartActivate() CLASS UnidadesMedicionGruposLineasView
+
+   ::oController:oUnidadesMedicioncontroller:oGetSelector:Start()
+
+   ::oController:oUnidadesMedicioncontroller2:oGetSelector:Start()
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -235,6 +268,7 @@ RETURN ( ::oDialog:nResult )
 CLASS UnidadesMedicionGruposLineasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
+
  
 END CLASS
 
@@ -260,6 +294,8 @@ CLASS SQLUnidadesMedicionGruposLineasModel FROM SQLBaseModel
 
    METHOD getColumns()
 
+   METHOD getInitialSelect()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -273,7 +309,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionGruposLineasModel
                                                          "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                         "default"   => {|| space( 40 ) } }                        )
+                                                         "default"   => {|| ::getSenderControllerParentUuid() } }  )
 
    hset( ::hColumns, "unidad_alternativa_codigo",     {  "create"    => "VARCHAR( 20 )"                           ,;
                                                          "default"   => {|| space( 20 ) } }                        )
@@ -290,6 +326,24 @@ METHOD getColumns() CLASS SQLUnidadesMedicionGruposLineasModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLUnidadesMedicionGruposLineasModel
+
+   local cSelect  := "SELECT unidades_medicion_grupos_lineas.id,"                                                       + " " + ;
+                        "unidades_medicion_grupos_lineas.uuid,"                                                         + " " + ;
+                        "unidades_medicion_grupos_lineas.parent_uuid,"                                                  + " " + ;
+                        "unidades_medicion_grupos_lineas.unidad_alternativa_codigo,"                                    + " " + ;
+                        "t1.nombre as unidad_alternativa_nombre,"                                                       + " " + ; 
+                        "unidades_medicion_grupos_lineas.cantidad_alternativa,"                                         + " " + ; 
+                        "unidades_medicion_grupos_lineas.unidad_base_codigo,"                                           + " " + ;
+                        "unidades_medicion_grupos_lineas.cantidad_base,"                                                + " " + ;
+                        "t2.nombre as unidad_base_nombre"                                                               + " " + ;   
+                     "FROM unidades_medicion_grupos_lineas"                                                             + " " + ;
+                        "INNER JOIN unidades_medicion t1 ON unidades_medicion_grupos_lineas.unidad_alternativa_codigo = t1.codigo"  + " " +;
+                        "INNER JOIN unidades_medicion t2 ON unidades_medicion_grupos_lineas.unidad_base_codigo = t2.codigo" + " "
+
+
+RETURN ( cSelect )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

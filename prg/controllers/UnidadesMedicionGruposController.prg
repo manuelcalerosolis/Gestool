@@ -5,11 +5,7 @@
 
 CLASS UnidadesMedicionGruposController FROM SQLNavigatorController
 
-   DATA oUnidadesMedicionGruposLineascontroller
-
-   DATA oUnidadesMedicionController
-
-   DATA oUnidadesMedicionController2
+   DATA oUnidadesMedicionGruposLineasController
 
    DATA oCamposExtraValoresController
 
@@ -17,9 +13,6 @@ CLASS UnidadesMedicionGruposController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ),;
-                                             ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ),;
-                                             .t. ) )
 
 END CLASS
 
@@ -49,13 +42,12 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposController
 
    ::oRepository                    := UnidadesMedicionGruposRepository():New( self )
 
-   ::oUnidadesMedicionGruposLineascontroller :=UnidadesMedicionGruposLineasController():New( self )
+   ::oUnidadesMedicionGruposLineasController :=UnidadesMedicionGruposLineasController():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oGetSelector                   := GetSelector():New( self )
 
-   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
 
 RETURN ( Self )
 
@@ -72,7 +64,6 @@ METHOD End() CLASS UnidadesMedicionGruposController
    ::oValidator:End()
 
    ::oRepository:End()
-
 
    ::oUnidadesMedicionGruposLineasController:End()
 
@@ -99,7 +90,7 @@ ENDCLASS
 //----------------------------------------------------------------------------//
 
 METHOD addColumns() CLASS UnidadesMedicionGruposBrowseView
-/*
+
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
       :cHeader             := 'Id'
@@ -133,14 +124,6 @@ METHOD addColumns() CLASS UnidadesMedicionGruposBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo_iso'
-      :cHeader             := 'Código ISO'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_iso' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-*/
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -202,23 +185,23 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnAppend:bAction   := {|| ::oController:oZonasController:Append() }
+   oBtnAppend:bAction   := {|| ::oController:oUnidadesMedicionGruposLineasController:Append() }
 
    REDEFINE BUTTON oBtnEdit ;
       ID          130 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnEdit:bAction   := {|| ::oController:oZonasController:Edit() }
+   oBtnEdit:bAction   := {|| ::oController:oUnidadesMedicionGruposLineasController:Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
       ID          140 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnDelete:bAction   := {|| ::oController:oZonasController:Delete() }
+   oBtnDelete:bAction   := {|| ::oController:oUnidadesMedicionGruposLineasController:Delete() }
 
-   ::oController:oZonasController:Activate( 150, ::oDialog ) 
+   ::oController:oUnidadesMedicionGruposLineasController:Activate( 150, ::oDialog ) 
 
 // campos extra--------------------------------------------------------------------------------------------------------------//
 
