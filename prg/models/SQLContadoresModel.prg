@@ -10,7 +10,7 @@ CLASS SQLContadoresModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "contadores"
 
-   DATA cConstraints                   INIT "PRIMARY KEY (id), UNIQUE KEY ( empresa_uuid, documento, serie )"
+   DATA cConstraints                   INIT "PRIMARY KEY (id), UNIQUE KEY ( empresa_codigo, documento, serie )"
 
    METHOD getColumns()
 
