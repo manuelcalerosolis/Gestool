@@ -141,7 +141,7 @@ RETURN ( Self )
 
 METHOD Validate() CLASS NumeroDocumentoComponent
 
-RETURN ( ::oGet:varGet() > 0 )
+RETURN ( val( ::oGet:varGet() > 0 ) )
 
 //---------------------------------------------------------------------------//
 

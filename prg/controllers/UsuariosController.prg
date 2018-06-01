@@ -404,7 +404,7 @@ METHOD validUserPassword( cNombre, cPassword ) CLASS SQLUsuariosModel
 
    local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
    cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
-   if ( alltrim( cPassword ) != __encryption_key__ ) .and. !( "NOPASSWORD" $ appParamsMain() )
+   if ( alltrim( cPassword ) != __encryption_key__ ) .and. !( "NOPASSWORD" $ appParamsMain() .or. "NOPASSWORD" $ appParamsSecond() )
       cSQL     +=     "AND password = " + quoted( ::Crypt( cPassword ) )      + " " 
    end if 
    cSQL        +=    "LIMIT 1"

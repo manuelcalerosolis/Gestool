@@ -153,7 +153,7 @@ CLASS SQLBaseModel
 
    // Where for columns--------------------------------------------------------
 
-   METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa_uuid" ) )
+   METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa_codigo" ) )
    METHOD isParentUuidColumn()                        INLINE ( hb_hhaskey( ::hColumns, "parent_uuid" ) )
 
    // Get edit value for xbrowse-----------------------------------------------
@@ -302,11 +302,11 @@ RETURN ( ::hColumns )
 
 METHOD getEmpresaColumns()
    
-   hset( ::hColumns, "empresa_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
-                                          "default"   => {|| Company():Uuid() } }        )
+   hset( ::hColumns, "empresa_codigo", {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
+                                          "default"   => {|| Company():Codigo() } }        )
 
-   hset( ::hColumns, "usuario_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
-                                          "default"   => {|| Auth():Uuid() } }           )
+   hset( ::hColumns, "usuario_codigo", {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
+                                          "default"   => {|| Auth():Codigo() } }           )
 
 RETURN ( ::hColumns )
 
@@ -410,7 +410,7 @@ METHOD addEmpresaWhere( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cTableName + ".empresa_uuid = " + toSQLString( uuidEmpresa() )
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cTableName + ".empresa_codigo = " + toSQLString( Company():Codigo() )
 
 RETURN ( cSQLSelect )
 
