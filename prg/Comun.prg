@@ -190,7 +190,7 @@ FUNCTION CreateMainSqlWindow( oIconApp )
 
    DEFINE WINDOW oWnd ;
       FROM                    0, 0 TO 26, 82;
-      TITLE                   __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
+      TITLE                   "SQL DEMO" + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
       MDI ;
       COLORS                  Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
       ICON                    oIconApp ;
