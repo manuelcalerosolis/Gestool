@@ -5,6 +5,14 @@
 
 CLASS UnidadesMedicionGruposController FROM SQLNavigatorController
 
+   DATA oUnidadesMedicionGruposLineascontroller
+
+   DATA oUnidadesMedicionController
+
+   DATA oUnidadesMedicionController2
+
+   DATA oCamposExtraValoresController
+
    METHOD New()
 
    METHOD End()
@@ -41,6 +49,10 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposController
 
    ::oRepository                    := UnidadesMedicionGruposRepository():New( self )
 
+   ::oUnidadesMedicionGruposLineascontroller :=UnidadesMedicionGruposLineasController():New( self )
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+
    ::oGetSelector                   := GetSelector():New( self )
 
    ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
@@ -60,6 +72,11 @@ METHOD End() CLASS UnidadesMedicionGruposController
    ::oValidator:End()
 
    ::oRepository:End()
+
+
+   ::oUnidadesMedicionGruposLineasController:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::oGetSelector:End()
 
@@ -134,7 +151,8 @@ RETURN ( self )
 
 CLASS UnidadesMedicionGruposView FROM SQLBaseView
 
-  
+   DATA oSayCamposExtra
+
    METHOD Activate()
 
 END CLASS
@@ -144,6 +162,10 @@ END CLASS
 METHOD Activate() CLASS UnidadesMedicionGruposView
 
    local oDialog
+   local oSayCamposExtra
+   local oBtnEdit
+   local oBtnAppend
+   local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "GRUPO_UNIDAD_MEDICION" ;
@@ -166,20 +188,50 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
-/*
+
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_iso" ] ;
+   // Unidades equivalencia--------------------------------------------------------------------
+
+   REDEFINE BUTTON oBtnAppend ;
       ID          120 ;
-      VALID       ( ::oController:validate( "codigo_iso" ) ) ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnAppend:bAction   := {|| ::oController:oZonasController:Append() }
+
+   REDEFINE BUTTON oBtnEdit ;
+      ID          130 ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnEdit:bAction   := {|| ::oController:oZonasController:Edit() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          140 ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnDelete:bAction   := {|| ::oController:oZonasController:Delete() }
+
+   ::oController:oZonasController:Activate( 150, ::oDialog ) 
+
+// campos extra--------------------------------------------------------------------------------------------------------------//
+
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          160 ;
       OF          ::oDialog ;
 
-*/
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
@@ -219,7 +271,7 @@ END CLASS
 
 METHOD getValidators() CLASS UnidadesMedicionGruposValidator
 
-   ::hValidators  := {  "descripcion" =>  {  "required"           => "La descripción es un dato requerido",;
+   ::hValidators  := {  "nombre" =>       {  "required"           => "La descripción es un dato requerido",;
                                              "unique"             => "La descripción introducida ya existe" },;
                         "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
                                              "unique"             => "EL código introducido ya existe"  } }
@@ -236,8 +288,6 @@ CLASS SQLUnidadesMedicionGruposModel FROM SQLBaseModel
    DATA cTableName               INIT "unidades_medicion_grupos"
 
    METHOD getColumns()
-
-   /*METHOD getInsertUnidadesMedicionSentence()*/
 
 END CLASS
 
@@ -256,35 +306,10 @@ METHOD getColumns() CLASS SQLUnidadesMedicionGruposModel
 
    hset( ::hColumns, "nombre",                        {  "create"    => "VARCHAR( 200 )"                          ,;
                                                          "default"   => {|| space( 200 ) } }                      )
-   //campos empresa
-
-   hset( ::hColumns, "unidad_alternativa_codigo",     {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                         "default"   => {|| space( 20 ) } }                        )
-
-   hset( ::hColumns, "cantidad_alternativa",          {  "create"    => "INTEGER"                                 ,;
-                                                         "default"   => {|| 1 } }                                 )
-
-   hset( ::hColumns, "unidad_base_codigo",            {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                         "default"   => {|| space( 20 ) } }                      )
-
-   hset( ::hColumns, "cantidad_base",                 {  "create"    => "INTEGER"                                 ,;
-                                                         "default"   => {|| 1 } }                                 )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
-
-/*METHOD getInsertUnidadesMedicionSentence() CLASS SQLUnidadesMedicionGruposModel
-
-   local cSentence 
-
-   cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cSentence  +=    "( uuid, codigo, nombre, codigo_iso, sistema ) "
-   cSentence  += "VALUES "
-   cSentence  +=    "( UUID(), 'UDS', 'Unidades', 'UDS', 1 )"
-
-RETURN ( cSentence )*/
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
