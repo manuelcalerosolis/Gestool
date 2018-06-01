@@ -106,14 +106,14 @@ METHOD runSeederEmpresa()
 
    SincronizaRemesasMovimientosAlmacen()
 
-   /*::oMsg:SetText( "Ejecutando seeder de cabeceras de movimientos de almacén" )
+   ::oMsg:SetText( "Ejecutando seeder de cabeceras de movimientos de almacén" )
    ::SeederMovimientosAlmacen()
    
    ::oMsg:SetText( "Ejecutando seeder de líneas de movimientos de almacén" )
    ::SeederMovimientosAlmacenLineas()
 
    ::oMsg:SetText( "Ejecutando seeder de números de serie de lineas de movimientos de almacén" )
-   ::SeederMovimientosAlmacenSeries()*/
+   ::SeederMovimientosAlmacenSeries()
 
    ::oMsg:SetText( "Ejecutando seeder de transportistas" )
    ::SeederTransportistas()
@@ -848,7 +848,6 @@ RETURN ( Self )
 METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
 
    local hCampos  := {  "empresa" =>            quoted( cCodEmp() ),;
-                        "usuario" =>            quoted( ( dbfRemMov )->cCodUsr ),;
                         "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
                         "numero" =>             quoted( rjust( ( dbfRemMov )->nNumRem, "0", 6 ) ),;
                         "tipo_movimiento" =>    quoted( ( dbfRemMov )->nTipMov ),;

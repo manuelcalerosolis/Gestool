@@ -46,31 +46,31 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD getPorcentajeIVA()
 
    METHOD validColumnArticulosFamiliaBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFamiliasController:oModel, "articulo_familia_uuid" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFamiliasController:oModel, "articulo_familia_codigo" ) )
 
    METHOD validColumnArticulosTipoBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosTipoController:oModel, "articulo_tipo_uuid" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosTipoController:oModel, "articulo_tipo_codigo" ) )
 
    METHOD validColumnArticulosCategoriasBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosCategoriasController:oModel, "articulo_categoria_uuid" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosCategoriasController:oModel, "articulo_categoria_codigo" ) )
 
    METHOD validColumnArticulosFabricantesBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFabricantesController:oModel, "articulo_fabricante_uuid" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFabricantesController:oModel, "articulo_fabricante_codigo" ) )
 
    METHOD validColumnArticulosTemporadasBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosTemporadasController:oModel, "articulo_temporada_uuid" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosTemporadasController:oModel, "articulo_temporada_codigo" ) )
 
    METHOD validColumnTiposIvaBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oTipoIvaController:oModel, "tipo_iva_uuid" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oTipoIvaController:oModel, "tipo_iva_codigo" ) )
 
    METHOD validColumnImpuestosEspecialesBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oImpuestosEspecialesController:oModel, "impuesto_especial_uuid" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oImpuestosEspecialesController:oModel, "impuesto_especial_codigo" ) )
 
    METHOD validPrimeraPropiedadBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oPrimeraPropiedadController:oModel, "primera_propiedad_uuid" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oPrimeraPropiedadController:oModel, "primera_propiedad_codigo" ) )
 
    METHOD validSegundaPropiedadBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oSegundaPropiedadController:oModel, "segunda_propiedad_uuid" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oSegundaPropiedadController:oModel, "segunda_propiedad_codigo" ) )
 
 END CLASS
 
@@ -85,8 +85,8 @@ METHOD New() CLASS ArticulosController
    ::cName                                   := "articulos"
 
    ::hImage                                  := {  "16" => "gc_object_cube_16",;
-                                             "32" => "gc_object_cube_32",;
-                                             "48" => "gc_object_cube_48" }
+                                                   "32" => "gc_object_cube_32",;
+                                                   "48" => "gc_object_cube_48" }
 
    ::lTransactional                          := .t.
 

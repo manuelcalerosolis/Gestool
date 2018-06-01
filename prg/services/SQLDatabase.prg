@@ -107,17 +107,13 @@ METHOD New()
    ::cPasswordMySQL           := GetPvProfString(  "MySQL",    "Password", "",            cIniAplication() )
    ::nPortMySQL               := GetPvProfInt(     "MySQL",    "Port",     3306,          cIniAplication() )
 
-   // msgalert( ::cDatabaseMySQL, "cDatabaseMySQL" )
-   // msgalert( ::cIpMySQL, "cIpMySQL" )
-   // msgalert( ::cUserMySQL, "cUserMySQL" )
-   // msgalert( ::cPasswordMySQL, "cPasswordMySQL" )
-   // msgalert( ::nPortMySQL, "nPortMySQL" )
-
    ::oConexion                := THDO():new( "mysql" )
 
    ::oConexion:setAttribute( HDO_ATTR_ERRMODE, .t. )
 
    ::oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. )
+
+   ::oConexion:setAttribute( STMT_ATTR_TINY_AS_BOOL, .t. )
 
 RETURN ( Self )
 
@@ -521,9 +517,26 @@ RETURN ( self )
 
 METHOD exportTable( hFileName, cTable )
 
+   local nCount
+   local aFetch
+   local oQuery
    local cString
 
+   oQuery         := ::Query( "SELECT Count(*) " + cTable )
+
+   logwrite( hb_valtoexp( oQuery:fetch() ) )
+
+   aFetch         := oQuery:fetch()
+
    logwrite( cTable )
+   logwrite( hb_valtoexp( aFetch ) )
+   logwrite( "registros " + str( nCount ) )
+
+   oQuery:free()
+
+   if nCount == 0
+      RETURN ( self )
+   end if 
 
    cString        := "--  Datos de la tabla " + cTable + hb_osnewline()
    cString        += "INSERT INTO `" + cTable + "` VALUES " + hb_osnewline()
@@ -535,8 +548,6 @@ METHOD exportTable( hFileName, cTable )
    cString        :=  hb_osnewline() + "--  Fin de datos de la tabla " + cTable + hb_osnewline() + hb_osnewline()
 
    fwrite( hFileName, cString )
-
-   MsgInfo( cString, "cString" )
 
 RETURN ( self )
 
