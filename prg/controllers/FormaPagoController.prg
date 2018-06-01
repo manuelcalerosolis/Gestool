@@ -9,6 +9,8 @@ CLASS FormasPagosController FROM SQLNavigatorController
 
    DATA oCamposExtraValoresController
 
+   DATA oDocumentosController
+
    METHOD New()
 
    METHOD End()
@@ -39,6 +41,8 @@ METHOD New( oSenderController ) CLASS FormasPagosController
 
    ::oBancosController           := CuentasBancariasController():new( self )
 
+   ::oDocumentosController       :=  DocumentosController():New( self )
+
    ::oValidator                  := FormaPagoValidator():New( self, ::oDialogView )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
@@ -64,6 +68,8 @@ METHOD End() CLASS FormasPagosController
    ::oRepository:End()
 
    ::oCamposExtraValoresController:End()
+
+   ::oDocumentosController:End()
 
    ::Super:End()
 
@@ -195,6 +201,8 @@ CLASS FormaPagoView FROM SQLBaseView
 
    METHOD bancosControllerValidated()
 
+   METHOD addLinksToExplorerBar()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -217,6 +225,7 @@ RETURN ( self )
 METHOD startActivate()
 
    ::oController:oBancosController:oGetSelector:Start()
+   ::addLinksToExplorerBar()
 
 RETURN ( self )
 
@@ -227,7 +236,7 @@ METHOD Activate() CLASS FormaPagoView
    local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "FORMA_PAGO" ;
+      RESOURCE    "FORMA_PAGO_SQL" ;
       TITLE       ::LblTitle() + "forma de pago"
 
    REDEFINE BITMAP ::oBitmap ;
@@ -403,16 +412,7 @@ METHOD Activate() CLASS FormaPagoView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE SAY   ::oSayCamposExtra ;
-      PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
-      COLOR       rgb( 10, 152, 234 ) ;
-      ID          300 ;
-      OF          ::oDialog ;
-
-   ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
-
+      ::redefineExplorerBar( 500 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -460,6 +460,29 @@ METHOD bancosControllerValidated()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD addLinksToExplorerBar() CLASS FormaPagoView
+
+   local oPanel            
+
+   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   if ::oController:isZoomMode()
+      RETURN ( self )
+   end if
+
+   oPanel:AddLink(   "Documentos...",;
+                    {|| ::oController:oDocumentosController:activateDialogView( ::oController:getUuid() ) },;
+                     ::oController:oDocumentosController:getImage( "16" ) )
+
+   oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
+
+   oPanel:AddLink(   "Campos extra...",;
+                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
+                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
+
+RETURN ( self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
