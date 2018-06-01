@@ -106,14 +106,14 @@ METHOD runSeederEmpresa()
 
    SincronizaRemesasMovimientosAlmacen()
 
-   /*::oMsg:SetText( "Ejecutando seeder de cabeceras de movimientos de almacén" )
+   ::oMsg:SetText( "Ejecutando seeder de cabeceras de movimientos de almacén" )
    ::SeederMovimientosAlmacen()
    
    ::oMsg:SetText( "Ejecutando seeder de líneas de movimientos de almacén" )
    ::SeederMovimientosAlmacenLineas()
 
    ::oMsg:SetText( "Ejecutando seeder de números de serie de lineas de movimientos de almacén" )
-   ::SeederMovimientosAlmacenSeries()*/
+   ::SeederMovimientosAlmacenSeries()
 
    ::oMsg:SetText( "Ejecutando seeder de transportistas" )
    ::SeederTransportistas()
