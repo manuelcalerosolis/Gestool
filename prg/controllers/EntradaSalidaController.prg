@@ -130,11 +130,20 @@ METHOD addColumns() CLASS EntradaSalidaBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-      with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'caja_uuid'
-      :cHeader             := 'Caja'
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo_caja'
+      :cHeader             := 'Código Caja'
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'caja_uuid' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_caja' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+  with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre_caja'
+      :cHeader             := 'Nombre caja'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_caja' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -313,7 +322,30 @@ CLASS SQLEntradaSalidaModel FROM SQLCompanyModel
    METHOD setCajaUuidAttribute( uValue ) ;
                                  INLINE ( if( empty( uValue ), "", ::oController:oCajasController:oModel():getUuidWhereCodigo( uValue ) ) )
 
+METHOD getInitialSelect()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLEntradaSalidaModel
+
+   local cSelect  := "SELECT cajas_entradas_salidas.id,"                                                               + " " + ;
+                        "cajas_entradas_salidas.uuid,"                                                                 + " " + ;
+                        "cajas_entradas_salidas.sesion,"                                                               + " " + ;
+                        "cajas_entradas_salidas.nombre,"                                                               + " " + ;
+                        "cajas_entradas_salidas.fecha_hora,"                                                           + " " + ; 
+                        "cajas_entradas_salidas.caja_uuid,"                                                            + " " + ; 
+                        "cajas_entradas_salidas.nombre,"                                                               + " " + ;
+                        "cajas_entradas_salidas.tipo,"                                                                 + " " + ;
+                        "cajas_entradas_salidas.importe,"                                                              + " " + ;   
+                        "cajas_entradas_salidas.delegacion_uuid,"                                                        + " " + ;
+                        "cajas.codigo as 'codigo_caja',"                                                                 + " " + ;
+                        "cajas.nombre as 'nombre_caja'"                                                                  + " " + ;  
+                     "FROM cajas_entradas_salidas"                                                                     + " " + ;
+                        "INNER JOIN cajas ON cajas_entradas_salidas.caja_uuid = cajas.uuid"  + " "
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 
