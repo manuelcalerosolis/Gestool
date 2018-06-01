@@ -375,6 +375,7 @@ ContactosController.prg 													\
 FormaPagoController.prg 													\
 ArticulosFamiliaController.prg 											\
 UnidadesMedicionController.prg 											\
+UnidadesMedicionGruposController.prg 									\
 UbicacionesController.prg 													\
 DivisasMonetariasController.prg 											\
 ImpuestosEspecialesController.prg 										\
@@ -1059,6 +1060,7 @@ ContactosController.obj       											\
 FormaPagoController.obj       											\
 ArticulosFamiliaController.obj       									\
 UnidadesMedicionController.obj       									\
+UnidadesMedicionGruposController.obj       							\
 UbicacionesController.obj       											\
 DivisasMonetariasController.obj       									\
 ImpuestosEspecialesController.obj       								\
@@ -1730,6 +1732,7 @@ $(OBJ)\ContactosController.obj    										+
 $(OBJ)\FormaPagoController.obj 	   									+
 $(OBJ)\ArticulosFamiliaController.obj    								+
 $(OBJ)\UnidadesMedicionController.obj    								+
+$(OBJ)\UnidadesMedicionGruposController.obj    						+
 $(OBJ)\UbicacionesController.obj    									+
 $(OBJ)\DivisasMonetariasController.obj    							+
 $(OBJ)\ImpuestosEspecialesController.obj    							+
