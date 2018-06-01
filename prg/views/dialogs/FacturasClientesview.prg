@@ -55,7 +55,7 @@ METHOD Activate() CLASS FacturasClientesView
       PROMPT      "General",;
                   "Comercial";
       DIALOGS     "TRANSACION_GENERAL" ,;
-                  "CLIENTE_COMERCIAL"
+                  "CLIENTE_COMERCIAL" 
 
    ::redefineExplorerBar()
 

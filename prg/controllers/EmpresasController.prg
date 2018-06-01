@@ -72,7 +72,7 @@ METHOD New() CLASS EmpresasController
    ::oAjustableController           := AjustableController():New( self )
 
    ::oDireccionesController         := DireccionesController():New( self )
-   ::oDireccionesController:oValidator:setDialog( ::oDialogView )
+   ::oDireccionesController:setView( ::oDialogView )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 

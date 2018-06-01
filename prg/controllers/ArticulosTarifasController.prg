@@ -297,7 +297,7 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "articulos_tarifas"
 
-   DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( empresa_uuid, codigo )"
+   DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( empresa_codigo, codigo )"
 
    METHOD getColumns()
 
@@ -343,8 +343,8 @@ METHOD getInsertArticulosTarifasSentence()
    local cSentence 
 
    cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cSentence  +=    "( uuid, empresa_uuid, usuario_uuid, codigo, nombre, sistema ) "
-   cSentence  += "SELECT empresas.uuid, empresas.uuid, '', '1', 'General', '1' "
+   cSentence  +=    "( empresa_codigo, usuario_codigo, uuid, codigo, nombre, sistema ) "
+   cSentence  += "SELECT empresas.codigo, '999', UUID(), '1', 'General', '1' "
    cSentence  +=    "FROM empresas"
 
 RETURN ( cSentence )

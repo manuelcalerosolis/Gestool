@@ -802,11 +802,7 @@ METHOD ZipFiles()
 
    cZip                 += ".sql"
 
-   ?"Antes de exportar"
-
    getSQLDataBase():Export( cZip )
-
-   ?"Despues de exportar"
 
    aadd( aFil, cZip )
 
