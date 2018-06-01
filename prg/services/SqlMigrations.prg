@@ -246,6 +246,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLUnidadesMedicionModel():New() )
 
+   aadd( ::aModels, SQLUnidadesMedicionGruposModel():New() )
+
    aadd( ::aModels, SQLArticulosUnidadesMedicionModel():New() )
 
    aadd( ::aModels, SQLDivisasMonetariasModel():New() )

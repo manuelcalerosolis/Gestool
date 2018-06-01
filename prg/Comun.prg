@@ -2894,6 +2894,17 @@ FUNCTION CreateAccesoSQL( oWnd )
    oItem:cBmpBig        := "gc_tape_measure2_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
+/*unidades de medicion grupos*/
+      oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Grupos de unidades de medición'
+   oItem:cMessage       := 'Grupos de unidades de medición'
+   oItem:bAction        := {|| UnidadesMedicionGruposController():New():ActivateNavigatorView() }
+   oItem:cId            := "unidades_medicion_grupos"
+   oItem:cBmp           := "gc_tape_measure2_16"
+   oItem:cBmpBig        := "gc_tape_measure2_32"
+   oItem:lShow          := .f.
+   oItem:lLittle        := .t.
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo

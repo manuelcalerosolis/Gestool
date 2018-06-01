@@ -848,7 +848,6 @@ RETURN ( Self )
 METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
 
    local hCampos  := {  "empresa" =>            quoted( cCodEmp() ),;
-                        "usuario" =>            quoted( ( dbfRemMov )->cCodUsr ),;
                         "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
                         "numero" =>             quoted( rjust( ( dbfRemMov )->nNumRem, "0", 6 ) ),;
                         "tipo_movimiento" =>    quoted( ( dbfRemMov )->nTipMov ),;
