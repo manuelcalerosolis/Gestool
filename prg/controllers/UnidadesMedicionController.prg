@@ -273,7 +273,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) UNIQUE"                     ,;
                                              "default"   => {|| space( 20 ) } }                        )
-   //campos empresa
+   ::getEmpresaColumns()
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
