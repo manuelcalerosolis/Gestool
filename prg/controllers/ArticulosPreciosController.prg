@@ -337,12 +337,12 @@ METHOD getSQLInsertPreciosWhereTarifa( codigoTarifa )
 
    local cSQL
 
-   cSQL           := "INSERT IGNORE INTO articulos_precios"                                                                + " "  
-   cSQL           +=    "( uuid, tarifa_codigo, articulo_codigo, margen, precio_base, precio_iva_incluido )"                   + " "  
-   cSQL           += "SELECT UUID(), articulos_tarifas.codigo, articulos.codigo, articulos_tarifas.margen_predefinido, 0, 0"   + " "  
-   cSQL           +=    "FROM articulos"                                                                                   + " "  
-   cSQL           += "INNER JOIN articulos_tarifas ON articulos_tarifas.empresa_codigo = articulos.empresa_codigo"             + " "  
-   cSQL           += "WHERE articulos.empresa_codigo = " + quoted( Company():Codigo() )                                        + " "
+   cSQL           := "INSERT IGNORE INTO articulos_precios"                                                                   + " "  
+   cSQL           +=    "( uuid, parent_uuid, tarifa_codigo, margen, precio_base, precio_iva_incluido )"                      + " "  
+   cSQL           += "SELECT UUID(), articulos.uuid, articulos_tarifas.codigo, articulos_tarifas.margen_predefinido, 0, 0"    + " "  
+   cSQL           +=    "FROM articulos"                                                                                      + " "  
+   cSQL           += "INNER JOIN articulos_tarifas ON articulos_tarifas.empresa_codigo = articulos.empresa_codigo"            + " "  
+   cSQL           += "WHERE articulos.empresa_codigo = " + quoted( Company():Codigo() )                                       + " "
    cSQL           +=    "AND articulos_tarifas.codigo = " + quoted( codigoTarifa )
 
 RETURN ( cSQL )
@@ -359,7 +359,8 @@ METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
    cSQL           +=    "FROM articulos_tarifas"                                                                           + " "  
    cSQL           += "WHERE articulos_tarifas.empresa_codigo = " + quoted( Company():Codigo() ) 
 
-   msgalert( cSql )                               
+   msgalert( cSql )       
+   logwrite( cSql )                        
 
 RETURN ( cSQL )
 

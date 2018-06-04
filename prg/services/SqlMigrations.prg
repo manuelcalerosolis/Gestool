@@ -5,13 +5,19 @@
 
 CLASS SQLMigrations
 
+   DATA hJson                             INIT {=>}
+
    DATA aModels                           INIT {}
 
    DATA aRepositories                     INIT {}
 
    METHOD Run()
+
+   METHOD checkDatabase()
    
    METHOD createDatabase()
+
+   METHOD readGestoolDatabaseJSON()
 
    METHOD addModels()
 
@@ -27,21 +33,38 @@ CLASS SQLMigrations
 
    METHOD checkValues()
 
-   METHOD getSchemaColumns( oModel )    
+   METHOD getSchemaColumns( cDatabaseMySQL, cTableName )    
 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD Run() 
+METHOD checkDatabase()
 
-   ::createDatabase()
+   getSQLDatabase():ConnectWithoutDataBase()
+
+   if !::readGestoolDatabaseJSON()
+      RETURN ( self )
+   end if 
+
+   if hhaskey( ::hJson, "Databases" )
+      aeval( hget( ::hJson, "Databases" ),;
+         {|hDatabase| ::Run( hget( hDatabase, "Database" ) ) } )
+   end if 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD Run( cDatabaseMySQL ) 
+
+   ::createDatabase( cDatabaseMySQL )
 
    ::addModels()
 
-   ::checkModels()
+   ::checkModels( cDatabaseMySQL )
 
-   ::addRepositories()
+   // ::addRepositories()
 
    // ::checkRepositories()
 
@@ -51,30 +74,32 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD createDatabase()
+METHOD createDatabase( cDatabaseMySQL )
 
-   getSQLDatabase():oConexion:Exec( "CREATE DATABASE IF NOT EXISTS " + getSQLDatabase():cDatabaseMySQL + ";" )
+   DEFAULT cDatabaseMySQL  := getSQLDatabase():cDatabaseMySQL
 
-   getSQLDatabase():oConexion:Exec( "USE " + getSQLDatabase():cDatabaseMySQL + ";" )
+   getSQLDatabase():ExecWithOutParse( "CREATE DATABASE IF NOT EXISTS " + cDatabaseMySQL + ";" )
+   
+   getSQLDatabase():ExecWithOutParse( "USE " + cDatabaseMySQL + ";" )
        
 RETURN ( self )    
 
 //----------------------------------------------------------------------------//
 
-METHOD checkModels()
+METHOD checkModels( cDatabaseMySQL )
 
-RETURN ( aeval( ::aModels, {|oModel| ::checkModel( oModel ) } ) )
+RETURN ( aeval( ::aModels, {|oModel| ::checkModel( cDatabaseMySQL, oModel ) } ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD checkModel( oModel )
+METHOD checkModel( cDatabaseMySQL, oModel )
 
-   local aSchemaColumns    := ::getSchemaColumns( oModel )
+   local aSchemaColumns    := ::getSchemaColumns( cDatabaseMySQL, oModel:cTableName )
 
    if empty( aSchemaColumns )
-      getSQLDatabase():Exec( oModel:getCreateTableSentence() )
+      getSQLDatabase():Exec( oModel:getCreateTableSentence( cDatabaseMySQL ) )
    else
-      getSQLDatabase():Execs( oModel:getAlterTableSentences( aSchemaColumns ) )
+      getSQLDatabase():Execs( oModel:getAlterTableSentences( cDatabaseMySQL, aSchemaColumns ) )
    end if 
   
 RETURN ( Self )
@@ -111,23 +136,29 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD getSchemaColumns( oModel )
+METHOD getSchemaColumns( cDatabaseMySQL, cTableName )
 
    local oError
    local cSentence
    local oStatement
    local aSchemaColumns
 
+   DEFAULT cDatabaseMySQL  := getSQLDatabase():cDatabaseMySQL
+
+   if empty( cTableName )
+      RETURN ( nil )  
+   end if  
+
    if empty( getSQLDatabase():oConexion )
       msgstop( "No hay conexiones disponibles" )
       RETURN ( nil )  
    end if  
 
-   cSentence               := "SELECT COLUMN_NAME "                              +;
-                                 "FROM INFORMATION_SCHEMA.COLUMNS "              +;
-                                 "WHERE table_name = " + quoted( oModel:cTableName ) + " " +;
-                                    "AND table_schema = " + quoted( getSQLDatabase():cDatabaseMySQL ) 
-
+   cSentence               := "SELECT COLUMN_NAME "                                       + ;
+                                 "FROM INFORMATION_SCHEMA.COLUMNS "                       + ;
+                                 "WHERE table_schema = " + quoted( cDatabaseMySQL ) + " " + ; 
+                                    "AND table_name = " + quoted( cTableName )
+                                  
    try
 
       oStatement           := getSQLDatabase():oConexion:Query( cSentence )
@@ -156,19 +187,19 @@ RETURN ( aSchemaColumns )
 
 METHOD addModels()
 
-   aadd( ::aModels, SQLEmpresasModel():New() )
+   // aadd( ::aModels, SQLEmpresasModel():New() )
+
+   // aadd( ::aModels, SQLUsuariosModel():New() )
+
+   // aadd( ::aModels, SQLRolesModel():New() )
+
+   // aadd( ::aModels, SQLPermisosModel():New() )
+
+   // aadd( ::aModels, SQLPermisosOpcionesModel():New() )
 
    aadd( ::aModels, SQLTiposImpresorasModel():New() )
 
    aadd( ::aModels, SQLTagsModel():New() )
-
-   aadd( ::aModels, SQLUsuariosModel():New() )
-
-   aadd( ::aModels, SQLRolesModel():New() )
-
-   aadd( ::aModels, SQLPermisosModel():New() )
-
-   aadd( ::aModels, SQLPermisosOpcionesModel():New() )
 
    aadd( ::aModels, SQLAjustesModel():New() )
 
@@ -323,3 +354,20 @@ METHOD addRepositories()
 RETURN ( ::aRepositories )
  
 //----------------------------------------------------------------------------//
+
+METHOD readGestoolDatabaseJSON()
+
+   local hJson
+   local cGestoolDatabase     := "GestoolDatabase.json"
+
+   hb_jsonDecode( memoread( cGestoolDatabase ), @hJson )      
+
+   if empty( hJson )
+      RETURN ( .f. )
+   end if 
+
+   ::hJson                    := hJson
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------//

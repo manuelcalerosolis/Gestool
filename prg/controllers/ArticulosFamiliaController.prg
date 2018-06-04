@@ -717,7 +717,7 @@ METHOD getRowSetWhereFamiliaUuid( familiaUuid )
 
    cSQL                 := "SELECT uuid, nombre FROM " + ::cTableName            + " "
    cSQL                 +=    "WHERE familia_uuid = " + quoted( familiaUuid )    + " "
-   cSQL                 +=    "AND empresa_uuid = " + quoted( Company():Uuid() ) + " " 
+   cSQL                 +=    "AND empresa_codigo = " + quoted( Company():Codigo() ) + " " 
 
    oHashList            := getSQLDatabase():selectHashList( cSQL ) 
 

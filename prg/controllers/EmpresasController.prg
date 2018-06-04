@@ -35,6 +35,10 @@ CLASS EmpresasController FROM SQLNavigatorController
 
    METHOD startingActivate()
 
+   METHOD addUpdateButton()
+
+   METHOD updateEmpresa()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -43,15 +47,15 @@ METHOD New() CLASS EmpresasController
 
    ::Super:New()
 
-   ::cTitle                      := "Empresas"
+   ::cTitle                         := "Empresas"
 
-   ::cName                       := "empresas"
+   ::cName                          := "empresas"
 
-   ::lConfig                     := .t.
+   ::lConfig                        := .t.
 
-   ::hImage                      := {  "16" => "gc_factory_16",;
-                                       "32" => "gc_factory_32",;
-                                       "48" => "gc_factory_48" }
+   ::hImage                         := {  "16" => "gc_factory_16",;
+                                          "32" => "gc_factory_32",;
+                                          "48" => "gc_factory_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -74,6 +78,8 @@ METHOD New() CLASS EmpresasController
    ::oDireccionesController         := DireccionesController():New( self )
    ::oDireccionesController:setView( ::oDialogView )
 
+   ::oDelegacionesController        := DelegacionesController():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
@@ -87,7 +93,7 @@ METHOD New() CLASS EmpresasController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
-   ::oDelegacionesController        := DelegacionesController():New( self )
+   ::oNavigatorView:oMenuTreeView:setEvent( 'addedAppendButton',     {|| ::addUpdateButton() } )
 
 RETURN ( Self )
 
@@ -158,6 +164,24 @@ METHOD startingActivate()
    oPanel:AddCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
    
    oPanel:addComboBox( "Delegación defecto", @::cDelegacionDefecto, ::aDelegaciones )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD addUpdateButton()
+
+   ::oNavigatorView:oMenuTreeView:AddButton( "Actualizar", "New16", {|| ::updateEmpresa() }, "T", ACC_APPD ) 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateEmpresa()
+
+   local cNombreEmpresa    := 'gestool_' + ::getRowSet():fieldGet( 'codigo' )
+
+   SQLMigrations():Run( cNombreEmpresa )
 
 RETURN ( self )
 
