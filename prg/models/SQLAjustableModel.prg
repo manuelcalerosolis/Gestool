@@ -159,7 +159,7 @@ RETURN ( ::set( cAjusteUuid, uAjusteValue, cAjustableTipo, cAjustableUuid ) )
 METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
 
    local uValue
-   local cSentence   
+   local cSentence 
 
    if empty( cUuid ) .or. empty( cTipo ) .or. empty( cAjuste )
       RETURN ( uDefault )
@@ -167,8 +167,8 @@ METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
 
    cSentence         := "SELECT ajustables.ajuste_valor "
    cSentence         +=    "FROM ajustables AS ajustables "
-   cSentence         += "INNER JOIN ajustes AS ajustes ON ajustes.uuid = ajustables.ajuste_uuid "
-   cSentence         += "WHERE ajustes.ajuste = " + quoted( cAjuste ) + " "
+   cSentence         += "INNER JOIN ajustes AS ajustes ON ajustes.ajuste = " + quoted( cAjuste ) + " "
+   cSentence         += "WHERE ajustables.ajuste_uuid = ajustes.uuid "
    cSentence         +=    "AND ajustables.ajustable_tipo = " + quoted( cTipo ) + " "
    cSentence         +=    "AND ajustables.ajustable_uuid = " + quoted( cUuid ) 
 
@@ -184,10 +184,12 @@ RETURN ( uDefault )
 
 METHOD getLogic( cUuid, cTipo, cajuste, lDefault )
 
-   local uValue   := ::getValue( cUuid, cTipo, cajuste, lDefault )
+   local uValue
+
+   uValue   := ::getValue( cUuid, cTipo, cajuste, lDefault )
 
    if hb_ischar( uValue ) 
-      RETURN ( uValue == '1' ) 
+      RETURN ( alltrim( uValue ) == '1' ) 
    endif
 
 RETURN ( lDefault )

@@ -42,7 +42,8 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _CCODSUALB                19
 #define _CCONDENT                 20
 #define _MCOMENT                  21
-#define _MOBSERV                  22
+
+ #define _MOBSERV                  22
 #define _CCODPAGO                 23
 #define _NBULTOS                  24
 #define _NPORTES                  25
@@ -4854,7 +4855,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       REDEFINE GET aGet[ _NCOSDIV ] VAR aTmp[ _NCOSDIV ] ;
          ID       320 ;
          IDSAY    321 ;
-         WHEN     ( oUser():lAdministrador() .and. nMode != ZOOM_MODE );
+         WHEN     ( SQLAjustableModel():getRolVerPreciosCosto( Auth():rolUuid() ) .AND. nMode != ZOOM_MODE );
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1]
 
@@ -9876,7 +9877,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aTmpAlb, nMode, aGet, oFld, oSayPr1, oSayPr2, 
 
       // Ocultamos el precio de costo------------------------------------------------
 
-      if !lAccArticulo() .or. oUser():lNotCostos()
+      if !lAccArticulo() .AND. SQLAjustableModel():getRolNoVerPreciosCosto( Auth():rolUuid() )
          aGet[ _NCOSDIV ]:Hide()
       end if 
 

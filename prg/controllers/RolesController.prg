@@ -148,6 +148,7 @@ RETURN ( .t. )
 
 METHOD saveConfig()
 
+   
    ::oAjustableController:oModel:setRolMostrarRentabilidad( ::lMostrarRentabilidad, ::cUuidRol )
 
    ::oAjustableController:oModel:setRolCambiarPrecios( ::lCambiarPrecios, ::cUuidRol )
