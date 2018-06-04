@@ -113,6 +113,17 @@ METHOD addColumns() CLASS FormaPagoBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'tactil'
+      :cHeader             := 'Tactil'
+      :nWidth              := 20
+      :nHeadBmpNo          := 3
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'incluir_en_terminal' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :SetCheck( { "Sel16", "Nil16" } )
+      :AddResource( "TACTIL16" )
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
       :nWidth              := 50
@@ -129,17 +140,6 @@ METHOD addColumns() CLASS FormaPagoBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'tactil'
-      :cHeader             := 'Tactil'
-      :nWidth              := 20
-      :nHeadBmpNo          := 3
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'incluir_en_terminal' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "TACTIL16" )
-   end with
-
-      with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'posicion'
       :cHeader             := 'Posición'
       :nWidth              := 50

@@ -311,11 +311,11 @@ RETURN ( Self )
 
 METHOD AddDuplicateButton() 
 
-   ::fireEvent( 'addingAppendButton' )
+   ::fireEvent( 'addingDuplicateButton' )
 
    ::AddButton( "Duplicar", "Dup16", {|| ::getController():Duplicate(), ::oSender:Refresh() }, "D", ACC_APPD ) 
 
-   ::fireEvent( 'addedAppendButton' )
+   ::fireEvent( 'addedDuplicateButton' )
 
 RETURN ( Self )
 

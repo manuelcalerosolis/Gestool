@@ -38,9 +38,11 @@ CLASS SQLDatabase
 
    METHOD isParseError()
 
-   METHOD Exec( cSql )             
+   METHOD Exec( cSql )        
+   METHOD ExecWithOutParse( cSql )        INLINE ( ::Exec( cSql, .f. ) )     
    METHOD Execs( aSql ) 
    METHOD TransactionalExec( cSql )       INLINE ( ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
+   
    METHOD Query( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Prepare( cSql )                 INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Parse( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
@@ -187,12 +189,14 @@ RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
-METHOD Exec( cSentence )
+METHOD Exec( cSentence, lParse )
 
    local lExec    := .t.
    local oError
 
-   if ::isParseError( cSentence )
+   DEFAULT lParse := .t.
+
+   if lParse .and. ::isParseError( cSentence )
       RETURN ( .f. )  
    end if 
 

@@ -180,7 +180,7 @@ RETURN nil
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION CreateMainSqlWindow( oIconApp )
+FUNCTION CreateMainSQLWindow( oIconApp )
 
    if !( lInitCheck() )
       RETURN nil
@@ -196,7 +196,7 @@ FUNCTION CreateMainSqlWindow( oIconApp )
       ICON                    oIconApp ;
       MENU                    ( BuildMenu() )
 
-   oWndBar                    := CreateAccesoSQL( oWnd )
+   oWndBar                    := CreateMainSQLAcceso( oWnd )
    oWndBar:CreateButtonBar( oWnd )
 
    // Set the bar messages-----------------------------------------------------
@@ -2765,7 +2765,7 @@ RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION CreateAccesoSQL( oWnd )
+FUNCTION CreateMainSQLAcceso( oWnd )
 
    local oAcceso
    local oGrupo
@@ -3469,6 +3469,84 @@ FUNCTION CreateAccesoSQL( oWnd )
 RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION CreateAdminSQLAcceso()
+
+   local oItem
+   local oGrupo
+   local oAcceso
+   local oItemGeneral
+
+   oAcceso                             := TAcceso():New()
+   oAcceso:lCreateFavoritosOfficeBar   := .f.
+
+   oItemGeneral         := oAcceso:Add()
+   oItemGeneral:cPrompt := 'General'
+   oItemGeneral:cBmp    := "gc_folder_open_16"
+   oItemGeneral:cBmpBig := "gc_folder_open_32"
+   oItemGeneral:lShow   := .t.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 5
+   oGrupo:cPrompt       := ''
+   oGrupo:cLittleBitmap := "gc_factory_16"
+   oGrupo:cBigBitmap    := "gc_factory_32"
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Empresa'
+   oItem:cMessage       := 'Empresas'
+   oItem:bAction        := {|| EmpresasController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_factory_16"
+   oItem:cBmpBig        := "gc_factory_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Usuarios'
+   oItem:cMessage       := 'Acceso a los usuarios del programa'
+   oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios"
+   oItem:cBmp           := "gc_businesspeople_16"
+   oItem:cBmpBig        := "gc_businesspeople_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Roles'
+   oItem:cMessage       := 'Roles'
+   oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios_roles"
+   oItem:cBmp           := "GC_ID_CARDS_16"
+   oItem:cBmpBig        := "GC_ID_CARDS_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Permisos'
+   oItem:cMessage       := 'Permisos'
+   oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios_permisos"
+   oItem:cBmp           := "GC_ID_BADGE_16"
+   oItem:cBmpBig        := "GC_ID_BADGE_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Asistencia remota'
+   oItem:cMessage       := 'Solicitar asistencia remota'
+   oItem:bAction        := {|| RunAsistenciaRemota() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_user_headset_16"
+   oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:lShow          := .f.
+
+RETURN ( oAcceso )
+
+//---------------------------------------------------------------------------//
+
+
 
 FUNCTION IsReport()
 
@@ -5906,7 +5984,7 @@ RETURN ( if( lFull, fullCurDir(), "" ) + cPatEmp + "\" )
 FUNCTION appParamsMain( paramsMain )
 
    if !empty( paramsMain )
-      appParamsMain   := paramsMain
+      appParamsMain     := upper( paramsMain )
    end if 
 
 RETURN ( appParamsMain )
@@ -5916,7 +5994,7 @@ RETURN ( appParamsMain )
 FUNCTION appParamsSecond( paramsSecond )
 
    if !empty( paramsSecond )
-      appParamsSecond   := paramsSecond
+      appParamsSecond   := upper( paramsSecond )
    end if 
 
 RETURN ( appParamsSecond )
@@ -5926,7 +6004,7 @@ RETURN ( appParamsSecond )
 FUNCTION appParamsThird( paramsThird )
 
    if !empty( paramsThird )
-      appParamsThird   := paramsThird
+      appParamsThird   := upper( paramsThird )
    end if 
 
 RETURN ( appParamsThird )
@@ -7130,53 +7208,49 @@ FUNCTION trimNif( cNif )
 RETURN( cNif )
 
 //--------------------------------------------------------------------------//
-/*
-FUNCTION ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
 
-   LOCAL cOldAlias  := Alias()
-   LOCAL lCreate    := FALSE
-   LOCAL nItem      := 0
-   LOCAL xParameter
+FUNCTION CreateAdminSQLWindow( oIconApp )
 
-   DEFAULT hConnection := hConn
-   DEFAULT lShow       := FALSE
+   if !( lInitCheck() )
+      RETURN nil
+   end if 
 
-   IF !empty( cAlias ) .and. !empty( cSql )
+   // Carga o no la imagen de fondo--------------------------------------------
 
-      cSql := StrTran( cSql, ";", "" )
+   DEFINE WINDOW oWnd ;
+      FROM                    0, 0 TO 26, 82;
+      TITLE                   "Administrador : " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
+      MDI ;
+      COLORS                  Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
+      ICON                    oIconApp ;
+      MENU                    ( BuildMenu() )
 
-      DBSelectArea( 0 )
+   oWndBar                    := CreateAdminSQLAcceso( oWnd )
+   oWndBar:CreateButtonBar( oWnd )
 
-      IF !AdsCreateSqlStatement( cAlias, ADS_CDX, hConnection )
-         msgStop( "Error AdsCreateSqlStatement()" + FINL + "Error: " + cValtoChar( AdsGetLastError() ) )
-      ELSE
-         IF !HB_IsNil( aParameters ) .and. HB_IsArray( aParameters )
-            FOR EACH xParameter IN aParameters
-               nItem := HB_EnumIndex()
-               cSql  := StrTran( cSql, "%" + AllTrim( Str( nItem ) ) , Var2Str( xParameter ) )
-            NEXT
-         ENDIF
-         IF lShow
-            MsgInfo( cSql, "SQLDebug")
-         ENDIF
-         IF !AdsExecuteSqlDirect( cSql )
-            ( cAlias )->( DBCloseArea() )
-            msgStop( "Error AdsExecuteSqlDirect( cSql )" + FINL + "Error:" + cValtoChar( AdsGetLastError() ) + FINL + cSql )
-         ELSE
-            lCreate := TRUE
-         ENDIF
-      ENDIF
+   // Set the bar messages-----------------------------------------------------
 
-      IF !empty( cOldAlias )
-         DBSelectArea( cOldAlias )
-      ENDIF
+   oWnd:Cargo                 := appParamsMain()
 
-   ENDIF
+   oWnd:bKeyDown              := { | nKey | StdKey( nKey ) }  
 
-RETURN lCreate
-*/
+   // Mensajes-----------------------------------------------------------------
 
-//---------------------------------------------------------------------------//
+   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
+   oWnd:oMsgBar:setFont( oFontLittelTitle() )
+
+   // Abrimos la ventana-------------------------------------------------------
+
+   ACTIVATE WINDOW oWnd ;
+      MAXIMIZED ;
+      ON PAINT                ( WndPaint( hDC, oWnd ) ); 
+      ON RESIZE               ( WndResize( oWnd ) )
+
+   SysRefresh()
+
+RETURN nil
+
+//-----------------------------------------------------------------------------//
 
 FUNCTION aNombreTarifas() 
 

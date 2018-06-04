@@ -527,11 +527,13 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getCreateTableSentence()
+METHOD getCreateTableSentence( cDatabaseMySQL )
    
    local cSQLCreateTable 
 
-   cSQLCreateTable         := "CREATE TABLE " + ::oDatabase:cDatabaseMySQL + "." + ::cTableName + " ( "
+   DEFAULT cDatabaseMySQL  := ::oDatabase:cDatabaseMySQL
+
+   cSQLCreateTable         := "CREATE TABLE " + cDatabaseMySQL + "." + ::cTableName + " ( "
 
    hEval( ::getColumns(),;
       {| k, hash | if( hhaskey( hash, "create" ), cSQLCreateTable += k + " " + hget( hash, "create" ) + ", ", ) } )
@@ -552,7 +554,7 @@ RETURN ( cSQLCreateTable )
 
 //---------------------------------------------------------------------------//
 
-METHOD getAlterTableSentences( aSchemaColumns ) 
+METHOD getAlterTableSentences( cDatabaseMySQL, aSchemaColumns ) 
 
    local aAlter
    local hColumn
@@ -563,27 +565,29 @@ METHOD getAlterTableSentences( aSchemaColumns )
       RETURN ( self )
    end if 
 
-   aAlter         := {}
-   hColumns       := ::getTableColumns()
+   DEFAULT cDatabaseMySQL  := ::oDatabase:cDatabaseMySQL
+
+   aAlter                  := {}
+   hColumns                := ::getTableColumns()
 
    for each hColumn in aSchemaColumns
 
-      nPosition   := ascan( hb_hkeys( hColumns ), hget( hColumn, "COLUMN_NAME" ) )
+      nPosition            := ascan( hb_hkeys( hColumns ), hget( hColumn, "COLUMN_NAME" ) )
       
       if nPosition != 0
          hb_hdelat( hColumns, nPosition )
       else 
-         aadd( aAlter, "ALTER TABLE " + ::oDatabase:cDatabaseMySQL + "." + ::cTableName + " DROP COLUMN " + hget( hColumn, "COLUMN_NAME" ) )
+         aadd( aAlter, "ALTER TABLE " + cDatabaseMySQL + "." + ::cTableName + " DROP COLUMN " + hget( hColumn, "COLUMN_NAME" ) )
       end if
 
    next
 
    if !empty( hColumns )
-      heval( hColumns, {| k, hash | aadd( aAlter, "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
+      heval( hColumns, {| k, hash | aadd( aAlter, "ALTER TABLE " + cDatabaseMySQL + "." + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
    end if 
 
    if !empty( hColumns )
-      msgInfo( hb_valtoexp( hColumns ), "getAlterTableSentences " + ::cTableName, "Alter table" )
+      msgInfo( hb_valtoexp( hColumns ), "getAlterTableSentences " + cDatabaseMySQL + "." + ::cTableName, "Alter table" )
    end if 
 
 RETURN ( aAlter )
