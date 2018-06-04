@@ -205,11 +205,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
          end if
 
       case ( "SQL" $ appParamsMain() ) 
-<<<<<<< HEAD
 
-=======
-      
->>>>>>> 9d88828d0c8b2bfca0d3613095f8d4b11eee6028
          if UsuariosController():New():isLogin()
             CreateMainSqlWindow( oIconApp )
          end if

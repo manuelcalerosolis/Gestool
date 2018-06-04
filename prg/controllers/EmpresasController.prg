@@ -171,7 +171,7 @@ RETURN ( self )
 
 METHOD addUpdateButton()
 
-   ::oNavigatorView:oMenuTreeView:AddButton( "Actualizar", "New16", {|| ::updateEmpresa() }, "T", ACC_APPD ) 
+   ::oNavigatorView:oMenuTreeView:AddButton( "Actualizar", "gc_server_client_exchange_16", {|| ::updateEmpresa() }, "T", ACC_APPD ) 
 
 RETURN ( self )
 
