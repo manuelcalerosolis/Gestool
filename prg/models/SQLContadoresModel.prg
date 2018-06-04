@@ -65,7 +65,7 @@ METHOD isSerie( cDocumento, cSerie )
    local cSql  := "SELECT id"                                              + " "
    cSql        +=    "FROM " + ::cTableName                                + " "
    cSql        +=    "WHERE documento = " + quoted( cDocumento )           + " "
-   cSql        +=    "AND empresa_uuid = " + quoted( Company():Uuid() )    + " " 
+   cSql        +=    "AND empresa_codigo = " + quoted( Company():Uuid() )    + " " 
    cSql        +=    "AND serie = " + quoted( cSerie )
 
 RETURN ( !empty( ::getDatabase():getValue( cSql ) ) )
@@ -77,7 +77,7 @@ METHOD getLastCounter( cDocumento )
    local cSql  := "SELECT serie, contador"                                 + " "
    cSql        +=    "FROM " + ::cTableName                                + " "
    cSql        +=    "WHERE documento = " + quoted( cDocumento )           + " "
-   cSql        +=    "AND empresa_uuid = " + quoted( Company():Uuid() )    + " " 
+   cSql        +=    "AND empresa_codigo = " + quoted( Company():Uuid() )    + " " 
    cSql        +=    "AND usuario_uuid = " + quoted( Auth():Uuid() )       + " "
    cSql        +=    "ORDER BY updated_at DESC"                            + " " 
    cSql        +=    "LIMIT 1"
