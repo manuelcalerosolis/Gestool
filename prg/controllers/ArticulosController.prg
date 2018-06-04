@@ -223,7 +223,7 @@ METHOD getPorcentajeIVA() CLASS ArticulosController
       RETURN ( 0 )
    end if 
 
-RETURN ( ::oTipoIvaController:oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[ "tipo_iva_uuid" ] ) )
+RETURN ( ::oTipoIvaController:oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[ "tipo_iva_codigo" ] ) )
 
 //---------------------------------------------------------------------------//
 

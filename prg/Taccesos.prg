@@ -8,7 +8,7 @@
 CLASS TAcceso
 
    DATA  cDbf
-   DATA  lOpenFiles        INIT  .f.
+   DATA  lOpenFiles                 INIT  .f.
 
    DATA  oBmpLogo
 
@@ -23,21 +23,23 @@ CLASS TAcceso
    DATA  oFavoritosBar
    DATA  oFavoritosGroup
 
+   DATA lCreateFavoritosOfficeBar   INIT .t.
+
    DATA  oGet
-   DATA  cGet              INIT  Space( 200 )
+   DATA  cGet                       INIT  Space( 200 )
 
    DATA  oComboBox
    DATA  cComboBox
-   DATA  aComboBox         INIT  {}
+   DATA  aComboBox                  INIT  {}
 
    DATA  oComboFilter
-   DATA  cComboFilter      INIT  __txtFilters__ 
-   DATA  aComboFilter      INIT  {__txtFilters__}
+   DATA  cComboFilter               INIT  __txtFilters__ 
+   DATA  aComboFilter               INIT  {__txtFilters__}
 
    DATA  oYearComboBox
-   DATA  cYearComboBox     INIT  __txtAllYearsFilter__
-   DATA  aYearComboBox     INIT  {}
-   DATA  lYearComboBox     INIT  .t.
+   DATA  cYearComboBox              INIT  __txtAllYearsFilter__
+   DATA  aYearComboBox              INIT  {}
+   DATA  lYearComboBox              INIT  .t.
 
    DATA  cYearComboBoxExpression
 
@@ -206,7 +208,7 @@ METHOD New() CLASS TAcceso
    local nSize
 
    ::aAccesos        := {}
-   ::cGet            := Space( 200 )
+   ::cGet            := space( 200 )
    ::cYearComboBox   := __txtAllYearsFilter__
 
    /*
@@ -214,8 +216,8 @@ METHOD New() CLASS TAcceso
    */
 
    aAdd( ::aYearComboBox, __txtAllYearsFilter__ )
-   for n := 2000 to Year( Date() )
-      aAdd( ::aYearComboBox, Str( n, 4 ) )
+   for n := 2000 to year( date() )
+      aAdd( ::aYearComboBox, str( n, 4 ) )
    next
 
 RETURN ( Self )
@@ -381,7 +383,7 @@ METHOD Save( oDlg )
 
    ::SaveTree( Auth():Uuid(), ::oTree:aItems )
 
-   ::ReCreateOfficeBar( oWnd() )
+   ::ReCreateOfficeBar()
 
    oDlg:End( IDOK )
 
@@ -442,7 +444,7 @@ METHOD CreateButtonBar( oWnd, lCreateButtonBar )
 
    oWnd:oTop                  := ::oReBar
 
-   ::CreateOfficeBar( oWnd )
+   ::CreateOfficeBar()
 
    if !::lTactil
       ::CreateSearchBar( oWnd )
@@ -684,24 +686,26 @@ RETURN ( lHide )
 
 //----------------------------------------------------------------------------//
 
-METHOD CreateOfficeBar( oWnd )
+METHOD CreateOfficeBar()
 
    local oAcceso
 
-   ::oOfficeBar               := TDotNetBar():New( 0, 0, 1000, 120, ::oReBar, 1 )
-   ::oOfficeBar:lPaintAll     := .f.
-   ::oOfficeBar:lDisenio      := .f.
-   ::oOfficeBar:bRClicked     := {|| ::EditButtonBar() }
+   ::oOfficeBar                        := TDotNetBar():New( 0, 0, 1000, 120, ::oReBar, 1 )
+   ::oOfficeBar:lPaintAll              := .f.
+   ::oOfficeBar:lDisenio               := .f.
+   ::oOfficeBar:bRClicked              := {|| ::EditButtonBar() }
 
    ::oOfficeBar:SetStyle( 1 )
 
-   ::oRebar:oTop              := ::oOfficeBar
+   ::oRebar:oTop                       := ::oOfficeBar
 
    /*
    Creamos la carpeta de favoritos---------------------------------------------
    */
 
-   ::CreateFavoritosOfficeBar()
+   if ::lCreateFavoritosOfficeBar
+      ::CreateFavoritosOfficeBar()
+   end if 
 
    /*
    Resto de carpetas-----------------------------------------------------------
@@ -717,7 +721,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD ReCreateOfficeBar( oWnd )
+METHOD ReCreateOfficeBar()
 
    local oCarpeta
 

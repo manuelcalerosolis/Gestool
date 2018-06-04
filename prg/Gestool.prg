@@ -86,8 +86,13 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    // Motor de bases de datos--------------------------------------------------
 
-   if ( "ADMINISTRADOR" $ upper( appParamsMain() ) )
+   if ( "ADMINISTRADOR" $ appParamsMain() )
       TDataCenter():lAdministratorTask()
+      RETURN ( nil )
+   end if
+
+   if ( "CHECKDATABASE" $ appParamsMain() )
+      SQLMigrations():CheckDatabase()
       RETURN ( nil )
    end if
 
@@ -193,8 +198,18 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
             CreateMainTabletWindow( oIconApp )
          end if
 
+      case ( "ADMINSQL" $ appParamsMain() ) 
+
+         if UsuariosController():New():isLogin()
+            CreateAdminSqlWindow( oIconApp )
+         end if
+
       case ( "SQL" $ appParamsMain() ) 
+<<<<<<< HEAD
+
+=======
       
+>>>>>>> 9d88828d0c8b2bfca0d3613095f8d4b11eee6028
          if UsuariosController():New():isLogin()
             CreateMainSqlWindow( oIconApp )
          end if

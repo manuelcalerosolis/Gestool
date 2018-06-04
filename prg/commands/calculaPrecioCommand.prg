@@ -5,17 +5,17 @@
 
 CLASS CalculaPrecioCommand 
 
-   DATA nCosto
+   DATA nCosto                         INIT 0
 
-   DATA nMargen
+   DATA nMargen                        INIT 0
 
-   DATA nMargenReal
+   DATA nMargenReal                    INIT 0
 
-   DATA nPrecioBase
+   DATA nPrecioBase                    INIT 0
 
-   DATA nPorcentajeIVA
+   DATA nPorcentajeIVA                 INIT 0
 
-   DATA nPrecioIVAIncluido
+   DATA nPrecioIVAIncluido             INIT 0
 
    // Constructores------------------------------------------------------------
 

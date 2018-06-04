@@ -323,27 +323,6 @@ CLASS SQLTransportistasModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "transportistas"
 
-   CLASSDATA hColumns                        INIT {   "id"           => {  "create" => "INTEGER AUTO_INCREMENT UNIQUE",;
-                                                                           "default" => {|| 0 } },;
-                                                                        ;
-                                                      "uuid"         => {  "create" => "VARCHAR(40) NOT NULL UNIQUE",;
-                                                                           "default" => {|| win_uuidcreatestring() } },;
-                                                                        ;
-                                                      "empresa_uuid" => {  "create" => "VARCHAR ( 40 ) NOT NULL",;
-                                                                           "default" => {|| uuidEmpresa() } },;
-                                                                        ;
-                                                      "usuario_uuid" => {  "create" => "VARCHAR ( 40 ) NOT NULL",;
-                                                                           "default" => {|| Auth():Uuid() } },;
-                                                                        ;
-                                                      "codigo" =>       {  "create" => "VARCHAR( 9 ) NOT NULL",;
-                                                                           "default" => {|| space( 9 ) } },;
-                                                                        ;
-                                                      "nombre" =>       {  "create" => "VARCHAR( 140 )",;
-                                                                           "default" => {|| space( 140 ) } },;
-                                                                        ;
-                                                      "dni" =>          {  "create" => "VARCHAR( 20 )",;
-                                                                           "default" => {|| space( 20 ) } } }
-
    MESSAGE getNombre( uuid )                 INLINE ( ::getField( "nombre", "uuid", uuid ) )
 
    MESSAGE getNombreWhereCodigo( codigo )    INLINE ( ::getField( "nombre", "codigo", codigo ) )
