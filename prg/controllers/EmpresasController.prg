@@ -181,7 +181,7 @@ METHOD updateEmpresa()
 
    local cNombreEmpresa    := 'gestool_' + ::getRowSet():fieldGet( 'codigo' )
 
-   SQLMigrations():Run( cNombreEmpresa )
+   msgRun( "Actualizando estructura de empresa", "Espere por favor...", {|| SQLMigrations():Run( cNombreEmpresa ) } )
 
 RETURN ( self )
 

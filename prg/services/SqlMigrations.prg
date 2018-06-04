@@ -120,22 +120,6 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD checkValues()
-
-   getSQLDatabase():Exec( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )
-
-   getSQLDatabase():Exec( SQLRolesModel():getInsertRolesSentence() )
-
-   getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() ) 
-
-   getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
-
-   getSQLDatabase():Exec( SQLArticulosTarifasModel():getInsertArticulosTarifasSentence() )
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
 METHOD getSchemaColumns( cDatabaseMySQL, cTableName )
 
    local oError
@@ -347,6 +331,22 @@ METHOD addModels()
 
 RETURN ( ::aModels )
  
+//----------------------------------------------------------------------------//
+
+METHOD checkValues()
+
+   // getSQLDatabase():Exec( SQLRolesModel():getInsertRolesSentence() )
+
+   // getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() ) 
+
+   getSQLDatabase():Exec( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )
+
+   getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
+
+   getSQLDatabase():Exec( SQLArticulosTarifasModel():getInsertArticulosTarifasSentence() )
+
+RETURN ( Self )
+
 //----------------------------------------------------------------------------//
 
 METHOD addRepositories()
