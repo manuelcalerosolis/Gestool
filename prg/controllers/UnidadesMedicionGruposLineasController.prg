@@ -7,7 +7,6 @@ CLASS UnidadesMedicionGruposLineasController FROM SQLBrowseController
 
    DATA oUnidadesMedicionController
 
-   DATA oUnidadesMedicionController2
 
    METHOD New()
 
@@ -43,8 +42,6 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposLineasController
 
    ::oUnidadesMedicionController    := UnidadesMedicionController():New( self )
 
-   ::oUnidadesMedicionController2    := UnidadesMedicionController():New( self )
-
    ::oGetSelector                   := GetSelector():New( self )
 
 RETURN ( Self )
@@ -64,8 +61,6 @@ METHOD End() CLASS UnidadesMedicionGruposLineasController
    ::oRepository:End()
 
    ::oUnidadesMedicionController:End()
-
-   ::oUnidadesMedicionController2:End()
 
    ::oGetSelector:End()
 
@@ -135,7 +130,7 @@ METHOD addColumns() CLASS UnidadesMedicionGruposLineasBrowseView
       :cSortOrder          := 'cantidad_base'
       :cHeader             := 'Cantidad'
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad_base' ) }
+      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'cantidad_base' ), "@E 999999999.999" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -177,7 +172,8 @@ END CLASS
 METHOD Activate() CLASS UnidadesMedicionGruposLineasView
 
    local oDialog
-
+   local cUnidadBaseCodigo := ::oController:oSenderController:getModelBuffer( 'unidad_base_codigo' )
+   local cUnidadBaseNombre := SQLUnidadesMedicionModel():getField( 'nombre', 'codigo', cUnidadBaseCodigo )
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "LINEA_GRUPO_UNIDAD_MEDICION" ;
@@ -206,22 +202,27 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
       ID          130 ;
       SPINNER ;
       MIN 1;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( .f. ) ;
       OF          ::oDialog ;
 
 
 // unidad base--------------------------------------------------------------------------------------------------------------//
 
-   ::oController:oUnidadesMedicioncontroller2:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) )
-   
-   ::oController:oUnidadesMedicioncontroller2:oGetSelector:setEvent( 'validated', {|| ::UnidadesMedicionControllerValidated() } )
+   REDEFINE GET   cUnidadBaseCodigo ;
+      ID          140 ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog ;
 
-   ::oController:oUnidadesMedicioncontroller2:oGetSelector:Activate( 140, 142, ::oDialog )
+   REDEFINE GET   cUnidadBaseNombre ;
+      ID          142 ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "cantidad_base" ] ;
       ID          150 ;
       SPINNER ;
-      MIN 1;
+      MIN 1.000;
+      PICTURE     "@E 999999999.999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -255,8 +256,6 @@ RETURN ( ::oDialog:nResult )
 METHOD StartActivate() CLASS UnidadesMedicionGruposLineasView
 
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Start()
-
-   ::oController:oUnidadesMedicioncontroller2:oGetSelector:Start()
 
 RETURN ( self )
 
@@ -317,11 +316,8 @@ METHOD getColumns() CLASS SQLUnidadesMedicionGruposLineasModel
    hset( ::hColumns, "cantidad_alternativa",          {  "create"    => "INTEGER"                                 ,;
                                                          "default"   => {|| 1 } }                                 )
 
-   hset( ::hColumns, "unidad_base_codigo",            {  "create"    => "VARCHAR( 20 )"                          ,;
-                                                         "default"   => {|| space( 20 ) } }                      )
-
-   hset( ::hColumns, "cantidad_base",                 {  "create"    => "INTEGER"                                 ,;
-                                                         "default"   => {|| 1 } }                                 )
+   hset( ::hColumns, "cantidad_base",                 {  "create"    => "FLOAT (10,3)"                              ,;
+                                                         "default"   => {|| 1    } }                               )
 
 RETURN ( ::hColumns )
 
@@ -329,21 +325,23 @@ RETURN ( ::hColumns )
 
 METHOD getInitialSelect() CLASS SQLUnidadesMedicionGruposLineasModel
 
-   local cSelect  := "SELECT unidades_medicion_grupos_lineas.id,"                                                       + " " + ;
-                        "unidades_medicion_grupos_lineas.uuid,"                                                         + " " + ;
-                        "unidades_medicion_grupos_lineas.parent_uuid,"                                                  + " " + ;
-                        "unidades_medicion_grupos_lineas.unidad_alternativa_codigo,"                                    + " " + ;
-                        "t1.nombre as unidad_alternativa_nombre,"                                                       + " " + ; 
-                        "unidades_medicion_grupos_lineas.cantidad_alternativa,"                                         + " " + ; 
-                        "unidades_medicion_grupos_lineas.unidad_base_codigo,"                                           + " " + ;
-                        "unidades_medicion_grupos_lineas.cantidad_base,"                                                + " " + ;
-                        "t2.nombre as unidad_base_nombre"                                                               + " " + ;   
-                     "FROM unidades_medicion_grupos_lineas"                                                             + " " + ;
-                        "INNER JOIN unidades_medicion t1 ON unidades_medicion_grupos_lineas.unidad_alternativa_codigo = t1.codigo"  + " " +;
-                        "INNER JOIN unidades_medicion t2 ON unidades_medicion_grupos_lineas.unidad_base_codigo = t2.codigo" + " "
+   local cSelect  := "SELECT unidades_medicion_grupos_lineas.id,"                                                                      + " " + ;                                                      
+                        "unidades_medicion_grupos_lineas.uuid,"                                                                        + " " + ;                                                        
+                        "unidades_medicion_grupos_lineas.parent_uuid,"                                                                 + " " + ;
+                        "unidades_medicion_grupos_lineas.unidad_alternativa_codigo,"                                                   + " " + ;
+                        "unidades_medicion_alternativa.nombre as unidad_alternativa_nombre,"                                           + " " + ;
+                        "unidades_medicion_grupos_lineas.cantidad_alternativa,"                                                        + " " + ;                                                   
+                        "unidades_medicion_grupos_lineas.cantidad_base,"                                                               + " " + ;
+                        "unidades_medicion_grupos.unidad_base_codigo as unidad_base_codigo,"                                           + " " + ;
+                        "unidades_medicion_base.nombre as unidad_base_nombre"                                                          + " " + ;   
+                     "FROM unidades_medicion_grupos_lineas"                                                                            + " " + ;
+                        "INNER JOIN unidades_medicion_grupos as unidades_medicion_grupos ON unidades_medicion_grupos_lineas.parent_uuid = unidades_medicion_grupos.uuid"           + " " + ;
+                        "INNER JOIN unidades_medicion as unidades_medicion_alternativa ON unidades_medicion_grupos_lineas.unidad_alternativa_codigo = unidades_medicion_alternativa.codigo"  + " " + ;
+                        "INNER JOIN unidades_medicion as unidades_medicion_base ON unidades_medicion_grupos.unidad_base_codigo = unidades_medicion_base.codigo"                                      + " " 
 
 
 RETURN ( cSelect )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

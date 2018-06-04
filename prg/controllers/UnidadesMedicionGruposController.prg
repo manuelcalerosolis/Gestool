@@ -9,6 +9,8 @@ CLASS UnidadesMedicionGruposController FROM SQLNavigatorController
 
    DATA oCamposExtraValoresController
 
+   DATA oUnidadesMedicionController
+
    METHOD New()
 
    METHOD End()
@@ -44,6 +46,8 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposController
 
    ::oUnidadesMedicionGruposLineasController :=UnidadesMedicionGruposLineasController():New( self )
 
+   ::oUnidadesMedicionController    := UnidadesMedicionController():New( self )
+
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oGetSelector                   := GetSelector():New( self )
@@ -66,6 +70,8 @@ METHOD End() CLASS UnidadesMedicionGruposController
    ::oRepository:End()
 
    ::oUnidadesMedicionGruposLineasController:End()
+
+   ::oUnidadesMedicionController:End()
 
    ::oCamposExtraValoresController:End()
 
@@ -124,6 +130,14 @@ METHOD addColumns() CLASS UnidadesMedicionGruposBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'unidad_base_nombre'
+      :cHeader             := 'Unidad base'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_base_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -137,6 +151,8 @@ CLASS UnidadesMedicionGruposView FROM SQLBaseView
    DATA oSayCamposExtra
 
    METHOD Activate()
+
+   METHOD StartActivate() 
 
 END CLASS
 
@@ -178,30 +194,37 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
+   ::oController:oUnidadesMedicioncontroller:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) )
+   
+   ::oController:oUnidadesMedicioncontroller:oGetSelector:setEvent( 'validated', {|| ::UnidadesMedicionControllerValidated() } )
+
+   ::oController:oUnidadesMedicioncontroller:oGetSelector:Activate( 120, 122, ::oDialog )
+
+
    // Unidades equivalencia--------------------------------------------------------------------
 
    REDEFINE BUTTON oBtnAppend ;
-      ID          120 ;
+      ID          130 ;
       OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( !empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
 
    oBtnAppend:bAction   := {|| ::oController:oUnidadesMedicionGruposLineasController:Append() }
 
    REDEFINE BUTTON oBtnEdit ;
-      ID          130 ;
+      ID          140 ;
       OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( !empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
 
    oBtnEdit:bAction   := {|| ::oController:oUnidadesMedicionGruposLineasController:Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
-      ID          140 ;
+      ID          150 ;
       OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( !empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
 
    oBtnDelete:bAction   := {|| ::oController:oUnidadesMedicionGruposLineasController:Delete() }
 
-   ::oController:oUnidadesMedicionGruposLineasController:Activate( 150, ::oDialog ) 
+   ::oController:oUnidadesMedicionGruposLineasController:Activate( 160, ::oDialog ) 
 
 // campos extra--------------------------------------------------------------------------------------------------------------//
 
@@ -209,7 +232,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       PROMPT      "Campos extra..." ;
       FONT        getBoldFont() ; 
       COLOR       rgb( 10, 152, 234 ) ;
-      ID          160 ;
+      ID          170 ;
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
@@ -231,6 +254,8 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
+   ::oDialog:bStart  := {|| ::StartActivate() }
+   
    ACTIVATE DIALOG ::oDialog CENTER
 
   ::oBitmap:end()
@@ -239,6 +264,12 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD StartActivate() CLASS UnidadesMedicionGruposView
+
+   ::oController:oUnidadesMedicioncontroller:oGetSelector:Start()
+
+RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -272,6 +303,8 @@ CLASS SQLUnidadesMedicionGruposModel FROM SQLBaseModel
 
    METHOD getColumns()
 
+   METHOD getInitialSelect()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -284,15 +317,32 @@ METHOD getColumns() CLASS SQLUnidadesMedicionGruposModel
    hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR( 20 ) UNIQUE"                     ,;
-                                                         "default"   => {|| space( 20 ) } }                        )
+   hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR( 20 ) UNIQUE"                    ,;
+                                                         "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",                        {  "create"    => "VARCHAR( 200 )"                          ,;
                                                          "default"   => {|| space( 200 ) } }                      )
 
+   hset( ::hColumns, "unidad_base_codigo",            {  "create"    => "VARCHAR( 20 )"                           ,;
+                                                         "default"   => {|| space( 20 ) } }                       )
+
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLUnidadesMedicionGruposModel
+
+   local cSelect  := "SELECT unidades_medicion_grupos.id,"                                                                          + " " + ;
+                        "unidades_medicion_grupos.uuid,"                                                                            + " " + ;
+                        "unidades_medicion_grupos.codigo,"                                                                          + " " + ;
+                        "unidades_medicion_grupos.nombre,"                                                                          + " " + ;
+                        "unidades_medicion_grupos.unidad_base_codigo,"                                                              + " " + ;
+                        "unidades_medicion.nombre as unidad_base_nombre"                                                            + " " + ;   
+                     "FROM unidades_medicion_grupos"                                                                                + " " + ;
+                        "INNER JOIN unidades_medicion  ON unidades_medicion_grupos.unidad_base_codigo = unidades_medicion.codigo"   + " " 
+
+RETURN ( cSelect )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
