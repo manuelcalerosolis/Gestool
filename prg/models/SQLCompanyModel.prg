@@ -7,7 +7,7 @@
 
 CLASS SQLCompanyModel FROM SQLBaseModel
 
-   METHOD getTableName()   INLINE ( ::Company():getTableName( ::cTableName ) )
+   METHOD getTableName()   INLINE ( Company():getTableName( ::cTableName ) )
 
 ENDCLASS
 

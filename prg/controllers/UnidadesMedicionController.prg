@@ -251,7 +251,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLUnidadesMedicionModel FROM SQLBaseModel
+CLASS SQLUnidadesMedicionModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "unidades_medicion"
 
@@ -292,7 +292,7 @@ METHOD getInsertUnidadesMedicionSentence() CLASS SQLUnidadesMedicionModel
 
    local cSentence 
 
-   cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
+   cSentence  := "INSERT IGNORE INTO " + ::getTableName() + " "
    cSentence  +=    "( uuid, codigo, nombre, codigo_iso, sistema ) "
    cSentence  += "VALUES "
    cSentence  +=    "( UUID(), 'UDS', 'Unidades', 'UDS', 1 )"

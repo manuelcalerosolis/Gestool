@@ -15,7 +15,7 @@ CLASS CompanyManager
 
    METHOD New()
 
-   METHOD Set( hCompany )                    INLINE ( ::guard( hCompany ) )
+   METHOD Set( hCompany )              INLINE ( ::guard( hCompany ) )
    METHOD Guard( hCompany )
 
    METHOD guardWhereUuid( uuid )
@@ -23,8 +23,8 @@ CLASS CompanyManager
 
    METHOD getDefaultDelegacion()
 
-   METHOD getCompanyDatabase()               INLINE ( 'gestool' + '_' + ::codigo )
-   METHOD getCompanyTableName( cTableName )  INLINE ( ::getCompanyDatabase() + '.' + cTableName )
+   METHOD getDatabase()                INLINE ( 'gestool' + '_' + ::codigo )
+   METHOD getTableName( cTableName )   INLINE ( ::getDatabase() + '.' + cTableName )
 
 END CLASS
 
@@ -62,7 +62,7 @@ METHOD guard( hCompany )
       ::codigo          := hget( hCompany, "codigo" ) 
    end if 
 
-   ::delegacionUuid     := ::getDefaultDelegacion()
+   // ::delegacionUuid     := ::getDefaultDelegacion()
 
 RETURN ( self )
 
@@ -96,10 +96,10 @@ METHOD getDefaultDelegacion()
 
    local delegacionUuid    
    
-   delegacionUuid          := SQLAjustableModel():getUsuarioEmpresaExclusiva( Auth():Uuid() )
+   delegacionUuid    := SQLAjustableCompanyModel():getUsuarioEmpresaExclusiva( Auth():Uuid() )
 
    if empty( delegacionUuid )
-      delegacionUuid       := SQLAjustableModel():getEmpresaDelegacionDefecto( ::uuid )
+      delegacionUuid := SQLAjustableCompanyModel():getEmpresaDelegacionDefecto( ::uuid )
    end if
 
 RETURN ( delegacionUuid )

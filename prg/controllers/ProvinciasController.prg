@@ -15,9 +15,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ProvinciasController
+METHOD New( oSenderController ) CLASS ProvinciasController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                   := "Provincias"
 
@@ -27,8 +27,6 @@ METHOD New() CLASS ProvinciasController
                                     "32" => "gc_flag_spain_32",;
                                     "48" => "gc_flag_spain_48" }
 
-   ::nLevel                   := Auth():Level( ::cName )
-
    ::oModel                   := SQLProvinciasModel():New( self )
 
    ::oBrowseView              := ProvinciasBrowseView():New( self )
@@ -37,7 +35,13 @@ METHOD New() CLASS ProvinciasController
 
    ::oValidator               := ProvinciasValidator():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
+   if empty( oSenderController )
+
+      ::nLevel                := Auth():Level( ::cName )
+   
+      ::oFilterController:setTableToFilter( ::cName )
+
+   end if 
 
 RETURN ( Self )
 

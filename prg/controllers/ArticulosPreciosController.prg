@@ -359,9 +359,6 @@ METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
    cSQL           +=    "FROM articulos_tarifas"                                                                           + " "  
    cSQL           += "WHERE articulos_tarifas.empresa_codigo = " + quoted( Company():Codigo() ) 
 
-   msgalert( cSql )       
-   logwrite( cSql )                        
-
 RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//

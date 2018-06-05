@@ -239,7 +239,7 @@ END CLASS
 METHOD New( oController )
 
    if empty( ::hColumns ) .and. empty( ::getColumns() )
-      msgstop( "La definición de columnas no puede estar vacia" )
+      msgstop( "La definición de columnas no puede estar vacia" / 2 )
       RETURN ( Self )
    end if 
 
@@ -536,7 +536,7 @@ METHOD getCreateTableSentence( cDatabaseMySQL )
       RETURN ( "" )
    end if 
 
-   cSQLCreateTable         := "CREATE TABLE " + cDatabaseMySQL + "." + ::getTableName() + " ( "
+   cSQLCreateTable         := "CREATE TABLE " + ::getTableName() + " ( "
 
    hEval( ::getColumns(),;
       {| k, hash | if( hhaskey( hash, "create" ), cSQLCreateTable += k + " " + hget( hash, "create" ) + ", ", ) } )
@@ -576,17 +576,17 @@ METHOD getAlterTableSentences( cDatabaseMySQL, aSchemaColumns )
       if nPosition != 0
          hb_hdelat( hColumns, nPosition )
       else 
-         aadd( aAlter, "ALTER TABLE " + cDatabaseMySQL + "." + ::getTableName() + " DROP COLUMN " + hget( hColumn, "COLUMN_NAME" ) )
+         aadd( aAlter, "ALTER TABLE " + ::getTableName() + " DROP COLUMN " + hget( hColumn, "COLUMN_NAME" ) )
       end if
 
    next
 
    if !empty( hColumns )
-      heval( hColumns, {| k, hash | aadd( aAlter, "ALTER TABLE " + cDatabaseMySQL + "." + ::getTableName() + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
+      heval( hColumns, {| k, hash | aadd( aAlter, "ALTER TABLE " + ::getTableName() + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
    end if 
 
    if !empty( hColumns )
-      msgInfo( hb_valtoexp( hColumns ), "getAlterTableSentences " + cDatabaseMySQL + "." + ::getTableName(), "Alter table" )
+      msgInfo( hb_valtoexp( hColumns ), "getAlterTableSentences " + ::getTableName(), "Alter table" )
    end if 
 
 RETURN ( aAlter )

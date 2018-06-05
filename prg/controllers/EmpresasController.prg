@@ -45,17 +45,23 @@ END CLASS
 
 METHOD New() CLASS EmpresasController
 
-   ::Super:New()
-
    ::cTitle                         := "Empresas"
 
    ::cName                          := "empresas"
 
    ::lConfig                        := .t.
 
+   ::lFilterController              := .f.
+
+   ::lVistaModel                    := .f.
+
    ::hImage                         := {  "16" => "gc_factory_16",;
                                           "32" => "gc_factory_32",;
                                           "48" => "gc_factory_48" }
+   
+   ::Super:New()
+
+   ::oNavigatorView:lRestoreState   := .f.
 
    ::oModel                         := SQLEmpresasModel():New( self )
 

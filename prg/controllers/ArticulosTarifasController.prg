@@ -298,8 +298,6 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
    hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                                 "default"   => {|| win_uuidcreatestring() } }            )
    
-   ::getEmpresaColumns()
-
    hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 20 )"                           ,;
                                                 "default"   => {|| space( 20 ) } }                       )
 
@@ -322,10 +320,10 @@ METHOD getInsertArticulosTarifasSentence()
 
    local cSentence 
 
-   cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cSentence  +=    "( empresa_codigo, usuario_codigo, uuid, codigo, nombre, sistema ) "
-   cSentence  += "SELECT empresas.codigo, '999', UUID(), '1', 'General', '1' "
-   cSentence  +=    "FROM empresas"
+   cSentence   := "INSERT IGNORE INTO " + ::getTableName() + " "
+   cSentence   +=    "( uuid, codigo, nombre, sistema ) "
+   cSentence   += "VALUES "
+   cSentence   +=    "( UUID(), '1', 'General', '1' )"
 
 RETURN ( cSentence )
 

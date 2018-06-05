@@ -29,8 +29,6 @@ METHOD New( oSenderController ) CLASS DelegacionesController
                                           "32" => "gc_factory_group_32",;
                                           "48" => "gc_factory_group_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
-
    ::oModel                         := SQLDelegacionesModel():New( self )
 
    ::oBrowseView                    := DelegacionesBrowseView():New( self )
@@ -44,8 +42,6 @@ METHOD New( oSenderController ) CLASS DelegacionesController
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := DelegacionesRepository():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
@@ -289,7 +285,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLDelegacionesModel FROM SQLCompanyModel
+CLASS SQLDelegacionesModel FROM SQLBaseModel
 
    DATA cTableName                        INIT "empresas_delegaciones"
 

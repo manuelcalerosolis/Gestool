@@ -16,9 +16,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS PaisesController
+METHOD New( oSenderController ) CLASS PaisesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                   := "Paises"
 
@@ -28,8 +28,6 @@ METHOD New() CLASS PaisesController
                                     "32" => "gc_globe_32",;
                                     "48" => "gc_globe_48" }
 
-   ::nLevel                   := Auth():Level( ::cName )
-
    ::oModel                   := SQLPaisesModel():New( self )
 
    ::oBrowseView              := PaisesBrowseView():New( self )
@@ -38,8 +36,13 @@ METHOD New() CLASS PaisesController
 
    ::oValidator               := PaisesValidator():New( self )
 
+   if empty( oSenderController )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
+      ::nLevel                := Auth():Level( ::cName )
+   
+      ::oFilterController:setTableToFilter( ::cName )
+
+   end if 
 
 RETURN ( Self )
 

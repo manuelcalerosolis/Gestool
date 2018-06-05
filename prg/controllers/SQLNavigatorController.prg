@@ -11,7 +11,11 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA oDialogModalView
 
+   DATA lFilterController                             INIT .t.
+
    DATA oFilterController 
+
+   DATA lVistaModel                                   INIT .t.
 
    DATA oVistaModel
 
@@ -119,9 +123,13 @@ METHOD New( oSenderController )
 
    ::oDialogModalView                                 := SQLDialogView():New( self )
 
-   ::oFilterController                                := SQLFiltrosController():New( self ) 
+   if ::lFilterController
+      ::oFilterController                             := SQLFiltrosController():New( self ) 
+   end if 
 
-   ::oVistaModel                                      := SQLConfiguracionVistasModel():New( self )
+   if ::lVistaModel
+      ::oVistaModel                                   := SQLConfiguracionVistasModel():New( self )
+   end if 
 
    ::oWindowsBar                                      := oWndBar()
 
@@ -167,9 +175,13 @@ METHOD buildRowSetSentence()
    local cColumnOrder
    local cColumnOrientation 
 
-   cColumnOrder               := ::oVistaModel:getColumnOrderNavigator( ::getName() )
+   if !empty( ::oVistaModel )
 
-   cColumnOrientation         := ::oVistaModel:getColumnOrientationNavigator( ::getName() )   
+      cColumnOrder               := ::oVistaModel:getColumnOrderNavigator( ::getName() )
+
+      cColumnOrientation         := ::oVistaModel:getColumnOrientationNavigator( ::getName() )   
+
+   end if 
 
    ::oRowSet:build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
 
@@ -370,11 +382,15 @@ METHOD setFilter( cFilterName )
    
    else 
 
-      cFilterSentence      := ::oFilterController:getFilterSentence( cFilterName )
+      if !empty( ::oFilterController )
 
-      ::getModel():setFilterWhere( cFilterSentence )
-   
-      ::showEditAndDeleteButtonFilter()
+         cFilterSentence      := ::oFilterController:getFilterSentence( cFilterName )
+
+         ::getModel():setFilterWhere( cFilterSentence )
+      
+         ::showEditAndDeleteButtonFilter()
+
+      end if 
    
    end if  
 
@@ -388,7 +404,9 @@ METHOD buildFilter( cFilter )
 
    ::getModel():insertFilterWhere( cFilter )
 
-   ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
+   if !empty( ::oFilterController )
+      ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
+   end if 
 
    ::reBuildRowSet()
    
@@ -400,7 +418,9 @@ METHOD clearFilter()
 
    ::getModel():clearFilterWhere()
 
-   ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
+   if !empty( ::oFilterController )
+      ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
+   end if 
 
    ::reBuildRowSet()
    
@@ -409,6 +429,10 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD buildCustomFilter( cField, cValue, cOperator )
+
+   if empty( ::oFilterController )
+      RETURN ( .f. )
+   end if 
 
    ::oFilterController:oCustomView:setText( "'" + cField + "' " + cOperator )
    ::oFilterController:oCustomView:setValue( cValue )

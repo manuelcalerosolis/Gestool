@@ -19,6 +19,8 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    DATA oVerticalSplitter
    DATA oHorizontalSplitter
+
+   DATA lRestoreState                        INIT .t.
    
    METHOD New( oController )
    METHOD End()
@@ -105,11 +107,15 @@ METHOD Activate()
 
    ::getBrowseView():ActivateMDI( ::getWindow(), dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop - dfnSplitterHeight - 162 )
 
-   ::getBrowseView():restoreStateFromModel() 
+   if ::lRestoreState
 
-   ::getBrowseView():gotoIdFromModel()
+      ::getBrowseView():restoreStateFromModel() 
 
-   ::getBrowseView():setColumnOrder() 
+      ::getBrowseView():gotoIdFromModel()
+
+      ::getBrowseView():setColumnOrder() 
+
+   end if 
 
    // Splitters----------------------------------------------------------------
 

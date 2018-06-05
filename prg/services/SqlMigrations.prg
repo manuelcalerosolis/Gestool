@@ -166,6 +166,8 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLDireccionesModel():New() )
 
+   aadd( ::aModels, SQLDelegacionesModel():New() )
+
    aadd( ::aModels, SQLUsuariosModel():New() )
 
    aadd( ::aModels, SQLRolesModel():New() )
@@ -215,18 +217,16 @@ METHOD Run( cCodigoEmpresa ) CLASS SQLCompanyMigrations
 
    Company():guardWhereCodigo( cCodigoEmpresa )
 
-   msgalert( Company():getCompanyDatabase() )
-
-   ::createDatabase( Company():getCompanyDatabase() )
+   ::createDatabase( Company():getDatabase() )
 
    ::addModels()
 
-   ::checkModels( Company():getCompanyDatabase() )
+   ::checkModels( Company():getDatabase() )
 
    ::checkValues()
 
 RETURN ( Self )
-*/
+
 //----------------------------------------------------------------------------//
 
 METHOD addModels() CLASS SQLCompanyMigrations
@@ -235,9 +235,9 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLTagsModel():New() )
 
-   aadd( ::aModels, SQLAjustesModel():New() )
+   aadd( ::aModels, SQLAjustesCompanyModel():New() )
 
-   aadd( ::aModels, SQLAjustableModel():New() )
+   aadd( ::aModels, SQLAjustableCompanyModel():New() )
 
    aadd( ::aModels, SQLContadoresModel():New() )
 
@@ -338,8 +338,6 @@ METHOD addModels() CLASS SQLCompanyMigrations
    aadd( ::aModels, SQLArticulosCategoriasModel():New() )
 
    aadd( ::aModels, SQLAlmacenesModel():New() )
-
-   aadd( ::aModels, SQLDelegacionesModel():New() )
 
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
