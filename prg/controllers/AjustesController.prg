@@ -9,6 +9,8 @@ CLASS AjustesController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD getModel()       INLINE ( ::oModel := SQLAjustesModel():New( self ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -19,15 +21,13 @@ METHOD New() CLASS AjustesController
 
    ::cTitle                := "Ajustes"
 
-   ::setName( "ajustes" )
+   ::cName                 := "ajustes"
 
    ::lTransactional        := .t.
 
    ::hImage                := { "16" => "gc_businesspeople_16" }
 
-   ::oModel                := SQLAjustesModel():New( self )
-
-   ::oRepository           := AjustesRepository():New( self )
+   ::getModel()
 
 RETURN ( Self )
 
@@ -35,7 +35,7 @@ RETURN ( Self )
 
 METHOD End()
 
-   if !empty(::oModel)
+   if !empty( ::oModel )
       ::oModel:End()
    endif
 
@@ -44,6 +44,13 @@ METHOD End()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+CLASS AjustesCompanyController FROM AjustesController
+
+   METHOD getModel()       INLINE ( ::oModel := SQLAjustesCompanyModel():New( self ) )
+
+END CLASS
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

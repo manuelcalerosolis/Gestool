@@ -180,7 +180,13 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLAjustableModel():New() )
 
-   aadd( ::aModels, SQLConfiguracionVistasModel():New() )
+   aadd( ::aModels, SQLCodigosPostalesModel():New() )
+
+   aadd( ::aModels, SQLProvinciasModel():New() )
+
+   aadd( ::aModels, SQLPaisesModel():New() )
+
+   aadd( ::aModels, SQLLenguajesModel():New() )
 
 RETURN ( ::aModels )
  
@@ -260,14 +266,6 @@ METHOD addModels() CLASS SQLCompanyMigrations
    aadd( ::aModels, SQLCamposExtraValoresModel():New() )
 
    aadd( ::aModels, SQLListinModel():New() )
-
-   aadd( ::aModels, SQLCodigosPostalesModel():New() )
-
-   aadd( ::aModels, SQLProvinciasModel():New() )
-
-   aadd( ::aModels, SQLPaisesModel():New() )
-
-   aadd( ::aModels, SQLLenguajesModel():New() )
 
    aadd( ::aModels, SQLDireccionesModel():New() )
 

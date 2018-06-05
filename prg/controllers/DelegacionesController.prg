@@ -19,15 +19,21 @@ END CLASS
 
 METHOD New( oSenderController ) CLASS DelegacionesController
 
-   ::Super:New( oSenderController )
-
    ::cTitle                         := "Delegaciones"
 
    ::cName                          := "delegaciones"
 
+   ::lFilterController              := .f.
+
+   ::lVistaModel                    := .f.
+
    ::hImage                         := {  "16" => "gc_factory_group_16",;
                                           "32" => "gc_factory_group_32",;
                                           "48" => "gc_factory_group_48" }
+
+   ::Super:New( oSenderController )
+
+   ::oNavigatorView:lRestoreState   := .f.
 
    ::oModel                         := SQLDelegacionesModel():New( self )
 
@@ -252,7 +258,7 @@ METHOD addLinksToExplorerBar() CLASS DelegacionesView
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+      oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
    end if
 
 RETURN ( self )
@@ -277,6 +283,7 @@ METHOD getValidators() CLASS DelegacionesValidator
                                           "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
                                           "unique"             => "EL código introducido ya existe" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -309,8 +316,6 @@ METHOD getColumns() CLASS SQLDelegacionesModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getEmpresaColumns()
-
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| ::getSenderControllerParentUuid() } } )
 
@@ -326,9 +331,7 @@ RETURN ( ::hColumns )
 
 METHOD aNombres() CLASS SQLDelegacionesModel
 
-   local cSelect  := ""
-
-   cSelect        += "SELECT nombre FROM " + ::cTableName
+   local cSelect  := "SELECT nombre FROM " + ::getTableName()
 
 RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSelect ) )
 

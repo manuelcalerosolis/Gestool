@@ -62,10 +62,6 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD setViewType( cViewType )              INLINE ( ::cViewType := cViewType )
    METHOD getViewType( )                        INLINE ( ::cViewType )
 
-   METHOD saveStateToModel( cViewType )
-   
-   METHOD restoreStateFromModel( cViewType )
-
    METHOD setFilterInRowSet( cFilterExpresion )
 
    METHOD getSelectedCol()                      INLINE ::SelectedCol()
@@ -380,40 +376,8 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD saveStateToModel( cViewType )
-
-   DEFAULT cViewType    := ::getViewType()
-
-   SQLConfiguracionVistasModel():set( cViewType, ::getName(), ::saveState() )
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD restoreStateFromModel( cViewType )
-
-   local cBrowseState
-
-   DEFAULT cViewType    := ::getViewType()
-
-   ::getOriginalState()
-
-   cBrowseState         := SQLConfiguracionVistasModel():getState( cViewType, ::getName() )
-
-   if !empty( cBrowseState )
-      ::restoreState( cBrowseState )
-   end if 
-
-RETURN ( Self )
-
-//------------------------------------------------------------------------//
-
 METHOD setFilterInRowSet( cFilterExpresion )
 
-   msgalert( ::SelectedCol():cSortOrder + cFilterExpresion + " ('" + alltrim( cvaltostr( ::SelectedCol():Value() ) ) + "' )" )
-   //msgalert( alltrim( ::SelectedCol():cSortOrder ) ) == alltrim( cvaltostr( ::SelectedCol():Value() ) ) )
-
-   // msgalert( ::oRowSet:fieldGet( ::SelectedCol():cSortOrder ) ) // + " == " + quoted( alltrim( cvaltostr( ::SelectedCol():Value() ) ) ) )
    ::oRowSet:setFilter( { || ::oRowSet:fieldGet( 1 ) == 1 } )
 
 RETURN ( Self )

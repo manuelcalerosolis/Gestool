@@ -9,6 +9,8 @@ CLASS SQLAjustableModel FROM SQLBaseModel
 
    DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( ajuste_uuid, ajustable_tipo, ajustable_uuid )"
 
+   METHOD getAjusteTableName()   INLINE ( SQLAjustesModel():getTableName() )
+
    METHOD getColumns()
 
    METHOD set( cAjusteUuid, uAjusteValue, cAjustableTipo, cAjustableUuid )
@@ -76,8 +78,6 @@ CLASS SQLAjustableModel FROM SQLBaseModel
 
    METHOD getRolCambiarCampos( cUuid )                                  INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_campos', .t. ) )   
    METHOD getRolNoCambiarCampos( cUuid )                                INLINE ( !::getRolCambiarCampos( cUuid ) )
-
-   // METHOD assertUsuarioFavoritos( cUuid )                               INLINE ( ::getValue( cUuid, 'favoritos', uAjusteValue, 'usuarios', cAjustableUuid ) )
 
    METHOD setEmpresaDelegacionDefecto( uAjusteValue, cAjustableUuid )   INLINE ( ::setValue( 'delegacion_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getEmpresaDelegacionDefecto( cUuid )                          INLINE ( ::getValue( cUuid, 'empresas', 'delegacion_defecto', space( 40 ) ) )   
@@ -166,8 +166,8 @@ METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    end if 
 
    cSentence         := "SELECT ajustables.ajuste_valor "
-   cSentence         +=    "FROM ajustables AS ajustables "
-   cSentence         += "INNER JOIN ajustes AS ajustes ON ajustes.ajuste = " + quoted( cAjuste ) + " "
+   cSentence         +=    "FROM " + ::getTableName() + " AS ajustables "
+   cSentence         += "INNER JOIN " + ::getAjusteTableName() + " AS ajustes ON ajustes.ajuste = " + quoted( cAjuste ) + " "
    cSentence         += "WHERE ajustables.ajuste_uuid = ajustes.uuid "
    cSentence         +=    "AND ajustables.ajustable_tipo = " + quoted( cTipo ) + " "
    cSentence         +=    "AND ajustables.ajustable_uuid = " + quoted( cUuid ) 
@@ -214,19 +214,9 @@ RETURN ( ::getUsuarioEmpresaEnUso( cUuid ) )
 
 CLASS SQLAjustableCompanyModel FROM SQLAjustableModel
 
-   METHOD getTableName()   INLINE ( Company():getTableName( ::cTableName ) )
+   METHOD getTableName()         INLINE ( Company():getTableName( ::cTableName ) )
 
-END CLASS
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS AjustableRepository FROM SQLBaseRepository
-
-   METHOD getTableName()      INLINE ( SQLAjustableModel():getTableName() ) 
+   METHOD getAjusteTableName()   INLINE ( SQLAjustesCompanyModel():getTableName() )
 
 END CLASS
 

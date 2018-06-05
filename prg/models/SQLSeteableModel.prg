@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLajustableModel FROM SQLBaseModel
+CLASS SQLAjustableModel FROM SQLBaseModel
 
    DATA cTableName               INIT "ajustables"
 
@@ -56,6 +56,12 @@ METHOD set( ajusteUuid, ajusteValue, ajustableTipo, ajustableUuid )
 RETURN ( ::insertOnDuplicate( hBuffer ) )
 
 //---------------------------------------------------------------------------//
+
+CLASS SQLAjustableCompanyModel FROM SQLAjustableModel 
+
+
+
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
