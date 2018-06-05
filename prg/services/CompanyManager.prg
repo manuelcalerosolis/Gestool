@@ -15,13 +15,16 @@ CLASS CompanyManager
 
    METHOD New()
 
-   METHOD Set( hCompany )           INLINE ( ::guard( hCompany ) )
+   METHOD Set( hCompany )                    INLINE ( ::guard( hCompany ) )
    METHOD Guard( hCompany )
 
    METHOD guardWhereUuid( uuid )
    METHOD guardWhereCodigo( cCodigo )
 
    METHOD getDefaultDelegacion()
+
+   METHOD getCompanyDatabase()               INLINE ( 'gestool' + '_' + ::codigo )
+   METHOD getCompanyTableName( cTableName )  INLINE ( ::getCompanyDatabase() + '.' + cTableName )
 
 END CLASS
 

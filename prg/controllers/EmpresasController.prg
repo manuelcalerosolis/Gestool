@@ -57,8 +57,6 @@ METHOD New() CLASS EmpresasController
                                           "32" => "gc_factory_32",;
                                           "48" => "gc_factory_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
-
    ::oModel                         := SQLEmpresasModel():New( self )
 
    ::oBrowseView                    := EmpresasBrowseView():New( self )

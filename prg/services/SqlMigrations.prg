@@ -55,8 +55,6 @@ METHOD createDatabase( cDatabaseMySQL ) CLASS SQLBaseMigrations
 
    getSQLDatabase():ExecWithOutParse( "CREATE DATABASE IF NOT EXISTS " + cDatabaseMySQL + ";" )
    
-   // getSQLDatabase():ExecWithOutParse( "USE " + cDatabaseMySQL + ";" )
-       
 RETURN ( self )    
 
 //----------------------------------------------------------------------------//
@@ -215,15 +213,15 @@ ENDCLASS
 
 METHOD Run( cCodigoEmpresa ) CLASS SQLCompanyMigrations
 
-   local cDatabaseEmpresa  := "gestool_" + cCodigoEmpresa
-
-   ::createDatabase( cDatabaseEmpresa )
-
    Company():guardWhereCodigo( cCodigoEmpresa )
+
+   msgalert( Company():getCompanyDatabase() )
+
+   ::createDatabase( Company():getCompanyDatabase() )
 
    ::addModels()
 
-   ::checkModels( cDatabaseEmpresa )
+   ::checkModels( Company():getCompanyDatabase() )
 
    ::checkValues()
 

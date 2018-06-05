@@ -98,7 +98,7 @@ METHOD getInsertAjustesSentence()
 
    local cSentence 
 
-   cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
+   cSentence  := "INSERT IGNORE INTO " + ::getTableName() + " "
    cSentence  +=    "( uuid, ajuste, sistema, tipo_dato, valor_minimo, valor_maximo ) "
    cSentence  += "VALUES "
    cSentence  +=    "( UUID(), 'empresa_exclusiva',         '1',  'alphanumeric', NULL, NULL ), "
@@ -128,7 +128,7 @@ METHOD getAjusteUuidSentence( cAjuste )
 
    local cSentence
 
-   cSentence  := "SELECT uuid FROM " + ::cTableName + " "
+   cSentence  := "SELECT uuid FROM " + ::getTableName() + " "
    cSentence  +=    "WHERE ajuste = " + quoted( cAjuste )
 
 RETURN ( cSentence )
