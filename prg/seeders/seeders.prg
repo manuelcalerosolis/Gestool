@@ -4,6 +4,122 @@
 
 //---------------------------------------------------------------------------//
 
+CLASS SQLGestoolSeeders
+
+   DATA aConvert
+
+   METHOD Run()
+
+   METHOD Convert()
+
+   METHOD insertEmpresas( dbf ) 
+
+   METHOD insertUsuarios( dbf )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Run() CLASS SQLGestoolSeeders
+
+   ::aConvert  := {  {  "file"   => cPatDat() + "Empresa.Dbf",;
+                        "block"  => {|dbf| ::insertEmpresas( dbf ) } },;
+                     {  "file"   => cPatDat() + "Users.Dbf",;
+                        "block"  => {|dbf| ::insertUsuarios( dbf ) } };
+                  }
+
+   aeval( ::aConvert,;
+      {|hConvert| ::Convert( hget( hConvert, "file" ), hget( hConvert, "block" ) ) } )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Convert( cFile, bBlock ) CLASS SQLGestoolSeeders
+
+   local dbf
+
+   if !( file( cFile ) )
+      msgStop( "El fichero " + cFile + " no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   dbUseArea( .t., ( "DBFCDX" ), ( cFile ), ( cCheckArea( "File", @dbf ) ), .t., .f. )
+
+   if ( dbf )->( neterr() )
+      RETURN ( self )
+   end if 
+
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( bBlock ) )
+
+   ( dbf )->( dbclosearea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertEmpresas() CLASS SQLGestoolSeeders
+
+   local nId
+   local hBuffer  
+
+   hBuffer        := SQLEmpresasModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              field->Uuid      )
+   hset( hBuffer, "codigo",            field->CodEmp    )
+   hset( hBuffer, "nombre",            field->cNombre   )
+   hset( hBuffer, "nif",               field->cNif      )
+   hset( hBuffer, "administrador",     field->cAdminis  )
+   hset( hBuffer, "pagina_web",        field->web       )
+
+   nId            := SQLEmpresasModel():insertIgnoreBuffer( hBuffer )
+
+   if empty( nId )
+      RETURN ( self )
+   end if 
+
+   // Direcciones--------------------------------------------------------------
+
+   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hBuffer, "principal",      1                   )
+   hset( hBuffer, "parent_uuid",    field->Uuid         )
+   hset( hBuffer, "direccion",      field->cDomicilio   )
+   hset( hBuffer, "poblacion",      field->cPoblacion   )
+   hset( hBuffer, "provincia",      field->cProvincia   )
+   hset( hBuffer, "codigo_postal",  field->cCodPos      )
+   hset( hBuffer, "telefono",       field->cTlf         )
+   hset( hBuffer, "email",          field->email        )
+                        
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertUsuarios()
+
+   local hBuffer
+
+   hBuffer        := SQLUsuariosModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              field->Uuid     )
+   hset( hBuffer, "codigo",            field->cCodUse  )
+   hset( hBuffer, "nombre",            capitalize( field->cNbrUse ) )
+   hset( hBuffer, "password",          SQLUsuariosModel():Crypt( field->cClvUse )  )
+
+   SQLUsuariosModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 CLASS Seeders
 
    DATA oMsg
@@ -19,8 +135,6 @@ CLASS Seeders
 
    METHOD getInsertStatement( hCampos, cDataBaseName )
 
-   METHOD SeederUsuarios()
-   METHOD insertUsuarios( dbf )
 
    METHOD SeederSituaciones()
    METHOD getStatementSituaciones( dbfSitua )
@@ -254,41 +368,6 @@ RETURN ( ::getInsertStatement( hCampos, "tipos_impresoras" ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederUsuarios()
-
-   local dbf
-   local cPath    := ( fullCurDir() + cPatDat() + "\" )
-
-   if !( file( cPath + "Users.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\Users.Dbf no se ha localizado", "Atención" )  
-      RETURN ( self )
-   end if
-
-   USE ( cPath + "Users.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Users", @dbf ) )
-   ( dbf )->( ordsetfocus( 0 ) )
-
-   ( dbf )->( dbeval( {|| ::insertUsuarios( dbf ) } ) )
-
-   ( dbf )->( dbCloseArea() )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertUsuarios( dbf )
-
-   local hBuffer
-
-   hBuffer        := SQLUsuariosModel():loadBlankBuffer()
-
-   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
-   hset( hBuffer, "codigo",            ( dbf )->cCodUse  )
-   hset( hBuffer, "nombre",            ( dbf )->cNbrUse  )
-   hset( hBuffer, "password",          SQLUsuariosModel():Crypt( ( dbf )->cClvUse )  )
-
-   SQLUsuariosModel():insertIgnoreBuffer( hBuffer )
-
-RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

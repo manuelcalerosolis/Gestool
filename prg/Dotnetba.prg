@@ -108,48 +108,56 @@ CLASS TDotNetBar FROM TControl
 ENDCLASS
 
 
-**********************************************************************************************************************
-  METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, nOption,  lDisenio ) CLASS TDotNetBar
-*********************************************************************************************************************
+//---------------------------------------------------------------------------//
+
+METHOD New( nTop, nLeft, nWidth, nHeight, oWnd, nOption,  lDisenio ) CLASS TDotNetBar
 
    DEFAULT lDisenio := .f.
+
    if nTop == nil; nTop := 0; endif
    if nLeft == nil; nLeft := 0; endif
    if nWidth == nil; nWidth := 0; endif
    if nHeight == nil; nHeight := 0; endif
    if nOption == nil; nOption := 0; endif
 
-   ::nTop      := nTop
-   ::nLeft     := nLeft
-   ::nBottom   := nTop + nHeight
-   ::nRight    := nLeft + nWidth
-   ::oWnd      := oWnd
-   ::lDisenio  := lDisenio
-   ::nOption   := nOption
+   ::nTop         := nTop
+   ::nLeft        := nLeft
+   ::nBottom      := nTop + nHeight
+   ::nRight       := nLeft + nWidth
+   ::oWnd         := oWnd
+   ::lDisenio     := lDisenio
+   ::nOption      := nOption
 
-   ::oColor    := TClrStyle():New()
+   ::oColor       := TClrStyle():New()
 
    ::nClrBorder   := ::oColor:_GRISB
    ::nClrZonaTab  := ::oColor:_GRIS0
 
+   ::lVisible     := .f.
 
-   ::nStyle      := nOR( WS_CHILD, WS_VISIBLE, WS_CLIPSIBLINGS, WS_CLIPCHILDREN ) //WS_TABSTOP,
-   ::nId         := ::GetNewId()
+   ::nStyle       := nOR( WS_CHILD, WS_VISIBLE, WS_CLIPSIBLINGS, WS_CLIPCHILDREN ) //WS_TABSTOP,
+   ::nId          := ::GetNewId()
 
-   ::aControls := {}
+   ::aControls    := {}
 
-   ::Register(nOr( CS_VREDRAW, CS_HREDRAW ) )
+   ::Register( nOr( CS_VREDRAW, CS_HREDRAW ) )
 
-   if !Empty( oWnd:hWnd )
-      ::Create()
-      ::lVisible = .t.
-      oWnd:AddControl( Self )
-   else
+
+   if empty( oWnd:hWnd )
+
       oWnd:DefControl( Self )
-      ::lVisible  = .f.
+
+   else
+
+      ::Create()
+
+      ::lVisible  := .t.
+
+      oWnd:AddControl( Self )
+
    endif
 
-return self
+RETURN self
 
 *****************************************************************************************************
   METHOD GetCoords() CLASS TDotNetBar
@@ -201,7 +209,7 @@ for n := 1 to nLen
 next
 
 
-return 0
+RETURN 0
 
 
 ***************************************************************************************************
@@ -212,10 +220,10 @@ local aPoint
 local cText
 
 if nMsg == 20 //WM_ERASEBKGND
-   return 1
+   RETURN 1
 endif
 
-return ::Super:HandleEvent( nMsg, nWParam, nLParam )
+RETURN ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
 
 ***************************************************************************************************
@@ -233,7 +241,7 @@ local oCarpeta
 local lSelected
 
 if ::lWorking
-   return 0
+   RETURN 0
 endif
 
 
@@ -305,7 +313,7 @@ SelectObject( hDCMem, hOldBmp )
 DeleteObject( hBmpMem )
 DeleteDC( hDCMem )
 
-return 0
+RETURN 0
 
 
 ***************************************************************************************************
@@ -318,7 +326,7 @@ local hChild := ::IsOverVisibleChild( nRow, nCol )
 if hChild != nil
    SetFocus( hChild )
    SendMessage( hChild, WM_LBUTTONDOWN, nMakeLong( nCol, nRow ), 0 )
-   return 1
+   RETURN 1
 endif
 
 //if ::oWndPopup != nil
@@ -339,7 +347,7 @@ if ::oBtnCaptured != nil
 endif
 
 
-return 0
+RETURN 0
 
 ***************************************************************************************************
    METHOD LButtonUp( nRow, nCol, nFlags ) CLASS TDotNetBar
@@ -376,7 +384,7 @@ return 0
             nRow    := aPoint[1]
             nCol    := aPoint[2]
 
-            return eval( ::oFirstTab:bAction, nRow, nCol )
+            RETURN eval( ::oFirstTab:bAction, nRow, nCol )
 
          endif
 
@@ -466,7 +474,7 @@ return 0
 
    ::Refresh()
 
-return 0
+RETURN 0
 
 ***************************************************************************************************
    METHOD RButtonDown( nRow, nCol, nFlags ) CLASS TDotNetBar
@@ -479,7 +487,7 @@ local hChild := ::IsOverVisibleChild( nRow, nCol )
 if hChild != nil
    SetFocus( hChild )
    SendMessage( hChild, WM_RBUTTONDOWN, nMakeLong( nCol, nRow ), 0 )
-   return 1
+   RETURN 1
 endif
 
    SetFocus( ::hWnd )
@@ -497,7 +505,7 @@ endif
       ::Refresh()
    endif
 
-return 0
+RETURN 0
 
 ***************************************************************************************************
    METHOD RButtonUp( nRow, nCol, nFlags ) CLASS TDotNetBar
@@ -534,7 +542,7 @@ return 0
 
    ::Refresh()
 
-return 0
+RETURN 0
 
 ***************************************************************************************************
    METHOD MouseMove( nRow, nCol, nFlags ) CLASS TDotNetBar
@@ -547,7 +555,7 @@ local lFind := .f.
 local oLastGrupo := ::oGrupoOver
 
 if ::lWorking
-   return 0
+   RETURN 0
 endif
 
 ::nRow := nRow
@@ -654,7 +662,7 @@ if ::nOption != 0
 
 endif
 
-return 0
+RETURN 0
 
 
 
@@ -674,7 +682,7 @@ for n := 1 to nLen
     endif
 next
 
-return nOption
+RETURN nOption
 
 
 ***************************************************************************************************
@@ -684,7 +692,7 @@ return nOption
    ::nOption := nOption
 
 
-return nOption
+RETURN nOption
 
 
 ***************************************************************************************************
@@ -724,7 +732,7 @@ if ::nOption != 0
 
              if "TDOTNET" $ oGrupo:aItems[n2]:ClassName()
                  if oGrupo:aItems[n2]:IsOver( nRow, nCol )
-                    return oGrupo:aItems[n2]
+                    RETURN oGrupo:aItems[n2]
                  endif
              endif
 
@@ -736,7 +744,7 @@ if ::nOption != 0
 
 endif
 
-return nil
+RETURN nil
 
 
 ***************************************************************************************************
@@ -749,11 +757,11 @@ nLen := len( ::aControls )
    for n := 1 to nLen
        oControl := ::aControls[n]
        if IsWindowVisible( oControl:hWnd ) .and. PtInRect( nRow, nCol, GetCoors( oControl:hWnd ) )
-          return oControl:hWnd
+          RETURN oControl:hWnd
        endif
    next
 
-return nil
+RETURN nil
 
 
 
@@ -770,7 +778,7 @@ do case
    case nKey == VK_TAB
 
         if nLen == 0
-           return 0
+           RETURN 0
         endif
         if lControl
            do while .t.
@@ -819,7 +827,7 @@ do case
 
 endcase
 
-return 0
+RETURN 0
 
 ***************************************************************************************************
    METHOD ReSize( nType, nWidth, nHeight ) CLASS TDotNetBar
@@ -870,7 +878,7 @@ return 0
        if lResize
           ::Refresh()
        endif
-      return 0
+      RETURN 0
    endif
 
    oCarpeta := ::aCarpetas[::nOption]
@@ -881,7 +889,7 @@ return 0
          ::Refresh()
       endif
 
-      return 0
+      RETURN 0
    endif
 
    nLen := len( oCarpeta:aGrupos )
@@ -920,7 +928,7 @@ return 0
 
     ::Refresh()
 
-return 0
+RETURN 0
 
 ***************************************************************************************************
    METHOD LostFocus() CLASS TDotNetBar
@@ -930,7 +938,7 @@ if ::IsPopup
    ::oWPEnd()
 endif
 
-return ::Super:LostFocus()
+RETURN ::Super:LostFocus()
 
 ***********************************************************************************************************************
    METHOD oWPLostFocus() CLASS TDotNetBar
@@ -942,7 +950,7 @@ if ::oWndPopup != nil .and. GetParent(GetFocus()) != ::oWndPopup:hWnd
 
 endif
 
-return .t.
+RETURN .t.
 
 ***********************************************************************************************************************
    METHOD oWPEnd() CLASS TDotNetBar
@@ -953,7 +961,7 @@ return .t.
    ::End()
 
 
-return 0
+RETURN 0
 
 #define IMAGE_BITMAP        0
 
@@ -978,10 +986,10 @@ return 0
 ***********************************************************************************************
 
 if ::nOption != 0
-   return ::aCarpetas[::nOption]:cPrompt
+   RETURN ::aCarpetas[::nOption]:cPrompt
 endif
 
-return ""
+RETURN ""
 
 ***********************************************************************************************
     METHOD SetText( cItem ) CLASS TDotNetBar
@@ -994,7 +1002,7 @@ if ::nOption != 0
    ::GetCoords()
 endif
 
-return cText
+RETURN cText
 
 ***********************************************************************************************
    METHOD LDblClick( nRow, nCol, nFlags ) CLASS TDotNetBar
@@ -1006,22 +1014,22 @@ local oGrupo
 local oBtn
 
 if !::lDisenio
-   return 0
+   RETURN 0
 endif
 
 if nLen == 0
-   return 0
+   RETURN 0
 endif
 
 for n := 1 to nLen
     oCarpeta := ::aCarpetas[n]
     if oCarpeta:IsOverSolapa( nRow, nCol )
-       return oCarpeta:Edit()
+       RETURN oCarpeta:Edit()
     endif
 next
 
 if ::nOption == 0
-   return 0
+   RETURN 0
 endif
 
 oCarpeta := ::aCarpetas[::nOption]
@@ -1029,7 +1037,7 @@ oCarpeta := ::aCarpetas[::nOption]
 oGrupo := oCarpeta:oGrupoOver( nRow, nCol )
 
 if oGrupo == nil
-   return nil
+   RETURN nil
 endif
 
 oBtn := oGrupo:oBtnOver( nRow, nCol )
@@ -1041,7 +1049,7 @@ else
 endif
 
 
-return nil
+RETURN nil
 
 
 ***********************************************************************************************
@@ -1084,14 +1092,14 @@ if ::cName == nil; ::cName := "oBar" ; endif
   ::cVars := ""
 
   cPrg += "ACTIVATE WINDOW oWnd" + CRLF + CRLF
-  cPrg += "return nil" + CRLF + CRLF
+  cPrg += "RETURN nil" + CRLF + CRLF
 
 
-return cPrg
+RETURN cPrg
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-  static function str4( nVal ) ; return str(nVal,4)
+  static function str4( nVal ) ; RETURN str(nVal,4)
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 ***********************************************************************************************
@@ -1104,7 +1112,7 @@ endif
 
 if empty( cFileName)
    MsgInfo("Proceso cancelado")
-   return 0
+   RETURN 0
 endif
 
 if lower(right(cFileName,4 ) ) != ".prg"
@@ -1116,7 +1124,7 @@ endif
 if file( cFileName )
    if !ApoloMsgNoYes( "El fichero" + CRLF + cFileName + CRLF + "Ya existe" + CRLF + CRLF + "¿Desea sobreescribirlo?")
       MsgInfo("Proceso cancelado")
-      return 0
+      RETURN 0
    endif
 endif
 
@@ -1126,7 +1134,7 @@ MemoWrit( cFileName ,::GenPrg())
 
 //ShellExecute( GetActiveWindow() ,nil, cFileName ,'','',5)
 
-return 0
+RETURN 0
 
 
 ***********************************************************************************************
@@ -1162,7 +1170,7 @@ endif
 
 if empty( cFileName )
    MsgInfo("Proceso cancelado")
-   return 0
+   RETURN 0
 endif
 
 cInfo := memoread( cFileName )
@@ -1172,7 +1180,7 @@ cInfo := memoread( cFileName )
 /*
 if at("tdotnetbar", lower( cInfo ) ) == 0
    MsgStop( "No se encontró la definición de TDotNetBar","Atención")
-   return 0
+   RETURN 0
 endif
 
 nLines := strcount( cInfo, CRLF )
@@ -1317,7 +1325,7 @@ enddo
 ::Refresh()
 
 */
-return 0
+RETURN 0
 
 /*
 ***********************************************************************************************
@@ -1359,7 +1367,7 @@ local cLine
 
 if empty( cInfo )
    MsgInfo("Proceso cancelado")
-   return 0
+   RETURN 0
 endif
 
 nLines := strcount( cInfo, CRLF )
@@ -1473,7 +1481,7 @@ enddo
 ::Refresh()
 
 
-return 0
+RETURN 0
 */
 
 
@@ -1508,7 +1516,7 @@ DEFAULT nLevel := PARSEANDO_BAR
 if nLevel == 1
    if at("tdotnetbar", lower( cInfo ) ) == 0
       MsgStop( "No se encontró la definición de TDotNetBar","Atención")
-      return 0
+      RETURN 0
    endif
 endif
 
@@ -1656,7 +1664,7 @@ enddo
 ::Refresh()
 
 
-return 0
+RETURN 0
 
 
 
@@ -1680,7 +1688,7 @@ ains( ::aCarpetas, nPos )
 
 ::Refresh()
 
-return nil
+RETURN nil
 
 
 
@@ -1700,7 +1708,7 @@ endif
 
 ::oFirstTab := TCarpeta():New( self, cText, .t., bAction, aColors )
 
-return nil
+RETURN nil
 
 
 function GetMyObject( aObjects, cName )
@@ -1711,11 +1719,11 @@ cName := alltrim( cName )
 
 for n := 1 to nLen
     if alltrim(lower(aObjects[n,1])) == lower( cName )
-       return aObjects[n,2]
+       RETURN aObjects[n,2]
     endif
 next
 
-return nil
+RETURN nil
 
 
 
@@ -1866,7 +1874,7 @@ return nil
   METHOD New() CLASS TClrStyle
 ********************************************************************************************
 
-return self
+RETURN self
 
 ********************************************************************************************
   METHOD SetStyle( nStyle ) CLASS TClrStyle
@@ -2057,4 +2065,4 @@ return self
 
    endcase
 
-Return 0
+RETURN 0

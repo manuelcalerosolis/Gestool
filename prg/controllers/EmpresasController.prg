@@ -80,8 +80,6 @@ METHOD New() CLASS EmpresasController
 
    ::oDelegacionesController        := DelegacionesController():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
    
@@ -149,7 +147,7 @@ METHOD saveConfig()
 
    ::oAjustableController:oModel:setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, ::cUuidEmpresa )
    
-   ::cUuidDelegacionDefecto    := SQLDelegacionesModel():getUuidFromNombre( ::cDelegacionDefecto )
+   ::cUuidDelegacionDefecto      := SQLDelegacionesModel():getUuidFromNombre( ::cDelegacionDefecto )
 
    ::oAjustableController:oModel:setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, ::cUuidEmpresa )
 
@@ -179,9 +177,23 @@ RETURN ( self )
 
 METHOD updateEmpresa()
 
-   local cNombreEmpresa    := 'gestool_' + ::getRowSet():fieldGet( 'codigo' )
+   local nSelect
+   local aSelected
+   local cCodigoEmpresa
+   local cNombreEmpresa     
 
-   msgRun( "Actualizando estructura de empresa", "Espere por favor...", {|| SQLMigrations():Run( cNombreEmpresa ) } )
+   aSelected               := ::getBrowse():aSelected 
+
+   for each nSelect in aSelected
+
+      ::getRowSet():goToRecNo( nSelect )
+
+      cNombreEmpresa       := alltrim( ::getRowSet():fieldGet( 'nombre' ) )
+      cCodigoEmpresa       := ::getRowSet():fieldGet( 'codigo' )
+
+      msgRun(  "Actualizando estructura de empresa : " + cNombreEmpresa, "Espere por favor...", {|| SQLCompanyMigrations():Run( cCodigoEmpresa ) } )
+
+   next
 
 RETURN ( self )
 

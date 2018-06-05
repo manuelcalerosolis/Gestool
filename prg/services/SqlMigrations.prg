@@ -3,35 +3,27 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS SQLMigrations
-
-   DATA hJson                             INIT {=>}
+CLASS SQLBaseMigrations
 
    DATA aModels                           INIT {}
 
    DATA aRepositories                     INIT {}
 
-   METHOD Run()
+   METHOD Run( cDatabaseMySQL ) 
 
-   METHOD checkDatabase()
-   
    METHOD createDatabase()
 
-   METHOD readGestoolDatabaseJSON()
+   METHOD addModels()                     VIRTUAL
 
-   METHOD addModels()
+   METHOD checkValues()                   VIRTUAL
 
-   METHOD checkModels()   
+   METHOD checkModels()                   
 
-   METHOD checkModel( oModel )
+   METHOD checkModel( oModel ) 
 
-   METHOD addRepositories()
+   METHOD checkRepositories()      
 
-   METHOD checkRepositories()
-
-   METHOD checkRepository( oRepository )
-
-   METHOD checkValues()
+   METHOD checkRepository( oRepository ) 
 
    METHOD getSchemaColumns( cDatabaseMySQL, cTableName )    
 
@@ -39,24 +31,9 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD checkDatabase()
+METHOD Run( cDatabaseMySQL ) CLASS SQLBaseMigrations
 
-   getSQLDatabase():ConnectWithoutDataBase()
-
-   if !::readGestoolDatabaseJSON()
-      RETURN ( self )
-   end if 
-
-   if hhaskey( ::hJson, "Databases" )
-      aeval( hget( ::hJson, "Databases" ),;
-         {|hDatabase| ::Run( hget( hDatabase, "Database" ) ) } )
-   end if 
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD Run( cDatabaseMySQL ) 
+   DEFAULT cDatabaseMySQL  := 'Gestool'
 
    ::createDatabase( cDatabaseMySQL )
 
@@ -64,35 +41,33 @@ METHOD Run( cDatabaseMySQL )
 
    ::checkModels( cDatabaseMySQL )
 
-   // ::addRepositories()
-
-   // ::checkRepositories()
-
    ::checkValues()
 
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD createDatabase( cDatabaseMySQL )
+METHOD createDatabase( cDatabaseMySQL ) CLASS SQLBaseMigrations
 
-   DEFAULT cDatabaseMySQL  := getSQLDatabase():cDatabaseMySQL
+   if empty( cDatabaseMySQL )
+      RETURN ( self )
+   end if 
 
    getSQLDatabase():ExecWithOutParse( "CREATE DATABASE IF NOT EXISTS " + cDatabaseMySQL + ";" )
    
-   getSQLDatabase():ExecWithOutParse( "USE " + cDatabaseMySQL + ";" )
+   // getSQLDatabase():ExecWithOutParse( "USE " + cDatabaseMySQL + ";" )
        
 RETURN ( self )    
 
 //----------------------------------------------------------------------------//
 
-METHOD checkModels( cDatabaseMySQL )
+METHOD checkModels( cDatabaseMySQL ) CLASS SQLBaseMigrations
 
 RETURN ( aeval( ::aModels, {|oModel| ::checkModel( cDatabaseMySQL, oModel ) } ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD checkModel( cDatabaseMySQL, oModel )
+METHOD checkModel( cDatabaseMySQL, oModel ) CLASS SQLBaseMigrations
 
    local aSchemaColumns    := ::getSchemaColumns( cDatabaseMySQL, oModel:cTableName )
 
@@ -106,13 +81,13 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD checkRepositories()
+METHOD checkRepositories() CLASS SQLBaseMigrations
 
 RETURN ( aeval( ::aRepositories, {|oRepository| ::checkRepository( oRepository ) } ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD checkRepository( oRepository )
+METHOD checkRepository( oRepository ) CLASS SQLBaseMigrations
 
    getSQLDatabase():Execs( oRepository:getSQLFunctions() )
 
@@ -120,16 +95,20 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD getSchemaColumns( cDatabaseMySQL, cTableName )
+METHOD getSchemaColumns( cDatabaseMySQL, cTableName ) CLASS SQLBaseMigrations
 
    local oError
    local cSentence
    local oStatement
    local aSchemaColumns
 
-   DEFAULT cDatabaseMySQL  := getSQLDatabase():cDatabaseMySQL
-
+   if empty( cDatabaseMySQL )
+      msgstop( "No se especifico la base de datos" )
+      RETURN ( nil )  
+   end if  
+   
    if empty( cTableName )
+      msgstop( "No se especifico la tabla" )
       RETURN ( nil )  
    end if  
 
@@ -167,19 +146,92 @@ METHOD getSchemaColumns( cDatabaseMySQL, cTableName )
 
 RETURN ( aSchemaColumns )
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-METHOD addModels()
+CLASS SQLGestoolMigrations FROM SQLBaseMigrations
 
-   // aadd( ::aModels, SQLEmpresasModel():New() )
+   METHOD addModels()  
 
-   // aadd( ::aModels, SQLUsuariosModel():New() )
+   METHOD checkValues()
 
-   // aadd( ::aModels, SQLRolesModel():New() )
+ENDCLASS
 
-   // aadd( ::aModels, SQLPermisosModel():New() )
+//----------------------------------------------------------------------------//
 
-   // aadd( ::aModels, SQLPermisosOpcionesModel():New() )
+METHOD addModels() CLASS SQLGestoolMigrations
+
+   aadd( ::aModels, SQLEmpresasModel():New() )
+
+   aadd( ::aModels, SQLDireccionesModel():New() )
+
+   aadd( ::aModels, SQLUsuariosModel():New() )
+
+   aadd( ::aModels, SQLRolesModel():New() )
+
+   aadd( ::aModels, SQLPermisosModel():New() )
+
+   aadd( ::aModels, SQLPermisosOpcionesModel():New() )
+
+   aadd( ::aModels, SQLAjustesModel():New() )
+
+   aadd( ::aModels, SQLAjustableModel():New() )
+
+   aadd( ::aModels, SQLConfiguracionVistasModel():New() )
+
+RETURN ( ::aModels )
+ 
+//----------------------------------------------------------------------------//
+
+METHOD checkValues() CLASS SQLGestoolMigrations
+
+   getSQLDatabase():Exec( SQLRolesModel():getInsertRolesSentence() )
+
+   getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() ) 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+
+CLASS SQLCompanyMigrations FROM SQLBaseMigrations
+
+   METHOD Run( cCodigoEmpresa )
+
+   METHOD addModels()
+
+   METHOD checkValues()
+
+ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Run( cCodigoEmpresa ) CLASS SQLCompanyMigrations
+
+   local cDatabaseEmpresa  := "gestool_" + cCodigoEmpresa
+
+   ::createDatabase( cDatabaseEmpresa )
+
+   Company():guardWhereCodigo( cCodigoEmpresa )
+
+   ::addModels()
+
+   ::checkModels( cDatabaseEmpresa )
+
+   ::checkValues()
+
+RETURN ( Self )
+*/
+//----------------------------------------------------------------------------//
+
+METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLTiposImpresorasModel():New() )
 
@@ -237,7 +289,7 @@ METHOD addModels()
 
    aadd( ::aModels, SQLCajasModel():New() )
 
-    aadd( ::aModels, SQLEntradaSalidaModel():New() )
+   aadd( ::aModels, SQLEntradaSalidaModel():New() )
 
    aadd( ::aModels, SQLArticulosEnvasadoModel():New() )
 
@@ -333,11 +385,7 @@ RETURN ( ::aModels )
  
 //----------------------------------------------------------------------------//
 
-METHOD checkValues()
-
-   // getSQLDatabase():Exec( SQLRolesModel():getInsertRolesSentence() )
-
-   // getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() ) 
+METHOD checkValues() CLASS SQLCompanyMigrations
 
    getSQLDatabase():Exec( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )
 
@@ -349,27 +397,3 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD addRepositories()
-
-   aadd( ::aRepositories, ArticulosPreciosRepository():New() )
-
-RETURN ( ::aRepositories )
- 
-//----------------------------------------------------------------------------//
-
-METHOD readGestoolDatabaseJSON()
-
-   local hJson
-   local cGestoolDatabase     := "GestoolDatabase.json"
-
-   hb_jsonDecode( memoread( cGestoolDatabase ), @hJson )      
-
-   if empty( hJson )
-      RETURN ( .f. )
-   end if 
-
-   ::hJson                    := hJson
-
-RETURN ( .t. )
-
-//----------------------------------------------------------------//

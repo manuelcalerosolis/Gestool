@@ -6,6 +6,8 @@
 
 static oSqlDatabase
 
+static oSqlCompany
+
 //----------------------------------------------------------------------------//
 
 CLASS SQLDatabase
@@ -14,8 +16,6 @@ CLASS SQLDatabase
 
    DATA oStatement
 
-   DATA cPathDatabaseMySQL    
-   
    DATA cDatabaseMySQL    
 
    DATA cIpMySQL
@@ -95,15 +95,14 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New() 
+METHOD New( cDatabaseMySQL )
 
-   ::cPathDatabaseMySQL       := fullCurDir() + "Database\" 
-
-   if !lIsDir( ::cPathDatabaseMySQL )
-      makedir( ::cPathDatabaseMySQL )
+   if empty( cDatabaseMySQL ) 
+      cDatabaseMySQL          := GetPvProfString(  "MySQL",    "Database", "gestool",     cIniAplication() )
    end if 
 
-   ::cDatabaseMySQL           := GetPvProfString(  "MySQL",    "Database", "gestool",     cIniAplication() )
+   ::cDatabaseMySQL           := cDatabaseMySQL
+
    ::cIpMySQL                 := GetPvProfString(  "MySQL",    "Ip",       "127.0.0.1",   cIniAplication() )
    ::cUserMySQL               := GetPvProfString(  "MySQL",    "User",     "root",        cIniAplication() )
    ::cPasswordMySQL           := GetPvProfString(  "MySQL",    "Password", "",            cIniAplication() )
@@ -180,7 +179,7 @@ METHOD isParseError( cSentence )
    ::oConexion:Ping()
 
    if !::oConexion:Parse( cSentence )
-      msgstop( cSentence, "Error en el comando SQL" )
+      msgstop( cSentence, "Error en el comando SQL" / 2 )
       logwrite( cSentence )
       RETURN ( .t. )  
    end if 
@@ -566,5 +565,28 @@ Function getSQLDatabase()
 RETURN ( oSqlDatabase )
 
 //----------------------------------------------------------------------------//
+
+Function getSQLCompany( cCompanyDatabase )
+
+   if empty( oSqlCompany )
+      oSqlCompany             := SQLDatabase():New( cCompanyDatabase )
+      oSqlCompany:Connect()
+   end if
+
+RETURN ( oSqlCompany )
+
+//----------------------------------------------------------------------------//
+
+Function endSQLCompany( cCompanyDatabase )
+
+   if !empty( oSqlCompany )
+      oSqlCompany:Disconnect()
+      oSqlCompany             := nil
+   end if
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
 
 

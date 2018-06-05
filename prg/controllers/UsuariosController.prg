@@ -1,8 +1,9 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-#define  __encryption_key__ "snorlax"
-#define  __admin_password__ "superusuario"
+#define  __encryption_key__   "snorlax"
+#define  __admin_name__       "Super administrador"
+#define  __admin_password__   "superusuario"
 
 //---------------------------------------------------------------------------//
 
@@ -43,8 +44,8 @@ CLASS UsuariosController FROM SQLNavigatorController
    METHOD End()
 
    METHOD isLogin()
-
-   METHOD isTactilLogin()
+   METHOD isLoginTactil()
+   METHOD isLoginSuperAdmin()
 
    METHOD setConfig()
 
@@ -70,13 +71,14 @@ METHOD New() CLASS UsuariosController
 
    ::cTitle                := "Usuarios"
 
-   ::setName( "usuarios" )
+   ::cName                 := "usuarios"
 
    ::lTransactional        := .t.
 
    ::lConfig               := .t.
 
-   ::hImage                := { "16" => "gc_businesspeople_16" }
+   ::hImage                := {  "16" => "gc_businesspeople_16",;
+                                 "48" => "gc_businesspeople_48" }
 
    ::oModel                := SQLUsuariosModel():New( self )
 
@@ -95,8 +97,6 @@ METHOD New() CLASS UsuariosController
    ::oAjustableController  := AjustableController():New( self )
 
    ::oRolesController      := RolesController():New( self )
-
-   ::oFilterController:setTableToFilter( ::getName() )
 
    ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } )  
    ::setEvent( 'closedDialog',   {|| ::oDialogView:closedDialog() } )  
@@ -263,6 +263,8 @@ RETURN ( .t. )
 
 METHOD isLogin()
 
+   ::oLoginView:loadUsers()
+
    if ( ::oLoginView:Activate() != IDOK )
       RETURN ( .f. )
    end if 
@@ -273,7 +275,21 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD isTactilLogin()
+METHOD isLoginSuperAdmin()
+
+   ::oLoginView:loadSuperAdmin()
+
+   if ( ::oLoginView:Activate() != IDOK )
+      RETURN ( .f. )
+   end if 
+
+   ::oAjustableController:oModel:setUsuarioPcEnUso( rtrim( netname() ), Auth():uuid() )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD isLoginTactil()
 
    if ( ::oLoginTactilView:Activate() != IDOK )
       RETURN ( .f. )
@@ -302,7 +318,7 @@ METHOD checkSuperUser()
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -332,6 +348,8 @@ CLASS SQLUsuariosModel FROM SQLBaseModel
    METHOD fetchDirect() 
 
    METHOD getNombreUsuarioWhereNetName( cNetName ) 
+
+   METHOD isPasswordExclude( cPassword )
 
 END CLASS
 
@@ -377,9 +395,9 @@ METHOD getInsertUsuariosSentence() CLASS SQLUsuariosModel
    local cSQL  
    local cUuidRol
 
-   cUuidRol    := RolesRepository():getUuidWhereNombre( "Super administrador" )
+   cUuidRol    := RolesRepository():getUuidWhereNombre( __admin_name__ )
 
-   cSQL        := "INSERT IGNORE INTO " + ::cTableName + " "
+   cSQL        := "INSERT IGNORE INTO " + ::getTableName() + " "
    cSQL        += "( uuid, "
    cSQL        +=    "codigo, "
    cSQL        +=    "nombre, "
@@ -390,9 +408,9 @@ METHOD getInsertUsuariosSentence() CLASS SQLUsuariosModel
    cSQL        += "VALUES "
    cSQL        +=    "( UUID(), "
    cSQL        +=    "'999', "
-   cSQL        +=    "'Super administrador', "
+   cSQL        +=    quoted( __admin_name__ ) + ", "
    cSQL        +=    "'', "
-   cSQL        +=    "'', "
+   cSQL        +=    quoted( ::Crypt( __admin_password__ ) ) + ", "
    cSQL        +=    "'1', "
    cSQL        +=    quoted( cUuidRol ) + " )"
 
@@ -402,11 +420,15 @@ RETURN ( cSQL )
 
 METHOD validUserPassword( cNombre, cPassword ) CLASS SQLUsuariosModel
 
-   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   local cSQL  
+
+   cSQL        := "SELECT * FROM " + ::getTableName()                         + " "    
    cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
-   if ( alltrim( cPassword ) != __encryption_key__ ) .and. !( "NOPASSWORD" $ appParamsMain() .or. "NOPASSWORD" $ appParamsSecond() )
+
+   if !( ::isPasswordExclude( cPassword ) )
       cSQL     +=     "AND password = " + quoted( ::Crypt( cPassword ) )      + " " 
-   end if 
+   end if
+
    cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
@@ -416,10 +438,12 @@ RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 METHOD validSuperUserPassword( cPassword ) CLASS SQLUsuariosModel
 
    local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
-   cSQL        +=    "WHERE super_user = 1"                                   + " "    
-   if ( alltrim( cPassword ) != __encryption_key__ ) 
-      cSQL     +=       "AND password = " + quoted( ::Crypt( cPassword ) )    + " " 
-   end if 
+   cSQL        +=    "WHERE super_user = 1"                                   + " "
+
+   if !( ::isPasswordExclude( cPassword ) )
+      cSQL     +=     "AND password = " + quoted( ::Crypt( cPassword ) )      + " " 
+   end if
+
    cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
@@ -443,6 +467,16 @@ METHOD getNombreUsuarioWhereNetName( cNetName ) CLASS SQLUsuariosModel
    cSQL        +=       "AND ajustables.ajustable_tipo = 'usuarios'"
 
 RETURN ( ::getDatabase():getValue( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD isPasswordExclude( cPassword )
+
+   if ( "NOPASSWORD" $ appParamsMain() .or. "NOPASSWORD" $ appParamsSecond() )
+      RETURN ( .t. )
+   end if 
+                                    
+RETURN ( alltrim( cPassword ) == __encryption_key__ )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -595,7 +629,7 @@ METHOD Activate() CLASS UsuariosView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_businesspeople_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog
 
@@ -770,7 +804,9 @@ CLASS UsuariosLoginView FROM SQLBaseView
    DATA aComboUsuarios           
 
    METHOD Activate()
-      METHOD onActivate()
+      METHOD loadUsers()
+      METHOD loadSuperAdmin() 
+
       METHOD Validate()
 
    METHOD sayError( cError )  INLINE ( ::oSayError:setText( cError ), ::oSayError:Show(), dialogSayNo( ::oDialog ) )
@@ -779,7 +815,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD onActivate() CLASS UsuariosLoginView
+METHOD loadUsers() CLASS UsuariosLoginView
 
    ::cGetPassword          := space( 100 )
    ::aComboUsuarios        := ::oController:oModel:getArrayNombres()
@@ -789,9 +825,17 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS UsuariosLoginView 
+METHOD loadSuperAdmin() CLASS UsuariosLoginView
 
-   ::onActivate()
+   ::cGetPassword          := space( 100 )
+   ::aComboUsuarios        := { __admin_name__ }
+   ::cComboUsuario         := __admin_name__
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS UsuariosLoginView 
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "LOGIN" 
@@ -816,6 +860,7 @@ METHOD Activate() CLASS UsuariosLoginView
    REDEFINE SAY   ::oSayError ;
       ID          120 ;
       COLOR       Rgb( 183, 28, 28 ) ;
+      FONT        getBoldFont() ;
       OF          ::oDialog
 
    REDEFINE BUTTON ;

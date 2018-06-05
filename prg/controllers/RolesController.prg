@@ -46,13 +46,14 @@ METHOD New() CLASS RolesController
 
    ::cTitle                := "Roles"
 
-   ::setName( "Roles" )
+   ::cName                 := "roles" 
 
    ::lTransactional        := .t.
 
    ::lConfig               := .t.
 
-   ::hImage                := { "16" => "GC_ID_CARDS_16" }
+   ::hImage                := {  "16" => "gc_id_cards_16",;
+                                 "48" => "gc_id_cards_48" }
 
    ::oModel                := SQLRolesModel():New( self )
 
@@ -67,8 +68,6 @@ METHOD New() CLASS RolesController
    ::oPermisosController   := PermisosController():New( self )
 
    ::oAjustableController  := AjustableController():New( self )
-
-   ::oFilterController:setTableToFilter( ::getName() )
 
    ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } )  
    ::setEvent( 'closedDialog',   {|| ::oDialogView:closedDialog() } )  
@@ -148,7 +147,6 @@ RETURN ( .t. )
 
 METHOD saveConfig()
 
-   
    ::oAjustableController:oModel:setRolMostrarRentabilidad( ::lMostrarRentabilidad, ::cUuidRol )
 
    ::oAjustableController:oModel:setRolCambiarPrecios( ::lCambiarPrecios, ::cUuidRol )
@@ -243,7 +241,7 @@ METHOD getInsertRolesSentence()
 
    local cStatement 
 
-   cStatement  := "INSERT IGNORE INTO " + ::cTableName + " "
+   cStatement  := "INSERT IGNORE INTO " + ::getTableName() + " "
    cStatement  +=    "( uuid, nombre ) "
    cStatement  += "VALUES "
    cStatement  +=    "( UUID(), 'Super administrador' ), "
@@ -361,67 +359,69 @@ RETURN ( self )
 
 METHOD Activate() CLASS RolesView
 
-   local oDlg
-   local oBmpGeneral
-
-   DEFINE DIALOG  oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ROL" ;
       TITLE       ::lblTitle() + "Rol" 
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "GC_ID_CARDS_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
 
    REDEFINE GET   ::getModel():hBuffer[ "id" ] ;
       ID          100 ;
       WHEN        ( .f. ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE COMBOBOX ::cComboPermiso ;
       ID          120 ;
       ITEMS       ::aComboPermisos ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( ::Save( oDlg ) )
+      ACTION      ( ::Save( ::oDialog ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( ::oDialog:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| ::Save( oDlg ) } )
+   ::oDialog:AddFastKey( VK_F5, {|| ::Save() } )
 
-   oDlg:Activate( , , , .t. )
+   ::oDialog:Activate( , , , .t. )
 
-   oBmpGeneral:end()
+   ::oBitmap:end()
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD Save( oDlg )
+METHOD Save()
 
-   if !( validateDialog( oDlg ) )
+   if !( validateDialog( ::oDialog ) )
       RETURN ( .f. )
    end if 
 
-   oDlg:end( IDOK )
+   ::oDialog:end( IDOK )
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

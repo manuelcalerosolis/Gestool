@@ -84,15 +84,30 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    appLoadAds()
 
+   xbrNumFormat( "E", .t. )
+
+   // Administracion SQL-------------------------------------------------------
+
+   if ( "ADMINSQL" $ appParamsMain() ) 
+
+      getSQLDatabase():ConnectWithoutDataBase()
+
+      SQLGestoolMigrations():Run()
+
+      SQLGestoolSeeders():Run()
+         
+      if UsuariosController():New():isLoginSuperAdmin()
+         CreateAdminSQLWindow( oIconApp )
+      end if
+
+      RETURN ( nil )
+
+   end if 
+
    // Motor de bases de datos--------------------------------------------------
 
    if ( "ADMINISTRADOR" $ appParamsMain() )
       TDataCenter():lAdministratorTask()
-      RETURN ( nil )
-   end if
-
-   if ( "CHECKDATABASE" $ appParamsMain() )
-      SQLMigrations():CheckDatabase()
       RETURN ( nil )
    end if
 
@@ -183,12 +198,10 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
       RETURN .f.
    end if
 
-   XbrNumFormat( "E", .t. )
-
    do case
       case ( "TACTIL" $ appParamsMain() )
          
-         if UsuariosController():New():isTactilLogin()
+         if UsuariosController():New():isLoginTactil()
             CreateMainTactilWindow( oIconApp )
          end if
 
@@ -196,12 +209,6 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
          if AccessCode():loadTableConfiguration()
             CreateMainTabletWindow( oIconApp )
-         end if
-
-      case ( "ADMINSQL" $ appParamsMain() ) 
-
-         if UsuariosController():New():isLogin()
-            CreateAdminSqlWindow( oIconApp )
          end if
 
       case ( "SQL" $ appParamsMain() ) 

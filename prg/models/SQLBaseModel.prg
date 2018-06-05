@@ -68,7 +68,7 @@ CLASS SQLBaseModel
    METHOD setDatabase( oDb )                          INLINE ( ::oDatabase := oDb )
    METHOD getDatabase()                               INLINE ( if( empty( ::oDatabase ), getSQLDatabase(), ::oDatabase ) )
 
-   METHOD getTableName()                              INLINE ( ::cTableName )
+   METHOD getTableName()                              INLINE ( "gestool." + ::cTableName )
 
    // Columns-------------------------------------------------------------------
 
@@ -531,7 +531,10 @@ METHOD getCreateTableSentence( cDatabaseMySQL )
    
    local cSQLCreateTable 
 
-   DEFAULT cDatabaseMySQL  := ::oDatabase:cDatabaseMySQL
+   if empty( cDatabaseMySQL )
+      msgstop( "Error al crear la tabla " + ::cTableName + " no se proporciono el nombre de la base de datos" )
+      RETURN ( "" )
+   end if 
 
    cSQLCreateTable         := "CREATE TABLE " + cDatabaseMySQL + "." + ::cTableName + " ( "
 
@@ -539,16 +542,12 @@ METHOD getCreateTableSentence( cDatabaseMySQL )
       {| k, hash | if( hhaskey( hash, "create" ), cSQLCreateTable += k + " " + hget( hash, "create" ) + ", ", ) } )
    
    if !empty( ::cConstraints )
-
       cSQLCreateTable      += ::cConstraints + " )"
-
    else
-
       cSQLCreateTable      := chgAtEnd( cSQLCreateTable, ' )', 2 )
-
    end if
 
-   //msgInfo( cSQLCreateTable, "cSQLCreateTable " + ::cTableName, "Create sentence" ) 
+   // msgInfo( cSQLCreateTable, "cSQLCreateTable " + ::cTableName, "Create sentence" ) 
 
 RETURN ( cSQLCreateTable )
 
@@ -661,7 +660,7 @@ METHOD getInsertSentence( hBuffer, lIgnore )
       ::cSQLInsert   += "IGNORE "
    end if 
 
-   ::cSQLInsert      += "INTO " + ::cTableName + " ( "
+   ::cSQLInsert      += "INTO " + ::getTableName() + " ( "
 
    hEval( hBuffer, {| k, v | if( k != ::cColumnKey, ::cSQLInsert += k + ", ", ) } )
 
@@ -687,7 +686,7 @@ METHOD getUpdateSentence( hBuffer )
 
    hBuffer              := ::setUpdatedTimeStamp( hBuffer )
 
-   ::cSQLUpdate         := "UPDATE " + ::cTableName + " SET "
+   ::cSQLUpdate         := "UPDATE " + ::getTableName() + " SET "
 
    for each uValue in hBuffer
       if ( uValue:__enumkey() != ::cColumnKey )
@@ -735,7 +734,7 @@ RETURN ( cSQLUpdate )
 
 METHOD getDeleteSentenceByUuid( uUuid )
 
-   local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+   local cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
                            "WHERE uuid IN ( " 
 
    if hb_isarray( uUuid )
@@ -753,7 +752,7 @@ RETURN ( cSentence )
 
 METHOD getDeleteSentenceWhereParentUuid( aUuid )
 
-   local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+   local cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
                            "WHERE parent_uuid IN ( " 
 
    aeval( aUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
@@ -1236,7 +1235,7 @@ RETURN ( ::getDatabase():getValue( cSql ) )
 METHOD getHash( cBy, cId )
 
    local cSql  := "SELECT * " 
-   cSql        +=    "FROM " + ::cTableName                             + " "
+   cSql        +=    "FROM "+ ::getTableName()                          + " "
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
 
 RETURN ( atail( ::getDatabase():selectTrimedFetchHash( cSql ) ) )

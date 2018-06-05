@@ -203,8 +203,6 @@ FUNCTION CreateMainSQLWindow( oIconApp )
 
    oWnd:Cargo                 := appParamsMain()
 
-   oWnd:bKeyDown              := { | nKey | StdKey( nKey ) }  
-
    // Mensajes-----------------------------------------------------------------
 
    oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
@@ -2765,7 +2763,7 @@ RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION CreateMainSQLAcceso( oWnd )
+FUNCTION CreateMainSQLAcceso()
 
    local oAcceso
    local oGrupo
@@ -3487,7 +3485,7 @@ FUNCTION CreateAdminSQLAcceso()
    oItemGeneral:lShow   := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 5
+   oGrupo:nBigItems     := 6
    oGrupo:cPrompt       := ''
    oGrupo:cLittleBitmap := "gc_factory_16"
    oGrupo:cBigBitmap    := "gc_factory_32"
@@ -3518,8 +3516,8 @@ FUNCTION CreateAdminSQLAcceso()
    oItem:cMessage       := 'Roles'
    oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
    oItem:cId            := "usuarios_roles"
-   oItem:cBmp           := "GC_ID_CARDS_16"
-   oItem:cBmpBig        := "GC_ID_CARDS_32"
+   oItem:cBmp           := "gc_id_cards_16"
+   oItem:cBmpBig        := "gc_id_cards_32"
    oItem:lShow          := .f.
 
    oItem                := oItemGeneral:Add()
@@ -3528,8 +3526,8 @@ FUNCTION CreateAdminSQLAcceso()
    oItem:cMessage       := 'Permisos'
    oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
    oItem:cId            := "usuarios_permisos"
-   oItem:cBmp           := "GC_ID_BADGE_16"
-   oItem:cBmpBig        := "GC_ID_BADGE_32"
+   oItem:cBmp           := "gc_id_badge_16"
+   oItem:cBmpBig        := "gc_id_badge_32"
    oItem:lShow          := .f.
 
    oItem                := oItemGeneral:Add()
@@ -3542,11 +3540,19 @@ FUNCTION CreateAdminSQLAcceso()
    oItem:cBmpBig        := "gc_user_headset_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Salir'
+   oItem:cMessage       := 'Salir'
+   oItem:bAction        := {|| if( !empty( oWnd() ), oWnd():End(), ) }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_door_open2_16"
+   oItem:cBmpBig        := "gc_door_open2_32"
+   oItem:lShow          := .f.
+
 RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
-
-
 
 FUNCTION IsReport()
 
@@ -7211,12 +7217,6 @@ RETURN( cNif )
 
 FUNCTION CreateAdminSQLWindow( oIconApp )
 
-   if !( lInitCheck() )
-      RETURN nil
-   end if 
-
-   // Carga o no la imagen de fondo--------------------------------------------
-
    DEFINE WINDOW oWnd ;
       FROM                    0, 0 TO 26, 82;
       TITLE                   "Administrador : " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
@@ -7231,8 +7231,6 @@ FUNCTION CreateAdminSQLWindow( oIconApp )
    // Set the bar messages-----------------------------------------------------
 
    oWnd:Cargo                 := appParamsMain()
-
-   oWnd:bKeyDown              := { | nKey | StdKey( nKey ) }  
 
    // Mensajes-----------------------------------------------------------------
 
