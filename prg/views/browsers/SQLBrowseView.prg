@@ -12,12 +12,6 @@ CLASS SQLBrowseView
 
    DATA oController
 
-   DATA nId
-
-   DATA cColumnOrder
-
-   DATA cColumnOrientation
-
    DATA lFooter                              INIT .f.
    
    DATA lFastEdit                            INIT .f.
@@ -25,8 +19,6 @@ CLASS SQLBrowseView
    DATA lMultiSelect                         INIT .t.
 
    DATA nMarqueeStyle                        INIT MARQSTYLE_HIGHLROWRC
-
-   DATA lRestoreState                        INIT .t.
 
    METHOD New( oController )
    METHOD End()
@@ -44,9 +36,6 @@ CLASS SQLBrowseView
 
    METHOD getBrowse()                        INLINE ( ::oBrowse )
    METHOD getBrowseSelected()                INLINE ( ::oBrowse:aSelected )
-
-   METHOD restoreStateFromModel()   
-   METHOD saveStateToModel()         
 
    METHOD getColumnByHeader( cHeader )       INLINE ( ::oBrowse:getColumnByHeader( cHeader ) )
    METHOD getColumnOrder( cSortOrder )       INLINE ( ::oBrowse:getColumnOrder( cSortOrder ) )
@@ -72,6 +61,8 @@ CLASS SQLBrowseView
    METHOD setViewTypeToNavigator()           INLINE ( ::oBrowse:setViewType( "navigator" ) )
    METHOD setViewTypeToSelector()            INLINE ( ::oBrowse:setViewType( "selector" ) )
    METHOD getViewType()                      INLINE ( ::oBrowse:getViewType() )
+
+   // Controller---------------------------------------------------------------
 
    METHOD setController( oController )       INLINE ( ::oController := oController )
    METHOD getController()                    INLINE ( ::oController )
@@ -115,18 +106,13 @@ CLASS SQLBrowseView
 
    // State--------------------------------------------------------------------
 
-   METHOD saveToModel()
+   METHOD restoreState()                     INLINE ( if( !empty( ::oController ), ::oController:restoreState(), ) )
 
-   METHOD saveIdToModel( nId )
-   METHOD getIdFromModel()
-
-   METHOD gotoIdFromModel()
-   
-   METHOD saveColumnOrderToModel()
-   METHOD getColumnOrderFromModel()
-
-   METHOD saveColumnOrientationToModel()
-   METHOD getColumnOrientationFromModel()
+   METHOD setId( nId )
+   METHOD setState( cBrowseState )
+  
+   METHOD getColumnSortOrder()
+   METHOD getColumnSortOrientation()
 
 ENDCLASS
 
@@ -135,18 +121,6 @@ ENDCLASS
 METHOD New( oController )
 
    ::oController              := oController
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD saveToModel()
-
-   ::saveIdToModel()
-
-   ::saveColumnOrderToModel()
-
-   ::saveColumnOrientationToModel()
 
 RETURN ( Self )
 
@@ -287,7 +261,9 @@ METHOD ActivateMDI( oWindow, nTop, nLeft, nRight, nBottom )
 
    ::addColumns()
 
-   ::CreateFromCode()
+   ::createFromCode()
+
+   ::restoreState()
 
 RETURN ( Self )
 
@@ -323,37 +299,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveIdToModel()
-
-   local nId   
-
-   if empty( ::getRowSet() )
-      RETURN ( self )
-   end if 
-
-   if empty( ::getModel() )
-      RETURN ( self )
-   end if 
-
-   nId               := ::getRowSet():fieldGet( ::getModel():cColumnKey )
-
-   if !empty( nId )
-      ::oController:setIdView( ::getViewType(), ::getName(), nId )
-   end if 
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getIdFromModel()
-
-RETURN ( ::oController:getIdView( ::getViewType(), ::getName() ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD gotoIdFromModel()
-
-   local nId         := ::getIdFromModel()
+METHOD setId( nId )
 
    if empty( nId )
       RETURN ( Self )
@@ -367,77 +313,42 @@ RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
-METHOD saveColumnOrderToModel()
+METHOD getColumnSortOrder()
 
-   local cColumnOrder   
+   local oColumnOrder   := ::getColumnOrder()
 
-   if empty( ::oBrowse )
-      RETURN ( Self )
+   if !empty( oColumnOrder )
+      RETURN ( oColumnOrder:cSortOrder )
    end if 
 
-   aeval( ::oBrowse:aCols, {|o| if( !empty( o:cOrder ), cColumnOrder := o:cSortOrder, ) } )
-
-   if !empty( cColumnOrder )
-      ::oController:setColumnOrderView( ::getViewType(), ::getName(), cColumnOrder )
-   end if 
-
-RETURN ( Self )
+RETURN ( "" )
 
 //------------------------------------------------------------------------//
 
-METHOD getColumnOrderFromModel()
+METHOD getColumnSortOrientation()
 
-   local cColumnOrder
+   local oColumnOrder   := ::getColumnOrder()
 
-   cColumnOrder   := ::oController:getColumnOrderView( ::getViewType(), ::getName() )
-
-RETURN ( cColumnOrder )
-
-//------------------------------------------------------------------------//
-
-METHOD saveColumnOrientationToModel()
-
-   local cColumnOrientation
-
-   if empty( ::oBrowse )
-      RETURN ( Self )
+   if !empty( oColumnOrder )
+      RETURN ( oColumnOrder:cOrder )
    end if 
 
-   aeval( ::oBrowse:aCols, {|o| if( !empty( o:cOrder ), cColumnOrientation := o:cOrder, ) } )
-
-   if !empty( cColumnOrientation )
-      ::oController:setColumnOrientationView( ::getViewType(), ::getName(), cColumnOrientation )
-   end if 
-
-RETURN ( Self )
+RETURN ( "" )
 
 //------------------------------------------------------------------------//
 
-METHOD getColumnOrientationFromModel()
-
-   local cColumnOrientation
-
-   cColumnOrientation   := ::oController:getColumnOrientationView( ::getViewType(), ::getName() )
-
-RETURN ( cColumnOrientation )
-
-//------------------------------------------------------------------------//
-
-METHOD setColumnOrder( cSortOrder, cSortOrientation )
+METHOD setColumnOrder( cColumnOrder, cColumnOrientation )
 
    local oColumn
 
-   DEFAULT cSortOrder         := ::getColumnOrderFromModel()
-   DEFAULT cSortOrientation   := ::getColumnOrientationFromModel()
-
-   oColumn                    := ::getColumnOrder( cSortOrder )
+   oColumn                    := ::getColumnOrder( cColumnOrder )
 
    if empty( oColumn )
       RETURN ( Self )
    end if 
 
-   if !empty( cSortOrientation )
-      oColumn:cOrder          := cSortOrientation
+   if !empty( cColumnOrientation )
+      oColumn:cOrder          := cColumnOrientation
    end if 
 
 RETURN ( Self )
@@ -458,13 +369,9 @@ RETURN ( oColumn:cHeader )
 
 //------------------------------------------------------------------------//
 
-METHOD restoreStateFromModel()
-
-   local cBrowseState
+METHOD setState( cBrowseState )
 
    ::oBrowse:getOriginalState()
-
-   cBrowseState         := ::oController:getStateView( ::getViewType(), ::getName() )
 
    if !empty( cBrowseState )
       ::oBrowse:restoreState( cBrowseState )
@@ -474,10 +381,3 @@ RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
-METHOD saveStateToModel()
-
-   ::oController:setStateView( ::getViewType(), ::getName(), ::saveState() )
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//

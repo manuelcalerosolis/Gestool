@@ -57,8 +57,6 @@ METHOD New() CLASS EmpresasController
    
    ::Super:New()
 
-   ::oNavigatorView:lRestoreState   := .f.
-
    ::oModel                         := SQLEmpresasModel():New( self )
 
    ::oBrowseView                    := EmpresasBrowseView():New( self )

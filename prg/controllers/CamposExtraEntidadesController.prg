@@ -327,7 +327,7 @@ CLASS SQLCamposExtraEntidadesCompanyModel FROM SQLCamposExtraEntidadesModel
 
    METHOD getTableName()                     INLINE ( Company():getTableName( ::cTableName ) )
 
-END CLASS
+END CLASS 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

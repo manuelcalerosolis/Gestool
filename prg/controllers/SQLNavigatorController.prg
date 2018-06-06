@@ -75,6 +75,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
    METHOD showEditAndDeleteButtonFilter()
 
    METHOD getIds()                                    INLINE ( ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected ) )
+   METHOD getBrowseViewType()                         INLINE ( ::oBrowseView:getViewType() )
 
    // Filters manege-----------------------------------------------------------
 
@@ -108,6 +109,9 @@ CLASS SQLNavigatorController FROM SQLBaseController
                                                                      ::buildLikeFilter( cField, cValue ), ) )
 
    // Vistas manege -----------------------------------------------------------
+
+   METHOD restoreState()
+   METHOD saveState()
 
    METHOD setIdView( cType, cName, nId )              INLINE ( iif( !empty( ::oViewController ), ::oViewController:setId( cType, cName, nId ), ) )
    METHOD getIdView( cType, cName )                   INLINE ( iif( !empty( ::oViewController ), ::oViewController:getId( cType, cName ), ) )
@@ -150,8 +154,6 @@ RETURN ( self )
 METHOD End()
 
    cursorWait()
-
-   ::oBrowseView:saveToModel()
 
    if ::lEnableWindowsBar
       ::DisableWindowsBar()
@@ -211,8 +213,6 @@ METHOD activateNavigatorView()
 
       ::oNavigatorView:Activate()
 
-      ::oBrowseView:gotoIdFromModel()
-
       ::EnableWindowsBar()
 
    endif 
@@ -245,6 +245,28 @@ METHOD activateSelectorView( lCenter )
    end if
 
 RETURN ( ::oSelectorView:Activate( lCenter ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD restoreState()
+
+   local nId                  := ::getIdView( ::getBrowseViewType(), ::getName() )
+   local cColumnOrder         := ::getColumnOrderView( ::getBrowseViewType(), ::getName() )
+   local cColumnOrientation   := ::getColumnOrientationView( ::getBrowseViewType(), ::getName() )
+   
+   ::oBrowseView:setColumnOrder( cColumnOrder, cColumnOrientation )
+
+   ::oBrowseView:setId( nId )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveState()
+
+   msgalert( ::getRowSet:fieldget( "id" ), "id" )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
