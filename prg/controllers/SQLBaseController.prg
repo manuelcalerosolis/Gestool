@@ -65,7 +65,7 @@ CLASS SQLBaseController
 
    METHOD getModel()                                  INLINE ( ::oModel )
    METHOD getModelColumnKey()                         INLINE ( iif( !empty( ::oModel ), ::oModel:cColumnKey, ) )
-   METHOD getModelTableName()                         INLINE ( iif( !empty( ::oModel ), ::oModel:cTableName, ) )
+   METHOD getModelTableName()                         INLINE ( iif( !empty( ::oModel ), ::oModel:getTableName(), ) )
    METHOD getModelColumns()                           INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
    METHOD getModelExtraColumns()                      INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
    

@@ -3404,8 +3404,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Campos extra'
    oItem:cMessage       := 'Solicitar campos extra'
-   oItem:bAction        := {|| CamposExtraController():New():ActivateNavigatorView() }
-   oItem:cId            := "asistencia_remota"
+   oItem:bAction        := {|| CamposExtraCompanyController():New():ActivateNavigatorView() }
+   oItem:cId            := "campos_extra"
    oItem:cBmp           := "gc_form_plus2_16"
    oItem:cBmpBig        := "gc_form_plus2_32"
    oItem:lShow          := .f.
@@ -3485,7 +3485,7 @@ FUNCTION CreateAdminSQLAcceso()
    oItemGeneral:lShow   := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 6
+   oGrupo:nBigItems     := 7
    oGrupo:cPrompt       := ''
    oGrupo:cLittleBitmap := "gc_factory_16"
    oGrupo:cBigBitmap    := "gc_factory_32"
@@ -3528,6 +3528,16 @@ FUNCTION CreateAdminSQLAcceso()
    oItem:cId            := "usuarios_permisos"
    oItem:cBmp           := "gc_id_badge_16"
    oItem:cBmpBig        := "gc_id_badge_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Campos extra'
+   oItem:cMessage       := 'Solicitar campos extra'
+   oItem:bAction        := {|| CamposExtraController():New():ActivateNavigatorView() }
+   oItem:cId            := "campos_extra"
+   oItem:cBmp           := "gc_form_plus2_16"
+   oItem:cBmpBig        := "gc_form_plus2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemGeneral:Add()

@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS ClientesValidator FROM SQLCompanyValidator
+CLASS ClientesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

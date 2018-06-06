@@ -231,7 +231,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS OrdenComandasValidator FROM SQLCompanyValidator
+CLASS OrdenComandasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

@@ -60,7 +60,7 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD setOriginalState()                    INLINE ( if( !empty( ::cOriginal ), ::restoreState( ::cOriginal ), ) )
 
    METHOD setViewType( cViewType )              INLINE ( ::cViewType := cViewType )
-   METHOD getViewType( )                        INLINE ( ::cViewType )
+   METHOD getViewType()                         INLINE ( ::cViewType )
 
    METHOD setFilterInRowSet( cFilterExpresion )
 
@@ -160,7 +160,7 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
       MenuAddItem()
 
-      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::saveStateToModel() }, , "gc_table_selection_column_disk_16", oMenu )
+      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::oController:saveState() }, , "gc_table_selection_column_disk_16", oMenu )
 
       MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::setOriginalState() }, , "gc_table_selection_column_refresh_16", oMenu )
 

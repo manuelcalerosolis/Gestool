@@ -51,10 +51,6 @@ METHOD New() CLASS EmpresasController
 
    ::lConfig                        := .t.
 
-   ::lFilterController              := .f.
-
-   ::lVistaModel                    := .f.
-
    ::hImage                         := {  "16" => "gc_factory_16",;
                                           "32" => "gc_factory_32",;
                                           "48" => "gc_factory_48" }
@@ -103,10 +99,17 @@ RETURN ( Self )
 
 METHOD End()
 
-   if !empty( ::oAjustableController )
-      ::oAjustableController:End()
-      ::oAjustableController  := nil
-   end if 
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oCamposExtraValoresController:End()
+   
+   ::oAjustableController:End()
+
+   ::oDireccionesController:End()
+
+   ::oDelegacionesController:End()
 
    ::Super:End()
 
@@ -552,4 +555,6 @@ METHOD getNombres() CLASS EmpresasRepository
 RETURN ( aNombres )
 
 //---------------------------------------------------------------------------//
+
+
 

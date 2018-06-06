@@ -3,6 +3,20 @@
 
 //---------------------------------------------------------------------------//
 
+CLASS CamposExtraCompanyController FROM CamposExtraController
+
+   METHOD getModel()                   INLINE ( ::oModel := SQLCamposExtraCompanyModel():New( self ) )
+
+   METHOD getLevel()                   INLINE ( ::nLevel := Auth():Level( ::getName() ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 CLASS CamposExtraController FROM SQLNavigatorController
 
    DATA oCamposExtraEntidadesController
@@ -12,6 +26,10 @@ CLASS CamposExtraController FROM SQLNavigatorController
    METHOD End()
 
    METHOD deleteEntitiesWhereEmpty()
+
+   METHOD getModel()                   INLINE ( ::oModel := SQLCamposExtraModel():New( self ) )
+
+   METHOD getLevel()                   INLINE ( nil )
 
 END CLASS
 
@@ -27,13 +45,14 @@ METHOD New() CLASS CamposExtraController
 
    ::lTransactional                    := .t.
 
-   ::nLevel                            := Auth():Level( ::getName() )
 
    ::hImage                            := {  "16" => "gc_form_plus2_16",;
                                              "32" => "gc_form_plus2_32",;
                                              "48" => "gc_form_plus2_48" }
 
-   ::oModel                            := SQLCamposExtraModel():New( self )
+   ::getLevel()
+
+   ::getModel()
 
    ::oBrowseView                       := CamposExtraBrowseView():New( self )
 
@@ -42,8 +61,6 @@ METHOD New() CLASS CamposExtraController
    ::oValidator                        := CamposExtraValidator():New( self, ::oDialogView )
 
    ::oCamposExtraEntidadesController   := CamposExtraEntidadesController():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::setEvent( 'edited',      {|| ::deleteEntitiesWhereEmpty() } )
    ::setEvent( 'appended',    {|| ::deleteEntitiesWhereEmpty() } )
@@ -430,7 +447,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraValidator FROM SQLCompanyValidator
+CLASS CamposExtraValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -458,7 +475,19 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCamposExtraModel FROM SQLCompanyModel
+CLASS SQLCamposExtraCompanyModel FROM SQLCamposExtraModel
+
+   METHOD getTableName()   INLINE ( Company():getTableName( ::cTableName ) )
+
+END CLASS
+   
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLCamposExtraModel FROM SQLBaseModel
 
    DATA cTableName                           INIT "campos_extra"
 
@@ -480,15 +509,13 @@ METHOD getColumns() CLASS SQLCamposExtraModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getEmpresaColumns()
-
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
                                              "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "requerido",         {  "create"    => "BIT"                                     ,;
+   hset( ::hColumns, "requerido",         {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| .f. } }                               )
 
    hset( ::hColumns, "tipo",              {  "create"    => "VARCHAR( 10 )"                           ,;

@@ -11,13 +11,9 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA oDialogModalView
 
-   DATA lFilterController                             INIT .t.
-
    DATA oFilterController 
 
-   DATA lVistaModel                                   INIT .t.
-
-   DATA oVistaModel
+   DATA oViewController
 
    DATA lDocuments                                    INIT .f.
 
@@ -41,6 +37,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
    METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) )
 
    METHOD buildRowSetSentence() 
+   METHOD buildRowSetSentenceNavigator()              INLINE ( ::buildRowSetSentence( 'navigator' ) )
 
    METHOD activateNavigatorView()
 
@@ -109,6 +106,23 @@ CLASS SQLNavigatorController FROM SQLBaseController
                                                                      ::buildSmallerFilter( cField, cValue ), ) )
    METHOD buildCustomLikeFilter( cField, cValue )     INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
                                                                      ::buildLikeFilter( cField, cValue ), ) )
+
+   // Vistas manege -----------------------------------------------------------
+
+   METHOD setIdView( cType, cName, nId )              INLINE ( iif( !empty( ::oViewController ), ::oViewController:setId( cType, cName, nId ), ) )
+   METHOD getIdView( cType, cName )                   INLINE ( iif( !empty( ::oViewController ), ::oViewController:getId( cType, cName ), ) )
+
+   METHOD setColumnOrderView( cType, cName, cColumnOrder ) ;
+                                                      INLINE ( iif( !empty( ::oViewController ), ::oViewController:setColumnOrder( cType, cName, cColumnOrder ), ) )
+   METHOD getColumnOrderView( cType, cName )          INLINE ( iif( !empty( ::oViewController ), ::oViewController:getColumnOrder( cType, cName ), ) )
+
+   METHOD setColumnOrientationView( cType, cName, cColumnOrientation ) ;
+                                                      INLINE ( iif( !empty( ::oViewController ), ::oViewController:setColumnOrientation( cType, cName, cColumnOrientation ), ) )
+   METHOD getColumnOrientationView( cType, cName )    INLINE ( iif( !empty( ::oViewController ), ::oViewController:getColumnOrientation( cType, cName ), ) )
+
+   METHOD setStateView( cType, cName, cState )        INLINE ( iif( !empty( ::oViewController ), ::oViewController:setState( cType, cName, cState ), ) )
+   METHOD getStateView( cType, cName )                INLINE ( iif( !empty( ::oViewController ), ::oViewController:getState( cType, cName ), ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -123,13 +137,9 @@ METHOD New( oSenderController )
 
    ::oDialogModalView                                 := SQLDialogView():New( self )
 
-   if ::lFilterController
-      ::oFilterController                             := SQLFiltrosController():New( self ) 
-   end if 
+   ::oViewController                                  := SQLConfiguracionVistasController():New( self )
 
-   if ::lVistaModel
-      ::oVistaModel                                   := SQLConfiguracionVistasModel():New( self )
-   end if 
+   ::oFilterController                                := SQLFiltrosController():New( self ) 
 
    ::oWindowsBar                                      := oWndBar()
 
@@ -141,23 +151,22 @@ METHOD End()
 
    cursorWait()
 
+   ::oBrowseView:saveToModel()
+
    if ::lEnableWindowsBar
       ::DisableWindowsBar()
    end if
 
    if !empty( ::oSelectorView )
       ::oSelectorView:End()
-      ::oSelectorView         := nil
+   end if 
+
+   if !empty( ::oViewController )
+      ::oViewController:End() 
    end if 
 
    if !empty( ::oFilterController )
       ::oFilterController:End() 
-      ::oFilterController     := nil
-   end if 
-
-   if !empty( ::oVistaModel )
-      ::oVistaModel:End()
-      ::oVistaModel           := nil
    end if 
 
    ::Super():End()
@@ -170,18 +179,10 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildRowSetSentence()
+METHOD buildRowSetSentence( cType )
 
-   local cColumnOrder
-   local cColumnOrientation 
-
-   if !empty( ::oVistaModel )
-
-      cColumnOrder               := ::oVistaModel:getColumnOrderNavigator( ::getName() )
-
-      cColumnOrientation         := ::oVistaModel:getColumnOrientationNavigator( ::getName() )   
-
-   end if 
+   local cColumnOrder         := ::getColumnOrderView( cType, ::getName() )
+   local cColumnOrientation   := ::getColumnOrientationView( cType, ::getName() )
 
    ::oRowSet:build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
 
@@ -204,12 +205,14 @@ METHOD activateNavigatorView()
 
    ::closeAllWindows()
 
-   ::buildRowSetSentence()   
+   ::buildRowSetSentenceNavigator()   
 
    if !empty( ::oRowSet:get() )
 
       ::oNavigatorView:Activate()
-      
+
+      ::oBrowseView:gotoIdFromModel()
+
       ::EnableWindowsBar()
 
    endif 
@@ -232,6 +235,8 @@ METHOD activateSelectorView( lCenter )
       msgStop( "Acceso no permitido." )
       RETURN ( nil )
    end if
+
+   ::oBrowseView:getFromModel()
 
    ::buildRowSetSentence()   
 

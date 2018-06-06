@@ -12,6 +12,12 @@ CLASS SQLBrowseView
 
    DATA oController
 
+   DATA nId
+
+   DATA cColumnOrder
+
+   DATA cColumnOrientation
+
    DATA lFooter                              INIT .f.
    
    DATA lFastEdit                            INIT .f.
@@ -109,7 +115,11 @@ CLASS SQLBrowseView
 
    // State--------------------------------------------------------------------
 
+   METHOD saveToModel()
+
    METHOD saveIdToModel( nId )
+   METHOD getIdFromModel()
+
    METHOD gotoIdFromModel()
    
    METHOD saveColumnOrderToModel()
@@ -130,7 +140,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD End()
+METHOD saveToModel()
 
    ::saveIdToModel()
 
@@ -138,12 +148,21 @@ METHOD End()
 
    ::saveColumnOrientationToModel()
 
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD End()
+
+   CursorWait()
+
    if !empty( ::oBrowse )
       ::oBrowse:End()
-      ::oBrowse               := nil
    end if 
 
    Self                       := nil
+
+   CursorWE()
 
 RETURN ( nil )
 
@@ -308,10 +327,6 @@ METHOD saveIdToModel()
 
    local nId   
 
-   if !( ::lRestoreState )
-      RETURN ( self )
-   end if 
-
    if empty( ::getRowSet() )
       RETURN ( self )
    end if 
@@ -323,22 +338,22 @@ METHOD saveIdToModel()
    nId               := ::getRowSet():fieldGet( ::getModel():cColumnKey )
 
    if !empty( nId )
-      SQLConfiguracionVistasModel():setId( ::getViewType(), ::getName(), nId )
+      ::oController:setIdView( ::getViewType(), ::getName(), nId )
    end if 
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getIdFromModel()
+
+RETURN ( ::oController:getIdView( ::getViewType(), ::getName() ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD gotoIdFromModel()
 
-   local nId   
-
-   if !( ::lRestoreState )
-      RETURN ( self )
-   end if 
-
-   nId               := SQLConfiguracionVistasModel():getId( ::getViewType(), ::getName() )
+   local nId         := ::getIdFromModel()
 
    if empty( nId )
       RETURN ( Self )
@@ -356,10 +371,6 @@ METHOD saveColumnOrderToModel()
 
    local cColumnOrder   
 
-   if !( ::lRestoreState )
-      RETURN ( self )
-   end if 
-
    if empty( ::oBrowse )
       RETURN ( Self )
    end if 
@@ -367,7 +378,7 @@ METHOD saveColumnOrderToModel()
    aeval( ::oBrowse:aCols, {|o| if( !empty( o:cOrder ), cColumnOrder := o:cSortOrder, ) } )
 
    if !empty( cColumnOrder )
-      SQLConfiguracionVistasModel():setColumnOrder( ::getViewType(), ::getName(), cColumnOrder )
+      ::oController:setColumnOrderView( ::getViewType(), ::getName(), cColumnOrder )
    end if 
 
 RETURN ( Self )
@@ -378,11 +389,7 @@ METHOD getColumnOrderFromModel()
 
    local cColumnOrder
 
-   if !( ::lRestoreState )
-      RETURN ( self )
-   end if 
-
-   cColumnOrder   := SQLConfiguracionVistasModel():getColumnOrder( ::getViewType(), ::getName() )
+   cColumnOrder   := ::oController:getColumnOrderView( ::getViewType(), ::getName() )
 
 RETURN ( cColumnOrder )
 
@@ -392,10 +399,6 @@ METHOD saveColumnOrientationToModel()
 
    local cColumnOrientation
 
-   if !( ::lRestoreState )
-      RETURN ( self )
-   end if 
-
    if empty( ::oBrowse )
       RETURN ( Self )
    end if 
@@ -403,7 +406,7 @@ METHOD saveColumnOrientationToModel()
    aeval( ::oBrowse:aCols, {|o| if( !empty( o:cOrder ), cColumnOrientation := o:cOrder, ) } )
 
    if !empty( cColumnOrientation )
-      SQLConfiguracionVistasModel():setColumnOrientation( ::getViewType(), ::getName(), cColumnOrientation )
+      ::oController:setColumnOrientationView( ::getViewType(), ::getName(), cColumnOrientation )
    end if 
 
 RETURN ( Self )
@@ -414,11 +417,7 @@ METHOD getColumnOrientationFromModel()
 
    local cColumnOrientation
 
-   if !( ::lRestoreState )
-      RETURN ( self )
-   end if 
-
-   cColumnOrientation   := SQLConfiguracionVistasModel():getColumnOrientation( ::getViewType(), ::getName() )
+   cColumnOrientation   := ::oController:getColumnOrientationView( ::getViewType(), ::getName() )
 
 RETURN ( cColumnOrientation )
 
@@ -463,9 +462,9 @@ METHOD restoreStateFromModel()
 
    local cBrowseState
 
-   ::getOriginalState()
+   ::oBrowse:getOriginalState()
 
-   cBrowseState         := SQLConfiguracionVistasModel():getState( ::getViewType(), ::getName() )
+   cBrowseState         := ::oController:getStateView( ::getViewType(), ::getName() )
 
    if !empty( cBrowseState )
       ::oBrowse:restoreState( cBrowseState )
@@ -477,7 +476,7 @@ RETURN ( Self )
 
 METHOD saveStateToModel()
 
-   SQLConfiguracionVistasModel():set( ::getViewType(), ::getName(), ::saveState() )
+   ::oController:setStateView( ::getViewType(), ::getName(), ::saveState() )
 
 RETURN ( Self )
 

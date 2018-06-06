@@ -284,7 +284,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS EntradaSalidaValidator FROM SQLCompanyValidator
+CLASS EntradaSalidaValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

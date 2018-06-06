@@ -246,7 +246,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosValidator FROM SQLCompanyValidator
+CLASS ComentariosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

@@ -6,8 +6,6 @@
 
 CLASS SQLFiltrosController FROM SQLBaseController
 
-   DATA oSender 
-
    DATA hColumns
 
    DATA cName
@@ -32,8 +30,8 @@ CLASS SQLFiltrosController FROM SQLBaseController
 
    METHOD loadedBlankBuffer()
 
-   METHOD setComboFilter( cText )            INLINE ( ::oSender:oWindowsBar:setComboFilter( cText ) )
-   METHOD setComboFilterItem( cText )        INLINE ( ::oSender:oWindowsBar:setComboFilterItem( cText ) )
+   METHOD setComboFilter( cText )            INLINE ( ::oSenderController:oWindowsBar:setComboFilter( cText ) )
+   METHOD setComboFilterItem( cText )        INLINE ( ::oSenderController:oWindowsBar:setComboFilterItem( cText ) )
 
    METHOD setTableToFilter( cTableToFilter ) INLINE ( ::oModel:setTableToFilter( cTableToFilter ) )
    METHOD getTableToFilter()                 INLINE ( ::oModel:getTableToFilter() )
@@ -42,9 +40,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSender )
+METHOD New( oSenderController )
 
-   ::oSender                           := oSender
+   ::oSenderController                 := oSenderController
 
    ::oDialogView                       := SQLFilterView():New( self )
 
@@ -60,7 +58,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End( oSender )
+METHOD End( oSenderController )
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
@@ -118,7 +116,7 @@ RETURN ( ::oModel:getId( cNameFilter, cTableToFilter ) )
 
 METHOD loadedBlankBuffer()
 
-   local cTextFilter    := ::oSender:oWindowsBar:getComboFilter()
+   local cTextFilter    := ::oSenderController:oWindowsBar:getComboFilter()
 
    if empty( cTextFilter )
       RETURN ( Self )   
@@ -134,8 +132,8 @@ RETURN ( Self )
 METHOD Append()
 
    if ::Super:Append()
-      ::oSender:oWindowsBar:addComboFilter( hget( ::oModel:hBuffer, "nombre" ) )
-      ::oSender:oWindowsBar:setComboFilter( hget( ::oModel:hBuffer, "nombre" ) )
+      ::oSenderController:oWindowsBar:addComboFilter( hget( ::oModel:hBuffer, "nombre" ) )
+      ::oSenderController:oWindowsBar:setComboFilter( hget( ::oModel:hBuffer, "nombre" ) )
    end if 
 
 RETURN ( Self )   

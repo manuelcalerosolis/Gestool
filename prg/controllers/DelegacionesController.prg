@@ -19,21 +19,15 @@ END CLASS
 
 METHOD New( oSenderController ) CLASS DelegacionesController
 
+   ::Super:New( oSenderController )
+
    ::cTitle                         := "Delegaciones"
 
    ::cName                          := "delegaciones"
 
-   ::lFilterController              := .f.
-
-   ::lVistaModel                    := .f.
-
    ::hImage                         := {  "16" => "gc_factory_group_16",;
                                           "32" => "gc_factory_group_32",;
                                           "48" => "gc_factory_group_48" }
-
-   ::Super:New( oSenderController )
-
-   ::oNavigatorView:lRestoreState   := .f.
 
    ::oModel                         := SQLDelegacionesModel():New( self )
 
@@ -269,7 +263,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DelegacionesValidator FROM SQLCompanyValidator
+CLASS DelegacionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

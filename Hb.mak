@@ -642,7 +642,7 @@ FamiliasModel.prg                                    				\
 TiposArticulosModel.prg                                    		\
 ContadoresModel.prg                                   			\
 ColumnasUsuariosModel.prg 													\
-SQLConfiguracionVistasModel.prg                      				\
+SQLConfiguracionVistasController.prg                      		\
 PedidosClientesLineasModel.prg 											\
 EmpresasModel.prg 															\
 CajasModel.prg 																\
@@ -1339,7 +1339,7 @@ ArticulosModel.obj                                    			\
 FamiliasModel.obj                                    				\
 TiposArticulosModel.obj                                    		\
 ContadoresModel.obj                                    			\
-SQLConfiguracionVistasModel.obj                      				\
+SQLConfiguracionVistasController.obj                      		\
 PedidosClientesLineasModel.obj 											\
 ColumnasUsuariosModel.obj 													\
 Categoria.obj                                               	\
@@ -2011,7 +2011,7 @@ $(OBJ)\PropiedadesModel.obj      										+
 $(OBJ)\PropiedadesController.obj      									+
 $(OBJ)\PropiedadesLineasModel.obj      								+
 $(OBJ)\PropiedadesLineasController.obj      							+
-$(OBJ)\SQLConfiguracionVistasModel.obj 								+
+$(OBJ)\SQLConfiguracionVistasController.obj 							+
 $(OBJ)\Categoria.obj                                     		+
 $(OBJ)\GroupCustomer.obj                                 		+
 $(OBJ)\GroupCustomerViewSearchNavigator.obj              		+

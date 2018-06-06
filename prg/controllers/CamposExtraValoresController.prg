@@ -428,6 +428,19 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+CLASS SQLCamposExtraValoresCompanyModel FROM SQLCamposExtraValoresModel 
+
+   METHOD getTableName()                              INLINE ( Company():getTableName( ::cTableName ) )
+
+   METHOD getSQLCamposExtraModelTableName()           INLINE ( SQLCamposExtraCompanyModel():getTableName() )
+
+   METHOD getSQLCamposExtraEntidadesModelTableName()  INLINE ( SQLCamposExtraEntidadesCompanyModel():getTableName() )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -444,11 +457,15 @@ CLASS SQLCamposExtraValoresModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   METHOD getListaAttribute( value )            INLINE ( if( empty( value ), {}, hb_deserialize( value ) ) )
+   METHOD getListaAttribute( value )                  INLINE ( if( empty( value ), {}, hb_deserialize( value ) ) )
 
-   METHOD setListaAttribute( value )            INLINE ( hb_serialize( value ) )
+   METHOD setListaAttribute( value )                  INLINE ( hb_serialize( value ) )
 
-   METHOD updateValorWhereUuid( uuid, uValue )  INLINE ( ::updateFieldWhereUuid( uuid, 'valor', uValue ) )
+   METHOD updateValorWhereUuid( uuid, uValue )        INLINE ( ::updateFieldWhereUuid( uuid, 'valor', uValue ) )
+
+   METHOD getSQLCamposExtraModelTableName()           INLINE ( SQLCamposExtraModel():getTableName() )
+
+   METHOD getSQLCamposExtraEntidadesModelTableName()  INLINE ( SQLCamposExtraEntidadesModel():getTableName() )
 
 END CLASS
 
@@ -467,9 +484,9 @@ METHOD getInitialSelect() CLASS SQLCamposExtraValoresModel
    cSQL        +=       "valores.valor as valor, "
    cSQL        +=       "valores.uuid as valor_uuid, "
    cSQL        +=       "entidad.parent_uuid "
-   cSQL        +=    "FROM " + ::cTableName + " valores "
-   cSQL        +=    "INNER JOIN " + SQLCamposExtraEntidadesModel():cTableName + " entidad ON entidad.uuid = valores.campo_extra_entidad_uuid "
-   cSQL        +=    "INNER JOIN " + SQLCamposExtraModel():cTableName + " campos ON campos.uuid = entidad.parent_uuid "
+   cSQL        +=    "FROM " + ::getTableName() + " valores "
+   cSQL        +=    "INNER JOIN " + ::getSQLCamposExtraEntidadesModelTableName() + " entidad ON entidad.uuid = valores.campo_extra_entidad_uuid "
+   cSQL        +=    "INNER JOIN " + ::getSQLCamposExtraModelTableName() + " campos ON campos.uuid = entidad.parent_uuid "
 
    if !empty( ::oController )
       cSQL     += "WHERE entidad.entidad = " + quoted( ::oController:cEntidad )
@@ -503,6 +520,16 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+CLASS CamposExtraValoresCompanyRepository FROM CamposExtraValoresRepository 
+
+   METHOD getSQLCamposExtraModelTableName()           INLINE ( SQLCamposExtraCompanyModel():getTableName() )
+
+   METHOD getSQLCamposExtraEntidadesModelTableName()  INLINE ( SQLCamposExtraEntidadesCompanyModel():getTableName() )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -511,7 +538,12 @@ RETURN ( ::hColumns )
 CLASS CamposExtraValoresRepository FROM SQLBaseRepository
 
    METHOD getTableName()                              INLINE ( SQLCamposExtraValoresModel():getTableName() ) 
+
    METHOD getTableNameCamposExtra()                   INLINE ( SQLCamposExtraModel():getTableName() ) 
+
+   METHOD getSQLCamposExtraModelTableName()           INLINE ( SQLCamposExtraModel():getTableName() )
+
+   METHOD getSQLCamposExtraEntidadesModelTableName()  INLINE ( SQLCamposExtraEntidadesModel():getTableName() )
 
    METHOD getSentenceCampoExtraValoresWhereEntidad( cEntidad )
 
@@ -525,12 +557,15 @@ METHOD getSentenceCampoExtraValoresWhereEntidad( cEntidad ) CLASS CamposExtraVal
 
    local cSQL  
 
-   DEFAULT cEntidad  := 'clientes'
-
-   cSQL              := "SELECT entidad.id, entidad.uuid, entidad.parent_uuid, entidad.entidad, campos.nombre, valores.valor " 
-   cSQL              +=    "FROM campos_extra_entidad entidad "
-   cSQL              +=    "INNER JOIN campos_extra campos ON entidad.parent_uuid = campos.uuid "
-   cSQL              +=    "LEFT JOIN campos_extra_valores valores ON valores.campo_extra_entidad_uuid = entidad.uuid "
+   cSQL              := "SELECT entidad.id, "
+   cSQL              +=    "entidad.uuid, "
+   cSQL              +=    "entidad.parent_uuid, "
+   cSQL              +=    "entidad.entidad, "
+   cSQL              +=    "campos.nombre, "
+   cSQL              +=    "valores.valor " 
+   cSQL              +=    "FROM " + ::getSQLCamposExtraEntidadesModelTableName() + " entidad "
+   cSQL              +=    "INNER JOIN " + ::getSQLCamposExtraModelTableName() + " campos ON entidad.parent_uuid = campos.uuid "
+   cSQL              +=    "LEFT JOIN "+ ::getTableName() + " valores ON valores.campo_extra_entidad_uuid = entidad.uuid "
    cSQL              +=    "WHERE entidad = " + quoted( cEntidad )
 
 RETURN ( cSQL )

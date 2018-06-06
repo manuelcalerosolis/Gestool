@@ -249,7 +249,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CajasValidator FROM SQLCompanyValidator
+CLASS CajasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

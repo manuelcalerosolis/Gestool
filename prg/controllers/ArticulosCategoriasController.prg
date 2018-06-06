@@ -251,7 +251,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosCategoriasValidator FROM SQLCompanyValidator
+CLASS ArticulosCategoriasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

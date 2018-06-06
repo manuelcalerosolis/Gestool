@@ -180,6 +180,8 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLAjustableModel():New() )
 
+   aadd( ::aModels, SQLConfiguracionVistasModel():New() )
+
    aadd( ::aModels, SQLCodigosPostalesModel():New() )
 
    aadd( ::aModels, SQLProvinciasModel():New() )
@@ -187,6 +189,14 @@ METHOD addModels() CLASS SQLGestoolMigrations
    aadd( ::aModels, SQLPaisesModel():New() )
 
    aadd( ::aModels, SQLLenguajesModel():New() )
+
+   aadd( ::aModels, SQLCamposExtraModel():New() )
+
+   aadd( ::aModels, SQLCamposExtraEntidadesModel():New() )
+   
+   aadd( ::aModels, SQLCamposExtraValoresModel():New() )
+
+   aadd( ::aModels, SQLFiltrosModel():New() ) 
 
 RETURN ( ::aModels )
  
@@ -258,12 +268,6 @@ METHOD addModels() CLASS SQLCompanyMigrations
    aadd( ::aModels, SQLArticulosFabricantesModel():New() )
 
    aadd( ::aModels, SQLImagenesModel():New() )
-
-   aadd( ::aModels, SQLCamposExtraModel():New() )
-
-   aadd( ::aModels, SQLCamposExtraEntidadesModel():New() )
-   
-   aadd( ::aModels, SQLCamposExtraValoresModel():New() )
 
    aadd( ::aModels, SQLListinModel():New() )
 
@@ -337,8 +341,6 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLAlmacenesModel():New() )
 
-   aadd( ::aModels, SQLConfiguracionVistasModel():New() )
-
    aadd( ::aModels, SQLTageableModel():New() )
                                       
    aadd( ::aModels, SQLTiposVentasModel():New() )
@@ -374,6 +376,8 @@ METHOD addModels() CLASS SQLCompanyMigrations
    aadd( ::aModels, SQLDescuentosModel():New() ) 
 
    aadd( ::aModels, SQLFacturasClientesModel():New() ) 
+
+   aadd( ::aModels, SQLCamposExtraCompanyModel():New() )
 
 RETURN ( ::aModels )
  

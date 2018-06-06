@@ -412,7 +412,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CuentasBancariasValidator FROM SQLCompanyValidator
+CLASS CuentasBancariasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

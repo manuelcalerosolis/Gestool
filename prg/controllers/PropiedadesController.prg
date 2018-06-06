@@ -271,7 +271,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesValidator FROM SQLCompanyValidator
+CLASS PropiedadesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

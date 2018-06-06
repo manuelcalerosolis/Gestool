@@ -239,7 +239,7 @@ END CLASS
 METHOD New( oController )
 
    if empty( ::hColumns ) .and. empty( ::getColumns() )
-      msgstop( "La definición de columnas no puede estar vacia" / 2 )
+      msgstop( "La definición de columnas no puede estar vacia" )
       RETURN ( Self )
    end if 
 

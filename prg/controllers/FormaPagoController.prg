@@ -490,7 +490,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FormaPagoValidator FROM SQLCompanyValidator
+CLASS FormaPagoValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

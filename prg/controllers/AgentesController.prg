@@ -316,7 +316,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesValidator FROM SQLCompanyValidator
+CLASS AgentesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

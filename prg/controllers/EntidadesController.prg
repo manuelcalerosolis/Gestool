@@ -357,7 +357,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS EntidadesValidator FROM SQLCompanyValidator
+CLASS EntidadesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

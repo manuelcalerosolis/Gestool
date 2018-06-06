@@ -293,7 +293,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TransportistasValidator FROM SQLCompanyValidator
+CLASS TransportistasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

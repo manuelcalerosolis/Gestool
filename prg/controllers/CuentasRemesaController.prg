@@ -311,7 +311,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CuentasRemesaValidator FROM SQLCompanyValidator
+CLASS CuentasRemesaValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

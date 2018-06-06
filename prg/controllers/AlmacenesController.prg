@@ -309,7 +309,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AlmacenesValidator FROM SQLCompanyValidator
+CLASS AlmacenesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
