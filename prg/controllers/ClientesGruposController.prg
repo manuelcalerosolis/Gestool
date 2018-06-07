@@ -208,7 +208,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ClientesGruposValidator FROM SQLBaseValidator
+CLASS ClientesGruposValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -251,9 +251,6 @@ METHOD getColumns() CLASS SQLClientesGruposModel
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
-
-   ::getTimeStampColumns()
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
                                              "default"   => {|| space( 20 ) } }                        )

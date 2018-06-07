@@ -264,7 +264,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UnidadesMedicionGruposLineasValidator FROM SQLBaseValidator
+CLASS UnidadesMedicionGruposLineasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -287,7 +287,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLUnidadesMedicionGruposLineasModel FROM SQLBaseModel
+CLASS SQLUnidadesMedicionGruposLineasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "unidades_medicion_grupos_lineas"
 

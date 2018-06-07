@@ -135,7 +135,7 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesValidator FROM SQLBaseValidator
+CLASS FacturasClientesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  

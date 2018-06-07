@@ -279,7 +279,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TraduccionesValidator FROM SQLBaseValidator
+CLASS TraduccionesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -299,7 +299,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLTraduccionesModel FROM SQLBaseModel
+CLASS SQLTraduccionesModel FROM SQLCompanyModel
 
    DATA cTableName                                 INIT "traducciones"
 

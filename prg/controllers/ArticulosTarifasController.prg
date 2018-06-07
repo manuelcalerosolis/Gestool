@@ -253,7 +253,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTarifasValidator FROM SQLBaseValidator
+CLASS ArticulosTarifasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -280,7 +280,7 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "articulos_tarifas"
 
-   DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( empresa_codigo, codigo )"
+   DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( codigo )"
 
    METHOD getColumns()
 
@@ -310,7 +310,6 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
    hset( ::hColumns, "sistema",              {  "create"    => "TINYINT ( 1 )"                           ,;
                                                 "default"   => {|| "0" } }                               )
 
-   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 

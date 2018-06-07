@@ -330,7 +330,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DivisasMonetariasValidator FROM SQLBaseValidator
+CLASS DivisasMonetariasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -356,7 +356,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLDivisasMonetariasModel FROM SQLBaseModel
+CLASS SQLDivisasMonetariasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "divisas_monetarias"
 
@@ -389,7 +389,7 @@ METHOD getColumns() CLASS SQLDivisasMonetariasModel
    hset( ::hColumns, "simbolo",                 {  "create"    => "VARCHAR( 3 )"                            ,;
                                                    "default"   => {|| space( 3) } }                         )
 
-   hset( ::hColumns, "texto_masculino",         {  "create"    => "BIT"                                     ,;
+   hset( ::hColumns, "texto_masculino",         {  "create"    => "TINYINT( 1 )"                            ,;
                                                    "default"   => {|| .f. } }                               )
 
    hset( ::hColumns, "precio_compra_entero",    {  "create"    => "INTEGER"                                 ,;

@@ -321,7 +321,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DocumentosValidator FROM SQLBaseValidator
+CLASS DocumentosValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -345,7 +345,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLDocumentosModel FROM SQLBaseModel
+CLASS SQLDocumentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "documentos"
 

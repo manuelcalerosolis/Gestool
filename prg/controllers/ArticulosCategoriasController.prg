@@ -251,7 +251,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosCategoriasValidator FROM SQLBaseValidator
+CLASS ArticulosCategoriasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -291,7 +291,6 @@ METHOD getColumns() CLASS SQLArticulosCategoriasModel
 
    hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                     "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                            ,;
                                     "default"   => {|| space( 20 ) } }                        )

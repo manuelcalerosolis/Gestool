@@ -262,7 +262,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TipoIvaValidator FROM SQLBaseValidator
+CLASS TipoIvaValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -284,7 +284,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLTiposIvaModel FROM SQLBaseModel
+CLASS SQLTiposIvaModel FROM SQLCompanyModel
 
    DATA cTableName                              INIT "tipos_iva"
 

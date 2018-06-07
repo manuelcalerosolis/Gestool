@@ -309,7 +309,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AlmacenesValidator FROM SQLBaseValidator
+CLASS AlmacenesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -369,7 +369,6 @@ METHOD getColumns() CLASS SQLAlmacenesModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "almacen_uuid",      {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )

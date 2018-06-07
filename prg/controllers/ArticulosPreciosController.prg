@@ -237,7 +237,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosPreciosValidator FROM SQLBaseValidator
+CLASS ArticulosPreciosValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -257,7 +257,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosPreciosModel FROM SQLBaseModel
+CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_precios"
 

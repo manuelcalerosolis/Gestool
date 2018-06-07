@@ -250,7 +250,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImpuestosEspecialesValidator FROM SQLBaseValidator
+CLASS ImpuestosEspecialesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -276,7 +276,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLImpuestosEspecialesModel FROM SQLBaseModel
+CLASS SQLImpuestosEspecialesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "impuestos_especiales"
 
@@ -306,7 +306,7 @@ METHOD getColumns() CLASS SQLImpuestosEspecialesModel
    hset( ::hColumns, "subcuenta",         {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "aplicar",           {  "create"    => "BIT"                                     ,;
+   hset( ::hColumns, "aplicar",           {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| .f. } }                               )
 
 RETURN ( ::hColumns )
