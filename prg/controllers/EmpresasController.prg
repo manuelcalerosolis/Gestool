@@ -35,9 +35,11 @@ CLASS EmpresasController FROM SQLNavigatorController
 
    METHOD startingActivate()
 
-   METHOD addUpdateButton()
+   METHOD addExtraButtons()
 
    METHOD updateEmpresa()
+
+   METHOD seedEmpresa()
 
 END CLASS
 
@@ -89,7 +91,7 @@ METHOD New() CLASS EmpresasController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
-   ::oNavigatorView:oMenuTreeView:setEvent( 'addedAppendButton',     {|| ::addUpdateButton() } )
+   ::oNavigatorView:oMenuTreeView:setEvent( 'addedRefreshButton',     {|| ::addExtraButtons() } )
 
 RETURN ( Self )
 
@@ -172,15 +174,46 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD addUpdateButton()
+METHOD addExtraButtons()
 
    ::oNavigatorView:oMenuTreeView:AddButton( "Actualizar", "gc_server_client_exchange_16", {|| ::updateEmpresa() }, "T", ACC_APPD ) 
+   
+   ::oNavigatorView:oMenuTreeView:AddButton( "Importar datos", "gc_server_client_exchange_16", {|| ::seedEmpresa() }, "D", ACC_APPD ) 
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD updateEmpresa()
+
+   /*
+   local nSelect
+   local aSelected
+   local cCodigoEmpresa
+   local cNombreEmpresa     
+
+   aSelected               := ::getBrowse():aSelected 
+
+   for each nSelect in aSelected
+
+      ::getRowSet():goToRecNo( nSelect )
+
+      cCodigoEmpresa       := ::getRowSet():fieldGet( 'codigo' )
+      cNombreEmpresa       := alltrim( ::getRowSet():fieldGet( 'nombre' ) )
+
+      msgRun( "Actualizando empresa : " + cNombreEmpresa, "Espere por favor...", {|| SQLCompanyMigrations():Run( cCodigoEmpresa ) }   )
+
+   next
+   */
+   aeval( ::getBrowse():aSelected,;
+            {|nSelect|  ::getRowSet():goToRecNo( nSelect ),;
+                        msgRun( "Actualizando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanyMigrations():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD seedEmpresa()
 
    local nSelect
    local aSelected
@@ -193,10 +226,12 @@ METHOD updateEmpresa()
 
       ::getRowSet():goToRecNo( nSelect )
 
-      cNombreEmpresa       := alltrim( ::getRowSet():fieldGet( 'nombre' ) )
       cCodigoEmpresa       := ::getRowSet():fieldGet( 'codigo' )
+      cNombreEmpresa       := alltrim( ::getRowSet():fieldGet( 'nombre' ) )
 
-      msgRun(  "Actualizando estructura de empresa : " + cNombreEmpresa, "Espere por favor...", {|| SQLCompanyMigrations():Run( cCodigoEmpresa ) } )
+      Auth():guardWhereCodigo( cCodigoEmpresa )
+
+      msgRun( "Importando empresa : " + cNombreEmpresa, "Espere por favor...", {|| SQLCompanySeeders():Run( cCodigoEmpresa ) } )
 
    next
 

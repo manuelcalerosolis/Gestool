@@ -2,40 +2,22 @@
 #include "factu.ch" 
 #include "hdo.ch"
 
+
 //---------------------------------------------------------------------------//
 
-CLASS SQLGestoolSeeders
+CLASS SQLSeeders
 
    DATA aConvert
 
-   METHOD Run()
+   METHOD Run()            VIRTUAL
 
    METHOD Convert()
-
-   METHOD insertEmpresas( dbf ) 
-
-   METHOD insertUsuarios( dbf )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Run() CLASS SQLGestoolSeeders
-
-   ::aConvert  := {  {  "file"   => cPatDat() + "Empresa.Dbf",;
-                        "block"  => {|dbf| ::insertEmpresas( dbf ) } },;
-                     {  "file"   => cPatDat() + "Users.Dbf",;
-                        "block"  => {|dbf| ::insertUsuarios( dbf ) } };
-                  }
-
-   aeval( ::aConvert,;
-      {|hConvert| ::Convert( hget( hConvert, "file" ), hget( hConvert, "block" ) ) } )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Convert( cFile, bBlock ) CLASS SQLGestoolSeeders
+METHOD Convert( cFile, bBlock ) CLASS SQLSeeders
 
    local dbf
 
@@ -57,6 +39,37 @@ METHOD Convert( cFile, bBlock ) CLASS SQLGestoolSeeders
    ( dbf )->( dbclosearea() )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLGestoolSeeders FROM SQLSeeders
+
+   METHOD Run()
+
+   METHOD insertEmpresas( dbf ) 
+
+   METHOD insertUsuarios( dbf )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Run() CLASS SQLGestoolSeeders
+
+   ::aConvert  := {  {  "file"   => cPatDat() + "Empresa.Dbf",;
+                        "block"  => {|dbf| ::insertEmpresas( dbf ) } },;
+                     {  "file"   => cPatDat() + "Users.Dbf",;
+                        "block"  => {|dbf| ::insertUsuarios( dbf ) } };
+                  }
+
+   aeval( ::aConvert,;
+      {|hConvert| ::Convert( hget( hConvert, "file" ), hget( hConvert, "block" ) ) } )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -99,7 +112,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertUsuarios()
+METHOD insertUsuarios() CLASS SQLGestoolSeeders
 
    local hBuffer
 
@@ -120,13 +133,12 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS Seeders
+CLASS SQLCompanySeeders FROM SQLSeeders
 
-   DATA oMsg
+   METHOD Run()
 
-   DATA hConfig
-
-   METHOD New()
+   METHOD SeederTiposImpresoras()
+   METHOD insertTiposImpresoras( dbf )
 
    METHOD runSeederDatos()
    METHOD runSeederEmpresa()
@@ -135,12 +147,9 @@ CLASS Seeders
 
    METHOD getInsertStatement( hCampos, cDataBaseName )
 
-
    METHOD SeederSituaciones()
    METHOD getStatementSituaciones( dbfSitua )
 
-   METHOD SeederTiposImpresoras()
-   METHOD getStatementTiposImpresoras( dbfTipImp )
 
    METHOD SeederMovimientosAlmacen()
    METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
@@ -182,15 +191,30 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oMsg ) CLASS Seeders
+METHOD Run() CLASS SQLCompanySeeders
 
-   ::oMsg            := oMsg
+   msgalert( "SQLGestoolSeeders" )
+
+   ::aConvert     := {  {  "file"   => cPatDat() + "TipImp.Dbf",;
+                           "block"  => {|dbf| ::insertTiposImpresoras( dbf ) } };
+                     }
+
+   aeval( ::aConvert,;
+      {|hConvert| ::Convert( hget( hConvert, "file" ), hget( hConvert, "block" ) ) } )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD runSeederDatos()
+METHOD insertTiposImpresoras() CLASS SQLCompanySeeders
+
+   local hBuffer  := { "nombre" => quoted( field->cTipImp ) }
+
+RETURN ( SQLTiposImpresorasModel():insertIgnoreBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD runSeederDatos() CLASS SQLCompanySeeders
 
    SincronizaListin()
 
@@ -216,7 +240,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD runSeederEmpresa()
+METHOD runSeederEmpresa() CLASS SQLCompanySeeders
 
    SincronizaRemesasMovimientosAlmacen()
 
@@ -253,7 +277,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertStatement( hCampos, cTableName )
+METHOD getInsertStatement( hCampos, cTableName ) CLASS SQLCompanySeeders
 
    local cStatement  
 
@@ -273,7 +297,7 @@ RETURN cStatement
 //--LO DEJO CON EL MÉTODO ANTIGUO PORQUE YA SE HA QUITADO EL CÓDIGO DEL TODO-//
 //---------------------------------------------------------------------------//
 
-METHOD SeederSituaciones() CLASS Seeders
+METHOD SeederSituaciones() CLASS SQLCompanySeeders
 
    local cPath       := cPatDat( .t. )
    local dbfSitua
@@ -310,7 +334,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementSituaciones( dbfSitua )
+METHOD getStatementSituaciones( dbfSitua ) CLASS SQLCompanySeeders
    
    local hCampos        := { "nombre" => quoted( ( dbfSitua )->cSitua ) }
 
@@ -320,7 +344,7 @@ RETURN ( ::getInsertStatement( hCampos, "situaciones" ) )
 //--LO DEJO CON EL MÉTODO ANTIGUO PORQUE YA SE HA QUITADO EL CÓDIGO DEL TODO-//
 //---------------------------------------------------------------------------//
 
-METHOD SeederTiposImpresoras() CLASS Seeders
+METHOD SeederTiposImpresoras() CLASS SQLCompanySeeders
 
    local cPath       := cPatDat( .t. )
    local dbfTipImp
@@ -340,7 +364,7 @@ METHOD SeederTiposImpresoras() CLASS Seeders
    ( dbfTipImp )->( dbgotop() )
    while !( dbfTipImp )->( eof() )
 
-      getSQLDatabase():Exec( ::getStatementTiposImpresoras( dbfTipImp ) )
+      getSQLDatabase():Exec( ::insertTiposImpresoras( dbfTipImp ) )
 
       ( dbfTipImp )->( dbSkip() )
 
@@ -356,11 +380,6 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementTiposImpresoras( dbfTipImp )
-
-   local hCampos        := { "nombre" => quoted( ( dbfTipImp )->cTipImp ) }
-
-RETURN ( ::getInsertStatement( hCampos, "tipos_impresoras" ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -375,7 +394,7 @@ RETURN ( ::getInsertStatement( hCampos, "tipos_impresoras" ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederListin()
+METHOD SeederListin() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatDat() + "\" )
@@ -396,7 +415,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertListin( dbf )
+METHOD insertListin( dbf ) CLASS SQLCompanySeeders
 
    local hBuffer
    local nId
@@ -435,7 +454,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederLenguajes()
+METHOD SeederLenguajes() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatDat() + "\" )
@@ -456,7 +475,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertLenguaje( dbf )
+METHOD insertLenguaje( dbf ) CLASS SQLCompanySeeders
 
    local hBuffer
 
@@ -476,7 +495,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederSqlFiles()
+METHOD SeederSqlFiles() CLASS SQLCompanySeeders
 
    local cStm
    local aFile
@@ -507,7 +526,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederAgentes()
+METHOD SeederAgentes() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
@@ -528,7 +547,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertAgentes( dbf )
+METHOD insertAgentes( dbf ) CLASS SQLCompanySeeders
 
    local nId
    local hBuffer
@@ -570,7 +589,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederTransportistas()
+METHOD SeederTransportistas() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
@@ -591,7 +610,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertTransportista( dbf )
+METHOD insertTransportista( dbf ) CLASS SQLCompanySeeders
 
    local nId
    local hBuffer
@@ -632,7 +651,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederEmpresas() CLASS Seeders
+METHOD SeederEmpresas() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatDat() + "\" )
@@ -653,7 +672,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertEmpresas( dbf ) CLASS Seeders
+METHOD insertEmpresas( dbf ) CLASS SQLCompanySeeders
 
    local nId
    local cSql
@@ -697,7 +716,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederFabricantes() CLASS Seeders
+METHOD SeederFabricantes() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
@@ -718,7 +737,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertFabricantes( dbf ) CLASS Seeders
+METHOD insertFabricantes( dbf ) CLASS SQLCompanySeeders
 
    local nId
    local cSql
@@ -742,7 +761,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederCamposExtra() CLASS Seeders
+METHOD SeederCamposExtra() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
@@ -763,7 +782,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementCamposExtra( dbf ) CLASS Seeders
+METHOD getStatementCamposExtra( dbf ) CLASS SQLCompanySeeders
 
    local aTipo    := {  "Texto", "Número", "Fecha", "Lógico", "Lista" } 
    local hCampos  := {  "uuid"      => quoted( ( dbf )->Uuid ),;
@@ -778,7 +797,7 @@ RETURN ( ::getInsertStatement( hCampos, "campos_extra" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD SeederCamposExtraValores() CLASS Seeders
+METHOD SeederCamposExtraValores() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
@@ -799,7 +818,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementCamposExtraValores( dbf ) CLASS Seeders
+METHOD getStatementCamposExtraValores( dbf ) CLASS SQLCompanySeeders
 
    local hCampos  := {  "uuid"                     => quoted( ( dbf )->Uuid ),;
                         "campo_extra_entidad_uuid" => quoted( CamposExtraModel():getUuid( ( dbf )->cCodTipo ) ),;
@@ -810,7 +829,7 @@ RETURN ( ::getInsertStatement( hCampos, "campos_extra_valores" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS Seeders
+METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS SQLCompanySeeders
 
    local cEntidadUuid   := ""
 
@@ -840,7 +859,7 @@ RETURN ( cEntidadUuid )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederMovimientosAlmacen()
+METHOD SeederMovimientosAlmacen() CLASS SQLCompanySeeders
 
    local dbf
    local cLastRec
@@ -882,7 +901,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SeederMovimientosAlmacenLineas()
+METHOD SeederMovimientosAlmacenLineas() CLASS SQLCompanySeeders
 
    local dbf
    local cLastRec
@@ -924,7 +943,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
+METHOD getStatementSeederMovimientosAlmacen( dbfRemMov ) CLASS SQLCompanySeeders
 
    local hCampos  := {  "empresa" =>            quoted( cCodEmp() ),;
                         "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
@@ -942,7 +961,7 @@ RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementSeederMovimientosAlmacenLineas( dbfHisMov )
+METHOD getStatementSeederMovimientosAlmacenLineas( dbfHisMov ) CLASS SQLCompanySeeders
 
    local hCampos  
 
@@ -964,7 +983,7 @@ RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen_lineas" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD SeederMovimientosAlmacenSeries()
+METHOD SeederMovimientosAlmacenSeries() CLASS SQLCompanySeeders
 
    local dbf
    local cLastRec
@@ -1006,7 +1025,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer )
+METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer ) CLASS SQLCompanySeeders
 
    local hCampos        
 
@@ -1018,7 +1037,7 @@ RETURN ( ::getInsertStatement( hCampos, SQLMovimientosAlmacenLineasNumerosSeries
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
+STATIC FUNCTION SincronizaRemesasMovimientosAlmacen() 
 
    local oBlock
    local oError
@@ -1110,7 +1129,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-FUNCTION SincronizaListin()
+FUNCTION SincronizaListin() 
 
    local oBlock
    local oError

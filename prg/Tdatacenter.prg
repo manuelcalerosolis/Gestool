@@ -771,7 +771,7 @@ METHOD StartAdministratorTask()
 	end if 
 
    if ::lSeeders
-      oSeeder  := Seeders():New( ::oMsg )
+      oSeeder  := SQLSeeders():New( ::oMsg )
    end if
 
    // Recorremos el array de las empresas par actualizarlas--------------------
