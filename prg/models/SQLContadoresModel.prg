@@ -6,11 +6,9 @@
 
 CLASS SQLContadoresModel FROM SQLCompanyModel
 
-   DATA lTran
-
    DATA cTableName                     INIT "contadores"
 
-   DATA cConstraints                   INIT "PRIMARY KEY (id), UNIQUE KEY ( empresa_codigo, documento, serie )"
+   DATA cConstraints                   INIT "PRIMARY KEY (id), UNIQUE KEY ( documento, serie )"
 
    METHOD getColumns()
 
@@ -29,7 +27,8 @@ METHOD getColumns()
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                           "default"   => {|| 0 } }                                 )
 
-   ::getEmpresaColumns()
+   hset( ::hColumns, "usuario_codigo", {  "create"    => "VARCHAR ( 20 )"                          ,;
+                                          "default"   => {|| Auth():Codigo() } }                   )
 
    hset( ::hColumns, "documento",      {  "create"    => "VARCHAR ( 250 )"                         ,;
                                           "default"   => {|| space( 250 ) } }                      )
@@ -63,9 +62,8 @@ RETURN ( ::insertOnDuplicateTransactional( hBuffer ) )
 METHOD isSerie( cDocumento, cSerie )
 
    local cSql  := "SELECT id"                                              + " "
-   cSql        +=    "FROM " + ::cTableName                                + " "
+   cSql        +=    "FROM " + ::getTableName()                            + " "
    cSql        +=    "WHERE documento = " + quoted( cDocumento )           + " "
-   cSql        +=    "AND empresa_codigo = " + quoted( Company():Uuid() )    + " " 
    cSql        +=    "AND serie = " + quoted( cSerie )
 
 RETURN ( !empty( ::getDatabase():getValue( cSql ) ) )
@@ -75,10 +73,9 @@ RETURN ( !empty( ::getDatabase():getValue( cSql ) ) )
 METHOD getLastCounter( cDocumento )
 
    local cSql  := "SELECT serie, contador"                                 + " "
-   cSql        +=    "FROM " + ::cTableName                                + " "
+   cSql        +=    "FROM " + ::getTableName()                            + " "
    cSql        +=    "WHERE documento = " + quoted( cDocumento )           + " "
-   cSql        +=    "AND empresa_codigo = " + quoted( Company():Uuid() )    + " " 
-   cSql        +=    "AND usuario_uuid = " + quoted( Auth():Uuid() )       + " "
+   cSql        +=    "AND usuario_codigo = " + quoted( Auth():Codigo() )   + " "
    cSql        +=    "ORDER BY updated_at DESC"                            + " " 
    cSql        +=    "LIMIT 1"
 
