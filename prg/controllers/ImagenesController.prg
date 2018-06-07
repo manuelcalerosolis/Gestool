@@ -312,7 +312,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesValidator FROM SQLBaseValidator
+CLASS ImagenesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -332,7 +332,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLImagenesModel FROM SQLBaseModel
+CLASS SQLImagenesModel FROM SQLCompanyModel
 
    DATA cTableName                                 INIT "imagenes"
 
@@ -366,7 +366,7 @@ METHOD getColumns() CLASS SQLImagenesModel
    hset( ::hColumns, "imagen",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "principal",         {  "create"    => "BIT"                                     ,;
+   hset( ::hColumns, "principal",         {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| .f. } }                               )
 
 RETURN ( ::hColumns )

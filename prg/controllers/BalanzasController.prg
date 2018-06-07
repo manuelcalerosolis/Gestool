@@ -292,7 +292,7 @@ RETURN( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS BalanzasValidator FROM SQLBaseValidator
+CLASS BalanzasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -318,7 +318,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLBalanzasModel FROM SQLBaseModel
+CLASS SQLBalanzasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "balanzas"
 
@@ -366,7 +366,7 @@ METHOD getColumns() CLASS SQLBalanzasModel
    hset( ::hColumns, "entubamiento",      {  "create"    => "VARCHAR( 1 )"                          ,;
                                              "default"   => {|| space( 1 ) } }                       )
 
-   hset( ::hColumns, "abrir_puerto",      {  "create"    => "BIT"                                     ,;
+   hset( ::hColumns, "abrir_puerto",      {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| .f. } }                               )
 
 

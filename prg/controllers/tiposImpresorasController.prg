@@ -78,7 +78,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLTiposImpresorasModel FROM SQLBaseModel
+CLASS SQLTiposImpresorasModel FROM SQLCompanyModel
 
    DATA cColumnCode              INIT "nombre"
 

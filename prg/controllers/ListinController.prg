@@ -260,7 +260,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ListinValidator FROM SQLBaseValidator
+CLASS ListinValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -284,7 +284,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLListinModel FROM SQLBaseModel
+CLASS SQLListinModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "listin"
 

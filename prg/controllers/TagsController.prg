@@ -155,8 +155,6 @@ METHOD getColumns() CLASS SQLTagsModel
    hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                     "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getEmpresaColumns()
-
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 50 )"                          ,;
                                     "default"   => {|| space( 50 ) } }                       )
 

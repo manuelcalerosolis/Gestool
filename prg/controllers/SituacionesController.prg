@@ -147,7 +147,7 @@ RETURN ( oDlg:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SituacionesValidator FROM SQLBaseValidator
+CLASS SituacionesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -171,7 +171,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLSituacionesModel FROM SQLBaseModel
+CLASS SQLSituacionesModel FROM SQLCompanyModel
 
    DATA cColumnCode              INIT "nombre"
 

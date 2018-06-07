@@ -273,7 +273,7 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLListinModel():New() )
 
-   aadd( ::aModels, SQLDireccionesModel():New() )
+   //aadd( ::aModels, SQLDireccionesModel():New() )
 
    aadd( ::aModels, SQLComentariosModel():New() )
 

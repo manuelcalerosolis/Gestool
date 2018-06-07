@@ -184,7 +184,7 @@ RETURN ( oDlg:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CajonPortamonedaValidator FROM SQLBaseValidator
+CLASS CajonPortamonedaValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -210,7 +210,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCajonesPortamonedasModel FROM SQLBaseModel
+CLASS SQLCajonesPortamonedasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cajones_portamonedas"
 
