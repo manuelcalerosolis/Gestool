@@ -246,7 +246,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosValidator FROM SQLBaseValidator
+CLASS ComentariosValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -289,7 +289,6 @@ METHOD getColumns() CLASS SQLComentariosModel
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
                                              "default"   => {|| space( 20 ) } }                        )

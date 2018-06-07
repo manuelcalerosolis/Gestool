@@ -221,7 +221,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImpresorasValidator FROM SQLBaseValidator
+CLASS ImpresorasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -244,7 +244,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLImpresorasModel FROM SQLBaseModel
+CLASS SQLImpresorasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "Impresoras"
 

@@ -443,7 +443,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RecibosValidator FROM SQLBaseValidator
+CLASS RecibosValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -469,7 +469,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLRecibosModel FROM SQLBaseModel
+CLASS SQLRecibosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "factura_recibos"
 
@@ -563,7 +563,7 @@ METHOD getColumns() CLASS SQLRecibosModel
    hset( ::hColumns, "gastos",                     {  "create"    => "FLOAT( 15,3 )"                              ,;
                                                       "default"   => {||  0.000  } }                               )
 
-   hset( ::hColumns, "cobrado",                    {  "create"    => "BIT"                                        ,;
+   hset( ::hColumns, "cobrado",                    {  "create"    => "TINYINT( 1 )"                                ,;
                                                       "default"   => {|| .f. } }                                  )
 
    hset( ::hColumns, "fecha_cobro",                {  "create"    => "DATE"                                       ,;

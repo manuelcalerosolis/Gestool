@@ -201,7 +201,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosLineasValidator FROM SQLBaseValidator
+CLASS ComentariosLineasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -224,7 +224,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLComentariosLineasModel FROM SQLBaseModel
+CLASS SQLComentariosLineasModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "articulos_familias_comentarios_lineas"
 

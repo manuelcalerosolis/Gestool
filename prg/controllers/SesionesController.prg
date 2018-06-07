@@ -217,7 +217,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SesionesValidator FROM SQLBaseValidator
+CLASS SesionesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -242,7 +242,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLSesionesModel FROM SQLBaseModel
+CLASS SQLSesionesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cajas_sesiones"
 
