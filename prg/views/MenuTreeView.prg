@@ -440,7 +440,7 @@ METHOD addPdfButtons( cWorkArea )
 
    ::oButtonPdf  := ::AddButton( "Pdf", "Doclock16", {|| ::getController():printDocument( IS_PDF ) }, "F", ACC_IMPR ) 
 
-      aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Doclock16", ::blockPrintDocument( IS_PDF, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPdf ) } ) 
+   aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Doclock16", ::blockPrintDocument( IS_PDF, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPdf ) } ) 
 
    ::fireEvent( 'addedPdfButton') 
 
