@@ -21643,6 +21643,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "* Dejar contraseñas en blanco si no desea cambiarla", -1, "Static", WS_GROUP, 120, 108, 171, 8
   CONTROL "Rol", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 126, 353, 28
   CONTROL "Rol de usuario", -1, "Static", WS_GROUP, 50, 139, 51, 8
+  CONTROL "<a>Campos extra...</a>", 150, "SysLink", WS_TABSTOP, 44, 159, 88, 10
 }
 
 AJUSTES DIALOG DISCARDABLE 138, 96, 461, 299

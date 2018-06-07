@@ -20,6 +20,8 @@ CLASS UsuariosController FROM SQLNavigatorController
    DATA cUuidCajaExclusiva
    DATA cNombreCajaExclusiva
 
+   DATA oCamposExtraValoresController
+
    DATA aEmpresas
    DATA oComboEmpresa
    DATA cCodigoEmpresaExclusiva
@@ -98,6 +100,8 @@ METHOD New() CLASS UsuariosController
 
    ::oRolesController      := RolesController():New( self )
 
+   ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, ::oModel:cTableName )
+
    ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } )  
    ::setEvent( 'closedDialog',   {|| ::oDialogView:closedDialog() } )  
 
@@ -136,6 +140,8 @@ METHOD End()
       ::oRolesController:End()
       ::oRolesController      := nil
    end if 
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -580,7 +586,9 @@ CLASS UsuariosView FROM SQLBaseView
    DATA oGetPassword
    DATA cGetPassword          INIT space( 100 )
    DATA oGetRepeatPassword
-   DATA cGetRepeatPassword    INIT space( 100 )   
+   DATA cGetRepeatPassword    INIT space( 100 ) 
+
+   DATA oSayCamposExtra  
 
    DATA oComboRol 
    DATA cComboRol   
@@ -678,6 +686,17 @@ METHOD Activate() CLASS UsuariosView
       ITEMS       ::aComboRoles ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
+
+//Campos extra----------------------------------------------------------------//
+   REDEFINE SAY   ::oSayCamposExtra ;
+      PROMPT      "Campos extra..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          150 ;
+      OF          ::oDialog ;
+
+   ::oSayCamposExtra:lWantClick  := .t.
+   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }      
 
    REDEFINE BUTTON ;
       ID          IDOK ;

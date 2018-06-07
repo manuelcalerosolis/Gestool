@@ -6,7 +6,7 @@
 CLASS CamposExtraEntidadesController FROM SQLBrowseController
 
    CLASSDATA aEntidades INIT  {  "empresas" =>     { "nombre" => "Empresas", "icono" => "gc_factory_16"  },;
-                                 "usuarios" =>     { "nombre" => "Usuarios", "icono" => "gc_factory_16"  } }
+                                 "usuarios" =>     { "nombre" => "Usuarios", "icono" => "gc_businesspeople_16"  } }
 
    METHOD New( oController )
 

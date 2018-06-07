@@ -24,33 +24,33 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                         := "Grupos de unidades de medición"
+   ::cTitle                                  := "Grupos de unidades de medición"
 
-   ::cName                          := "unidades_medicion_grupos"
+   ::cName                                   := "unidades_medicion_grupos"
 
-   ::hImage                         := {  "16" => "gc_tape_measure2_16",;
-                                          "32" => "gc_tape_measure2_32",;
-                                          "48" => "gc_tape_measure2_48" }
+   ::hImage                                  := {  "16" => "gc_tape_measure2_16",;
+                                                   "32" => "gc_tape_measure2_32",;
+                                                   "48" => "gc_tape_measure2_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                                  := Auth():Level( ::cName )
 
-   ::oModel                         := SQLUnidadesMedicionGruposModel():New( self )
+   ::oModel                                  := SQLUnidadesMedicionGruposModel():New( self )
 
-   ::oBrowseView                    := UnidadesMedicionGruposBrowseView():New( self )
+   ::oBrowseView                             := UnidadesMedicionGruposBrowseView():New( self )
 
-   ::oDialogView                    := UnidadesMedicionGruposView():New( self )
+   ::oDialogView                             := UnidadesMedicionGruposView():New( self )
 
-   ::oValidator                     := UnidadesMedicionGruposValidator():New( self, ::oDialogView )
+   ::oValidator                              := UnidadesMedicionGruposValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := UnidadesMedicionGruposRepository():New( self )
+   ::oRepository                             := UnidadesMedicionGruposRepository():New( self )
 
    ::oUnidadesMedicionGruposLineasController :=UnidadesMedicionGruposLineasController():New( self )
 
-   ::oUnidadesMedicionController    := UnidadesMedicionController():New( self )
+   ::oUnidadesMedicionController             := UnidadesMedicionController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+   ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
-   ::oGetSelector                   := GetSelector():New( self )
+   ::oGetSelector                            := GetSelector():New( self )
 
 
 RETURN ( Self )
