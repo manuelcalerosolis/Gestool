@@ -47,7 +47,7 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionController
 
    ::oGetSelector                   := GetSelector():New( self )
 
-   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
+   //::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
 
 RETURN ( Self )
 
@@ -229,7 +229,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UnidadesMedicionValidator FROM SQLCompanyValidator
+CLASS UnidadesMedicionValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

@@ -305,6 +305,8 @@ CLASS SQLUnidadesMedicionGruposModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
+   METHOD getUnidadesMedicionModel()      INLINE ( SQLUnidadesMedicionModel():getTableName() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -333,14 +335,14 @@ RETURN ( ::hColumns )
 
 METHOD getInitialSelect() CLASS SQLUnidadesMedicionGruposModel
 
-   local cSelect  := "SELECT unidades_medicion_grupos.id,"                                                                          + " " + ;
-                        "unidades_medicion_grupos.uuid,"                                                                            + " " + ;
-                        "unidades_medicion_grupos.codigo,"                                                                          + " " + ;
-                        "unidades_medicion_grupos.nombre,"                                                                          + " " + ;
-                        "unidades_medicion_grupos.unidad_base_codigo,"                                                              + " " + ;
-                        "unidades_medicion.nombre as unidad_base_nombre"                                                            + " " + ;   
-                     "FROM unidades_medicion_grupos"                                                                                + " " + ;
-                        "INNER JOIN unidades_medicion  ON unidades_medicion_grupos.unidad_base_codigo = unidades_medicion.codigo"   + " " 
+   local cSelect  := "SELECT grupos.id,"                                                                                            + " " + ;
+                        "grupos.uuid,"                                                                                              + " " + ;
+                        "grupos.codigo,"                                                                                            + " " + ;
+                        "grupos.nombre,"                                                                                            + " " + ;
+                        "grupos.unidad_base_codigo,"                                                                                + " " + ;
+                        "unidad.nombre AS unidad_base_nombre"                                                                       + " " + ;   
+                     "FROM " + ::getTableName() +" AS grupos"                                                                       + " " + ;
+                        "INNER JOIN "+ ::getUnidadesMedicionModel() +" AS unidad ON grupos.unidad_base_codigo = unidad.codigo"      + " " 
 
 RETURN ( cSelect )
 //---------------------------------------------------------------------------//
@@ -352,6 +354,7 @@ RETURN ( cSelect )
 CLASS UnidadesMedicionGruposRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLUnidadesMedicionGruposModel():getTableName() ) 
+
 
 END CLASS
 

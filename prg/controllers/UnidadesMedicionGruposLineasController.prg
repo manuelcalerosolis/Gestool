@@ -295,6 +295,10 @@ CLASS SQLUnidadesMedicionGruposLineasModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
+   METHOD getUnidades()          INLINE(SQLUnidadesMedicionModel():getTableName())
+
+   METHOD getGrupos()          INLINE(SQLUnidadesMedicionGruposModel():getTableName())
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -330,14 +334,14 @@ METHOD getInitialSelect() CLASS SQLUnidadesMedicionGruposLineasModel
                         "unidades_medicion_grupos_lineas.parent_uuid,"                                                                 + " " + ;
                         "unidades_medicion_grupos_lineas.unidad_alternativa_codigo,"                                                   + " " + ;
                         "unidades_medicion_alternativa.nombre as unidad_alternativa_nombre,"                                           + " " + ;
-                        "unidades_medicion_grupos_lineas.cantidad_alternativa,"                                                        + " " + ;                                                   
-                        "unidades_medicion_grupos_lineas.cantidad_base,"                                                               + " " + ;
-                        "unidades_medicion_grupos.unidad_base_codigo as unidad_base_codigo,"                                           + " " + ;
+                        "grupos_lineas.cantidad_alternativa,"                                                        + " " + ;                                                   
+                        "grupos_lineas.cantidad_base,"                                                               + " " + ;
+                        "grupos.unidad_base_codigo as unidad_base_codigo,"                                           + " " + ;
                         "unidades_medicion_base.nombre as unidad_base_nombre"                                                          + " " + ;   
-                     "FROM unidades_medicion_grupos_lineas"                                                                            + " " + ;
-                        "INNER JOIN unidades_medicion_grupos as unidades_medicion_grupos ON unidades_medicion_grupos_lineas.parent_uuid = unidades_medicion_grupos.uuid"           + " " + ;
-                        "INNER JOIN unidades_medicion as unidades_medicion_alternativa ON unidades_medicion_grupos_lineas.unidad_alternativa_codigo = unidades_medicion_alternativa.codigo"  + " " + ;
-                        "INNER JOIN unidades_medicion as unidades_medicion_base ON unidades_medicion_grupos.unidad_base_codigo = unidades_medicion_base.codigo"                                      + " " 
+                     "FROM "+::getTableName()+" AS lineas"                                                                            + " " + ;
+                        "INNER JOIN "+::getGrupos()+" as grupos ON lineas.parent_uuid = unidades_medicion_grupos.uuid"           + " " + ;
+                        "INNER JOIN "+::getUnidades()+" as unidades_medicion_alternativa ON unidades_medicion_grupos_lineas.unidad_alternativa_codigo = unidades_medicion_alternativa.codigo"  + " " + ;
+                        "INNER JOIN "+::getUnidades()+" as unidades_medicion_base ON unidades_medicion_grupos.unidad_base_codigo = unidades_medicion_base.codigo"                                      + " " 
 
 
 RETURN ( cSelect )

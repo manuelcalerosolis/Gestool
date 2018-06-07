@@ -246,7 +246,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ComentariosValidator FROM SQLCompanyValidator
+CLASS ComentariosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -296,7 +296,6 @@ METHOD getColumns() CLASS SQLComentariosModel
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
-   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
@@ -314,9 +313,9 @@ CLASS ComentariosRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLComentariosModel():getTableName() ) 
 
-   METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
+   /*METHOD getNombreWhereUuid( Uuid )      INLINE ( ::getColumnWhereUuid( Uuid, "nombre" ) )
 
-   METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )
+   METHOD getUuidWhereNombre( cNombre )   INLINE ( ::getUuidWhereColumn( cNombre, "nombre", "" ) )*/
 
 END CLASS
 
