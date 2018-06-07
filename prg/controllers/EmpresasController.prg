@@ -205,6 +205,7 @@ METHOD updateEmpresa()
 
    next
    */
+
    aeval( ::getBrowse():aSelected,;
             {|nSelect|  ::getRowSet():goToRecNo( nSelect ),;
                         msgRun( "Actualizando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanyMigrations():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
@@ -215,6 +216,7 @@ RETURN ( self )
 
 METHOD seedEmpresa()
 
+   /*
    local nSelect
    local aSelected
    local cCodigoEmpresa
@@ -229,11 +231,17 @@ METHOD seedEmpresa()
       cCodigoEmpresa       := ::getRowSet():fieldGet( 'codigo' )
       cNombreEmpresa       := alltrim( ::getRowSet():fieldGet( 'nombre' ) )
 
-      Auth():guardWhereCodigo( cCodigoEmpresa )
+      
 
       msgRun( "Importando empresa : " + cNombreEmpresa, "Espere por favor...", {|| SQLCompanySeeders():Run( cCodigoEmpresa ) } )
 
    next
+   */
+
+   aeval( ::getBrowse():aSelected,;
+            {|nSelect|  ::getRowSet():goToRecNo( nSelect ),;
+                        Company():guardWhereCodigo( ::getRowSet():fieldGet( 'codigo' ) ),;
+                        msgRun( "Importando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanySeeders():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
 
 RETURN ( self )
 

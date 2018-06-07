@@ -193,10 +193,10 @@ END CLASS
 
 METHOD Run() CLASS SQLCompanySeeders
 
-   msgalert( "SQLGestoolSeeders" )
-
    ::aConvert     := {  {  "file"   => cPatDat() + "TipImp.Dbf",;
-                           "block"  => {|dbf| ::insertTiposImpresoras( dbf ) } };
+                           "block"  => {|| ::insertTiposImpresoras() } },;
+                        {  "file"   => cPatDat() + "Lenguaje.Dbf",;
+                           "block"  => {|| ::insertLenguaje() } } ;                          
                      }
 
    aeval( ::aConvert,;
@@ -208,9 +208,23 @@ RETURN ( self )
 
 METHOD insertTiposImpresoras() CLASS SQLCompanySeeders
 
-   local hBuffer  := { "nombre" => quoted( field->cTipImp ) }
+   local hBuffer  := SQLTiposImpresorasModel():loadBlankBuffer()
+
+   hset( hBuffer, "nombre", field->cTipImp )
 
 RETURN ( SQLTiposImpresorasModel():insertIgnoreBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertLenguaje() CLASS SQLCompanySeeders
+
+   local hBuffer  := SQLLenguajesModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",     field->uuid    )
+   hset( hBuffer, "codigo",   field->cCodLen )
+   hset( hBuffer, "nombre",   field->cNomLen )
+
+RETURN ( SQLLenguajesModel():insertIgnoreBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 
@@ -474,21 +488,6 @@ METHOD SeederLenguajes() CLASS SQLCompanySeeders
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD insertLenguaje( dbf ) CLASS SQLCompanySeeders
-
-   local hBuffer
-
-   hBuffer        := SQLLenguajesModel():loadBlankBuffer()
-
-   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
-   hset( hBuffer, "codigo",            ( dbf )->cCodLen  )
-   hset( hBuffer, "nombre",            ( dbf )->cNomLen  )
-
-   SQLLenguajesModel():insertIgnoreBuffer( hBuffer )
-
-RETURN ( self )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

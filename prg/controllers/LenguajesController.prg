@@ -280,17 +280,15 @@ END CLASS
 METHOD getColumns() CLASS SQLLenguajesModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "text"      => "Uuid"                                    ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                          ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) UNIQUE"                    ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 20 )"                          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 20 ) UNIQUE"                    ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
 RETURN ( ::hColumns )

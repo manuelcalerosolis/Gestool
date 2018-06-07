@@ -92,14 +92,13 @@ END CLASS
 
 METHOD getColumns() CLASS SQLTiposImpresorasModel
 
-   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"          ,;
-                                       "text"      => "Identificador"                          ,;
+   hset( ::hColumns, "id",          {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                        "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+   hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                        "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 50 )"                          ,;
+   hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 50 ) UNIQUE"                    ,;
                                        "default"   => {|| space( 50 ) } }                       )
 
 RETURN ( ::hColumns )
