@@ -38,12 +38,23 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD selectColumnOrder( oCol )             INLINE ( ::changeColumnOrder( oCol ), ::Refresh() )
    
    METHOD getColumnByHeader( cHeader )
+   METHOD getColumnBySortOrder( cSortOrder ) 
+     
    METHOD getColumnOrder( cSortOrder )
    METHOD getColumnOrderHeader( cSortOrder )    INLINE ( if( !empty( ::getColumnOrder( cSortOrder ) ), ::getColumnOrder( cSortOrder ):cHeader, "" ) )
+
+   METHOD getColumnSortOrder()
+   METHOD getColumnSortOrientation()
 
    METHOD getColumnOrderByHeader( cHeader )  
 
    METHOD getFirstVisibleColumn()
+
+   METHOD setColumnOrder( cSortOrder, cColumnOrientation )
+
+   METHOD setFirstColumnOrder()
+
+   // Actions-------------------------------------------------------------------
 
    METHOD RButtonDown( nRow, nCol, nFlags )
 
@@ -334,19 +345,62 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD getColumnOrder( cSortOrder )
+METHOD getColumnOrder( cOrder )
 
    local nPosition   
 
-   if !empty( cSortOrder )
-      nPosition   := ascan( ::aCols, {|o| o:cSortOrder == cSortOrder } )
+   if !empty( cOrder )
+      nPosition   := ascan( ::aCols, {|o| o:cOrder == cOrder } )
    else 
-      nPosition   := ascan( ::aCols, {|o| !empty( o:cSortOrder ) .and. !( o:lHide ) } )
+      nPosition   := ascan( ::aCols, {|o| !empty( o:cOrder ) .and. !( o:lHide ) } )
    end if 
 
-   nPosition      := max( nPosition, 1 )
+   if nPosition != 0
+      RETURN ( ::aCols[ nPosition ] )
+   end if 
 
-RETURN ( ::aCols[ nPosition ] )
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD getColumnSortOrder()
+
+   local oColumnOrder   := ::getColumnOrder()
+
+   if !empty( oColumnOrder )
+      RETURN ( oColumnOrder:cSortOrder )
+   end if 
+
+RETURN ( "" )
+
+//------------------------------------------------------------------------//
+
+METHOD getColumnSortOrientation()
+
+   local oColumnOrder   := ::getColumnOrder()
+
+   if !empty( oColumnOrder )
+      RETURN ( oColumnOrder:cOrder )
+   end if 
+
+RETURN ( "" )
+
+//------------------------------------------------------------------------//
+
+METHOD getColumnBySortOrder( cSortOrder )
+
+   local nPosition   
+
+   if empty( cSortOrder )
+      RETURN ( nil )
+   end if 
+
+   nPosition      := ascan( ::aCols, {|o| ( o:cSortOrder == cSortOrder ) .and. !( o:lHide ) } )
+   if nPosition != 0
+      RETURN ( ::aCols[ nPosition ] )
+   end if 
+
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -379,6 +433,40 @@ RETURN ( nil )
 METHOD setFilterInRowSet( cFilterExpresion )
 
    ::oRowSet:setFilter( { || ::oRowSet:fieldGet( 1 ) == 1 } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setColumnOrder( cSortOrder, cColumnOrientation )
+
+   local oColumn
+
+   oColumn                    := ::getColumnBySortOrder( cSortOrder )
+
+   if empty( oColumn )
+      RETURN ( Self )
+   end if 
+
+   if !empty( cColumnOrientation )
+      oColumn:cOrder          := cColumnOrientation
+   end if 
+
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD setFirstColumnOrder()
+
+   local oColumn
+
+   oColumn                    := ::getFirstVisibleColumn()
+
+   if empty( oColumn )
+      RETURN ( Self )
+   end if 
+
+   oColumn:cOrder             := 'D'
 
 RETURN ( Self )
 

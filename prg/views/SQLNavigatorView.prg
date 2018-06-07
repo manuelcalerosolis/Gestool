@@ -127,8 +127,6 @@ METHOD validMDIChild()
 
    ::oController:saveState()
 
-   msgalert( "validMDIChild" )
-
 RETURN ( .t. )
 
 //----------------------------------------------------------------------------//

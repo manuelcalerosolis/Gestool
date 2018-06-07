@@ -253,10 +253,21 @@ METHOD restoreState()
    local nId                  := ::getIdView( ::getBrowseViewType(), ::getName() )
    local cColumnOrder         := ::getColumnOrderView( ::getBrowseViewType(), ::getName() )
    local cColumnOrientation   := ::getColumnOrientationView( ::getBrowseViewType(), ::getName() )
-   
-   ::oBrowseView:setColumnOrder( cColumnOrder, cColumnOrientation )
+   local cState               := ::getStateView( ::getBrowseViewType(), ::getName() ) 
 
-   ::oBrowseView:setId( nId )
+   if empty( cColumnOrder )
+      ::oBrowseView:setFirstColumnOrder()
+   else
+      ::oBrowseView:setColumnOrder( cColumnOrder, cColumnOrientation )
+   end if 
+
+   if !empty( cState )
+      ::oBrowseView:setSaveState( cState )
+   end if 
+
+   if !empty( nId )
+      ::oBrowseView:setId( nId )
+   end if 
 
 RETURN ( self )
 
@@ -264,7 +275,17 @@ RETURN ( self )
 
 METHOD saveState()
 
-   msgalert( ::getRowSet:fieldget( "id" ), "id" )
+   CursorWait()
+
+   ::setIdView( ::getBrowseViewType(), ::getName(), ::getRowSet:fieldget( "id" ) )
+
+   ::setColumnOrderView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrder() )
+
+   ::setColumnOrientationView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrientation() )
+
+   ::setStateView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getSaveState() ) 
+
+   CursorWE()
 
 RETURN ( self )
 

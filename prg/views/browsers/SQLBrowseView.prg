@@ -36,15 +36,22 @@ CLASS SQLBrowseView
 
    METHOD getBrowse()                        INLINE ( ::oBrowse )
    METHOD getBrowseSelected()                INLINE ( ::oBrowse:aSelected )
+   METHOD getSaveState()                     INLINE ( ::oBrowse:SaveState() )
+   METHOD setSaveState( cState )             INLINE ( ::oBrowse:restoreState( cState ) )
 
    METHOD getColumnByHeader( cHeader )       INLINE ( ::oBrowse:getColumnByHeader( cHeader ) )
    METHOD getColumnOrder( cSortOrder )       INLINE ( ::oBrowse:getColumnOrder( cSortOrder ) )
    METHOD getColumnOrderHeader( cSortOrder ) INLINE ( ::oBrowse:getColumnOrderHeader( cSortOrder ) )
 
-   METHOD setColumnOrder( cSortOrder )
+   METHOD setColumnOrder( cSortOrder, cColumnOrientation ) ;
+                                             INLINE ( ::oBrowse:setColumnOrder( cSortOrder, cColumnOrientation ) )
+   METHOD setFirstColumnOrder()              INLINE ( ::oBrowse:setFirstColumnOrder() )
 
    METHOD getColumnHeaderByOrder( cSortOrder )  
    METHOD getColumnOrderByHeader( cHeader )  INLINE ( ::oBrowse:getColumnOrderByHeader( cHeader ) )
+
+   METHOD getColumnSortOrder()               INLINE ( ::oBrowse:getColumnSortOrder() )
+   METHOD getColumnSortOrientation()         INLINE ( ::oBrowse:getColumnSortOrientation() )
 
    METHOD selectColumnOrder( oCol )          INLINE ( ::oBrowse:selectColumnOrder( oCol ) )
    METHOD refreshCurrent()                   INLINE ( ::oBrowse:refreshCurrent() )
@@ -111,8 +118,6 @@ CLASS SQLBrowseView
    METHOD setId( nId )
    METHOD setState( cBrowseState )
   
-   METHOD getColumnSortOrder()
-   METHOD getColumnSortOrientation()
 
 ENDCLASS
 
@@ -308,48 +313,6 @@ METHOD setId( nId )
    ::getRowSet():findId( nId )
 
    ::oBrowse:SelectCurrent()
-
-RETURN ( Self )
-
-//------------------------------------------------------------------------//
-
-METHOD getColumnSortOrder()
-
-   local oColumnOrder   := ::getColumnOrder()
-
-   if !empty( oColumnOrder )
-      RETURN ( oColumnOrder:cSortOrder )
-   end if 
-
-RETURN ( "" )
-
-//------------------------------------------------------------------------//
-
-METHOD getColumnSortOrientation()
-
-   local oColumnOrder   := ::getColumnOrder()
-
-   if !empty( oColumnOrder )
-      RETURN ( oColumnOrder:cOrder )
-   end if 
-
-RETURN ( "" )
-
-//------------------------------------------------------------------------//
-
-METHOD setColumnOrder( cColumnOrder, cColumnOrientation )
-
-   local oColumn
-
-   oColumn                    := ::getColumnOrder( cColumnOrder )
-
-   if empty( oColumn )
-      RETURN ( Self )
-   end if 
-
-   if !empty( cColumnOrientation )
-      oColumn:cOrder          := cColumnOrientation
-   end if 
 
 RETURN ( Self )
 
