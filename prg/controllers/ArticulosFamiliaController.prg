@@ -580,7 +580,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosFamiliaValidator FROM SQLBaseValidator
+CLASS ArticulosFamiliaValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -658,8 +658,6 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
    hset( ::hColumns, "familia_uuid",                  {  "create"    => "VARCHAR( 40 )"                           ,;
                                                          "default"   => {|| space( 40 ) } }                       )
 
-   ::getEmpresaColumns()
-
    hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR( 20 )"                           ,;
                                                          "default"   => {|| space( 20 ) } }                       )
 
@@ -689,8 +687,6 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
 
    hset( ::hColumns, "mostrar_ventana_comentarios",   {  "create"    => "BIT"                                     ,;
                                                          "default"   => {|| .f. } }                               )
-
-   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 

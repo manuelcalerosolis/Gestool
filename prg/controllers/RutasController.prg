@@ -209,7 +209,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RutasValidator FROM SQLBaseValidator
+CLASS RutasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -252,7 +252,6 @@ METHOD getColumns() CLASS SQLRutasModel
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
                                              "default"   => {|| space( 20 ) } }                        )
@@ -260,7 +259,6 @@ METHOD getColumns() CLASS SQLRutasModel
    hset( ::hColumns, "nombre",           {  "create"    => "VARCHAR( 200 )"                           ,;
                                              "default"  => {|| space( 200 ) } }                       )
    
-   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 

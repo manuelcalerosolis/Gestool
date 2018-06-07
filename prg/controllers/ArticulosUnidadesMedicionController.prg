@@ -227,7 +227,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosUnidadesMedicionValidator FROM SQLBaseValidator
+CLASS ArticulosUnidadesMedicionValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -248,7 +248,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosUnidadesMedicionModel FROM SQLBaseModel
+CLASS SQLArticulosUnidadesMedicionModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_unidades_medicion"
 
@@ -298,7 +298,7 @@ METHOD getColumns() CLASS SQLArticulosUnidadesMedicionModel
    hset( ::hColumns, "unidad_medicion_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                       "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "operar",                     {  "create"    => "BIT"                                     ,;
+   hset( ::hColumns, "operar",                     {  "create"    => "TINYINT( 1 )"                            ,;
                                                       "default"   => {|| .t. } }                               )
 
    hset( ::hColumns, "cantidad",                   {  "create"    => "FLOAT( 16, 6 )"                          ,;

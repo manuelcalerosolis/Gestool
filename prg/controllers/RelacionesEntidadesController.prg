@@ -145,7 +145,7 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLRelacionesEntidadesModel FROM SQLBaseModel
+CLASS SQLRelacionesEntidadesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "relaciones_entidades"
 

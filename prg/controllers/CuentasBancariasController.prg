@@ -412,7 +412,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CuentasBancariasValidator FROM SQLBaseValidator
+CLASS CuentasBancariasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -436,7 +436,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCuentasBancariasModel FROM SQLBaseModel
+CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cuentas_bancarias"
 
@@ -462,8 +462,6 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
 
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                    "default"   => {|| space( 40 ) } }                       )
-
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "nombre_banco",            {  "create"    => "VARCHAR( 140 )"                          ,;
                                                    "default"   => {|| space( 140 ) } }                      )

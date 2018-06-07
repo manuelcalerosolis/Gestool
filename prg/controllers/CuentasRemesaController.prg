@@ -311,7 +311,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CuentasRemesaValidator FROM SQLBaseValidator
+CLASS CuentasRemesaValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -374,7 +374,6 @@ METHOD getColumns() CLASS SQLCuentasRemesaModel
 
    hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                                    "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
 
 
    hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 )"                            ,;

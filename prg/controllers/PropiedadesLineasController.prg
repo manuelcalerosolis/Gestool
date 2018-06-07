@@ -276,7 +276,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLPropiedadesLineasModel FROM SQLBaseModel
+CLASS SQLPropiedadesLineasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_propiedades_lineas"
 

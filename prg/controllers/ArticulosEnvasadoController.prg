@@ -223,7 +223,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosEnvasadoValidator FROM SQLBaseValidator
+CLASS ArticulosEnvasadoValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -249,7 +249,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosEnvasadoModel FROM SQLBaseModel
+CLASS SQLArticulosEnvasadoModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "articulos_envasado"
 

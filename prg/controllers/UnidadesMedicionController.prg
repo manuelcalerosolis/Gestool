@@ -229,7 +229,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UnidadesMedicionValidator FROM SQLBaseValidator
+CLASS UnidadesMedicionValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -273,7 +273,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) UNIQUE"                     ,;
                                              "default"   => {|| space( 20 ) } }                        )
-   ::getEmpresaColumns()
+   
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
@@ -281,7 +281,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
    hset( ::hColumns, "codigo_iso",        {  "create"    => "VARCHAR( 6 )"                            ,;
                                              "default"   => {|| space( 6 ) } }                        )
 
-   hset( ::hColumns, "sistema",           {  "create"    => "BIT"                                     ,;
+   hset( ::hColumns, "sistema",           {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| .f. } }                               )
 
 RETURN ( ::hColumns )

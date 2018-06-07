@@ -271,7 +271,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesValidator FROM SQLBaseValidator
+CLASS PropiedadesValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -311,7 +311,6 @@ METHOD getColumns() CLASS SQLPropiedadesModel
    hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                     "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
                                     "default"   => {|| space( 20 ) } }                       )
@@ -319,10 +318,9 @@ METHOD getColumns() CLASS SQLPropiedadesModel
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
                                     "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "color",    {  "create"    => "BIT"                                     ,;
+   hset( ::hColumns, "color",    {  "create"    => "TINYINT( 1 )"                            ,;
                                     "default"   => {|| .f. } }                               )
 
-   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 

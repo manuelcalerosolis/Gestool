@@ -331,7 +331,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ContactosValidator FROM SQLBaseValidator
+CLASS ContactosValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -354,7 +354,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLContactosModel FROM SQLBaseModel
+CLASS SQLContactosModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "contactos"
 

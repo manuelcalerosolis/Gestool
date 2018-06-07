@@ -372,7 +372,7 @@ Return ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS IncidenciasValidator FROM SQLBaseValidator
+CLASS IncidenciasValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
  
@@ -392,7 +392,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLIncidenciasModel FROM SQLBaseModel
+CLASS SQLIncidenciasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "incidencias"
 
@@ -421,10 +421,10 @@ METHOD getColumns() CLASS SQLIncidenciasModel
    hset( ::hColumns, "fecha_hora",              {  "create"    => "TIMESTAMP"                               ,;
                                                    "default"   => {|| hb_datetime() } }                     )
    
-   hset( ::hColumns, "mostrar",                {  "create"    => "BIT"                                      ,;
+   hset( ::hColumns, "mostrar",                {  "create"    => "TINYINT( 1 )"                             ,;
                                                    "default"   => {|| .f. } }                               )
 
-   hset( ::hColumns, "resuelta",                {  "create"    => "BIT"                                     ,;
+   hset( ::hColumns, "resuelta",                {  "create"    => "TINYINT( 1 )"                            ,;
                                                    "default"   => {|| .f. } }                               )
 
    hset( ::hColumns, "fecha_hora_resolucion",   {  "create"    => "TIMESTAMP"                               ,;

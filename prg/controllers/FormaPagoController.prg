@@ -490,7 +490,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FormaPagoValidator FROM SQLBaseValidator
+CLASS FormaPagoValidator FROM SQLCompanyValidator
 
    METHOD getValidators()
 
@@ -579,20 +579,20 @@ METHOD getColumns() CLASS SQLFormaPagoModel
    hset( ::hColumns, "codigo_edi",           {  "create"    => "VARCHAR( 200 )"                             ,;                                  
                                                 "default"   => {|| space( 200 ) } }                         )
 
-   hset( ::hColumns, "incluir_en_terminal",  {  "create"    => "BIT"                                        ,;
+   hset( ::hColumns, "incluir_en_terminal",  {  "create"    => "TINYINT( 1 )"                               ,;
                                                 "default"   => {|| .f. } }                                  )
 
    hset( ::hColumns, "icono",                {  "create"    => "VARCHAR( 40 )"                              ,;
                                                 "default"   => {|| space( 40 ) } }                          )
 
    hset( ::hColumns, "posicion",             {  "create"    => "INTEGER( 2 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                           )
+                                                "default"   => {|| ( 0 ) } }                                )
 
    hset( ::hColumns, "forma_pago",           {  "create"    => "VARCHAR( 200 )"                             ,;                                  
                                                 "default"   => {|| space( 200 ) } }                         )
 
    hset( ::hColumns, "generar_documento",    {  "create"    => "INTEGER( 1 )"                               ,;
-                                                "default"   => {|| ( 0 ) } }                           )
+                                                "default"   => {|| ( 0 ) } }                                )
    
    ::getEmpresaColumns()
    
