@@ -253,7 +253,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTarifasValidator FROM SQLCompanyValidator
+CLASS ArticulosTarifasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

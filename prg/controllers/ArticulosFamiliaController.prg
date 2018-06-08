@@ -580,7 +580,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosFamiliaValidator FROM SQLCompanyValidator
+CLASS ArticulosFamiliaValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

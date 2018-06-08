@@ -262,7 +262,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TipoIvaValidator FROM SQLCompanyValidator
+CLASS TipoIvaValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

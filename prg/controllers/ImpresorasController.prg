@@ -221,7 +221,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImpresorasValidator FROM SQLCompanyValidator
+CLASS ImpresorasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

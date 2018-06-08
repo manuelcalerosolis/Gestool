@@ -331,7 +331,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ContactosValidator FROM SQLCompanyValidator
+CLASS ContactosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

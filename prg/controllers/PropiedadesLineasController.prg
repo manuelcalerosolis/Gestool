@@ -33,7 +33,7 @@ METHOD New( oController ) CLASS PropiedadesLineasController
 
    ::oRepository                 := PropiedadesLineasRepository():New( self )
 
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::oModel:gettingSelectSentence() } ) 
+   //::oModel:setEvent( 'gettingSelectSentence',  {|| ::oModel:gettingSelectSentence() } ) 
 
 RETURN ( Self )
 

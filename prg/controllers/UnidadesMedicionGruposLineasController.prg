@@ -264,7 +264,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UnidadesMedicionGruposLineasValidator FROM SQLCompanyValidator
+CLASS UnidadesMedicionGruposLineasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -293,7 +293,11 @@ CLASS SQLUnidadesMedicionGruposLineasModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getInitialSelect()
+   METHOD getGeneralSelect()
+
+   METHOD getUnidadesMedicionTableName()           INLINE ( SQLUnidadesMedicionModel():getTableName() )
+
+   METHOD getUnidadesMedicionGruposTableName()     INLINE ( SQLUnidadesMedicionGruposModel():getTableName() )
 
 END CLASS
 
@@ -323,22 +327,21 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect() CLASS SQLUnidadesMedicionGruposLineasModel
+METHOD getGeneralSelect() CLASS SQLUnidadesMedicionGruposLineasModel
 
-   local cSelect  := "SELECT unidades_medicion_grupos_lineas.id,"                                                                      + " " + ;                                                      
-                        "unidades_medicion_grupos_lineas.uuid,"                                                                        + " " + ;                                                        
-                        "unidades_medicion_grupos_lineas.parent_uuid,"                                                                 + " " + ;
-                        "unidades_medicion_grupos_lineas.unidad_alternativa_codigo,"                                                   + " " + ;
-                        "unidades_medicion_alternativa.nombre as unidad_alternativa_nombre,"                                           + " " + ;
-                        "unidades_medicion_grupos_lineas.cantidad_alternativa,"                                                        + " " + ;                                                   
-                        "unidades_medicion_grupos_lineas.cantidad_base,"                                                               + " " + ;
-                        "unidades_medicion_grupos.unidad_base_codigo as unidad_base_codigo,"                                           + " " + ;
-                        "unidades_medicion_base.nombre as unidad_base_nombre"                                                          + " " + ;   
-                     "FROM unidades_medicion_grupos_lineas"                                                                            + " " + ;
-                        "INNER JOIN unidades_medicion_grupos as unidades_medicion_grupos ON unidades_medicion_grupos_lineas.parent_uuid = unidades_medicion_grupos.uuid"           + " " + ;
-                        "INNER JOIN unidades_medicion as unidades_medicion_alternativa ON unidades_medicion_grupos_lineas.unidad_alternativa_codigo = unidades_medicion_alternativa.codigo"  + " " + ;
-                        "INNER JOIN unidades_medicion as unidades_medicion_base ON unidades_medicion_grupos.unidad_base_codigo = unidades_medicion_base.codigo"                                      + " " 
-
+   local cSelect  := "SELECT lineas.id,"                                                                          + " " + ;                                                                                                                     
+                        "lineas.uuid,"                                                                            + " " + ;                                                                                                                                    
+                        "lineas.parent_uuid,"                                                                     + " " + ;
+                        "lineas.unidad_alternativa_codigo,"                                                       + " " + ;
+                        "alternativa.nombre as unidad_alternativa_nombre,"                                        + " " + ;
+                        "lineas.cantidad_alternativa,"                                                            + " " + ;                                               
+                        "lineas.cantidad_base,"                                                                   + " " + ;
+                        "grupos.unidad_base_codigo as unidad_base_codigo,"                                        + " " + ;
+                        "base.nombre as unidad_base_nombre"                                                       + " " + ;
+                     "FROM "+ ::getTableName() + " AS lineas"                                                     + " " + ;                                                    
+                        "INNER JOIN " + ::getUnidadesMedicionGruposTableName() + " as grupos ON lineas.parent_uuid = grupos.uuid"                     + " " + ;         
+                        "INNER JOIN " + ::getUnidadesMedicionTableName() + " as alternativa ON lineas.unidad_alternativa_codigo = alternativa.codigo" + " " + ;
+                        "INNER JOIN " + ::getUnidadesMedicionTableName() + " as base ON grupos.unidad_base_codigo = base.codigo"        
 
 RETURN ( cSelect )
 

@@ -43,7 +43,7 @@ METHOD New( oSenderController ) CLASS AgentesController
 
    ::oValidator                     := AgentesValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController         := DireccionesController():New( self )
+   ::oDireccionesController         := DireccionesCompanyController():New( self )
 
    ::oRepository                    := AgentesRepository():New( self )
 
@@ -347,25 +347,25 @@ CLASS SQLAgentesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getInitialSelect()
+   METHOD getGeneralSelect()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect() CLASS SQLAgentesModel
+METHOD getGeneralSelect() CLASS SQLAgentesModel
 
-   local cSelect  := "SELECT agentes.id,"                                                               + " " + ;
-                        "agentes.uuid,"                                                                 + " " + ;
-                        "agentes.codigo,"                                                               + " " + ;
-                        "agentes.nombre,"                                                               + " " + ;
-                        "agentes.dni,"                                                                  + " " + ;
-                        "agentes.comision,"                                                             + " " + ;
-                        "direcciones.telefono as telefono,"                                             + " " + ;
-                        "direcciones.movil as movil,"                                                   + " " + ;
-                        "direcciones.email as email"                                                    + " " + ;
-                     "FROM  agentes"                                                                    + " " + ;
-                        "INNER JOIN direcciones ON agentes.uuid = direcciones.parent_uuid"              + " "
+   local cSelect  := "SELECT agentes.id,"                                                                                           + " " + ;
+                        "agentes.uuid,"                                                                                             + " " + ;
+                        "agentes.codigo,"                                                                                           + " " + ;
+                        "agentes.nombre,"                                                                                           + " " + ;
+                        "agentes.dni,"                                                                                              + " " + ;
+                        "agentes.comision,"                                                                                         + " " + ;
+                        "direcciones.telefono as telefono,"                                                                         + " " + ;
+                        "direcciones.movil as movil,"                                                                               + " " + ;
+                        "direcciones.email as email"                                                                                + " " + ;
+                     "FROM "+ ::getTableName() + " AS agentes"                                                                      + " " + ;
+                        "INNER JOIN " + SQLDireccionesCompanyModel():getTableName() + " AS direcciones ON agentes.uuid = direcciones.parent_uuid"   
 
 RETURN ( cSelect )
 
@@ -378,8 +378,6 @@ METHOD getColumns() CLASS SQLAgentesModel
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
-   
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(20) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| space( 20 )}})

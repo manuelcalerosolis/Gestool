@@ -443,7 +443,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RecibosValidator FROM SQLCompanyValidator
+CLASS RecibosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

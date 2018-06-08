@@ -312,7 +312,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImagenesValidator FROM SQLCompanyValidator
+CLASS ImagenesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

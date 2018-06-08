@@ -237,7 +237,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosPreciosValidator FROM SQLCompanyValidator
+CLASS ArticulosPreciosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

@@ -229,7 +229,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UnidadesMedicionValidator FROM SQLCompanyValidator
+CLASS UnidadesMedicionValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

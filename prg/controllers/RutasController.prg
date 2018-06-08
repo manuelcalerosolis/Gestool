@@ -209,7 +209,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RutasValidator FROM SQLCompanyValidator
+CLASS RutasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

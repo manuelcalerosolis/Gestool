@@ -260,7 +260,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ListinValidator FROM SQLCompanyValidator
+CLASS ListinValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

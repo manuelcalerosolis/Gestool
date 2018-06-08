@@ -184,7 +184,7 @@ RETURN ( oDlg:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CajonPortamonedaValidator FROM SQLCompanyValidator
+CLASS CajonPortamonedaValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

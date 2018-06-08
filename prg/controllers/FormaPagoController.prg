@@ -23,33 +23,33 @@ METHOD New( oSenderController ) CLASS FormasPagosController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Formas de pago"
+   ::cTitle                         := "Formas de pago"
 
-   ::cName                       := "forma_pago"
+   ::cName                          := "forma_pago"
 
-   ::hImage                      := {  "16" => "gc_credit_cards_16",;
-                                       "32" => "gc_credit_cards_32",;
-                                       "48" => "gc_credit_cards_48" }
+   ::hImage                         := {  "16" => "gc_credit_cards_16",;
+                                          "32" => "gc_credit_cards_32",;
+                                          "48" => "gc_credit_cards_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLFormaPagoModel():New( self )
+   ::oModel                         := SQLFormaPagoModel():New( self )
 
-   ::oBrowseView                 := FormaPagoBrowseView():New( self )
+   ::oBrowseView                    := FormaPagoBrowseView():New( self )
 
-   ::oDialogView                 := FormaPagoView():New( self )
+   ::oDialogView                    := FormaPagoView():New( self )
 
-   ::oBancosController           := CuentasBancariasController():new( self )
+   ::oBancosController              := CuentasBancariasController():new( self )
 
-   ::oDocumentosController       :=  DocumentosController():New( self )
+   ::oDocumentosController          :=  DocumentosController():New( self )
 
-   ::oValidator                  := FormaPagoValidator():New( self, ::oDialogView )
+   ::oValidator                     := FormaPagoValidator():New( self, ::oDialogView )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
-   ::oRepository                 := FormaPagoRepository():New( self )
+   ::oRepository                    := FormaPagoRepository():New( self )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oGetSelector                   := GetSelector():New( self )
 
 RETURN ( Self )
 
@@ -117,7 +117,7 @@ METHOD addColumns() CLASS FormaPagoBrowseView
       :cHeader             := 'Tactil'
       :nWidth              := 20
       :nHeadBmpNo          := 3
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'incluir_en_terminal' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tactil' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :SetCheck( { "Sel16", "Nil16" } )
       :AddResource( "TACTIL16" )
@@ -380,7 +380,7 @@ METHOD Activate() CLASS FormaPagoView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE SAYCHECKBOX   ::oController:oModel:hBuffer[ "incluir_en_terminal" ] ;
+   REDEFINE SAYCHECKBOX   ::oController:oModel:hBuffer[ "tactil" ] ;
       ID          250 ;
       IDSAY       252 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -490,7 +490,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FormaPagoValidator FROM SQLCompanyValidator
+CLASS FormaPagoValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -535,7 +535,6 @@ METHOD getColumns() CLASS SQLFormaPagoModel
 
    hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
                                                 "default"   => {|| win_uuidcreatestring() } }               )
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 20 )"                               ,;
                                                 "default"   => {|| space( 20 ) } }                           )
@@ -579,7 +578,7 @@ METHOD getColumns() CLASS SQLFormaPagoModel
    hset( ::hColumns, "codigo_edi",           {  "create"    => "VARCHAR( 200 )"                             ,;                                  
                                                 "default"   => {|| space( 200 ) } }                         )
 
-   hset( ::hColumns, "incluir_en_terminal",  {  "create"    => "TINYINT( 1 )"                               ,;
+   hset( ::hColumns, "tactil",               {  "create"    => "TINYINT( 1 )"                               ,;
                                                 "default"   => {|| .f. } }                                  )
 
    hset( ::hColumns, "icono",                {  "create"    => "VARCHAR( 40 )"                              ,;
@@ -593,9 +592,7 @@ METHOD getColumns() CLASS SQLFormaPagoModel
 
    hset( ::hColumns, "generar_documento",    {  "create"    => "INTEGER( 1 )"                               ,;
                                                 "default"   => {|| ( 0 ) } }                                )
-   
-   ::getEmpresaColumns()
-   
+
    ::getTimeStampColumns()
 
 RETURN ( ::hColumns )

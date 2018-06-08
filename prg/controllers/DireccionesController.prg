@@ -4,7 +4,7 @@
 //---------------------------------------------------------------------------//
 
 
-CLASS DireccionesControllerCompanyController FROM DireccionesController
+CLASS DireccionesCompanyController FROM DireccionesController
 
    METHOD getModel()                   INLINE ( ::oModel := SQLDireccionesCompanyModel():New( self ) )
 

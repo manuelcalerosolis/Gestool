@@ -279,7 +279,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TraduccionesValidator FROM SQLCompanyValidator
+CLASS TraduccionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
