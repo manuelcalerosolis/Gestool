@@ -147,7 +147,7 @@ RETURN ( oDlg:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SituacionesValidator FROM SQLCompanyValidator
+CLASS SituacionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

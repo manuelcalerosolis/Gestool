@@ -292,7 +292,7 @@ RETURN( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS BalanzasValidator FROM SQLCompanyValidator
+CLASS BalanzasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

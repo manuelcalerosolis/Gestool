@@ -339,7 +339,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DescuentosValidator FROM SQLCompanyValidator
+CLASS DescuentosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

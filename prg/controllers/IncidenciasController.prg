@@ -372,7 +372,7 @@ Return ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS IncidenciasValidator FROM SQLCompanyValidator
+CLASS IncidenciasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

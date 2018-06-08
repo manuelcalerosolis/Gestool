@@ -208,7 +208,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ClientesGruposValidator FROM SQLCompanyValidator
+CLASS ClientesGruposValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

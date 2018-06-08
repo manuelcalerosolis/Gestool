@@ -223,7 +223,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosEnvasadoValidator FROM SQLCompanyValidator
+CLASS ArticulosEnvasadoValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

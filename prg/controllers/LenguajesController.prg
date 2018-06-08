@@ -191,7 +191,7 @@ METHOD Activate() CLASS LenguajesView
       RESOURCE    "LENGUAJE" ;
       TITLE       ::LblTitle() + "lenguajes"
 
-   REDEFINE BITMAP ::oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ; 
       ID          900 ;
       RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
@@ -228,7 +228,7 @@ METHOD Activate() CLASS LenguajesView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBmpGeneral:end()
+   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -265,7 +265,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLLenguajesModel FROM SQLBaseModel
+CLASS SQLLenguajesModel FROM SQLCompanyModel
 
    DATA cTableName                  INIT "lenguajes"
 

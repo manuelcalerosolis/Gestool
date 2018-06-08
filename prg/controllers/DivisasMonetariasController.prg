@@ -330,7 +330,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DivisasMonetariasValidator FROM SQLCompanyValidator
+CLASS DivisasMonetariasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

@@ -321,7 +321,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DocumentosValidator FROM SQLCompanyValidator
+CLASS DocumentosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

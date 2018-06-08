@@ -250,7 +250,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ImpuestosEspecialesValidator FROM SQLCompanyValidator
+CLASS ImpuestosEspecialesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

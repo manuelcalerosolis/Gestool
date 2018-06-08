@@ -311,7 +311,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CuentasRemesaValidator FROM SQLCompanyValidator
+CLASS CuentasRemesaValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -344,24 +344,28 @@ CLASS SQLCuentasRemesaModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getCuentasBancariasTablename()           INLINE( SQLCuentasBancariasModel():getTableName() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD getInitialSelect() CLASS SQLCuentasRemesaModel
 
-   local cSelect  := "SELECT cuentas_remesa.id,"                                                               + " " + ;
-                        "cuentas_remesa.uuid,"                                                                 + " " + ;
-                        "cuentas_remesa.codigo,"                                                               + " " + ;
-                        "cuentas_remesa.nombre,"                                                               + " " + ;
-                        "CONCAT( cuentas_bancarias.iban_codigo_pais, "                                         + " " + ;  
-                        "cuentas_bancarias.iban_digito_control, "                                              + " " + ; 
-                        "cuentas_bancarias.cuenta_codigo_entidad, "                                            + " " + ;
-                        "cuentas_bancarias.cuenta_codigo_oficina, "                                            + " " + ;
-                        "cuentas_bancarias.cuenta_digito_control, "                                            + " " + ;
-                        "cuentas_bancarias.cuenta_numero ) AS cuenta"                                          + " " + ;
-                     "FROM cuentas_remesa"                                                                     + " " + ;
-                        "INNER JOIN cuentas_bancarias ON cuentas_remesa.uuid = cuentas_bancarias.parent_uuid"  + " "
+   local cSelect  := "SELECT remesa.id,"                                                               + " " + ;
+                        "remesa.uuid,"                                                                         + " " + ;
+                        "remesa.codigo,"                                                                       + " " + ;
+                        "remesa.nombre,"                                                                       + " " + ;
+                        "CONCAT( bancaria.iban_codigo_pais, "                                         + " " + ;  
+                        "bancaria.iban_digito_control, "                                              + " " + ; 
+                        "bancaria.cuenta_codigo_entidad, "                                            + " " + ;
+                        "bancaria.cuenta_codigo_oficina, "                                            + " " + ;
+                        "bancaria.cuenta_digito_control, "                                            + " " + ;
+                        "bancaria.cuenta_numero ) AS cuenta"                                          + " " + ;
+                     "FROM " + ::getTableName() + " AS remesa"                                                   + " " + ;
+                        "INNER JOIN " + ::getCuentasBancariasTablename() +" AS bancaria ON remesa.uuid = bancaria.parent_uuid"  + " "
+
+                        logwrite( cSelect )
 
 RETURN ( cSelect )
 

@@ -245,7 +245,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaValidator FROM SQLCompanyValidator
+CLASS ArticulosTemporadaValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
