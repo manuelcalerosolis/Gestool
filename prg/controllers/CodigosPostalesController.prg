@@ -3,6 +3,16 @@
 
 //---------------------------------------------------------------------------//
 
+CLASS CodigosPostalesGestoolController FROM CodigosPostalesController
+
+   METHOD getModel()                   INLINE ( ::oModel := SQLCodigosPostalesGestoolModel():New( self ) )
+
+   METHOD getProvinciasController()    INLINE ( ::oProvinciasController := ProvinciasGestoolController():New( self ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
 CLASS CodigosPostalesController FROM SQLNavigatorController
 
    DATA oProvinciasController
@@ -11,13 +21,17 @@ CLASS CodigosPostalesController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD getModel()                   INLINE ( ::oModel := SQLCodigosPostalesModel():New( self ) )
+
+   METHOD getProvinciasController()    INLINE ( ::oProvinciasController := ProvinciasController():New( self ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS CodigosPostalesController
+METHOD New( oSenderController ) CLASS CodigosPostalesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                   := "Código postal"
 
@@ -27,23 +41,24 @@ METHOD New() CLASS CodigosPostalesController
                                     "32" => "gc_postage_stamp_32",;
                                     "48" => "gc_postage_stamp_48" }
 
-   ::nLevel                   := Auth():Level( ::cName )
-
-   ::oModel                   := SQLCodigosPostalesModel():New( self )
-
    ::oBrowseView              := CodigosPostalesBrowseView():New( self )
 
    ::oDialogView              := CodigosPostalesView():New( self )
 
    ::oValidator               := CodigosPostalesValidator():New( self )
 
-   ::oProvinciasController    := ProvinciasController():New( self )
+   ::getProvinciasController()
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
+   if empty( oSenderController )
+
+      ::nLevel                := Auth():Level( ::cName )
+   
+   end if 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS CodigosPostalesController
 
    ::oModel:End()
@@ -60,10 +75,6 @@ METHOD End() CLASS CodigosPostalesController
 
 RETURN ( Self )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -240,11 +251,20 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+CLASS SQLCodigosPostalesGestoolModel FROM SQLCodigosPostalesModel
+
+   METHOD getTableName()         INLINE ( "gestool." + ::cTableName )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCodigosPostalesModel FROM SQLBaseModel
+CLASS SQLCodigosPostalesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "codigos_postales"
 

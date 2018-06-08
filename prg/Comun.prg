@@ -3404,7 +3404,7 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Campos extra'
    oItem:cMessage       := 'Solicitar campos extra'
-   oItem:bAction        := {|| CamposExtraCompanyController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| CamposExtraController():New():ActivateNavigatorView() }
    oItem:cId            := "campos_extra"
    oItem:cBmp           := "gc_form_plus2_16"
    oItem:cBmpBig        := "gc_form_plus2_32"
@@ -3534,7 +3534,7 @@ FUNCTION CreateAdminSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Campos extra'
    oItem:cMessage       := 'Solicitar campos extra'
-   oItem:bAction        := {|| CamposExtraController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| CamposExtraGestoolController():New():ActivateNavigatorView() }
    oItem:cId            := "campos_extra"
    oItem:cBmp           := "gc_form_plus2_16"
    oItem:cBmpBig        := "gc_form_plus2_32"

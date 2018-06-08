@@ -136,7 +136,7 @@ METHOD getInitialSelect() CLASS SQLClientesModel
                         "RPAD( IFNULL( cuentas_remesa.codigo, ''), 20, ' ' ) AS codigo_remesa,"                            + " " + ;
                         "cuentas_remesa.nombre AS nombre_remesa"                                                           + " " + ;
                      "FROM " + ::getTableName() + " AS clientes"                                                           + " " + ;
-                        "LEFT JOIN " + SQLDireccionesCompanyModel():getTableName() + " direcciones"                        + " " + ;  
+                        "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                        + " " + ;  
                            "ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"                          + " " + ;  
                         "LEFT JOIN " + SQLFormaPagoModel():getTableName() + " forma_pago"                                  + " " + ;  
                            "ON clientes.forma_pago_codigo = forma_pago.codigo"                                             + " " + ;
@@ -168,7 +168,7 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLClientesModel
                         "direcciones.movil AS movil,"                                                                      + " " + ;
                         "direcciones.email AS email"                                                                       + " " + ;
                      "FROM " + ::getTableName() + " AS clientes"                                                           + " " + ;
-                        "LEFT JOIN " + SQLDireccionesCompanyModel():getTableName() + " direcciones"                        + " " + ;  
+                        "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                        + " " + ;  
                            "ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"                          + " " + ;
                      "WHERE clientes." + cBy + " = " + quoted( cId ) 
 

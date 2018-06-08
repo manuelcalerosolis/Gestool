@@ -43,7 +43,7 @@ METHOD New( oSenderController ) CLASS AgentesController
 
    ::oValidator                     := AgentesValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController         := DireccionesCompanyController():New( self )
+   ::oDireccionesController         := DireccionesController():New( self )
 
    ::oRepository                    := AgentesRepository():New( self )
 
@@ -365,7 +365,7 @@ METHOD getGeneralSelect() CLASS SQLAgentesModel
                         "direcciones.movil as movil,"                                                                               + " " + ;
                         "direcciones.email as email"                                                                                + " " + ;
                      "FROM "+ ::getTableName() + " AS agentes"                                                                      + " " + ;
-                        "INNER JOIN " + SQLDireccionesCompanyModel():getTableName() + " AS direcciones ON agentes.uuid = direcciones.parent_uuid"   
+                        "INNER JOIN " + SQLDireccionesModel():getTableName() + " AS direcciones ON agentes.uuid = direcciones.parent_uuid"   
 
 RETURN ( cSelect )
 
@@ -380,7 +380,7 @@ METHOD getColumns() CLASS SQLAgentesModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(20) NOT NULL UNIQUE"             ,;
-                                             "default"   => {|| space( 20 )}})
+                                             "default"   => {|| space( 20 ) } } )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                         ,;
                                              "default"   => {|| space( 140 ) } }                      )

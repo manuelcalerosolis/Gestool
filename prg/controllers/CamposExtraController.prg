@@ -3,11 +3,13 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraCompanyController FROM CamposExtraController
+CLASS CamposExtraGestoolController FROM CamposExtraController
 
-   METHOD getModel()                   INLINE ( ::oModel := SQLCamposExtraCompanyModel():New( self ) )
+   METHOD getModel()                            INLINE ( ::oModel := SQLCamposExtraGestoolModel():New( self ) )
 
-   METHOD getLevel()                   INLINE ( ::nLevel := Auth():Level( ::getName() ) )
+   METHOD getLevel()                            INLINE ( nil )
+
+   METHOD getCamposExtraEntidadesController()   INLINE ( ::oCamposExtraEntidadesController := CamposExtraEntidadesGestoolController():New( self ) )
 
 END CLASS
 
@@ -27,9 +29,11 @@ CLASS CamposExtraController FROM SQLNavigatorController
 
    METHOD deleteEntitiesWhereEmpty()
 
-   METHOD getModel()                   INLINE ( ::oModel := SQLCamposExtraModel():New( self ) )
+   METHOD getModel()                            INLINE ( ::oModel := SQLCamposExtraModel():New( self ) )
 
-   METHOD getLevel()                   INLINE ( nil )
+   METHOD getLevel()                            INLINE ( ::nLevel := Auth():Level( ::getName() ) )
+
+   METHOD getCamposExtraEntidadesController()   INLINE ( ::oCamposExtraEntidadesController := CamposExtraEntidadesController():New( self ) )
 
 END CLASS
 
@@ -60,7 +64,7 @@ METHOD New() CLASS CamposExtraController
 
    ::oValidator                        := CamposExtraValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraEntidadesController   := CamposExtraEntidadesController():New( self )
+   ::getCamposExtraEntidadesController()
 
    ::setEvent( 'edited',      {|| ::deleteEntitiesWhereEmpty() } )
    ::setEvent( 'appended',    {|| ::deleteEntitiesWhereEmpty() } )
@@ -475,9 +479,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCamposExtraCompanyModel FROM SQLCamposExtraModel
+CLASS SQLCamposExtraGestoolModel FROM SQLCamposExtraModel
 
-   METHOD getTableName()   INLINE ( Company():getTableName( ::cTableName ) )
+   METHOD getTableName()   INLINE ( "gestool." + ::cTableName )
 
 END CLASS
    
@@ -487,7 +491,7 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCamposExtraModel FROM SQLBaseModel
+CLASS SQLCamposExtraModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "campos_extra"
 

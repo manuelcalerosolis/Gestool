@@ -3,14 +3,23 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PaisesController FROM SQLNavigatorController
+CLASS PaisesGestoolController FROM PaisesController
 
+   METHOD getModel()          INLINE ( ::oModel := SQLPaisesGestoolModel():New( self ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS PaisesController FROM SQLNavigatorController
 
    METHOD New()
 
    METHOD End()
 
    METHOD getSelectorPais( oGet )
+
+   METHOD getModel()          INLINE ( ::oModel := SQLPaisesModel():New( self ) )
 
 END CLASS
 
@@ -28,7 +37,7 @@ METHOD New( oSenderController ) CLASS PaisesController
                                     "32" => "gc_globe_32",;
                                     "48" => "gc_globe_48" }
 
-   ::oModel                   := SQLPaisesModel():New( self )
+   ::getModel()
 
    ::oBrowseView              := PaisesBrowseView():New( self )
 
@@ -220,17 +229,26 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+CLASS SQLPaisesGestoolModel FROM SQLPaisesModel
+
+   METHOD getTableName()                  INLINE ( "gestool." + ::cTableName )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLPaisesModel FROM SQLBaseModel
+CLASS SQLPaisesModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "paises"
+   DATA cTableName                        INIT "paises"
 
    METHOD getColumns()
 
-   METHOD getNombreWhereCodigo( codigo ) INLINE ( ::getField( 'nombre', 'codigo', codigo ) )
+   METHOD getNombreWhereCodigo( codigo )  INLINE ( ::getField( 'nombre', 'codigo', codigo ) )
 
 END CLASS
 
@@ -238,15 +256,14 @@ END CLASS
 
 METHOD getColumns() CLASS SQLPaisesModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"         ,;
-                                             "text"      => "Identificador"                         ,;
-                                             "default"   => {|| 0 } }                                )
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                             "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                          ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) UNIQUE"                    ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                        ,;
-                                             "default"   => {|| space( 200 ) } }                     )
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) UNIQUE"                   ,;
+                                             "default"   => {|| space( 200 ) } }                      )
 
 RETURN ( ::hColumns )
 

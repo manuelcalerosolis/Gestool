@@ -37,9 +37,9 @@ METHOD New( oSenderController ) CLASS DelegacionesController
 
    ::oValidator                     := DelegacionesValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController         := DireccionesController():New( self )
+   ::oDireccionesController         := DireccionesGestoolController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+   ::oCamposExtraValoresController  := CamposExtraValoresGestoolController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := DelegacionesRepository():New( self )
 

@@ -3,6 +3,14 @@
 
 //---------------------------------------------------------------------------//
 
+CLASS CamposExtraValoresGestoolController FROM CamposExtraValoresController
+
+   METHOD getModel()                          INLINE ( ::oModel := SQLCamposExtraValoresGestoolModel():New( self ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
 CLASS CamposExtraValoresController FROM SQLBrowseController
 
    DATA cEntidad
@@ -14,6 +22,8 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
    METHOD New( self )
 
    METHOD End()
+
+   METHOD getModel()                                        INLINE ( ::oModel := SQLCamposExtraValoresModel():New( self ) )
 
    METHOD setEntidad( cEntidad )                            INLINE ( ::cEntidad := cEntidad )
 
@@ -49,11 +59,9 @@ METHOD New( oSenderController, cEntidad ) CLASS CamposExtraValoresController
                                              "32" => "gc_form_plus2_32",;
                                              "48" => "gc_form_plus2_48" }
 
-   ::oModel                            := SQLCamposExtraValoresModel():New( self )
+   ::getModel()
 
    ::oBrowseView                       := CamposExtraValoresBrowseView():New( self )
-
-   ::oRepository                       := CamposExtraValoresRepository():New( self )
 
    ::oDialogView                       := CamposExtraValoresView():New( self )
 
@@ -74,8 +82,6 @@ METHOD End() CLASS CamposExtraValoresController
    ::oDialogView:End()
 
    ::oValidator:End()
-
-   ::oRepository:End()
 
    ::Super:End()
 
@@ -119,7 +125,7 @@ METHOD assertCamposExtraValores() CLASS CamposExtraValoresController
 
    local aValores  
 
-   aValores          := ::oRepository:getHashCampoExtraValoresWhereEntidad( ::cEntidad )
+   aValores          := ::oModel:getHashCampoExtraValoresWhereEntidad( ::cEntidad )
 
    if empty( aValores )
       RETURN .f.
@@ -426,16 +432,14 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS SQLCamposExtraValoresCompanyModel FROM SQLCamposExtraValoresModel 
+CLASS SQLCamposExtraValoresGestoolModel FROM SQLCamposExtraValoresModel
 
-   METHOD getTableName()                              INLINE ( Company():getTableName( ::cTableName ) )
+   METHOD getTableName()                              INLINE ( "gestool." + ::cTableName )
 
-   METHOD getSQLCamposExtraModelTableName()           INLINE ( SQLCamposExtraCompanyModel():getTableName() )
+   METHOD getSQLCamposExtraModelTableName()           INLINE ( SQLCamposExtraGestoolModel():getTableName() )
 
-   METHOD getSQLCamposExtraEntidadesModelTableName()  INLINE ( SQLCamposExtraEntidadesCompanyModel():getTableName() )
+   METHOD getSQLCamposExtraEntidadesModelTableName()  INLINE ( SQLCamposExtraEntidadesGestoolModel():getTableName() )
 
 END CLASS
 
@@ -445,13 +449,13 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCamposExtraValoresModel FROM SQLBaseModel
+CLASS SQLCamposExtraValoresModel FROM SQLCompanyModel
 
-   DATA cTableName                              INIT "campos_extra_valores"
+   DATA cTableName                                    INIT "campos_extra_valores"
 
-   DATA cConstraints                            INIT "PRIMARY KEY ( id ), UNIQUE KEY ( campo_extra_entidad_uuid, entidad_uuid )"
+   DATA cConstraints                                  INIT "PRIMARY KEY ( id ), UNIQUE KEY ( campo_extra_entidad_uuid, entidad_uuid )"
 
-   DATA cColumnOrder                            INIT "nombre"                  
+   DATA cColumnOrder                                  INIT "nombre"                  
 
    METHOD getInitialSelect()
 
@@ -466,6 +470,10 @@ CLASS SQLCamposExtraValoresModel FROM SQLBaseModel
    METHOD getSQLCamposExtraModelTableName()           INLINE ( SQLCamposExtraModel():getTableName() )
 
    METHOD getSQLCamposExtraEntidadesModelTableName()  INLINE ( SQLCamposExtraEntidadesModel():getTableName() )
+
+   METHOD getSentenceCampoExtraValoresWhereEntidad( cEntidad )
+
+   METHOD getHashCampoExtraValoresWhereEntidad( cEntidad )
 
 END CLASS
 
@@ -516,48 +524,10 @@ METHOD getColumns() CLASS SQLCamposExtraValoresModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS CamposExtraValoresCompanyRepository FROM CamposExtraValoresRepository 
+METHOD getSentenceCampoExtraValoresWhereEntidad( cEntidad ) CLASS SQLCamposExtraValoresModel
 
-   METHOD getSQLCamposExtraModelTableName()           INLINE ( SQLCamposExtraCompanyModel():getTableName() )
-
-   METHOD getSQLCamposExtraEntidadesModelTableName()  INLINE ( SQLCamposExtraEntidadesCompanyModel():getTableName() )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS CamposExtraValoresRepository FROM SQLBaseRepository
-
-   METHOD getTableName()                              INLINE ( SQLCamposExtraValoresModel():getTableName() ) 
-
-   METHOD getTableNameCamposExtra()                   INLINE ( SQLCamposExtraModel():getTableName() ) 
-
-   METHOD getSQLCamposExtraModelTableName()           INLINE ( SQLCamposExtraModel():getTableName() )
-
-   METHOD getSQLCamposExtraEntidadesModelTableName()  INLINE ( SQLCamposExtraEntidadesModel():getTableName() )
-
-   METHOD getSentenceCampoExtraValoresWhereEntidad( cEntidad )
-
-   METHOD getHashCampoExtraValoresWhereEntidad( cEntidad )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD getSentenceCampoExtraValoresWhereEntidad( cEntidad ) CLASS CamposExtraValoresRepository
-
-   local cSQL  
-
-   cSQL              := "SELECT entidad.id, "
+   local cSQL        := "SELECT entidad.id, "
    cSQL              +=    "entidad.uuid, "
    cSQL              +=    "entidad.parent_uuid, "
    cSQL              +=    "entidad.entidad, "
@@ -572,7 +542,7 @@ RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
 
-METHOD getHashCampoExtraValoresWhereEntidad( cEntidad ) CLASS CamposExtraValoresRepository
+METHOD getHashCampoExtraValoresWhereEntidad( cEntidad ) CLASS SQLCamposExtraValoresModel
 
    local cSQL        := ::getSentenceCampoExtraValoresWhereEntidad( cEntidad ) 
 

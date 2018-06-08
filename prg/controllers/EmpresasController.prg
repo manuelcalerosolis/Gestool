@@ -67,7 +67,7 @@ METHOD New() CLASS EmpresasController
 
    ::oValidator                     := EmpresasValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+   ::oCamposExtraValoresController  := CamposExtraValoresGestoolController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := EmpresasRepository():New( self )
 
@@ -75,7 +75,7 @@ METHOD New() CLASS EmpresasController
 
    ::oAjustableController           := AjustableController():New( self )
 
-   ::oDireccionesController         := DireccionesController():New( self )
+   ::oDireccionesController         := DireccionesGestoolController():New( self )
    ::oDireccionesController:setView( ::oDialogView )
 
    ::oDelegacionesController        := DelegacionesController():New( self )
@@ -484,7 +484,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD getColumns() CLASS SQLEmpresasModel
-
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )

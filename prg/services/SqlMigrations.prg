@@ -164,7 +164,13 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLEmpresasModel():New() )
 
-   aadd( ::aModels, SQLDireccionesModel():New() )
+   aadd( ::aModels, SQLDireccionesGestoolModel():New() )
+
+   aadd( ::aModels, SQLCodigosPostalesGestoolModel():New() )
+
+   aadd( ::aModels, SQLProvinciasGestoolModel():New() )
+
+   aadd( ::aModels, SQLPaisesGestoolModel():New() )
 
    aadd( ::aModels, SQLDelegacionesModel():New() )
 
@@ -182,11 +188,11 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
-   aadd( ::aModels, SQLCamposExtraModel():New() )
+   aadd( ::aModels, SQLCamposExtraGestoolModel():New() )
 
-   aadd( ::aModels, SQLCamposExtraEntidadesModel():New() )
+   aadd( ::aModels, SQLCamposExtraEntidadesGestoolModel():New() )
    
-   aadd( ::aModels, SQLCamposExtraValoresModel():New() )
+   aadd( ::aModels, SQLCamposExtraValoresGestoolModel():New() )
 
    aadd( ::aModels, SQLFiltrosModel():New() ) 
 
@@ -194,11 +200,6 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLConfiguracionesModel():New() )
 
-   aadd( ::aModels, SQLCodigosPostalesModel():New() )
-
-   aadd( ::aModels, SQLProvinciasModel():New() )
-
-   aadd( ::aModels, SQLPaisesModel():New() )
 
 RETURN ( ::aModels )
  
@@ -273,7 +274,13 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLListinModel():New() )
 
-   aadd( ::aModels, SQLDireccionesCompanyModel():New() )
+   aadd( ::aModels, SQLDireccionesModel():New() )
+
+   aadd( ::aModels, SQLCodigosPostalesModel():New() )
+
+   aadd( ::aModels, SQLProvinciasModel():New() )
+
+   aadd( ::aModels, SQLPaisesModel():New() )
 
    aadd( ::aModels, SQLComentariosModel():New() )
 
@@ -371,16 +378,20 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLProveedoresModel():New() ) 
 
+
    aadd( ::aModels, SQLTraduccionesModel():New() ) 
 
    aadd( ::aModels, SQLDescuentosModel():New() ) 
 
    aadd( ::aModels, SQLFacturasClientesModel():New() ) 
 
-   aadd( ::aModels, SQLCamposExtraCompanyModel():New() )
+   aadd( ::aModels, SQLCamposExtraModel():New() )
+
+   aadd( ::aModels, SQLCamposExtraEntidadesModel():New() )
+   
+   aadd( ::aModels, SQLCamposExtraValoresModel():New() )
 
    aadd( ::aModels, SQLLenguajesModel():New() )
-
 
 RETURN ( ::aModels )
  

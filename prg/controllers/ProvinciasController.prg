@@ -3,11 +3,21 @@
 
 //---------------------------------------------------------------------------//
 
+CLASS ProvinciasGestoolController FROM ProvinciasController
+
+   METHOD getModel()          INLINE ( ::oModel := SQLProvinciasGestoolModel():New( self ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
 CLASS ProvinciasController FROM SQLNavigatorController
 
    METHOD New()
 
    METHOD End()
+
+   METHOD getModel()          INLINE ( ::oModel := SQLProvinciasModel():New( self ) )
 
    METHOD getSelectorProvincia( oGet )
 
@@ -29,7 +39,7 @@ METHOD New( oSenderController ) CLASS ProvinciasController
                                     "32" => "gc_flag_spain_32",;
                                     "48" => "gc_flag_spain_48" }
 
-   ::oModel                   := SQLProvinciasModel():New( self )
+   ::getModel()
 
    ::oBrowseView              := ProvinciasBrowseView():New( self )
 
@@ -132,8 +142,6 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS ProvinciasView FROM SQLBaseView
   
@@ -201,7 +209,6 @@ RETURN ( oDlg:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS ProvinciasValidator FROM SQLBaseValidator
 
@@ -227,11 +234,16 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+CLASS SQLProvinciasGestoolModel FROM SQLProvinciasModel
+
+   METHOD getTableName()         INLINE ( "gestool." + ::cTableName )
+
+END CLASS
+
 //---------------------------------------------------------------------------//
 
-CLASS SQLProvinciasModel FROM SQLBaseModel
+CLASS SQLProvinciasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "provincias"
 
@@ -244,32 +256,15 @@ END CLASS
 METHOD getColumns() CLASS SQLProvinciasModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 50 )"                          ,;
+   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 50 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| space( 50 ) } }                       )
 
 RETURN ( ::hColumns )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS ProvinciasRepository FROM SQLBaseRepository
-
-   METHOD getTableName()         INLINE ( SQLProvinciasModel():getTableName() ) 
-
-END CLASS
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

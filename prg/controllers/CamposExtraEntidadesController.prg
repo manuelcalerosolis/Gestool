@@ -1,16 +1,74 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-//---------------------------------------------------------------------------//
-
-CLASS CamposExtraEntidadesController FROM SQLBrowseController
+CLASS CamposExtraEntidadesGestoolController FROM CamposExtraEntidadesController 
 
    CLASSDATA aEntidades INIT  {  "empresas" =>     { "nombre" => "Empresas", "icono" => "gc_factory_16"  },;
                                  "usuarios" =>     { "nombre" => "Usuarios", "icono" => "gc_businesspeople_16"  } }
 
+   METHOD getModel()             INLINE ( ::oModel := SQLCamposExtraEntidadesGestoolModel():New( self ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS CamposExtraEntidadesController FROM SQLBrowseController
+
+   CLASSDATA aEntidades INIT  {  "articulos" =>                            { "nombre" => "Artículos",  "icono" => "gc_object_cube_16"                                     } ,;
+                                 "articulos_temporada" =>                  { "nombre" => "Temporadas", "icono" => "gc_cloud_sun_16"                                       } ,;
+                                 "articulos_categorias" =>                 { "nombre" => "Categorias", "icono" => "gc_photographic_filters_16"                            } ,;
+                                 "articulos_propiedades" =>                { "nombre" => "Propiedades", "icono" => "gc_coathanger_16"                                     } ,;
+                                 "articulos_familias" =>                   { "nombre" => "Familias",  "icono" => "gc_cubes_16"                                            } ,;
+                                 "articulos_tipos" =>                      { "nombre" => "Tipos de artículos", "icono" => "gc_objects_16"                                 } ,;
+                                 "articulos_tarifas" =>                    { "nombre" => "Tarifas", "icono" => "gc_money_interest_16"                                     } ,;
+                                 "clientes" =>                             { "nombre" => "Clientes",  "icono" => "gc_user_16"                                             } ,;
+                                 "clientes_grupos" =>                      { "nombre" => "Grupo de clientes",  "icono" => "gc_users3_16"                                  } ,;
+                                 "proveedores" =>                          { "nombre" => "Proveedores",  "icono" => "gc_businessman_16"                                   } ,;
+                                 "agentes" =>                              { "nombre" => "Agentes",  "icono" => "gc_businessman2_16"                                      } ,;
+                                 "transportistas" =>                       { "nombre" => "Transportistas",  "icono" => "gc_small_truck_16"                                } ,;
+                                 "presupuestos_clientes" =>                { "nombre" => "Presupuestos a clientes",  "icono" => "gc_notebook_user_16"                     } ,;
+                                 "pedidos_clientes" =>                     { "nombre" => "Pedidos a clientes",  "icono" => "gc_clipboard_empty_user_16"                   } ,;
+                                 "albaranes_clientes" =>                   { "nombre" => "Albaranes a clientes",  "icono" => "gc_document_empty_16"                       } ,;
+                                 "lineas_albaranes_clientes" =>            { "nombre" => "Líneas de albaranes a clientes",  "icono" => "gc_document_empty_16"             } ,;
+                                 "facturas_clientes" =>                    { "nombre" => "Facturas a clientes",  "icono" => "gc_document_text_user_16"                    } ,;
+                                 "lineas_facturas_clientes" =>             { "nombre" => "Líneas de facturas a clientes",  "icono" => "gc_document_text_user_16"          } ,;
+                                 "facturas_anticipos_clientes" =>          { "nombre" => "Facturas de anticipos a clientes",  "icono" => "gc_document_text_money2_16"     } ,;
+                                 "rectificativa_clientes" =>               { "nombre" => "Facturas rectificativa a clientes",  "icono" => "gc_document_text_delete_16"    } ,;
+                                 "pedidos_proveedores" =>                  { "nombre" => "Pedidos a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"         } ,;
+                                 "lineas_pedidos_proveedores" =>           { "nombre" => "Líneas pedidos a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"  } ,;
+                                 "albaranes_proveedores" =>                { "nombre" => "Albaranes a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"       } ,;
+                                 "forma_pago" =>                           { "nombre" => "Forma de pago",  "icono" => "gc_credit_cards_16"                                } ,;
+                                 "lineas_albaranes_proveedores" =>         { "nombre" => "Líneas albaranes a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"} ,;
+                                 "facturas_proveedores" =>                 { "nombre" => "Facturas a proveedores",  "icono" => "gc_document_text_businessman_16"          } ,;
+                                 "lineas_facturas_proveedores" =>          { "nombre" => "Líneas facturas a proveedores",  "icono" => "gc_document_text_businessman_16"   } ,;
+                                 "facturas_rectificativa_proveedores"=>    { "nombre" => "Facturas rectificativa a proveedores", "icono" => "gc_document_text_delete2_16" } ,;
+                                 "sat" =>                                  { "nombre" => "S.A.T",  "icono" => "gc_power_drill_sat_user_16"                                } ,;
+                                 "envases_articulos" =>                    { "nombre" => "Envases de artículos",  "icono" => "gc_box_closed_16"                           } ,;
+                                 "grupos_clientes" =>                      { "nombre" => "Grupos de clientes",  "icono" => "gc_users3_16"                                 } ,;
+                                 "movimientos_almacen" =>                  { "nombre" => "Movimientos de almacén",  "icono" => "gc_pencil_package_16"                     } ,;
+                                 "movimientos_almacen_lineas" =>           { "nombre" => "Movimientos de almacén lineas", "icono" => "gc_pencil_package_16"               } ,;
+                                 "articulos_fabricantes" =>                { "nombre" => "Fabricantes", "icono" => "gc_pencil_package_16"                                 } ,;
+                                 "articulos_familias_comentarios" =>       { "nombre" => "Comentarios", "icono" => "gc_message_16"                                        } ,;
+                                 "almacenes" =>                            { "nombre" => "Almacenes", "icono" => "gc_warehouse_16"                                        } ,;
+                                 "entidades" =>                            { "nombre" => "Entidades", "icono" => "gc_office_building2_16"                                 } ,;
+                                 "cuentas_remesa" =>                       { "nombre" => "Cuentas de remesa", "icono" => "gc_notebook2_16"                                } ,;
+                                 "cuentas_bancarias" =>                    { "nombre" => "Cuentas bancarias", "icono" => "gc_central_bank_euro_16"                        } ,;
+                                 "iva_tipos" =>                            { "nombre" => "Tipos de IVA", "icono" => "gc_moneybag_16"                                      } ,;
+                                 "impuestos_especiales" =>                 { "nombre" => "Impuestos especiales", "icono" => "gc_moneybag_euro_16"                         } ,;
+                                 "orden_comandas" =>                       { "nombre" => "Orden de comandas", "icono" => "gc_sort_az_descending_16"                       } ,;
+                                 "divisas_monetarias" =>                   { "nombre" => "Divisas monetarias", "icono" => "gc_currency_euro_16"                           } ,;
+                                 "cajas" =>                                { "nombre" => "Cajas", "icono" => "gc_cash_register_16"                                        } ,;
+                                 "unidades_medicion" =>                    { "nombre" => "Unidades de medición", "icono" => "gc_tape_measure2_16"                         } ,;
+                                 "unidades_medicion_grupos" =>             { "nombre" => "Grupos de unidades de medición", "icono" => "gc_tape_measure2_16"               } ,;
+                                 "rutas" =>                                { "nombre" => "Rutas", "icono" => "gc_map_route_16"                                            } ,;
+                                 "entradas_salidas" =>                     { "nombre" => "Entradas y salidas de caja", "icono" => "gc_cash_register_refresh_16"           } ,;
+                                 "lineas_propiedades" =>                   { "nombre" => "Líneas de propiedades",  "icono" => "gc_coathanger_16"                          } }   
+
    METHOD New( oController )
 
    METHOD End()
+
+   METHOD getModel()             INLINE ( ::oModel := SQLCamposExtraEntidadesModel():New( self ) )
 
    METHOD getNombresEntidades()
 
@@ -40,11 +98,9 @@ METHOD New( oController ) CLASS CamposExtraEntidadesController
                                     "32" => "gc_user_message_32",;
                                     "48" => "gc_user_message_48" }
 
-   ::oModel                   := SQLCamposExtraEntidadesModel():New( self )
+   ::getModel()
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
-
-   ::oRepository              := CamposExtraEntidadesRepository():New( self )
 
    ::oBrowseView              := CamposExtraEntidadesBrowseView():New( self )
 
@@ -69,8 +125,6 @@ METHOD End() CLASS CamposExtraEntidadesController
    ::oDialogView:End()
 
    ::oValidator:End()
-
-   ::oRepository:End()
 
    ::Super:End()
 
@@ -126,7 +180,7 @@ METHOD assertAppend() CLASS CamposExtraEntidadesController
       RETURN ( .t. )
    end if 
 
-RETURN ( ::oRepository:isNotBlankEntityWhereUuid( ::getSenderController():getUuid() ) )
+RETURN ( ::oModel:isNotBlankEntityWhereUuid( ::getSenderController():getUuid() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -138,7 +192,7 @@ METHOD UpdateLine( uValue ) CLASS CamposExtraEntidadesController
       RETURN ( nil )
    end if 
 
-   if ::oRepository:isEntityWhereUuid( ::oSenderController:getUuid(), cEntidad ) 
+   if ::oModel:isEntityWhereUuid( ::oSenderController:getUuid(), cEntidad ) 
       msgalert( "El nombre de la entidad ya existe" )
       RETURN ( nil )
    end if 
@@ -157,62 +211,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraEntidadesCompanyController FROM CamposExtraEntidadesController 
-
-   CLASSDATA aEntidades INIT  {  "articulos" =>                            { "nombre" => "Artículos",  "icono" => "gc_object_cube_16"                                     } ,;
-                                 "articulos_temporada" =>                  { "nombre" => "Temporadas", "icono" => "gc_cloud_sun_16"                                       } ,;
-                                 "articulos_categorias" =>                 { "nombre" => "Categorias", "icono" => "gc_photographic_filters_16"                            } ,;
-                                 "articulos_propiedades" =>                { "nombre" => "Propiedades", "icono" => "gc_coathanger_16"                                     } ,;
-                                 "articulos_familias" =>                   { "nombre" => "Familias",  "icono" => "gc_cubes_16"                                            } ,;
-                                 "articulos_tipos" =>                      { "nombre" => "Tipos de artículos", "icono" => "gc_objects_16"                                 } ,;
-                                 "articulos_tarifas" =>                    { "nombre" => "Tarifas", "icono" => "gc_money_interest_16"                                     } ,;
-                                 "clientes" =>                             { "nombre" => "Clientes",  "icono" => "gc_user_16"                                             } ,;
-                                 "clientes_grupos" =>                      { "nombre" => "Grupo de clientes",  "icono" => "gc_users3_16"                                  } ,;
-                                 "proveedores" =>                          { "nombre" => "Proveedores",  "icono" => "gc_businessman_16"                                   } ,;
-                                 "agentes" =>                              { "nombre" => "Agentes",  "icono" => "gc_businessman2_16"                                      } ,;
-                                 "transportistas" =>                       { "nombre" => "Transportistas",  "icono" => "gc_small_truck_16"                                } ,;
-                                 "presupuestos_clientes" =>                { "nombre" => "Presupuestos a clientes",  "icono" => "gc_notebook_user_16"                     } ,;
-                                 "pedidos_clientes" =>                     { "nombre" => "Pedidos a clientes",  "icono" => "gc_clipboard_empty_user_16"                   } ,;
-                                 "albaranes_clientes" =>                   { "nombre" => "Albaranes a clientes",  "icono" => "gc_document_empty_16"                       } ,;
-                                 "lineas_albaranes_clientes" =>            { "nombre" => "Líneas de albaranes a clientes",  "icono" => "gc_document_empty_16"             } ,;
-                                 "facturas_clientes" =>                    { "nombre" => "Facturas a clientes",  "icono" => "gc_document_text_user_16"                    } ,;
-                                 "lineas_facturas_clientes" =>             { "nombre" => "Líneas de facturas a clientes",  "icono" => "gc_document_text_user_16"          } ,;
-                                 "facturas_anticipos_clientes" =>          { "nombre" => "Facturas de anticipos a clientes",  "icono" => "gc_document_text_money2_16"     } ,;
-                                 "rectificativa_clientes" =>               { "nombre" => "Facturas rectificativa a clientes",  "icono" => "gc_document_text_delete_16"    } ,;
-                                 "pedidos_proveedores" =>                  { "nombre" => "Pedidos a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"         } ,;
-                                 "lineas_pedidos_proveedores" =>           { "nombre" => "Líneas pedidos a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"  } ,;
-                                 "albaranes_proveedores" =>                { "nombre" => "Albaranes a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"       } ,;
-                                 "forma_pago" =>                           { "nombre" => "Forma de pago",  "icono" => "gc_credit_cards_16"                                } ,;
-                                 "lineas_albaranes_proveedores" =>         { "nombre" => "Líneas albaranes a proveedores",  "icono" => "gc_clipboard_empty_businessman_16"} ,;
-                                 "facturas_proveedores" =>                 { "nombre" => "Facturas a proveedores",  "icono" => "gc_document_text_businessman_16"          } ,;
-                                 "lineas_facturas_proveedores" =>          { "nombre" => "Líneas facturas a proveedores",  "icono" => "gc_document_text_businessman_16"   } ,;
-                                 "facturas_rectificativa_proveedores"=>    { "nombre" => "Facturas rectificativa a proveedores", "icono" => "gc_document_text_delete2_16" } ,;
-                                 "sat" =>                                  { "nombre" => "S.A.T",  "icono" => "gc_power_drill_sat_user_16"                                } ,;
-                                 "envases_articulos" =>                    { "nombre" => "Envases de artículos",  "icono" => "gc_box_closed_16"                           } ,;
-                                 "grupos_clientes" =>                      { "nombre" => "Grupos de clientes",  "icono" => "gc_users3_16"                                 } ,;
-                                 "movimientos_almacen" =>                  { "nombre" => "Movimientos de almacén",  "icono" => "gc_pencil_package_16"                     } ,;
-                                 "movimientos_almacen_lineas" =>           { "nombre" => "Movimientos de almacén lineas", "icono" => "gc_pencil_package_16"               } ,;
-                                 "articulos_fabricantes" =>                { "nombre" => "Fabricantes", "icono" => "gc_pencil_package_16"                                 } ,;
-                                 "articulos_familias_comentarios" =>       { "nombre" => "Comentarios", "icono" => "gc_message_16"                                        } ,;
-                                 "almacenes" =>                            { "nombre" => "Almacenes", "icono" => "gc_warehouse_16"                                        } ,;
-                                 "entidades" =>                            { "nombre" => "Entidades", "icono" => "gc_office_building2_16"                                 } ,;
-                                 "cuentas_remesa" =>                       { "nombre" => "Cuentas de remesa", "icono" => "gc_notebook2_16"                                } ,;
-                                 "cuentas_bancarias" =>                    { "nombre" => "Cuentas bancarias", "icono" => "gc_central_bank_euro_16"                        } ,;
-                                 "iva_tipos" =>                            { "nombre" => "Tipos de IVA", "icono" => "gc_moneybag_16"                                      } ,;
-                                 "impuestos_especiales" =>                 { "nombre" => "Impuestos especiales", "icono" => "gc_moneybag_euro_16"                         } ,;
-                                 "orden_comandas" =>                       { "nombre" => "Orden de comandas", "icono" => "gc_sort_az_descending_16"                       } ,;
-                                 "divisas_monetarias" =>                   { "nombre" => "Divisas monetarias", "icono" => "gc_currency_euro_16"                           } ,;
-                                 "cajas" =>                                { "nombre" => "Cajas", "icono" => "gc_cash_register_16"                                        } ,;
-                                 "unidades_medicion" =>                    { "nombre" => "Unidades de medición", "icono" => "gc_tape_measure2_16"                         } ,;
-                                 "unidades_medicion_grupos" =>             { "nombre" => "Grupos de unidades de medición", "icono" => "gc_tape_measure2_16"               } ,;
-                                 "rutas" =>                                { "nombre" => "Rutas", "icono" => "gc_map_route_16"                                            } ,;
-                                 "entradas_salidas" =>                     { "nombre" => "Entradas y salidas de caja", "icono" => "gc_cash_register_refresh_16"           } ,;
-                                 "lineas_propiedades" =>                   { "nombre" => "Líneas de propiedades",  "icono" => "gc_coathanger_16"                          } }   
-
-
-END CLASS
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -323,9 +321,9 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCamposExtraEntidadesCompanyModel FROM SQLCamposExtraEntidadesModel
+CLASS SQLCamposExtraEntidadesGestoolModel FROM SQLCamposExtraEntidadesModel
 
-   METHOD getTableName()                     INLINE ( Company():getTableName( ::cTableName ) )
+   METHOD getTableName()                     INLINE ( "gestool." + ::cTableName ) 
 
 END CLASS 
 
@@ -336,7 +334,7 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCamposExtraEntidadesModel FROM SQLBaseModel
+CLASS SQLCamposExtraEntidadesModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "campos_extra_entidad"
 
@@ -345,6 +343,12 @@ CLASS SQLCamposExtraEntidadesModel FROM SQLBaseModel
    METHOD getParentUuidAttribute( value )
 
    METHOD deleteBlankEntityWhereUuid( parentUuid )
+
+   METHOD isEntityWhereUuid( parentUuid, cEntidad )
+
+   METHOD isBlankEntityWhereUuid( parentUuid )    INLINE ( ::isEntityWhereUuid( parentUuid, '' ) )
+   
+   METHOD isNotBlankEntityWhereUuid( parentUuid ) INLINE ( !::isBlankEntityWhereUuid(  parentUuid ) )
 
 END CLASS
 
@@ -391,34 +395,12 @@ METHOD deleteBlankEntityWhereUuid( parentUuid )
 RETURN ( getSQLDataBase():Exec( cSQL ) )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS CamposExtraEntidadesRepository FROM SQLBaseRepository
-
-   METHOD getTableName()                          INLINE ( SQLCamposExtraEntidadesModel():getTableName() ) 
-
-   METHOD isEntityWhereUuid( parentUuid, cEntidad )
-
-   METHOD isBlankEntityWhereUuid( parentUuid )    INLINE ( ::isEntityWhereUuid( parentUuid, '' ) )
-   
-   METHOD isNotBlankEntityWhereUuid( parentUuid ) INLINE ( !::isBlankEntityWhereUuid(  parentUuid ) )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
 
 METHOD isEntityWhereUuid( parentUuid, cEntidad )
 
-   local cSQL  
-
-   cSQL              := "SELECT Count(*) FROM " + ::getTableName() + " "
-   cSQL              +=    "WHERE parent_uuid = " + quoted( parentUuid ) + " "
-   cSQL              +=    "AND entidad = " + quoted( cEntidad )
+   local cSQL  := "SELECT Count(*) FROM " + ::getTableName() + " "
+   cSQL        +=    "WHERE parent_uuid = " + quoted( parentUuid ) + " "
+   cSQL        +=    "AND entidad = " + quoted( cEntidad )
 
 RETURN ( getSQLDataBase():getValue( cSQL ) > 0 )
 
@@ -427,3 +409,4 @@ RETURN ( getSQLDataBase():getValue( cSQL ) > 0 )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+

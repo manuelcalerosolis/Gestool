@@ -71,36 +71,36 @@ METHOD New() CLASS UsuariosController
 
    ::Super:New()
 
-   ::cTitle                := "Usuarios"
+   ::cTitle                            := "Usuarios"
 
-   ::cName                 := "usuarios"
+   ::cName                             := "usuarios"
 
-   ::lTransactional        := .t.
+   ::lTransactional                    := .t.
 
-   ::lConfig               := .t.
+   ::lConfig                           := .t.
 
-   ::hImage                := {  "16" => "gc_businesspeople_16",;
-                                 "48" => "gc_businesspeople_48" }
+   ::hImage                            := {  "16" => "gc_businesspeople_16",;
+                                             "48" => "gc_businesspeople_48" }
 
-   ::oModel                := SQLUsuariosModel():New( self )
+   ::oModel                            := SQLUsuariosModel():New( self )
 
-   ::oRepository           := UsuariosRepository():New( self )
+   ::oRepository                       := UsuariosRepository():New( self )
 
-   ::oBrowseView           := UsuariosBrowseView():New( self )
+   ::oBrowseView                       := UsuariosBrowseView():New( self )
 
-   ::oDialogView           := UsuariosView():New( self )
+   ::oDialogView                       := UsuariosView():New( self )
 
-   ::oValidator            := UsuariosValidator():New( self, ::oDialogView )
+   ::oValidator                        := UsuariosValidator():New( self, ::oDialogView )
 
-   ::oLoginView            := UsuariosLoginView():New( self )
+   ::oLoginView                        := UsuariosLoginView():New( self )
 
-   ::oLoginTactilView      := UsuariosLoginTactilView():New( self )
+   ::oLoginTactilView                  := UsuariosLoginTactilView():New( self )
 
-   ::oAjustableController  := AjustableController():New( self )
+   ::oAjustableController              := AjustableController():New( self )
 
-   ::oRolesController      := RolesController():New( self )
+   ::oRolesController                  := RolesController():New( self )
 
-   ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, ::oModel:cTableName )
+   ::oCamposExtraValoresController     := CamposExtraValoresGestoolController():New( self, ::oModel:cTableName )
 
    ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } )  
    ::setEvent( 'closedDialog',   {|| ::oDialogView:closedDialog() } )  
