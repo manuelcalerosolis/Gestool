@@ -236,8 +236,6 @@ METHOD activateSelectorView( lCenter )
       RETURN ( nil )
    end if
 
-   ::oBrowseView:getFromModel()
-
    ::buildRowSetSentence()   
 
    if empty( ::oRowSet:get() )

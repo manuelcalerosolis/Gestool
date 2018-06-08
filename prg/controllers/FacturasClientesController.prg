@@ -106,7 +106,9 @@ RETURN ( Self )
 
 METHOD loadedBlankBuffer() 
 
-   hset( ::oModel:hBuffer, "numero", padr( ::oContadoresModel:getDocumentCounter( ::cName ), 50 ) )
+   hset( ::oModel:hBuffer, "serie",    ::oContadoresModel:getDocumentSerie( ::cName ) )
+   
+   hset( ::oModel:hBuffer, "numero",   ::oContadoresModel:getDocumentCounter( ::cName ) )
 
 RETURN ( Self )
 

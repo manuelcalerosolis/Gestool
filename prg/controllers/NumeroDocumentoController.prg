@@ -15,7 +15,7 @@ CLASS SerieDocumentoComponent
 
    METHOD New()
 
-   METHOD End()
+   METHOD End()                     
 
    METHOD Activate()
 
@@ -39,7 +39,9 @@ RETURN ( Self )
 
 METHOD End() CLASS SerieDocumentoComponent
 
-RETURN ( Self )
+   self                             := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -118,7 +120,9 @@ RETURN ( Self )
 
 METHOD End() CLASS NumeroDocumentoComponent
 
-RETURN ( Self )
+   self                             := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -141,7 +145,7 @@ RETURN ( Self )
 
 METHOD Validate() CLASS NumeroDocumentoComponent
 
-RETURN ( val( ::oGet:varGet() > 0 ) )
+RETURN ( ::oGet:varGet() > 0 )
 
 //---------------------------------------------------------------------------//
 

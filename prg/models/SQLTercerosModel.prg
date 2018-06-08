@@ -19,8 +19,6 @@ METHOD getColumns() CLASS SQLTercerosModel
    hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"        ,;
                                                 "default"   => {|| win_uuidcreatestring() } }         )
 
-   ::getEmpresaColumns()
-
    hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 12 )"                        ,;
                                                 "default"   => {|| space( 12 ) } }                    )
 
@@ -30,8 +28,8 @@ METHOD getColumns() CLASS SQLTercerosModel
    hset( ::hColumns, "dni",                  {  "create"    => "VARCHAR( 20 )"                        ,;
                                                 "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "forma_pago_uuid",      {  "create"    => "VARCHAR( 40 )"                        ,;
-                                                "default"   => {|| space( 40 ) } }                    )
+   hset( ::hColumns, "forma_pago_codigo",    {  "create"    => "VARCHAR( 20 )"                        ,;
+                                                "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "web",                  {  "create"    => "VARCHAR( 150 )"                       ,;
                                                 "default"   => {|| space( 150 ) } }                   )

@@ -23,6 +23,8 @@ METHOD New( oSenderController ) CLASS ProvinciasController
 
    ::cName                    := "provincias"
 
+   ::lTransactional           := .t.
+
    ::hImage                   := {  "16" => "gc_flag_spain_16",;
                                     "32" => "gc_flag_spain_32",;
                                     "48" => "gc_flag_spain_48" }

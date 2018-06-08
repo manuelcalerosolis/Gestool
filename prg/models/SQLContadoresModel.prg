@@ -14,6 +14,8 @@ CLASS SQLContadoresModel FROM SQLCompanyModel
 
    METHOD isSerie( cDocumento, cSerie )
    METHOD insertSerie( cDocumento, cSerie, nContador )
+   METHOD getLastSerie( cDocumento )
+   METHOD getDocumentSerie( cDocumento )                          
 
    METHOD getLastCounter()                          
    METHOD getDocumentCounter()                          
@@ -70,34 +72,52 @@ RETURN ( !empty( ::getDatabase():getValue( cSql ) ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getLastCounter( cDocumento )
+METHOD getLastSerie( cDocumento )
 
-   local cSql  := "SELECT serie, contador"                                 + " "
+   local cSql  := "SELECT serie"                                           + " "
    cSql        +=    "FROM " + ::getTableName()                            + " "
    cSql        +=    "WHERE documento = " + quoted( cDocumento )           + " "
    cSql        +=    "AND usuario_codigo = " + quoted( Auth():Codigo() )   + " "
    cSql        +=    "ORDER BY updated_at DESC"                            + " " 
    cSql        +=    "LIMIT 1"
 
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSql ) ) 
+RETURN ( ::getDatabase():getValue( cSql ) ) 
+
+//---------------------------------------------------------------------------//
+   
+METHOD getDocumentSerie( cDocumento )                          
+
+   local cSerial     := ::getLastSerie( cDocumento )
+
+   if empty( cSerial )
+      RETURN ( padr( "A", 20 ) )
+   end if
+
+RETURN ( padr( cSerial, 20 ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getLastCounter( cDocumento )
+
+   local cSql  := "SELECT contador"                                        + " "
+   cSql        +=    "FROM " + ::getTableName()                            + " "
+   cSql        +=    "WHERE documento = " + quoted( cDocumento )           + " "
+   cSql        +=    "AND usuario_codigo = " + quoted( Auth():Codigo() )   + " "
+   cSql        +=    "ORDER BY updated_at DESC"                            + " " 
+   cSql        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():getValue( cSql ) ) 
 
 //---------------------------------------------------------------------------//
    
 METHOD getDocumentCounter( cDocumento )                          
 
-   local cDocument   := ""
-   local hDocument   := ::getLastCounter( cDocumento )
+   local nCounter    := ::getLastCounter( cDocumento )
 
-   if empty( hDocument )
-      RETURN ( padl( "1", 6, "0" ) )
+   if empty( nCounter )
+      RETURN ( 1 )
    end if
 
-   if !empty( hget( hDocument, "serie" ) )
-      cDocument      := hget( hDocument, "serie" ) + "/"
-   end if 
-
-   cDocument         += alltrim( padl( hget( hDocument, "contador" ) + 1, 6, "0" ) )
-
-RETURN ( cDocument )
+RETURN ( nCounter + 1 )
 
 //---------------------------------------------------------------------------//
