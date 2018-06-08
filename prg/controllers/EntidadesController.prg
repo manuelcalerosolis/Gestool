@@ -43,7 +43,7 @@ METHOD New( oSenderController ) CLASS EntidadesController
 
    ::oDireccionesController               := DireccionesController():New( self )
 
-   ::oDireccionesController:oValidator    := DireccionesEntidadesValidator():New( ::oDireccionesController, ::oDialogView )
+   ::oDireccionesController:oValidator    := DireccionesValidator():New( ::oDireccionesController, ::oDialogView )
 
    ::oCamposExtraValoresController        := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
@@ -400,24 +400,24 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLEntidadesModel
 
-   local cSelect  := "SELECT entidades.id,"                                                               + " " + ;
-                        "entidades.uuid,"                                                                 + " " + ;
-                        "entidades.codigo,"                                                               + " " + ;
-                        "entidades.descripcion,"                                                          + " " + ;
-                        "entidades.nombre,"                                                               + " " + ;
-                        "entidades.gnl_fisico,"                                                           + " " + ;
-                        "entidades.punto_logico_op,"                                                      + " " + ;
-                        "entidades.web,"                                                                  + " " + ;
-                        "entidades.codigo_ine,"                                                           + " " + ;
-                        "entidades.cno_cnae,"                                                             + " " + ;
-                        "entidades.otros,"                                                                + " " + ;
-                        "direcciones.direccion as direccion,"                                             + " " + ;
-                        "direcciones.codigo_postal as codigo_postal,"                                     + " " + ;
-                        "direcciones.poblacion as poblacion,"                                             + " " + ;
-                        "direcciones.provincia as provincia,"                                             + " " + ;
-                        "direcciones.codigo_pais as codigo_pais"                                          + " " + ;
-                     "FROM  entidades"                                                                    + " " + ;
-                        "INNER JOIN direcciones ON entidades.uuid = direcciones.parent_uuid"              + " "
+   local cSelect  := "SELECT entidades.id,"                                                                                                     + " " + ;
+                        "entidades.uuid,"                                                                                                       + " " + ;
+                        "entidades.codigo,"                                                                                                     + " " + ;
+                        "entidades.descripcion,"                                                                                                + " " + ;
+                        "entidades.nombre,"                                                                                                     + " " + ;
+                        "entidades.gnl_fisico,"                                                                                                 + " " + ;
+                        "entidades.punto_logico_op,"                                                                                            + " " + ;
+                        "entidades.web,"                                                                                                        + " " + ;
+                        "entidades.codigo_ine,"                                                                                                 + " " + ;
+                        "entidades.cno_cnae,"                                                                                                   + " " + ;
+                        "entidades.otros,"                                                                                                      + " " + ;
+                        "direcciones.direccion as direccion,"                                                                                   + " " + ;
+                        "direcciones.codigo_postal as codigo_postal,"                                                                           + " " + ;
+                        "direcciones.poblacion as poblacion,"                                                                                   + " " + ;
+                        "direcciones.provincia as provincia,"                                                                                   + " " + ;
+                        "direcciones.codigo_pais as codigo_pais"                                                                                + " " + ;
+                     "FROM " + ::getTableName() + " AS entidades"                                                                                + " " + ;
+                        "INNER JOIN " + SQLDireccionesModel():getTableName() + " AS direcciones ON entidades.uuid = direcciones.parent_uuid"   + " "
 
 RETURN ( cSelect )
 
@@ -430,8 +430,6 @@ METHOD getColumns() CLASS SQLEntidadesModel
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
-
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                   ,;
                                              "default"   => {|| space( 20 ) } }                        )
