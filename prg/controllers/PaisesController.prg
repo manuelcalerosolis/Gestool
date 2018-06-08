@@ -7,6 +7,8 @@ CLASS PaisesGestoolController FROM PaisesController
 
    METHOD getModel()          INLINE ( ::oModel := SQLPaisesGestoolModel():New( self ) )
 
+   METHOD getLevel()          INLINE ( nil )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -20,6 +22,8 @@ CLASS PaisesController FROM SQLNavigatorController
    METHOD getSelectorPais( oGet )
 
    METHOD getModel()          INLINE ( ::oModel := SQLPaisesModel():New( self ) )
+
+   METHOD getLevel()          INLINE ( iif( empty( ::oSenderController ), ::nLevel := Auth():Level( ::cName ), ) ) 
 
 END CLASS
 
@@ -39,23 +43,18 @@ METHOD New( oSenderController ) CLASS PaisesController
 
    ::getModel()
 
+   ::getLevel()
+
    ::oBrowseView              := PaisesBrowseView():New( self )
 
    ::oDialogView              := PaisesView():New( self )
 
    ::oValidator               := PaisesValidator():New( self )
 
-   if empty( oSenderController )
-
-      ::nLevel                := Auth():Level( ::cName )
-   
-      ::oFilterController:setTableToFilter( ::cName )
-
-   end if 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS PaisesController
 
    ::oModel:End()
@@ -65,8 +64,6 @@ METHOD End() CLASS PaisesController
    ::oDialogView:End()
 
    ::oValidator:End()
-
-   /*::oRepository:End()*/
 
    ::Super:End()
 
@@ -82,7 +79,7 @@ METHOD getSelectorPais( oGet ) CLASS PaisesController
       RETURN ( Self )
    end if 
 
-   if hHasKey( hResult, "codigo" )
+   if hhaskey( hResult, "codigo" )
       oGet:cText( hGet( hResult, "codigo" ) )
    else
       oGet:cText( "" )
@@ -90,9 +87,6 @@ METHOD getSelectorPais( oGet ) CLASS PaisesController
    
 RETURN ( Self )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -140,8 +134,6 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS PaisesView FROM SQLBaseView
   
@@ -153,53 +145,55 @@ END CLASS
 
 METHOD Activate() CLASS PaisesView
 
-   local oDlg
-   local oBmpGeneral
-
-   DEFINE DIALOG  oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "PAIS" ;
       TITLE       ::LblTitle() + "país"
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
       RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG ::oDialog CENTER
 
-   oBmpGeneral:end()
+   ::oBitmap:end()
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -272,20 +266,4 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS PaisesRepository FROM SQLBaseRepository
-
-   METHOD getTableName()         INLINE ( SQLPaisesModel():getTableName() ) 
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
