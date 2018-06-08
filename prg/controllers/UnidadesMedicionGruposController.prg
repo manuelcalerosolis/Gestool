@@ -117,7 +117,7 @@ METHOD addColumns() CLASS UnidadesMedicionGruposBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -275,7 +275,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UnidadesMedicionGruposValidator FROM SQLCompanyValidator
+CLASS UnidadesMedicionGruposValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -343,6 +343,8 @@ METHOD getInitialSelect() CLASS SQLUnidadesMedicionGruposModel
                         "unidad.nombre AS unidad_base_nombre"                                                                       + " " + ;   
                      "FROM " + ::getTableName() +" AS grupos"                                                                       + " " + ;
                         "INNER JOIN "+ ::getUnidadesMedicionModel() +" AS unidad ON grupos.unidad_base_codigo = unidad.codigo"      + " " 
+
+                        logwrite ( cSelect )  
 
 RETURN ( cSelect )
 //---------------------------------------------------------------------------//
