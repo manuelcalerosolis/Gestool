@@ -90,14 +90,6 @@ METHOD addColumns() CLASS PropiedadesLineasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
-      :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
       :nWidth              := 300
@@ -161,13 +153,6 @@ METHOD Activate() CLASS PropiedadesLineasView
       PROMPT      "Lineas de propiedades" ;
       ID          800 ;
       FONT        getBoldFont() ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
-      ID          100 ;
-      PICTURE     "@! NNNN" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -265,9 +250,7 @@ END CLASS
 METHOD getValidators() CLASS PropiedadesLineasValidator
 
    ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido",;
-                                          "unique"    => "El nombre introducido ya existe" },;
-                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
-                                          "unique"    => "El código introducido ya existe" } }
+                                          "unique"    => "El nombre introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -296,9 +279,6 @@ METHOD getColumns() CLASS SQLPropiedadesLineasModel
 
    hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 )"                           ,;
                                           "default"   => {|| ::getSenderControllerParentUuid() } } )
-
-   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 4 )"                            ,;
-                                          "default"   => {|| space( 4 ) } }                        )
 
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
                                           "default"   => {|| space( 200 ) } }                      )

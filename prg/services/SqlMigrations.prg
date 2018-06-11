@@ -395,6 +395,8 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLLenguajesModel():New() )
 
+   //aadd( ::aModels, SQLPropiedadesCombinacionesModel():New() )
+
 RETURN ( ::aModels )
  
 //----------------------------------------------------------------------------//
