@@ -19,13 +19,11 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD New()
 
-   METHOD loadedBlankBuffer()
-
-   METHOD gettingSelectSentence()
+   METHOD Append()
 
    // Validaciones ------------------------------------------------------------
 
-   METHOD validateCodigoArticulo()     
+   METHOD validColumnCodigoArticulo( oCol, uValue, nKey )  
 
    METHOD validateLote()               
 
@@ -93,10 +91,6 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD refreshBrowse()              INLINE ( iif(  !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
 
-   METHOD insertingBuffer()
-   
-   METHOD updatingBuffer()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -107,16 +101,11 @@ METHOD New( oController )
 
    ::lTransactional                    := .t.
 
-   ::cTitle                            := "Movimientos de almacén líneas"
+   ::cTitle                            := "Facturas clientes líneas"
 
-   ::setName( "lineas_movimientos_almacen" )
+   ::setName( "lineas_facturas_clientes" )
 
    ::oModel                            := SQLFacturasClientesLineasModel():New( self )
-
-   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
-   ::oModel:setEvent( 'insertingBuffer',        {|| ::insertingBuffer() } ) 
-   ::oModel:setEvent( 'updatingBuffer',         {|| ::updatingBuffer() } ) 
 
    ::oBrowseView                       := FacturasClientesLineasBrowseView():New( self )
    ::oBrowseView:lFooter               := .t.
@@ -145,35 +134,11 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer()
+METHOD validColumnCodigoArticulo( oCol, uValue, nKey ) 
 
-   local uuid        := ::getSenderController():getUuid() 
+   msgalert( hb_valtoexp( uValue ), "validColumnCodigoArticulo uValue" ) 
 
-   if !empty( uuid )
-      hset( ::oModel:hBuffer, "parent_uuid", uuid )
-   end if 
-
-   hset( ::oModel:hBuffer, "codigo_articulo", space( 200 ) )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD gettingSelectSentence()
-
-   local uuid        := ::getSenderController():getUuid() 
-
-   if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
-   end if 
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD validateCodigoArticulo()  
-
-   if !( ::validate( "codigo_articulo" ) )
+   if !( ::validate( "articulo_codigo", uValue ) )
       RETURN .f.
    end if 
 
@@ -184,6 +149,8 @@ METHOD validateCodigoArticulo()
    if !( ::getHashArticulo() ) 
       RETURN .f.
    end if 
+
+   /*
 
    ::stampArticulo()
 
@@ -199,7 +166,7 @@ METHOD validateCodigoArticulo()
 
    ::showLoteCaducidad()
 
-   ::showProperties()
+   */
 
 RETURN ( .t. )
 
@@ -559,55 +526,44 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertingBuffer()
+METHOD Append()
 
-   local aSQLInsert    := {}
+   local nId
+   local lAppend     := .t.   
 
-   if !empty( ::aProperties )
-      RETURN ( self )
+   if ::notUserAppend()
+      msgStop( "Acceso no permitido." )
+      RETURN ( .f. )
    end if 
 
-   aeval( ::aProperties, {|oProperty| ::oModel:addInsertSentence( aSQLInsert, oProperty ) } )
+   if isFalse( ::fireEvent( 'appending' ) )
+      RETURN ( .f. )
+   end if
 
-   if !empty( aSQLInsert )
-      ::oModel:setSQLInsert( aSQLInsert )
-      RETURN ( self )
+   ::setAppendMode()
+
+   ::saveRowSetRecno()
+
+   nId               := ::oModel:insertBlankBuffer()
+         
+   if !empty( nId )
+
+      ::fireEvent( 'appended' ) 
+
+      ::refreshRowSetAndFindId( nId )
+
+   else 
+      
+      lAppend        := .f.
+
+      ::refreshRowSet()
+
    end if 
 
-RETURN ( self )
+   ::refreshBrowseView()
 
-//---------------------------------------------------------------------------//
+   ::fireEvent( 'exitAppended' ) 
 
-METHOD updatingBuffer()
+RETURN ( lAppend )
 
-   local oProperty
-   local aSQLUpdate     := {}
-
-   if empty( ::aProperties )
-      RETURN ( nil )
-   end if 
-
-   for each oProperty in ::aProperties
-
-      do case
-         case !empty( oProperty:Uuid ) .and. empty( oProperty:Value )
-
-            ::oModel:addDeleteSentence( aSQLUpdate, oProperty )
-
-         case !empty( oProperty:Uuid ) .and. !empty( oProperty:Value )
-
-            ::oModel:addUpdateSentence( aSQLUpdate, oProperty )
-       
-         case empty( oProperty:Uuid ) 
-
-            ::oModel:addInsertSentence( aSQLUpdate, oProperty )
-
-      end case
-
-   next 
-
-   ::oModel:cSQLUpdate  := aSQLUpdate
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

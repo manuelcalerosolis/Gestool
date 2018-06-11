@@ -74,25 +74,13 @@ METHOD getColumns()
                                                       "default"   => {|| win_uuidcreatestring() } }   )
 
    hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR(40) NOT NULL"           ,;
-                                                      "default"   => {|| space(40) } }                )
+                                                      "default"   => {|| ::getSenderControllerParentUuid() } } )
 
-   hset( ::hColumns, "codigo_articulo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
+   hset( ::hColumns, "articulo_codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
                                                       "default"   => {|| space( 20 ) } }              )
 
-   hset( ::hColumns, "nombre_articulo",            {  "create"    => "VARCHAR(250) NOT NULL"          ,;
+   hset( ::hColumns, "articulo_nombre",            {  "create"    => "VARCHAR(250) NOT NULL"          ,;
                                                       "default"   => {|| space(250) } }               )
-
-   hset( ::hColumns, "codigo_primera_propiedad",   {  "create"    => "VARCHAR(20)"                    ,;
-                                                      "default"   => {|| space(20) } }                )
-
-   hset( ::hColumns, "valor_primera_propiedad",    {  "create"    => "VARCHAR(200)"                   ,;
-                                                      "default"   => {|| space(200) } }               )
-
-   hset( ::hColumns, "codigo_segunda_propiedad",   {  "create"    => "VARCHAR(20)"                    ,;
-                                                      "default"   => {|| space(20) } }                )
-
-   hset( ::hColumns, "valor_segunda_propiedad",    {  "create"    => "VARCHAR(200)"                   ,;
-                                                      "default"   => {|| space(200) } }               )
 
    hset( ::hColumns, "fecha_caducidad",            {  "create"    => "DATE"                           ,;
                                                       "default"   => {|| ctod('') } }                 )
@@ -100,10 +88,10 @@ METHOD getColumns()
    hset( ::hColumns, "lote",                       {  "create"    => "VARCHAR(40)"                    ,;
                                                       "default"   => {|| space(40) } }                )
 
-   hset( ::hColumns, "unidades_articulo",          {  "create"    => "DECIMAL(19,6)"                  ,;
+   hset( ::hColumns, "articulo_unidades",          {  "create"    => "DECIMAL(19,6)"                  ,;
                                                       "default"   => {|| 1 } }                        )
 
-   hset( ::hColumns, "precio_articulo",            {  "create"    => "DECIMAL(19,6)"                  ,;
+   hset( ::hColumns, "articulo_precio",            {  "create"    => "DECIMAL(19,6)"                  ,;
                                                       "default"   => {|| 0 } }                        )
 
 RETURN ( ::hColumns )
@@ -112,20 +100,16 @@ RETURN ( ::hColumns )
 
 METHOD getInitialSelect()
 
-   local cSelect  := "SELECT id, "                                            + ;
-                        "uuid, "                                              + ;
-                        "parent_uuid, "                                       + ;
-                        "codigo_articulo, "                                   + ;
-                        "nombre_articulo, "                                   + ;
-                        "codigo_primera_propiedad, "                          + ;
-                        "valor_primera_propiedad, "                           + ;
-                        "codigo_segunda_propiedad, "                          + ;
-                        "valor_segunda_propiedad, "                           + ;
-                        "fecha_caducidad, "                                   + ;
-                        "lote, "                                              + ;
-                        "unidades_articulo, "                                 + ;
-                        "precio_articulo, "                                   + ;
-                        "unidades_articulo * precio_articulo as total_precio "+ ;
+   local cSelect  := "SELECT id, "                                               + ;
+                        "uuid, "                                                 + ;
+                        "parent_uuid, "                                          + ;
+                        "articulo_codigo, "                                      + ;
+                        "articulo_nombre, "                                      + ;
+                        "fecha_caducidad, "                                      + ;
+                        "lote, "                                                 + ;
+                        "articulo_unidades, "                                    + ;
+                        "articulo_precio, "                                      + ;
+                        "articulo_unidades * articulo_precio as total_precio "   + ;
                      "FROM " + ::getTableName()    
 
 RETURN ( cSelect )

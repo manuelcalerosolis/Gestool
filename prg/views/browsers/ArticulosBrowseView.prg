@@ -6,7 +6,7 @@
 
 CLASS ArticulosBrowseView FROM SQLBrowseView
 
-   DATA lFastEdit                            INIT .t.
+   DATA lFastEdit          INIT .t.
 
    METHOD addColumns()                       
 

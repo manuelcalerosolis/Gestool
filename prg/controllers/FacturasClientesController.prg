@@ -7,6 +7,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oClientesController
 
+   DATA oArticulosController
+
    DATA oSerieDocumentoComponent
 
    DATA oNumeroDocumentoComponent
@@ -63,6 +65,8 @@ METHOD New() CLASS FacturasClientesController
 
    ::oClientesController         := ClientesController():New( self )
 
+   ::oArticulosController        := ArticulosController():New( self )
+
    ::oNumeroDocumentoComponent   := NumeroDocumentoComponent():New( self )
 
    ::oSerieDocumentoComponent    := SerieDocumentoComponent():New( self )
@@ -93,6 +97,8 @@ RETURN ( Self )
 METHOD End() CLASS FacturasClientesController
 
    ::oClientesController:End()
+
+   ::oArticulosController:End()
 
    ::oFormasPagoController:End()
 

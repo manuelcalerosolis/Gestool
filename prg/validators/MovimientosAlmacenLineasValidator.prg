@@ -4,17 +4,13 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MovimientosAlmacenLineasValidator FROM SQLBaseValidator
+CLASS DocumentosLineasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
    METHOD isCodeGS128( value )
    METHOD existArticulo( value )                   
 
-   METHOD existPropiedad( value, propiedad )
-   METHOD existOrEmptyPrimeraPropiedad( value )    INLINE ( ::existPropiedad( value, "codigo_primera_propiedad" ) )
-   METHOD existOrEmptySegundaPropiedad( value )    INLINE ( ::existPropiedad( value, "codigo_segunda_propiedad" ) )
- 
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -24,9 +20,7 @@ METHOD getValidators()
    ::hValidators  := {  "codigo_articulo"          => {  "isCodeGS128"           => "",;
                                                          "required"              => "El artículo es un dato requerido",;
                                                          "existArticulo"         => "El artículo {value}, no existe" },;
-                        "nombre_articulo"          => {  "required"              => "El nombre del artículo es un dato requerido" },;
-                        "valor_primera_propiedad"  => {  "existOrEmptyPrimeraPropiedad" => "La primera propiedad no existe" },;
-                        "valor_segunda_propiedad"  => {  "existOrEmptySegundaPropiedad" => "La segunda propiedad no existe" } }
+                        "nombre_articulo"          => {  "required"              => "El nombre del artículo es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -57,24 +51,6 @@ METHOD isCodeGS128( value )
    end if 
 
 RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD existPropiedad( value, propiedad )
-
-   if empty( value )
-      RETURN ( .t. )
-   end if
-
-   if empty( ::oController )
-      RETURN ( .t. )
-   end if
-
-   if empty( ::oController:getModelBuffer( propiedad ) )
-      RETURN ( .t. )
-   end if
-
-RETURN ( PropiedadesLineasModel():exist( ::oController:getModelBuffer( propiedad ), value ) )
 
 //---------------------------------------------------------------------------//
 

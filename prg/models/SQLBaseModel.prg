@@ -224,6 +224,10 @@ CLASS SQLBaseModel
 
    METHOD getColumnWhereId( id, cColumn ) 
 
+   METHOD getColumnWhereCodigo( codigo, cColumn ) 
+   METHOD getNombreWhereCodigo( codigo )              INLINE ( ::getColumnWhereCodigo( codigo, 'nombre' ) )
+   METHOD getCodigoWhereCodigo( codigo )              INLINE ( ::getColumnWhereCodigo( codigo, 'codigo' ) )
+
    METHOD getArrayColumns( cColumn ) 
    METHOD getArrayNombres( cColumn )                  INLINE ( ::getArrayColumns( 'nombre' ) )
    METHOD getArrayColumnsWithBlank( cColumn ) 
@@ -1317,6 +1321,17 @@ METHOD getColumnWhereUuid( uuid, cColumn )
 RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD getColumnWhereCodigo( uuid, cColumn ) 
+
+   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
+                        "WHERE codigo = " + quoted( uuid )              + " " + ;
+                        "LIMIT 1"
+
+RETURN ( ::getDatabase():getValue( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD getArrayColumns( cColumn ) 
 

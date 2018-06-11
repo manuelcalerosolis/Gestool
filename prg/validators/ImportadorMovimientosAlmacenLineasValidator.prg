@@ -4,7 +4,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ImportadorMovimientosAlmacenLineasValidator FROM SQLBaseValidator
+CLASS ImportadorDocumentosLineasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 

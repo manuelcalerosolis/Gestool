@@ -31,7 +31,9 @@ RETURN ( self )
 
 METHOD Activate() CLASS FacturasClientesView
 
-   local cSeleccion := "aaa"
+   local oBtnAppend
+   local oBtnEdit
+   local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TRANSACION_COMERCIAL" ;
@@ -102,6 +104,31 @@ METHOD Activate() CLASS FacturasClientesView
 
    ::oController:oAlmacenesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_uuid" ] ) )
    ::oController:oAlmacenesController:oGetSelector:Activate( 230, 231, ::oFolder:aDialogs[1] )
+
+   // Lineas ------------------------------------------------------------------
+
+   REDEFINE BUTTON oBtnAppend ;
+      ID          500 ;
+      OF          ::oFolder:aDialogs[1] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnAppend:bAction   := {|| ::oController:oLineasController:Append() }
+
+   REDEFINE BUTTON oBtnEdit ;
+      ID          501 ;
+      OF          ::oFolder:aDialogs[1] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnEdit:bAction     := {|| ::oController:oLineasController:Edit() }
+
+   REDEFINE BUTTON oBtnDelete ;
+      ID          502 ;
+      OF          ::oFolder:aDialogs[1] ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+
+   oBtnDelete:bAction   := {|| ::oController:oLineasController:Delete() }
+
+   ::oController:oLineasController:Activate( 600, ::oFolder:aDialogs[1] )   
 
    // Botones generales--------------------------------------------------------
 
