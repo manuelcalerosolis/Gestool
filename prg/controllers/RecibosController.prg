@@ -477,28 +477,6 @@ CLASS SQLRecibosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   /*METHOD getCodigoCajaAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oCajasController:oModel():getCodigoWhereUuid( uValue ) ) )
-
-   /*METHOD setCodigoCajaAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:oCajasController:oModel():getUuidWhereCodigo( uValue ) ) )
-
-   METHOD getClienteAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oClientesController:oModel():getCodigoWhereUuid( uValue ) ) )
-
-   METHOD setClienteAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:oClientesController:oModel():getUuidWhereCodigo( uValue ) ) )
-
-   METHOD getFormapagoAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oFormasPagosController:oModel():getCodigoWhereUuid( uValue ) ) )
-
-   METHOD setFormapagoAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:oFormasPagosController:oModel():getUuidWhereCodigo( uValue ) ) )
-   METHOD getAgenteAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oAgentesController:oModel():getCodigoWhereUuid( uValue ) ) )
-
-   METHOD setAgenteAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:oAgentesController:oModel():getUuidWhereCodigo( uValue ) ) )*/
 
 END CLASS
 
@@ -525,7 +503,7 @@ METHOD getGeneralSelect() CLASS SQLRecibosModel
                         "factura_recibos.pagado_por,"                                                                                     + " " + ;
                         "clientes.nombre AS nombre_cliente "                                                                              + " " + ;  
                      "FROM " + ::getTableName() + " AS factura_recibos"                                                                   + " " + ;
-                        "INNER JOIN " + SQLClientesModel():getTableName() + " AS clientes ON factura_recibos.cliente = clientes.uuid"  
+                        "INNER JOIN " + SQLClientesModel():getTableName() + " AS clientes ON factura_recibos.cliente = clientes.id"  
 
 RETURN ( cSelect )
 
@@ -564,7 +542,7 @@ METHOD getColumns() CLASS SQLRecibosModel
                                                       "default"   => {||  0.000  } }                               )
 
    hset( ::hColumns, "cobrado",                    {  "create"    => "TINYINT( 1 )"                                ,;
-                                                      "default"   => {|| .f. } }                                  )
+                                                      "default"   => {|| 0 } }                                  )
 
    hset( ::hColumns, "fecha_cobro",                {  "create"    => "DATE"                                       ,;
                                                       "default"   => {|| ctod( "" ) } }                            )

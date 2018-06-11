@@ -2811,7 +2811,7 @@ FUNCTION CreateMainSQLAcceso()
    oGrupo:cLittleBitmap := "gc_factory_16"
    oGrupo:cBigBitmap    := "gc_factory_32"
 
-   oItem                := oItemArchivo:Add()
+   /*oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Empresa'
    oItem:cMessage       := 'Empresas'
@@ -2819,7 +2819,7 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_factory_16"
    oItem:cBmpBig        := "gc_factory_32"
-   oItem:lShow          := .f.
+   oItem:lShow          := .f.*/
 
    // Articulos----------------------------------------------------------------
 
@@ -2920,8 +2920,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cPrompt        := 'Temporadas de artículo'
    oItem:cMessage       := 'Temporadas de artículo'
    oItem:bAction        := {|| ArticulosTemporadasController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "temporadas"
+   oItem:cId            := "articulos_temporada"
+   oItem:cBmp           := "gc_cloud_sun_16"
    oItem:cBmpBig        := "gc_cloud_sun_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.

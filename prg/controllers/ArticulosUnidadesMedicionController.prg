@@ -170,9 +170,9 @@ METHOD Activate() CLASS ArticulosUnidadesMedicionView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   ::oController:oUnidadesMedicionController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_medicion_uuid" ] ) )
+   ::oController:oUnidadesMedicionController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_medicion_codigo" ] ) )
    ::oController:oUnidadesMedicionController:oGetSelector:Activate( 100, 101, ::oDialog )
-   ::oController:oUnidadesMedicionController:oGetSelector:setView( ::oDialogView )
+   //::oController:oUnidadesMedicionController:oGetSelector:setView( ::oDialogView )
    // ::oController:oUnidadesMedicionController:oGetSelector:setValid( {| uValue | msgalert( uValue, "dentro de setValid" ), ::oController:validate( "unidad_medicion_uuid", uValue  ) } )
 
    REDEFINE GET   ::oGetCantidad ;
@@ -237,8 +237,8 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosUnidadesMedicionValidator
 
-   ::hValidators  := {  "unidad_medicion_uuid" =>  {  "required"  => "El código es un dato requerido",;
-                                                      "unique"    => "El código introducido ya existe" } }
+   ::hValidators  := {  "unidad_medicion_codigo" =>  {  "required"  => "El código es un dato requerido",;
+                                                         "unique"    => "El código introducido ya existe" } }
 
 RETURN ( ::hValidators )
 
@@ -258,11 +258,11 @@ CLASS SQLArticulosUnidadesMedicionModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getUnidadMedicionUuidAttribute( uValue ) ; 
+   /*METHOD getUnidadMedicionUuidAttribute( uValue ) ; 
                                  INLINE ( if( empty( uValue ), space( 8 ), SQLUnidadesMedicionModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setUnidadMedicionUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", SQLUnidadesMedicionModel():getUuidWhereCodigo( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), "", SQLUnidadesMedicionModel():getUuidWhereCodigo( uValue ) ) )*/
 
 END CLASS
 
@@ -270,15 +270,16 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLArticulosUnidadesMedicionModel
 
-   local cSelect  := "SELECT articulos_unidades_medicion.id,"                                            + " " + ;
-                        "articulos_unidades_medicion.uuid,"                                              + " " + ;
-                        "articulos_unidades_medicion.operar,"                                            + " " + ;
-                        "articulos_unidades_medicion.cantidad,"                                          + " " + ;
-                        "unidades_medicion.codigo as unidades_medicion_codigo,"                          + " " + ;
-                        "unidades_medicion.nombre as unidades_medicion_nombre,"                          + " " + ;
-                        "unidades_medicion.uuid as unidades_medicion_uuid"                               + " " + ;
-                     "FROM articulos_unidades_medicion"                                                  + " " + ;
-                        "INNER JOIN unidades_medicion ON articulos_unidades_medicion.unidad_medicion_uuid = unidades_medicion.uuid"
+   local cSelect  := "SELECT articulos_unidades_medicion.id,"                                                     + " " + ;
+                        "articulos_unidades_medicion.uuid,"                                                       + " " + ;
+                        "articulos_unidades_medicion.operar,"                                                     + " " + ;
+                        "articulos_unidades_medicion.cantidad,"                                                   + " " + ;
+                        "unidades_medicion.codigo as unidades_medicion_codigo,"                                   + " " + ;
+                        "unidades_medicion.nombre as unidades_medicion_nombre,"                                   + " " + ;
+                        "unidades_medicion.uuid as unidades_medicion_uuid"                                        + " " + ;
+                     "FROM " +::getTableName() + " AS articulos_unidades_medicion"                                + " " + ;
+                        "INNER JOIN " + SQLUnidadesMedicionModel():getTableName() + " AS unidades_medicion"       + " " + ;
+                        "ON articulos_unidades_medicion.unidad_medicion_codigo = unidades_medicion.codigo"
 
 RETURN ( cSelect )
 
@@ -295,11 +296,11 @@ METHOD getColumns() CLASS SQLArticulosUnidadesMedicionModel
    hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                       "default"   => {|| ::getSenderControllerParentUuid() } } )
 
-   hset( ::hColumns, "unidad_medicion_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                                      "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "unidad_medicion_codigo",       {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "operar",                     {  "create"    => "TINYINT( 1 )"                            ,;
-                                                      "default"   => {|| .t. } }                               )
+                                                      "default"   => {|| 0 } }                               )
 
    hset( ::hColumns, "cantidad",                   {  "create"    => "FLOAT( 16, 6 )"                          ,;
                                                       "default"   => {|| 0 } }                                 )

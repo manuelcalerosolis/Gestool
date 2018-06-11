@@ -282,7 +282,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
                                              "default"   => {|| space( 6 ) } }                        )
 
    hset( ::hColumns, "sistema",           {  "create"    => "TINYINT( 1 )"                            ,;
-                                             "default"   => {|| .f. } }                               )
+                                             "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 

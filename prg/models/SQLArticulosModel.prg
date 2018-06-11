@@ -9,7 +9,7 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getInitialSelect()
+   METHOD getGeneralSelect()
 
 END CLASS
 
@@ -22,8 +22,6 @@ METHOD getColumns() CLASS SQLArticulosModel
 
    hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                                       "default"   => {|| win_uuidcreatestring() } }            )
-
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",                     {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
@@ -82,7 +80,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect() CLASS SQLArticulosModel
+METHOD getGeneralSelect() CLASS SQLArticulosModel
 
    local cSelect  := "SELECT articulos.id AS id, "                                                                                                 + ;
                         "articulos.uuid AS uuid, "                                                                                                 + ;
@@ -112,16 +110,25 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
                         "segunda_propiedad.nombre AS segunda_propiedad_nombre, "                                                                   + ;
                         "articulos.articulo_temporada_codigo, "                                                                                    + ;
                         "articulos_temporadas.nombre AS articulo_temporada_nombre "                                                                + ;
-                     "FROM articulos "                                                                                                             + ;
-                        "LEFT JOIN articulos_familias ON articulos.articulo_familia_codigo = articulos_familias.codigo "                           + ; 
-                        "LEFT JOIN articulos_tipos ON articulos.articulo_tipo_codigo = articulos_tipos.codigo "                                    + ;
-                        "LEFT JOIN articulos_categorias ON articulos.articulo_categoria_codigo = articulos_categorias.codigo "                     + ; 
-                        "LEFT JOIN articulos_fabricantes ON articulos.articulo_fabricante_codigo = articulos_fabricantes.codigo "                  + ;
-                        "LEFT JOIN tipos_iva ON articulos.tipo_iva_codigo = tipos_iva.codigo "                                                     + ;
-                        "LEFT JOIN articulos_temporadas ON articulos.articulo_temporada_codigo = articulos_temporadas.codigo "                     + ;
-                        "LEFT JOIN impuestos_especiales ON articulos.impuesto_especial_codigo = impuestos_especiales.codigo "                      + ;
-                        "LEFT JOIN articulos_propiedades AS primera_propiedad ON articulos.primera_propiedad_codigo = primera_propiedad.codigo "   + ; 
-                        "LEFT JOIN articulos_propiedades AS segunda_propiedad ON articulos.segunda_propiedad_codigo = segunda_propiedad.codigo " 
+                     "FROM " + ::getTableName()+ " AS articulos "                                                                                  + ;
+                        "LEFT JOIN " + SQLArticulosFamiliaModel():getTableName() + " AS articulos_familias "                                       + ;
+                        "ON articulos.articulo_familia_codigo = articulos_familias.codigo "                                                        + ;
+                        "LEFT JOIN " + SQLArticulosTipoModel():getTableName() + " AS articulos_tipos "                                             + ; 
+                        "ON articulos.articulo_tipo_codigo = articulos_tipos.codigo "                                                              + ;
+                        "LEFT JOIN " + SQLArticulosTipoModel():getTableName() + " AS articulos_categorias "                                        + ;
+                        "ON articulos.articulo_categoria_codigo = articulos_categorias.codigo "                                                    + ; 
+                        "LEFT JOIN " + SQLArticulosCategoriasModel():getTableName() + " AS articulos_fabricantes "                                 + ;
+                        "ON articulos.articulo_fabricante_codigo = articulos_fabricantes.codigo "                                                  + ;
+                        "LEFT JOIN " + SQLArticulosCategoriasModel():getTableName() + " AS tipos_iva "                                             + ;
+                        "ON articulos.tipo_iva_codigo = tipos_iva.codigo "                                                                         + ;
+                        "LEFT JOIN " + SQLArticulosTemporadasModel():getTableName() + " AS articulos_temporadas "                                  + ;
+                        "ON articulos.articulo_temporada_codigo = articulos_temporadas.codigo "                                                    + ;
+                        "LEFT JOIN " + SQLImpuestosEspecialesModel():getTableName() + " AS impuestos_especiales "                                  + ;
+                        "ON articulos.impuesto_especial_codigo = impuestos_especiales.codigo "                                                     + ;
+                        "LEFT JOIN " + SQLPropiedadesModel():getTableName() + " AS primera_propiedad "                                             + ;
+                        "ON articulos.primera_propiedad_codigo = primera_propiedad.codigo "                                                        + ; 
+                        "LEFT JOIN " + SQLPropiedadesModel():getTableName() + " AS segunda_propiedad "                                             + ; 
+                        "ON articulos.segunda_propiedad_codigo = segunda_propiedad.codigo " 
 
 RETURN ( cSelect )
 

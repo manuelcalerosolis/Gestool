@@ -367,7 +367,7 @@ METHOD getColumns() CLASS SQLBalanzasModel
                                              "default"   => {|| space( 1 ) } }                       )
 
    hset( ::hColumns, "abrir_puerto",      {  "create"    => "TINYINT( 1 )"                            ,;
-                                             "default"   => {|| .f. } }                               )
+                                             "default"   => {|| 0 } }                               )
 
 
 

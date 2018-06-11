@@ -627,7 +627,7 @@ CLASS SQLArticulosFamiliaModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getPrimeraPropiedadUuidAttribute( uuid ) ; 
+   /*METHOD getPrimeraPropiedadUuidAttribute( uuid ) ; 
                                  INLINE ( if( empty( uuid ), space( 18 ), SQLPropiedadesModel():getCodigoWhereUuid( uuid ) ) )
 
    METHOD setPrimeraPropiedadUuidAttribute( codigo ) ;
@@ -637,7 +637,7 @@ CLASS SQLArticulosFamiliaModel FROM SQLCompanyModel
                                  INLINE ( if( empty( uuid ), space( 3 ), SQLComentariosModel():getCodigoWhereUuid( uuid ) ) )
 
    METHOD setComentarioUuidAttribute( codigo ) ;
-                                 INLINE ( if( empty( codigo ), "", SQLComentariosModel():getUuidWhereCodigo( codigo ) ) )
+                                 INLINE ( if( empty( codigo ), "", SQLComentariosModel():getUuidWhereCodigo( codigo ) ) )*/
 
    METHOD setFamiliaUuidAttribute( value )
 
@@ -711,9 +711,9 @@ METHOD getRowSetWhereFamiliaUuid( familiaUuid )
    local cSQL      
    local oHashList
 
-   cSQL                 := "SELECT uuid, nombre FROM " + ::cTableName            + " "
+   cSQL                 := "SELECT uuid, nombre FROM " + ::getTableName()            + " "
    cSQL                 +=    "WHERE familia_uuid = " + quoted( familiaUuid )    + " "
-   cSQL                 +=    "AND empresa_codigo = " + quoted( Company():Codigo() ) + " " 
+   /*cSQL                 +=    "AND empresa_codigo = " + quoted( Company():Codigo() ) + " " */
 
    oHashList            := getSQLDatabase():selectHashList( cSQL ) 
 
