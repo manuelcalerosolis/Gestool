@@ -71,7 +71,7 @@ RETURN ( Self )
 
 METHOD VerifyOrden()
 
-   local cSQL           := "UPDATE orden_comandas SET orden = orden + 1 WHERE orden >= " + toSQLString( ::oModel:hBuffer[ "orden" ] )
+   local cSQL           := "UPDATE " + ::oModel:getTableName() + " SET orden = orden + 1 WHERE orden >= " + toSQLString( ::oModel:hBuffer[ "orden" ] )
 
 RETURN ( getSQLDatabase():Exec( cSQL ) )
 
@@ -277,7 +277,6 @@ METHOD getColumns() CLASS SQLOrdenComandasModel
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
                                              "default"   => {|| space( 20 ) } }                        )
@@ -299,7 +298,7 @@ METHOD getOrden() CLASS SQLOrdenComandasModel
    local cSQL 
    local nOrden   
 
-   cSQL           := "SELECT orden FROM orden_comandas ORDER BY orden DESC LIMIT 1"
+   cSQL           := "SELECT orden FROM " + ::getTableName() + " ORDER BY orden DESC LIMIT 1"
 
    nOrden         := getSQLDatabase():getValue( cSQL )
 

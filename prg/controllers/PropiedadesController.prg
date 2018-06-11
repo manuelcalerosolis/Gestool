@@ -319,7 +319,7 @@ METHOD getColumns() CLASS SQLPropiedadesModel
                                     "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "color",    {  "create"    => "TINYINT( 1 )"                            ,;
-                                    "default"   => {|| .f. } }                               )
+                                    "default"   => {|| 0 } }                               )
 
 
 RETURN ( ::hColumns )

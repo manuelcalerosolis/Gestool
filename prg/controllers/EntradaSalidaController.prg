@@ -225,7 +225,7 @@ METHOD Activate() CLASS EntradaSalidaView
       OF          ::oDialog ;
    // codigo caja-------------------------------------------------------------------------------------------------------//
 
-   ::oController:oCajasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "caja_uuid" ] ) )
+   ::oController:oCajasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "caja_codigo" ] ) )
    
    ::oController:oCajasController:oGetSelector:setEvent( 'validated', {|| ::CajasControllerValidated() } )
 
@@ -316,34 +316,34 @@ CLASS SQLEntradaSalidaModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getCajaUuidAttribute( uValue ) ; 
+   /*METHOD getCajaUuidAttribute( uValue ) ; 
                                  INLINE ( if( empty( uValue ), space( 40 ), ::oController:oCajasController:oModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setCajaUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:oCajasController:oModel():getUuidWhereCodigo( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), "", ::oController:oCajasController:oModel():getUuidWhereCodigo( uValue ) ) )*/
 
-METHOD getInitialSelect()
+METHOD getGeneralSelect()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect() CLASS SQLEntradaSalidaModel
+METHOD getGeneralSelect() CLASS SQLEntradaSalidaModel
 
    local cSelect  := "SELECT cajas_entradas_salidas.id,"                                                               + " " + ;
                         "cajas_entradas_salidas.uuid,"                                                                 + " " + ;
                         "cajas_entradas_salidas.sesion,"                                                               + " " + ;
                         "cajas_entradas_salidas.nombre,"                                                               + " " + ;
                         "cajas_entradas_salidas.fecha_hora,"                                                           + " " + ; 
-                        "cajas_entradas_salidas.caja_uuid,"                                                            + " " + ; 
+                        "cajas_entradas_salidas.caja_codigo,"                                                          + " " + ; 
                         "cajas_entradas_salidas.nombre,"                                                               + " " + ;
                         "cajas_entradas_salidas.tipo,"                                                                 + " " + ;
                         "cajas_entradas_salidas.importe,"                                                              + " " + ;   
-                        "cajas_entradas_salidas.delegacion_uuid,"                                                        + " " + ;
-                        "cajas.codigo as 'codigo_caja',"                                                                 + " " + ;
-                        "cajas.nombre as 'nombre_caja'"                                                                  + " " + ;  
-                     "FROM cajas_entradas_salidas"                                                                     + " " + ;
-                        "INNER JOIN cajas ON cajas_entradas_salidas.caja_uuid = cajas.uuid"  + " "
+                        "cajas_entradas_salidas.delegacion_uuid,"                                                      + " " + ;
+                        "cajas.codigo AS codigo_caja,"                                                               + " " + ;
+                        "cajas.nombre AS nombre_caja"                                                                + " " + ;  
+                     "FROM " + ::getTableName() +" AS cajas_entradas_salidas"                                          + " " + ;
+                        "INNER JOIN " + SQLCajasModel():getTableName() + " AS cajas ON cajas_entradas_salidas.caja_codigo = cajas.codigo"  + " "
 
 RETURN ( cSelect )
 
@@ -357,17 +357,14 @@ METHOD getColumns() CLASS SQLEntradaSalidaModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getEmpresaColumns()
-
-
    hset( ::hColumns, "sesion",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
    hset( ::hColumns, "fecha_hora",        {  "create"    => "TIMESTAMP"                               ,;
                                              "default"   => {|| hb_datetime() } }                      )
 
-   hset( ::hColumns, "caja_uuid",         {  "create"   => "VARCHAR( 40 )"                            ,;
-                                             "default"   => {|| space( 40 ) } }                        )
+   hset( ::hColumns, "caja_codigo",       {  "create"   => "VARCHAR( 20 )"                            ,;
+                                             "default"   => {|| space( 20 ) } }                        )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
