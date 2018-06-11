@@ -59,7 +59,6 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oClientesGruposController:setView( ::oDialogView )
 
    ::oDireccionesController         := DireccionesController():New( self )
-   ::oDireccionesController:setView( ::oDialogView )
 
    ::oContactosController           := ContactosController():New( self )
 

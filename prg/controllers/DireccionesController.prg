@@ -526,17 +526,31 @@ RETURN ( ::hValidators )
 
 METHOD codigoPostal( value )
 
+   local cPoblacion
+   local cProvincia
+
    if empty( value )
       RETURN ( .t. )
    end if 
 
    if empty( ::oController:oDialogView:oGetPoblacion:varget() )
-      ::oController:oDialogView:oGetPoblacion:cText( ::oController:oCodigosPostalesController:getModel():getField( "poblacion", "codigo", value ) )
+
+      cPoblacion  := ::oController:oCodigosPostalesController:getModel():getField( "poblacion", "codigo", value )
+      if !empty( cPoblacion )
+         ::oController:oDialogView:oGetPoblacion:cText( cPoblacion )
+      end if 
+
    end if 
 
    if empty( ::oController:oDialogView:oGetCodigoProvincia:varget() )
-      ::oController:oDialogView:oGetCodigoProvincia:cText( ::oController:oCodigosPostalesController:getModel():getField( "provincia", "codigo", value ) )
-      ::oController:oDialogView:oGetCodigoProvincia:lValid()
+
+      cProvincia  := ::oController:oCodigosPostalesController:getModel():getField( "provincia", "codigo", value )
+
+      if !empty( cProvincia )
+         ::oController:oDialogView:oGetCodigoProvincia:cText( cProvincia )
+         ::oController:oDialogView:oGetCodigoProvincia:lValid()
+      end if 
+
    end if 
 
 RETURN ( .t. )

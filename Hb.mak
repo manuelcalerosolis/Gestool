@@ -504,6 +504,7 @@ TiposVentasValidator.prg 													\
 EtiquetasValidator.prg 														\
 MovimientosAlmacenValidator.prg 											\
 MovimientosAlmacenLineasValidator.prg 									\
+FacturasClientesLineasValidator.prg 									\
 SQLBaseRepository.prg 														\
 TiposVentasRepository.prg 													\
 ConfiguracionEmpresasRepository.prg 									\
@@ -702,7 +703,11 @@ DescuentosController.prg 													\
 ClientesBrowseView.prg 														\
 TercerosBrowseView.prg 														\
 SqlFacturasClientesModel.prg 												\
+SqlFacturasClientesLineasModel.prg										\
 FacturasClientesController.prg 											\
+FacturasClientesLineasController.prg									\
+FacturasClientesLineasBrowse.prg											\
+FacturasClientesLineasView.prg											\
 FacturasClientesView.prg 													\
 
 C               =       	            								\
@@ -1192,6 +1197,7 @@ TiposVentasValidator.obj 													\
 EtiquetasValidator.obj 														\
 MovimientosAlmacenValidator.obj 											\
 MovimientosAlmacenLineasValidator.obj 									\
+FacturasClientesLineasValidator.obj 									\
 SQLBaseRepository.obj 														\
 ConfiguracionEmpresasRepository.obj 									\
 TiposVentasRepository.obj 													\
@@ -1381,8 +1387,12 @@ CalculaPrecioCommand.obj 													\
 DescuentosController.obj 													\
 ClientesBrowseView.obj 														\
 TercerosBrowseView.obj 														\
-SqlFacturasClientesModel.obj 												\
+SQLFacturasClientesModel.obj 												\
+SQLFacturasClientesLineasModel.obj 										\
 FacturasClientesController.obj 											\
+FacturasClientesLineasController.obj 									\
+FacturasClientesLineasBrowse.obj 										\
+FacturasClientesLineasView.obj 											\
 FacturasClientesView.obj 													\
 
 .PRG.OBJ:
@@ -1864,6 +1874,7 @@ $(OBJ)\TiposVentasValidator.obj											+
 $(OBJ)\EtiquetasValidator.obj												+
 $(OBJ)\MovimientosAlmacenValidator.obj									+
 $(OBJ)\MovimientosAlmacenLineasValidator.obj							+
+$(OBJ)\FacturasClientesLineasValidator.obj							+
 $(OBJ)\SQLBaseRepository.obj 												+
 $(OBJ)\ConfiguracionEmpresasRepository.obj							+
 $(OBJ)\TiposVentasRepository.obj											+
@@ -2051,7 +2062,11 @@ $(OBJ)\DescuentosController.obj 											+
 $(OBJ)\ClientesBrowseView.obj 											+
 $(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\SqlFacturasClientesModel.obj 				    				+
+$(OBJ)\SqlFacturasClientesLineasModel.obj 	    					+
 $(OBJ)\FacturasClientesController.obj 									+
+$(OBJ)\FacturasClientesLineasController.obj 							+
+$(OBJ)\FacturasClientesLineasBrowse.obj 								+
+$(OBJ)\FacturasClientesLineasView.obj 									+
 $(OBJ)\FacturasClientesView.obj 											+
 $(OBJ)\Events.obj              		
 $<,$*

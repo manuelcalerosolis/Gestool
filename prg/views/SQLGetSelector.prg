@@ -131,7 +131,6 @@ METHOD helpAction() CLASS GetSelector
    hResult        := ::oController:ActivateSelectorView()
 
    if hb_isnil( hResult )
-      ::oGet:cText( "" )
       RETURN ( .f. )
    end if 
 

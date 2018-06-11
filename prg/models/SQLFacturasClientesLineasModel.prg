@@ -4,9 +4,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLMovimientosAlmacenLineasModel FROM SQLExportableModel
+CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
 
-   DATA cTableName            INIT  "movimientos_almacen_lineas"
+   DATA cTableName            INIT  "facturas_clientes_lineas"
 
    DATA cTableTemporal        
 
@@ -100,12 +100,6 @@ METHOD getColumns()
    hset( ::hColumns, "lote",                       {  "create"    => "VARCHAR(40)"                    ,;
                                                       "default"   => {|| space(40) } }                )
 
-   hset( ::hColumns, "bultos_articulo",            {  "create"    => "DECIMAL(19,6)"                  ,;
-                                                      "default"   => {|| 0 } }                        )
-
-   hset( ::hColumns, "cajas_articulo",             {  "create"    => "DECIMAL(19,6)"                  ,;
-                                                      "default"   => {|| 0 } }                        )
-
    hset( ::hColumns, "unidades_articulo",          {  "create"    => "DECIMAL(19,6)"                  ,;
                                                       "default"   => {|| 1 } }                        )
 
@@ -129,12 +123,9 @@ METHOD getInitialSelect()
                         "valor_segunda_propiedad, "                           + ;
                         "fecha_caducidad, "                                   + ;
                         "lote, "                                              + ;
-                        "bultos_articulo, "                                   + ;
-                        "cajas_articulo, "                                    + ;
                         "unidades_articulo, "                                 + ;
-                        ::getSQLSubSentenceTotalUnidadesLinea() + ", "        + ;
                         "precio_articulo, "                                   + ;
-                        ::getSQLSubSentenceTotalPrecioLinea()                 + ;
+                        "unidades_articulo * precio_articulo as total_precio "+ ;
                      "FROM " + ::getTableName()    
 
 RETURN ( cSelect )
@@ -178,7 +169,7 @@ RETURN ( nil )
 
 METHOD addUpdateSentence( aSQLUpdate, oProperty )
 
-   aadd( aSQLUpdate, "UPDATE " + ::cTableName + " " +                                                       ;
+   aadd( aSQLUpdate, "UPDATE " + ::getTableName() + " " +                                                       ;
                         "SET unidades_articulo = " + toSqlString( oProperty:Value )                + ", " + ;
                         "precio_articulo = " + toSqlString( hget( ::hBuffer, "precio_articulo" ) ) + " " +  ;
                         "WHERE uuid = " + quoted( oProperty:Uuid ) +  "; " )
@@ -189,7 +180,7 @@ RETURN ( nil )
 
 METHOD addDeleteSentence( aSQLUpdate, oProperty )
 
-   aadd( aSQLUpdate, "DELETE FROM " + ::cTableName + " " +                          ;
+   aadd( aSQLUpdate, "DELETE FROM " + ::getTableName() + " " +                          ;
                         "WHERE uuid = " + quoted( oProperty:Uuid ) + "; " )
 
 RETURN ( nil )
@@ -198,7 +189,7 @@ RETURN ( nil )
 
 METHOD addDeleteSentenceById( aSQLUpdate, nId )
 
-   aadd( aSQLUpdate, "DELETE FROM " + ::cTableName + " " +                          ;
+   aadd( aSQLUpdate, "DELETE FROM " + ::getTableName() + " " +                          ;
                         "WHERE id = " + quoted( nId ) + "; " )
 
 RETURN ( nil )
@@ -207,7 +198,7 @@ RETURN ( nil )
 
 METHOD deleteWhereUuid( uuid )
 
-   local cSentence   := "DELETE FROM " + ::cTableName + " " + ;
+   local cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
                            "WHERE parent_uuid = " + quoted( uuid )
 
 RETURN ( ::getDatabase():Exec( cSentence ) )
@@ -218,7 +209,7 @@ METHOD aUuidToDelete( aParentsUuid )
 
    local cSentence   
 
-   cSentence            := "SELECT uuid FROM " + ::cTableName + " "
+   cSentence            := "SELECT uuid FROM " + ::getTableName() + " "
    cSentence            +=    "WHERE parent_uuid IN ( " 
 
    aeval( aParentsUuid, {| v | cSentence += toSQLString( v ) + ", " } )
@@ -313,7 +304,7 @@ RETURN ( "SUM( " + cTable + "unidades_articulo * " + cTable + "precio_articulo )
 
 METHOD getSentenceNotSent( aFetch )
 
-   local cSentence   := "SELECT * FROM " + ::cTableName + " "
+   local cSentence   := "SELECT * FROM " + ::getTableName() + " "
 
    cSentence         +=    "WHERE parent_uuid IN ( " 
 
@@ -327,19 +318,13 @@ RETURN ( cSentence )
 
 METHOD getIdProductAdded()
 
-   local aId         := MovimientosAlmacenLineasRepository():getIdFromBuffer( ::hBuffer )
-
-   if !empty( aId )
-      RETURN( hget( atail( aId ), "id" ) )
-   end if 
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD getUpdateUnitsSentece( id )
    
-   local cSentence   := "UPDATE " + ::cTableName                                                                                    + " " +  ;
+   local cSentence   := "UPDATE " + ::getTableName() +                                                                                  + " " +  ;
                            "SET unidades_articulo = unidades_articulo + " + toSQLString( hget( ::hBuffer, "unidades_articulo" ) )   + " " +  ;
                         "WHERE id = " + quoted( id )
 
@@ -354,7 +339,7 @@ METHOD createTemporalTableWhereUuid( originalUuid )
    ::cTableTemporal  := ::cTableName + hb_ttos( hb_datetime() )
 
    cSentence         := "CREATE TEMPORARY TABLE " + ::cTableTemporal          + " "
-   cSentence         +=    "SELECT * from " + ::cTableName                    + " " 
+   cSentence         +=    "SELECT * from " + ::getTableName()                + " " 
    cSentence         += "WHERE parent_uuid = " + quoted( originalUuid )       + "; "
 
 RETURN ( ::getDatabase():Exec( cSentence ) )
@@ -388,7 +373,7 @@ METHOD insertTemporalTable()
 
    local cSentence
 
-   cSentence         := "INSERT INTO " + ::cTableName                         + " "
+   cSentence         := "INSERT INTO " + ::getTableName() +                       + " "
    cSentence         +=    "SELECT * FROM " + ::cTableTemporal
 
 RETURN ( ::getDatabase():Exec( cSentence ) )

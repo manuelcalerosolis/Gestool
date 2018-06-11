@@ -124,7 +124,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
                                                       INLINE ( iif( !empty( ::oViewController ), ::oViewController:setColumnOrientation( cType, cName, cColumnOrientation ), ) )
    METHOD getColumnOrientationView( cType, cName )    INLINE ( iif( !empty( ::oViewController ), ::oViewController:getColumnOrientation( cType, cName ), ) )
 
-   METHOD setStateView( cType, cName, cState )        INLINE ( iif( !empty( ::oViewController ), ::oViewController:setState( cType, cName, cState ), ) )
+   METHOD setStateView( cType, cName, cState )        INLINE ( msgalert( ::oViewController:className(), "SQLNavigatorController INLINE" ), iif( !empty( ::oViewController ), ::oViewController:setState( cType, cName, cState ), ) )
    METHOD getStateView( cType, cName )                INLINE ( iif( !empty( ::oViewController ), ::oViewController:getState( cType, cName ), ) )
 
 END CLASS
@@ -274,6 +274,8 @@ RETURN ( self )
 METHOD saveState()
 
    CursorWait()
+
+   msgalert( "saveState SQLNavigatorController")
 
    ::setIdView( ::getBrowseViewType(), ::getName(), ::getRowSet:fieldget( "id" ) )
 

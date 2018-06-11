@@ -169,15 +169,13 @@ METHOD redefineGeneral() CLASS ClientesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "excluir_fidelizacion" ] ;
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "excluir_fidelizacion" ] ;
       ID          150 ;
-      IDSAY       152 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "no_editar_datos" ] ;
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "no_editar_datos" ] ;
       ID          160 ;
-      IDSAY       162 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 

@@ -25,13 +25,13 @@ METHOD New( oSenderController ) CLASS AgentesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Agentes"
+   ::cTitle                         := "Agentes"
 
-   ::cName                       := "agentes"
+   ::cName                          := "agentes"
 
-   ::hImage                      := {  "16" => "gc_businessman2_16",;
-                                       "32" => "gc_businessman2_32",;
-                                       "48" => "gc_businessman2_48" }
+   ::hImage                         := {  "16" => "gc_businessman2_16",;
+                                          "32" => "gc_businessman2_32",;
+                                          "48" => "gc_businessman2_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -48,6 +48,7 @@ METHOD New( oSenderController ) CLASS AgentesController
    ::oRepository                    := AgentesRepository():New( self )
 
    ::oPaisesController              := PaisesController():New( self )
+
    ::oProvinciasController          := ProvinciasController():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'agentes')
@@ -70,6 +71,7 @@ METHOD New( oSenderController ) CLASS AgentesController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS AgentesController
 
    ::oModel:End()
@@ -114,6 +116,7 @@ METHOD addColumns() CLASS AgentesBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -127,7 +130,7 @@ METHOD addColumns() CLASS AgentesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
@@ -151,7 +154,7 @@ METHOD addColumns() CLASS AgentesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'comision'
       :cHeader             := 'Comisión %'
-      :nWidth              := 60
+      :nWidth              := 100
       :nHeadStrAlign       := AL_RIGHT
       :nDataStrAlign       := AL_RIGHT
       :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'comision' ), "@E 999.99" ) }
@@ -332,9 +335,6 @@ METHOD getValidators() CLASS AgentesValidator
                                                       "unique"             => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -21,6 +21,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oContadoresModel
 
+   DATA oLineasController
+
    METHOD New()
 
    METHOD End()
@@ -77,6 +79,8 @@ METHOD New() CLASS FacturasClientesController
    ::oAlmacenesController        := AlmacenesController():New( self )
    ::oAlmacenesController:setView( ::oDialogView )
 
+   ::oLineasController           := FacturasClientesLineasController():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
@@ -97,6 +101,8 @@ METHOD End() CLASS FacturasClientesController
    ::oAgentesController:End()
 
    ::oAlmacenesController:End()
+
+   ::oLineasController:End()
 
    ::Super:End()
 

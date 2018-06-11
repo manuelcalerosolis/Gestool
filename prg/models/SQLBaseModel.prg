@@ -647,6 +647,10 @@ METHOD getInsertSentence( hBuffer, lIgnore )
 
    DEFAULT hBuffer   := ::hBuffer
    DEFAULT lIgnore   := .f.
+   
+   if !hb_ishash( hBuffer )
+      RETURN ( nil )
+   end if 
 
    ::fireEvent( 'getingInsertSentence' )   
 
@@ -680,6 +684,10 @@ METHOD getUpdateSentence( hBuffer )
 
    DEFAULT hBuffer      := ::hBuffer
 
+   if !hb_ishash( hBuffer )
+      RETURN ( nil )
+   end if 
+
    ::fireEvent( 'getingUpdateSentence' )   
 
    hBuffer              := ::setUpdatedTimeStamp( hBuffer )
@@ -709,6 +717,10 @@ METHOD getInsertOnDuplicateSentence( hBuffer, lDebug )
 
    DEFAULT hBuffer   := ::hBuffer
    DEFAULT lDebug    := .f.
+
+   if !hb_ishash( hBuffer )
+      RETURN ( nil )
+   end if 
 
    hBuffer           := ::setUpdatedTimeStamp( hBuffer )
    

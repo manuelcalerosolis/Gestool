@@ -99,7 +99,11 @@ RETURN ( nil )
 
 METHOD Select()
 
-   ::hSelectedBuffer    := ::getModel():loadCurrentBuffer( ::getBrowseView():getRowSet():fieldGet( 'id' ) )
+   local nId            := ::getBrowseView():getRowSet():fieldGet( 'id' )
+
+   if !empty( nId )
+      ::hSelectedBuffer := ::getModel():loadCurrentBuffer( nId )
+   end if 
 
    ::oDialog:End( IDOK )
 

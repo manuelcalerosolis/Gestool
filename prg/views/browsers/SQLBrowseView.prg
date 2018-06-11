@@ -113,12 +113,11 @@ CLASS SQLBrowseView
 
    // State--------------------------------------------------------------------
 
-   METHOD restoreState()                     INLINE ( if( !empty( ::oController ), ::oController:restoreState(), ) )
+   METHOD restoreState()                     
+   METHOD setState( cBrowseState )
 
    METHOD setId( nId )
-   METHOD setState( cBrowseState )
   
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -329,6 +328,18 @@ METHOD getColumnHeaderByOrder( cSortOrder )
    end if 
 
 RETURN ( oColumn:cHeader )
+
+//------------------------------------------------------------------------//
+
+METHOD restoreState()
+
+   ::oBrowse:getOriginalState()
+
+   if !empty( ::oController )
+      ::oController:restoreState()
+   end if 
+
+RETURN ( Self )
 
 //------------------------------------------------------------------------//
 

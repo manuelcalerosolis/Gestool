@@ -195,6 +195,10 @@ METHOD Exec( cSentence, lParse )
 
    DEFAULT lParse := .t.
 
+   if !hb_ischar( cSentence )
+      RETURN ( .f. )  
+   end if 
+
    if lParse .and. ::isParseError( cSentence )
       RETURN ( .f. )  
    end if 
