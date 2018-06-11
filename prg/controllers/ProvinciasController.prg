@@ -68,8 +68,6 @@ METHOD End() CLASS ProvinciasController
 
    ::oValidator:End()
 
-   /*::oRepository:End()*/
-
    ::Super:End()
 
 RETURN ( Self )

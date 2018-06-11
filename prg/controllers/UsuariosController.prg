@@ -687,7 +687,8 @@ METHOD Activate() CLASS UsuariosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-//Campos extra----------------------------------------------------------------//
+   // Campos extra-------------------------------------------------------------
+
    REDEFINE SAY   ::oSayCamposExtra ;
       PROMPT      "Campos extra..." ;
       FONT        getBoldFont() ; 

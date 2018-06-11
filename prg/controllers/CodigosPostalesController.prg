@@ -148,78 +148,81 @@ END CLASS
 
 METHOD Activate() CLASS CodigosPostalesView
 
-   local oDlg
-   local oBmpGeneral
    local oGetProvincia
 
-   ::validProvincia()
-
-   DEFINE DIALOG  oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CODIGO_POSTAL" ;
       TITLE       ::LblTitle() + "Código postal"
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
       RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "poblacion" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "poblacion" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   oGetProvincia VAR ::oController:oModel:hBuffer[ "provincia" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "provincia" ), ::validProvincia() ) ;
       BITMAP      "LUPA" ;
-      OF          oDlg
+      OF          ::oDialog
 
       oGetProvincia:bHelp  := {|| ::oController:oProvinciasController:getSelectorProvincia( oGetProvincia ), ::validProvincia() }
 
    REDEFINE GET ::oSayProvincia VAR ::cSayProvincia ;
       ID          121;
       WHEN        ( .f. );
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ACTIVATE DIALOG oDlg CENTER
+   ::oDialog:bStart  := {|| ::validProvincia() }
 
-   oBmpGeneral:end()
+   ACTIVATE DIALOG ::oDialog CENTER
 
-RETURN ( oDlg:nResult )
+   ::oBitmap:end()
+
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
 METHOD validProvincia() CLASS CodigosPostalesView
 
-   ::cSayProvincia  := SQLProvinciasModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "provincia" ] )
+   ::cSayProvincia  := ::oController:oProvinciasController:getModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "provincia" ] )
 
-   if !Empty( ::oSayProvincia )
+   if !empty( ::oSayProvincia )
       ::oSayProvincia:Refresh()
    end if
 
