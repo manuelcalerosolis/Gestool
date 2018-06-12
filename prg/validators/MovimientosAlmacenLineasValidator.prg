@@ -9,7 +9,7 @@ CLASS DocumentosLineasValidator FROM SQLBaseValidator
    METHOD getValidators()
 
    METHOD isCodeGS128( value )
-   METHOD existArticulo( value )                   
+   METHOD existCodigoArticulo( value )                   
 
 END CLASS
 
@@ -17,10 +17,10 @@ END CLASS
 
 METHOD getValidators()
 
-   ::hValidators  := {  "codigo_articulo"          => {  "isCodeGS128"           => "",;
+   ::hValidators  := {  "articulo_codigo"          => {  "isCodeGS128"           => "",;
                                                          "required"              => "El artículo es un dato requerido",;
-                                                         "existArticulo"         => "El artículo {value}, no existe" },;
-                        "nombre_articulo"          => {  "required"              => "El nombre del artículo es un dato requerido" } }
+                                                         "existCodigoArticulo"   => "El artículo {value}, no existe" },;
+                        "articulo_nombre"          => {  "required"              => "El nombre del artículo es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -28,7 +28,9 @@ RETURN ( ::hValidators )
 
 METHOD isCodeGS128( value )
 
-   local hCodeGS128  := ReadCodeGS128( value )
+   local hCodeGS128  
+
+   hCodeGS128  := ReadCodeGS128( value )
 
    if empty( hCodeGS128 )
       RETURN ( .t. )
@@ -54,27 +56,13 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD existArticulo( value )
-
-   local cId
+METHOD existCodigoArticulo( value )
 
    if empty( value )
       RETURN ( .t. )
    end if 
 
-   if ArticulosModel():exist( value )
-      RETURN ( .t. )
-   end if 
-
-   cId                     := ArticulosCodigosBarraModel():getCodigo( value )
-
-   if !empty( cId )
-      ::oController:setModelBufferPadr( "codigo_articulo", cId )
-      ::oController:oDialogView:oGetCodigoArticulo:Refresh()
-      RETURN ( .t. )
-   end if 
-
-RETURN ( .f. )
+RETURN ( !empty( SQLArticulosModel():getCodigoWhereCodigo( value ) ) )
 
 //---------------------------------------------------------------------------//
 

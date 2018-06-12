@@ -11,7 +11,7 @@ CLASS UnidadesMedicionController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ),;
+   METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ) == 1,;
                                              ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ),;
                                              .t. ) )
 

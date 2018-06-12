@@ -403,9 +403,11 @@ RETURN ( ::aModels )
 
 METHOD checkValues() CLASS SQLCompanyMigrations
 
+   getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
+
    getSQLDatabase():Exec( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )
 
-   getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
+   getSQLDatabase():Execs( SQLUnidadesMedicionGruposModel():getInsertUnidadesMedicionGruposSentence() )
 
    getSQLDatabase():Exec( SQLArticulosTarifasModel():getInsertArticulosTarifasSentence() )
 

@@ -20,6 +20,8 @@ CLASS SQLBrowseView
 
    DATA nMarqueeStyle                        INIT MARQSTYLE_HIGHLROWRC
 
+   DATA nColSel                              INIT 1
+
    METHOD New( oController )
    METHOD End()
 
@@ -68,6 +70,10 @@ CLASS SQLBrowseView
    METHOD setViewTypeToNavigator()           INLINE ( ::oBrowse:setViewType( "navigator" ) )
    METHOD setViewTypeToSelector()            INLINE ( ::oBrowse:setViewType( "selector" ) )
    METHOD getViewType()                      INLINE ( ::oBrowse:getViewType() )
+
+   METHOD setFocus()                         INLINE ( ::oBrowse:setFocus() )
+
+   METHOD selectCol( nCol, lOffset )         INLINE ( ::oBrowse:selectCol( nCol, lOffset ) )
 
    // Controller---------------------------------------------------------------
 
@@ -164,6 +170,7 @@ METHOD Create( oWindow )
    ::oBrowse:lFooter          := ::lFooter
    ::oBrowse:lFastEdit        := ::lFastEdit
    ::oBrowse:lMultiSelect     := ::lMultiSelect
+   ::oBrowse:nColSel          := ::nColSel
 
    // Propiedades del control--------------------------------------------------
 

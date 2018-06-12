@@ -1,11 +1,22 @@
 #include "FiveWin.Ch"
 #include "Factu.Ch"
+#include "Xbrowse.Ch"
 
 //------------------------------------------------------------------------//
 
 CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    DATA lFastEdit          INIT .t.
+
+   DATA lFooter            INIT .t.
+
+   DATA nFreeze            INIT 1
+
+   DATA nMarqueeStyle      INIT 3
+
+   DATA nColSel            INIT 2
+
+   DATA oColumnCodigo
 
    METHOD addColumns()                       
 
@@ -43,14 +54,15 @@ METHOD addColumns()
       :lHide               := .t.
    end with
 
-   with object ( ::oBrowse:AddCol() )
+   with object ( ::oColumnCodigo := ::oBrowse:AddCol() )
+
       :cSortOrder          := 'articulo_codigo'
       :cHeader             := 'Código artículo'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
 
-      :nEditType           := 5
+      :nEditType           := EDIT_GET_BUTTON
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:validColumnCodigoArticulo( oCol, uNewValue, nKey ) }
       :bEditBlock          := {|| ::oController:oSenderController:oArticulosController:ActivateSelectorView() }
       :nBtnBmp             := 1
@@ -64,6 +76,8 @@ METHOD addColumns()
       :nWidth              := 180
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := EDIT_GET
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:validColumnNombreArticulo( oCol, uNewValue, nKey ) }
    end with
 
    with object ( ::oBrowse:AddCol() )

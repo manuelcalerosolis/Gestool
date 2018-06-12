@@ -114,17 +114,12 @@ METHOD Activate() CLASS ArticulosView
    ::oController:oImpuestosEspecialesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "impuesto_especial_codigo" ] ) )
    ::oController:oImpuestosEspecialesController:oGetSelector:Activate( 170, 171, ::oFolder:aDialogs[ 1 ] )
 
-   // Primera propiedad--------------------------------------------------------
+   // Unidades de medicion grupo-----------------------------------------------
 
-   ::oController:oPrimeraPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "primera_propiedad_codigo" ] ) )
-   ::oController:oPrimeraPropiedadController:oGetSelector:Activate( 230, 231, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oUnidadesMedicionGruposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidades_medicion_grupos_codigo" ] ) )
+   ::oController:oUnidadesMedicionGruposController:oGetSelector:Activate( 230, 231, ::oFolder:aDialogs[ 1 ] )
 
-   // Segunda propiedad--------------------------------------------------------
-
-   ::oController:oSegundaPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "segunda_propiedad_codigo" ] ) )
-   ::oController:oSegundaPropiedadController:oGetSelector:Activate( 240, 241, ::oFolder:aDialogs[ 1 ] )
-
-   // Segunda propiedad--------------------------------------------------------
+   // Temporadas---------------------------------------------------------------
 
    ::oController:oArticulosTemporadasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_temporada_codigo" ] ) )
    ::oController:oArticulosTemporadasController:oGetSelector:Activate( 250, 251, ::oFolder:aDialogs[ 1 ] )
@@ -234,10 +229,8 @@ METHOD startActivate() CLASS ArticulosView
 
    ::oController:oImpuestosEspecialesController:oGetSelector:Start()
 
-   ::oController:oPrimeraPropiedadController:oGetSelector:Start()
+   ::oController:oUnidadesMedicionGruposController:oGetSelector:Start()
    
-   ::oController:oSegundaPropiedadController:oGetSelector:Start()
-
    ::oController:oArticulosTemporadasController:oGetSelector:Start()
 
    ::oController:oTagsController:oDialogView:Start()
@@ -261,13 +254,9 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
    end if
 
    oPanel:AddLink(   "Codificación de proveedores...",;
-                     {|| msgalert( "todo" ) },;
+                     {|| msgalert( "to-do" ) },;
                      ::oController:oArticulosUnidadesMedicionController:getImage( "16" ) )
  
-   oPanel:AddLink(   "Unidades de medición...",;
-                     {|| ::oController:oArticulosUnidadesMedicionController:activateDialogView() },;
-                     ::oController:oArticulosUnidadesMedicionController:getImage( "16" ) )
-
    oPanel:AddLink(   "Imagenes...",;
                      {|| ::oController:oImagenesController:activateDialogView() },;
                      ::oController:oImagenesController:getImage( "16" ) )

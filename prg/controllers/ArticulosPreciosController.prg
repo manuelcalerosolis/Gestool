@@ -276,7 +276,7 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    METHOD insertPreciosWhereArticulo( uuidArticulo )     INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereArticulo( uuidArticulo ) ) )
 
-   METHOD updateFieldsCommandWhereUuid( oCommand, uuid ) INLINE ( ::updateFieldsWhereUuid( uuid,   {  'margen'                => oCommand:Margen(),; 
+   METHOD updateFieldsCommandWhereUuid( oCommand, uuid ) INLINE ( ::updateBufferWhereUuid( uuid,   {  'margen'                => oCommand:Margen(),; 
                                                                                                       'margen_real'           => oCommand:MargenReal(),;
                                                                                                       'precio_base'           => oCommand:PrecioBase(),;
                                                                                                       'precio_iva_incluido'   => oCommand:PrecioIVAIncluido() } ) )

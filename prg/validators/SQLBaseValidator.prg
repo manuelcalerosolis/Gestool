@@ -190,7 +190,7 @@ METHOD Exist( uValue )
    local nCount
    local cSQLSentence
 
-   cSQLSentence         := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
+   cSQLSentence         := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + " "
    cSQLSentence         +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
    nCount               := getSQLDatabase():getValue( cSQLSentence )

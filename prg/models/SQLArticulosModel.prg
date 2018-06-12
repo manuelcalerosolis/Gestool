@@ -50,10 +50,8 @@ METHOD getColumns() CLASS SQLArticulosModel
    hset( ::hColumns, "impuesto_especial_codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "primera_propiedad_codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                      "default"   => {|| space( 20 ) } }                       )
-
-   hset( ::hColumns, "segunda_propiedad_codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "unidades_medicion_grupos_codigo",;
+                                                   {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "obsoleto",                   {  "create"    => "BIT"                                     ,;
@@ -104,31 +102,27 @@ METHOD getGeneralSelect() CLASS SQLArticulosModel
                         "tipos_iva.nombre AS tipo_iva_nombre, "                                                                                    + ;
                         "articulos.impuesto_especial_codigo, "                                                                                     + ;
                         "impuestos_especiales.nombre AS impuesto_especial_nombre, "                                                                + ;
-                        "articulos.primera_propiedad_codigo, "                                                                                     + ;
-                        "primera_propiedad.nombre AS primera_propiedad_nombre, "                                                                   + ;
-                        "articulos.segunda_propiedad_codigo, "                                                                                     + ;
-                        "segunda_propiedad.nombre AS segunda_propiedad_nombre, "                                                                   + ;
+                        "articulos.unidades_medicion_grupos_codigo, "                                                                              + ;
+                        "unidades_medicion_grupos.nombre AS unidades_medicion_grupos_nombre, "                                                     + ;
                         "articulos.articulo_temporada_codigo, "                                                                                    + ;
                         "articulos_temporadas.nombre AS articulo_temporada_nombre "                                                                + ;
                      "FROM " + ::getTableName()+ " AS articulos "                                                                                  + ;
                         "LEFT JOIN " + SQLArticulosFamiliaModel():getTableName() + " AS articulos_familias "                                       + ;
-                        "ON articulos.articulo_familia_codigo = articulos_familias.codigo "                                                        + ;
+                           "ON articulos.articulo_familia_codigo = articulos_familias.codigo "                                                     + ;
                         "LEFT JOIN " + SQLArticulosTipoModel():getTableName() + " AS articulos_tipos "                                             + ; 
-                        "ON articulos.articulo_tipo_codigo = articulos_tipos.codigo "                                                              + ;
+                           "ON articulos.articulo_tipo_codigo = articulos_tipos.codigo "                                                           + ;
                         "LEFT JOIN " + SQLArticulosTipoModel():getTableName() + " AS articulos_categorias "                                        + ;
-                        "ON articulos.articulo_categoria_codigo = articulos_categorias.codigo "                                                    + ; 
+                           "ON articulos.articulo_categoria_codigo = articulos_categorias.codigo "                                                 + ; 
                         "LEFT JOIN " + SQLArticulosCategoriasModel():getTableName() + " AS articulos_fabricantes "                                 + ;
-                        "ON articulos.articulo_fabricante_codigo = articulos_fabricantes.codigo "                                                  + ;
+                           "ON articulos.articulo_fabricante_codigo = articulos_fabricantes.codigo "                                               + ;
                         "LEFT JOIN " + SQLArticulosCategoriasModel():getTableName() + " AS tipos_iva "                                             + ;
-                        "ON articulos.tipo_iva_codigo = tipos_iva.codigo "                                                                         + ;
+                           "ON articulos.tipo_iva_codigo = tipos_iva.codigo "                                                                      + ;
                         "LEFT JOIN " + SQLArticulosTemporadasModel():getTableName() + " AS articulos_temporadas "                                  + ;
-                        "ON articulos.articulo_temporada_codigo = articulos_temporadas.codigo "                                                    + ;
+                           "ON articulos.articulo_temporada_codigo = articulos_temporadas.codigo "                                                 + ;
                         "LEFT JOIN " + SQLImpuestosEspecialesModel():getTableName() + " AS impuestos_especiales "                                  + ;
-                        "ON articulos.impuesto_especial_codigo = impuestos_especiales.codigo "                                                     + ;
-                        "LEFT JOIN " + SQLPropiedadesModel():getTableName() + " AS primera_propiedad "                                             + ;
-                        "ON articulos.primera_propiedad_codigo = primera_propiedad.codigo "                                                        + ; 
-                        "LEFT JOIN " + SQLPropiedadesModel():getTableName() + " AS segunda_propiedad "                                             + ; 
-                        "ON articulos.segunda_propiedad_codigo = segunda_propiedad.codigo " 
+                           "ON articulos.impuesto_especial_codigo = impuestos_especiales.codigo "                                                  + ;
+                        "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS unidades_medicion_grupos "                           + ;
+                           "ON articulos.unidades_medicion_grupos_codigo = unidades_medicion_grupos.codigo "                                       
 
 RETURN ( cSelect )
 

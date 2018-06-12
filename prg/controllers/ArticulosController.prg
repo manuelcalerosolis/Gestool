@@ -25,9 +25,7 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oArticulosUnidadesMedicionController
 
-   DATA oPrimeraPropiedadController
-
-   DATA oSegundaPropiedadController
+   DATA oUnidadesMedicionGruposController
 
    DATA oTraduccionesController
 
@@ -66,11 +64,8 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD validColumnImpuestosEspecialesBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oImpuestosEspecialesController:oModel, "impuesto_especial_codigo" ) )
 
-   METHOD validPrimeraPropiedadBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oPrimeraPropiedadController:oModel, "primera_propiedad_codigo" ) )
-
-   METHOD validSegundaPropiedadBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oSegundaPropiedadController:oModel, "segunda_propiedad_codigo" ) )
+   METHOD validColumnUnidadesMedicionGruposBrowse( oCol, uValue, nKey ) ;
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oUnidadesMedicionGruposController:oModel, "unidades_medicion_grupos_codigo" ) )
 
 END CLASS
 
@@ -131,17 +126,14 @@ METHOD New() CLASS ArticulosController
    ::oArticulosPreciosController             := ArticulosPreciosController():New( self )
    ::oArticulosPreciosController:setView( ::oDialogView )
 
-   ::oPrimeraPropiedadController             := PropiedadesController():New( self )
-   ::oPrimeraPropiedadController:setView( ::oDialogView )
-
-   ::oSegundaPropiedadController             := PropiedadesController():New( self )
-   ::oSegundaPropiedadController:setView( ::oDialogView )
-   
    ::oArticulosUnidadesMedicionController    := ArticulosUnidadesMedicionController():New( self )
    ::oArticulosUnidadesMedicionController:setView( ::oDialogView )
 
    ::oArticulosTemporadasController          := ArticulosTemporadasController():New( self )
    ::oArticulosTemporadasController:setView( ::oDialogView )
+
+   ::oUnidadesMedicionGruposController       := UnidadesMedicionGruposController():New( self )
+   ::oUnidadesMedicionGruposController:setView( ::oDialogView )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -180,10 +172,6 @@ METHOD End() CLASS ArticulosController
    ::oTipoIvaController:End()
 
    ::oImpuestosEspecialesController:End()
-
-   ::oPrimeraPropiedadController:End()
-
-   ::oSegundaPropiedadController:End()
 
    ::oArticulosUnidadesMedicionController:End()
 

@@ -106,12 +106,13 @@ METHOD addColumns() CLASS UnidadesMedicionGruposLineasBrowseView
       :cHeader             := 'Cantidad'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad_alternativa' ) }
+      :cEditPicture        := "@E 999999999.999999"
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'unidad_alternativa_codigo'
-      :cHeader             := 'Código de Unidad alternativa'
+      :cHeader             := 'Código de unidad alternativa'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_alternativa_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -120,7 +121,7 @@ METHOD addColumns() CLASS UnidadesMedicionGruposLineasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'unidad_alternativa_nombre'
-      :cHeader             := 'Nombre de Unidad alternativa'
+      :cHeader             := 'Nombre de unidad alternativa'
       :nWidth              := 150
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_alternativa_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -130,13 +131,14 @@ METHOD addColumns() CLASS UnidadesMedicionGruposLineasBrowseView
       :cSortOrder          := 'cantidad_base'
       :cHeader             := 'Cantidad'
       :nWidth              := 100
-      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'cantidad_base' ), "@E 999999999.999" ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad_base' ) }
+      :cEditPicture        := "@E 999999999.999999"
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
       with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'unidad_base_codigo'
-      :cHeader             := 'Código de Unidad base'
+      :cHeader             := 'Código de unidad base'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_base_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -145,7 +147,7 @@ METHOD addColumns() CLASS UnidadesMedicionGruposLineasBrowseView
 
   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'unidad_base_nombre'
-      :cHeader             := 'Nombre de Unidad base'
+      :cHeader             := 'Nombre de unidad base'
       :nWidth              := 150
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_base_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -289,7 +291,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLUnidadesMedicionGruposLineasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "unidades_medicion_grupos_lineas"
+   DATA cTableName                                 INIT "unidades_medicion_grupos_lineas"
 
    METHOD getColumns()
 
@@ -339,9 +341,13 @@ METHOD getGeneralSelect() CLASS SQLUnidadesMedicionGruposLineasModel
                         "grupos.unidad_base_codigo as unidad_base_codigo,"                                        + " " + ;
                         "base.nombre as unidad_base_nombre"                                                       + " " + ;
                      "FROM "+ ::getTableName() + " AS lineas"                                                     + " " + ;                                                    
-                        "INNER JOIN " + ::getUnidadesMedicionGruposTableName() + " as grupos ON lineas.parent_uuid = grupos.uuid"                     + " " + ;         
-                        "INNER JOIN " + ::getUnidadesMedicionTableName() + " as alternativa ON lineas.unidad_alternativa_codigo = alternativa.codigo" + " " + ;
-                        "INNER JOIN " + ::getUnidadesMedicionTableName() + " as base ON grupos.unidad_base_codigo = base.codigo"        
+                        "INNER JOIN " + ::getUnidadesMedicionGruposTableName() + " AS grupos"                     + " " + ;         
+                           "ON lineas.parent_uuid = grupos.uuid"                                                  + " " + ;         
+                        "INNER JOIN " + ::getUnidadesMedicionTableName() + " AS alternativa"                      + " " + ;         
+                           "ON lineas.unidad_alternativa_codigo = alternativa.codigo"                             + " " + ;
+                        "INNER JOIN " + ::getUnidadesMedicionTableName() + " AS base"                             + " " + ;         
+                           " ON grupos.unidad_base_codigo = base.codigo"                                          + " " + ;         
+                     "WHERE parent_uuid = " + quoted( ::getSenderControllerParentUuid() )
 
 RETURN ( cSelect )
 

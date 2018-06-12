@@ -99,7 +99,7 @@ CLASS SQLBaseModel
    METHOD getInitialSelect()                          INLINE ( "SELECT * FROM " + ::getTableName() )
 
    METHOD getField( cField, cBy, cId )
-   METHOD getHash( cField, cBy, cId )
+   METHOD getHashWhere( cBy, cId )
 
    METHOD getIdSelect( id )
    METHOD getWhereSelect( cWhere )
@@ -202,8 +202,10 @@ CLASS SQLBaseModel
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
    METHOD updateFieldWhereId( id, cField, uValue )
+   METHOD updateBufferWhereId( id, hBuffer )
+
    METHOD updateFieldWhereUuid( uuid, cField, uValue )
-   METHOD updateFieldsWhereUuid( uuid, hFields )
+   METHOD updateBufferWhereUuid( uuid, hBuffer )
 
    // Metodos de consulta------------------------------------------------------
 
@@ -1199,13 +1201,46 @@ RETURN ( hset( ::hBuffer, cColumn, uValue ) )
 
 METHOD updateFieldWhereId( id, cField, uValue )
 
-   local cSql  := "UPDATE " + ::getTableName() + " "
+   local cSql  
+
+   if !hb_isnumeric( id ) .or. empty( id )
+      RETURN ( nil )
+   end if 
+
+   cSql        := "UPDATE " + ::getTableName() + " "
    cSql        +=    "SET " + cField + " = " + toSqlString( uValue ) + " "
    cSql        +=    "WHERE id = " + toSqlString( id )
 
 RETURN ( ::getDatabase():Exec( cSql ) )
 
 //----------------------------------------------------------------------------//
+
+METHOD updateBufferWhereId( id, hBuffer )
+
+   local cSql 
+   local uValue
+
+   if !hb_isnumeric( id ) .or. empty( id )
+      RETURN ( nil )
+   end if 
+
+   if !hb_ishash( hBuffer )
+      RETURN ( nil )
+   end if 
+   
+   cSQL        := "UPDATE " + ::getTableName() + " SET "
+
+   for each uValue in hBuffer
+      cSql     += uValue:__enumKey() + " = " + toSQLString( ::setAttribute( uValue:__enumKey(), uValue ) ) + ", "
+   next
+
+   cSql        := chgAtEnd( cSql, '', 2 ) + " "
+
+   cSql        +=    "WHERE id = " + toSqlString( id )
+
+RETURN ( ::getDatabase():Exec( cSql ) )
+
+//---------------------------------------------------------------------------//
 
 METHOD updateFieldWhereUuid( uuid, cField, uValue )
 
@@ -1217,14 +1252,14 @@ RETURN ( ::getDatabase():Exec( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD updateFieldsWhereUuid( uuid, hFields )
+METHOD updateBufferWhereUuid( uuid, hBuffer )
 
    local cSql  
    local uValue
 
    cSql           := "UPDATE " + ::getTableName() + " SET "
 
-   for each uValue in hFields
+   for each uValue in hBuffer
       cSql        += uValue:__enumKey() + " = " + toSQLString( uValue ) + ", "
    next
 
@@ -1239,18 +1274,20 @@ RETURN ( ::getDatabase():Exec( cSql ) )
 METHOD getField( cField, cBy, cId )
 
    local cSql  := "SELECT " + cField                                    + " "                              
-   cSql        +=    "FROM " + ::getTableName()                             + " "
+   cSql        +=    "FROM " + ::getTableName()                         + " "
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
+   cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():getValue( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD getHash( cBy, cId )
+METHOD getHashWhere( cBy, cId )
 
    local cSql  := "SELECT * " 
    cSql        +=    "FROM "+ ::getTableName()                          + " "
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
+   cSQL        +=    "LIMIT 1"
 
 RETURN ( atail( ::getDatabase():selectTrimedFetchHash( cSql ) ) )
 

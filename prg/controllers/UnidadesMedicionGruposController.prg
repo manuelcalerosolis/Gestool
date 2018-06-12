@@ -15,6 +15,9 @@ CLASS UnidadesMedicionGruposController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ) == 1,;
+                                             ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ),;
+                                             .t. ) )
 
 END CLASS
 
@@ -44,7 +47,7 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposController
 
    ::oRepository                             := UnidadesMedicionGruposRepository():New( self )
 
-   ::oUnidadesMedicionGruposLineasController :=UnidadesMedicionGruposLineasController():New( self )
+   ::oUnidadesMedicionGruposLineasController := UnidadesMedicionGruposLineasController():New( self )
 
    ::oUnidadesMedicionController             := UnidadesMedicionController():New( self )
 
@@ -52,6 +55,7 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposController
 
    ::oGetSelector                            := GetSelector():New( self )
 
+   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
 
 RETURN ( Self )
 
@@ -160,7 +164,6 @@ END CLASS
 
 METHOD Activate() CLASS UnidadesMedicionGruposView
 
-   local oDialog
    local oSayCamposExtra
    local oBtnEdit
    local oBtnAppend
@@ -200,7 +203,6 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
 
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Activate( 120, 122, ::oDialog )
 
-
    // Unidades equivalencia--------------------------------------------------------------------
 
    REDEFINE BUTTON oBtnAppend ;
@@ -226,7 +228,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
 
    ::oController:oUnidadesMedicionGruposLineasController:Activate( 160, ::oDialog ) 
 
-// campos extra--------------------------------------------------------------------------------------------------------------//
+   // campos extra-------------------------------------------------------------
 
    REDEFINE SAY   ::oSayCamposExtra ;
       PROMPT      "Campos extra..." ;
@@ -237,6 +239,8 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
 
    ::oSayCamposExtra:lWantClick  := .t.
    ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+
+   // botones------------------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -259,7 +263,6 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
    ACTIVATE DIALOG ::oDialog CENTER
 
   ::oBitmap:end()
-  
 
 RETURN ( ::oDialog:nResult )
 
@@ -270,6 +273,8 @@ METHOD StartActivate() CLASS UnidadesMedicionGruposView
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Start()
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -299,13 +304,15 @@ RETURN ( ::hValidators )
 
 CLASS SQLUnidadesMedicionGruposModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "unidades_medicion_grupos"
+   DATA cTableName                        INIT "unidades_medicion_grupos"
 
    METHOD getColumns()
 
    METHOD getInitialSelect()
 
    METHOD getUnidadesMedicionModel()      INLINE ( SQLUnidadesMedicionModel():getTableName() )
+
+   METHOD getInsertUnidadesMedicionGruposSentence()
 
 END CLASS
 
@@ -328,6 +335,8 @@ METHOD getColumns() CLASS SQLUnidadesMedicionGruposModel
    hset( ::hColumns, "unidad_base_codigo",            {  "create"    => "VARCHAR( 20 )"                           ,;
                                                          "default"   => {|| space( 20 ) } }                       )
 
+   hset( ::hColumns, "sistema",                       {  "create"    => "TINYINT( 1 )"                            ,;
+                                                         "default"   => {|| "0" } }                               )
 
 RETURN ( ::hColumns )
 
@@ -335,18 +344,42 @@ RETURN ( ::hColumns )
 
 METHOD getInitialSelect() CLASS SQLUnidadesMedicionGruposModel
 
-   local cSelect  := "SELECT grupos.id,"                                                                                            + " " + ;
-                        "grupos.uuid,"                                                                                              + " " + ;
-                        "grupos.codigo,"                                                                                            + " " + ;
-                        "grupos.nombre,"                                                                                            + " " + ;
-                        "grupos.unidad_base_codigo,"                                                                                + " " + ;
-                        "unidad.nombre AS unidad_base_nombre"                                                                       + " " + ;   
-                     "FROM " + ::getTableName() +" AS grupos"                                                                       + " " + ;
-                        "INNER JOIN "+ ::getUnidadesMedicionModel() +" AS unidad ON grupos.unidad_base_codigo = unidad.codigo"      + " " 
-
-                        logwrite ( cSelect )  
+   local cSelect  := "SELECT grupos.id,"                                                                                         + " " + ;
+                        "grupos.uuid,"                                                                                           + " " + ;
+                        "grupos.codigo,"                                                                                         + " " + ;
+                        "grupos.nombre,"                                                                                         + " " + ;
+                        "grupos.unidad_base_codigo,"                                                                             + " " + ;
+                        "grupos.sistema,"                                                                                        + " " + ;
+                        "unidad.nombre AS unidad_base_nombre"                                                                    + " " + ;   
+                     "FROM " + ::getTableName() +" AS grupos"                                                                    + " " + ;
+                        "INNER JOIN " + ::getUnidadesMedicionModel() + " AS unidad ON grupos.unidad_base_codigo = unidad.codigo"       
 
 RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInsertUnidadesMedicionGruposSentence() CLASS SQLUnidadesMedicionGruposModel
+
+   local uuid        := win_uuidcreatestring()
+   local cSentence
+   local aSentence   := {} 
+
+   cSentence         := "INSERT IGNORE INTO " + ::getTableName()                       + " " + ;
+                           "( uuid, codigo, nombre, unidad_base_codigo, sistema )"     + " " + ;
+                        "VALUES"                                                       + " " + ;
+                           "( " + quoted( uuid ) + ", 'UDS', 'Unidades', 'UDS', 1 )"
+
+   aadd( aSentence, cSentence )
+
+   cSentence         := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                + " " + ;
+                           "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base )"   + " " + ;
+                        "VALUES"                                                                                     + " " + ;
+                           "( UUID(), " + quoted( uuid ) + ", 'UDS', 1, 1 )"
+
+   aadd( aSentence, cSentence )
+
+RETURN ( aSentence )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -356,7 +389,6 @@ RETURN ( cSelect )
 CLASS UnidadesMedicionGruposRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLUnidadesMedicionGruposModel():getTableName() ) 
-
 
 END CLASS
 

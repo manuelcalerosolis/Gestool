@@ -22574,33 +22574,30 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 171, "Edit", WS_BORDER|WS_TABSTOP, 148, 113, 296, 12
   CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 70, 126, 76, 12
   CONTROL "", 231, "Edit", WS_BORDER|WS_TABSTOP, 148, 126, 296, 12
-  CONTROL "", 240, "Edit", WS_BORDER|WS_TABSTOP, 70, 139, 76, 12
-  CONTROL "", 241, "Edit", WS_BORDER|WS_TABSTOP, 148, 139, 296, 12
-  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 70, 152, 360, 12
-  CONTROL "", 181, "TBtnBmp", 0x00000000, 432, 152, 12, 12
-  CONTROL "", 182, "TTagEver", WS_TABSTOP|0x00800000, 70, 165, 374, 32
-  CONTROL "", 190, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 227, 76, 12
-  CONTROL "", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 216, 10, 10
-  CONTROL "", 210, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 242, 10, 10
-  CONTROL "", 220, "Edit", WS_BORDER|WS_TABSTOP, 70, 254, 158, 12
-  CONTROL "Lote actual", 221, "Static", WS_GROUP, 11, 257, 41, 8
+  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 70, 140, 360, 12
+  CONTROL "", 181, "TBtnBmp", 0x00000000, 432, 140, 12, 12
+  CONTROL "", 182, "TTagEver", WS_TABSTOP|0x00800000, 70, 153, 374, 40
+  CONTROL "", 190, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 223, 76, 12
+  CONTROL "", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 212, 10, 10
+  CONTROL "", 210, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 238, 10, 10
+  CONTROL "", 220, "Edit", WS_BORDER|WS_TABSTOP, 70, 250, 158, 12
+  CONTROL "Lote actual", 221, "Static", WS_GROUP, 11, 253, 41, 8
   CONTROL "Código*", -1, "Static", WS_GROUP, 11, 13, 32, 8
   CONTROL "Nombre*", -1, "Static", WS_GROUP, 11, 26, 29, 8
   CONTROL "Familia", -1, "Static", WS_GROUP, 11, 39, 27, 8
-  CONTROL "", -1, "Button", BS_GROUPBOX, 5, 2, 444, 200
+  CONTROL "", -1, "Button", BS_GROUPBOX, 5, 2, 444, 197
   CONTROL "Tipo", -1, "Static", WS_GROUP, 11, 52, 19, 8
   CONTROL "Categoría", -1, "Static", WS_GROUP, 11, 65, 37, 8
   CONTROL "Fabricantes", -1, "Static", WS_GROUP, 11, 78, 42, 8
-  CONTROL "Marcadores", -1, "Static", WS_GROUP, 11, 156, 42, 8
+  CONTROL "Marcadores", -1, "Static", WS_GROUP, 11, 144, 42, 8
   CONTROL "Tipo I.V.A.", -1, "Static", WS_GROUP, 11, 104, 39, 8
   CONTROL "Impuestos esp.", -1, "Static", WS_GROUP, 11, 117, 53, 8
-  CONTROL "Otros", -1, "Button", BS_GROUPBOX, 5, 205, 444, 66
-  CONTROL "Caducidad", -1, "Static", WS_GROUP, 11, 231, 53, 8
-  CONTROL "", 191, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 148, 227, 80, 60
-  CONTROL "Obsoleto", 202, "Static", WS_GROUP, 11, 218, 53, 8
-  CONTROL "Solicitar lote", 212, "Static", WS_GROUP, 11, 244, 53, 8
-  CONTROL "Propiedad 1", -1, "Static", WS_GROUP, 11, 130, 42, 8
-  CONTROL "Propiedad 2", -1, "Static", WS_GROUP, 11, 143, 39, 8
+  CONTROL "Otros", -1, "Button", BS_GROUPBOX, 5, 201, 444, 66
+  CONTROL "Caducidad", -1, "Static", WS_GROUP, 11, 227, 53, 8
+  CONTROL "", 191, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 148, 223, 80, 60
+  CONTROL "Obsoleto", 202, "Static", WS_GROUP, 11, 214, 53, 8
+  CONTROL "Solicitar lote", 212, "Static", WS_GROUP, 11, 240, 53, 8
+  CONTROL "Grupo unidades", -1, "Static", WS_GROUP, 11, 130, 55, 8
   CONTROL "Temporada", -1, "Static", WS_GROUP, 11, 91, 42, 8
 }
 
