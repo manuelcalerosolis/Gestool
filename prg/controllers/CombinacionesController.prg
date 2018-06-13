@@ -97,12 +97,27 @@ METHOD addColumns() CLASS CombinacionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'parent_uuid'
-      :cHeader             := 'Artículo'
+      :cSortOrder          := 'grupo_nombre'
+      :cHeader             := 'Nombre grupo'
       :nWidth              := 120
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'parent_uuid' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'grupo_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'propiedad_nombre'
+      :cHeader             := 'Valor propiedad'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'propiedad_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'orden'
+      :cHeader             := 'Orden'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'orden' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -151,7 +166,7 @@ METHOD Activate() CLASS CombinacionesView
 
    
       ::redefineExplorerBar( 100 )
-      
+
       ::redefineExplorerBar( 110 )
 
    REDEFINE BUTTON ;
@@ -210,6 +225,8 @@ CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getGeneralSelect()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -226,12 +243,28 @@ METHOD getColumns() CLASS SQLCombinacionesModel
    hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 )"                              ,;
                                                 "default"   => {|| ::getSenderControllerParentUuid() } }    )
 
-   hset( ::hColumns, "incremento_precio",    {  "create"    => "FLOAT( 16,6 )"                               ,;
+   hset( ::hColumns, "incremento_precio",    {  "create"    => "FLOAT( 16,6 )"                              ,;
                                                 "default"   => { 0 } }                                      ) 
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getGeneralSelect() CLASS SQLCombinacionesModel
+
+   local cSelect  := "SELECT grupos.uuid AS grupo_uuid,"                                                                               + " " + ;
+                            "grupos.nombre AS grupo_nombre,"                                                                           + " " + ;                     
+                            "lineas.uuid AS propiedad_uuid,"                                                                           + " " + ;
+                            "lineas.parent_uuid AS parent_uuid,"                                                                       + " " + ;
+                            "lineas.nombre AS propiedad_nombre,"                                                                       + " " + ;
+                            "lineas.orden AS orden"                                                                                    + " " + ;
+                     "FROM " + SQLPropiedadesModel():getTableName() + " AS grupos"                                                     + " " + ; 
+                     "INNER JOIN " + SQLPropiedadesLineasModel():getTableName() +" AS lineas"                                          + " " + ;
+                     "ON grupos.uuid = lineas.parent_uuid"                                                                             + " " + ;
+                     "ORDER by grupo_uuid, orden"                                                                                      + " "      
+
+RETURN ( cSelect )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
