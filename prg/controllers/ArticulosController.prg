@@ -185,7 +185,7 @@ METHOD End() CLASS ArticulosController
 
    ::oArticulosTemporadasController:End()
 
-   ::oCombinaciones:End()
+   ::oCombinacionesController:End()
 
    ::Super:End()
 
