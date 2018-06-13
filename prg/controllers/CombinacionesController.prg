@@ -136,8 +136,6 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS CombinacionesView FROM SQLBaseView
   
@@ -163,11 +161,10 @@ METHOD Activate() CLASS CombinacionesView
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog ;
-
    
-      ::redefineExplorerBar( 100 )
+   ::redefineExplorerBar( 100 )
 
-      ::redefineExplorerBar( 110 )
+   ::redefineExplorerBar( 110 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -196,7 +193,6 @@ RETURN ( ::oDialog:nResult )
 CLASS CombinacionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
-
  
 END CLASS
 
@@ -216,8 +212,6 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
@@ -225,11 +219,9 @@ CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getGeneralSelect()
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD getColumns() CLASS SQLCombinacionesModel
@@ -248,26 +240,6 @@ METHOD getColumns() CLASS SQLCombinacionesModel
 
 RETURN ( ::hColumns )
 
-//---------------------------------------------------------------------------//
-
-METHOD getGeneralSelect() CLASS SQLCombinacionesModel
-
-   local cSelect  := "SELECT grupos.uuid AS grupo_uuid,"                                                                               + " " + ;
-                            "grupos.nombre AS grupo_nombre,"                                                                           + " " + ;                     
-                            "lineas.uuid AS propiedad_uuid,"                                                                           + " " + ;
-                            "lineas.parent_uuid AS parent_uuid,"                                                                       + " " + ;
-                            "lineas.nombre AS propiedad_nombre,"                                                                       + " " + ;
-                            "lineas.orden AS orden"                                                                                    + " " + ;
-                     "FROM " + SQLPropiedadesModel():getTableName() + " AS grupos"                                                     + " " + ; 
-                     "INNER JOIN " + SQLPropiedadesLineasModel():getTableName() +" AS lineas"                                          + " " + ;
-                     "ON grupos.uuid = lineas.parent_uuid"                                                                             + " " + ;
-                     "ORDER by grupo_uuid, orden"                                                                                      + " "      
-
-RETURN ( cSelect )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

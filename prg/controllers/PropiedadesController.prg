@@ -299,6 +299,8 @@ CLASS SQLPropiedadesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getPropertyList()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -310,7 +312,6 @@ METHOD getColumns() CLASS SQLPropiedadesModel
 
    hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                     "default"   => {|| win_uuidcreatestring() } }            )
-
 
    hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
                                     "default"   => {|| space( 20 ) } }                       )
@@ -325,6 +326,22 @@ METHOD getColumns() CLASS SQLPropiedadesModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getPropertyList() CLASS SQLPropiedadesModel
+
+   local cSelect  := "SELECT grupos.uuid AS grupo_uuid,"                                        + " " + ;
+                            "grupos.nombre AS grupo_nombre,"                                    + " " + ;                     
+                            "lineas.uuid AS propiedad_uuid,"                                    + " " + ;
+                            "lineas.parent_uuid AS parent_uuid,"                                + " " + ;
+                            "lineas.nombre AS propiedad_nombre,"                                + " " + ;
+                            "lineas.orden AS orden"                                             + " " + ;
+                     "FROM " + ::getTableName() + " AS grupos "                                 + " " + ; 
+                     "INNER JOIN " + SQLPropiedadesLineasModel():getTableName() +" AS lineas"   + " " + ;
+                        "ON grupos.uuid = lineas.parent_uuid"                                   + " " + ;
+                     "ORDER by grupo_uuid, orden"                                               
+
+RETURN ( cSelect )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
