@@ -73,7 +73,7 @@ METHOD End() CLASS PropiedadesController
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -124,7 +124,7 @@ METHOD addColumns() CLASS PropiedadesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -263,7 +263,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -331,9 +331,11 @@ METHOD getPropertyList() CLASS SQLPropiedadesModel
 
    local cSelect  := "SELECT grupos.uuid AS grupo_uuid,"                                        + " " + ;
                             "grupos.nombre AS grupo_nombre,"                                    + " " + ;                     
+                            "grupos.color AS grupo_color,"                                      + " " + ;                     
                             "lineas.uuid AS propiedad_uuid,"                                    + " " + ;
                             "lineas.parent_uuid AS parent_uuid,"                                + " " + ;
                             "lineas.nombre AS propiedad_nombre,"                                + " " + ;
+                            "lineas.color_rgb AS propiedad_color_rgb,"                          + " " + ;
                             "lineas.orden AS orden"                                             + " " + ;
                      "FROM " + ::getTableName() + " AS grupos "                                 + " " + ; 
                      "INNER JOIN " + SQLPropiedadesLineasModel():getTableName() +" AS lineas"   + " " + ;

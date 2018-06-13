@@ -365,10 +365,15 @@ CLASS TTaskPanel FROM TControl
    CLASSDATA lRegistered AS LOGICAL
 
    METHOD New( cTitle, oWnd, nIndex, cBmpPanel )
-   METHOD AddLink( cPrompt, bAction, cBitmap )
-   METHOD AddGet( cPrompt, bAction, cBitmap )
-   METHOD AddComboBox( cPrompt, cItem, aItems )
-   METHOD AddCheckBox( cPrompt, lCheckBox )
+   METHOD addLink( cPrompt, bAction, cBitmap )
+   METHOD addGet( cPrompt, bAction, cBitmap )
+   METHOD addComboBox( cPrompt, cItem, aItems )
+
+   METHOD addCheckBox( cPrompt, lCheckBox )
+   METHOD addLeftCheckBox( cPrompt, lCheckBox )                INLINE ( ::addCheckBox( cPrompt, lCheckBox, 10 ) )
+   
+   METHOD addColorCheckBox( cPrompt, lCheckBox, nColor )
+   METHOD addLeftColorCheckBox( cPrompt, lCheckBox, nColor )   INLINE ( ::addColorCheckBox( cPrompt, lCheckBox, nColor, 10 )  )
 
    METHOD Display() INLINE ::BeginPaint(), ::Paint(), ::EndPaint(), 0
    METHOD Destroy()
@@ -488,7 +493,7 @@ METHOD AddGet( cPrompt, cGet ) CLASS TTaskPanel
    local oGet
    local nTop        := ::getTopControl()
 
-   @ nTop + 3, 10  SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
+   @ nTop + 3, 10 SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
 
    @ nTop, 120 GET oGet VAR cGet SIZE 400, 20 OF Self PIXEL
 
@@ -504,7 +509,7 @@ METHOD AddComboBox( cPrompt, cItem, aItems ) CLASS TTaskPanel
    local oCbx
    local nTop        := ::getTopControl()
 
-   @ nTop + 6, 10  SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
+   @ nTop + 6, 10 SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
 
    @ nTop, 120 COMBOBOX oCbx VAR cItem ITEMS aItems SIZE 400, 460 OF Self PIXEL HEIGHTGET 20  
 
@@ -514,18 +519,40 @@ RETURN ( oCbx )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddCheckBox( cPrompt, lCheckBox ) CLASS TTaskPanel
+METHOD AddCheckBox( cPrompt, lCheckBox, nLeft ) CLASS TTaskPanel
 
+   local oChk
    local nTop        := ::getTopControl()
-   local oCheckBox
 
-   @ nTop, 120 CHECKBOX oCheckBox VAR lCheckBox PROMPT cPrompt SIZE 400, 12 OF Self PIXEL 
+   DEFAULT nLeft     := 120
 
-   ::setHeight( oCheckBox:nTop, oCheckBox:nHeight )
+   @ nTop, nLeft CHECKBOX oChk VAR lCheckBox PROMPT cPrompt SIZE 400, 12 OF Self PIXEL 
 
-RETURN ( oCheckBox )
+   ::setHeight( oChk:nTop, oChk:nHeight )
+
+RETURN ( oChk )
 
 //----------------------------------------------------------------------------//
+
+METHOD AddColorCheckBox( cPrompt, lCheckBox, nColor, nLeft ) CLASS TTaskPanel
+
+   local oChk
+   local oSay
+   local nTop        := ::getTopControl()
+
+   DEFAULT nColor    := rgb( 0, 0 , 0)
+   DEFAULT nLeft     := 120
+
+   @ nTop, nLeft SAY oSay PROMPT "" SIZE 12, 12 COLOR nColor, nColor OF Self PIXEL 
+
+   @ nTop, nLeft + 20 CHECKBOX oChk VAR lCheckBox PROMPT cPrompt SIZE 400, 12 OF Self PIXEL 
+
+   ::setHeight( oChk:nTop, oChk:nHeight )
+
+RETURN ( oChk )
+
+//----------------------------------------------------------------------------//
+
 
 METHOD Destroy() CLASS TTaskPanel
 

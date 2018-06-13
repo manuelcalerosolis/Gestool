@@ -400,8 +400,6 @@ RETURN ( ::aModels )
 
 METHOD checkValues() CLASS SQLCompanyMigrations
 
-   msgalert('METHOD checkValues() CLASS SQLCompanyMigrations')
-
    getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
 
    getSQLDatabase():Exec( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )

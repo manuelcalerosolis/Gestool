@@ -264,7 +264,7 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
                      ::oController:oImagenesController:getImage( "16" ) )
 
    oPanel:AddLink(   "Combinaciones...",;
-                     {|| ::oController:oCombinacionesController:activateDialogView() },;
+                     {|| ::oController:oCombinacionesController:runViewGenerate() },;
                      ::oController:oCombinacionesController:getImage( "16" ) )
 
    oPanel:AddLink(   "Traducciones...",;
@@ -276,7 +276,6 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
    oPanel:AddLink(   "Campos extra...",;
                      {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
                      ::oController:oCamposExtraValoresController:getImage( "16" ) )
-
 
 RETURN ( self )
 

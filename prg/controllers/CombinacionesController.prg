@@ -5,9 +5,17 @@
 
 CLASS CombinacionesController FROM SQLNavigatorController
 
+   DATA oPropiedadesController
+
+   DATA oPropiedadesLineasController
+
+   DATA hPropertyList
+
    METHOD New()
 
    METHOD End()
+
+   METHOD runViewGenerate()
 
 END CLASS
 
@@ -17,15 +25,19 @@ METHOD New( oSenderController ) CLASS CombinacionesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Combinaciones"
+   ::cTitle                         := "Combinaciones"
 
-   ::cName                       := "combinaciones"
+   ::cName                          := "combinaciones"
 
-   ::hImage                      := {  "16" => "gc_cash_register_refresh_16",;
-                                       "32" => "gc_cash_register_refresh_32",;
-                                       "48" => "gc_cash_register_refresh_48" }
+   ::hImage                         := {  "16" => "gc_cash_register_refresh_16",;
+                                          "32" => "gc_cash_register_refresh_32",;
+                                          "48" => "gc_cash_register_refresh_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
+
+   ::oPropiedadesController         := PropiedadesController():New( self )
+
+   ::oPropiedadesLineasController   := PropiedadesLineasController():New( self )
 
    ::oModel                         := SQLCombinacionesModel():New( self )
 
@@ -45,6 +57,10 @@ RETURN ( Self )
 
 METHOD End() CLASS CombinacionesController
 
+   ::oPropiedadesController:End()
+
+   ::oPropiedadesLineasController:End()
+
    ::oModel:End()
 
    ::oBrowseView:End()
@@ -60,9 +76,20 @@ METHOD End() CLASS CombinacionesController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+METHOD runViewGenerate()
+
+   ::hPropertyList  := getSQLDatabase():selectTrimedFetchHash( ::oPropiedadesController:oModel:getPropertyList() ) 
+
+   if empty( ::hPropertyList )
+      msgStop( "No se definieron propiedades" )
+      RETURN ( Self )
+   end if 
+
+   ::dialogViewActivate()
+
+RETURN ( Self )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -128,7 +155,6 @@ METHOD addColumns() CLASS CombinacionesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -138,8 +164,22 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 CLASS CombinacionesView FROM SQLBaseView
+
+   DATA oPanel
+
+   DATA cGroupProperty
   
    METHOD Activate()
+
+   METHOD startActivate()
+
+   METHOD addPanel( hProperty )
+
+   METHOD addLeftCheckBox( hProperty ) 
+
+   METHOD generateCombinations()
+
+   METHOD generateCombination( oControl )
 
 END CLASS
 
@@ -162,9 +202,13 @@ METHOD Activate() CLASS CombinacionesView
       FONT        getBoldFont() ;
       OF          ::oDialog ;
    
-   ::redefineExplorerBar( 100 )
-
    ::redefineExplorerBar( 110 )
+
+   REDEFINE BUTTON ;
+      ID          120 ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      ACTION      ( ::generateCombinations() )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -178,12 +222,86 @@ METHOD Activate() CLASS CombinacionesView
       CANCEL ;
       ACTION     ( ::oDialog:end() )
 
+   ::oDialog:bStart  := {|| ::startActivate() }
+
    ACTIVATE DIALOG ::oDialog CENTER
-   
 
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS CombinacionesView
+
+   local hProperty
+
+   for each hProperty in ::oController:hPropertyList
+      
+      ::addPanel( hProperty )
+
+      ::addLeftCheckBox( hProperty )
+
+   next
+   
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD addPanel( hProperty ) CLASS CombinacionesView
+
+   if hget( hProperty, "grupo_nombre" ) != ::cGroupProperty
+      ::oPanel       := ::oExplorerBar:addPanel( hget( hProperty, "grupo_nombre" ), nil, 1 )
+   end if 
+
+   ::cGroupProperty  := hget( hProperty, "grupo_nombre" ) 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD addLeftCheckBox( hProperty ) CLASS CombinacionesView
+
+   local oCheckBox
+
+   if empty( ::oPanel )
+      RETURN ( nil )
+   end if 
+
+   if hget( hProperty, "grupo_color" )
+      oCheckBox      := ::oPanel:addLeftColorCheckBox( hget( hProperty, "propiedad_nombre" ), .f., hget( hProperty, "propiedad_color_rgb" ) )
+   else
+      oCheckBox      := ::oPanel:addLeftCheckBox( hget( hProperty, "propiedad_nombre" ), .f. )
+   end if 
+
+   oCheckBox:Cargo   := hProperty
+
+RETURN ( oCheckBox )
+
+//---------------------------------------------------------------------------//
+
+METHOD generateCombinations() CLASS CombinacionesView
+
+   aeval( ::oExplorerBar:aPanels,;
+      {|oPanel| aeval( oPanel:aControls,;
+         {|oControl| ::generateCombination( oControl ) } ) } )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD generateCombination( oControl ) CLASS CombinacionesView
+
+   msgalert( oControl:ClassName(), "ClassName" )
+
+   if ( oControl:ClassName() != "TCHECKBOX" )
+      RETURN ( nil )
+   end if 
+
+   if ( oControl:varGet() )
+      msgalert( hb_valtoexp( oControl:Cargo ) )
+   end if 
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -200,10 +318,6 @@ END CLASS
 
 METHOD getValidators() CLASS CombinacionesValidator
 
-   /*::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido"    ,;
-                                                      "unique"             => "El nombre introducido ya existe"   },;
-                        "tipos"  =>                {  "required"           => "El tipo es un datos requerido"     },;
-                        "Importe"  =>              {  "required"           => "El importe es un datos requerido"  } }*/
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//

@@ -137,7 +137,7 @@ METHOD New() CLASS ArticulosController
    ::oUnidadesMedicionGruposController       := UnidadesMedicionGruposController():New( self )
    ::oUnidadesMedicionGruposController:setView( ::oDialogView )
 
-   ::oCombinacionesController                :=CombinacionesController():New( self )
+   ::oCombinacionesController                := CombinacionesController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
