@@ -254,10 +254,6 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLTagsModel():New() )
 
-   aadd( ::aModels, SQLAjustesCompanyModel():New() )
-
-   aadd( ::aModels, SQLAjustableCompanyModel():New() )
-
    aadd( ::aModels, SQLContadoresModel():New() )
 
    aadd( ::aModels, SQLSituacionesModel():New() )
@@ -378,7 +374,6 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLProveedoresModel():New() ) 
 
-
    aadd( ::aModels, SQLTraduccionesModel():New() ) 
 
    aadd( ::aModels, SQLDescuentosModel():New() ) 
@@ -402,6 +397,8 @@ RETURN ( ::aModels )
 //----------------------------------------------------------------------------//
 
 METHOD checkValues() CLASS SQLCompanyMigrations
+
+   msgalert('METHOD checkValues() CLASS SQLCompanyMigrations')
 
    getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
 

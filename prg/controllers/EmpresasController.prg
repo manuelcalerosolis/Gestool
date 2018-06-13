@@ -23,6 +23,10 @@ CLASS EmpresasController FROM SQLNavigatorController
    DATA cDelegacionDefecto
    DATA aDelegaciones
 
+   DATA cCodigoUnidaesDefecto
+   DATA cUnidadesDefecto
+   DATA aUnidades
+
    METHOD New()
 
    METHOD End()
@@ -119,11 +123,12 @@ RETURN ( Self )
 
 METHOD setConfig()
 
-   if ::loadConfig() .and. ;
-      ::oAjustableController:DialogViewActivate()
+   if !( ::loadConfig() )
+      RETURN ( self )
+   end if 
 
+   if ::oAjustableController:DialogViewActivate()
       ::saveConfig()
-
    end if
    
 RETURN ( self )
@@ -138,13 +143,21 @@ METHOD loadConfig()
       RETURN ( .f. )
    end if 
 
+   Company():guardWhereUuid( ::cUuidEmpresa )
+
    ::lSolicitarUsuario           := ::oAjustableController:oModel:getEmpresaSeleccionarUsuarios( ::cUuidEmpresa )
 
-   ::aDelegaciones               := SQLDelegacionesModel():aNombres()
+   ::aDelegaciones               := SQLDelegacionesModel():getArrayNombres()
 
    ::cUuidDelegacionDefecto      := ::oAjustableController:oModel:getEmpresaDelegacionDefecto( ::cUuidEmpresa )
 
    ::cDelegacionDefecto          := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionDefecto )
+
+   ::aUnidades                   := SQLUnidadesMedicionGruposModel():getArrayNombres()
+
+   ::cCodigoUnidaesDefecto       := ::oAjustableController:oModel:getEmpresaUnidadesGrupoDefecto( ::cUuidEmpresa )
+
+   ::cUnidadesDefecto            := SQLUnidadesMedicionGruposModel():getNombreWhereCodigo( ::cCodigoUnidaesDefecto )
 
 RETURN ( .t. )
 
@@ -158,6 +171,10 @@ METHOD saveConfig()
 
    ::oAjustableController:oModel:setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, ::cUuidEmpresa )
 
+   ::cCodigoUnidaesDefecto       := SQLUnidadesMedicionGruposModel():getCodigoWhereNombre( ::cUnidadesDefecto )
+
+   ::oAjustableController:oModel:setEmpresaUnidadesGrupoDefecto( ::cCodigoUnidaesDefecto, ::cUuidEmpresa )
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -169,6 +186,8 @@ METHOD startingActivate()
    oPanel:AddCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
    
    oPanel:addComboBox( "Delegación defecto", @::cDelegacionDefecto, ::aDelegaciones )
+
+   oPanel:addComboBox( "Unidades defecto", @::cUnidadesDefecto, ::aUnidades )
 
 RETURN ( self )
 

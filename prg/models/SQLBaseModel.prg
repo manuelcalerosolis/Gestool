@@ -215,7 +215,11 @@ CLASS SQLBaseModel
 
    METHOD getWhereUuid( Uuid )
    METHOD getWhereCodigo( cCodigo )
-   METHOD getWhereNombre( cNombre )
+
+   METHOD getWhereNombre( uValue )               
+
+   METHOD getColumnWhereNombre( uValue, cColumn, uDefault ) 
+   METHOD getCodigoWhereNombre( uValue )              INLINE ( ::getColumnWhereNombre( uValue, 'codigo', '' ) )
 
    METHOD getColumnWhereId( id, cColumn )
    METHOD getNombreWhereId( id )                      INLINE ( ::getColumnWhereId( id, 'nombre' ) )
@@ -231,7 +235,7 @@ CLASS SQLBaseModel
    METHOD getCodigoWhereCodigo( codigo )              INLINE ( ::getColumnWhereCodigo( codigo, 'codigo' ) )
 
    METHOD getArrayColumns( cColumn ) 
-   METHOD getArrayNombres( cColumn )                  INLINE ( ::getArrayColumns( 'nombre' ) )
+   METHOD getArrayNombres()                           INLINE ( ::getArrayColumns( 'nombre' ) )
    METHOD getArrayColumnsWithBlank( cColumn ) 
 
    METHOD getNombresWithBlank()                       INLINE ( ::getArrayColumnsWithBlank( 'nombre' ) )
@@ -1309,6 +1313,33 @@ RETURN ( uDefault )
 
 //---------------------------------------------------------------------------//
 
+METHOD getColumnWhereNombre( uValue, cColumn, uDefault ) 
+
+   local uuid
+   local cSQL  := "SELECT " + cColumn + "  FROM " + ::getTableName()    + " " 
+   cSQL        +=    "WHERE nombre = " + toSqlString( uValue )          + " " 
+   cSQL        +=    "LIMIT 1"
+
+   uuid        := ::getDatabase():getValue( cSQL )
+   if !empty( uuid )
+      RETURN ( uuid )
+   end if 
+
+RETURN ( uDefault )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereNombre( cNombre )
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
+   cSQL        +=    "LIMIT 1"
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+
 METHOD getWhereUuid( Uuid )
 
    local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
@@ -1323,16 +1354,6 @@ METHOD getWhereCodigo( cCodigo )
 
    local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
    cSQL        +=    "WHERE codigo = " + quoted( cCodigo )                    + " " 
-   cSQL        +=    "LIMIT 1"
-
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getWhereNombre( cNombre )
-
-   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
-   cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
    cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
@@ -1368,7 +1389,6 @@ METHOD getColumnWhereCodigo( uuid, cColumn )
 RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD getArrayColumns( cColumn ) 
 

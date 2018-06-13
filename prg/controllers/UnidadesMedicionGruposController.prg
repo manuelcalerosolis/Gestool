@@ -326,7 +326,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionGruposModel
    hset( ::hColumns, "uuid",                          {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR( 20 ) UNIQUE"                    ,;
+   hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
                                                          "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",                        {  "create"    => "VARCHAR( 200 )"                          ,;

@@ -82,6 +82,10 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD setEmpresaDelegacionDefecto( uAjusteValue, cAjustableUuid )   INLINE ( ::setValue( 'delegacion_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getEmpresaDelegacionDefecto( cUuid )                          INLINE ( ::getValue( cUuid, 'empresas', 'delegacion_defecto', space( 40 ) ) )   
 
+   METHOD setEmpresaUnidadesGrupoDefecto( uAjusteValue, cAjustableUuid );
+                                                                        INLINE ( ::setValue( 'unidades_grupo_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getEmpresaUnidadesGrupoDefecto( cCodigo )                     INLINE ( ::getValue( cCodigo, 'empresas', 'unidades_grupo_defecto', space( 20 ) ) )   
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -205,20 +209,6 @@ METHOD getUsuarioEmpresa( cUuid )
    end if 
 
 RETURN ( ::getUsuarioEmpresaEnUso( cUuid ) )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS SQLAjustableCompanyModel FROM SQLAjustableModel
-
-   METHOD getTableName()         INLINE ( Company():getTableName( ::cTableName ) )
-
-   METHOD getAjusteTableName()   INLINE ( SQLAjustesCompanyModel():getTableName() )
-
-END CLASS
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

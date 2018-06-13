@@ -47,10 +47,3 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AjustableCompanyController FROM AjustableController
-
-   METHOD getModel()       INLINE ( ::oModel := SQLAjustableCompanyModel():New( self ) )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
