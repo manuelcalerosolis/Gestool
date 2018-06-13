@@ -3,9 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS RutasController FROM SQLNavigatorController
-
-   DATA oCamposExtraValoresController
+CLASS CombinacionesController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -15,38 +13,37 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS RutasController
+METHOD New( oSenderController ) CLASS CombinacionesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Rutas"
+   ::cTitle                      := "Combinaciones"
 
-   ::cName                       := "rutas"
+   ::cName                       := "combinaciones"
 
-   ::hImage                      := {  "16" => "gc_map_route_16",;
-                                       "32" => "gc_map_route_32",;
-                                       "48" => "gc_map_route_48" }
+   ::hImage                      := {  "16" => "gc_cash_register_refresh_16",;
+                                       "32" => "gc_cash_register_refresh_32",;
+                                       "48" => "gc_cash_register_refresh_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLRutasModel():New( self )
+   ::oModel                         := SQLCombinacionesModel():New( self )
 
-   ::oBrowseView                    := RutasBrowseView():New( self )
+   ::oBrowseView                    := CombinacionesBrowseView():New( self )
 
-   ::oDialogView                    := RutasView():New( self )
+   ::oDialogView                    := CombinacionesView():New( self )
 
-   ::oValidator                     := RutasValidator():New( self, ::oDialogView )
+   ::oValidator                     := CombinacionesValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+   ::oRepository                    := CombinacionesRepository():New( self )
 
-   ::oRepository                    := RutasRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
+   ::oGetSelector                   := GetSelector():New( self )   
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-METHOD End() CLASS RutasController
+
+METHOD End() CLASS CombinacionesController
 
    ::oModel:End()
 
@@ -57,8 +54,6 @@ METHOD End() CLASS RutasController
    ::oValidator:End()
 
    ::oRepository:End()
-
-   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -74,7 +69,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RutasBrowseView FROM SQLBrowseView
+CLASS CombinacionesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -82,7 +77,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS RutasBrowseView
+METHOD addColumns() CLASS CombinacionesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -102,20 +97,22 @@ METHOD addColumns() CLASS RutasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
+      :cSortOrder          := 'parent_uuid'
+      :cHeader             := 'Artículo'
       :nWidth              := 120
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'parent_uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :cSortOrder          := 'incremento_precio'
+      :cHeader             := 'Incremento de precio'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
 
 RETURN ( self )
 
@@ -127,9 +124,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RutasView FROM SQLBaseView
-
-   DATA oSayCamposExtra
+CLASS CombinacionesView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -137,18 +132,15 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS RutasView
-
-   local oBmpGeneral
-   local oSayCamposExtra
+METHOD Activate() CLASS CombinacionesView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "RUTAS" ;
-      TITLE       ::LblTitle() + "ruta"
+      RESOURCE    "CONTAINER_COMBINACIONES" ;
+      TITLE       ::LblTitle() + "Combinaciones de propiedades"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    ::oController:GetImage( "48" ) ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
       OF          ::oDialog ;
 
@@ -156,29 +148,11 @@ METHOD Activate() CLASS RutasView
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog ;
+
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
-      ID          100 ;
-      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          110 ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE SAY   ::oSayCamposExtra ;
-      PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
-      COLOR       rgb( 10, 152, 234 ) ;
-      ID          120 ;
-      OF          ::oDialog ;
-
-   ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+      ::redefineExplorerBar( 100 )
+      
+      ::redefineExplorerBar( 110 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -192,13 +166,8 @@ METHOD Activate() CLASS RutasView
       CANCEL ;
       ACTION     ( ::oDialog:end() )
 
-   if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
-   end if
-
    ACTIVATE DIALOG ::oDialog CENTER
-
-  ::oBitmap:end()
+   
 
 RETURN ( ::oDialog:nResult )
 
@@ -209,7 +178,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RutasValidator FROM SQLBaseValidator
+CLASS CombinacionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -218,12 +187,12 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS RutasValidator
+METHOD getValidators() CLASS CombinacionesValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"           => "La ruta es un dato requerido",;
-                                                      "unique"             => "La ruta introducida ya existe" },;
-                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe" } }
+   /*::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido"    ,;
+                                                      "unique"             => "El nombre introducido ya existe"   },;
+                        "tipos"  =>                {  "required"           => "El tipo es un datos requerido"     },;
+                        "Importe"  =>              {  "required"           => "El importe es un datos requerido"  } }*/
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -235,30 +204,30 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLRutasModel FROM SQLCompanyModel
+CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "rutas"
+   DATA cTableName               INIT "combinaciones"
 
    METHOD getColumns()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLRutasModel
+METHOD getColumns() CLASS SQLCombinacionesModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
+                                                "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"                ,;                                  
+                                                "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
-                                             "default"   => {|| space( 20 ) } }                        )
+   hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 )"                              ,;
+                                                "default"   => {|| ::getSenderControllerParentUuid() } }    )
 
-   hset( ::hColumns, "nombre",           {  "create"    => "VARCHAR( 200 )"                           ,;
-                                             "default"  => {|| space( 200 ) } }                       )
-   
+   hset( ::hColumns, "incremento_precio",    {  "create"    => "FLOAT( 16,6 )"                               ,;
+                                                "default"   => { 0 } }                                      ) 
 
 RETURN ( ::hColumns )
 
@@ -272,9 +241,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RutasRepository FROM SQLBaseRepository
+CLASS CombinacionesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLRutasModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLCombinacionesModel():getTableName() ) 
 
 END CLASS
 

@@ -141,7 +141,7 @@ METHOD redefineGeneral() CLASS ClientesView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     ( "@! NNNNNNNNNNNN" ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
 

@@ -3,53 +3,47 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS OrdenComandasController FROM SQLNavigatorController
-
-   DATA oCamposExtraValoresController
+CLASS CombinacionesPropiedadesController FROM SQLNavigatorController
 
    METHOD New()
 
    METHOD End()
 
-   METHOD VerifyOrden()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS OrdenComandasController
+METHOD New( oSenderController ) CLASS CombinacionesPropiedadesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
-   ::cTitle                      := "Ordenes de comanda"
+   ::cTitle                      := "Combinaciones de Propiedades"
 
-   ::cName                       := "Orden_comandas"
+   ::cName                       := "combinaciones_propiedades"
 
-   ::hImage                      := {  "16" => "gc_sort_az_descending_16",;
-                                       "32" => "gc_sort_az_descending_32",;
-                                       "48" => "gc_sort_az_descending_48" }
+   ::hImage                      := {  "16" => "gc_cash_register_refresh_16",;
+                                       "32" => "gc_cash_register_refresh_32",;
+                                       "48" => "gc_cash_register_refresh_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLOrdenComandasModel():New( self )
+   ::oModel                         := SQLCombinacionesPropiedadesModel():New( self )
 
-   ::oBrowseView                 := OrdenComandasBrowseView():New( self )
+   ::oBrowseView                    := CombinacionesPropiedadesBrowseView():New( self )
 
-   ::oDialogView                 := OrdenComandasView():New( self )
+   ::oDialogView                    := CombinacionesPropiedadesView():New( self )
 
-   ::oValidator                  := OrdenComandasValidator():New( self, ::oDialogView )
+   ::oValidator                     := CombinacionesPropiedadesValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+   ::oRepository                    :=CombinacionesPropiedadesRepository():New( self )
 
-   ::oRepository                 := OrdenComandasRepository():New( self )
-
-   ::setEvent( 'closedDialog', {|| ::VerifyOrden() } ) 
+   ::oGetSelector                   := GetSelector():New( self )   
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS OrdenComandasController
+METHOD End() CLASS CombinacionesPropiedadesController
 
    ::oModel:End()
 
@@ -61,20 +55,11 @@ METHOD End() CLASS OrdenComandasController
 
    ::oRepository:End()
 
-   ::oCamposExtraValoresController:End()
-
    ::Super:End()
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD VerifyOrden()
-
-   local cSQL           := "UPDATE " + ::oModel:getTableName() + " SET orden = orden + 1 WHERE orden >= " + toSQLString( ::oModel:hBuffer[ "orden" ] )
-
-RETURN ( getSQLDatabase():Exec( cSQL ) )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -84,7 +69,7 @@ RETURN ( getSQLDatabase():Exec( cSQL ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS OrdenComandasBrowseView FROM SQLBrowseView
+CLASS CombinacionesPropiedadesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -92,7 +77,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS OrdenComandasBrowseView
+METHOD addColumns() CLASS CombinacionesPropiedadesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -112,28 +97,22 @@ METHOD addColumns() CLASS OrdenComandasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
-      :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :cSortOrder          := 'parent_uuid'
+      :cHeader             := 'Artículo'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'parent_uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'descripcion'
-      :cHeader             := 'Descripcion'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
+      :cSortOrder          := 'propiedad_uuid'
+      :cHeader             := 'Valor propiedad'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'propiedad_uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'orden'
-      :cHeader             := 'Orden'
-      :nWidth              := 70
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'orden' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
 
 RETURN ( self )
 
@@ -145,9 +124,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS OrdenComandasView FROM SQLBaseView
-
-   DATA oSayCamposExtra
+CLASS CombinacionesPropiedadesView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -155,14 +132,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS OrdenComandasView
+METHOD Activate() CLASS CombinacionesPropiedadesView
 
-   local oDialog 
-   local oSayCamposExtra
-
-   DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ORDEN_COMANDA" ;
-      TITLE       ::LblTitle() + "Orden de comanda"
+   /*DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "ENTRADA_SALIDA" ;
+      TITLE       ::LblTitle() + "Entrada o salida de caja"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -174,37 +148,49 @@ METHOD Activate() CLASS OrdenComandasView
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog ;
-   
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+
+   REDEFINE COMBOBOX ::oTipo ;
+      VAR         ::oController:oModel:hBuffer[ "tipo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
+      ITEMS       ::aTipo;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
       ID          110 ;
-      VALID       ( ::oController:validate( "descripcion" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "orden" ] ;
-      ID          120 ;
+      VALID       ( ::oController:validate( "importe" ) ) ;
       SPINNER ;
-      MIN         1;
-      VALID       ( ::oController:validate( "orden" ) ) ;
+      PICTURE     "@E 9999999.999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE SAY   ::oSayCamposExtra ;
-      PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
-      COLOR       rgb( 10, 152, 234 ) ;
-      ID          130 ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+      ID          120 ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   REDEFINE GET   ::oController:oModel:hBuffer[ "sesion" ] ;
+      ID          130 ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog ;
+   // codigo caja-------------------------------------------------------------------------------------------------------//
+
+   ::oController:oCajasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "caja_codigo" ] ) )
+   
+   ::oController:oCajasController:oGetSelector:setEvent( 'validated', {|| ::CajasControllerValidated() } )
+
+   ::oController:oCajasController:oGetSelector:Activate( 140, 141, ::oDialog )
+
+   // cliente------------------------------------------------------------------------------------------------------------//
+  
+  REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
+      ID          150 ;
+      SPINNER ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog ;
+
+      ::redefineExplorerBar( 160 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -218,9 +204,8 @@ METHOD Activate() CLASS OrdenComandasView
       CANCEL ;
       ACTION     ( ::oDialog:end() )
 
-   ACTIVATE DIALOG ::oDialog CENTER
-
-  ::oBitmap:end()
+   ACTIVATE DIALOG ::oDialog CENTER*/
+   
 
 RETURN ( ::oDialog:nResult )
 
@@ -231,7 +216,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS OrdenComandasValidator FROM SQLBaseValidator
+CLASS CombinacionesPropiedadesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -240,13 +225,12 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS OrdenComandasValidator
+METHOD getValidators() CLASS CombinacionesPropiedadesValidator
 
-   ::hValidators  := {  "descripcion" =>           {  "required"           => "La descripcion es un dato requerido",;
-                                                      "unique"             => "La descripcion introducido ya existe" },;
-                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe"  },;
-                        "orden" =>                 {  "unique"             => "El orden introducido ya existe"  } }
+   /*::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido"    ,;
+                                                      "unique"             => "El nombre introducido ya existe"   },;
+                        "tipos"  =>                {  "required"           => "El tipo es un datos requerido"     },;
+                        "Importe"  =>              {  "required"           => "El importe es un datos requerido"  } }*/
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -258,57 +242,34 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLOrdenComandasModel FROM SQLCompanyModel
+CLASS SQLCombinacionesPropiedadesModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "orden_comandas"
+   DATA cTableName               INIT "combinaciones_propiedades"
 
    METHOD getColumns()
-
-   METHOD getOrden()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLOrdenComandasModel
+METHOD getColumns() CLASS SQLCombinacionesPropiedadesModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
+                                                "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"                ,;                                  
+                                                "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
-                                             "default"   => {|| space( 20 ) } }                        )
+   hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 )"                              ,;
+                                                "default"   => {|| ::getSenderControllerParentUuid() } }    )
 
-   hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
-
-   hset( ::hColumns, "orden",             {  "create"    => "INTEGER "                                  ,;
-                                             "default"   => { || ::getOrden() } }                       )
-
-   ::getTimeStampColumns()
+   hset( ::hColumns, "propiedad_uuid",       {  "create"    => "VARCHAR( 40 )"                              ,;
+                                                "default"   => { || space ( 40 )  } }                       ) 
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
-
-METHOD getOrden() CLASS SQLOrdenComandasModel
-
-   local cSQL 
-   local nOrden   
-
-   cSQL           := "SELECT orden FROM " + ::getTableName() + " ORDER BY orden DESC LIMIT 1"
-
-   nOrden         := getSQLDatabase():getValue( cSQL )
-
-
-   if hb_isnumeric( nOrden )
-      RETURN ( nOrden + 1 )
-   end if 
-
-RETURN ( 1 )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -318,9 +279,9 @@ RETURN ( 1 )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS OrdenComandasRepository FROM SQLBaseRepository
+CLASS CombinacionesPropiedadesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLOrdenComandasModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLCombinacionesPropiedadesModel():getTableName() ) 
 
 END CLASS
 
