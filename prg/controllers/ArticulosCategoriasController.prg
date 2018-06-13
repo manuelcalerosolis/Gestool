@@ -195,7 +195,7 @@ METHOD Activate() CLASS ArticulosCategoriasView
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;

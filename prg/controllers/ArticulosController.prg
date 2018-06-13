@@ -33,6 +33,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oArticulosTemporadasController
 
+   DATA oCombinacionesController
+
    METHOD New()
 
    METHOD End()
@@ -135,6 +137,8 @@ METHOD New() CLASS ArticulosController
    ::oUnidadesMedicionGruposController       := UnidadesMedicionGruposController():New( self )
    ::oUnidadesMedicionGruposController:setView( ::oDialogView )
 
+   ::oCombinacionesController                :=CombinacionesController():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvents( { 'loadedBlankBuffer', 'loadedCurrentBuffer' }, {|| ::insertPreciosWhereArticulo() } )
@@ -180,6 +184,8 @@ METHOD End() CLASS ArticulosController
    ::oTraduccionesController:End()
 
    ::oArticulosTemporadasController:End()
+
+   ::oCombinaciones:End()
 
    ::Super:End()
 

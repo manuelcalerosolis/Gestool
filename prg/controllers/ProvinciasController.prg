@@ -170,7 +170,7 @@ METHOD Activate() CLASS ProvinciasView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode()  ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          oDlg
 

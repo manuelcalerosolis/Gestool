@@ -74,7 +74,7 @@ METHOD Activate() CLASS ArticulosView
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNN" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
@@ -239,6 +239,8 @@ METHOD startActivate() CLASS ArticulosView
 
    ::oGetCodigo:SetFocus()
 
+   ::oController:oCombinacionesController:oGetSelector:Start()
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -261,6 +263,10 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
                      {|| ::oController:oImagenesController:activateDialogView() },;
                      ::oController:oImagenesController:getImage( "16" ) )
 
+   oPanel:AddLink(   "Combinaciones...",;
+                     {|| ::oController:oCombinacionesController:activateDialogView() },;
+                     ::oController:oCombinacionesController:getImage( "16" ) )
+
    oPanel:AddLink(   "Traducciones...",;
                      {|| ::oController:oTraduccionesController:activateDialogView() },;
                      ::oController:oTraduccionesController:getImage( "16" ) )
@@ -270,6 +276,7 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
    oPanel:AddLink(   "Campos extra...",;
                      {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
                      ::oController:oCamposExtraValoresController:getImage( "16" ) )
+
 
 RETURN ( self )
 
