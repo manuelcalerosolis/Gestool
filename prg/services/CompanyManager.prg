@@ -96,10 +96,10 @@ METHOD getDefaultDelegacion()
 
    local delegacionUuid    
    
-   delegacionUuid    := SQLAjustableCompanyModel():getUsuarioEmpresaExclusiva( Auth():Uuid() )
+   delegacionUuid    := SQLAjustableModel():getUsuarioEmpresaExclusiva( Auth():Uuid() )
 
    if empty( delegacionUuid )
-      delegacionUuid := SQLAjustableCompanyModel():getEmpresaDelegacionDefecto( ::uuid )
+      delegacionUuid := SQLAjustableModel():getEmpresaDelegacionDefecto( ::uuid )
    end if
 
 RETURN ( delegacionUuid )

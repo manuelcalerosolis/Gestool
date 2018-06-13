@@ -292,8 +292,6 @@ CLASS SQLDelegacionesModel FROM SQLBaseModel
 
    METHOD getColumns()
 
-   METHOD aNombres()
-
    METHOD getNombreFromUuid( cUuid )      INLINE ( ::getField( 'nombre', 'uuid', cUuid ) )
 
    METHOD getUuidFromNombre( cNombre )    INLINE ( ::getField( 'uuid', 'nombre', cNombre ) )
@@ -320,14 +318,6 @@ METHOD getColumns() CLASS SQLDelegacionesModel
                                              "default"   => {|| space( 200 ) } }                      )
 
 RETURN ( ::hColumns )
-
-//---------------------------------------------------------------------------//
-
-METHOD aNombres() CLASS SQLDelegacionesModel
-
-   local cSelect  := "SELECT nombre FROM " + ::getTableName()
-
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSelect ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

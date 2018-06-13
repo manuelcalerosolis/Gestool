@@ -44,13 +44,6 @@ METHOD End()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
-CLASS AjustesCompanyController FROM AjustesController
-
-   METHOD getModel()       INLINE ( ::oModel := SQLAjustesCompanyModel():New( self ) )
-
-END CLASS
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -125,7 +118,8 @@ METHOD getInsertAjustesSentence()
    cSentence  +=    "( UUID(), 'asistente_generar_facturas','1',  'boolean',      NULL, NULL ), "
    cSentence  +=    "( UUID(), 'cambiar_estado',            '1',  'boolean',      NULL, NULL ), "
    cSentence  +=    "( UUID(), 'cambiar_campos',            '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'delegacion_defecto',        '1',  'alphanumeric', NULL, NULL )"
+   cSentence  +=    "( UUID(), 'delegacion_defecto',        '1',  'alphanumeric', NULL, NULL ), "
+   cSentence  +=    "( UUID(), 'unidades_grupo_defecto',    '1',  'alphanumeric', NULL, NULL )"
 
 RETURN ( cSentence )
 
@@ -146,19 +140,6 @@ METHOD getAjusteUuid( cAjuste )
 
 RETURN ( ::getDatabase():getValue( ::getAjusteUuidSentence( cAjuste ) ) )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS SQLAjustesCompanyModel FROM SQLAjustesModel
-
-   METHOD getTableName()   INLINE ( Company():getTableName( ::cTableName ) )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
