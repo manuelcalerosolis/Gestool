@@ -3,10 +3,31 @@
 
 //---------------------------------------------------------------------------//
 
+CLASS DireccionesGestoolController FROM DireccionesController
+
+   METHOD getModel()                      INLINE ( ::oModel := SQLDireccionesGestoolModel():New( self ) )
+
+   METHOD getCodigosPostalesController()  INLINE ( ::oCodigosPostalesController  := CodigosPostalesGestoolController():New( self ) )
+
+   METHOD getPaisesController()           INLINE ( ::oPaisesController := PaisesGestoolController():New( self ) )
+
+   METHOD getProvinciasController()       INLINE ( ::oProvinciasController := ProvinciasGestoolController():New( self ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 CLASS DireccionesController FROM SQLNavigatorController
 
    DATA oPaisesController
+
    DATA oProvinciasController
+
+   DATA oCodigosPostalesController
 
    METHOD New()
 
@@ -26,10 +47,25 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
-   METHOD externalStartDialog()        INLINE ( ::oDialogView:StartDialog() )
+   METHOD externalStartDialog()           INLINE ( ::oDialogView:StartDialog() )
+
+   METHOD getModel()                      INLINE ( ::oModel := SQLDireccionesModel():New( self ) )
+
+   METHOD getCodigosPostalesController()  INLINE ( ::oCodigosPostalesController  := CodigosPostalesController():New( self ) )
+
+   METHOD getPaisesController()           INLINE ( ::oPaisesController := PaisesController():New( self ) )
+
+   METHOD getProvinciasController()       INLINE ( ::oProvinciasController := ProvinciasController():New( self ) )
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD New( oController ) CLASS DireccionesController
@@ -46,7 +82,7 @@ METHOD New( oController ) CLASS DireccionesController
                                           "32" => "gc_signpost3_32",;
                                           "48" => "gc_signpost3_48" }
 
-   ::oModel                         := SQLDireccionesModel():New( self )
+   ::getModel()                        
 
    ::oBrowseView                    := DireccionesBrowseView():New( self )
 
@@ -54,9 +90,11 @@ METHOD New( oController ) CLASS DireccionesController
 
    ::oValidator                     := DireccionesValidator():New( self, ::oDialogView )
 
-   ::oPaisesController              := PaisesController():New( self )
+   ::getCodigosPostalesController()
 
-   ::oProvinciasController          := ProvinciasController():New( self )
+   ::getPaisesController()
+
+   ::getProvinciasController()
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
@@ -445,7 +483,7 @@ RETURN ( Self )
 
 METHOD StartDialog()
 
-   ::oGetPais:oHelpText:cText( SQLPaisesModel():getField( "nombre", "codigo", ::oController:oModel:hBuffer[ "codigo_pais" ] ) )
+   ::oGetPais:oHelpText:cText( ::oController:oPaisesController:getModel():getField( "nombre", "codigo", ::oController:oModel:hBuffer[ "codigo_pais" ] ) )
 
 RETURN ( Self )
 
@@ -488,17 +526,31 @@ RETURN ( ::hValidators )
 
 METHOD codigoPostal( value )
 
+   local cPoblacion
+   local cProvincia
+
    if empty( value )
       RETURN ( .t. )
    end if 
 
    if empty( ::oController:oDialogView:oGetPoblacion:varget() )
-      ::oController:oDialogView:oGetPoblacion:cText( SQLCodigosPostalesModel():getField( "poblacion", "codigo", value ) )
+
+      cPoblacion  := ::oController:oCodigosPostalesController:getModel():getField( "poblacion", "codigo", value )
+      if !empty( cPoblacion )
+         ::oController:oDialogView:oGetPoblacion:cText( cPoblacion )
+      end if 
+
    end if 
 
    if empty( ::oController:oDialogView:oGetCodigoProvincia:varget() )
-      ::oController:oDialogView:oGetCodigoProvincia:cText( SQLCodigosPostalesModel():getField( "provincia", "codigo", value ) )
-      ::oController:oDialogView:oGetCodigoProvincia:lValid()
+
+      cProvincia  := ::oController:oCodigosPostalesController:getModel():getField( "provincia", "codigo", value )
+
+      if !empty( cProvincia )
+         ::oController:oDialogView:oGetCodigoProvincia:cText( cProvincia )
+         ::oController:oDialogView:oGetCodigoProvincia:lValid()
+      end if 
+
    end if 
 
 RETURN ( .t. )
@@ -511,7 +563,7 @@ METHOD codigoProvincia( value )
       RETURN ( .t. )
    end if 
 
-   ::oController:oDialogView:oGetProvincia:cText( SQLProvinciasModel():getField( "provincia", "codigo", value ) )
+   ::oController:oDialogView:oGetProvincia:cText( ::oController:oProvinciasController:getModel():getField( "provincia", "codigo", value ) )
 
 RETURN ( .t. )
 
@@ -523,10 +575,15 @@ METHOD codigoPais( value )
       RETURN ( .t. )
    end if 
 
-   ::oController:oDialogView:oGetPais:oHelpText:cText( SQLPaisesModel():getField( "nombre", "codigo", value ) )
+   ::oController:oDialogView:oGetPais:oHelpText:cText( ::oController:oPaisesController:getModel():getField( "nombre", "codigo", value ) )
 
 RETURN ( .t. )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 CLASS DireccionesEntidadesValidator FROM DireccionesValidator
@@ -558,7 +615,20 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLDireccionesModel FROM SQLBaseModel
+CLASS SQLDireccionesGestoolModel FROM SQLDireccionesModel
+
+   METHOD getTableName()   INLINE ( "gestool." + ::cTableName )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLDireccionesModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "direcciones"
 

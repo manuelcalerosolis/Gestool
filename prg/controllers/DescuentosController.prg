@@ -362,7 +362,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLDescuentosModel FROM SQLBaseModel
+CLASS SQLDescuentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "descuentos"
 
@@ -387,7 +387,6 @@ METHOD getColumns() CLASS SQLDescuentosModel
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                    "default"   => {|| space( 40 ) } }                       )
 
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
                                                    "default"   => {|| space( 200 ) } }                      )

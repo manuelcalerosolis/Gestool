@@ -37,6 +37,7 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::oRepository                    := ArticulosPreciosRepository():New( self )
 
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -257,25 +258,25 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLArticulosPreciosModel FROM SQLBaseModel
+CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_precios"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( tarifa_uuid, articulo_uuid )"
+   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( parent_uuid, tarifa_codigo )"
 
    METHOD getInitialSelect()
 
    METHOD getColumns()
 
-   METHOD getSQLInsertPreciosWhereTarifa( uuidTarifa )
+   METHOD getSQLInsertPreciosWhereTarifa( codigoTarifa )
 
-   METHOD insertPreciosWhereTarifa( uuidTarifa )         INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereTarifa( uuidTarifa ) ) )
+   METHOD insertPreciosWhereTarifa( codigoTarifa )       INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereTarifa( codigoTarifa ) ) )
 
    METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
 
    METHOD insertPreciosWhereArticulo( uuidArticulo )     INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereArticulo( uuidArticulo ) ) )
 
-   METHOD updateFieldsCommandWhereUuid( oCommand, uuid ) INLINE ( ::updateFieldsWhereUuid( uuid,   {  'margen'                => oCommand:Margen(),; 
+   METHOD updateFieldsCommandWhereUuid( oCommand, uuid ) INLINE ( ::updateBufferWhereUuid( uuid,   {  'margen'                => oCommand:Margen(),; 
                                                                                                       'margen_real'           => oCommand:MargenReal(),;
                                                                                                       'precio_base'           => oCommand:PrecioBase(),;
                                                                                                       'precio_iva_incluido'   => oCommand:PrecioIVAIncluido() } ) )
@@ -286,19 +287,19 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLArticulosPreciosModel
 
-   local cSelect  := "SELECT articulos_precios.id,"                        + " " + ;
-                        "articulos_precios.uuid,"                          + " " + ;
-                        "articulos_precios.tarifa_uuid,"                   + " " + ;
-                        "articulos_precios.articulo_uuid,"                 + " " + ;
-                        "articulos_precios.margen,"                        + " " + ;
-                        "articulos_precios.margen_real,"                   + " " + ;
-                        "articulos_precios.precio_base,"                   + " " + ;
-                        "articulos_precios.precio_iva_incluido,"           + " " + ;
-                        "articulos_tarifas.nombre,"                        + " " + ;
-                        "articulos_tarifas.margen_predefinido,"            + " " + ;
-                        "articulos_tarifas.iva_incluido"                   + " " + ;
-                     "FROM articulos_precios"                              + " " + ;
-                        "INNER JOIN articulos_tarifas ON articulos_tarifas.uuid = articulos_precios.tarifa_uuid"     + " "
+   local cSelect  := "SELECT articulos_precios.id, "                                                              + ;
+                        "articulos_precios.uuid, "                                                                + ;
+                        "articulos_precios.parent_uuid, "                                                         + ;
+                        "articulos_precios.tarifa_codigo, "                                                       + ;
+                        "articulos_precios.margen, "                                                              + ;
+                        "articulos_precios.margen_real, "                                                         + ;
+                        "articulos_precios.precio_base, "                                                         + ;
+                        "articulos_precios.precio_iva_incluido, "                                                 + ;
+                        "articulos_tarifas.nombre, "                                                              + ;
+                        "articulos_tarifas.margen_predefinido "                                                   + ;
+                     "FROM " + ::getTableName() + " AS articulos_precios "                                        + ;
+                        "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas "      + ;
+                        "ON articulos_tarifas.codigo = articulos_precios.tarifa_codigo"   
 
 RETURN ( cSelect )
 
@@ -312,11 +313,11 @@ METHOD getColumns() CLASS SQLArticulosPreciosModel
    hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                                       "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "tarifa_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                      "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| ::getSenderControllerParentUuid() } } )
 
-   hset( ::hColumns, "articulo_uuid",              {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                      "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "tarifa_codigo",              {  "create"    => "VARCHAR( 20 )"                           ,;
+                                                      "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "margen",                     {  "create"    => "FLOAT( 8, 4 )"                           ,;
                                                       "default"   => {|| 0 } }                                 )
@@ -334,17 +335,17 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLInsertPreciosWhereTarifa( uuidTarifa )
+METHOD getSQLInsertPreciosWhereTarifa( codigoTarifa )
 
    local cSQL
 
-   cSQL           := "INSERT IGNORE INTO articulos_precios"                                                                + " "  
-   cSQL           +=    "( uuid, tarifa_uuid, articulo_uuid, margen, precio_base, precio_iva_incluido )"                   + " "  
-   cSQL           += "SELECT uuid(), articulos_tarifas.uuid, articulos.uuid, articulos_tarifas.margen_predefinido, 0, 0"   + " "  
-   cSQL           +=    "FROM articulos"                                                                                   + " "  
-   cSQL           += "INNER JOIN articulos_tarifas ON articulos_tarifas.empresa_uuid = articulos.empresa_uuid"             + " "  
-   cSQL           += "WHERE articulos.empresa_uuid = " + quoted( Company():Uuid() )                                        + " "
-   cSQL           +=    "AND articulos_tarifas.uuid = " + quoted( uuidTarifa )
+   cSQL           := "INSERT IGNORE INTO " + ::getTableName() + " AS articulos_precios"                                       + " "  
+   cSQL           +=    "( uuid, parent_uuid, tarifa_codigo, margen, precio_base, precio_iva_incluido )"                      + " "  
+   cSQL           += "SELECT UUID(), articulos.uuid, articulos_tarifas.codigo, articulos_tarifas.margen_predefinido, 0, 0"    + " "  
+   cSQL           +=    "FROM " + SQLArticulosModel():getTableName() + " AS articulos"                                        + " "                                           + " "  
+   cSQL           +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas"                   + " "
+   cSql           +=    "ON articulos_tarifas.empresa_codigo = articulos.empresa_codigo"                                      + " "  
+   cSQL           +=    "WHERE articulos_tarifas.codigo = " + quoted( codigoTarifa )
 
 RETURN ( cSQL )
 
@@ -354,11 +355,11 @@ METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
 
    local cSQL
 
-   cSQL           := "INSERT IGNORE INTO articulos_precios"                                                                + " "  
-   cSQL           +=    "( uuid, tarifa_uuid, articulo_uuid, margen, precio_base, precio_iva_incluido )"                   + " "  
-   cSQL           += "SELECT uuid(), articulos_tarifas.uuid, " + quoted( uuidArticulo ) + ", articulos_tarifas.margen_predefinido, 0, 0"   + " "  
-   cSQL           +=    "FROM articulos_tarifas"                                                                           + " "  
-   cSQL           += "WHERE articulos_tarifas.empresa_uuid = " + quoted( Company():Uuid() )                                 
+   cSQL           := "INSERT IGNORE INTO " + ::getTableName()                                                                                + " "  
+   cSQL           +=    "( uuid, tarifa_codigo, parent_uuid, margen, precio_base, precio_iva_incluido )"                                     + " "  
+   cSQL           += "SELECT uuid(), articulos_tarifas.codigo, " + quoted( uuidArticulo ) + ", articulos_tarifas.margen_predefinido, 0, 0"   + " "  
+   cSQL           +=    "FROM " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas"                                                                           + " "  
+   /*cSQL           += "WHERE articulos_tarifas.empresa_codigo = " + quoted( Company():Codigo() ) */
 
 RETURN ( cSQL )
 
@@ -428,8 +429,6 @@ METHOD createFunctionPriceUsingMargin() CLASS ArticulosPreciosRepository
    cSQL        +=    "RETURN PrecioBase;"                                                                + space( 1 )
    cSQL        += "END;"                                                                                 + space( 1 )
 
-   logwrite( cSQL )
-
 RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
@@ -445,7 +444,6 @@ METHOD createFunctionTest() CLASS ArticulosPreciosRepository
    cSQL        +=    "RETURN 1;"                                                                         + space( 1 )
    cSQL        += "END;"                                                                                 + space( 1 )
 
-   logwrite( cSQL )
 
 RETURN ( cSQL )
 

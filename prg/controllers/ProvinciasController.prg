@@ -3,11 +3,21 @@
 
 //---------------------------------------------------------------------------//
 
+CLASS ProvinciasGestoolController FROM ProvinciasController
+
+   METHOD getModel()          INLINE ( ::oModel := SQLProvinciasGestoolModel():New( self ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
 CLASS ProvinciasController FROM SQLNavigatorController
 
    METHOD New()
 
    METHOD End()
+
+   METHOD getModel()          INLINE ( ::oModel := SQLProvinciasModel():New( self ) )
 
    METHOD getSelectorProvincia( oGet )
 
@@ -15,21 +25,21 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ProvinciasController
+METHOD New( oSenderController ) CLASS ProvinciasController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                   := "Provincias"
 
    ::cName                    := "provincias"
 
+   ::lTransactional           := .t.
+
    ::hImage                   := {  "16" => "gc_flag_spain_16",;
                                     "32" => "gc_flag_spain_32",;
                                     "48" => "gc_flag_spain_48" }
 
-   ::nLevel                   := Auth():Level( ::cName )
-
-   ::oModel                   := SQLProvinciasModel():New( self )
+   ::getModel()
 
    ::oBrowseView              := ProvinciasBrowseView():New( self )
 
@@ -37,7 +47,13 @@ METHOD New() CLASS ProvinciasController
 
    ::oValidator               := ProvinciasValidator():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
+   if empty( oSenderController )
+
+      ::nLevel                := Auth():Level( ::cName )
+   
+      ::oFilterController:setTableToFilter( ::cName )
+
+   end if 
 
 RETURN ( Self )
 
@@ -51,8 +67,6 @@ METHOD End() CLASS ProvinciasController
    ::oDialogView:End()
 
    ::oValidator:End()
-
-   /*::oRepository:End()*/
 
    ::Super:End()
 
@@ -126,8 +140,6 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS ProvinciasView FROM SQLBaseView
   
@@ -158,7 +170,7 @@ METHOD Activate() CLASS ProvinciasView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode()  ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          oDlg
 
@@ -195,7 +207,6 @@ RETURN ( oDlg:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS ProvinciasValidator FROM SQLBaseValidator
 
@@ -221,11 +232,16 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+CLASS SQLProvinciasGestoolModel FROM SQLProvinciasModel
+
+   METHOD getTableName()         INLINE ( "gestool." + ::cTableName )
+
+END CLASS
+
 //---------------------------------------------------------------------------//
 
-CLASS SQLProvinciasModel FROM SQLBaseModel
+CLASS SQLProvinciasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "provincias"
 
@@ -238,32 +254,15 @@ END CLASS
 METHOD getColumns() CLASS SQLProvinciasModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 50 )"                          ,;
+   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 50 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| space( 50 ) } }                       )
 
 RETURN ( ::hColumns )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS ProvinciasRepository FROM SQLBaseRepository
-
-   METHOD getTableName()         INLINE ( SQLProvinciasModel():getTableName() ) 
-
-END CLASS
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

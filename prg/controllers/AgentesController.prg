@@ -25,13 +25,13 @@ METHOD New( oSenderController ) CLASS AgentesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Agentes"
+   ::cTitle                         := "Agentes"
 
-   ::cName                       := "agentes"
+   ::cName                          := "agentes"
 
-   ::hImage                      := {  "16" => "gc_businessman2_16",;
-                                       "32" => "gc_businessman2_32",;
-                                       "48" => "gc_businessman2_48" }
+   ::hImage                         := {  "16" => "gc_businessman2_16",;
+                                          "32" => "gc_businessman2_32",;
+                                          "48" => "gc_businessman2_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -48,6 +48,7 @@ METHOD New( oSenderController ) CLASS AgentesController
    ::oRepository                    := AgentesRepository():New( self )
 
    ::oPaisesController              := PaisesController():New( self )
+
    ::oProvinciasController          := ProvinciasController():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'agentes')
@@ -70,6 +71,7 @@ METHOD New( oSenderController ) CLASS AgentesController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS AgentesController
 
    ::oModel:End()
@@ -114,6 +116,7 @@ METHOD addColumns() CLASS AgentesBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -127,7 +130,7 @@ METHOD addColumns() CLASS AgentesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
@@ -151,7 +154,7 @@ METHOD addColumns() CLASS AgentesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'comision'
       :cHeader             := 'Comisión %'
-      :nWidth              := 60
+      :nWidth              := 100
       :nHeadStrAlign       := AL_RIGHT
       :nDataStrAlign       := AL_RIGHT
       :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'comision' ), "@E 999.99" ) }
@@ -247,7 +250,7 @@ METHOD Activate() CLASS AgentesView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNN" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
@@ -316,7 +319,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS AgentesValidator FROM SQLCompanyValidator
+CLASS AgentesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -337,9 +340,6 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS SQLAgentesModel FROM SQLCompanyModel
 
@@ -347,25 +347,25 @@ CLASS SQLAgentesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getInitialSelect()
+   METHOD getGeneralSelect()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect() CLASS SQLAgentesModel
+METHOD getGeneralSelect() CLASS SQLAgentesModel
 
-   local cSelect  := "SELECT agentes.id,"                                                               + " " + ;
-                        "agentes.uuid,"                                                                 + " " + ;
-                        "agentes.codigo,"                                                               + " " + ;
-                        "agentes.nombre,"                                                               + " " + ;
-                        "agentes.dni,"                                                                  + " " + ;
-                        "agentes.comision,"                                                             + " " + ;
-                        "direcciones.telefono as telefono,"                                             + " " + ;
-                        "direcciones.movil as movil,"                                                   + " " + ;
-                        "direcciones.email as email"                                                    + " " + ;
-                     "FROM  agentes"                                                                    + " " + ;
-                        "INNER JOIN direcciones ON agentes.uuid = direcciones.parent_uuid"              + " "
+   local cSelect  := "SELECT agentes.id,"                                                                                           + " " + ;
+                        "agentes.uuid,"                                                                                             + " " + ;
+                        "agentes.codigo,"                                                                                           + " " + ;
+                        "agentes.nombre,"                                                                                           + " " + ;
+                        "agentes.dni,"                                                                                              + " " + ;
+                        "agentes.comision,"                                                                                         + " " + ;
+                        "direcciones.telefono as telefono,"                                                                         + " " + ;
+                        "direcciones.movil as movil,"                                                                               + " " + ;
+                        "direcciones.email as email"                                                                                + " " + ;
+                     "FROM "+ ::getTableName() + " AS agentes"                                                                      + " " + ;
+                        "INNER JOIN " + SQLDireccionesModel():getTableName() + " AS direcciones ON agentes.uuid = direcciones.parent_uuid"   
 
 RETURN ( cSelect )
 
@@ -378,11 +378,9 @@ METHOD getColumns() CLASS SQLAgentesModel
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
-   
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(20) NOT NULL UNIQUE"             ,;
-                                             "default"   => {|| space( 20 )}})
+                                             "default"   => {|| space( 20 ) } } )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                         ,;
                                              "default"   => {|| space( 140 ) } }                      )

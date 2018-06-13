@@ -14,36 +14,6 @@ CLASS SQLClientesModel FROM SQLTercerosModel
    METHOD getClienteDireccionPrincipal( cBy, cId ) ;
                                  INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccionPrincipal( cBy, cId ) ) ) )
 
-   METHOD getAgenteUuidAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 3 ), SQLAgentesModel():getCodigoWhereUuid( uValue ) ) )
-
-   METHOD setAgenteUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", SQLAgentesModel():getUuidWhereCodigo( uValue ) ) )
-   
-   METHOD getCuentaRemesaUuidAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 3 ), SQLCuentasRemesaModel():getCodigoWhereUuid( uValue ) ) )
-
-   METHOD setCuentaRemesaUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", SQLCuentasRemesaModel():getUuidWhereCodigo( uValue ) ) )
-
-   METHOD getRutaUuidAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 4 ), SQLRutasModel():getCodigoWhereUuid( uValue ) ) )
-   
-   METHOD setRutaUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", SQLRutasModel():getUuidWhereCodigo( uValue ) ) )
-
-   METHOD getClienteGrupoUuidAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 4 ), SQLClientesGruposModel():getCodigoWhereUuid( uValue ) ) )
-   
-   METHOD setClienteGrupoUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", SQLClientesGruposModel():getUuidWhereCodigo( uValue ) ) )
-
-   METHOD getFormaPagoUuidAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 3 ), SQLFormaPagoModel():getCodigoWhereUuid( uValue ) ) )
-   
-   METHOD setFormaPagoUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", SQLFormaPagoModel():getUuidWhereCodigo( uValue ) ) )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -52,17 +22,17 @@ METHOD getColumns() CLASS SQLClientesModel
 
    ::super:getColumns()
 
-   hset( ::hColumns, "agente_uuid",                {  "create"    => "VARCHAR( 40 )"       ,;
-                                                      "default"   => {|| space( 40 ) } }   )
+   hset( ::hColumns, "agente_codigo",              {  "create"    => "VARCHAR( 20 )"       ,;
+                                                      "default"   => {|| space( 20 ) } }   )
 
-   hset( ::hColumns, "cuenta_remesa_uuid",         {  "create"    => "VARCHAR( 40 )"       ,;
-                                                      "default"   => {|| space( 40 ) } }   )
+   hset( ::hColumns, "cuenta_remesa_codigo",       {  "create"    => "VARCHAR( 20 )"       ,;
+                                                      "default"   => {|| space( 20 ) } }   )
 
-   hset( ::hColumns, "ruta_uuid",                  {  "create"    => "VARCHAR( 40 )"       ,;
-                                                      "default"   => {|| space( 40 ) } }   )
+   hset( ::hColumns, "ruta_codigo",                {  "create"    => "VARCHAR( 20 )"       ,;
+                                                      "default"   => {|| space( 20 ) } }   )
 
-   hset( ::hColumns, "cliente_grupo_uuid",         {  "create"    => "VARCHAR( 40 )"       ,;
-                                                      "default"   => {|| space( 40 ) } }   )
+   hset( ::hColumns, "cliente_grupo_codigo",       {  "create"    => "VARCHAR( 20 )"       ,;
+                                                      "default"   => {|| space( 20 ) } }   )
 
    hset( ::hColumns, "establecimiento",            {  "create"    => "VARCHAR( 100 )"      ,;
                                                       "default"   => {|| space( 100 ) } }  )
@@ -82,13 +52,13 @@ METHOD getColumns() CLASS SQLClientesModel
    hset( ::hColumns, "regimen_iva",                {  "create"    => "VARCHAR( 15 )"       ,;
                                                       "default"   => {|| space( 15 ) } }   )
 
-   hset( ::hColumns, "recargo_equivalencia",       {  "create"    => "BIT"                 ,;
+   hset( ::hColumns, "recargo_equivalencia",       {  "create"    => "TINYINT( 1 )"        ,;
                                                       "default"   => {|| .f. } }           )
 
    hset( ::hColumns, "porcentaje_irpf",            {  "create"    => "DECIMAL(19,6)"       ,;
                                                       "default"   => {|| 0 } }             )
 
-   hset( ::hColumns, "bloqueado",                  {  "create"    => "BIT"                 ,;
+   hset( ::hColumns, "bloqueado",                  {  "create"    => "TINYINT( 1 )"        ,;
                                                       "default"   => {|| .f. } }           )
 
    hset( ::hColumns, "fecha_bloqueo",              {  "create"    => "DATE"                ,;
@@ -97,19 +67,19 @@ METHOD getColumns() CLASS SQLClientesModel
    hset( ::hColumns, "causa_bloqueo",              {  "create"    => "VARCHAR( 100 )"      ,;
                                                       "default"   => {|| space( 100 ) } }  )
 
-   hset( ::hColumns, "excluir_fidelizacion",       {  "create"    => "BIT"                 ,;
+   hset( ::hColumns, "excluir_fidelizacion",       {  "create"    => "TINYINT( 1 )"        ,;
                                                       "default"   => {|| .f. } }           )
 
-   hset( ::hColumns, "no_editar_datos",            {  "create"    => "BIT"                 ,;
+   hset( ::hColumns, "no_editar_datos",            {  "create"    => "TINYINT( 1 )"        ,;
                                                       "default"   => {|| .f. } }           )
 
    hset( ::hColumns, "fecha_ultima_llamada",       {  "create"    => "DATE"                ,;
                                                       "default"   => {|| ctod( "" ) } }    )
 
-   hset( ::hColumns, "autorizado_venta_credito",   {  "create"    => "BIT"                 ,;
+   hset( ::hColumns, "autorizado_venta_credito",   {  "create"    => "TINYINT( 1 )"        ,;
                                                       "default"   => {|| .f. } }           )
 
-   hset( ::hColumns, "bloquear_riesgo_alcanzado",  {  "create"    => "BIT"                 ,;
+   hset( ::hColumns, "bloquear_riesgo_alcanzado",  {  "create"    => "TINYINT( 1 )"        ,;
                                                       "default"   => {|| .f. } }           )
 
    hset( ::hColumns, "fecha_peticion_riesgo",      {  "create"    => "DATE"                ,;
@@ -143,35 +113,36 @@ METHOD getInitialSelect() CLASS SQLClientesModel
                         "clientes.dni AS dni,"                                                                             + " " + ;
                         "clientes.establecimiento AS establecimiento,"                                                     + " " + ;
                         "clientes.fecha_ultima_llamada AS fecha_ultima_llamada,"                                           + " " + ;
-                        "clientes.forma_pago_uuid AS forma_pago_uuid,"                                                     + " " + ;
-                        "clientes.agente_uuid AS agente_uuid,"                                                             + " " + ;
-                        "clientes.cliente_grupo_uuid AS cliente_grupo_uuid,"                                               + " " + ;
-                        "clientes.cuenta_remesa_uuid AS cuenta_remesa_uuid,"                                               + " " + ;
-                        "clientes.ruta_uuid AS ruta_uuid,"                                                                 + " " + ;
+                        "clientes.forma_pago_codigo AS forma_pago_codigo,"                                                 + " " + ;
+                        "forma_pago.nombre AS nombre_forma_pago,"                                                          + " " + ;
+                        "clientes.agente_codigo AS agente_codigo,"                                                         + " " + ;
+                        "agentes.nombre AS nombre_agente,"                                                                 + " " + ;
+                        "clientes.cliente_grupo_codigo AS cliente_grupo_codigo,"                                           + " " + ;
+                        "clientes_grupos.nombre AS nombre_grupo_cliente,"                                                  + " " + ;
+                        "clientes.cuenta_remesa_codigo AS cuenta_remesa_codigo,"                                           + " " + ;
+                        "cuentas_remesa.nombre AS nombre_remesa,"                                                           + " " + ;
+                        "clientes.ruta_codigo AS ruta_codigo,"                                                             + " " + ;
+                        "rutas.nombre AS nombre_ruta,"                                                                     + " " + ;
                         "direcciones.direccion AS direccion,"                                                              + " " + ;
                         "direcciones.poblacion AS poblacion,"                                                              + " " + ;
                         "direcciones.provincia AS provincia,"                                                              + " " + ;
                         "direcciones.codigo_postal AS codigo_postal,"                                                      + " " + ;
                         "direcciones.telefono AS telefono,"                                                                + " " + ;
                         "direcciones.movil AS movil,"                                                                      + " " + ;
-                        "direcciones.email AS email,"                                                                      + " " + ;
-                        "RPAD( IFNULL( agentes.codigo, ''), 20, ' ' ) AS codigo_agente,"                                   + " " + ;
-                        "agentes.nombre AS nombre_agente,"                                                                 + " " + ;
-                        "RPAD( IFNULL( forma_pago.codigo, ''), 20, ' ' )  AS codigo_forma_pago,"                           + " " + ;
-                        "forma_pago.nombre AS nombre_forma_pago,"                                                          + " " + ;
-                        "RPAD( IFNULL( rutas.codigo, ''), 20, ' ' ) AS codigo_ruta,"                                       + " " + ;
-                        "rutas.nombre AS nombre_ruta,"                                                                     + " " + ;
-                        "RPAD( IFNULL( clientes_grupos.codigo, ''), 20, ' ' ) AS codigo_grupo_cliente,"                    + " " + ;
-                        "clientes_grupos.nombre AS nombre_grupo_cliente,"                                                  + " " + ;
-                        "RPAD( IFNULL( cuentas_remesa.codigo, ''), 20, ' ' ) AS codigo_remesa,"                            + " " + ;
-                        "cuentas_remesa.nombre AS nombre_remesa"                                                           + " " + ;
-                     "FROM  clientes"                                                                                      + " " + ;
-                        "LEFT JOIN direcciones ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"       + " " + ;
-                        "LEFT JOIN forma_pago ON clientes.forma_pago_uuid = forma_pago.uuid"                               + " " + ;
-                        "LEFT JOIN agentes ON clientes.agente_uuid = agentes.uuid"                                         + " " + ;
-                        "LEFT JOIN rutas ON clientes.ruta_uuid = rutas.uuid"                                               + " " + ;
-                        "LEFT JOIN clientes_grupos ON clientes.cliente_grupo_uuid = clientes_grupos.uuid"                  + " " + ;
-                        "LEFT JOIN cuentas_remesa ON clientes.cuenta_remesa_uuid = cuentas_remesa.uuid"                    + " "
+                        "direcciones.email AS email "                                                                      + " " + ;
+                     "FROM " + ::getTableName() + " AS clientes"                                                           + " " + ;
+                        "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                        + " " + ;  
+                           "ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"                          + " " + ;  
+                        "LEFT JOIN " + SQLFormaPagoModel():getTableName() + " forma_pago"                                  + " " + ;  
+                           "ON clientes.forma_pago_codigo = forma_pago.codigo"                                             + " " + ;
+                        "LEFT JOIN " + SQLAgentesModel():getTableName() + " agentes"                                       + " " + ;   
+                           "ON clientes.agente_codigo = agentes.codigo"                                                    + " " + ;
+                        "LEFT JOIN " + SQLRutasModel():getTableName() + " rutas"                                           + " " + ;
+                           "ON clientes.ruta_codigo = rutas.codigo"                                                        + " " + ;
+                        "LEFT JOIN " + SQLClientesGruposModel():getTableName() + " clientes_grupos"                        + " " + ;
+                           "ON clientes.cliente_grupo_codigo = clientes_grupos.codigo"                                     + " " + ;
+                        "LEFT JOIN " + SQLCuentasRemesaModel():getTableName() + " cuentas_remesa"                          + " " + ;
+                           "ON clientes.cuenta_remesa_codigo = cuentas_remesa.codigo"                    
 
 RETURN ( cSelect )
 
@@ -191,11 +162,10 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLClientesModel
                         "direcciones.telefono AS telefono,"                                                                + " " + ;
                         "direcciones.movil AS movil,"                                                                      + " " + ;
                         "direcciones.email AS email"                                                                       + " " + ;
-                     "FROM clientes"                                                                                       + " " + ;
-                        "LEFT JOIN direcciones ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"       + " " + ;
+                     "FROM " + ::getTableName() + " AS clientes"                                                           + " " + ;
+                        "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                        + " " + ;  
+                           "ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"                          + " " + ;
                      "WHERE clientes." + cBy + " = " + quoted( cId ) 
-
-   cSelect        := ::addEmpresaWhere( cSelect )    
 
 RETURN ( cSelect )
 

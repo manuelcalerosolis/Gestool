@@ -46,7 +46,7 @@ METHOD New( oController )
 
    ::oDialogView        := ImportadorMovimientosAlmacenLineasView():New( self )
 
-   ::oValidator         := ImportadorMovimientosAlmacenLineasValidator():New( self )
+   ::oValidator         := ImportadorDocumentosLineasValidator():New( self )
 
 RETURN ( Self )
 

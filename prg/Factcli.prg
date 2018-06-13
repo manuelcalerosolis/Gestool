@@ -5304,7 +5304,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
 
       REDEFINE GET aGet[ _NCOSDIV ] VAR aTmp[ _NCOSDIV ] ;
          ID       320 ;
-         WHEN     ( oUser():lAdministrador() .and. nMode != ZOOM_MODE );
+         WHEN     ( SQLAjustableModel():getRolVerPreciosCosto( Auth():rolUuid() ) .AND.  nMode != ZOOM_MODE );
          PICTURE  cPouDiv ;
          OF       fldGeneral ;
          IDSAY    321 ;
@@ -12060,7 +12060,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
          aGet[ _CALMLIN ]:lValid()
       end if   
 
-      if !lAccArticulo() .or. oUser():lNotCostos()
+      if !lAccArticulo() .or. SQLAjustableModel():getRolNoVerPreciosCosto( Auth():rolUuid() )
 
       if !empty( aGet ) .and. !empty( aGet[ _NCOSDIV ] )
          aGet[ _NCOSDIV ]:Hide()

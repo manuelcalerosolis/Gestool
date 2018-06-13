@@ -469,63 +469,41 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLRecibosModel FROM SQLBaseModel
+CLASS SQLRecibosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "factura_recibos"
 
-   METHOD getInitialSelect()
+   METHOD getGeneralSelect()
 
    METHOD getColumns()
 
-   METHOD getCodigoCajaAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oCajasController:oModel():getCodigoWhereUuid( uValue ) ) )
-
-   METHOD setCodigoCajaAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:oCajasController:oModel():getUuidWhereCodigo( uValue ) ) )
-
-   METHOD getClienteAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oClientesController:oModel():getCodigoWhereUuid( uValue ) ) )
-
-   METHOD setClienteAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:oClientesController:oModel():getUuidWhereCodigo( uValue ) ) )
-
-   METHOD getFormapagoAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oFormasPagosController:oModel():getCodigoWhereUuid( uValue ) ) )
-
-   METHOD setFormapagoAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:oFormasPagosController:oModel():getUuidWhereCodigo( uValue ) ) )
-   METHOD getAgenteAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oAgentesController:oModel():getCodigoWhereUuid( uValue ) ) )
-
-   METHOD setAgenteAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:oAgentesController:oModel():getUuidWhereCodigo( uValue ) ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect() CLASS SQLRecibosModel
+METHOD getGeneralSelect() CLASS SQLRecibosModel
 
-   local cSelect  := "SELECT factura_recibos.id,"                                                               + " " + ;
-                        "factura_recibos.uuid,"                                                                 + " " + ;
-                        "factura_recibos.parent_uuid,"                                                          + " " + ;
-                        "factura_recibos.expedicion,"                                                           + " " + ;
-                        "factura_recibos.vencimiento,"                                                          + " " + ;
-                        "factura_recibos.no_incluir_en_arqueo,"                                                 + " " + ;
-                        "factura_recibos.sesion,"                                                               + " " + ;
-                        "factura_recibos.importe,"                                                              + " " + ;
-                        "factura_recibos.cobro,"                                                                + " " + ;
-                        "factura_recibos.gastos,"                                                               + " " + ;
-                        "factura_recibos.cobrado,"                                                              + " " + ;
-                        "factura_recibos.fecha_cobro,"                                                          + " " + ;
-                        "factura_recibos.codigo_caja,"                                                          + " " + ;
-                        "factura_recibos.cliente,"                                                              + " " + ;
-                        "factura_recibos.agente,"                                                               + " " + ;
-                        "factura_recibos.concepto,"                                                             + " " + ;
-                        "factura_recibos.pagado_por,"                                                           + " " + ;
-                        "clientes.nombre AS nombre_cliente "                                                    + " " + ;  
-                     "FROM factura_recibos"                                                                     + " " + ;
-                        "INNER JOIN clientes ON factura_recibos.cliente = clientes.uuid"  + " "
+   local cSelect  := "SELECT factura_recibos.id,"                                                                                         + " " + ;
+                        "factura_recibos.uuid,"                                                                                           + " " + ;
+                        "factura_recibos.parent_uuid,"                                                                                    + " " + ;
+                        "factura_recibos.expedicion,"                                                                                     + " " + ;
+                        "factura_recibos.vencimiento,"                                                                                    + " " + ;
+                        "factura_recibos.no_incluir_en_arqueo,"                                                                           + " " + ;
+                        "factura_recibos.sesion,"                                                                                         + " " + ;
+                        "factura_recibos.importe,"                                                                                        + " " + ;
+                        "factura_recibos.cobro,"                                                                                          + " " + ;
+                        "factura_recibos.gastos,"                                                                                         + " " + ;
+                        "factura_recibos.cobrado,"                                                                                        + " " + ;
+                        "factura_recibos.fecha_cobro,"                                                                                    + " " + ;
+                        "factura_recibos.codigo_caja,"                                                                                    + " " + ;
+                        "factura_recibos.cliente,"                                                                                        + " " + ;
+                        "factura_recibos.agente,"                                                                                         + " " + ;
+                        "factura_recibos.concepto,"                                                                                       + " " + ;
+                        "factura_recibos.pagado_por,"                                                                                     + " " + ;
+                        "clientes.nombre AS nombre_cliente "                                                                              + " " + ;  
+                     "FROM " + ::getTableName() + " AS factura_recibos"                                                                   + " " + ;
+                        "INNER JOIN " + SQLClientesModel():getTableName() + " AS clientes ON factura_recibos.cliente = clientes.id"  
 
 RETURN ( cSelect )
 
@@ -563,23 +541,23 @@ METHOD getColumns() CLASS SQLRecibosModel
    hset( ::hColumns, "gastos",                     {  "create"    => "FLOAT( 15,3 )"                              ,;
                                                       "default"   => {||  0.000  } }                               )
 
-   hset( ::hColumns, "cobrado",                    {  "create"    => "BIT"                                        ,;
-                                                      "default"   => {|| .f. } }                                  )
+   hset( ::hColumns, "cobrado",                    {  "create"    => "TINYINT( 1 )"                                ,;
+                                                      "default"   => {|| 0 } }                                  )
 
    hset( ::hColumns, "fecha_cobro",                {  "create"    => "DATE"                                       ,;
                                                       "default"   => {|| ctod( "" ) } }                            )
 
    hset( ::hColumns, "codigo_caja",                {  "create"    => "VARCHAR( 20 )"                              ,;
-                                                      "default"   => {|| space( 40 ) } }                          )
+                                                      "default"   => {|| space( 20 ) } }                          )
 
    hset( ::hColumns, "cliente",                    {  "create"    => "VARCHAR( 20 )"                               ,;
-                                                      "default"   => {|| space( 40 ) } }                           )
+                                                      "default"   => {|| space( 20 ) } }                           )
 
    hset( ::hColumns, "forma_pago",                 {  "create"    => "VARCHAR( 40 )"                               ,;
                                                       "default"   => {|| space( 40 ) } }                           )
 
    hset( ::hColumns, "agente",                     {  "create"    => "VARCHAR( 20 )"                               ,;
-                                                      "default"   => {|| space( 40 ) } }                           )
+                                                      "default"   => {|| space( 20 ) } }                           )
 
    hset( ::hColumns, "concepto",                   {  "create"    => "VARCHAR( 200 )"                              ,;
                                                       "default"   => {|| space( 200 ) } }                          )

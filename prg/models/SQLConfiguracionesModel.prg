@@ -2,9 +2,22 @@
 #include "factu.ch" 
 #include "hdo.ch"
 
+
 //---------------------------------------------------------------------------//
 
-CLASS SQLConfiguracionesModel FROM SQLExportableModel
+CLASS SQLConfiguracionesCompanyModel FROM SQLConfiguracionesModel
+
+   METHOD getTableName()   INLINE ( Company():getTableName( ::cTableName ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLConfiguracionesModel FROM SQLBaseModel
 
    DATA aItems                                     INIT {}
 

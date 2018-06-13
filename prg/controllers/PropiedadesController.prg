@@ -178,8 +178,8 @@ METHOD Activate() CLASS PropiedadesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNN" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
@@ -271,7 +271,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PropiedadesValidator FROM SQLCompanyValidator
+CLASS PropiedadesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -311,7 +311,6 @@ METHOD getColumns() CLASS SQLPropiedadesModel
    hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                     "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
                                     "default"   => {|| space( 20 ) } }                       )
@@ -319,10 +318,9 @@ METHOD getColumns() CLASS SQLPropiedadesModel
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
                                     "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "color",    {  "create"    => "BIT"                                     ,;
-                                    "default"   => {|| .f. } }                               )
+   hset( ::hColumns, "color",    {  "create"    => "TINYINT( 1 )"                            ,;
+                                    "default"   => {|| 0 } }                               )
 
-   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 

@@ -68,7 +68,7 @@ CLASS SQLBaseModel
    METHOD setDatabase( oDb )                          INLINE ( ::oDatabase := oDb )
    METHOD getDatabase()                               INLINE ( if( empty( ::oDatabase ), getSQLDatabase(), ::oDatabase ) )
 
-   METHOD getTableName()                              INLINE ( ::cTableName )
+   METHOD getTableName()                              INLINE ( "gestool." + ::cTableName )
 
    // Columns-------------------------------------------------------------------
 
@@ -99,7 +99,7 @@ CLASS SQLBaseModel
    METHOD getInitialSelect()                          INLINE ( "SELECT * FROM " + ::getTableName() )
 
    METHOD getField( cField, cBy, cId )
-   METHOD getHash( cField, cBy, cId )
+   METHOD getHashWhere( cBy, cId )
 
    METHOD getIdSelect( id )
    METHOD getWhereSelect( cWhere )
@@ -202,8 +202,10 @@ CLASS SQLBaseModel
    METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
    METHOD updateFieldWhereId( id, cField, uValue )
+   METHOD updateBufferWhereId( id, hBuffer )
+
    METHOD updateFieldWhereUuid( uuid, cField, uValue )
-   METHOD updateFieldsWhereUuid( uuid, hFields )
+   METHOD updateBufferWhereUuid( uuid, hBuffer )
 
    // Metodos de consulta------------------------------------------------------
 
@@ -223,6 +225,10 @@ CLASS SQLBaseModel
    METHOD getCodigoWhereUuid( uuid )                  INLINE ( ::getColumnWhereUuid( uuid, 'codigo' ) )
 
    METHOD getColumnWhereId( id, cColumn ) 
+
+   METHOD getColumnWhereCodigo( codigo, cColumn ) 
+   METHOD getNombreWhereCodigo( codigo )              INLINE ( ::getColumnWhereCodigo( codigo, 'nombre' ) )
+   METHOD getCodigoWhereCodigo( codigo )              INLINE ( ::getColumnWhereCodigo( codigo, 'codigo' ) )
 
    METHOD getArrayColumns( cColumn ) 
    METHOD getArrayNombres( cColumn )                  INLINE ( ::getArrayColumns( 'nombre' ) )
@@ -334,8 +340,6 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addGroupBy( cSQLSelect )
 
-   logwrite( cSQLSelect )
-
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
@@ -410,7 +414,7 @@ METHOD addEmpresaWhere( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cTableName + ".empresa_codigo = " + toSQLString( Company():Codigo() )
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".empresa_codigo = " + toSQLString( Company():Codigo() )
 
 RETURN ( cSQLSelect )
 
@@ -435,7 +439,7 @@ METHOD addParentUuidWhere( cSQLSelect )
    uuid           := ::oController:getSenderController():getUuid() 
 
    if !empty( uuid )
-      cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::cTableName + ".parent_uuid = " + quoted( uuid )
+      cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".parent_uuid = " + quoted( uuid )
    end if 
 
 RETURN ( cSQLSelect )
@@ -527,32 +531,33 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getCreateTableSentence()
+METHOD getCreateTableSentence( cDatabaseMySQL )
    
    local cSQLCreateTable 
 
-   cSQLCreateTable         := "CREATE TABLE " + ::oDatabase:cDatabaseMySQL + "." + ::cTableName + " ( "
+   if empty( cDatabaseMySQL )
+      msgstop( "Error al crear la tabla " + ::getTableName() + " no se proporciono el nombre de la base de datos" )
+      RETURN ( "" )
+   end if 
+
+   cSQLCreateTable         := "CREATE TABLE " + ::getTableName() + " ( "
 
    hEval( ::getColumns(),;
       {| k, hash | if( hhaskey( hash, "create" ), cSQLCreateTable += k + " " + hget( hash, "create" ) + ", ", ) } )
    
    if !empty( ::cConstraints )
-
       cSQLCreateTable      += ::cConstraints + " )"
-
    else
-
       cSQLCreateTable      := chgAtEnd( cSQLCreateTable, ' )', 2 )
-
    end if
 
-   //msgInfo( cSQLCreateTable, "cSQLCreateTable " + ::cTableName, "Create sentence" ) 
+   // msgInfo( cSQLCreateTable, "cSQLCreateTable " + ::getTableName(), "Create sentence" ) 
 
 RETURN ( cSQLCreateTable )
 
 //---------------------------------------------------------------------------//
 
-METHOD getAlterTableSentences( aSchemaColumns ) 
+METHOD getAlterTableSentences( cDatabaseMySQL, aSchemaColumns ) 
 
    local aAlter
    local hColumn
@@ -563,27 +568,29 @@ METHOD getAlterTableSentences( aSchemaColumns )
       RETURN ( self )
    end if 
 
-   aAlter         := {}
-   hColumns       := ::getTableColumns()
+   DEFAULT cDatabaseMySQL  := ::oDatabase:cDatabaseMySQL
+
+   aAlter                  := {}
+   hColumns                := ::getTableColumns()
 
    for each hColumn in aSchemaColumns
 
-      nPosition   := ascan( hb_hkeys( hColumns ), hget( hColumn, "COLUMN_NAME" ) )
+      nPosition            := ascan( hb_hkeys( hColumns ), hget( hColumn, "COLUMN_NAME" ) )
       
       if nPosition != 0
          hb_hdelat( hColumns, nPosition )
       else 
-         aadd( aAlter, "ALTER TABLE " + ::oDatabase:cDatabaseMySQL + "." + ::cTableName + " DROP COLUMN " + hget( hColumn, "COLUMN_NAME" ) )
+         aadd( aAlter, "ALTER TABLE " + ::getTableName() + " DROP COLUMN " + hget( hColumn, "COLUMN_NAME" ) )
       end if
 
    next
 
    if !empty( hColumns )
-      heval( hColumns, {| k, hash | aadd( aAlter, "ALTER TABLE " + ::cTableName + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
+      heval( hColumns, {| k, hash | aadd( aAlter, "ALTER TABLE " + ::getTableName() + " ADD COLUMN " + k + " " + hget( hash, "create" ) ) } )
    end if 
 
    if !empty( hColumns )
-      msgInfo( hb_valtoexp( hColumns ), "getAlterTableSentences " + ::cTableName, "Alter table" )
+      msgInfo( hb_valtoexp( hColumns ), "getAlterTableSentences " + ::getTableName(), "Alter table" )
    end if 
 
 RETURN ( aAlter )
@@ -592,7 +599,7 @@ RETURN ( aAlter )
 
 METHOD getDropTableSentence()
    
-RETURN ( "DROP TABLE " + ::cTableName )
+RETURN ( "DROP TABLE " + ::getTableName() )
 
 //---------------------------------------------------------------------------//
 
@@ -646,6 +653,10 @@ METHOD getInsertSentence( hBuffer, lIgnore )
 
    DEFAULT hBuffer   := ::hBuffer
    DEFAULT lIgnore   := .f.
+   
+   if !hb_ishash( hBuffer )
+      RETURN ( nil )
+   end if 
 
    ::fireEvent( 'getingInsertSentence' )   
 
@@ -657,7 +668,7 @@ METHOD getInsertSentence( hBuffer, lIgnore )
       ::cSQLInsert   += "IGNORE "
    end if 
 
-   ::cSQLInsert      += "INTO " + ::cTableName + " ( "
+   ::cSQLInsert      += "INTO " + ::getTableName() + " ( "
 
    hEval( hBuffer, {| k, v | if( k != ::cColumnKey, ::cSQLInsert += k + ", ", ) } )
 
@@ -679,11 +690,15 @@ METHOD getUpdateSentence( hBuffer )
 
    DEFAULT hBuffer      := ::hBuffer
 
+   if !hb_ishash( hBuffer )
+      RETURN ( nil )
+   end if 
+
    ::fireEvent( 'getingUpdateSentence' )   
 
    hBuffer              := ::setUpdatedTimeStamp( hBuffer )
 
-   ::cSQLUpdate         := "UPDATE " + ::cTableName + " SET "
+   ::cSQLUpdate         := "UPDATE " + ::getTableName() + " SET "
 
    for each uValue in hBuffer
       if ( uValue:__enumkey() != ::cColumnKey )
@@ -709,6 +724,10 @@ METHOD getInsertOnDuplicateSentence( hBuffer, lDebug )
    DEFAULT hBuffer   := ::hBuffer
    DEFAULT lDebug    := .f.
 
+   if !hb_ishash( hBuffer )
+      RETURN ( nil )
+   end if 
+
    hBuffer           := ::setUpdatedTimeStamp( hBuffer )
    
    cSQLUpdate        := ::getInsertSentence( hBuffer ) + " "
@@ -731,7 +750,7 @@ RETURN ( cSQLUpdate )
 
 METHOD getDeleteSentenceByUuid( uUuid )
 
-   local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+   local cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
                            "WHERE uuid IN ( " 
 
    if hb_isarray( uUuid )
@@ -749,7 +768,7 @@ RETURN ( cSentence )
 
 METHOD getDeleteSentenceWhereParentUuid( aUuid )
 
-   local cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+   local cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
                            "WHERE parent_uuid IN ( " 
 
    aeval( aUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
@@ -768,7 +787,7 @@ METHOD getDeleteSentenceById( aIds )
       aIds     := { aIds }
    end if 
 
-   cSentence   := "DELETE FROM " + ::cTableName + space( 1 ) + ;
+   cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
                      "WHERE " + ::cColumnKey + " IN ( "
    
    aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
@@ -781,7 +800,7 @@ RETURN ( cSentence )
 
 METHOD aUuidToDelete( aParentsUuid )
 
-   local cSentence   := "SELECT uuid FROM " + ::cTableName + space( 1 ) + ;
+   local cSentence   := "SELECT uuid FROM " + ::getTableName() + " " + ;
                            "WHERE parent_uuid IN ( " 
 
    aeval( aParentsUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
@@ -1182,7 +1201,13 @@ RETURN ( hset( ::hBuffer, cColumn, uValue ) )
 
 METHOD updateFieldWhereId( id, cField, uValue )
 
-   local cSql  := "UPDATE " + ::cTableName + " "
+   local cSql  
+
+   if !hb_isnumeric( id ) .or. empty( id )
+      RETURN ( nil )
+   end if 
+
+   cSql        := "UPDATE " + ::getTableName() + " "
    cSql        +=    "SET " + cField + " = " + toSqlString( uValue ) + " "
    cSql        +=    "WHERE id = " + toSqlString( id )
 
@@ -1190,9 +1215,36 @@ RETURN ( ::getDatabase():Exec( cSql ) )
 
 //----------------------------------------------------------------------------//
 
+METHOD updateBufferWhereId( id, hBuffer )
+
+   local cSql 
+   local uValue
+
+   if !hb_isnumeric( id ) .or. empty( id )
+      RETURN ( nil )
+   end if 
+
+   if !hb_ishash( hBuffer )
+      RETURN ( nil )
+   end if 
+   
+   cSQL        := "UPDATE " + ::getTableName() + " SET "
+
+   for each uValue in hBuffer
+      cSql     += uValue:__enumKey() + " = " + toSQLString( ::setAttribute( uValue:__enumKey(), uValue ) ) + ", "
+   next
+
+   cSql        := chgAtEnd( cSql, '', 2 ) + " "
+
+   cSql        +=    "WHERE id = " + toSqlString( id )
+
+RETURN ( ::getDatabase():Exec( cSql ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD updateFieldWhereUuid( uuid, cField, uValue )
 
-   local cSql  := "UPDATE " + ::cTableName + " "
+   local cSql  := "UPDATE " + ::getTableName() + " "
    cSql        +=    "SET " + cField + " = " + toSqlString( uValue )    + " "
    cSql        +=    "WHERE uuid = " + toSqlString( uuid )
 
@@ -1200,14 +1252,14 @@ RETURN ( ::getDatabase():Exec( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD updateFieldsWhereUuid( uuid, hFields )
+METHOD updateBufferWhereUuid( uuid, hBuffer )
 
    local cSql  
    local uValue
 
-   cSql           := "UPDATE " + ::cTableName + " SET "
+   cSql           := "UPDATE " + ::getTableName() + " SET "
 
-   for each uValue in hFields
+   for each uValue in hBuffer
       cSql        += uValue:__enumKey() + " = " + toSQLString( uValue ) + ", "
    next
 
@@ -1222,18 +1274,20 @@ RETURN ( ::getDatabase():Exec( cSql ) )
 METHOD getField( cField, cBy, cId )
 
    local cSql  := "SELECT " + cField                                    + " "                              
-   cSql        +=    "FROM " + ::cTableName                             + " "
+   cSql        +=    "FROM " + ::getTableName()                         + " "
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
+   cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():getValue( cSql ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD getHash( cBy, cId )
+METHOD getHashWhere( cBy, cId )
 
    local cSql  := "SELECT * " 
-   cSql        +=    "FROM " + ::cTableName                             + " "
+   cSql        +=    "FROM "+ ::getTableName()                          + " "
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
+   cSQL        +=    "LIMIT 1"
 
 RETURN ( atail( ::getDatabase():selectTrimedFetchHash( cSql ) ) )
 
@@ -1304,6 +1358,17 @@ METHOD getColumnWhereUuid( uuid, cColumn )
 RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD getColumnWhereCodigo( uuid, cColumn ) 
+
+   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
+                        "WHERE codigo = " + quoted( uuid )              + " " + ;
+                        "LIMIT 1"
+
+RETURN ( ::getDatabase():getValue( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD getArrayColumns( cColumn ) 
 

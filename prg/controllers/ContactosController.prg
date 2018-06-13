@@ -354,7 +354,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLContactosModel FROM SQLBaseModel
+CLASS SQLContactosModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "contactos"
 

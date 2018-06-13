@@ -9,6 +9,8 @@ CLASS SQLAjustableModel FROM SQLBaseModel
 
    DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( ajuste_uuid, ajustable_tipo, ajustable_uuid )"
 
+   METHOD getAjusteTableName()   INLINE ( SQLAjustesModel():getTableName() )
+
    METHOD getColumns()
 
    METHOD set( cAjusteUuid, uAjusteValue, cAjustableTipo, cAjustableUuid )
@@ -76,8 +78,6 @@ CLASS SQLAjustableModel FROM SQLBaseModel
 
    METHOD getRolCambiarCampos( cUuid )                                  INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_campos', .t. ) )   
    METHOD getRolNoCambiarCampos( cUuid )                                INLINE ( !::getRolCambiarCampos( cUuid ) )
-
-   // METHOD assertUsuarioFavoritos( cUuid )                               INLINE ( ::getValue( cUuid, 'favoritos', uAjusteValue, 'usuarios', cAjustableUuid ) )
 
    METHOD setEmpresaDelegacionDefecto( uAjusteValue, cAjustableUuid )   INLINE ( ::setValue( 'delegacion_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getEmpresaDelegacionDefecto( cUuid )                          INLINE ( ::getValue( cUuid, 'empresas', 'delegacion_defecto', space( 40 ) ) )   
@@ -159,16 +159,16 @@ RETURN ( ::set( cAjusteUuid, uAjusteValue, cAjustableTipo, cAjustableUuid ) )
 METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
 
    local uValue
-   local cSentence   
+   local cSentence 
 
    if empty( cUuid ) .or. empty( cTipo ) .or. empty( cAjuste )
       RETURN ( uDefault )
    end if 
 
    cSentence         := "SELECT ajustables.ajuste_valor "
-   cSentence         +=    "FROM ajustables AS ajustables "
-   cSentence         += "INNER JOIN ajustes AS ajustes ON ajustes.uuid = ajustables.ajuste_uuid "
-   cSentence         += "WHERE ajustes.ajuste = " + quoted( cAjuste ) + " "
+   cSentence         +=    "FROM " + ::getTableName() + " AS ajustables "
+   cSentence         += "INNER JOIN " + ::getAjusteTableName() + " AS ajustes ON ajustes.ajuste = " + quoted( cAjuste ) + " "
+   cSentence         += "WHERE ajustables.ajuste_uuid = ajustes.uuid "
    cSentence         +=    "AND ajustables.ajustable_tipo = " + quoted( cTipo ) + " "
    cSentence         +=    "AND ajustables.ajustable_uuid = " + quoted( cUuid ) 
 
@@ -184,10 +184,12 @@ RETURN ( uDefault )
 
 METHOD getLogic( cUuid, cTipo, cajuste, lDefault )
 
-   local uValue   := ::getValue( cUuid, cTipo, cajuste, lDefault )
+   local uValue
+
+   uValue   := ::getValue( cUuid, cTipo, cajuste, lDefault )
 
    if hb_ischar( uValue ) 
-      RETURN ( uValue == '1' ) 
+      RETURN ( alltrim( uValue ) == '1' ) 
    endif
 
 RETURN ( lDefault )
@@ -208,10 +210,13 @@ RETURN ( ::getUsuarioEmpresaEnUso( cUuid ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-CLASS AjustableRepository FROM SQLBaseRepository
+CLASS SQLAjustableCompanyModel FROM SQLAjustableModel
 
-   METHOD getTableName()      INLINE ( SQLAjustableModel():getTableName() ) 
+   METHOD getTableName()         INLINE ( Company():getTableName( ::cTableName ) )
+
+   METHOD getAjusteTableName()   INLINE ( SQLAjustesCompanyModel():getTableName() )
 
 END CLASS
 

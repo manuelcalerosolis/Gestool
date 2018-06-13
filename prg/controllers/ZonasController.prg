@@ -129,7 +129,7 @@ METHOD Activate() CLASS ZonasView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNN" ;
       ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 

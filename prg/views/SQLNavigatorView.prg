@@ -19,7 +19,7 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    DATA oVerticalSplitter
    DATA oHorizontalSplitter
-   
+
    METHOD New( oController )
    METHOD End()
 
@@ -54,6 +54,8 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
    // Splitters----------------------------------------------------------------
 
    METHOD CreateSplitters()
+
+   METHOD validMDIChild()
 
 ENDCLASS
 
@@ -105,12 +107,6 @@ METHOD Activate()
 
    ::getBrowseView():ActivateMDI( ::getWindow(), dfnSplitterHeight + dfnSplitterWidth, dfnTreeViewWidth + dfnSplitterWidth, ::oMdiChild:nRight - ::oMdiChild:nLeft, ::oMdiChild:nBottom - ::oMdiChild:nTop - dfnSplitterHeight - 162 )
 
-   ::getBrowseView():restoreStateFromModel() 
-
-   ::getBrowseView():gotoIdFromModel()
-
-   ::getBrowseView():setColumnOrder() 
-
    // Splitters----------------------------------------------------------------
 
    ::CreateSplitters()
@@ -120,9 +116,18 @@ METHOD Activate()
    // Eventos------------------------------------------------------------------
 
    ::oMdiChild:bKeyDown    := {|nKey, nFlags| ::keyDown( nKey, nFlags ) }
+   ::oMdiChild:bValid      := {|| ::validMDIChild() }
    ::oMdiChild:bPostEnd    := {|| ::End() }
 
 RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD validMDIChild()
+
+   ::oController:saveState()
+
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 

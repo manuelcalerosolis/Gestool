@@ -146,9 +146,9 @@ END CLASS
 
 METHOD Activate() CLASS SesionesView
 
-   /*DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CAJAS" ;
-      TITLE       ::LblTitle() + "cajas"
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "SESION_ABRIR" ;
+      TITLE       ::LblTitle() + "sesiones"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -163,25 +163,25 @@ METHOD Activate() CLASS SesionesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
+      PICTURE     "@!NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   /*REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_sesion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          120 ;
       SPINNER  ;
       MIN 0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-       ::redefineExplorerBar( 200 )
+       ::redefineExplorerBar( 200 )*/
 
    // Botones caja -------------------------------------------------------
 
@@ -201,11 +201,11 @@ REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_sesion" ] ;
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ::oDialog:bStart  := {|| ::StartActivate() }
+   /*::oDialog:bStart  := {|| ::StartActivate() }*/
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBitmap:end()*/
+   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -242,7 +242,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLSesionesModel FROM SQLBaseModel
+CLASS SQLSesionesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cajas_sesiones"
 

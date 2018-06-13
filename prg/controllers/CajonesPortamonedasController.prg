@@ -210,7 +210,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCajonesPortamonedasModel FROM SQLBaseModel
+CLASS SQLCajonesPortamonedasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cajones_portamonedas"
 

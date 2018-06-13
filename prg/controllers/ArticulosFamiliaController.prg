@@ -245,7 +245,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
@@ -580,7 +580,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosFamiliaValidator FROM SQLCompanyValidator
+CLASS ArticulosFamiliaValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -627,7 +627,7 @@ CLASS SQLArticulosFamiliaModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getPrimeraPropiedadUuidAttribute( uuid ) ; 
+   /*METHOD getPrimeraPropiedadUuidAttribute( uuid ) ; 
                                  INLINE ( if( empty( uuid ), space( 18 ), SQLPropiedadesModel():getCodigoWhereUuid( uuid ) ) )
 
    METHOD setPrimeraPropiedadUuidAttribute( codigo ) ;
@@ -637,7 +637,7 @@ CLASS SQLArticulosFamiliaModel FROM SQLCompanyModel
                                  INLINE ( if( empty( uuid ), space( 3 ), SQLComentariosModel():getCodigoWhereUuid( uuid ) ) )
 
    METHOD setComentarioUuidAttribute( codigo ) ;
-                                 INLINE ( if( empty( codigo ), "", SQLComentariosModel():getUuidWhereCodigo( codigo ) ) )
+                                 INLINE ( if( empty( codigo ), "", SQLComentariosModel():getUuidWhereCodigo( codigo ) ) )*/
 
    METHOD setFamiliaUuidAttribute( value )
 
@@ -657,8 +657,6 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
 
    hset( ::hColumns, "familia_uuid",                  {  "create"    => "VARCHAR( 40 )"                           ,;
                                                          "default"   => {|| space( 40 ) } }                       )
-
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",                        {  "create"    => "VARCHAR( 20 )"                           ,;
                                                          "default"   => {|| space( 20 ) } }                       )
@@ -690,8 +688,6 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
    hset( ::hColumns, "mostrar_ventana_comentarios",   {  "create"    => "BIT"                                     ,;
                                                          "default"   => {|| .f. } }                               )
 
-   ::getTimeStampColumns()
-
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -715,9 +711,9 @@ METHOD getRowSetWhereFamiliaUuid( familiaUuid )
    local cSQL      
    local oHashList
 
-   cSQL                 := "SELECT uuid, nombre FROM " + ::cTableName            + " "
+   cSQL                 := "SELECT uuid, nombre FROM " + ::getTableName()            + " "
    cSQL                 +=    "WHERE familia_uuid = " + quoted( familiaUuid )    + " "
-   cSQL                 +=    "AND empresa_uuid = " + quoted( Company():Uuid() ) + " " 
+   /*cSQL                 +=    "AND empresa_codigo = " + quoted( Company():Codigo() ) + " " */
 
    oHashList            := getSQLDatabase():selectHashList( cSQL ) 
 

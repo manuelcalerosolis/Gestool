@@ -179,7 +179,7 @@ METHOD Activate() CLASS ImpuestosEspecialesView
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -276,7 +276,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLImpuestosEspecialesModel FROM SQLBaseModel
+CLASS SQLImpuestosEspecialesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "impuestos_especiales"
 
@@ -306,7 +306,7 @@ METHOD getColumns() CLASS SQLImpuestosEspecialesModel
    hset( ::hColumns, "subcuenta",         {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
-   hset( ::hColumns, "aplicar",           {  "create"    => "BIT"                                     ,;
+   hset( ::hColumns, "aplicar",           {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| .f. } }                               )
 
 RETURN ( ::hColumns )

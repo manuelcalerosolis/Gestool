@@ -99,7 +99,7 @@ METHOD addColumns() CLASS BalanzasBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -175,7 +175,7 @@ METHOD Activate() CLASS BalanzasView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNN" ;
       ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
@@ -318,7 +318,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLBalanzasModel FROM SQLBaseModel
+CLASS SQLBalanzasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "balanzas"
 
@@ -366,8 +366,8 @@ METHOD getColumns() CLASS SQLBalanzasModel
    hset( ::hColumns, "entubamiento",      {  "create"    => "VARCHAR( 1 )"                          ,;
                                              "default"   => {|| space( 1 ) } }                       )
 
-   hset( ::hColumns, "abrir_puerto",      {  "create"    => "BIT"                                     ,;
-                                             "default"   => {|| .f. } }                               )
+   hset( ::hColumns, "abrir_puerto",      {  "create"    => "TINYINT( 1 )"                            ,;
+                                             "default"   => {|| 0 } }                               )
 
 
 

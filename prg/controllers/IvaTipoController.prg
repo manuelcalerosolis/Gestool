@@ -189,7 +189,7 @@ METHOD Activate() CLASS TipoIvaView
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -284,7 +284,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLTiposIvaModel FROM SQLBaseModel
+CLASS SQLTiposIvaModel FROM SQLCompanyModel
 
    DATA cTableName                              INIT "tipos_iva"
 

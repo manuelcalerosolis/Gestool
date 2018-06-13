@@ -141,7 +141,7 @@ METHOD redefineGeneral() CLASS ClientesView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     ( "@! NNNNNNNNNNNN" ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
@@ -169,15 +169,13 @@ METHOD redefineGeneral() CLASS ClientesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "excluir_fidelizacion" ] ;
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "excluir_fidelizacion" ] ;
       ID          150 ;
-      IDSAY       152 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "no_editar_datos" ] ;
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "no_editar_datos" ] ;
       ID          160 ;
-      IDSAY       162 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
@@ -196,19 +194,19 @@ RETURN ( self )
 
 METHOD redefineComercial() CLASS ClientesView
 
-   ::oController:oCuentasRemesasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_remesa_uuid" ] ) )
+   ::oController:oCuentasRemesasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_remesa_codigo" ] ) )
    ::oController:oCuentasRemesasController:oGetSelector:Activate( 110, 111, ::oFolder:aDialogs[2] )
 
-   ::oController:oRutasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_uuid" ] ) )
+   ::oController:oRutasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_codigo" ] ) )
    ::oController:oRutasController:oGetSelector:Activate( 120, 121, ::oFolder:aDialogs[2] )
 
-   ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_uuid" ] ) )
+   ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
    ::oController:oAgentesController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[2] )
 
-   ::oController:oClientesGruposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_grupo_uuid" ] ) )
+   ::oController:oClientesGruposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_grupo_codigo" ] ) )
    ::oController:oClientesGruposController:oGetSelector:Activate( 140, 141, ::oFolder:aDialogs[2] )
 
-   ::oController:oFormasPagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_uuid" ] ) )
+   ::oController:oFormasPagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
    ::oController:oFormasPagoController:oGetSelector:Activate( 150, 151, ::oFolder:aDialogs[2] )
 
    REDEFINE GET ::oController:oModel:hBuffer[ "primer_dia_pago" ] ;

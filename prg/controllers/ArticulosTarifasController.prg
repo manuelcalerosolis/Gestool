@@ -89,13 +89,13 @@ RETURN ( ::Super:Delete( aSelectedRecno ) )
 
 METHOD insertPreciosWhereTarifa() CLASS ArticulosTarifasController
 
-   local uuidTarifa  := hget( ::oModel:hBuffer, "uuid" )
+   local codigoTarifa  := hget( ::oModel:hBuffer, "codigo" )
 
-   if empty( uuidTarifa )
+   if empty( codigoTarifa )
       RETURN ( Self )
    end if 
 
-   SQLArticulosPreciosModel():insertPreciosWhereTarifa( uuidTarifa )
+   SQLArticulosPreciosModel():insertPreciosWhereTarifa( codigoTarifa )
 
 RETURN ( Self )
 
@@ -158,17 +158,6 @@ METHOD addColumns() CLASS ArticulosTarifasBrowseView
       :nHeadStrAlign       := 1
    end with
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'iva_incluido'
-      :cHeader             := 'IVA incluido'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'iva_incluido' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nDataStrAlign       := 1
-      :nHeadStrAlign       := 1
-      :SetCheck( { "Sel16", "Nil16" } )
-   end with
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -210,7 +199,7 @@ METHOD Activate() CLASS ArticulosTarifasView
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -223,12 +212,6 @@ METHOD Activate() CLASS ArticulosTarifasView
       ID          120 ;
       SPINNER ;
       PICTURE     "@E 9999.9999" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-    REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "iva_incluido" ] ;
-      ID          130 ;
-      IDSAY       132 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
@@ -270,7 +253,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTarifasValidator FROM SQLCompanyValidator
+CLASS ArticulosTarifasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -297,7 +280,7 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "articulos_tarifas"
 
-   DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( empresa_codigo, codigo )"
+   DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( codigo )"
 
    METHOD getColumns()
 
@@ -315,10 +298,8 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
    hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                                 "default"   => {|| win_uuidcreatestring() } }            )
    
-   ::getEmpresaColumns()
-
-   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 20 )"                            ,;
-                                                "default"   => {|| space( 20 ) } }                        )
+   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 20 )"                           ,;
+                                                "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
                                                 "default"   => {|| space( 200 ) } }                      )
@@ -326,13 +307,9 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
    hset( ::hColumns, "margen_predefinido",   {  "create"    => "FLOAT( 8,4 )"                            ,;
                                                 "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "iva_incluido",         {  "create"    => "BIT"                                     ,;
-                                                "default"   => {|| .f. } }                               )
+   hset( ::hColumns, "sistema",              {  "create"    => "TINYINT ( 1 )"                           ,;
+                                                "default"   => {|| "0" } }                               )
 
-   hset( ::hColumns, "sistema",              {  "create"    => "BIT"                                     ,;
-                                                "default"   => {|| .f. } }                               )
-
-   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 
@@ -342,10 +319,10 @@ METHOD getInsertArticulosTarifasSentence()
 
    local cSentence 
 
-   cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
-   cSentence  +=    "( empresa_codigo, usuario_codigo, uuid, codigo, nombre, sistema ) "
-   cSentence  += "SELECT empresas.codigo, '999', UUID(), '1', 'General', '1' "
-   cSentence  +=    "FROM empresas"
+   cSentence   := "INSERT IGNORE INTO " + ::getTableName() + " "
+   cSentence   +=    "( uuid, codigo, nombre, sistema ) "
+   cSentence   += "VALUES "
+   cSentence   +=    "( UUID(), '1', 'General', '1' )"
 
 RETURN ( cSentence )
 

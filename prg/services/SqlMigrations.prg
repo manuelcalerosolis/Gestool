@@ -3,47 +3,43 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS SQLMigrations
+CLASS SQLBaseMigrations
 
    DATA aModels                           INIT {}
 
    DATA aRepositories                     INIT {}
 
-   METHOD Run()
-   
+   METHOD Run( cDatabaseMySQL ) 
+
    METHOD createDatabase()
 
-   METHOD addModels()
+   METHOD addModels()                     VIRTUAL
 
-   METHOD checkModels()   
+   METHOD checkValues()                   VIRTUAL
 
-   METHOD checkModel( oModel )
+   METHOD checkModels()                   
 
-   METHOD addRepositories()
+   METHOD checkModel( oModel ) 
 
-   METHOD checkRepositories()
+   METHOD checkRepositories()      
 
-   METHOD checkRepository( oRepository )
+   METHOD checkRepository( oRepository ) 
 
-   METHOD checkValues()
-
-   METHOD getSchemaColumns( oModel )    
+   METHOD getSchemaColumns( cDatabaseMySQL, cTableName )    
 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD Run() 
+METHOD Run( cDatabaseMySQL ) CLASS SQLBaseMigrations
 
-   ::createDatabase()
+   DEFAULT cDatabaseMySQL  := 'Gestool'
+
+   ::createDatabase( cDatabaseMySQL )
 
    ::addModels()
 
-   ::checkModels()
-
-   ::addRepositories()
-
-   // ::checkRepositories()
+   ::checkModels( cDatabaseMySQL )
 
    ::checkValues()
 
@@ -51,43 +47,45 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD createDatabase()
+METHOD createDatabase( cDatabaseMySQL ) CLASS SQLBaseMigrations
 
-   getSQLDatabase():oConexion:Exec( "CREATE DATABASE IF NOT EXISTS " + getSQLDatabase():cDatabaseMySQL + ";" )
+   if empty( cDatabaseMySQL )
+      RETURN ( self )
+   end if 
 
-   getSQLDatabase():oConexion:Exec( "USE " + getSQLDatabase():cDatabaseMySQL + ";" )
-       
+   getSQLDatabase():ExecWithOutParse( "CREATE DATABASE IF NOT EXISTS " + cDatabaseMySQL + ";" )
+   
 RETURN ( self )    
 
 //----------------------------------------------------------------------------//
 
-METHOD checkModels()
+METHOD checkModels( cDatabaseMySQL ) CLASS SQLBaseMigrations
 
-RETURN ( aeval( ::aModels, {|oModel| ::checkModel( oModel ) } ) )
+RETURN ( aeval( ::aModels, {|oModel| ::checkModel( cDatabaseMySQL, oModel ) } ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD checkModel( oModel )
+METHOD checkModel( cDatabaseMySQL, oModel ) CLASS SQLBaseMigrations
 
-   local aSchemaColumns    := ::getSchemaColumns( oModel )
+   local aSchemaColumns    := ::getSchemaColumns( cDatabaseMySQL, oModel:cTableName )
 
    if empty( aSchemaColumns )
-      getSQLDatabase():Exec( oModel:getCreateTableSentence() )
+      getSQLDatabase():Exec( oModel:getCreateTableSentence( cDatabaseMySQL ) )
    else
-      getSQLDatabase():Execs( oModel:getAlterTableSentences( aSchemaColumns ) )
+      getSQLDatabase():Execs( oModel:getAlterTableSentences( cDatabaseMySQL, aSchemaColumns ) )
    end if 
   
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD checkRepositories()
+METHOD checkRepositories() CLASS SQLBaseMigrations
 
 RETURN ( aeval( ::aRepositories, {|oRepository| ::checkRepository( oRepository ) } ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD checkRepository( oRepository )
+METHOD checkRepository( oRepository ) CLASS SQLBaseMigrations
 
    getSQLDatabase():Execs( oRepository:getSQLFunctions() )
 
@@ -95,39 +93,33 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD checkValues()
-
-   getSQLDatabase():Exec( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )
-
-   getSQLDatabase():Exec( SQLRolesModel():getInsertRolesSentence() )
-
-   getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() ) 
-
-   getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
-
-   getSQLDatabase():Exec( SQLArticulosTarifasModel():getInsertArticulosTarifasSentence() )
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD getSchemaColumns( oModel )
+METHOD getSchemaColumns( cDatabaseMySQL, cTableName ) CLASS SQLBaseMigrations
 
    local oError
    local cSentence
    local oStatement
    local aSchemaColumns
 
+   if empty( cDatabaseMySQL )
+      msgstop( "No se especifico la base de datos" )
+      RETURN ( nil )  
+   end if  
+   
+   if empty( cTableName )
+      msgstop( "No se especifico la tabla" )
+      RETURN ( nil )  
+   end if  
+
    if empty( getSQLDatabase():oConexion )
       msgstop( "No hay conexiones disponibles" )
       RETURN ( nil )  
    end if  
 
-   cSentence               := "SELECT COLUMN_NAME "                              +;
-                                 "FROM INFORMATION_SCHEMA.COLUMNS "              +;
-                                 "WHERE table_name = " + quoted( oModel:cTableName ) + " " +;
-                                    "AND table_schema = " + quoted( getSQLDatabase():cDatabaseMySQL ) 
-
+   cSentence               := "SELECT COLUMN_NAME "                                       + ;
+                                 "FROM INFORMATION_SCHEMA.COLUMNS "                       + ;
+                                 "WHERE table_schema = " + quoted( cDatabaseMySQL ) + " " + ; 
+                                    "AND table_name = " + quoted( cTableName )
+                                  
    try
 
       oStatement           := getSQLDatabase():oConexion:Query( cSentence )
@@ -152,15 +144,35 @@ METHOD getSchemaColumns( oModel )
 
 RETURN ( aSchemaColumns )
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-METHOD addModels()
+CLASS SQLGestoolMigrations FROM SQLBaseMigrations
+
+   METHOD addModels()  
+
+   METHOD checkValues()
+
+ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLEmpresasModel():New() )
 
-   aadd( ::aModels, SQLTiposImpresorasModel():New() )
+   aadd( ::aModels, SQLDireccionesGestoolModel():New() )
 
-   aadd( ::aModels, SQLTagsModel():New() )
+   aadd( ::aModels, SQLCodigosPostalesGestoolModel():New() )
+
+   aadd( ::aModels, SQLProvinciasGestoolModel():New() )
+
+   aadd( ::aModels, SQLPaisesGestoolModel():New() )
+
+   aadd( ::aModels, SQLDelegacionesModel():New() )
 
    aadd( ::aModels, SQLUsuariosModel():New() )
 
@@ -173,6 +185,78 @@ METHOD addModels()
    aadd( ::aModels, SQLAjustesModel():New() )
 
    aadd( ::aModels, SQLAjustableModel():New() )
+
+   aadd( ::aModels, SQLConfiguracionVistasModel():New() )
+
+   aadd( ::aModels, SQLCamposExtraGestoolModel():New() )
+
+   aadd( ::aModels, SQLCamposExtraEntidadesGestoolModel():New() )
+   
+   aadd( ::aModels, SQLCamposExtraValoresGestoolModel():New() )
+
+   aadd( ::aModels, SQLFiltrosModel():New() ) 
+
+   aadd( ::aModels, SQLConfiguracionEmpresasModel():New() )
+
+   aadd( ::aModels, SQLConfiguracionesModel():New() )
+
+
+RETURN ( ::aModels )
+ 
+//----------------------------------------------------------------------------//
+
+METHOD checkValues() CLASS SQLGestoolMigrations
+
+   getSQLDatabase():Exec( SQLRolesModel():getInsertRolesSentence() )
+
+   getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() ) 
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+
+CLASS SQLCompanyMigrations FROM SQLBaseMigrations
+
+   METHOD Run( cCodigoEmpresa )
+
+   METHOD addModels()
+
+   METHOD checkValues()
+
+ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Run( cCodigoEmpresa ) CLASS SQLCompanyMigrations
+
+   Company():guardWhereCodigo( cCodigoEmpresa )
+
+   ::createDatabase( Company():getDatabase() )
+
+   ::addModels()
+
+   ::checkModels( Company():getDatabase() )
+
+   ::checkValues()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD addModels() CLASS SQLCompanyMigrations
+
+   aadd( ::aModels, SQLTiposImpresorasModel():New() )
+
+   aadd( ::aModels, SQLTagsModel():New() )
+
+   aadd( ::aModels, SQLAjustesCompanyModel():New() )
+
+   aadd( ::aModels, SQLAjustableCompanyModel():New() )
 
    aadd( ::aModels, SQLContadoresModel():New() )
 
@@ -188,23 +272,15 @@ METHOD addModels()
 
    aadd( ::aModels, SQLImagenesModel():New() )
 
-   aadd( ::aModels, SQLCamposExtraModel():New() )
-
-   aadd( ::aModels, SQLCamposExtraEntidadesModel():New() )
-   
-   aadd( ::aModels, SQLCamposExtraValoresModel():New() )
-
    aadd( ::aModels, SQLListinModel():New() )
+
+   aadd( ::aModels, SQLDireccionesModel():New() )
 
    aadd( ::aModels, SQLCodigosPostalesModel():New() )
 
    aadd( ::aModels, SQLProvinciasModel():New() )
 
    aadd( ::aModels, SQLPaisesModel():New() )
-
-   aadd( ::aModels, SQLLenguajesModel():New() )
-
-   aadd( ::aModels, SQLDireccionesModel():New() )
 
    aadd( ::aModels, SQLComentariosModel():New() )
 
@@ -222,7 +298,7 @@ METHOD addModels()
 
    aadd( ::aModels, SQLCajasModel():New() )
 
-    aadd( ::aModels, SQLEntradaSalidaModel():New() )
+   aadd( ::aModels, SQLEntradaSalidaModel():New() )
 
    aadd( ::aModels, SQLArticulosEnvasadoModel():New() )
 
@@ -248,6 +324,8 @@ METHOD addModels()
 
    aadd( ::aModels, SQLUnidadesMedicionGruposModel():New() )
 
+   aadd( ::aModels, SQLUnidadesMedicionGruposLineasModel():New() )
+
    aadd( ::aModels, SQLArticulosUnidadesMedicionModel():New() )
 
    aadd( ::aModels, SQLDivisasMonetariasModel():New() )
@@ -272,25 +350,19 @@ METHOD addModels()
 
    aadd( ::aModels, SQLAlmacenesModel():New() )
 
-   aadd( ::aModels, SQLDelegacionesModel():New() )
-
-   aadd( ::aModels, SQLConfiguracionVistasModel():New() )
-
    aadd( ::aModels, SQLTageableModel():New() )
                                       
-   aadd( ::aModels, SQLTiposVentasModel():New() )
+   //aadd( ::aModels, SQLTiposVentasModel():New() )
 
-   aadd( ::aModels, SQLConfiguracionEmpresasModel():New() )
+   aadd( ::aModels, SQLConfiguracionesCompanyModel():New() )
 
-   aadd( ::aModels, SQLConfiguracionesModel():New() )
+   //aadd( ::aModels, SQLMovimientosAlmacenModel():New() )
 
-   aadd( ::aModels, SQLMovimientosAlmacenModel():New() )
+   //aadd( ::aModels, SQLMovimientosAlmacenLineasModel():New() )
 
-   aadd( ::aModels, SQLMovimientosAlmacenLineasModel():New() )
+   //aadd( ::aModels, SQLMovimientosAlmacenLineasNumerosSeriesModel():New() )
 
-   aadd( ::aModels, SQLMovimientosAlmacenLineasNumerosSeriesModel():New() )
-
-   aadd( ::aModels, SQLFiltrosModel():New() )
+   //aadd( ::aModels, SQLFiltrosCompanyModel():New() )
    
    aadd( ::aModels, SQLUsuarioFavoritosModel():New() )
 
@@ -306,20 +378,42 @@ METHOD addModels()
 
    aadd( ::aModels, SQLProveedoresModel():New() ) 
 
+
    aadd( ::aModels, SQLTraduccionesModel():New() ) 
 
    aadd( ::aModels, SQLDescuentosModel():New() ) 
 
    aadd( ::aModels, SQLFacturasClientesModel():New() ) 
 
+   aadd( ::aModels, SQLFacturasClientesLineasModel():New() ) 
+
+   aadd( ::aModels, SQLCamposExtraModel():New() )
+
+   aadd( ::aModels, SQLCamposExtraEntidadesModel():New() )
+   
+   aadd( ::aModels, SQLCamposExtraValoresModel():New() )
+
+   aadd( ::aModels, SQLLenguajesModel():New() )
+
+   aadd( ::aModels, SQLCombinacionesModel():New() )
+
+   aadd( ::aModels, SQLCombinacionesPropiedadesModel():New() )
+
 RETURN ( ::aModels )
  
 //----------------------------------------------------------------------------//
 
-METHOD addRepositories()
+METHOD checkValues() CLASS SQLCompanyMigrations
 
-   aadd( ::aRepositories, ArticulosPreciosRepository():New() )
+   getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
 
-RETURN ( ::aRepositories )
- 
+   getSQLDatabase():Exec( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )
+
+   getSQLDatabase():Execs( SQLUnidadesMedicionGruposModel():getInsertUnidadesMedicionGruposSentence() )
+
+   getSQLDatabase():Exec( SQLArticulosTarifasModel():getInsertArticulosTarifasSentence() )
+
+RETURN ( Self )
+
 //----------------------------------------------------------------------------//
+

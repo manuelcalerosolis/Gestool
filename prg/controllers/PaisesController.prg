@@ -3,8 +3,17 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PaisesController FROM SQLNavigatorController
+CLASS PaisesGestoolController FROM PaisesController
 
+   METHOD getModel()          INLINE ( ::oModel := SQLPaisesGestoolModel():New( self ) )
+
+   METHOD getLevel()          INLINE ( nil )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS PaisesController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -12,13 +21,17 @@ CLASS PaisesController FROM SQLNavigatorController
 
    METHOD getSelectorPais( oGet )
 
+   METHOD getModel()          INLINE ( ::oModel := SQLPaisesModel():New( self ) )
+
+   METHOD getLevel()          INLINE ( iif( empty( ::oSenderController ), ::nLevel := Auth():Level( ::cName ), ) ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS PaisesController
+METHOD New( oSenderController ) CLASS PaisesController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                   := "Paises"
 
@@ -28,9 +41,9 @@ METHOD New() CLASS PaisesController
                                     "32" => "gc_globe_32",;
                                     "48" => "gc_globe_48" }
 
-   ::nLevel                   := Auth():Level( ::cName )
+   ::getModel()
 
-   ::oModel                   := SQLPaisesModel():New( self )
+   ::getLevel()
 
    ::oBrowseView              := PaisesBrowseView():New( self )
 
@@ -38,12 +51,10 @@ METHOD New() CLASS PaisesController
 
    ::oValidator               := PaisesValidator():New( self )
 
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS PaisesController
 
    ::oModel:End()
@@ -53,8 +64,6 @@ METHOD End() CLASS PaisesController
    ::oDialogView:End()
 
    ::oValidator:End()
-
-   /*::oRepository:End()*/
 
    ::Super:End()
 
@@ -70,7 +79,7 @@ METHOD getSelectorPais( oGet ) CLASS PaisesController
       RETURN ( Self )
    end if 
 
-   if hHasKey( hResult, "codigo" )
+   if hhaskey( hResult, "codigo" )
       oGet:cText( hGet( hResult, "codigo" ) )
    else
       oGet:cText( "" )
@@ -78,9 +87,6 @@ METHOD getSelectorPais( oGet ) CLASS PaisesController
    
 RETURN ( Self )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -128,8 +134,6 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS PaisesView FROM SQLBaseView
   
@@ -141,53 +145,55 @@ END CLASS
 
 METHOD Activate() CLASS PaisesView
 
-   local oDlg
-   local oBmpGeneral
-
-   DEFINE DIALOG  oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "PAIS" ;
       TITLE       ::LblTitle() + "país"
 
-   REDEFINE BITMAP oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
       RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG ::oDialog CENTER
 
-   oBmpGeneral:end()
+   ::oBitmap:end()
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -217,17 +223,26 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+CLASS SQLPaisesGestoolModel FROM SQLPaisesModel
+
+   METHOD getTableName()                  INLINE ( "gestool." + ::cTableName )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLPaisesModel FROM SQLBaseModel
+CLASS SQLPaisesModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "paises"
+   DATA cTableName                        INIT "paises"
 
    METHOD getColumns()
 
-   METHOD getNombreWhereCodigo( codigo ) INLINE ( ::getField( 'nombre', 'codigo', codigo ) )
+   METHOD getNombreWhereCodigo( codigo )  INLINE ( ::getField( 'nombre', 'codigo', codigo ) )
 
 END CLASS
 
@@ -235,15 +250,14 @@ END CLASS
 
 METHOD getColumns() CLASS SQLPaisesModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"         ,;
-                                             "text"      => "Identificador"                         ,;
-                                             "default"   => {|| 0 } }                                )
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
+                                             "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                          ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) UNIQUE"                    ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                        ,;
-                                             "default"   => {|| space( 200 ) } }                     )
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) UNIQUE"                   ,;
+                                             "default"   => {|| space( 200 ) } }                      )
 
 RETURN ( ::hColumns )
 
@@ -252,20 +266,4 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS PaisesRepository FROM SQLBaseRepository
-
-   METHOD getTableName()         INLINE ( SQLPaisesModel():getTableName() ) 
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//

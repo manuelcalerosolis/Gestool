@@ -178,7 +178,7 @@ METHOD Activate() CLASS CajasView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
@@ -229,13 +229,15 @@ METHOD StartActivate() CLASS CajasView
 
    local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   oPanel:AddLink( "Campos extra...",;
-                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
-
     oPanel:AddLink(   "Impresoras...",;
                      {|| ::oController:oImpresorasController:activateDialogView() },;
                      ::oController:oImpresorasController:getImage( "16" ) )
+
+    oPanel                  := ::oExplorerBar:AddPanel( "Otros", nil, 1 )
+
+    oPanel:AddLink( "Campos extra...",;
+                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
+                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
 
 RETURN ( self )
@@ -247,7 +249,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CajasValidator FROM SQLCompanyValidator
+CLASS CajasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

@@ -104,7 +104,7 @@ METHOD addColumns() CLASS RutasBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -161,7 +161,7 @@ METHOD Activate() CLASS RutasView
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -209,7 +209,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RutasValidator FROM SQLCompanyValidator
+CLASS RutasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -252,7 +252,6 @@ METHOD getColumns() CLASS SQLRutasModel
 
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
                                              "default"   => {|| space( 20 ) } }                        )
@@ -260,7 +259,6 @@ METHOD getColumns() CLASS SQLRutasModel
    hset( ::hColumns, "nombre",           {  "create"    => "VARCHAR( 200 )"                           ,;
                                              "default"  => {|| space( 200 ) } }                       )
    
-   ::getTimeStampColumns()
 
 RETURN ( ::hColumns )
 

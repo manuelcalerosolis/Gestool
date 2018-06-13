@@ -76,8 +76,8 @@ METHOD getColumns()
    hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR(40) NOT NULL"           ,;
                                                       "default"   => {|| space(40) } }                )
 
-   hset( ::hColumns, "codigo_articulo",            {  "create"    => "VARCHAR(18) NOT NULL"           ,;
-                                                      "default"   => {|| space(18) } }                )
+   hset( ::hColumns, "codigo_articulo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
+                                                      "default"   => {|| space( 20 ) } }              )
 
    hset( ::hColumns, "nombre_articulo",            {  "create"    => "VARCHAR(250) NOT NULL"          ,;
                                                       "default"   => {|| space(250) } }               )

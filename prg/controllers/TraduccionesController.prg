@@ -299,7 +299,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLTraduccionesModel FROM SQLBaseModel
+CLASS SQLTraduccionesModel FROM SQLCompanyModel
 
    DATA cTableName                                 INIT "traducciones"
 
@@ -317,15 +317,15 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLTraduccionesModel
 
-   local cSelect  := "SELECT traducciones.id, "                               + ;
-                        "traducciones.uuid, "                                 + ;
-                        "traducciones.parent_uuid, "                          + ;
-                        "lenguajes.codigo, "                                  + ;
-                        "lenguajes.nombre, "                                  + ;
-                        "traducciones.texto, "                                + ;
-                        "LEFT( traducciones.texto_extendido, 256 ) "          + ;
-                        "FROM traducciones AS traducciones "                  + ;
-                        "INNER JOIN lenguajes AS lenguajes "                  + ;
+   local cSelect  := "SELECT traducciones.id, "                                                                + ;
+                        "traducciones.uuid, "                                                                  + ;
+                        "traducciones.parent_uuid, "                                                           + ;
+                        "lenguajes.codigo, "                                                                   + ;
+                        "lenguajes.nombre, "                                                                   + ;
+                        "traducciones.texto, "                                                                 + ;
+                        "LEFT( traducciones.texto_extendido, 256 ) "                                           + ;
+                        "FROM " + ::getTableName() + " AS traducciones "                                         + ;
+                        "INNER JOIN " +SQLLenguajesModel():getTableName() + " AS lenguajes "                   + ;
                            "ON lenguajes.uuid = traducciones.lenguaje_uuid"
 
 RETURN ( cSelect )

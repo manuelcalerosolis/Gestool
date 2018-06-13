@@ -4096,6 +4096,8 @@ RETURN .t.
 
 METHOD insertStructureInformation() CLASS TComercio
 
+   MsgInfo( "Entro en insertStructureInformation" )
+
    ::MeterTotalText( "Eliminando referencias en gestool." )
 
    if !( ::TComercioCategory:buildRootCategoryInformation() )
@@ -4103,7 +4105,11 @@ METHOD insertStructureInformation() CLASS TComercio
       RETURN .f.
    end if 
 
+   MsgInfo( "antes de buildAllProductInformation" )   
+
    ::TComercioProduct:buildAllProductInformation()
+
+   MsgInfo( "despues de buildAllProductInformation" )
 
    ::TPrestashopId():deleteAllReferencesWeb( ::getCurrentWebName() )
 
@@ -5011,7 +5017,7 @@ METHOD writeText( cText ) CLASS TComercio
    
    end if 
    
-   logWrite( cText, cPatLog() + "prestashop.log" ) 
+   SysRefresh()
 
 RETURN ( nil )   
 

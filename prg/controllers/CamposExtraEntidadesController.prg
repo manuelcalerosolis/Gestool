@@ -1,6 +1,15 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
+CLASS CamposExtraEntidadesGestoolController FROM CamposExtraEntidadesController 
+
+   CLASSDATA aEntidades INIT  {  "empresas" =>     { "nombre" => "Empresas", "icono" => "gc_factory_16"  },;
+                                 "usuarios" =>     { "nombre" => "Usuarios", "icono" => "gc_businesspeople_16"  } }
+
+   METHOD getModel()             INLINE ( ::oModel := SQLCamposExtraEntidadesGestoolModel():New( self ) )
+
+END CLASS
+
 //---------------------------------------------------------------------------//
 
 CLASS CamposExtraEntidadesController FROM SQLBrowseController
@@ -41,7 +50,6 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "articulos_fabricantes" =>                { "nombre" => "Fabricantes", "icono" => "gc_pencil_package_16"                                 } ,;
                                  "articulos_familias_comentarios" =>       { "nombre" => "Comentarios", "icono" => "gc_message_16"                                        } ,;
                                  "almacenes" =>                            { "nombre" => "Almacenes", "icono" => "gc_warehouse_16"                                        } ,;
-                                 "empresas" =>                             { "nombre" => "Empresas", "icono" => "gc_factory_16"                                           } ,;
                                  "entidades" =>                            { "nombre" => "Entidades", "icono" => "gc_office_building2_16"                                 } ,;
                                  "cuentas_remesa" =>                       { "nombre" => "Cuentas de remesa", "icono" => "gc_notebook2_16"                                } ,;
                                  "cuentas_bancarias" =>                    { "nombre" => "Cuentas bancarias", "icono" => "gc_central_bank_euro_16"                        } ,;
@@ -51,6 +59,7 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "divisas_monetarias" =>                   { "nombre" => "Divisas monetarias", "icono" => "gc_currency_euro_16"                           } ,;
                                  "cajas" =>                                { "nombre" => "Cajas", "icono" => "gc_cash_register_16"                                        } ,;
                                  "unidades_medicion" =>                    { "nombre" => "Unidades de medición", "icono" => "gc_tape_measure2_16"                         } ,;
+                                 "unidades_medicion_grupos" =>             { "nombre" => "Grupos de unidades de medición", "icono" => "gc_tape_measure2_16"               } ,;
                                  "rutas" =>                                { "nombre" => "Rutas", "icono" => "gc_map_route_16"                                            } ,;
                                  "entradas_salidas" =>                     { "nombre" => "Entradas y salidas de caja", "icono" => "gc_cash_register_refresh_16"           } ,;
                                  "lineas_propiedades" =>                   { "nombre" => "Líneas de propiedades",  "icono" => "gc_coathanger_16"                          } }   
@@ -58,6 +67,8 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
    METHOD New( oController )
 
    METHOD End()
+
+   METHOD getModel()             INLINE ( ::oModel := SQLCamposExtraEntidadesModel():New( self ) )
 
    METHOD getNombresEntidades()
 
@@ -81,19 +92,15 @@ METHOD New( oController ) CLASS CamposExtraEntidadesController
 
    ::cTitle                   := "Campos extra entidades"
 
-   ::setName( "campos_extra_entidades" )
-
-   ::nLevel                   := Auth():Level( ::getName() )
+   ::cName                    := "campos_extra_entidades"
 
    ::hImage                   := {  "16" => "gc_user_message_16",;
                                     "32" => "gc_user_message_32",;
                                     "48" => "gc_user_message_48" }
 
-   ::oModel                   := SQLCamposExtraEntidadesModel():New( self )
+   ::getModel()
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
-
-   ::oRepository              := CamposExtraEntidadesRepository():New( self )
 
    ::oBrowseView              := CamposExtraEntidadesBrowseView():New( self )
 
@@ -118,8 +125,6 @@ METHOD End() CLASS CamposExtraEntidadesController
    ::oDialogView:End()
 
    ::oValidator:End()
-
-   ::oRepository:End()
 
    ::Super:End()
 
@@ -175,7 +180,7 @@ METHOD assertAppend() CLASS CamposExtraEntidadesController
       RETURN ( .t. )
    end if 
 
-RETURN ( ::oRepository:isNotBlankEntityWhereUuid( ::getSenderController():getUuid() ) )
+RETURN ( ::oModel:isNotBlankEntityWhereUuid( ::getSenderController():getUuid() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -187,7 +192,7 @@ METHOD UpdateLine( uValue ) CLASS CamposExtraEntidadesController
       RETURN ( nil )
    end if 
 
-   if ::oRepository:isEntityWhereUuid( ::oSenderController:getUuid(), cEntidad ) 
+   if ::oModel:isEntityWhereUuid( ::oSenderController:getUuid(), cEntidad ) 
       msgalert( "El nombre de la entidad ya existe" )
       RETURN ( nil )
    end if 
@@ -203,6 +208,9 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -313,7 +321,20 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLCamposExtraEntidadesModel FROM SQLBaseModel
+CLASS SQLCamposExtraEntidadesGestoolModel FROM SQLCamposExtraEntidadesModel
+
+   METHOD getTableName()                     INLINE ( "gestool." + ::cTableName ) 
+
+END CLASS 
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLCamposExtraEntidadesModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "campos_extra_entidad"
 
@@ -322,6 +343,12 @@ CLASS SQLCamposExtraEntidadesModel FROM SQLBaseModel
    METHOD getParentUuidAttribute( value )
 
    METHOD deleteBlankEntityWhereUuid( parentUuid )
+
+   METHOD isEntityWhereUuid( parentUuid, cEntidad )
+
+   METHOD isBlankEntityWhereUuid( parentUuid )    INLINE ( ::isEntityWhereUuid( parentUuid, '' ) )
+   
+   METHOD isNotBlankEntityWhereUuid( parentUuid ) INLINE ( !::isBlankEntityWhereUuid(  parentUuid ) )
 
 END CLASS
 
@@ -368,34 +395,12 @@ METHOD deleteBlankEntityWhereUuid( parentUuid )
 RETURN ( getSQLDataBase():Exec( cSQL ) )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS CamposExtraEntidadesRepository FROM SQLBaseRepository
-
-   METHOD getTableName()                          INLINE ( SQLCamposExtraEntidadesModel():getTableName() ) 
-
-   METHOD isEntityWhereUuid( parentUuid, cEntidad )
-
-   METHOD isBlankEntityWhereUuid( parentUuid )    INLINE ( ::isEntityWhereUuid( parentUuid, '' ) )
-   
-   METHOD isNotBlankEntityWhereUuid( parentUuid ) INLINE ( !::isBlankEntityWhereUuid(  parentUuid ) )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
 
 METHOD isEntityWhereUuid( parentUuid, cEntidad )
 
-   local cSQL  
-
-   cSQL              := "SELECT Count(*) FROM " + ::getTableName() + " "
-   cSQL              +=    "WHERE parent_uuid = " + quoted( parentUuid ) + " "
-   cSQL              +=    "AND entidad = " + quoted( cEntidad )
+   local cSQL  := "SELECT Count(*) FROM " + ::getTableName() + " "
+   cSQL        +=    "WHERE parent_uuid = " + quoted( parentUuid ) + " "
+   cSQL        +=    "AND entidad = " + quoted( cEntidad )
 
 RETURN ( getSQLDataBase():getValue( cSQL ) > 0 )
 
@@ -404,3 +409,4 @@ RETURN ( getSQLDataBase():getValue( cSQL ) > 0 )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+

@@ -5,7 +5,7 @@
 
 CLASS DelegacionesModel FROM ADSBaseModel
 
-   METHOD getTableName()           INLINE ::getDatosTableName( "Delega" )
+   METHOD getTableName()                     INLINE ::getDatosTableName( "Delega" )
 
    METHOD UpdateDelegacionCodigoEmpresa()
 

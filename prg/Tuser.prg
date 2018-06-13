@@ -53,7 +53,7 @@ CLASS TUser
    METHOD   nHandle( nNewVal )         INLINE if( nNewVal != nil, ::_Handle := nNewVal, ::_Handle )
 
    DATA     _Master                    INIT .f.
-   METHOD   lMaster( lNewVal )         INLINE if( isLogic( lNewVal ), ::_Master := lNewVal, ::_Master )
+   METHOD   lMaster( lNewVal )         INLINE ( .t. ) //if( isLogic( lNewVal ), ::_Master := lNewVal, ::_Master )
 
    DATA     _Administrador             INIT .f.
    METHOD   lAdministrador( lNewVal )  INLINE ( .t. ) // if( isLogic( lNewVal ), ::_Administrador := lNewVal, ::_Administrador )

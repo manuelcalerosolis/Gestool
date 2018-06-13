@@ -6,6 +6,8 @@
 
 static oSqlDatabase
 
+static oSqlCompany
+
 //----------------------------------------------------------------------------//
 
 CLASS SQLDatabase
@@ -14,8 +16,6 @@ CLASS SQLDatabase
 
    DATA oStatement
 
-   DATA cPathDatabaseMySQL    
-   
    DATA cDatabaseMySQL    
 
    DATA cIpMySQL
@@ -38,9 +38,11 @@ CLASS SQLDatabase
 
    METHOD isParseError()
 
-   METHOD Exec( cSql )             
+   METHOD Exec( cSql )        
+   METHOD ExecWithOutParse( cSql )        INLINE ( ::Exec( cSql, .f. ) )     
    METHOD Execs( aSql ) 
    METHOD TransactionalExec( cSql )       INLINE ( ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
+   
    METHOD Query( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Prepare( cSql )                 INLINE ( if( !empty( ::oConexion ), ::oConexion:Prepare( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
    METHOD Parse( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
@@ -93,15 +95,14 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New() 
+METHOD New( cDatabaseMySQL )
 
-   ::cPathDatabaseMySQL       := fullCurDir() + "Database\" 
-
-   if !lIsDir( ::cPathDatabaseMySQL )
-      makedir( ::cPathDatabaseMySQL )
+   if empty( cDatabaseMySQL ) 
+      cDatabaseMySQL          := GetPvProfString(  "MySQL",    "Database", "gestool",     cIniAplication() )
    end if 
 
-   ::cDatabaseMySQL           := GetPvProfString(  "MySQL",    "Database", "gestool",     cIniAplication() )
+   ::cDatabaseMySQL           := cDatabaseMySQL
+
    ::cIpMySQL                 := GetPvProfString(  "MySQL",    "Ip",       "127.0.0.1",   cIniAplication() )
    ::cUserMySQL               := GetPvProfString(  "MySQL",    "User",     "root",        cIniAplication() )
    ::cPasswordMySQL           := GetPvProfString(  "MySQL",    "Password", "",            cIniAplication() )
@@ -178,7 +179,7 @@ METHOD isParseError( cSentence )
    ::oConexion:Ping()
 
    if !::oConexion:Parse( cSentence )
-      msgstop( cSentence, "Error en el comando SQL" )
+      msgstop( cSentence, "Error en el comando SQL" / 2 )
       logwrite( cSentence )
       RETURN ( .t. )  
    end if 
@@ -187,12 +188,18 @@ RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
-METHOD Exec( cSentence )
+METHOD Exec( cSentence, lParse )
 
    local lExec    := .t.
    local oError
 
-   if ::isParseError( cSentence )
+   DEFAULT lParse := .t.
+
+   if !hb_ischar( cSentence )
+      RETURN ( .f. )  
+   end if 
+
+   if lParse .and. ::isParseError( cSentence )
       RETURN ( .f. )  
    end if 
 
@@ -562,5 +569,28 @@ Function getSQLDatabase()
 RETURN ( oSqlDatabase )
 
 //----------------------------------------------------------------------------//
+
+Function getSQLCompany( cCompanyDatabase )
+
+   if empty( oSqlCompany )
+      oSqlCompany             := SQLDatabase():New( cCompanyDatabase )
+      oSqlCompany:Connect()
+   end if
+
+RETURN ( oSqlCompany )
+
+//----------------------------------------------------------------------------//
+
+Function endSQLCompany( cCompanyDatabase )
+
+   if !empty( oSqlCompany )
+      oSqlCompany:Disconnect()
+      oSqlCompany             := nil
+   end if
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
 
 

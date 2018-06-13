@@ -13,7 +13,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    DATA oFilterController 
 
-   DATA oVistaModel
+   DATA oViewController
 
    DATA lDocuments                                    INIT .f.
 
@@ -37,6 +37,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
    METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) )
 
    METHOD buildRowSetSentence() 
+   METHOD buildRowSetSentenceNavigator()              INLINE ( ::buildRowSetSentence( 'navigator' ) )
 
    METHOD activateNavigatorView()
 
@@ -74,6 +75,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
    METHOD showEditAndDeleteButtonFilter()
 
    METHOD getIds()                                    INLINE ( ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected ) )
+   METHOD getBrowseViewType()                         INLINE ( ::oBrowseView:getViewType() )
 
    // Filters manege-----------------------------------------------------------
 
@@ -105,6 +107,26 @@ CLASS SQLNavigatorController FROM SQLBaseController
                                                                      ::buildSmallerFilter( cField, cValue ), ) )
    METHOD buildCustomLikeFilter( cField, cValue )     INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
                                                                      ::buildLikeFilter( cField, cValue ), ) )
+
+   // Vistas manege -----------------------------------------------------------
+
+   METHOD restoreState()
+   METHOD saveState()
+
+   METHOD setIdView( cType, cName, nId )              INLINE ( iif( !empty( ::oViewController ), ::oViewController:setId( cType, cName, nId ), ) )
+   METHOD getIdView( cType, cName )                   INLINE ( iif( !empty( ::oViewController ), ::oViewController:getId( cType, cName ), ) )
+
+   METHOD setColumnOrderView( cType, cName, cColumnOrder ) ;
+                                                      INLINE ( iif( !empty( ::oViewController ), ::oViewController:setColumnOrder( cType, cName, cColumnOrder ), ) )
+   METHOD getColumnOrderView( cType, cName )          INLINE ( iif( !empty( ::oViewController ), ::oViewController:getColumnOrder( cType, cName ), ) )
+
+   METHOD setColumnOrientationView( cType, cName, cColumnOrientation ) ;
+                                                      INLINE ( iif( !empty( ::oViewController ), ::oViewController:setColumnOrientation( cType, cName, cColumnOrientation ), ) )
+   METHOD getColumnOrientationView( cType, cName )    INLINE ( iif( !empty( ::oViewController ), ::oViewController:getColumnOrientation( cType, cName ), ) )
+
+   METHOD setStateView( cType, cName, cState )        INLINE ( iif( !empty( ::oViewController ), ::oViewController:setState( cType, cName, cState ), ) )
+   METHOD getStateView( cType, cName )                INLINE ( iif( !empty( ::oViewController ), ::oViewController:getState( cType, cName ), ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -119,9 +141,9 @@ METHOD New( oSenderController )
 
    ::oDialogModalView                                 := SQLDialogView():New( self )
 
-   ::oFilterController                                := SQLFiltrosController():New( self ) 
+   ::oViewController                                  := SQLConfiguracionVistasController():New( self )
 
-   ::oVistaModel                                      := SQLConfiguracionVistasModel():New( self )
+   ::oFilterController                                := SQLFiltrosController():New( self ) 
 
    ::oWindowsBar                                      := oWndBar()
 
@@ -139,17 +161,14 @@ METHOD End()
 
    if !empty( ::oSelectorView )
       ::oSelectorView:End()
-      ::oSelectorView         := nil
+   end if 
+
+   if !empty( ::oViewController )
+      ::oViewController:End() 
    end if 
 
    if !empty( ::oFilterController )
       ::oFilterController:End() 
-      ::oFilterController     := nil
-   end if 
-
-   if !empty( ::oVistaModel )
-      ::oVistaModel:End()
-      ::oVistaModel           := nil
    end if 
 
    ::Super():End()
@@ -162,14 +181,10 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildRowSetSentence()
+METHOD buildRowSetSentence( cType )
 
-   local cColumnOrder
-   local cColumnOrientation 
-
-   cColumnOrder               := ::oVistaModel:getColumnOrderNavigator( ::getName() )
-
-   cColumnOrientation         := ::oVistaModel:getColumnOrientationNavigator( ::getName() )   
+   local cColumnOrder         := ::getColumnOrderView( cType, ::getName() )
+   local cColumnOrientation   := ::getColumnOrientationView( cType, ::getName() )
 
    ::oRowSet:build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
 
@@ -192,12 +207,12 @@ METHOD activateNavigatorView()
 
    ::closeAllWindows()
 
-   ::buildRowSetSentence()   
+   ::buildRowSetSentenceNavigator()   
 
    if !empty( ::oRowSet:get() )
 
       ::oNavigatorView:Activate()
-      
+
       ::EnableWindowsBar()
 
    endif 
@@ -228,6 +243,49 @@ METHOD activateSelectorView( lCenter )
    end if
 
 RETURN ( ::oSelectorView:Activate( lCenter ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD restoreState()
+
+   local nId                  := ::getIdView( ::getBrowseViewType(), ::getName() )
+   local cColumnOrder         := ::getColumnOrderView( ::getBrowseViewType(), ::getName() )
+   local cColumnOrientation   := ::getColumnOrientationView( ::getBrowseViewType(), ::getName() )
+   local cState               := ::getStateView( ::getBrowseViewType(), ::getName() ) 
+
+   if empty( cColumnOrder )
+      ::oBrowseView:setFirstColumnOrder()
+   else
+      ::oBrowseView:setColumnOrder( cColumnOrder, cColumnOrientation )
+   end if 
+
+   if !empty( cState )
+      ::oBrowseView:setSaveState( cState )
+   end if 
+
+   if !empty( nId )
+      ::oBrowseView:setId( nId )
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveState()
+
+   CursorWait()
+
+   ::setIdView( ::getBrowseViewType(), ::getName(), ::getRowSet:fieldget( "id" ) )
+
+   ::setColumnOrderView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrder() )
+
+   ::setColumnOrientationView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrientation() )
+
+   ::setStateView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getSaveState() ) 
+
+   CursorWE()
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -370,11 +428,15 @@ METHOD setFilter( cFilterName )
    
    else 
 
-      cFilterSentence      := ::oFilterController:getFilterSentence( cFilterName )
+      if !empty( ::oFilterController )
 
-      ::getModel():setFilterWhere( cFilterSentence )
-   
-      ::showEditAndDeleteButtonFilter()
+         cFilterSentence      := ::oFilterController:getFilterSentence( cFilterName )
+
+         ::getModel():setFilterWhere( cFilterSentence )
+      
+         ::showEditAndDeleteButtonFilter()
+
+      end if 
    
    end if  
 
@@ -388,7 +450,9 @@ METHOD buildFilter( cFilter )
 
    ::getModel():insertFilterWhere( cFilter )
 
-   ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
+   if !empty( ::oFilterController )
+      ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
+   end if 
 
    ::reBuildRowSet()
    
@@ -400,7 +464,9 @@ METHOD clearFilter()
 
    ::getModel():clearFilterWhere()
 
-   ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
+   if !empty( ::oFilterController )
+      ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
+   end if 
 
    ::reBuildRowSet()
    
@@ -409,6 +475,10 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 
 METHOD buildCustomFilter( cField, cValue, cOperator )
+
+   if empty( ::oFilterController )
+      RETURN ( .f. )
+   end if 
 
    ::oFilterController:oCustomView:setText( "'" + cField + "' " + cOperator )
    ::oFilterController:oCustomView:setValue( cValue )

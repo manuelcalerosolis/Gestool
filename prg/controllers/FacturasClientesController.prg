@@ -7,6 +7,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oClientesController
 
+   DATA oArticulosController
+
    DATA oSerieDocumentoComponent
 
    DATA oNumeroDocumentoComponent
@@ -20,6 +22,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    DATA oAlmacenesController
 
    DATA oContadoresModel
+
+   DATA oLineasController
 
    METHOD New()
 
@@ -61,6 +65,8 @@ METHOD New() CLASS FacturasClientesController
 
    ::oClientesController         := ClientesController():New( self )
 
+   ::oArticulosController        := ArticulosController():New( self )
+
    ::oNumeroDocumentoComponent   := NumeroDocumentoComponent():New( self )
 
    ::oSerieDocumentoComponent    := SerieDocumentoComponent():New( self )
@@ -77,6 +83,8 @@ METHOD New() CLASS FacturasClientesController
    ::oAlmacenesController        := AlmacenesController():New( self )
    ::oAlmacenesController:setView( ::oDialogView )
 
+   ::oLineasController           := FacturasClientesLineasController():New( self )
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
@@ -90,6 +98,8 @@ METHOD End() CLASS FacturasClientesController
 
    ::oClientesController:End()
 
+   ::oArticulosController:End()
+
    ::oFormasPagoController:End()
 
    ::oRutasController:End()
@@ -97,6 +107,8 @@ METHOD End() CLASS FacturasClientesController
    ::oAgentesController:End()
 
    ::oAlmacenesController:End()
+
+   ::oLineasController:End()
 
    ::Super:End()
 
@@ -106,7 +118,9 @@ RETURN ( Self )
 
 METHOD loadedBlankBuffer() 
 
-   hset( ::oModel:hBuffer, "numero", padr( ::oContadoresModel:getDocumentCounter( ::cName ), 50 ) )
+   hset( ::oModel:hBuffer, "serie",    ::oContadoresModel:getDocumentSerie( ::cName ) )
+   
+   hset( ::oModel:hBuffer, "numero",   ::oContadoresModel:getDocumentCounter( ::cName ) )
 
 RETURN ( Self )
 
@@ -135,7 +149,7 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesValidator FROM SQLCompanyValidator
+CLASS FacturasClientesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

@@ -180,7 +180,7 @@ RETURN nil
 
 //-----------------------------------------------------------------------------//
 
-FUNCTION CreateMainSqlWindow( oIconApp )
+FUNCTION CreateMainSQLWindow( oIconApp )
 
    if !( lInitCheck() )
       RETURN nil
@@ -196,14 +196,12 @@ FUNCTION CreateMainSqlWindow( oIconApp )
       ICON                    oIconApp ;
       MENU                    ( BuildMenu() )
 
-   oWndBar                    := CreateAccesoSQL( oWnd )
+   oWndBar                    := CreateMainSQLAcceso( oWnd )
    oWndBar:CreateButtonBar( oWnd )
 
    // Set the bar messages-----------------------------------------------------
 
    oWnd:Cargo                 := appParamsMain()
-
-   oWnd:bKeyDown              := { | nKey | StdKey( nKey ) }  
 
    // Mensajes-----------------------------------------------------------------
 
@@ -2765,7 +2763,7 @@ RETURN ( oAcceso )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION CreateAccesoSQL( oWnd )
+FUNCTION CreateMainSQLAcceso()
 
    local oAcceso
    local oGrupo
@@ -2813,7 +2811,7 @@ FUNCTION CreateAccesoSQL( oWnd )
    oGrupo:cLittleBitmap := "gc_factory_16"
    oGrupo:cBigBitmap    := "gc_factory_32"
 
-   oItem                := oItemArchivo:Add()
+   /*oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Empresa'
    oItem:cMessage       := 'Empresas'
@@ -2821,7 +2819,7 @@ FUNCTION CreateAccesoSQL( oWnd )
    oItem:cId            := "empresa"
    oItem:cBmp           := "gc_factory_16"
    oItem:cBmpBig        := "gc_factory_32"
-   oItem:lShow          := .f.
+   oItem:lShow          := .f.*/
 
    // Articulos----------------------------------------------------------------
 
@@ -2922,8 +2920,8 @@ FUNCTION CreateAccesoSQL( oWnd )
    oItem:cPrompt        := 'Temporadas de artículo'
    oItem:cMessage       := 'Temporadas de artículo'
    oItem:bAction        := {|| ArticulosTemporadasController():New():ActivateNavigatorView() }
-   oItem:cId            := "empresa"
-   oItem:cBmp           := "temporadas"
+   oItem:cId            := "articulos_temporada"
+   oItem:cBmp           := "gc_cloud_sun_16"
    oItem:cBmpBig        := "gc_cloud_sun_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .t.
@@ -3407,7 +3405,7 @@ FUNCTION CreateAccesoSQL( oWnd )
    oItem:cPrompt        := 'Campos extra'
    oItem:cMessage       := 'Solicitar campos extra'
    oItem:bAction        := {|| CamposExtraController():New():ActivateNavigatorView() }
-   oItem:cId            := "asistencia_remota"
+   oItem:cId            := "campos_extra"
    oItem:cBmp           := "gc_form_plus2_16"
    oItem:cBmpBig        := "gc_form_plus2_32"
    oItem:lShow          := .f.
@@ -3464,6 +3462,102 @@ FUNCTION CreateAccesoSQL( oWnd )
    oItem:cId            := "asistencia_remota"
    oItem:cBmp           := "gc_user_headset_16"
    oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:lShow          := .f.
+
+RETURN ( oAcceso )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION CreateAdminSQLAcceso()
+
+   local oItem
+   local oGrupo
+   local oAcceso
+   local oItemGeneral
+
+   oAcceso                             := TAcceso():New()
+   oAcceso:lCreateFavoritosOfficeBar   := .f.
+
+   oItemGeneral         := oAcceso:Add()
+   oItemGeneral:cPrompt := 'General'
+   oItemGeneral:cBmp    := "gc_folder_open_16"
+   oItemGeneral:cBmpBig := "gc_folder_open_32"
+   oItemGeneral:lShow   := .t.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 7
+   oGrupo:cPrompt       := ''
+   oGrupo:cLittleBitmap := "gc_factory_16"
+   oGrupo:cBigBitmap    := "gc_factory_32"
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Empresa'
+   oItem:cMessage       := 'Empresas'
+   oItem:bAction        := {|| EmpresasController():New():ActivateNavigatorView() }
+   oItem:cId            := "empresa"
+   oItem:cBmp           := "gc_factory_16"
+   oItem:cBmpBig        := "gc_factory_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Usuarios'
+   oItem:cMessage       := 'Acceso a los usuarios del programa'
+   oItem:bAction        := {|| UsuariosController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios"
+   oItem:cBmp           := "gc_businesspeople_16"
+   oItem:cBmpBig        := "gc_businesspeople_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Roles'
+   oItem:cMessage       := 'Roles'
+   oItem:bAction        := {|| RolesController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios_roles"
+   oItem:cBmp           := "gc_id_cards_16"
+   oItem:cBmpBig        := "gc_id_cards_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Permisos'
+   oItem:cMessage       := 'Permisos'
+   oItem:bAction        := {|| PermisosController():New():ActivateNavigatorView() }
+   oItem:cId            := "usuarios_permisos"
+   oItem:cBmp           := "gc_id_badge_16"
+   oItem:cBmpBig        := "gc_id_badge_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Campos extra'
+   oItem:cMessage       := 'Solicitar campos extra'
+   oItem:bAction        := {|| CamposExtraGestoolController():New():ActivateNavigatorView() }
+   oItem:cId            := "campos_extra"
+   oItem:cBmp           := "gc_form_plus2_16"
+   oItem:cBmpBig        := "gc_form_plus2_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Asistencia remota'
+   oItem:cMessage       := 'Solicitar asistencia remota'
+   oItem:bAction        := {|| RunAsistenciaRemota() }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_user_headset_16"
+   oItem:cBmpBig        := "gc_user_headset_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemGeneral:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Salir'
+   oItem:cMessage       := 'Salir'
+   oItem:bAction        := {|| if( !empty( oWnd() ), oWnd():End(), ) }
+   oItem:cId            := "asistencia_remota"
+   oItem:cBmp           := "gc_door_open2_16"
+   oItem:cBmpBig        := "gc_door_open2_32"
    oItem:lShow          := .f.
 
 RETURN ( oAcceso )
@@ -5906,7 +6000,7 @@ RETURN ( if( lFull, fullCurDir(), "" ) + cPatEmp + "\" )
 FUNCTION appParamsMain( paramsMain )
 
    if !empty( paramsMain )
-      appParamsMain   := paramsMain
+      appParamsMain     := upper( paramsMain )
    end if 
 
 RETURN ( appParamsMain )
@@ -5916,7 +6010,7 @@ RETURN ( appParamsMain )
 FUNCTION appParamsSecond( paramsSecond )
 
    if !empty( paramsSecond )
-      appParamsSecond   := paramsSecond
+      appParamsSecond   := upper( paramsSecond )
    end if 
 
 RETURN ( appParamsSecond )
@@ -5926,7 +6020,7 @@ RETURN ( appParamsSecond )
 FUNCTION appParamsThird( paramsThird )
 
    if !empty( paramsThird )
-      appParamsThird   := paramsThird
+      appParamsThird   := upper( paramsThird )
    end if 
 
 RETURN ( appParamsThird )
@@ -7130,53 +7224,41 @@ FUNCTION trimNif( cNif )
 RETURN( cNif )
 
 //--------------------------------------------------------------------------//
-/*
-FUNCTION ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
 
-   LOCAL cOldAlias  := Alias()
-   LOCAL lCreate    := FALSE
-   LOCAL nItem      := 0
-   LOCAL xParameter
+FUNCTION CreateAdminSQLWindow( oIconApp )
 
-   DEFAULT hConnection := hConn
-   DEFAULT lShow       := FALSE
+   DEFINE WINDOW oWnd ;
+      FROM                    0, 0 TO 26, 82;
+      TITLE                   "Administrador : " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
+      MDI ;
+      COLORS                  Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
+      ICON                    oIconApp ;
+      MENU                    ( BuildMenu() )
 
-   IF !empty( cAlias ) .and. !empty( cSql )
+   oWndBar                    := CreateAdminSQLAcceso( oWnd )
+   oWndBar:CreateButtonBar( oWnd )
 
-      cSql := StrTran( cSql, ";", "" )
+   // Set the bar messages-----------------------------------------------------
 
-      DBSelectArea( 0 )
+   oWnd:Cargo                 := appParamsMain()
 
-      IF !AdsCreateSqlStatement( cAlias, ADS_CDX, hConnection )
-         msgStop( "Error AdsCreateSqlStatement()" + FINL + "Error: " + cValtoChar( AdsGetLastError() ) )
-      ELSE
-         IF !HB_IsNil( aParameters ) .and. HB_IsArray( aParameters )
-            FOR EACH xParameter IN aParameters
-               nItem := HB_EnumIndex()
-               cSql  := StrTran( cSql, "%" + AllTrim( Str( nItem ) ) , Var2Str( xParameter ) )
-            NEXT
-         ENDIF
-         IF lShow
-            MsgInfo( cSql, "SQLDebug")
-         ENDIF
-         IF !AdsExecuteSqlDirect( cSql )
-            ( cAlias )->( DBCloseArea() )
-            msgStop( "Error AdsExecuteSqlDirect( cSql )" + FINL + "Error:" + cValtoChar( AdsGetLastError() ) + FINL + cSql )
-         ELSE
-            lCreate := TRUE
-         ENDIF
-      ENDIF
+   // Mensajes-----------------------------------------------------------------
 
-      IF !empty( cOldAlias )
-         DBSelectArea( cOldAlias )
-      ENDIF
+   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
+   oWnd:oMsgBar:setFont( oFontLittelTitle() )
 
-   ENDIF
+   // Abrimos la ventana-------------------------------------------------------
 
-RETURN lCreate
-*/
+   ACTIVATE WINDOW oWnd ;
+      MAXIMIZED ;
+      ON PAINT                ( WndPaint( hDC, oWnd ) ); 
+      ON RESIZE               ( WndResize( oWnd ) )
 
-//---------------------------------------------------------------------------//
+   SysRefresh()
+
+RETURN nil
+
+//-----------------------------------------------------------------------------//
 
 FUNCTION aNombreTarifas() 
 

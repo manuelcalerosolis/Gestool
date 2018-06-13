@@ -29,8 +29,6 @@ METHOD New( oSenderController ) CLASS DelegacionesController
                                           "32" => "gc_factory_group_32",;
                                           "48" => "gc_factory_group_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
-
    ::oModel                         := SQLDelegacionesModel():New( self )
 
    ::oBrowseView                    := DelegacionesBrowseView():New( self )
@@ -39,13 +37,11 @@ METHOD New( oSenderController ) CLASS DelegacionesController
 
    ::oValidator                     := DelegacionesValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController         := DireccionesController():New( self )
+   ::oDireccionesController         := DireccionesGestoolController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+   ::oCamposExtraValoresController  := CamposExtraValoresGestoolController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := DelegacionesRepository():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
@@ -256,7 +252,7 @@ METHOD addLinksToExplorerBar() CLASS DelegacionesView
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+      oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
    end if
 
 RETURN ( self )
@@ -267,7 +263,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DelegacionesValidator FROM SQLCompanyValidator
+CLASS DelegacionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -281,6 +277,7 @@ METHOD getValidators() CLASS DelegacionesValidator
                                           "unique"             => "El nombre introducido ya existe" },;
                         "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
                                           "unique"             => "EL código introducido ya existe" } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -289,7 +286,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLDelegacionesModel FROM SQLCompanyModel
+CLASS SQLDelegacionesModel FROM SQLBaseModel
 
    DATA cTableName                        INIT "empresas_delegaciones"
 
@@ -313,8 +310,6 @@ METHOD getColumns() CLASS SQLDelegacionesModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getEmpresaColumns()
-
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| ::getSenderControllerParentUuid() } } )
 
@@ -330,9 +325,7 @@ RETURN ( ::hColumns )
 
 METHOD aNombres() CLASS SQLDelegacionesModel
 
-   local cSelect  := ""
-
-   cSelect        += "SELECT nombre FROM " + ::cTableName
+   local cSelect  := "SELECT nombre FROM " + ::getTableName()
 
 RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSelect ) )
 

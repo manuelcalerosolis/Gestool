@@ -6,7 +6,7 @@
 
 CLASS ArticulosBrowseView FROM SQLBrowseView
 
-   DATA lFastEdit                            INIT .t.
+   DATA lFastEdit          INIT .t.
 
    METHOD addColumns()                       
 
@@ -15,7 +15,6 @@ ENDCLASS
 //----------------------------------------------------------------------------//
 
 METHOD addColumns() CLASS ArticulosBrowseView
-
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -234,56 +233,29 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :lHide               := .t.
    end with
 
-   // primera propiedad--------------------------------------------------------
+   // grupos de unidades de medicion-------------------------------------------
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'primera_propiedad_codigo'
-      :cHeader             := 'Código primera propiedad'
+      :cSortOrder          := 'unidades_medicion_grupos_codigo'
+      :cHeader             := 'Código grupo unidades medición'
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'primera_propiedad_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidades_medicion_grupos_codigo' ) }
       :lHide               := .t.
       
       if ::oController:isUserEdit()
          :nEditType        := 5
-         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validPrimeraPropiedadBrowse( oCol, uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oPrimeraPropiedadController:ActivateSelectorView() }
+         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnUnidadesMedicionGruposBrowse( oCol, uNewValue, nKey ) }
+         :bEditBlock       := {|| ::oController:oUnidadesMedicionGruposController:ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'primera_propiedad_nombre'
-      :cHeader             := 'Primera propiedad'
+      :cSortOrder          := 'unidades_medicion_grupos_nombre'
+      :cHeader             := 'Grupo unidades medición'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'primera_propiedad_nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   // segunda propiedad--------------------------------------------------------
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'segunda_propiedad_codigo'
-      :cHeader             := 'Código segunda propiedad'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'segunda_propiedad_codigo' ) }
-      :lHide               := .t.
-      
-      if ::oController:isUserEdit()
-         :nEditType        := 5
-         :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validsegundaPropiedadBrowse( oCol, uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:osegundaPropiedadController:ActivateSelectorView() }
-         :nBtnBmp          := 1
-         :AddResource( "Lupa" )
-      end if
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'segunda_propiedad_nombre'
-      :cHeader             := 'Segunda propiedad'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'segunda_propiedad_nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidades_medicion_grupos_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with

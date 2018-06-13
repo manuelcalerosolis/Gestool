@@ -38,12 +38,23 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD selectColumnOrder( oCol )             INLINE ( ::changeColumnOrder( oCol ), ::Refresh() )
    
    METHOD getColumnByHeader( cHeader )
+   METHOD getColumnBySortOrder( cSortOrder ) 
+     
    METHOD getColumnOrder( cSortOrder )
    METHOD getColumnOrderHeader( cSortOrder )    INLINE ( if( !empty( ::getColumnOrder( cSortOrder ) ), ::getColumnOrder( cSortOrder ):cHeader, "" ) )
+
+   METHOD getColumnSortOrder()
+   METHOD getColumnSortOrientation()
 
    METHOD getColumnOrderByHeader( cHeader )  
 
    METHOD getFirstVisibleColumn()
+
+   METHOD setColumnOrder( cSortOrder, cColumnOrientation )
+
+   METHOD setFirstColumnOrder()
+
+   // Actions-------------------------------------------------------------------
 
    METHOD RButtonDown( nRow, nCol, nFlags )
 
@@ -60,11 +71,7 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD setOriginalState()                    INLINE ( if( !empty( ::cOriginal ), ::restoreState( ::cOriginal ), ) )
 
    METHOD setViewType( cViewType )              INLINE ( ::cViewType := cViewType )
-   METHOD getViewType( )                        INLINE ( ::cViewType )
-
-   METHOD saveStateToModel( cViewType )
-   
-   METHOD restoreStateFromModel( cViewType )
+   METHOD getViewType()                         INLINE ( ::cViewType )
 
    METHOD setFilterInRowSet( cFilterExpresion )
 
@@ -164,7 +171,7 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
       MenuAddItem()
 
-      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::saveStateToModel() }, , "gc_table_selection_column_disk_16", oMenu )
+      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::oController:saveState() }, , "gc_table_selection_column_disk_16", oMenu )
 
       MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::setOriginalState() }, , "gc_table_selection_column_refresh_16", oMenu )
 
@@ -338,19 +345,62 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD getColumnOrder( cSortOrder )
+METHOD getColumnOrder( cOrder )
 
    local nPosition   
 
-   if !empty( cSortOrder )
-      nPosition   := ascan( ::aCols, {|o| o:cSortOrder == cSortOrder } )
+   if !empty( cOrder )
+      nPosition   := ascan( ::aCols, {|o| o:cOrder == cOrder } )
    else 
-      nPosition   := ascan( ::aCols, {|o| !empty( o:cSortOrder ) .and. !( o:lHide ) } )
+      nPosition   := ascan( ::aCols, {|o| !empty( o:cOrder ) .and. !( o:lHide ) } )
    end if 
 
-   nPosition      := max( nPosition, 1 )
+   if nPosition != 0
+      RETURN ( ::aCols[ nPosition ] )
+   end if 
 
-RETURN ( ::aCols[ nPosition ] )
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD getColumnSortOrder()
+
+   local oColumnOrder   := ::getColumnOrder()
+
+   if !empty( oColumnOrder )
+      RETURN ( oColumnOrder:cSortOrder )
+   end if 
+
+RETURN ( "" )
+
+//------------------------------------------------------------------------//
+
+METHOD getColumnSortOrientation()
+
+   local oColumnOrder   := ::getColumnOrder()
+
+   if !empty( oColumnOrder )
+      RETURN ( oColumnOrder:cOrder )
+   end if 
+
+RETURN ( "" )
+
+//------------------------------------------------------------------------//
+
+METHOD getColumnBySortOrder( cSortOrder )
+
+   local nPosition   
+
+   if empty( cSortOrder )
+      RETURN ( nil )
+   end if 
+
+   nPosition      := ascan( ::aCols, {|o| ( o:cSortOrder == cSortOrder ) .and. !( o:lHide ) } )
+   if nPosition != 0
+      RETURN ( ::aCols[ nPosition ] )
+   end if 
+
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -380,41 +430,43 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD saveStateToModel( cViewType )
+METHOD setFilterInRowSet( cFilterExpresion )
 
-   DEFAULT cViewType    := ::getViewType()
-
-   SQLConfiguracionVistasModel():set( cViewType, ::getName(), ::saveState() )
+   ::oRowSet:setFilter( { || ::oRowSet:fieldGet( 1 ) == 1 } )
 
 RETURN ( Self )
 
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-METHOD restoreStateFromModel( cViewType )
+METHOD setColumnOrder( cSortOrder, cColumnOrientation )
 
-   local cBrowseState
+   local oColumn
 
-   DEFAULT cViewType    := ::getViewType()
+   oColumn                    := ::getColumnBySortOrder( cSortOrder )
 
-   ::getOriginalState()
+   if empty( oColumn )
+      RETURN ( Self )
+   end if 
 
-   cBrowseState         := SQLConfiguracionVistasModel():getState( cViewType, ::getName() )
-
-   if !empty( cBrowseState )
-      ::restoreState( cBrowseState )
+   if !empty( cColumnOrientation )
+      oColumn:cOrder          := cColumnOrientation
    end if 
 
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
-METHOD setFilterInRowSet( cFilterExpresion )
+METHOD setFirstColumnOrder()
 
-   msgalert( ::SelectedCol():cSortOrder + cFilterExpresion + " ('" + alltrim( cvaltostr( ::SelectedCol():Value() ) ) + "' )" )
-   //msgalert( alltrim( ::SelectedCol():cSortOrder ) ) == alltrim( cvaltostr( ::SelectedCol():Value() ) ) )
+   local oColumn
 
-   // msgalert( ::oRowSet:fieldGet( ::SelectedCol():cSortOrder ) ) // + " == " + quoted( alltrim( cvaltostr( ::SelectedCol():Value() ) ) ) )
-   ::oRowSet:setFilter( { || ::oRowSet:fieldGet( 1 ) == 1 } )
+   oColumn                    := ::getFirstVisibleColumn()
+
+   if empty( oColumn )
+      RETURN ( Self )
+   end if 
+
+   oColumn:cOrder             := 'D'
 
 RETURN ( Self )
 

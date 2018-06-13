@@ -2,9 +2,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLTageableModel FROM SQLBaseModel
+CLASS SQLTageableModel FROM SQLCompanyModel
 
-   DATA cTableName                     INIT "Tageables"
+   DATA cTableName                     INIT "tageables"
 
    DATA cConstraints                   INIT "PRIMARY KEY (id), KEY (uuid)"
 
@@ -43,6 +43,8 @@ CLASS TageableRepository FROM SQLBaseRepository
 
    METHOD getTableName()      INLINE ( SQLTageableModel():getTableName() ) 
 
+   METHOD getTagsModel()      INLINE ( SQLTagsModel():getTableName() )
+
    METHOD getHashTageableTags( tageableUuid ) ;
                               INLINE ( ::getDatabase():selectTrimedFetchHash( ::getSQLTageableTags( tageableUuid ) ) )
 
@@ -56,13 +58,13 @@ METHOD getSQLTageableTags( tageableUuid ) CLASS TageableRepository
 
    local cSql
 
-   cSql  := "SELECT " + SQLTagsModel():getTableName() + ".nombre,"      + " " + ;
-                  SQLTageableModel():getTableName() + ".id,"            + " " + ; 
-                  SQLTageableModel():getTableName() + ".uuid"           + " " + ; 
-               "FROM " + SQLTageableModel():getTableName()              + " " + ;
-               "INNER JOIN " + SQLTagsModel():getTableName()            + " " + ;
-                  "ON " + SQLTagsModel():getTableName() + ".uuid = " + SQLTageableModel():getTableName() + ".tag_uuid " + ;
-               "WHERE " + SQLTageableModel():getTableName() + ".tageable_uuid = " + quoted( tageableUuid )
+   cSql  := "SELECT Tags.nombre,"                                             + " " + ;
+                  "Tageable.id,"                                              + " " + ; 
+                  "Tageable.uuid"                                             + " " + ; 
+               "FROM " + ::getTableName() + " AS Tageable"                    + " " + ;
+               "INNER JOIN " + ::getTagsModel() + " AS Tags"                  + " " + ;
+                  "ON Tags.uuid = Tageable.tag_uuid"                          + " " + ;
+               "WHERE Tageable.tageable_uuid = " + quoted( tageableUuid )
 
    logwrite( cSql )
 

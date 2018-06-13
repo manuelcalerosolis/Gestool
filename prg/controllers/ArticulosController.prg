@@ -25,15 +25,15 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oArticulosUnidadesMedicionController
 
-   DATA oPrimeraPropiedadController
-
-   DATA oSegundaPropiedadController
+   DATA oUnidadesMedicionGruposController
 
    DATA oTraduccionesController
 
    DATA oImagenesController
 
    DATA oArticulosTemporadasController
+
+   DATA oCombinacionesController
 
    METHOD New()
 
@@ -66,11 +66,8 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD validColumnImpuestosEspecialesBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oImpuestosEspecialesController:oModel, "impuesto_especial_codigo" ) )
 
-   METHOD validPrimeraPropiedadBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oPrimeraPropiedadController:oModel, "primera_propiedad_codigo" ) )
-
-   METHOD validSegundaPropiedadBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oSegundaPropiedadController:oModel, "segunda_propiedad_codigo" ) )
+   METHOD validColumnUnidadesMedicionGruposBrowse( oCol, uValue, nKey ) ;
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oUnidadesMedicionGruposController:oModel, "unidades_medicion_grupos_codigo" ) )
 
 END CLASS
 
@@ -131,17 +128,16 @@ METHOD New() CLASS ArticulosController
    ::oArticulosPreciosController             := ArticulosPreciosController():New( self )
    ::oArticulosPreciosController:setView( ::oDialogView )
 
-   ::oPrimeraPropiedadController             := PropiedadesController():New( self )
-   ::oPrimeraPropiedadController:setView( ::oDialogView )
-
-   ::oSegundaPropiedadController             := PropiedadesController():New( self )
-   ::oSegundaPropiedadController:setView( ::oDialogView )
-   
    ::oArticulosUnidadesMedicionController    := ArticulosUnidadesMedicionController():New( self )
    ::oArticulosUnidadesMedicionController:setView( ::oDialogView )
 
    ::oArticulosTemporadasController          := ArticulosTemporadasController():New( self )
    ::oArticulosTemporadasController:setView( ::oDialogView )
+
+   ::oUnidadesMedicionGruposController       := UnidadesMedicionGruposController():New( self )
+   ::oUnidadesMedicionGruposController:setView( ::oDialogView )
+
+   ::oCombinacionesController                :=CombinacionesController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -181,10 +177,6 @@ METHOD End() CLASS ArticulosController
 
    ::oImpuestosEspecialesController:End()
 
-   ::oPrimeraPropiedadController:End()
-
-   ::oSegundaPropiedadController:End()
-
    ::oArticulosUnidadesMedicionController:End()
 
    ::oImagenesController:End()
@@ -192,6 +184,8 @@ METHOD End() CLASS ArticulosController
    ::oTraduccionesController:End()
 
    ::oArticulosTemporadasController:End()
+
+   ::oCombinaciones:End()
 
    ::Super:End()
 
@@ -223,7 +217,7 @@ METHOD getPorcentajeIVA() CLASS ArticulosController
       RETURN ( 0 )
    end if 
 
-RETURN ( ::oTipoIvaController:oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[ "tipo_iva_uuid" ] ) )
+RETURN ( ::oTipoIvaController:oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[ "tipo_iva_codigo" ] ) )
 
 //---------------------------------------------------------------------------//
 

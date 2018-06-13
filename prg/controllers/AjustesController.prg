@@ -9,6 +9,8 @@ CLASS AjustesController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD getModel()       INLINE ( ::oModel := SQLAjustesModel():New( self ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -19,15 +21,13 @@ METHOD New() CLASS AjustesController
 
    ::cTitle                := "Ajustes"
 
-   ::setName( "ajustes" )
+   ::cName                 := "ajustes"
 
    ::lTransactional        := .t.
 
    ::hImage                := { "16" => "gc_businesspeople_16" }
 
-   ::oModel                := SQLAjustesModel():New( self )
-
-   ::oRepository           := AjustesRepository():New( self )
+   ::getModel()
 
 RETURN ( Self )
 
@@ -35,7 +35,7 @@ RETURN ( Self )
 
 METHOD End()
 
-   if !empty(::oModel)
+   if !empty( ::oModel )
       ::oModel:End()
    endif
 
@@ -44,6 +44,13 @@ METHOD End()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+CLASS AjustesCompanyController FROM AjustesController
+
+   METHOD getModel()       INLINE ( ::oModel := SQLAjustesCompanyModel():New( self ) )
+
+END CLASS
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -98,7 +105,7 @@ METHOD getInsertAjustesSentence()
 
    local cSentence 
 
-   cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
+   cSentence  := "INSERT IGNORE INTO " + ::getTableName() + " "
    cSentence  +=    "( uuid, ajuste, sistema, tipo_dato, valor_minimo, valor_maximo ) "
    cSentence  += "VALUES "
    cSentence  +=    "( UUID(), 'empresa_exclusiva',         '1',  'alphanumeric', NULL, NULL ), "
@@ -128,7 +135,7 @@ METHOD getAjusteUuidSentence( cAjuste )
 
    local cSentence
 
-   cSentence  := "SELECT uuid FROM " + ::cTableName + " "
+   cSentence  := "SELECT uuid FROM " + ::getTableName() + " "
    cSentence  +=    "WHERE ajuste = " + quoted( cAjuste )
 
 RETURN ( cSentence )
@@ -138,6 +145,18 @@ RETURN ( cSentence )
 METHOD getAjusteUuid( cAjuste )
 
 RETURN ( ::getDatabase():getValue( ::getAjusteUuidSentence( cAjuste ) ) )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLAjustesCompanyModel FROM SQLAjustesModel
+
+   METHOD getTableName()   INLINE ( Company():getTableName( ::cTableName ) )
+
+END CLASS
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

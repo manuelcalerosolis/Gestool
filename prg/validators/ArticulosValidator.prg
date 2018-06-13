@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosValidator FROM SQLCompanyValidator
+CLASS ArticulosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  

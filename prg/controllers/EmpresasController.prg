@@ -35,25 +35,29 @@ CLASS EmpresasController FROM SQLNavigatorController
 
    METHOD startingActivate()
 
+   METHOD addExtraButtons()
+
+   METHOD updateEmpresa()
+
+   METHOD seedEmpresa()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New() CLASS EmpresasController
 
+   ::cTitle                         := "Empresas"
+
+   ::cName                          := "empresas"
+
+   ::lConfig                        := .t.
+
+   ::hImage                         := {  "16" => "gc_factory_16",;
+                                          "32" => "gc_factory_32",;
+                                          "48" => "gc_factory_48" }
+   
    ::Super:New()
-
-   ::cTitle                      := "Empresas"
-
-   ::cName                       := "empresas"
-
-   ::lConfig                     := .t.
-
-   ::hImage                      := {  "16" => "gc_factory_16",;
-                                       "32" => "gc_factory_32",;
-                                       "48" => "gc_factory_48" }
-
-   ::nLevel                         := Auth():Level( ::cName )
 
    ::oModel                         := SQLEmpresasModel():New( self )
 
@@ -63,7 +67,7 @@ METHOD New() CLASS EmpresasController
 
    ::oValidator                     := EmpresasValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+   ::oCamposExtraValoresController  := CamposExtraValoresGestoolController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := EmpresasRepository():New( self )
 
@@ -71,10 +75,10 @@ METHOD New() CLASS EmpresasController
 
    ::oAjustableController           := AjustableController():New( self )
 
-   ::oDireccionesController         := DireccionesController():New( self )
+   ::oDireccionesController         := DireccionesGestoolController():New( self )
    ::oDireccionesController:setView( ::oDialogView )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
+   ::oDelegacionesController        := DelegacionesController():New( self )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
@@ -87,7 +91,7 @@ METHOD New() CLASS EmpresasController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
-   ::oDelegacionesController        := DelegacionesController():New( self )
+   ::oNavigatorView:oMenuTreeView:setEvent( 'addedRefreshButton',     {|| ::addExtraButtons() } )
 
 RETURN ( Self )
 
@@ -95,10 +99,17 @@ RETURN ( Self )
 
 METHOD End()
 
-   if !empty( ::oAjustableController )
-      ::oAjustableController:End()
-      ::oAjustableController  := nil
-   end if 
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oCamposExtraValoresController:End()
+   
+   ::oAjustableController:End()
+
+   ::oDireccionesController:End()
+
+   ::oDelegacionesController:End()
 
    ::Super:End()
 
@@ -143,7 +154,7 @@ METHOD saveConfig()
 
    ::oAjustableController:oModel:setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, ::cUuidEmpresa )
    
-   ::cUuidDelegacionDefecto    := SQLDelegacionesModel():getUuidFromNombre( ::cDelegacionDefecto )
+   ::cUuidDelegacionDefecto      := SQLDelegacionesModel():getUuidFromNombre( ::cDelegacionDefecto )
 
    ::oAjustableController:oModel:setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, ::cUuidEmpresa )
 
@@ -158,6 +169,37 @@ METHOD startingActivate()
    oPanel:AddCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
    
    oPanel:addComboBox( "Delegación defecto", @::cDelegacionDefecto, ::aDelegaciones )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD addExtraButtons()
+
+   ::oNavigatorView:oMenuTreeView:AddButton( "Actualizar", "gc_server_client_exchange_16", {|| ::updateEmpresa() }, "T", ACC_APPD ) 
+   
+   ::oNavigatorView:oMenuTreeView:AddButton( "Importar datos", "gc_server_client_exchange_16", {|| ::seedEmpresa() }, "D", ACC_APPD ) 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateEmpresa()
+
+   aeval( ::getBrowse():aSelected,;
+            {|nSelect|  ::getRowSet():goToRecNo( nSelect ),;
+                        msgRun( "Actualizando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanyMigrations():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD seedEmpresa()
+
+   aeval( ::getBrowse():aSelected,;
+            {|nSelect|  ::getRowSet():goToRecNo( nSelect ),;
+                        Company():guardWhereCodigo( ::getRowSet():fieldGet( 'codigo' ) ),;
+                        msgRun( "Importando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanySeeders():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
 
 RETURN ( self )
 
@@ -443,7 +485,6 @@ END CLASS
 
 METHOD getColumns() CLASS SQLEmpresasModel
 
-
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
@@ -512,4 +553,6 @@ METHOD getNombres() CLASS EmpresasRepository
 RETURN ( aNombres )
 
 //---------------------------------------------------------------------------//
+
+
 

@@ -358,6 +358,8 @@ DireccionesController.prg 													\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
+CombinacionesController.prg 												\
+CombinacionesPropiedadesController.prg 								\
 SesionesController.prg 														\
 RecibosController.prg 														\
 BalanzasController.prg 														\
@@ -376,6 +378,7 @@ FormaPagoController.prg 													\
 ArticulosFamiliaController.prg 											\
 UnidadesMedicionController.prg 											\
 UnidadesMedicionGruposController.prg 									\
+UnidadesMedicionGruposLineasController.prg 							\
 UbicacionesController.prg 													\
 DivisasMonetariasController.prg 											\
 ImpuestosEspecialesController.prg 										\
@@ -503,6 +506,7 @@ TiposVentasValidator.prg 													\
 EtiquetasValidator.prg 														\
 MovimientosAlmacenValidator.prg 											\
 MovimientosAlmacenLineasValidator.prg 									\
+FacturasClientesLineasValidator.prg 									\
 SQLBaseRepository.prg 														\
 TiposVentasRepository.prg 													\
 ConfiguracionEmpresasRepository.prg 									\
@@ -641,7 +645,7 @@ FamiliasModel.prg                                    				\
 TiposArticulosModel.prg                                    		\
 ContadoresModel.prg                                   			\
 ColumnasUsuariosModel.prg 													\
-SQLConfiguracionVistasModel.prg                      				\
+SQLConfiguracionVistasController.prg                      		\
 PedidosClientesLineasModel.prg 											\
 EmpresasModel.prg 															\
 CajasModel.prg 																\
@@ -701,7 +705,11 @@ DescuentosController.prg 													\
 ClientesBrowseView.prg 														\
 TercerosBrowseView.prg 														\
 SqlFacturasClientesModel.prg 												\
+SqlFacturasClientesLineasModel.prg										\
 FacturasClientesController.prg 											\
+FacturasClientesLineasController.prg									\
+FacturasClientesLineasBrowse.prg											\
+FacturasClientesLineasView.prg											\
 FacturasClientesView.prg 													\
 
 C               =       	            								\
@@ -1043,6 +1051,8 @@ DireccionesController.obj       											\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
+CombinacionesController.obj       										\
+CombinacionesPropiedadesController.obj       						\
 SesionesController.obj       												\
 RecibosController.obj    		   										\
 BalanzasController.obj       												\
@@ -1061,6 +1071,7 @@ FormaPagoController.obj       											\
 ArticulosFamiliaController.obj       									\
 UnidadesMedicionController.obj       									\
 UnidadesMedicionGruposController.obj       							\
+UnidadesMedicionGruposLineasController.obj       					\
 UbicacionesController.obj       											\
 DivisasMonetariasController.obj       									\
 ImpuestosEspecialesController.obj       								\
@@ -1190,6 +1201,7 @@ TiposVentasValidator.obj 													\
 EtiquetasValidator.obj 														\
 MovimientosAlmacenValidator.obj 											\
 MovimientosAlmacenLineasValidator.obj 									\
+FacturasClientesLineasValidator.obj 									\
 SQLBaseRepository.obj 														\
 ConfiguracionEmpresasRepository.obj 									\
 TiposVentasRepository.obj 													\
@@ -1337,7 +1349,7 @@ ArticulosModel.obj                                    			\
 FamiliasModel.obj                                    				\
 TiposArticulosModel.obj                                    		\
 ContadoresModel.obj                                    			\
-SQLConfiguracionVistasModel.obj                      				\
+SQLConfiguracionVistasController.obj                      		\
 PedidosClientesLineasModel.obj 											\
 ColumnasUsuariosModel.obj 													\
 Categoria.obj                                               	\
@@ -1379,8 +1391,12 @@ CalculaPrecioCommand.obj 													\
 DescuentosController.obj 													\
 ClientesBrowseView.obj 														\
 TercerosBrowseView.obj 														\
-SqlFacturasClientesModel.obj 												\
+SQLFacturasClientesModel.obj 												\
+SQLFacturasClientesLineasModel.obj 										\
 FacturasClientesController.obj 											\
+FacturasClientesLineasController.obj 									\
+FacturasClientesLineasBrowse.obj 										\
+FacturasClientesLineasView.obj 											\
 FacturasClientesView.obj 													\
 
 .PRG.OBJ:
@@ -1715,6 +1731,8 @@ $(OBJ)\DireccionesController.obj    									+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+
+$(OBJ)\CombinacionesController.obj    									+
+$(OBJ)\CombinacionesPropiedadesController.obj    					+
 $(OBJ)\SesionesController.obj    										+
 $(OBJ)\RecibosController.obj    											+
 $(OBJ)\BalanzasController.obj    										+	
@@ -1733,6 +1751,7 @@ $(OBJ)\FormaPagoController.obj 	   									+
 $(OBJ)\ArticulosFamiliaController.obj    								+
 $(OBJ)\UnidadesMedicionController.obj    								+
 $(OBJ)\UnidadesMedicionGruposController.obj    						+
+$(OBJ)\UnidadesMedicionGruposLineasController.obj    				+
 $(OBJ)\UbicacionesController.obj    									+
 $(OBJ)\DivisasMonetariasController.obj    							+
 $(OBJ)\ImpuestosEspecialesController.obj    							+
@@ -1861,6 +1880,7 @@ $(OBJ)\TiposVentasValidator.obj											+
 $(OBJ)\EtiquetasValidator.obj												+
 $(OBJ)\MovimientosAlmacenValidator.obj									+
 $(OBJ)\MovimientosAlmacenLineasValidator.obj							+
+$(OBJ)\FacturasClientesLineasValidator.obj							+
 $(OBJ)\SQLBaseRepository.obj 												+
 $(OBJ)\ConfiguracionEmpresasRepository.obj							+
 $(OBJ)\TiposVentasRepository.obj											+
@@ -2008,7 +2028,7 @@ $(OBJ)\PropiedadesModel.obj      										+
 $(OBJ)\PropiedadesController.obj      									+
 $(OBJ)\PropiedadesLineasModel.obj      								+
 $(OBJ)\PropiedadesLineasController.obj      							+
-$(OBJ)\SQLConfiguracionVistasModel.obj 								+
+$(OBJ)\SQLConfiguracionVistasController.obj 							+
 $(OBJ)\Categoria.obj                                     		+
 $(OBJ)\GroupCustomer.obj                                 		+
 $(OBJ)\GroupCustomerViewSearchNavigator.obj              		+
@@ -2048,7 +2068,11 @@ $(OBJ)\DescuentosController.obj 											+
 $(OBJ)\ClientesBrowseView.obj 											+
 $(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\SqlFacturasClientesModel.obj 				    				+
+$(OBJ)\SqlFacturasClientesLineasModel.obj 	    					+
 $(OBJ)\FacturasClientesController.obj 									+
+$(OBJ)\FacturasClientesLineasController.obj 							+
+$(OBJ)\FacturasClientesLineasBrowse.obj 								+
+$(OBJ)\FacturasClientesLineasView.obj 									+
 $(OBJ)\FacturasClientesView.obj 											+
 $(OBJ)\Events.obj              		
 $<,$*

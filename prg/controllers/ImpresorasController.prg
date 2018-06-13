@@ -244,7 +244,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLImpresorasModel FROM SQLBaseModel
+CLASS SQLImpresorasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "Impresoras"
 

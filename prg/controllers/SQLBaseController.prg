@@ -65,7 +65,7 @@ CLASS SQLBaseController
 
    METHOD getModel()                                  INLINE ( ::oModel )
    METHOD getModelColumnKey()                         INLINE ( iif( !empty( ::oModel ), ::oModel:cColumnKey, ) )
-   METHOD getModelTableName()                         INLINE ( iif( !empty( ::oModel ), ::oModel:cTableName, ) )
+   METHOD getModelTableName()                         INLINE ( iif( !empty( ::oModel ), ::oModel:getTableName(), ) )
    METHOD getModelColumns()                           INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
    METHOD getModelExtraColumns()                      INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
    
@@ -742,7 +742,7 @@ METHOD changeModelOrderAndOrientation( cOrderBy, cOrientation )
 
    ::oModel:setFind( "" )
 
-   ::oRowSet:build( ::oModel:getSelectSentence( cOrderBy, cOrientation ) )
+   ::oRowSet:buildPad( ::oModel:getSelectSentence( cOrderBy, cOrientation ) )
 
    ::oRowSet:findId( nId )
 
@@ -754,7 +754,7 @@ METHOD findInModel( uValue )
 
    ::oModel:setFind( uValue )
 
-   ::oRowSet:build( ::oModel:getSelectSentence() )
+   ::oRowSet:buildPad( ::oModel:getSelectSentence() )
 
 RETURN ( ::oRowSet:RecCount() )
 
@@ -823,26 +823,26 @@ RETURN ( ::aDocuments )
 
 METHOD validColumnBrowse( oCol, uValue, nKey, oModel, cFieldName )
    
-   local uuid              := ""
+   local cCodigo        := ""
 
    if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
       RETURN ( .t. )
    end if
 
    if hb_ishash( uValue )
-      uuid          := hGet( uValue, "uuid" )
+      cCodigo          := hGet( uValue, "codigo" )
    end if
 
    if hb_ischar( uValue )
-      uuid          := oModel:getUuidWhereCodigo( alltrim( uValue ) )
+      cCodigo          := oModel:getCodigoWhereCodigo( alltrim( uValue ) )
    end if
 
-   if empty( uuid )
+   if empty( cCodigo )
       msgStop( "valor no encontrado." )
       RETURN .t.
    end if
 
-   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cFieldName, uuid )
+   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cFieldName, cCodigo )
 
    ::RefreshRowSet()
 

@@ -123,7 +123,7 @@ METHOD New( oController )
 
    ::oDialogView                       := MovimientosAlmacenLineasView():New( self )
 
-   ::oValidator                        := MovimientosAlmacenLineasValidator():New( self )
+   ::oValidator                        := DocumentosLineasValidator():New( self )
 
    ::oSearchView                       := SQLSearchView():New( self )
 

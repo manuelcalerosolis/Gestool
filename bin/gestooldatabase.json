@@ -1,0 +1,12 @@
+{
+   "Databases"       :
+   [  {  "Name"      : "Hdad Matriz Almonte",
+         "Database"  : "Gestool_Hdad_Matriz_Almonte",
+         "Code"      : "0001" },
+      {  "Name"      : "Verde Green",
+         "Database"  : "Gestool_Verde_Green",
+         "Code"      : "00VG" },
+      {  "Name"      : "Zemtrum Ocio Comercio Restauracion",
+         "Database"  : "Gestool_Zemtrum",
+         "Code"      : "00Z0" } ]
+}

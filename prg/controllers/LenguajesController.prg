@@ -191,7 +191,7 @@ METHOD Activate() CLASS LenguajesView
       RESOURCE    "LENGUAJE" ;
       TITLE       ::LblTitle() + "lenguajes"
 
-   REDEFINE BITMAP ::oBmpGeneral ;
+   REDEFINE BITMAP ::oBitmap ; 
       ID          900 ;
       RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
@@ -200,7 +200,7 @@ METHOD Activate() CLASS LenguajesView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
-      WHEN        ( ::oController:isNotZoomMode()  ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
@@ -228,7 +228,7 @@ METHOD Activate() CLASS LenguajesView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBmpGeneral:end()
+   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -265,7 +265,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLLenguajesModel FROM SQLBaseModel
+CLASS SQLLenguajesModel FROM SQLCompanyModel
 
    DATA cTableName                  INIT "lenguajes"
 
@@ -280,17 +280,15 @@ END CLASS
 METHOD getColumns() CLASS SQLLenguajesModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                             "text"      => "Identificador"                           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                             "text"      => "Uuid"                                    ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                          ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) UNIQUE"                    ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 20 )"                          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 20 ) UNIQUE"                    ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
 RETURN ( ::hColumns )

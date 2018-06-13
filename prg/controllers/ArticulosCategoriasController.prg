@@ -195,7 +195,7 @@ METHOD Activate() CLASS ArticulosCategoriasView
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -251,7 +251,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosCategoriasValidator FROM SQLCompanyValidator
+CLASS ArticulosCategoriasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -291,7 +291,6 @@ METHOD getColumns() CLASS SQLArticulosCategoriasModel
 
    hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                     "default"   => {|| win_uuidcreatestring() } }            )
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                            ,;
                                     "default"   => {|| space( 20 ) } }                        )

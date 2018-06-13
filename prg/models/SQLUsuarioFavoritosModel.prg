@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLUsuarioFavoritosModel FROM SQLBaseModel
+CLASS SQLUsuarioFavoritosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "usuario_favoritos"
 
@@ -35,7 +35,7 @@ METHOD getColumns() CLASS SQLUsuarioFavoritosModel
    hset( ::hColumns, "favorito",       {  "create"    => "VARCHAR( 100 )"                          ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "visible",        {  "create"    => "BIT NOT NULL"                            ,;
+   hset( ::hColumns, "visible",        {  "create"    => "TINYINT( 1 ) NOT NULL"                   ,;
                                           "default"   => {|| .f. } }                               )
 
 RETURN ( ::hColumns )
@@ -55,7 +55,7 @@ RETURN ( ::insertOnDuplicate( hBuffer ) )
 
 METHOD get( cUsuarioUuid, cFavorito ) CLASS SQLUsuarioFavoritosModel
 
-   local cSql     := "SELECT * FROM " + ::cTableName + " "
+   local cSql     := "SELECT * FROM " + ::getTableName() + " "
    cSql           +=    "WHERE usuario_uuid = " + quoted( cUsuarioUuid ) + " "
    cSql           +=    "AND favorito = " + quoted( cFavorito ) + " "
 
@@ -66,7 +66,7 @@ RETURN ( getSQLDataBase():getValue( cSql ) )
 METHOD getVisible( cUsuarioUuid, cFavorito, lDefault ) CLASS SQLUsuarioFavoritosModel
 
    local lVisible
-   local cSql     := "SELECT visible FROM " + ::cTableName + " "
+   local cSql     := "SELECT visible FROM " + ::getTableName() + " "
    cSql           +=    "WHERE usuario_uuid = " + quoted( cUsuarioUuid ) + " "
    cSql           +=    "AND favorito = " + quoted( cFavorito ) + " "
 

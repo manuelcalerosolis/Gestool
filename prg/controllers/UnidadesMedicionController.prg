@@ -11,7 +11,7 @@ CLASS UnidadesMedicionController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ),;
+   METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ) == 1,;
                                              ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ),;
                                              .t. ) )
 
@@ -251,7 +251,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLUnidadesMedicionModel FROM SQLBaseModel
+CLASS SQLUnidadesMedicionModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "unidades_medicion"
 
@@ -273,7 +273,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) UNIQUE"                     ,;
                                              "default"   => {|| space( 20 ) } }                        )
-   //campos empresa
+   
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
@@ -281,8 +281,8 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
    hset( ::hColumns, "codigo_iso",        {  "create"    => "VARCHAR( 6 )"                            ,;
                                              "default"   => {|| space( 6 ) } }                        )
 
-   hset( ::hColumns, "sistema",           {  "create"    => "BIT"                                     ,;
-                                             "default"   => {|| .f. } }                               )
+   hset( ::hColumns, "sistema",           {  "create"    => "TINYINT( 1 )"                            ,;
+                                             "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 
@@ -292,7 +292,7 @@ METHOD getInsertUnidadesMedicionSentence() CLASS SQLUnidadesMedicionModel
 
    local cSentence 
 
-   cSentence  := "INSERT IGNORE INTO " + ::cTableName + " "
+   cSentence  := "INSERT IGNORE INTO " + ::getTableName() + " "
    cSentence  +=    "( uuid, codigo, nombre, codigo_iso, sistema ) "
    cSentence  += "VALUES "
    cSentence  +=    "( UUID(), 'UDS', 'Unidades', 'UDS', 1 )"

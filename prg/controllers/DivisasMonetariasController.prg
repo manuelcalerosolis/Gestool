@@ -187,7 +187,7 @@ METHOD Activate() CLASS DivisasMonetariasView
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -356,7 +356,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLDivisasMonetariasModel FROM SQLBaseModel
+CLASS SQLDivisasMonetariasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "divisas_monetarias"
 
@@ -389,7 +389,7 @@ METHOD getColumns() CLASS SQLDivisasMonetariasModel
    hset( ::hColumns, "simbolo",                 {  "create"    => "VARCHAR( 3 )"                            ,;
                                                    "default"   => {|| space( 3) } }                         )
 
-   hset( ::hColumns, "texto_masculino",         {  "create"    => "BIT"                                     ,;
+   hset( ::hColumns, "texto_masculino",         {  "create"    => "TINYINT( 1 )"                            ,;
                                                    "default"   => {|| .f. } }                               )
 
    hset( ::hColumns, "precio_compra_entero",    {  "create"    => "INTEGER"                                 ,;

@@ -2,15 +2,143 @@
 #include "factu.ch" 
 #include "hdo.ch"
 
+
 //---------------------------------------------------------------------------//
 
-CLASS Seeders
+CLASS SQLSeeders
 
-   DATA oMsg
+   DATA aConvert
 
-   DATA hConfig
+   METHOD Run()            VIRTUAL
 
-   METHOD New()
+   METHOD Convert()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Convert( cFile, bBlock ) CLASS SQLSeeders
+
+   local dbf
+
+   if !( file( cFile ) )
+      msgStop( "El fichero " + cFile + " no se ha localizado", "Atención" )  
+      RETURN ( self )
+   end if 
+
+   dbUseArea( .t., ( "DBFCDX" ), ( cFile ), ( cCheckArea( "File", @dbf ) ), .t., .f. )
+
+   if ( dbf )->( neterr() )
+      RETURN ( self )
+   end if 
+
+   ( dbf )->( ordsetfocus( 0 ) )
+
+   ( dbf )->( dbeval( bBlock ) )
+
+   ( dbf )->( dbclosearea() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLGestoolSeeders FROM SQLSeeders
+
+   METHOD Run()
+
+   METHOD insertEmpresas( dbf ) 
+
+   METHOD insertUsuarios( dbf )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Run() CLASS SQLGestoolSeeders
+
+   ::aConvert  := {  {  "file"   => cPatDat() + "Empresa.Dbf",;
+                        "block"  => {|dbf| ::insertEmpresas( dbf ) } },;
+                     {  "file"   => cPatDat() + "Users.Dbf",;
+                        "block"  => {|dbf| ::insertUsuarios( dbf ) } };
+                  }
+
+   aeval( ::aConvert,;
+      {|hConvert| ::Convert( hget( hConvert, "file" ), hget( hConvert, "block" ) ) } )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertEmpresas() CLASS SQLGestoolSeeders
+
+   local nId
+   local hBuffer  
+
+   hBuffer        := SQLEmpresasModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              field->Uuid      )
+   hset( hBuffer, "codigo",            field->CodEmp    )
+   hset( hBuffer, "nombre",            field->cNombre   )
+   hset( hBuffer, "nif",               field->cNif      )
+   hset( hBuffer, "administrador",     field->cAdminis  )
+   hset( hBuffer, "pagina_web",        field->web       )
+
+   nId            := SQLEmpresasModel():insertIgnoreBuffer( hBuffer )
+
+   if empty( nId )
+      RETURN ( self )
+   end if 
+
+   // Direcciones--------------------------------------------------------------
+
+   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
+
+   hset( hBuffer, "principal",      1                   )
+   hset( hBuffer, "parent_uuid",    field->Uuid         )
+   hset( hBuffer, "direccion",      field->cDomicilio   )
+   hset( hBuffer, "poblacion",      field->cPoblacion   )
+   hset( hBuffer, "provincia",      field->cProvincia   )
+   hset( hBuffer, "codigo_postal",  field->cCodPos      )
+   hset( hBuffer, "telefono",       field->cTlf         )
+   hset( hBuffer, "email",          field->email        )
+                        
+   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertUsuarios() CLASS SQLGestoolSeeders
+
+   local hBuffer
+
+   hBuffer        := SQLUsuariosModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",              field->Uuid     )
+   hset( hBuffer, "codigo",            field->cCodUse  )
+   hset( hBuffer, "nombre",            capitalize( field->cNbrUse ) )
+   hset( hBuffer, "password",          SQLUsuariosModel():Crypt( field->cClvUse )  )
+
+   SQLUsuariosModel():insertIgnoreBuffer( hBuffer )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLCompanySeeders FROM SQLSeeders
+
+   METHOD Run()
+
+   METHOD SeederTiposImpresoras()
+   METHOD insertTiposImpresoras( dbf )
 
    METHOD runSeederDatos()
    METHOD runSeederEmpresa()
@@ -19,14 +147,9 @@ CLASS Seeders
 
    METHOD getInsertStatement( hCampos, cDataBaseName )
 
-   METHOD SeederUsuarios()
-   METHOD insertUsuarios( dbf )
-
    METHOD SeederSituaciones()
    METHOD getStatementSituaciones( dbfSitua )
 
-   METHOD SeederTiposImpresoras()
-   METHOD getStatementTiposImpresoras( dbfTipImp )
 
    METHOD SeederMovimientosAlmacen()
    METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
@@ -68,15 +191,44 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oMsg ) CLASS Seeders
+METHOD Run() CLASS SQLCompanySeeders
 
-   ::oMsg            := oMsg
+   ::aConvert     := {  {  "file"   => cPatDat() + "TipImp.Dbf",;
+                           "block"  => {|| ::insertTiposImpresoras() } },;
+                        {  "file"   => cPatDat() + "Lenguaje.Dbf",;
+                           "block"  => {|| ::insertLenguaje() } } ;                          
+                     }
+
+   aeval( ::aConvert,;
+      {|hConvert| ::Convert( hget( hConvert, "file" ), hget( hConvert, "block" ) ) } )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD runSeederDatos()
+METHOD insertTiposImpresoras() CLASS SQLCompanySeeders
+
+   local hBuffer  := SQLTiposImpresorasModel():loadBlankBuffer()
+
+   hset( hBuffer, "nombre", field->cTipImp )
+
+RETURN ( SQLTiposImpresorasModel():insertIgnoreBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertLenguaje() CLASS SQLCompanySeeders
+
+   local hBuffer  := SQLLenguajesModel():loadBlankBuffer()
+
+   hset( hBuffer, "uuid",     field->uuid    )
+   hset( hBuffer, "codigo",   field->cCodLen )
+   hset( hBuffer, "nombre",   field->cNomLen )
+
+RETURN ( SQLLenguajesModel():insertIgnoreBuffer( hBuffer ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD runSeederDatos() CLASS SQLCompanySeeders
 
    SincronizaListin()
 
@@ -102,7 +254,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD runSeederEmpresa()
+METHOD runSeederEmpresa() CLASS SQLCompanySeeders
 
    SincronizaRemesasMovimientosAlmacen()
 
@@ -139,7 +291,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertStatement( hCampos, cTableName )
+METHOD getInsertStatement( hCampos, cTableName ) CLASS SQLCompanySeeders
 
    local cStatement  
 
@@ -159,7 +311,7 @@ RETURN cStatement
 //--LO DEJO CON EL MÉTODO ANTIGUO PORQUE YA SE HA QUITADO EL CÓDIGO DEL TODO-//
 //---------------------------------------------------------------------------//
 
-METHOD SeederSituaciones() CLASS Seeders
+METHOD SeederSituaciones() CLASS SQLCompanySeeders
 
    local cPath       := cPatDat( .t. )
    local dbfSitua
@@ -196,7 +348,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementSituaciones( dbfSitua )
+METHOD getStatementSituaciones( dbfSitua ) CLASS SQLCompanySeeders
    
    local hCampos        := { "nombre" => quoted( ( dbfSitua )->cSitua ) }
 
@@ -206,7 +358,7 @@ RETURN ( ::getInsertStatement( hCampos, "situaciones" ) )
 //--LO DEJO CON EL MÉTODO ANTIGUO PORQUE YA SE HA QUITADO EL CÓDIGO DEL TODO-//
 //---------------------------------------------------------------------------//
 
-METHOD SeederTiposImpresoras() CLASS Seeders
+METHOD SeederTiposImpresoras() CLASS SQLCompanySeeders
 
    local cPath       := cPatDat( .t. )
    local dbfTipImp
@@ -226,7 +378,7 @@ METHOD SeederTiposImpresoras() CLASS Seeders
    ( dbfTipImp )->( dbgotop() )
    while !( dbfTipImp )->( eof() )
 
-      getSQLDatabase():Exec( ::getStatementTiposImpresoras( dbfTipImp ) )
+      getSQLDatabase():Exec( ::insertTiposImpresoras( dbfTipImp ) )
 
       ( dbfTipImp )->( dbSkip() )
 
@@ -242,11 +394,6 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementTiposImpresoras( dbfTipImp )
-
-   local hCampos        := { "nombre" => quoted( ( dbfTipImp )->cTipImp ) }
-
-RETURN ( ::getInsertStatement( hCampos, "tipos_impresoras" ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -254,41 +401,6 @@ RETURN ( ::getInsertStatement( hCampos, "tipos_impresoras" ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederUsuarios()
-
-   local dbf
-   local cPath    := ( fullCurDir() + cPatDat() + "\" )
-
-   if !( file( cPath + "Users.Dbf" ) )
-      msgStop( "El fichero " + cPath + "\Users.Dbf no se ha localizado", "Atención" )  
-      RETURN ( self )
-   end if
-
-   USE ( cPath + "Users.Dbf" ) NEW VIA ( 'DBFCDX' ) SHARED ALIAS ( cCheckArea( "Users", @dbf ) )
-   ( dbf )->( ordsetfocus( 0 ) )
-
-   ( dbf )->( dbeval( {|| ::insertUsuarios( dbf ) } ) )
-
-   ( dbf )->( dbCloseArea() )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertUsuarios( dbf )
-
-   local hBuffer
-
-   hBuffer        := SQLUsuariosModel():loadBlankBuffer()
-
-   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
-   hset( hBuffer, "codigo",            ( dbf )->cCodUse  )
-   hset( hBuffer, "nombre",            ( dbf )->cNbrUse  )
-   hset( hBuffer, "password",          SQLUsuariosModel():Crypt( ( dbf )->cClvUse )  )
-
-   SQLUsuariosModel():insertIgnoreBuffer( hBuffer )
-
-RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -296,7 +408,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederListin()
+METHOD SeederListin() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatDat() + "\" )
@@ -317,7 +429,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertListin( dbf )
+METHOD insertListin( dbf ) CLASS SQLCompanySeeders
 
    local hBuffer
    local nId
@@ -356,7 +468,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederLenguajes()
+METHOD SeederLenguajes() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatDat() + "\" )
@@ -376,28 +488,13 @@ METHOD SeederLenguajes()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD insertLenguaje( dbf )
-
-   local hBuffer
-
-   hBuffer        := SQLLenguajesModel():loadBlankBuffer()
-
-   hset( hBuffer, "uuid",              ( dbf )->Uuid     )
-   hset( hBuffer, "codigo",            ( dbf )->cCodLen  )
-   hset( hBuffer, "nombre",            ( dbf )->cNomLen  )
-
-   SQLLenguajesModel():insertIgnoreBuffer( hBuffer )
-
-RETURN ( self )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederSqlFiles()
+METHOD SeederSqlFiles() CLASS SQLCompanySeeders
 
    local cStm
    local aFile
@@ -428,7 +525,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederAgentes()
+METHOD SeederAgentes() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
@@ -449,7 +546,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertAgentes( dbf )
+METHOD insertAgentes( dbf ) CLASS SQLCompanySeeders
 
    local nId
    local hBuffer
@@ -491,7 +588,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederTransportistas()
+METHOD SeederTransportistas() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
@@ -512,7 +609,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertTransportista( dbf )
+METHOD insertTransportista( dbf ) CLASS SQLCompanySeeders
 
    local nId
    local hBuffer
@@ -553,7 +650,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederEmpresas() CLASS Seeders
+METHOD SeederEmpresas() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatDat() + "\" )
@@ -574,7 +671,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertEmpresas( dbf ) CLASS Seeders
+METHOD insertEmpresas( dbf ) CLASS SQLCompanySeeders
 
    local nId
    local cSql
@@ -618,7 +715,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederFabricantes() CLASS Seeders
+METHOD SeederFabricantes() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
@@ -639,7 +736,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertFabricantes( dbf ) CLASS Seeders
+METHOD insertFabricantes( dbf ) CLASS SQLCompanySeeders
 
    local nId
    local cSql
@@ -663,7 +760,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederCamposExtra() CLASS Seeders
+METHOD SeederCamposExtra() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
@@ -684,7 +781,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementCamposExtra( dbf ) CLASS Seeders
+METHOD getStatementCamposExtra( dbf ) CLASS SQLCompanySeeders
 
    local aTipo    := {  "Texto", "Número", "Fecha", "Lógico", "Lista" } 
    local hCampos  := {  "uuid"      => quoted( ( dbf )->Uuid ),;
@@ -699,7 +796,7 @@ RETURN ( ::getInsertStatement( hCampos, "campos_extra" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD SeederCamposExtraValores() CLASS Seeders
+METHOD SeederCamposExtraValores() CLASS SQLCompanySeeders
 
    local dbf
    local cPath    := ( fullCurDir() + cPatEmp() + "\" )
@@ -720,7 +817,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementCamposExtraValores( dbf ) CLASS Seeders
+METHOD getStatementCamposExtraValores( dbf ) CLASS SQLCompanySeeders
 
    local hCampos  := {  "uuid"                     => quoted( ( dbf )->Uuid ),;
                         "campo_extra_entidad_uuid" => quoted( CamposExtraModel():getUuid( ( dbf )->cCodTipo ) ),;
@@ -731,7 +828,7 @@ RETURN ( ::getInsertStatement( hCampos, "campos_extra_valores" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS Seeders
+METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS SQLCompanySeeders
 
    local cEntidadUuid   := ""
 
@@ -761,7 +858,7 @@ RETURN ( cEntidadUuid )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD SeederMovimientosAlmacen()
+METHOD SeederMovimientosAlmacen() CLASS SQLCompanySeeders
 
    local dbf
    local cLastRec
@@ -803,7 +900,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SeederMovimientosAlmacenLineas()
+METHOD SeederMovimientosAlmacenLineas() CLASS SQLCompanySeeders
 
    local dbf
    local cLastRec
@@ -845,7 +942,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementSeederMovimientosAlmacen( dbfRemMov )
+METHOD getStatementSeederMovimientosAlmacen( dbfRemMov ) CLASS SQLCompanySeeders
 
    local hCampos  := {  "empresa" =>            quoted( cCodEmp() ),;
                         "uuid" =>               quoted( ( dbfRemMov )->cGuid ),;
@@ -863,7 +960,7 @@ RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementSeederMovimientosAlmacenLineas( dbfHisMov )
+METHOD getStatementSeederMovimientosAlmacenLineas( dbfHisMov ) CLASS SQLCompanySeeders
 
    local hCampos  
 
@@ -885,7 +982,7 @@ RETURN ( ::getInsertStatement( hCampos, "movimientos_almacen_lineas" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD SeederMovimientosAlmacenSeries()
+METHOD SeederMovimientosAlmacenSeries() CLASS SQLCompanySeeders
 
    local dbf
    local cLastRec
@@ -927,7 +1024,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer )
+METHOD getStatementSeederMovimientosAlmacenLineasNumerosSeries( dbfMovSer ) CLASS SQLCompanySeeders
 
    local hCampos        
 
@@ -939,7 +1036,7 @@ RETURN ( ::getInsertStatement( hCampos, SQLMovimientosAlmacenLineasNumerosSeries
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION SincronizaRemesasMovimientosAlmacen()
+STATIC FUNCTION SincronizaRemesasMovimientosAlmacen() 
 
    local oBlock
    local oError
@@ -1031,7 +1128,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-FUNCTION SincronizaListin()
+FUNCTION SincronizaListin() 
 
    local oBlock
    local oError

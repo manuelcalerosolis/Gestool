@@ -71,12 +71,6 @@ METHOD Activate( lCenter )
 
       ::getBrowseView():setLDblClick( {|| ::Select() } ) 
 
-      ::getBrowseView():restoreStateFromModel() 
-
-      ::getBrowseView():gotoIdFromModel()
-
-      ::getBrowseView():setColumnOrder( ::getModel():getOrderBy(), ::getModel():getOrientation() ) 
-
       // Eventos---------------------------------------------------------------
 
       ::oDialog:bStart              := {|| ::Start() }
@@ -85,15 +79,13 @@ METHOD Activate( lCenter )
 
    ::oDialog:Activate( , , , lCenter, , .t., {|| ::initActivate() } )
 
+   ::oController:saveState()
+
 RETURN ( ::getSelectedBuffer() )
 
 //----------------------------------------------------------------------------//
 
 METHOD End()
-
-   if !empty( ::oMenuTreeView )
-      ::oMenuTreeView:End() 
-   end if 
 
    if !empty( ::oDialog )
       ::oDialog:End()
@@ -107,7 +99,11 @@ RETURN ( nil )
 
 METHOD Select()
 
-   ::hSelectedBuffer    := ::getModel():loadCurrentBuffer( ::getBrowseView():getRowSet():fieldGet( 'id' ) )
+   local nId            := ::getBrowseView():getRowSet():fieldGet( 'id' )
+
+   if !empty( nId )
+      ::hSelectedBuffer := ::getModel():loadCurrentBuffer( nId )
+   end if 
 
    ::oDialog:End( IDOK )
 
@@ -126,6 +122,8 @@ METHOD Start()
    ::oComboBoxOrder:SetItems( ::getBrowseView():getColumnsHeaders() )
 
    ::oComboBoxOrder:Set( ::getBrowseView():getColumnOrderHeader() )
+
+   ::oController:restoreState()
 
    ::oGetSearch:setFocus()
 

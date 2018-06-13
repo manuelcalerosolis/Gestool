@@ -72,12 +72,6 @@ METHOD Activate()
 
       ::getBrowseView():ActivateDialog( ::oDialog, 130 )
 
-      ::getBrowseView():restoreStateFromModel() 
-
-      ::getBrowseView():gotoIdFromModel()
-
-      ::getBrowseView():setColumnOrder( ::getModel():getOrderBy(), ::getModel():getOrientation() ) 
-
       // Eventos---------------------------------------------------------------
 
       ::oDialog:bStart              := {|| ::Start() }
@@ -131,10 +125,11 @@ METHOD Start()
    oGrupo                  := TDotNetGroup():New( oCarpeta, 68, "", .f. )
       oBoton               := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",           "Salir",          1, {|| ::oDialog:end() }, , , .f., .f., .f. )
 
-
    ::oComboBoxOrder:SetItems( ::getBrowseView():getColumnsHeaders() )
 
    ::oComboBoxOrder:Set( ::getBrowseView():getColumnOrderHeader() )
+
+   ::oController:restoreState() 
 
    ::oGetSearch:setFocus()
 
@@ -144,7 +139,7 @@ RETURN ( Self )
 
 METHOD defaultTitle()
 
-   local cTitle   := ::oController:getTitle() + space( 1 ) + " : "  
+   local cTitle   := ::oController:getTitle() + " : "  
 
    if hhaskey( ::oController:oSenderController:oModel:hBuffer, "codigo" ) 
       cTitle      += alltrim( ::oController:oSenderController:oModel:hBuffer[ "codigo" ] ) + " - "
@@ -155,3 +150,5 @@ METHOD defaultTitle()
    end if 
 
 RETURN ( cTitle )
+
+//----------------------------------------------------------------------------//

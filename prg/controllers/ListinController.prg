@@ -284,7 +284,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLListinModel FROM SQLBaseModel
+CLASS SQLListinModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "listin"
 

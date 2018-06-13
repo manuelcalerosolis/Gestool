@@ -28,11 +28,12 @@ METHOD New() CLASS PermisosController
 
    ::cTitle                := "Permisos"
 
-   ::setName( "permisos" )
+   ::cName                 := "permisos"
 
    ::lTransactional        := .t.
 
-   ::hImage                := { "16" => "gc_id_badge_16" }
+   ::hImage                := {  "16" => "gc_id_badge_16",;
+                                 "48" => "gc_id_badge_48" }
 
    ::oModel                := SQLPermisosModel():New( self )
    
@@ -221,7 +222,9 @@ END CLASS
 
 METHOD openingDialog() CLASS PermisosView
 
-   ::addTreeItems( oWndBar():aAccesos )
+   local oAcceso  := CreateMainSQLAcceso()
+
+   ::addTreeItems( oAcceso:aAccesos )
    
 RETURN ( self )
 
@@ -237,7 +240,7 @@ METHOD addTreeItems( aAccesos ) CLASS PermisosView
 
    aeval( aAccesos,;
       {|oAcceso|  ::addTreeItem( oAcceso ),;
-                  iif(  len( oAcceso:aAccesos ) > 0,;
+                  iif(  !empty( oAcceso ) .and. len( oAcceso:aAccesos ) > 0,;
                         ::addTreeItems( oAcceso:aAccesos ), ) } )
 
    TreeEnd()
@@ -250,6 +253,10 @@ METHOD addTreeItem( oAcceso ) CLASS PermisosView
 
    local cUuid     
    local oItem  
+
+   if empty( oAcceso )
+      RETURN ( self )
+   end if 
 
    cUuid          := ::getModel():hBuffer[ "uuid" ]  
    oItem          := treeAddItem( oAcceso:cPrompt )
@@ -310,8 +317,13 @@ METHOD Activate() CLASS PermisosView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_id_badge_48" ;
+      RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
       OF          ::oDialog
 
    REDEFINE GET   ::getModel():hBuffer[ "id" ] ;

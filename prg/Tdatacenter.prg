@@ -589,7 +589,7 @@ METHOD lAdministratorTask()
    dbcloseall()
 
    if getSQLDatabase():ConnectWithoutDataBase()
-      SQLMigrations():run()
+      SQLCompanyMigrations():run()
    else 
       msgStop( "No se ha podido conectar a la base de datos MySQL" + CRLF + getSQLDatabase():sayConexionInfo() )
       RETURN ( nil )
@@ -771,7 +771,7 @@ METHOD StartAdministratorTask()
 	end if 
 
    if ::lSeeders
-      oSeeder  := Seeders():New( ::oMsg )
+      oSeeder  := SQLSeeders():New( ::oMsg )
    end if
 
    // Recorremos el array de las empresas par actualizarlas--------------------

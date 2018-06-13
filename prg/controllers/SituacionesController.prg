@@ -171,7 +171,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLSituacionesModel FROM SQLBaseModel
+CLASS SQLSituacionesModel FROM SQLCompanyModel
 
    DATA cColumnCode              INIT "nombre"
 

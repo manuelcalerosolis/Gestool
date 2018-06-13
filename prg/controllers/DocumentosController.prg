@@ -345,7 +345,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLDocumentosModel FROM SQLBaseModel
+CLASS SQLDocumentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "documentos"
 
