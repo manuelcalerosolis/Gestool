@@ -13,7 +13,7 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
    DATA cConstraints          INIT  "PRIMARY KEY ( id ), "                       + ; 
                                        "KEY ( uuid ), "                          + ;
                                        "KEY ( parent_uuid ), "                   + ;
-                                       "KEY ( codigo_articulo ) "               
+                                       "KEY ( articulo_codigo ) "               
 
    METHOD getColumns()
 
