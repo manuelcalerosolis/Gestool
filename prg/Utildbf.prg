@@ -4521,6 +4521,54 @@ RETURN ( file( cFile ) )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION permutateArray( aArray )
+
+   local x
+   local aResults    := {}
+
+   for x = 1 to len( aArray ) - 1
+      if x = 1
+         aResults    := mixArray( aArray[ x ], aArray[ x + 1 ] )
+      else
+         aResults    := mixArray( aResults, aArray[ x + 1 ] )
+      end if
+   next x
+
+RETURN ( aResults )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION mixArray( aGrp1, aGrp2 )
+
+   local x
+   local y
+   local aTemps   := {}
+
+   if !empty( aGrp1 ) .and. !empty( aGrp2 )
+      if !( hb_isarray( aGrp1[ 1 ] ) )
+         for x = 1 to Len( aGrp1 )
+            for y = 1 to Len( aGrp2 )
+               aadd( aTemps, {} )
+               aadd( atail( aTemps ), aGrp1[ x ] )
+               aadd( atail( aTemps ), aGrp2[ y ] )
+            next y
+         next x
+      else
+         for x = 1 to Len( aGrp1 )
+            for y = 1 to Len( aGrp2 )
+               aadd( aTemps, {} )
+               aeval( aGrp1[ x ], { | a | aadd( atail( aTemps ), a ) } )
+               aadd( aTail( aTemps ), aGrp2[ y ] )
+            next y
+         next x
+      endif
+   endif
+
+RETURN ( aTemps )
+
+//----------------------------------------------------------------------------//
+
+
 FUNCTION ShowImage( oBmpImage )
 
    local oDlg

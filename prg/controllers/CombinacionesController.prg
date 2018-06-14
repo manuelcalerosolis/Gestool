@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS CombinacionesController FROM SQLNavigatorController
+CLASS CombinacionesController FROM SQLBrowseController
 
    DATA oPropiedadesController
 
@@ -124,35 +124,12 @@ METHOD addColumns() CLASS CombinacionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'grupo_nombre'
-      :cHeader             := 'Nombre grupo'
-      :nWidth              := 120
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'grupo_nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'propiedad_nombre'
-      :cHeader             := 'Valor propiedad'
-      :nWidth              := 150
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'propiedad_nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'orden'
-      :cHeader             := 'Orden'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'orden' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'incremento_precio'
       :cHeader             := 'Incremento de precio'
       :nWidth              := 150
       :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :cEditPicture        := "@E 999999999999.999999"
    end with
 
 RETURN ( self )
@@ -168,6 +145,12 @@ CLASS CombinacionesView FROM SQLBaseView
    DATA oPanel
 
    DATA cGroupProperty
+
+   DATA aCombinations
+
+   DATA aPanelNode
+
+   DATA nFirstPanelSelected
   
    METHOD Activate()
 
@@ -179,7 +162,7 @@ CLASS CombinacionesView FROM SQLBaseView
 
    METHOD generateCombinations()
 
-   METHOD generateCombination( oControl )
+   METHOD generatePanelCombinations( oPanel )
 
 END CLASS
 
@@ -201,6 +184,8 @@ METHOD Activate() CLASS CombinacionesView
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog ;
+
+   ::oController:Activate( 100, ::oDialog )
    
    ::redefineExplorerBar( 110 )
 
@@ -280,27 +265,52 @@ RETURN ( oCheckBox )
 
 METHOD generateCombinations() CLASS CombinacionesView
 
-   aeval( ::oExplorerBar:aPanels,;
-      {|oPanel| aeval( oPanel:aControls,;
-         {|oControl| ::generateCombination( oControl ) } ) } )
+   local oPanel
+   local aPanelCombination
 
-RETURN ( nil )
+   ::aCombinations         := {}
 
-//---------------------------------------------------------------------------//
+   for each oPanel in ::oExplorerBar:aPanels
+      
+      aPanelCombination    := ::generatePanelCombinations( oPanel )
+      
+      if !empty( aPanelCombination )
+         aadd( ::aCombinations, aPanelCombination )
+      end if 
 
-METHOD generateCombination( oControl ) CLASS CombinacionesView
+   next 
 
-   msgalert( oControl:ClassName(), "ClassName" )
-
-   if ( oControl:ClassName() != "TCHECKBOX" )
+   if empty( ::aCombinations )
+      msgStop( "Debe seleccionar al menos una propiedad" )
       RETURN ( nil )
    end if 
 
-   if ( oControl:varGet() )
-      msgalert( hb_valtoexp( oControl:Cargo ) )
+   if len( ::aCombinations ) > 1
+      ::aCombinations       := permutateArray( ::aCombinations )
    end if 
 
-RETURN ( nil )
+   msgalert( hb_valtoexp( ::aCombinations ), "aCombinations" )
+
+RETURN ( ::aCombinations )
+
+//---------------------------------------------------------------------------//
+
+METHOD generatePanelCombinations( oPanel )
+
+   local oControl
+   local aPanelCombination    := {}
+
+   for each oControl in oPanel:aControls
+
+      if ( oControl:className() == "TCHECKBOX" ) .and. ( oControl:varGet() )
+               
+         aadd( aPanelCombination, hget( oControl:Cargo, "propiedad_nombre" ) )
+
+      end if 
+
+   next 
+
+RETURN ( aPanelCombination )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -333,8 +343,23 @@ CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getInitialSelect()
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLCombinacionesModel
+
+   local cSelect  := "SELECT combinaciones.id AS grupo_id,"                                                 + " " + ; 
+                        "combinaciones.uuid AS grupo_uuid,"                                                 + " " + ;
+                        "combinaciones.parent_uuid AS parent_uuid,"                                         + " " + ;
+                        "combinaciones.incremento_precio AS incremento_precio"                              + " " + ;                     
+                     "FROM " + ::getTableName() + " AS combinaciones"                                       + " " + ; 
+                     "INNER JOIN " + SQLCombinacionesPropiedadesModel():getTableName() + " AS propiedades"  + " " + ;
+                        "ON propiedades.uuid = combinaciones.parent_uuid"                                  
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 
@@ -343,7 +368,7 @@ METHOD getColumns() CLASS SQLCombinacionesModel
    hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
                                                 "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"                ,;                                  
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
                                                 "default"   => {|| win_uuidcreatestring() } }               )
 
    hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 )"                              ,;
@@ -362,9 +387,13 @@ RETURN ( ::hColumns )
 
 CLASS CombinacionesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLCombinacionesModel():getTableName() ) 
+   METHOD getTableName()         INLINE ( SQLCombinacionesModel():getTableName() ) 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+

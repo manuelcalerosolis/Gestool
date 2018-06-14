@@ -343,6 +343,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   // mezcla()
+
    // SQLContadoresModel():insertSerie( "movimientos_almacen", "ABC", 1 )
 
    // msgalert( SQLContadoresModel():isSerie( "movimientos_almacen", "ABC" ), "ABC" )

@@ -329,18 +329,19 @@ RETURN ( ::hColumns )
 
 METHOD getPropertyList() CLASS SQLPropiedadesModel
 
-   local cSelect  := "SELECT grupos.uuid AS grupo_uuid,"                                        + " " + ;
-                            "grupos.nombre AS grupo_nombre,"                                    + " " + ;                     
-                            "grupos.color AS grupo_color,"                                      + " " + ;                     
-                            "lineas.uuid AS propiedad_uuid,"                                    + " " + ;
-                            "lineas.parent_uuid AS parent_uuid,"                                + " " + ;
-                            "lineas.nombre AS propiedad_nombre,"                                + " " + ;
-                            "lineas.color_rgb AS propiedad_color_rgb,"                          + " " + ;
-                            "lineas.orden AS orden"                                             + " " + ;
+   local cSelect  := "SELECT grupos.id AS grupo_id,"                                            + " " + ; 
+                           "grupos.uuid AS grupo_uuid,"                                         + " " + ;
+                           "grupos.nombre AS grupo_nombre,"                                     + " " + ;                     
+                           "grupos.color AS grupo_color,"                                       + " " + ;                     
+                           "lineas.uuid AS propiedad_uuid,"                                     + " " + ;
+                           "lineas.parent_uuid AS parent_uuid,"                                 + " " + ;
+                           "lineas.nombre AS propiedad_nombre,"                                 + " " + ;
+                           "lineas.color_rgb AS propiedad_color_rgb,"                           + " " + ;
+                           "lineas.orden AS orden"                                              + " " + ;
                      "FROM " + ::getTableName() + " AS grupos "                                 + " " + ; 
-                     "INNER JOIN " + SQLPropiedadesLineasModel():getTableName() +" AS lineas"   + " " + ;
+                     "INNER JOIN " + SQLPropiedadesLineasModel():getTableName() + " AS lineas"  + " " + ;
                         "ON grupos.uuid = lineas.parent_uuid"                                   + " " + ;
-                     "ORDER by grupo_uuid, orden"                                               
+                     "ORDER by grupo_id, orden"                                               
 
 RETURN ( cSelect )
 
