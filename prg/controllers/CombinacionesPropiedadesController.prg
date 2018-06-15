@@ -182,10 +182,6 @@ END CLASS
 
 METHOD getValidators() CLASS CombinacionesPropiedadesValidator
 
-   /*::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido"    ,;
-                                                      "unique"             => "El nombre introducido ya existe"   },;
-                        "tipos"  =>                {  "required"           => "El tipo es un datos requerido"     },;
-                        "Importe"  =>              {  "required"           => "El importe es un datos requerido"  } }*/
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//

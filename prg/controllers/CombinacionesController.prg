@@ -5,8 +5,6 @@
 
 CLASS CombinacionesController FROM SQLBrowseController
 
-
-
    DATA oPropiedadesController
 
    DATA oPropiedadesLineasController
@@ -27,13 +25,13 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    METHOD isCombination( aCombination )   INLINE ( ::getRowSet():findString( ::getCombinationName( aCombination ), 'articulos_propiedades_nombre' ) )
 
+   METHOD updateIncrementoPrecio( nIncrementoPrecio )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oSenderController ) CLASS CombinacionesController
-
 
    ::Super:New( oSenderController )
 
@@ -67,7 +65,6 @@ METHOD New( oSenderController ) CLASS CombinacionesController
 
    ::oGetSelector                         := GetSelector():New( self ) 
 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -96,7 +93,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD runViewGenerate()
+METHOD runViewGenerate() CLASS CombinacionesController
 
    ::hPropertyList  := getSQLDatabase():selectTrimedFetchHash( ::oPropiedadesController:oModel:getPropertyList() ) 
 
@@ -111,7 +108,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertCombinations( aCombinations )
+METHOD insertCombinations( aCombinations ) CLASS CombinacionesController
 
    local aCombination
 
@@ -137,7 +134,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getCombinationName( aCombination )
+METHOD getCombinationName( aCombination ) CLASS CombinacionesController
 
    local cCombination   := ""
 
@@ -148,6 +145,14 @@ METHOD getCombinationName( aCombination )
 RETURN ( cCombination )
 
 //---------------------------------------------------------------------------//
+
+METHOD updateIncrementoPrecio( nIncrementoPrecio ) CLASS CombinacionesController
+
+   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'incremento_precio', nIncrementoPrecio )
+
+   ::refreshRowSet()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -201,10 +206,12 @@ METHOD addColumns() CLASS CombinacionesBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
       :bEditBlock          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
       :cEditPicture        := "@E 999999999999.999999"
+      :bOnPostEdit         := {|oCol, nIncrementoPrecio| ::oController:updateIncrementoPrecio( nIncrementoPrecio ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -240,7 +247,7 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS CombinacionesView
- msgalert ("activate")
+
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_COMBINACIONES" ;
       TITLE       ::LblTitle() + "Combinaciones de propiedades"
@@ -256,9 +263,8 @@ METHOD Activate() CLASS CombinacionesView
       FONT        getBoldFont() ;
       OF          ::oDialog ;
 
-msgalert( "1" )
    ::oController:Activate( 100, ::oDialog )
-   msgalert( "2" )
+
    ::redefineExplorerBar( 110 )
 
    REDEFINE BUTTON ;
