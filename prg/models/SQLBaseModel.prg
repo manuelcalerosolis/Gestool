@@ -344,6 +344,8 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addGroupBy( cSQLSelect )
 
+   logwrite( cSQLSelect )
+
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
@@ -797,6 +799,8 @@ METHOD getDeleteSentenceById( aIds )
    aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
    cSentence   := chgAtEnd( cSentence, ' )', 2 )
+
+   msgalert( cSentence, "getDeleteSentenceById" )
 
 RETURN ( cSentence )
 

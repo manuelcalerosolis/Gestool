@@ -11,11 +11,20 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    DATA hPropertyList
 
+   DATA oCombinacionesPropiedadesController
+
    METHOD New()
 
    METHOD End()
 
    METHOD runViewGenerate()
+
+   METHOD insertCombinations( aCombinations )
+
+   METHOD getCombinationName( aCombination )
+
+   METHOD isCombination( aCombination )   INLINE ( ::getRowSet():findString( ::getCombinationName( aCombination ), 'articulos_propiedades_nombre' ) )
+
 
 END CLASS
 
@@ -25,31 +34,35 @@ METHOD New( oSenderController ) CLASS CombinacionesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                         := "Combinaciones"
+   ::cTitle                               := "Combinaciones"
 
-   ::cName                          := "combinaciones"
+   ::cName                                := "combinaciones"
 
-   ::hImage                         := {  "16" => "gc_cash_register_refresh_16",;
-                                          "32" => "gc_cash_register_refresh_32",;
-                                          "48" => "gc_cash_register_refresh_48" }
+   ::hImage                               := {  "16" => "gc_cash_register_refresh_16",;
+                                                "32" => "gc_cash_register_refresh_32",;
+                                                "48" => "gc_cash_register_refresh_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::lTransactional                       := .t.
 
-   ::oPropiedadesController         := PropiedadesController():New( self )
+   ::nLevel                               := Auth():Level( ::cName )
 
-   ::oPropiedadesLineasController   := PropiedadesLineasController():New( self )
+   ::oPropiedadesController               := PropiedadesController():New( self )
 
-   ::oModel                         := SQLCombinacionesModel():New( self )
+   ::oPropiedadesLineasController         := PropiedadesLineasController():New( self )
 
-   ::oBrowseView                    := CombinacionesBrowseView():New( self )
+   ::oModel                               := SQLCombinacionesModel():New( self )
 
-   ::oDialogView                    := CombinacionesView():New( self )
+   ::oBrowseView                          := CombinacionesBrowseView():New( self )
 
-   ::oValidator                     := CombinacionesValidator():New( self, ::oDialogView )
+   ::oDialogView                          := CombinacionesView():New( self )
 
-   ::oRepository                    := CombinacionesRepository():New( self )
+   ::oValidator                           := CombinacionesValidator():New( self, ::oDialogView )
 
-   ::oGetSelector                   := GetSelector():New( self )   
+   ::oRepository                          := CombinacionesRepository():New( self )
+
+   ::oCombinacionesPropiedadesController  := CombinacionesPropiedadesController():New( self )
+
+   ::oGetSelector                         := GetSelector():New( self )   
 
 RETURN ( Self )
 
@@ -60,6 +73,8 @@ METHOD End() CLASS CombinacionesController
    ::oPropiedadesController:End()
 
    ::oPropiedadesLineasController:End()
+
+   ::oCombinacionesPropiedadesController:End()
 
    ::oModel:End()
 
@@ -73,7 +88,7 @@ METHOD End() CLASS CombinacionesController
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -83,12 +98,52 @@ METHOD runViewGenerate()
 
    if empty( ::hPropertyList )
       msgStop( "No se definieron propiedades" )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    ::dialogViewActivate()
 
-RETURN ( Self )
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertCombinations( aCombinations )
+
+   local aCombination
+
+   for each aCombination in aCombinations
+
+      if !( ::isCombination( aCombination ) )
+
+         if ::oModel:insertBlankBuffer() != 0
+
+            ::oCombinacionesPropiedadesController:insertProperties( aCombination, ::oModel:getBuffer( "uuid" ) )
+
+         end if 
+   
+      end if 
+
+   next
+
+   ::refreshRowSet()
+
+   ::refreshBrowseView()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCombinationName( aCombination )
+
+   local cCombination   := ""
+
+   aeval( aCombination, {|hCombination| cCombination += hget( hCombination, 'propiedad_nombre' ) + "," } )
+   
+   cCombination         := chgAtEnd( cCombination, '', 1 )
+
+RETURN ( cCombination )
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -117,10 +172,18 @@ METHOD addColumns() CLASS CombinacionesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Uuid'
-      :nWidth              := 300
+      :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'articulos_propiedades_nombre'
+      :cHeader             := 'Nombre'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_propiedades_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -188,6 +251,12 @@ METHOD Activate() CLASS CombinacionesView
    ::oController:Activate( 100, ::oDialog )
    
    ::redefineExplorerBar( 110 )
+
+   REDEFINE BUTTON ;
+      ID          130 ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      ACTION      ( ::oController:Delete( ::oController:getBrowse():aSelected ) )
 
    REDEFINE BUTTON ;
       ID          120 ;
@@ -289,8 +358,8 @@ METHOD generateCombinations() CLASS CombinacionesView
       ::aCombinations       := permutateArray( ::aCombinations )
    end if 
 
-   msgalert( hb_valtoexp( ::aCombinations ), "aCombinations" )
-
+   ::oController:insertCombinations( ::aCombinations )
+   
 RETURN ( ::aCombinations )
 
 //---------------------------------------------------------------------------//
@@ -304,7 +373,7 @@ METHOD generatePanelCombinations( oPanel )
 
       if ( oControl:className() == "TCHECKBOX" ) .and. ( oControl:varGet() )
                
-         aadd( aPanelCombination, hget( oControl:Cargo, "propiedad_nombre" ) )
+         aadd( aPanelCombination, oControl:Cargo )
 
       end if 
 
@@ -341,6 +410,8 @@ CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "combinaciones"
 
+   DATA cGroupBy                 INIT "GROUP BY uuid"
+
    METHOD getColumns()
 
    METHOD getInitialSelect()
@@ -351,13 +422,18 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLCombinacionesModel
 
-   local cSelect  := "SELECT combinaciones.id AS grupo_id,"                                                 + " " + ; 
-                        "combinaciones.uuid AS grupo_uuid,"                                                 + " " + ;
-                        "combinaciones.parent_uuid AS parent_uuid,"                                         + " " + ;
-                        "combinaciones.incremento_precio AS incremento_precio"                              + " " + ;                     
-                     "FROM " + ::getTableName() + " AS combinaciones"                                       + " " + ; 
-                     "INNER JOIN " + SQLCombinacionesPropiedadesModel():getTableName() + " AS propiedades"  + " " + ;
-                        "ON propiedades.uuid = combinaciones.parent_uuid"                                  
+   local cSelect  := "SELECT combinaciones.id AS id,"                                                                      + " " + ; 
+                        "combinaciones.uuid AS uuid,"                                                                + " " + ;
+                        "combinaciones.parent_uuid AS parent_uuid,"                                                        + " " + ;
+                        "combinaciones.incremento_precio AS incremento_precio,"                                            + " " + ; 
+                        "combinaciones_propiedades.id AS propiedades_id,"                                                  + " " + ; 
+                        "combinaciones_propiedades.uuid AS propiedades_uuid,"                                              + " " + ; 
+                        "GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre" + " " + ; 
+                     "FROM " + ::getTableName() + " AS combinaciones"                                                      + " " + ; 
+                     "INNER JOIN " + SQLCombinacionesPropiedadesModel():getTableName() + " AS combinaciones_propiedades"   + " " + ;
+                        "ON combinaciones_propiedades.parent_uuid = combinaciones.uuid"                                                  + " " + ;
+                     "INNER JOIN " + SQLPropiedadesLineasModel():getTableName() + " AS articulos_propiedades_lineas"       + " " + ;
+                        "ON combinaciones_propiedades.propiedad_uuid = articulos_propiedades_lineas.uuid"
 
 RETURN ( cSelect )
 
@@ -379,7 +455,6 @@ METHOD getColumns() CLASS SQLCombinacionesModel
 
 RETURN ( ::hColumns )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
