@@ -5,6 +5,8 @@
 
 CLASS CombinacionesController FROM SQLBrowseController
 
+
+
    DATA oPropiedadesController
 
    DATA oPropiedadesLineasController
@@ -31,6 +33,7 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD New( oSenderController ) CLASS CombinacionesController
+
 
    ::Super:New( oSenderController )
 
@@ -62,7 +65,8 @@ METHOD New( oSenderController ) CLASS CombinacionesController
 
    ::oCombinacionesPropiedadesController  := CombinacionesPropiedadesController():New( self )
 
-   ::oGetSelector                         := GetSelector():New( self )   
+   ::oGetSelector                         := GetSelector():New( self ) 
+
 
 RETURN ( Self )
 
@@ -192,6 +196,10 @@ METHOD addColumns() CLASS CombinacionesBrowseView
       :nWidth              := 150
       :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+
+      :nEditType           := 1
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
+      :bEditBlock          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
       :cEditPicture        := "@E 999999999999.999999"
    end with
 
@@ -232,7 +240,7 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS CombinacionesView
-
+ msgalert ("activate")
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_COMBINACIONES" ;
       TITLE       ::LblTitle() + "Combinaciones de propiedades"
@@ -248,8 +256,9 @@ METHOD Activate() CLASS CombinacionesView
       FONT        getBoldFont() ;
       OF          ::oDialog ;
 
+msgalert( "1" )
    ::oController:Activate( 100, ::oDialog )
-   
+   msgalert( "2" )
    ::redefineExplorerBar( 110 )
 
    REDEFINE BUTTON ;
@@ -287,6 +296,8 @@ RETURN ( ::oDialog:nResult )
 METHOD startActivate() CLASS CombinacionesView
 
    local hProperty
+
+   msgalert( "start_activate")
 
    for each hProperty in ::oController:hPropertyList
       
