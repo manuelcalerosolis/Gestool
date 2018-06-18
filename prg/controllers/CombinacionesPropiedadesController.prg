@@ -69,6 +69,9 @@ METHOD insertProperties( aCombination, uuidParent ) CLASS CombinacionesPropiedad
 
    local hCombination
 
+   logwrite("********insertProperties*********")
+   logwrite(hb_valtoexp( aCombination ) )
+
    for each hCombination in aCombination
 
       ::insertProperty( hget( hCombination, "propiedad_uuid" ), uuidParent )

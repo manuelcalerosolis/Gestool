@@ -255,6 +255,10 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
       RETURN ( self )
    end if
 
+   oPanel:AddLink(   "Combinaciones...",;
+                     {|| ::oController:oCombinacionesController:runViewGenerate() },;
+                     ::oController:oCombinacionesController:getImage( "16" ) )
+
    oPanel:AddLink(   "Codificación de proveedores...",;
                      {|| msgalert( "to-do" ) },;
                      ::oController:oArticulosUnidadesMedicionController:getImage( "16" ) )
@@ -262,10 +266,6 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
    oPanel:AddLink(   "Imagenes...",;
                      {|| ::oController:oImagenesController:activateDialogView() },;
                      ::oController:oImagenesController:getImage( "16" ) )
-
-   oPanel:AddLink(   "Combinaciones...",;
-                     {|| ::oController:oCombinacionesController:runViewGenerate() },;
-                     ::oController:oCombinacionesController:getImage( "16" ) )
 
    oPanel:AddLink(   "Traducciones...",;
                      {|| ::oController:oTraduccionesController:activateDialogView() },;

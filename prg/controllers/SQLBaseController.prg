@@ -98,6 +98,7 @@ CLASS SQLBaseController
                                                                      ::oRowSet:gotoRecno( nRecno ), ) )
    METHOD findRowSet( nId )                           INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:find( nId ), ) )
    METHOD refreshRowSet()                             INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refresh(), ) )
+   METHOD refreshRowSetAndGoTop()                     INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refreshAndGoTop(), ) )
    METHOD refreshRowSetAndFindId( nId )               INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refreshAndFindId( nId ), ) )
    METHOD goDownRowSet()                              INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:goDown(), ) )
    METHOD goUpRowSet()                                INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:goUp(), ) )
@@ -134,6 +135,7 @@ CLASS SQLBaseController
    METHOD getBrowse()                                 INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:getBrowse(), ) )
 
    METHOD refreshBrowseView()                         INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
+   METHOD refreshBrowseViewAndGoTop()                 INLINE ( if( !empty( ::oBrowseView ), ( ::oBrowseView:goTop(), ::oBrowseView:Refresh() ), ) )
 
    METHOD isBrowseColumnEdit()                        
 
