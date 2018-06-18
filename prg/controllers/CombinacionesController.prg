@@ -47,8 +47,6 @@ METHOD New( oSenderController ) CLASS CombinacionesController
                                                 "32" => "gc_cash_register_refresh_32",;
                                                 "48" => "gc_cash_register_refresh_48" }
 
-   ::lTransactional                       := .t.
-
    ::nLevel                               := Auth():Level( ::cName )
 
    ::oPropiedadesController               := PropiedadesController():New( self )
@@ -106,7 +104,13 @@ METHOD runViewGenerate() CLASS CombinacionesController
       RETURN ( nil )
    end if 
 
-   ::dialogViewActivate()
+   ::beginTransactionalMode()
+
+   if ::dialogViewActivate()
+      ::commitTransactionalMode()
+   else 
+      ::rollbackTransactionalMode()
+   end if 
 
 RETURN ( nil )
 
@@ -114,15 +118,7 @@ RETURN ( nil )
 
 METHOD insertCombinations( aCombinations ) CLASS CombinacionesController
 
-   local aCombination
-
-   for each aCombination in aCombinations
-
-      ::insertCombination( aCombination )
-
-   next
-
-RETURN ( nil )
+RETURN ( aeval( aCombinations, {|aCombination| ::insertCombination( aCombination ) } ) )
 
 //---------------------------------------------------------------------------//
 
