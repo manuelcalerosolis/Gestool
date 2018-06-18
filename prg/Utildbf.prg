@@ -4534,7 +4534,7 @@ FUNCTION permutateArray( aArray )
       end if
    next x
 
-RETURN ( aResults )
+RETURN ( aclone( aResults ) )
 
 //----------------------------------------------------------------------------//
 
@@ -4564,10 +4564,9 @@ FUNCTION mixArray( aGrp1, aGrp2 )
       endif
    endif
 
-RETURN ( aTemps )
+RETURN ( aclone( aTemps ) )
 
 //----------------------------------------------------------------------------//
-
 
 FUNCTION ShowImage( oBmpImage )
 

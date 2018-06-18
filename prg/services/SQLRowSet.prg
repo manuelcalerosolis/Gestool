@@ -42,7 +42,9 @@ CLASS SQLRowSet
    METHOD Build( cSentence )          
    METHOD BuildPad( cSentence )                       INLINE ::Build( cSentence, .t. )          
 
-   METHOD refreshAndFindId( nId )                     INLINE ( ::Refresh(), ::FindId( nId ) )
+   METHOD refreshAndGoTop()                           INLINE ( ::Refresh(), ::goTop() )
+   
+   METHOD refreshAndFindId( nId )                     INLINE ( ::Refresh(), ::findId( nId ) )
    METHOD buildAndFindId( nId )                       INLINE ( ::Build(), ::FindId( nId ) )
 
    METHOD refreshAndFindString( cFind, cColumn )      INLINE ( ::Refresh(), ::FindString( cFind, cColumn ) )

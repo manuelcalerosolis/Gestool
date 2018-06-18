@@ -66,8 +66,6 @@ METHOD getSQLTageableTags( tageableUuid ) CLASS TageableRepository
                   "ON Tags.uuid = Tageable.tag_uuid"                          + " " + ;
                "WHERE Tageable.tageable_uuid = " + quoted( tageableUuid )
 
-   logwrite( cSql )
-
 RETURN ( cSql ) 
 
 //---------------------------------------------------------------------------//

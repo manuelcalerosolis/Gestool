@@ -61,7 +61,7 @@ CLASS SQLBrowseView
    METHOD createFromCode()                   INLINE ( ::oBrowse:CreateFromCode() )
    METHOD createFromResource( id )           INLINE ( ::oBrowse:CreateFromResource( id ) )
 
-   METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick := bLDblClick )
+   METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick    := bLDblClick )
    METHOD setLDClickDatas( bLDClickDatas )   INLINE ( ::oBrowse:bLDClickDatas := bLDClickDatas )
 
    METHOD Refresh()                          INLINE ( ::oBrowse:makeTotals(), ::oBrowse:Refresh() )
