@@ -798,6 +798,8 @@ METHOD getDeleteSentenceById( aIds )
 
    cSentence   := chgAtEnd( cSentence, ' )', 2 )
 
+   msgalert( cSentence, "getDeleteSentenceById" )
+
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//

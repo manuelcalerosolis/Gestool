@@ -9,6 +9,10 @@ CLASS CombinacionesPropiedadesController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD insertProperties( aCombination )
+
+   METHOD insertProperty( uuidCombination, uuidParent )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -17,13 +21,13 @@ METHOD New( oSenderController ) CLASS CombinacionesPropiedadesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Combinaciones de Propiedades"
+   ::cTitle                         := "Combinaciones de Propiedades"
 
-   ::cName                       := "combinaciones_propiedades"
+   ::cName                          := "combinaciones_propiedades"
 
-   ::hImage                      := {  "16" => "gc_cash_register_refresh_16",;
-                                       "32" => "gc_cash_register_refresh_32",;
-                                       "48" => "gc_cash_register_refresh_48" }
+   ::hImage                         := {  "16" => "gc_cash_register_refresh_16",;
+                                          "32" => "gc_cash_register_refresh_32",;
+                                          "48" => "gc_cash_register_refresh_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -57,9 +61,33 @@ METHOD End() CLASS CombinacionesPropiedadesController
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD insertProperties( aCombination, uuidParent ) CLASS CombinacionesPropiedadesController
+
+   local hCombination
+
+   for each hCombination in aCombination
+
+      ::insertProperty( hget( hCombination, "propiedad_uuid" ), uuidParent )
+
+   next
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertProperty( uuidCombination, uuidParent ) CLASS CombinacionesPropiedadesController
+
+   local hBuffer     := ::oModel:loadBlankBuffer()
+   
+   hset( hBuffer, "propiedad_uuid", uuidCombination )  
+   hset( hBuffer, "parent_uuid", uuidParent )  
+
+RETURN ( ::oModel:insertBuffer( hBuffer ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -134,79 +162,6 @@ END CLASS
 
 METHOD Activate() CLASS CombinacionesPropiedadesView
 
-   /*DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "ENTRADA_SALIDA" ;
-      TITLE       ::LblTitle() + "Entrada o salida de caja"
-
-   REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
-      RESOURCE    ::oController:getImage( "48" ) ;
-      TRANSPARENT ;
-      OF          ::oDialog ;
-
-   REDEFINE SAY   ::oMessage ;
-      ID          800 ;
-      FONT        getBoldFont() ;
-      OF          ::oDialog ;
-
-   REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:oModel:hBuffer[ "tipo" ] ;
-      ID          100 ;
-      ITEMS       ::aTipo;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
-      ID          110 ;
-      VALID       ( ::oController:validate( "importe" ) ) ;
-      SPINNER ;
-      PICTURE     "@E 9999999.999" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          120 ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "sesion" ] ;
-      ID          130 ;
-      WHEN        ( .f. ) ;
-      OF          ::oDialog ;
-   // codigo caja-------------------------------------------------------------------------------------------------------//
-
-   ::oController:oCajasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "caja_codigo" ] ) )
-   
-   ::oController:oCajasController:oGetSelector:setEvent( 'validated', {|| ::CajasControllerValidated() } )
-
-   ::oController:oCajasController:oGetSelector:Activate( 140, 141, ::oDialog )
-
-   // cliente------------------------------------------------------------------------------------------------------------//
-  
-  REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
-      ID          150 ;
-      SPINNER ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-      ::redefineExplorerBar( 160 )
-
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
-
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      CANCEL ;
-      ACTION     ( ::oDialog:end() )
-
-   ACTIVATE DIALOG ::oDialog CENTER*/
-   
-
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
@@ -227,10 +182,6 @@ END CLASS
 
 METHOD getValidators() CLASS CombinacionesPropiedadesValidator
 
-   /*::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido"    ,;
-                                                      "unique"             => "El nombre introducido ya existe"   },;
-                        "tipos"  =>                {  "required"           => "El tipo es un datos requerido"     },;
-                        "Importe"  =>              {  "required"           => "El importe es un datos requerido"  } }*/
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -246,11 +197,12 @@ CLASS SQLCombinacionesPropiedadesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "combinaciones_propiedades"
 
+   DATA cConstraints             INIT "FOREIGN KEY (parent_uuid) REFERENCES " + SQLCombinacionesModel():getTableName() + " (uuid) ON DELETE CASCADE"
+
    METHOD getColumns()
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD getColumns() CLASS SQLCombinacionesPropiedadesModel
@@ -262,7 +214,7 @@ METHOD getColumns() CLASS SQLCombinacionesPropiedadesModel
                                                 "default"   => {|| win_uuidcreatestring() } }               )
 
    hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 )"                              ,;
-                                                "default"   => {|| ::getSenderControllerParentUuid() } }    )
+                                                "default"   => {|| space( 40 ) } }                          )
 
    hset( ::hColumns, "propiedad_uuid",       {  "create"    => "VARCHAR( 40 )"                              ,;
                                                 "default"   => { || space ( 40 )  } }                       ) 
