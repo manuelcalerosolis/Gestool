@@ -178,6 +178,8 @@ CLASS UnidadesMedicionGruposView FROM SQLBaseView
 
    METHOD StartActivate() 
 
+   METHOD validatedUnidadesMedicioncontroller()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -219,7 +221,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
 
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) )
    
-   ::oController:oUnidadesMedicioncontroller:oGetSelector:setEvent( 'validated', {|| ::oController:insertLineaUnidadBase(), ::oController:oUnidadesMedicionGruposLineasController:RefreshRowSetAndGoTop(), ::oController:oUnidadesMedicionGruposLineasController:RefreshBrowseView() } )
+   ::oController:oUnidadesMedicioncontroller:oGetSelector:setEvent( 'validated', {|| ::validatedUnidadesMedicioncontroller() } )
 
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Activate( 120, 122, ::oDialog )
 
@@ -293,6 +295,20 @@ METHOD StartActivate() CLASS UnidadesMedicionGruposView
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Start()
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD validatedUnidadesMedicioncontroller() CLASS UnidadesMedicionGruposView
+
+   ::oController:insertLineaUnidadBase()
+   
+   MsgInfo( ::oController:oUnidadesMedicionGruposLineasController )
+
+   ::oController:oUnidadesMedicionGruposLineasController:RefreshRowSetAndGoTop()
+   
+   ::oController:oUnidadesMedicionGruposLineasController:RefreshBrowseView()
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
