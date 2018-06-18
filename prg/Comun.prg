@@ -343,16 +343,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // SQLContadoresModel():insertSerie( "movimientos_almacen", "ABC", 1 )
-
-   // msgalert( SQLContadoresModel():isSerie( "movimientos_almacen", "ABC" ), "ABC" )
-
-   // msgalert( SQLContadoresModel():isSerie( "movimientos_almacen", "CCC" ), "CCC" )
-
-   // msgalert( hb_valtoexp( SQLContadoresModel():getLastCounter( "movimientos_almacen" ) ), "getLastCounter" )
-
-   //FacturasClientesController():New():ActivateNavigatorView()
-
 RETURN nil
 
 //----------------------------------------------------------------------------//
