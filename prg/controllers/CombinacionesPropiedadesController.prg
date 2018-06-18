@@ -69,9 +69,6 @@ METHOD insertProperties( aCombination, uuidParent ) CLASS CombinacionesPropiedad
 
    local hCombination
 
-   logwrite("********insertProperties*********")
-   logwrite(hb_valtoexp( aCombination ) )
-
    for each hCombination in aCombination
 
       ::insertProperty( hget( hCombination, "propiedad_uuid" ), uuidParent )
@@ -177,7 +174,6 @@ RETURN ( ::oDialog:nResult )
 CLASS CombinacionesPropiedadesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
-
  
 END CLASS
 
