@@ -53,8 +53,6 @@ METHOD End() CLASS CombinacionesPropiedadesController
 
    ::oDialogView:End()
 
-   ::oValidator:End()
-
    ::oRepository:End()
 
    ::Super:End()

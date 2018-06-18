@@ -348,13 +348,15 @@ METHOD getGeneralSelect() CLASS SQLUnidadesMedicionGruposLineasModel
                         "grupos.unidad_base_codigo as unidad_base_codigo,"                                        + " " + ;
                         "base.nombre as unidad_base_nombre"                                                       + " " + ;
                      "FROM "+ ::getTableName() + " AS lineas"                                                     + " " + ;                                                    
-                        "INNER JOIN " + ::getUnidadesMedicionGruposTableName() + " AS grupos"                     + " " + ;         
+                        "LEFT JOIN " + ::getUnidadesMedicionGruposTableName() + " AS grupos"                      + " " + ;         
                            "ON lineas.parent_uuid = grupos.uuid"                                                  + " " + ;         
-                        "INNER JOIN " + ::getUnidadesMedicionTableName() + " AS alternativa"                      + " " + ;         
+                        "LEFT JOIN " + ::getUnidadesMedicionTableName() + " AS alternativa"                       + " " + ;         
                            "ON lineas.unidad_alternativa_codigo = alternativa.codigo"                             + " " + ;
-                        "INNER JOIN " + ::getUnidadesMedicionTableName() + " AS base"                             + " " + ;         
+                        "LEFT JOIN " + ::getUnidadesMedicionTableName() + " AS base"                              + " " + ;         
                            " ON grupos.unidad_base_codigo = base.codigo"                                          + " " + ;         
                      "WHERE parent_uuid = " + quoted( ::getSenderControllerParentUuid() )
+
+   logwrite( cSelect )
 
 RETURN ( cSelect )
 
@@ -362,7 +364,7 @@ RETURN ( cSelect )
 
 METHOD getSentenceInserLineaUnidadBase( uuidParent, cCodigoBaseUnidad ) CLASS SQLUnidadesMedicionGruposLineasModel
 
-   local cSentence      := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                   + " " + ;
+   local cSentence      := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                      + " " + ;
                            "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )"   + " " + ;
                         "VALUES"                                                                                              + " " + ;
                            "( UUID(), " + quoted( uuidParent ) + ", " + quoted( cCodigoBaseUnidad ) + ", 1, 1, 1 )"

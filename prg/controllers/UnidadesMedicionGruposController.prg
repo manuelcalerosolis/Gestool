@@ -97,13 +97,13 @@ METHOD insertLineaUnidadBase() CLASS UnidadesMedicionGruposController
    Primero comprobamos que no hayan lineas
    */
 
-   if Empty( ::oUnidadesMedicionGruposLineasController:oModel:getField( 'uuid', 'parent_uuid', ::getUuid() ) )
+   if empty( ::oUnidadesMedicionGruposLineasController:oModel:getField( 'uuid', 'parent_uuid', ::getUuid() ) )
 
       ::oUnidadesMedicionGruposLineasController:oModel:insertLineaUnidadBase( ::oModel:hBuffer[ "uuid" ], ::oModel:hBuffer[ "unidad_base_codigo" ] )
 
    end if
 
-Return ( self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -237,9 +237,10 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
    REDEFINE BUTTON oBtnEdit ;
       ID          140 ;
       OF          ::oDialog ;
+      ACTION      ( ::oController:oUnidadesMedicionGruposLineasController:Edit() ) ;
       WHEN        ( !empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
 
-   oBtnEdit:bAction   := {|| ::oController:oUnidadesMedicionGruposLineasController:Edit() }
+   // oBtnEdit:bAction   := {||  }
 
    REDEFINE BUTTON oBtnDelete ;
       ID          150 ;

@@ -111,7 +111,7 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    ::bMenuSelect     := nil
 
-   if hb_isnil( ::SelectedCol():Cargo )
+   if !empty( ::SelectedCol():cSortOrder ) .and. hb_isnil( ::SelectedCol():Cargo ) 
 
    MenuAddItem( "Filtro rápido", "Establecer fitro rápido en columna actual", .f., .t., , , "gc_funnel_add_16", oMenu )
 
