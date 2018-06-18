@@ -37,8 +37,6 @@ METHOD New( oSenderController ) CLASS CombinacionesPropiedadesController
 
    ::oDialogView                    := CombinacionesPropiedadesView():New( self )
 
-   ::oValidator                     := CombinacionesPropiedadesValidator():New( self, ::oDialogView )
-
    ::oRepository                    :=CombinacionesPropiedadesRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )   
@@ -68,9 +66,6 @@ RETURN ( nil )
 METHOD insertProperties( aCombination, uuidParent ) CLASS CombinacionesPropiedadesController
 
    local hCombination
-
-   logwrite("********insertProperties*********")
-   logwrite(hb_valtoexp( aCombination ) )
 
    for each hCombination in aCombination
 
@@ -177,7 +172,6 @@ RETURN ( ::oDialog:nResult )
 CLASS CombinacionesPropiedadesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
-
  
 END CLASS
 
@@ -230,9 +224,6 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS CombinacionesPropiedadesRepository FROM SQLBaseRepository
 
@@ -240,5 +231,8 @@ CLASS CombinacionesPropiedadesRepository FROM SQLBaseRepository
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

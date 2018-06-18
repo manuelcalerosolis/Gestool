@@ -343,6 +343,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
+=======
    // mezcla()
 
    // SQLContadoresModel():insertSerie( "movimientos_almacen", "ABC", 1 )
@@ -355,6 +357,7 @@ FUNCTION Test()
 
    //FacturasClientesController():New():ActivateNavigatorView()
 
+>>>>>>> e424d4776074ea89a08bb103acf3a7f9e0f29ed4
 RETURN nil
 
 //----------------------------------------------------------------------------//
