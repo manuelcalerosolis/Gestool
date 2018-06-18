@@ -356,8 +356,6 @@ METHOD getGeneralSelect() CLASS SQLUnidadesMedicionGruposLineasModel
                            " ON grupos.unidad_base_codigo = base.codigo"                                          + " " + ;         
                      "WHERE parent_uuid = " + quoted( ::getSenderControllerParentUuid() )
 
-   logwrite( cSelect )
-
 RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
