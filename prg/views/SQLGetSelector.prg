@@ -150,8 +150,18 @@ RETURN ( .t. )
 
 METHOD validAction()
 
+   if isFalse( ::fireEvent( 'validating' ) )
+      RETURN ( .f. )
+   end if
+
    if empty( ::bValid ) .or. eval( ::bValid, ::cGet )
-      RETURN ( ::loadHelpText() )
+
+      ::loadHelpText()
+
+      ::fireEvent( 'validated' )
+
+      RETURN ( .t. )
+
    end if 
 
 RETURN ( .f. )

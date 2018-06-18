@@ -19,6 +19,8 @@ CLASS UnidadesMedicionGruposController FROM SQLNavigatorController
                                              ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ),;
                                              .t. ) )
 
+   METHOD insertLineaUnidadBase()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -84,6 +86,24 @@ METHOD End() CLASS UnidadesMedicionGruposController
    ::Super:End()
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertLineaUnidadBase() CLASS UnidadesMedicionGruposController
+
+   local cSelect  := ""
+
+   /*
+   Primero comprobamos que no hayan lineas
+   */
+
+   if Empty( ::oUnidadesMedicionGruposLineasController:oModel:getField( 'uuid', 'parent_uuid', ::getUuid() ) )
+
+      ::oUnidadesMedicionGruposLineasController:oModel:insertLineaUnidadBase( ::oModel:hBuffer[ "uuid" ], ::oModel:hBuffer[ "unidad_base_codigo" ] )
+
+   end if
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -199,7 +219,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
 
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) )
    
-   ::oController:oUnidadesMedicioncontroller:oGetSelector:setEvent( 'validated', {|| ::UnidadesMedicionControllerValidated() } )
+   ::oController:oUnidadesMedicioncontroller:oGetSelector:setEvent( 'validated', {|| ::oController:insertLineaUnidadBase(), ::oController:oUnidadesMedicionGruposLineasController:RefreshRowSetAndGoTop(), ::oController:oUnidadesMedicionGruposLineasController:RefreshBrowseView() } )
 
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Activate( 120, 122, ::oDialog )
 
@@ -374,10 +394,10 @@ METHOD getInsertUnidadesMedicionGruposSentence() CLASS SQLUnidadesMedicionGrupos
 
    aadd( aSentence, cSentence )
 
-   cSentence         := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                + " " + ;
-                           "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base )"   + " " + ;
-                        "VALUES"                                                                                     + " " + ;
-                           "( UUID(), " + quoted( uuid ) + ", " + cCodigoDefecto + ", 1, 1 )"
+   cSentence         := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                         + " " + ;
+                           "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )"   + " " + ;
+                        "VALUES"                                                                                              + " " + ;
+                           "( UUID(), " + quoted( uuid ) + ", " + cCodigoDefecto + ", 1, 1, 1 )"
 
    aadd( aSentence, cSentence )
 
