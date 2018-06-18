@@ -63,6 +63,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD refreshBrowse()              INLINE ( iif(  !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
 
+   METHOD updateUnidadMedicion( x )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -303,7 +305,7 @@ METHOD Append()
    ::saveRowSetRecno()
 
    nId               := ::oModel:insertBlankBuffer()
-         
+
    if !empty( nId )
 
       ::fireEvent( 'appended' ) 
@@ -328,5 +330,21 @@ METHOD Append()
    end if 
 
 RETURN ( lAppend )
+
+//----------------------------------------------------------------------------//
+
+METHOD updateUnidadMedicion( x )
+      
+   MsgInfo( ::getModelBuffer( "id" ), "id" )
+   MsgInfo( x, "x" )
+
+
+   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'unidad_medicion_codigo', x )
+
+   ::getRowSet():Refresh()
+
+   ::refreshBrowse()
+
+Return ( nil )
 
 //----------------------------------------------------------------------------//

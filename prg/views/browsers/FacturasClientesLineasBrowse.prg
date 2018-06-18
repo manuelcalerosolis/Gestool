@@ -18,6 +18,8 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    DATA oColumnCodigo
 
+   DATA oColumnUnidadMedicion
+
    METHOD addColumns()                       
 
 ENDCLASS
@@ -112,6 +114,16 @@ METHOD addColumns()
       :cFooterPicture      := :cEditPicture
       :oFooterFont         := getBoldFont()
       :cDataType           := "N"
+   end with
+
+   with object ( ::oColumnUnidadMedicion    := ::oBrowse:AddCol() )
+      :cHeader             := 'Unidad'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_medicion_codigo' ) }
+      :nEditType           := EDIT_LISTBOX
+      :cEditPicture        := ""
+      :aEditListTxt        := {"UDS", "CAJ"}
+      :bOnPostEdit         := {|o,x| ::oController:updateUnidadMedicion( x ) }
    end with
 
 RETURN ( self )

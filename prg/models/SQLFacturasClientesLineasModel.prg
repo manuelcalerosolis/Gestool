@@ -94,6 +94,9 @@ METHOD getColumns()
    hset( ::hColumns, "articulo_precio",            {  "create"    => "DECIMAL(19,6)"                  ,;
                                                       "default"   => {|| 0 } }                        )
 
+   hset( ::hColumns, "unidad_medicion_codigo",     {  "create"    => "VARCHAR( 20 )"                  ,;
+                                                      "default"   => {|| space( 20 ) } }              )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -109,7 +112,8 @@ METHOD getInitialSelect()
                         "lote, "                                                 + ;
                         "articulo_unidades, "                                    + ;
                         "articulo_precio, "                                      + ;
-                        "articulo_unidades * articulo_precio as total_precio "   + ;
+                        "articulo_unidades * articulo_precio as total_precio, "  + ;
+                        "unidad_medicion_codigo "                                + ;
                      "FROM " + ::getTableName()    
 
 RETURN ( cSelect )
