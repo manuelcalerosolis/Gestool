@@ -317,7 +317,7 @@ CLASS SQLUnidadesMedicionGruposLineasModel FROM SQLCompanyModel
    METHOD getUnidadesMedicionGruposTableName()     INLINE ( SQLUnidadesMedicionGruposModel():getTableName() )
 
    METHOD getSentenceInserLineaUnidadBase( uuidParent, cCodigoBaseUnidad )
-   
+
    METHOD insertLineaUnidadBase( uuidParent, cCodigoBaseUnidad )
 
 END CLASS

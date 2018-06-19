@@ -17,6 +17,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    DATA aSelectDelete                  INIT {}
 
+   DATA oUnidadesMedicionController
+
    METHOD New()
 
    METHOD Append()
@@ -65,6 +67,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD updateUnidadMedicion( x )
 
+   METHOD loadUnidadesMedicion()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -92,6 +96,8 @@ METHOD New( oController )
    ::oSeriesControler                  := NumerosSeriesController():New( self )
 
    ::oRelacionesEntidades              := RelacionesEntidadesController():New( self )
+
+   ::oUnidadesMedicionController       := UnidadesMedicionGruposLineasController():New( self )
 
    ::setEvent( 'activating',           {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
 
@@ -342,5 +348,21 @@ METHOD updateUnidadMedicion( x )
    ::refreshBrowse()
 
 Return ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD loadUnidadesMedicion()
+
+   MsgInfo( ::getRowSet():fieldGet( 'articulo_codigo' ), "articulo_codigo" )
+
+
+   MsgInfo( SQLArticulosModel():getField( "unidades_medicion_grupos_codigo", "codigo", ::getRowSet():fieldGet( 'articulo_codigo' ) ), "Grupo Unidades de Medicion" ) 
+
+
+
+
+   ::oBrowseView:oColumnUnidadMedicion:aEditListTxt := {"111", "2222", "333333"}
+
+Return ( .t. )
 
 //----------------------------------------------------------------------------//

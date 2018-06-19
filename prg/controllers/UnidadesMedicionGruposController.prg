@@ -33,9 +33,9 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposController
 
    ::cName                                   := "unidades_medicion_grupos"
 
-   ::hImage                                  := {  "16" => "gc_tape_measure2_16",;
-                                                   "32" => "gc_tape_measure2_32",;
-                                                   "48" => "gc_tape_measure2_48" }
+   ::hImage                                  := {  "16" => "tab_pane_tape_measure2_16",;
+                                                   "32" => "tab_pane_tape_measure2_32",;
+                                                   "48" => "tab_pane_tape_measure2_48" }
 
    ::nLevel                                  := Auth():Level( ::cName )
 
@@ -162,6 +162,15 @@ METHOD addColumns() CLASS UnidadesMedicionGruposBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'sistema'
+      :cHeader             := 'Sistema'
+      :nWidth              := 75
+      :bEditValue          := {|| if( ::getRowSet():fieldGet( 'sistema' ) == 1, "Sistema", "" ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -222,6 +231,8 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) )
    
    ::oController:oUnidadesMedicioncontroller:oGetSelector:setEvent( 'validated', {|| ::validatedUnidadesMedicioncontroller() } )
+
+   ::oController:oUnidadesMedicioncontroller:oGetSelector:setWhen( {|| Empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .AND. ::oController:isNotZoomMode() } )
 
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Activate( 120, 122, ::oDialog )
 
@@ -301,8 +312,6 @@ METHOD validatedUnidadesMedicioncontroller() CLASS UnidadesMedicionGruposView
 
    ::oController:insertLineaUnidadBase()
    
-   MsgInfo( ::oController:oUnidadesMedicionGruposLineasController )
-
    ::oController:oUnidadesMedicionGruposLineasController:RefreshRowSetAndGoTop()
    
    ::oController:oUnidadesMedicionGruposLineasController:RefreshBrowseView()

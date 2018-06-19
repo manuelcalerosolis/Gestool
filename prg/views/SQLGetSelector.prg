@@ -20,6 +20,8 @@ CLASS GetSelector
 
    DATA oEvents
 
+   DATA bWhen
+
    METHOD New( oSender )
    METHOD End()                                 
 
@@ -59,6 +61,8 @@ CLASS GetSelector
    METHOD setEvent( cEvent, bEvent )            INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                   INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
+   METHOD setWhen( bWhen )                      INLINE ( if( !Empty( bWhen ), ::bWhen  := bWhen, ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -68,6 +72,8 @@ METHOD New( oController ) CLASS GetSelector
    ::oController  := oController
 
    ::oEvents      := Events():New()
+
+   ::bWhen        := {|| ::oController:getSenderController():isNotZoomMode() } 
 
 RETURN ( Self )
 
@@ -108,11 +114,11 @@ METHOD Activate( idGet, idText, oDlg, idSay ) CLASS GetSelector
       IDTEXT      idText ;
       IDSAY       idSay ;
       BITMAP      "Lupa" ;
-      WHEN        ( ::oController:getSenderController():isNotZoomMode() ) ;
       OF          oDlg
 
    ::oGet:bHelp   := {|| ::helpAction() }
    ::oGet:bValid  := {|| ::validAction() }
+   ::oGet:bWhen   := ::bWhen
 
    ::fireEvent( 'activated' ) 
 
