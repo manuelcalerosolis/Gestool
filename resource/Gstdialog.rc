@@ -21724,7 +21724,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Powered by MariaDB SQL Database", -1, "Static", WS_GROUP, 20, 190, 121, 8
   CONTROL "Error en usuario y contraseña", 120, "Static", NOT WS_VISIBLE|WS_GROUP, 220, 116, 97, 8
   CONTROL "", 130, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 220, 27, 190, 135
-  CONTROL "Empresa", -1, "Static", WS_GROUP, 220, 17, 29, 8
+  CONTROL "Empresa", 131, "Static", WS_GROUP, 220, 17, 29, 8
 }
 
 CAJON_PORTAMONEDA DIALOG DISCARDABLE 193, 47, 401, 105
