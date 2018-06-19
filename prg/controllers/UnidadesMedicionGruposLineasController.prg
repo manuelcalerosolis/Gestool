@@ -7,10 +7,13 @@ CLASS UnidadesMedicionGruposLineasController FROM SQLBrowseController
 
    DATA oUnidadesMedicionController
 
-
    METHOD New()
 
    METHOD End()
+
+   METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ) == 1,;
+                                             ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ),;
+                                             ( .t. ) ) )
 
 END CLASS
 
@@ -43,6 +46,8 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposLineasController
    ::oUnidadesMedicionController    := UnidadesMedicionController():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
+
+   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
 
 RETURN ( Self )
 
@@ -145,12 +150,21 @@ METHOD addColumns() CLASS UnidadesMedicionGruposLineasBrowseView
       :lHide               := .t.
    end with
 
-  with object ( ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'unidad_base_nombre'
       :cHeader             := 'Nombre de unidad base'
       :nWidth              := 150
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_base_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'sistema'
+      :cHeader             := 'Sistema'
+      :nWidth              := 60
+      :bEditValue          := {|| if( ::getRowSet():fieldGet( 'sistema' ) == 1, 'Sistema', '' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
 RETURN ( self )
@@ -269,7 +283,6 @@ RETURN ( self )
 CLASS UnidadesMedicionGruposLineasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
-
  
 END CLASS
 
@@ -293,12 +306,14 @@ CLASS SQLUnidadesMedicionGruposLineasModel FROM SQLCompanyModel
 
    DATA cTableName                                 INIT "unidades_medicion_grupos_lineas"
 
+   DATA cConstraints                               INIT "FOREIGN KEY (parent_uuid) REFERENCES " + SQLUnidadesMedicionGruposModel():getTableName() + " (uuid) ON DELETE CASCADE"
+
    METHOD getColumns()
 
    METHOD getGeneralSelect()
 
    METHOD getUnidadesMedicionTableName()           INLINE ( SQLUnidadesMedicionModel():getTableName() )
-
+   
    METHOD getUnidadesMedicionGruposTableName()     INLINE ( SQLUnidadesMedicionGruposModel():getTableName() )
 
    METHOD getSentenceInserLineaUnidadBase( uuidParent, cCodigoBaseUnidad )
@@ -326,7 +341,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionGruposLineasModel
    hset( ::hColumns, "cantidad_alternativa",          {  "create"    => "INTEGER"                                 ,;
                                                          "default"   => {|| 1 } }                                 )
 
-   hset( ::hColumns, "cantidad_base",                 {  "create"    => "FLOAT (10,3)"                            ,;
+   hset( ::hColumns, "cantidad_base",                 {  "create"    => "FLOAT( 16, 6 )"                          ,;
                                                          "default"   => {|| 1    } }                              )
 
    hset( ::hColumns, "sistema",                       {  "create"    => "TINYINT( 1 )"                            ,;
@@ -342,9 +357,10 @@ METHOD getGeneralSelect() CLASS SQLUnidadesMedicionGruposLineasModel
                         "lineas.uuid,"                                                                            + " " + ;                                                                                                                                    
                         "lineas.parent_uuid,"                                                                     + " " + ;
                         "lineas.unidad_alternativa_codigo,"                                                       + " " + ;
-                        "alternativa.nombre as unidad_alternativa_nombre,"                                        + " " + ;
                         "lineas.cantidad_alternativa,"                                                            + " " + ;                                               
                         "lineas.cantidad_base,"                                                                   + " " + ;
+                        "lineas.sistema,"                                                                         + " " + ;
+                        "alternativa.nombre as unidad_alternativa_nombre,"                                        + " " + ;
                         "grupos.unidad_base_codigo as unidad_base_codigo,"                                        + " " + ;
                         "base.nombre as unidad_base_nombre"                                                       + " " + ;
                      "FROM "+ ::getTableName() + " AS lineas"                                                     + " " + ;                                                    
@@ -353,7 +369,7 @@ METHOD getGeneralSelect() CLASS SQLUnidadesMedicionGruposLineasModel
                         "LEFT JOIN " + ::getUnidadesMedicionTableName() + " AS alternativa"                       + " " + ;         
                            "ON lineas.unidad_alternativa_codigo = alternativa.codigo"                             + " " + ;
                         "LEFT JOIN " + ::getUnidadesMedicionTableName() + " AS base"                              + " " + ;         
-                           " ON grupos.unidad_base_codigo = base.codigo"                                          + " " + ;         
+                           "ON grupos.unidad_base_codigo = base.codigo"                                           + " " + ;         
                      "WHERE parent_uuid = " + quoted( ::getSenderControllerParentUuid() )
 
 RETURN ( cSelect )
@@ -362,7 +378,7 @@ RETURN ( cSelect )
 
 METHOD getSentenceInserLineaUnidadBase( uuidParent, cCodigoBaseUnidad ) CLASS SQLUnidadesMedicionGruposLineasModel
 
-   local cSentence      := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                      + " " + ;
+   local cSentence   := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                      + " " + ;
                            "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )"   + " " + ;
                         "VALUES"                                                                                              + " " + ;
                            "( UUID(), " + quoted( uuidParent ) + ", " + quoted( cCodigoBaseUnidad ) + ", 1, 1, 1 )"

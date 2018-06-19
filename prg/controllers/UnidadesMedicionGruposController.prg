@@ -230,9 +230,8 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
    REDEFINE BUTTON oBtnAppend ;
       ID          130 ;
       OF          ::oDialog ;
+      ACTION      ( ::oController:oUnidadesMedicionGruposLineasController:Append() ) ;
       WHEN        ( !empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
-
-   oBtnAppend:bAction   := {|| ::oController:oUnidadesMedicionGruposLineasController:Append() }
 
    REDEFINE BUTTON oBtnEdit ;
       ID          140 ;
@@ -245,9 +244,8 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
    REDEFINE BUTTON oBtnDelete ;
       ID          150 ;
       OF          ::oDialog ;
+      ACTION      ( ::oController:oUnidadesMedicionGruposLineasController:Delete() ) ;
       WHEN        ( !empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
-
-   oBtnDelete:bAction   := {|| ::oController:oUnidadesMedicionGruposLineasController:Delete() }
 
    ::oController:oUnidadesMedicionGruposLineasController:Activate( 160, ::oDialog ) 
 
