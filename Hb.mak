@@ -629,6 +629,7 @@ MaterialesConsumidosLineasModel.prg 									\
 TiposImpresorasController.prg 											\
 TagsController.prg 															\
 UsuariosController.prg														\
+AccessController.prg															\
 SuperUsuarioController.prg													\
 RolesController.prg															\
 AjustesController.prg														\
@@ -1329,6 +1330,7 @@ DelegacionesModel.obj														\
 TiposImpresorasController.obj 											\
 TagsController.obj 															\
 UsuariosController.obj														\
+AccessController.obj															\
 SuperUsuarioController.obj													\
 RolesController.obj 															\
 AjustesController.obj														\
@@ -2015,6 +2017,7 @@ $(OBJ)\DelegacionesModel.obj 												+
 $(OBJ)\TiposImpresorasController.obj               				+
 $(OBJ)\TagsController.obj                 							+
 $(OBJ)\UsuariosController.obj               							+
+$(OBJ)\AccessController.obj               							+
 $(OBJ)\SuperUsuarioController.obj           							+
 $(OBJ)\RolesController.obj               								+
 $(OBJ)\AjustesController.obj               							+

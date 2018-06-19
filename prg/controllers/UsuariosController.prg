@@ -11,6 +11,8 @@ CLASS UsuariosController FROM SQLNavigatorController
    
    DATA oAjustableController 
 
+   DATA oEmpresasController
+
    DATA oRolesController
 
    DATA cUuidUsuario
@@ -37,17 +39,10 @@ CLASS UsuariosController FROM SQLNavigatorController
    DATA cUuidDelegacionExclusiva
    DATA cNombreDelegacionExclusiva
 
-   DATA oLoginView
-   DATA oLoginTactilView
-
    DATA cValidError        INIT ""  
 
    METHOD New()
    METHOD End()
-
-   METHOD isLogin()
-   METHOD isLoginTactil()
-   METHOD isLoginSuperAdmin()
 
    METHOD setConfig()
 
@@ -59,17 +54,15 @@ CLASS UsuariosController FROM SQLNavigatorController
 
    METHOD changeComboEmpresa()
 
-   METHOD validUserPassword()
-
    METHOD checkSuperUser()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS UsuariosController
+METHOD New( oSenderController ) CLASS UsuariosController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                            := "Usuarios"
 
@@ -92,10 +85,6 @@ METHOD New() CLASS UsuariosController
 
    ::oValidator                        := UsuariosValidator():New( self, ::oDialogView )
 
-   ::oLoginView                        := UsuariosLoginView():New( self )
-
-   ::oLoginTactilView                  := UsuariosLoginTactilView():New( self )
-
    ::oAjustableController              := AjustableController():New( self )
 
    ::oRolesController                  := RolesController():New( self )
@@ -109,7 +98,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End()
+METHOD End() CLASS UsuariosController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -151,7 +140,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setConfig()
+METHOD setConfig() CLASS UsuariosController
 
    if ::loadConfig() .and. ;
       ::oAjustableController:DialogViewActivate()
@@ -164,7 +153,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadConfig()
+METHOD loadConfig() CLASS UsuariosController
 
    ::cUuidUsuario                := ::getRowSet():fieldGet( 'uuid' )
 
@@ -192,7 +181,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveConfig()
+METHOD saveConfig() CLASS UsuariosController
 
    ::cCodigoEmpresaExclusiva     := EmpresasModel():getCodigoFromNombre( ::cNombreEmpresaExclusiva )
    ::cUuidCajaExclusiva          := CajasModel():getUuidFromNombre( ::cNombreCajaExclusiva )
@@ -208,7 +197,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD startingActivate()
+METHOD startingActivate() CLASS UsuariosController
 
    local oPanel               := ::oAjustableController:oDialogView:oExplorerBar:AddPanel( "Propiedades usuario", nil, 1 ) 
 
@@ -227,7 +216,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD changeComboEmpresa()
+METHOD changeComboEmpresa() CLASS UsuariosController
 
    iif(  empty( ::cNombreEmpresaExclusiva ),;
          ( ::oComboDelegacion:Disable(), ::oComboDelegacion:Set( "" ) ),;
@@ -245,67 +234,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validUserPassword( cUsuario, cPassword )
-
-   local hUsuario
-
-   hUsuario                   := ::oModel:validUserPassword( cUsuario, cPassword )
-
-   if empty( hUsuario )
-      ::cValidError           := "Usuario y contraseña no coinciden" 
-      RETURN ( .f. )
-   end if 
-
-   if setUserActive( hget( hUsuario, "uuid" ) )
-      ::cValidError           := "Usuario actualmente en uso"
-      RETURN ( .f. )
-   end if 
-
-   Auth( hUsuario )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD isLogin()
-
-   ::oLoginView:loadUsers()
-
-   if ( ::oLoginView:Activate() != IDOK )
-      RETURN ( .f. )
-   end if 
-
-   ::oAjustableController:oModel:setUsuarioPcEnUso( rtrim( netname() ), Auth():uuid() )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD isLoginSuperAdmin()
-
-   ::oLoginView:loadSuperAdmin()
-
-   if ( ::oLoginView:Activate() != IDOK )
-      RETURN ( .f. )
-   end if 
-
-   ::oAjustableController:oModel:setUsuarioPcEnUso( rtrim( netname() ), Auth():uuid() )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD isLoginTactil()
-
-   if ( ::oLoginTactilView:Activate() != IDOK )
-      RETURN ( .f. )
-   end if 
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD checkSuperUser()
+METHOD checkSuperUser() CLASS UsuariosController
 
    local hUsuario
 
@@ -322,8 +251,6 @@ METHOD checkSuperUser()
    ::Edit( hget( hUsuario, "id" ) )
 
 RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -348,8 +275,7 @@ CLASS SQLUsuariosModel FROM SQLBaseModel
    METHOD getNombreWhereUuid( uuid )      INLINE ( ::getField( 'nombre', 'uuid', uuid ) )
 
    METHOD validUserPassword( cNombre, cPassword )
-
-   METHOD validSuperUserPassword( cPassword ) 
+   METHOD validSuperUserPassword( cPassword )
 
    METHOD fetchDirect() 
 
@@ -466,10 +392,10 @@ RETURN ( ::getDatabase():Query( cSQL ) )
 
 METHOD getNombreUsuarioWhereNetName( cNetName ) CLASS SQLUsuariosModel
 
-   local cSQL  := "SELECT usuarios.nombre FROM " + ::getTableName() + " "   
-   cSQL        +=    "INNER JOIN ajustables "
-   cSQL        +=       "ON usuarios.uuid = ajustables.ajustable_uuid "
-   cSQL        +=    "WHERE ajustables.ajuste_valor = " + quoted( cNetName ) + " "    
+   local cSQL  := "SELECT usuarios.nombre FROM " + ::getTableName() + " AS usuarios"         + " "   
+   cSQL        +=    "INNER JOIN " + SQLAjustableModel():getTableName() + " AS ajustables"   + " "
+   cSQL        +=       "ON usuarios.uuid = ajustables.ajustable_uuid"                       + " "
+   cSQL        +=    "WHERE ajustables.ajuste_valor = " + quoted( cNetName )                 + " "    
    cSQL        +=       "AND ajustables.ajustable_tipo = 'usuarios'"
 
 RETURN ( ::getDatabase():getValue( cSQL ) )
@@ -812,225 +738,3 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosLoginView FROM SQLBaseView
-
-   DATA oSayError
-
-   DATA oGetPassword
-   DATA cGetPassword
-
-   DATA oComboUsuario
-   DATA cComboUsuario   
-   DATA aComboUsuarios           
-
-   METHOD Activate()
-      METHOD loadUsers()
-      METHOD loadSuperAdmin() 
-
-      METHOD Validate()
-
-   METHOD sayError( cError )  INLINE ( ::oSayError:setText( cError ), ::oSayError:Show(), dialogSayNo( ::oDialog ) )
-   
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD loadUsers() CLASS UsuariosLoginView
-
-   ::cGetPassword          := space( 100 )
-   ::aComboUsuarios        := ::oController:oModel:getArrayNombres()
-   ::cComboUsuario         := ::oController:oModel:getNombreUsuarioWhereNetName( netname() )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadSuperAdmin() CLASS UsuariosLoginView
-
-   ::cGetPassword          := space( 100 )
-   ::aComboUsuarios        := { __admin_name__ }
-   ::cComboUsuario         := __admin_name__
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS UsuariosLoginView 
-
-   DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "LOGIN" 
-
-   REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
-      RESOURCE    "gestool_logo" ;
-      TRANSPARENT ;
-      OF          ::oDialog
-
-   REDEFINE COMBOBOX ::oComboUsuario ;
-      VAR         ::cComboUsuario ;
-      ID          100 ;
-      ITEMS       ::aComboUsuarios ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oGetPassword ;
-      VAR         ::cGetPassword ;
-      ID          110 ;
-      OF          ::oDialog
-
-   REDEFINE SAY   ::oSayError ;
-      ID          120 ;
-      COLOR       Rgb( 183, 28, 28 ) ;
-      FONT        getBoldFont() ;
-      OF          ::oDialog
-
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      ACTION      ( ::Validate() )
-
-   ::oDialog:AddFastKey( VK_F5, {|| ::Validate() } )
-
-   ::oDialog:Activate( , , , .t. )
-
-   ::oBitmap:end()
-
-RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD Validate()
-
-   if ::oController:validUserPassword( ::cComboUsuario, ::cGetPassword )
-      ::oDialog:end( IDOK ) 
-   else     
-      ::sayError( ::oController:cValidError )
-   end if 
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS UsuariosLoginTactilView FROM SQLBaseView
-
-   DATA oSayError
-
-   DATA oImageList
-
-   DATA oListView
-
-   METHOD Activate()
-      METHOD startActivate()
-      METHOD initActivate() 
-
-   METHOD sayError( cError )  INLINE ( ::oSayError:setText( cError ), ::oSayError:Show(), dialogSayNo( ::oDialog ) )
-   
-   METHOD Validate( nOpt )
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD startActivate() CLASS UsuariosLoginTactilView
-
-   local oStatement
-
-   oStatement  := UsuariosRepository():fetchDirect()
-   
-   if !empty( oStatement )
-
-      while oStatement:fetchDirect()
-   
-         with object ( TListViewItem():New() )
-            :Cargo   := oStatement:fieldget( "nombre" )
-            :cText   := Capitalize( oStatement:fieldget( "nombre" ) )
-            :nImage  := 0
-            :nGroup  := 1
-            :Create( ::oListView )
-         end with
-   
-      end while
-   
-      oStatement:free()
-   
-   end if 
-
-   ::oListView:Refresh()
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD initActivate() CLASS UsuariosLoginTactilView
-
-   ::oListView:SetImageList( ::oImageList )
-   ::oListView:EnableGroupView()
-   ::oListView:SetIconSpacing( 120, 140 )
-
-   with object ( TListViewGroup():New() )
-      :cHeader := "Usuarios"
-      :Create( ::oListView )
-   end with
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS UsuariosLoginTactilView 
-
-   ::oImageList   := TImageList():New( 50, 50 ) 
-
-   ::oImageList:AddMasked( TBitmap():Define( "gc_businessman2_50" ),   Rgb( 255, 0, 255 ) )
-   ::oImageList:AddMasked( TBitmap():Define( "gc_user2_50" ),          Rgb( 255, 0, 255 ) )
-
-   DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "LOGIN_TACTIL" 
-
-   REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
-      RESOURCE    "gestool_logo" ;
-      TRANSPARENT ;
-      OF          ::oDialog
-
-   ::oListView          := TListView():Redefine( 100, ::oDialog )
-   ::oListView:nOption  := 0
-   ::oListView:bClick   := {| nOpt | ::Validate( nOpt ) }
-
-   REDEFINE SAY   ::oSayError ;
-      ID          120 ;
-      COLOR       Rgb( 183, 28, 28 ) ;
-      OF          ::oDialog
-
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      ACTION      ( ::oDialog:End( IDCANCEL ) )
-
-   ::oDialog:bStart := {|| ::startActivate() }
-
-   ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } )
-
-   ::oBitmap:end()
-
-RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD Validate( nOpt ) CLASS UsuariosLoginTactilView 
-
-   local cUsuario    := ::oListView:GetItem( nOpt ):Cargo
-   local cPassword   := VirtualKey( .t., , "Introduzca contraseña" )
-
-   if ::oController:validUserPassword( cUsuario, cPassword )
-      ::oDialog:End( IDOK )
-   else
-      ::sayError( ::oController:cValidError )
-   end if 
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//

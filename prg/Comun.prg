@@ -182,15 +182,17 @@ RETURN nil
 
 FUNCTION CreateMainSQLWindow( oIconApp )
 
-   if !( lInitCheck() )
-      RETURN nil
-   end if 
+   // if !( lInitCheck() )
+   //    RETURN nil
+   // end if 
 
    // Carga o no la imagen de fondo--------------------------------------------
 
+   msgalert( Company():Nombre(), "CompanyNombre" )
+
    DEFINE WINDOW oWnd ;
       FROM                    0, 0 TO 26, 82;
-      TITLE                   "SQL DEMO" + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
+      TITLE                   __GSTROTOR__ + " " + __GSTVERSION__ + " " + cTypeVersion() + " : " + Company():Codigo() + " - " + Company():Nombre() ;
       MDI ;
       COLORS                  Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
       ICON                    oIconApp ;
@@ -231,8 +233,9 @@ FUNCTION CreateMainSQLWindow( oIconApp )
       MAXIMIZED ;
       ON PAINT                ( WndPaint( hDC, oWnd ) ); 
       ON RESIZE               ( WndResize( oWnd ) );
-      ON INIT                 ( lStartCheck() );
       VALID                   ( EndApp() ) 
+
+      // ON INIT                 ( lStartCheck() );
 
    SysRefresh()
 

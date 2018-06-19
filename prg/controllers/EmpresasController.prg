@@ -49,7 +49,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS EmpresasController
+METHOD New( oSenderController ) CLASS EmpresasController
+
+   ::Super:New( oSenderController )
 
    ::cTitle                         := "Empresas"
 
@@ -61,8 +63,6 @@ METHOD New() CLASS EmpresasController
                                           "32" => "gc_factory_32",;
                                           "48" => "gc_factory_48" }
    
-   ::Super:New()
-
    ::oModel                         := SQLEmpresasModel():New( self )
 
    ::oBrowseView                    := EmpresasBrowseView():New( self )
@@ -498,6 +498,8 @@ CLASS SQLEmpresasModel FROM SQLBaseModel
 
    METHOD getNombreWhereUuid( uuid )   INLINE ( ::getField( "nombre", "uuid", uuid ) )
 
+   METHOD validEmpresa( cNombre ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -537,6 +539,19 @@ METHOD getColumns() CLASS SQLEmpresasModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD validEmpresa( cNombre ) CLASS SQLEmpresasModel
+
+   local cSQL  
+
+   cSQL        := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
+   cSQL        +=    "LIMIT 1"
+
+   msgalert( cSQL, "cSQL" )
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

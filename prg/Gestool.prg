@@ -96,7 +96,7 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
       SQLGestoolSeeders():Run()
          
-      if UsuariosController():New():isLoginSuperAdmin()
+      if AccessController():New( .f. ):isLogin()
          CreateAdminSQLWindow( oIconApp )
       end if
 
@@ -213,8 +213,8 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
       case ( "SQL" $ appParamsMain() ) 
 
-         if UsuariosController():New():isLogin()
-            CreateMainSqlWindow( oIconApp )
+         if AccessController():New( .t. ):isLogin()
+            CreateMainSQLWindow( oIconApp )
          end if
 
       otherwise
