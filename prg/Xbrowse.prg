@@ -11499,9 +11499,6 @@ METHOD ShowBtnList( nKey ) CLASS TXBrwColumn
       xValue   := Trim( xValue )
    endif
 
-   MsgAlert( hb_Valtoexp( aBound ), "aBound" )
-   MsgAlert( xValue, "xValue" )
-
    if ( nAt := Ascan( aBound, xValue ) ) == 0
       if ValType( xValue ) == 'C'
          do while Len( xValue ) > 1 .and. nAt == 0

@@ -75,7 +75,7 @@ METHOD New( oController )
 
    ::lTransactional                    := .t.
 
-   ::cTitle                            := "Facturas clientes líneas"
+   ::cTitle                            := "Facturas clientes lÃ­neas"
 
    ::setName( "lineas_facturas_clientes" )
 
@@ -252,7 +252,7 @@ RETURN ( .t. )
 METHOD runDialogSeries()
 
    if Empty( ::oDialogView:nTotalUnidadesArticulo() )
-      msgStop( "El número de unidades no puede ser 0 para editar números de serie" )
+      msgStop( "El nÃºmero de unidades no puede ser 0 para editar nÃºmeros de serie" )
       RETURN ( .f. )
    end if
 
@@ -335,10 +335,6 @@ RETURN ( lAppend )
 
 METHOD updateUnidadMedicion( x )
       
-   MsgInfo( ::getModelBuffer( "id" ), "id" )
-   MsgInfo( x, "x" )
-
-
    ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'unidad_medicion_codigo', x )
 
    ::getRowSet():Refresh()
