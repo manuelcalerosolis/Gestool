@@ -384,3 +384,8 @@ GC_DOCUMENT_TEXT_PLUS2_32 BITMAP "..\\bmp\\gc_document_text_plus2_32.bmp"
 GC_FACTORY_GROUP_16 BITMAP "..\\bmp\\gc_factory_group_16.bmp"
 GC_FACTORY_GROUP_32 BITMAP "..\\bmp\\gc_factory_group_32.bmp"
 GC_FACTORY_GROUP_48 BITMAP "..\\bmp\\gc_factory_group_48.bmp"
+
+
+TAB_PANE_TAPE_MEASURE2_16 BITMAP "..\\bmp\\tab_pane_tape_measure2_16.bmp"
+TAB_PANE_TAPE_MEASURE2_32 BITMAP "..\\bmp\\tab_pane_tape_measure2_32.bmp"
+TAB_PANE_TAPE_MEASURE2_48 BITMAP "..\\bmp\\tab_pane_tape_measure2_48.bmp"

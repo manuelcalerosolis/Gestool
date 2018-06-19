@@ -20,7 +20,7 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    DATA oColumnUnidadMedicion
 
-   METHOD addColumns()                       
+   METHOD addColumns()
 
 ENDCLASS
 
@@ -57,19 +57,16 @@ METHOD addColumns()
    end with
 
    with object ( ::oColumnCodigo := ::oBrowse:AddCol() )
-
       :cSortOrder          := 'articulo_codigo'
       :cHeader             := 'Código artículo'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-
       :nEditType           := EDIT_GET_BUTTON
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:validColumnCodigoArticulo( oCol, uNewValue, nKey ) }
       :bEditBlock          := {|| ::oController:oSenderController:oArticulosController:ActivateSelectorView() }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
-
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -120,13 +117,13 @@ METHOD addColumns()
       :cHeader             := 'Unidad'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_medicion_codigo' ) }
-      :nEditType           := EDIT_LISTBOX
-      :cEditPicture        := ""
-      :aEditListTxt        := {"UDS", "CAJ"}
+      :nEditType           := EDIT_GET_LISTBOX
+      :aEditListTxt        := {}
+      :bEditWhen           := {|| ::oController:loadUnidadesMedicion() }
       :bOnPostEdit         := {|o,x| ::oController:updateUnidadMedicion( x ) }
+      :cEditPicture        := "@! NNNNNNNNNNNNNNNNNNNN"
    end with
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
-
