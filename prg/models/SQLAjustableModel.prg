@@ -84,7 +84,7 @@ CLASS SQLAjustableModel FROM SQLBaseModel
 
    METHOD setEmpresaUnidadesGrupoDefecto( uAjusteValue, cAjustableUuid );
                                                                         INLINE ( ::setValue( 'unidades_grupo_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
-   METHOD getEmpresaUnidadesGrupoDefecto( cCodigo )                     INLINE ( ::getValue( cCodigo, 'empresas', 'unidades_grupo_defecto', space( 20 ) ) )   
+   METHOD getEmpresaUnidadesGrupoDefecto( cCodigo )                     INLINE ( ::getValue( cCodigo, 'empresas', 'unidades_grupo_defecto', __grupo_unidades_medicion__ ) )   
 
 END CLASS
 
