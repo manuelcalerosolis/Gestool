@@ -353,15 +353,7 @@ Return ( nil )
 
 METHOD loadUnidadesMedicion()
 
-   MsgInfo( ::getRowSet():fieldGet( 'articulo_codigo' ), "articulo_codigo" )
-
-
-   MsgInfo( SQLArticulosModel():getField( "unidades_medicion_grupos_codigo", "codigo", ::getRowSet():fieldGet( 'articulo_codigo' ) ), "Grupo Unidades de Medicion" ) 
-
-
-
-
-   ::oBrowseView:oColumnUnidadMedicion:aEditListTxt := {"111", "2222", "333333"}
+   ::oBrowseView:oColumnUnidadMedicion:aEditListTxt := UnidadesMedicionGruposLineasRepository():getWhereCodigoArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) )
 
 Return ( .t. )
 
