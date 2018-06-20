@@ -334,10 +334,10 @@ END CLASS
 
 METHOD getValidators() CLASS UnidadesMedicionGruposValidator
 
-   ::hValidators  := {  "nombre" =>       {  "required"           => "La descripción es un dato requerido",;
-                                             "unique"             => "La descripción introducida ya existe" },;
-                        "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
-                                             "unique"             => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "La descripción es un dato requerido",;
+                                          "unique"    => "La descripción introducida ya existe" },;
+                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
+                                          "unique"    => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//

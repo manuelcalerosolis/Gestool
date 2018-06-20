@@ -630,6 +630,7 @@ TiposImpresorasController.prg 											\
 TagsController.prg 															\
 UsuariosController.prg														\
 AccessController.prg															\
+EnviromentController.prg													\
 SuperUsuarioController.prg													\
 RolesController.prg															\
 AjustesController.prg														\
@@ -1331,6 +1332,7 @@ TiposImpresorasController.obj 											\
 TagsController.obj 															\
 UsuariosController.obj														\
 AccessController.obj															\
+EnviromentController.obj													\
 SuperUsuarioController.obj													\
 RolesController.obj 															\
 AjustesController.obj														\
@@ -2018,6 +2020,7 @@ $(OBJ)\TiposImpresorasController.obj               				+
 $(OBJ)\TagsController.obj                 							+
 $(OBJ)\UsuariosController.obj               							+
 $(OBJ)\AccessController.obj               							+
+$(OBJ)\EnviromentController.obj               						+
 $(OBJ)\SuperUsuarioController.obj           							+
 $(OBJ)\RolesController.obj               								+
 $(OBJ)\AjustesController.obj               							+

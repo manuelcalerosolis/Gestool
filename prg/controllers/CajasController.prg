@@ -21,31 +21,31 @@ METHOD New( oSenderController) CLASS CajasController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Cajas"
+   ::cTitle                         := "Cajas"
 
-   ::cName                       := "cajas"
+   ::cName                          := "cajas"
 
-   ::hImage                      := {  "16" => "gc_cash_register_16",;
-                                       "32" => "gc_cash_register_32",;
-                                       "48" => "gc_cash_register_48" }
+   ::hImage                         := {  "16" => "gc_cash_register_16",;
+                                          "32" => "gc_cash_register_32",;
+                                          "48" => "gc_cash_register_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLCajasModel():New( self )
+   ::oModel                         := SQLCajasModel():New( self )
 
-   ::oBrowseView                 := CajasBrowseView():New( self )
+   ::oBrowseView                    := CajasBrowseView():New( self )
 
-   ::oDialogView                 := CajasView():New( self )
+   ::oDialogView                    := CajasView():New( self )
 
-   ::oValidator                  := CajasValidator():New( self, ::oDialogView )
+   ::oValidator                     := CajasValidator():New( self, ::oDialogView )
 
-   ::oRepository                 := CajasRepository():New( self )
+   ::oRepository                    := CajasRepository():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
-   ::oImpresorasController  := ImpresorasController():New( self, ::oModel:cTableName )
+   ::oImpresorasController          := ImpresorasController():New( self, ::oModel:cTableName )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -140,8 +140,6 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS CajasView FROM SQLBaseView
 
@@ -188,14 +186,16 @@ METHOD Activate() CLASS CajasView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_sesion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_sesion" ] ;
       ID          120 ;
       SPINNER  ;
       MIN 0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-       ::redefineExplorerBar( 200 )
+   // Explorer bar -------------------------------------------------------
+
+   ::redefineExplorerBar( 200 )
 
    // Botones caja -------------------------------------------------------
 
@@ -227,22 +227,20 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartActivate() CLASS CajasView
 
-   local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+   local oPanel      := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-    oPanel:AddLink(   "Impresoras...",;
+    oPanel:AddLink(  "Impresoras...",;
                      {|| ::oController:oImpresorasController:activateDialogView() },;
                      ::oController:oImpresorasController:getImage( "16" ) )
 
-    oPanel                  := ::oExplorerBar:AddPanel( "Otros", nil, 1 )
+    oPanel           := ::oExplorerBar:AddPanel( "Otros", nil, 1 )
 
-    oPanel:AddLink( "Campos extra...",;
+    oPanel:AddLink(  "Campos extra...",;
                      {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
                      ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
-
 RETURN ( self )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -270,15 +268,14 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS SQLCajasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cajas"
 
    METHOD getColumns()
+
+   METHOD getInsertCajasSentence() 
 
 END CLASS
 
@@ -292,24 +289,28 @@ METHOD getColumns() CLASS SQLCajasModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                             ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) NOT NULL"                  ,;
-                                             "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) NOT NULL UNIQUE"          ,;
+                                             "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "codigo_sesion",     {  "create"    => "INTEGER UNSIGNED"                        ,;
                                              "default"   => {|| 0 } }                                 )
 
-   ::getEmpresaColumns()
-
-
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+METHOD getInsertCajasSentence() CLASS SQLCajasModel
+
+   local cSentence   := "INSERT IGNORE INTO " + ::getTableName()                       + " " + ;
+                           "( uuid, codigo, nombre, codigo_sesion )"                   + " " + ;
+                        "VALUES"                                                       + " " + ;
+                           "( " + quoted( win_uuidcreatestring() ) + ", '1', 'Principal', 1 )"
+
+RETURN ( cSentence )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -320,8 +321,10 @@ CLASS CajasRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLCajasModel():getTableName() ) 
 
-
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

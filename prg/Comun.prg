@@ -231,9 +231,8 @@ FUNCTION CreateMainSQLWindow( oIconApp )
       MAXIMIZED ;
       ON PAINT                ( WndPaint( hDC, oWnd ) ); 
       ON RESIZE               ( WndResize( oWnd ) );
+      ON INIT                 ( EnviromentController():New():isShow() );
       VALID                   ( EndApp() ) 
-
-      // ON INIT                 ( lStartCheck() );
 
    SysRefresh()
 

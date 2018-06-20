@@ -43,7 +43,6 @@ METHOD New( oSenderController ) CLASS ImpresorasController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -182,7 +181,6 @@ REDEFINE COMBOBOX ::oTipo ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-
    // Botones impresoras -------------------------------------------------------
 
    REDEFINE BUTTON ;
@@ -231,8 +229,8 @@ END CLASS
 
 METHOD getValidators() CLASS ImpresorasValidator
 
-      ::hValidators  := {  "nombre_impresora" =>                {  "required"           => "El nombre es un dato requerido" } ,; 
-                           "tipo_impresora_uuid"  =>            {  "required"           => "El tipo es un datos requerido"  }  }
+      ::hValidators  := {  "nombre_impresora"      => {  "required"  => "El nombre es un dato requerido" } ,; 
+                           "tipo_impresora_uuid"   => {  "required"  => "El tipo es un datos requerido"  }  }
 
 RETURN ( ::hValidators )
 
@@ -246,7 +244,9 @@ RETURN ( ::hValidators )
 
 CLASS SQLImpresorasModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "Impresoras"
+   DATA cTableName               INIT "impresoras"
+
+   DATA cConstraints             INIT "FOREIGN KEY (parent_uuid) REFERENCES " + SQLUnidadesMedicionGruposModel():getTableName() + " (uuid) ON DELETE CASCADE"
 
    METHOD getColumns()
 
@@ -257,7 +257,6 @@ CLASS SQLImpresorasModel FROM SQLCompanyModel
 
    METHOD setTipoImpresoraUuidAttribute( uValue ) ;
                                  INLINE ( if( empty( uValue ), "", SQLTiposImpresorasModel():getUuidWhereNombre( uValue ) ) )
-
 
 END CLASS
 
@@ -273,9 +272,10 @@ METHOD getInitialSelect() CLASS SQLImpresorasModel
                         "impresoras.ruta_comandas,"                                                        + " " + ;
                         "impresoras.ruta_anulacion,"                                                       + " " + ;
                         "tipos_impresoras.nombre as tipo_nombre,"                                          + " " + ;
-                        "tipos_impresoras.uuid"                                                           + " " + ;
-                     "FROM impresoras"                                                          + " " + ;
-                        "INNER JOIN tipos_impresoras ON impresoras.tipo_impresora_uuid = tipos_impresoras.uuid"  + " "
+                        "tipos_impresoras.uuid"                                                            + " " + ;
+                     "FROM " + ::getTableName() + " AS impresoras"                                         + " " + ;
+                     "INNER JOIN " + SQLTiposImpresorasModel():getTableName() + " AS tipos_impresoras"     + " " + ; 
+                        "ON impresoras.tipo_impresora_uuid = tipos_impresoras.uuid"
 
 RETURN ( cSelect )
 
@@ -287,26 +287,25 @@ METHOD getColumns() CLASS SQLImpresorasModel
                                                 "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                                "default"   => {|| win_uuidcreatestring() } } )
+                                                "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                                "default"   => {|| ::getSenderControllerParentUuid() } }  )
+                                                "default"   => {|| ::getSenderControllerParentUuid() } } )
 
    hset( ::hColumns, "nombre_impresora",     {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                "default"   => {|| space( 200 ) } }                       )
+                                                "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "tipo_impresora_uuid",  {  "create"    => "VARCHAR( 40 )"                          ,;
+   hset( ::hColumns, "tipo_impresora_uuid",  {  "create"    => "VARCHAR( 40 )"                           ,;
                                                 "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "codigo_corte",         {  "create"    => "VARCHAR( 50 )"                          ,;
+   hset( ::hColumns, "codigo_corte",         {  "create"    => "VARCHAR( 50 )"                           ,;
                                                 "default"   => {|| space( 50 ) } }                       )
 
    hset( ::hColumns, "ruta_comandas",        {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                "default"   => {|| space( 200 ) } }                       )
+                                                "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "ruta_anulacion",       {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                "default"   => {|| space( 200 ) } }                       )
-
+                                                "default"   => {|| space( 200 ) } }                      )
 
 RETURN ( ::hColumns )
 
