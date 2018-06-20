@@ -5,6 +5,8 @@
 #define  __admin_name__       "Super administrador"
 #define  __admin_password__   "superusuario"
 
+#define ADP_NAME              1
+
 //---------------------------------------------------------------------------//
 
 CLASS AccessController FROM SQLBaseController
@@ -23,6 +25,16 @@ CLASS AccessController FROM SQLBaseController
    DATA oEmpresasController
    DATA oAjustableController
 
+   DATA aComboUsuarios
+   DATA cComboUsuario  
+
+   DATA cComboEmpresa
+   DATA aComboEmpresas
+
+   DATA cGetPassword
+
+   DATA cMacAddress                    INIT ""
+
    METHOD New()
    METHOD End()
 
@@ -33,15 +45,20 @@ CLASS AccessController FROM SQLBaseController
    METHOD isLoginSuperAdmin()
    METHOD isLoginTactil()
 
+   METHOD loadSuperAdmin()
+
+   METHOD loadUsersAndCompanies()
+   METHOD saveUsersAndCompanies()
+
    METHOD isSelectCompany()            INLINE ( ::lSelectCompany )
+
+   METHOD getMacAddress()              
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( lSelectCompany ) CLASS AccessController
-
-   DEFAULT lSelectCompany              := .t.
+METHOD New() CLASS AccessController
 
    ::Super:New()
 
@@ -51,8 +68,6 @@ METHOD New( lSelectCompany ) CLASS AccessController
 
    ::hImage                            := {  "16" => "gc_businesspeople_16",;
                                              "48" => "gc_businesspeople_48" }
-
-   ::lSelectCompany                    := lSelectCompany
 
    ::oAccessView                       := AccessView():New( self )
 
@@ -84,9 +99,67 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD loadUsersAndCompanies() CLASS AccessController
+
+   local cUltimaEmpresa
+   local cUltimoUsuario
+
+   ::cGetPassword          := space( 100 )
+
+   // Usuario------------------------------------------------------------------
+
+   ::aComboUsuarios        := ::oUsuariosController:oModel:getArrayNombres()
+
+   cUltimoUsuario          := ::oAjustableController:oModel:getUltimoUsuarioInMac( ::getMacAddress() )
+   if empty( cUltimoUsuario )
+      ::cComboUsuario      := atail( ::aComboUsuarios )
+   else 
+      ::cComboUsuario      := ::oUsuariosController:oModel:getNombreWhereUuid( cUltimoUsuario )
+   end if 
+
+   // Empresa------------------------------------------------------------------
+
+   if ::isSelectCompany()
+
+      ::aComboEmpresas     := ::oEmpresasController:oModel:getArrayNombres()
+
+      cUltimaEmpresa       := ::oAjustableController:oModel:getUltimaEmpresaInMac( ::getMacAddress() )
+      if empty( cUltimaEmpresa )
+         ::cComboEmpresa   := atail( ::cComboEmpresa )
+      else
+         ::cComboEmpresa   := ::oEmpresasController:oModel:getNombreWhereUuid( cUltimaEmpresa )
+      end if 
+
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadSuperAdmin() CLASS AccessController
+
+   ::cGetPassword          := space( 100 )
+
+   ::aComboUsuarios        := { __admin_name__ }
+   ::cComboUsuario         := __admin_name__
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveUsersAndCompanies() CLASS AccessController
+
+   ::oAjustableController:oModel:setUltimaEmpresaInMac( Company():uuid(), ::getMacAddress() )
+
+   ::oAjustableController:oModel:setUltimoUsuarioInMac( Auth():uuid(), ::getMacAddress() )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD isLogin() CLASS AccessController
 
-   ::oAccessView:loadUsersAndCompanies()
+   ::loadUsersAndCompanies()
 
    if ( ::oAccessView:Activate() != IDOK )
       RETURN ( .f. )
@@ -100,7 +173,7 @@ METHOD isLogin() CLASS AccessController
       Company( ::hEmpresa )
    end if 
 
-   ::oAjustableController:oModel:setUsuarioPcEnUso( rtrim( netname() ), Auth():uuid() )
+   ::saveUsersAndCompanies()
 
 RETURN ( .t. )
 
@@ -108,7 +181,9 @@ RETURN ( .t. )
 
 METHOD isLoginSuperAdmin() CLASS AccessController
 
-   ::aComboUsuarios        := ::oController:oUsuariosController:oModel:getArrayNombres()
+   ::lSelectCompany  := .f.
+
+   ::loadSuperAdmin()
 
    if ( ::oAccessView:Activate() != IDOK )
       RETURN ( .f. )
@@ -117,8 +192,6 @@ METHOD isLoginSuperAdmin() CLASS AccessController
    if !empty( ::hUsuario )
       Auth( ::hUsuario )
    end if 
-
-   ::oAjustableController:oModel:setUsuarioPcEnUso( rtrim( netname() ), Auth():uuid() )
 
 RETURN ( .t. )
 
@@ -134,9 +207,9 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validUserPassword( cUsuario, cPassword ) CLASS AccessController
+METHOD validUserPassword() CLASS AccessController
 
-   ::hUsuario                 := ::oUsuariosController:oModel:validUserPassword( cUsuario, cPassword )
+   ::hUsuario                 := ::oUsuariosController:oModel:validUserPassword( ::cComboUsuario, ::cGetPassword )
 
    if empty( ::hUsuario )
       ::cValidError           := "Usuario y contraseña no coinciden" 
@@ -152,9 +225,13 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validCompany( cEmpresa ) CLASS AccessController
+METHOD validCompany() CLASS AccessController
 
-   ::hEmpresa                 := ::oEmpresasController:oModel:validEmpresa( cEmpresa )
+   if !( ::isSelectCompany() )
+      RETURN ( .t. )
+   end if 
+
+   ::hEmpresa                 := ::oEmpresasController:oModel:validEmpresa( ::cComboEmpresa )
 
    if empty( ::hEmpresa )
       ::cValidError           := "Empresa no existe" 
@@ -164,6 +241,23 @@ METHOD validCompany( cEmpresa ) CLASS AccessController
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD getMacAddress() CLASS AccessController
+
+   local aNetCardInfo    
+
+   if !empty( ::cMacAddress )
+      RETURN ( ::cMacAddress )
+   end if 
+
+   aNetCardInfo         := getNetCardInfo()
+
+   if !empty( aNetCardInfo )
+      ::cMacAddress     := afirst( getNetCardInfo() )[ ADP_NAME ]
+   end if 
+
+RETURN ( ::cMacAddress )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -174,16 +268,12 @@ CLASS AccessView FROM SQLBaseView
    DATA oSayError
 
    DATA oGetPassword
-   DATA cGetPassword
 
    DATA oComboUsuario
-   DATA cComboUsuario   
-   DATA aComboUsuarios  
 
    DATA oSayEmpresa
+
    DATA oComboEmpresa
-   DATA cComboEmpresa
-   DATA aComboEmpresas
 
    METHOD isSelectCompany()         INLINE ( ::oController:lSelectCompany )
 
@@ -191,41 +281,11 @@ CLASS AccessView FROM SQLBaseView
    METHOD ActivateWithCompany()     INLINE ( ::setShowEmpresa( .t. ), ::Activate() )
    METHOD startActivate()
 
-   METHOD loadSuperAdmin() 
-   METHOD loadUsersAndCompanies()
-
    METHOD Validate()
 
    METHOD sayError( cError )        INLINE ( ::oSayError:setText( cError ), ::oSayError:Show(), dialogSayNo( ::oDialog ) )
    
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD loadUsersAndCompanies() CLASS AccessView
-
-   if ::isSelectCompany()
-      ::aComboEmpresas     := ::oController:oEmpresasController:oModel:getArrayNombres()
-      ::cComboEmpresa      := atail( ::aComboEmpresas )
-   end if 
-
-   ::aComboUsuarios        := ::oController:oUsuariosController:oModel:getArrayNombres()
-   ::cComboUsuario         := ::oController:oUsuariosController:oModel:getNombreUsuarioWhereNetName( netname() )
-   
-   ::cGetPassword          := space( 100 )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadSuperAdmin() CLASS AccessView
-
-   ::aComboUsuarios        := { __admin_name__ }
-   ::cComboUsuario         := __admin_name__
-
-   ::cGetPassword          := space( 100 )
-
-RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -245,19 +305,19 @@ METHOD Activate() CLASS AccessView
       OF          ::oDialog
 
    REDEFINE COMBOBOX ::oComboEmpresa ;
-      VAR         ::cComboEmpresa ;
+      VAR         ::oController:cComboEmpresa ;
       ID          130 ;
-      ITEMS       ::aComboEmpresas ;
+      ITEMS       ::oController:aComboEmpresas ;
       OF          ::oDialog
 
    REDEFINE COMBOBOX ::oComboUsuario ;
-      VAR         ::cComboUsuario ;
+      VAR         ::oController:cComboUsuario ;
       ID          100 ;
-      ITEMS       ::aComboUsuarios ;
+      ITEMS       ::oController:aComboUsuarios ;
       OF          ::oDialog
 
    REDEFINE GET   ::oGetPassword ;
-      VAR         ::cGetPassword ;
+      VAR         ::oController:cGetPassword ;
       ID          110 ;
       OF          ::oDialog
 
@@ -300,12 +360,12 @@ RETURN ( nil )
 
 METHOD Validate() CLASS AccessView
 
-   if !( ::oController:validUserPassword( ::cComboUsuario, ::cGetPassword ) )
+   if !( ::oController:validUserPassword() )
       ::sayError( ::oController:cValidError )
       RETURN ( nil )
    end if 
 
-   if ::isSelectCompany() .and. !( ::oController:validCompany( ::cComboEmpresa ) )
+   if !( ::oController:validCompany() )
       ::sayError( ::oController:cValidError )
       RETURN ( nil )
    end if 
@@ -333,7 +393,7 @@ CLASS AccessTactilView FROM SQLBaseView
       METHOD startActivate()
       METHOD initActivate() 
 
-   METHOD sayError( cError )  INLINE ( ::oSayError:setText( cError ), ::oSayError:Show(), dialogSayNo( ::oDialog ) )
+   METHOD sayError( cError )     INLINE ( ::oSayError:setText( cError ), ::oSayError:Show(), dialogSayNo( ::oDialog ) )
    
    METHOD Validate( nOpt )
 

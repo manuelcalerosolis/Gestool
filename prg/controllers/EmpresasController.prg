@@ -544,8 +544,6 @@ METHOD validEmpresa( cNombre ) CLASS SQLEmpresasModel
    cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
    cSQL        +=    "LIMIT 1"
 
-   msgalert( cSQL, "cSQL" )
-
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
@@ -583,6 +581,4 @@ METHOD getNombres() CLASS EmpresasRepository
 RETURN ( aNombres )
 
 //---------------------------------------------------------------------------//
-
-
 

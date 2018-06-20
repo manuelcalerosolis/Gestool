@@ -36,6 +36,12 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD setRolCambiarEstado( uAjusteValue, cAjustableUuid )           INLINE ( ::setLogic( 'cambiar_estado', uAjusteValue, 'roles', cAjustableUuid ) )
    METHOD setRolCambiarCampos( uAjusteValue, cAjustableUuid )           INLINE ( ::setLogic( 'cambiar_campos', uAjusteValue, 'roles', cAjustableUuid ) )
 
+   METHOD setUltimaEmpresaInMac( uuidEmpresa, cMacAddress )             INLINE ( ::set( '', uuidEmpresa, 'ultima_empresa', cMacAddress ) )
+   METHOD getUltimaEmpresaInMac( cMacAddress )                          INLINE ( ::getValueWhereMac( 'ultima_empresa', cMacAddress, '' ) )
+
+   METHOD setUltimoUsuarioInMac( uuidUsuario, cMacAddress )             INLINE ( ::set( '', uuidUsuario, 'ultimo_usuario', cMacAddress ) )
+   METHOD getUltimoUsuarioInMac( cMacAddress )                          INLINE ( ::getValueWhereMac( 'ultimo_usuario', cMacAddress ) )
+
    METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    METHOD getLogic( cUuid, cTipo, cAjuste, lDefault ) 
 
@@ -85,6 +91,8 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD setEmpresaUnidadesGrupoDefecto( uAjusteValue, cAjustableUuid );
                                                                         INLINE ( ::setValue( 'unidades_grupo_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getEmpresaUnidadesGrupoDefecto( cCodigo )                     INLINE ( ::getValue( cCodigo, 'empresas', 'unidades_grupo_defecto', __grupo_unidades_medicion__ ) )   
+
+   METHOD getValueWhereMac( cTipoAjuste, cMacAddress, uDefault )
 
 END CLASS
 
@@ -209,6 +217,30 @@ METHOD getUsuarioEmpresa( cUuid )
    end if 
 
 RETURN ( ::getUsuarioEmpresaEnUso( cUuid ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getValueWhereMac( cTipoAjuste, cMacAddress, uDefault )
+
+   local uValue
+   local cSentence 
+
+   if empty( cTipoAjuste ) .or. empty( cMacAddress )
+      RETURN ( uDefault )
+   end if 
+
+   cSentence         := "SELECT ajuste_valor "
+   cSentence         +=    "FROM " + ::getTableName() + " "
+   cSentence         += "WHERE ajustable_uuid = " + quoted( cMacAddress ) + " "
+   cSentence         +=    "AND ajustable_tipo = " + quoted( cTipoAjuste )
+
+   uValue            := ::getDatabase():getValue( cSentence )
+
+   if hb_ischar( uValue ) 
+      RETURN ( uValue ) 
+   endif
+
+RETURN ( uDefault )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

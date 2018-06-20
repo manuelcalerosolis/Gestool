@@ -188,8 +188,6 @@ FUNCTION CreateMainSQLWindow( oIconApp )
 
    // Carga o no la imagen de fondo--------------------------------------------
 
-   msgalert( Company():Nombre(), "CompanyNombre" )
-
    DEFINE WINDOW oWnd ;
       FROM                    0, 0 TO 26, 82;
       TITLE                   __GSTROTOR__ + " " + __GSTVERSION__ + " " + cTypeVersion() + " : " + Company():Codigo() + " - " + Company():Nombre() ;
