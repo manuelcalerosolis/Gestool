@@ -402,6 +402,8 @@ METHOD checkValues() CLASS SQLCompanyMigrations
 
    getSQLDatabase():Exec( SQLAjustesModel():getInsertAjustesSentence() )
 
+   getSQLDatabase():Exec( SQLCajasModel():getInsertCajasSentence() )
+
    getSQLDatabase():Exec( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )
 
    getSQLDatabase():Execs( SQLUnidadesMedicionGruposModel():getInsertUnidadesMedicionGruposSentence() )

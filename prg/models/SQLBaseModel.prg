@@ -242,6 +242,8 @@ CLASS SQLBaseModel
 
    METHOD getSenderControllerParentUuid()
 
+   METHOD Count( oController )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -1285,6 +1287,14 @@ METHOD getField( cField, cBy, cId )
 RETURN ( ::getDatabase():getValue( cSql ) )
 
 //----------------------------------------------------------------------------//
+
+METHOD Count( oController )
+
+   local cSql  := "SELECT COUNT(*) FROM " + ::getTableName()    
+
+RETURN ( ::getDatabase():getValue( cSql ) )
+
+//---------------------------------------------------------------------------//
 
 METHOD getHashWhere( cBy, cId )
 

@@ -213,13 +213,13 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
       case ( "SQL" $ appParamsMain() ) 
 
-         if AccessController():New( .t. ):isLogin()
+         if AccessController():New():isLogin()
             CreateMainSQLWindow( oIconApp )
          end if
 
       otherwise
 
-         if UsuariosController():New():isLogin()
+         if AccessController():New():isLogin()
             CreateMainWindow( oIconApp )
          end if
 
