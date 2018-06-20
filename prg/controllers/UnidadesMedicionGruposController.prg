@@ -352,8 +352,6 @@ CLASS SQLUnidadesMedicionGruposModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getCodigoDefecto()              INLINE ( 'UDS' )
-
    METHOD getInitialSelect()
 
    METHOD getUnidadesMedicionModel()      INLINE ( SQLUnidadesMedicionModel():getTableName() )
@@ -409,7 +407,7 @@ METHOD getInsertUnidadesMedicionGruposSentence() CLASS SQLUnidadesMedicionGrupos
    local uuid           := win_uuidcreatestring()
    local cSentence
    local aSentence      := {} 
-   local cCodigoDefecto := quoted( ::getCodigoDefecto() )
+   local cCodigoDefecto := quoted( __grupo_unidades_medicion__ )
 
    cSentence         := "INSERT IGNORE INTO " + ::getTableName()                       + " " + ;
                            "( uuid, codigo, nombre, unidad_base_codigo, sistema )"     + " " + ;
