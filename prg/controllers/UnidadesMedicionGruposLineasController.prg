@@ -403,7 +403,40 @@ CLASS UnidadesMedicionGruposLineasRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLUnidadesMedicionGruposLineasModel():getTableName() ) 
 
+   METHOD getWhereCodigoGrupo( cCodigoGrupo )
+
+   METHOD getWhereCodigoArticulo( cCodigoArticulo )
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereCodigoGrupo( cCodigoGrupo ) CLASS UnidadesMedicionGruposLineasRepository
+
+   local cSql                    := ""
+   local aUnidadesMedicion       := {}
+
+Return ( aUnidadesMedicion )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereCodigoArticulo( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository
+
+   local cSelect                 := ""
+
+   if Empty( cCodigoArticulo )
+      RETURN ( {} )
+   end if
+
+   cSelect  := "SELECT lineas.unidad_alternativa_codigo"                                                 + " " + ;
+               "FROM "+ ::getTableName() + " AS lineas"                                                  + " " + ;
+               "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"             + " " + ;         
+                  "ON lineas.parent_uuid = grupos.uuid"                                                  + " " + ;         
+               "LEFT JOIN " + SQLArticulosModel():getTableName() + " AS articulos"                       + " " + ;         
+                  "ON articulos.unidades_medicion_grupos_codigo = grupos.codigo"                         + " " + ;         
+               "WHERE articulos.codigo = " + quoted( cCodigoArticulo )
+
+Return ( ::getDatabase():selectFetchArrayOneColumn( cSelect ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
