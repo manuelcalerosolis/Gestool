@@ -420,7 +420,7 @@ Return ( aUnidadesMedicion )
 
 //---------------------------------------------------------------------------//
 
-METHOD getWhereCodigoArticulo( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository
+METHOD getWhereCodigoArticulo( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository 
 
    local cSelect                 := ""
 

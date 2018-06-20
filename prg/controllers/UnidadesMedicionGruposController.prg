@@ -351,8 +351,8 @@ CLASS SQLUnidadesMedicionGruposModel FROM SQLCompanyModel
    DATA cTableName                        INIT "unidades_medicion_grupos"
 
    METHOD getColumns()
-
-   METHOD getInitialSelect()
+ 
+   METHOD getInitialSelect() 
 
    METHOD getUnidadesMedicionModel()      INLINE ( SQLUnidadesMedicionModel():getTableName() )
 
