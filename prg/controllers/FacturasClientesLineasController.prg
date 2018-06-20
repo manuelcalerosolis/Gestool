@@ -38,6 +38,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD validateSegundaPropiedad()   INLINE ( iif(  ::validate( "valor_segunda_propiedad" ),;
                                                       ::stampPropertyName( "codigo_segunda_propiedad" , "valor_segunda_propiedad", ::oDialogView:oGetValorSegundaPropiedad ),;
                                                       .f. ) )
+
+   METHOD lValidUnidadMedicion( uValue )
    
    // Otros--------------------------------------------------------------------
 
@@ -89,7 +91,7 @@ METHOD New( oController )
 
    ::oDialogView                       := FacturasClientesLineasView():New( self )
 
-   ::oValidator                        := DocumentosLineasValidator():New( self )
+   ::oValidator                        := FacturasClientesLineasValidator():New( self )
 
    ::oSearchView                       := SQLSearchView():New( self )
 
@@ -108,6 +110,8 @@ METHOD New( oController )
    ::setEvent( 'deletedSelection',     {|| ::oBrowseView:Refresh() } )
 
    ::setEvent( 'deletingLines',        {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
+
+   ::oModel:setEvent( 'loadedBlankBuffer',  {|| hSet( ::oModel:hBuffer, "unidad_medicion_codigo", UnidadesMedicionGruposLineasRepository():getCodigoDefault() ) } )
 
 RETURN ( Self )
 
@@ -164,8 +168,9 @@ METHOD stampArticulo( hArticulo )
       ::hArticulo    := hArticulo
    end if 
 
-   hBuffer           := {  "articulo_codigo"    => hget( ::hArticulo, "codigo" ),;
-                           "articulo_nombre"    => hget( ::hArticulo, "nombre" ) }
+   hBuffer           := {  "articulo_codigo"          => hget( ::hArticulo, "codigo" ),;
+                           "articulo_nombre"          => hget( ::hArticulo, "nombre" ),;
+                           "unidad_medicion_codigo"   => UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( ::hArticulo, "codigo" ) ) }
 
    ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
 
@@ -339,9 +344,9 @@ RETURN ( lAppend )
 
 //----------------------------------------------------------------------------//
 
-METHOD updateUnidadMedicion( x )
+METHOD updateUnidadMedicion( uValue )
       
-   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'unidad_medicion_codigo', x )
+   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'unidad_medicion_codigo', uValue )
 
    ::getRowSet():Refresh()
 
@@ -353,7 +358,23 @@ Return ( nil )
 
 METHOD loadUnidadesMedicion()
 
-   ::oBrowseView:oColumnUnidadMedicion:aEditListTxt := UnidadesMedicionGruposLineasRepository():getWhereCodigoArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) )
+   ::oBrowseView:oColumnUnidadMedicion:aEditListTxt := UnidadesMedicionGruposLineasRepository():getCodigos( ::getRowSet():fieldGet( 'articulo_codigo' ) )
+
+Return ( .t. )
+
+//----------------------------------------------------------------------------//
+
+METHOD lValidUnidadMedicion( uValue )
+
+   local cValue   :=  uValue:VarGet()
+
+   if !hb_ischar( cValue )
+      RETURN ( .f. )
+   end if 
+
+   if !( ::validate( "unidad_medicion_codigo", cValue ) )
+      RETURN ( .f. )
+   end if
 
 Return ( .t. )
 

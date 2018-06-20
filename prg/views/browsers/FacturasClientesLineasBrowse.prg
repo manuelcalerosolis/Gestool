@@ -122,6 +122,7 @@ METHOD addColumns()
       :bEditWhen           := {|| ::oController:loadUnidadesMedicion() }
       :bOnPostEdit         := {|o,x| ::oController:updateUnidadMedicion( x ) }
       :cEditPicture        := "@! NNNNNNNNNNNNNNNNNNNN"
+      :bEditValid          := {|uNewValue| ::oController:lValidUnidadMedicion( uNewValue ) }
    end with
 
 RETURN ( self )
