@@ -219,7 +219,7 @@ FUNCTION CreateMainSQLWindow( oIconApp )
 
    oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():codigoDelegacion() ), 100,,,, .t., {|| SelectDelegacion(), chkTurno() } )
 
-   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Application():codigoCaja(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
+   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Box():Codigo(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
    
    oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( Application():codigoAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
 
@@ -1106,7 +1106,7 @@ RETURN cNbr
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cCajUsr( cCaj )
+FUNCTION setCajaMessageBar(  cCaj )
 
    if !empty( cCaj ) .and. oMsgCaja != nil
       oMsgCaja:SetText( "Caja : " + RTrim( cCaj ) )

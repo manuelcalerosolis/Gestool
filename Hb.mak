@@ -148,7 +148,8 @@ Entsal.prg              										\
 Usuario.prg             										\
 Tuser.prg               										\
 AuthManager.prg           										\
-ApplicationManager.prg    										\
+BoxManager.prg    												\
+ApplicationManager.prg 											\
 Oferta.prg              										\
 Internet.prg            										\
 Intitem.prg             										\
@@ -830,7 +831,8 @@ Entsal.obj                                         				\
 Usuario.obj                                        				\
 Tuser.obj                                          				\
 AuthManager.obj                                          		\
-ApplicationManager.obj                                     		\
+BoxManager.obj                                     				\
+ApplicationManager.obj 														\
 Oferta.obj                                         				\
 Internet.obj                                       				\
 Intitem.obj                                        				\
@@ -1528,7 +1530,8 @@ $(OBJ)\Entsal.obj                										+
 $(OBJ)\Usuario.obj               										+
 $(OBJ)\Tuser.obj                 										+
 $(OBJ)\AuthManager.obj             										+
-$(OBJ)\ApplicationManager.obj      										+
+$(OBJ)\BoxManager.obj      												+
+$(OBJ)\ApplicationManager.obj												+
 $(OBJ)\Oferta.obj                										+
 $(OBJ)\Internet.obj              										+
 $(OBJ)\Intitem.obj               										+

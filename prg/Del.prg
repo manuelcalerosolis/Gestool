@@ -37,7 +37,7 @@ Return cNbrUsr
 
 //---------------------------------------------------------------------------//
 
-Function cCajUsr( cCaj )
+Function setCajaMessageBar(  cCaj )
 
    if cCaj != nil
       cCajUsr  := cCaj

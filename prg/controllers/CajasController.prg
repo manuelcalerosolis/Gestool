@@ -126,10 +126,10 @@ METHOD addColumns() CLASS CajasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo_sesion'
+      :cSortOrder          := 'numero_sesion'
       :cHeader             := 'Código de sesión'
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_sesion' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'numero_sesion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -186,7 +186,7 @@ METHOD Activate() CLASS CajasView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_sesion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "numero_sesion" ] ;
       ID          120 ;
       SPINNER  ;
       MIN 0;
@@ -295,8 +295,8 @@ METHOD getColumns() CLASS SQLCajasModel
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) NOT NULL UNIQUE"          ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "codigo_sesion",     {  "create"    => "INTEGER UNSIGNED"                        ,;
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "numero_sesion",     {  "create"    => "INTEGER UNSIGNED"                        ,;
+                                             "default"   => {|| 1 } }                                 )
 
 RETURN ( ::hColumns )
 
@@ -305,7 +305,7 @@ RETURN ( ::hColumns )
 METHOD getInsertCajasSentence() CLASS SQLCajasModel
 
    local cSentence   := "INSERT IGNORE INTO " + ::getTableName()                       + " " + ;
-                           "( uuid, codigo, nombre, codigo_sesion )"                   + " " + ;
+                           "( uuid, codigo, nombre, numero_sesion )"                   + " " + ;
                         "VALUES"                                                       + " " + ;
                            "( " + quoted( win_uuidcreatestring() ) + ", '1', 'Principal', 1 )"
 

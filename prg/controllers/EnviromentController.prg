@@ -18,8 +18,10 @@ CLASS EnviromentController FROM SQLBaseController
    METHOD isShow()
 
    METHOD loadData()
+
+   METHOD setData()
    
-   METHOD isCajas()                    INLINE ( if( hb_isarray( ::aComboCajas ), len( ::aComboCajas ) > 1, .f. ) )
+   METHOD isMultiplesCajas()           INLINE ( if( hb_isarray( ::aComboCajas ), len( ::aComboCajas ) > 1, .f. ) )
 
 END CLASS
 
@@ -60,6 +62,20 @@ METHOD loadData() CLASS EnviromentController
 
    ::aComboCajas                       := ::oCajasController:oModel:getArrayNombres()
 
+   ::cComboCaja                        := atail( ::aComboCajas )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD setData() CLASS EnviromentController
+
+   ::hCaja                             := ::oCajasController:oModel:getWhereNombre( ::cComboCaja )
+
+   if !empty( ::hCaja )
+      Box( ::hCaja )
+   end if 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -68,9 +84,11 @@ METHOD isShow() CLASS EnviromentController
 
    ::loadData()
 
-   if ( ::oDialogView:Activate() != IDOK )
-      RETURN ( .f. )
+   if ::isMultiplesCajas()
+      ::oDialogView:Activate()
    end if 
+
+   ::setData()
 
 RETURN ( .t. )
 
