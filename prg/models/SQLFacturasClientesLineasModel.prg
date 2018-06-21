@@ -97,23 +97,28 @@ METHOD getColumns()
    hset( ::hColumns, "unidad_medicion_codigo",     {  "create"    => "VARCHAR( 20 )"                  ,;
                                                       "default"   => {|| space( 20 ) } }              )
 
+   hset( ::hColumns, "unidad_medicion_factor",     {  "create"    => "DECIMAL(19,6)"                  ,;
+                                                      "default"   => {|| 1 } }                        )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
 METHOD getInitialSelect()
 
-   local cSelect  := "SELECT id, "                                               + ;
-                        "uuid, "                                                 + ;
-                        "parent_uuid, "                                          + ;
-                        "articulo_codigo, "                                      + ;
-                        "articulo_nombre, "                                      + ;
-                        "fecha_caducidad, "                                      + ;
-                        "lote, "                                                 + ;
-                        "articulo_unidades, "                                    + ;
-                        "articulo_precio, "                                      + ;
-                        "articulo_unidades * articulo_precio as total_precio, "  + ;
-                        "unidad_medicion_codigo "                                + ;
+   local cSelect  := "SELECT id, "                                                        + ;
+                        "uuid, "                                                          + ;
+                        "parent_uuid, "                                                   + ;
+                        "articulo_codigo, "                                               + ;
+                        "articulo_nombre, "                                               + ;
+                        "fecha_caducidad, "                                               + ;
+                        "lote, "                                                          + ;
+                        "articulo_unidades, "                                             + ;
+                        "articulo_precio, "                                               + ;
+                        "articulo_unidades * articulo_precio as total_precio, "           + ;
+                        "unidad_medicion_codigo, "                                        + ;
+                        "unidad_medicion_factor, "                                        + ;
+                        "articulo_unidades * unidad_medicion_factor as unidades_stock "   + ;
                      "FROM " + ::getTableName()    
 
 RETURN ( cSelect )

@@ -427,7 +427,7 @@ METHOD addLinksToExplorerBar() CLASS ClientesView
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Tarifas...",             {|| MsgInfo( "Tarifas" ) }, "gc_money_interest_16" )
+      oPanel:AddLink( "Tarifas...",             {|| ::oController:oClientesTarifasController:activateDialogView() }, ::oController:oClientesTarifasController:getImage( "16" ) )
       oPanel:AddLink( "Direcciones...",         {|| ::oController:oDireccionesController:activateDialogView() }, ::oController:oDireccionesController:getImage( "16" ) )
       oPanel:AddLink( "Contactos...",           {|| ::oController:oContactosController:activateDialogView() }, ::oController:oContactosController:getImage( "16" ) )
       oPanel:AddLink( "Cuentas bancarias...",   {|| ::oController:oCuentasBancariasController:activateDialogView() }, ::oController:oCuentasBancariasController:getImage( "16" ) )

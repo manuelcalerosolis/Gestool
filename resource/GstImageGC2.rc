@@ -389,3 +389,5 @@ GC_FACTORY_GROUP_48 BITMAP "..\\bmp\\gc_factory_group_48.bmp"
 TAB_PANE_TAPE_MEASURE2_16 BITMAP "..\\bmp\\tab_pane_tape_measure2_16.bmp"
 TAB_PANE_TAPE_MEASURE2_32 BITMAP "..\\bmp\\tab_pane_tape_measure2_32.bmp"
 TAB_PANE_TAPE_MEASURE2_48 BITMAP "..\\bmp\\tab_pane_tape_measure2_48.bmp"
+
+GC_DESK_64 BITMAP "..\\bmp\\gc_desk_64.bmp"

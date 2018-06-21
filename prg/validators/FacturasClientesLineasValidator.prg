@@ -106,19 +106,18 @@ RETURN ( .f. )
 METHOD existUnidadMedicion( value )
 
    local cId
-
-   MsgInfo( "Entro en existUnidadMedicion", value )
+   local aValores
 
    if empty( value )
       RETURN ( .t. )
-   end if 
+   end if
 
-   //***************************POR AQUI PARA VIENDOLO**********************//
+   aValores          := UnidadesMedicionGruposLineasRepository():getCodigos( ::oController:getRowSet():fieldGet( 'articulo_codigo' ) )
 
-   if ArticulosModel():exist( value )
+   if aScan( aValores, AllTrim( value ) ) != 0
       RETURN ( .t. )
-   end if 
-   
+   end if
+
 RETURN ( .f. )
 
 //---------------------------------------------------------------------------//

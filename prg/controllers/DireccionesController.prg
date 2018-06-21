@@ -546,9 +546,13 @@ METHOD codigoPostal( value )
 
       cProvincia  := ::oController:oCodigosPostalesController:getModel():getField( "provincia", "codigo", value )
 
+      MsgInfo( cProvincia, "cProvincia" )
+
       if !empty( cProvincia )
          ::oController:oDialogView:oGetCodigoProvincia:cText( cProvincia )
          ::oController:oDialogView:oGetCodigoProvincia:lValid()
+      else
+         ::oController:oDialogView:oGetCodigoProvincia:cText( Space( 100 ) )
       end if 
 
    end if 

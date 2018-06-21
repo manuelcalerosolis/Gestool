@@ -23,6 +23,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD Append()
 
+   METHOD Edit()                       INLINE ( .t. )
+
    // Validaciones ------------------------------------------------------------
 
    METHOD validColumnCodigoArticulo( oCol, uValue, nKey )  
@@ -70,6 +72,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD updateUnidadMedicion( x )
 
    METHOD loadUnidadesMedicion()
+
+   METHOD updateFieldWhereId( cField, uValue )    INLINE ( ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cField, uValue ), ::getRowSet():Refresh(), ::refreshBrowse() )
 
 END CLASS
 
@@ -346,7 +350,10 @@ RETURN ( lAppend )
 
 METHOD updateUnidadMedicion( uValue )
       
-   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'unidad_medicion_codigo', uValue )
+   local hBuffer           := {  "unidad_medicion_codigo"          => uValue,;
+                                 "unidad_medicion_factor"          => UnidadesMedicionGruposLineasRepository():getFactorWhereUnidadMedicion( ::getRowSet():fieldGet( 'articulo_codigo' ), uValue ) }
+
+   ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
 
    ::getRowSet():Refresh()
 
