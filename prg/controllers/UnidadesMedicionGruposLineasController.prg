@@ -403,24 +403,164 @@ CLASS UnidadesMedicionGruposLineasRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLUnidadesMedicionGruposLineasModel():getTableName() ) 
 
-   METHOD getWhereCodigoGrupo( cCodigoGrupo )
+   METHOD getSentenceWhereGrupoSistema( cCodigoGrupo )
+
+   METHOD getSentenceWhereEmpresa( cCodigoGrupo )
+
+   METHOD getSentenceWhereCodigoArticulo( cCodigoArticulo )
+
+
+
+   METHOD getWhereGrupoSistema( cCodigoGrupo )
+
+   METHOD getWhereEmpresa( cCodigoGrupo )
 
    METHOD getWhereCodigoArticulo( cCodigoArticulo )
+
+   METHOD getCodigos( cCodigoArticulo )
+
+   METHOD getWhereGrupoSistemaDefault()
+
+   METHOD getWhereEmpresaDefault()
+
+   METHOD getWhereCodigoArticuloDefault( cCodigoArticulo )
+
+   METHOD getCodigoDefault( cCodigoArticulo )
+
+   METHOD getFactorWhereUnidadMedicion( cCodigoArticulo, cCodigoUnidad )
+
+   METHOD getFactorWhereUnidadMedicion( cCodigoArticulo, cCodigoUnidad )
+
+   METHOD getFactorWhereUnidadArticulo( cCodigoArticulo, cCodigoUnidad )
+
+   METHOD getFactorWhereUnidadEmpresa( cCodigoUnidad )
+
+   METHOD getFactorWhereUnidadGrupoSistema( cCodigoUnidad )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getWhereCodigoGrupo( cCodigoGrupo ) CLASS UnidadesMedicionGruposLineasRepository
+METHOD getSentenceWhereGrupoSistema( cField ) CLASS UnidadesMedicionGruposLineasRepository
 
-   local cSql                    := ""
-   local aUnidadesMedicion       := {}
+   local cSelect
 
-Return ( aUnidadesMedicion )
+   DEFAULT cField    := "unidad_alternativa_codigo"
+
+   cSelect           := "SELECT lineas." + cField                                                                 + " " + ;
+                        "FROM "+ ::getTableName() + " AS lineas"                                                  + " " + ;
+                        "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"             + " " + ;         
+                           "ON lineas.parent_uuid = grupos.uuid"                                                  + " " + ;         
+                        "WHERE grupos.sistema = 1"
+
+RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceWhereEmpresa( cField ) CLASS UnidadesMedicionGruposLineasRepository
+
+   local cSelect
+
+   DEFAULT cField    := "unidad_alternativa_codigo"
+
+   cSelect           := "SELECT lineas." + cField                                                                 + " " + ;
+                           "FROM "+ ::getTableName() + " AS lineas"                                               + " " + ;
+                           "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"          + " " + ;         
+                              "ON lineas.parent_uuid = grupos.uuid"                                               + " " + ;         
+                           "LEFT JOIN " + SQLAjustableModel():getTableName() + " AS ajustables"                   + " " + ;
+                              "ON ajustables.ajuste_valor = grupos.codigo"                                        + " " + ;
+                           "LEFT JOIN " + SQLAjustesModel():getTableName() + " AS ajustes"                        + " " + ;
+                              "ON ajustes.uuid = ajustables.ajuste_uuid"                                          + " " + ;
+                           "WHERE ajustes.ajuste = 'unidades_grupo_defecto'"                                      + " " + ;
+                              "AND ajustables.ajustable_uuid = " + quoted( Company():uuid() )
+
+RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceWhereCodigoArticulo( cCodigoArticulo, cField ) CLASS UnidadesMedicionGruposLineasRepository 
+
+   local cSelect
+
+   DEFAULT cField    := "unidad_alternativa_codigo"
+
+   cSelect           := "SELECT lineas." + cField                                                                 + " " + ;
+                           "FROM "+ ::getTableName() + " AS lineas"                                               + " " + ;
+                           "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"          + " " + ;         
+                              "ON lineas.parent_uuid = grupos.uuid"                                               + " " + ;         
+                           "LEFT JOIN " + SQLArticulosModel():getTableName() + " AS articulos"                    + " " + ;         
+                              "ON articulos.unidades_medicion_grupos_codigo = grupos.codigo"                      + " " + ;
+                           "WHERE articulos.codigo = " + quoted( cCodigoArticulo )
+
+RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereGrupoSistema() CLASS UnidadesMedicionGruposLineasRepository
+
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereGrupoSistema() ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereEmpresa() CLASS UnidadesMedicionGruposLineasRepository
+
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereEmpresa() ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getWhereCodigoArticulo( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository 
+
+   if Empty( cCodigoArticulo )
+      RETURN ( {} )
+   end if
+
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereCodigoArticulo( cCodigoArticulo ) ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCodigos( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository 
+
+   local aResult  := {}
+
+   if !empty( cCodigoArticulo )
+      aResult  := ::getWhereCodigoArticulo( cCodigoArticulo )
+   end if      
+
+   if empty( aResult )
+      aResult  := ::getWhereEmpresa()
+   end if
+
+   if empty( aResult )
+      aResult  := ::getWhereGrupoSistema()
+   end if
+
+RETURN ( aResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereGrupoSistemaDefault() CLASS UnidadesMedicionGruposLineasRepository
+
+   local cSelect  
+
+   cSelect        := ::getSentenceWhereGrupoSistema()       + " " + ;
+                        "AND lineas.sistema = 1"   
+
+RETURN ( ::getDatabase():getValue( cSelect ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereEmpresaDefault() CLASS UnidadesMedicionGruposLineasRepository
+
+   local cSelect  
+
+   cSelect        := ::getSentenceWhereEmpresa()            + " " + ;
+                        "AND lineas.sistema = 1"
+
+RETURN ( ::getDatabase():getValue( cSelect ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereCodigoArticuloDefault( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository 
 
    local cSelect                 := ""
 
@@ -428,15 +568,87 @@ METHOD getWhereCodigoArticulo( cCodigoArticulo ) CLASS UnidadesMedicionGruposLin
       RETURN ( {} )
    end if
 
-   cSelect  := "SELECT lineas.unidad_alternativa_codigo"                                                 + " " + ;
-               "FROM "+ ::getTableName() + " AS lineas"                                                  + " " + ;
-               "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"             + " " + ;         
-                  "ON lineas.parent_uuid = grupos.uuid"                                                  + " " + ;         
-               "LEFT JOIN " + SQLArticulosModel():getTableName() + " AS articulos"                       + " " + ;         
-                  "ON articulos.unidades_medicion_grupos_codigo = grupos.codigo"                         + " " + ;         
-               "WHERE articulos.codigo = " + quoted( cCodigoArticulo )
+   cSelect     := ::getSentenceWhereCodigoArticulo( cCodigoArticulo ) + " " + ;
+                     "AND lineas.sistema = 1"
 
-Return ( ::getDatabase():selectFetchArrayOneColumn( cSelect ) )
+RETURN ( ::getDatabase():getValue( cSelect ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCodigoDefault( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository 
+
+   local cResult  := ""
+
+   if !empty( cCodigoArticulo )
+      cResult  := ::getWhereCodigoArticuloDefault( cCodigoArticulo )
+   end if      
+
+   if empty( cResult )
+      cResult  := ::getWhereEmpresaDefault()
+   end if
+
+   if empty( cResult )
+      cResult  := ::getWhereGrupoSistemaDefault()
+   end if
+
+RETURN ( AllTrim( cResult ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFactorWhereUnidadMedicion( cCodigoArticulo, cCodigoUnidad ) CLASS UnidadesMedicionGruposLineasRepository 
+
+   local nResult := 1
+
+   if !empty( cCodigoArticulo )
+      nResult  := ::getFactorWhereUnidadArticulo( cCodigoArticulo, cCodigoUnidad )
+   end if      
+
+   if empty( nResult )
+      nResult  := ::getFactorWhereUnidadEmpresa( cCodigoUnidad )
+   end if
+
+   if empty( nResult )
+      nResult  := ::getFactorWhereUnidadGrupoSistema( cCodigoUnidad )
+   end if
+
+RETURN ( nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFactorWhereUnidadArticulo( cCodigoArticulo, cCodigoUnidad ) CLASS UnidadesMedicionGruposLineasRepository
+
+   local cSentence := ""
+
+   if Empty( cCodigoArticulo )
+      RETURN ( {} )
+   end if
+
+   cSentence         := ::getSentenceWhereCodigoArticulo( cCodigoArticulo,  "cantidad_base"  ) + " " + ;
+                     "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )
+
+RETURN ( ::getDatabase():getValue( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFactorWhereUnidadEmpresa( cCodigoUnidad ) CLASS UnidadesMedicionGruposLineasRepository
+
+   local cSentence := ""
+
+   cSentence         := ::getSentenceWhereEmpresa( "cantidad_base" )            + " " + ;
+                        "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )
+
+RETURN ( ::getDatabase():getValue( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFactorWhereUnidadGrupoSistema( cCodigoUnidad ) CLASS UnidadesMedicionGruposLineasRepository
+
+   local cSentence := ""
+
+   cSentence         := ::getSentenceWhereGrupoSistema( "cantidad_base" )       + " " + ;
+                        "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )   
+
+RETURN ( ::getDatabase():getValue( cSentence ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

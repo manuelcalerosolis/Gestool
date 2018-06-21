@@ -170,6 +170,8 @@ METHOD startDialog() CLASS FacturasClientesView
 
    ::oController:oAgentesController:oGetSelector:Start()
 
+   ::oController:oLineasController:oBrowseView:Refresh()
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

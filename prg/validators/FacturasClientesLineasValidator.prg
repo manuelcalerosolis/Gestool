@@ -14,6 +14,8 @@ CLASS FacturasClientesLineasValidator FROM SQLBaseValidator
    METHOD existPropiedad( value, propiedad )
    METHOD existOrEmptyPrimeraPropiedad( value )    INLINE ( ::existPropiedad( value, "codigo_primera_propiedad" ) )
    METHOD existOrEmptySegundaPropiedad( value )    INLINE ( ::existPropiedad( value, "codigo_segunda_propiedad" ) )
+
+   METHOD existUnidadMedicion( value )
  
 END CLASS
 
@@ -25,8 +27,7 @@ METHOD getValidators()
                                                          "required"              => "El artículo es un dato requerido",;
                                                          "existArticulo"         => "El artículo {value}, no existe" },;
                         "nombre_articulo"          => {  "required"              => "El nombre del artículo es un dato requerido" },;
-                        "valor_primera_propiedad"  => {  "existOrEmptyPrimeraPropiedad" => "La primera propiedad no existe" },;
-                        "valor_segunda_propiedad"  => {  "existOrEmptySegundaPropiedad" => "La segunda propiedad no existe" } }
+                        "unidad_medicion_codigo"   => {  "existUnidadMedicion"   => "La unidad de medición no existe" } }
 
 RETURN ( ::hValidators )
 
@@ -102,3 +103,21 @@ RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 
+METHOD existUnidadMedicion( value )
+
+   local cId
+   local aValores
+
+   if empty( value )
+      RETURN ( .t. )
+   end if
+
+   aValores          := UnidadesMedicionGruposLineasRepository():getCodigos( ::oController:getRowSet():fieldGet( 'articulo_codigo' ) )
+
+   if aScan( aValores, AllTrim( value ) ) != 0
+      RETURN ( .t. )
+   end if
+
+RETURN ( .f. )
+
+//---------------------------------------------------------------------------//

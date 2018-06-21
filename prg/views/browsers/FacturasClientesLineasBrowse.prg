@@ -88,6 +88,8 @@ METHOD addColumns()
       :nDataStrAlign       := AL_LEFT
       :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_caducidad' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := EDIT_GET
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateFieldWhereId( 'fecha_caducidad', uNewValue ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -97,6 +99,8 @@ METHOD addColumns()
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'lote' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := EDIT_GET
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateFieldWhereId( 'lote', uNewValue ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -111,9 +115,12 @@ METHOD addColumns()
       :cFooterPicture      := :cEditPicture
       :oFooterFont         := getBoldFont()
       :cDataType           := "N"
+      :nEditType           := EDIT_GET
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateFieldWhereId( 'articulo_unidades', uNewValue ) }
    end with
 
    with object ( ::oColumnUnidadMedicion    := ::oBrowse:AddCol() )
+      :cSortOrder          := 'unidad_medicion_codigo'
       :cHeader             := 'Unidad'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_medicion_codigo' ) }
@@ -122,6 +129,32 @@ METHOD addColumns()
       :bEditWhen           := {|| ::oController:loadUnidadesMedicion() }
       :bOnPostEdit         := {|o,x| ::oController:updateUnidadMedicion( x ) }
       :cEditPicture        := "@! NNNNNNNNNNNNNNNNNNNN"
+      :bEditValid          := {|uNewValue| ::oController:lValidUnidadMedicion( uNewValue ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'unidad_medicion_factor'
+      :cHeader             := 'Factor'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_medicion_factor' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :cEditPicture        := masUnd()
+      :cDataType           := "N"
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'unidades_stock'
+      :cHeader             := 'Unidades stock'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidades_stock' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :cEditPicture        := masUnd()
+      :nFootStyle          := :nDataStrAlign               
+      :nFooterType         := AGGR_SUM
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := getBoldFont()
+      :cDataType           := "N"
    end with
 
 RETURN ( self )

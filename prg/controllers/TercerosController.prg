@@ -35,6 +35,8 @@ CLASS TercerosController FROM SQLNavigatorController
 
    DATA oClientesEntidadesController
 
+   DATA oClientesTarifasController
+
    METHOD New()
 
    METHOD End()

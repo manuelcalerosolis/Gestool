@@ -74,6 +74,8 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::oClientesEntidadesController   := ClientesEntidadesController():New( self )
 
+   ::oClientesTarifasController     := ClientesTarifasController():New( self )
+
    ::oGetSelector                   := ClientGetSelector():New( self )
    
    ::oFilterController:setTableToFilter( ::oModel:cTableName )

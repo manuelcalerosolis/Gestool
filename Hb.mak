@@ -712,9 +712,10 @@ SqlFacturasClientesModel.prg 												\
 SqlFacturasClientesLineasModel.prg										\
 FacturasClientesController.prg 											\
 FacturasClientesLineasController.prg									\
-FacturasClientesLineasBrowse.prg											\
+FacturasClientesLineasBrowse.prg										\
 FacturasClientesLineasView.prg											\
-FacturasClientesView.prg 													\
+FacturasClientesView.prg 												\
+ClientesTarifasController.prg 											\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1405,7 +1406,8 @@ FacturasClientesController.obj 											\
 FacturasClientesLineasController.obj 									\
 FacturasClientesLineasBrowse.obj 										\
 FacturasClientesLineasView.obj 											\
-FacturasClientesView.obj 													\
+FacturasClientesView.obj 												\
+ClientesTarifasController.obj 											\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -2060,39 +2062,40 @@ $(OBJ)\PedidosProveedoresLineasModel.obj 							   +
 $(OBJ)\RelacionesEntidadesController.obj 							   +
 $(OBJ)\CentroCosteModel.obj 												+
 $(OBJ)\TransportistasModel.obj 											+
-$(OBJ)\MdiChild.obj 															+
-$(OBJ)\SQLComboSelector.obj 												+
-$(OBJ)\CompanyManager.obj 													+
+$(OBJ)\MdiChild.obj 													+
+$(OBJ)\SQLComboSelector.obj 											+
+$(OBJ)\CompanyManager.obj 												+
 $(OBJ)\TercerosController.obj 											+
 $(OBJ)\ClientesController.obj 											+
 $(OBJ)\ProveedoresController.obj 										+
-$(OBJ)\SQLTercerosModel.obj 												+
-$(OBJ)\SQLclientesModel.obj 												+
+$(OBJ)\SQLTercerosModel.obj 											+
+$(OBJ)\SQLclientesModel.obj 											+
 $(OBJ)\SQLProveedoresModel.obj 		  									+
-$(OBJ)\ClientesView.obj 													+
-$(OBJ)\ClientesValidator.obj 												+
-$(OBJ)\SqlGetSelector.obj 													+
+$(OBJ)\ClientesView.obj 												+
+$(OBJ)\ClientesValidator.obj 											+
+$(OBJ)\SqlGetSelector.obj 												+
 $(OBJ)\SqlClientGetSelector.obj											+
 $(OBJ)\NumeroDocumentoController.obj									+
-$(OBJ)\SQLDialogView.obj 													+
-$(OBJ)\CalculaPrecioCommand.obj 											+
-$(OBJ)\DescuentosController.obj 											+
+$(OBJ)\SQLDialogView.obj 												+
+$(OBJ)\CalculaPrecioCommand.obj 										+
+$(OBJ)\DescuentosController.obj 										+
 $(OBJ)\ClientesBrowseView.obj 											+
 $(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\SqlFacturasClientesModel.obj 				    				+
-$(OBJ)\SqlFacturasClientesLineasModel.obj 	    					+
+$(OBJ)\SqlFacturasClientesLineasModel.obj 	    						+
 $(OBJ)\FacturasClientesController.obj 									+
 $(OBJ)\FacturasClientesLineasController.obj 							+
 $(OBJ)\FacturasClientesLineasBrowse.obj 								+
 $(OBJ)\FacturasClientesLineasView.obj 									+
-$(OBJ)\FacturasClientesView.obj 											+
+$(OBJ)\FacturasClientesView.obj 										+
+$(OBJ)\ClientesTarifasController.obj 									+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+
 $(FWLIB)\FiveHC.lib              										+
 $(HBLIB)\hdo.lib               											+
-$(HBLIB)\mylist.lib 															+
-$(HBLIB)\rdlmysql.lib 														+
+$(HBLIB)\mylist.lib 													+
+$(HBLIB)\rdlmysql.lib 													+
 $(HBLIB)\libmysql.lib            										+
 $(HBLIB)\Eagle1.lib              										+
 $(HBLIB)\hbwin.lib               										+
