@@ -149,6 +149,7 @@ Usuario.prg             										\
 Tuser.prg               										\
 AuthManager.prg           										\
 BoxManager.prg    												\
+SessionManager.prg  												\
 ApplicationManager.prg 											\
 Oferta.prg              										\
 Internet.prg            										\
@@ -832,6 +833,7 @@ Usuario.obj                                        				\
 Tuser.obj                                          				\
 AuthManager.obj                                          		\
 BoxManager.obj                                     				\
+SessionManager.obj 															\
 ApplicationManager.obj 														\
 Oferta.obj                                         				\
 Internet.obj                                       				\
@@ -1531,6 +1533,7 @@ $(OBJ)\Usuario.obj               										+
 $(OBJ)\Tuser.obj                 										+
 $(OBJ)\AuthManager.obj             										+
 $(OBJ)\BoxManager.obj      												+
+$(OBJ)\SessionManager.obj    												+
 $(OBJ)\ApplicationManager.obj												+
 $(OBJ)\Oferta.obj                										+
 $(OBJ)\Internet.obj              										+

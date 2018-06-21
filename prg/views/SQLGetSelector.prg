@@ -61,7 +61,8 @@ CLASS GetSelector
    METHOD setEvent( cEvent, bEvent )            INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                   INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
 
-   METHOD setWhen( bWhen )                      INLINE ( if( !Empty( bWhen ), ::bWhen  := bWhen, ) )
+   METHOD setWhen( bWhen )                      INLINE ( if( !empty( bWhen ),    ::bWhen        := bWhen, ),;
+                                                         if( !empty( ::oGet ),   ::oGet:bWhen   := ::bWhen, ) )
 
 END CLASS
 

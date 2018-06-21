@@ -1,22 +1,23 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-static oBox
+static oSession
 
 //----------------------------------------------------------------------------//
 
-CLASS BoxManager
+CLASS SessionManager
 
-   DATA id                       INIT 0
-   DATA uuid                     INIT ""
-   DATA codigo                   INIT ""
-   DATA nombre                   INIT ""
-   DATA numeroSesion             INIT 1
+   DATA id                          INIT 0
+   DATA uuid                        INIT ""
+   DATA numero                      INIT 0
+   DATA cajaCodigo                  INIT ""
+   DATA fechaHoraInicio             
+   DATA fechaHoraCierre             
 
    METHOD New()
 
-   METHOD Set( hBox )           INLINE ( ::guard( hBox ) )
-   METHOD Guard( hBox )
+   METHOD Set( hSession )           INLINE ( ::guard( hSession ) )
+   METHOD Guard( hSession )
 
    METHOD guardWhereUuid( uuid )
    
@@ -26,43 +27,47 @@ END CLASS
 
 //--------------------------------------------------------------------------//
 
-METHOD New( hBox )
+METHOD New( hSession )
 
-   if !empty( hBox )
-      ::guard( hBox )
+   if !empty( hSession )
+      ::guard( hSession )
    end if 
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD guard( hBox )
+METHOD guard( hSession )
 
-   if !hb_ishash( hBox )
+   if !hb_ishash( hSession )
       RETURN ( self )
    end if 
 
-   if hhaskey( hBox, "id" )
-      ::id           := hget( hBox, "id" ) 
+   if hhaskey( hSession, "id" )
+      ::id                 := hget( hSession, "id" ) 
    end if 
 
-   if hhaskey( hBox, "uuid" )
-      ::uuid         := hget( hBox, "uuid" ) 
+   if hhaskey( hSession, "uuid" )
+      ::uuid               := hget( hSession, "uuid" ) 
    end if 
 
-   if hhaskey( hBox, "codigo" )
-      ::codigo       := hget( hBox, "codigo" ) 
+   if hhaskey( hSession, "numero" )
+      ::numero             := hget( hSession, "numero" ) 
    end if 
    
-   if hhaskey( hBox, "nombre" )
-      ::nombre       := hget( hBox, "nombre" ) 
+   if hhaskey( hSession, "caja_codigo" )
+      ::cajaCodigo         := hget( hSession, "caja_codigo" ) 
    end if 
 
-   if hhaskey( hBox, "numero_sesion" )
-      ::numeroSesion := hget( hBox, "numero_sesion" ) 
+   if hhaskey( hSession, "fecha_hora_inicio" )
+      ::fechaHoraInicio    := hget( hSession, "fecha_hora_inicio" ) 
    end if 
 
-   setCajaMessageBar( ::nombre )
+   if hhaskey( hSession, "fecha_hora_fin" )
+      ::fechaHoraFin       := hget( hSession, "fecha_hora_fin" ) 
+   end if 
+
+   setSesionMessageBar( ::numero )
 
 RETURN ( self )
 
@@ -70,10 +75,10 @@ RETURN ( self )
 
 METHOD guardWhereUuid( uuid )
 
-   local hBox    := SQLCajasModel():getWhereUuid( Uuid )
+   local hSession    := SQLSesionesModel():getWhereUuid( Uuid )
 
-   if hb_ishash( hBox )
-      ::guard( hBox )
+   if hb_ishash( hSession )
+      ::guard( hSession )
    endif 
 
 RETURN ( self )
@@ -82,10 +87,10 @@ RETURN ( self )
 
 METHOD guardWhereNombre( cNombre )
 
-   local hBox    := SQLCajasModel():getWhereNombre( cNombre )
+   local hSession    := SQLSesionesModel():getWhereNombre( cNombre )
 
-   if hb_ishash( hBox )
-      ::guard( hBox )
+   if hb_ishash( hSession )
+      ::guard( hSession )
    endif 
 
 RETURN ( self )
@@ -96,17 +101,17 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-FUNCTION Box( hBox )
+FUNCTION Session( hSession )
 
-   if empty( oBox )
-      oBox       := BoxManager():New() 
+   if empty( oSession )
+      oSession       := SessionManager():New() 
    end if
 
-   if !empty( hBox )
-      oBox:Guard( hBox )
+   if !empty( hSession )
+      oSession:Guard( hSession )
    end if 
 
-RETURN ( oBox )
+RETURN ( oSession )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

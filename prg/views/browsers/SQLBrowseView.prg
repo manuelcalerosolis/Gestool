@@ -64,8 +64,8 @@ CLASS SQLBrowseView
    METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick    := bLDblClick )
    METHOD setLDClickDatas( bLDClickDatas )   INLINE ( ::oBrowse:bLDClickDatas := bLDClickDatas )
 
-   METHOD Refresh()                          INLINE ( ::oBrowse:makeTotals(), ::oBrowse:Refresh() )
-   METHOD goTop()                            INLINE ( ::oBrowse:goTop() )
+   METHOD Refresh()                          INLINE ( if( !empty( ::oBrowse ), ( ::oBrowse:makeTotals(), ::oBrowse:Refresh() ), ) )
+   METHOD goTop()                            INLINE ( if( !empty( ::oBrowse ), ::oBrowse:goTop(), ) )
 
    METHOD setViewTypeToNavigator()           INLINE ( ::oBrowse:setViewType( "navigator" ) )
    METHOD setViewTypeToSelector()            INLINE ( ::oBrowse:setViewType( "selector" ) )

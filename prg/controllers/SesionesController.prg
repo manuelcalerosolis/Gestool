@@ -5,15 +5,19 @@
 
 CLASS SesionesController FROM SQLNavigatorController
 
+   DATA oCajasController
+
    METHOD New()
 
    METHOD End()
+
+   METHOD isNotOpenSessions()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController) CLASS SesionesController
+METHOD New( oSenderController ) CLASS SesionesController
 
    ::Super:New( oSenderController )
 
@@ -37,9 +41,11 @@ METHOD New( oSenderController) CLASS SesionesController
 
    ::oRepository                 := SesionesRepository():New( self )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oCajasController            := CajasController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
+
+   ::setEvent( 'appending', {|| ::isNotOpenSessions() } )
 
 RETURN ( Self )
 
@@ -57,14 +63,23 @@ METHOD End() CLASS SesionesController
 
    ::oRepository:End()
 
-   ::oGetSelector:End()
+   ::oCajasController:End()
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+
+METHOD isNotOpenSessions()
+
+   if ::oModel:isOpenSessions()
+      msgStop( "Ya existe una sesión abierta en esta caja" )
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -81,7 +96,7 @@ END CLASS
 
 METHOD addColumns() CLASS SesionesBrowseView
 
-   /*with object ( ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
       :cHeader             := 'Id'
       :nWidth              := 60
@@ -90,6 +105,7 @@ METHOD addColumns() CLASS SesionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'id'
       :cHeader             := 'Uuid'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
@@ -98,33 +114,40 @@ METHOD addColumns() CLASS SesionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
-      :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :cSortOrder          := 'estado'
+      :cHeader             := 'Estado'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'estado' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre_caja'
-      :cHeader             := 'Nombre'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :cSortOrder          := 'numero'
+      :cHeader             := 'Número'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'numero' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
+      :cEditPicture        := "99999999"
+   end with 
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo_sesion'
-      :cHeader             := 'Código de sesión'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_sesion' ) }
+      :cSortOrder          := 'caja_codigo'
+      :cHeader             := 'Código caja'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'caja_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with 
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'caja_nombre'
+      :cHeader             := 'Nombre caja'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'caja_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
-*/
+
 RETURN ( self )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -135,13 +158,12 @@ CLASS SesionesView FROM SQLBaseView
 
    METHOD Activate()
 
+   METHOD startActivate() 
+
+   METHOD endActivate()
+
 END CLASS
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS SesionesView
@@ -161,12 +183,21 @@ METHOD Activate() CLASS SesionesView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "numero" ] ;
       ID          100 ;
-      PICTURE     "@!NNNNNNNNNNNNNNNNNNNN" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
+      PICTURE     "999999999" ;
+      WHEN        ( .f. ) ;
       OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora_inicio" ] ;
+      ID          110 ;
+      PICTURE     "@DT" ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog
+
+   ::oController:oCajasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "caja_codigo" ] ) )
+   ::oController:oCajasController:oGetSelector:Activate( 120, 121, ::oDialog )
+   ::oController:oCajasController:oGetSelector:setWhen( {|| .f. } )
 
    /*REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
@@ -201,8 +232,8 @@ METHOD Activate() CLASS SesionesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   /*::oDialog:bStart  := {|| ::StartActivate() }*/
-
+   ::oDialog:bStart  := {|| ::StartActivate() }
+   
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()
@@ -210,7 +241,21 @@ METHOD Activate() CLASS SesionesView
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS SesionesView
+
+   ::oController:oCajasController:oGetSelector:Start()
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
+
+METHOD endActivate() CLASS SesionesView
+
+   ::oDialog:end( IDOK )
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -227,10 +272,6 @@ END CLASS
 
 METHOD getValidators() CLASS SesionesValidator
 
-   /*::hValidators  := {  "nombre_caja" =>  {  "required"           => "El nombre es un dato requerido",;
-                                             "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
-                                             "unique"             => "EL código introducido ya existe" } }*/
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -246,9 +287,63 @@ CLASS SQLSesionesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cajas_sesiones"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( numero, caja_codigo )"
+
    METHOD getColumns()
 
+   METHOD getGeneralSelect() 
+
+   METHOD isOpenSessions()
+
+   METHOD getLastOpenWhereCaja( cCajaNombre )
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getGeneralSelect() CLASS SQLSesionesModel
+
+   local cSelect  := "SELECT sesiones.id AS id, "                                      + ;
+                        "sesiones.uuid AS uuid, "                                      + ;
+                        "sesiones.numero AS numero, "                                  + ;
+                        "sesiones.caja_codigo AS caja_codigo, "                        + ;
+                        "sesiones.estado AS estado, "                                  + ;
+                        "cajas.nombre AS caja_nombre "                                 + ;
+                        "FROM " + ::getTableName()+ " AS sesiones "                    + ;
+                     "LEFT JOIN " + SQLCajasModel():getTableName() + " AS cajas "      + ;
+                        "ON sesiones.caja_codigo = cajas.codigo"
+
+RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD isOpenSessions() CLASS SQLSesionesModel
+
+   local cSelect  := "SELECT COUNT(*) "                                    + ;
+                        "FROM " + ::getTableName() + " "                   + ;
+                     "WHERE estado = 'Abierta' "                           + ;
+                        "AND caja_codigo = " + quoted( Box():Codigo() )    
+
+RETURN ( getSQLDataBase():getValue( cSelect ) > 0 )
+
+//---------------------------------------------------------------------------//
+ 
+METHOD getLastOpenWhereCaja( cCajaNombre ) CLASS SQLSesionesModel
+
+   local aSelect
+   local cSelect  := "SELECT sesiones.* "                                           + ;
+                        "FROM " + ::getTableName() + " AS sesiones "                + ;
+                     "INNER JOIN " + SQLCajasModel():getTableName() + " AS cajas "  + ;
+                        "ON sesiones.caja_codigo = cajas.codigo "                   + ;
+                     "WHERE sesiones.estado = 'Abierta' "                           + ;
+                        "AND cajas.nombre = " + quoted( cCajaNombre )    
+
+   aSelect        := ::getDatabase():selectTrimedFetchHash( cSelect )
+   if hb_isarray( aSelect )
+      RETURN ( atail( aSelect ) )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -260,14 +355,14 @@ METHOD getColumns() CLASS SQLSesionesModel
    hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                                       "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "caja_uuid",                  {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                      "default"   => {||space( 40 ) } }                        )
+   hset( ::hColumns, "numero",                     {  "create"    => "INTEGER UNSIGNED"                        ,;
+                                                      "default"   => {|| Box():numeroSesion() } }                                 )
 
-   hset( ::hColumns, "codigo",                     {  "create"    => "INTEGER"                                 ,;
-                                                      "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "caja_codigo",                {  "create"    => "VARCHAR( 20 )"                           ,;
+                                                      "default"   => {|| Box():Codigo() } }                    )
 
    hset( ::hColumns, "fecha_hora_inicio",          {  "create"    => "TIMESTAMP"                               ,;
-                                                      "default"   => {||hb_datetime() } }                      )
+                                                      "default"   => {|| hb_datetime() } }                     )
 
    hset( ::hColumns, "fecha_hora_cierre",          {  "create"    => "TIMESTAMP"                               ,;
                                                       "default"   => {|| ctod( "" ) } }                        )
@@ -275,19 +370,8 @@ METHOD getColumns() CLASS SQLSesionesModel
    hset( ::hColumns, "estado",                     {  "create"     => "ENUM( 'Abierta', 'Cerrada' )"           ,;
                                                       "default"    => {|| 'Abierta' }  }                       )
 
-   hset( ::hColumns, "delegacion_uuid",            {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                      "default"   => {||space( 40 ) } }                        )
-
-
-
-
-
 RETURN ( ::hColumns )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -298,8 +382,10 @@ CLASS SesionesRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLSesionesModel():getTableName() ) 
 
-
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -7,10 +7,19 @@ CLASS EnviromentController FROM SQLBaseController
 
    DATA hCaja
 
+   DATA hSesion
+
    DATA oCajasController
+
+   DATA oSesionesController
+
+   DATA oAlmacenesController
 
    DATA aComboCajas
    DATA cComboCaja
+
+   DATA aComboAlmacenes
+   DATA cComboAlmacen
 
    METHOD New()
    METHOD End()
@@ -22,6 +31,14 @@ CLASS EnviromentController FROM SQLBaseController
    METHOD setData()
    
    METHOD isMultiplesCajas()           INLINE ( if( hb_isarray( ::aComboCajas ), len( ::aComboCajas ) > 1, .f. ) )
+   
+   METHOD isMultiplesAlmacenes()       INLINE ( if( hb_isarray( ::aComboAlmacenes ), len( ::aComboAlmacenes ) > 1, .f. ) )
+
+   METHOD changeCajas()
+
+   METHOD changeAlmacenes()
+
+   METHOD checkSessions()
 
 END CLASS
 
@@ -42,6 +59,10 @@ METHOD New() CLASS EnviromentController
 
    ::oCajasController                  := CajasController():New( self )
 
+   ::oSesionesController               := SesionesController():New( self )
+
+   ::oAlmacenesController              := AlmacenesController():New( self )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -49,6 +70,10 @@ RETURN ( Self )
 METHOD End() CLASS EnviromentController
 
    ::oCajasController:End()
+
+   ::oSesionesController:End()
+
+   ::oAlmacenesController:End()
    
    ::Super:End()
 
@@ -64,6 +89,10 @@ METHOD loadData() CLASS EnviromentController
 
    ::cComboCaja                        := atail( ::aComboCajas )
 
+   ::aComboAlmacenes                   := ::oAlmacenesController:oModel:getArrayNombres()
+
+   ::cComboAlmacen                     := atail( ::aComboAlmacenes )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -76,6 +105,11 @@ METHOD setData() CLASS EnviromentController
       Box( ::hCaja )
    end if 
 
+   ::hSesion                           := ::oSesionesController:oModel:getLastOpenWhereCaja( ::cComboCaja ) 
+   if !empty( ::hSesion )
+      SessionManager( ::hSesion )
+   end if 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -84,11 +118,43 @@ METHOD isShow() CLASS EnviromentController
 
    ::loadData()
 
-   if ::isMultiplesCajas()
+   if ::isMultiplesCajas() .or. ::isMultiplesAlmacenes()
       ::oDialogView:Activate()
    end if 
 
    ::setData()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeCajas() CLASS EnviromentController
+
+   Box():guardWhereNombre( ::oDialogView:oComboCaja:varGet() )
+
+   ::checkSessions()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeAlmacenes() CLASS EnviromentController
+
+   msgalert( ::oDialogView:oComboAlmacen:varGet() )
+
+   // ::checkSessions()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD checkSessions() CLASS EnviromentController
+
+   if ::oSesionesController:oModel:isOpenSessions()
+      ::oDialogView:hideSaySessiones()
+   else
+      ::oDialogView:showSaySessiones()
+   end if 
 
 RETURN ( .t. )
 
@@ -102,11 +168,18 @@ CLASS EnviromentView FROM SQLBaseView
 
    DATA oSayCaja
 
+   DATA oSaySessiones
+
    DATA oComboCaja
+
+   DATA oComboAlmacen
 
    METHOD Activate()
       METHOD startActivate()
       METHOD Validate()
+
+   METHOD showSaySessiones    INLINE ( ::oSaySessiones:Show() )
+   METHOD hideSaySessiones    INLINE ( ::oSaySessiones:Hide() )
    
 END CLASS
 
@@ -124,6 +197,14 @@ METHOD Activate() CLASS EnviromentView
       TRANSPARENT ;
       OF          ::oDialog
 
+   REDEFINE COMBOBOX ::oComboAlmacen ;
+      VAR         ::oController:cComboAlmacen ;
+      ID          120 ;
+      ITEMS       ::oController:aComboAlmacenes ;
+      OF          ::oDialog
+
+   ::oComboAlmacen:bChange    := {|| ::oController:changeAlmacenes() }
+
    REDEFINE SAY   ::oSayCaja ;
       ID          101 ;
       OF          ::oDialog
@@ -133,6 +214,18 @@ METHOD Activate() CLASS EnviromentView
       ID          100 ;
       ITEMS       ::oController:aComboCajas ;
       OF          ::oDialog
+
+   ::oComboCaja:bChange    := {|| ::oController:changeCajas() }
+
+   REDEFINE SAY   ::oSaySessiones ;
+      PROMPT      "Iniciar una sesión de trabajo..." ;
+      FONT        getBoldFont() ; 
+      COLOR       rgb( 10, 152, 234 ) ;
+      ID          110 ;
+      OF          ::oDialog ;
+
+   ::oSaySessiones:lWantClick  := .t.
+   ::oSaySessiones:OnClick     := {|| ::oController:oSesionesController:Append(), ::oController:checkSessions() }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

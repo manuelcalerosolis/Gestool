@@ -49,6 +49,8 @@ METHOD New( oSenderController) CLASS CajasController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
+   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -257,10 +259,10 @@ END CLASS
 
 METHOD getValidators() CLASS CajasValidator
 
-   ::hValidators  := {  "nombre_caja" =>  {  "required"           => "El nombre es un dato requerido",;
-                                             "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
-                                             "unique"             => "EL código introducido ya existe" } }
+   ::hValidators  := {  "nombre_caja" =>  {  "required"  => "El nombre es un dato requerido",;
+                                             "unique"    => "El nombre introducido ya existe" },;
+                        "codigo" =>       {  "required"  => "El código es un dato requerido" ,;
+                                             "unique"    => "EL código introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -298,16 +300,19 @@ METHOD getColumns() CLASS SQLCajasModel
    hset( ::hColumns, "numero_sesion",     {  "create"    => "INTEGER UNSIGNED"                        ,;
                                              "default"   => {|| 1 } }                                 )
 
+   hset( ::hColumns, "sistema",           {  "create"    => "TINYINT( 1 )"                            ,;
+                                             "default"   => {|| 0 } }                                 )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
 METHOD getInsertCajasSentence() CLASS SQLCajasModel
 
-   local cSentence   := "INSERT IGNORE INTO " + ::getTableName()                       + " " + ;
-                           "( uuid, codigo, nombre, numero_sesion )"                   + " " + ;
-                        "VALUES"                                                       + " " + ;
-                           "( " + quoted( win_uuidcreatestring() ) + ", '1', 'Principal', 1 )"
+   local cSentence   := "INSERT IGNORE INTO " + ::getTableName()                                      + " " + ;
+                           "( uuid, codigo, nombre, numero_sesion, sistema )"                         + " " + ;
+                        "VALUES"                                                                      + " " + ;
+                           "( " + quoted( win_uuidcreatestring() ) + ", '1', 'Principal', 1, 1 )"
 
 RETURN ( cSentence )
 
