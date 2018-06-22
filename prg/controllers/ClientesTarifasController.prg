@@ -31,6 +31,8 @@ METHOD New( oController ) CLASS ClientesTarifasController
 
    ::oBrowseView                    := ClientesTarifasBrowseView():New( self )
 
+   ::oDialogView                    := ClientesTarifasView():New( self )
+
    ::oGetSelector                   := GetSelector():New( self )
    
 RETURN ( Self )
@@ -109,6 +111,62 @@ METHOD addColumns() CLASS ClientesTarifasBrowseView
    end with
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ClientesTarifasView FROM SQLBaseView
+  
+   METHOD Activate()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS ClientesTarifasView
+
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "CONTACTO" ;
+      TITLE       ::LblTitle() + "Contacto"
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    ::oController:getImage( "48" ) ;
+      TRANSPARENT ;
+      OF          ::oDialog ;
+
+    REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
+   
+
+
+
+
+
+
+   REDEFINE BUTTON ;
+      ID          IDOK ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+
+   REDEFINE BUTTON ;
+      ID          IDCANCEL ;
+      OF          ::oDialog ;
+      CANCEL ;
+      ACTION      ( ::oDialog:end() )
+
+   ACTIVATE DIALOG ::oDialog CENTER
+
+  ::oBitmap:end()
+
+RETURN ( ::oDialog:nResult )
+
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
