@@ -391,3 +391,4 @@ TAB_PANE_TAPE_MEASURE2_32 BITMAP "..\\bmp\\tab_pane_tape_measure2_32.bmp"
 TAB_PANE_TAPE_MEASURE2_48 BITMAP "..\\bmp\\tab_pane_tape_measure2_48.bmp"
 
 GC_DESK_64 BITMAP "..\\bmp\\gc_desk_64.bmp"
+GC_DESK_128 BITMAP "..\\bmp\\gc_desk_128.bmp"

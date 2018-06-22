@@ -149,6 +149,8 @@ METHOD Activate() CLASS ClientesTarifasView
 
 
 
+
+
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
