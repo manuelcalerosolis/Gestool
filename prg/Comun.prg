@@ -217,13 +217,13 @@ FUNCTION CreateMainSQLWindow( oIconApp )
 
    oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( Auth():Nombre() ), 200,,,, .t. )
 
-   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():codigoDelegacion() ), 100,,,, .t., {|| SelectDelegacion(), chkTurno() } )
+   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():codigoDelegacion() ), 100,,,, .t., {|| EnviromentController():New():Show() } )
 
-   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Box():Codigo(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
+   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Box():Codigo(), 100,,,, .t., {|| EnviromentController():New():Show() } )
    
-   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( Application():codigoAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
+   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( Application():codigoAlmacen() ), 100,,,, .t., {|| EnviromentController():New():Show() } )
 
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : " + alltrim( str( Session():Numero() ) ) , 100,,,, .t. ) 
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : " + alltrim( str( Session():Numero() ) ) , 100,,,, .t., {|| EnviromentController():New():Show() } ) 
 
    // Abrimos la ventana-------------------------------------------------------
 
@@ -1106,13 +1106,13 @@ RETURN cNbr
 
 //---------------------------------------------------------------------------//
 
-FUNCTION setCajaMessageBar( cCaj )
+FUNCTION setCajaMessageBar( cCaja )
 
-   if !empty( cCaj ) .and. oMsgCaja != nil
-      oMsgCaja:SetText( "Caja : " + RTrim( cCaj ) )
+   if !empty( cCaja ) .and. oMsgCaja != nil
+      oMsgCaja:SetText( "Caja : " + rtrim( cCaja ) )
    end if
 
-RETURN ( cCaj )
+RETURN ( cCaja )
 
 //---------------------------------------------------------------------------//
 
@@ -1123,6 +1123,16 @@ FUNCTION setSesionMessageBar( nNumero )
    end if
 
 RETURN ( nNumero )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION setAlmacenMessageBar( cAlmacen )
+
+   if cAlmacen != nil .and. oMsgAlmacen != nil
+      oMsgAlmacen:SetText( "Almacén : " + rtrim( cAlmacen ) )
+   end if
+
+RETURN ( cAlmacen )
 
 //---------------------------------------------------------------------------//
 
@@ -7069,16 +7079,6 @@ FUNCTION getFieldNameFromDictionary( cName, hashDictionary )
   end if 
 
 RETURN ( cFieldName )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION cAlmUsr( cAlm )
-
-   if cAlm != nil .and. oMsgAlmacen != nil
-      oMsgAlmacen:SetText( "Almacén : " + RTrim( cAlm ) )
-   end if
-
-RETURN ( cAlm )
 
 //---------------------------------------------------------------------------//
 

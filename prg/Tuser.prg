@@ -38,7 +38,7 @@ CLASS TUser
    METHOD   cCaja( cNewVal )           INLINE if( !Empty( cNewVal ), ( ::_Caja := cNewVal, setCajaMessageBar(  cNewVal ) ), ::_Caja )
 
    DATA     _Almacen                   INIT "000"
-   METHOD   cAlmacen( cNewVal )        INLINE if( !Empty( cNewVal ), ( ::_Almacen := cNewVal, cAlmUsr( cNewVal ) ), ::_Almacen )
+   METHOD   cAlmacen( cNewVal )        INLINE if( !Empty( cNewVal ), ( ::_Almacen := cNewVal, setAlmacenMessageBar(  cNewVal ) ), ::_Almacen )
 
    DATA     _Imagen                    INIT ""
    METHOD   cImagen( cNewVal )         INLINE if( cNewVal != nil, ::_Imagen := cNewVal, ::_Imagen )
