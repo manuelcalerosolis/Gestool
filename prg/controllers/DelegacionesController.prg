@@ -112,7 +112,7 @@ METHOD addColumns() CLASS DelegacionesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
@@ -273,10 +273,10 @@ END CLASS
 
 METHOD getValidators() CLASS DelegacionesValidator
 
-   ::hValidators  := {  "nombre" =>    {  "required"           => "El nombre es un dato requerido",;
-                                          "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>    {  "required"           => "El código es un dato requerido" ,;
-                                          "unique"             => "EL código introducido ya existe" } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido",;
+                                          "unique"    => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
+                                          "unique"    => "EL código introducido ya existe" } }
 
 RETURN ( ::hValidators )
 
@@ -295,6 +295,8 @@ CLASS SQLDelegacionesModel FROM SQLBaseModel
    METHOD getNombreFromUuid( cUuid )      INLINE ( ::getField( 'nombre', 'uuid', cUuid ) )
 
    METHOD getUuidFromNombre( cNombre )    INLINE ( ::getField( 'uuid', 'nombre', cNombre ) )
+
+   METHOD getNombresWhereParentUuid( parentUuid )
 
 END CLASS
 
@@ -318,6 +320,16 @@ METHOD getColumns() CLASS SQLDelegacionesModel
                                              "default"   => {|| space( 200 ) } }                      )
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNombresWhereParentUuid( parentUuid ) CLASS SQLDelegacionesModel 
+
+   local cSQL     := "SELECT nombre "                                + ;
+                        "FROM " + ::getTableName() + " "             + ;
+                        "WHERE parent_uuid = " + quoted( parentUuid )
+   
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

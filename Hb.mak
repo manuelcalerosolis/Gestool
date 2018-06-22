@@ -150,6 +150,7 @@ Tuser.prg               										\
 AuthManager.prg           										\
 BoxManager.prg    												\
 SessionManager.prg  												\
+StoreManager.prg 													\
 ApplicationManager.prg 											\
 Oferta.prg              										\
 Internet.prg            										\
@@ -833,6 +834,7 @@ Entsal.obj                                         				\
 Usuario.obj                                        				\
 Tuser.obj                                          				\
 AuthManager.obj                                          		\
+StoreManager.obj 																\
 BoxManager.obj                                     				\
 SessionManager.obj 															\
 ApplicationManager.obj 														\
@@ -1534,6 +1536,7 @@ $(OBJ)\Entsal.obj                										+
 $(OBJ)\Usuario.obj               										+
 $(OBJ)\Tuser.obj                 										+
 $(OBJ)\AuthManager.obj             										+
+$(OBJ)\StoreManager.obj             									+
 $(OBJ)\BoxManager.obj      												+
 $(OBJ)\SessionManager.obj    												+
 $(OBJ)\ApplicationManager.obj												+

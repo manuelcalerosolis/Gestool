@@ -9,11 +9,15 @@ CLASS EnviromentController FROM SQLBaseController
 
    DATA hSesion
 
+   DATA hAlmacen
+
    DATA oCajasController
 
    DATA oSesionesController
 
    DATA oAlmacenesController
+
+   DATA oDelegacionesController
 
    DATA aComboCajas
    DATA cComboCaja
@@ -21,10 +25,15 @@ CLASS EnviromentController FROM SQLBaseController
    DATA aComboAlmacenes
    DATA cComboAlmacen
 
+   DATA aComboDelegaciones
+   DATA cComboDelegacion
+
    METHOD New()
    METHOD End()
 
    METHOD isShow()
+
+   METHOD Show()
 
    METHOD loadData()
 
@@ -34,9 +43,15 @@ CLASS EnviromentController FROM SQLBaseController
    
    METHOD isMultiplesAlmacenes()       INLINE ( if( hb_isarray( ::aComboAlmacenes ), len( ::aComboAlmacenes ) > 1, .f. ) )
 
+   METHOD isMultiplesDelegaciones()    INLINE ( if( hb_isarray( ::aComboDelegaciones ), len( ::aComboDelegaciones ) > 1, .f. ) )
+   
+   METHOD isEmpyDelegaciones()         INLINE ( if( hb_isarray( ::aComboDelegaciones ), len( ::aComboDelegaciones ) == 0, .f. ) )
+
    METHOD changeCajas()
 
    METHOD changeAlmacenes()
+
+   METHOD changeDelegaciones()         INLINE ( .t. )
 
    METHOD checkSessions()
 
@@ -63,6 +78,8 @@ METHOD New() CLASS EnviromentController
 
    ::oAlmacenesController              := AlmacenesController():New( self )
 
+   ::oDelegacionesController           := DelegacionesController():New( self )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -74,6 +91,8 @@ METHOD End() CLASS EnviromentController
    ::oSesionesController:End()
 
    ::oAlmacenesController:End()
+
+   ::oDelegacionesController:End()
    
    ::Super:End()
 
@@ -93,6 +112,10 @@ METHOD loadData() CLASS EnviromentController
 
    ::cComboAlmacen                     := atail( ::aComboAlmacenes )
 
+   ::aComboDelegaciones                := ::oDelegacionesController:oModel:getNombresWhereParentUuid( Company():Uuid() )
+
+   ::cComboDelegacion                  := atail( ::aComboDelegaciones )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -110,6 +133,8 @@ METHOD setData() CLASS EnviromentController
       SessionManager( ::hSesion )
    end if 
 
+   Store():guardWhereNombre( ::cComboAlmacen )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -118,9 +143,21 @@ METHOD isShow() CLASS EnviromentController
 
    ::loadData()
 
-   if ::isMultiplesCajas() .or. ::isMultiplesAlmacenes()
+   if ::isMultiplesCajas() .or. ::isMultiplesAlmacenes() .or. ::isMultiplesDelegaciones()
       ::oDialogView:Activate()
    end if 
+
+   ::setData()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD Show() CLASS EnviromentController
+
+   ::loadData()
+
+   ::oDialogView:Activate()
 
    ::setData()
 
@@ -140,9 +177,7 @@ RETURN ( .t. )
 
 METHOD changeAlmacenes() CLASS EnviromentController
 
-   msgalert( ::oDialogView:oComboAlmacen:varGet() )
-
-   // ::checkSessions()
+   Store():guardWhereNombre( ::cComboAlmacen )
 
 RETURN ( .t. )
 
@@ -168,18 +203,25 @@ CLASS EnviromentView FROM SQLBaseView
 
    DATA oSayCaja
 
+   DATA oSayDelegaciones
+
    DATA oSaySessiones
 
    DATA oComboCaja
 
    DATA oComboAlmacen
 
+   DATA oComboDelegaciones
+
    METHOD Activate()
       METHOD startActivate()
       METHOD Validate()
 
-   METHOD showSaySessiones    INLINE ( ::oSaySessiones:Show() )
-   METHOD hideSaySessiones    INLINE ( ::oSaySessiones:Hide() )
+   METHOD showDelegaciones()     INLINE ( ::oSayDelegaciones:Show(), ::oComboDelegaciones:Show() )
+   METHOD hideDelegaciones()     INLINE ( ::oSayDelegaciones:Hide(), ::oComboDelegaciones:Hide() )
+
+   METHOD showSaySessiones()     INLINE ( ::oSaySessiones:Show() )
+   METHOD hideSaySessiones()     INLINE ( ::oSaySessiones:Hide() )
    
 END CLASS
 
@@ -193,9 +235,21 @@ METHOD Activate() CLASS EnviromentView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gestool_logo" ;
+      RESOURCE    "gc_desk_64" ;
       TRANSPARENT ;
       OF          ::oDialog
+
+   REDEFINE SAY   ::oSayDelegaciones ;
+      ID          131 ;
+      OF          ::oDialog
+
+   REDEFINE COMBOBOX ::oComboDelegaciones ;
+      VAR         ::oController:cComboDelegacion ;
+      ID          130 ;
+      ITEMS       ::oController:aComboDelegaciones ;
+      OF          ::oDialog
+
+   ::oComboDelegaciones:bChange  := {|| ::oController:changeDelegaciones() }
 
    REDEFINE COMBOBOX ::oComboAlmacen ;
       VAR         ::oController:cComboAlmacen ;
@@ -203,7 +257,7 @@ METHOD Activate() CLASS EnviromentView
       ITEMS       ::oController:aComboAlmacenes ;
       OF          ::oDialog
 
-   ::oComboAlmacen:bChange    := {|| ::oController:changeAlmacenes() }
+   ::oComboAlmacen:bChange       := {|| ::oController:changeAlmacenes() }
 
    REDEFINE SAY   ::oSayCaja ;
       ID          101 ;
@@ -245,6 +299,11 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 
 METHOD startActivate() CLASS EnviromentView
+
+   if ::oController:isEmpyDelegaciones()
+      ::oSayDelegaciones:Hide()
+      ::oComboDelegaciones:Hide()
+   end if 
 
 RETURN ( nil )
 
