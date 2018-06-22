@@ -235,7 +235,7 @@ METHOD Activate() CLASS EnviromentView
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    "gc_desk_64" ;
+      RESOURCE    "gc_desk_128" ;
       TRANSPARENT ;
       OF          ::oDialog
 
