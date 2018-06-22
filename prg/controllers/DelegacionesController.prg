@@ -296,6 +296,8 @@ CLASS SQLDelegacionesModel FROM SQLBaseModel
 
    METHOD getUuidFromNombre( cNombre )    INLINE ( ::getField( 'uuid', 'nombre', cNombre ) )
 
+   METHOD getWhereNombre( cNombre, parentUuid )
+
    METHOD getNombresWhereParentUuid( parentUuid )
 
 END CLASS
@@ -325,13 +327,22 @@ RETURN ( ::hColumns )
 
 METHOD getNombresWhereParentUuid( parentUuid ) CLASS SQLDelegacionesModel 
 
-   local cSQL     := "SELECT nombre "                                + ;
-                        "FROM " + ::getTableName() + " "             + ;
-                        "WHERE parent_uuid = " + quoted( parentUuid )
+   local cSQL  := "SELECT nombre "                                + ;
+                     "FROM " + ::getTableName() + " "             + ;
+                     "WHERE parent_uuid = " + quoted( parentUuid )
    
 RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD getWhereNombre( cNombre, parentUuid ) CLASS SQLDelegacionesModel
+
+   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
+   cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
+   cSQL        +=       "AND parent_uuid = " + quoted( parentUuid )           
+
+RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

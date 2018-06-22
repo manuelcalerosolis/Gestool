@@ -654,7 +654,7 @@ METHOD cDelegacion( cNewVal )
 
       ::_Delegacion     := cNewVal
 
-      cDlgUsr( cNewVal ) 
+      setDelegacionMessageBar(  cNewVal ) 
 
    else
 

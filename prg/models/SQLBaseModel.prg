@@ -1326,8 +1326,8 @@ RETURN ( uDefault )
 METHOD getColumnWhereNombre( uValue, cColumn, uDefault ) 
 
    local uuid
-   local cSQL  := "SELECT " + cColumn + "  FROM " + ::getTableName()    + " " 
-   cSQL        +=    "WHERE nombre = " + toSqlString( uValue )          + " " 
+   local cSQL  := "SELECT " + cColumn + "  FROM " + ::getTableName()          + " " 
+   cSQL        +=    "WHERE nombre = " + toSqlString( uValue )                + " " 
    cSQL        +=    "LIMIT 1"
 
    uuid        := ::getDatabase():getValue( cSQL )

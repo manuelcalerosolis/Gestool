@@ -51,7 +51,9 @@ CLASS EnviromentController FROM SQLBaseController
 
    METHOD changeAlmacenes()
 
-   METHOD changeDelegaciones()         INLINE ( .t. )
+   METHOD changeDelegaciones()
+
+   METHOD setSesion()
 
    METHOD checkSessions()
 
@@ -122,18 +124,13 @@ RETURN ( nil )
 
 METHOD setData() CLASS EnviromentController
 
-   ::hCaja                             := ::oCajasController:oModel:getWhereNombre( ::cComboCaja )
+   ::changeCajas()
 
-   if !empty( ::hCaja )
-      Box( ::hCaja )
-   end if 
+   ::changeAlmacenes()
 
-   ::hSesion                           := ::oSesionesController:oModel:getLastOpenWhereCaja( ::cComboCaja ) 
-   if !empty( ::hSesion )
-      SessionManager( ::hSesion )
-   end if 
+   ::changeDelegaciones()
 
-   Store():guardWhereNombre( ::cComboAlmacen )
+   ::setSesion()
 
 RETURN ( nil )
 
@@ -167,9 +164,20 @@ RETURN ( .t. )
 
 METHOD changeCajas() CLASS EnviromentController
 
-   Box():guardWhereNombre( ::oDialogView:oComboCaja:varGet() )
+   Box():guardWhereNombre( ::cComboCaja )
 
    ::checkSessions()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD setSesion() CLASS EnviromentController
+
+   ::hSesion                           := ::oSesionesController:oModel:getLastOpenWhereCaja( ::cComboCaja ) 
+   if !empty( ::hSesion )
+      SessionManager( ::hSesion )
+   end if 
 
 RETURN ( .t. )
 
@@ -178,6 +186,14 @@ RETURN ( .t. )
 METHOD changeAlmacenes() CLASS EnviromentController
 
    Store():guardWhereNombre( ::cComboAlmacen )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeDelegaciones() CLASS EnviromentController
+
+   Delegation():guardWhereNombre( ::cComboDelegacion, Company():Uuid() )
 
 RETURN ( .t. )
 
@@ -269,7 +285,7 @@ METHOD Activate() CLASS EnviromentView
       ITEMS       ::oController:aComboCajas ;
       OF          ::oDialog
 
-   ::oComboCaja:bChange    := {|| ::oController:changeCajas() }
+   ::oComboCaja:bChange          := {|| ::oController:changeCajas() }
 
    REDEFINE SAY   ::oSaySessiones ;
       PROMPT      "Iniciar una sesión de trabajo..." ;
@@ -278,15 +294,15 @@ METHOD Activate() CLASS EnviromentView
       ID          110 ;
       OF          ::oDialog ;
 
-   ::oSaySessiones:lWantClick  := .t.
-   ::oSaySessiones:OnClick     := {|| ::oController:oSesionesController:Append(), ::oController:checkSessions() }
+   ::oSaySessiones:lWantClick    := .t.
+   ::oSaySessiones:OnClick       := {|| ::oController:oSesionesController:Append(), ::oController:checkSessions() }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
       ACTION      ( ::Validate() )
 
-   ::oDialog:bStart  := {|| ::startActivate() }
+   ::oDialog:bStart              := {|| ::startActivate() }
 
    ::oDialog:AddFastKey( VK_F5, {|| ::Validate() } )
 

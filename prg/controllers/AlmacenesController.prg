@@ -376,8 +376,8 @@ METHOD getColumns() CLASS SQLAlmacenesModel
    hset( ::hColumns, "almacen_uuid",      {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
-                                             "default"   => {|| space( 20 ) } }                        )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                           ,;
+                                             "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
