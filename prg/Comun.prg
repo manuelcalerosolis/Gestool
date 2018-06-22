@@ -219,11 +219,11 @@ FUNCTION CreateMainSQLWindow( oIconApp )
 
    oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():codigoDelegacion() ), 100,,,, .t., {|| SelectDelegacion(), chkTurno() } )
 
-   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Application():codigoCaja(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
+   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Box():Codigo(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
    
    oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( Application():codigoAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
 
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : ", 100,,,, .t., {|| dbDialog() } ) 
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : " + alltrim( str( Session():Numero() ) ) , 100,,,, .t. ) 
 
    // Abrimos la ventana-------------------------------------------------------
 
@@ -1106,13 +1106,23 @@ RETURN cNbr
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cCajUsr( cCaj )
+FUNCTION setCajaMessageBar( cCaj )
 
    if !empty( cCaj ) .and. oMsgCaja != nil
       oMsgCaja:SetText( "Caja : " + RTrim( cCaj ) )
    end if
 
 RETURN ( cCaj )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION setSesionMessageBar( nNumero )
+
+   if !empty( nNumero ) .and. oMsgCaja != nil
+      oMsgSesion:SetText( "Sesión : " + alltrim( str( nNumero ) ) )
+   end if
+
+RETURN ( nNumero )
 
 //---------------------------------------------------------------------------//
 

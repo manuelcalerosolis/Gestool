@@ -76,6 +76,8 @@ METHOD New( oSenderController ) CLASS AlmacenesController
 
    ::oModel:setEvent( 'gettingSelectSentence',        {|| ::gettingSelectSentence() } ) 
 
+   ::setEvents( { 'editing', 'deleting' },            {|| ::isSystemRegister() } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -357,6 +359,8 @@ CLASS SQLAlmacenesModel FROM SQLCompanyModel
 
    METHOD getAlmacenUuidAttribute( value )
 
+   METHOD getInsertAlmacenSentence()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -369,7 +373,6 @@ METHOD getColumns() CLASS SQLAlmacenesModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-
    hset( ::hColumns, "almacen_uuid",      {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
@@ -379,11 +382,14 @@ METHOD getColumns() CLASS SQLAlmacenesModel
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
 
+   hset( ::hColumns, "sistema",           {  "create"    => "TINYINT( 1 )"                            ,;
+                                             "default"   => {|| 0 } }                                 )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getAlmacenUuidAttribute( value )
+METHOD getAlmacenUuidAttribute( value ) CLASS SQLAlmacenesModel
    
    if empty( ::oController )
       RETURN ( value )
@@ -394,6 +400,17 @@ METHOD getAlmacenUuidAttribute( value )
    end if
 
 RETURN ( ::oController:getSenderController():getUuid() )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInsertAlmacenSentence() CLASS SQLAlmacenesModel
+
+   local cSentence   := "INSERT IGNORE INTO " + ::getTableName()                          + " " + ;
+                           "( uuid, codigo, nombre, sistema )"                            + " " + ;
+                        "VALUES"                                                          + " " + ;
+                           "( " + quoted( win_uuidcreatestring() ) + ", '1', 'Principal', 1 )"
+
+RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

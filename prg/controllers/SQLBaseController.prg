@@ -109,6 +109,8 @@ CLASS SQLBaseController
    METHOD getIdFromRowSet()                           INLINE ( iif(  !empty( ::getRowSet() ),;
                                                                      ::getRowSet():fieldGet( ::oModel:cColumnKey ), nil ) )
 
+   METHOD isSystemRegister()                          
+
    METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( iif(  !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
 
@@ -769,6 +771,21 @@ METHOD findInRowSet( uValue, cColumn )
    end if 
 
 RETURN ( ::oRowSet:findString( uValue, cColumn ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD isSystemRegister()
+
+   if empty( ::oRowSet )
+      RETURN ( .t. )
+   end if 
+
+   if ::oRowSet:fieldGet( 'sistema' ) == 1
+      msgStop( "Este registro pertenece al sistema, no se puede alterar." )
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 

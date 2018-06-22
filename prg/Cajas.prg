@@ -2271,7 +2271,7 @@ FUNCTION lChgCaja( codigoCaja, uuidCaja, codigoUsuario )
       lSetCaja( codigoCaja, uuidCaja, codigoUsuario )
    end if
 
-   cCajUsr( codigoCaja )
+   setCajaMessageBar(  codigoCaja )
 
 RETURN nil
 

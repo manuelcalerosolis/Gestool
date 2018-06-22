@@ -49,6 +49,8 @@ METHOD New( oSenderController) CLASS CajasController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
+   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -126,10 +128,10 @@ METHOD addColumns() CLASS CajasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo_sesion'
+      :cSortOrder          := 'numero_sesion'
       :cHeader             := 'Código de sesión'
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_sesion' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'numero_sesion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -186,7 +188,7 @@ METHOD Activate() CLASS CajasView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_sesion" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "numero_sesion" ] ;
       ID          120 ;
       SPINNER  ;
       MIN 0;
@@ -257,10 +259,10 @@ END CLASS
 
 METHOD getValidators() CLASS CajasValidator
 
-   ::hValidators  := {  "nombre_caja" =>  {  "required"           => "El nombre es un dato requerido",;
-                                             "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
-                                             "unique"             => "EL código introducido ya existe" } }
+   ::hValidators  := {  "nombre_caja" =>  {  "required"  => "El nombre es un dato requerido",;
+                                             "unique"    => "El nombre introducido ya existe" },;
+                        "codigo" =>       {  "required"  => "El código es un dato requerido" ,;
+                                             "unique"    => "EL código introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -295,7 +297,10 @@ METHOD getColumns() CLASS SQLCajasModel
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) NOT NULL UNIQUE"          ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "codigo_sesion",     {  "create"    => "INTEGER UNSIGNED"                        ,;
+   hset( ::hColumns, "numero_sesion",     {  "create"    => "INTEGER UNSIGNED"                        ,;
+                                             "default"   => {|| 1 } }                                 )
+
+   hset( ::hColumns, "sistema",           {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
@@ -304,10 +309,10 @@ RETURN ( ::hColumns )
 
 METHOD getInsertCajasSentence() CLASS SQLCajasModel
 
-   local cSentence   := "INSERT IGNORE INTO " + ::getTableName()                       + " " + ;
-                           "( uuid, codigo, nombre, codigo_sesion )"                   + " " + ;
-                        "VALUES"                                                       + " " + ;
-                           "( " + quoted( win_uuidcreatestring() ) + ", '1', 'Principal', 1 )"
+   local cSentence   := "INSERT IGNORE INTO " + ::getTableName()                                      + " " + ;
+                           "( uuid, codigo, nombre, numero_sesion, sistema )"                         + " " + ;
+                        "VALUES"                                                                      + " " + ;
+                           "( " + quoted( win_uuidcreatestring() ) + ", '1', 'Principal', 1, 1 )"
 
 RETURN ( cSentence )
 
