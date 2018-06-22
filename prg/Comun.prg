@@ -1136,13 +1136,13 @@ RETURN ( cAlmacen )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cDlgUsr( cDlg )
+FUNCTION setDelegacionMessageBar( cDelegacion )
 
-   if cDlg != nil .and. oMsgDelegacion != nil
-      oMsgDelegacion:SetText( "Delegación : " + RTrim( cDlg ) )
+   if cDelegacion != nil .and. oMsgDelegacion != nil
+      oMsgDelegacion:SetText( "Delegación : " + rtrim( cDelegacion ) )
    end if
 
-RETURN ( cDlg )
+RETURN ( cDelegacion )
 
 //---------------------------------------------------------------------------//
 

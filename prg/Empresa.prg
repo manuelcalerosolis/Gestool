@@ -7384,7 +7384,7 @@ FUNCTION SelectDelegacion()
 
    if oDlg:nResult == IDOK
       Application():setDelegacion( ( dbfDlg )->cCodDlg, ( dbfDlg )->Uuid )
-      cDlgUsr( ( dbfDlg )->cCodDlg )
+      setDelegacionMessageBar(  ( dbfDlg )->cCodDlg )
    end if
 
    if !empty( dbfDlg )

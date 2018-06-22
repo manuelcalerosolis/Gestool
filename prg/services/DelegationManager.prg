@@ -11,16 +11,13 @@ CLASS DelegationManager
    DATA uuid                     INIT ""
    DATA codigo                   INIT ""
    DATA nombre                   INIT ""
-   DATA almacenUuid              INIT ""
-   DATA sistema                  INIT 0
+   DATA parentUuid               INIT ""
 
    METHOD New()
 
    METHOD Set( hDelegation )     INLINE ( ::guard( hDelegation ) )
    METHOD Guard( hDelegation )
 
-   METHOD guardWhereUuid( uuid )
-   
    METHOD guardWhereNombre( cNombre )
 
 END CLASS
@@ -59,35 +56,19 @@ METHOD guard( hDelegation )
       ::nombre       := hget( hDelegation, "nombre" ) 
    end if 
 
-   if hhaskey( hDelegation, "almacen_uuid" )
-      ::almacenUuid  := hget( hDelegation, "almacen_uuid" ) 
+   if hhaskey( hDelegation, "parent_uuid" )
+      ::parentUuid   := hget( hDelegation, "parent_uuid" ) 
    end if 
 
-   if hhaskey( hDelegation, "sistema" )
-      ::sistema      := hget( hDelegation, "sistema" ) 
-   end if 
-
-   setAlmacenMessageBar( ::nombre )
+   setDelegacionMessageBar( ::nombre )
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD guardWhereUuid( uuid )
+METHOD guardWhereNombre( cNombre, uuidParent )
 
-   local hDelegation    := SQLCajasModel():getWhereUuid( Uuid )
-
-   if hb_ishash( hDelegation )
-      ::guard( hDelegation )
-   endif 
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD guardWhereNombre( cNombre )
-
-   local hDelegation    := SQLCajasModel():getWhereNombre( cNombre )
+   local hDelegation    := SQLDelegacionesModel():getWhereNombre( cNombre, uuidParent )
 
    if hb_ishash( hDelegation )
       ::guard( hDelegation )
