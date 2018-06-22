@@ -400,9 +400,6 @@ METHOD selectFunctionPriceUsingMargin( precioCosto, porcentajeIVA, Margen, uuid 
    cSQL        +=    toSQLString( Margen ) + ", "
    cSQL        +=    toSQLString( uuid ) + " )"
 
-   msgalert( cSQL )
-   logwrite( cSQL )
-
 RETURN ( getSQLDatabase():Exec( cSQL ) )
 
 //---------------------------------------------------------------------------//
