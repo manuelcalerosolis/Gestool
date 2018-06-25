@@ -165,6 +165,7 @@ METHOD addColumns() CLASS ClientesTarifasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'uuid'
       :cHeader             := 'Uuid'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
@@ -173,6 +174,7 @@ METHOD addColumns() CLASS ClientesTarifasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'parent_uuid'
       :cHeader             := 'Uuid cliente'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'parent_uuid' ) }
@@ -181,6 +183,7 @@ METHOD addColumns() CLASS ClientesTarifasBrowseView
    end with
    
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'tarifa_uuid'
       :cHeader             := 'Uuid tarifa'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_uuid' ) }
@@ -189,6 +192,7 @@ METHOD addColumns() CLASS ClientesTarifasBrowseView
    end with
    
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'tarifa'
       :cHeader             := 'Tarifa'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa' ) }
