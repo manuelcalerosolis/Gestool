@@ -5,9 +5,13 @@
 
 CLASS ClientesTarifasController FROM SQLNavigatorController
 
+   DATA oArticulosTarifasController
+
    METHOD New()
 
    METHOD End()
+
+   METHOD ApenndLineaaaaa()
 
 END CLASS
 
@@ -33,8 +37,13 @@ METHOD New( oController ) CLASS ClientesTarifasController
 
    ::oDialogView                    := ClientesTarifasView():New( self )
 
-   ::oGetSelector                   := GetSelector():New( self )
-   
+   ::oArticulosTarifasController    := ArticulosTarifasController():New( self )
+
+   ::oDialogModalView:setEvent( 'addingduplicatebutton', {|| .f. } )
+   ::oDialogModalView:setEvent( 'addingeditbutton', {|| .f. } )
+   ::oDialogModalView:setEvent( 'addingzoombutton', {|| .f. } )
+   ::oDialogModalView:setEvent( 'appending', {|| ::ApenndLineaaaaa() } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -43,9 +52,26 @@ METHOD End() CLASS ClientesTarifasController
 
    ::oModel:End()
 
+   ::oArticulosTarifasController:End()
+
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD ApenndLineaaaaa()
+
+   ::oArticulosTarifasController:oSelectorView:setLogicMultiselect( .t. )
+
+   MsgInfo( hb_ValToExp( ::oArticulosTarifasController:activateSelectorView() ), "ApenndLineaaaaa" )
+
+
+
+
+
+
+RETURN ( .f. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -129,7 +155,7 @@ END CLASS
 METHOD Activate() CLASS ClientesTarifasView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTACTO" ;
+      RESOURCE    "CLIENTES_TARIFAS" ;
       TITLE       ::LblTitle() + "Contacto"
 
    REDEFINE BITMAP ::oBitmap ;
@@ -149,6 +175,9 @@ METHOD Activate() CLASS ClientesTarifasView
 
 
 
+
+
+   
 
 
    REDEFINE BUTTON ;

@@ -674,6 +674,7 @@ METHOD Delete( aSelectedRecno )
       RETURN ( .f. )
    end if 
 
+
    if len( aSelectedRecno ) == 0
       RETURN ( .f. )
    end if 

@@ -5,6 +5,8 @@
 
 CLASS SQLDialogView FROM SQLBrowseableView 
 
+   DATA oEvents
+
    DATA oDialog
 
    DATA cTitle
@@ -14,37 +16,57 @@ CLASS SQLDialogView FROM SQLBrowseableView
    DATA oOfficeBar
 
    DATA oGetSearch
-   DATA cGetSearch                        INIT space( 200 )
+   DATA cGetSearch                              INIT space( 200 )
 
    DATA oComboBoxOrder
    DATA cComboBoxOrder
 
    DATA bInitActivate
 
+   METHOD New( oController )
+
    METHOD End()
 
    METHOD Activate( bInitActivate )
-      METHOD ActivateMoved()              INLINE ( ::Activate( .f. ) )
-      METHOD initActivate()               INLINE ( .t. )
+      METHOD ActivateMoved()                    INLINE ( ::Activate( .f. ) )
+      METHOD initActivate()                     INLINE ( .t. )
 
-   METHOD isActive()                      INLINE ( ::oDialog != nil )
+   METHOD isActive()                            INLINE ( ::oDialog != nil )
 
    METHOD Start()
 
-   METHOD getGetSearch()                  INLINE ( ::oGetSearch )
-   METHOD getComboBoxOrder()              INLINE ( ::oComboBoxOrder )
-   METHOD getWindow()                     INLINE ( ::oDialog )
+   METHOD getGetSearch()                        INLINE ( ::oGetSearch )
+   METHOD getComboBoxOrder()                    INLINE ( ::oComboBoxOrder )
+   METHOD getWindow()                           INLINE ( ::oDialog )
 
-   METHOD getSelectedBuffer()             INLINE ( ::hSelectedBuffer )
+   METHOD getSelectedBuffer()                   INLINE ( ::hSelectedBuffer )
 
-   METHOD setTitle( cTitle )              INLINE ( ::cTitle := cTitle )
-   METHOD getTitle()                      INLINE ( iif( empty( ::cTitle ), ::defaultTitle(), ::cTitle ) )
+   METHOD setTitle( cTitle )                    INLINE ( ::cTitle := cTitle )
+   METHOD getTitle()                            INLINE ( iif( empty( ::cTitle ), ::defaultTitle(), ::cTitle ) )
 
    METHOD defaultTitle()                  
 
-   METHOD Select()                        INLINE ( nil )
+   METHOD Select()                              INLINE ( nil )
+
+   METHOD Append()  
+
+   METHOD setEvents( aEvents, bEvent )                
+   METHOD setEvent( cEvent, bEvent )            INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
+   METHOD fireEvent( cEvent )                   INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )                            
 
 ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD New( oController )
+
+   ::oController           := oController
+
+   ::oMenuTreeView         := MenuTreeView():New( Self )
+
+   ::oEvents               := Events():New()
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -96,11 +118,34 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
+METHOD Append()
+
+   if isFalse( ::fireEvent( 'appending' ) )
+      RETURN ( .f. )
+   end if
+
+   ::oController:Append()
+
+   ::fireEvent( 'appended' )
+
+   ::Refresh()
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
+
+METHOD setEvents( aEvents, bEvent )
+
+RETURN ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
+
+//----------------------------------------------------------------------------//
+
 METHOD Start()
 
    local oBoton
    local oGrupo
    local oCarpeta
+   local nCount            := 0
 
    ::oOfficeBar            := TDotNetBar():New( 0, 0, 2020, 118, ::oDialog, 1 )
    ::oOfficeBar:lPaintAll  := .f.
@@ -114,16 +159,27 @@ METHOD Start()
    oGrupo                  := TDotNetGroup():New( oCarpeta, 68, "", .f. )
       oBoton               := TDotNetButton():New( 60, oGrupo, ::oController:getImage( "48" ), "", 1, {|| ::RefreshRowSet() }, , , .f., .f., .f. )
 
-   oGrupo                  := TDotNetGroup():New( oCarpeta, 368, "Opciones", .f. ) 
-      oBoton               := TDotNetButton():New( 60, oGrupo, "lupa_32",                    "Buscar",         1, {|| ::getGetSearch():setFocus() }, , , .f., .f., .f. )
-      oBoton               := TDotNetButton():New( 60, oGrupo, "new32",                      "Añadir",         2, {|| ::oController:Append(), ::Refresh() }, , , .f., .f., .f. )
-      oBoton               := TDotNetButton():New( 60, oGrupo, "gc_document_text_plus2_32",  "Duplicar",       3, {|| ::oController:Duplicate(), ::Refresh() }, , , .f., .f., .f. )
-      oBoton               := TDotNetButton():New( 60, oGrupo, "gc_pencil__32",              "Modificar",      4, {|| ::oController:Edit(), ::Refresh() }, , , .f., .f., .f. )
-      oBoton               := TDotNetButton():New( 60, oGrupo, "gc_lock2_32",                "Zoom",           5, {|| ::oController:Zoom(), ::Refresh() }, , , .f., .f., .f. )
-      oBoton               := TDotNetButton():New( 60, oGrupo, "del32",                      "Eliminar",       6, {|| ::oController:Delete( ::getBrowse():aSelected ), ::Refresh() }, , , .f., .f., .f. )
+   
+   nCount                  := 0
 
-   oGrupo                  := TDotNetGroup():New( oCarpeta, 68, "", .f. )
-      oBoton               := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",           "Salir",          1, {|| ::oDialog:end() }, , , .f., .f., .f. )
+   oGrupo                  := TDotNetGroup():New( oCarpeta, 428, "Opciones", .f. ) 
+      oBoton               := TDotNetButton():New( 60, oGrupo, "lupa_32",                    "Buscar",         ++nCount, {|| ::getGetSearch():setFocus() }, , , .f., .f., .f. )
+      oBoton               := TDotNetButton():New( 60, oGrupo, "new32",                      "Añadir",         ++nCount, {|| ::Append() }, , , .f., .f., .f. )
+      
+      if isTrue( ::fireEvent( 'addingduplicatebutton' ) )
+         oBoton            := TDotNetButton():New( 60, oGrupo, "gc_document_text_plus2_32",  "Duplicar",       ++nCount, {|| ::oController:Duplicate(), ::Refresh() }, , , .f., .f., .f. )
+      end if
+      
+      if isTrue( ::fireEvent( 'addingeditbutton' ) )
+         oBoton            := TDotNetButton():New( 60, oGrupo, "gc_pencil__32",              "Modificar",      ++nCount, {|| ::oController:Edit(), ::Refresh() }, , , .f., .f., .f. )
+      end if
+      
+      if isTrue( ::fireEvent( 'addingzoombutton' ) )
+         oBoton            := TDotNetButton():New( 60, oGrupo, "gc_lock2_32",                "Zoom",           ++nCount, {|| ::oController:Zoom(), ::Refresh() }, , , .f., .f., .f. )
+      end if
+
+      oBoton               := TDotNetButton():New( 60, oGrupo, "del32",                      "Eliminar",       ++nCount, {|| ::oController:Delete( ::getBrowse():aSelected ), ::Refresh() }, , , .f., .f., .f. )
+      oBoton               := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",           "Salir",          ++nCount, {|| ::oDialog:end() }, , , .f., .f., .f. )
 
    ::oComboBoxOrder:SetItems( ::getBrowseView():getColumnsHeaders() )
 
@@ -144,7 +200,7 @@ METHOD defaultTitle()
    if hhaskey( ::oController:oSenderController:oModel:hBuffer, "codigo" ) 
       cTitle      += alltrim( ::oController:oSenderController:oModel:hBuffer[ "codigo" ] ) + " - "
    end if 
-   
+
    if hhaskey( ::oController:oSenderController:oModel:hBuffer, "nombre" ) 
       cTitle      += alltrim( ::oController:oSenderController:oModel:hBuffer[ "nombre" ] ) 
    end if 

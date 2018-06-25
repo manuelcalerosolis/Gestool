@@ -8,7 +8,7 @@ CLASS SQLSelectorView FROM SQLBrowseableView
    DATA oDialog
 
    DATA oGetSearch
-   DATA cGetSearch                        INIT space( 200 )
+   DATA cGetSearch                              INIT space( 200 )
 
    DATA oComboBoxOrder
    DATA cComboBoxOrder
@@ -17,23 +17,31 @@ CLASS SQLSelectorView FROM SQLBrowseableView
 
    DATA hSelectedBuffer
 
+   DATA aSelectedBuffer
+
+   DATA lMultiselect                            INIT ( .f. )
+
    METHOD End()
 
    METHOD Activate( bInitActivate )
-      METHOD ActivateMoved()              INLINE ( ::Activate( .f. ) )
-      METHOD initActivate()               INLINE ( iif( hb_isblock( ::bInitActivate ), eval( ::bInitActivate, Self ), ) )
+      METHOD ActivateMoved()                    INLINE ( ::Activate( .f. ) )
+      METHOD initActivate()                     INLINE ( iif( hb_isblock( ::bInitActivate ), eval( ::bInitActivate, Self ), ) )
 
-   METHOD isActive()                      INLINE ( ::oDialog != nil )
+   METHOD isActive()                            INLINE ( ::oDialog != nil )
 
    METHOD Select()
 
+   METHOD MultiSelect()
+
+   METHOD setLogicMultiselect( lMultiselect )   INLINE ( ::lMultiselect := lMultiselect )
+
    METHOD Start()
 
-   METHOD getGetSearch()                  INLINE ( ::oGetSearch )
-   METHOD getComboBoxOrder()              INLINE ( ::oComboBoxOrder )
-   METHOD getWindow()                     INLINE ( ::oDialog )
+   METHOD getGetSearch()                        INLINE ( ::oGetSearch )
+   METHOD getComboBoxOrder()                    INLINE ( ::oComboBoxOrder )
+   METHOD getWindow()                           INLINE ( ::oDialog )
 
-   METHOD getSelectedBuffer()             INLINE ( ::hSelectedBuffer )
+   METHOD getSelectedBuffer()                   INLINE ( if( ::lMultiselect, ::aSelectedBuffer, ::hSelectedBuffer ) )
 
 ENDCLASS
 
@@ -69,7 +77,7 @@ METHOD Activate( lCenter )
 
       ::getBrowseView():ActivateDialog( ::oDialog, 130 )
 
-      ::getBrowseView():setLDblClick( {|| ::Select() } ) 
+      ::getBrowseView():setLDblClick( {|| if( ::lMultiselect, ::MultiSelect(), ::Select() ) } ) 
 
       // Eventos---------------------------------------------------------------
 
@@ -104,6 +112,25 @@ METHOD Select()
    if !empty( nId )
       ::hSelectedBuffer := ::getModel():loadCurrentBuffer( nId )
    end if 
+
+   ::oDialog:End( IDOK )
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD MultiSelect()
+
+   local aIds
+   local nId
+   
+   ::aSelectedBuffer       := {}
+
+   aIds        := ::getBrowseView():getRowSet():IdFromRecno( ::getBrowseView():oBrowse:aSelected )
+
+   for each nId in aIds
+      aAdd( ::aSelectedBuffer, ::getModel():loadCurrentBuffer( nId ) )
+   next
 
    ::oDialog:End( IDOK )
 
