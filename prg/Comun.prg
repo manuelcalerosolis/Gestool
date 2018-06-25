@@ -157,11 +157,11 @@ FUNCTION CreateMainWindow( oIconApp )
 
    oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( Auth():Nombre() ), 200,,,, .t. )
 
-   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():codigoDelegacion() ), 100,,,, .t., {|| SelectDelegacion(), chkTurno() } )
+   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():codigoDelegacion() ), 200,,,, .t., {|| SelectDelegacion(), chkTurno() } )
 
-   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Application():codigoCaja(), 100,,,, .t., {|| SelectCajas(), chkTurno() } )
+   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Application():codigoCaja(), 200,,,, .t., {|| SelectCajas(), chkTurno() } )
    
-   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( Application():codigoAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
+   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( Application():codigoAlmacen() ), 200,,,, .t., {|| SelectAlmacen() } )
 
    oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : ", 100,,,, .t., {|| dbDialog() } ) 
 
@@ -215,15 +215,15 @@ FUNCTION CreateMainSQLWindow( oIconApp )
    oWnd:oMsgBar:oDate:bMsg    := {|| GetSysDate() }
    oWnd:oMsgBar:CheckTimer()
 
-   oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( Auth():Nombre() ), 200,,,, .t. )
+   oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " +    rtrim( Auth():Nombre() ), 200,,,, .t. )
 
-   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + Rtrim( Application():codigoDelegacion() ), 100,,,, .t., {|| EnviromentController():New():Show() } )
+   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + rtrim( Application():codigoDelegacion() ), 200,,,, .t., {|| EnviromentController():New():Show() } )
 
-   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  + Box():Codigo(), 100,,,, .t., {|| EnviromentController():New():Show() } )
+   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  +      rtrim( Box():Nombre() ), 200,,,, .t., {|| EnviromentController():New():Show() } )
    
-   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " + Rtrim( Application():codigoAlmacen() ), 100,,,, .t., {|| EnviromentController():New():Show() } )
+   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " +    rtrim( Application():codigoAlmacen() ), 200,,,, .t., {|| EnviromentController():New():Show() } )
 
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : " + alltrim( str( Session():Numero() ) ) , 100,,,, .t., {|| EnviromentController():New():Show() } ) 
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : " +     alltrim( str( Session():Numero() ) ) , 100,,,, .t., {|| EnviromentController():New():Show() } ) 
 
    // Abrimos la ventana-------------------------------------------------------
 

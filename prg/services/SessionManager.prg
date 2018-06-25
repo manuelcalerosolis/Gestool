@@ -67,6 +67,8 @@ METHOD guard( hSession )
       ::fechaHoraFin       := hget( hSession, "fecha_hora_fin" ) 
    end if 
 
+   msgalert( ::uuid, "Session uuid" )
+
    setSesionMessageBar( ::numero )
 
 RETURN ( self )

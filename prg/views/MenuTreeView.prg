@@ -153,13 +153,15 @@ METHOD New( oSender )
 
    ::oImageList   := TImageList():New( 16, 16 )
 
-RETURN ( Self )
+RETURN ( self )
 
 //----------------------------------------------------------------------------//
 
 METHOD ActivateMDI( nWidth, nHeight )
 
-   ::fireEvent( 'activatingMDI' )
+   if isFalse( ::fireEvent( 'activatingMDI' ) )
+      RETURN ( nil )
+   end if 
 
    ::oTreeView    := TTreeView():New( 0, 0, ::oSender:getWindow(), , , .t., .f., nWidth, nHeight ) 
    
@@ -167,19 +169,21 @@ METHOD ActivateMDI( nWidth, nHeight )
 
    ::fireEvent( 'activatedMDI' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD ActivateDialog( oDialog, id )
 
-   ::fireEvent( 'activatingDialog' )
+   if isFalse( ::fireEvent( 'activatingDialog' ) )
+      RETURN ( nil )
+   end if 
 
    ::oTreeView    := TTreeView():Redefine( id, oDialog ) 
 
    ::fireEvent( 'activatedDialog' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -195,7 +199,7 @@ METHOD Default()
       ::oButtonMain     := ::oTreeView:Add( ::getController():cTitle, ::AddImage( ::getController():getImage( "16" ) ) )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -275,140 +279,164 @@ RETURN ( nImageList )
 
 METHOD AddSearchButton()    
 
-   ::fireEvent( 'addingSearchButton' )
+   if isFalse( ::fireEvent( 'addingSearchButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::AddButton( "Buscar", "Bus16", {|| ::oSender:getGetSearch():setFocus() }, "B" ) 
 
    ::fireEvent( 'addedSearchButton' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddRefreshButton()
 
-   ::fireEvent( 'addingRefreshButton' )
+   if isFalse( ::fireEvent( 'addingRefreshButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::AddButton( "Refrescar", "Refresh16", {|| ::oSender:RefreshRowSet() }, "R" ) 
 
    ::fireEvent( 'addedRefreshButton' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddAppendButton()    
 
-   ::fireEvent( 'addingAppendButton' )
+   if isFalse( ::fireEvent( 'addingAppendButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::AddButton( "Añadir", "New16", {|| ::getController():Append(), ::oSender:Refresh() }, "A", ACC_APPD ) 
    
    ::fireEvent( 'addedAppendButton' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddDuplicateButton() 
 
-   ::fireEvent( 'addingDuplicateButton' )
+   if isFalse( ::fireEvent( 'addingDuplicateButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::AddButton( "Duplicar", "Dup16", {|| ::getController():Duplicate(), ::oSender:Refresh() }, "D", ACC_APPD ) 
 
    ::fireEvent( 'addedDuplicateButton' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddEditButton()      
 
-   ::fireEvent( 'addingEditButton' )
+   if isFalse( ::fireEvent( 'addingEditButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::AddButton( "Modificar", "Edit16", {|| ::getController():Edit(), ::oSender:Refresh() }, "M", ACC_EDIT ) 
 
    ::fireEvent( 'addedEditButton' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddZoomButton()      
 
-   ::fireEvent( 'addingZoomButton' )
+   if isFalse( ::fireEvent( 'addingZoomButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::AddButton( "Zoom", "Zoom16", {|| ::getController():Zoom(), ::oSender:Refresh() }, "Z", ACC_ZOOM ) 
 
    ::fireEvent( 'addedZoomButton' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddDeleteButton()    
 
-   ::fireEvent( 'addingDeleteButton' )
+   if isFalse( ::fireEvent( 'addingDeleteButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::AddButton( "Eliminar", "Del16", {|| ::getController():Delete( ::getBrowse():aSelected ), ::oSender:Refresh() }, "E", ACC_DELE ) 
 
    ::fireEvent( 'addedDeleteButton' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddSelectButton()    
 
-   ::fireEvent( 'addingSelectButton' )
+   if isFalse( ::fireEvent( 'addingSelectButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::AddButton( "Seleccionar [Enter]", "Select16", {|| ::oSender:Select() }, K_ENTER ) 
 
    ::fireEvent( 'addedSelectButton' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddExitButton()
 
-   ::fireEvent( 'addingExitButton' )
+   if isFalse( ::fireEvent( 'addingExitButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::AddButton( "Salir [ESC]", "End16", {|| ::Exit() }, "S" ) 
 
    ::fireEvent( 'addedExitButton' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD AddCloseButton()
 
-   ::fireEvent( 'addingCloseButton' )
+   if isFalse( ::fireEvent( 'addingCloseButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::AddButton( "Salir [ESC]", "End16", {|| ::oSender:End() }, "S" ) 
 
    ::fireEvent( 'addedCloseButton' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 
 METHOD addPrintSerialButton( cWorkArea )
 
-   ::fireEvent( 'addingPrintSerialButton')
+   if isFalse( ::fireEvent( 'addingPrintSerialButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::oButtonPrint    := ::AddButton( "Imprimir series", "Imp16", {|| ::getController():printSerialDocument() }, nil, ACC_IMPR )
 
    ::fireEvent( 'addedPrintSerialButton') 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD addPrintButtons( cWorkArea )
 
-   ::fireEvent( 'addingPrintButton')
+   if isFalse( ::fireEvent( 'addingPrintButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::oButtonPrint    := ::AddButton( "Imprimir", "Imp16", {|| ::getController():printDocument( IS_PRINTER ) }, "I", ACC_IMPR )
 
@@ -416,13 +444,15 @@ METHOD addPrintButtons( cWorkArea )
 
    ::fireEvent( 'addedPrintButton') 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD addPreviewButtons( cWorkArea )
 
-   ::fireEvent( 'addingPreviewButton')
+   if isFalse( ::fireEvent( 'addingPreviewButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::oButtonPreview  := ::AddButton( "Previsualizar", "Prev116", {|| ::getController():printDocument( IS_SCREEN ) }, "P", ACC_IMPR ) 
 
@@ -430,13 +460,15 @@ METHOD addPreviewButtons( cWorkArea )
 
    ::fireEvent( 'addedPreviewButton') 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD addPdfButtons( cWorkArea )
 
-   ::fireEvent( 'addingPdfButton')
+   if isFalse( ::fireEvent( 'addingPdfButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::oButtonPdf  := ::AddButton( "Pdf", "Doclock16", {|| ::getController():printDocument( IS_PDF ) }, "F", ACC_IMPR ) 
 
@@ -444,55 +476,61 @@ METHOD addPdfButtons( cWorkArea )
 
    ::fireEvent( 'addedPdfButton') 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD addLabelButton()
 
    if !( ::isControllerLabels() )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
-   ::fireEvent( 'addingLabelButton')
+   if isFalse( ::fireEvent( 'addingLabelButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::oButtonLabel  := ::AddButton( "Etiquetas", "gc_portable_barcode_scanner_16", {|| ::getController():labelDocument() }, "Q", ACC_IMPR ) 
 
    ::fireEvent( 'addedLabelButton') 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD addConfigButton()
 
    if !( ::isControllerConfig() )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
-   ::fireEvent( 'addingConfigButton')
+   if isFalse( ::fireEvent( 'addingConfigButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::oButtonConfig   := ::AddButton( "Configuraciones", "gc_wrench_16", {|| ::getController():setConfig() }, "N", ACC_IMPR ) 
 
    ::fireEvent( 'addedConfigButton') 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD addOthersButton()
 
    if !( ::isControllerOthers() )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
-   ::fireEvent( 'addingOthersButton')
+   if isFalse( ::fireEvent( 'addingOthersButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::oButtonOthers   := ::AddButton( "Otros", "gc_more_16", {|| ::oButtonOthers:Toggle() }, "O", ACC_IMPR ) 
 
    ::fireEvent( 'addedOthersButton') 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -505,10 +543,12 @@ RETURN ( {|| ::getController():printDocument( nDevice, cFormato ) } )
 METHOD addDocumentsButton()
 
    if !( ::isControllerDocuments() )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
-   ::fireEvent( 'addingDocumentButton' )
+   if isFalse( ::fireEvent( 'addingDocumentButton' ) )
+      RETURN ( nil )
+   end if 
 
    ::addPrintSerialButton()
 
@@ -520,7 +560,7 @@ METHOD addDocumentsButton()
    
    ::fireEvent( 'addedDocumentButton' ) 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -544,7 +584,7 @@ METHOD onChange()
 
    ::selectButtonMain()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

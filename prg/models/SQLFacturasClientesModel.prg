@@ -7,6 +7,8 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getInitialSelect() 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -20,7 +22,10 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
                                                          "default"   => {|| win_uuidcreatestring() } }         )
 
    hset( ::hColumns, "delegacion_uuid",               {  "create"    => "VARCHAR( 40 )"                        ,;
-                                                         "default"   => {|| Company():delegacionUuid() } }    )
+                                                         "default"   => {|| Delegation():Uuid() } }            )
+
+   hset( ::hColumns, "sesion_uuid",                   {  "create"    => "VARCHAR( 40 )"                        ,;
+                                                         "default"   => {|| Session():Uuid() } }               )
 
    hset( ::hColumns, "serie",                         {  "create"    => "VARCHAR( 20 )"                        ,;
                                                          "default"   => {|| space( 20 ) } }                    )
@@ -34,8 +39,8 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
    hset( ::hColumns, "fecha_valor_stock",             {  "create"    => "DATETIME DEFAULT CURRENT_TIMESTAMP"   ,;
                                                          "default"   => {|| hb_datetime() } }                  )
 
-   hset( ::hColumns, "cliente_uuid",                  {  "create"    => "VARCHAR( 40 )"                        ,;
-                                                         "default"   => {|| space( 40 ) } }                    )
+   hset( ::hColumns, "cliente_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
+                                                         "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "direccion_principal_uuid",      {  "create"    => "VARCHAR( 40 )"                        ,;
                                                          "default"   => {|| space( 40 ) } }                    )
@@ -59,45 +64,30 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-/*METHOD getInitialSelect() CLASS SQLFacturasClientesModel
+METHOD getInitialSelect() CLASS SQLFacturasClientesModel
 
-   local cSelect  := "SELECT clientes.id AS id,"                                                                           + " " + ;
-                        "clientes.uuid AS uuid,"                                                                           + " " + ;
-                        "clientes.codigo AS codigo,"                                                                       + " " + ;
-                        "clientes.nombre AS nombre,"                                                                       + " " + ;
-                        "clientes.dni AS dni,"                                                                             + " " + ;
-                        "clientes.establecimiento AS establecimiento,"                                                     + " " + ;
-                        "clientes.fecha_ultima_llamada AS fecha_ultima_llamada,"                                           + " " + ;
-                        "clientes.forma_pago_uuid AS forma_pago_uuid,"                                                     + " " + ;
-                        "clientes.agente_uuid AS agente_uuid,"                                                             + " " + ;
-                        "clientes.cliente_grupo_uuid AS cliente_grupo_uuid,"                                               + " " + ;
-                        "clientes.cuenta_remesa_uuid AS cuenta_remesa_uuid,"                                               + " " + ;
-                        "clientes.ruta_uuid AS ruta_uuid,"                                                                 + " " + ;
-                        "direcciones.direccion AS direccion,"                                                              + " " + ;
-                        "direcciones.poblacion AS poblacion,"                                                              + " " + ;
-                        "direcciones.provincia AS provincia,"                                                              + " " + ;
-                        "direcciones.codigo_postal AS codigo_postal,"                                                      + " " + ;
-                        "direcciones.telefono AS telefono,"                                                                + " " + ;
-                        "direcciones.movil AS movil,"                                                                      + " " + ;
-                        "direcciones.email AS email,"                                                                      + " " + ;
-                        "agentes.codigo AS codigo_agente,"                                                                 + " " + ;
-                        "agentes.nombre AS nombre_agente,"                                                                 + " " + ;
-                        "forma_pago.codigo AS codigo_forma_pago,"                                                          + " " + ;
-                        "forma_pago.nombre AS nombre_forma_pago,"                                                          + " " + ;
-                        "rutas.codigo AS codigo_ruta,"                                                                     + " " + ;
-                        "rutas.nombre AS nombre_ruta,"                                                                     + " " + ;
-                        "clientes_grupos.codigo AS codigo_grupo_cliente,"                                                  + " " + ;
-                        "clientes_grupos.nombre AS nombre_grupo_cliente,"                                                  + " " + ;
-                        "cuentas_remesa.codigo AS codigo_remesa,"                                                          + " " + ;
-                        "cuentas_remesa.nombre AS nombre_remesa"                                                           + " " + ;
-                     "FROM  clientes"                                                                                      + " " + ;
-                        "LEFT JOIN direcciones ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"       + " " + ;
-                        "LEFT JOIN forma_pago ON clientes.forma_pago_uuid = forma_pago.uuid"                               + " " + ;
-                        "LEFT JOIN agentes ON clientes.agente_uuid = agentes.uuid"                                         + " " + ;
-                        "LEFT JOIN rutas ON clientes.ruta_uuid = rutas.uuid"                                               + " " + ;
-                        "LEFT JOIN clientes_grupos ON clientes.cliente_grupo_uuid = clientes_grupos.uuid"                  + " " + ;
-                        "LEFT JOIN cuentas_remesa ON clientes.cuenta_remesa_uuid = cuentas_remesa.uuid"                    + " "
+   local cSelect  := "SELECT facturas_clientes.id AS id,"                                             + " " + ;
+                        "facturas_clientes.uuid AS uuid,"                                             + " " + ;
+                        "CONCAT( facturas_clientes.serie, '/', facturas_clientes.numero ) AS numero," + " " + ;
+                        "facturas_clientes.delegacion_uuid AS delegacion_uuid,"                       + " " + ;
+                        "facturas_clientes.sesion_uuid AS sesion_uuid,"                               + " " + ;
+                        "facturas_clientes.cliente_codigo AS cliente_codigo,"                         + " " + ;
+                        "clientes.nombre AS cliente_nombre,"                                          + " " + ;
+                        "direcciones.direccion AS direccion_direccion,"                               + " " + ;
+                        "direcciones.poblacion AS direccion_poblacion,"                               + " " + ;
+                        "direcciones.codigo_provincia AS direccion_codigo_provincia,"                 + " " + ;
+                        "direcciones.provincia AS direccion_provincia,"                               + " " + ;
+                        "direcciones.codigo_postal AS direccion_codigo_postal,"                       + " " + ;
+                        "direcciones.telefono AS direccion_telefono,"                                 + " " + ;
+                        "direcciones.movil AS direccion_movil,"                                       + " " + ;
+                        "direcciones.email AS direccion_email"                                        + " " + ;
+                     "FROM " + ::getTableName() + " AS facturas_clientes"                             + " " + ;
+                        "LEFT JOIN " + SQLClientesModel():getTableName() + " clientes"                + " " + ;  
+                           "ON facturas_clientes.cliente_codigo = clientes.codigo"                    + " " + ;  
+                        "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"          + " " + ;  
+                           "ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal" 
 
-RETURN ( cSelect )*/
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
+

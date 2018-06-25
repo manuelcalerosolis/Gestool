@@ -137,6 +137,6 @@ METHOD End() CLASS ClientesController
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//

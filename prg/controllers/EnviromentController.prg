@@ -176,7 +176,7 @@ METHOD setSesion() CLASS EnviromentController
 
    ::hSesion                           := ::oSesionesController:oModel:getLastOpenWhereCaja( ::cComboCaja ) 
    if !empty( ::hSesion )
-      SessionManager( ::hSesion )
+      Session( ::hSesion )
    end if 
 
 RETURN ( .t. )
