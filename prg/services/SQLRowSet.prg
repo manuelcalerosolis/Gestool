@@ -53,6 +53,7 @@ CLASS SQLRowSet
    METHOD freeRowSet()                                INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:free(), ::oRowSet := nil ), ) )
 
    METHOD Refresh()                                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Refresh(), ) )
+   METHOD RefreshAndGoTop()                           INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:Refresh(), ::oRowSet:GoTop() ), ) )
 
    METHOD IdFromRecno( aRecno, cColumnKey )
    METHOD UuidFromRecno( aRecno )                     INLINE ( ::IdFromRecno( aRecno, "uuid" ) )

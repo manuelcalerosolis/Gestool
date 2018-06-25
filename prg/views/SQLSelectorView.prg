@@ -31,6 +31,8 @@ CLASS SQLSelectorView FROM SQLBrowseableView
 
    METHOD Select()
 
+   METHOD MonoSelect()
+
    METHOD MultiSelect()
 
    METHOD setLogicMultiselect( lMultiselect )   INLINE ( ::lMultiselect := lMultiselect )
@@ -77,7 +79,7 @@ METHOD Activate( lCenter )
 
       ::getBrowseView():ActivateDialog( ::oDialog, 130 )
 
-      ::getBrowseView():setLDblClick( {|| if( ::lMultiselect, ::MultiSelect(), ::Select() ) } ) 
+      ::getBrowseView():setLDblClick( {|| ::Select() } ) 
 
       // Eventos---------------------------------------------------------------
 
@@ -106,6 +108,26 @@ RETURN ( nil )
 //----------------------------------------------------------------------------//
 
 METHOD Select()
+
+   ::hSelectedBuffer       := {=>}
+
+   ::aSelectedBuffer       := {}
+
+   if ::lMultiselect
+      
+      ::MultiSelect()
+
+   else
+
+      ::MonoSelect()
+
+   end if
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD MonoSelect()
 
    local nId            := ::getBrowseView():getRowSet():fieldGet( 'id' )
 
