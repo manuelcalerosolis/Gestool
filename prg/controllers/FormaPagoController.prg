@@ -442,8 +442,18 @@ RETURN ( ::oDialog:nResult )
 
 METHOD bancosControllerValidated()
 
-   local cCodigo  := ::oController:oModel:hBuffer[ "banco_uuid" ]
-   local hColumns := ::oController:oBancosController:oModel:getWhereCodigo( cCodigo )  
+   local hColumns    
+   local uuidBanco   := ::oController:oModel:hBuffer[ "banco_uuid" ]
+
+   if empty( uuidBanco )
+      RETURN ( nil )
+   end if 
+
+   hColumns          := ::oController:oBancosController:oModel:getWhereUuid( uuidBanco )  
+
+   if !( hb_ishash( hColumns ) )
+      RETURN ( nil )
+   end if 
 
    ::oGetIBANCodigoPais:cText( hget( hColumns, "iban_codigo_pais" ) )
 

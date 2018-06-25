@@ -341,8 +341,6 @@ METHOD getColumns() CLASS SQLTransportistasModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getEmpresaColumns()
-
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                   ,;
                                              "default"   => {|| space( 20 ) } }                        )
 

@@ -45,8 +45,6 @@ METHOD getColumns()
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   ::getEmpresaColumns()
-
    hset( ::hColumns, "empresa",           {  "create"    => "VARCHAR( 4 )"                            ,;
                                              "default"   => {|| space( 4 ) } }                        )
 

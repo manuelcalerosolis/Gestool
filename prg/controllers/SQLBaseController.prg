@@ -626,15 +626,17 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD DialogViewActivate()
+METHOD DialogViewActivate( oDialogView )
+
+   DEFAULT oDialogView     := ::oDialogView
 
    if empty( ::oDialogView )
       RETURN ( .f. )
    end if 
 
-   ::oDialogView:Activating()
+   oDialogView:Activating()
 
-   ::uDialogResult         := ::oDialogView:Activate()
+   ::uDialogResult         := oDialogView:Activate()
 
    if hb_islogical( ::uDialogResult )
       RETURN ( ::uDialogResult )
@@ -644,16 +646,18 @@ METHOD DialogViewActivate()
       RETURN ( .t. )
    end if 
 
-   ::oDialogView:Activated()
+   oDialogView:Activated()
 
 RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
-METHOD DialogViewEnd()
+METHOD DialogViewEnd( oDialogView )
 
-   if !empty( ::oDialogView )
-      ::oDialogView:EndActivate()
+   DEFAULT oDialogView     := ::oDialogView
+
+   if !empty( oDialogView )
+      oDialogView:EndActivate()
    end if 
 
 RETURN ( .f. )

@@ -75,7 +75,7 @@ CLASS SQLBaseModel
    METHOD getColumns()                                INLINE ( ::hColumns )
    METHOD getTableColumns() 
 
-   METHOD getEmpresaColumns()
+   METHOD getClosedColumns()
    METHOD getDateTimeColumns()
    METHOD getTimeStampColumns()
    METHOD getTimeStampSentColumns()
@@ -293,7 +293,7 @@ RETURN ( ::hColumns )
 
 METHOD getTimeStampSentColumns()
 
-   hset( ::hColumns, "enviado",     {  "create"    => "DATETIME DEFAULT NULL"       ,;
+   hset( ::hColumns, "send_at",     {  "create"    => "DATETIME DEFAULT NULL"       ,;
                                        "text"      => "Enviado fecha y hora" }      )
 
 RETURN ( ::hColumns )
@@ -312,13 +312,10 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getEmpresaColumns()
+METHOD getClosedColumns()
    
-   hset( ::hColumns, "empresa_codigo", {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
-                                          "default"   => {|| Company():Codigo() } }        )
-
-   hset( ::hColumns, "usuario_codigo", {  "create"    => "VARCHAR ( 40 ) NOT NULL"       ,;
-                                          "default"   => {|| Auth():Codigo() } }           )
+   hset( ::hColumns, "closed_at",      {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
+                                          "default"   => {|| nil } }         )
 
 RETURN ( ::hColumns )
 

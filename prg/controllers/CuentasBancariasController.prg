@@ -64,7 +64,6 @@ METHOD New( oSenderController ) CLASS CuentasBancariasController
    ::setEvent( 'edited',                              {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',                    {|| ::oBrowseView:Refresh() } ) 
 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

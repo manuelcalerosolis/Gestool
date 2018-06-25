@@ -390,7 +390,6 @@ METHOD getColumns() CLASS SQLClientesEntidadesModel
    
    hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"               ,;
                                                    "default"   => {|| win_uuidcreatestring() } }              )
-   ::getEmpresaColumns()
 
    hset( ::hColumns, "entidad_uuid",            {  "create"    => "VARCHAR(40) NOT NULL"                       ,;                                  
                                                    "default"   => {|| space( 40 ) } }                          )
