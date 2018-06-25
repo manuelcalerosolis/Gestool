@@ -11,7 +11,7 @@ CLASS ClientesTarifasController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD ApenndLineaaaaa()
+   METHOD ApenndLinea()
 
 END CLASS
 
@@ -35,14 +35,12 @@ METHOD New( oController ) CLASS ClientesTarifasController
 
    ::oBrowseView                    := ClientesTarifasBrowseView():New( self )
 
-   ::oDialogView                    := ClientesTarifasView():New( self )
-
    ::oArticulosTarifasController    := ArticulosTarifasController():New( self )
 
    ::oDialogModalView:setEvent( 'addingduplicatebutton', {|| .f. } )
    ::oDialogModalView:setEvent( 'addingeditbutton', {|| .f. } )
    ::oDialogModalView:setEvent( 'addingzoombutton', {|| .f. } )
-   ::oDialogModalView:setEvent( 'appending', {|| ::ApenndLineaaaaa() } )
+   ::oDialogModalView:setEvent( 'appending', {|| ::ApenndLinea() } )
 
 RETURN ( Self )
 
@@ -60,16 +58,33 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD ApenndLineaaaaa()
+METHOD ApenndLinea()
+
+   local hLine
+   local aLines      := {}
+   local hBuffer     := {=>}
 
    ::oArticulosTarifasController:oSelectorView:setLogicMultiselect( .t. )
 
-   MsgInfo( hb_ValToExp( ::oArticulosTarifasController:activateSelectorView() ), "ApenndLineaaaaa" )
+   aLines            := ::oArticulosTarifasController:activateSelectorView()
 
+   if Empty( aLines )
+      Return ( .f. )
+   end if
 
+   for each hLine in aLines
 
+      hBuffer        := ::oModel():loadBlankBuffer()
 
+      hSet( hBuffer, "parent_uuid", ::oSenderController:getUuid() )
+      hSet( hBuffer, "tarifa_uuid", hGet( hLine, "uuid" ) )
 
+      ::oModel:insertIgnoreBuffer( hBuffer )
+
+   next
+
+   ::getRowSet():RefreshAndGoTop()
+   ::oBrowseView:getBrowse():Refresh()
 
 RETURN ( .f. )
 
@@ -81,9 +96,13 @@ RETURN ( .f. )
 
 CLASS SQLClientesTarifasModel FROM SQLCompanyModel
 
-   DATA cTableName                     INIT "clientes_tarifas"
+   DATA cTableName               INIT "clientes_tarifas"
+
+   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( parent_uuid, tarifa_uuid )"
 
    METHOD getColumns()
+
+   METHOD getInitialSelect()
 
 END CLASS
 
@@ -104,6 +123,22 @@ METHOD getColumns() CLASS SQLClientesTarifasModel
                                              "default"   => {|| space( 40 ) } }                       )
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLClientesTarifasModel
+
+   local cSelect  := "SELECT clientes_tarifas.id AS id, "                                                      + ;
+                        "clientes_tarifas.uuid AS uuid, "                                                      + ;
+                        "clientes_tarifas.parent_uuid AS parent_uuid, "                                        + ;
+                        "clientes_tarifas.tarifa_uuid AS tarifa_uuid, "                                        + ;
+                        "articulos_tarifas.nombre AS tarifa "                                                  + ;
+                     "FROM " + ::getTableName() + " AS clientes_tarifas "                                      + ;   
+                        "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " ON clientes_tarifas.tarifa_uuid = articulos_tarifas.uuid"
+
+RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -131,73 +166,36 @@ METHOD addColumns() CLASS ClientesTarifasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Uuid'
-      :nWidth              := 300
+      :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Uuid cliente'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'parent_uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+   
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Uuid tarifa'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+   
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Tarifa'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
 RETURN ( self )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-CLASS ClientesTarifasView FROM SQLBaseView
-  
-   METHOD Activate()
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS ClientesTarifasView
-
-   DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CLIENTES_TARIFAS" ;
-      TITLE       ::LblTitle() + "Contacto"
-
-   REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
-      RESOURCE    ::oController:getImage( "48" ) ;
-      TRANSPARENT ;
-      OF          ::oDialog ;
-
-    REDEFINE SAY   ::oMessage ;
-      ID          800 ;
-      FONT        getBoldFont() ;
-      OF          ::oDialog
-   
-
-
-
-
-
-
-
-
-   
-
-
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
-
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      CANCEL ;
-      ACTION      ( ::oDialog:end() )
-
-   ACTIVATE DIALOG ::oDialog CENTER
-
-  ::oBitmap:end()
-
-RETURN ( ::oDialog:nResult )
-
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
