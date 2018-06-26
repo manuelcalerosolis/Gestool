@@ -376,11 +376,11 @@ METHOD getColumns() CLASS SQLAlmacenesModel
    hset( ::hColumns, "almacen_uuid",      {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
+                                             "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "sistema",           {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| 0 } }                                 )

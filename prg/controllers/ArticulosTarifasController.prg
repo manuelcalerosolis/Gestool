@@ -322,7 +322,7 @@ METHOD getInsertArticulosTarifasSentence()
    cSentence   := "INSERT IGNORE INTO " + ::getTableName() + " "
    cSentence   +=    "( uuid, codigo, nombre, sistema ) "
    cSentence   += "VALUES "
-   cSentence   +=    "( UUID(), '1', 'General', '1' )"
+   cSentence   +=    "( UUID(), '1', " + __tarifa_general__ + ", '1' )"
 
 RETURN ( cSentence )
 

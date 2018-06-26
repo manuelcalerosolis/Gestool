@@ -23,6 +23,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oContadoresModel
 
+   DATA oClientesTarifasController
+
    DATA oLineasController
 
    METHOD New()
@@ -83,12 +85,16 @@ METHOD New() CLASS FacturasClientesController
    ::oAlmacenesController        := AlmacenesController():New( self )
    ::oAlmacenesController:setView( ::oDialogView )
 
+   ::oClientesTarifasController  := ClientesTarifasController():New( self )
+
    ::oLineasController           := FacturasClientesLineasController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',      {|| ::insertedBuffer() } )
+
+   ::oClientesController:oGetSelector:setEvent( 'loaded', {|| ::oClientesTarifasController:oModel:getTarifasNombreWhereClienteCodigo( ::oClientesController:oGetSelector:cGet ) } )
 
 RETURN ( Self )
 
@@ -107,6 +113,8 @@ METHOD End() CLASS FacturasClientesController
    ::oAgentesController:End()
 
    ::oAlmacenesController:End()
+
+   ::oClientesTarifasController:End()
 
    ::oLineasController:End()
 
