@@ -6,6 +6,10 @@ CLASS FacturasClientesView FROM SQLBaseView
    DATA oExplorerBar
 
    DATA oGetNumero
+
+   DATA oComboTarifa
+
+   DATA cComboTarifa       INIT __tarifa_general__
    
    METHOD Activate()
 
@@ -100,12 +104,21 @@ METHOD Activate() CLASS FacturasClientesView
    ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
    ::oController:oAgentesController:oGetSelector:Activate( 250, 251, ::oFolder:aDialogs[1] )
 
-   // Almacenes-----------------------------------------------------------------
+   // Almacenes----------------------------------------------------------------
 
    ::oController:oAlmacenesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_codigo" ] ) )
    ::oController:oAlmacenesController:oGetSelector:Activate( 230, 231, ::oFolder:aDialogs[1] )
 
+   // Tarifas------------------------------------------------------------------
+
+   REDEFINE COMBOBOX ::oComboTarifa ;
+      VAR         ::cComboTarifa ;
+      ID          270 ;
+      ITEMS       ( { __tarifa_general__ } ) ;
+      OF          ::oFolder:aDialogs[1] ;
+
    // Lineas ------------------------------------------------------------------
+
 
    REDEFINE BUTTON oBtnAppend ;
       ID          500 ;

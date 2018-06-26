@@ -172,6 +172,8 @@ METHOD stampArticulo( hArticulo )
       ::hArticulo    := hArticulo
    end if 
 
+   msgalert( UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( ::hArticulo, "codigo" ) ), "UnidadesMedicionGruposLineasRepository" )
+
    hBuffer           := {  "articulo_codigo"          => hget( ::hArticulo, "codigo" ),;
                            "articulo_nombre"          => hget( ::hArticulo, "nombre" ),;
                            "unidad_medicion_codigo"   => UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( ::hArticulo, "codigo" ) ) }

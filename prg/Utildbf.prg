@@ -3381,11 +3381,26 @@ RETURN ( if( oError:GenCode == EG_ZERODIV, 0, Break( oError ) ) )
 FUNCTION Quoted( uValue )
 
    if ( hb_isnumeric( uValue ) )
-      RETURN ( alltrim( str( uValue ) ) )
+      RETURN ( hb_ntos( uValue ) )
    end if 
 
    if ( hb_ischar( uValue ) .or. hb_ismemo( uValue ) )
-      RETURN ( "'" + alltrim( getSqlDatabase():escapeStr( uValue ) ) + "'" )
+      // RETURN ( "'" + alltrim( getSqlDatabase():escapeStr( uValue ) ) + "'" )
+      RETURN ( "'" + alltrim( uValue ) + "'" )
+   end if 
+
+RETURN ( "''" )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION quotedNotEscaped( uValue )
+
+   if ( hb_isnumeric( uValue ) )
+      RETURN ( hb_ntos( uValue ) )
+   end if 
+
+   if ( hb_ischar( uValue ) .or. hb_ismemo( uValue ) )
+      RETURN ( "'" + alltrim( uValue ) + "'" )
    end if 
 
 RETURN ( "''" )

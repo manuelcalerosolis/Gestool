@@ -73,6 +73,9 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD setViewType( cViewType )              INLINE ( ::cViewType := cViewType )
    METHOD getViewType()                         INLINE ( ::cViewType )
 
+   METHOD setChange( bChange )                  INLINE ( ::bChange := bChange )
+   METHOD getChange()                           INLINE ( ::bChange )
+
    METHOD setFilterInRowSet( cFilterExpresion )
 
    METHOD getSelectedCol()                      INLINE ::SelectedCol()

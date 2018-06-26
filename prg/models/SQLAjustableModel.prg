@@ -231,7 +231,7 @@ METHOD getValueWhereMac( cTipoAjuste, cMacAddress, uDefault )
 
    cSentence         := "SELECT ajuste_valor "
    cSentence         +=    "FROM " + ::getTableName() + " "
-   cSentence         += "WHERE ajustable_uuid = " + quoted( cMacAddress ) + " "
+   cSentence         += "WHERE ajustable_uuid = " + quotedNotEscaped( cMacAddress ) + " "
    cSentence         +=    "AND ajustable_tipo = " + quoted( cTipoAjuste )
 
    uValue            := ::getDatabase():getValue( cSentence )

@@ -22,6 +22,8 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()
 
+   METHOD evalChange()     INLINE ( msgalert( hb_valtoexp( ::getRowSet():getvaluesashash() ), "evalChange" ) )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//

@@ -304,7 +304,7 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
    hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 )"                          ,;
                                                 "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "margen_predefinido",   {  "create"    => "FLOAT( 8,4 )"                            ,;
+   hset( ::hColumns, "margen_predefinido",   {  "create"    => "FLOAT( 8, 4 )"                           ,;
                                                 "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "sistema",              {  "create"    => "TINYINT ( 1 )"                           ,;

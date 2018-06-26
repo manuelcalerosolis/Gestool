@@ -22,6 +22,8 @@ CLASS SQLBrowseView
 
    DATA nColSel                              INIT 1
 
+   DATA bChange
+
    METHOD New( oController )
    METHOD End()
 
@@ -102,6 +104,8 @@ CLASS SQLBrowseView
    METHOD insertSelectedColumn()
 
    METHOD addColumns()                       VIRTUAL
+
+   METHOD evalChange()                       VIRTUAL
 
    METHOD getColumnsHeaders()
 
@@ -185,6 +189,8 @@ METHOD Create( oWindow )
    ::oBrowse:setRowSet( ::getRowSet() )
 
    ::oBrowse:setName( ::getName() )
+
+   ::oBrowse:setChange( {|| ::evalChange() } )
 
    ::oBrowse:bKeyChar         := {|nKey| ::getController():onKeyChar( nKey ) }
 
