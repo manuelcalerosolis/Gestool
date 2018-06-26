@@ -87,22 +87,22 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Formas de pago------------------------------------------------------------
 
-   ::oController:oFormasPagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_uuid" ] ) )
+   ::oController:oFormasPagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
    ::oController:oFormasPagoController:oGetSelector:Activate( 240, 241, ::oFolder:aDialogs[1] )
 
    // Rutas--------------------------------------------------------------------
 
-   ::oController:oRutasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_uuid" ] ) )
+   ::oController:oRutasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_codigo" ] ) )
    ::oController:oRutasController:oGetSelector:Activate( 260, 261, ::oFolder:aDialogs[1] )
 
    // Agentes------------------------------------------------------------------
 
-   ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_uuid" ] ) )
+   ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
    ::oController:oAgentesController:oGetSelector:Activate( 250, 251, ::oFolder:aDialogs[1] )
 
    // Almacenes-----------------------------------------------------------------
 
-   ::oController:oAlmacenesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_uuid" ] ) )
+   ::oController:oAlmacenesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_codigo" ] ) )
    ::oController:oAlmacenesController:oGetSelector:Activate( 230, 231, ::oFolder:aDialogs[1] )
 
    // Lineas ------------------------------------------------------------------

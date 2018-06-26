@@ -45,20 +45,24 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
    hset( ::hColumns, "direccion_principal_uuid",      {  "create"    => "VARCHAR( 40 )"                        ,;
                                                          "default"   => {|| space( 40 ) } }                    )
 
-   hset( ::hColumns, "forma_pago_uuid",               {  "create"    => "VARCHAR( 40 )"                        ,;
-                                                         "default"   => {|| space( 40 ) } }                    )
+   hset( ::hColumns, "forma_pago_codigo",             {  "create"    => "VARCHAR( 20 )"                        ,;
+                                                         "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "almacen_uuid",                  {  "create"    => "VARCHAR( 40 )"                        ,;
-                                                         "default"   => {|| space( 40 ) } }                    )
+   hset( ::hColumns, "almacen_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
+                                                         "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "agente_uuid",                   {  "create"    => "VARCHAR( 40 )"                        ,;
-                                                         "default"   => {|| space( 40 ) } }                    )
+   hset( ::hColumns, "agente_codigo",                 {  "create"    => "VARCHAR( 20 )"                        ,;
+                                                         "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "ruta_uuid",                     {  "create"    => "VARCHAR( 40 )"                        ,;
-                                                         "default"   => {|| space( 40 ) } }                    )
+   hset( ::hColumns, "ruta_codigo",                   {  "create"    => "VARCHAR( 20 )"                        ,;
+                                                         "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "transportista_uuid",            {  "create"    => "VARCHAR( 40 )"                        ,;
-                                                         "default"   => {|| space( 40 ) } }                    )
+   hset( ::hColumns, "transportista_codigo",          {  "create"    => "VARCHAR( 20 )"                        ,;
+                                                         "default"   => {|| space( 20 ) } }                    )
+
+   ::getTimeStampColumns()
+
+   ::getClosedColumns()
    
 RETURN ( ::hColumns )
 

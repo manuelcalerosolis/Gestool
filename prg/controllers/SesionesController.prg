@@ -5,6 +5,8 @@
 
 CLASS SesionesController FROM SQLNavigatorController
 
+   DATA oDialogCloseView
+
    DATA oCajasController
 
    METHOD New()
@@ -12,6 +14,8 @@ CLASS SesionesController FROM SQLNavigatorController
    METHOD End()
 
    METHOD isNotOpenSessions()
+
+   METHOD CloseSession()
 
 END CLASS
 
@@ -37,6 +41,8 @@ METHOD New( oSenderController ) CLASS SesionesController
 
    ::oDialogView                 := SesionesView():New( self )
 
+   ::oDialogCloseView            := SesionesCloseView():New( self )
+
    ::oValidator                  := SesionesValidator():New( self, ::oDialogView )
 
    ::oRepository                 := SesionesRepository():New( self )
@@ -46,6 +52,9 @@ METHOD New( oSenderController ) CLASS SesionesController
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::setEvent( 'appending', {|| ::isNotOpenSessions() } )
+
+   ::oNavigatorView:oMenuTreeView:setEvent( 'addedAppendButton',;
+      {|| ::oNavigatorView:oMenuTreeView:AddButton( "Cerrar", "gc_clock_stop_16", {|| ::CloseSession() }, , ACC_EDIT, ::oNavigatorView:oMenuTreeView:oButtonMain ) } )
 
 RETURN ( Self )
 
@@ -59,6 +68,8 @@ METHOD End() CLASS SesionesController
 
    ::oDialogView:End()
 
+   ::oDialogCloseView:End()
+
    ::oValidator:End()
 
    ::oRepository:End()
@@ -71,7 +82,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD isNotOpenSessions()
+METHOD isNotOpenSessions() CLASS SesionesController
 
    if ::oModel:isOpenSessions()
       msgStop( "Ya existe una sesión abierta en esta caja" )
@@ -81,6 +92,41 @@ METHOD isNotOpenSessions()
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD CloseSession() CLASS SesionesController
+
+   local nId   := Session():Id()
+
+   if empty( nId )
+      RETURN ( nil )
+   end if 
+
+   ::beginTransactionalMode()
+
+   ::oModel:loadCurrentBuffer( nId )
+
+   if ::DialogViewActivate( ::oDialogCloseView )
+      
+      ::oModel:updateBuffer()
+
+      // Proceder al cierre
+
+      ::commitTransactionalMode()
+
+      ::refreshRowSetAndFindId( nId )
+
+      ::refreshBrowseView()
+
+   else
+
+      ::rollbackTransactionalMode()
+
+   end if 
+
+   msgalert( "CloseSession" )
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -262,6 +308,115 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
+CLASS SesionesCloseView FROM SQLBaseView
+
+   METHOD Activate()
+
+   METHOD startActivate() 
+
+   METHOD endActivate()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS SesionesCloseView
+
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "SESION_CERRAR" ;
+      TITLE       ::LblTitle() + "sesiones"
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    ::oController:getimage( "48" ) ;
+      TRANSPARENT ;
+      OF          ::oDialog
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "numero" ] ;
+      ID          100 ;
+      PICTURE     "999999999" ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora_inicio" ] ;
+      ID          110 ;
+      PICTURE     "@DT" ;
+      WHEN        ( .f. ) ;
+      OF          ::oDialog
+
+   ::oController:oCajasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "caja_codigo" ] ) )
+   ::oController:oCajasController:oGetSelector:Activate( 120, 121, ::oDialog )
+   ::oController:oCajasController:oGetSelector:setWhen( {|| .f. } )
+
+   /*REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+      ID          110 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+      ID          120 ;
+      SPINNER  ;
+      MIN 0;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+       ::redefineExplorerBar( 200 )*/
+
+   // Botones caja -------------------------------------------------------
+
+   REDEFINE BUTTON ;
+      ID          IDOK ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+
+   REDEFINE BUTTON ;
+      ID          IDCANCEL ;
+      OF          ::oDialog ;
+      CANCEL ;
+      ACTION      ( ::oDialog:end() )
+
+   if ::oController:isNotZoomMode() 
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+   end if
+
+   ::oDialog:bStart  := {|| ::StartActivate() }
+   
+   ACTIVATE DIALOG ::oDialog CENTER
+
+   ::oBitmap:end()
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS SesionesCloseView
+
+   ::oController:oCajasController:oGetSelector:Start()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD endActivate() CLASS SesionesCloseView
+
+   ::oDialog:end( IDOK )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+
 CLASS SesionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
@@ -295,7 +450,9 @@ CLASS SQLSesionesModel FROM SQLCompanyModel
 
    METHOD isOpenSessions()
 
-   METHOD getLastOpenWhereCaja( cCajaNombre )
+   METHOD getLastOpenWhereCajaNombre( cCajaNombre )
+
+   METHOD getAllTransactionWhereSessionUuid( uuidSession )
 
 END CLASS
 
@@ -328,7 +485,7 @@ RETURN ( getSQLDataBase():getValue( cSelect ) > 0 )
 
 //---------------------------------------------------------------------------//
  
-METHOD getLastOpenWhereCaja( cCajaNombre ) CLASS SQLSesionesModel
+METHOD getLastOpenWhereCajaNombre( cCajaNombre ) CLASS SQLSesionesModel
 
    local aSelect
    local cSelect  := "SELECT sesiones.* "                                           + ;
@@ -343,6 +500,24 @@ METHOD getLastOpenWhereCaja( cCajaNombre ) CLASS SQLSesionesModel
       RETURN ( atail( aSelect ) )
    end if 
 
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getAllTransactionWhereSessionUuid( uuidSession ) CLASS SQLSesionesModel
+/*
+   local cSelect  := "SELECT sesiones.* "                                           + ;
+                        "FROM " + ::getTableName() + " AS sesiones "                + ;
+                     "INNER JOIN " + SQLCajasModel():getTableName() + " AS cajas "  + ;
+                        "ON sesiones.caja_codigo = cajas.codigo "                   + ;
+                     "WHERE sesiones.estado = 'Abierta' "                           + ;
+                        "AND cajas.nombre = " + quoted( cCajaNombre )    
+
+   aSelect        := ::getDatabase():selectTrimedFetchHash( cSelect )
+   if hb_isarray( aSelect )
+      RETURN ( atail( aSelect ) )
+   end if 
+*/
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

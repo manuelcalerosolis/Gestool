@@ -577,41 +577,41 @@ RETURN ( ::getDatabase():getValue( cSelect ) )
 
 METHOD getCodigoDefault( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository 
 
-   local cResult  := ""
+   local cCodigo     := ""
 
    if !empty( cCodigoArticulo )
-      cResult  := ::getWhereCodigoArticuloDefault( cCodigoArticulo )
+      cCodigo        := ::getWhereCodigoArticuloDefault( cCodigoArticulo )
    end if      
 
-   if empty( cResult )
-      cResult  := ::getWhereEmpresaDefault()
+   if empty( cCodigo )
+      cCodigo        := ::getWhereEmpresaDefault()
    end if
 
-   if empty( cResult )
-      cResult  := ::getWhereGrupoSistemaDefault()
+   if empty( cCodigo )
+      cCodigo        := ::getWhereGrupoSistemaDefault()
    end if
 
-RETURN ( AllTrim( cResult ) )
+RETURN ( cCodigo )
 
 //---------------------------------------------------------------------------//
 
 METHOD getFactorWhereUnidadMedicion( cCodigoArticulo, cCodigoUnidad ) CLASS UnidadesMedicionGruposLineasRepository 
 
-   local nResult := 1
+   local nFactory := 1
 
    if !empty( cCodigoArticulo )
-      nResult  := ::getFactorWhereUnidadArticulo( cCodigoArticulo, cCodigoUnidad )
+      nFactory    := ::getFactorWhereUnidadArticulo( cCodigoArticulo, cCodigoUnidad )
    end if      
 
-   if empty( nResult )
-      nResult  := ::getFactorWhereUnidadEmpresa( cCodigoUnidad )
+   if empty( nFactory )
+      nFactory    := ::getFactorWhereUnidadEmpresa( cCodigoUnidad )
    end if
 
-   if empty( nResult )
-      nResult  := ::getFactorWhereUnidadGrupoSistema( cCodigoUnidad )
+   if empty( nFactory )
+      nFactory    := ::getFactorWhereUnidadGrupoSistema( cCodigoUnidad )
    end if
 
-RETURN ( nResult )
+RETURN ( nFactory )
 
 //---------------------------------------------------------------------------//
 
