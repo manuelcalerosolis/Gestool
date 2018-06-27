@@ -339,11 +339,11 @@ METHOD getSQLInsertPreciosWhereTarifa( codigoTarifa )
 
    local cSQL
 
-   cSQL           := "INSERT IGNORE INTO " + ::getTableName()                                                           + " "  
-   cSQL           +=    "( uuid, parent_uuid, tarifa_codigo, margen )"                                                  + " "  
-   cSQL           += "SELECT UUID(), articulos.uuid, articulos_tarifas.codigo, articulos_tarifas.margen_predefinido"    + " "  
-   cSQL           +=    "FROM " + SQLArticulosModel():getTableName() + " AS articulos"                                  + " "
-   cSQL           +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas"             + " "
+   cSQL           := "INSERT IGNORE INTO " + ::getTableName()                                                  + " "  
+   cSQL           +=    "( uuid, parent_uuid, tarifa_codigo )"                                                 + " "  
+   cSQL           += "SELECT UUID(), articulos.uuid, articulos_tarifas.codigo"                                 + " "  
+   cSQL           +=    "FROM " + SQLArticulosModel():getTableName() + " AS articulos"                         + " "
+   cSQL           +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas"    + " "
    cSql           +=    "ON articulos_tarifas.codigo = " + quoted( codigoTarifa )
 
 RETURN ( cSQL )

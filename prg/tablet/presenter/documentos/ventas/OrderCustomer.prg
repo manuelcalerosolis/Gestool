@@ -74,7 +74,7 @@ METHOD Build( oSender ) CLASS OrderCustomer
 
    ::oProductStock         := ProductStock():init( self )
 
-   ::oStore                := Store():init( self )
+   ::oStore                := Stores():init( self )
 
    ::oPayment              := Payment():init( self )
 

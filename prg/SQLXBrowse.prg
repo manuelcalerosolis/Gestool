@@ -76,6 +76,9 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD setChange( bChange )                  INLINE ( ::bChange := bChange )
    METHOD getChange()                           INLINE ( ::bChange )
 
+   METHOD setGotFocus( bGotFocus )              INLINE ( ::bGotFocus := bGotFocus )
+   METHOD getGotFocus()                         INLINE ( ::bGotFocus )
+
    METHOD setFilterInRowSet( cFilterExpresion )
 
    METHOD getSelectedCol()                      INLINE ::SelectedCol()

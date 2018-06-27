@@ -147,13 +147,13 @@ METHOD loadConfig()
 
    ::lSolicitarUsuario           := ::oAjustableController:oModel:getEmpresaSeleccionarUsuarios( ::cUuidEmpresa )
 
-   ::aDelegaciones               := SQLDelegacionesModel():getArrayNombres()
+   ::aDelegaciones               := SQLDelegacionesModel():getNombres()
 
    ::cUuidDelegacionDefecto      := ::oAjustableController:oModel:getEmpresaDelegacionDefecto( ::cUuidEmpresa )
 
    ::cDelegacionDefecto          := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionDefecto )
 
-   ::aUnidades                   := SQLUnidadesMedicionGruposModel():getArrayNombres()
+   ::aUnidades                   := SQLUnidadesMedicionGruposModel():getNombres()
 
    ::cCodigoUnidaesDefecto       := ::oAjustableController:oModel:getEmpresaUnidadesGrupoDefecto( ::cUuidEmpresa )
 

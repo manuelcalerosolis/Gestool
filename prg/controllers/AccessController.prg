@@ -108,7 +108,7 @@ METHOD loadUsersAndCompanies() CLASS AccessController
 
    // Usuario------------------------------------------------------------------
 
-   ::aComboUsuarios        := ::oUsuariosController:oModel:getArrayNombres()
+   ::aComboUsuarios        := ::oUsuariosController:oModel:getNombres()
 
    cUltimoUsuario          := ::oAjustableController:oModel:getUltimoUsuarioInMac( ::getMacAddress() )
    if empty( cUltimoUsuario )
@@ -121,7 +121,7 @@ METHOD loadUsersAndCompanies() CLASS AccessController
 
    if ::isSelectCompany()
 
-      ::aComboEmpresas     := ::oEmpresasController:oModel:getArrayNombres()
+      ::aComboEmpresas     := ::oEmpresasController:oModel:getNombres()
 
       cUltimaEmpresa       := ::oAjustableController:oModel:getUltimaEmpresaInMac( ::getMacAddress() )
       if empty( cUltimaEmpresa )
@@ -262,6 +262,7 @@ RETURN ( ::cMacAddress )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS AccessView FROM SQLBaseView
 
@@ -374,7 +375,6 @@ METHOD Validate() CLASS AccessView
 
 RETURN ( nil )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

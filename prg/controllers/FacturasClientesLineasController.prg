@@ -19,7 +19,11 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    DATA oUnidadesMedicionController
 
+   DATA oHistoryManager
+
    METHOD New()
+
+   METHOD End()
 
    METHOD Append()
 
@@ -49,9 +53,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD stampArticuloNombre( uValue )
 
-   METHOD isChangeArticulo()
-
-   METHOD getHashArticulo()
+   METHOD getArticulo( cCodigo )
 
    METHOD runDialogSeries()
 
@@ -105,6 +107,8 @@ METHOD New( oController )
 
    ::oUnidadesMedicionController       := UnidadesMedicionGruposLineasController():New( self )
 
+   ::oHistoryManager                   := HistoryManager():New()
+
    ::setEvent( 'activating',           {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
 
    ::setEvent( 'closedDialog',         {|| ::closedDialog() } )
@@ -121,6 +125,32 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD End()
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oSearchView:End()
+
+   ::oSeriesControler:End()
+
+   ::oRelacionesEntidades:End()
+
+   ::oUnidadesMedicionController:End()
+
+   ::oHistoryManager:End()
+
+   ::Super:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD validColumnCodigoArticulo( oCol, uValue, nKey )
 
    local hArticulo 
@@ -130,23 +160,59 @@ METHOD validColumnCodigoArticulo( oCol, uValue, nKey )
    end if
 
    if hb_ishash( uValue )
+
+      if ::oHistoryManager:isEqual( "articulo_codigo", hget( uValue, "codigo" ) )
+         RETURN ( .f. )
+      end if          
+
       RETURN ( ::stampArticulo( uValue ) )
+
    end if 
 
    if !hb_ischar( uValue )
       RETURN ( .f. )
    end if 
 
+   if ::oHistoryManager:isEqual( "articulo_codigo", uValue )
+      RETURN ( .f. )
+   end if          
+
    if !( ::validate( "articulo_codigo", uValue ) )
       RETURN ( .f. )
    end if 
 
-   hArticulo   := SQLArticulosModel():getHashWhere( "codigo", uValue )
+   hArticulo   := ::getArticulo( uValue )
    if empty( hArticulo )
       RETURN ( .f. )
    end if 
 
 RETURN ( ::stampArticulo( hArticulo ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getArticulo( cCodigo )
+   
+RETURN ( SQLArticulosModel():getHashWhere( "codigo", cCodigo ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampArticulo( hArticulo )
+
+   local hBuffer
+
+   msgalert( UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( hArticulo, "codigo" ) ), "UnidadesMedicionGruposLineasRepository" )
+
+   hBuffer           := {  "articulo_codigo"          => hget( hArticulo, "codigo" ),;
+                           "articulo_nombre"          => hget( hArticulo, "nombre" ),;
+                           "unidad_medicion_codigo"   => UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( hArticulo, "codigo" ) ) }
+
+   ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
+
+   ::getRowSet():Refresh()
+   
+   ::oHistoryManager:Set( ::getRowSet():getValuesAsHash() )
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -164,64 +230,13 @@ RETURN ( ::stampArticuloNombre( uValue ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampArticulo( hArticulo )
-
-   local hBuffer
-
-   if !empty( hArticulo )
-      ::hArticulo    := hArticulo
-   end if 
-
-   msgalert( UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( ::hArticulo, "codigo" ) ), "UnidadesMedicionGruposLineasRepository" )
-
-   hBuffer           := {  "articulo_codigo"          => hget( ::hArticulo, "codigo" ),;
-                           "articulo_nombre"          => hget( ::hArticulo, "nombre" ),;
-                           "unidad_medicion_codigo"   => UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( ::hArticulo, "codigo" ) ) }
-
-   ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
-
-   ::getRowSet():Refresh()
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
 METHOD stampArticuloNombre( uValue )
 
    ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "articulo_nombre", uValue )
 
    ::getRowSet():Refresh()
 
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD isChangeArticulo()
-
-   local cCodigoArticulo
-
-   cCodigoArticulo   := ::getModelBuffer( "articulo_codigo" )
-   if empty( cCodigoArticulo )
-      RETURN ( .f. )
-   end if  
-
-   if !( ::oDialogView:oGetCodigoArticulo:isOriginalChanged( cCodigoArticulo ) )
-      RETURN ( .f. )
-   end if
-
-   ::oDialogView:oGetCodigoArticulo:setOriginal( cCodigoArticulo )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD getHashArticulo()
-
-   ::hArticulo       := ArticulosModel():getHash( ::getModelBuffer( "articulo_codigo" ) )
-
-   if empty( ::hArticulo )
-      RETURN ( .f. )
-   end if 
+   ::oHistoryManager:Set( ::getRowSet():getValuesAsHash() )
 
 RETURN ( .t. )
 

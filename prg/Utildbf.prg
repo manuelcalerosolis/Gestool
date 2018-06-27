@@ -3385,8 +3385,7 @@ FUNCTION Quoted( uValue )
    end if 
 
    if ( hb_ischar( uValue ) .or. hb_ismemo( uValue ) )
-      // RETURN ( "'" + alltrim( getSqlDatabase():escapeStr( uValue ) ) + "'" )
-      RETURN ( "'" + alltrim( uValue ) + "'" )
+      RETURN ( "'" + alltrim( getSqlDatabase():escapeStr( uValue ) ) + "'" )
    end if 
 
 RETURN ( "''" )

@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS Store FROM Editable
+CLASS Stores FROM Editable
 
    DATA oGrid
 
@@ -18,7 +18,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS Store
+METHOD New() CLASS Stores
 
    if ::OpenFiles()
       ::setEnviroment()
@@ -28,7 +28,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Init( oSender ) CLASS Store
+METHOD Init( oSender ) CLASS Stores
 
    ::nView                             := oSender:nView
 
@@ -43,7 +43,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenFiles() CLASS Store
+METHOD OpenFiles() CLASS Stores
 
    local oError
    local oBlock

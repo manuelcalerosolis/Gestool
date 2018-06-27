@@ -9,7 +9,7 @@ CLASS FacturasClientesView FROM SQLBaseView
 
    DATA oComboTarifa
 
-   DATA cComboTarifa       INIT __tarifa_general__
+   DATA cComboTarifa       INIT __tarifa_base__
    
    METHOD Activate()
 
@@ -35,8 +35,8 @@ RETURN ( self )
 
 METHOD Activate() CLASS FacturasClientesView
 
-   local oBtnAppend
    local oBtnEdit
+   local oBtnAppend
    local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
@@ -114,7 +114,7 @@ METHOD Activate() CLASS FacturasClientesView
    REDEFINE COMBOBOX ::oComboTarifa ;
       VAR         ::cComboTarifa ;
       ID          270 ;
-      ITEMS       ( { __tarifa_general__ } ) ;
+      ITEMS       ( { __tarifa_base__ } ) ;
       OF          ::oFolder:aDialogs[1] ;
 
    // Lineas ------------------------------------------------------------------

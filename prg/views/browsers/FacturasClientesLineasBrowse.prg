@@ -20,15 +20,27 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    DATA oColumnUnidadMedicion
 
-   METHOD addColumns()
+   METHOD Create( oWindow )
 
-   METHOD evalChange()     INLINE ( msgalert( hb_valtoexp( ::getRowSet():getvaluesashash() ), "evalChange" ) )
+   METHOD addColumns()
 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns()
+METHOD Create( oWindow ) CLASS FacturasClientesLineasBrowseView 
+
+   ::Super:Create( oWindow )
+
+   ::oBrowse:setChange( {|| ::oController:oHistoryManager:Set( ::getRowSet():getValuesAsHash() ) } )
+
+   ::oBrowse:setGotFocus( {|| ::oController:oHistoryManager:Set( ::getRowSet():getValuesAsHash() ) } )
+
+RETURN ( ::oBrowse )
+
+//---------------------------------------------------------------------------//
+
+METHOD addColumns() CLASS FacturasClientesLineasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -159,6 +171,19 @@ METHOD addColumns()
       :cDataType           := "N"
    end with
 
-RETURN ( self )
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'articulo_precio'
+      :cHeader             := 'Precio'
+      :nWidth              := 80
+      :cEditPicture        := masUnd()
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_precio' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nFootStyle          := :nDataStrAlign               
+      :cDataType           := "N"
+      :nEditType           := EDIT_GET
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateFieldWhereId( 'articulo_precio', uNewValue ) }
+   end with
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//

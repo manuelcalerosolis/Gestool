@@ -106,11 +106,11 @@ RETURN ( nil )
 
 METHOD loadData() CLASS EnviromentController
 
-   ::aComboCajas                       := ::oCajasController:oModel:getArrayNombres()
+   ::aComboCajas                       := ::oCajasController:oModel:getNombres()
 
    ::cComboCaja                        := atail( ::aComboCajas )
 
-   ::aComboAlmacenes                   := ::oAlmacenesController:oModel:getArrayNombres()
+   ::aComboAlmacenes                   := ::oAlmacenesController:oModel:getNombres()
 
    ::cComboAlmacen                     := atail( ::aComboAlmacenes )
 

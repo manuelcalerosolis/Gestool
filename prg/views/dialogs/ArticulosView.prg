@@ -241,7 +241,7 @@ METHOD startActivate() CLASS ArticulosView
 
    ::oController:oCombinacionesController:oGetSelector:Start()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

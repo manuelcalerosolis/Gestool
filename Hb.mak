@@ -153,6 +153,7 @@ SessionManager.prg  												\
 StoreManager.prg 													\
 DelegationManager.prg 											\
 ApplicationManager.prg 											\
+HistoryManager.prg 												\
 Oferta.prg              										\
 Internet.prg            										\
 Intitem.prg             										\
@@ -840,6 +841,7 @@ DelegationManager.obj 														\
 BoxManager.obj                                     				\
 SessionManager.obj 															\
 ApplicationManager.obj 														\
+HistoryManager.obj 															\
 Oferta.obj                                         				\
 Internet.obj                                       				\
 Intitem.obj                                        				\
@@ -1543,6 +1545,7 @@ $(OBJ)\DelegationManager.obj        									+
 $(OBJ)\BoxManager.obj      												+
 $(OBJ)\SessionManager.obj    												+
 $(OBJ)\ApplicationManager.obj												+
+$(OBJ)\HistoryManager.obj													+
 $(OBJ)\Oferta.obj                										+
 $(OBJ)\Internet.obj              										+
 $(OBJ)\Intitem.obj               										+

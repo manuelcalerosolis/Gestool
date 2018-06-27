@@ -209,7 +209,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD onActivate() CLASS ImpresorasView
 
-   ::aTipo        := ::oController:oTiposImpresorasController:oModel:getArrayNombres()
+   ::aTipo        := ::oController:oTiposImpresorasController:oModel:getNombres()
    
 RETURN ( self )
 

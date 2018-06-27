@@ -156,8 +156,8 @@ METHOD getTarifasNombreWhereClienteCodigo( cCodigoCliente ) CLASS SQLClientesTar
 
    aNombres       := ::getDatabase():selectFetchArrayOneColumn( cSelect )
 
-   if ascan( aNombres, __tarifa_general__ ) == 0
-      ains( aNombres, 1, __tarifa_general__, .t. )
+   if ascan( aNombres, __tarifa_base__ ) == 0
+      ains( aNombres, 1, __tarifa_base__, .t. )
    end if 
 
 RETURN ( aNombres )

@@ -216,6 +216,8 @@ CLASS SQLBaseModel
    METHOD getWhereUuid( Uuid )
    METHOD getWhereCodigo( cCodigo )
 
+   METHOD isWhereCodigo( cCodigo )
+
    METHOD getWhereNombre( uValue )               
 
    METHOD getColumnWhereNombre( uValue, cColumn, uDefault ) 
@@ -234,11 +236,12 @@ CLASS SQLBaseModel
    METHOD getNombreWhereCodigo( codigo )              INLINE ( ::getColumnWhereCodigo( codigo, 'nombre' ) )
    METHOD getCodigoWhereCodigo( codigo )              INLINE ( ::getColumnWhereCodigo( codigo, 'codigo' ) )
 
-   METHOD getArrayColumns( cColumn ) 
-   METHOD getArrayNombres()                           INLINE ( ::getArrayColumns( 'nombre' ) )
-   METHOD getArrayColumnsWithBlank( cColumn ) 
+   METHOD getColumn( cColumn ) 
+   METHOD getColumnWhere( cColumn, cField, cCondition, cValue )
+   METHOD getColumnsWithBlank( cColumn ) 
 
-   METHOD getNombresWithBlank()                       INLINE ( ::getArrayColumnsWithBlank( 'nombre' ) )
+   METHOD getNombres()                                INLINE ( ::getColumn( 'nombre' ) )
+   METHOD getNombresWithBlank()                       INLINE ( ::getColumnsWithBlank( 'nombre' ) )
 
    METHOD getSenderControllerParentUuid()
 
@@ -1296,7 +1299,7 @@ RETURN ( ::getDatabase():getValue( cSql ) )
 METHOD getHashWhere( cBy, cId )
 
    local cSql  := "SELECT * " 
-   cSql        +=    "FROM "+ ::getTableName()                          + " "
+   cSql        +=    "FROM " + ::getTableName()                         + " "
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
    cSQL        +=    "LIMIT 1"
 
@@ -1366,11 +1369,20 @@ RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
+METHOD isWhereCodigo( cCodigo )
+
+   local cSQL  := "SELECT COUNT(*) FROM " + ::getTableName()                  + " "    
+   cSQL        +=    "WHERE codigo = " + quoted( cCodigo )                    
+
+RETURN ( ::getDatabase():getValue( cSQL ) > 0 )
+
+//---------------------------------------------------------------------------//
+
 METHOD getColumnWhereId( id, cColumn ) 
 
-   local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
-                        "WHERE id = " + quoted( id )                    + " " + ;
-                        "LIMIT 1"
+   local cSQL  := "SELECT " + cColumn + " FROM " + ::getTableName()           + " " 
+   cSQL        +=    "WHERE id = " + quoted( id )                             + " " 
+   cSQL        +=    "LIMIT 1"
 
 RETURN ( ::getDatabase():getValue( cSQL ) )
 
@@ -1396,7 +1408,7 @@ RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getArrayColumns( cColumn ) 
+METHOD getColumn( cColumn ) 
 
    local cSQL     := "SELECT " + cColumn + "  FROM " + ::getTableName()
    
@@ -1404,7 +1416,16 @@ RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getArrayColumnsWithBlank( cColumn )
+METHOD getColumnWhere( cColumn, cField, cCondition, cValue ) 
+
+   local cSQL     := "SELECT " + cColumn + "  FROM " + ::getTableName() + " " + ;
+                        "WHERE " + cField + " " + cCondition + " " + toSQLString( cValue )    
+
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSQL ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getColumnsWithBlank( cColumn )
 
    local aColumns                
    local cSQL     := "SELECT " + cColumn + "  FROM " + ::getTableName()

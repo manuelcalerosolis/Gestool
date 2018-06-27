@@ -105,8 +105,6 @@ CLASS SQLBrowseView
 
    METHOD addColumns()                       VIRTUAL
 
-   METHOD evalChange()                       VIRTUAL
-
    METHOD getColumnsHeaders()
 
    METHOD getVisibleColumnsHeaders()   
@@ -189,8 +187,6 @@ METHOD Create( oWindow )
    ::oBrowse:setRowSet( ::getRowSet() )
 
    ::oBrowse:setName( ::getName() )
-
-   ::oBrowse:setChange( {|| ::evalChange() } )
 
    ::oBrowse:bKeyChar         := {|nKey| ::getController():onKeyChar( nKey ) }
 
