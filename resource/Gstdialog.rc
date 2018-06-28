@@ -22808,12 +22808,13 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Tarifa", 800, "Static", WS_GROUP, 44, 3, 481, 24
   CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 58, 35, 8
-  CONTROL "Factor", -1, "Static", WS_GROUP, 50, 86, 25, 8
+  CONTROL "Incremento", -1, "Static", WS_GROUP, 50, 86, 41, 8
   CONTROL "Activa", 141, "Static", WS_GROUP, 50, 100, 43, 8
   CONTROL "<a>Campos extra...</a>", 170, "SysLink", WS_TABSTOP, 44, 149, 88, 10
   CONTROL "Tarifa base", -1, "Static", WS_GROUP, 50, 72, 41, 8
   CONTROL "Valido desde", -1, "Static", WS_GROUP, 50, 114, 46, 8
   CONTROL "Valido hasta", -1, "Static", WS_GROUP, 50, 128, 46, 8
+  CONTROL "%", -1, "Static", WS_GROUP, 202, 85, 11, 8
 }
 
 ARTICULO_PRECIO DIALOG DISCARDABLE 35, -50, 456, 270

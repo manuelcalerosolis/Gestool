@@ -154,8 +154,27 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Tarifa'
-      :nWidth              := 160
+      :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'porcetaje_incremento'
+      :cHeader             := 'Incremento %'
+      :nWidth              := 50
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'porcetaje_incremento' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :cEditPicture        := "@E 9999.9999"
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre_tarifa_base'
+      :cHeader             := 'Tarifa base'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_tarifa_base' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -166,6 +185,7 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :cEditPicture        := "@E 9999.9999"
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -176,8 +196,7 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :nHeadBmpNo          := 1
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
-      :AddResource( "gc_pencil_16" )
-
+      :addResource( "gc_pencil_16" )
       :nEditType           := 1
       :bEditValue          := {|| ::getRowSet():fieldGet( 'margen' ) }
       :bEditBlock          := {|| ::getRowSet():fieldGet( 'margen' ) }
@@ -194,6 +213,7 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :nHeadStrAlign       := 1
       :bEditValue          := {|| ::getRowSet():fieldGet( 'margen_real' ) }
       :cEditPicture        := "@E 9999.9999"
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -204,8 +224,7 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :nHeadBmpNo          := 1
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
-      :AddResource( "gc_pencil_16" )
-
+      :addResource( "gc_pencil_16" )
       :nEditType           := 1
       :bEditValue          := {|| ::getRowSet():fieldGet( 'precio_base' ) }
       :bEditBlock          := {|| ::getRowSet():fieldGet( 'precio_base' ) }
@@ -228,6 +247,15 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :bEditBlock          := {|| ::getRowSet():fieldGet( 'precio_iva_incluido' ) }
       :cEditPicture        := "@E 9999.9999"
       :bOnPostEdit         := {|oCol, nPrecioIVAIncluido| ::oController:setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'manual'
+      :cHeader             := "Manual"
+      :bStrData            := {|| "" }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'manual' ) == 1 }
+      :nWidth              := 60
+      :SetCheck( { "Sel16", "Nil16" } )
    end with
 
 RETURN ( self )
@@ -262,7 +290,7 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_precios"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( parent_uuid, tarifa_codigo )"
+   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( parent_uuid, tarifa_uuid )"
 
    METHOD getInitialSelect()
 
@@ -279,7 +307,8 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
    METHOD updateFieldsCommandWhereUuid( oCommand, uuid ) INLINE ( ::updateBufferWhereUuid( uuid,   {  'margen'                => oCommand:Margen(),; 
                                                                                                       'margen_real'           => oCommand:MargenReal(),;
                                                                                                       'precio_base'           => oCommand:PrecioBase(),;
-                                                                                                      'precio_iva_incluido'   => oCommand:PrecioIVAIncluido() } ) )
+                                                                                                      'precio_iva_incluido'   => oCommand:PrecioIVAIncluido(),;
+                                                                                                      'manual'                => 1 } ) )
 
 END CLASS
 
@@ -287,19 +316,30 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLArticulosPreciosModel
 
-   local cSelect  := "SELECT articulos_precios.id, "                                                              + ;
-                        "articulos_precios.uuid, "                                                                + ;
-                        "articulos_precios.parent_uuid, "                                                         + ;
-                        "articulos_precios.tarifa_codigo, "                                                       + ;
-                        "articulos_precios.margen, "                                                              + ;
-                        "articulos_precios.margen_real, "                                                         + ;
-                        "articulos_precios.precio_base, "                                                         + ;
-                        "articulos_precios.precio_iva_incluido, "                                                 + ;
-                        "articulos_tarifas.nombre, "                                                              + ;
-                        "articulos_tarifas.margen_predefinido "                                                   + ;
-                     "FROM " + ::getTableName() + " AS articulos_precios "                                        + ;
-                        "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas "      + ;
-                        "ON articulos_tarifas.codigo = articulos_precios.tarifa_codigo"   
+   local cSelect  := "SELECT articulos_precios.id, "                                                                
+   cSelect        +=    "articulos_precios.uuid, "                                                                  
+   cSelect        +=    "articulos_precios.parent_uuid, "                                                           
+   cSelect        +=    "articulos_precios.tarifa_uuid, "                                                         
+
+   cSelect        +=    "articulos_tarifas.porcetaje_incremento, "
+
+   cSelect        +=    "IF( articulos_precios.manual = 1, "
+   cSelect        +=       "articulos_precios.margen, "
+   cSelect        +=       "( SELECT margen FROM " + SQLArticulosTarifasModel():getTableName() + " WHERE articulos_tarifas.parent_uuid = articulos_tarifas.uuid ) * articulos_tarifas.porcetaje_incremento ) "
+   cSelect        +=    "AS margen ,"
+
+   cSelect        +=    "articulos_precios.margen_real, "                                                           
+   cSelect        +=    "articulos_precios.precio_base, "                                                           
+   cSelect        +=    "articulos_precios.precio_iva_incluido, "                                                   
+   cSelect        +=    "articulos_precios.manual, "                                                                
+   cSelect        +=    "articulos_tarifas.nombre, "                                                                
+   cSelect        +=    "articulos_tarifas.parent_uuid, "                                                           
+   cSelect        +=    "( SELECT nombre FROM " + SQLArticulosTarifasModel():getTableName() + " WHERE articulos_tarifas.parent_uuid = articulos_tarifas.uuid ) AS nombre_tarifa_base "  
+   cSelect        += "FROM " + ::getTableName() + " AS articulos_precios "                                          
+   cSelect        +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas "        
+   cSelect        +=       "ON articulos_tarifas.uuid = articulos_precios.tarifa_uuid"                              
+
+   logwrite( cSelect )
 
 RETURN ( cSelect )
 
@@ -316,8 +356,11 @@ METHOD getColumns() CLASS SQLArticulosPreciosModel
    hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;
                                                       "default"   => {|| ::getSenderControllerParentUuid() } } )
 
-   hset( ::hColumns, "tarifa_codigo",              {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                      "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "tarifa_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                      "default"   => {|| space( 40 ) } }                       )
+
+   hset( ::hColumns, "manual",                     {  "create"    => "TINYINT ( 1 )"                           ,;
+                                                      "default"   => {|| "0" } }                               )
 
    hset( ::hColumns, "margen",                     {  "create"    => "FLOAT( 8, 4 )"                           ,;
                                                       "default"   => {|| 0 } }                                 )
@@ -340,8 +383,8 @@ METHOD getSQLInsertPreciosWhereTarifa( codigoTarifa )
    local cSQL
 
    cSQL           := "INSERT IGNORE INTO " + ::getTableName()                                                  + " "  
-   cSQL           +=    "( uuid, parent_uuid, tarifa_codigo )"                                                 + " "  
-   cSQL           += "SELECT UUID(), articulos.uuid, articulos_tarifas.codigo"                                 + " "  
+   cSQL           +=    "( uuid, parent_uuid, tarifa_uuid )"                                                   + " "  
+   cSQL           += "SELECT UUID(), articulos.uuid, articulos_tarifas.uuid"                                   + " "  
    cSQL           +=    "FROM " + SQLArticulosModel():getTableName() + " AS articulos"                         + " "
    cSQL           +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas"    + " "
    cSql           +=    "ON articulos_tarifas.codigo = " + quoted( codigoTarifa )
@@ -352,12 +395,13 @@ RETURN ( cSQL )
 
 METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
 
-   local cSQL
-
-   cSQL           := "INSERT IGNORE INTO " + ::getTableName()                                                                                + " "  
-   cSQL           +=    "( uuid, tarifa_codigo, parent_uuid, margen, precio_base, precio_iva_incluido )"                                     + " "  
-   cSQL           += "SELECT uuid(), articulos_tarifas.codigo, " + quoted( uuidArticulo ) + ", articulos_tarifas.margen_predefinido, 0, 0"   + " "  
+   local cSQL     := "INSERT IGNORE INTO " + ::getTableName()                                                  + " "  
+   cSQL           +=    "( uuid, tarifa_uuid, parent_uuid, precio_base, precio_iva_incluido )"                 + " "  
+   cSQL           += "SELECT uuid(), articulos_tarifas.uuid, " + quoted( uuidArticulo ) + ", 0, 0"             + " "  
    cSQL           +=    "FROM " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas"
+
+   msgalert( cSQL, "cSQL" )
+   logwrite( cSQL )
 
 RETURN ( cSQL )
 

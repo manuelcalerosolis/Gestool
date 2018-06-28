@@ -151,10 +151,10 @@ METHOD addColumns() CLASS ArticulosTarifasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'factor'
-      :cHeader             := 'Factor'
+      :cSortOrder          := 'porcentaje_incremento'
+      :cHeader             := 'porcentaje_incremento'
       :nWidth              := 130
-      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'factor' ), "@E 9999.99" ) }
+      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'porcentaje_incremento' ), "@E 9999.9999" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
@@ -246,12 +246,12 @@ METHOD Activate() CLASS ArticulosTarifasView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "factor" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "porcentaje_incremento" ] ;
       ID          130 ;
       SPINNER ;
-      PICTURE     "@E 9999.99" ;
+      PICTURE     "@E 9999.9999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "factor" ) ) ;
+      VALID       ( ::oController:validate( "porcentaje_incremento" ) ) ;
       OF          ::oDialog ;
 
    REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "activa" ] ;
@@ -330,12 +330,12 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosTarifasValidator
 
-   ::hValidators  := {  "nombre" =>       {  "required"  => "El nombre es un dato requerido",;
-                                             "unique"    => "El nombre introducido ya existe" },;
-                        "codigo" =>       {  "required"  => "El código es un dato requerido" ,;
-                                             "unique"    => "EL código introducido ya existe" },;
-                        "factor" =>       {  "positive"  => "El factor debe ser un número mayor que cero" },;
-                        "parent_uuid" =>  {  "required"  => "La tarifa base es un dato requerido" } }
+   ::hValidators  := {  "nombre" =>                {  "required"  => "El nombre es un dato requerido",;
+                                                      "unique"    => "El nombre introducido ya existe" },;
+                        "codigo" =>                {  "required"  => "El código es un dato requerido" ,;
+                                                      "unique"    => "EL código introducido ya existe" },;
+                        "porcentaje_incremento" => {  "positive"  => "El porcentaje de incremento debe ser un número mayor que cero" },;
+                        "parent_uuid" =>           {  "required"  => "La tarifa base es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -384,8 +384,8 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
    hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 ) NOT NULL UNIQUE"          ,;
                                                 "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "factor",               {  "create"    => "FLOAT( 8, 4 )"                           ,;
-                                                "default"   => {|| 1 } }                                 )
+   hset( ::hColumns, "porcentaje_incremento",{  "create"    => "FLOAT( 8, 4 )"                           ,;
+                                                "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "activa",               {  "create"    => "TINYINT ( 1 )"                           ,;
                                                 "default"   => {|| 1 } }                                 )
@@ -411,7 +411,7 @@ METHOD getInsertArticulosTarifasSentence()
    uuid        := win_uuidcreatestring()
 
    cSentence   := "INSERT IGNORE INTO " + ::getTableName() + " "
-   cSentence   +=    "( uuid, parent_uuid, codigo, nombre, factor, activa, sistema ) "
+   cSentence   +=    "( uuid, parent_uuid, codigo, nombre, porcentaje_incremento, activa, sistema ) "
    cSentence   += "VALUES "
    cSentence   +=    "( '" + uuid + "', '" + uuid + "', '1', '" + __tarifa_base__ + "', 1, 1, 1 )"
 
