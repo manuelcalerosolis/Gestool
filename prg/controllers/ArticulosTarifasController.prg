@@ -145,19 +145,27 @@ METHOD addColumns() CLASS ArticulosTarifasBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
-      :nWidth              := 300
+      :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'porcentaje_incremento'
-      :cHeader             := 'porcentaje_incremento'
-      :nWidth              := 130
-      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'porcentaje_incremento' ), "@E 9999.9999" ) }
+      :cSortOrder          := 'margen'
+      :cHeader             := 'Incremento %'
+      :nWidth              := 80
+      :bEditValue          := {|| transform( ::getRowSet():fieldGet( 'margen' ), "@E 9999.99" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre_tarifa_base'
+      :cHeader             := 'Tarifa base'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_tarifa_base' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -244,14 +252,15 @@ METHOD Activate() CLASS ArticulosTarifasView
       ITEMS       ( ::oController:oModel:getColumnWhere( 'nombre', 'uuid', '!=', ::oController:oModel:hBuffer[ 'uuid' ] ) ) ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "parent_uuid" ) ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "porcentaje_incremento" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "margen" ] ;
       ID          130 ;
       SPINNER ;
       PICTURE     "@E 9999.9999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "porcentaje_incremento" ) ) ;
+      VALID       ( ::oController:validate( "margen" ) ) ;
       OF          ::oDialog ;
 
    REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "activa" ] ;
@@ -334,7 +343,6 @@ METHOD getValidators() CLASS ArticulosTarifasValidator
                                                       "unique"    => "El nombre introducido ya existe" },;
                         "codigo" =>                {  "required"  => "El código es un dato requerido" ,;
                                                       "unique"    => "EL código introducido ya existe" },;
-                        "porcentaje_incremento" => {  "positive"  => "El porcentaje de incremento debe ser un número mayor que cero" },;
                         "parent_uuid" =>           {  "required"  => "La tarifa base es un dato requerido" } }
 
 RETURN ( ::hValidators )
@@ -363,9 +371,34 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    METHOD setActivaAttribute( activa )       INLINE ( if( hb_isnil( activa ), 1, if( activa, 1, 0 ) ) )
 
+   METHOD getInitialSelect()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLArticulosTarifasModel
+
+   local cSelect  := "SELECT id, "                                                                
+   cSelect        +=    "uuid, "                                                                  
+   cSelect        +=    "parent_uuid, "                                                           
+   cSelect        +=    "codigo, "                                                         
+   cSelect        +=    "nombre, "                                                         
+
+   cSelect        +=    "( SELECT nombre FROM " + ::getTableName() + " WHERE parent_uuid = uuid ) AS nombre_tarifa_base, " 
+
+   cSelect        +=    "margen, "                                                         
+   cSelect        +=    "activa, "                                                         
+   cSelect        +=    "valido_desde, "                                                         
+   cSelect        +=    "valido_hasta, "                                                         
+   cSelect        +=    "sistema "                                                         
+
+   cSelect        += "FROM " + ::getTableName() 
+
+RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD getColumns() CLASS SQLArticulosTarifasModel
 
@@ -384,7 +417,7 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
    hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 200 ) NOT NULL UNIQUE"          ,;
                                                 "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "porcentaje_incremento",{  "create"    => "FLOAT( 8, 4 )"                           ,;
+   hset( ::hColumns, "margen",               {  "create"    => "FLOAT( 8, 4 )"                           ,;
                                                 "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "activa",               {  "create"    => "TINYINT ( 1 )"                           ,;
@@ -411,9 +444,9 @@ METHOD getInsertArticulosTarifasSentence()
    uuid        := win_uuidcreatestring()
 
    cSentence   := "INSERT IGNORE INTO " + ::getTableName() + " "
-   cSentence   +=    "( uuid, parent_uuid, codigo, nombre, porcentaje_incremento, activa, sistema ) "
+   cSentence   +=    "( uuid, parent_uuid, codigo, nombre, margen, activa, sistema ) "
    cSentence   += "VALUES "
-   cSentence   +=    "( '" + uuid + "', '" + uuid + "', '1', '" + __tarifa_base__ + "', 1, 1, 1 )"
+   cSentence   +=    "( '" + uuid + "', '" + uuid + "', '1', '" + __tarifa_base__ + "', 0, 1, 1 )"
 
 RETURN ( cSentence )
 

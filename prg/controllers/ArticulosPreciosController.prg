@@ -160,12 +160,12 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'porcetaje_incremento'
-      :cHeader             := 'Incremento %'
+      :cSortOrder          := 'margen_sobre_tarifa_base'
+      :cHeader             := 'Inc.%'
       :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'porcetaje_incremento' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'margen_sobre_tarifa_base' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :cEditPicture        := "@E 9999.9999"
+      :cEditPicture        := "@E 9999.99"
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
    end with
@@ -321,12 +321,14 @@ METHOD getInitialSelect() CLASS SQLArticulosPreciosModel
    cSelect        +=    "articulos_precios.parent_uuid, "                                                           
    cSelect        +=    "articulos_precios.tarifa_uuid, "                                                         
 
-   cSelect        +=    "articulos_tarifas.porcetaje_incremento, "
+   cSelect        +=    "articulos_tarifas.margen, "
 
    cSelect        +=    "IF( articulos_precios.manual = 1, "
    cSelect        +=       "articulos_precios.margen, "
-   cSelect        +=       "( SELECT margen FROM " + SQLArticulosTarifasModel():getTableName() + " WHERE articulos_tarifas.parent_uuid = articulos_tarifas.uuid ) * articulos_tarifas.porcetaje_incremento ) "
-   cSelect        +=    "AS margen ,"
+   cSelect        +=       "( SELECT margen FROM " + SQLArticulosTarifasModel():getTableName() + " "
+   cSelect        +=          "WHERE articulos_tarifas.parent_uuid = articulos_tarifas.uuid ) " 
+   cSelect        +=    ") "
+   cSelect        +=    "AS margen_sobre_tarifa_base ,"
 
    cSelect        +=    "articulos_precios.margen_real, "                                                           
    cSelect        +=    "articulos_precios.precio_base, "                                                           
@@ -396,12 +398,9 @@ RETURN ( cSQL )
 METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
 
    local cSQL     := "INSERT IGNORE INTO " + ::getTableName()                                                  + " "  
-   cSQL           +=    "( uuid, tarifa_uuid, parent_uuid, precio_base, precio_iva_incluido )"                 + " "  
+   cSQL           +=    "( uuid, tarifa_uuid, parent_uuid, precio_base, precio_iva_incluido )"         + " "  
    cSQL           += "SELECT uuid(), articulos_tarifas.uuid, " + quoted( uuidArticulo ) + ", 0, 0"             + " "  
    cSQL           +=    "FROM " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas"
-
-   msgalert( cSQL, "cSQL" )
-   logwrite( cSQL )
 
 RETURN ( cSQL )
 
