@@ -40,7 +40,10 @@ CLASS SQLDatabase
 
    METHOD Exec( cSql )        
    METHOD ExecWithOutParse( cSql )        INLINE ( ::Exec( cSql, .f. ) )     
+   
    METHOD Execs( aSql ) 
+   METHOD ExecsWithOutParse( aSql )       INLINE ( ::Execs( aSql, .f. ) )
+
    METHOD TransactionalExec( cSql )       INLINE ( ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
    
    METHOD Query( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
@@ -219,13 +222,13 @@ RETURN ( lExec )
 
 //----------------------------------------------------------------------------//
 
-METHOD Execs( cSentence )
+METHOD Execs( cSentence, lParse )
 
    if hb_isarray( cSentence )
-      RETURN ( aeval( cSentence, {|cSql| ::Exec( cSql ) } ) ) 
+      RETURN ( aeval( cSentence, {|cSql| ::Exec( cSql, lParse ) } ) ) 
    end if 
 
-RETURN ( ::Exec( cSentence ) ) 
+RETURN ( ::Exec( cSentence, lParse ) ) 
 
 //----------------------------------------------------------------------------//
 

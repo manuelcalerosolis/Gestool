@@ -45,9 +45,9 @@ METHOD New() CLASS ArticulosTarifasController
 
    ::oRepository                    := ArticulosTarifasRepository():New( self )
 
-   ::setEvent( 'appended',                   {|| ::insertPreciosWhereTarifa() } )
+   ::setEvent( 'appended',          {|| ::insertPreciosWhereTarifa() } )
 
-   ::setEvents( { 'editing', 'deleting' },   {|| ::isSystemRegister() } )
+   ::setEvent( 'deleting',          {|| if( ::isSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 
@@ -207,9 +207,17 @@ CLASS ArticulosTarifasView FROM SQLBaseView
 
    DATA oComboTarifaPadre
 
+   DATA aComboTarifaPadre
+
    METHOD Activate()
 
    METHOD startActivate()
+
+   METHOD getItemsComboTarifaPadre()
+
+   METHOD setItemsComboTarifaPadre()
+
+   METHOD whenTarifaBase()
 
 END CLASS
 
@@ -218,6 +226,8 @@ END CLASS
 METHOD Activate() CLASS ArticulosTarifasView
 
    local oSayCamposExtra
+
+   ::aComboTarifaPadre  := ::getItemsComboTarifaPadre()
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TARIFA" ;
@@ -243,13 +253,13 @@ METHOD Activate() CLASS ArticulosTarifasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oComboTarifaPadre ;
       VAR         ::oController:oModel:hBuffer[ "parent_uuid" ] ;
-      ITEMS       ( ::oController:oModel:getColumnWhere( 'nombre', 'uuid', '!=', ::oController:oModel:hBuffer[ 'uuid' ] ) ) ;
+      ITEMS       ( ::aComboTarifaPadre ) ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "parent_uuid" ) ) ;
@@ -259,26 +269,26 @@ METHOD Activate() CLASS ArticulosTarifasView
       ID          130 ;
       SPINNER ;
       PICTURE     "@E 9999.9999" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::whenTarifaBase() ) ;
       VALID       ( ::oController:validate( "margen" ) ) ;
       OF          ::oDialog ;
 
    REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "activa" ] ;
       ID          140 ;
       IDSAY       141 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET ::oController:oModel:hBuffer[ "valido_desde" ] ;
       ID          150 ;
       SPINNER ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET ::oController:oModel:hBuffer[ "valido_hasta" ] ;
       ID          160 ;
       SPINNER ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE SAY   ::oSayCamposExtra ;
@@ -319,9 +329,63 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate() CLASS ArticulosTarifasView
 
-   SendMessage( ::oComboTarifaPadre:hWnd, 0x0153, -1, 14 )
+   sendMessage( ::oComboTarifaPadre:hWnd, 0x0153, -1, 14 )
+
+//    ::setItemsComboTarifaPadre()
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getItemsComboTarifaPadre() CLASS ArticulosTarifasView
+
+   local cItem 
+   local aItems   
+
+   if ::oController:isSystemRegister()
+      aItems      := { __tarifa_base__ }
+   else 
+      aItems      := ::oController:oModel:getColumnWhere( 'nombre', 'uuid', '!=', ::oController:oModel:hBuffer[ 'uuid' ] )
+   end if 
+
+   ains( aItems, 1, __tarifa_costo__, .t. )
+
+RETURN ( aItems )
+
+//---------------------------------------------------------------------------//
+
+METHOD setItemsComboTarifaPadre() CLASS ArticulosTarifasView
+
+   local cItem 
+   local aItems   
+
+   if ::oController:isSystemRegister()
+      aItems      := { __tarifa_base__ }
+   else 
+      aItems      := ::oController:oModel:getColumnWhere( 'nombre', 'uuid', '!=', ::oController:oModel:hBuffer[ 'uuid' ] )
+   end if 
+
+   ains( aItems, 1, __tarifa_costo__, .t. )
+
+   ::oComboTarifaPadre:setItems( aItems )
+
+   msgalert( ::oController:oModel:hBuffer[ "parent_uuid" ], "parent_uuid" )
+
+   cItem          := ::oController:oModel:hBuffer[ "parent_uuid" ]
+
+   msgalert( hb_valtoexp( aItems ), "aItems" )
+   
+   msgalert( cItem, "cItem" )
+
+   ::oComboTarifaPadre:set( cItem )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD whenTarifaBase() CLASS ArticulosTarifasView
+
+RETURN ( alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) != alltrim( ::oController:oModel:hBuffer[ "parent_uuid" ] ) .and. ::oController:isNotZoomMode() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -332,6 +396,8 @@ RETURN ( nil )
 CLASS ArticulosTarifasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
+
+   METHOD notNameCosto( value )           INLINE ( alltrim( lower( value ) ) != __tarifa_costo__ )
  
 END CLASS
 
@@ -339,11 +405,12 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosTarifasValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"  => "El nombre es un dato requerido",;
-                                                      "unique"    => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"  => "El código es un dato requerido" ,;
-                                                      "unique"    => "EL código introducido ya existe" },;
-                        "parent_uuid" =>           {  "required"  => "La tarifa base es un dato requerido" } }
+   ::hValidators  := {  "nombre" =>       {  "required"     => "El nombre es un dato requerido",;
+                                             "unique"       => "El nombre introducido ya existe",;
+                                             "notNameCosto" => "El nombre de la tarifa no puede ser '" + __tarifa_costo__ + "'" },;
+                        "codigo" =>       {  "required"     => "El código es un dato requerido" ,;
+                                             "unique"       => "EL código introducido ya existe" },;
+                        "parent_uuid" =>  {  "required"     => "La tarifa base es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -363,9 +430,10 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    METHOD getInsertArticulosTarifasSentence()
 
-   METHOD getParentUuidAttribute( uuid )     INLINE ( if( hb_isnil( uuid ), space( 200 ), SQLArticulosTarifasModel():getNombreWhereUuid( uuid ) ) )
+   METHOD getParentUuidAttribute( uuid )     INLINE ( msgalert( if( empty( uuid ), __tarifa_costo__, SQLArticulosTarifasModel():getNombreWhereUuid( uuid ) ), "alert" ),;
+                                                      if( empty( uuid ), __tarifa_costo__, SQLArticulosTarifasModel():getNombreWhereUuid( uuid ) ) )
 
-   METHOD setParentUuidAttribute( nombre )   INLINE ( if( hb_isnil( nombre ), "", SQLArticulosTarifasModel():getUuidWhereNombre( nombre ) ) )
+   METHOD setParentUuidAttribute( nombre )   INLINE ( if( hb_isnil( nombre ) .or. ( alltrim( nombre ) == __tarifa_costo__ ), "", SQLArticulosTarifasModel():getUuidWhereNombre( nombre ) ) )
 
    METHOD getActivaAttribute( activa )       INLINE ( if( hb_isnil( activa ), .t., ( activa == 1 ) ) )
 
@@ -385,7 +453,7 @@ METHOD getInitialSelect() CLASS SQLArticulosTarifasModel
    cSelect        +=    "codigo, "                                                         
    cSelect        +=    "nombre, "                                                         
 
-   cSelect        +=    "( SELECT nombre FROM " + ::getTableName() + " WHERE parent_uuid = uuid ) AS nombre_tarifa_base, " 
+   cSelect        +=    "( SELECT nombre FROM " + ::getTableName() + " AS tarifas WHERE articulos_tarifas.parent_uuid = tarifas.uuid ) AS nombre_tarifa_base, " 
 
    cSelect        +=    "margen, "                                                         
    cSelect        +=    "activa, "                                                         
@@ -395,10 +463,11 @@ METHOD getInitialSelect() CLASS SQLArticulosTarifasModel
 
    cSelect        += "FROM " + ::getTableName() 
 
+   logwrite( cSelect )
+
 RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD getColumns() CLASS SQLArticulosTarifasModel
 

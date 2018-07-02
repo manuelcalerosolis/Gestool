@@ -110,6 +110,7 @@ CLASS SQLBaseController
                                                                      ::getRowSet():fieldGet( ::oModel:cColumnKey ), nil ) )
 
    METHOD isSystemRegister()                          
+   METHOD isNotSystemRegister()                       INLINE ( !( ::isSystemRegister() ) )
 
    METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( iif(  !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
@@ -785,12 +786,7 @@ METHOD isSystemRegister()
       RETURN ( .t. )
    end if 
 
-   if ::oRowSet:fieldGet( 'sistema' ) == 1
-      msgStop( "Este registro pertenece al sistema, no se puede alterar." )
-      RETURN ( .f. )
-   end if 
-
-RETURN ( .t. )
+RETURN ( ::oRowSet:fieldGet( 'sistema' ) == 1 )
 
 //----------------------------------------------------------------------------//
 

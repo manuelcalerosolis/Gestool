@@ -11,10 +11,6 @@ CLASS UnidadesMedicionGruposLineasController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ) == 1,;
-                                             ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ),;
-                                             ( .t. ) ) )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -47,7 +43,7 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposLineasController
 
    ::oGetSelector                   := GetSelector():New( self )
 
-   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
+   ::setEvents( { 'editing', 'deleting' }, {|| if( ::isSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 

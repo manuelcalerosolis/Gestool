@@ -1273,6 +1273,8 @@ METHOD updateBufferWhereUuid( uuid, hBuffer )
 
    cSql           +=    "WHERE uuid = " + toSqlString( uuid )
 
+   msgalert( cSQL, "updateBufferWhereUuid" )
+
 RETURN ( ::getDatabase():Exec( cSql ) )
 
 //---------------------------------------------------------------------------//

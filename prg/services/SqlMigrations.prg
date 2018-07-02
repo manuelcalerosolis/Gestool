@@ -87,7 +87,7 @@ RETURN ( aeval( ::aRepositories, {|oRepository| ::checkRepository( oRepository )
 
 METHOD checkRepository( oRepository ) CLASS SQLBaseMigrations
 
-   getSQLDatabase():Execs( oRepository:getSQLFunctions() )
+   getSQLDatabase():ExecsWithOutParse( oRepository:getSQLFunctions() )
 
 RETURN ( Self )
 
@@ -213,6 +213,7 @@ METHOD checkValues() CLASS SQLGestoolMigrations
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
@@ -224,6 +225,8 @@ CLASS SQLCompanyMigrations FROM SQLBaseMigrations
    METHOD Run( cCodigoEmpresa )
 
    METHOD addModels()
+
+   METHOD addRepositories()
 
    METHOD checkValues()
 
@@ -242,6 +245,10 @@ METHOD Run( cCodigoEmpresa ) CLASS SQLCompanyMigrations
    ::checkModels( Company():getDatabase() )
 
    ::checkValues()
+
+   ::addRepositories()
+
+   ::checkRepositories()
 
 RETURN ( Self )
 
@@ -416,4 +423,13 @@ METHOD checkValues() CLASS SQLCompanyMigrations
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
+METHOD addRepositories() CLASS SQLCompanyMigrations
+
+   aadd( ::aRepositories, ArticulosPreciosRepository():New() )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 

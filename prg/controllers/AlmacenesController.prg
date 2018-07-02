@@ -76,7 +76,7 @@ METHOD New( oSenderController ) CLASS AlmacenesController
 
    ::oModel:setEvent( 'gettingSelectSentence',        {|| ::gettingSelectSentence() } ) 
 
-   ::setEvents( { 'editing', 'deleting' },            {|| ::isSystemRegister() } )
+   ::setEvents( { 'editing', 'deleting' },            {|| if( ::isSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 

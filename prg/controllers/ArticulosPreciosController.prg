@@ -62,6 +62,8 @@ METHOD setMargen( oCol, nMargen ) CLASS ArticulosPreciosController
 
    local oCommand
 
+   msgalert( nMargen, "nMargen")
+
    if ::oValidator:validate( 'margen', nMargen )
 
       oCommand    := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
@@ -72,9 +74,11 @@ METHOD setMargen( oCol, nMargen ) CLASS ArticulosPreciosController
 
       ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
 
-      // ::oRepository:selectFunctionPriceUsingMargin( ::oSenderController:getPrecioCosto(), ::oSenderController:getPorcentajeIVA(), nMargen, ::getRowSet():fieldGet( 'uuid' ) )
-
       ::getRowSet():Refresh()
+
+   else
+
+      msgalert( "margen no validado" )
 
    end if 
 
@@ -125,7 +129,9 @@ CLASS ArticulosPreciosBrowseView FROM SQLBrowseView
 
    DATA nMarqueeStyle         INIT 3
 
-   METHOD addColumns()                    
+   METHOD addColumns()         
+
+   METHOD getPrecioBase()           
 
 ENDCLASS
 
@@ -156,25 +162,6 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :cHeader             := 'Tarifa'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'margen_sobre_tarifa_base'
-      :cHeader             := 'Inc.%'
-      :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'margen_sobre_tarifa_base' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :cEditPicture        := "@E 9999.99"
-      :nDataStrAlign       := 1
-      :nHeadStrAlign       := 1
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre_tarifa_base'
-      :cHeader             := 'Tarifa base'
-      :nWidth              := 120
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_tarifa_base' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -258,7 +245,33 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :SetCheck( { "Sel16", "Nil16" } )
    end with
 
-RETURN ( self )
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getPrecioBase()  CLASS ArticulosPreciosBrowseView
+
+   local nPrecioBase := 0
+
+   // if ::getRowSet():fieldGet( 'manual' ) == 1
+   //    RETURN ( ::getRowSet():fieldGet( 'precio_base' ) )
+   // end if 
+
+   // buscar en la tarifa anterior el porcentaje o es cero
+
+   RETURN ::getRowSet():fieldget('margen')
+
+   // ver si en la tarifa anterior ese articulo tiene precio manual o es la base
+
+   // aplicar el porcentaje calculado a la tarifa encontrada
+
+
+
+
+
+
+
+RETURN ( nPrecioBase )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -321,25 +334,34 @@ METHOD getInitialSelect() CLASS SQLArticulosPreciosModel
    cSelect        +=    "articulos_precios.parent_uuid, "                                                           
    cSelect        +=    "articulos_precios.tarifa_uuid, "                                                         
 
-   cSelect        +=    "articulos_tarifas.margen, "
-
    cSelect        +=    "IF( articulos_precios.manual = 1, "
    cSelect        +=       "articulos_precios.margen, "
-   cSelect        +=       "( SELECT margen FROM " + SQLArticulosTarifasModel():getTableName() + " "
-   cSelect        +=          "WHERE articulos_tarifas.parent_uuid = articulos_tarifas.uuid ) " 
+   cSelect        +=       "articulos_tarifas.margen " 
    cSelect        +=    ") "
-   cSelect        +=    "AS margen_sobre_tarifa_base ,"
+   cSelect        +=    "AS margen, "
+
+   cSelect        +=    "IF( articulos_precios.manual = 1, "
+   cSelect        +=       "articulos_precios.precio_base, "
+   cSelect        +=       "( ( articulos_precios_parent.precio_base * articulos_tarifas.margen / 100 ) + articulos_precios_parent.precio_base ) " 
+   cSelect        +=    ") "
+   cSelect        +=    "AS precio_base, "
 
    cSelect        +=    "articulos_precios.margen_real, "                                                           
-   cSelect        +=    "articulos_precios.precio_base, "                                                           
    cSelect        +=    "articulos_precios.precio_iva_incluido, "                                                   
    cSelect        +=    "articulos_precios.manual, "                                                                
+
    cSelect        +=    "articulos_tarifas.nombre, "                                                                
    cSelect        +=    "articulos_tarifas.parent_uuid, "                                                           
+
    cSelect        +=    "( SELECT nombre FROM " + SQLArticulosTarifasModel():getTableName() + " WHERE articulos_tarifas.parent_uuid = articulos_tarifas.uuid ) AS nombre_tarifa_base "  
-   cSelect        += "FROM " + ::getTableName() + " AS articulos_precios "                                          
+
+   cSelect        += "FROM " + ::getTableName() + " AS articulos_precios "                
+
    cSelect        +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas "        
-   cSelect        +=       "ON articulos_tarifas.uuid = articulos_precios.tarifa_uuid"                              
+   cSelect        +=       "ON articulos_tarifas.uuid = articulos_precios.tarifa_uuid "                              
+
+   cSelect        +=    "INNER JOIN " + ::getTableName() + " AS articulos_precios_parent "        
+   cSelect        +=       "ON articulos_precios_parent.parent_uuid = articulos_precios.parent_uuid AND articulos_precios_parent.tarifa_uuid = articulos_tarifas.parent_uuid"
 
    logwrite( cSelect )
 
@@ -421,7 +443,7 @@ CLASS ArticulosPreciosRepository FROM SQLBaseRepository
 
    METHOD selectFunctionPriceUsingMargin()
    
-   METHOD dropFunctionPriceUsingMargin()  INLINE ( "DROP FUNCTION IF EXISTS CalculatePriceUsingMargin;" )
+   METHOD dropFunctionPriceUsingMargin()  INLINE ( "DROP FUNCTION IF EXISTS CalculateBaseMargin;" )
 
    METHOD createFunctionPriceUsingMargin()
 
@@ -446,7 +468,7 @@ RETURN ( getSQLDatabase():Exec( cSQL ) )
 //---------------------------------------------------------------------------//
 
 METHOD createFunctionPriceUsingMargin() CLASS ArticulosPreciosRepository
-   
+/*   
    local cSQL  := "CREATE FUNCTION CalculatePriceUsingMargin( PrecioCosto FLOAT, PorcentajeIVA FLOAT, Margen FLOAT, PrecioUuid CHAR ) RETURNS FLOAT" + space( 1 )
    
    cSQL        += "BEGIN"                                                                                + space( 1 )
@@ -466,6 +488,48 @@ METHOD createFunctionPriceUsingMargin() CLASS ArticulosPreciosRepository
 
    cSQL        +=    "RETURN PrecioBase;"                                                                + space( 1 )
    cSQL        += "END;"                                                                                 + space( 1 )
+*/
+   local cSQL  := "CREATE DEFINER = `root`@`localhost` FUNCTION `CalculateBaseMargin`( `param_uuid` VARCHAR(40) ) "
+   cSQL        += "RETURNS float "
+   cSQL        += "LANGUAGE SQL "
+   cSQL        += "NOT DETERMINISTIC "
+   cSQL        += "CONTAINS SQL "
+   cSQL        += "SQL SECURITY DEFINER "
+   cSQL        += "COMMENT '25d7860e-3671-478a-a47a-05dca2cd8345' "
+   cSQL        += "BEGIN "
+
+   cSQL        += "DECLARE current_margen DECIMAL(10,2);"
+   cSQL        += "DECLARE total_margen DECIMAL(10,2);"
+
+   cSQL        += "DECLARE current_parent_uuid CHAR(40);"
+
+   cSQL        += "SET @total_margen = 0;"
+
+   cSQL        += "SELECT "
+   cSQL        += "margen, parent_uuid "
+   cSQL        += "INTO "
+   cSQL        += "@current_margen, @current_parent_uuid "
+   cSQL        += "FROM " + ::getTableName() + " "
+   cSQL        += "WHERE uuid = param_uuid;"
+
+   cSQL        += "SET @total_margen = @total_margen + @current_margen;"
+
+   cSQL        += "WHILE @current_margen != 0 DO "
+   
+   cSQL        +=    "SELECT "
+   cSQL        +=    "margen, parent_uuid "
+   cSQL        +=    "INTO "
+   cSQL        +=    "@current_margen, @current_parent_uuid "
+   cSQL        +=    "FROM gestool_00vg.articulos_tarifas "
+   cSQL        +=    "WHERE uuid = @current_parent_uuid;"
+   
+   cSQL        +=    "SET @total_margen = @total_margen + @current_margen;"
+
+   cSQL        +=    "END WHILE;"
+
+   cSQL        +=    "RETURN @total_margen;"
+
+   cSQL        +=    "END"
 
 RETURN ( cSQL )
 
@@ -482,6 +546,7 @@ METHOD createFunctionTest() CLASS ArticulosPreciosRepository
    cSQL        +=    "RETURN 1;"                                                                         + space( 1 )
    cSQL        += "END;"                                                                                 + space( 1 )
 
+   msgalert( cSQL, "cSQL" )
 
 RETURN ( cSQL )
 

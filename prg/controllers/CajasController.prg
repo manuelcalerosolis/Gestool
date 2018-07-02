@@ -49,7 +49,7 @@ METHOD New( oSenderController) CLASS CajasController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
+   ::setEvents( { 'editing', 'deleting' }, {|| if( ::isSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 
