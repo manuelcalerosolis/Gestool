@@ -203,6 +203,8 @@ RETURN ( self )
 
 CLASS ArticulosTarifasView FROM SQLBaseView
 
+   DATA oGetMargen
+
    DATA oSayCamposExtra
 
    DATA oComboTarifaPadre
@@ -211,11 +213,15 @@ CLASS ArticulosTarifasView FROM SQLBaseView
 
    METHOD Activate()
 
+   METHOD Activating()              INLINE ( ::aComboTarifaPadre  := ::getItemsComboTarifaPadre() )
+
    METHOD startActivate()
 
    METHOD getItemsComboTarifaPadre()
 
    METHOD setItemsComboTarifaPadre()
+
+   METHOD changeComboTarifaPadre()
 
    METHOD whenTarifaBase()
 
@@ -227,7 +233,9 @@ METHOD Activate() CLASS ArticulosTarifasView
 
    local oSayCamposExtra
 
-   ::aComboTarifaPadre  := ::getItemsComboTarifaPadre()
+   msgalert( ::oController:oModel:hBuffer[ "sistema" ], "sistema")
+   msgalert( ::oController:isNotSystemRegister(), "::oController:isNotSystemRegister()" )
+   msgalert( ::oController:isNotZoomMode(), "::oController:isNotZoomMode()" )
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TARIFA" ;
@@ -265,7 +273,10 @@ METHOD Activate() CLASS ArticulosTarifasView
       VALID       ( ::oController:validate( "parent_uuid" ) ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "margen" ] ;
+   ::oComboTarifaPadre:bChange   := {|| ::changeComboTarifaPadre() }
+
+   REDEFINE GET   ::oGetMargen ;
+      VAR         ::oController:oModel:hBuffer[ "margen" ] ;
       ID          130 ;
       SPINNER ;
       PICTURE     "@E 9999.9999" ;
@@ -337,6 +348,18 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD changeComboTarifaPadre() CLASS ArticulosTarifasView
+
+   ::oGetMargen:varPut( 0 )
+
+   ::oGetMargen:Refresh()
+
+   ::oGetMargen:setFocus()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD getItemsComboTarifaPadre() CLASS ArticulosTarifasView
 
    local cItem 
@@ -369,13 +392,7 @@ METHOD setItemsComboTarifaPadre() CLASS ArticulosTarifasView
 
    ::oComboTarifaPadre:setItems( aItems )
 
-   msgalert( ::oController:oModel:hBuffer[ "parent_uuid" ], "parent_uuid" )
-
    cItem          := ::oController:oModel:hBuffer[ "parent_uuid" ]
-
-   msgalert( hb_valtoexp( aItems ), "aItems" )
-   
-   msgalert( cItem, "cItem" )
 
    ::oComboTarifaPadre:set( cItem )
 
@@ -447,23 +464,23 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLArticulosTarifasModel
 
-   local cSelect  := "SELECT id, "                                                                
-   cSelect        +=    "uuid, "                                                                  
-   cSelect        +=    "parent_uuid, "                                                           
-   cSelect        +=    "codigo, "                                                         
-   cSelect        +=    "nombre, "                                                         
+   local cSelect  := "SELECT articulos_tarifas.id, "                                                                
+   cSelect        +=    "articulos_tarifas.uuid, "                                                                  
+   cSelect        +=    "articulos_tarifas.parent_uuid, "                                                           
+   cSelect        +=    "articulos_tarifas.codigo, "                                                         
+   cSelect        +=    "articulos_tarifas.nombre, "                                                         
+   cSelect        +=    "articulos_tarifas.margen, "                                                         
+   cSelect        +=    "articulos_tarifas.activa, "                                                         
+   cSelect        +=    "articulos_tarifas.valido_desde, "                                                         
+   cSelect        +=    "articulos_tarifas.valido_hasta, "                                                         
+   cSelect        +=    "articulos_tarifas.sistema, "                            
 
-   cSelect        +=    "( SELECT nombre FROM " + ::getTableName() + " AS tarifas WHERE articulos_tarifas.parent_uuid = tarifas.uuid ) AS nombre_tarifa_base, " 
+   cSelect        +=    "IFNULL( articulos_tarifas_base.nombre, " + quoted( __tarifa_costo__ ) + " ) AS nombre_tarifa_base " 
 
-   cSelect        +=    "margen, "                                                         
-   cSelect        +=    "activa, "                                                         
-   cSelect        +=    "valido_desde, "                                                         
-   cSelect        +=    "valido_hasta, "                                                         
-   cSelect        +=    "sistema "                                                         
+   cSelect        += "FROM " + ::getTableName() + " AS articulos_tarifas "
 
-   cSelect        += "FROM " + ::getTableName() 
-
-   logwrite( cSelect )
+   cSelect        +=    "LEFT JOIN " + ::getTableName() + " AS articulos_tarifas_base "        
+   cSelect        +=       "ON articulos_tarifas_base.uuid = articulos_tarifas.parent_uuid"
 
 RETURN ( cSelect )
 
