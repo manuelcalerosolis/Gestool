@@ -15,7 +15,7 @@ CLASS ArticulosTarifasController FROM SQLNavigatorController
 
    METHOD Delete( aSelectedRecno )
 
-   METHOD insertPreciosWhereTarifa()
+   METHOD updatedTarifa()
 
 END CLASS
 
@@ -49,7 +49,7 @@ METHOD New() CLASS ArticulosTarifasController
 
    ::oRepository                    := ArticulosTarifasRepository():New( self )
 
-   ::setEvents( { 'appended', 'duplicated', 'edited' },  {|| ::insertPreciosWhereTarifa() } )
+   ::setEvents( { 'appended', 'duplicated', 'edited' },  {|| ::updatedTarifa() } )
 
    ::setEvent( 'deleting',          {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -95,21 +95,31 @@ RETURN ( ::Super:Delete( aSelectedRecno ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertPreciosWhereTarifa() CLASS ArticulosTarifasController
+METHOD updatedTarifa() CLASS ArticulosTarifasController
 
-   local cTarifa     
-   local uuidTarifa
+   local nMargen
+   local cTarifaSobre     
+   local cTarifaActualizar     
+   local uuidTarifaSobre     
+   local uuidTarifaActualizar     
 
-   cTarifa           := hget( ::oModel:hBuffer, "parent_uuid" )
+   nMargen              := hget( ::oModel:hBuffer, "margen" )
+   cTarifaSobre         := hget( ::oModel:hBuffer, "parent_uuid" )
+   uuidTarifaActualizar := hget( ::oModel:hBuffer, "uuid" )
+   cTarifaActualizar    := hget( ::oModel:hBuffer, "nombre" )
+   uuidTarifaSobre      := SQLArticulosTarifasModel():getUuidWhereNombre( cTarifaSobre )
 
-   if cTarifa == __tarifa_costo__
-      RETURN ( ::oArticulosPreciosController:oModel:insertUpdatePreciosSobreCostoWhereTarifa( hget( ::oModel:hBuffer, "uuid" ), hget( ::oModel:hBuffer, "margen" ) ) )
+   msgalert( nMargen, "nMargen" )
+   msgalert( cTarifaSobre, "cTarifaSobre" )
+   msgalert( uuidTarifaSobre, "uuidTarifaSobre" )
+   msgalert( uuidTarifaActualizar, "uuidTarifaActualizar" )
+   msgalert( cTarifaActualizar, "cTarifaActualizar" )
+
+   if cTarifaSobre == __tarifa_costo__
+      ::oArticulosPreciosController:oModel:insertUpdatePreciosSobreCostoWhereTarifa( uuidTarifaActualizar, nMargen )
    end if
 
-   uuidTarifa        := SQLArticulosTarifasModel():getUuidWhereNombre( cTarifa )
-
-   msgalert( cTarifa, "cTarifa" )
-   msgalert( uuidTarifa, "uuidTarifa" )
+   ::oArticulosPreciosController:oModel:insertUpdateWhereTarifa( uuidTarifaActualizar )
 
 RETURN ( nil )
 
@@ -453,6 +463,8 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    METHOD getInsertArticulosTarifasSentence()
 
+   METHOD insertUpdateWhereTarifa( uuidTarifa )
+
    METHOD getParentUuidAttribute( uuid )     INLINE ( if( empty( uuid ), __tarifa_costo__, SQLArticulosTarifasModel():getNombreWhereUuid( uuid ) ) )
 
    METHOD setParentUuidAttribute( nombre )   INLINE ( if( hb_isnil( nombre ) .or. ( alltrim( nombre ) == __tarifa_costo__ ), "", SQLArticulosTarifasModel():getUuidWhereNombre( nombre ) ) )
@@ -527,7 +539,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertArticulosTarifasSentence()
+METHOD getInsertArticulosTarifasSentence() CLASS SQLArticulosTarifasModel
 
    local uuid 
    local cSentence 
@@ -542,6 +554,15 @@ METHOD getInsertArticulosTarifasSentence()
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
+
+METHOD insertUpdateWhereTarifa( uuidTarifa ) CLASS SQLArticulosTarifasModel
+
+   msgalert( uuidTarifa, "uuidTarifa" )
+
+   msgalert( hb_valtoexp( ::findByUuid( uuidTarifa ) ) )
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

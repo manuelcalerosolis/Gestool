@@ -23,7 +23,7 @@ CLASS SQLBaseModel
 
    DATA cColumnOrientation
 
-   DATA cGeneralSelect                                                              
+   DATA cGeneralSelect                                                                                             
 
    DATA cGeneralWhere
 
@@ -101,8 +101,10 @@ CLASS SQLBaseModel
    METHOD getField( cField, cBy, cId )
    METHOD getHashWhere( cBy, cId )
 
-   METHOD getIdSelect( id )
+   METHOD getWhereIdSelect( id )
+   METHOD getWhereUuidSelect( uuid )
    METHOD getWhereSelect( cWhere )
+
    METHOD getSelectSentence()
    
    METHOD setCreatedTimeStamp( hBuffer )
@@ -125,6 +127,8 @@ CLASS SQLBaseModel
    METHOD getDropTableSentence()
 
    METHOD setGeneralSelect( cSelect )                 INLINE ( ::cGeneralSelect  := cSelect )
+   METHOD getGeneralSelect()                          INLINE ( if( empty( ::cGeneralSelect ), "SELECT * FROM " + ::getTableName(), ::cGeneralSelect ) )
+
    METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
    METHOD addGeneralWhere( cSQLSelect )
    
@@ -168,12 +172,14 @@ CLASS SQLBaseModel
 
    METHOD getSelectByOrder()
 
-   METHOD getWhere( cWhere )                          INLINE ( atail( ::getDatabase():selectFetchHash( ::getWhereSelect( cWhere ) ) ) )
+   METHOD getWhere( cField, cOperator, uValue )       INLINE ( atail( ::getDatabase():selectFetchHash( ::getWhereSelect( cField, cOperator, uValue ) ) ) )
 
    // Busquedas----------------------------------------------------------------
 
    METHOD setFind( cFind )                            INLINE ( ::cFind := cFind )
+
    METHOD findById( nId )
+   METHOD findByUuid( uuid )
    
    // Busquedas----------------------------------------------------------------
 
@@ -353,19 +359,22 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getIdSelect( id )
+METHOD getWhereIdSelect( id )
 
-   local cSQLSelect        := ::cGeneralSelect + " "
-   cSQLSelect              += "WHERE id = " + toSQLString( id )
-
-RETURN ( cSQLSelect )
+RETURN ( ::getWhereSelect( "id", "=", id ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getWhereSelect( cWhere )
+METHOD getWhereUuidSelect( uuid )
 
-   local cSQLSelect        := ::cGeneralSelect + " "
-   cSQLSelect              += "WHERE " + cWhere 
+RETURN ( ::getWhereSelect( "uuid", "=", uuid ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereSelect( cField, cOperator, uValue )
+
+   local cSQLSelect        := ::getGeneralSelect() + " "
+   cSQLSelect              += "WHERE " + cField + cOperator + toSQLString( uValue ) 
 
 RETURN ( cSQLSelect )
 
@@ -504,23 +513,6 @@ METHOD addFindWhere( cSQLSelect )
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
-/*
-METHOD getSelectByOrder( cSQLSelect )
-
-   if !empty( ::getColumnOrder() )
-      cSQLSelect  += " ORDER BY " + ::getColumnOrder() 
-   end if 
-
-   if !empty( ::getColumnOrientation() ) .and. ::getColumnOrientation() == "A"
-      cSQLSelect  += " DESC"
-   else
-      cSQLSelect  += " ASC"
-   end if
-
-RETURN ( cSQLSelect )
-*/
-
-//---------------------------------------------------------------------------//
 
 METHOD getSelectByOrder( cSQLSelect )
 
@@ -559,8 +551,6 @@ METHOD getCreateTableSentence( cDatabaseMySQL )
    else
       cSQLCreateTable      := chgAtEnd( cSQLCreateTable, ' )', 2 )
    end if
-
-   // msgInfo( cSQLCreateTable, "cSQLCreateTable " + ::getTableName(), "Create sentence" ) 
 
 RETURN ( cSQLCreateTable )
 
@@ -620,7 +610,25 @@ METHOD findById( id )
       RETURN ( nil )
    end if 
 
-   hBuffer        := atail( ::getDatabase():selectPadedFetchHash( ::getIdSelect( id ) ) )
+   hBuffer        := atail( ::getDatabase():selectPadedFetchHash( ::getWhereIdSelect( id ) ) )
+
+   if hb_ishash( hBuffer )
+      heval( hBuffer, {|k,v| hset( hBuffer, k, ::getAttribute( k, v ) ) } )
+   end if 
+
+RETURN ( hBuffer )
+
+//---------------------------------------------------------------------------//
+
+METHOD findByUuid( uuid )
+
+   local hBuffer  
+
+   if !hb_ischar( uuid )
+      RETURN ( nil )
+   end if 
+
+   hBuffer        := atail( ::getDatabase():selectPadedFetchHash( ::getWhereUuidSelect( uuid ) ) )
 
    if hb_ishash( hBuffer )
       heval( hBuffer, {|k,v| hset( hBuffer, k, ::getAttribute( k, v ) ) } )

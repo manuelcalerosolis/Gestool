@@ -327,6 +327,7 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
                                                                               'precio_base'           => oCommand:PrecioBase(),;
                                                                               'precio_iva_incluido'   => oCommand:PrecioIVAIncluido(),;
                                                                               'manual'                => 1 } ) )
+   METHOD insertUpdateWhereTarifa( uuidTarifa ) 
 
 END CLASS
 
@@ -408,7 +409,7 @@ RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLInsertUpdatePreciosSobreCostoWhereTarifa( uuidTarifa, nMargen )
+METHOD getSQLInsertUpdatePreciosSobreCostoWhereTarifa( uuidTarifa, nMargen ) CLASS SQLArticulosPreciosModel
 
    local cSQL
 
@@ -449,7 +450,7 @@ RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLInsertPreciosWhereTarifa( codigoTarifa )
+METHOD getSQLInsertPreciosWhereTarifa( codigoTarifa ) CLASS SQLArticulosPreciosModel
 
    local cSQL
 
@@ -464,7 +465,7 @@ RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
+METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo ) CLASS SQLArticulosPreciosModel
 
    local cSQL     
 
@@ -474,6 +475,54 @@ METHOD getSQLInsertPreciosWhereArticulo( uuidArticulo )
    cSQL           +=    "FROM " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas"
 
 RETURN ( cSQL )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertUpdateWhereTarifa( uuidTarifa ) CLASS SQLArticulosPreciosModel
+
+   local cSQL
+
+   cSQL  := "INSERT INTO " + ::getTableName()                                                            + " "  
+   
+   cSQL  +=    "( uuid,"                                                                                 + " "
+   cSQL  +=    "parent_uuid,"                                                                            + " "
+   cSQL  +=    "tarifa_uuid,"                                                                            + " "
+   cSQL  +=    "margen,"                                                                                 + " "
+   cSQL  +=    "precio_base,"                                                                            + " "  
+   cSQL  +=    "precio_iva_incluido )"                                                                   + " "  
+
+   cSQL  += "SELECT "                                                                                    + " "
+   
+   cSQL  +=    "UUID(),"                                                                                 + " "
+   cSQL  +=    "articulos.uuid,"                                                                         + " "
+   cSQL  +=    quoted( uuidTarifa ) + ","                                                                + " "
+   cSQL  +=    "articulos_tarifas.margen ,"                                                 + " "
+   cSQL  +=    "articulos_precios_parent.precio_base,"                                                   + " "   
+   cSQL  +=    "articulos_precios_parent.precio_iva_incluido"                                            + " "   
+
+   cSQL  += "FROM " + SQLArticulosModel():getTableName() + " AS articulos"                               + " "
+
+   cSQL  += "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas"          + " "
+   cSQL  +=    "ON articulos_tarifas.uuid = " + quoted( uuidTarifa )                                     + " "
+
+   cSQL  += "INNER JOIN " + ::getTableName() + " AS articulos_precios_parent"                            + " "
+   cSQL  +=    "ON articulos_precios_parent.parent_uuid = articulos.uuid"                                + " "
+   cSQL  +=    "AND articulos_precios_parent.tarifa_uuid = articulos_tarifas.parent_uuid"                + " "
+
+   cSQL  += "INNER JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva"                          + " "
+   cSQL  +=    "ON tipos_iva.codigo = articulos.tipo_iva_codigo"                                         + " "
+
+   cSQL  +=    "WHERE articulos_precios_parent.manual != 1"                                              + " "
+
+   cSQL  += "ON DUPLICATE KEY UPDATE"                                                                    + " "
+   cSQL  +=    "margen = articulos_tarifas.margen ,"                                                     + " "   
+   cSQL  +=    "precio_base = articulos_precios_parent.precio_base,"                                     + " "   
+   cSQL  +=    "precio_iva_incluido = articulos_precios_parent.precio_iva_incluido"
+
+   msgalert( cSQL )
+   logwrite( cSQL )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

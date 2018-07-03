@@ -182,9 +182,7 @@ RETURN nil
 
 FUNCTION CreateMainSQLWindow( oIconApp )
 
-   // if !( lInitCheck() )
-   //    RETURN nil
-   // end if 
+   Test()
 
    // Carga o no la imagen de fondo--------------------------------------------
 
@@ -342,6 +340,8 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
+
+   SQLArticulosPreciosModel():insertUpdateWhereTarifa( '528dd01d-6a3d-4149-9de2-dbeea6b5814c' ) 
 
    // SQLContadoresModel():insertSerie( "movimientos_almacen", "ABC", 1 )
 
