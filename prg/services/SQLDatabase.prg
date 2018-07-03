@@ -231,6 +231,30 @@ METHOD Execs( cSentence, lParse )
 RETURN ( ::Exec( cSentence, lParse ) ) 
 
 //----------------------------------------------------------------------------//
+/*
+METHOD Parse( cSql )
+
+   local e
+
+   if empty( ::oConexion )
+      RETURN ( .f. )
+   end if 
+
+   try
+      
+      ::oConexion:Parse( cSql )
+
+   catch e
+      
+      msgstop( e:SubSystem + ";" + padl( e:SubCode, 4 ) + ";" + e:Operation + ";" + e:Description, "Error en sentencia" )  
+
+      RETURN ( .f. )
+
+   end 
+
+RETURN ( .t. )
+*/
+//----------------------------------------------------------------------------//
 
 METHOD selectFetch( cSentence, fetchType, attributePad )
 
