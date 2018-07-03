@@ -109,8 +109,8 @@ CLASS SQLBaseController
    METHOD getIdFromRowSet()                           INLINE ( iif(  !empty( ::getRowSet() ),;
                                                                      ::getRowSet():fieldGet( ::oModel:cColumnKey ), nil ) )
 
-   METHOD isSystemRegister()                          
-   METHOD isNotSystemRegister()                       INLINE ( !( ::isSystemRegister() ) )
+   METHOD isRowSetSystemRegister()                          
+   METHOD isNotRowSetSystemRegister()                       INLINE ( !( ::isRowSetSystemRegister() ) )
 
    METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( iif(  !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
@@ -780,7 +780,7 @@ RETURN ( ::oRowSet:findString( uValue, cColumn ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD isSystemRegister()
+METHOD isRowSetSystemRegister()
 
    if empty( ::oRowSet )
       RETURN ( .t. )

@@ -7,6 +7,8 @@ CLASS ArticulosTarifasController FROM SQLNavigatorController
 
    DATA oCamposExtraValoresController
 
+   DATA oArticulosPreciosController
+
    METHOD New()
 
    METHOD End()
@@ -41,13 +43,15 @@ METHOD New() CLASS ArticulosTarifasController
 
    ::oValidator                     := ArticulosTarifasValidator():New( self, ::oDialogView )
 
+   ::oArticulosPreciosController    := ArticulosPreciosController():New( self )
+
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oRepository                    := ArticulosTarifasRepository():New( self )
 
-   ::setEvent( 'appended',          {|| ::insertPreciosWhereTarifa() } )
+   ::setEvents( { 'appended', 'duplicated', 'edited' },  {|| ::insertPreciosWhereTarifa() } )
 
-   ::setEvent( 'deleting',          {|| if( ::isSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
+   ::setEvent( 'deleting',          {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 
@@ -64,6 +68,8 @@ METHOD End() CLASS ArticulosTarifasController
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oArticulosPreciosController:End()
 
    ::oCamposExtraValoresController:End()
 
@@ -91,15 +97,21 @@ RETURN ( ::Super:Delete( aSelectedRecno ) )
 
 METHOD insertPreciosWhereTarifa() CLASS ArticulosTarifasController
 
-   local codigoTarifa  := hget( ::oModel:hBuffer, "codigo" )
+   local cTarifa     
+   local uuidTarifa
 
-   if empty( codigoTarifa )
-      RETURN ( Self )
-   end if 
+   cTarifa           := hget( ::oModel:hBuffer, "parent_uuid" )
 
-   SQLArticulosPreciosModel():insertPreciosWhereTarifa( codigoTarifa )
+   if cTarifa == __tarifa_costo__
+      RETURN ( ::oArticulosPreciosController:oModel:insertUpdatePreciosSobreCostoWhereTarifa( hget( ::oModel:hBuffer, "uuid" ), hget( ::oModel:hBuffer, "margen" ) ) )
+   end if
 
-RETURN ( Self )
+   uuidTarifa        := SQLArticulosTarifasModel():getUuidWhereNombre( cTarifa )
+
+   msgalert( cTarifa, "cTarifa" )
+   msgalert( uuidTarifa, "uuidTarifa" )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -233,10 +245,6 @@ METHOD Activate() CLASS ArticulosTarifasView
 
    local oSayCamposExtra
 
-   msgalert( ::oController:oModel:hBuffer[ "sistema" ], "sistema")
-   msgalert( ::oController:isNotSystemRegister(), "::oController:isNotSystemRegister()" )
-   msgalert( ::oController:isNotZoomMode(), "::oController:isNotZoomMode()" )
-
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TARIFA" ;
       TITLE       ::LblTitle() + "tarifa"
@@ -261,7 +269,7 @@ METHOD Activate() CLASS ArticulosTarifasView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
-      WHEN        ( ::oController:isNotSystemRegister() .and. ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog ;
 
@@ -287,19 +295,19 @@ METHOD Activate() CLASS ArticulosTarifasView
    REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "activa" ] ;
       ID          140 ;
       IDSAY       141 ;
-      WHEN        ( ::oController:isNotSystemRegister() .and. ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET ::oController:oModel:hBuffer[ "valido_desde" ] ;
       ID          150 ;
       SPINNER ;
-      WHEN        ( ::oController:isNotSystemRegister() .and. ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET ::oController:oModel:hBuffer[ "valido_hasta" ] ;
       ID          160 ;
       SPINNER ;
-      WHEN        ( ::oController:isNotSystemRegister() .and. ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE SAY   ::oSayCamposExtra ;
@@ -342,8 +350,6 @@ METHOD startActivate() CLASS ArticulosTarifasView
 
    sendMessage( ::oComboTarifaPadre:hWnd, 0x0153, -1, 14 )
 
-//    ::setItemsComboTarifaPadre()
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -365,7 +371,7 @@ METHOD getItemsComboTarifaPadre() CLASS ArticulosTarifasView
    local cItem 
    local aItems   
 
-   if ::oController:isSystemRegister()
+   if ::oController:isRowSetSystemRegister()
       aItems      := { __tarifa_base__ }
    else 
       aItems      := ::oController:oModel:getColumnWhere( 'nombre', 'uuid', '!=', ::oController:oModel:hBuffer[ 'uuid' ] )
@@ -382,7 +388,7 @@ METHOD setItemsComboTarifaPadre() CLASS ArticulosTarifasView
    local cItem 
    local aItems   
 
-   if ::oController:isSystemRegister()
+   if ::oController:isRowSetSystemRegister()
       aItems      := { __tarifa_base__ }
    else 
       aItems      := ::oController:oModel:getColumnWhere( 'nombre', 'uuid', '!=', ::oController:oModel:hBuffer[ 'uuid' ] )
@@ -447,8 +453,7 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    METHOD getInsertArticulosTarifasSentence()
 
-   METHOD getParentUuidAttribute( uuid )     INLINE ( msgalert( if( empty( uuid ), __tarifa_costo__, SQLArticulosTarifasModel():getNombreWhereUuid( uuid ) ), "alert" ),;
-                                                      if( empty( uuid ), __tarifa_costo__, SQLArticulosTarifasModel():getNombreWhereUuid( uuid ) ) )
+   METHOD getParentUuidAttribute( uuid )     INLINE ( if( empty( uuid ), __tarifa_costo__, SQLArticulosTarifasModel():getNombreWhereUuid( uuid ) ) )
 
    METHOD setParentUuidAttribute( nombre )   INLINE ( if( hb_isnil( nombre ) .or. ( alltrim( nombre ) == __tarifa_costo__ ), "", SQLArticulosTarifasModel():getUuidWhereNombre( nombre ) ) )
 
@@ -516,7 +521,7 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
                                                 "default"   => {|| ctod( "" ) } }                        )
 
    hset( ::hColumns, "sistema",              {  "create"    => "TINYINT ( 1 )"                           ,;
-                                                "default"   => {|| "0" } }                               )
+                                                "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 

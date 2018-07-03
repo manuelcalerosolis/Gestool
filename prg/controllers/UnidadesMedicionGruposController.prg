@@ -53,7 +53,7 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposController
 
    ::oGetSelector                            := GetSelector():New( self )
 
-   ::setEvents( { 'editing', 'deleting' }, {|| if( ::isSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
+   ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 

@@ -108,6 +108,9 @@ CLASS SQLBaseModel
    METHOD setCreatedTimeStamp( hBuffer )
    METHOD setUpdatedTimeStamp( hBuffer )
 
+   METHOD isBufferSystemRegister( hBuffer )   
+   METHOD isNotBufferSystemRegister( hBuffer )        INLINE ( !( ::isBufferSystemRegister( hBuffer ) ) )
+
    METHOD getInsertSentence()
    METHOD getInsertIgnoreSentence( hBuffer )          INLINE ( ::getInsertSentence( hBuffer, .t. ) )
    METHOD getUpdateSentence()
@@ -655,6 +658,22 @@ RETURN ( hBuffer )
 
 //---------------------------------------------------------------------------//
 
+METHOD isBufferSystemRegister( hBuffer )
+
+   DEFAULT hBuffer   := ::hBuffer
+
+   if !hb_ishash( hBuffer )
+      RETURN ( nil )
+   end if 
+
+   if ( hhaskey( hBuffer, "sistema" ) )
+      RETURN ( hget( hBuffer, "sistema" ) == 1 )
+   end if 
+
+RETURN ( .f. )
+
+//----------------------------------------------------------------------------//
+
 METHOD getInsertSentence( hBuffer, lIgnore )
 
    DEFAULT hBuffer   := ::hBuffer
@@ -722,13 +741,12 @@ RETURN ( ::cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertOnDuplicateSentence( hBuffer, lDebug )
+METHOD getInsertOnDuplicateSentence( hBuffer )
 
    local uValue
    local cSQLUpdate  
 
    DEFAULT hBuffer   := ::hBuffer
-   DEFAULT lDebug    := .f.
 
    if !hb_ishash( hBuffer )
       RETURN ( nil )
@@ -1272,8 +1290,6 @@ METHOD updateBufferWhereUuid( uuid, hBuffer )
    cSql           := chgAtEnd( cSql, '', 2 ) + " "
 
    cSql           +=    "WHERE uuid = " + toSqlString( uuid )
-
-   msgalert( cSQL, "updateBufferWhereUuid" )
 
 RETURN ( ::getDatabase():Exec( cSql ) )
 
