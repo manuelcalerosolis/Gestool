@@ -537,7 +537,7 @@ METHOD getSQLInsertUpdateCostoWhereTarifa( uuidTarifa, lCosto ) CLASS SQLArticul
    cSQL  +=    quoted( uuidTarifa ) + ", "
    cSQL  +=    "articulos_tarifas.margen, "
    cSQL  +=    cPrecioBase + ", "
-   cSQL  +=    cPrecioIVA 
+   cSQL  +=    cPrecioIVA + " "
 
    cSQL  += "FROM " + SQLArticulosModel():getTableName() + " AS articulos "
 
@@ -546,20 +546,20 @@ METHOD getSQLInsertUpdateCostoWhereTarifa( uuidTarifa, lCosto ) CLASS SQLArticul
 
    cSQL  += "LEFT JOIN " + ::getTableName() + " AS articulos_precios_parent "            
    cSQL  +=    "ON articulos_precios_parent.parent_uuid = articulos.uuid "                
-   cSQL  +=    "AND articulos_precios_parent.tarifa_uuid = articulos_tarifas.parent_uuid "
+   cSQL  +=    "AND articulos_precios_parent.tarifa_uuid = articulos_tarifas.uuid "
 
    cSQL  += "LEFT JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva "
    cSQL  +=    "ON tipos_iva.codigo = articulos.tipo_iva_codigo "
 
-   cSQL  +=    "WHERE articulos_precios_parent.manual != 1 "
-
    cSQL  += "ON DUPLICATE KEY UPDATE "                                                                    
-   cSQL  +=    "margen = articulos_tarifas.margen, "
-   cSQL  +=    "precio_base = " + cPrecioBase + ", "
-   cSQL  +=    "precio_iva_incluido = " + cPrecioIVA
+   cSQL  +=    "margen = IF( articulos_precios_parent.manual != 1, VALUES( margen ), " + ::getTableName() + ".margen ), "
+   cSQL  +=    "precio_base = IF( articulos_precios_parent.manual != 1, VALUES( precio_base ), " + ::getTableName() + ".precio_base ), "
+   cSQL  +=    "precio_iva_incluido = IF( articulos_precios_parent.manual != 1, VALUES( precio_iva_incluido ), " + ::getTableName() + ".manual )"
 
-   msgalert( cSQL, "cSQL" )
-   logwrite( cSQL )
+   // cSQL  +=    "WHERE articulos_precios_parent.manual != 1 "
+
+   // msgalert( cSQL, "cSQL" )
+   // logwrite( cSQL )
 
 RETURN ( cSql )
 
