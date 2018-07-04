@@ -169,6 +169,8 @@ RETURN ( lConnect )
 
 METHOD isParseError( cSentence )
 
+   local e
+
    if empty( cSentence )
       msgstop( "La sentencia esta vacia", "SQLDatabase" )
       RETURN ( .t. )  
@@ -181,11 +183,24 @@ METHOD isParseError( cSentence )
 
    ::oConexion:Ping()
 
-   if !::oConexion:Parse( cSentence )
-      msgstop( cSentence, "Error en el comando SQL" / 2 )
+//   if !::oConexion:Parse( cSentence )
+
+   try
+      
+      ::oConexion:Parse( cSentence )
+
+   catch e
+      
       logwrite( cSentence )
-      RETURN ( .t. )  
-   end if 
+
+      msgstop( e:SubSystem + ";" + padl( e:SubCode, 4 ) + ";" + e:Operation + ";" + e:Description, "Error en sentencia" )  
+
+      RETURN ( .t. )
+
+   end 
+
+//      msgstop( cSentence, "Error en el comando SQL" / 2 )
+//      RETURN ( .t. )  
 
 RETURN ( .f. )
 

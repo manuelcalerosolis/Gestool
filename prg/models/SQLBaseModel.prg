@@ -17,6 +17,8 @@ CLASS SQLBaseModel
 
    DATA cTableName
 
+   DATA cAs
+
    DATA cConstraints
 
    DATA hColumns                                      INIT {=>}
@@ -127,7 +129,6 @@ CLASS SQLBaseModel
    METHOD getDropTableSentence()
 
    METHOD setGeneralSelect( cSelect )                 INLINE ( ::cGeneralSelect  := cSelect )
-   METHOD getGeneralSelect()                          INLINE ( if( empty( ::cGeneralSelect ), "SELECT * FROM " + ::getTableName(), ::cGeneralSelect ) )
 
    METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
    METHOD addGeneralWhere( cSQLSelect )
@@ -373,8 +374,14 @@ RETURN ( ::getWhereSelect( "uuid", "=", uuid ) )
 
 METHOD getWhereSelect( cField, cOperator, uValue )
 
-   local cSQLSelect        := ::getGeneralSelect() + " "
-   cSQLSelect              += "WHERE " + cField + cOperator + toSQLString( uValue ) 
+   local cSQLSelect        := ::cGeneralSelect + " "
+   cSQLSelect              += "WHERE "
+   
+   if !empty( ::cAs )
+      cSQLSelect           += ::cAs + "."
+   end if 
+
+   cSQLSelect              += cField + " " + cOperator + " " + toSQLString( uValue ) 
 
 RETURN ( cSQLSelect )
 

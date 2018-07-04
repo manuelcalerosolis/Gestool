@@ -341,17 +341,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   SQLArticulosPreciosModel():insertUpdateWhereTarifa( '528dd01d-6a3d-4149-9de2-dbeea6b5814c' ) 
-
-   // SQLContadoresModel():insertSerie( "movimientos_almacen", "ABC", 1 )
-
-   // msgalert( SQLContadoresModel():isSerie( "movimientos_almacen", "ABC" ), "ABC" )
-
-   // msgalert( SQLContadoresModel():isSerie( "movimientos_almacen", "CCC" ), "CCC" )
-
-   // msgalert( hb_valtoexp( SQLContadoresModel():getLastCounter( "movimientos_almacen" ) ), "getLastCounter" )
-
-   //FacturasClientesController():New():ActivateNavigatorView()
+   // SQLArticulosPreciosModel():insertUpdateWhereTarifa( '528dd01d-6a3d-4149-9de2-dbeea6b5814c' ) 
 
 RETURN nil
 

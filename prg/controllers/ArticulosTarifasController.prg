@@ -15,7 +15,9 @@ CLASS ArticulosTarifasController FROM SQLNavigatorController
 
    METHOD Delete( aSelectedRecno )
 
-   METHOD updatedTarifa()
+   METHOD endEditedTarifa()
+
+   METHOD updatedTarifa( uuidTarifaActualizar, lCosto )
 
 END CLASS
 
@@ -49,7 +51,7 @@ METHOD New() CLASS ArticulosTarifasController
 
    ::oRepository                    := ArticulosTarifasRepository():New( self )
 
-   ::setEvents( { 'appended', 'duplicated', 'edited' },  {|| ::updatedTarifa() } )
+   ::setEvents( { 'appended', 'duplicated', 'edited' },  {|| ::endEditedTarifa() } )
 
    ::setEvent( 'deleting',          {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -95,31 +97,39 @@ RETURN ( ::Super:Delete( aSelectedRecno ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD updatedTarifa() CLASS ArticulosTarifasController
+METHOD endEditedTarifa() CLASS ArticulosTarifasController
 
-   local nMargen
+   local oWaitMessage
    local cTarifaSobre     
-   local cTarifaActualizar     
-   local uuidTarifaSobre     
-   local uuidTarifaActualizar     
+   local uuidTarifaActualizar  
 
-   nMargen              := hget( ::oModel:hBuffer, "margen" )
+   oWaitMessage         := TWaitMeter():New( "Actualizando tarifa", "Espere por favor..." )
+   oWaitMessage:Run()
+
    cTarifaSobre         := hget( ::oModel:hBuffer, "parent_uuid" )
    uuidTarifaActualizar := hget( ::oModel:hBuffer, "uuid" )
-   cTarifaActualizar    := hget( ::oModel:hBuffer, "nombre" )
-   uuidTarifaSobre      := SQLArticulosTarifasModel():getUuidWhereNombre( cTarifaSobre )
 
-   msgalert( nMargen, "nMargen" )
-   msgalert( cTarifaSobre, "cTarifaSobre" )
-   msgalert( uuidTarifaSobre, "uuidTarifaSobre" )
-   msgalert( uuidTarifaActualizar, "uuidTarifaActualizar" )
-   msgalert( cTarifaActualizar, "cTarifaActualizar" )
+   ::updatedTarifa( uuidTarifaActualizar, cTarifaSobre == __tarifa_costo__ )
 
-   if cTarifaSobre == __tarifa_costo__
-      ::oArticulosPreciosController:oModel:insertUpdatePreciosSobreCostoWhereTarifa( uuidTarifaActualizar, nMargen )
-   end if
+   oWaitMessage:End()
 
-   ::oArticulosPreciosController:oModel:insertUpdateWhereTarifa( uuidTarifaActualizar )
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD updatedTarifa( uuidTarifaActualizar, lCosto ) CLASS ArticulosTarifasController
+
+   local cTarifaParent  
+
+   DEFAULT lCosto       := .f.
+
+   ::oArticulosPreciosController:oModel:insertUpdateCostoWhereTarifa( uuidTarifaActualizar, lCosto )
+
+   cTarifaParent        := ::oModel:getTarifaWhereTarifaParent( uuidTarifaActualizar )
+
+   if !empty( cTarifaParent )
+      ::updatedTarifa( cTarifaParent )
+   end if 
 
 RETURN ( nil )
 
@@ -463,8 +473,6 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    METHOD getInsertArticulosTarifasSentence()
 
-   METHOD insertUpdateWhereTarifa( uuidTarifa )
-
    METHOD getParentUuidAttribute( uuid )     INLINE ( if( empty( uuid ), __tarifa_costo__, SQLArticulosTarifasModel():getNombreWhereUuid( uuid ) ) )
 
    METHOD setParentUuidAttribute( nombre )   INLINE ( if( hb_isnil( nombre ) .or. ( alltrim( nombre ) == __tarifa_costo__ ), "", SQLArticulosTarifasModel():getUuidWhereNombre( nombre ) ) )
@@ -474,6 +482,9 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
    METHOD setActivaAttribute( activa )       INLINE ( if( hb_isnil( activa ), 1, if( activa, 1, 0 ) ) )
 
    METHOD getInitialSelect()
+
+   METHOD getTarifaWhereTarifaParent( uuidTarifaParent ) ;
+                                             INLINE ( ::getField( "uuid", "parent_uuid", uuidTarifaParent ) )
 
 END CLASS
 
@@ -554,15 +565,6 @@ METHOD getInsertArticulosTarifasSentence() CLASS SQLArticulosTarifasModel
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
-
-METHOD insertUpdateWhereTarifa( uuidTarifa ) CLASS SQLArticulosTarifasModel
-
-   msgalert( uuidTarifa, "uuidTarifa" )
-
-   msgalert( hb_valtoexp( ::findByUuid( uuidTarifa ) ) )
-
-RETURN ( nil )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
