@@ -127,7 +127,7 @@ METHOD updatedTarifa( uuidTarifaActualizar, lCosto ) CLASS ArticulosTarifasContr
 
    cTarifaParent        := ::oModel:getTarifaWhereTarifaParent( uuidTarifaActualizar )
 
-   if !empty( cTarifaParent )
+   if !empty( cTarifaParent ) .and. ( uuidTarifaActualizar != cTarifaParent )
       ::updatedTarifa( cTarifaParent )
    end if 
 
@@ -394,7 +394,7 @@ METHOD getItemsComboTarifaPadre() CLASS ArticulosTarifasView
    if ::oController:isRowSetSystemRegister()
       aItems      := { __tarifa_base__ }
    else 
-      aItems      := ::oController:oModel:getColumnWhere( 'nombre', 'uuid', '!=', ::oController:oModel:hBuffer[ 'uuid' ] )
+      aItems      := ::oController:oModel:getNombres()
    end if 
 
    ains( aItems, 1, __tarifa_costo__, .t. )
@@ -485,6 +485,8 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    METHOD getTarifaWhereTarifaParent( uuidTarifaParent ) ;
                                              INLINE ( ::getField( "uuid", "parent_uuid", uuidTarifaParent ) )
+
+   METHOD getNombres( cColumn )              INLINE ( ::getDatabase():selectFetchArrayOneColumn( "SELECT nombre FROM " + ::getTableName() + " ORDER BY id" ) )
 
 END CLASS
 
