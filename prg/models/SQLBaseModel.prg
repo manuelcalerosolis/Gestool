@@ -45,9 +45,9 @@ CLASS SQLBaseModel
 
    DATA cGroupBy                                      INIT ""
 
-   DATA cOrderBy 
-   
-   DATA cOrientation
+   DATA cOrderBy                                      INIT ""    
+
+   DATA cOrientation                                  INIT ""
 
    DATA cFind
 
@@ -391,9 +391,13 @@ METHOD getSelectSentence( cOrderBy, cOrientation )
 
    local cSQLSelect        
 
-   ::cOrderBy              := cOrderBy
+   if empty( cOrderBy )
+      ::setOrderBy( cOrderBy )
+   end if 
 
-   ::cOrientation          := cOrientation
+   if empty( cOrientation )
+      ::setOrientation( cOrientation )
+   end if 
 
    ::fireEvent( 'gettingSelectSentence')
 
@@ -510,12 +514,12 @@ RETURN ( cSQLSelect )
 
 METHOD addFindWhere( cSQLSelect )
 
-   if empty( ::cOrderBy ) .or. empty( ::cFind )
+   if empty( ::getOrderBy() ) .or. empty( ::cFind )
       RETURN ( cSQLSelect )
    end if 
 
    cSQLSelect     += space( 1 )
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::cOrderBy +") LIKE '%" + Upper( ::cFind ) + "%'" 
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::getOrderBy() +") LIKE '%" + Upper( ::cFind ) + "%'" 
 
 RETURN ( cSQLSelect )
 
@@ -523,13 +527,13 @@ RETURN ( cSQLSelect )
 
 METHOD getSelectByOrder( cSQLSelect )
 
-   if empty( ::cOrderBy )
+   if empty( ::getOrderBy() )
       RETURN ( cSQLSelect )
    end if 
    
-   cSQLSelect     += " ORDER BY " + ::cOrderBy 
+   cSQLSelect     += " ORDER BY " + ::getOrderBy() 
 
-   if !empty( ::cOrientation ) .and. ::cOrientation == "A"
+   if !empty( ::getOrientation() ) .and. ::getOrientation() == "A"
       cSQLSelect  += " DESC"
    else
       cSQLSelect  += " ASC"

@@ -45,6 +45,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    METHOD getPorcentajeIVA()
 
+   METHOD validatePrecioCosto()
+
    METHOD validColumnArticulosFamiliaBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFamiliasController:oModel, "articulo_familia_codigo" ) )
 
@@ -229,11 +231,24 @@ METHOD insertPreciosWhereArticulo() CLASS ArticulosController
       RETURN ( Self )
    end if 
 
-   SQLArticulosPreciosModel():insertPreciosWhereArticulo( uuidArticulo )   
+   ::oArticulosPreciosController:oModel:insertPreciosWhereArticulo( uuidArticulo )   
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD validatePrecioCosto() CLASS ArticulosController
+   
+   local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
+
+   if empty( uuidArticulo )
+      RETURN ( Self )
+   end if 
+
+   ::oArticulosPreciosController:oModel:updatePrecioWhereTarifaAndArticulo( uuidArticulo )
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

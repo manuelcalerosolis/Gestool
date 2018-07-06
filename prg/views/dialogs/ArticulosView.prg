@@ -176,6 +176,7 @@ METHOD Activate() CLASS ArticulosView
       ID          100 ;
       PICTURE     "@E 99999999.999999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validatePrecioCosto() ) ;
       OF          ::oFolder:aDialogs[2]
 
    ::oController:oArticulosPreciosController:Activate( 130, ::oFolder:aDialogs[2] )

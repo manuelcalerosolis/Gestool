@@ -123,12 +123,14 @@ METHOD updatedTarifa( uuidTarifaActualizar, lCosto ) CLASS ArticulosTarifasContr
 
    DEFAULT lCosto       := .f.
 
-   ::oArticulosPreciosController:oModel:insertUpdateCostoWhereTarifa( uuidTarifaActualizar, lCosto )
+   ::oArticulosPreciosController:oModel:insertUpdatePrecioWhereTarifa( uuidTarifaActualizar, lCosto )
 
    cTarifaParent        := ::oModel:getTarifaWhereTarifaParent( uuidTarifaActualizar )
 
    if !empty( cTarifaParent ) .and. ( uuidTarifaActualizar != cTarifaParent )
+
       ::updatedTarifa( cTarifaParent )
+   
    end if 
 
 RETURN ( nil )
@@ -290,7 +292,7 @@ METHOD Activate() CLASS ArticulosTarifasView
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
+      VALID       ( ::oController:validate( "nombre" ) .and. ::setItemsComboTarifaPadre() ) ;
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oComboTarifaPadre ;
@@ -405,24 +407,22 @@ RETURN ( aItems )
 
 METHOD setItemsComboTarifaPadre() CLASS ArticulosTarifasView
 
-   local cItem 
-   local aItems   
+   local aItems
+   local cNombreTarifa  := ::oController:oModel:hBuffer[ "nombre" ]
 
-   if ::oController:isRowSetSystemRegister()
-      aItems      := { __tarifa_base__ }
-   else 
-      aItems      := ::oController:oModel:getColumnWhere( 'nombre', 'uuid', '!=', ::oController:oModel:hBuffer[ 'uuid' ] )
+   if ::oController:isAppendOrDuplicateMode()
+
+      aItems            := ::getItemsComboTarifaPadre()  
+
+      aadd( aItems, cNombreTarifa )
+
+      ::oComboTarifaPadre:setItems( aItems )
+
+      ::oComboTarifaPadre:set( cNombreTarifa )
+
    end if 
 
-   ains( aItems, 1, __tarifa_costo__, .t. )
-
-   ::oComboTarifaPadre:setItems( aItems )
-
-   cItem          := ::oController:oModel:hBuffer[ "parent_uuid" ]
-
-   ::oComboTarifaPadre:set( cItem )
-
-RETURN ( nil )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -475,7 +475,7 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    METHOD getParentUuidAttribute( uuid )     INLINE ( if( empty( uuid ), __tarifa_costo__, SQLArticulosTarifasModel():getNombreWhereUuid( uuid ) ) )
 
-   METHOD setParentUuidAttribute( nombre )   INLINE ( if( hb_isnil( nombre ) .or. ( alltrim( nombre ) == __tarifa_costo__ ), "", SQLArticulosTarifasModel():getUuidWhereNombre( nombre ) ) )
+   METHOD setParentUuidAttribute( nombre )   // INLINE ( if( hb_isnil( nombre ) .or. ( alltrim( nombre ) == __tarifa_costo__ ), "", SQLArticulosTarifasModel():getUuidWhereNombre( nombre ) ) )
 
    METHOD getActivaAttribute( activa )       INLINE ( if( hb_isnil( activa ), .t., ( activa == 1 ) ) )
 
@@ -549,6 +549,20 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
                                                 "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD setParentUuidAttribute( nombre )   
+
+   if hb_isnil( nombre ) .or. ( alltrim( nombre ) == __tarifa_costo__ )
+      RETURN ( "" )
+   end if
+
+   if hb_ischar( nombre ) .and. ( alltrim( nombre ) == alltrim( ::hBuffer[ "nombre" ] ) )
+      RETURN ( ::hBuffer[ "uuid" ] )
+   end if 
+
+RETURN ( SQLArticulosTarifasModel():getUuidWhereNombre( nombre ) )  
 
 //---------------------------------------------------------------------------//
 
