@@ -23,7 +23,9 @@ CLASS CalculaPrecioCommand
 
    METHOD Build( hBuilder )
 
-   // SETGET-----------------------------------------------------------------
+   // SETGET-------------------------------------------------------------------
+
+   METHOD Say() 
 
    METHOD Costo( value )               INLINE ( iif( hb_isnil( value ), ::nCosto, ::nCosto := value ) )
 
@@ -100,6 +102,23 @@ METHOD Build( hBuilder ) CLASS CalculaPrecioCommand
    end if 
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Say()
+
+   local cSay  
+
+   cSay  := "Costo : " + hb_ntos( ::nCosto )                         + CRLF
+   cSay  += "Margen : " + hb_ntos( ::nMargen )                       + CRLF
+   cSay  += "MargenReal : " + hb_ntos( ::nMargenReal )               + CRLF
+   cSay  += "PrecioBase : " + hb_ntos( ::nPrecioBase )               + CRLF
+   cSay  += "PorcentajeIVA : " + hb_ntos( ::nPorcentajeIVA )         + CRLF
+   cSay  += "PrecioIVAIncluido : " + hb_ntos( ::nPrecioIVAIncluido ) + CRLF
+
+   msgInfo( cSay, "CalculaPrecioCommand" )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

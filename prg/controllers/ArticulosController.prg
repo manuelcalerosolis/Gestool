@@ -228,24 +228,28 @@ METHOD insertPreciosWhereArticulo() CLASS ArticulosController
    local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
 
    if empty( uuidArticulo )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    ::oArticulosPreciosController:oModel:insertPreciosWhereArticulo( uuidArticulo )   
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD validatePrecioCosto() CLASS ArticulosController
+
+   ::oArticulosPreciosController:oRowSet:goTop()
+
+   while !( ::oArticulosPreciosController:oRowSet:Eof() ) 
    
-   local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
+      ::oArticulosPreciosController:oModel:updatePrecioWhereTarifaAndArticulo( ::oArticulosPreciosController:oRowSet:fieldget( "id" ), hget( ::oModel:hBuffer, "precio_costo" ) )
 
-   if empty( uuidArticulo )
-      RETURN ( Self )
-   end if 
+      ::oArticulosPreciosController:oRowSet:Skip()
 
-   ::oArticulosPreciosController:oModel:updatePrecioWhereTarifaAndArticulo( uuidArticulo )
+   end while
+
+   ::oArticulosPreciosController:refreshRowSetAndGoTop()
 
 RETURN ( .t. )
 

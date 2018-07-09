@@ -88,6 +88,7 @@ METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
    local oCommand := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
                                                       'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
                                                       'PrecioBase'      => nPrecioBase } )
+   
    oCommand:caclculaPreciosUsandoBase()
 
    ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
@@ -292,9 +293,13 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
-   METHOD getPrecioSobre( lCosto )  INLINE ( "IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base" )
-   METHOD getPrecioBase( lCosto )   INLINE ( "( ( " + ::getPrecioSobre( lCosto ) + " * articulos_tarifas.margen / 100 ) + " + ::getPrecioSobre( lCosto ) + " )" )
-   METHOD getPrecioIVA( lCosto )    INLINE ( "( " + ::getPrecioBase( lCosto ) + " * tipos_iva.porcentaje / 100 ) + " + ::getPrecioBase( lCosto ) )
+   METHOD getPrecioSobre( nPrecioCosto )
+
+   METHOD getPrecioBase( nPrecioCosto ) ;
+                                    INLINE ( "( " + ::getPrecioSobre( nPrecioCosto ) + " * articulos_tarifas.margen / 100 ) + " + ::getPrecioSobre( nPrecioCosto ) )
+
+   METHOD getPrecioIVA( nPrecioCosto ) ;
+                                    INLINE ( "( " + ::getPrecioBase( nPrecioCosto ) + " * tipos_iva.porcentaje / 100 ) + " + ::getPrecioBase( nPrecioCosto ) )
 
    METHOD getInnerJoinArticulosTarifas( uuidTarifa ) INLINE ;
                                     (  "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas " + CRLF + ;
@@ -302,7 +307,7 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    METHOD getInnerJoinTiposIva()    INLINE ;
                                     (  "LEFT JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva " + CRLF + ;
-                                       "ON tipos_iva.codigo = articulos.tipo_iva_codigo " + CRLF )
+                                          "ON tipos_iva.codigo = articulos.tipo_iva_codigo " + CRLF )
 
    METHOD getSQLInsertPrecioWhereTarifa( uuidTarifa, lCosto )
    METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa, lCosto )
@@ -311,10 +316,10 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
                                     INLINE ( ::getDatabase():Exec( ::getSQLInsertPrecioWhereTarifa( uuidTarifa, lCosto ) ),;
                                              ::getDatabase():Exec( ::getSQLUpdatePrecioWhereTarifa( uuidTarifa, lCosto ) ) )
 
-   METHOD updatePrecioWhereTarifaAndArticulo( uuidArticulo ) ;
-                                    INLINE ( ::getDatabase():Exec( ::getSQLUpdatePrecioWhereTarifaAndArticulo( uuidArticulo ) ) )
+   METHOD updatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto ) ;
+                                    INLINE ( ::getDatabase():Exec( ::getSQLUpdatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto ) ) )
 
-   METHOD getSQLUpdatePrecioWhereTarifaAndArticulo( uuidArticulo )
+   METHOD getSQLUpdatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto )
 
    METHOD getSQLInsertPreciosWhereTarifa( codigoTarifa )
 
@@ -405,7 +410,17 @@ RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLInsertPrecioWhereTarifa( uuidTarifa, lCosto ) CLASS SQLArticulosPreciosModel
+METHOD getPrecioSobre( nPrecioCosto ) 
+
+   if !empty( nPrecioCosto )
+      RETURN ( "IF( articulos_tarifas.parent_uuid = '', " + hb_ntos( nPrecioCosto ) + ", articulos_precios_parent.precio_base )" )
+   end if 
+
+RETURN ( "IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base )" ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD getSQLInsertPrecioWhereTarifa( uuidTarifa ) CLASS SQLArticulosPreciosModel
 
    local cSQL
 
@@ -424,14 +439,16 @@ METHOD getSQLInsertPrecioWhereTarifa( uuidTarifa, lCosto ) CLASS SQLArticulosPre
    cSQL  +=    "articulos.uuid, "+ CRLF
    cSQL  +=    quoted( uuidTarifa ) + ", " + CRLF
    cSQL  +=    "articulos_tarifas.margen, " + CRLF
-   cSQL  +=    ::getPrecioBase( lCosto ) + ", " + CRLF
-   cSQL  +=    ::getPrecioIVA( lCosto ) + " " + CRLF
+   cSQL  +=    "( @precioBase := ( ( @precioSobre := IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base ) ) * articulos_tarifas.margen / 100 ) + @precioSobre ), " + CRLF
+   cSQL  +=    "@precioIVA := ( @precioBase * tipos_iva.porcentaje / 100 ) + @precioBase " + CRLF
 
    cSQL  += "FROM " + SQLArticulosModel():getTableName() + " AS articulos "+ CRLF
 
-   cSQL  += ::getInnerJoinArticulosTarifas( uuidTarifa )
+   cSQL  += "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas " + CRLF 
+   cSQL  +=    "ON articulos_tarifas.uuid = " + quoted( uuidTarifa ) + " " + CRLF
 
-   cSQL  += ::getInnerJoinTiposIva()
+   cSQL  += "LEFT JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva " + CRLF 
+   cSQL  +=    "ON tipos_iva.codigo = articulos.tipo_iva_codigo " + CRLF
 
    cSQL  += "LEFT JOIN " + ::getTableName() + " AS articulos_precios_parent "+ CRLF            
    cSQL  +=    "ON articulos_precios_parent.articulo_uuid = articulos.uuid "+ CRLF                
@@ -458,13 +475,18 @@ METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa, lCosto ) CLASS SQLArticulosPre
    cSQL  += "LEFT JOIN " + SQLArticulosModel():getTableName() + " AS articulos " + CRLF 
    cSQL  +=    "ON articulos.uuid = articulos_precios.articulo_uuid " + CRLF
 
-   cSQL  += ::getInnerJoinTiposIva()
+   cSQL  += "LEFT JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva " + CRLF 
+   cSQL  +=    "ON tipos_iva.codigo = articulos.tipo_iva_codigo " + CRLF
 
    cSQL  += "SET " + CRLF
 
    cSQL  +=    "articulos_precios.margen = articulos_tarifas.margen, " + CRLF
-   cSQL  +=    "articulos_precios.precio_base = " + ::getPrecioBase( lCosto ) + " ," + CRLF 
-   cSQL  +=    "articulos_precios.precio_iva_incluido = " + ::getPrecioIVA( lCosto ) + " " + CRLF
+   
+   //cSQL  +=    "articulos_precios.precio_base = " + ::getPrecioBase( lCosto ) + " ," + CRLF 
+   //cSQL  +=    "articulos_precios.precio_iva_incluido = " + ::getPrecioIVA( lCosto ) + " " + CRLF
+
+   cSQL  +=    "articulos_precios.precio_base = ( @precioBase := ( ( @precioSobre := IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base ) ) * articulos_tarifas.margen / 100 ) + @precioSobre ), " + CRLF
+   cSQL  +=    "articulos_precios.precio_iva_incluido = ( @precioBase * tipos_iva.porcentaje / 100 ) + @precioBase " + CRLF
 
    cSQL  += "WHERE " + CRLF
    cSQL  +=    "( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) " + CRLF
@@ -476,7 +498,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLUpdatePrecioWhereTarifaAndArticulo( uuidArticulo ) CLASS SQLArticulosPreciosModel
+METHOD getSQLUpdatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto ) CLASS SQLArticulosPreciosModel
 
    local cSQL
    
@@ -497,19 +519,18 @@ METHOD getSQLUpdatePrecioWhereTarifaAndArticulo( uuidArticulo ) CLASS SQLArticul
    cSQL  += "SET " + CRLF
 
    cSQL  +=    "articulos_precios.margen = articulos_tarifas.margen, " + CRLF
-   cSQL  +=    "articulos_precios.precio_base = " + ::getPrecioBase() + " ," + CRLF 
-   cSQL  +=    "articulos_precios.precio_iva_incluido = " + ::getPrecioIVA() + " " + CRLF
+   cSQL  +=    "articulos_precios.precio_base = " + ::getPrecioBase( nPrecioCosto ) + ", " + CRLF 
+   cSQL  +=    "articulos_precios.precio_iva_incluido = ( articulos_precios.precio_base * IFNULL( tipos_iva.porcentaje, 0 ) / 100 ) + articulos_precios.precio_base " + CRLF   
 
    cSQL  += "WHERE " + CRLF
    cSQL  +=    "( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) " + CRLF
-   cSQL  +=    "AND articulos_precios.articulo_uuid = " + quoted( uuidArticulo ) + CRLF
+   cSQL  +=    "AND articulos_precios.id = " + quoted( idPrecio ) + " " + CRLF
 
    logwrite( cSQL )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD getSQLInsertPreciosWhereTarifa( codigoTarifa ) CLASS SQLArticulosPreciosModel
 
