@@ -87,7 +87,7 @@ RETURN ( aeval( ::aRepositories, {|oRepository| ::checkRepository( oRepository )
 
 METHOD checkRepository( oRepository ) CLASS SQLBaseMigrations
 
-   // getSQLDatabase():ExecsWithOutParse( oRepository:getSQLFunctions() )
+   getSQLDatabase():ExecsWithOutParse( oRepository:getSQLFunctions() )
 
 RETURN ( Self )
 

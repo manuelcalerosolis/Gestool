@@ -89,9 +89,11 @@ METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
                                                       'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
                                                       'PrecioBase'      => nPrecioBase } )
    
-   oCommand:caclculaPreciosUsandoBase()
+   // oCommand:caclculaPreciosUsandoBase()
 
-   ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
+   // ::oModel:updateFieldsCommandWhereUuid( oCommand,  )
+
+   ::oRepository:callUpdatePrecioBaseWhereUuid( ::getRowSet():fieldGet( 'uuid' ), nPrecioBase )
 
    ::getRowSet():Refresh()
 
@@ -582,114 +584,58 @@ CLASS ArticulosPreciosRepository FROM SQLBaseRepository
    METHOD getTableName()                  INLINE ( SQLArticulosPreciosModel():getTableName() ) 
 
    METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionPriceUsingMargin(),;
-                                                      ::createFunctionPriceUsingMargin(),;
-                                                      ::dropFunctionTest(),;
-                                                      ::createFunctionTest() } )
+                                                      ::createFunctionUpdatePrecioBaseWhereUuid() } )
 
-   METHOD selectFunctionPriceUsingMargin()
-   
-   METHOD dropFunctionPriceUsingMargin()  INLINE ( "DROP FUNCTION IF EXISTS CalculateBaseMargin;" )
+   METHOD dropFunctionPriceUsingMargin()  
 
-   METHOD createFunctionPriceUsingMargin()
+   METHOD createFunctionUpdatePrecioBaseWhereUuid()
 
-   METHOD dropFunctionTest()              INLINE ( "DROP FUNCTION IF EXISTS Test;" )
-
-   METHOD createFunctionTest()
+   METHOD callUpdatePrecioBaseWhereUuid( uuidPrecioArticulo, precioBase )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD selectFunctionPriceUsingMargin( precioCosto, porcentajeIVA, Margen, uuid ) CLASS ArticulosPreciosRepository
+METHOD dropFunctionPriceUsingMargin() CLASS ArticulosPreciosRepository  
 
-   local cSQL  := "SELECT CalculatePriceUsingMargin( "
-   cSQL        +=    toSQLString( precioCosto ) + ", "
-   cSQL        +=    toSQLString( porcentajeIVA ) + ", "
-   cSQL        +=    toSQLString( Margen ) + ", "
-   cSQL        +=    toSQLString( uuid ) + " )"
-
-RETURN ( getSQLDatabase():Exec( cSQL ) )
+RETURN ( "DROP PROCEDURE IF EXISTS " + Company():getTableName( 'UpdatePrecioBaseWhereUuid' ) + ";" )
 
 //---------------------------------------------------------------------------//
 
-METHOD createFunctionPriceUsingMargin() CLASS ArticulosPreciosRepository
-/*   
-   local cSQL  := "CREATE FUNCTION CalculatePriceUsingMargin( PrecioCosto FLOAT, PorcentajeIVA FLOAT, Margen FLOAT, PrecioUuid CHAR ) RETURNS FLOAT" + space( 1 )
-   
-   cSQL        += "BEGIN"                                                                                + space( 1 )
-   cSQL        +=    "DECLARE PrecioBase FLOAT;"                                                           + space( 1 )
-   cSQL        +=    "DECLARE PrecioIVAIncluido FLOAT;"                                                    + space( 1 )
-   cSQL        +=    "DECLARE MargenReal FLOAT;"                                                           + space( 1 )
-   
-   cSQL        +=    "SET PrecioBase = PrecioCosto + ( PrecioCosto * Margen / 100 );"                    + space( 1 )
-   cSQL        +=    "SET PrecioIVAIncluido = PrecioBase + ( PrecioBase * PorcentajeIVA / 100 );"        + space( 1 )
-   cSQL        +=    "SET MargenReal = ( PrecioBase - PrecioCosto ) / PrecioCosto * 100;"                + space( 1 )
+METHOD callUpdatePrecioBaseWhereUuid( uuidPrecioArticulo, precioBase ) CLASS ArticulosPreciosRepository
 
-   cSql        +=    "UPDATE " + ::getTableName() + " SET"                                               + space( 1 )
-   cSql        +=       "precio_base = PrecioBase,"                                                      + space( 1 )
-   cSql        +=       "precio_iva_incluido = PrecioIVAIncluido,"                                       + space( 1 )
-   cSql        +=       "margen_real = MargenReal"                                                       + space( 1 )
-   cSql        +=    "WHERE uuid = PrecioUuid;"                                                          + space( 1 )
-
-   cSQL        +=    "RETURN PrecioBase;"                                                                + space( 1 )
-   cSQL        += "END;"                                                                                 + space( 1 )
-*/
-   local cSQL  := "CREATE DEFINER = `root`@`localhost` FUNCTION `CalculateBaseMargin`( `param_uuid` VARCHAR(40) ) "
-   cSQL        += "RETURNS float "
-   cSQL        += "LANGUAGE SQL "
-   cSQL        += "NOT DETERMINISTIC "
-   cSQL        += "CONTAINS SQL "
-   cSQL        += "SQL SECURITY DEFINER "
-   cSQL        += "COMMENT '25d7860e-3671-478a-a47a-05dca2cd8345' "
-   cSQL        += "BEGIN "
-
-   cSQL        += "DECLARE current_margen DECIMAL(10,2);"
-   cSQL        += "DECLARE total_margen DECIMAL(10,2);"
-
-   cSQL        += "DECLARE current_parent_uuid CHAR(40);"
-
-   cSQL        += "SET @total_margen = 0;"
-
-   cSQL        += "SELECT "
-   cSQL        += "margen, parent_uuid "
-   cSQL        += "INTO "
-   cSQL        += "@current_margen, @current_parent_uuid "
-   cSQL        += "FROM " + ::getTableName() + " "
-   cSQL        += "WHERE uuid = param_uuid;"
-
-   cSQL        += "SET @total_margen = @total_margen + @current_margen;"
-
-   cSQL        += "WHILE @current_margen != 0 DO "
-   
-   cSQL        +=    "SELECT "
-   cSQL        +=    "margen, parent_uuid "
-   cSQL        +=    "INTO "
-   cSQL        +=    "@current_margen, @current_parent_uuid "
-   cSQL        +=    "FROM gestool_00vg.articulos_tarifas "
-   cSQL        +=    "WHERE uuid = @current_parent_uuid;"
-   
-   cSQL        +=    "SET @total_margen = @total_margen + @current_margen;"
-
-   cSQL        +=    "END WHILE;"
-
-   cSQL        +=    "RETURN @total_margen;"
-
-   cSQL        +=    "END"
-
-RETURN ( cSQL )
+RETURN ( getSQLDatabase():Exec( "CALL " + Company():getTableName( 'UpdatePrecioBaseWhereUuid' ) + "( " + quoted( uuidPrecioArticulo ) + ", " + hb_ntos( precioBase ) + " )" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD createFunctionTest() CLASS ArticulosPreciosRepository
-   
-   local cSQL  := "CREATE FUNCTION Test( idPrecio INT ) RETURNS INT DETERMINISTIC" + space( 1 )
-   
-   cSQL        += "BEGIN"                                                                                + space( 1 )
-   cSql        +=    "UPDATE " + ::getTableName() + " SET"                                               + space( 1 )
-   cSql        +=       "precio_base = 1234"                                                             + space( 1 )
-   cSql        +=    "WHERE id = @idPrecio;"                                                             + space( 1 )
-   cSQL        +=    "RETURN 1;"                                                                         + space( 1 )
-   cSQL        += "END;"                                                                                 + space( 1 )
+METHOD createFunctionUpdatePrecioBaseWhereUuid() CLASS ArticulosPreciosRepository
+
+   local cSQL
+
+   cSQL  := "DELIMITER $$ " + CRLF
+
+   cSQL  := "CREATE DEFINER=`root`@`localhost` PROCEDURE " + Company():getTableName( 'UpdatePrecioBaseWhereUuid' ) + " ( IN `uuid_precio_articulo` CHAR(40), IN `precio_base` FLOAT(16,6) ) " + CRLF
+   cSQL  += "LANGUAGE SQL "+ CRLF
+   cSQL  += "NOT DETERMINISTIC "+ CRLF
+   cSQL  += "CONTAINS SQL "+ CRLF
+   cSQL  += "SQL SECURITY DEFINER "+ CRLF
+   cSQL  += "COMMENT '' "+ CRLF
+   cSQL  += "BEGIN "+ CRLF
+
+   cSQL  += "UPDATE " + ::getTableName() + " AS articulos_precios " + CRLF
+
+   cSQL  += "INNER JOIN " + SQLArticulosModel():getTableName() + " AS articulos " + CRLF
+   cSQL  += "   ON articulos.uuid = articulos_precios.articulo_uuid " + CRLF
+
+   cSQL  += "LEFT JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva " + CRLF
+   cSQL  += "   ON tipos_iva.codigo = articulos.tipo_iva_codigo " + CRLF
+
+   cSQL  += "SET articulos_precios.precio_base = precio_base, " + CRLF
+   cSQL  += "articulos_precios.precio_iva_incluido = ( articulos_precios.precio_base * tipos_iva.porcentaje / 100 ) + ( articulos_precios.precio_base ), " + CRLF
+   cSQL  += "manual = 1 " + CRLF
+   cSQL  += "WHERE articulos_precios.uuid = uuid_precio_articulo; " + CRLF
+
+   cSQL  += "END" + CRLF
 
 RETURN ( cSQL )
 
