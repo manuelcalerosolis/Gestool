@@ -85,9 +85,9 @@ RETURN ( self )
 
 METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
 
-   local oCommand := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
-                                                      'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
-                                                      'PrecioBase'      => nPrecioBase } )
+   // local oCommand := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
+   //                                                    'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
+   //                                                    'PrecioBase'      => nPrecioBase } )
    
    // oCommand:caclculaPreciosUsandoBase()
 
@@ -103,13 +103,15 @@ RETURN ( self )
 
 METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) CLASS ArticulosPreciosController
 
-   local oCommand := CalculaPrecioCommand():Build( {  'Costo'              => ::oSenderController:getPrecioCosto(),;
-                                                      'PorcentajeIVA'      => ::oSenderController:getPorcentajeIVA(),;
-                                                      'PrecioIVAIncluido'  => nPrecioIVAIncluido } )
+   // local oCommand := CalculaPrecioCommand():Build( {  'Costo'              => ::oSenderController:getPrecioCosto(),;
+   //                                                    'PorcentajeIVA'      => ::oSenderController:getPorcentajeIVA(),;
+   //                                                    'PrecioIVAIncluido'  => nPrecioIVAIncluido } )
 
-   oCommand:caclculaPreciosUsandoIVAIncluido()
+   // oCommand:caclculaPreciosUsandoIVAIncluido()
 
-   ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
+   // ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
+   
+   ::oRepository:callUpdatePrecioIvaIncluidoWhereUuid( ::getRowSet():fieldGet( 'uuid' ), nPrecioIVAIncluido )
 
    ::getRowSet():Refresh()
 
@@ -583,20 +585,28 @@ CLASS ArticulosPreciosRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLArticulosPreciosModel():getTableName() ) 
 
-   METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionPriceUsingMargin(),;
-                                                      ::createFunctionUpdatePrecioBaseWhereUuid() } )
+   METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionUpdatePrecioBaseWhereUuid(),;
+                                                      ::createFunctionUpdatePrecioBaseWhereUuid(),;
+                                                      ::dropFunctionUpdatePrecioIvaIncluidoWhereUuid(),;
+                                                      ::createFunctionUpdatePrecioIvaIncluidoWhereUuid() } )
 
-   METHOD dropFunctionPriceUsingMargin()  
+   METHOD dropFunctionUpdatePrecioBaseWhereUuid()  
 
    METHOD createFunctionUpdatePrecioBaseWhereUuid()
 
    METHOD callUpdatePrecioBaseWhereUuid( uuidPrecioArticulo, precioBase )
 
+   METHOD dropFunctionUpdatePrecioIvaIncluidoWhereUuid()
+
+   METHOD callUpdatePrecioIvaIncluidoWhereUuid( uuidPrecioArticulo, precioIvaIncluido ) 
+
+   METHOD createFunctionUpdatePrecioIvaIncluidoWhereUuid()   
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD dropFunctionPriceUsingMargin() CLASS ArticulosPreciosRepository  
+METHOD dropFunctionUpdatePrecioBaseWhereUuid() CLASS ArticulosPreciosRepository  
 
 RETURN ( "DROP PROCEDURE IF EXISTS " + Company():getTableName( 'UpdatePrecioBaseWhereUuid' ) + ";" )
 
@@ -630,9 +640,12 @@ METHOD createFunctionUpdatePrecioBaseWhereUuid() CLASS ArticulosPreciosRepositor
    cSQL  += "LEFT JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva " + CRLF
    cSQL  += "   ON tipos_iva.codigo = articulos.tipo_iva_codigo " + CRLF
 
-   cSQL  += "SET articulos_precios.precio_base = precio_base, " + CRLF
-   cSQL  += "articulos_precios.precio_iva_incluido = ( articulos_precios.precio_base * tipos_iva.porcentaje / 100 ) + ( articulos_precios.precio_base ), " + CRLF
+   cSQL  += "SET " + CRLF
+
+   cSQL  += "articulos_precios.precio_base = precio_base, " + CRLF
+   cSQL  += "articulos_precios.precio_iva_incluido = ( precio_base * tipos_iva.porcentaje / 100 ) + ( precio_base ), " + CRLF
    cSQL  += "manual = 1 " + CRLF
+
    cSQL  += "WHERE articulos_precios.uuid = uuid_precio_articulo; " + CRLF
 
    cSQL  += "END" + CRLF
@@ -640,6 +653,55 @@ METHOD createFunctionUpdatePrecioBaseWhereUuid() CLASS ArticulosPreciosRepositor
 RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
+
+METHOD dropFunctionUpdatePrecioIvaIncluidoWhereUuid() CLASS ArticulosPreciosRepository  
+
+RETURN ( "DROP PROCEDURE IF EXISTS " + Company():getTableName( 'UpdatePrecioIvaIncluidoWhereUuid' ) + ";" )
+
+//---------------------------------------------------------------------------//
+
+METHOD callUpdatePrecioIvaIncluidoWhereUuid( uuidPrecioArticulo, precioIvaIncluido ) CLASS ArticulosPreciosRepository
+
+RETURN ( getSQLDatabase():Exec( "CALL " + Company():getTableName( 'UpdatePrecioIvaIncluidoWhereUuid' ) + "( " + quoted( uuidPrecioArticulo ) + ", " + hb_ntos( precioIvaIncluido ) + " )" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionUpdatePrecioIvaIncluidoWhereUuid() CLASS ArticulosPreciosRepository
+
+   local cSQL
+
+   cSQL  := "DELIMITER $$ " + CRLF
+
+   cSQL  := "CREATE DEFINER=`root`@`localhost` PROCEDURE " + Company():getTableName( 'UpdatePrecioIvaIncluidoWhereUuid' ) + " ( IN `uuid_precio_articulo` CHAR(40), IN `precio_iva_incluido` FLOAT(16,6) ) " + CRLF
+   cSQL  += "LANGUAGE SQL "+ CRLF
+   cSQL  += "NOT DETERMINISTIC "+ CRLF
+   cSQL  += "CONTAINS SQL "+ CRLF
+   cSQL  += "SQL SECURITY DEFINER "+ CRLF
+   cSQL  += "COMMENT '' "+ CRLF
+   cSQL  += "BEGIN "+ CRLF
+
+   cSQL  += "UPDATE " + ::getTableName() + " AS articulos_precios " + CRLF
+
+   cSQL  += "INNER JOIN " + SQLArticulosModel():getTableName() + " AS articulos " + CRLF
+   cSQL  +=    "ON articulos.uuid = articulos_precios.articulo_uuid " + CRLF
+
+   cSQL  += "LEFT JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva " + CRLF
+   cSQL  +=    "ON tipos_iva.codigo = articulos.tipo_iva_codigo " + CRLF
+
+   cSQL  += "SET "
+
+   cSQL  += "articulos_precios.precio_iva_incluido = precio_iva_incluido, " + CRLF
+   cSQL  += "articulos_precios.precio_base = ( precio_iva_incluido / ( 1 + ( tipos_iva.porcentaje / 100 ) ) ), " + CRLF
+   cSQL  += "manual = 1 " + CRLF
+
+   cSQL  += "WHERE articulos_precios.uuid = uuid_precio_articulo; " + CRLF
+
+   cSQL  += "END" + CRLF
+
+RETURN ( cSQL )
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
