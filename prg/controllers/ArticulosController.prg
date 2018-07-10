@@ -239,15 +239,15 @@ RETURN ( nil )
 
 METHOD validatePrecioCosto() CLASS ArticulosController
 
-   ::oArticulosPreciosController:oRowSet:goTop()
+   local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
+   local nPrecioCosto   := hget( ::oModel:hBuffer, "precio_costo" )
 
-   while !( ::oArticulosPreciosController:oRowSet:Eof() ) 
+   // ::oModel:updateFieldWhereUuid( uuidArticulo, "precio_costo", nPrecioCosto )
+
+   ::oArticulosPreciosController:oRepository:callUpdatePreciosWhereUuidArticulo( uuidArticulo )
    
-      ::oArticulosPreciosController:oModel:updatePrecioWhereTarifaAndArticulo( ::oArticulosPreciosController:oRowSet:fieldget( "id" ), hget( ::oModel:hBuffer, "precio_costo" ) )
-
-      ::oArticulosPreciosController:oRowSet:Skip()
-
-   end while
+   msgalert( uuidArticulo, "uuidArticulo" )
+   logwrite( uuidArticulo )
 
    ::oArticulosPreciosController:refreshRowSetAndGoTop()
 

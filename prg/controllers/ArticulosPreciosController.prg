@@ -85,14 +85,6 @@ RETURN ( self )
 
 METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
 
-   // local oCommand := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
-   //                                                    'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
-   //                                                    'PrecioBase'      => nPrecioBase } )
-   
-   // oCommand:caclculaPreciosUsandoBase()
-
-   // ::oModel:updateFieldsCommandWhereUuid( oCommand,  )
-
    ::oRepository:callUpdatePrecioBaseWhereUuid( ::getRowSet():fieldGet( 'uuid' ), nPrecioBase )
 
    ::getRowSet():Refresh()
@@ -103,14 +95,6 @@ RETURN ( self )
 
 METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) CLASS ArticulosPreciosController
 
-   // local oCommand := CalculaPrecioCommand():Build( {  'Costo'              => ::oSenderController:getPrecioCosto(),;
-   //                                                    'PorcentajeIVA'      => ::oSenderController:getPorcentajeIVA(),;
-   //                                                    'PrecioIVAIncluido'  => nPrecioIVAIncluido } )
-
-   // oCommand:caclculaPreciosUsandoIVAIncluido()
-
-   // ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
-   
    ::oRepository:callUpdatePrecioIvaIncluidoWhereUuid( ::getRowSet():fieldGet( 'uuid' ), nPrecioIVAIncluido )
 
    ::getRowSet():Refresh()
@@ -180,15 +164,11 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :cHeader             := 'Margen %'
       :nWidth              := 75
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nHeadBmpNo          := 1
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
-      :addResource( "gc_pencil_16" )
-      :nEditType           := 1
       :bEditValue          := {|| ::getRowSet():fieldGet( 'margen' ) }
       :bEditBlock          := {|| ::getRowSet():fieldGet( 'margen' ) }
       :cEditPicture        := "@E 9999.9999"
-      :bOnPostEdit         := {|oCol, nMargen| ::oController:setMargen( oCol, nMargen ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -397,7 +377,7 @@ METHOD getInitialSelect() CLASS SQLArticulosPreciosModel
    cSelect        +=    "articulos_tarifas.nombre, "                                                                
    cSelect        +=    "articulos_tarifas.parent_uuid, "                                                           
 
-   cSelect        +=    "IFNULL( articulos_tarifas_base.nombre, 'Costo' ) AS articulos_tarifas_base_nombre "  
+   cSelect        +=    "IF( articulos_tarifas_base.nombre IS NULL OR articulos_precios.manual = 1, 'Costo', articulos_tarifas_base.nombre ) AS articulos_tarifas_base_nombre "  
 
    cSelect        += "FROM " + ::getTableName() + " AS articulos_precios "                
 
@@ -458,8 +438,6 @@ METHOD getSQLInsertPrecioWhereTarifa( uuidTarifa ) CLASS SQLArticulosPreciosMode
    cSQL  +=    "ON articulos_precios_parent.articulo_uuid = articulos.uuid "+ CRLF                
    cSQL  +=    "AND articulos_precios_parent.tarifa_uuid = articulos_tarifas.uuid "+ CRLF
 
-   logwrite( cSQL )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -496,7 +474,6 @@ METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa, lCosto ) CLASS SQLArticulosPre
    cSQL  +=    "( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) " + CRLF
    cSQL  +=    "AND articulos_precios.tarifa_uuid = " + quoted( uuidTarifa ) + CRLF
 
-   logwrite( cSQL )
 
 RETURN ( cSql )
 
@@ -529,8 +506,6 @@ METHOD getSQLUpdatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto ) CLASS 
    cSQL  += "WHERE " + CRLF
    cSQL  +=    "( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) " + CRLF
    cSQL  +=    "AND articulos_precios.id = " + quoted( idPrecio ) + " " + CRLF
-
-   logwrite( cSQL )
 
 RETURN ( cSql )
 
@@ -588,7 +563,11 @@ CLASS ArticulosPreciosRepository FROM SQLBaseRepository
    METHOD getSQLFunctions()               INLINE ( {  ::dropFunctionUpdatePrecioBaseWhereUuid(),;
                                                       ::createFunctionUpdatePrecioBaseWhereUuid(),;
                                                       ::dropFunctionUpdatePrecioIvaIncluidoWhereUuid(),;
-                                                      ::createFunctionUpdatePrecioIvaIncluidoWhereUuid() } )
+                                                      ::createFunctionUpdatePrecioIvaIncluidoWhereUuid(),;
+                                                      ::dropFunctionUpdatePrecioWhereIdPrecio(),;
+                                                      ::createFunctionUpdatePrecioWhereIdPrecio(),;
+                                                      ::dropFunctionUpdatePreciosWhereUuidArticulo(),;
+                                                      ::createFunctionUpdatePreciosWhereUuidArticulo() } )
 
    METHOD dropFunctionUpdatePrecioBaseWhereUuid()  
 
@@ -601,6 +580,18 @@ CLASS ArticulosPreciosRepository FROM SQLBaseRepository
    METHOD callUpdatePrecioIvaIncluidoWhereUuid( uuidPrecioArticulo, precioIvaIncluido ) 
 
    METHOD createFunctionUpdatePrecioIvaIncluidoWhereUuid()   
+
+   METHOD dropFunctionUpdatePrecioWhereIdPrecio()
+   
+   METHOD callUpdatePrecioWhereIdPrecio( idPrecioArticulo )
+   
+   METHOD createFunctionUpdatePrecioWhereIdPrecio()
+
+   METHOD dropFunctionUpdatePreciosWhereUuidArticulo()
+
+   METHOD callUpdatePreciosWhereUuidArticulo( idPrecio )
+
+   METHOD createFunctionUpdatePreciosWhereUuidArticulo()   
 
 END CLASS
 
@@ -644,6 +635,8 @@ METHOD createFunctionUpdatePrecioBaseWhereUuid() CLASS ArticulosPreciosRepositor
 
    cSQL  += "articulos_precios.precio_base = precio_base, " + CRLF
    cSQL  += "articulos_precios.precio_iva_incluido = ( precio_base * tipos_iva.porcentaje / 100 ) + ( precio_base ), " + CRLF
+   cSQL  += "margen = ( articulos_precios.precio_base - articulos.precio_costo ) / precio_costo * 100, " + CRLF
+   cSQL  += "margen_real = ( articulos_precios.precio_base - articulos.precio_costo ) / precio_base * 100, " + CRLF
    cSQL  += "manual = 1 " + CRLF
 
    cSQL  += "WHERE articulos_precios.uuid = uuid_precio_articulo; " + CRLF
@@ -692,16 +685,139 @@ METHOD createFunctionUpdatePrecioIvaIncluidoWhereUuid() CLASS ArticulosPreciosRe
 
    cSQL  += "articulos_precios.precio_iva_incluido = precio_iva_incluido, " + CRLF
    cSQL  += "articulos_precios.precio_base = ( precio_iva_incluido / ( 1 + ( tipos_iva.porcentaje / 100 ) ) ), " + CRLF
+   cSQL  += "margen = ( articulos_precios.precio_base - articulos.precio_costo ) / precio_costo * 100, " + CRLF
+   cSQL  += "margen_real = ( articulos_precios.precio_base - articulos.precio_costo ) / precio_base * 100, " + CRLF
    cSQL  += "manual = 1 " + CRLF
 
    cSQL  += "WHERE articulos_precios.uuid = uuid_precio_articulo; " + CRLF
 
    cSQL  += "END" + CRLF
 
+   logwrite( cSQL )
+
 RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
 
+METHOD dropFunctionUpdatePrecioWhereIdPrecio() CLASS ArticulosPreciosRepository  
+
+RETURN ( "DROP PROCEDURE IF EXISTS " + Company():getTableName( 'UpdatePrecioWhereIdPrecio' ) + ";" )
+
+//---------------------------------------------------------------------------//
+
+METHOD callUpdatePrecioWhereIdPrecio( idPrecio ) CLASS ArticulosPreciosRepository
+
+RETURN ( getSQLDatabase():Exec( "CALL " + Company():getTableName( 'UpdatePrecioWhereIdPrecio' ) + "( " + quoted( idPrecio ) + " )" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionUpdatePrecioWhereIdPrecio() CLASS ArticulosPreciosRepository
+
+   local cSQL
+
+   cSQL  := "DELIMITER $$ " + CRLF
+
+   cSQL  := "CREATE DEFINER=`root`@`localhost` PROCEDURE " + Company():getTableName( 'UpdatePrecioWhereIdPrecio' ) + " ( IN `id_articulo_precio` INT ) " + CRLF
+   cSQL  += "LANGUAGE SQL "+ CRLF
+   cSQL  += "NOT DETERMINISTIC "+ CRLF
+   cSQL  += "CONTAINS SQL "+ CRLF
+   cSQL  += "SQL SECURITY DEFINER "+ CRLF
+   cSQL  += "COMMENT '' "+ CRLF
+   cSQL  += "BEGIN "+ CRLF
+
+   cSQL  += "UPDATE " + ::getTableName() + " AS articulos_precios " + CRLF  
+
+   cSQL  += "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas " + CRLF + ;
+               "ON articulos_tarifas.uuid = articulos_precios.tarifa_uuid " + CRLF
+
+   cSQL  += "LEFT JOIN " + SQLArticulosModel():getTableName() + " AS articulos " + CRLF 
+   cSQL  +=    "ON articulos.uuid = articulos_precios.articulo_uuid " + CRLF
+
+   cSQL  += "LEFT JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva " + CRLF
+   cSQL  +=    "ON tipos_iva.codigo = articulos.tipo_iva_codigo " + CRLF
+
+   cSQL  += "LEFT JOIN " + ::getTableName() + " AS articulos_precios_parent " + CRLF    
+   cSQL  +=    "ON articulos_precios_parent.tarifa_uuid = articulos_tarifas.parent_uuid " + CRLF
+   cSQL  +=    "AND articulos_precios_parent.articulo_uuid = articulos_precios.articulo_uuid " + CRLF
+
+   cSQL  += "SET " + CRLF
+
+   cSQL  +=    "articulos_precios.margen = articulos_tarifas.margen, " + CRLF
+   cSQL  +=    "articulos_precios.precio_base = IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base ), " + CRLF 
+   cSQL  +=    "articulos_precios.precio_iva_incluido = ( articulos_precios.precio_base * IFNULL( tipos_iva.porcentaje, 0 ) / 100 ) + articulos_precios.precio_base " + CRLF   
+
+   cSQL  += "WHERE " + CRLF
+   cSQL  +=    "( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) " + CRLF
+   cSQL  +=    "AND articulos_precios.id = id_articulo_precio; " + CRLF
+
+   cSQL  += "END" + CRLF
+
+   logwrite( cSQL )
+
+RETURN ( cSQL )
+
+//---------------------------------------------------------------------------//
+
+METHOD dropFunctionUpdatePreciosWhereUuidArticulo() CLASS ArticulosPreciosRepository  
+
+RETURN ( "DROP PROCEDURE IF EXISTS " + Company():getTableName( 'UpdatePreciosWhereUuidArticulo' ) + ";" )
+
+//---------------------------------------------------------------------------//
+
+METHOD callUpdatePreciosWhereUuidArticulo( uuidArticulo ) CLASS ArticulosPreciosRepository
+
+RETURN ( getSQLDatabase():Exec( "CALL " + Company():getTableName( 'UpdatePreciosWhereUuidArticulo' ) + "( " + quoted( uuidArticulo ) + " )" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createFunctionUpdatePreciosWhereUuidArticulo() CLASS ArticulosPreciosRepository
+
+   local cSQL
+
+   cSQL  := "DELIMITER $$ " + CRLF
+
+   cSQL  := "CREATE DEFINER=`root`@`localhost` PROCEDURE " + Company():getTableName( 'UpdatePreciosWhereUuidArticulo' ) + " ( IN `uuid_articulo_precio` INT ) " + CRLF
+   cSQL  += "LANGUAGE SQL " + CRLF
+   cSQL  += "NOT DETERMINISTIC " + CRLF
+   cSQL  += "CONTAINS SQL " + CRLF
+   cSQL  += "SQL SECURITY DEFINER " + CRLF
+   cSQL  += "COMMENT '' " + CRLF
+   cSQL  += "BEGIN " + CRLF
+
+   cSQL  += "DECLARE done INT DEFAULT FALSE;" + CRLF
+   cSQL  += "DECLARE id INT;" + CRLF
+
+   cSQL  += "DECLARE cursor_articulo CURSOR FOR " + CRLF
+   cSQL  +=    "SELECT id " + CRLF
+   cSQL  +=    "FROM " + ::getTableName() + " AS articulos_precios " + CRLF 
+   cSQL  +=    "WHERE articulos_precios.articulo_uuid = uuid_articulo_precio " + CRLF
+   cSQL  +=    "ORDER BY articulos_precios.id;" + CRLF
+
+   cSQL  += "DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;" + CRLF
+
+   cSQL  += "OPEN cursor_articulo;" + CRLF
+
+   cSQL  += "read_loop: LOOP " + CRLF
+  
+   cSQL  += "FETCH cursor_articulo INTO id;" + CRLF
+    
+   cSQL  += "IF done THEN" + CRLF
+   cSQL  +=    "LEAVE read_loop;" + CRLF
+   cSQL  += "END IF;" + CRLF
+    
+   cSQL  +=    "CALL " + Company():getTableName( 'UpdatePrecioWhereIdPrecio' ) + "( id );" + CRLF
+
+   cSQL  += "END LOOP;" + CRLF
+
+   cSQL  += "CLOSE cursor_articulo;" + CRLF
+
+   cSQL  += "END" + CRLF
+
+   logwrite( cSQL )
+
+RETURN ( cSQL )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
