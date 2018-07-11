@@ -42,6 +42,7 @@ METHOD New( oSenderController ) CLASS TipoIvaController
    ::oRepository                    := TipoIvaRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
+   ::oGetSelector:cPicture          := "@!"
 
 RETURN ( Self )
 

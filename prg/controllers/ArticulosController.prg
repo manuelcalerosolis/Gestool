@@ -46,6 +46,8 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD getPorcentajeIVA()
 
    METHOD validatePrecioCosto()
+   
+   METHOD validateTipoIVA()
 
    METHOD validColumnArticulosFamiliaBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFamiliasController:oModel, "articulo_familia_codigo" ) )
@@ -242,18 +244,33 @@ METHOD validatePrecioCosto() CLASS ArticulosController
    local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
    local nPrecioCosto   := hget( ::oModel:hBuffer, "precio_costo" )
 
-   // ::oModel:updateFieldWhereUuid( uuidArticulo, "precio_costo", nPrecioCosto )
+   ::oModel:updateFieldWhereUuid( uuidArticulo, "precio_costo", nPrecioCosto )
 
    ::oArticulosPreciosController:oRepository:callUpdatePreciosWhereUuidArticulo( uuidArticulo )
    
-   msgalert( uuidArticulo, "uuidArticulo" )
-   logwrite( uuidArticulo )
-
    ::oArticulosPreciosController:refreshRowSetAndGoTop()
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD validateTipoIVA() CLASS ArticulosController
+
+   local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
+   local cCodigoTipoIVA := hget( ::oModel:hBuffer, "tipo_iva_codigo" )
+
+   msgalert( cCodigoTipoIVA, "cCodigoTipoIVA" )
+
+   ::oModel:updateFieldWhereUuid( uuidArticulo, "tipo_iva_codigo", cCodigoTipoIVA )
+
+   ::oArticulosPreciosController:oRepository:callUpdatePreciosWhereUuidArticulo( uuidArticulo )
+   
+   ::oArticulosPreciosController:refreshRowSetAndGoTop()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

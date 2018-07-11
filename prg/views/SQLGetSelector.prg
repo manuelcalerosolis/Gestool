@@ -9,8 +9,8 @@ CLASS GetSelector
 
    DATA bValue
 
-   DATA bValid
-
+   DATA cPicture                                  
+   
    DATA oGet
    DATA cGet
 
@@ -21,6 +21,7 @@ CLASS GetSelector
    DATA oEvents
 
    DATA bWhen
+   DATA bValid
 
    METHOD New( oSender )
    METHOD End()                                 
@@ -112,6 +113,8 @@ METHOD Activate( idGet, idText, oDlg, idSay ) CLASS GetSelector
    REDEFINE GET   ::oGet ;
       VAR         ::cGet ;
       ID          idGet ;
+      PICTURE     ::cPicture ;
+      UPDATE ;
       IDTEXT      idText ;
       IDSAY       idSay ;
       BITMAP      "Lupa" ;
@@ -161,7 +164,7 @@ METHOD validAction()
       RETURN ( .f. )
    end if
 
-   if empty( ::bValid ) .or. eval( ::bValid, ::cGet )
+   if empty( ::bValid ) .or. eval( ::bValid, ::oGet:varGet() )
 
       ::loadHelpText()
 

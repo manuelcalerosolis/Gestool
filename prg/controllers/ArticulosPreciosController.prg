@@ -725,7 +725,24 @@ METHOD createFunctionUpdatePrecioWhereIdPrecio() CLASS ArticulosPreciosRepositor
    cSQL  += "COMMENT '' "+ CRLF
    cSQL  += "BEGIN "+ CRLF
 
-   cSQL  += "UPDATE " + ::getTableName() + " AS articulos_precios " + CRLF  
+   cSQL  += "DECLARE margen FLOAT;" + CRLF
+   cSQL  += "DECLARE margen_real FLOAT;" + CRLF
+   cSQL  += "DECLARE precio_costo FLOAT;" + CRLF
+   cSQL  += "DECLARE porcentaje_iva FLOAT;" + CRLF
+   cSQL  += "DECLARE precio_base FLOAT;" + CRLF
+   cSQL  += "DECLARE precio_iva_incluido FLOAT;" + CRLF
+
+   cSQL  += "SELECT " + CRLF
+   cSQL  += "articulos_tarifas.margen, " + CRLF
+   cSQL  += "IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base )," + CRLF
+   cSQL  += "tipos_iva.porcentaje" + CRLF
+
+   cSQL  += "INTO " + CRLF
+   cSQL  += "margen, " + CRLF
+   cSQL  += "precio_costo, " + CRLF
+   cSQL  += "porcentaje_iva " + CRLF
+
+   cSQL  += "FROM " + ::getTableName() + " AS articulos_precios " + CRLF  
 
    cSQL  += "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas " + CRLF + ;
                "ON articulos_tarifas.uuid = articulos_precios.tarifa_uuid " + CRLF
@@ -740,11 +757,22 @@ METHOD createFunctionUpdatePrecioWhereIdPrecio() CLASS ArticulosPreciosRepositor
    cSQL  +=    "ON articulos_precios_parent.tarifa_uuid = articulos_tarifas.parent_uuid " + CRLF
    cSQL  +=    "AND articulos_precios_parent.articulo_uuid = articulos_precios.articulo_uuid " + CRLF
 
+   cSQL  += "WHERE " + CRLF
+   cSQL  +=    "( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) " + CRLF
+   cSQL  +=    "AND articulos_precios.id = id_articulo_precio; " + CRLF
+
+   cSQL  += "SET precio_base = ( precio_costo * margen / 100 ) + ( precio_costo );" + CRLF
+   cSQL  += "SET precio_iva_incluido = ( precio_base * porcentaje_iva / 100 ) + ( precio_base );" + CRLF
+   cSQL  += "SET margen_real = ( ( precio_base - precio_costo ) / precio_base * 100 );" + CRLF
+
+   cSQL  += "UPDATE " + ::getTableName() + " AS articulos_precios " + CRLF  
+
    cSQL  += "SET " + CRLF
 
-   cSQL  +=    "articulos_precios.margen = articulos_tarifas.margen, " + CRLF
-   cSQL  +=    "articulos_precios.precio_base = IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base ), " + CRLF 
-   cSQL  +=    "articulos_precios.precio_iva_incluido = ( articulos_precios.precio_base * IFNULL( tipos_iva.porcentaje, 0 ) / 100 ) + articulos_precios.precio_base " + CRLF   
+   cSQL  += "articulos_precios.margen = margen, " + CRLF
+   cSQL  += "articulos_precios.margen_real = margen_real, " + CRLF
+   cSQL  += "articulos_precios.precio_base = precio_base, " + CRLF
+   cSQL  += "articulos_precios.precio_iva_incluido = precio_iva_incluido " + CRLF
 
    cSQL  += "WHERE " + CRLF
    cSQL  +=    "( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) " + CRLF
@@ -776,7 +804,7 @@ METHOD createFunctionUpdatePreciosWhereUuidArticulo() CLASS ArticulosPreciosRepo
 
    cSQL  := "DELIMITER $$ " + CRLF
 
-   cSQL  := "CREATE DEFINER=`root`@`localhost` PROCEDURE " + Company():getTableName( 'UpdatePreciosWhereUuidArticulo' ) + " ( IN `uuid_articulo_precio` INT ) " + CRLF
+   cSQL  := "CREATE DEFINER=`root`@`localhost` PROCEDURE " + Company():getTableName( 'UpdatePreciosWhereUuidArticulo' ) + " ( IN `uuid_articulo_precio` CHAR(40) ) " + CRLF
    cSQL  += "LANGUAGE SQL " + CRLF
    cSQL  += "NOT DETERMINISTIC " + CRLF
    cSQL  += "CONTAINS SQL " + CRLF
@@ -785,7 +813,7 @@ METHOD createFunctionUpdatePreciosWhereUuidArticulo() CLASS ArticulosPreciosRepo
    cSQL  += "BEGIN " + CRLF
 
    cSQL  += "DECLARE done INT DEFAULT FALSE;" + CRLF
-   cSQL  += "DECLARE id INT;" + CRLF
+   cSQL  += "DECLARE id_articulo_precio INT;" + CRLF
 
    cSQL  += "DECLARE cursor_articulo CURSOR FOR " + CRLF
    cSQL  +=    "SELECT id " + CRLF
@@ -799,13 +827,13 @@ METHOD createFunctionUpdatePreciosWhereUuidArticulo() CLASS ArticulosPreciosRepo
 
    cSQL  += "read_loop: LOOP " + CRLF
   
-   cSQL  += "FETCH cursor_articulo INTO id;" + CRLF
+   cSQL  += "FETCH cursor_articulo INTO id_articulo_precio;" + CRLF
     
    cSQL  += "IF done THEN" + CRLF
    cSQL  +=    "LEAVE read_loop;" + CRLF
    cSQL  += "END IF;" + CRLF
     
-   cSQL  +=    "CALL " + Company():getTableName( 'UpdatePrecioWhereIdPrecio' ) + "( id );" + CRLF
+   cSQL  +=    "CALL " + Company():getTableName( 'UpdatePrecioWhereIdPrecio' ) + "( id_articulo_precio );" + CRLF
 
    cSQL  += "END LOOP;" + CRLF
 

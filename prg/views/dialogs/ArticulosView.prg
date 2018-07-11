@@ -108,8 +108,7 @@ METHOD Activate() CLASS ArticulosView
 
    ::oController:oTipoIvaController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_iva_codigo" ] ) )
    ::oController:oTipoIvaController:oGetSelector:Activate( 160, 161, ::oFolder:aDialogs[ 1 ] )
-   ::oController:oTipoIvaController:oGetSelector:bValid  := {|| ::oController:validatePrecioCosto() }
-
+   ::oController:oTipoIvaController:oGetSelector:bValid  := {|| ::oController:validateTipoIVA() }
 
    // Impuestos especiales-----------------------------------------------------
 
