@@ -164,13 +164,19 @@ METHOD validAction()
       RETURN ( .f. )
    end if
 
-   if empty( ::bValid ) .or. eval( ::bValid, ::oGet:varGet() )
+   ::evalValue( ::oGet:varGet() )
+
+   if empty( ::bValid ) .or. eval( ::bValid, ::oGet )
 
       ::loadHelpText()
 
       ::fireEvent( 'validated' )
 
       RETURN ( .t. )
+
+   else
+   
+      ::oGet:oWnd:nLastKey    := 0
 
    end if 
 
@@ -192,7 +198,7 @@ METHOD loadHelpText( lSilenceMode ) CLASS GetSelector
       RETURN ( .f. )
    end if
 
-   ::evalValue( ::oGet:varGet() )
+   // ::evalValue( ::oGet:varGet() )
 
    ::cleanHelpText()
 

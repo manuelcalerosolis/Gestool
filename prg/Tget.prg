@@ -1200,7 +1200,7 @@ METHOD lValid() CLASS TGet
    else
       ::oGet:Assign()
       if ValType( ::bValid ) == "B"
-         lRet := Eval( ::bValid, Self  )
+         lRet := Eval( ::bValid, Self )
          if ! lRet
             ::oWnd:nLastKey = 0
          endif

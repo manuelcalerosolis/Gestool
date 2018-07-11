@@ -176,6 +176,7 @@ METHOD Activate() CLASS ArticulosView
       VAR         ::oController:oModel:hBuffer[ "precio_costo" ] ;
       ID          100 ;
       PICTURE     "@E 99999999.999999" ;
+      SPINNER ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validatePrecioCosto() ) ;
       OF          ::oFolder:aDialogs[2]

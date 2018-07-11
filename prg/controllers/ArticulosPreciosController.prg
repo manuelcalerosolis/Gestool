@@ -9,11 +9,13 @@ CLASS ArticulosPreciosController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD setMargen( oCol, nMargen )
-
    METHOD setPrecioBase( oCol, nPrecioBase )
    
    METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido )
+
+   METHOD setManual( oCol, lManual )
+
+   METHOD UpdatePreciosAndRefresh() 
 
 END CLASS
 
@@ -53,33 +55,19 @@ METHOD End() CLASS ArticulosPreciosController
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setMargen( oCol, nMargen ) CLASS ArticulosPreciosController
+METHOD UpdatePreciosAndRefresh() 
 
-   local oCommand
+   ::oRepository:callUpdatePreciosWhereUuidArticulo( ::getRowSet():fieldGet( 'articulo_uuid' ) )
 
-   if ::oValidator:validate( 'margen', nMargen )
+   ::getRowSet():Refresh()
 
-      oCommand    := CalculaPrecioCommand():Build( {  'Costo'           => ::oSenderController:getPrecioCosto(),;
-                                                      'PorcentajeIVA'   => ::oSenderController:getPorcentajeIVA(),;
-                                                      'Margen'          => nMargen } )
+   ::getBrowseView():Refresh() 
 
-      oCommand:caclculaPreciosUsandoMargen()
-
-      ::oModel:updateFieldsCommandWhereUuid( oCommand, ::getRowSet():fieldGet( 'uuid' ) )
-
-      ::getRowSet():Refresh()
-
-   else
-
-      msgalert( "margen no validado" )
-
-   end if 
-
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -87,9 +75,7 @@ METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
 
    ::oRepository:callUpdatePrecioBaseWhereUuid( ::getRowSet():fieldGet( 'uuid' ), nPrecioBase )
 
-   ::getRowSet():Refresh()
-
-RETURN ( self )
+RETURN ( ::UpdatePreciosAndRefresh() )
 
 //---------------------------------------------------------------------------//
 
@@ -97,9 +83,15 @@ METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) CLASS ArticulosPreciosCo
 
    ::oRepository:callUpdatePrecioIvaIncluidoWhereUuid( ::getRowSet():fieldGet( 'uuid' ), nPrecioIVAIncluido )
 
-   ::getRowSet():Refresh()
+RETURN ( ::UpdatePreciosAndRefresh() )
 
-RETURN ( self )
+//---------------------------------------------------------------------------//
+
+METHOD setManual( oCol, lManual ) CLASS ArticulosPreciosController
+
+   ::oModel:updateFieldWhereUuid( ::getRowSet():fieldGet( 'uuid' ), "manual", lManual )
+
+RETURN ( ::UpdatePreciosAndRefresh() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -229,8 +221,9 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :cHeader             := "Manual"
       :bStrData            := {|| "" }
       :bEditValue          := {|| ::getRowSet():fieldGet( 'manual' ) == 1 }
+      :bEditBlock          := {|| msgalert( "manual" ) }
       :nWidth              := 60
-      :SetCheck( { "Sel16", "Nil16" } )
+      :SetCheck( { "Sel16", "Nil16" }, {|oCol, lManual| ::oController:setManual( oCol, lManual ) } )
    end with
 
 RETURN ( nil )
@@ -314,13 +307,6 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    METHOD insertPreciosWhereArticulo( uuidArticulo ) ;     
                                     INLINE ( ::getDatabase():Execs( ::getSQLInsertPreciosWhereArticulo( uuidArticulo ) ) )
-
-   METHOD updateFieldsCommandWhereUuid( oCommand, uuid ) ;
-                                    INLINE ( ::updateBufferWhereUuid( uuid,   {  'margen'                => oCommand:Margen(),; 
-                                                                                 'margen_real'           => oCommand:MargenReal(),;
-                                                                                 'precio_base'           => oCommand:PrecioBase(),;
-                                                                                 'precio_iva_incluido'   => oCommand:PrecioIVAIncluido(),;
-                                                                                 'manual'                => 1 } ) )
    
 END CLASS
 
@@ -693,8 +679,6 @@ METHOD createFunctionUpdatePrecioIvaIncluidoWhereUuid() CLASS ArticulosPreciosRe
 
    cSQL  += "END" + CRLF
 
-   logwrite( cSQL )
-
 RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
@@ -780,8 +764,6 @@ METHOD createFunctionUpdatePrecioWhereIdPrecio() CLASS ArticulosPreciosRepositor
 
    cSQL  += "END" + CRLF
 
-   logwrite( cSQL )
-
 RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
@@ -840,8 +822,6 @@ METHOD createFunctionUpdatePreciosWhereUuidArticulo() CLASS ArticulosPreciosRepo
    cSQL  += "CLOSE cursor_articulo;" + CRLF
 
    cSQL  += "END" + CRLF
-
-   logwrite( cSQL )
 
 RETURN ( cSQL )
 
