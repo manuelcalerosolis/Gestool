@@ -10,6 +10,10 @@
 
 #define NUMERO_TARIFAS  6
 
+#command CTEXT TO VAR <v> => #pragma __cstream|<v>:=%s
+
+memvar nId
+
 static oWnd
 static oWndBar
 static oDlgProgress
@@ -340,10 +344,25 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
+/*   
+   local cQuery
 
-   // SQLArticulosPreciosModel():insertUpdateWhereTarifa( '528dd01d-6a3d-4149-9de2-dbeea6b5814c' ) 
+   private nId   := 5
 
-RETURN nil
+   TEXT INTO cQuery
+   SELECT COUNT(*) FROM { SQLArticulosModel():getTableName() }
+      WHERE id > { nId } 
+   ENDTEXT
+
+   msgalert( cQuery)
+
+   cQuery      := getSQLDatabase():genStatement( cQuery )
+
+   msgalert( cQuery, "cQuery" )
+
+   msgalert( getSQLDatabase():getValue( cQuery ), "cQuery" )
+*/   
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

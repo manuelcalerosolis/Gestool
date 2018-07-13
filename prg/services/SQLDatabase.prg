@@ -52,6 +52,8 @@ CLASS SQLDatabase
 
    METHOD escapeStr( cEscape )            INLINE ( if( !empty( ::oConexion ), ::oConexion:escapeStr( cEscape ), cEscape ) ) 
 
+   METHOD genStatement( cStatement )
+
    METHOD selectFetch( cSql )
 
    METHOD selectFetchHash( cSentence, attributePad )  INLINE ::selectFetch( cSentence, FETCH_HASH, attributePad )
@@ -246,29 +248,22 @@ METHOD Execs( cSentence, lParse )
 RETURN ( ::Exec( cSentence, lParse ) ) 
 
 //----------------------------------------------------------------------------//
-/*
-METHOD Parse( cSql )
 
-   local e
+METHOD genStatement( cSentence )
 
-   if empty( ::oConexion )
-      RETURN ( .f. )
-   end if 
+   local cExpr, cContain, uContain
 
-   try
-      
-      ::oConexion:Parse( cSql )
+   while "{" $ cSentence
+      cExpr       := substr( cSentence,   at( "{", cSentence ) + 1, ;
+                                          at( "}", cSentence ) ;
+                                          - at( "{", cSentence ) - 1 )
+      uContain    := eval( &( "{ ||" + cExpr + " }" ) )
+      cContain    := transform( uContain, "@" )
+      cSentence   := strtran( cSentence, "{" + cExpr + "}", cContain, 1 )
+    end
 
-   catch e
-      
-      msgstop( e:SubSystem + ";" + padl( e:SubCode, 4 ) + ";" + e:Operation + ";" + e:Description, "Error en sentencia" )  
+RETURN ( cSentence )
 
-      RETURN ( .f. )
-
-   end 
-
-RETURN ( .t. )
-*/
 //----------------------------------------------------------------------------//
 
 METHOD selectFetch( cSentence, fetchType, attributePad )

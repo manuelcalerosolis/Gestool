@@ -248,7 +248,7 @@ METHOD validatePrecioCosto() CLASS ArticulosController
 
    ::oArticulosPreciosController:oRepository:callUpdatePreciosWhereUuidArticulo( uuidArticulo )
    
-   ::oArticulosPreciosController:refreshRowSetAndGoTop()
+   ::oArticulosPreciosController:refreshRowSet()
 
 RETURN ( .t. )
 
@@ -259,13 +259,11 @@ METHOD validateTipoIVA() CLASS ArticulosController
    local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
    local cCodigoTipoIVA := hget( ::oModel:hBuffer, "tipo_iva_codigo" )
 
-   msgalert( cCodigoTipoIVA, "cCodigoTipoIVA" )
-
    ::oModel:updateFieldWhereUuid( uuidArticulo, "tipo_iva_codigo", cCodigoTipoIVA )
 
    ::oArticulosPreciosController:oRepository:callUpdatePreciosWhereUuidArticulo( uuidArticulo )
    
-   ::oArticulosPreciosController:refreshRowSetAndGoTop()
+   ::oArticulosPreciosController:refreshRowSet()
 
 RETURN ( .t. )
 

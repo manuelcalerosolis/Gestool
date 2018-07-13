@@ -15,6 +15,8 @@ CLASS ArticulosTarifasController FROM SQLNavigatorController
 
    METHOD Delete( aSelectedRecno )
 
+   METHOD endAppendedTarifa()
+
    METHOD endEditedTarifa()
 
    METHOD updatedTarifa( uuidTarifaActualizar, lCosto )
@@ -51,7 +53,9 @@ METHOD New() CLASS ArticulosTarifasController
 
    ::oRepository                    := ArticulosTarifasRepository():New( self )
 
-   ::setEvents( { 'appended', 'duplicated', 'edited' },  {|| ::endEditedTarifa() } )
+   ::setEvents( { 'appended', 'duplicated' },  {|| ::endAppendedTarifa() } )
+
+   ::setEvent( 'edited',            {|| ::endEditedTarifa() } )
 
    ::setEvent( 'deleting',          {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -97,25 +101,43 @@ RETURN ( ::Super:Delete( aSelectedRecno ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD endEditedTarifa() CLASS ArticulosTarifasController
+METHOD endAppendedTarifa() CLASS ArticulosTarifasController
 
    local oWaitMessage
-   local cTarifaSobre     
    local uuidTarifaActualizar  
 
    oWaitMessage         := TWaitMeter():New( "Actualizando tarifa", "Espere por favor..." )
    oWaitMessage:Run()
 
-   cTarifaSobre         := hget( ::oModel:hBuffer, "parent_uuid" )
    uuidTarifaActualizar := hget( ::oModel:hBuffer, "uuid" )
 
-   ::updatedTarifa( uuidTarifaActualizar, cTarifaSobre == __tarifa_costo__ )
+   ::oArticulosPreciosController:oModel:insertPrecioWhereTarifa( uuidTarifaActualizar )
 
    oWaitMessage:End()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD endEditedTarifa() CLASS ArticulosTarifasController
+
+   local oWaitMessage
+   local uuidTarifaActualizar  
+
+   oWaitMessage         := TWaitMeter():New( "Actualizando tarifa", "Espere por favor..." )
+   oWaitMessage:Run()
+
+   uuidTarifaActualizar := hget( ::oModel:hBuffer, "uuid" )
+
+   ::oArticulosPreciosController:oModel:updatePrecioWhereTarifa( uuidTarifaActualizar )
+
+   oWaitMessage:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+// quitar
 
 METHOD updatedTarifa( uuidTarifaActualizar, lCosto ) CLASS ArticulosTarifasController
 

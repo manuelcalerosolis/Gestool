@@ -391,11 +391,11 @@ METHOD getSelectSentence( cOrderBy, cOrientation )
 
    local cSQLSelect        
 
-   if empty( cOrderBy )
+   if !empty( cOrderBy )
       ::setOrderBy( cOrderBy )
    end if 
 
-   if empty( cOrientation )
+   if !empty( cOrientation )
       ::setOrientation( cOrientation )
    end if 
 

@@ -286,8 +286,20 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
                                     (  "LEFT JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva " + CRLF + ;
                                           "ON tipos_iva.codigo = articulos.tipo_iva_codigo " + CRLF )
 
-   METHOD getSQLInsertPrecioWhereTarifa( uuidTarifa, lCosto )
+   METHOD getSQLInsertPrecioWhereTarifa( uuidTarifa )
+
+   METHOD insertPrecioWhereTarifa( uuidTarifa ) ;
+                                    INLINE ( ::getDatabase():Exec( ::getSQLInsertPrecioWhereTarifa( uuidTarifa ) ) )
+
    METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa, lCosto )
+
+   METHOD updatePrecioWhereTarifa( uuidTarifa ) ;
+                                    INLINE ( ::getDatabase():Exec( ::getSQLUpdatePrecioWhereTarifa( uuidTarifa ) ) )
+
+   METHOD updatePrecioWhereArticulo( uuidArticulo ) ;
+                                    INLINE ( ::getDatabase():Exec( ::getSQLUpdatePrecioWhereArticulo( uuidArticulo ) ) )
+
+   METHOD getSQLUpdatePrecioWhereArticulo( uuidArticulo ) 
 
    METHOD insertUpdatePrecioWhereTarifa( uuidTarifa, lCosto ) ;
                                     INLINE ( ::getDatabase():Exec( ::getSQLInsertPrecioWhereTarifa( uuidTarifa, lCosto ) ),;
@@ -394,76 +406,138 @@ METHOD getSQLInsertPrecioWhereTarifa( uuidTarifa ) CLASS SQLArticulosPreciosMode
 
    local cSQL
 
-   cSQL  := "INSERT IGNORE INTO " + ::getTableName() + " "  + CRLF  
-   
-   cSQL  +=    "( uuid, " + CRLF
-   cSQL  +=    "articulo_uuid, " + CRLF
-   cSQL  +=    "tarifa_uuid, " + CRLF
-   cSQL  +=    "margen, " + CRLF
-   cSQL  +=    "precio_base, " + CRLF
-   cSQL  +=    "precio_iva_incluido ) " + CRLF
+   TEXT INTO cSql
 
-   cSQL  += "SELECT " + CRLF
+   INSERT IGNORE INTO %2$s 
+      (  uuid,
+         articulo_uuid,
+         tarifa_uuid,
+         margen,
+         precio_base,
+         precio_iva_incluido )
+      SELECT 
+         UUID(),
+         articulos.uuid,
+         %1$s,
+         articulos_tarifas.margen,
+         @precioBase :=             
+         ( ( @precioSobre :=                
+            IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base )                
+            * articulos_tarifas.margen / 100 ) + @precioSobre ),
+         @precioIVA := ( ( @precioBase * tipos_iva.porcentaje / 100 ) + @precioBase )
+      FROM %3$s AS articulos
 
-   cSQL  +=    "UUID(), "+ CRLF
-   cSQL  +=    "articulos.uuid, "+ CRLF
-   cSQL  +=    quoted( uuidTarifa ) + ", " + CRLF
-   cSQL  +=    "articulos_tarifas.margen, " + CRLF
-   cSQL  +=    "( @precioBase := ( ( @precioSobre := IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base ) ) * articulos_tarifas.margen / 100 ) + @precioSobre ), " + CRLF
-   cSQL  +=    "@precioIVA := ( @precioBase * tipos_iva.porcentaje / 100 ) + @precioBase " + CRLF
+      LEFT JOIN %2$s AS articulos_precios_parent 
+         ON articulos_precios_parent.articulo_uuid = articulos.uuid 
+         AND articulos_precios_parent.tarifa_uuid = articulos_tarifas.uuid
 
-   cSQL  += "FROM " + SQLArticulosModel():getTableName() + " AS articulos "+ CRLF
+      INNER JOIN %4$s AS articulos_tarifas  
+         ON articulos_tarifas.uuid = %1$s
 
-   cSQL  += "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas " + CRLF 
-   cSQL  +=    "ON articulos_tarifas.uuid = " + quoted( uuidTarifa ) + " " + CRLF
+      LEFT JOIN %5$s AS tipos_iva
+         ON tipos_iva.codigo = articulos.tipo_iva_codigo
 
-   cSQL  += "LEFT JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva " + CRLF 
-   cSQL  +=    "ON tipos_iva.codigo = articulos.tipo_iva_codigo " + CRLF
+   ENDTEXT
 
-   cSQL  += "LEFT JOIN " + ::getTableName() + " AS articulos_precios_parent "+ CRLF            
-   cSQL  +=    "ON articulos_precios_parent.articulo_uuid = articulos.uuid "+ CRLF                
-   cSQL  +=    "AND articulos_precios_parent.tarifa_uuid = articulos_tarifas.uuid "+ CRLF
+   cSql  := hb_strformat( cSql, quoted( uuidTarifa ), ::getTableName(), SQLArticulosModel():getTableName(), SQLArticulosTarifasModel():getTableName(), SQLTiposIvaModel():getTableName() )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa, lCosto ) CLASS SQLArticulosPreciosModel
+METHOD getSQLUpdatePrecioWhereTarifa( uuidTarifa ) CLASS SQLArticulosPreciosModel
 
    local cSQL
+
+   TEXT INTO cSql
    
-   cSQL  := "UPDATE " + ::getTableName() + " AS articulos_precios " + CRLF  
+   UPDATE %2$s AS articulos_precios
 
-   cSQL  += ::getInnerJoinArticulosTarifas( uuidTarifa )
+      INNER JOIN %4$s AS articulos_tarifas  
+         ON articulos_tarifas.uuid = %1$s
 
-   cSQL  += "LEFT JOIN " + ::getTableName() + " AS articulos_precios_parent " + CRLF    
-   cSQL  +=    "ON articulos_precios_parent.tarifa_uuid = articulos_tarifas.parent_uuid " + CRLF
-   cSQL  +=    "AND articulos_precios_parent.articulo_uuid = articulos_precios.articulo_uuid " + CRLF
+      LEFT JOIN %2$s AS articulos_precios_parent 
+         ON articulos_precios_parent.tarifa_uuid = articulos_tarifas.parent_uuid
+         AND articulos_precios_parent.articulo_uuid = articulos_precios.articulo_uuid
 
-   cSQL  += "LEFT JOIN " + SQLArticulosModel():getTableName() + " AS articulos " + CRLF 
-   cSQL  +=    "ON articulos.uuid = articulos_precios.articulo_uuid " + CRLF
+      LEFT JOIN %3$s AS articulos 
+        ON articulos.uuid = articulos_precios.articulo_uuid 
 
-   cSQL  += "LEFT JOIN " + SQLTiposIvaModel():getTableName() + " AS tipos_iva " + CRLF 
-   cSQL  +=    "ON tipos_iva.codigo = articulos.tipo_iva_codigo " + CRLF
+      LEFT JOIN %5$s AS tipos_iva
+         ON tipos_iva.codigo = articulos.tipo_iva_codigo
 
-   cSQL  += "SET " + CRLF
+      SET 
+         articulos_precios.margen = articulos_tarifas.margen, 
 
-   cSQL  +=    "articulos_precios.margen = articulos_tarifas.margen, " + CRLF
-   
-   //cSQL  +=    "articulos_precios.precio_base = " + ::getPrecioBase( lCosto ) + " ," + CRLF 
-   //cSQL  +=    "articulos_precios.precio_iva_incluido = " + ::getPrecioIVA( lCosto ) + " " + CRLF
+         articulos_precios.precio_base = 
+            @precioBase :=             
+            ( ( @precioSobre :=                
+               IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base )                
+               * articulos_tarifas.margen / 100 ) + @precioSobre ),
 
-   cSQL  +=    "articulos_precios.precio_base = ( @precioBase := ( ( @precioSobre := IF( articulos_tarifas.parent_uuid = '', articulos.precio_costo, articulos_precios_parent.precio_base ) ) * articulos_tarifas.margen / 100 ) + @precioSobre ), " + CRLF
-   cSQL  +=    "articulos_precios.precio_iva_incluido = ( @precioBase * tipos_iva.porcentaje / 100 ) + @precioBase " + CRLF
+         articulos_precios.precio_iva_incluido = ( ( @precioBase * tipos_iva.porcentaje / 100 ) + @precioBase )
 
-   cSQL  += "WHERE " + CRLF
-   cSQL  +=    "( articulos_precios.manual IS NULL OR articulos_precios.manual != 1 ) " + CRLF
-   cSQL  +=    "AND articulos_precios.tarifa_uuid = " + quoted( uuidTarifa ) + CRLF
+      WHERE 
+         (  articulos_precios.manual IS NULL OR articulos_precios.manual != 1 )
+            AND articulos_precios.tarifa_uuid = %1$s 
 
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, quoted( uuidTarifa ), ::getTableName(), SQLArticulosModel():getTableName(), SQLArticulosTarifasModel():getTableName(), SQLTiposIvaModel():getTableName() )
 
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
+METHOD getSQLUpdatePrecioWhereArticulo( uuidArticulo ) CLASS SQLArticulosPreciosModel
+
+   local cSQL
+
+   TEXT INTO cSql
+   
+   UPDATE %2$s AS articulos_precios
+
+      INNER JOIN %4$s AS articulos_tarifas  
+         ON articulos_tarifas.uuid = articulos_precios.tarifa_uuid
+
+      LEFT JOIN %2$s AS articulos_precios_parent 
+         ON articulos_precios_parent.tarifa_uuid = articulos_tarifas.parent_uuid
+         AND articulos_precios_parent.articulo_uuid = articulos_precios.articulo_uuid
+
+      LEFT JOIN %3$s AS articulos 
+        ON articulos.uuid = articulos_precios.articulo_uuid 
+
+      LEFT JOIN %5$s AS tipos_iva
+         ON tipos_iva.codigo = articulos.tipo_iva_codigo
+
+      SET 
+         articulos_precios.margen = articulos_tarifas.margen, 
+
+         articulos_precios.precio_base = 
+            ( ( @precioSobre :=                
+               IF( articulos_tarifas.parent_uuid = '',
+                  articulos.precio_costo,
+                  articulos_precios_parent.precio_base ) )               
+               * articulos_tarifas.margen / 100 ) + @precioSobre, 
+
+         articulos_precios.precio_iva_incluido = 
+            ( @precioBase * tipos_iva.porcentaje / 100 ) + @precioBase
+
+      WHERE 
+         (  articulos_precios.manual IS NULL OR articulos_precios.manual != 1 )
+            AND articulos_precios.articulo_uuid = %1$s 
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, quoted( uuidArticulo ), ::getTableName(), SQLArticulosModel():getTableName(), SQLArticulosTarifasModel():getTableName(), SQLTiposIvaModel():getTableName() )
+
+   logwrite( cSql )
+   msgalert( cSql, "cSql" )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD getSQLUpdatePrecioWhereTarifaAndArticulo( idPrecio, nPrecioCosto ) CLASS SQLArticulosPreciosModel
 
@@ -599,8 +673,6 @@ METHOD createFunctionUpdatePrecioBaseWhereUuid() CLASS ArticulosPreciosRepositor
 
    local cSQL
 
-   cSQL  := "DELIMITER $$ " + CRLF
-
    cSQL  := "CREATE DEFINER=`root`@`localhost` PROCEDURE " + Company():getTableName( 'UpdatePrecioBaseWhereUuid' ) + " ( IN `uuid_precio_articulo` CHAR(40), IN `precio_base` FLOAT(16,6) ) " + CRLF
    cSQL  += "LANGUAGE SQL "+ CRLF
    cSQL  += "NOT DETERMINISTIC "+ CRLF
@@ -649,8 +721,6 @@ METHOD createFunctionUpdatePrecioIvaIncluidoWhereUuid() CLASS ArticulosPreciosRe
 
    local cSQL
 
-   cSQL  := "DELIMITER $$ " + CRLF
-
    cSQL  := "CREATE DEFINER=`root`@`localhost` PROCEDURE " + Company():getTableName( 'UpdatePrecioIvaIncluidoWhereUuid' ) + " ( IN `uuid_precio_articulo` CHAR(40), IN `precio_iva_incluido` FLOAT(16,6) ) " + CRLF
    cSQL  += "LANGUAGE SQL "+ CRLF
    cSQL  += "NOT DETERMINISTIC "+ CRLF
@@ -698,8 +768,6 @@ RETURN ( getSQLDatabase():Exec( "CALL " + Company():getTableName( 'UpdatePrecioW
 METHOD createFunctionUpdatePrecioWhereIdPrecio() CLASS ArticulosPreciosRepository
 
    local cSQL
-
-   cSQL  := "DELIMITER $$ " + CRLF
 
    cSQL  := "CREATE DEFINER=`root`@`localhost` PROCEDURE " + Company():getTableName( 'UpdatePrecioWhereIdPrecio' ) + " ( IN `id_articulo_precio` INT ) " + CRLF
    cSQL  += "LANGUAGE SQL "+ CRLF
@@ -782,48 +850,52 @@ RETURN ( getSQLDatabase():Exec( "CALL " + Company():getTableName( 'UpdatePrecios
 
 METHOD createFunctionUpdatePreciosWhereUuidArticulo() CLASS ArticulosPreciosRepository
 
-   local cSQL
+   local cSql
 
-   cSQL  := "DELIMITER $$ " + CRLF
+   TEXT INTO cSql
+      CREATE DEFINER = `root`@`localhost` PROCEDURE %1$s ( IN `uuid_articulo_precio` CHAR(40) ) 
+      
+      LANGUAGE SQL
+      NOT DETERMINISTIC
+      CONTAINS SQL
+      SQL SECURITY DEFINER
+      COMMENT ''
 
-   cSQL  := "CREATE DEFINER=`root`@`localhost` PROCEDURE " + Company():getTableName( 'UpdatePreciosWhereUuidArticulo' ) + " ( IN `uuid_articulo_precio` CHAR(40) ) " + CRLF
-   cSQL  += "LANGUAGE SQL " + CRLF
-   cSQL  += "NOT DETERMINISTIC " + CRLF
-   cSQL  += "CONTAINS SQL " + CRLF
-   cSQL  += "SQL SECURITY DEFINER " + CRLF
-   cSQL  += "COMMENT '' " + CRLF
-   cSQL  += "BEGIN " + CRLF
+      BEGIN
 
-   cSQL  += "DECLARE done INT DEFAULT FALSE;" + CRLF
-   cSQL  += "DECLARE id_articulo_precio INT;" + CRLF
+      DECLARE done INT DEFAULT FALSE;
+      DECLARE id_articulo_precio INT;
 
-   cSQL  += "DECLARE cursor_articulo CURSOR FOR " + CRLF
-   cSQL  +=    "SELECT id " + CRLF
-   cSQL  +=    "FROM " + ::getTableName() + " AS articulos_precios " + CRLF 
-   cSQL  +=    "WHERE articulos_precios.articulo_uuid = uuid_articulo_precio " + CRLF
-   cSQL  +=    "ORDER BY articulos_precios.id;" + CRLF
+      DECLARE cursor_articulo CURSOR FOR
+      SELECT id
+         FROM %3$s AS articulos_precios 
+         WHERE articulos_precios.articulo_uuid = uuid_articulo_precio   
+         ORDER BY articulos_precios.id;
 
-   cSQL  += "DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;" + CRLF
+      DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
-   cSQL  += "OPEN cursor_articulo;" + CRLF
+      OPEN cursor_articulo;
 
-   cSQL  += "read_loop: LOOP " + CRLF
-  
-   cSQL  += "FETCH cursor_articulo INTO id_articulo_precio;" + CRLF
-    
-   cSQL  += "IF done THEN" + CRLF
-   cSQL  +=    "LEAVE read_loop;" + CRLF
-   cSQL  += "END IF;" + CRLF
-    
-   cSQL  +=    "CALL " + Company():getTableName( 'UpdatePrecioWhereIdPrecio' ) + "( id_articulo_precio );" + CRLF
+      read_loop: LOOP 
+      FETCH cursor_articulo INTO id_articulo_precio;
 
-   cSQL  += "END LOOP;" + CRLF
+         IF done THEN
+            LEAVE read_loop;
+         END IF;
 
-   cSQL  += "CLOSE cursor_articulo;" + CRLF
+         CALL %2$s( id_articulo_precio );
 
-   cSQL  += "END" + CRLF
+      END LOOP;
 
-RETURN ( cSQL )
+      CLOSE cursor_articulo;
+
+   END
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, Company():getTableName( 'UpdatePreciosWhereUuidArticulo' ), Company():getTableName( 'UpdatePrecioWhereIdPrecio' ), ::getTableName() )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

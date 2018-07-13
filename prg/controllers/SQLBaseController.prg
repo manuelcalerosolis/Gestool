@@ -132,19 +132,6 @@ CLASS SQLBaseController
    METHOD Validate( cColumn, uValue )                 INLINE ( iif( !empty( ::oValidator ), ::oValidator:Validate( cColumn, uValue ), ) )
    METHOD Assert( cColumn, uValue )                   INLINE ( iif( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
 
-   // Browse------------------------------------------------------------------
-
-   METHOD getBrowseView()                             INLINE ( ::oBrowseView )
-   METHOD getBrowse()                                 INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:getBrowse(), ) )
-
-   METHOD refreshBrowseView()                         INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
-   METHOD refreshBrowseViewAndGoTop()                 INLINE ( if( !empty( ::oBrowseView ), ( ::oBrowseView:goTop(), ::oBrowseView:Refresh() ), ) )
-
-   METHOD isBrowseColumnEdit()                        
-
-   METHOD startBrowse( oCombobox )
-   METHOD restoreBrowseState()
-
    // Access -----------------------------------------------------------------
 
    METHOD isUserAccess()                              INLINE ( nAnd( ::nLevel, __permission_access__ ) != 0 )
@@ -290,69 +277,6 @@ METHOD End()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
-METHOD isBrowseColumnEdit()
-
-   local oSelectedColumn   
-
-   if !empty( ::oBrowseView ) 
-
-      oSelectedColumn   := ::oBrowseView:getSelectedCol()
-   
-      if !empty( oSelectedColumn )
-         RETURN ( oSelectedColumn:nEditType != 0 )
-      end if 
-   
-   end if 
-
-RETURN ( .f. )   
-
-//---------------------------------------------------------------------------//
-
-METHOD startBrowse( oCombobox )
-
-   local oColumn
-
-   if empty( ::oDialogView:getoBrowse() )
-      RETURN ( Self )
-   end if 
-
-   if (!empty( oCombobox ) )
-      oCombobox:SetItems( ::oDialogView:getoBrowse():getColumnHeaders() )
-   endif
-
-   ::restoreBrowseState()
-
-   oColumn        := ::oDialogView:getoBrowse():getColumnOrder( ::oModel:cColumnOrder )
-   if empty( oColumn )
-      RETURN ( Self )
-   end if 
-   
-   if (!empty( oCombobox ) )
-      oCombobox:set( oColumn:cHeader )
-   endif
-
-   ::oDialogView:getoBrowse():selectColumnOrder( oColumn, ::oModel:cOrientation )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD restoreBrowseState()
-
-   if empty( ::oDialogView:getoBrowse() )
-      RETURN ( Self )
-   end if 
-
-   if empty( ::oDialogView:getBrowseState() )
-      RETURN ( Self )
-   end if 
-
-   ::oDialogView:getoBrowse():restoreState( ::oDialogView:getBrowseState() )
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
 
 METHOD Append()
 

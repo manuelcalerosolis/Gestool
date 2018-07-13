@@ -2,26 +2,32 @@
 #include "factu.ch" 
 #include "hdo.ch"
 
+//---------------------------------------------------------------------------//
+
 CLASS SQLConfiguracionVistasController FROM SQLBaseController
 
    METHOD New( oController )
 
    METHOD setId( cViewType, cViewName, nId )    INLINE ( ::oModel:setId( cViewType, cViewName, nId ) )
+   
    METHOD getId( cViewType, cViewName )         INLINE ( ::oModel:getId( cViewType, cViewName ) )
 
    METHOD setColumnOrder( cViewType, cViewName, cColumnOrder ) ;
                                                 INLINE ( ::oModel:setColumnOrder( cViewType, cViewName, cColumnOrder ) )
+   
    METHOD getColumnOrder( cViewType, cViewName ) ;
                                                 INLINE ( ::oModel:getColumnOrder( cViewType, cViewName ) )
 
    METHOD setState( cViewType, cViewName, cState ) ;
                                                 INLINE ( ::oModel:setState( cViewType, cViewName, cState ) )
+   
    METHOD getState( cViewType, cViewName )      INLINE ( ::oModel:getState( cViewType, cViewName ) )
 
    METHOD getColumnOrderNavigator( cViewName )  INLINE ( ::oModel:getColumnOrderNavigator( cViewName ) )
 
    METHOD setColumnOrientation( cViewType, cViewName, cColumnOrientation ) ;
                                                 INLINE ( ::oModel:setColumnOrientation( cViewType, cViewName, cColumnOrientation ) ) 
+   
    METHOD getColumnOrientation( cViewType, cViewName ) ;
                                                 INLINE ( ::oModel:getColumnOrientation( cViewType, cViewName ) ) 
 
