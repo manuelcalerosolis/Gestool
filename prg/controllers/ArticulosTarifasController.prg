@@ -570,6 +570,8 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
    hset( ::hColumns, "sistema",              {  "create"    => "TINYINT ( 1 )"                           ,;
                                                 "default"   => {|| 0 } }                                 )
 
+   ::getTimeStampColumns()
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//

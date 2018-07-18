@@ -32,6 +32,7 @@ CLASS SQLFiltrosController FROM SQLBaseController
 
    METHOD setComboFilter( cText )            INLINE ( ::oSenderController:oWindowsBar:setComboFilter( cText ) )
    METHOD setComboFilterItem( cText )        INLINE ( ::oSenderController:oWindowsBar:setComboFilterItem( cText ) )
+   METHOD showCleanButtonFilter()            INLINE ( ::oSenderController:oWindowsBar:showCleanButtonFilter() )
 
    METHOD setTableToFilter( cTableToFilter ) INLINE ( ::oModel:setTableToFilter( cTableToFilter ) )
    METHOD getTableToFilter()                 INLINE ( ::oModel:getTableToFilter() )

@@ -116,7 +116,7 @@ RETURN ( nPermiso )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PermisosBrowseView FROM SQLBrowseView
+CLASS PermisosBrowseView FROM SQLBrowseGestoolView
 
    METHOD addColumns()                       
 

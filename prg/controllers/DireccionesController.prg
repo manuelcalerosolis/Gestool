@@ -211,7 +211,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesBrowseView FROM SQLBrowseView
+CLASS DireccionesBrowseView FROM SQLBrowseGestoolView
 
    METHOD addColumns()                       
 

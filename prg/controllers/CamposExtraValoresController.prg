@@ -169,7 +169,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraValoresBrowseView FROM SQLBrowseView
+CLASS CamposExtraValoresBrowseView FROM SQLBrowseGestoolView
 
    DATA oColumnValor
 

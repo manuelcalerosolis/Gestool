@@ -5975,7 +5975,17 @@ RETURN ( if( dSysDate != nil, dSysDate, Date() ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION aEmp() ; RETURN ( aEmpresa )
+FUNCTION aEmp( nField ) 
+
+   if empty( nField )
+      RETURN ( aEmpresa )
+   end if 
+
+   if empty( aEmpresa )
+      RETURN ( nil )
+   end if 
+   
+RETURN ( if( nField > 1 .and. nField < len( aEmpresa ), aEmpresa[ nField ], nil ) )
 
 //---------------------------------------------------------------------------//
 

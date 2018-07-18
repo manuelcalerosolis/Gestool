@@ -186,7 +186,7 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLAjustableModel():New() )
 
-   aadd( ::aModels, SQLConfiguracionVistasModel():New() )
+   aadd( ::aModels, SQLConfiguracionVistasGestoolModel():New() )
 
    aadd( ::aModels, SQLCamposExtraGestoolModel():New() )
 
@@ -354,7 +354,7 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLTageableModel():New() )
                                       
-   //aadd( ::aModels, SQLTiposVentasModel():New() )
+   aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
    aadd( ::aModels, SQLConfiguracionesCompanyModel():New() )
 

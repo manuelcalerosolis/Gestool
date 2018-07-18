@@ -256,7 +256,7 @@ RETURN ( cStatement )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RolesBrowseView FROM SQLBrowseView
+CLASS RolesBrowseView FROM SQLBrowseGestoolView
 
    METHOD addColumns()                       
 

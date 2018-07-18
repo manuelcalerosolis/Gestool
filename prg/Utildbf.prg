@@ -4403,7 +4403,7 @@ FUNCTION GetBmp( aGet, cMask, cPath )
    local cFile 
 
    DEFAULT cMask  := "Imagenes (*.bmp,jpg,png,gif)|*.bmp;*.jpg;*.png;*.gif|"
-   DEFAULT cPath  := rtrim( cPatImg() )
+   DEFAULT cPath  := cPatImg()
 
    cFile          := upper( cGetFile( cMask, "Seleccione el fichero", 1, cPath ) )
 

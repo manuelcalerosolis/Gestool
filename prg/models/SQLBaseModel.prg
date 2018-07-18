@@ -133,7 +133,6 @@ CLASS SQLBaseModel
    METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
    METHOD addGeneralWhere( cSQLSelect )
    
-   METHOD addEmpresaWhere()
    METHOD addParentUuidWhere()                           
 
    METHOD setOthersWhere( cWhere )                    INLINE ( ::cOthersWhere   := cWhere )
@@ -348,8 +347,6 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addOthersWhere( cSQLSelect )
 
-   cSQLSelect              := ::addEmpresaWhere( cSQLSelect )
-
    cSQLSelect              := ::addParentUuidWhere( cSQLSelect )
 
    cSQLSelect              := ::addFilterWhere( cSQLSelect )
@@ -437,18 +434,6 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD addEmpresaWhere( cSQLSelect )
-
-   if !::isEmpresaColumn()
-      RETURN ( cSQLSelect )
-   end if 
-
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".empresa_codigo = " + toSQLString( Company():Codigo() )
-
-RETURN ( cSQLSelect )
-
-//---------------------------------------------------------------------------//
-
 METHOD addParentUuidWhere( cSQLSelect ) 
 
    local uuid        
@@ -493,7 +478,13 @@ METHOD addFilterWhere( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cFilterWhere
+   cSQLSelect           += ::getWhereOrAnd( cSQLSelect )
+
+   if !empty( ::cAs )
+      cSQLSelect        += ::cAs + "."
+   end if 
+
+   cSQLSelect           += ::cFilterWhere
 
 RETURN ( cSQLSelect )
 

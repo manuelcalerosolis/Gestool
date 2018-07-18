@@ -83,7 +83,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DelegacionesBrowseView FROM SQLBrowseView
+CLASS DelegacionesBrowseView FROM SQLBrowseGestoolView
 
    METHOD addColumns()                       
 

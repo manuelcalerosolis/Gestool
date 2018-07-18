@@ -402,7 +402,7 @@ RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD isPasswordExclude( cPassword )
+METHOD isPasswordExclude( cPassword ) CLASS SQLUsuariosModel
 
    if ( "NOPASSWORD" $ appParamsMain() .or. "NOPASSWORD" $ appParamsSecond() )
       RETURN ( .t. )
@@ -416,7 +416,7 @@ RETURN ( alltrim( cPassword ) == __encryption_key__ )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosBrowseView FROM SQLBrowseView
+CLASS UsuariosBrowseView FROM SQLBrowseGestoolView
 
    METHOD addColumns()                       
 

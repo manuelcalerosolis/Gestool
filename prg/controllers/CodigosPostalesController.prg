@@ -81,7 +81,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CodigosPostalesBrowseView FROM SQLBrowseView
+CLASS CodigosPostalesBrowseView FROM SQLBrowseGestoolView
 
    METHOD addColumns()                       
 

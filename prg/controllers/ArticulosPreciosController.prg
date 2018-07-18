@@ -258,6 +258,8 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    DATA cTableName                  INIT "articulos_precios"
 
+   DATA cAs                         INIT "articulos_precios"
+
    DATA cConstraints                INIT "PRIMARY KEY ( id ), UNIQUE KEY ( articulo_uuid, tarifa_uuid )"
 
    METHOD getColumns()

@@ -205,7 +205,7 @@ RETURN ( self )
 
 METHOD updateEmpresa()
 
-   aeval( ::getBrowse():aSelected,;
+   aeval( ::getBrowseView():getBrowseSelected(),;
             {|nSelect|  ::getRowSet():goToRecNo( nSelect ),;
                         msgRun( "Actualizando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanyMigrations():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
 
@@ -215,7 +215,7 @@ RETURN ( self )
 
 METHOD seedEmpresa()
 
-   aeval( ::getBrowse():aSelected,;
+   aeval( ::getBrowseView():getBrowseSelected(),;
             {|nSelect|  ::getRowSet():goToRecNo( nSelect ),;
                         Company():guardWhereCodigo( ::getRowSet():fieldGet( 'codigo' ) ),;
                         msgRun( "Importando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanySeeders():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
@@ -228,7 +228,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS EmpresasBrowseView FROM SQLBrowseView
+CLASS EmpresasBrowseView FROM SQLBrowseGestoolView
 
    METHOD addColumns()                       
 

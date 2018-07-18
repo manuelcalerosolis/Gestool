@@ -107,7 +107,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraBrowseView FROM SQLBrowseView
+CLASS CamposExtraBrowseView FROM SQLBrowseGestoolView
 
    METHOD addColumns()                       
 

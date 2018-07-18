@@ -99,7 +99,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ProvinciasBrowseView FROM SQLBrowseView
+CLASS ProvinciasBrowseView FROM SQLBrowseGestoolView
 
    METHOD addColumns()                       
 

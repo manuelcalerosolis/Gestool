@@ -11,7 +11,7 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getGeneralSelect()
+   METHOD getInitialSelect()
 
 END CLASS
 
@@ -80,7 +80,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getGeneralSelect() CLASS SQLArticulosModel
+METHOD getInitialSelect() CLASS SQLArticulosModel
 
    local cSelect  := "SELECT articulos.id AS id, "                                                                         + ;
                         "articulos.uuid AS uuid, "                                                                         + ;

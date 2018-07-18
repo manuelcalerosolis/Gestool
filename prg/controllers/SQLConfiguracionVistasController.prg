@@ -4,6 +4,24 @@
 
 //---------------------------------------------------------------------------//
 
+CLASS SQLConfiguracionVistasGestoolController FROM SQLConfiguracionVistasController
+
+   METHOD New( oController )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oSenderController ) CLASS SQLConfiguracionVistasGestoolController
+
+   ::oSenderController                 := oSenderController
+
+   ::oModel                            := SQLConfiguracionVistasGestoolModel():New( self )
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 CLASS SQLConfiguracionVistasController FROM SQLBaseController
 
    METHOD New( oController )
@@ -52,7 +70,15 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLConfiguracionVistasModel FROM SQLBaseModel
+CLASS SQLConfiguracionVistasGestoolModel FROM SQLConfiguracionVistasModel
+
+   METHOD getTableName()   INLINE ( "gestool." + ::cTableName )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS SQLConfiguracionVistasModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "configuracion_vistas"
 
@@ -87,6 +113,7 @@ CLASS SQLConfiguracionVistasModel FROM SQLBaseModel
 
    METHOD setNavigator( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
                                                             INLINE ( ::set( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
+   
    METHOD setSelector( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
                                                             INLINE ( ::set( "selector", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
    

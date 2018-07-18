@@ -50,7 +50,7 @@ CLASS SQLBaseController
    DATA oView
 
    METHOD New()
-   METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
+   METHOD Instance()                                  INLINE ( iif( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
    METHOD End()
 
    METHOD setDirectory( cDirectory )                  INLINE ( ::cDirectory := cDirectory )
@@ -60,6 +60,10 @@ CLASS SQLBaseController
    METHOD getName()                                   INLINE ( ::cName )
 
    METHOD getSenderController()                       INLINE ( ::oSenderController ) 
+
+   METHOD getBrowseView()                             INLINE ( ::oBrowseView )
+
+   METHOD getBrowseViewType()                         INLINE ( ::oBrowseView:getViewType() )
 
    // Modelo -----------------------------------------------------------------
 
@@ -241,6 +245,25 @@ CLASS SQLBaseController
 
    METHOD setView( oView )                            INLINE ( ::oView := oView )
    METHOD getView()                                   INLINE ( if( empty( ::oView ), ::oDialogView, ::oView ) )
+
+   // Refresh
+
+   METHOD refreshBrowseView()                         INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) ) 
+
+   // Filters------------------------------------------------------------------
+
+   METHOD buildFilter( cExpresion )
+   METHOD buildInFilter( cField, cValue )             INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " IN (" + toSqlString( cValue ) + ")", "" ) ) )
+   METHOD buildNotInFilter( cField, cValue )          INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " NOT IN (" + toSqlString( cValue ) + ")", "" ) ) )
+   METHOD buildBiggerFilter( cField, cValue )         INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " > " + toSqlString( cValue ), "" ) ) )
+   METHOD buildSmallerFilter( cField, cValue )        INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " < " + toSqlString( cValue ), "" ) ) )
+   METHOD buildStartLikeFilter( cField, cValue )      INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( alltrim( cstr( cValue ) ) + "%" ), "" ) ) )
+   METHOD buildEndLikeFilter( cField, cValue )        INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( "%" + alltrim( cstr( cValue ) ) ), "" ) ) )
+   METHOD buildLikeFilter( cField, cValue )           INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( "%" + alltrim( cstr( cValue ) ) + "%" ), "" ) ) )
+
+   METHOD clearFilter()
+
+   METHOD reBuildRowSet()   
 
 END CLASS
 
@@ -791,5 +814,41 @@ METHOD validColumnBrowse( oCol, uValue, nKey, oModel, cFieldName )
    ::RefreshRowSet()
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildFilter( cFilter )
+
+   ::getModel():insertFilterWhere( cFilter )
+
+   ::reBuildRowSet()
+   
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD clearFilter()
+
+   ::getModel():clearFilterWhere()
+
+   ::reBuildRowSet()
+   
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD reBuildRowSet()
+
+   local nId
+
+   nId               := ::oRowSet:fieldGet( ::getModelColumnKey() )
+   
+   ::oRowSet:build( ::getModel():getSelectSentence() )
+
+   ::oRowSet:findString( nId )
+      
+   ::getBrowseView():Refresh()
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//

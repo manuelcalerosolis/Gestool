@@ -53,8 +53,6 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD onKeyChar( nKey )
 
-   METHOD reBuildRowSet()
-
    METHOD getComboBoxOrder()                          
 
    METHOD onChangeCombo( oColumn )
@@ -73,10 +71,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD showEditAndDeleteButtonFilter()
 
-   METHOD getBrowseView()                             INLINE ( ::oBrowseView )
-
    METHOD getIds()                                    INLINE ( ::getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected ) )
-   METHOD getBrowseViewType()                         INLINE ( ::oBrowseView:getViewType() )
 
    // Filters manege-----------------------------------------------------------
 
@@ -87,6 +82,22 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD getFilters()                                INLINE ( iif( !empty( ::oFilterController ), ::oFilterController:getFilters(), ) ) 
    METHOD setFilter()                                                                                                       
    METHOD clearFilter() 
+
+   METHOD buildFilter()
+
+   METHOD buildCustomFilter( cField, cValue, cOperator )
+
+   METHOD buildCustomInFilter( cField, cValue )       INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "IN (...)" ),;
+                                                                     ::buildInFilter( cField, cValue ), ) )
+   METHOD buildCustomNotInFilter( cField, cValue )    INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "NOT IN (...)" ),;
+                                                                     ::buildNotInFilter( cField, cValue ), ) )
+   METHOD buildCustomBiggerFilter( cField, cValue )   INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "> (...)" ),;
+                                                                     ::buildBiggerFilter( cField, cValue ), ) )
+   METHOD buildCustomSmallerFilter( cField, cValue )  INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "< (...)" ),;
+                                                                     ::buildSmallerFilter( cField, cValue ), ) )
+   METHOD buildCustomLikeFilter( cField, cValue )     INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
+                                                                     ::buildLikeFilter( cField, cValue ), ) )
+
 
 END CLASS
 
@@ -141,8 +152,6 @@ METHOD buildRowSetSentence( cType )
    local cColumnOrder         
    local cColumnOrientation   
 
-   msgalert( cType )
-
    if !empty( ::oBrowseView )
 
       cColumnOrder            := ::oBrowseView:getColumnOrderView( cType, ::getName() )
@@ -150,9 +159,6 @@ METHOD buildRowSetSentence( cType )
       cColumnOrientation      := ::oBrowseView:getColumnOrientationView( cType, ::getName() )
 
    end if 
-
-   msgalert( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ), "buildRowSetSentence" )
-
 
    ::oRowSet:Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
 
@@ -413,20 +419,44 @@ METHOD setFilter( cFilterName )
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
-/*
+
 METHOD buildFilter( cFilter )
 
    ::getModel():insertFilterWhere( cFilter )
 
    if !empty( ::oFilterController )
+
       ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
+
+      ::oFilterController:showCleanButtonFilter()   
+
    end if 
 
    ::reBuildRowSet()
    
-RETURN ( self )
-*/
-//---------------------------------------------------------------------------//
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD buildCustomFilter( cField, cValue, cOperator )
+
+   if empty( ::oFilterController )
+      RETURN ( .f. )
+   end if 
+
+   ::oFilterController:oCustomView:setText( "'" + cField + "' " + cOperator )
+
+   ::oFilterController:oCustomView:setValue( cValue )
+
+   if !( ::oFilterController:oCustomView:Activate() )
+      RETURN ( .f. )
+   end if 
+
+   cValue            := alltrim( ::oFilterController:oCustomView:getValue() )
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
 
 METHOD clearFilter()
 
@@ -438,41 +468,6 @@ METHOD clearFilter()
 
    ::reBuildRowSet()
    
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-/*
-METHOD buildCustomFilter( cField, cValue, cOperator )
-
-   if empty( ::oFilterController )
-      RETURN ( .f. )
-   end if 
-
-   ::oFilterController:oCustomView:setText( "'" + cField + "' " + cOperator )
-   ::oFilterController:oCustomView:setValue( cValue )
-
-   if !( ::oFilterController:oCustomView:Activate() )
-      RETURN ( .f. )
-   end if 
-
-   cValue            := alltrim( ::oFilterController:oCustomView:getValue() )
-
-RETURN ( .t. )
-*/
-//---------------------------------------------------------------------------//
-
-METHOD reBuildRowSet()
-
-   local nId
-
-   nId               := ::oRowSet:fieldGet( ::getModelColumnKey() )
-   
-   ::oRowSet:build( ::getModel():getSelectSentence() )
-
-   ::oRowSet:findString( nId )
-      
-   ::getBrowseView():Refresh()
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
