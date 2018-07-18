@@ -282,7 +282,7 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
 
    cSentence            := chgAtEnd( cSentence, '', 2 )
 
-   getSQLDatabase():Exec( cSentence  )
+   getSQLDatabase():TransactionalExec( cSentence  )
 
 RETURN ( nil )
 
@@ -290,13 +290,13 @@ RETURN ( nil )
 
 METHOD delete( cViewType, cViewName ) CLASS SQLConfiguracionVistasModel
 
-   local cSentence   := "DELETE FROM " + ::getTableName() + " "                              + ;
-                           "WHERE "                                                          + ;
-                              "view_type = " + quoted( cViewType ) + " AND "                 + ;
-                              "view_name = " + quoted( cViewName ) + " AND "                 + ;
-                              "usuario_uuid = " + quoted( Auth():Uuid() )
+   local cSentence      := "DELETE FROM " + ::getTableName() + " "                              + ;
+                              "WHERE "                                                          + ;
+                                 "view_type = " + quoted( cViewType ) + " AND "                 + ;
+                                 "view_name = " + quoted( cViewName ) + " AND "                 + ;
+                                 "usuario_uuid = " + quoted( Auth():Uuid() )
 
-   getSQLDatabase():Exec( cSentence  )
+   getSQLDatabase():TransactionalExec( cSentence  )
 
 RETURN ( nil )
        
