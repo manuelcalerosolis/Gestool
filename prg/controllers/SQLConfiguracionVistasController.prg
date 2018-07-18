@@ -82,7 +82,7 @@ CLASS SQLConfiguracionVistasModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "configuracion_vistas"
 
-   DATA cConstraints                         INIT  "PRIMARY KEY ( id ), UNIQUE KEY ( usuario_codigo, view_type, view_name )"
+   DATA cConstraints                         INIT  "PRIMARY KEY ( id ), UNIQUE KEY ( usuario_uuid, view_type, view_name )"
 
    METHOD getColumns()
 
@@ -134,7 +134,7 @@ METHOD getColumns() CLASS SQLConfiguracionVistasModel
    ::hColumns  := {  "id"                 =>  { "create" => "INTEGER AUTO_INCREMENT"      },;
                      "view_type"          =>  { "create" => "VARCHAR( 40 ) NOT NULL"      },;
                      "view_name"          =>  { "create" => "VARCHAR( 60 ) NOT NULL"      },;
-                     "usuario_codigo"     =>  { "create" => "VARCHAR( 20 ) NOT NULL"      },;                     
+                     "usuario_uuid"       =>  { "create" => "VARCHAR( 40 ) NOT NULL"      },;                     
                      "browse_state"       =>  { "create" => "TEXT"                        },;
                      "column_order"       =>  { "create" => "VARCHAR( 60 )"               },;
                      "column_orientation" =>  { "create" => "CHARACTER( 1 )"	            },;
@@ -152,7 +152,7 @@ METHOD get( cViewType, cViewName ) CLASS SQLConfiguracionVistasModel
                            "WHERE "                                                                + ;
                               "view_type = " + quoted( cViewType )   + " AND "                     + ;
                               "view_name = " + quoted( cViewName )   + " AND "                     + ;
-                              "usuario_codigo = " + quoted( Auth():Codigo() ) + " "                + ; 
+                              "usuario_uuid = " + quoted( Auth():Uuid() ) + " "                    + ; 
                            "LIMIT 1"
 
    aFetch            := getSQLDatabase():selectFetchHash( cSentence, .f. )
@@ -201,22 +201,22 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
 
    local cSentence  
 
-   if empty( cViewType )
-      RETURN ( Self )
+   if hb_isnil( cViewType )
+      RETURN ( nil )
    end if 
 
-   if empty( cViewName )
-      RETURN ( Self )
+   if hb_isnil( cViewName )
+      RETURN ( nil )
    end if 
 
    if empty( cBrowseState ) .and. empty( cColumnOrder ) .and. empty( cOrientation ) .and. empty( idToFind )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
    
    cSentence            := "INSERT INTO " + ::getTableName() + " ( "                               
    cSentence            +=       "view_type, "                                               
    cSentence            +=       "view_name, "     
-   cSentence            +=       "usuario_codigo, "     
+   cSentence            +=       "usuario_uuid, "     
 
    if !empty( cBrowseState )                                          
       cBrowseState      := getSQLDatabase():escapeStr( cBrowseState ) 
@@ -240,7 +240,7 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
    cSentence            += "VALUES ( "                                                    
    cSentence            +=       quoted( cViewType ) + ", "                          
    cSentence            +=       quoted( cViewName ) + ", "  
-   cSentence            +=       quoted( Auth():Codigo() ) + ", "
+   cSentence            +=       quoted( Auth():Uuid() ) + ", "
 
    if !empty( cBrowseState )                                          
       cSentence         +=       quoted( cBrowseState ) + ", "                               
@@ -284,7 +284,7 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
 
    getSQLDatabase():Exec( cSentence  )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -294,7 +294,7 @@ METHOD delete( cViewType, cViewName ) CLASS SQLConfiguracionVistasModel
                            "WHERE "                                                          + ;
                               "view_type = " + quoted( cViewType ) + " AND "                 + ;
                               "view_name = " + quoted( cViewName ) + " AND "                 + ;
-                              "usuario_codigo = " + quoted( Auth():Codigo() )
+                              "usuario_uuid = " + quoted( Auth():Uuid() )
 
    getSQLDatabase():Exec( cSentence  )
 

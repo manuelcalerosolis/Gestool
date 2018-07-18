@@ -548,6 +548,10 @@ METHOD setIdView( cType, cName, nId )
    DEFAULT cType  := ::getType()
    DEFAULT cName  := ::getName()
 
+   msgalert( cType, "cType" )
+   msgalert( cName, "cName" )
+   msgalert( empty( ::oConfiguracionVistasController ), "::oConfiguracionVistasController" )
+
    if empty( ::oConfiguracionVistasController )
       RETURN ( nil )
    end if 
