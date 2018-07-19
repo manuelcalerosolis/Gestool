@@ -1,7 +1,19 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+
+CLASS SQLNavigatorGestoolController FROM SQLNavigatorController
+
+   METHOD getConfiguracionVistasController()          INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 CLASS SQLNavigatorController FROM SQLBrowseController
 
@@ -28,6 +40,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    DATA oWindowsBar
 
    METHOD New()
+
    METHOD End()
 
    METHOD setName( cName )                            INLINE ( ::Super:setName( cName ), if( !empty( ::oFilterController ), ::oFilterController:setTableToFilter( cName ), ) ) 
@@ -97,7 +110,6 @@ CLASS SQLNavigatorController FROM SQLBrowseController
                                                                      ::buildSmallerFilter( cField, cValue ), ) )
    METHOD buildCustomLikeFilter( cField, cValue )     INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
                                                                      ::buildLikeFilter( cField, cValue ), ) )
-
 
 END CLASS
 

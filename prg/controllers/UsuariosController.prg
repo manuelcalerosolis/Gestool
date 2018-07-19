@@ -7,7 +7,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosController FROM SQLNavigatorController
+CLASS UsuariosController FROM SQLNavigatorGestoolController
    
    DATA oAjustableController 
 
@@ -416,7 +416,7 @@ RETURN ( alltrim( cPassword ) == __encryption_key__ )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosBrowseView FROM SQLBrowseGestoolView
+CLASS UsuariosBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 

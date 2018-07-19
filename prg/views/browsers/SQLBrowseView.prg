@@ -3,23 +3,9 @@
 #include "Xbrowse.Ch"
 
 //------------------------------------------------------------------------//
-
-CLASS SQLBrowseGestoolView FROM SQLBrowseView
-
-   METHOD New( oController )
-
-ENDCLASS
-
-//----------------------------------------------------------------------------//
-
-METHOD New( oController ) CLASS SQLBrowseGestoolView
-
-   ::oController                             := oController
-
-   ::oConfiguracionVistasController          := SQLConfiguracionVistasGestoolController():New( self )
-
-RETURN ( Self )
-
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
 //------------------------------------------------------------------------//
 
 CLASS SQLBrowseView
@@ -73,49 +59,53 @@ CLASS SQLBrowseView
    // Facades------------------------------------------------------------------
 
    METHOD getBrowse()                        INLINE ( ::oBrowse )
-   METHOD getBrowseSelected()                INLINE ( ::oBrowse:aSelected )
-   METHOD getSaveState()                     INLINE ( ::oBrowse:SaveState() )
-   METHOD setSaveState( cState )             INLINE ( ::oBrowse:restoreState( cState ) )
+   METHOD getBrowseSelected()                INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:aSelected, ) )
+   METHOD getSaveState()                     INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:SaveState(), ) )
+   METHOD setSaveState( cState )             INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:restoreState( cState ), ) )
 
-   METHOD getColumnByHeader( cHeader )       INLINE ( ::oBrowse:getColumnByHeader( cHeader ) )
-   METHOD getColumnOrder( cSortOrder )       INLINE ( ::oBrowse:getColumnOrder( cSortOrder ) )
-   METHOD getColumnOrderHeader( cSortOrder ) INLINE ( ::oBrowse:getColumnOrderHeader( cSortOrder ) )
+   METHOD getColumnByHeader( cHeader )       INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnByHeader( cHeader ), ) )
+   METHOD getColumnOrder( cSortOrder )       INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnOrder( cSortOrder ), ) )
+   METHOD getColumnOrderHeader( cSortOrder ) INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnOrderHeader( cSortOrder ), ) )
 
    METHOD setColumnOrder( cSortOrder, cColumnOrientation ) ;
-                                             INLINE ( ::oBrowse:setColumnOrder( cSortOrder, cColumnOrientation ) )
-   METHOD setFirstColumnOrder()              INLINE ( ::oBrowse:setFirstColumnOrder() )
+                                             INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setColumnOrder( cSortOrder, cColumnOrientation ), ) )
+   METHOD setFirstColumnOrder()              INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setFirstColumnOrder(), ) )
 
    METHOD getColumnHeaderByOrder( cSortOrder )  
-   METHOD getColumnOrderByHeader( cHeader )  INLINE ( ::oBrowse:getColumnOrderByHeader( cHeader ) )
+   METHOD getColumnOrderByHeader( cHeader )  INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnOrderByHeader( cHeader ), ) )
 
-   METHOD getColumnSortOrder()               INLINE ( ::oBrowse:getColumnSortOrder() )
-   METHOD getColumnSortOrientation()         INLINE ( ::oBrowse:getColumnSortOrientation() )
+   METHOD getColumnSortOrder()               INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnSortOrder(), ) )
+   METHOD getColumnSortOrientation()         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnSortOrientation(), ) )
 
-   METHOD selectColumnOrder( oCol )          INLINE ( ::oBrowse:selectColumnOrder( oCol ) )
-   METHOD refreshCurrent()                   INLINE ( ::oBrowse:refreshCurrent() )
+   METHOD selectColumnOrder( oCol )          INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:selectColumnOrder( oCol ), ) )
+   METHOD refreshCurrent()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:refreshCurrent(), ) )
 
-   METHOD createFromCode()                   INLINE ( ::oBrowse:CreateFromCode() )
-   METHOD createFromResource( id )           INLINE ( ::oBrowse:CreateFromResource( id ) )
+   METHOD createFromCode()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:CreateFromCode(), ) )
+   METHOD createFromResource( id )           INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:CreateFromResource( id ), ) )
 
-   METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick    := bLDblClick )
-   METHOD setLDClickDatas( bLDClickDatas )   INLINE ( ::oBrowse:bLDClickDatas := bLDClickDatas )
+   METHOD setLDblClick( bLDblClick )         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:bLDblClick    := bLDblClick, ) )
+   METHOD setLDClickDatas( bLDClickDatas )   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:bLDClickDatas := bLDClickDatas, ) )
 
-   METHOD Refresh()                          INLINE ( if( !empty( ::oBrowse ), ( ::oBrowse:makeTotals(), ::oBrowse:Refresh() ), ) )
-   METHOD goTop()                            INLINE ( if( !empty( ::oBrowse ), ::oBrowse:goTop(), ) )
+   METHOD Refresh()                          INLINE ( iif( !empty( ::oBrowse ), ( ::oBrowse:makeTotals(), ::oBrowse:Refresh() ), ) )
+   METHOD goTop()                            INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:goTop(), ) )
 
-   METHOD setViewTypeToNavigator()           INLINE ( ::oBrowse:setViewType( "navigator" ) )
-   METHOD setViewTypeToSelector()            INLINE ( ::oBrowse:setViewType( "selector" ) )
-   METHOD getViewType()                      INLINE ( ::oBrowse:getViewType() )
+   METHOD setViewTypeToNavigator()           INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setViewType( "navigator" ), ) )
+   METHOD setViewTypeToSelector()            INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setViewType( "selector" ), ) )
+   METHOD getViewType()                      INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getViewType(), ) )
 
-   METHOD setFocus()                         INLINE ( ::oBrowse:setFocus() )
+   METHOD setFocus()                         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setFocus(), ) )
 
-   METHOD selectCol( nCol, lOffset )         INLINE ( ::oBrowse:selectCol( nCol, lOffset ) )
+   METHOD selectCol( nCol, lOffset )         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:selectCol( nCol, lOffset ), ) )
 
-   METHOD SelectedCol()                      INLINE ( ::oBrowse:SelectedCol() )
+   METHOD SelectedCol()                      INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:SelectedCol(), ) )
 
-   METHOD hWnd()                             INLINE ( ::oBrowse:hWnd )
+   METHOD hWnd()                             INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:hWnd, ) )
 
-   METHOD oPopup()                           INLINE ( ::oBrowse:oPopup )
+   METHOD oPopup()                           INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:oPopup, ) )
+
+   METHOD getSelectedCol()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:SelectedCol(), nil ) )
+
+   METHOD changeColumnOrder( oCol )          INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:changeColumnOrder( oCol ), nil ) )
 
    // Controller---------------------------------------------------------------
 
@@ -149,9 +139,6 @@ CLASS SQLBrowseView
 
    METHOD getFirstColumnHeader()
 
-   METHOD getSelectedCol()                   INLINE ( if( !empty( ::oBrowse ), ::oBrowse:SelectedCol(), nil ) )
-
-   METHOD changeColumnOrder( oCol )          INLINE ( if( !empty( ::oBrowse ), ::oBrowse:changeColumnOrder( oCol ), nil ) )
 
    // Events---------------------------------------------------------------------
 
@@ -195,8 +182,6 @@ METHOD New( oController )
 
    ::oController                             := oController
 
-   ::oConfiguracionVistasController          := SQLConfiguracionVistasController():New( self )
-
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -204,6 +189,8 @@ RETURN ( Self )
 METHOD End()
 
    CursorWait()
+
+   ::saveState()
 
    ::oConfiguracionVistasController:End()
 
@@ -287,13 +274,15 @@ METHOD getFirstColumnHeader()
 
    local oCol
 
-   if hb_isarray( ::oBrowse:aCols )
-      for each oCol in ::oBrowse:aCols 
-         if !( oCol:lHide ) .and. !empty( oCol:cHeader )
-            RETURN ( oCol:cHeader )
-         end if 
-      next
-   end if 
+   if !hb_isarray( ::oBrowse:aCols )
+      RETURN ( "" )
+   end if
+
+   for each oCol in ::oBrowse:aCols 
+      if !( oCol:lHide ) .and. !empty( oCol:cHeader )
+         RETURN ( oCol:cHeader )
+      end if 
+   next
 
 RETURN ( "" )
 
@@ -321,7 +310,9 @@ METHOD ActivateDialog( oDialog, nId )
 
    ::addColumns()
 
-   ::CreateFromResource( nId )
+   ::createFromResource( nId )
+
+   ::restoreState()
 
 RETURN ( Self )
 
@@ -547,10 +538,6 @@ METHOD setIdView( cType, cName, nId )
 
    DEFAULT cType  := ::getType()
    DEFAULT cName  := ::getName()
-
-   msgalert( cType, "cType" )
-   msgalert( cName, "cName" )
-   msgalert( empty( ::oConfiguracionVistasController ), "::oConfiguracionVistasController" )
 
    if empty( ::oConfiguracionVistasController )
       RETURN ( nil )

@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PermisosController FROM SQLNavigatorController
+CLASS PermisosController FROM SQLNavigatorGestoolController
    
    DATA cUuidRoles
 
@@ -116,7 +116,7 @@ RETURN ( nPermiso )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS PermisosBrowseView FROM SQLBrowseGestoolView
+CLASS PermisosBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 

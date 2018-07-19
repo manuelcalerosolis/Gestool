@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS DelegacionesController FROM SQLNavigatorController
+CLASS DelegacionesController FROM SQLNavigatorGestoolController
 
    DATA oDireccionesController
 
@@ -12,6 +12,8 @@ CLASS DelegacionesController FROM SQLNavigatorController
    METHOD New()
 
    METHOD End()
+
+   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
 END CLASS
 
@@ -83,7 +85,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DelegacionesBrowseView FROM SQLBrowseGestoolView
+CLASS DelegacionesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 

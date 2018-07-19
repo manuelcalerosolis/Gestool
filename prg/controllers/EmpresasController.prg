@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS EmpresasController FROM SQLNavigatorController
+CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    DATA oGetSelector
 
@@ -65,6 +65,8 @@ METHOD New( oSenderController ) CLASS EmpresasController
    
    ::oModel                         := SQLEmpresasModel():New( self )
 
+   ::oRepository                    := EmpresasRepository():New( self )
+
    ::oBrowseView                    := EmpresasBrowseView():New( self )
 
    ::oDialogView                    := EmpresasView():New( self )
@@ -72,8 +74,6 @@ METHOD New( oSenderController ) CLASS EmpresasController
    ::oValidator                     := EmpresasValidator():New( self, ::oDialogView )
 
    ::oCamposExtraValoresController  := CamposExtraValoresGestoolController():New( self, ::oModel:cTableName )
-
-   ::oRepository                    := EmpresasRepository():New( self )
 
    ::oGetSelector                   := ComboSelector():New( self )
 
@@ -228,7 +228,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS EmpresasBrowseView FROM SQLBrowseGestoolView
+CLASS EmpresasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 

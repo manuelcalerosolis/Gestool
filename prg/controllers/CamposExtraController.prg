@@ -11,6 +11,8 @@ CLASS CamposExtraGestoolController FROM CamposExtraController
 
    METHOD getCamposExtraEntidadesController()   INLINE ( ::oCamposExtraEntidadesController := CamposExtraEntidadesGestoolController():New( self ) )
 
+   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -39,9 +41,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS CamposExtraController
+METHOD New( oSenderController ) CLASS CamposExtraController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                            := "Campos extra"
 
@@ -107,7 +109,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraBrowseView FROM SQLBrowseGestoolView
+CLASS CamposExtraBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 

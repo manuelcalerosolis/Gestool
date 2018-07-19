@@ -3,11 +3,29 @@
 
 //---------------------------------------------------------------------------//
 
+CLASS SQLBrowseGestoolController FROM SQLBrowseController
+
+   METHOD getConfiguracionVistasController()          INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+
+END CLASS 
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
 CLASS SQLBrowseController FROM SQLBaseController
 
    DATA oBrowseView
 
+   DATA oConfiguracionVistasController
+
    METHOD New()
+
+   METHOD End()
+
+   METHOD getConfiguracionVistasController()          INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasController():New( self ) )
 
    METHOD Activate()
 
@@ -24,26 +42,28 @@ CLASS SQLBrowseController FROM SQLBaseController
    // Vistas manege -----------------------------------------------------------
 
    METHOD restoreState()
+
    METHOD saveState()
 
    METHOD getBrowseViewType()                         INLINE ( ::oBrowseView:getViewType() )
 
-   METHOD setIdView( cType, cName, nId )              INLINE ( iif( !empty( ::oBrowseView ), ::oBrowseView:setIdView( cType, cName, nId ), ) )
+   METHOD setIdView( cType, cName, nId )              INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:setId( ::oBrowseView:cType, ::oBrowseView:cName, nId ), ) )
    
-   METHOD getIdView( cType, cName )                   INLINE ( iif( !empty( ::oBrowseView ), ::oBrowseView:getIdView( cType, cName ), ) )
+   METHOD getIdView( cType, cName )                   INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:getId( ::oBrowseView:cType, ::oBrowseView:cName ), ) )
 
    METHOD setColumnOrderView( cType, cName, cColumnOrder ) ;
-                                                      INLINE ( iif( !empty( ::oBrowseView ), ::oBrowseView:setColumnOrderView( cType, cName, cColumnOrder ), ) )
-   METHOD getColumnOrderView( cType, cName )          INLINE ( iif( !empty( ::oBrowseView ), ::oBrowseView:getColumnOrderView( cType, cName ), ) )
+                                                      INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:setColumnOrder( ::oBrowseView:cType, ::oBrowseView:cName, cColumnOrder ), ) )
+   
+   METHOD getColumnOrderView( cType, cName )          INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:getColumnOrder( ::oBrowseView:cType, ::oBrowseView:cName ), ) )
 
    METHOD setColumnOrientationView( cType, cName, cColumnOrientation ) ;
-                                                      INLINE ( iif( !empty( ::oBrowseView ), ::oBrowseView:setColumnOrientationView( cType, cName, cColumnOrientation ), ) )
+                                                      INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:setColumnOrientation( ::oBrowseView:cType, ::oBrowseView:cName, cColumnOrientation ), ) )
    
-   METHOD getColumnOrientationView( cType, cName )    INLINE ( iif( !empty( ::oBrowseView ), ::oBrowseView:getColumnOrientationView( cType, cName ), ) )
+   METHOD getColumnOrientationView( cType, cName )    INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:getColumnOrientation( ::oBrowseView:cType, ::oBrowseView:cName ), ) )
 
-   METHOD setStateView( cType, cName, cState )        INLINE ( iif( !empty( ::oBrowseView ), ::oBrowseView:setStateView( cType, cName, cState ), ) )
+   METHOD setStateView( cType, cName, cState )        INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:setStateView( ::oBrowseView:cType, ::oBrowseView:cName, cState ), ) )
    
-   METHOD getStateView( cType, cName )                INLINE ( iif( !empty( ::oBrowseView ), ::oBrowseView:getStateView( cType, cName ), ) )
+   METHOD getStateView( cType, cName )                INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:getStateView( ::oBrowseView:cType, ::oBrowseView:cName ), ) )
 
 END CLASS
 
@@ -53,7 +73,25 @@ METHOD New( oSenderController )
 
    ::Super:New( oSenderController )
 
+   ::getConfiguracionVistasController()
+
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End()
+
+   CursorWait()
+
+   ::saveState()
+
+   ::oConfiguracionVistasController:End()
+
+   Self                                      := nil
+
+   CursorWE()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

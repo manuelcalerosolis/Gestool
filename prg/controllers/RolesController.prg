@@ -5,7 +5,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS RolesController FROM SQLNavigatorController
+CLASS RolesController FROM SQLNavigatorGestoolController
 
    DATA oAjustableController 
 
@@ -256,7 +256,7 @@ RETURN ( cStatement )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS RolesBrowseView FROM SQLBrowseGestoolView
+CLASS RolesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
