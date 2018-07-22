@@ -61,9 +61,9 @@ CLASS SQLBrowseController FROM SQLBaseController
    
    METHOD getColumnOrientationView( cType, cName )    INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:getColumnOrientation( ::oBrowseView:cType, ::oBrowseView:cName ), ) )
 
-   METHOD setStateView( cType, cName, cState )        INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:setStateView( ::oBrowseView:cType, ::oBrowseView:cName, cState ), ) )
+   METHOD setStateView( cType, cName, cState )        INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:setState( ::oBrowseView:cType, ::oBrowseView:cName, cState ), ) )
    
-   METHOD getStateView( cType, cName )                INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:getStateView( ::oBrowseView:cType, ::oBrowseView:cName ), ) )
+   METHOD getStateView( cType, cName )                INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:getState( ::oBrowseView:cType, ::oBrowseView:cName ), ) )
 
 END CLASS
 

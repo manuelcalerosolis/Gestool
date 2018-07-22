@@ -192,8 +192,6 @@ METHOD End()
 
    ::saveState()
 
-   ::oConfiguracionVistasController:End()
-
    if !empty( ::oBrowse )
       ::oBrowse:End()
    end if 
