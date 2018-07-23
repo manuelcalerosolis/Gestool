@@ -344,24 +344,23 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-/*   
+   
    local cQuery
-
-   private nId   := 5
+   local nId   := 5
 
    TEXT INTO cQuery
-   SELECT COUNT(*) FROM { SQLArticulosModel():getTableName() }
-      WHERE id > { nId } 
+   SELECT COUNT(*) FROM {{ SQLArticulosModel():getTableName() }}
+      WHERE id > {{| nId | nId }}
    ENDTEXT
 
-   msgalert( cQuery)
+   msgalert( cQuery )
 
    cQuery      := getSQLDatabase():genStatement( cQuery )
 
    msgalert( cQuery, "cQuery" )
 
-   msgalert( getSQLDatabase():getValue( cQuery ), "cQuery" )
-*/   
+   // msgalert( getSQLDatabase():getValue( cQuery ), "cQuery" )
+   
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

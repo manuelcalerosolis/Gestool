@@ -5,8 +5,6 @@
 
 CLASS SQLBaseController
 
-   CLASSDATA oInstance 
-
    DATA oSenderController
 
    DATA oExportableController                            
@@ -50,7 +48,6 @@ CLASS SQLBaseController
    DATA oView
 
    METHOD New()
-   METHOD Instance()                                  INLINE ( iif( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
    METHOD End()
 
    METHOD setDirectory( cDirectory )                  INLINE ( ::cDirectory := cDirectory )

@@ -47,23 +47,23 @@ CLASS SQLBrowseController FROM SQLBaseController
 
    METHOD getBrowseViewType()                         INLINE ( ::oBrowseView:getViewType() )
 
-   METHOD setIdView( cType, cName, nId )              INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:setId( ::oBrowseView:cType, ::oBrowseView:cName, nId ), ) )
+   METHOD setId( cType, cName, nId )                  INLINE ( ::oConfiguracionVistasController:setId( cType, cName, nId ) )
    
-   METHOD getIdView( cType, cName )                   INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:getId( ::oBrowseView:cType, ::oBrowseView:cName ), ) )
+   METHOD getId( cType, cName )                       INLINE ( ::oConfiguracionVistasController:getId( cType, cName ) )
 
-   METHOD setColumnOrderView( cType, cName, cColumnOrder ) ;
-                                                      INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:setColumnOrder( ::oBrowseView:cType, ::oBrowseView:cName, cColumnOrder ), ) )
+   METHOD setColumnOrder( cType, cName, cColumnOrder ) ;
+                                                      INLINE ( ::oConfiguracionVistasController:setColumnOrder( cType, cName, cColumnOrder ) )
    
-   METHOD getColumnOrderView( cType, cName )          INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:getColumnOrder( ::oBrowseView:cType, ::oBrowseView:cName ), ) )
+   METHOD getColumnOrder( cType, cName )              INLINE ( ::oConfiguracionVistasController:getColumnOrder( cType, cName ) )
 
-   METHOD setColumnOrientationView( cType, cName, cColumnOrientation ) ;
-                                                      INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:setColumnOrientation( ::oBrowseView:cType, ::oBrowseView:cName, cColumnOrientation ), ) )
+   METHOD setColumnOrientation( cType, cName, cColumnOrientation ) ;
+                                                      INLINE ( ::oConfiguracionVistasController:setColumnOrientation( cType, cName, cColumnOrientation ) )
    
-   METHOD getColumnOrientationView( cType, cName )    INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:getColumnOrientation( ::oBrowseView:cType, ::oBrowseView:cName ), ) )
+   METHOD getColumnOrientation( cType, cName )        INLINE ( ::oConfiguracionVistasController:getColumnOrientation( cType, cName ) ) 
 
-   METHOD setStateView( cType, cName, cState )        INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:setState( ::oBrowseView:cType, ::oBrowseView:cName, cState ), ) )
+   METHOD setState( cType, cName, cState )            INLINE ( ::oConfiguracionVistasController:setState( cType, cName, cState ) )
    
-   METHOD getStateView( cType, cName )                INLINE ( iif( !empty( ::oBrowseView ), ::oConfiguracionVistasController:getState( ::oBrowseView:cType, ::oBrowseView:cName ), ) )
+   METHOD getState( cType, cName )                    INLINE ( ::oConfiguracionVistasController:getState( cType, cName ) )
 
 END CLASS
 
@@ -82,8 +82,6 @@ RETURN ( self )
 METHOD End()
 
    CursorWait()
-
-   ::saveState()
 
    ::oConfiguracionVistasController:End()
 
@@ -133,23 +131,10 @@ RETURN ( ::Super:Delete( ::oBrowseView:getBrowseSelected() ) )
 
 METHOD restoreState()
 
-   local nId                  := ::getIdView( ::getBrowseViewType(), ::getName() )
-   local cColumnOrder         := ::getColumnOrderView( ::getBrowseViewType(), ::getName() )
-   local cColumnOrientation   := ::getColumnOrientationView( ::getBrowseViewType(), ::getName() )
-   local cState               := ::getStateView( ::getBrowseViewType(), ::getName() ) 
-
-   if empty( cColumnOrder )
-      ::oBrowseView:setFirstColumnOrder()
-   else
-      ::oBrowseView:setColumnOrder( cColumnOrder, cColumnOrientation )
-   end if 
+   local cState               := ::getState( ::getBrowseViewType(), ::getName() ) 
 
    if !empty( cState )
-      ::oBrowseView:setSaveState( cState )
-   end if 
-
-   if !empty( nId )
-      ::oBrowseView:findId( nId )
+      ::oBrowseView:setState( cState )
    end if 
 
 RETURN ( self )
@@ -160,13 +145,7 @@ METHOD saveState()
 
    CursorWait()
 
-   ::setIdView( ::getBrowseViewType(), ::getName(), ::getRowSet:fieldget( "id" ) )
-
-   ::setColumnOrderView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrder() )
-
-   ::setColumnOrientationView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrientation() )
-
-   ::setStateView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getSaveState() ) 
+   ::setState( ::getBrowseViewType(), ::getName(), ::oBrowseView:getState() ) 
 
    CursorWE()
 

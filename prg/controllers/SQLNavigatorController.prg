@@ -60,6 +60,8 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD closeAllWindows()                           INLINE ( if( !empty( oWnd() ), ( SysRefresh(), oWnd():CloseAll(), SysRefresh() ), ) )
 
+   METHOD saveState()
+
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
 
    METHOD addFastKey( uKey, bAction )
@@ -255,24 +257,25 @@ METHOD restoreState()
 
 RETURN ( self )
 
+*/
 //---------------------------------------------------------------------------//
 
 METHOD saveState()
 
    CursorWait()
 
-   ::setIdView( ::getBrowseViewType(), ::getName(), ::getRowSet:fieldget( "id" ) )
+   ::setId( ::getBrowseViewType(), ::getName(), ::getRowSet:fieldget( "id" ) )
 
-   ::setColumnOrderView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrder() )
+   ::setColumnOrder( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrder() )
 
-   ::setColumnOrientationView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrientation() )
+   ::setColumnOrientation( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrientation() )
 
-   ::setStateView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getSaveState() ) 
+   ::setState( ::getBrowseViewType(), ::getName(), ::oBrowseView:getState() ) 
 
    CursorWE()
 
 RETURN ( self )
-*/
+
 //---------------------------------------------------------------------------//
 
 METHOD activateDialogView()

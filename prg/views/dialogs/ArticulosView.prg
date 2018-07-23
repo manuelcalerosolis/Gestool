@@ -183,9 +183,6 @@ METHOD Activate() CLASS ArticulosView
 
    ::oController:oArticulosPreciosController:Activate( 130, ::oFolder:aDialogs[2] )
 
-   // Táctil ------------------------------------------------------------------
-
-
    // Botones Articulos -------------------------------------------------------
 
    REDEFINE BUTTON ;
@@ -207,6 +204,8 @@ METHOD Activate() CLASS ArticulosView
    ::oDialog:bStart  := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
+
+   ::oController:oArticulosPreciosController:saveState()
 
    ::oBitmap:end()
 

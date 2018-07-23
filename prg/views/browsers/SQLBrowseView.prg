@@ -18,8 +18,6 @@ CLASS SQLBrowseView
 
    DATA bMenuSelect
 
-   DATA oConfiguracionVistasController
-
    DATA lFooter                              INIT .f.
    
    DATA lFastEdit                            INIT .f.
@@ -58,17 +56,23 @@ CLASS SQLBrowseView
 
    // Facades------------------------------------------------------------------
 
+   METHOD getController() INLINE ( ::oController:oController )
+
    METHOD getBrowse()                        INLINE ( ::oBrowse )
+
+   METHOD getState()                         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:saveState(), ) )
+   
    METHOD getBrowseSelected()                INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:aSelected, ) )
-   METHOD getSaveState()                     INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:SaveState(), ) )
-   METHOD setSaveState( cState )             INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:restoreState( cState ), ) )
 
    METHOD getColumnByHeader( cHeader )       INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnByHeader( cHeader ), ) )
+   
    METHOD getColumnOrder( cSortOrder )       INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnOrder( cSortOrder ), ) )
+   
    METHOD getColumnOrderHeader( cSortOrder ) INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnOrderHeader( cSortOrder ), ) )
 
    METHOD setColumnOrder( cSortOrder, cColumnOrientation ) ;
                                              INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setColumnOrder( cSortOrder, cColumnOrientation ), ) )
+   
    METHOD setFirstColumnOrder()              INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setFirstColumnOrder(), ) )
 
    METHOD getColumnHeaderByOrder( cSortOrder )  
@@ -103,21 +107,21 @@ CLASS SQLBrowseView
 
    METHOD oPopup()                           INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:oPopup, ) )
 
-   METHOD getSelectedCol()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:SelectedCol(), nil ) )
+   METHOD getSelectedCol()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:SelectedCol(), ) )
 
-   METHOD changeColumnOrder( oCol )          INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:changeColumnOrder( oCol ), nil ) )
+   METHOD changeColumnOrder( oCol )          INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:changeColumnOrder( oCol ), ) )
+
+   METHOD setOriginalState()                 INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setOriginalState(), ) )
 
    // Controller---------------------------------------------------------------
 
    METHOD setController( oController )       INLINE ( ::oController := oController )
    METHOD getController()                    INLINE ( ::oController )
 
-   METHOD getSenderController()              INLINE ( ::oController:oSenderController )
-
-   METHOD isNotSenderControllerZoomMode()    INLINE ( empty( ::getSenderController() ) .or. ::getSenderController():isNotZoomMode() )
+   METHOD isNotSenderControllerZoomMode()    INLINE ( empty( ::getController() ) .or. ::getController():isNotZoomMode() )
    
-   METHOD getComboBoxOrder()                 INLINE ( if( !empty( ::oController ), ::oController:getComboBoxOrder(), ) )
-   METHOD getMenuTreeView()                  INLINE ( if( !empty( ::oController ), ::oController:getMenuTreeView(), ) )
+   METHOD getComboBoxOrder()                 INLINE ( iif( !empty( ::getController() ), ::getController():getComboBoxOrder(), ) )
+   METHOD getMenuTreeView()                  INLINE ( iif( !empty( ::getController() ), ::getController():getMenuTreeView(), ) )
 
    // Models-------------------------------------------------------------------
 
@@ -139,7 +143,6 @@ CLASS SQLBrowseView
 
    METHOD getFirstColumnHeader()
 
-
    // Events---------------------------------------------------------------------
 
    METHOD onKeyChar( nKey )
@@ -150,9 +153,10 @@ CLASS SQLBrowseView
 
    // Vistas manege -----------------------------------------------------------
 
-   METHOD restoreState()
    METHOD setState( cState )
-   METHOD saveState( cState )
+   METHOD restoreState()
+
+   METHOD saveStateView()           
 
    METHOD setIdView( cType, cName, nId )              
 
@@ -166,8 +170,6 @@ CLASS SQLBrowseView
                                                       
    METHOD getColumnOrientationView( cType, cName )    
 
-   METHOD setStateView( cType, cName, cState )        
-
    METHOD getStateView( cType, cName )        
 
    // Menus--------------------------------------------------------------------
@@ -180,7 +182,7 @@ ENDCLASS
 
 METHOD New( oController )
 
-   ::oController                             := oController
+   ::oController  := oController
 
 RETURN ( Self )
 
@@ -190,13 +192,11 @@ METHOD End()
 
    CursorWait()
 
-   ::saveState()
-
    if !empty( ::oBrowse )
       ::oBrowse:End()
    end if 
 
-   Self                                      := nil
+   self                                      := nil
 
    CursorWE()
 
@@ -409,8 +409,6 @@ RETURN ( nil )
 
 METHOD setState( cState )
 
-   ::oBrowse:getOriginalState()
-
    if !empty( cState )
       ::oBrowse:restoreState( cState )
    end if 
@@ -490,7 +488,7 @@ METHOD BuildMenu( nRow, nCol, nFlags )
 
       MenuAddItem()
 
-      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::SaveState() }, , "gc_table_selection_column_disk_16", oMenu )
+      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::saveStateView() }, , "gc_table_selection_column_disk_16", oMenu )
 
       MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::setOriginalState() }, , "gc_table_selection_column_refresh_16", oMenu )
 
@@ -514,21 +512,13 @@ RETURN {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 
 //----------------------------------------------------------------------------//
 
-METHOD saveState()
+METHOD saveStateView()              
 
-   CursorWait()
+   if empty( ::getController() )
+      RETURN ( nil )
+   end if 
 
-   ::setIdView( ::getType(), ::getName(), ::getRowSet:fieldget( "id" ) )
-
-   ::setColumnOrderView( ::getType(), ::getName(), ::getColumnSortOrder() )
-
-   ::setColumnOrientationView( ::getType(), ::getName(), ::getColumnSortOrientation() )
-
-   ::setStateView( ::getType(), ::getName(), ::getSaveState() ) 
-
-   CursorWE()
-
-RETURN ( nil )
+RETURN ( ::getController():saveState() )
 
 //----------------------------------------------------------------------------//
 
@@ -537,11 +527,11 @@ METHOD setIdView( cType, cName, nId )
    DEFAULT cType  := ::getType()
    DEFAULT cName  := ::getName()
 
-   if empty( ::oConfiguracionVistasController )
+   if empty( ::getController() )
       RETURN ( nil )
    end if 
 
-RETURN ( ::oConfiguracionVistasController:setId( cType, cName, nId ) )
+RETURN ( ::getController():setId( cType, cName, nId ) )
 
 //----------------------------------------------------------------------------//
 
@@ -550,11 +540,11 @@ METHOD getIdView( cType, cName )
    DEFAULT cType  := ::getType()
    DEFAULT cName  := ::getName()
 
-   if empty( ::oConfiguracionVistasController )
+   if empty( ::getController() )
       RETURN ( nil )
    end if 
 
-RETURN ( ::oConfiguracionVistasController:getId( cType, cName ) )
+RETURN ( ::getController():getId( cType, cName ) )
 
 //---------------------------------------------------------------------------//
 
@@ -563,11 +553,11 @@ METHOD setColumnOrderView( cType, cName, cColumnOrder )
    DEFAULT cType  := ::getType()
    DEFAULT cName  := ::getName()
 
-   if empty( ::oConfiguracionVistasController )
+   if empty( ::getController() )
       RETURN ( nil )
    end if 
 
-RETURN ( ::oConfiguracionVistasController:setColumnOrder( cType, cName, cColumnOrder ) )
+RETURN ( ::getController():setColumnOrder( cType, cName, cColumnOrder ) )
 
 //---------------------------------------------------------------------------//
 
@@ -576,11 +566,11 @@ METHOD getColumnOrderView( cType, cName )
    DEFAULT cType  := ::getType()
    DEFAULT cName  := ::getName()
 
-   if empty( ::oConfiguracionVistasController )
+   if empty( ::getController() )
       RETURN ( "" )
    end if 
 
-RETURN ( ::oConfiguracionVistasController:getColumnOrder( cType, cName ) )
+RETURN ( ::getController():getColumnOrder( cType, cName ) )
 
 //----------------------------------------------------------------------------//
 
@@ -589,11 +579,11 @@ METHOD setColumnOrientationView( cType, cName, cColumnOrientation )
    DEFAULT cType  := ::getType()
    DEFAULT cName  := ::getName()
 
-   if empty( ::oConfiguracionVistasController )
+   if empty( ::getController() )
       RETURN ( nil )
    end if 
 
-RETURN ( ::oConfiguracionVistasController:setColumnOrientation( cType, cName, cColumnOrientation ) )
+RETURN ( ::getController():setColumnOrientation( cType, cName, cColumnOrientation ) )
 
 //----------------------------------------------------------------------------//
 
@@ -602,24 +592,11 @@ METHOD getColumnOrientationView( cType, cName )
    DEFAULT cType  := ::getType()
    DEFAULT cName  := ::getName()
 
-   if empty( ::oConfiguracionVistasController )
+   if empty( ::getController() )
       RETURN ( nil )
    end if 
 
-RETURN ( ::oConfiguracionVistasController:getColumnOrientation( cType, cName ) )
-
-//----------------------------------------------------------------------------//
-
-METHOD setStateView( cType, cName, cState )        
-
-   DEFAULT cType  := ::getType()
-   DEFAULT cName  := ::getName()
-
-   if empty( ::oConfiguracionVistasController )
-      RETURN ( nil )
-   end if 
-
-RETURN ( ::oConfiguracionVistasController:setState( cType, cName, cState ) )
+RETURN ( ::getController():getColumnOrientation( cType, cName ) )
 
 //----------------------------------------------------------------------------//
 
@@ -628,11 +605,11 @@ METHOD getStateView( cType, cName )
    DEFAULT cType  := ::getType()
    DEFAULT cName  := ::getName()
 
-   if empty( ::oConfiguracionVistasController )
+   if empty( ::getController() )
       RETURN ( nil )
    end if 
 
-RETURN ( ::oConfiguracionVistasController:getState( cType, cName ) )
+RETURN ( ::getController():getState( cType, cName ) )
 
 //----------------------------------------------------------------------------//
 
