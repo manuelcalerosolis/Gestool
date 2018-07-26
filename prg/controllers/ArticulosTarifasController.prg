@@ -47,7 +47,7 @@ METHOD New() CLASS ArticulosTarifasController
 
    ::oValidator                     := ArticulosTarifasValidator():New( self, ::oDialogView )
 
-   ::oArticulosPreciosController    := ArticulosPreciosController():New( self )
+   ::oArticulosPreciosController    := ArticulosPreciosTarifasController():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
@@ -261,8 +261,6 @@ CLASS ArticulosTarifasView FROM SQLBaseView
 
    DATA oGetMargen
 
-   DATA oSayCamposExtra
-
    DATA oComboTarifaPadre
 
    DATA aComboTarifaPadre
@@ -287,35 +285,42 @@ END CLASS
 
 METHOD Activate() CLASS ArticulosTarifasView
 
-   local oSayCamposExtra
-
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "TARIFA" ;
-      TITLE       ::LblTitle() + "tarifa"
+      RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
+      TITLE       ::LblTitle() + "precios de tarifa"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
-      RESOURCE    ::oController:getimage( "48" )  ;
+      RESOURCE    ::oController:getimage( "48" ) ;
       TRANSPARENT ;
-      OF          ::oDialog ;
+      OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
+      PROMPT      "Tarifa" ;
       ID          800 ;
       FONT        getBoldFont() ;
+      OF          ::oDialog
+
+   ::redefineExplorerBar()
+
+   REDEFINE FOLDER ::oFolder ;
+      ID          500 ;
       OF          ::oDialog ;
+      PROMPT      "&General" ;
+      DIALOGS     "TARIFA_GENERAL"    
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
-      OF          ::oDialog ;
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) .and. ::setItemsComboTarifaPadre() ) ;
-      OF          ::oDialog ;
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE COMBOBOX ::oComboTarifaPadre ;
       VAR         ::oController:oModel:hBuffer[ "parent_uuid" ] ;
@@ -323,7 +328,7 @@ METHOD Activate() CLASS ArticulosTarifasView
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "parent_uuid" ) ) ;
-      OF          ::oDialog ;
+      OF          ::oFolder:aDialogs[1]
 
    ::oComboTarifaPadre:bChange   := {|| ::changeComboTarifaPadre() }
 
@@ -334,35 +339,25 @@ METHOD Activate() CLASS ArticulosTarifasView
       PICTURE     "@E 9999.9999" ;
       WHEN        ( ::whenTarifaBase() ) ;
       VALID       ( ::oController:validate( "margen" ) ) ;
-      OF          ::oDialog ;
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "activa" ] ;
       ID          140 ;
       IDSAY       141 ;
       WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET ::oController:oModel:hBuffer[ "valido_desde" ] ;
       ID          150 ;
       SPINNER ;
       WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET ::oController:oModel:hBuffer[ "valido_hasta" ] ;
       ID          160 ;
       SPINNER ;
       WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
-
-   REDEFINE SAY   ::oSayCamposExtra ;
-      PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
-      COLOR       rgb( 10, 152, 234 ) ;
-      ID          170 ;
-      OF          ::oDialog ;
-
-   ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -392,7 +387,25 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate() CLASS ArticulosTarifasView
 
+   local oPanel            
+
    sendMessage( ::oComboTarifaPadre:hWnd, 0x0153, -1, 14 )
+
+   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   if ::oController:isZoomMode()
+      RETURN ( self )
+   end if
+
+   oPanel:AddLink(   "Precios...",;
+                     {|| ::oController:oArticulosPreciosController:Edit( ::oController:getUuid() ) },;
+                     ::oController:oArticulosPreciosController:getImage( "16" ) )
+
+   oPanel           := ::oExplorerBar:AddPanel( "Otros", nil, 1 )
+
+   oPanel:AddLink(   "Campos extra...",;
+                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
+                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
 RETURN ( nil )
 

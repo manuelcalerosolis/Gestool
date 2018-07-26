@@ -47,6 +47,10 @@ CLASS SQLBrowseController FROM SQLBaseController
 
    METHOD getBrowseViewType()                         INLINE ( ::oBrowseView:getViewType() )
 
+   METHOD getBrowseViewName()                         INLINE ( ::oBrowseView:getName() )
+
+   METHOD getBrowseViewState()                        INLINE ( ::oBrowseView:getState() )
+
    METHOD setId( cType, cName, nId )                  INLINE ( ::oConfiguracionVistasController:setId( cType, cName, nId ) )
    
    METHOD getId( cType, cName )                       INLINE ( ::oConfiguracionVistasController:getId( cType, cName ) )
@@ -103,9 +107,9 @@ METHOD Activate( nId, oDialog )
 
    ::oRowSet:buildPad( ::oModel:getSelectSentence() )
 
-   ::fireEvent( 'activated' )     
-
    ::oBrowseView:ActivateDialog( oDialog, nId )
+
+   ::fireEvent( 'activated' )     
 
 RETURN ( Self )
 
@@ -131,7 +135,7 @@ RETURN ( ::Super:Delete( ::oBrowseView:getBrowseSelected() ) )
 
 METHOD restoreState()
 
-   local cState               := ::getState( ::getBrowseViewType(), ::getName() ) 
+   local cState               := ::getState( ::getBrowseViewType(), ::getBrowseViewName() ) 
 
    if !empty( cState )
       ::oBrowseView:setState( cState )
@@ -145,7 +149,7 @@ METHOD saveState()
 
    CursorWait()
 
-   ::setState( ::getBrowseViewType(), ::getName(), ::oBrowseView:getState() ) 
+   ::setState( ::getBrowseViewType(), ::getBrowseViewName(), ::getBrowseViewState() ) 
 
    CursorWE()
 

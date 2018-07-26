@@ -344,7 +344,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-   
+/*   
    local cQuery
    local nId   := 5
 
@@ -358,9 +358,7 @@ FUNCTION Test()
    cQuery      := getSQLDatabase():genStatement( cQuery )
 
    msgalert( cQuery, "cQuery" )
-
-   // msgalert( getSQLDatabase():getValue( cQuery ), "cQuery" )
-   
+*/
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

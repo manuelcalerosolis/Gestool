@@ -34,6 +34,8 @@ CLASS SQLBrowseView
 
    DATA cName
 
+   DATA oEvents
+
    METHOD New( oController )
    METHOD End()
 
@@ -154,6 +156,7 @@ CLASS SQLBrowseView
    // Vistas manege -----------------------------------------------------------
 
    METHOD setState( cState )
+
    METHOD restoreState()
 
    METHOD saveStateView()           
@@ -176,6 +179,11 @@ CLASS SQLBrowseView
 
    METHOD BuildMenu( nRow, nCol, nFlags )
 
+   // Events-------------------------------------------------------------------
+
+   METHOD setEvent( cEvent, bEvent )         INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
+   METHOD fireEvent( cEvent )                INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -184,6 +192,8 @@ METHOD New( oController )
 
    ::oController  := oController
 
+   ::oEvents                                 := Events():New()
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -191,6 +201,10 @@ RETURN ( Self )
 METHOD End()
 
    CursorWait()
+
+   if !empty( ::oEvents )
+      ::oEvents:End()
+   end if 
 
    if !empty( ::oBrowse )
       ::oBrowse:End()
@@ -211,6 +225,8 @@ METHOD Create( oWindow )
    if empty( ::getRowSet() )
       RETURN ( nil )
    endif
+
+   ::fireEvent( 'creating' )
 
    ::oBrowse                  := SQLXBrowse():New( ::oController, oWindow )
    ::oBrowse:l2007            := .f.
@@ -243,6 +259,8 @@ METHOD Create( oWindow )
    if ::isNotSenderControllerZoomMode() 
       ::setLDblClick( {|| ::getController():Edit(), ::Refresh() } )
    end if 
+
+   ::fireEvent( 'created' )
 
 RETURN ( ::oBrowse )
 
@@ -300,6 +318,8 @@ RETURN ( heval( ::oController:oMenuTreeView:hFastKey, {|k,v| msgalert( nKey, "nK
 
 METHOD ActivateDialog( oDialog, nId )
 
+   ::fireEvent( 'activatingDialog' )
+
    ::Create( oDialog )
 
    ::setViewTypeToSelector()
@@ -312,11 +332,15 @@ METHOD ActivateDialog( oDialog, nId )
 
    ::restoreState()
 
+   ::fireEvent( 'activatedDialog' )
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 METHOD ActivateMDI( oWindow, nTop, nLeft, nRight, nBottom )
+
+   ::fireEvent( 'activatingMDI' )
 
    ::Create( oWindow )
 
@@ -331,6 +355,8 @@ METHOD ActivateMDI( oWindow, nTop, nLeft, nRight, nBottom )
    ::createFromCode()
 
    ::restoreState()
+
+   ::fireEvent( 'activatedMDI' )
 
 RETURN ( Self )
 
@@ -423,6 +449,8 @@ METHOD BuildMenu( nRow, nCol, nFlags )
    local oMenu
    local bMenuSelect
 
+   ::fireEvent( 'buildingMenu' )
+
    oMenu             := MenuBegin( .t., , ::oBrowse )
    bMenuSelect       := ::bMenuSelect
 
@@ -501,6 +529,8 @@ METHOD BuildMenu( nRow, nCol, nFlags )
    oMenu:end()
 
    ::SetFocus()
+
+   ::fireEvent( 'buildedMenu' )
 
 RETURN ( nil )
 

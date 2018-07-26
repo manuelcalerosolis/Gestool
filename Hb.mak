@@ -403,6 +403,10 @@ ArticulosView.prg 															\
 ArticulosValidator.prg 														\
 SQLArticulosModel.prg 														\
 ArticulosPreciosController.prg 											\
+ArticulosPreciosView.prg 													\
+ArticulosPreciosBrowseView.prg											\
+SQLArticulosPreciosModel.prg												\
+ArticulosPreciosRepository.prg											\
 ZonasController.prg 															\
 ArticulosFabricantesController.prg 										\
 ImagenesController.prg 														\
@@ -1104,6 +1108,10 @@ ArticulosView.obj 															\
 ArticulosValidator.obj 														\
 SQLArticulosModel.obj 														\
 ArticulosPreciosController.obj       									\
+ArticulosPreciosView.obj 													\
+ArticulosPreciosBrowseView.obj											\
+SQLArticulosPreciosModel.obj												\
+ArticulosPreciosRepository.obj											\
 ZonasController.obj       													\
 ArticulosFabricantesController.obj       								\
 ImagenesController.obj       												\
@@ -1792,6 +1800,10 @@ $(OBJ)\ArticulosView.obj    												+
 $(OBJ)\ArticulosValidator.obj												+
 $(OBJ)\SQLArticulosModel.obj												+
 $(OBJ)\ArticulosPreciosController.obj    								+
+$(OBJ)\ArticulosPreciosView.obj    										+
+$(OBJ)\ArticulosPreciosBrowseView.obj    								+
+$(OBJ)\SQLArticulosPreciosModel.obj    								+
+$(OBJ)\ArticulosPreciosRepository.obj    								+
 $(OBJ)\ZonasController.obj    											+
 $(OBJ)\ArticulosFabricantesController.obj    						+
 $(OBJ)\ImagenesController.obj    										+

@@ -183,7 +183,7 @@ METHOD Activate() CLASS ArticulosView
 
    ::oController:oArticulosPreciosController:Activate( 130, ::oFolder:aDialogs[2] )
 
-   // Botones Articulos -------------------------------------------------------
+   // Botones artículos -------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
