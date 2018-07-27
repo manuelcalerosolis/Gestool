@@ -11,9 +11,9 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    DATA cConstraints                INIT "PRIMARY KEY ( id ), UNIQUE KEY ( articulo_uuid, tarifa_uuid )"
 
-   METHOD getColumns()
+   DATA cOrderBy                    INIT "id"
 
-   METHOD getOrderBy()              INLINE ( "id" )
+   METHOD getColumns()
 
    METHOD addParentUuidWhere( cSQLSelect )    
 

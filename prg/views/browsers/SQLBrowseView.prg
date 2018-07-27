@@ -115,6 +115,8 @@ CLASS SQLBrowseView
 
    METHOD setOriginalState()                 INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setOriginalState(), ) )
 
+   METHOD getFirstVisibleColumn()            INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getFirstVisibleColumn(), ) )
+
    // Controller---------------------------------------------------------------
 
    METHOD setController( oController )       INLINE ( ::oController := oController )
@@ -190,7 +192,7 @@ ENDCLASS
 
 METHOD New( oController )
 
-   ::oController  := oController
+   ::oController                             := oController
 
    ::oEvents                                 := Events():New()
 
@@ -306,7 +308,13 @@ RETURN ( "" )
 
 METHOD onClickHeader( oColumn ) 
 
-RETURN ( ::getController():onChangeCombo( oColumn ) )
+   ::fireEvent( 'onclickheader' )
+
+   ::getController():onChangeCombo( oColumn )
+
+   ::fireEvent( 'onclickedheader' )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

@@ -21,6 +21,8 @@ CLASS ArticulosPreciosController FROM SQLBrowseController
 
    METHOD getBrowseView()           INLINE ( ::oBrowseView := ArticulosPreciosBrowseView():New( self ) )
 
+   METHOD onClickedHeader()         
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -50,6 +52,8 @@ METHOD New( oController ) CLASS ArticulosPreciosController
    ::getBrowseView()
 
    ::oBrowseView:setEvent( 'created', {|| ::oBrowseView:setLDblClick( {|| nil } ) } )
+
+   ::oBrowseView:setEvent( 'onclickedheader', {|| ::onClickedHeader() } )
 
 RETURN ( Self )
 
@@ -106,6 +110,18 @@ METHOD setManual( oCol, lManual ) CLASS ArticulosPreciosController
    ::oModel:updateFieldWhereUuid( ::getRowSet():fieldGet( 'uuid' ), "manual", lManual )
 
 RETURN ( ::UpdatePreciosAndRefresh() )
+
+//---------------------------------------------------------------------------//
+
+METHOD onClickedHeader() CLASS ArticulosPreciosController
+
+   local oColumn  := ::oBrowseView:getColumnOrder()
+
+   if !empty( oColumn )
+      ::oDialogView:oComboBoxOrder:set( oColumn:cHeader )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

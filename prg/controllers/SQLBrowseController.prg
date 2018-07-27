@@ -31,6 +31,8 @@ CLASS SQLBrowseController FROM SQLBaseController
 
    METHOD onChangeCombo( oColumn )
 
+   METHOD setComboColumn( oColumn )
+
    METHOD Delete()
 
    METHOD isBrowseColumnEdit()
@@ -117,13 +119,31 @@ RETURN ( Self )
 
 METHOD onChangeCombo( oColumn )
 
+   ::setComboColumn( oColumn )
+
    ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
    ::oBrowseView:getBrowse():changeColumnOrder( oColumn )
 
    ::oBrowseView:getBrowse():refreshCurrent()
 
-RETURN ( Self )
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD setComboColumn( oColumn )
+
+   if !( __objhasmethod( self, "getComboBoxOrder" ) )
+      RETURN ( nil )
+   end if 
+
+   if  empty( ::getComboBoxOrder() )
+      RETURN ( nil )
+   end if 
+
+   ::getComboBoxOrder():Set( oColumn:cHeader )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -141,7 +161,7 @@ METHOD restoreState()
       ::oBrowseView:setState( cState )
    end if 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -153,7 +173,7 @@ METHOD saveState()
 
    CursorWE()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -180,7 +200,7 @@ METHOD startBrowse( oCombobox )
    local oColumn
 
    if empty( ::oDialogView:getoBrowse() )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    if (!empty( oCombobox ) )
@@ -191,7 +211,7 @@ METHOD startBrowse( oCombobox )
 
    oColumn        := ::oDialogView:getoBrowse():getColumnOrder( ::oModel:cColumnOrder )
    if empty( oColumn )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
    
    if (!empty( oCombobox ) )
@@ -200,23 +220,23 @@ METHOD startBrowse( oCombobox )
 
    ::oDialogView:getoBrowse():selectColumnOrder( oColumn, ::oModel:cOrientation )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD restoreBrowseState()
 
    if empty( ::oDialogView:getoBrowse() )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    if empty( ::oDialogView:getBrowseState() )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    ::oDialogView:getoBrowse():restoreState( ::oDialogView:getBrowseState() )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

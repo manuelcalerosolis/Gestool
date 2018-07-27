@@ -88,7 +88,7 @@ METHOD Activate()
          ID                110 ;
          OF                ::oDialog
 
-      ::oComboBoxOrder:bChange      := {|| ::onChangeCombo() } 
+      ::oComboBoxOrder:bChange      := {|| ::oController:onChangeCombo() } 
 
       // Browse-----------------------------------------------------------------
 

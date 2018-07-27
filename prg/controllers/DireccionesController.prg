@@ -37,9 +37,9 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
-   METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
-   METHOD loadPrincipalBlankBuffer()   INLINE ( ::oModel:loadPrincipalBlankBuffer() )
-   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
+   METHOD loadBlankBuffer()               INLINE ( ::oModel:loadBlankBuffer() )
+   METHOD loadPrincipalBlankBuffer()      INLINE ( ::oModel:loadPrincipalBlankBuffer() )
+   METHOD insertBuffer()                  INLINE ( ::oModel:insertBuffer() )
 
    METHOD loadedCurrentBuffer( uuidEntidad ) 
    METHOD updateBuffer( uuidEntidad )

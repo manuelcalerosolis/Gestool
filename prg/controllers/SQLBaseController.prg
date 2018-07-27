@@ -688,7 +688,7 @@ METHOD changeModelOrderAndOrientation( cOrderBy, cOrientation )
 
    local nId           
 
-   if empty(::oRowSet)
+   if empty( ::oRowSet )
       RETURN ( self )
    end if 
 
