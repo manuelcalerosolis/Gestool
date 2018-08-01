@@ -348,7 +348,6 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-<<<<<<< HEAD
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tarifa_codigo'
       :cHeader             := 'Código tarifa'
@@ -365,11 +364,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-
-RETURN ( self )
-=======
 RETURN ( nil )
->>>>>>> 1511236dcd0fb7cf243630683a85288c3d0f4b62
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
