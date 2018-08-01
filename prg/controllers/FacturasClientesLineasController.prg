@@ -198,13 +198,20 @@ RETURN ( SQLArticulosModel():getHashWhere( "codigo", cCodigo ) )
 
 METHOD stampArticulo( hArticulo )
 
-   local hBuffer
+   local hBuffer     := {=>}
 
+   msgalert( hb_valtoexp( hArticulo ), "hArticulo" )
+   msgalert( hb_valtoexp( ::oSenderController:getSelectedTarifa() ), "tarifa" )
+   
    msgalert( UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( hArticulo, "codigo" ) ), "UnidadesMedicionGruposLineasRepository" )
 
-   hBuffer           := {  "articulo_codigo"          => hget( hArticulo, "codigo" ),;
-                           "articulo_nombre"          => hget( hArticulo, "nombre" ),;
-                           "unidad_medicion_codigo"   => UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( hArticulo, "codigo" ) ) }
+   hset( hBuffer, "articulo_codigo",         hget( hArticulo, "codigo" ) )
+
+   hset( hBuffer, "articulo_nombre",         hget( hArticulo, "nombre" ) )
+
+   hset( hBuffer, "unidad_medicion_codigo",  UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( hArticulo, "codigo" ) ) )
+   
+   hset( hBuffer, "articulo_precio",         333 )
 
    ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
 

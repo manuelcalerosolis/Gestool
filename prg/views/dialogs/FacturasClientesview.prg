@@ -114,7 +114,7 @@ METHOD Activate() CLASS FacturasClientesView
    REDEFINE COMBOBOX ::oComboTarifa ;
       VAR         ::cComboTarifa ;
       ID          270 ;
-      ITEMS       ( { __tarifa_base__ } ) ;
+      ITEMS       ( ::oController:oArticulosTarifasController:oModel:getNombres() ) ;
       OF          ::oFolder:aDialogs[1] ;
 
    // Lineas ------------------------------------------------------------------

@@ -510,7 +510,7 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    METHOD getParentUuidAttribute( uuid )     INLINE ( if( empty( uuid ), __tarifa_costo__, SQLArticulosTarifasModel():getNombreWhereUuid( uuid ) ) )
 
-   METHOD setParentUuidAttribute( nombre )   // INLINE ( if( hb_isnil( nombre ) .or. ( alltrim( nombre ) == __tarifa_costo__ ), "", SQLArticulosTarifasModel():getUuidWhereNombre( nombre ) ) )
+   METHOD setParentUuidAttribute( nombre )   
 
    METHOD getActivaAttribute( activa )       INLINE ( if( hb_isnil( activa ), .t., ( activa == 1 ) ) )
 
@@ -521,7 +521,7 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
    METHOD getTarifaWhereTarifaParent( uuidTarifaParent ) ;
                                              INLINE ( ::getField( "uuid", "parent_uuid", uuidTarifaParent ) )
 
-   METHOD getNombres( cColumn )              INLINE ( ::getDatabase():selectFetchArrayOneColumn( "SELECT nombre FROM " + ::getTableName() + " ORDER BY id" ) )
+   METHOD getNombres()                       
 
 END CLASS
 
@@ -616,6 +616,30 @@ METHOD getInsertArticulosTarifasSentence() CLASS SQLArticulosTarifasModel
    cSentence   +=    "( '" + uuid + "', '" + uuid + "', '1', '" + __tarifa_base__ + "', 0, 1, 1 )"
 
 RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNombres() CLASS SQLArticulosTarifasModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT nombre FROM %1$s 
+
+      WHERE
+
+         activa = 1 
+         AND ( valido_desde IS NULL OR valido_desde >= CURDATE() )
+         AND ( valido_hasta IS NULL OR valido_hasta <= CURDATE() ) 
+
+      ORDER BY id
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName() )
+
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( cSql ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
