@@ -50,6 +50,8 @@ CLASS ClientesView FROM SQLBaseView
 
    METHOD redefineComercial()
 
+   METHOD redefineContabilidad()
+
    METHOD addLinksToExplorerBar()
 
    METHOD changeBloqueo()
@@ -94,13 +96,17 @@ METHOD Activate() CLASS ClientesView
       ID          500 ;
       OF          ::oDialog ;
       PROMPT      "General",;
-                  "Comercial";
+                  "Comercial",;
+                  "Contabilidad";
       DIALOGS     "CLIENTE_GENERAL" ,;
-                  "CLIENTE_COMERCIAL"
+                  "CLIENTE_COMERCIAL",;
+                  "CLIENTE_CONTABILIDAD";
 
    ::redefineGeneral()   
 
    ::redefineComercial()
+
+   ::redefineContabilidad()
 
    ::redefineExplorerBar()
 
@@ -138,6 +144,7 @@ METHOD redefineGeneral() CLASS ClientesView
 
    local oSay
 
+
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     ( "@! NNNNNNNNNNNN" ) ;
@@ -169,24 +176,8 @@ METHOD redefineGeneral() CLASS ClientesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "excluir_fidelizacion" ] ;
-      ID          150 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
-
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "no_editar_datos" ] ;
-      ID          160 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
-
-   REDEFINE GET ::oGetFechaUltimaLlamada ;
-      VAR         ::oController:oModel:hBuffer[ "fecha_ultima_llamada" ] ;
-      ID          170 ;
-      SPINNER ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[1]
-
-   TBtnBmp():ReDefine( 180, "gc_recycle_16",,,,,{|| ::loadFechaLlamada() }, ::oFolder:aDialogs[1], .f., {|| ::oController:isNotZoomMode() }, .f. )
+   ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
+   ::oController:oArticulosTarifasController:oGetSelector:Activate( 150, 151, ::oFolder:aDialogs[1] )
 
 RETURN ( self )
 
@@ -324,12 +315,38 @@ METHOD redefineComercial() CLASS ClientesView
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[2]
 
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "excluir_fidelizacion" ] ;
+      ID          320 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[2]
+
+   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "no_editar_datos" ] ;
+      ID          330 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[2]
+
+   REDEFINE GET ::oGetFechaUltimaLlamada ;
+      VAR         ::oController:oModel:hBuffer[ "fecha_ultima_llamada" ] ;
+      ID          340 ;
+      SPINNER ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[2]
+
+   TBtnBmp():ReDefine( 350, "gc_recycle_16",,,,,{|| ::loadFechaLlamada() }, ::oFolder:aDialogs[2], .f., {|| ::oController:isNotZoomMode() }, .f. )
+
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD redefineContabilidad() CLASS ClientesView
+
    REDEFINE SAY ::oInfoSubCuenta ;
       PROMPT   "Subcuenta..." ;
       FONT     getBoldFont() ; 
       COLOR    rgb( 10, 152, 234 ) ;
       ID       320 ;
-      OF       ::oFolder:aDialogs[2]
+      OF       ::oFolder:aDialogs[3]
 
    ::oInfoSubCuenta:lWantClick  := .t.
    ::oInfoSubCuenta:OnClick     := {|| if( ::oController:isNotZoomMode(),  msgalert( "Informe subcuenta del cliente" ), ) }
@@ -341,13 +358,13 @@ METHOD redefineComercial() CLASS ClientesView
       WHEN     ( ::oController:isNotZoomMode() ) ;
       ON HELP  ( MsgInfo( "Conectar con Contaplus" ) ) ;
       BITMAP   "LUPA" ;
-      OF       ::oFolder:aDialogs[2]
+      OF       ::oFolder:aDialogs[3]
 
    REDEFINE GET ::oSaldoSubcuenta ; 
       VAR      ::nSaldoSubcuenta ;
       ID       340;
       WHEN     ( ::oController:isNotZoomMode() ) ;
-      OF       ::oFolder:aDialogs[2]
+      OF       ::oFolder:aDialogs[3]
 
    REDEFINE GET ::oGetCuentaVenta ; 
       VAR      ::oController:oModel:hBuffer[ "cuenta_venta" ] ;
@@ -356,14 +373,14 @@ METHOD redefineComercial() CLASS ClientesView
       WHEN     ( ::oController:isNotZoomMode() ) ;
       ON HELP  ( MsgInfo( "Conectar con Contaplus" ) ) ;
       BITMAP   "LUPA" ;
-      OF       ::oFolder:aDialogs[2]
+      OF       ::oFolder:aDialogs[3]
 
    REDEFINE SAY ::oInfoSubCuentaDescuento ;
       PROMPT   "Descuento..." ;
       FONT     getBoldFont() ; 
       COLOR    rgb( 10, 152, 234 ) ;
       ID       360 ;
-      OF       ::oFolder:aDialogs[2]
+      OF       ::oFolder:aDialogs[3]
 
    ::oInfoSubCuentaDescuento:lWantClick  := .t.
    ::oInfoSubCuentaDescuento:OnClick     := {|| if( ::oController:isNotZoomMode(), msgalert( "Informe subcuenta dedescuento" ), ) }
@@ -375,23 +392,24 @@ METHOD redefineComercial() CLASS ClientesView
       WHEN     ( ::oController:isNotZoomMode() ) ;
       ON HELP  ( MsgInfo( "Conectar con Contaplus" ) ) ;
       BITMAP   "LUPA" ;
-      OF       ::oFolder:aDialogs[2]
+      OF       ::oFolder:aDialogs[3]
 
    REDEFINE GET ::oSaldoSubcuentaDescuento ; 
       VAR      ::nSaldoSubcuentaDescuento ;
       ID       380;
       WHEN     ( ::oController:isNotZoomMode() ) ;
-      OF       ::oFolder:aDialogs[2]
+      OF       ::oFolder:aDialogs[3]
 
-RETURN ( self )
-
+   RETURN ( self )
 //---------------------------------------------------------------------------//
-
 METHOD startDialog()
+
 
    ::addLinksToExplorerBar()
    
    ::oController:oAgentesController:oGetSelector:Start()
+
+   ::oController:oArticulosTarifasController:oGetSelector:Start()
 
    ::oController:oFormasPagoController:oGetSelector:Start()
 

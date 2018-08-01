@@ -58,6 +58,8 @@ METHOD End() CLASS RutasController
 
    ::oRepository:End()
 
+   ::oGetSelector:End()
+
    ::oCamposExtraValoresController:End()
 
    ::Super:End()

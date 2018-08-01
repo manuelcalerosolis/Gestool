@@ -226,6 +226,22 @@ METHOD addColumns() CLASS ClientesBrowseView
       :lHide               := .t.
    end with
 
+    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'tarifa_codigo'
+      :cHeader             := 'Código tarifa'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'tarifa_nombre'
+      :cHeader             := 'Nombre tarifa'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

@@ -5,6 +5,8 @@
 
 CLASS FacturasClientesController FROM SQLNavigatorController
 
+   DATA oArticulosTarifasController
+
    DATA oClientesController
 
    DATA oArticulosController
@@ -75,6 +77,9 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oArticulosController        := ArticulosController():New( self )
 
+   ::oArticulosTarifasController := ArticulosTarifasController():New( self )
+   ::oArticulosTarifasController:setView( ::oDialogView )
+
    ::oNumeroDocumentoComponent   := NumeroDocumentoComponent():New( self )
 
    ::oSerieDocumentoComponent    := SerieDocumentoComponent():New( self )
@@ -125,6 +130,8 @@ METHOD End() CLASS FacturasClientesController
    ::oArticulosTarifasController:End()
 
    ::oClientesTarifasController:End()
+
+   ::oArticulosTarifasController:End()
 
    ::oLineasController:End()
 
@@ -341,7 +348,28 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+<<<<<<< HEAD
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'tarifa_codigo'
+      :cHeader             := 'Código tarifa'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'tarifa_nombre'
+      :cHeader             := 'Nombre tarifa'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+
+RETURN ( self )
+=======
 RETURN ( nil )
+>>>>>>> 1511236dcd0fb7cf243630683a85288c3d0f4b62
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
