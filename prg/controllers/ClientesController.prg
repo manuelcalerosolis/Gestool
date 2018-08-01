@@ -5,6 +5,8 @@
 
 CLASS ClientesController FROM TercerosController
 
+   DATA oArticulosTarifasController
+
    METHOD New()
 
    METHOD End()
@@ -45,6 +47,9 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::oAgentesController             := AgentesController():New( self )
    ::oAgentesController:setView( ::oDialogView )
+
+   ::oArticulosTarifasController    := ArticulosTarifasController():New( self )
+   ::oArticulosTarifasController:setView( ::oDialogView )
 
    ::oFormasPagoController          := FormasPagosController():New( self )
    ::oFormasPagoController:setView( ::oDialogView )
@@ -112,6 +117,8 @@ METHOD End() CLASS ClientesController
    ::oIncidenciasController:End()
 
    ::oDocumentosController:End()
+
+   ::oArticulosTarifasController:End()
 
    ::oCuentasBancariasController:End()
 

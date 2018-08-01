@@ -8,8 +8,6 @@ CLASS FacturasClientesView FROM SQLBaseView
    DATA oGetNumero
 
    DATA oComboTarifa
-
-   DATA cComboTarifa       INIT __tarifa_base__
    
    METHOD Activate()
 
@@ -111,11 +109,8 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Tarifas------------------------------------------------------------------
 
-   REDEFINE COMBOBOX ::oComboTarifa ;
-      VAR         ::cComboTarifa ;
-      ID          270 ;
-      ITEMS       ( { __tarifa_base__ } ) ;
-      OF          ::oFolder:aDialogs[1] ;
+   ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
+   ::oController:oArticulosTarifasController:oGetSelector:Activate( 270, 271, ::oFolder:aDialogs[1] )
 
    // Lineas ------------------------------------------------------------------
 
@@ -184,6 +179,8 @@ METHOD startDialog() CLASS FacturasClientesView
    ::oController:oAgentesController:oGetSelector:Start()
 
    ::oController:oLineasController:oBrowseView:Refresh()
+
+   ::oController:oArticulosTarifasController:oGetSelector:start()
 
 RETURN ( self )
 

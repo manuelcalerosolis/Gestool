@@ -25,9 +25,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ArticulosTarifasController
+METHOD New( oSenderController ) CLASS ArticulosTarifasController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                         := "Tarifas"
 
@@ -46,6 +46,8 @@ METHOD New() CLASS ArticulosTarifasController
    ::oDialogView                    := ArticulosTarifasView():New( self )
 
    ::oValidator                     := ArticulosTarifasValidator():New( self, ::oDialogView )
+
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oArticulosPreciosController    := ArticulosPreciosTarifasController():New( self )
 
@@ -505,6 +507,8 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
    DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( codigo )"
 
    METHOD getColumns()
+
+   METHOD isParentUuidColumn()               INLINE ( .f. )
 
    METHOD getInsertArticulosTarifasSentence()
 
