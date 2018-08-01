@@ -19,13 +19,17 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    DATA oDelegacionesController
 
-   DATA cUuidDelegacionDefecto
-   DATA cDelegacionDefecto
    DATA aDelegaciones
+   DATA cDelegacionDefecto
+   DATA cUuidDelegacionDefecto
 
-   DATA cCodigoUnidaesDefecto
-   DATA cUnidadesDefecto
    DATA aUnidades
+   DATA cUnidadesDefecto
+   DATA cCodigoUnidaesDefecto
+
+   DATA aTarifas
+   DATA cTarifaDefecto   
+   DATA cCodigoTarifaDefecto
 
    METHOD New()
 
@@ -159,6 +163,12 @@ METHOD loadConfig()
 
    ::cUnidadesDefecto            := SQLUnidadesMedicionGruposModel():getNombreWhereCodigo( ::cCodigoUnidaesDefecto )
 
+   ::aTarifas                    := SQLArticulosTarifasModel():getNombres()
+
+   ::cCodigoTarifaDefecto        := ::oAjustableController:oModel:getEmpresaTarifaDefecto( ::cUuidEmpresa )
+
+   ::cTarifaDefecto              := SQLArticulosTarifasModel():getNombreWhereCodigo( ::cCodigoTarifaDefecto )
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -175,6 +185,14 @@ METHOD saveConfig()
 
    ::oAjustableController:oModel:setEmpresaUnidadesGrupoDefecto( ::cCodigoUnidaesDefecto, ::cUuidEmpresa )
 
+   msgalert( ::cTarifaDefecto, "cTarifaDefecto" )
+
+   ::cCodigoTarifaDefecto        := SQLArticulosTarifasModel():getCodigoWhereNombre( ::cTarifaDefecto )
+
+   msgalert( ::cCodigoTarifaDefecto, "cCodigoTarifaDefecto" )
+
+   ::oAjustableController:oModel:setEmpresaTarifaDefecto( ::cCodigoTarifaDefecto, ::cUuidEmpresa )
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -188,6 +206,8 @@ METHOD startingActivate()
    oPanel:addComboBox( "Delegación defecto", @::cDelegacionDefecto, ::aDelegaciones )
 
    oPanel:addComboBox( "Unidades defecto", @::cUnidadesDefecto, ::aUnidades )
+
+   oPanel:addComboBox( "Tarifa defecto", @::cTarifaDefecto, ::aTarifas )
 
 RETURN ( self )
 
