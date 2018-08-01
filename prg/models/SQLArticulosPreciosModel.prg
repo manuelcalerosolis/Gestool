@@ -149,7 +149,7 @@ METHOD getInitialSelect() CLASS SQLArticulosPreciosModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName, SQLArticulosTarifasModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosTarifasModel():getTableName() )
 
 RETURN ( cSql )
 

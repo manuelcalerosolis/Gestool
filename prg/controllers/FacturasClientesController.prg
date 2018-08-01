@@ -25,6 +25,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oContadoresModel
 
+   DATA oArticulosTarifasController
+
    DATA oClientesTarifasController
 
    DATA oLineasController
@@ -39,13 +41,15 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD clienteSelectorLoaded()
 
+   METHOD getSelectedTarifa()          INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:cComboTarifa, "" ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS FacturasClientesController
+METHOD New( oController ) CLASS FacturasClientesController
 
-   ::Super:New()
+   ::Super:New( oController )
 
    ::cTitle                      := "Facturas de clientes"
 
@@ -92,6 +96,8 @@ METHOD New() CLASS FacturasClientesController
    ::oAlmacenesController        := AlmacenesController():New( self )
    ::oAlmacenesController:setView( ::oDialogView )
 
+   ::oArticulosTarifasController := ArticulosTarifasController():New( self )
+
    ::oClientesTarifasController  := ClientesTarifasController():New( self )
 
    ::oLineasController           := FacturasClientesLineasController():New( self )
@@ -120,6 +126,8 @@ METHOD End() CLASS FacturasClientesController
    ::oAgentesController:End()
 
    ::oAlmacenesController:End()
+
+   ::oArticulosTarifasController:End()
 
    ::oClientesTarifasController:End()
 
@@ -169,7 +177,7 @@ METHOD clienteSelectorLoaded()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -340,6 +348,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+<<<<<<< HEAD
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tarifa_codigo'
       :cHeader             := 'Código tarifa'
@@ -358,6 +367,9 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
 
 RETURN ( self )
+=======
+RETURN ( nil )
+>>>>>>> 1511236dcd0fb7cf243630683a85288c3d0f4b62
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
