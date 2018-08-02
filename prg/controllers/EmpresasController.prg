@@ -185,11 +185,7 @@ METHOD saveConfig()
 
    ::oAjustableController:oModel:setEmpresaUnidadesGrupoDefecto( ::cCodigoUnidaesDefecto, ::cUuidEmpresa )
 
-   msgalert( ::cTarifaDefecto, "cTarifaDefecto" )
-
    ::cCodigoTarifaDefecto        := SQLArticulosTarifasModel():getCodigoWhereNombre( ::cTarifaDefecto )
-
-   msgalert( ::cCodigoTarifaDefecto, "cCodigoTarifaDefecto" )
 
    ::oAjustableController:oModel:setEmpresaTarifaDefecto( ::cCodigoTarifaDefecto, ::cUuidEmpresa )
 

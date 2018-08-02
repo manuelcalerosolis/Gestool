@@ -147,7 +147,7 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD setEmpresaTarifaDefecto( uAjusteValue, cAjustableUuid );
                                  INLINE ( ::setValue( 'tarifas_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getEmpresaTarifaDefecto( cCodigo );
-                                 INLINE ( ::getValue( cCodigo, 'empresas', 'tarifas_defecto', __tarifa_base__ ) )   
+                                 INLINE ( padr( ::getValue( cCodigo, 'empresas', 'tarifas_defecto', __tarifa_base__ ), 20 ) )   
 
 END CLASS
 
@@ -242,7 +242,7 @@ METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    uValue            := ::getDatabase():getValue( cSentence )
 
    if hb_ischar( uValue ) 
-      RETURN ( uValue ) 
+      RETURN ( alltrim( uValue ) )
    endif
 
 RETURN ( uDefault )

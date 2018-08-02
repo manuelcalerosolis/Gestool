@@ -199,10 +199,7 @@ RETURN ( SQLArticulosModel():getHashWhere( "codigo", cCodigo ) )
 METHOD stampArticulo( hArticulo )
 
    local hBuffer     := {=>}
-
-   msgalert( hb_valtoexp( hArticulo ), "hArticulo" )
-   
-   msgalert( UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( hArticulo, "codigo" ) ), "UnidadesMedicionGruposLineasRepository" )
+   local nPrecioBase := SQLArticulosPreciosModel():getPrecioBaseWhereArticuloUuidAndTarifaCodigo( hget( hArticulo, "uuid" ), ::oSenderController:getModelBuffer( "tarifa_codigo" ) )
 
    hset( hBuffer, "articulo_codigo",         hget( hArticulo, "codigo" ) )
 
@@ -210,7 +207,7 @@ METHOD stampArticulo( hArticulo )
 
    hset( hBuffer, "unidad_medicion_codigo",  UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( hArticulo, "codigo" ) ) )
    
-   hset( hBuffer, "articulo_precio",         333 )
+   hset( hBuffer, "articulo_precio",         nPrecioBase )
 
    ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
 

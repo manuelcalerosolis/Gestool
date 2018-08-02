@@ -159,7 +159,7 @@ METHOD clientesSettedHelpText()
       cCodigoTarifa  := Company():getDefaultTarifa()
    end if
 
-   ::oArticulosTarifasController:oGetSelector:cText( hget( ::oClientesController:oGetSelector:uFields, "tarifa_codigo" ) )
+   ::oArticulosTarifasController:oGetSelector:cText( cCodigoTarifa )
    ::oArticulosTarifasController:oGetSelector:lValid()
 
 RETURN ( nil )

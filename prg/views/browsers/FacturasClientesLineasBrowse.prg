@@ -184,6 +184,21 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateFieldWhereId( 'articulo_precio', uNewValue ) }
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'total_precio'
+      :cHeader             := 'Total precio'
+      :nWidth              := 80
+      :cEditPicture        := masUnd()
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'total_precio' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :cEditPicture        := masUnd()
+      :nFootStyle          := :nDataStrAlign               
+      :nFooterType         := AGGR_SUM
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := getBoldFont()
+      :cDataType           := "N"
+   end with
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
