@@ -109,15 +109,6 @@ METHOD Activate() CLASS FacturasClientesView
 
    ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
    ::oController:oArticulosTarifasController:oGetSelector:Activate( 270, 271, ::oFolder:aDialogs[1] )
-<<<<<<< HEAD
-=======
-
-   REDEFINE COMBOBOX ::oComboTarifa ;
-      VAR         ::cComboTarifa ;
-      ID          270 ;
-      ITEMS       ( ::oController:oArticulosTarifasController:oModel:getNombres() ) ;
-      OF          ::oFolder:aDialogs[1] ;
->>>>>>> 64e8b68f8cf8a6f9ad14714f7d3b2e416ccdd6e7
 
    // Lineas ------------------------------------------------------------------
 
