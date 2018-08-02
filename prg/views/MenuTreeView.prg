@@ -209,9 +209,13 @@ METHOD End()
       RETURN ( nil )
    end if
 
+   sysrefresh()
+
    aeval( ::oImageList:aBitmaps, {|oBitmap| oBitmap:End() } )
 
    ::oImageList:End()
+
+   sysrefresh()
 
 RETURN ( nil )
 

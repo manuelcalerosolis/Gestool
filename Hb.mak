@@ -1,25 +1,25 @@
-HB                   = 	\harbour_bcc582\
+HB                   = 	\harbour_bcc7\
 
-HBINCLUDE            = 	\harbour_bcc582\include
-FWINCLUDE            = 	\fwh1705\include
+HBINCLUDE            = 	\harbour_bcc7\include
+FWINCLUDE            = 	\fwh1801\include
 GTINCLUDE            = 	.\Include
 
-HBLIB                = 	\harbour_bcc582\lib
-FWLIB                = 	\fwh1705\lib
+HBLIB                = 	\harbour_bcc7\lib
+FWLIB                = 	\fwh1801\lib
 
 RESOURCE             = 	.\resource
 
-BORLAND              = 	\bcc582
-BORLANDLIB           = 	\bcc582\lib
+BORLAND              = 	\bcc73
+BORLANDLIB           = 	\bcc73\lib
 
 IMG2PDFLIB           = 	\img2Pdf
 
-OBJ                  = 	obj1705
+OBJ                  = 	obj1801
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Commands;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	.\C
 
-PPO 					   = 	ppo1705
+PPO 					   = 	ppo1801
 
 EXE 					   = 	bin\$(TARGET).exe
 
@@ -2083,40 +2083,41 @@ $(OBJ)\PedidosProveedoresLineasModel.obj 							   +
 $(OBJ)\RelacionesEntidadesController.obj 							   +
 $(OBJ)\CentroCosteModel.obj 												+
 $(OBJ)\TransportistasModel.obj 											+
-$(OBJ)\MdiChild.obj 													+
-$(OBJ)\SQLComboSelector.obj 											+
-$(OBJ)\CompanyManager.obj 												+
+$(OBJ)\MdiChild.obj 															+
+$(OBJ)\SQLComboSelector.obj 												+
+$(OBJ)\CompanyManager.obj 													+
 $(OBJ)\TercerosController.obj 											+
 $(OBJ)\ClientesController.obj 											+
 $(OBJ)\ProveedoresController.obj 										+
-$(OBJ)\SQLTercerosModel.obj 											+
-$(OBJ)\SQLclientesModel.obj 											+
+$(OBJ)\SQLTercerosModel.obj 												+
+$(OBJ)\SQLclientesModel.obj 												+
 $(OBJ)\SQLProveedoresModel.obj 		  									+
-$(OBJ)\ClientesView.obj 												+
-$(OBJ)\ClientesValidator.obj 											+
-$(OBJ)\SqlGetSelector.obj 												+
+$(OBJ)\ClientesView.obj 													+
+$(OBJ)\ClientesValidator.obj 												+
+$(OBJ)\SqlGetSelector.obj 													+
 $(OBJ)\SqlClientGetSelector.obj											+
 $(OBJ)\NumeroDocumentoController.obj									+
-$(OBJ)\SQLDialogView.obj 												+
-$(OBJ)\CalculaPrecioCommand.obj 										+
-$(OBJ)\DescuentosController.obj 										+
+$(OBJ)\SQLDialogView.obj 													+
+$(OBJ)\CalculaPrecioCommand.obj 											+
+$(OBJ)\DescuentosController.obj 											+
 $(OBJ)\ClientesBrowseView.obj 											+
 $(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\SqlFacturasClientesModel.obj 				    				+
-$(OBJ)\SqlFacturasClientesLineasModel.obj 	    						+
+$(OBJ)\SqlFacturasClientesLineasModel.obj 	    					+
 $(OBJ)\FacturasClientesController.obj 									+
 $(OBJ)\FacturasClientesLineasController.obj 							+
 $(OBJ)\FacturasClientesLineasBrowse.obj 								+
 $(OBJ)\FacturasClientesLineasView.obj 									+
-$(OBJ)\FacturasClientesView.obj 										+
+$(OBJ)\FacturasClientesView.obj 											+
 $(OBJ)\ClientesTarifasController.obj 									+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+
 $(FWLIB)\FiveHC.lib              										+
+$(FWLIB)\libcurl.lib             										+
 $(HBLIB)\hdo.lib               											+
-$(HBLIB)\mylist.lib 													+
-$(HBLIB)\rdlmysql.lib 													+
+$(HBLIB)\mylist.lib 															+
+$(HBLIB)\rdlmysql.lib 														+
 $(HBLIB)\libmysql.lib            										+
 $(HBLIB)\Eagle1.lib              										+
 $(HBLIB)\hbwin.lib               										+

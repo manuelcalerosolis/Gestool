@@ -352,8 +352,12 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+<<<<<<< HEAD
 
 RETURN ( self )
+=======
+RETURN ( nil )
+>>>>>>> 64e8b68f8cf8a6f9ad14714f7d3b2e416ccdd6e7
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
