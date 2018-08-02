@@ -133,7 +133,7 @@ METHOD getInitialSelect() CLASS SQLClientesModel
                         "direcciones.telefono AS telefono,"                                                                + " " + ;
                         "direcciones.movil AS movil,"                                                                      + " " + ;
                         "direcciones.movil AS movil,"                                                                      + " " + ;
-                        "tarifas.codigo AS tarifa_codigo, "                                                                 + " " + ;
+                        "tarifas.codigo AS tarifa_codigo, "                                                                + " " + ;
                         "tarifas.nombre AS tarifa_nombre "                                                                 + " " + ;
                      "FROM " + ::getTableName() + " AS clientes"                                                           + " " + ;
                         "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                               + " " + ;  
@@ -163,6 +163,8 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLClientesModel
                         "clientes.codigo AS codigo,"                                                                       + " " + ;
                         "clientes.nombre AS nombre,"                                                                       + " " + ;
                         "clientes.dni AS dni,"                                                                             + " " + ;
+                        "clientes.tarifa_codigo AS tarifa_codigo,"                                                         + " " + ;
+                        "tarifas.nombre AS tarifa_nombre,"                                                                 + " " + ;
                         "direcciones.direccion AS direccion,"                                                              + " " + ;
                         "direcciones.poblacion AS poblacion,"                                                              + " " + ;
                         "direcciones.provincia AS provincia,"                                                              + " " + ;
@@ -171,8 +173,10 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLClientesModel
                         "direcciones.movil AS movil,"                                                                      + " " + ;
                         "direcciones.email AS email"                                                                       + " " + ;
                      "FROM " + ::getTableName() + " AS clientes"                                                           + " " + ;
-                        "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                        + " " + ;  
+                        "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                               + " " + ;  
                            "ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"                          + " " + ;
+                        "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " tarifas "                             + " " + ;
+                           "ON clientes.tarifa_codigo = tarifas.codigo"                                                    + " " + ;
                      "WHERE clientes." + cBy + " = " + quoted( cId ) 
 
 RETURN ( cSelect )

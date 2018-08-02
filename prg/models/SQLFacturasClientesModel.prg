@@ -88,7 +88,7 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
                         "direcciones.telefono AS direccion_telefono,"                                 + " " + ;
                         "direcciones.movil AS direccion_movil,"                                       + " " + ;
                         "direcciones.email AS direccion_email,"                                       + " " + ;
-                        "tarifas.codigo AS tarifa_codigo, "                                          + " " + ;
+                        "tarifas.codigo AS tarifa_codigo, "                                           + " " + ;
                         "tarifas.nombre AS tarifa_nombre "                                            + " " + ;
                      "FROM " + ::getTableName() + " AS facturas_clientes"                             + " " + ;
                         "LEFT JOIN " + SQLClientesModel():getTableName() + " clientes"                + " " + ;  

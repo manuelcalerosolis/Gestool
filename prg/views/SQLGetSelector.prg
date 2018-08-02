@@ -43,8 +43,8 @@ CLASS GetSelector
    METHOD validAction()
 
    METHOD loadHelpText()
-      METHOD cleanHelpText()                    INLINE ( ::oGet:oHelptext:cText( "" ) )
-      METHOD setHelpText( value )               INLINE ( ::oGet:oHelptext:cText( value ) )
+      METHOD cleanHelpText()                    
+      METHOD setHelpText( value )               
 
    METHOD getFields()                           INLINE ( ::uFields   := ::oController:oModel:getField( "nombre", ::getKey(), ::oGet:varGet() ) )
    
@@ -54,8 +54,10 @@ CLASS GetSelector
 
    METHOD showMessage()
 
+   METHOD cText( value )                        INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
    METHOD Hide()                                INLINE ( if( !empty( ::oGet ), ::oGet:Hide(), ) )
    METHOD Show()                                INLINE ( if( !empty( ::oGet ), ::oGet:Show(), ) )
+   METHOD lValid()                              INLINE ( if( !empty( ::oGet ), ::oGet:lValid(), ) )
 
    // Events-------------------------------------------------------------------
 
@@ -108,7 +110,7 @@ METHOD Activate( idGet, idText, oDlg, idSay ) CLASS GetSelector
       RETURN ( nil )
    end if
 
-   ::cGet         := eval( ::bValue )
+   ::cGet        := eval( ::bValue )
 
    REDEFINE GET   ::oGet ;
       VAR         ::cGet ;
@@ -245,6 +247,34 @@ METHOD showMessage( lSilenceMode )
    end if 
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD cleanHelpText()
+
+   if isFalse( ::fireEvent( 'cleaningHelpText' ) )
+      RETURN ( .f. )
+   end if
+
+   ::oGet:oHelptext:cText( "" ) 
+
+   ::fireEvent( 'cleanedHelpText' ) 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD setHelpText( value )               
+
+   if isFalse( ::fireEvent( 'settingHelpText' ) )
+      RETURN ( .f. )
+   end if
+
+   ::oGet:oHelptext:cText( value ) 
+
+   ::fireEvent( 'settedHelpText' ) 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

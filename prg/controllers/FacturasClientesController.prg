@@ -25,8 +25,6 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oContadoresModel
 
-   DATA oArticulosTarifasController
-
    DATA oClientesTarifasController
 
    DATA oLineasController
@@ -37,11 +35,10 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD loadedBlankBuffer() 
 
-   METHOD insertedBuffer()
+   METHOD clientesSettedHelpText()
 
-   METHOD clienteSelectorLoaded()
-
-   METHOD getSelectedTarifa()          INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:cComboTarifa, "" ) )
+   METHOD clientesCleanedHelpText()    INLINE ( ::oArticulosTarifasController:oGetSelector:cText( space( 20 ) ),;
+                                                ::oArticulosTarifasController:oGetSelector:lValid() )
 
 END CLASS
 
@@ -96,8 +93,6 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oAlmacenesController        := AlmacenesController():New( self )
    ::oAlmacenesController:setView( ::oDialogView )
 
-   ::oArticulosTarifasController := ArticulosTarifasController():New( self )
-
    ::oClientesTarifasController  := ClientesTarifasController():New( self )
 
    ::oLineasController           := FacturasClientesLineasController():New( self )
@@ -105,9 +100,10 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',      {|| ::insertedBuffer() } )
 
-   ::oClientesController:oGetSelector:setEvent( 'loaded', {|| ::clienteSelectorLoaded() } )
+   ::oClientesController:oGetSelector:setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
+
+   ::oClientesController:oGetSelector:setEvent( 'cleanedHelpText', {|| ::clientesCleanedHelpText() } )
 
 RETURN ( Self )
 
@@ -124,14 +120,12 @@ METHOD End() CLASS FacturasClientesController
    ::oRutasController:End()
 
    ::oAgentesController:End()
-
+ 
    ::oAlmacenesController:End()
 
    ::oArticulosTarifasController:End()
 
    ::oClientesTarifasController:End()
-
-   ::oArticulosTarifasController:End()
 
    ::oLineasController:End()
 
@@ -151,28 +145,22 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertedBuffer() 
+METHOD clientesSettedHelpText()
 
-   // padr( ::oContadoresModel:insertDocumentCounter( ::cName ), 50 ) )
+   local cCodigoTarifa
 
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD clienteSelectorLoaded()
-
-   local cTarifaCliente
-   local aTarifasCliente   := ::oClientesTarifasController:oModel:getTarifasNombreWhereClienteCodigo( ::oClientesController:oGetSelector:cGet )
-
-   if !empty( ::oDialogView ) .and. !empty( ::oDialogView:oComboTarifa )
-
-      cTarifaCliente       := ::oDialogView:oComboTarifa:varGet()
-
-      ::oDialogView:oComboTarifa:setItems( aTarifasCliente )
-      
-      ::oDialogView:oComboTarifa:set( cTarifaCliente )
-
+   if empty( ::oClientesController:oGetSelector:uFields )
+      RETURN ( nil )
    end if 
+
+   cCodigoTarifa     := hget( ::oClientesController:oGetSelector:uFields, "tarifa_codigo" )
+
+   // if empty( cCodigoTarifa )
+   //    cCodigoTarifa  := // Empresa
+   // end if
+
+   ::oArticulosTarifasController:oGetSelector:cText( hget( ::oClientesController:oGetSelector:uFields, "tarifa_codigo" ) )
+   ::oArticulosTarifasController:oGetSelector:lValid()
 
 RETURN ( nil )
 
@@ -348,7 +336,6 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-<<<<<<< HEAD
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tarifa_codigo'
       :cHeader             := 'Código tarifa'
@@ -367,9 +354,6 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
 
 RETURN ( self )
-=======
-RETURN ( nil )
->>>>>>> 1511236dcd0fb7cf243630683a85288c3d0f4b62
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

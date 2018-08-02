@@ -201,7 +201,6 @@ METHOD stampArticulo( hArticulo )
    local hBuffer     := {=>}
 
    msgalert( hb_valtoexp( hArticulo ), "hArticulo" )
-   msgalert( hb_valtoexp( ::oSenderController:getSelectedTarifa() ), "tarifa" )
    
    msgalert( UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( hArticulo, "codigo" ) ), "UnidadesMedicionGruposLineasRepository" )
 
