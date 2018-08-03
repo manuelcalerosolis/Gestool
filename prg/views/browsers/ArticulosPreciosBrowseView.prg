@@ -146,7 +146,7 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :cHeader             := "% Dto."
       :bStrData            := {|| "" }
       :nWidth              := 20
-      :AddResource( "gc_pencil_16" )
+      :AddResource( "gc_more2_16" )
       :bBmpData            := {|| 1 }
       :bLDClickData        := {|| msgalert( ::getRowSet():fieldGet( 'uuid' ) ) }
    end with
