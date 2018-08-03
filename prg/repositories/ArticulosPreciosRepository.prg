@@ -228,7 +228,12 @@ METHOD createFunctionUpdatePrecioWhereIdPrecio() CLASS ArticulosPreciosRepositor
 
          SET precio_base = ( precio_costo * margen / 100 ) + ( precio_costo );
          SET precio_iva_incluido = ( precio_base * porcentaje_iva / 100 ) + ( precio_base );
-         SET margen_real = ( ( precio_base - precio_costo ) / precio_base * 100 );
+
+         IF precio_base > 0 THEN 
+            SET margen_real = ( ( precio_base - precio_costo ) / precio_base * 100 );
+         ELSE 
+            SET margen_real = 0;
+         END IF;
 
          UPDATE %2$s AS articulos_precios 
             SET 
