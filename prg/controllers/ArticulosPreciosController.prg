@@ -5,6 +5,8 @@
 
 CLASS ArticulosPreciosController FROM SQLBrowseController
 
+   DATA oArticulosPreciosDescuentosController
+
    METHOD New()
 
    METHOD End()
@@ -47,6 +49,8 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::oRepository                    := ArticulosPreciosRepository():New( self )
 
+   ::oArticulosPreciosDescuentosController    := ArticulosPreciosDescuentosController():New( self )
+
    ::getModel()
 
    ::getBrowseView()
@@ -66,6 +70,8 @@ METHOD End() CLASS ArticulosPreciosController
    ::oModel:End()
 
    ::oBrowseView:End()
+
+   ::oArticulosPreciosDescuentosController:End()
 
    ::oValidator:End()
 

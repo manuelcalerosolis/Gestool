@@ -713,15 +713,16 @@ NumeroDocumentoController.prg 											\
 SQLDialogView.prg 															\
 CalculaPrecioCommand.prg 													\
 DescuentosController.prg 													\
+ArticulosPreciosDescuentosController.prg 								\
 ClientesBrowseView.prg 														\
 TercerosBrowseView.prg 														\
 SqlFacturasClientesModel.prg 												\
 SqlFacturasClientesLineasModel.prg										\
 FacturasClientesController.prg 											\
 FacturasClientesLineasController.prg									\
-FacturasClientesLineasBrowse.prg										\
+FacturasClientesLineasBrowse.prg											\
 FacturasClientesLineasView.prg											\
-FacturasClientesView.prg 												\
+FacturasClientesView.prg 													\
 ClientesTarifasController.prg 											\
 
 C               =       	            								\
@@ -1412,6 +1413,7 @@ NumeroDocumentoController.obj 											\
 SQLDialogView.obj 															\
 CalculaPrecioCommand.obj 													\
 DescuentosController.obj 													\
+ArticulosPreciosDescuentosController.obj 								\
 ClientesBrowseView.obj 														\
 TercerosBrowseView.obj 														\
 SQLFacturasClientesModel.obj 												\
@@ -1420,7 +1422,7 @@ FacturasClientesController.obj 											\
 FacturasClientesLineasController.obj 									\
 FacturasClientesLineasBrowse.obj 										\
 FacturasClientesLineasView.obj 											\
-FacturasClientesView.obj 												\
+FacturasClientesView.obj 													\
 ClientesTarifasController.obj 											\
 
 .PRG.OBJ:
@@ -2100,6 +2102,7 @@ $(OBJ)\NumeroDocumentoController.obj									+
 $(OBJ)\SQLDialogView.obj 													+
 $(OBJ)\CalculaPrecioCommand.obj 											+
 $(OBJ)\DescuentosController.obj 											+
+$(OBJ)\ArticulosPreciosDescuentosController.obj 					+
 $(OBJ)\ClientesBrowseView.obj 											+
 $(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\SqlFacturasClientesModel.obj 				    				+
