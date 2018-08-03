@@ -141,6 +141,16 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :SetCheck( { "Sel16", "Nil16" }, {|oCol, lManual| ::oController:setManual( oCol, lManual ) } )
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :nEditType           := 1
+      :cHeader             := "% Dto."
+      :bStrData            := {|| "" }
+      :nWidth              := 20
+      :AddResource( "gc_pencil_16" )
+      :bBmpData            := {|| 1 }
+      :bLDClickData        := {|| msgalert( ::getRowSet():fieldGet( 'uuid' ) ) }
+   end with
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
