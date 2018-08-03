@@ -15,6 +15,8 @@ CLASS FacturasClientesView FROM SQLBaseView
 
    METHOD addLinksToExplorerBar()
 
+   METHOD isClientEmpty()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -26,6 +28,12 @@ METHOD Activating() CLASS FacturasClientesView
    end if 
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD isClientEmpty() CLASS FacturasClientesView
+
+RETURN ( empty( ::oController:getModelBuffer( "cliente_codigo" ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -115,21 +123,21 @@ METHOD Activate() CLASS FacturasClientesView
    REDEFINE BUTTON oBtnAppend ;
       ID          500 ;
       OF          ::oFolder:aDialogs[1] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( !::isClientEmpty() ) ;
 
    oBtnAppend:bAction   := {|| ::oController:oLineasController:Append() }
 
    REDEFINE BUTTON oBtnEdit ;
       ID          501 ;
       OF          ::oFolder:aDialogs[1] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( !::isClientEmpty() ) ;
 
    oBtnEdit:bAction     := {|| ::oController:oLineasController:Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
       ID          502 ;
       OF          ::oFolder:aDialogs[1] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( !::isClientEmpty() ) ;
 
    oBtnDelete:bAction   := {|| ::oController:oLineasController:Delete() }
 
@@ -151,6 +159,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F2, {|| if( !::isClientEmpty(), ::oController:oLineasController:Append(), ) } )
+      ::oDialog:AddFastKey( VK_F3, {|| if( !::isClientEmpty(), ::oController:oLineasController:Edit(), ) } )
+      ::oDialog:AddFastKey( VK_F4, {|| if( !::isClientEmpty(), ::oController:oLineasController:Delete(), ) } )
    end if
 
    ::oDialog:bStart := {|| ::startDialog() }
