@@ -195,12 +195,12 @@ METHOD getSQLInsertPrecioWhereTarifa( uuidTarifa ) CLASS SQLArticulosPreciosMode
          @precioIVA := ( ( @precioBase * tipos_iva.porcentaje / 100 ) + @precioBase )
       FROM %3$s AS articulos
 
+      INNER JOIN %4$s AS articulos_tarifas  
+         ON articulos_tarifas.uuid = %1$s
+
       LEFT JOIN %2$s AS articulos_precios_parent 
          ON articulos_precios_parent.articulo_uuid = articulos.uuid 
          AND articulos_precios_parent.tarifa_uuid = articulos_tarifas.uuid
-
-      INNER JOIN %4$s AS articulos_tarifas  
-         ON articulos_tarifas.uuid = %1$s
 
       LEFT JOIN %5$s AS tipos_iva
          ON tipos_iva.codigo = articulos.tipo_iva_codigo
