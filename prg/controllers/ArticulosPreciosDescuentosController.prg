@@ -223,7 +223,7 @@ METHOD addColumns() CLASS ArticulosPreciosDescuentosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'porcentaje'
-      :cHeader             := 'Descuento'
+      :cHeader             := '% Descuento'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'porcentaje' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -231,29 +231,26 @@ METHOD addColumns() CLASS ArticulosPreciosDescuentosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'cantidad'
-      :cHeader             := 'Cantidad'
+      :cHeader             := 'Unidades'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'fecha_inicio'
-      :cHeader             := 'Inicio'
+      :cHeader             := 'Fecha inicio'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_inicio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'fecha_fin'
-      :cHeader             := 'Fin'
+      :cHeader             := 'Fecha fin'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_fin' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
 RETURN ( self )
@@ -377,11 +374,15 @@ CLASS SQLArticulosPreciosDescuentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_precios_descuentos"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( porcentaje, cantidad, fecha_inicio )"
+
    METHOD getColumns()
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
+
+   METHOD getDescuentoPorArticulo( uuid_articulo, unidades, fecha_inicio, fecha_fin )
 
 END CLASS
 
@@ -399,7 +400,7 @@ METHOD getColumns() CLASS SQLArticulosPreciosDescuentosModel
                                                    "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "fecha_inicio",            {  "create"    => "DATE"                                    ,;
-                                                   "default"   => {|| ctod( "" ) } }                        )
+                                                   "default"   => {|| getSysDate() } }                        )
 
    hset( ::hColumns, "fecha_fin",               {  "create"    => "DATE"                                    ,;
                                                    "default"   => {|| ctod( "" ) } }                        )
@@ -426,6 +427,19 @@ METHOD getParentUuidAttribute( value ) CLASS SQLArticulosPreciosDescuentosModel
 
 RETURN ( ::oController:oSenderController:getUuid() )
 
+//---------------------------------------------------------------------------//
+METHOD getDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura ) CLASS SQLArticulosPreciosDescuentosModel
+   
+   /*local cSelect  := "SELECT articulos_tarifas.id, "                                                                
+   cSelect        +=    "articulos_tarifas.uuid, "                                                                  
+   cSelect        +=    "articulos_tarifas.parent_uuid, "*/
+
+   msgalert( articulo_uuid )
+   msgalert( tarifa_codigo )
+   msgalert ( unidades )
+   msgalert ( fecha_factura )
+
+RETURN (nil)
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

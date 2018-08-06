@@ -96,6 +96,8 @@ CLASS SQLDatabase
                                                    "Password : " + ::cPasswordMySQL + CRLF + ;
                                                    "Port : " + alltrim( str( ::nPortMySQL ) ) )
 
+   METHOD showError( e )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -210,8 +212,8 @@ RETURN ( .f. )
 
 METHOD Exec( cSentence, lParse )
 
+   local e
    local lExec    := .t.
-   local oError
 
    DEFAULT lParse := .t.
 
@@ -227,9 +229,9 @@ METHOD Exec( cSentence, lParse )
    
       ::oConexion:Exec( cSentence )
        
-   catch oError
+   catch e
 
-      eval( errorBlock(), oError )
+      ::showError( e )
 
       lExec       := .f.
    
@@ -610,6 +612,19 @@ METHOD exportTable( hFileName, cTable )
    cString        :=  hb_osnewline() + "--  Fin de datos de la tabla " + cTable + hb_osnewline() + hb_osnewline()
 
    fwrite( hFileName, cString )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD showError( e )
+
+   do case 
+      case ( "Duplicate entry " $ e:Description )
+         msgstop( "Clave primaria duplicada, la combinación de datos ya existe", "Error" )
+      otherwise
+         msgstop( e:SubSystem + ";" + padl( e:SubCode, 4 ) + ";" + e:Operation + ";" + e:Description, "Error en sentencia" )  
+   end case
 
 RETURN ( self )
 
