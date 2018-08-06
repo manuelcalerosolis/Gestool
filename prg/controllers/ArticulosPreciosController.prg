@@ -25,6 +25,10 @@ CLASS ArticulosPreciosController FROM SQLBrowseController
 
    METHOD onClickedHeader()         
 
+   METHOD getUuid()                 INLINE ( iif(  !empty( ::getRowSet() ),;
+                                                   ::getRowSet():fieldGet( 'uuid' ),;
+                                                   nil ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -43,13 +47,13 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::cName                          := "articulos_precios"
 
-   ::oDialogView                    := ArticulosPreciosView():New( self )
+   ::oDialogView                             := ArticulosPreciosView():New( self )
 
-   ::oValidator                     := ArticulosPreciosValidator():New( self )
+   ::oValidator                              := ArticulosPreciosValidator():New( self )
 
-   ::oRepository                    := ArticulosPreciosRepository():New( self )
+   ::oRepository                             := ArticulosPreciosRepository():New( self )
 
-   ::oArticulosPreciosDescuentosController    := ArticulosPreciosDescuentosController():New( self )
+   ::oArticulosPreciosDescuentosController   := ArticulosPreciosDescuentosController():New( self )
 
    ::getModel()
 

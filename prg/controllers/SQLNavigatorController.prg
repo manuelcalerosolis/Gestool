@@ -280,6 +280,8 @@ RETURN ( self )
 
 METHOD activateDialogView()
 
+   msgalert( ::cTitle, "activateDialogView" )
+
    if empty( ::oDialogModalView )
       RETURN ( nil )
    end if 

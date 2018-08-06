@@ -22,6 +22,8 @@ CLASS ArticulosPreciosDescuentosController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD activatingDialogModalView()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -30,13 +32,13 @@ METHOD New( oSenderController ) CLASS ArticulosPreciosDescuentosController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Descuentos artículos" 
+   ::cTitle                         := "Descuentos artículos" 
 
-   ::cName                       := "descuentos_articulos"
+   ::cName                          := "descuentos_articulos"
 
-   ::hImage                      := {  "16" => "gc_symbol_percent_16",;
-                                       "32" => "gc_symbol_percent_32",;
-                                       "48" => "gc_symbol_percent_48" }
+   ::hImage                         := {  "16" => "gc_symbol_percent_16",;
+                                          "32" => "gc_symbol_percent_32",;
+                                          "48" => "gc_symbol_percent_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -50,12 +52,13 @@ METHOD New( oSenderController ) CLASS ArticulosPreciosDescuentosController
 
    ::oRepository                    := ArticulosPreciosDescuentosRepository():New( self )
 
-   ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
+   ::oDialogModalView:setEvent( 'activating', {|| ::activatingDialogModalView() } )
+
+   ::setEvent( 'appending',                     {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
-
 
 RETURN ( Self )
 
@@ -75,9 +78,30 @@ METHOD End() CLASS ArticulosPreciosDescuentosController
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD activatingDialogModalView()
+
+   local cTitle 
+
+   cTitle   := "Descuentos artículo : " + alltrim( ::oSenderController:oSenderController:getModelBuffer( "codigo" ) )
+   
+   cTitle   += " - "
+
+   cTitle   += alltrim( ::oSenderController:oSenderController:getModelBuffer( "nombre" ) )
+
+   cTitle   += ", "
+
+   cTitle   += "sobre tarifa : " + ::oSenderController:getRowSet():fieldGet( 'articulos_tarifas_nombre' )
+
+   ::oDialogModalView:setTitle( cTitle )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD gettingSelectSentence() CLASS ArticulosPreciosDescuentosController
 
@@ -87,7 +111,7 @@ METHOD gettingSelectSentence() CLASS ArticulosPreciosDescuentosController
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -106,7 +130,7 @@ METHOD LoadedCurrentBuffer( uuiddescuento ) CLASS ArticulosPreciosDescuentosCont
 
    ::oModel:loadCurrentBuffer( idDescuento )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
