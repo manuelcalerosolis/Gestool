@@ -30,7 +30,7 @@ METHOD New( oSenderController ) CLASS ArticulosPreciosDescuentosController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Descuentos Artículos"
+   ::cTitle                      := "Descuentos artículos" 
 
    ::cName                       := "descuentos_articulos"
 
