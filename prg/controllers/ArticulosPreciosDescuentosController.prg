@@ -223,7 +223,7 @@ METHOD addColumns() CLASS ArticulosPreciosDescuentosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'porcentaje'
-      :cHeader             := 'Descuento'
+      :cHeader             := '% Descuento'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'porcentaje' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -231,29 +231,26 @@ METHOD addColumns() CLASS ArticulosPreciosDescuentosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'cantidad'
-      :cHeader             := 'Cantidad'
+      :cHeader             := 'Unidades'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'fecha_inicio'
-      :cHeader             := 'Inicio'
+      :cHeader             := 'Fecha inicio'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_inicio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'fecha_fin'
-      :cHeader             := 'Fin'
+      :cHeader             := 'Fecha fin'
       :nWidth              := 120
       :bEditValue          := {|| ::getRowSet():fieldGet( 'fecha_fin' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
 RETURN ( self )
@@ -377,11 +374,18 @@ CLASS SQLArticulosPreciosDescuentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_precios_descuentos"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( porcentaje, cantidad, fecha_inicio )"
+
    METHOD getColumns()
 
-   METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+   METHOD getIdWhereParentUuid( uuid )    INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
+
+   METHOD getSentenceDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura )
+
+   METHOD getDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura ) ;
+                                          INLINE   ( ::ExecuteSqlStatement(::getSentenceDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura ) ) )
 
 END CLASS
 
@@ -399,7 +403,7 @@ METHOD getColumns() CLASS SQLArticulosPreciosDescuentosModel
                                                    "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "fecha_inicio",            {  "create"    => "DATE"                                    ,;
-                                                   "default"   => {|| ctod( "" ) } }                        )
+                                                   "default"   => {|| getSysDate() } }                        )
 
    hset( ::hColumns, "fecha_fin",               {  "create"    => "DATE"                                    ,;
                                                    "default"   => {|| ctod( "" ) } }                        )
@@ -425,6 +429,35 @@ METHOD getParentUuidAttribute( value ) CLASS SQLArticulosPreciosDescuentosModel
    end if
 
 RETURN ( ::oController:oSenderController:getUuid() )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura ) CLASS SQLArticulosPreciosDescuentosModel
+   
+   local cSelect
+
+   cSelect  := "SELECT articulos_precios_descuentos.porcentaje as porcentaje "                                                                                                                                
+   cSelect  +=    "FROM "+ ::getTableName() + " AS articulos_precios_descuentos " 
+
+   cSelect  +=    "INNER JOIN "+ SQLArticulosPreciosModel():getTableName() +" as articulos_precios "                                                                  
+   cSelect  +=    "ON articulos_precios_descuentos.parent_uuid = articulos_precios.uuid "
+
+   cSelect  +=    "INNER JOIN " + SQLArticulosModel():getTableName() + " as articulos "                                                                  
+   cSelect  +=    "ON articulos_precios.articulo_uuid = " + quoted( articulo_uuid ) + " " 
+
+   cSelect  +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " as articulos_tarifas "                                                                  
+   cSelect  +=    "ON articulos_tarifas.codigo = " + tarifa_codigo + " "
+
+   cSelect  +=    "WHERE fecha_inicio <= " + dtoc( fecha_factura ) + " "                                                                  
+   cSelect  +=       "( AND fecha_fin >= " + dtoc( fecha_factura ) + " OR fecha_fin IS NULL ) "                                                                  
+   cSelect  +=       "AND articulos_precios_descuentos.cantidad >= " + quoted(unidades) + " "                                                                  
+   cSelect  +=       "AND articulos_precios.uuid = articulos_precios_descuentos.parent_uuid "                                                                  
+
+   cSelect  +=    "ORDER BY articulos_precios_descuentos.porcentaje desc " 
+
+   cSelect  +=    "LIMIT 1 "
+
+RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

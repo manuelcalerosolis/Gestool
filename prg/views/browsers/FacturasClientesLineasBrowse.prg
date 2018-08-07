@@ -199,6 +199,14 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cDataType           := "N"
    end with
 
+      with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'descuento'
+      :cHeader             := '% Descuento'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

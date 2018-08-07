@@ -19,6 +19,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    DATA oUnidadesMedicionController
 
+   DATA oArticulosPreciosDescuentosController
+
    DATA oHistoryManager
 
    METHOD New()
@@ -91,23 +93,25 @@ METHOD New( oController )
 
    ::setName( "lineas_facturas_clientes" )
 
-   ::oModel                            := SQLFacturasClientesLineasModel():New( self )
+   ::oModel                                        := SQLFacturasClientesLineasModel():New( self )
 
-   ::oBrowseView                       := FacturasClientesLineasBrowseView():New( self )
+   ::oBrowseView                                   := FacturasClientesLineasBrowseView():New( self )
 
-   ::oDialogView                       := FacturasClientesLineasView():New( self )
+   ::oDialogView                                   := FacturasClientesLineasView():New( self )
 
-   ::oValidator                        := FacturasClientesLineasValidator():New( self )
+   ::oValidator                                    := FacturasClientesLineasValidator():New( self )
 
-   ::oSearchView                       := SQLSearchView():New( self )
+   ::oSearchView                                   := SQLSearchView():New( self )
 
-   ::oSeriesControler                  := NumerosSeriesController():New( self )
+   ::oSeriesControler                              := NumerosSeriesController():New( self )
 
-   ::oRelacionesEntidades              := RelacionesEntidadesController():New( self )
+   ::oRelacionesEntidades                          := RelacionesEntidadesController():New( self )
 
-   ::oUnidadesMedicionController       := UnidadesMedicionGruposLineasController():New( self )
+   ::oUnidadesMedicionController                   := UnidadesMedicionGruposLineasController():New( self )
 
-   ::oHistoryManager                   := HistoryManager():New()
+   ::oArticulosPreciosDescuentosController         := ArticulosPreciosDescuentosController():New( self )
+
+   ::oHistoryManager                               := HistoryManager():New()
 
    ::setEvent( 'activating',           {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
 
@@ -211,9 +215,12 @@ METHOD stampArticulo( hArticulo )
 
    ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
 
+   ::oArticulosPreciosDescuentosController:oModel:getDescuentoPorArticulo( hget( hArticulo, "uuid" ), ::oSenderController:getModelBuffer( "tarifa_codigo" ), ::getRowSet():fieldGet( 'articulo_unidades' ), ::oSenderController:oModel:hBuffer[ "fecha" ] )
+
    ::getRowSet():Refresh()
    
    ::oHistoryManager:Set( ::getRowSet():getValuesAsHash() )
+
 
 RETURN ( .t. )
 

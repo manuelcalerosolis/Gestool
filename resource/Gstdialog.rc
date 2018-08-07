@@ -23639,19 +23639,21 @@ CAPTION "Descuentos"
 FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 100, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 40, 80, 12
-  CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 54, 80, 12
-  CONTROL "", 120, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 68, 80, 12
+  CONTROL "", 130, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 54, 80, 12
+  CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 87, 80, 12
+  CONTROL "", 120, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 101, 80, 12
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 318, 121, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 374, 121, 50, 14
-  CONTROL "Porcentaje *", -1, "Static", WS_GROUP, 50, 44, 44, 8
-  CONTROL "Descuento", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 380, 71
+  CONTROL "% Descuento", -1, "Static", WS_GROUP, 50, 44, 47, 8
+  CONTROL "Descuento", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 380, 43
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Descuentos", 800, "Static", WS_GROUP, 44, 3, 383, 24
-  CONTROL "Fecha inicio", -1, "Static", WS_GROUP, 50, 58, 44, 8
-  CONTROL "Fecha fin", -1, "Static", WS_GROUP, 50, 72, 44, 8
-  CONTROL "", 130, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 120, 82, 80, 12
-  CONTROL "Unidades", -1, "Static", WS_GROUP, 50, 86, 44, 8
-  CONTROL "* Cero para cualquier cantidad", -1, "Static", WS_GROUP, 203, 84, 101, 8
+  CONTROL "Fecha inicio", -1, "Static", WS_GROUP, 50, 91, 44, 8
+  CONTROL "Fecha fin", -1, "Static", WS_GROUP, 50, 105, 44, 8
+  CONTROL "Unidades", -1, "Static", WS_GROUP, 50, 58, 44, 8
+  CONTROL "* Cero para cualquier cantidad", -1, "Static", WS_GROUP, 203, 58, 101, 8
   CONTROL "%", -1, "Static", WS_GROUP, 203, 44, 11, 8
+  CONTROL "Rango de fechas", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 43, 77, 380, 43
+  CONTROL "* En blanco para duración ilimitada", -1, "Static", WS_GROUP, 202, 105, 114, 8
 }
 
