@@ -9,17 +9,6 @@ CLASS ArticulosPreciosDescuentosController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
-   METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
-   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
-
-   METHOD loadedCurrentBuffer( uuidEntidad ) 
-   METHOD updateBuffer( uuidEntidad )
-
-   METHOD loadedDuplicateCurrentBuffer( uuidEntidad )
-   METHOD loadedDuplicateBuffer( uuidEntidad )
-
-   METHOD deleteBuffer( aUuidEntidades )
-
    METHOD End()
 
    METHOD activatingDialogModalView()
@@ -102,7 +91,6 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD gettingSelectSentence() CLASS ArticulosPreciosDescuentosController
 
    local uuid        := ::getSenderController():getUuid() 
@@ -113,81 +101,6 @@ METHOD gettingSelectSentence() CLASS ArticulosPreciosDescuentosController
 
 RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-
-METHOD LoadedCurrentBuffer( uuiddescuento ) CLASS ArticulosPreciosDescuentosController
-
-   local idDescuento     
-
-   if empty( uuiddescuento )
-      ::oModel:insertBuffer()
-   end if 
-
-   idDescuento          := ::oModel:getIdWhereParentUuid( uuiddescuento )
-   if empty( idDescuento )
-      idDescuento       := ::oModel:insertBlankBuffer()
-   end if 
-
-   ::oModel:loadCurrentBuffer( idDescuento )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD UpdateBuffer( uuidDescuento ) CLASS ArticulosPreciosDescuentosController
-
-   local idDescuento     
-
-   idDescuento          := ::oModel:getIdWhereParentUuid( uuidDescuento )
-   if empty( idDescuento )
-      ::oModel:insertBuffer()
-      RETURN ( self )
-   end if 
-
-   ::oModel:updateBuffer()
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedDuplicateCurrentBuffer( uuidDescuento ) CLASS ArticulosPreciosDescuentosController
-
-   local idDescuento     
-
-   idDescuento          := ::oModel:getIdWhereParentUuid( uuidDescuento )
-   if empty( idDescuento )
-      ::oModel:insertBuffer()
-      RETURN ( self )
-   end if 
-
-   ::oModel:loadDuplicateBuffer( idDescuento )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedDuplicateBuffer( uuidDescuento ) CLASS ArticulosPreciosDescuentosController
-
-   hset( ::oModel:hBuffer, "parent_uuid", uuidDescuento )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD deleteBuffer( aUuidEntidades ) CLASS ArticulosPreciosDescuentosController
-
-   if empty( aUuidEntidades )
-      RETURN ( self )
-   end if
-
-   ::oModel:deleteWhereParentUuid( aUuidEntidades )
-
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -226,14 +139,16 @@ METHOD addColumns() CLASS ArticulosPreciosDescuentosBrowseView
       :cHeader             := '% Descuento'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'porcentaje' ) }
+      :cEditPicture        := "@E 999.9999"
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cantidad'
+      :cSortOrder          := 'unidades'
       :cHeader             := 'Unidades'
       :nWidth              := 120
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidades' ) }
+      :cEditPicture        := "@E 999,999.999999"
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -260,8 +175,6 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS ArticulosPreciosDescuentosView FROM SQLBaseView
   
@@ -272,9 +185,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ArticulosPreciosDescuentosView
-
-   local oDialog
-   local oBmpGeneral
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ARTICULOS_PRECIOS_DESCUENTOS" ;
@@ -311,10 +221,10 @@ METHOD Activate() CLASS ArticulosPreciosDescuentosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cantidad" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "unidades" ] ;
       ID          130 ;
       SPINNER ;
-      PICTURE     "@E 999999" ;
+      PICTURE     "@E 999,999.999999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
@@ -374,18 +284,19 @@ CLASS SQLArticulosPreciosDescuentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_precios_descuentos"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( porcentaje, cantidad, fecha_inicio )"
+   DATA cConstraints             INIT "PRIMARY KEY ( porcentaje, unidades, fecha_inicio )"
 
    METHOD getColumns()
 
-   METHOD getIdWhereParentUuid( uuid )    INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+   METHOD getIdWhereParentUuid( uuid ) ;
+                                 INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
 
-   METHOD getSentenceDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura )
+   METHOD getSentenceDescuentoWhereArticulo( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta )
 
-   METHOD getDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura ) ;
-                                          INLINE   ( ::ExecuteSqlStatement(::getSentenceDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura ) ) )
+   METHOD getDescuentoWhereArticulo( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ;
+                                 INLINE ( getSQLDatabase():getValue( ::getSentenceDescuentoWhereArticulo( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ) )
 
 END CLASS
 
@@ -396,22 +307,22 @@ METHOD getColumns() CLASS SQLArticulosPreciosDescuentosModel
    hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                                    "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                                    "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                    "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "fecha_inicio",            {  "create"    => "DATE"                                    ,;
-                                                   "default"   => {|| getSysDate() } }                        )
+                                                   "default"   => {|| getSysDate() } }                      )
 
    hset( ::hColumns, "fecha_fin",               {  "create"    => "DATE"                                    ,;
                                                    "default"   => {|| ctod( "" ) } }                        )
 
-   hset( ::hColumns, "porcentaje",              {  "create"    => "FLOAT(7,4)"                              ,;
+   hset( ::hColumns, "porcentaje",              {  "create"    => "FLOAT( 7, 4 )"                           ,;
                                                    "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "cantidad",                {  "create"    => "INT UNSIGNED"                            ,;
+   hset( ::hColumns, "unidades",                {  "create"    => "FLOAT( 16, 6 )"                          ,;
                                                    "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
@@ -432,7 +343,7 @@ RETURN ( ::oController:oSenderController:getUuid() )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura ) CLASS SQLArticulosPreciosDescuentosModel
+METHOD getSentenceDescuentoWhereArticulo( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) CLASS SQLArticulosPreciosDescuentosModel
    
    local cSelect
 
@@ -440,22 +351,24 @@ METHOD getSentenceDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, 
    cSelect  +=    "FROM "+ ::getTableName() + " AS articulos_precios_descuentos " 
 
    cSelect  +=    "INNER JOIN "+ SQLArticulosPreciosModel():getTableName() +" as articulos_precios "                                                                  
-   cSelect  +=    "ON articulos_precios_descuentos.parent_uuid = articulos_precios.uuid "
+   cSelect  +=       "ON articulos_precios_descuentos.parent_uuid = articulos_precios.uuid "
 
    cSelect  +=    "INNER JOIN " + SQLArticulosModel():getTableName() + " as articulos "                                                                  
-   cSelect  +=    "ON articulos_precios.articulo_uuid = " + quoted( articulo_uuid ) + " " 
+   cSelect  +=       "ON articulos_precios.articulo_uuid = " + quoted( uuidArticulo ) + " " 
 
    cSelect  +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " as articulos_tarifas "                                                                  
-   cSelect  +=    "ON articulos_tarifas.codigo = " + tarifa_codigo + " "
+   cSelect  +=       "ON articulos_tarifas.codigo = " + quoted( cCodigoTarifa ) + " "
 
-   cSelect  +=    "WHERE fecha_inicio <= " + dtoc( fecha_factura ) + " "                                                                  
-   cSelect  +=       "( AND fecha_fin >= " + dtoc( fecha_factura ) + " OR fecha_fin IS NULL ) "                                                                  
-   cSelect  +=       "AND articulos_precios_descuentos.cantidad >= " + quoted(unidades) + " "                                                                  
+   cSelect  +=    "WHERE articulos_precios_descuentos.fecha_inicio <= " + toSqlString( dFechaVenta ) + " "                                                                  
+   cSelect  +=       "AND ( articulos_precios_descuentos.fecha_fin IS NULL OR articulos_precios_descuentos.fecha_fin >= " + toSqlString( dFechaVenta ) + " ) "                                                                  
+   cSelect  +=       "AND articulos_precios_descuentos.unidades <= " + quoted( nUnidades ) + " "                                                                  
    cSelect  +=       "AND articulos_precios.uuid = articulos_precios_descuentos.parent_uuid "                                                                  
 
-   cSelect  +=    "ORDER BY articulos_precios_descuentos.porcentaje desc " 
+   cSelect  +=    "ORDER BY articulos_precios_descuentos.porcentaje DESC " 
 
    cSelect  +=    "LIMIT 1 "
+
+   logwrite( cSelect )
 
 RETURN ( cSelect )
 

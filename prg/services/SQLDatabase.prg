@@ -187,8 +187,6 @@ METHOD isParseError( cSentence )
 
    ::oConexion:Ping()
 
-//   if !::oConexion:Parse( cSentence )
-
    try
       
       ::oConexion:Parse( cSentence )
@@ -197,14 +195,11 @@ METHOD isParseError( cSentence )
       
       logwrite( cSentence )
 
-      msgstop( e:SubSystem + ";" + padl( e:SubCode, 4 ) + ";" + e:Operation + ";" + e:Description, "Error en sentencia" )  
+      ::showError( e )
 
       RETURN ( .t. )
 
    end 
-
-//      msgstop( cSentence, "Error en el comando SQL" / 2 )
-//      RETURN ( .t. )  
 
 RETURN ( .f. )
 
@@ -230,6 +225,8 @@ METHOD Exec( cSentence, lParse )
       ::oConexion:Exec( cSentence )
        
    catch e
+
+      logwrite( cSentence )   
 
       ::showError( e )
 
@@ -630,7 +627,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-Function getSQLDatabase()
+FUNCTION getSQLDatabase()
 
    if empty( oSqlDatabase )
       oSqlDatabase            := SQLDatabase():New()
@@ -640,7 +637,7 @@ RETURN ( oSqlDatabase )
 
 //----------------------------------------------------------------------------//
 
-Function getSQLCompany( cCompanyDatabase )
+FUNCTION getSQLCompany( cCompanyDatabase )
 
    if empty( oSqlCompany )
       oSqlCompany             := SQLDatabase():New( cCompanyDatabase )
@@ -651,7 +648,7 @@ RETURN ( oSqlCompany )
 
 //----------------------------------------------------------------------------//
 
-Function endSQLCompany( cCompanyDatabase )
+FUNCTION endSQLCompany( cCompanyDatabase )
 
    if !empty( oSqlCompany )
       oSqlCompany:Disconnect()

@@ -23318,7 +23318,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Dirección", -1, "Static", WS_GROUP, 4, 111, 35, 8
   CONTROL "Almacén", -1, "Static", WS_GROUP, 382, 100, 33, 8
   CONTROL "Pago", 242, "Static", WS_GROUP, 382, 48, 22, 8
-  CONTROL "Agente", -1, "Static", WS_GROUP, 382, 73, 29, 8
+  CONTROL "Agente", 254, "Static", WS_GROUP, 382, 73, 29, 8
   CONTROL "% Comisión", -1, "Static", WS_GROUP, 382, 86, 41, 8
   CONTROL "Ruta", 262, "Static", WS_GROUP, 382, 60, 21, 8
   CONTROL "Margen", 800, "Static", WS_GROUP, 50, 346, 35, 8

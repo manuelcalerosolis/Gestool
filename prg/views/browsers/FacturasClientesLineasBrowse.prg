@@ -121,7 +121,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cSortOrder          := 'articulo_unidades'
       :cHeader             := 'Unidades'
       :nWidth              := 80
-      :cEditPicture        := masUnd()
+      :cEditPicture        := "@E 999,999.999999"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_unidades' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nFootStyle          := :nDataStrAlign               
@@ -130,7 +130,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :oFooterFont         := getBoldFont()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateFieldWhereId( 'articulo_unidades', uNewValue ) }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampUnidades( uNewValue ) }
    end with
 
    with object ( ::oColumnUnidadMedicion    := ::oBrowse:AddCol() )
@@ -175,7 +175,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cSortOrder          := 'articulo_precio'
       :cHeader             := 'Precio'
       :nWidth              := 80
-      :cEditPicture        := masUnd()
+      :cEditPicture        := "@E 999,999.999999"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_precio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nFootStyle          := :nDataStrAlign               
@@ -188,10 +188,9 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cSortOrder          := 'total_precio'
       :cHeader             := 'Total precio'
       :nWidth              := 80
-      :cEditPicture        := masUnd()
+      :cEditPicture        := "@E 99,999,999.999999"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'total_precio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :cEditPicture        := masUnd()
       :nFootStyle          := :nDataStrAlign               
       :nFooterType         := AGGR_SUM
       :cFooterPicture      := :cEditPicture
@@ -203,6 +202,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cSortOrder          := 'descuento'
       :cHeader             := '% Descuento'
       :nWidth              := 80
+      :cEditPicture        := "@E 999.9999"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with

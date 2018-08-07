@@ -1,7 +1,4 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
-#include "Hdo.ch"
-#include "HdoCommon.ch"
 
 //---------------------------------------------------------------------------//
 

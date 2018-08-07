@@ -374,7 +374,7 @@ RETURN ( cSelect )
 
 METHOD getSentenceInserLineaUnidadBase( uuidParent, cCodigoBaseUnidad ) CLASS SQLUnidadesMedicionGruposLineasModel
 
-   local cSentence   := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                      + " " + ;
+   local cSentence   := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                         + " " + ;
                            "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )"   + " " + ;
                         "VALUES"                                                                                              + " " + ;
                            "( UUID(), " + quoted( uuidParent ) + ", " + quoted( cCodigoBaseUnidad ) + ", 1, 1, 1 )"
@@ -404,8 +404,6 @@ CLASS UnidadesMedicionGruposLineasRepository FROM SQLBaseRepository
    METHOD getSentenceWhereEmpresa( cCodigoGrupo )
 
    METHOD getSentenceWhereCodigoArticulo( cCodigoArticulo )
-
-
 
    METHOD getWhereGrupoSistema( cCodigoGrupo )
 
@@ -444,7 +442,7 @@ METHOD getSentenceWhereGrupoSistema( cField ) CLASS UnidadesMedicionGruposLineas
    DEFAULT cField    := "unidad_alternativa_codigo"
 
    cSelect           := "SELECT lineas." + cField                                                                 + " " + ;
-                        "FROM "+ ::getTableName() + " AS lineas"                                                  + " " + ;
+                        "FROM " + ::getTableName() + " AS lineas"                                                  + " " + ;
                         "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"             + " " + ;         
                            "ON lineas.parent_uuid = grupos.uuid"                                                  + " " + ;         
                         "WHERE grupos.sistema = 1"
@@ -567,6 +565,8 @@ METHOD getWhereCodigoArticuloDefault( cCodigoArticulo ) CLASS UnidadesMedicionGr
    cSelect     := ::getSentenceWhereCodigoArticulo( cCodigoArticulo ) + " " + ;
                      "AND lineas.sistema = 1"
 
+                     MSGALERT( cSelect, "cSelect")
+
 RETURN ( ::getDatabase():getValue( cSelect ) )
 
 //---------------------------------------------------------------------------//
@@ -574,6 +574,8 @@ RETURN ( ::getDatabase():getValue( cSelect ) )
 METHOD getCodigoDefault( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository 
 
    local cCodigo     := ""
+
+   msgalert( cCodigoArticulo, "cCodigoArticulo" )
 
    if !empty( cCodigoArticulo )
       cCodigo        := ::getWhereCodigoArticuloDefault( cCodigoArticulo )

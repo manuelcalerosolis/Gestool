@@ -39,21 +39,45 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD validateLote()               
 
-   METHOD validatePrimeraPropiedad()   INLINE ( iif(  ::validate( "valor_primera_propiedad" ),;
-                                                      ::stampPropertyName( "codigo_primera_propiedad" , "valor_primera_propiedad", ::oDialogView:oGetValorPrimeraPropiedad ),;
-                                                      .f. ) )
+   METHOD validatePrimeraPropiedad()      INLINE ( iif(  ::validate( "valor_primera_propiedad" ),;
+                                                         ::stampPropertyName( "codigo_primera_propiedad" , "valor_primera_propiedad", ::oDialogView:oGetValorPrimeraPropiedad ),;
+                                                         .f. ) )
 
-   METHOD validateSegundaPropiedad()   INLINE ( iif(  ::validate( "valor_segunda_propiedad" ),;
-                                                      ::stampPropertyName( "codigo_segunda_propiedad" , "valor_segunda_propiedad", ::oDialogView:oGetValorSegundaPropiedad ),;
-                                                      .f. ) )
+   METHOD validateSegundaPropiedad()      INLINE ( iif(  ::validate( "valor_segunda_propiedad" ),;
+                                                         ::stampPropertyName( "codigo_segunda_propiedad" , "valor_segunda_propiedad", ::oDialogView:oGetValorSegundaPropiedad ),;
+                                                         .f. ) )
 
    METHOD lValidUnidadMedicion( uValue )
    
    // Otros--------------------------------------------------------------------
 
+   METHOD setHistoryManager()             INLINE ( ::oHistoryManager:Set( ::getRowSet():getValuesAsHash() ) )
+
+   METHOD updateField( cField, uValue )   INLINE ( ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cField, uValue ),;
+                                                   ::getRowSet():Refresh(),;
+                                                   ::oHistoryManager:Set( ::getRowSet():getValuesAsHash() ) ) 
+
    METHOD stampArticulo( hArticulo )
 
-   METHOD stampArticuloNombre( uValue )
+   METHOD stampArticuloCodigo( cCodigoArticulo ) ,;
+                                          INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ) )
+
+   METHOD stampArticuloNombre( cNombreArticulo ) ,;
+                                          INLINE ( ::updateField( "articulo_nombre", cNombreArticulo ) )
+
+   ::getRowSet():Refresh()
+
+   ::setHistoryManager() 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+   METHOD stampArticuloNombre( cNombreArticulo ) 
+
+   METHOD stampArticuloUnidadeMedicion()
+
+   METHOD stampUnidades( uValue )
 
    METHOD getArticulo( cCodigo )
 
@@ -202,26 +226,37 @@ RETURN ( SQLArticulosModel():getHashWhere( "codigo", cCodigo ) )
 
 METHOD stampArticulo( hArticulo )
 
-   local hBuffer     := {=>}
-   local nPrecioBase := SQLArticulosPreciosModel():getPrecioBaseWhereArticuloUuidAndTarifaCodigo( hget( hArticulo, "uuid" ), ::oSenderController:getModelBuffer( "tarifa_codigo" ) )
+   local hBuffer           := {=>}
+   // local nPrecioBase       := SQLArticulosPreciosModel():getPrecioBaseWhereArticuloUuidAndTarifaCodigo( hget( hArticulo, "uuid" ), ::oSenderController:getModelBuffer( "tarifa_codigo" ) )
+   // local nDescuento        := SQLArticulosPreciosDescuentosModel():getDescuentoWhereArticulo( hget( hArticulo, "uuid" ), ::oSenderController:getModelBuffer( "tarifa_codigo" ), ::getRowSet():fieldGet( 'articulo_unidades' ), ::oSenderController:oModel:hBuffer[ "fecha" ] )
+   // local cUnidadMedicion   := UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( hArticulo, "codigo" ) )
 
+   ::updateField( "articulo_codigo", hget( hArticulo, "codigo" ) )
+
+   ::updateField( "articulo_nombre", hget( hArticulo, "codigo" ) )
+
+   ::stampArticuloUnidadeMedicion()
+
+   /*
    hset( hBuffer, "articulo_codigo",         hget( hArticulo, "codigo" ) )
 
-   hset( hBuffer, "articulo_nombre",         hget( hArticulo, "nombre" ) )
-
-   hset( hBuffer, "unidad_medicion_codigo",  UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( hArticulo, "codigo" ) ) )
+   hset( hBuffer, "unidad_medicion_codigo",  cUnidadMedicion )
    
    hset( hBuffer, "articulo_precio",         nPrecioBase )
 
+   hset( hBuffer, "descuento",               nDescuento )
+
    ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
 
-   ::oArticulosPreciosDescuentosController:oModel:getDescuentoPorArticulo( hget( hArticulo, "uuid" ), ::oSenderController:getModelBuffer( "tarifa_codigo" ), ::getRowSet():fieldGet( 'articulo_unidades' ), ::oSenderController:oModel:hBuffer[ "fecha" ] )
+   ::stampArticuloUnidadeMedicion()
 
-   ::getRowSet():Refresh()
+   ::stampArticuloPrecio()
+
+   ::stampArticuloUnidades()
    
    ::oHistoryManager:Set( ::getRowSet():getValuesAsHash() )
-
-
+   */
+   
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -240,13 +275,25 @@ RETURN ( ::stampArticuloNombre( uValue ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampArticuloNombre( uValue )
+METHOD stampArticuloUnidadeMedicion()
 
-   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "articulo_nombre", uValue )
+   local cUnidadMedicion   := UnidadesMedicionGruposLineasRepository():getCodigoDefault( ::getRowSet():fieldGet( 'articulo_codigo' ) )
 
-   ::getRowSet():Refresh()
+   msgalert( cUnidadMedicion, "cUnidadMedicion" )
 
-   ::oHistoryManager:Set( ::getRowSet():getValuesAsHash() )
+   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "unidad_medicion_codigo", cUnidadMedicion )
+
+   ::setHistoryManager()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampUnidades( uValue )
+
+   // local nDescuento        := SQLArticulosPreciosDescuentosModel():getDescuentoWhereArticulo( hget( hArticulo, "uuid" ), ::oSenderController:getModelBuffer( "tarifa_codigo" ), ::getRowSet():fieldGet( 'articulo_unidades' ), ::oSenderController:oModel:hBuffer[ "fecha" ] )
+
+   ::oController:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'articulo_unidades', uValue )
 
 RETURN ( .t. )
 
