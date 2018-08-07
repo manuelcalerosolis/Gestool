@@ -27,7 +27,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD Append()
 
-   METHOD Edit()                       INLINE ( .t. )
+   METHOD Edit()                       
 
    // Validaciones ------------------------------------------------------------
 
@@ -368,6 +368,24 @@ RETURN ( lAppend )
 
 //----------------------------------------------------------------------------//
 
+METHOD Edit()
+
+   local nId
+   local cCodigoArticulo   := ::getRowSet():fieldGet( 'articulo_codigo' )
+
+   if empty( cCodigoArticulo )
+      RETURN ( nil )
+   end if 
+
+   nId                     := ::oSenderController:oArticulosController:oModel:getIdWhereCodigo( cCodigoArticulo )
+   if empty( nId )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::oSenderController:oArticulosController:Edit( nId ) )
+
+//----------------------------------------------------------------------------//
+
 METHOD updateUnidadMedicion( uValue )
       
    local hBuffer           := {  "unidad_medicion_codigo"          => uValue,;
@@ -379,7 +397,7 @@ METHOD updateUnidadMedicion( uValue )
 
    ::refreshBrowse()
 
-Return ( nil )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -387,7 +405,7 @@ METHOD loadUnidadesMedicion()
 
    ::oBrowseView:oColumnUnidadMedicion:aEditListTxt := UnidadesMedicionGruposLineasRepository():getCodigos( ::getRowSet():fieldGet( 'articulo_codigo' ) )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
@@ -403,6 +421,6 @@ METHOD lValidUnidadMedicion( uValue )
       RETURN ( .f. )
    end if
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//

@@ -2142,7 +2142,7 @@ METHOD IsDisplayPosVisible( nPos, lComplete ) CLASS TXBrowse
       nWidth += ::ColAtPos( nFor ):nWidth + COL_SEPARATOR
    next
 
-   if lComplete
+   if lcomplete
       nWidth += ::ColAtPos( nPos ):nWidth + COL_SEPARATOR
 
 //    2008-03-30
@@ -13658,3 +13658,4 @@ function FW_ArrSum( aArray, bnCol, nStart, nCount )
 return nRet
 
 //----------------------------------------------------------------------------//
+

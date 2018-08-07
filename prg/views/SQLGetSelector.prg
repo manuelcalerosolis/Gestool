@@ -10,6 +10,8 @@ CLASS GetSelector
    DATA bValue
 
    DATA cPicture                                  
+
+   DATA oLink
    
    DATA oGet
    DATA cGet
@@ -98,33 +100,47 @@ METHOD Build( hBuilder ) CLASS GetSelector
    local idGet    := if( hhaskey( hBuilder, "idGet" ),   hBuilder[ "idGet" ],    nil )
    local idText   := if( hhaskey( hBuilder, "idText" ),  hBuilder[ "idText" ],   nil )
    local idSay    := if( hhaskey( hBuilder, "idSay" ),   hBuilder[ "idSay"],     nil )
+   local idLink   := if( hhaskey( hBuilder, "idLink" ),  hBuilder[ "idLink"],    nil )
    local oDlg     := if( hhaskey( hBuilder, "oDialog" ), hBuilder[ "oDialog" ],  nil )
 
-RETURN ( ::Activate( idGet, idText, oDlg, idSay ) )
+RETURN ( ::Activate( idGet, idText, oDlg, idSay, idLink ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate( idGet, idText, oDlg, idSay ) CLASS GetSelector
+METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
 
    if isFalse( ::fireEvent( 'activating' ) )
       RETURN ( nil )
    end if
 
-   ::cGet        := eval( ::bValue )
+   ::cGet               := eval( ::bValue )
 
-   REDEFINE GET   ::oGet ;
-      VAR         ::cGet ;
-      ID          idGet ;
-      PICTURE     ::cPicture ;
+   REDEFINE GET         ::oGet ;
+      VAR               ::cGet ;
+      ID                idGet ;
+      PICTURE           ::cPicture ;
       UPDATE ;
-      IDTEXT      idText ;
-      IDSAY       idSay ;
-      BITMAP      "Lupa" ;
-      OF          oDlg
+      IDTEXT            idText ;
+      IDSAY             idSay ;
+      BITMAP            "Lupa" ;
+      OF                oDlg
 
-   ::oGet:bHelp   := {|| ::helpAction() }
-   ::oGet:bValid  := {|| ::validAction() }
-   ::oGet:bWhen   := ::bWhen
+   ::oGet:bHelp         := {|| ::helpAction() }
+   ::oGet:bValid        := {|| ::validAction() }
+   ::oGet:bWhen         := ::bWhen
+
+   if !empty( idLink )   
+
+   REDEFINE SAY         ::oLink ;
+      FONT              getBoldFont() ; 
+      COLOR             rgb( 10, 152, 234 ) ;
+      ID                idLink ;
+      OF                oDlg ;
+
+   ::oLink:lWantClick   := .t.
+   ::oLink:OnClick      := {|| ::oController:Edit( ::oController:oModel:getIdWhereCodigo( ::cGet ) ) }
+
+   end if 
 
    ::fireEvent( 'activated' ) 
 

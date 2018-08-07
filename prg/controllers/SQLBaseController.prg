@@ -511,6 +511,7 @@ METHOD postEdit()
 
    do case
       case ::dialgOkAndGoTo()
+
          if ::refreshRowSetAndFindId( ::oDialogView:idGoTo )
             ::Edit()
          else 
@@ -518,12 +519,17 @@ METHOD postEdit()
          end if 
 
       case ::dialgOkAndDown()
+
          ::goDownRowSet()
+      
          ::Edit()
 
       case ::dialgOkAndUp()
+
          ::goUpRowSet()
+      
          ::Edit()
+         
    end case 
 
 RETURN ( self )

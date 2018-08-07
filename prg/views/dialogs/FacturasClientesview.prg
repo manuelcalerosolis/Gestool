@@ -72,7 +72,7 @@ METHOD Activate() CLASS FacturasClientesView
    // Cliente------------------------------------------------------------------
 
    ::oController:oClientesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) )
-   ::oController:oClientesController:oGetSelector:Build( { "idGet" => 170, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oClientesController:oGetSelector:Build( { "idGet" => 170, "idLink" => 171, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Serie-------------------------------------------------------------------
 
@@ -96,17 +96,17 @@ METHOD Activate() CLASS FacturasClientesView
    // Formas de pago------------------------------------------------------------
 
    ::oController:oFormasPagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
-   ::oController:oFormasPagoController:oGetSelector:Activate( 240, 241, ::oFolder:aDialogs[1] )
+   ::oController:oFormasPagoController:oGetSelector:Build( { "idGet" => 240, "idText" => 241, "idLink" => 242, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Rutas--------------------------------------------------------------------
 
    ::oController:oRutasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_codigo" ] ) )
-   ::oController:oRutasController:oGetSelector:Activate( 260, 261, ::oFolder:aDialogs[1] )
+   ::oController:oRutasController:oGetSelector:Build( { "idGet" => 260, "idText" => 261, "idLink" => 262, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Agentes------------------------------------------------------------------
 
    ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
-   ::oController:oAgentesController:oGetSelector:Activate( 250, 251, ::oFolder:aDialogs[1] )
+   ::oController:oAgentesController:oGetSelector:Build( { "idGet" => 250, "idText" => 251, "idLink" => 254, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Almacenes----------------------------------------------------------------
 

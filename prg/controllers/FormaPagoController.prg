@@ -80,10 +80,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS FormaPagoBrowseView FROM SQLBrowseView
 
@@ -120,7 +116,8 @@ METHOD addColumns() CLASS FormaPagoBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tactil' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "TACTIL16" )
+      :AddResource( "Tactil16" )
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -145,6 +142,7 @@ METHOD addColumns() CLASS FormaPagoBrowseView
       :nWidth              := 50
       :bEditValue          := {|| ::getRowSet():fieldGet( 'posicion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
 RETURN ( self )
@@ -217,7 +215,6 @@ METHOD New( oController ) CLASS FormaPagoView
                            "Porcentaje"            => "gc_symbol_percent_16",;
                            "Cesta de compra"       => "gc_shopping_cart_16" }
 
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -227,7 +224,7 @@ METHOD startActivate()
    ::oController:oBancosController:oGetSelector:Start()
    ::addLinksToExplorerBar()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -491,7 +488,7 @@ METHOD addLinksToExplorerBar() CLASS FormaPagoView
                      {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
                      ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

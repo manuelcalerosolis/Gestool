@@ -33,6 +33,8 @@ CLASS ArticulosView FROM SQLBaseView
 
    METHOD changeLote()           INLINE ( iif( ::oController:oModel:hBuffer[ "lote" ], ::oGetLoteActual:Show(), ::oGetLoteActual:Hide() ) )
 
+   METHOD changeNombre()         INLINE ( ::oMessage:setText( "Artículo : " + alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -43,6 +45,8 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ArticulosView
+
+   local oGetNombre
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
@@ -78,11 +82,14 @@ METHOD Activate() CLASS ArticulosView
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   oGetNombre ;
+      VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
+      
+   oGetNombre:bChange   := {|| ::changeNombre() }
 
    // Familias de articulos ---------------------------------------------------
 
@@ -237,6 +244,8 @@ METHOD startActivate() CLASS ArticulosView
 
    ::oController:oTagsController:oDialogView:Start()
 
+   ::changeNombre()
+
    ::changeLote()
 
    ::oGetCodigo:SetFocus()
@@ -279,7 +288,7 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
                      {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
                      ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -227,7 +227,17 @@ RETURN ( ::oTipoIvaController:oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[
 
 METHOD insertPreciosWhereArticulo() CLASS ArticulosController
 
-   local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
+   local uuidArticulo   
+
+   if empty( ::oModel )
+      RETURN ( nil )
+   end if 
+
+   if empty( ::oModel:hBuffer )
+      RETURN ( nil )
+   end if 
+
+   uuidArticulo      := hget( ::oModel:hBuffer, "uuid" )
 
    if empty( uuidArticulo )
       RETURN ( nil )

@@ -105,6 +105,8 @@ CLASS SQLBaseModel
 
    METHOD getWhereIdSelect( id )
    METHOD getWhereUuidSelect( uuid )
+   METHOD getWhereCodigoSelect( codigo )
+
    METHOD getWhereSelect( cWhere )
 
    METHOD getSelectSentence()
@@ -178,8 +180,9 @@ CLASS SQLBaseModel
 
    METHOD setFind( cFind )                            INLINE ( ::cFind := cFind )
 
-   METHOD findById( nId )
-   METHOD findByUuid( uuid )
+   METHOD getBufferById( nId )
+   METHOD getBufferByUuid( uuid )
+   METHOD getBufferByCodigo( cCodigo )
    
    // Busquedas----------------------------------------------------------------
 
@@ -221,6 +224,10 @@ CLASS SQLBaseModel
    METHOD getUuidWhereColumn( uValue, cColumn, uDefault ) 
    METHOD getUuidWhereNombre( uValue )                INLINE ( ::getUuidWhereColumn( uValue, 'nombre', '' ) )
    METHOD getUuidWhereCodigo( uValue )                INLINE ( ::getUuidWhereColumn( uValue, 'codigo', '' ) )
+
+   METHOD getIdWhereColumn( uValue, cColumn, uDefault ) 
+   METHOD getIdWhereNombre( uValue )                  INLINE ( ::getIdWhereColumn( uValue, 'nombre', '' ) )
+   METHOD getIdWhereCodigo( uValue )                  INLINE ( ::getIdWhereColumn( uValue, 'codigo', '' ) )
 
    METHOD getWhereUuid( Uuid )
    METHOD getWhereCodigo( cCodigo )
@@ -366,6 +373,12 @@ RETURN ( ::getWhereSelect( "id", "=", id ) )
 METHOD getWhereUuidSelect( uuid )
 
 RETURN ( ::getWhereSelect( "uuid", "=", uuid ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getWhereCodigoSelect( codigo )
+
+RETURN ( ::getWhereSelect( "codigo", "=", codigo ) )
 
 //---------------------------------------------------------------------------//
 
@@ -604,7 +617,7 @@ RETURN ( "DROP TABLE " + ::getTableName() )
 
 //---------------------------------------------------------------------------//
 
-METHOD findById( id )
+METHOD getBufferById( id )
 
    local hBuffer  
 
@@ -622,7 +635,7 @@ RETURN ( hBuffer )
 
 //---------------------------------------------------------------------------//
 
-METHOD findByUuid( uuid )
+METHOD getBufferByUuid( uuid )
 
    local hBuffer  
 
@@ -631,6 +644,24 @@ METHOD findByUuid( uuid )
    end if 
 
    hBuffer        := atail( ::getDatabase():selectPadedFetchHash( ::getWhereUuidSelect( uuid ) ) )
+
+   if hb_ishash( hBuffer )
+      heval( hBuffer, {|k,v| hset( hBuffer, k, ::getAttribute( k, v ) ) } )
+   end if 
+
+RETURN ( hBuffer )
+
+//---------------------------------------------------------------------------//
+
+METHOD getBufferByCodigo( cCodigo )
+
+   local hBuffer  
+
+   if !hb_ischar( cCodigo )
+      RETURN ( nil )
+   end if 
+
+   hBuffer        := atail( ::getDatabase():selectPadedFetchHash( ::getWhereCodigoSelect( cCodigo ) ) )
 
    if hb_ishash( hBuffer )
       heval( hBuffer, {|k,v| hset( hBuffer, k, ::getAttribute( k, v ) ) } )
@@ -939,7 +970,7 @@ METHOD loadCurrentBuffer( id )
 
    ::fireEvent( 'loadingCurrentBuffer' )
 
-   ::hBuffer            := ::findById( id )
+   ::hBuffer            := ::getBufferById( id )
 
    ::fireEvent( 'loadedCurrentBuffer' )
 
@@ -953,7 +984,7 @@ METHOD loadDuplicateBuffer( id )
 
    ::fireEvent( 'loadingDuplicateBuffer' )
 
-   ::hBuffer            := ::findById( id )
+   ::hBuffer            := ::getBufferById( id )
 
    ::fireEvent( 'loadedDuplicateCurrentBuffer' )
 
@@ -1345,6 +1376,22 @@ METHOD getUuidWhereColumn( uValue, cColumn, uDefault )
    uuid        := ::getDatabase():getValue( cSQL )
    if !empty( uuid )
       RETURN ( uuid )
+   end if 
+
+RETURN ( uDefault )
+
+//---------------------------------------------------------------------------//
+
+METHOD getIdWhereColumn( uValue, cColumn, uDefault ) 
+
+   local nId
+   local cSQL  := "SELECT id FROM " + ::getTableName()                  + " " 
+   cSQL        +=    "WHERE " + cColumn + " = " + toSqlString( uValue ) + " " 
+   cSQL        +=    "LIMIT 1"
+
+   nId         := ::getDatabase():getValue( cSQL )
+   if !empty( nId )
+      RETURN ( nId )
    end if 
 
 RETURN ( uDefault )

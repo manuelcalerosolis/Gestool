@@ -43,6 +43,8 @@ CLASS SQLBrowseView
 
    METHOD ActivateDialog()
    METHOD ActivateMDI()
+
+   METHOD onDblClick()
    
    METHOD setSize( nTop, nLeft, nRight, nBottom ) 
 
@@ -259,12 +261,28 @@ METHOD Create( oWindow )
    ::oBrowse:bKeyChar         := {|nKey| ::getController():onKeyChar( nKey ) }
 
    if ::isNotSenderControllerZoomMode() 
-      ::setLDblClick( {|| ::getController():Edit(), ::Refresh() } )
+      ::setLDblClick( {|| ::onDblClick() } )
    end if 
 
    ::fireEvent( 'created' )
 
 RETURN ( ::oBrowse )
+
+//---------------------------------------------------------------------------//
+
+METHOD onDblClick()
+
+   if isFalse( ::fireEvent( 'doubleClicking' ) )
+      RETURN ( .f. )
+   end if
+
+   ::getController():Edit()
+
+   ::Refresh() 
+
+   ::fireEvent( 'doubleClicked' )
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -391,6 +409,7 @@ METHOD insertSelectedColumn()
 
    with object ( ::oBrowse:InsCol( 1 ) )
       :Cargo         := .t.
+      :nWidth        := 20
       :bEditValue    := { || ascan( ::oBrowse:aSelected, ::oBrowse:BookMark ) > 0 }
       :nHeadBmpNo    := { || if( len( ::oBrowse:aSelected ) == ::oBrowse:nLen, 1, 2 ) }
       :bLClickHeader := { || if( len( ::oBrowse:aSelected ) == ::oBrowse:KeyCount(), ( ::oBrowse:SelectNone(), ::oBrowse:Select( 1 ) ), ::oBrowse:SelectAll() ) }
