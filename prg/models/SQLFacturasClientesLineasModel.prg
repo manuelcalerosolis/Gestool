@@ -100,6 +100,9 @@ METHOD getColumns()
    hset( ::hColumns, "unidad_medicion_factor",     {  "create"    => "DECIMAL(19,6)"                  ,;
                                                       "default"   => {|| 1 } }                        )
 
+   hset( ::hColumns, "descuento",                  {  "create"    => "FLOAT(7,4)"                      ,;
+                                                      "default"   => {|| 0 } }                         )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -118,7 +121,8 @@ METHOD getInitialSelect()
                         "articulo_unidades * articulo_precio as total_precio, "           + ;
                         "unidad_medicion_codigo, "                                        + ;
                         "unidad_medicion_factor, "                                        + ;
-                        "articulo_unidades * unidad_medicion_factor as unidades_stock "   + ;
+                        "articulo_unidades * unidad_medicion_factor as unidades_stock, "  + ;
+                        "descuento "                                                      + ;
                      "FROM " + ::getTableName()    
 
 RETURN ( cSelect )

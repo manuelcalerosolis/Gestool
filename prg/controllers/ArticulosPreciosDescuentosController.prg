@@ -378,11 +378,14 @@ CLASS SQLArticulosPreciosDescuentosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+   METHOD getIdWhereParentUuid( uuid )    INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
 
-   METHOD getDescuentoPorArticulo( uuid_articulo, unidades, fecha_inicio, fecha_fin )
+   METHOD getSentenceDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura )
+
+   METHOD getDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura ) ;
+                                          INLINE   ( ::ExecuteSqlStatement(::getSentenceDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura ) ) )
 
 END CLASS
 
@@ -428,18 +431,34 @@ METHOD getParentUuidAttribute( value ) CLASS SQLArticulosPreciosDescuentosModel
 RETURN ( ::oController:oSenderController:getUuid() )
 
 //---------------------------------------------------------------------------//
-METHOD getDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura ) CLASS SQLArticulosPreciosDescuentosModel
+
+METHOD getSentenceDescuentoPorArticulo( articulo_uuid, tarifa_codigo, unidades, fecha_factura ) CLASS SQLArticulosPreciosDescuentosModel
    
-   /*local cSelect  := "SELECT articulos_tarifas.id, "                                                                
-   cSelect        +=    "articulos_tarifas.uuid, "                                                                  
-   cSelect        +=    "articulos_tarifas.parent_uuid, "*/
+   local cSelect
 
-   msgalert( articulo_uuid )
-   msgalert( tarifa_codigo )
-   msgalert ( unidades )
-   msgalert ( fecha_factura )
+   cSelect  := "SELECT articulos_precios_descuentos.porcentaje as porcentaje "                                                                                                                                
+   cSelect  +=    "FROM "+ ::getTableName() + " AS articulos_precios_descuentos " 
 
-RETURN (nil)
+   cSelect  +=    "INNER JOIN "+ SQLArticulosPreciosModel():getTableName() +" as articulos_precios "                                                                  
+   cSelect  +=    "ON articulos_precios_descuentos.parent_uuid = articulos_precios.uuid "
+
+   cSelect  +=    "INNER JOIN " + SQLArticulosModel():getTableName() + " as articulos "                                                                  
+   cSelect  +=    "ON articulos_precios.articulo_uuid = " + quoted( articulo_uuid ) + " " 
+
+   cSelect  +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " as articulos_tarifas "                                                                  
+   cSelect  +=    "ON articulos_tarifas.codigo = " + tarifa_codigo + " "
+
+   cSelect  +=    "WHERE fecha_inicio <= " + dtoc( fecha_factura ) + " "                                                                  
+   cSelect  +=       "( AND fecha_fin >= " + dtoc( fecha_factura ) + " OR fecha_fin IS NULL ) "                                                                  
+   cSelect  +=       "AND articulos_precios_descuentos.cantidad >= " + quoted(unidades) + " "                                                                  
+   cSelect  +=       "AND articulos_precios.uuid = articulos_precios_descuentos.parent_uuid "                                                                  
+
+   cSelect  +=    "ORDER BY articulos_precios_descuentos.porcentaje desc " 
+
+   cSelect  +=    "LIMIT 1 "
+
+RETURN ( cSelect )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
