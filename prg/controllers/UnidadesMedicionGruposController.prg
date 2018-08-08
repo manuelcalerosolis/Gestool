@@ -405,17 +405,17 @@ METHOD getInsertUnidadesMedicionGruposSentence() CLASS SQLUnidadesMedicionGrupos
    local aSentence      := {} 
    local cCodigoDefecto := quoted( __grupo_unidades_medicion__ )
 
-   cSentence         := "INSERT IGNORE INTO " + ::getTableName()                       + " " + ;
-                           "( uuid, codigo, nombre, unidad_base_codigo, sistema )"     + " " + ;
-                        "VALUES"                                                       + " " + ;
-                           "( " + quoted( uuid ) + ", " + cCodigoDefecto + ", 'Unidades', " + cCodigoDefecto + ", 1 )"
+   cSentence            := "INSERT IGNORE INTO " + ::getTableName()                       + " " + ;
+                              "( uuid, codigo, nombre, unidad_base_codigo, sistema )"     + " " + ;
+                           "VALUES"                                                       + " " + ;
+                              "( " + quoted( uuid ) + ", " + cCodigoDefecto + ", 'Unidades', " + cCodigoDefecto + ", 1 )"
 
    aadd( aSentence, cSentence )
 
-   cSentence         := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                         + " " + ;
-                           "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )"   + " " + ;
-                        "VALUES"                                                                                              + " " + ;
-                           "( UUID(), " + quoted( uuid ) + ", " + cCodigoDefecto + ", 1, 1, 1 )"
+   cSentence            := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                         + " " + ;
+                              "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )"   + " " + ;
+                           "VALUES"                                                                                              + " " + ;
+                              "( UUID(), " + quoted( uuid ) + ", " + cCodigoDefecto + ", 1, 1, 1 )"
 
    aadd( aSentence, cSentence )
 

@@ -410,6 +410,7 @@ ArticulosPreciosRepository.prg											\
 ZonasController.prg 															\
 ArticulosFabricantesController.prg 										\
 ImagenesController.prg 														\
+UnidadesMedicionOperacionesController.prg 							\
 TraduccionesController.prg 												\
 AgentesController.prg 														\
 MovimientosAlmacenView.prg													\
@@ -1116,6 +1117,7 @@ ArticulosPreciosRepository.obj											\
 ZonasController.obj       													\
 ArticulosFabricantesController.obj       								\
 ImagenesController.obj       												\
+UnidadesMedicionOperacionesController.obj       					\
 TraduccionesController.obj 												\
 AgentesController.obj     		  											\
 MovimientosAlmacenesLineasModel.obj 									\
@@ -1809,6 +1811,7 @@ $(OBJ)\ArticulosPreciosRepository.obj    								+
 $(OBJ)\ZonasController.obj    											+
 $(OBJ)\ArticulosFabricantesController.obj    						+
 $(OBJ)\ImagenesController.obj    										+
+$(OBJ)\UnidadesMedicionOperacionesController.obj    				+
 $(OBJ)\TraduccionesController.obj    									+
 $(OBJ)\AgentesController.obj    											+
 $(OBJ)\MovimientosAlmacenView.obj 										+

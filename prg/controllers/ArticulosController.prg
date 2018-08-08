@@ -27,6 +27,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oUnidadesMedicionGruposController
 
+   DATA oUnidadesMedicionOperacionesController
+
    DATA oTraduccionesController
 
    DATA oImagenesController
@@ -104,6 +106,8 @@ METHOD New() CLASS ArticulosController
    ::oRepository                             := ArticulosRepository():New( self )
 
    ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, 'clientes' )
+
+   ::oUnidadesMedicionOperacionesController  := UnidadesMedicionOperacionesController():New( self )
 
    ::oTagsController                         := TagsController():New( self )
 
@@ -184,6 +188,8 @@ METHOD End() CLASS ArticulosController
    ::oArticulosUnidadesMedicionController:End()
 
    ::oImagenesController:End()
+
+   ::oUnidadesMedicionOperacionesController:End()
 
    ::oTraduccionesController:End()
 
