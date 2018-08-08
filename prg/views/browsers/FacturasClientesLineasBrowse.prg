@@ -130,7 +130,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :oFooterFont         := getBoldFont()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampUnidades( uNewValue ) }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloUnidades( uNewValue ) }
    end with
 
    with object ( ::oColumnUnidadMedicion    := ::oBrowse:AddCol() )
@@ -141,7 +141,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nEditType           := EDIT_GET_LISTBOX
       :aEditListTxt        := {}
       :bEditWhen           := {|| ::oController:loadUnidadesMedicion() }
-      :bOnPostEdit         := {|o,x| ::oController:updateUnidadMedicion( x ) }
+      :bOnPostEdit         := {|o,x| ::oController:stampArticuloUnidadMedicion( x ) }
       :cEditPicture        := "@! NNNNNNNNNNNNNNNNNNNN"
       :bEditValid          := {|uNewValue| ::oController:lValidUnidadMedicion( uNewValue ) }
    end with
@@ -158,12 +158,12 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'unidades_stock'
-      :cHeader             := 'Unidades stock'
+      :cSortOrder          := 'total_unidades'
+      :cHeader             := 'Total unidades'
       :nWidth              := 120
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidades_stock' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'total_unidades' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :cEditPicture        := masUnd()
+      :cEditPicture        := "@E 999,999.999999"
       :nFootStyle          := :nDataStrAlign               
       :nFooterType         := AGGR_SUM
       :cFooterPicture      := :cEditPicture
@@ -181,7 +181,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nFootStyle          := :nDataStrAlign               
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateFieldWhereId( 'articulo_precio', uNewValue ) }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateField( 'articulo_precio', uNewValue ) }
    end with
 
    with object ( ::oBrowse:AddCol() )

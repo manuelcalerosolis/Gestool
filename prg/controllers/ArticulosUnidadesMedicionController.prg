@@ -237,7 +237,7 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosUnidadesMedicionValidator
 
-   ::hValidators  := {  "unidad_medicion_codigo" =>  {  "required"  => "El código es un dato requerido",;
+   ::hValidators  := {  "unidad_medicion_codigo" =>  {  "required"   => "El código es un dato requerido",;
                                                          "unique"    => "El código introducido ya existe" } }
 
 RETURN ( ::hValidators )

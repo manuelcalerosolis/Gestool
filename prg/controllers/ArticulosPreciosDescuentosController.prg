@@ -402,6 +402,7 @@ METHOD sqlDescuentoWhereArticuloCodigo( cCodigoArticulo, cCodigoTarifa, nUnidade
    cSql  +=    "LIMIT 1 "
 
    logwrite( cSql )
+   msgalert( cSql )
 
 RETURN ( cSql )
 

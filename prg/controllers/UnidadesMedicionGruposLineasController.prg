@@ -575,8 +575,6 @@ METHOD getCodigoDefault( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRep
 
    local cCodigo     := ""
 
-   msgalert( cCodigoArticulo, "cCodigoArticulo" )
-
    if !empty( cCodigoArticulo )
       cCodigo        := ::getWhereCodigoArticuloDefault( cCodigoArticulo )
    end if      
