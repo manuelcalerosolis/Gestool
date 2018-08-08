@@ -67,7 +67,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    ::getRowSet():Refresh()
 
-   ::setHistoryManager() 
+   ::setHistoryManager()
 
 RETURN ( nil )
 
