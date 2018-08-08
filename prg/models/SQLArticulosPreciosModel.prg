@@ -76,6 +76,11 @@ CLASS SQLArticulosPreciosModel FROM SQLCompanyModel
 
    METHOD getSQLPrecioBaseWhereArticuloUuidAndTarifaCodigo( uuidArticulo, cCodigoTarifa )
 
+   METHOD getPrecioBaseWhereArticuloCodigoAndTarifaCodigo( cCodigoArticulo, cCodigoTarifa ) ;
+                                    INLINE ( ::getDatabase():getValue( ::getSQLPrecioBaseWhereArticuloCodigoAndTarifaCodigo( cCodigoArticulo, cCodigoTarifa ) ) )
+
+   METHOD getSQLPrecioBaseWhereArticuloCodigoAndTarifaCodigo( cCodigoArticulo, cCodigoTarifa )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -377,8 +382,10 @@ METHOD getSQLPrecioBaseWhereArticuloUuidAndTarifaCodigo( uuidArticulo, cCodigoTa
 
    local cSql     := "SELECT articulos_precios.precio_base"                                              + " "  
    cSQL           +=    "FROM " + ::getTableName() + " AS articulos_precios"                             + " "  
+   
    cSQL           += "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas" + " "  
    cSQL           +=    "ON articulos_tarifas.codigo = " + quoted( cCodigoTarifa )                       + " "  
+   
    cSQL           += "WHERE"                                                                             + " "  
    cSQL           +=    "articulos_precios.articulo_uuid = " + quoted( uuidArticulo ) + " AND"           + " "  
    cSQL           +=    "articulos_precios.tarifa_uuid = articulos_tarifas.uuid" 
@@ -386,6 +393,26 @@ METHOD getSQLPrecioBaseWhereArticuloUuidAndTarifaCodigo( uuidArticulo, cCodigoTa
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
+METHOD getSQLPrecioBaseWhereArticuloCodigoAndTarifaCodigo( cCodigoArticulo, cCodigoTarifa )
+
+   local cSql     := "SELECT articulos_precios.precio_base"                                              + " "  
+   cSQL           +=    "FROM " + ::getTableName() + " AS articulos_precios"                             + " " 
+
+   cSQL           += "INNER JOIN " + SQLArticulosModel():getTableName() + " AS articulos"                + " "  
+   cSQL           +=    "ON articulos.codigo = " + quoted( cCodigoArticulo )                             + " "  
+   
+   cSQL           += "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " AS articulos_tarifas" + " "  
+   cSQL           +=    "ON articulos_tarifas.codigo = " + quoted( cCodigoTarifa )                       + " "  
+   
+   cSQL           += "WHERE"                                                                             + " "  
+   cSQL           +=    "articulos_precios.articulo_uuid = articulos.uuid AND"                           + " "  
+   cSQL           +=    "articulos_precios.tarifa_uuid = articulos_tarifas.uuid" 
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
