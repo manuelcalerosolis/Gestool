@@ -276,9 +276,6 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS SQLArticulosPreciosDescuentosModel FROM SQLCompanyModel
 
@@ -293,10 +290,15 @@ CLASS SQLArticulosPreciosDescuentosModel FROM SQLCompanyModel
 
    METHOD getParentUuidAttribute( value )
 
-   METHOD getSentenceDescuentoWhereArticulo( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta )
+   METHOD sqlDescuentoWhereArticuloUuid( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta )
 
-   METHOD getDescuentoWhereArticulo( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ;
-                                 INLINE ( getSQLDatabase():getValue( ::getSentenceDescuentoWhereArticulo( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ) )
+   METHOD getDescuentoWhereArticuloUuid( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ;
+                                 INLINE ( getSQLDatabase():getValue( ::sqlDescuentoWhereArticuloUuid( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ) )
+
+   METHOD sqlDescuentoWhereArticuloCodigo( cCodigoArticulo, cCodigoTarifa, nUnidades, dFechaVenta )
+
+   METHOD getDescuentoWhereArticuloCodigo( cCodigoArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ;
+                                 INLINE ( getSQLDatabase():getValue( ::sqlDescuentoWhereArticuloCodigo( cCodigoArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) ) )
 
 END CLASS
 
@@ -343,34 +345,65 @@ RETURN ( ::oController:oSenderController:getUuid() )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceDescuentoWhereArticulo( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) CLASS SQLArticulosPreciosDescuentosModel
+METHOD sqlDescuentoWhereArticuloUuid( uuidArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) CLASS SQLArticulosPreciosDescuentosModel
    
-   local cSelect
+   local cSql
 
-   cSelect  := "SELECT articulos_precios_descuentos.porcentaje as porcentaje "                                                                                                                                
-   cSelect  +=    "FROM "+ ::getTableName() + " AS articulos_precios_descuentos " 
+   cSql  := "SELECT articulos_precios_descuentos.porcentaje as porcentaje "                                                                                                                                
+   cSql  +=    "FROM "+ ::getTableName() + " AS articulos_precios_descuentos " 
 
-   cSelect  +=    "INNER JOIN "+ SQLArticulosPreciosModel():getTableName() +" as articulos_precios "                                                                  
-   cSelect  +=       "ON articulos_precios_descuentos.parent_uuid = articulos_precios.uuid "
+   cSql  +=    "INNER JOIN "+ SQLArticulosPreciosModel():getTableName() +" as articulos_precios "                                                                  
+   cSql  +=       "ON articulos_precios_descuentos.parent_uuid = articulos_precios.uuid "
 
-   cSelect  +=    "INNER JOIN " + SQLArticulosModel():getTableName() + " as articulos "                                                                  
-   cSelect  +=       "ON articulos_precios.articulo_uuid = " + quoted( uuidArticulo ) + " " 
+   cSql  +=    "INNER JOIN " + SQLArticulosModel():getTableName() + " as articulos "                                                                  
+   cSql  +=       "ON articulos_precios.articulo_uuid = " + quoted( uuidArticulo ) + " " 
 
-   cSelect  +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " as articulos_tarifas "                                                                  
-   cSelect  +=       "ON articulos_tarifas.codigo = " + quoted( cCodigoTarifa ) + " "
+   cSql  +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " as articulos_tarifas "                                                                  
+   cSql  +=       "ON articulos_tarifas.codigo = " + quoted( cCodigoTarifa ) + " "
 
-   cSelect  +=    "WHERE articulos_precios_descuentos.fecha_inicio <= " + toSqlString( dFechaVenta ) + " "                                                                  
-   cSelect  +=       "AND ( articulos_precios_descuentos.fecha_fin IS NULL OR articulos_precios_descuentos.fecha_fin >= " + toSqlString( dFechaVenta ) + " ) "                                                                  
-   cSelect  +=       "AND articulos_precios_descuentos.unidades <= " + quoted( nUnidades ) + " "                                                                  
-   cSelect  +=       "AND articulos_precios.uuid = articulos_precios_descuentos.parent_uuid "                                                                  
+   cSql  +=    "WHERE articulos_precios_descuentos.fecha_inicio <= " + toSqlString( dFechaVenta ) + " "                                                                  
+   cSql  +=       "AND ( articulos_precios_descuentos.fecha_fin IS NULL OR articulos_precios_descuentos.fecha_fin >= " + toSqlString( dFechaVenta ) + " ) "                                                                  
+   cSql  +=       "AND articulos_precios_descuentos.unidades <= " + quoted( nUnidades ) + " "                                                                  
+   cSql  +=       "AND articulos_precios.uuid = articulos_precios_descuentos.parent_uuid "                                                                  
 
-   cSelect  +=    "ORDER BY articulos_precios_descuentos.porcentaje DESC " 
+   cSql  +=    "ORDER BY articulos_precios_descuentos.porcentaje DESC " 
 
-   cSelect  +=    "LIMIT 1 "
+   cSql  +=    "LIMIT 1 "
 
-   logwrite( cSelect )
+   logwrite( cSql )
 
-RETURN ( cSelect )
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD sqlDescuentoWhereArticuloCodigo( cCodigoArticulo, cCodigoTarifa, nUnidades, dFechaVenta ) CLASS SQLArticulosPreciosDescuentosModel
+   
+   local cSql
+
+   cSql  := "SELECT articulos_precios_descuentos.porcentaje as porcentaje "                                                                                                                                
+   cSql  +=    "FROM "+ ::getTableName() + " AS articulos_precios_descuentos " 
+
+   cSql  +=    "INNER JOIN " + SQLArticulosModel():getTableName() + " as articulos "                                                                  
+   cSql  +=       "ON articulos.codigo = " + quoted( cCodigoArticulo ) + " " 
+
+   cSql  +=    "INNER JOIN "+ SQLArticulosPreciosModel():getTableName() +" as articulos_precios "                                                                  
+   cSql  +=       "ON articulos_precios_descuentos.parent_uuid = articulos_precios.uuid "
+
+   cSql  +=    "INNER JOIN " + SQLArticulosTarifasModel():getTableName() + " as articulos_tarifas "                                                                  
+   cSql  +=       "ON articulos_tarifas.codigo = " + quoted( cCodigoTarifa ) + " "
+
+   cSql  +=    "WHERE articulos_precios_descuentos.fecha_inicio <= " + toSqlString( dFechaVenta ) + " "                                                                  
+   cSql  +=       "AND ( articulos_precios_descuentos.fecha_fin IS NULL OR articulos_precios_descuentos.fecha_fin >= " + toSqlString( dFechaVenta ) + " ) "                                                                  
+   cSql  +=       "AND articulos_precios_descuentos.unidades <= " + quoted( nUnidades ) + " "                                                                  
+   cSql  +=       "AND articulos_precios.uuid = articulos_precios_descuentos.parent_uuid "                                                                  
+
+   cSql  +=    "ORDER BY articulos_precios_descuentos.porcentaje DESC " 
+
+   cSql  +=    "LIMIT 1 "
+
+   logwrite( cSql )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
