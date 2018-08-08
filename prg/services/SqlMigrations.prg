@@ -330,6 +330,8 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLArticulosUnidadesMedicionModel():New() )
 
+   aadd( ::aModels, SQLUnidadesMedicionOperacionesModel():New() )
+
    aadd( ::aModels, SQLDivisasMonetariasModel():New() )
 
    aadd( ::aModels, SQLImpuestosEspecialesModel():New() )
@@ -356,7 +358,7 @@ METHOD addModels() CLASS SQLCompanyMigrations
                                       
    aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
-   aadd( ::aModels, SQLConfiguracionesCompanyModel():New() )
+   aadd( ::aModels, SQLConfiguracionesCompanyModel():New() ) 
 
    //aadd( ::aModels, SQLMovimientosAlmacenModel():New() )
 

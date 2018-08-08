@@ -67,19 +67,9 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD stampArticuloNombre( cNombreArticulo ) ;
                                           INLINE ( ::updateField( "articulo_nombre", cNombreArticulo ) )
 
-<<<<<<< HEAD
-   ::getRowSet():Refresh()
 
-   ::setHistoryManager()
+   /*METHOD stampArticuloNombre( cNombreArticulo ) */
 
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-   METHOD stampArticuloNombre( cNombreArticulo ) 
-
-=======
->>>>>>> 9e6f7d46196978851f83aa1330be7e2c02d20fdd
    METHOD stampArticuloUnidadeMedicion()
 
    METHOD stampArticuloPrecio()
@@ -240,11 +230,11 @@ METHOD stampArticulo( hArticulo )
 
    ::stampArticuloCodigo( hget( hArticulo, "codigo" ) )
 
-   ::stampArticuloNombre( hget( hArticulo, "nombre" ) )
+   /*::stampArticuloNombre( hget( hArticulo, "nombre" ) )
 
    ::stampArticuloUnidadeMedicion()
 
-   ::stampArticuloPrecio()
+   ::stampArticuloPrecio()*/
 
    /*
    hset( hBuffer, "articulo_codigo",         hget( hArticulo, "codigo" ) )

@@ -244,6 +244,8 @@ METHOD startActivate() CLASS ArticulosView
 
    ::oController:oTagsController:oDialogView:Start()
 
+   ::oController:oArticulosFamiliasController:oGetSelector:Start()
+
    ::changeNombre()
 
    ::changeLote()
@@ -281,6 +283,10 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
    oPanel:AddLink(   "Traducciones...",;
                      {|| ::oController:oTraduccionesController:activateDialogView() },;
                      ::oController:oTraduccionesController:getImage( "16" ) )
+
+   oPanel:AddLink(   "Unidad por operación...",;
+                     {|| ::oController:ounidadesmedicionoperacionesController:activateDialogView() },;
+                     ::oController:ounidadesmedicionoperacionesController:getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
 

@@ -22415,7 +22415,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 316, 88, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 374, 88, 50, 14
   CONTROL "Código *", -1, "Static", WS_GROUP, 50, 43, 46, 8
-  CONTROL "Unidad de medida", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 379, 52
+  CONTROL "Unidad de medición", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 379, 52
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Unidad de medida", 800, "Static", WS_GROUP, 44, 3, 481, 24
   CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 56, 46, 8
@@ -23665,7 +23665,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 316, 80, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 374, 80, 50, 14
   CONTROL "Unidad", -1, "Static", WS_GROUP, 50, 43, 46, 8
-  CONTROL "Unidad de medida", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 379, 44
+  CONTROL "Unidad de medición", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 379, 44
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Unidad de medida por operación", 800, "Static", WS_GROUP, 44, 3, 481, 24
   CONTROL "Tipo de operación", -1, "Static", WS_GROUP, 50, 57, 63, 8
