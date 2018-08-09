@@ -345,14 +345,14 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-local aVacio := {}
+/*local aVacio := {}
 local aConsulta := getSQLDatabase():selectTrimedFetchHash( SQLUnidadesMedicionOperacionesModel():getUnidadesWhereGrupo( 'LIQ' ) ) 
 
 ? hb_valtoexp( aConsulta )
 aeval( aConsulta, {| h | aadd( aVacio, h["nombre"] ) } ) 
 ? hb_valtoexp( aVacio )
 
-? hb_valtoexp( getSQLDatabase():selectPadedFetchHash( SQLUnidadesMedicionOperacionesModel():getUnidadesWhereGrupo( 'LIQ' ) ) )
+? hb_valtoexp( getSQLDatabase():selectPadedFetchHash( SQLUnidadesMedicionOperacionesModel():getUnidadesWhereGrupo( 'LIQ' ) ) )*/
 
 /*   
    local cQuery
