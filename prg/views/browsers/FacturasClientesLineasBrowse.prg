@@ -77,7 +77,8 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := EDIT_GET_BUTTON
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:validColumnCodigoArticulo( oCol, uNewValue, nKey ) }
+      :bEditValid          := {|oGet, oCol| ::oController:validArticuloCodigo( oGet, oCol ) }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateArticuloCodigo( oCol, uNewValue, nKey ) }
       :bEditBlock          := {|| ::oController:oSenderController:oArticulosController:ActivateSelectorView() }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
@@ -130,7 +131,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :oFooterFont         := getBoldFont()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloUnidades( uNewValue ) }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloUnidades( oCol, uNewValue ) }
    end with
 
    with object ( ::oColumnUnidadMedicion    := ::oBrowse:AddCol() )

@@ -22,10 +22,9 @@ END CLASS
 
 METHOD getValidators()
 
-   ::hValidators  := {  "codigo_articulo"          => {  "isCodeGS128"           => "",;
-                                                         "required"              => "El artículo es un dato requerido",;
+   ::hValidators  := {  "articulo_codigo"          => {  "isCodeGS128"           => "",;
                                                          "existArticulo"         => "El artículo {value}, no existe" },;
-                        "nombre_articulo"          => {  "required"              => "El nombre del artículo es un dato requerido" },;
+                        "articulo_nombre"          => {  "required"              => "El nombre del artículo es un dato requerido" },;
                         "unidad_medicion_codigo"   => {  "existUnidadMedicion"   => "La unidad de medición no existe" } }
 
 RETURN ( ::hValidators )

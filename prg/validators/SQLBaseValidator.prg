@@ -93,7 +93,7 @@ METHOD ProcessAll( cColumn, hProcess )
 
    for each hColumn in hColumnProcess
 
-      if !::Process( hColumn:__enumKey(), hColumn:__enumValue() )
+      if !( ::Process( hColumn:__enumKey(), hColumn:__enumValue() ) )
          RETURN ( .f. )
       end if 
 

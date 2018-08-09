@@ -13,8 +13,6 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    DATA oSearchView
 
-   DATA aProperties                    INIT {}
-
    DATA aSelectDelete                  INIT {}
 
    DATA oUnidadesMedicionController
@@ -33,19 +31,13 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    // Validaciones ------------------------------------------------------------
 
-   METHOD validColumnCodigoArticulo( oCol, uValue, nKey )  
+   METHOD validArticuloCodigo( oGet, oCol )
+
+   METHOD postValidateArticuloCodigo( oCol, uValue, nKey )  
 
    METHOD validColumnNombreArticulo( oCol, uValue, nKey )  
 
    METHOD validateLote()               
-
-   METHOD validatePrimeraPropiedad()      INLINE ( iif(  ::validate( "valor_primera_propiedad" ),;
-                                                         ::stampPropertyName( "codigo_primera_propiedad" , "valor_primera_propiedad", ::oDialogView:oGetValorPrimeraPropiedad ),;
-                                                         .f. ) )
-
-   METHOD validateSegundaPropiedad()      INLINE ( iif(  ::validate( "valor_segunda_propiedad" ),;
-                                                         ::stampPropertyName( "codigo_segunda_propiedad" , "valor_segunda_propiedad", ::oDialogView:oGetValorSegundaPropiedad ),;
-                                                         .f. ) )
 
    METHOD lValidUnidadMedicion( uValue )
    
@@ -67,14 +59,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD stampArticuloNombre( cNombreArticulo ) ;
                                           INLINE ( ::updateField( "articulo_nombre", cNombreArticulo ) )
 
-<<<<<<< HEAD
    METHOD stampArticuloUnidaMedicionVentas()
-=======
-
-   /*METHOD stampArticuloNombre( cNombreArticulo ) */
-
-   METHOD stampArticuloUnidadeMedicion()
->>>>>>> ccf52185cfa93d2267244e60153c8cb2ddc59dc7
 
    METHOD stampArticuloPrecio()
 
@@ -117,31 +102,31 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::lTransactional                    := .t.
+   ::lTransactional                          := .t.
 
-   ::cTitle                            := "Facturas clientes líneas"
+   ::cTitle                                  := "Facturas clientes líneas"
 
    ::setName( "lineas_facturas_clientes" )
 
-   ::oModel                                        := SQLFacturasClientesLineasModel():New( self )
+   ::oModel                                  := SQLFacturasClientesLineasModel():New( self )
 
-   ::oBrowseView                                   := FacturasClientesLineasBrowseView():New( self )
+   ::oBrowseView                             := FacturasClientesLineasBrowseView():New( self )
 
-   ::oDialogView                                   := FacturasClientesLineasView():New( self )
+   ::oDialogView                             := FacturasClientesLineasView():New( self )
 
-   ::oValidator                                    := FacturasClientesLineasValidator():New( self )
+   ::oValidator                              := FacturasClientesLineasValidator():New( self )
 
-   ::oSearchView                                   := SQLSearchView():New( self )
+   ::oSearchView                             := SQLSearchView():New( self )
 
-   ::oSeriesControler                              := NumerosSeriesController():New( self )
+   ::oSeriesControler                        := NumerosSeriesController():New( self )
 
-   ::oRelacionesEntidades                          := RelacionesEntidadesController():New( self )
+   ::oRelacionesEntidades                    := RelacionesEntidadesController():New( self )
 
-   ::oUnidadesMedicionController                   := UnidadesMedicionGruposLineasController():New( self )
+   ::oUnidadesMedicionController             := UnidadesMedicionGruposLineasController():New( self )
 
-   ::oArticulosPreciosDescuentosController         := ArticulosPreciosDescuentosController():New( self )
+   ::oArticulosPreciosDescuentosController   := ArticulosPreciosDescuentosController():New( self )
 
-   ::oHistoryManager                               := HistoryManager():New()
+   ::oHistoryManager                         := HistoryManager():New()
 
    ::setEvent( 'activating',           {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
 
@@ -185,7 +170,19 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD validColumnCodigoArticulo( oCol, uValue, nKey )
+METHOD validArticuloCodigo( oGet, oCol )
+
+   local uValue   := oGet:varGet()
+
+   if empty( uValue )
+      RETURN ( .t. )
+   end if 
+
+RETURN ( ::validate( "articulo_codigo", uValue ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
 
    local hArticulo 
 
@@ -194,13 +191,10 @@ METHOD validColumnCodigoArticulo( oCol, uValue, nKey )
    end if
 
    if hb_ishash( uValue )
-
       if ::oHistoryManager:isEqual( "articulo_codigo", hget( uValue, "codigo" ) )
          RETURN ( .f. )
       end if          
-
       RETURN ( ::stampArticulo( uValue ) )
-
    end if 
 
    if !hb_ischar( uValue )
@@ -210,10 +204,6 @@ METHOD validColumnCodigoArticulo( oCol, uValue, nKey )
    if ::oHistoryManager:isEqual( "articulo_codigo", uValue )
       RETURN ( .f. )
    end if          
-
-   if !( ::validate( "articulo_codigo", uValue ) )
-      RETURN ( .f. )
-   end if 
 
    hArticulo   := ::getHashArticuloWhereCodigo( uValue )
    if empty( hArticulo )
@@ -246,40 +236,15 @@ RETURN ( nil )
 
 METHOD stampArticulo( hArticulo )
 
-   local hBuffer           := {=>}
-   // local nPrecioBase       := SQLArticulosPreciosModel():getPrecioBaseWhereArticuloUuidAndTarifaCodigo( hget( hArticulo, "uuid" ), ::oSenderController:getModelBuffer( "tarifa_codigo" ) )
-   // local nDescuento        := SQLArticulosPreciosDescuentosModel():getDescuentoWhereArticulo( hget( hArticulo, "uuid" ), ::oSenderController:getModelBuffer( "tarifa_codigo" ), ::getRowSet():fieldGet( 'articulo_unidades' ), ::oSenderController:oModel:hBuffer[ "fecha" ] )
-   // local cUnidadMedicion   := UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( hArticulo, "codigo" ) )
-
    ::stampArticuloCodigo( hget( hArticulo, "codigo" ) )
 
-   /*::stampArticuloNombre( hget( hArticulo, "nombre" ) )
-
-   ::stampArticuloUnidaMedicionVentas()
-
-   ::stampArticuloPrecio()*/
-
-   ::stampArticuloDescuento()
-
-   /*
-   hset( hBuffer, "articulo_codigo",         hget( hArticulo, "codigo" ) )
-
-   hset( hBuffer, "unidad_medicion_codigo",  cUnidadMedicion )
-   
-   hset( hBuffer, "articulo_precio",         nPrecioBase )
-
-   hset( hBuffer, "descuento",               nDescuento )
-
-   ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
+   ::stampArticuloNombre( hget( hArticulo, "nombre" ) )
 
    ::stampArticuloUnidaMedicionVentas()
 
    ::stampArticuloPrecio()
 
-   ::stampArticuloUnidades()
-   
-   ::oHistoryManager:Set( ::getRowSet():getValuesAsHash() )
-   */
+   ::stampArticuloDescuento()
    
 RETURN ( .t. )
 
@@ -311,11 +276,13 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampArticuloUnidades( uValue )
+METHOD stampArticuloUnidades( oCol, uValue )
 
    ::updateField( 'articulo_unidades', uValue )
 
    ::stampArticuloDescuento()
+
+   ::oBrowseView:makeTotals( oCol )
 
 RETURN ( .t. )
 
@@ -393,14 +360,6 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD closedDialog()
-
-   ::aProperties     := {}
-
-   if !( ::oDialogView:oBrowsePropertyView:lVisible() )
-      RETURN ( .t. )
-   end if 
-
-   ::aProperties     := ::oDialogView:oBrowsePropertyView:getProperties()
 
 RETURN ( .t. )
 
