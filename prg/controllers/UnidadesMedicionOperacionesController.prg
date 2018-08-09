@@ -39,6 +39,8 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionOperacionesController
 
    ::oGetSelector                   := GetSelector():New( self )
 
+   ::setEvent( 'appended',            {|| ::oModel:GetCodigoUnidadWhereNombre( ::oModel:hBuffer["codigo_unidad"] ) } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -98,10 +100,10 @@ METHOD addColumns() CLASS UnidadesMedicionOperacionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'unidad'
-      :cHeader             := 'Unidad'
+      :cSortOrder          := 'codigo_unidad'
+      :cHeader             := 'Código Unidad'
       :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_unidad' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -125,7 +127,9 @@ RETURN ( self )
 
 CLASS UnidadesMedicionOperacionesView FROM SQLBaseView
 
-   DATA oUnidad
+   DATA oUnidades
+
+   DATA hUnidades
 
    DATA oTipo
 
@@ -145,13 +149,16 @@ METHOD New( oController ) CLASS UnidadesMedicionOperacionesView
 
    ::hTipos          := {  "Compra"                         => "Compra",;
                            "Venta"                          => "Venta",;
-                           "Almacenes"                      => "Almacenes" }
+                           "Almacenes"                      => "Almacenes" }         
+   
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS UnidadesMedicionOperacionesView
+
+::hUnidades       := ::oController:oModel:SetUnidadesWhereGrupo( ::oController:oSenderController:getRowSet():fieldGet( 'unidades_medicion_grupos_codigo' ) )
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "UNIDAD_MEDICION_OPERACION" ;
@@ -169,20 +176,18 @@ METHOD Activate() CLASS UnidadesMedicionOperacionesView
       OF          ::oDialog ;
    
 
-   REDEFINE COMBOBOX ::oUnidad ;
+   REDEFINE COMBOBOX ::oUnidades ;
       VAR         ::oController:oModel:hBuffer[ "codigo_unidad" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ITEMS       ( hgetkeys( ::hTipos ) ) ;
-      BITMAPS     ( hgetvalues( ::hTipos ) ) ;
+      ITEMS       ( ::hUnidades ) ;
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oTipo ;
       VAR         ::oController:oModel:hBuffer[ "operacion" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ITEMS       ( hgetkeys( ::hTipos ) ) ;
-      BITMAPS     ( hgetvalues( ::hTipos ) ) ;
+      ITEMS       ( hgetValues( ::hTipos ) ) ;
       OF          ::oDialog ;
 
    REDEFINE BUTTON ;
@@ -241,7 +246,13 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "unidades_medicion_operacion"
 
-   METHOD getUnidadesWhereGrupo()
+   DATA aConsulta                INIT {}
+
+   METHOD getUnidadesWhereGrupo( cCodigoGrupo )
+
+   METHOD SetUnidadesWhereGrupo( cCodigoGrupo )
+
+   METHOD GetCodigoUnidadWhereNombre( Nombre, cCodigoGrupo )
 
    METHOD getColumns()
 
@@ -251,20 +262,20 @@ END CLASS
 
 METHOD getColumns() CLASS SQLUnidadesMedicionOperacionesModel
 
-   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                          "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
+                                          "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
-                                          "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
+                                          "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                          "default"   => {|| space( 40 ) } }                        )
+   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                     ,;
+                                          "default"   => {|| ::getSenderControllerParentUuid() } }    )
 
-   hset( ::hColumns, "codigo_unidad",  {  "create"    => "VARCHAR( 20 )"                          ,;
-                                          "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "codigo_unidad",  {  "create"    => "VARCHAR( 20 )"                              ,;
+                                          "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "operacion",      {  "create"    => "VARCHAR( 200 )"                          ,;
-                                          "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "operacion",      {  "create"    => "VARCHAR( 200 )"                             ,;
+                                          "default"   => {|| space( 200 ) } }                         )
    
    ::getTimeStampColumns()
 
@@ -300,6 +311,35 @@ METHOD getUnidadesWhereGrupo( cCodigoGrupo ) CLASS SQLUnidadesMedicionOperacione
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
+METHOD SetUnidadesWhereGrupo( cCodigoGrupo ) CLASS SQLUnidadesMedicionOperacionesModel
+
+   local cCodigo
+
+   local aUnidades := {}
+
+   ::aConsulta := getSQLDatabase():selectTrimedFetchHash( SQLUnidadesMedicionOperacionesModel():getUnidadesWhereGrupo( cCodigoGrupo ) )  
+
+   aeval( ::aConsulta, {| h | aadd( aUnidades, h["nombre"] ) } )
+
+
+RETURN ( aUnidades )
+
+//---------------------------------------------------------------------------//
+METHOD GetCodigoUnidadWhereNombre( Nombre ) CLASS SQLUnidadesMedicionOperacionesModel
+
+   local cCodigo
+
+   local nPos
+
+   nPos  := aScan( ::aConsulta, {|h| alltrim(hget(h,"nombre")) ==alltrim(Nombre)  } )
+
+   cCodigo :=hb_valtoexp(cCodigo := hget( ::aConsulta[nPos], "codigo" ))
+
+   msgalert (cCodigo)
+
+RETURN( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
