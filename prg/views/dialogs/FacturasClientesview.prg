@@ -190,6 +190,8 @@ METHOD startDialog() CLASS FacturasClientesView
 
    ::oController:oArticulosTarifasController:oGetSelector:start()
 
+   ::oController:oClientesController:oGetSelector:setFocus()
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//

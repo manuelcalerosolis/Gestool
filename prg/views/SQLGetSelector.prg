@@ -60,6 +60,7 @@ CLASS GetSelector
    METHOD Hide()                                INLINE ( if( !empty( ::oGet ), ::oGet:Hide(), ) )
    METHOD Show()                                INLINE ( if( !empty( ::oGet ), ::oGet:Show(), ) )
    METHOD lValid()                              INLINE ( if( !empty( ::oGet ), ::oGet:lValid(), ) )
+   METHOD setFocus()                            INLINE ( if( !empty( ::oGet ), ::oGet:setFocus(), ) )
 
    // Events-------------------------------------------------------------------
 
