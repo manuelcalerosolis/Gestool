@@ -123,7 +123,6 @@ METHOD getInitialSelect()
                         "unidad_medicion_codigo, "                                        + ;
                         "unidad_medicion_factor, "                                        + ;
                         "descuento "                                                      + ;
-                        "articulo_unidades * unidad_medicion_factor * articulo_precio as total_linea, " + ;
                      "FROM " + ::getTableName()    
 
 RETURN ( cSelect )

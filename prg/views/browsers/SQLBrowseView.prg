@@ -119,6 +119,8 @@ CLASS SQLBrowseView
 
    METHOD getFirstVisibleColumn()            INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getFirstVisibleColumn(), ) )
 
+   METHOD makeTotals( aCols )                INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:makeTotals( aCols ), ) )
+
    // Controller---------------------------------------------------------------
 
    METHOD setController( oController )       INLINE ( ::oController := oController )

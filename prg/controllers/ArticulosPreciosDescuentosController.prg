@@ -370,8 +370,6 @@ METHOD sqlDescuentoWhereArticuloUuid( uuidArticulo, cCodigoTarifa, nUnidades, dF
 
    cSql  +=    "LIMIT 1 "
 
-   logwrite( cSql )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -400,9 +398,6 @@ METHOD sqlDescuentoWhereArticuloCodigo( cCodigoArticulo, cCodigoTarifa, nUnidade
    cSql  +=    "ORDER BY articulos_precios_descuentos.porcentaje DESC " 
 
    cSql  +=    "LIMIT 1 "
-
-   logwrite( cSql )
-   msgalert( cSql )
 
 RETURN ( cSql )
 

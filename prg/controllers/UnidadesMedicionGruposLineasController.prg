@@ -565,8 +565,6 @@ METHOD getWhereCodigoArticuloDefault( cCodigoArticulo ) CLASS UnidadesMedicionGr
    cSelect     := ::getSentenceWhereCodigoArticulo( cCodigoArticulo ) + " " + ;
                      "AND lineas.sistema = 1"
 
-                     MSGALERT( cSelect, "cSelect")
-
 RETURN ( ::getDatabase():getValue( cSelect ) )
 
 //---------------------------------------------------------------------------//

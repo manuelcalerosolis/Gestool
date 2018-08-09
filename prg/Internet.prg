@@ -1485,8 +1485,6 @@ METHOD lFtpSendFiles( aSource, aTarget, cDirectory ) CLASS TSndRecInf
 
       if file( aSource[ n ] )
 
-         LogWrite( aSource[ n ] )
-
          ::SetText( "El fichero " + aSource[ n ] + " exite." )      
 
          if isFalse( ::oFtp:createFile( aSource[ n ] ) )

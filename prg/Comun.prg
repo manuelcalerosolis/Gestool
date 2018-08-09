@@ -345,6 +345,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+<<<<<<< HEAD
+=======
 /*local aVacio := {}
 local aConsulta := getSQLDatabase():selectTrimedFetchHash( SQLUnidadesMedicionOperacionesModel():getUnidadesWhereGrupo( 'LIQ' ) ) 
 
@@ -354,6 +356,7 @@ aeval( aConsulta, {| h | aadd( aVacio, h["nombre"] ) } )
 
 ? hb_valtoexp( getSQLDatabase():selectPadedFetchHash( SQLUnidadesMedicionOperacionesModel():getUnidadesWhereGrupo( 'LIQ' ) ) )*/
 
+>>>>>>> 0e97b4085b45a364d038192962bfedf595e951e7
 /*   
    local cQuery
    local nId   := 5

@@ -11730,7 +11730,7 @@ METHOD PostEdit( xValue, lButton, lDirectAssign ) CLASS TXBrwColumn
 
    if ! Empty( ::nFooterType ) .or. ;
       ( ::cDataType == 'N' .and. ( ::cFooter != nil .or. ::bFooter != nil .or. ::nTotal != nil ) )
-      ::RecalcTotal( uOriginal, ::Value )
+      // ::RecalcTotal( uOriginal, ::Value )
       ::RefreshFooter()
    endif
 
