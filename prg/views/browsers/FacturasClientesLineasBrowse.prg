@@ -186,6 +186,30 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'total_bruto'
+      :cHeader             := 'Total bruto'
+      :nWidth              := 80
+      :cEditPicture        := "@E 99,999,999.999999"
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'total_bruto' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nFootStyle          := :nDataStrAlign               
+      :nFooterType         := AGGR_SUM
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := getBoldFont()
+      :cDataType           := "N"
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'descuento'
+      :cHeader             := '% Descuento'
+      :nWidth              := 80
+      :cEditPicture        := "@E 999.9999"
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'total_precio'
       :cHeader             := 'Total precio'
       :nWidth              := 80
@@ -197,15 +221,6 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cFooterPicture      := :cEditPicture
       :oFooterFont         := getBoldFont()
       :cDataType           := "N"
-   end with
-
-      with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'descuento'
-      :cHeader             := '% Descuento'
-      :nWidth              := 80
-      :cEditPicture        := "@E 999.9999"
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
 RETURN ( nil )

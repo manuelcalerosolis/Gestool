@@ -39,7 +39,7 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionOperacionesController
 
    ::oGetSelector                   := GetSelector():New( self )
 
-   ::setEvent( 'appended',            {|| ::oModel:GetCodigoUnidadWhereNombre( ::oModel:hBuffer["codigo_unidad"] ) } )
+   ::setEvent( 'appended',          {|| ::oModel:GetCodigoUnidadWhereNombre( ::oModel:hBuffer["codigo_unidad"] ) } )
 
 RETURN ( Self )
 
@@ -326,13 +326,14 @@ METHOD SetUnidadesWhereGrupo( cCodigoGrupo ) CLASS SQLUnidadesMedicionOperacione
 RETURN ( aUnidades )
 
 //---------------------------------------------------------------------------//
+
 METHOD GetCodigoUnidadWhereNombre( Nombre ) CLASS SQLUnidadesMedicionOperacionesModel
 
    local cCodigo
 
    local nPos
 
-   nPos  := aScan( ::aConsulta, {|h| alltrim(hget(h,"nombre")) ==alltrim(Nombre)  } )
+   nPos     := aScan( ::aConsulta, {|h| alltrim(hget(h,"nombre")) ==alltrim(Nombre)  } )
 
    cCodigo :=hb_valtoexp(cCodigo := hget( ::aConsulta[nPos], "codigo" ))
 
@@ -340,6 +341,7 @@ METHOD GetCodigoUnidadWhereNombre( Nombre ) CLASS SQLUnidadesMedicionOperaciones
 
 RETURN( nil )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
