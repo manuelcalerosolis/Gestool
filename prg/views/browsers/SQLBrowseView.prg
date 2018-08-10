@@ -28,6 +28,8 @@ CLASS SQLBrowseView
 
    DATA nColSel                              INIT 1
 
+   DATA bSelectedColumnDblClick
+
    DATA bChange
 
    DATA cType 
@@ -139,9 +141,16 @@ CLASS SQLBrowseView
 
    METHOD getRowSet()                        INLINE ( ::getController():getRowSet() )
 
-   // Columns------------------------------------------------------------------
+   // Selected Columns---------------------------------------------------------
 
    METHOD insertSelectedColumn()
+
+   METHOD setSelectedColumnDblClick( bLDClick ) ;
+                                             INLINE ( ::bSelectedColumnDblClick := bLDClick )
+
+   METHOD getSelectedColumnDblClick()        INLINE ( ::bSelectedColumnDblClick )
+
+   // Columns------------------------------------------------------------------
 
    METHOD addColumns()                       VIRTUAL
 
@@ -412,9 +421,10 @@ METHOD insertSelectedColumn()
    with object ( ::oBrowse:InsCol( 1 ) )
       :Cargo         := .t.
       :nWidth        := 20
-      :bEditValue    := { || ascan( ::oBrowse:aSelected, ::oBrowse:BookMark ) > 0 }
-      :nHeadBmpNo    := { || if( len( ::oBrowse:aSelected ) == ::oBrowse:nLen, 1, 2 ) }
-      :bLClickHeader := { || if( len( ::oBrowse:aSelected ) == ::oBrowse:KeyCount(), ( ::oBrowse:SelectNone(), ::oBrowse:Select( 1 ) ), ::oBrowse:SelectAll() ) }
+      :bLDClickData  := ::getSelectedColumnDblClick()
+      :bEditValue    := {|| ascan( ::oBrowse:aSelected, ::oBrowse:BookMark ) > 0 }
+      :nHeadBmpNo    := {|| if( len( ::oBrowse:aSelected ) == ::oBrowse:nLen, 1, 2 ) }
+      :bLClickHeader := {|| if( len( ::oBrowse:aSelected ) == ::oBrowse:KeyCount(), ( ::oBrowse:SelectNone(), ::oBrowse:Select( 1 ) ), ::oBrowse:SelectAll() ) }
       :setCheck()
    end with
 
