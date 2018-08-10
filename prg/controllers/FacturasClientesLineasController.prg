@@ -61,6 +61,10 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD stampArticuloUnidaMedicionVentas()
 
+
+   METHOD stampArticuloUnidadMedicion()
+
+
    METHOD stampArticuloPrecio()
 
    METHOD stampArticuloUnidades( uValue )
@@ -245,6 +249,23 @@ METHOD stampArticulo( hArticulo )
    ::stampArticuloPrecio()
 
    ::stampArticuloDescuento()
+
+   /*
+   hset( hBuffer, "articulo_codigo",         hget( hArticulo, "codigo" ) )
+
+   hset( hBuffer, "unidad_medicion_codigo",  cUnidadMedicion )
+   
+   hset( hBuffer, "articulo_precio",         nPrecioBase )
+
+   hset( hBuffer, "descuento",               nDescuento )
+
+   ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
+
+   ::stampArticuloUnidaMedicionVentas()
+
+   ::stampArticuloPrecio()
+
+   ::stampArticuloDescuento()*/
    
 RETURN ( .t. )
 

@@ -39,7 +39,11 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionOperacionesController
 
    ::oGetSelector                   := GetSelector():New( self )
 
+<<<<<<< HEAD
    ::setEvent( 'appended',          {|| ::oModel:GetCodigoUnidadWhereNombre( ::oModel:hBuffer["codigo_unidad"] ) } )
+=======
+   /*::setEvent( 'appended',            {|| ::oModel:GetCodigoUnidadWhereNombre( ::oModel:hBuffer["codigo_unidad"] ) } )*/
+>>>>>>> 729bcf5c6a79ea26e3f2441e5eb2828496b14137
 
 RETURN ( Self )
 
@@ -102,8 +106,16 @@ METHOD addColumns() CLASS UnidadesMedicionOperacionesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo_unidad'
       :cHeader             := 'Código Unidad'
-      :nWidth              := 50
+      :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_unidad' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre_unidad'
+      :cHeader             := 'Nombre Unidad'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_unidad' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -177,7 +189,7 @@ METHOD Activate() CLASS UnidadesMedicionOperacionesView
    
 
    REDEFINE COMBOBOX ::oUnidades ;
-      VAR         ::oController:oModel:hBuffer[ "codigo_unidad" ] ;
+      VAR         ::oController:oModel:hBuffer[ "uuid_unidad" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ITEMS       ( ::hUnidades ) ;
@@ -246,13 +258,18 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "unidades_medicion_operacion"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, uuid_unidad, operacion )"
+
    DATA aConsulta                INIT {}
 
    METHOD getUnidadesWhereGrupo( cCodigoGrupo )
 
    METHOD SetUnidadesWhereGrupo( cCodigoGrupo )
 
-   METHOD GetCodigoUnidadWhereNombre( Nombre, cCodigoGrupo )
+   METHOD setUuidUnidadAttribute( value ) ;
+                                 INLINE ( SQLUnidadesMedicionModel():getUuidWhereColumn( Value, "nombre" ) )
+
+   METHOD getInitialSelect()                              
 
    METHOD getColumns()
 
@@ -271,8 +288,8 @@ METHOD getColumns() CLASS SQLUnidadesMedicionOperacionesModel
    hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                     ,;
                                           "default"   => {|| ::getSenderControllerParentUuid() } }    )
 
-   hset( ::hColumns, "codigo_unidad",  {  "create"    => "VARCHAR( 20 )"                              ,;
-                                          "default"   => {|| space( 20 ) } }                          )
+   hset( ::hColumns, "uuid_unidad",    {  "create"    => "VARCHAR( 40 )"                              ,;
+                                          "default"   => {|| space( 40 ) } }                          )
 
    hset( ::hColumns, "operacion",      {  "create"    => "VARCHAR( 200 )"                             ,;
                                           "default"   => {|| space( 200 ) } }                         )
@@ -326,21 +343,46 @@ METHOD SetUnidadesWhereGrupo( cCodigoGrupo ) CLASS SQLUnidadesMedicionOperacione
 RETURN ( aUnidades )
 
 //---------------------------------------------------------------------------//
+<<<<<<< HEAD
 
 METHOD GetCodigoUnidadWhereNombre( Nombre ) CLASS SQLUnidadesMedicionOperacionesModel
+=======
+>>>>>>> 729bcf5c6a79ea26e3f2441e5eb2828496b14137
 
-   local cCodigo
+METHOD getInitialSelect() CLASS SQLUnidadesMedicionOperacionesModel
 
-   local nPos
+local cSQL
 
+<<<<<<< HEAD
    nPos     := aScan( ::aConsulta, {|h| alltrim(hget(h,"nombre")) ==alltrim(Nombre)  } )
+=======
+   TEXT INTO cSql
+>>>>>>> 729bcf5c6a79ea26e3f2441e5eb2828496b14137
 
-   cCodigo :=hb_valtoexp(cCodigo := hget( ::aConsulta[nPos], "codigo" ))
+      SELECT 
 
-   msgalert (cCodigo)
+         unidades_medicion.uuid as uuid,
+         unidades_medicion.id as id,
+         unidades_medicion.codigo as codigo_unidad,
+         unidades_medicion.nombre as nombre_unidad,
+         unidades_medicion_operacion.operacion as operacion    
+      
+      FROM %1$s AS unidades_medicion_operacion
+      
+      INNER JOIN %2$s AS unidades_medicion
+      ON unidades_medicion_operacion.uuid_unidad = unidades_medicion.uuid
 
-RETURN( nil )
 
+      ENDTEXT
+
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLUnidadesMedicionModel():getTableName() ) 
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

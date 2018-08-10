@@ -271,7 +271,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
                                              "default"   => {|| space( 20 ) } }                        )
    
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) UNIQUE"                   ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "codigo_iso",        {  "create"    => "VARCHAR( 6 )"                            ,;
