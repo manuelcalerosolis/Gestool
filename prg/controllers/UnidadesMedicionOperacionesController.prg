@@ -248,7 +248,9 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
    METHOD getUuidUnidadAttribute( uuid ) ;
                                  INLINE ( SQLUnidadesMedicionModel():getColumnWhereUuid( uuid, "nombre" ) )
 
-   METHOD getInitialSelect()                              
+   METHOD getInitialSelect() 
+
+   METHOD getUnidadVentaWhereArticulo( cCodigoArticulo )                             
 
    METHOD getColumns()
 
@@ -350,6 +352,39 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+
+METHOD getUnidadVentaWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionOperacionesModel
+   
+   local cSQL
+
+   TEXT INTO cSql
+
+   SELECT 
+         unidades_medicion.nombre,
+         unidades_medicion.codigo
+
+   FROM  %1$s AS unidades_medicion_operacion
+
+INNER JOIN %2$s AS articulos
+ ON articulos.uuid = unidades_medicion_operacion.parent_uuid AND articulos.codigo= %4$s 
+ 
+INNER JOIN %3$s AS unidades_medicion
+   ON unidades_medicion.uuid = unidades_medicion_operacion.uuid_unidad
+
+WHERE unidades_medicion_operacion.operacion = "Venta"
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), SQLUnidadesMedicionModel():getTableName() , cCodigoArticulo )
+
+
+RETURN ( cSql )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
