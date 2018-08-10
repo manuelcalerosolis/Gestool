@@ -235,7 +235,6 @@ CLASS SQLBaseModel
    METHOD isWhereCodigo( cCodigo )
 
    METHOD getWhereNombre( uValue )               
-
    METHOD getColumnWhereNombre( uValue, cColumn, uDefault ) 
    METHOD getCodigoWhereNombre( uValue )              INLINE ( ::getColumnWhereNombre( uValue, 'codigo', '' ) )
 
@@ -1468,7 +1467,6 @@ METHOD getColumnWhereUuid( uuid, cColumn )
    local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
                         "WHERE uuid = " + quoted( uuid )                + " " + ;
                         "LIMIT 1"
-
 RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//

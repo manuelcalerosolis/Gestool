@@ -60,11 +60,10 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
                                           INLINE ( ::updateField( "articulo_nombre", cNombreArticulo ) )
 
    METHOD stampArticuloUnidaMedicionVentas()
-<<<<<<< HEAD
+
 
    METHOD stampArticuloUnidadMedicion()
-=======
->>>>>>> fca1396d0530bf7c00e6348f918b6406df657661
+
 
    METHOD stampArticuloPrecio()
 
@@ -244,7 +243,6 @@ METHOD stampArticulo( hArticulo )
    ::stampArticuloCodigo( hget( hArticulo, "codigo" ) )
 
    ::stampArticuloNombre( hget( hArticulo, "nombre" ) )
-<<<<<<< HEAD
 
    ::stampArticuloUnidaMedicionVentas()
 
@@ -262,14 +260,12 @@ METHOD stampArticulo( hArticulo )
    hset( hBuffer, "descuento",               nDescuento )
 
    ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
-=======
->>>>>>> fca1396d0530bf7c00e6348f918b6406df657661
 
    ::stampArticuloUnidaMedicionVentas()
 
    ::stampArticuloPrecio()
 
-   ::stampArticuloDescuento()
+   ::stampArticuloDescuento()*/
    
 RETURN ( .t. )
 

@@ -102,8 +102,16 @@ METHOD addColumns() CLASS UnidadesMedicionOperacionesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo_unidad'
       :cHeader             := 'Código Unidad'
-      :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid_unidad' ) }
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_unidad' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre_unidad'
+      :cHeader             := 'Nombre Unidad'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_unidad' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -246,13 +254,18 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "unidades_medicion_operacion"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, uuid_unidad, operacion )"
+
    DATA aConsulta                INIT {}
 
    METHOD getUnidadesWhereGrupo( cCodigoGrupo )
 
    METHOD SetUnidadesWhereGrupo( cCodigoGrupo )
 
-   METHOD setUuidUnidadNombre( value )
+   METHOD setUuidUnidadAttribute( value ) ;
+                                 INLINE ( SQLUnidadesMedicionModel():getUuidWhereColumn( Value, "nombre" ) )
+
+   METHOD getInitialSelect()                              
 
    METHOD getColumns()
 
@@ -327,18 +340,36 @@ RETURN ( aUnidades )
 
 //---------------------------------------------------------------------------//
 
-METHOD setUuidUnidadNombre( value ) CLASS SQLUnidadesMedicionOperacionesModel
+METHOD getInitialSelect() CLASS SQLUnidadesMedicionOperacionesModel
 
-   if empty( ::oController )
-      RETURN ( value )
-   end if 
+local cSQL
 
-   if empty( ::oController:oDialogView )
-      RETURN ( value )
-   end if 
+   TEXT INTO cSql
 
-RETURN ( ::oController:oDialogView:uuidSelected )
+      SELECT 
 
+         unidades_medicion.uuid as uuid,
+         unidades_medicion.id as id,
+         unidades_medicion.codigo as codigo_unidad,
+         unidades_medicion.nombre as nombre_unidad,
+         unidades_medicion_operacion.operacion as operacion    
+      
+      FROM %1$s AS unidades_medicion_operacion
+      
+      INNER JOIN %2$s AS unidades_medicion
+      ON unidades_medicion_operacion.uuid_unidad = unidades_medicion.uuid
+
+
+      ENDTEXT
+
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLUnidadesMedicionModel():getTableName() ) 
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
