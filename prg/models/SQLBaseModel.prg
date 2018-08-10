@@ -985,6 +985,10 @@ METHOD loadDuplicateBuffer( id )
 
    ::hBuffer            := ::getBufferById( id )
 
+   if !( hb_ishash( ::hBuffer ) )
+      RETURN ( nil )
+   end if
+
    ::fireEvent( 'loadedDuplicateCurrentBuffer' )
 
    if hhaskey( ::hBuffer, "id" )

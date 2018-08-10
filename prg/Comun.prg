@@ -345,24 +345,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-<<<<<<< HEAD
-=======
-/*   
-   local cQuery
-   local nId   := 5
-
-   TEXT INTO cQuery
-   SELECT COUNT(*) FROM {{ SQLArticulosModel():getTableName() }}
-      WHERE id > {{| nId | nId }}
-   ENDTEXT
-
-   msgalert( cQuery )
-
-   cQuery      := getSQLDatabase():genStatement( cQuery )
-
-   msgalert( cQuery, "cQuery" )
-*/
->>>>>>> 729bcf5c6a79ea26e3f2441e5eb2828496b14137
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

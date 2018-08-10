@@ -203,8 +203,6 @@ METHOD defaultTitle()
 
    local cTitle   
 
-   msgalert( ::cTitle, ::oController:classname() )
-
    cTitle         := ::oController:getTitle() + " : "  
 
    if empty( ::oController:oSenderController:oModel )
