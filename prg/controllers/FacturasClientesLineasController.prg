@@ -287,10 +287,25 @@ RETURN ( ::stampArticuloNombre( uValue ) )
 
 METHOD stampArticuloUnidaMedicionVentas()
 
-   local cUnidadMedicion   := UnidadesMedicionGruposLineasRepository():getCodigoDefault( ::getRowSet():fieldGet( 'articulo_codigo' ) )
+   local cUnidadMedicion   := SQLUnidadesMedicionOperacionesModel():getUnidadVentaWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
    if !empty( cUnidadMedicion )
       ::updateField( "unidad_medicion_codigo", cUnidadMedicion )
+      RETURN ( nil )
+   end if 
+
+   cUnidadMedicion         := SQLUnidadesMedicionOperacionesModel():getUnidadDefectoWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) )
+
+   if !empty( cUnidadMedicion )
+      ::updateField( "unidad_medicion_codigo", cUnidadMedicion )
+      RETURN ( nil )
+   end if 
+
+   cUnidadMedicion         := SQLUnidadesMedicionOperacionesModel():getUnidad()
+
+   if !empty( cUnidadMedicion )
+      ::updateField( "unidad_medicion_codigo", cUnidadMedicion )
+      RETURN ( nil )
    end if 
 
 RETURN ( nil )
