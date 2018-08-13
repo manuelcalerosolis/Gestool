@@ -166,6 +166,8 @@ METHOD End()
 
    ::oUnidadesMedicionController:End()
 
+   ::oFacturasClientesDescuentosLineasController:End()
+
    ::oHistoryManager:End()
 
    ::Super:End()

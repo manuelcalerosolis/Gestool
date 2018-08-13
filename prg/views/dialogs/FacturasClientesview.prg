@@ -141,7 +141,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    oBtnDelete:bAction   := {|| ::oController:oLineasController:Delete() }
 
-   ::oController:oLineasController:Activate( 600, ::oFolder:aDialogs[1] )   
+   ::oController:oLineasController:Activate( 600, ::oFolder:aDialogs[1] )
+
+   ::oController:oFacturasClientesDescuentosLineasController:Activate( 700, ::oFolder:aDialogs[1] )   
 
    // Botones generales--------------------------------------------------------
 

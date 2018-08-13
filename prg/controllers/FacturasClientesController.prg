@@ -27,6 +27,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oClientesTarifasController
 
+   DATA oFacturasClientesDescuentosLineasController
+
    DATA oLineasController
 
    METHOD New()
@@ -48,54 +50,57 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::Super:New( oController )
 
-   ::cTitle                      := "Facturas de clientes"
+   ::cTitle                                              := "Facturas de clientes"
 
-   ::cName                       := "facturas_clientes"
+   ::cName                                               := "facturas_clientes"
    
-   ::lTransactional              := .t.
+   ::lTransactional                                      := .t.
 
-   ::hImage                      := {  "16" => "gc_document_text_user_16",;
-                                       "32" => "gc_document_text_user_32",;
-                                       "48" => "gc_document_text_user_48" }
+   ::hImage                                              := {  "16" => "gc_document_text_user_16",;
+                                                               "32" => "gc_document_text_user_32",;
+                                                               "48" => "gc_document_text_user_48" }
 
-   ::oModel                      := SQLFacturasClientesModel():New( self )
+   ::oModel                                              := SQLFacturasClientesModel():New( self )
 
-   ::oContadoresModel            := SQLContadoresModel():New( self )
+   ::oContadoresModel                                    := SQLContadoresModel():New( self )
 
-   ::oDialogView                 := FacturasClientesView():New( self )
+   ::oDialogView                                         := FacturasClientesView():New( self )
 
-   ::oValidator                  := FacturasClientesValidator():New( self, ::oDialogView )
+   ::oValidator                                          := FacturasClientesValidator():New( self, ::oDialogView )
 
-   ::oBrowseView                 := FacturasClientesBrowseView():New( self )
+   ::oBrowseView                                         := FacturasClientesBrowseView():New( self )
 
-   ::oRepository                 := FacturasClientesRepository():New( self )
+   ::oRepository                                         := FacturasClientesRepository():New( self )
 
-   ::oClientesController         := ClientesController():New( self )
+   ::oClientesController                                 := ClientesController():New( self )
 
-   ::oArticulosController        := ArticulosController():New( self )
+   ::oArticulosController                                := ArticulosController():New( self )
 
-   ::oArticulosTarifasController := ArticulosTarifasController():New( self )
+   ::oArticulosTarifasController                         := ArticulosTarifasController():New( self )
    ::oArticulosTarifasController:setView( ::oDialogView )
 
-   ::oNumeroDocumentoComponent   := NumeroDocumentoComponent():New( self )
+   ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
 
-   ::oSerieDocumentoComponent    := SerieDocumentoComponent():New( self )
+   ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
 
-   ::oFormasPagoController       := FormasPagosController():New( self )   
+   ::oFormasPagoController                               := FormasPagosController():New( self )   
    ::oFormasPagoController:setView( ::oDialogView )
 
-   ::oRutasController            := RutasController():New( self )
+   ::oRutasController                                    := RutasController():New( self )
    ::oRutasController:setView( ::oDialogView )
 
-   ::oAgentesController          := AgentesController():New( self )
+   ::oAgentesController                                  := AgentesController():New( self )
    ::oAgentesController:setView( ::oDialogView )
 
-   ::oAlmacenesController        := AlmacenesController():New( self )
+   ::oAlmacenesController                                := AlmacenesController():New( self )
    ::oAlmacenesController:setView( ::oDialogView )
 
-   ::oClientesTarifasController  := ClientesTarifasController():New( self )
+   ::oClientesTarifasController                          := ClientesTarifasController():New( self )
 
-   ::oLineasController           := FacturasClientesLineasController():New( self )
+   ::oLineasController                                   := FacturasClientesLineasController():New( self )
+   
+   ::oFacturasClientesDescuentosLineasController         := FacturasClientesDescuentosLineasController():New( self )
+
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -126,6 +131,8 @@ METHOD End() CLASS FacturasClientesController
    ::oArticulosTarifasController:End()
 
    ::oClientesTarifasController:End()
+
+   ::oFacturasClientesDescuentosLineasController:End()
 
    ::oLineasController:End()
 
