@@ -361,15 +361,17 @@ METHOD InsertWhereCliente( UuidCliente ) CLASS SQLFacturasClientesDescuentosLine
 
    TEXT INTO cSql
 
-   INSERT INTO %1$s (nombre, descuento)
+   INSERT IGNORE INTO %1$s (uuid, parent_uuid, nombre, descuento)
 
-   SELECT descuentos.nombre,
+   SELECT %3$s,
+          %4$s
+          descuentos.nombre,
           descuentos.descuento
    FROM %2$s AS descuentos
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(),quoted( win_uuidcreatestring() ),::getSenderControllerParentUuid()  )
 
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 

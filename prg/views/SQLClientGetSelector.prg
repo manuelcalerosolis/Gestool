@@ -194,6 +194,8 @@ METHOD setHelpText( value )
 
    if( !empty( ::oGetTarifa ),         ::oGetTarifa:cText( value[ "tarifa_codigo" ] ), ) 
 
+   SQLFacturasClientesDescuentosLineasModel():InsertWhereCliente( "d665bccc-2bd3-4d26-b0a5-a0fb64c86783" )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
