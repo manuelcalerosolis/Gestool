@@ -215,7 +215,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() );
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;

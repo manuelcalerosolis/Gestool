@@ -142,7 +142,7 @@ CLASS UnidadesMedicionOperacionesView FROM SQLBaseView
 
    METHOD Activate()
 
-   METHOD Activating()     INLINE ( ::hUnidades := ::oController:oModel:getUnidadesWhereGrupo( ::oController:oSenderController:getRowSet():fieldGet( 'unidades_medicion_grupos_codigo' ) ) )
+   METHOD Activating()     INLINE ( ::hUnidades := ::oController:oModel:getUnidadesWhereGrupo( ::oController:oSenderController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) ) ) 
 
 END CLASS
 
@@ -252,7 +252,9 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
 
    METHOD getUnidadVentaWhereArticulo( cCodigoArticulo )
 
-   METHOD getUnidad()                             
+   METHOD getUnidad() 
+
+   METHOD getNumeroOperacionesWhereArticulo( cCodigoArticulo )                            
 
    METHOD getColumns()
 
@@ -305,6 +307,7 @@ METHOD sqlUnidadesWhereGrupo( cCodigoGrupo ) CLASS SQLUnidadesMedicionOperacione
          unidades_medicion_grupos.codigo = %4$s 
 
    ENDTEXT
+
 
    cSql  := hb_strformat( cSql, SQLUnidadesMedicionGruposModel():getTableName(), SQLUnidadesMedicionGruposLineasModel():getTableName(),SQLUnidadesMedicionModel():getTableName() , quoted( cCodigoGrupo ) ) 
 
@@ -404,6 +407,29 @@ METHOD getUnidad() CLASS SQLUnidadesMedicionOperacionesModel
 RETURN( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD getNumeroOperacionesWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionOperacionesModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT 
+         COUNT(*) 
+
+      FROM %1$s AS unidades_medicion_operacion
+
+      INNER JOIN %2$s AS articulos
+         ON unidades_medicion_operacion.parent_uuid = articulos.uuid AND articulos.codigo = %3$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
+
+   logwrite(cSql)
+
+RETURN ( getSQLDatabase():getValue( cSql ) )
+   
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

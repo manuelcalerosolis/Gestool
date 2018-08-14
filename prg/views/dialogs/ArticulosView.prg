@@ -33,7 +33,7 @@ CLASS ArticulosView FROM SQLBaseView
 
    METHOD changeLote()           INLINE ( iif( ::oController:oModel:hBuffer[ "lote" ], ::oGetLoteActual:Show(), ::oGetLoteActual:Hide() ) )
 
-   METHOD changeNombre()         INLINE ( ::oMessage:setText( "Artículo : " + alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) ) )
+   METHOD changeNombre()         INLINE ( ::oMessage:setText( "Artículo : " + alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) ) ) 
 
 END CLASS
 
@@ -123,9 +123,12 @@ METHOD Activate() CLASS ArticulosView
    ::oController:oImpuestosEspecialesController:oGetSelector:Activate( 170, 171, ::oFolder:aDialogs[ 1 ] )
 
    // Unidades de medicion grupo-----------------------------------------------
-
-   ::oController:oUnidadesMedicionGruposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidades_medicion_grupos_codigo" ] ) )
-   ::oController:oUnidadesMedicionGruposController:oGetSelector:Activate( 230, 231, ::oFolder:aDialogs[ 1 ] )
+   
+   with object ( ::oController:oUnidadesMedicionGruposController:oGetSelector )
+      :Bind( bSETGET( ::oController:oModel:hBuffer[ "unidades_medicion_grupos_codigo" ] ) )
+      :Activate( 230, 231, ::oFolder:aDialogs[ 1 ] )
+      :setWhen( {|| ::oController:isNotZoomMode() .and. SQLUnidadesMedicionOperacionesModel():getNumeroOperacionesWhereArticulo( ::oController:getModelBuffer( "codigo" ) ) == 0 } )
+   end with
 
    // Temporadas---------------------------------------------------------------
 
@@ -295,6 +298,7 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
                      ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
 RETURN ( nil )
+
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
