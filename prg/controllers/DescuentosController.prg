@@ -364,7 +364,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLDescuentosModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "descuentos"
+   DATA cTableName               INIT "clientes_descuentos"
 
    METHOD getColumns()
 

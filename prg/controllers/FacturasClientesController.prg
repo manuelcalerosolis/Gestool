@@ -42,6 +42,10 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    METHOD clientesCleanedHelpText()    INLINE ( ::oArticulosTarifasController:oGetSelector:cText( space( 20 ) ),;
                                                 ::oArticulosTarifasController:oGetSelector:lValid() )
 
+   METHOD clientSetTarifa()
+
+   METHOD clientSetDescuentos()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -101,7 +105,6 @@ METHOD New( oController ) CLASS FacturasClientesController
    
    ::oFacturasClientesDescuentosLineasController         := FacturasClientesDescuentosLineasController():New( self )
 
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
@@ -142,7 +145,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() 
+METHOD loadedBlankBuffer() CLASS FacturasClientesController
 
    hset( ::oModel:hBuffer, "serie",    ::oContadoresModel:getDocumentSerie( ::cName ) )
    
@@ -152,7 +155,17 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientesSettedHelpText()
+METHOD clientesSettedHelpText() CLASS FacturasClientesController
+
+   ::clientSetTarifa()
+
+   ::clientSetDescuentos()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD clientSetTarifa() CLASS FacturasClientesController
 
    local cCodigoTarifa
 
@@ -167,11 +180,21 @@ METHOD clientesSettedHelpText()
    end if
 
    ::oArticulosTarifasController:oGetSelector:cText( cCodigoTarifa )
+   
    ::oArticulosTarifasController:oGetSelector:lValid()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD clientSetDescuentos() CLASS FacturasClientesController
+
+   SQLFacturasClientesDescuentosLineasModel():insertDescuentosWhereClienteUuid()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

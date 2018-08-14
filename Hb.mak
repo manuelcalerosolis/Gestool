@@ -721,7 +721,7 @@ SqlFacturasClientesModel.prg 												\
 SqlFacturasClientesLineasModel.prg										\
 FacturasClientesController.prg 											\
 FacturasClientesLineasController.prg									\
-FacturasClientesDescuentosLineasController.prg						\
+FacturasClientesDescuentosController.prg								\
 FacturasClientesLineasBrowse.prg											\
 FacturasClientesLineasView.prg											\
 FacturasClientesView.prg 													\
@@ -1423,7 +1423,7 @@ SQLFacturasClientesModel.obj 												\
 SQLFacturasClientesLineasModel.obj 										\
 FacturasClientesController.obj 											\
 FacturasClientesLineasController.obj 									\
-FacturasClientesDescuentosLineasController.obj 						\
+FacturasClientesDescuentosController.obj 								\
 FacturasClientesLineasBrowse.obj 										\
 FacturasClientesLineasView.obj 											\
 FacturasClientesView.obj 													\
@@ -2114,7 +2114,7 @@ $(OBJ)\SqlFacturasClientesModel.obj 				    				+
 $(OBJ)\SqlFacturasClientesLineasModel.obj 	    					+
 $(OBJ)\FacturasClientesController.obj 									+
 $(OBJ)\FacturasClientesLineasController.obj 							+
-$(OBJ)\FacturasClientesDescuentosLineasController.obj 			+
+$(OBJ)\FacturasClientesDescuentosController.obj 					+
 $(OBJ)\FacturasClientesLineasBrowse.obj 								+
 $(OBJ)\FacturasClientesLineasView.obj 									+
 $(OBJ)\FacturasClientesView.obj 											+

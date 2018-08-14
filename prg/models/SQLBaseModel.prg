@@ -1517,10 +1517,15 @@ RETURN ( aColumns )
 
 METHOD getSenderControllerParentUuid() 
 
+   msgalert( "en SQLBaseModel" )  
+   msgalert( ::oController:Classname() ) 
+
    if empty( ::oController )
       RETURN ( space( 40 ) )
    end if
 
+   msgalert( ::oController:getSenderController():Classname() ) 
+   
    if empty( ::oController:getSenderController() )
       RETURN ( space( 40 ) )
    end if

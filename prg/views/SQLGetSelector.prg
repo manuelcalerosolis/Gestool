@@ -61,6 +61,8 @@ CLASS GetSelector
    METHOD Show()                                INLINE ( if( !empty( ::oGet ), ::oGet:Show(), ) )
    METHOD lValid()                              INLINE ( if( !empty( ::oGet ), ::oGet:lValid(), ) )
    METHOD setFocus()                            INLINE ( if( !empty( ::oGet ), ::oGet:setFocus(), ) )
+   METHOD Refresh()                             INLINE ( if( !empty( ::oGet ), ::oGet:Refresh(), ) )
+   METHOD evalWhen()                            INLINE ( if( !empty( ::oGet ) .and. !empty( ::bWhen ), ( if( eval( ::bWhen ), ::oGet:Enable(), ::oGet:Disable() ) ), ) )
 
    // Events-------------------------------------------------------------------
 

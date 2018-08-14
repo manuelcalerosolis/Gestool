@@ -3,20 +3,9 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesDescuentosLineasController FROM SQLNavigatorController
+CLASS FacturasClientesDescuentosController FROM SQLNavigatorController
 
    METHOD New()
-
-   /*METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
-   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
-
-   METHOD loadedCurrentBuffer( uuidEntidad ) 
-   METHOD updateBuffer( uuidEntidad )
-
-   METHOD loadedDuplicateCurrentBuffer( uuidEntidad )
-   METHOD loadedDuplicateBuffer( uuidEntidad )
-
-   METHOD deleteBuffer( aUuidEntidades )*/
 
    METHOD End()
 
@@ -24,42 +13,36 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS FacturasClientesDescuentosLineasController
+METHOD New( oSenderController ) CLASS FacturasClientesDescuentosController
 
    ::Super:New( oSenderController )
 
    ::cTitle                      := "DescuentosLineas"
 
-   ::cName                       := "facturas_clientes_descuentos_lineas"
+   ::cName                       := "facturas_clientes_descuentos"
 
    ::hImage                      := {  "16" => "gc_symbol_percent_16",;
                                        "32" => "gc_symbol_percent_32",;
                                        "48" => "gc_symbol_percent_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::oModel                         := SQLFacturasClientesDescuentosModel():New( self )
 
-   ::oModel                         := SQLFacturasClientesDescuentosLineasModel():New( self )
+   ::oBrowseView                    := FacturasClientesDescuentosBrowseView():New( self )
 
-   ::oBrowseView                    := FacturasClientesDescuentosLineasBrowseView():New( self )
+   ::oDialogView                    := FacturasClientesDescuentosView():New( self )
 
-   ::oDialogView                    := FacturasClientesDescuentosLineasView():New( self )
+   ::oValidator                     := FacturasClientesDescuentosValidator():New( self, ::oDialogView )
 
-   ::oValidator                     := FacturasClientesDescuentosLineasValidator():New( self, ::oDialogView )
+   ::oRepository                    := FacturasClientesDescuentosRepository():New( self )
 
-   ::oRepository                    := FacturasClientesDescuentosLineasRepository():New( self )
-
-   /*::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
-
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )*/
-
+   msgalert( ::oSenderController:className(), "parent" )
+   msgalert( ::oModel:getSenderControllerParentUuid(), "getSenderControllerParentUuid" )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS FacturasClientesDescuentosLineasController
+METHOD End() CLASS FacturasClientesDescuentosController
 
    ::oModel:End()
 
@@ -77,87 +60,11 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-
-/*METHOD LoadedCurrentBuffer( uuiddescuento ) CLASS DescuentosController
-
-   local idDescuento     
-
-   if empty( uuiddescuento )
-      ::oModel:insertBuffer()
-   end if 
-
-   idDescuento          := ::oModel:getIdWhereParentUuid( uuiddescuento )
-   if empty( idDescuento )
-      idDescuento       := ::oModel:insertBlankBuffer()
-   end if 
-
-   ::oModel:loadCurrentBuffer( idDescuento )
-
-RETURN ( self )
-*/
-//---------------------------------------------------------------------------//
-
-/*METHOD UpdateBuffer( uuidDescuento ) CLASS DescuentosController
-
-   local idDescuento     
-
-   idDescuento          := ::oModel:getIdWhereParentUuid( uuidDescuento )
-   if empty( idDescuento )
-      ::oModel:insertBuffer()
-      RETURN ( self )
-   end if 
-
-   ::oModel:updateBuffer()
-
-RETURN ( self )
-*/
-//---------------------------------------------------------------------------//
-/*
-METHOD loadedDuplicateCurrentBuffer( uuidDescuento ) CLASS DescuentosController
-
-   local idDescuento     
-
-   idDescuento          := ::oModel:getIdWhereParentUuid( uuidDescuento )
-   if empty( idDescuento )
-      ::oModel:insertBuffer()
-      RETURN ( self )
-   end if 
-
-   ::oModel:loadDuplicateBuffer( idDescuento )
-
-RETURN ( self )
-*/
-//---------------------------------------------------------------------------//
-/*
-METHOD loadedDuplicateBuffer( uuidDescuento ) CLASS DescuentosController
-
-   hset( ::oModel:hBuffer, "parent_uuid", uuidDescuento )
-
-RETURN ( self )
-*/
-//---------------------------------------------------------------------------//
-/*
-METHOD deleteBuffer( aUuidEntidades ) CLASS DescuentosController
-
-   if empty( aUuidEntidades )
-      RETURN ( self )
-   end if
-
-   ::oModel:deleteWhereParentUuid( aUuidEntidades )
-
-RETURN ( self )
-*/
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesDescuentosLineasBrowseView FROM SQLBrowseView
+CLASS FacturasClientesDescuentosBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -165,7 +72,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS FacturasClientesDescuentosLineasBrowseView
+METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -208,9 +115,8 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
-CLASS FacturasClientesDescuentosLineasView FROM SQLBaseView
+CLASS FacturasClientesDescuentosView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -218,10 +124,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS FacturasClientesDescuentosLineasView
-
-   local oDialog
-   local oBmpGeneral
+METHOD Activate() CLASS FacturasClientesDescuentosView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "DESCUENTOS" ;
@@ -280,7 +183,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesDescuentosLineasValidator FROM SQLBaseValidator
+CLASS FacturasClientesDescuentosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -288,7 +191,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS FacturasClientesDescuentosLineasValidator
+METHOD getValidators() CLASS FacturasClientesDescuentosValidator
 
    ::hValidators  := {  "descuento" =>           {  "required"              => "El porcentaje de descuento es un dato requerido" } }
 
@@ -303,13 +206,15 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLFacturasClientesDescuentosLineasModel FROM SQLCompanyModel
+CLASS SQLFacturasClientesDescuentosModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "facturas_clientes_descuentos_lineas"
+   METHOD New( oSenderController )
+
+   DATA cTableName               INIT "facturas_clientes_descuentos"
 
    METHOD getColumns()
 
-   METHOD InsertWhereCliente( UuidCliente ) 
+   METHOD insertDescuentosWhereClienteUuid( uuidCliente ) 
 
    /*METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
@@ -319,7 +224,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLFacturasClientesDescuentosLineasModel
+METHOD New( oSenderController )
+
+   msgalert( oSenderController:className(), "SQLFacturasClientesDescuentosModel" )
+
+RETURN ( ::Super():New( oSenderController ) )
+
+METHOD getColumns() CLASS SQLFacturasClientesDescuentosModel
 
    hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                                    "default"   => {|| 0 } }                                 )
@@ -329,7 +240,6 @@ METHOD getColumns() CLASS SQLFacturasClientesDescuentosLineasModel
 
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                    "default"   => {|| ::getSenderControllerParentUuid() } } )
-
 
    hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
                                                    "default"   => {|| space( 200 ) } }                      )
@@ -356,22 +266,29 @@ RETURN ( ::oController:oSenderController:getUuid() )*/
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertWhereCliente( UuidCliente ) CLASS SQLFacturasClientesDescuentosLineasModel
+METHOD insertDescuentosWhereClienteUuid( uuidCliente ) CLASS SQLFacturasClientesDescuentosModel
+
    local cSql
 
    TEXT INTO cSql
 
-   INSERT IGNORE INTO %1$s (uuid, parent_uuid, nombre, descuento)
+      INSERT IGNORE 
+         INTO %1$s (uuid, parent_uuid, nombre, descuento)
 
-   SELECT %3$s,
-          %4$s
-          descuentos.nombre,
-          descuentos.descuento
-   FROM %2$s AS descuentos
+      SELECT 
+         UUID(), %3$s, descuentos.nombre, descuentos.descuento
+
+      FROM %2$s AS descuentos
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(),quoted( win_uuidcreatestring() ),::getSenderControllerParentUuid()  )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), ::getSenderControllerParentUuid() )
+
+
+
+   msgalert( ::getSenderControllerParentUuid(), "" )
+   msgalert( cSql )
+   logwrite( cSql )
 
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
@@ -380,9 +297,9 @@ RETURN ( getSQLDatabase():Exec ( cSql ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesDescuentosLineasRepository FROM SQLBaseRepository
+CLASS FacturasClientesDescuentosRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLFacturasClientesDescuentosLineasModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLFacturasClientesDescuentosModel():getTableName() ) 
 
 END CLASS
 

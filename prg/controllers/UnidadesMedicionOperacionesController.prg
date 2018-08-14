@@ -426,8 +426,6 @@ METHOD getNumeroOperacionesWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMed
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
 
-   logwrite(cSql)
-
 RETURN ( getSQLDatabase():getValue( cSql ) )
    
 //---------------------------------------------------------------------------//

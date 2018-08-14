@@ -123,7 +123,7 @@ METHOD Activate() CLASS ArticulosView
    ::oController:oImpuestosEspecialesController:oGetSelector:Activate( 170, 171, ::oFolder:aDialogs[ 1 ] )
 
    // Unidades de medicion grupo-----------------------------------------------
-   
+
    with object ( ::oController:oUnidadesMedicionGruposController:oGetSelector )
       :Bind( bSETGET( ::oController:oModel:hBuffer[ "unidades_medicion_grupos_codigo" ] ) )
       :Activate( 230, 231, ::oFolder:aDialogs[ 1 ] )
@@ -288,7 +288,8 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
                      ::oController:oTraduccionesController:getImage( "16" ) )
 
    oPanel:AddLink(   "Unidad por operación...",;
-                     {|| ::oController:ounidadesmedicionoperacionesController:activateDialogView() },;
+                     {||   ::oController:oUnidadesMedicionOperacionesController:activateDialogView(),;
+                           ::oController:oUnidadesMedicionGruposController:oGetSelector:evalWhen() },;
                      ::oController:ounidadesmedicionoperacionesController:getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
