@@ -431,6 +431,8 @@ CLASS UnidadesMedicionGruposLineasRepository FROM SQLBaseRepository
 
    METHOD getFactorWhereUnidadGrupoSistema( cCodigoUnidad )
 
+   METHOD getUnidadDefectoWhereArticulo( cCodigoArticulo )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -498,7 +500,7 @@ RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereGrupoSiste
 
 METHOD getWhereEmpresa() CLASS UnidadesMedicionGruposLineasRepository
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereEmpresa() ) )
+RETURN ( ::getDatabase():getValue( ::getSentenceWhereEmpresa() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -643,6 +645,35 @@ METHOD getFactorWhereUnidadGrupoSistema( cCodigoUnidad ) CLASS UnidadesMedicionG
                         "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )   
 
 RETURN ( ::getDatabase():getValue( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUnidadDefectoWhereArticulo( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      unidades_medicion_grupos_lineas.unidad_alternativa_codigo
+
+      FROM %1$s AS unidades_medicion_grupos_lineas
+
+      INNER JOIN %2$s AS unidades_medicion_grupos
+         ON unidades_medicion_grupos_lineas.parent_uuid = unidades_medicion_grupos.uuid 
+
+      INNER JOIN %3$s AS articulos
+         ON articulos.unidades_medicion_grupos_codigo = unidades_medicion_grupos.codigo AND articulos.codigo = %4$s
+
+      ORDER BY unidades_medicion_grupos_lineas.cantidad_base ASC
+      
+      LIMIT 1      
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLUnidadesMedicionGruposModel():getTableName(), SQLArticulosModel():getTableName(), cCodigoArticulo )
+
+RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

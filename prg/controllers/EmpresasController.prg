@@ -157,7 +157,7 @@ METHOD loadConfig()
 
    ::cDelegacionDefecto          := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionDefecto )
 
-   ::aUnidades                   := SQLUnidadesMedicionGruposModel():getNombres()
+   ::aUnidades                   := SQLUnidadesMedicionGruposModel():getNombresWithBlank()
 
    ::cCodigoUnidaesDefecto       := ::oAjustableController:oModel:getEmpresaUnidadesGrupoDefecto( ::cUuidEmpresa )
 
@@ -199,11 +199,11 @@ METHOD startingActivate()
 
    oPanel:AddCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
    
-   oPanel:addComboBox( "Delegación defecto", @::cDelegacionDefecto, ::aDelegaciones )
+   oPanel:addComboBox( "Delegación", @::cDelegacionDefecto, ::aDelegaciones )
 
-   oPanel:addComboBox( "Unidades defecto", @::cUnidadesDefecto, ::aUnidades )
+   oPanel:addComboBox( "Grupos unidades", @::cUnidadesDefecto, ::aUnidades )
 
-   oPanel:addComboBox( "Tarifa defecto", @::cTarifaDefecto, ::aTarifas )
+   oPanel:addComboBox( "Tarifa", @::cTarifaDefecto, ::aTarifas )
 
 RETURN ( self )
 

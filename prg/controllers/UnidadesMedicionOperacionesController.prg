@@ -252,8 +252,6 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
 
    METHOD getUnidadVentaWhereArticulo( cCodigoArticulo )
 
-   METHOD getUnidadDefectoWhereArticulo( cCodigoArticulo )
-
    METHOD getUnidad()                             
 
    METHOD getColumns()
@@ -355,68 +353,34 @@ METHOD getInitialSelect() CLASS SQLUnidadesMedicionOperacionesModel
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
 
 METHOD getUnidadVentaWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionOperacionesModel
    
    local cSQL
-   local Unidad
+   local cUnidad
 
    TEXT INTO cSql
 
    SELECT 
-         unidades_medicion.codigo
+      unidades_medicion.codigo
 
-   FROM  %1$s AS unidades_medicion_operacion
+      FROM  %1$s AS unidades_medicion_operacion
 
-INNER JOIN %2$s AS articulos
- ON articulos.uuid = unidades_medicion_operacion.parent_uuid AND articulos.codigo= %4$s 
+      INNER JOIN %2$s AS articulos
+         ON articulos.uuid = unidades_medicion_operacion.parent_uuid AND articulos.codigo= %4$s 
  
-INNER JOIN %3$s AS unidades_medicion
-   ON unidades_medicion.uuid = unidades_medicion_operacion.uuid_unidad
+      INNER JOIN %3$s AS unidades_medicion
+         ON unidades_medicion.uuid = unidades_medicion_operacion.uuid_unidad
 
-WHERE unidades_medicion_operacion.operacion = "Venta"
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), SQLUnidadesMedicionModel():getTableName() , cCodigoArticulo  )
-
-   Unidad := getSQLDatabase():getValue ( cSql )
-
-
-RETURN ( Unidad )
-
-//---------------------------------------------------------------------------//
-
-METHOD getUnidadDefectoWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionOperacionesModel
-
-   local cSql
-
-   TEXT INTO cSql
-
-   SELECT unidades_medicion.codigo 
-
-   FROM %1$s AS unidades_medicion_grupos_lineas
-
-   INNER JOIN %2$s AS unidades_medicion
-      ON unidades_medicion_grupos_lineas.unidad_alternativa_codigo =unidades_medicion.codigo
-
-   INNER JOIN %3$s AS unidades_medicion_grupos
-      ON unidades_medicion_grupos_lineas.parent_uuid = unidades_medicion_grupos.uuid AND unidades_medicion_grupos_lineas.sistema= 1
-
-   INNER JOIN %4$s AS articulos
-      ON articulos.unidades_medicion_grupos_codigo = unidades_medicion_grupos.codigo AND articulos.codigo = %5$s
+      WHERE unidades_medicion_operacion.operacion = "Venta"
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, SQLUnidadesMedicionGruposLineasModel():getTableName(), SQLUnidadesMedicionModel():getTableName(), SQLUnidadesMedicionGruposModel():getTableName(), SQLArticulosModel():getTableName(), cCodigoArticulo  )
+   cSql        := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), SQLUnidadesMedicionModel():getTableName(), cCodigoArticulo )
 
-RETURN ( getSQLDatabase():getValue( cSql ) )
+   cUnidad     := getSQLDatabase():getValue ( cSql )
+
+RETURN ( cUnidad )
 
 //---------------------------------------------------------------------------//
 
@@ -426,11 +390,12 @@ METHOD getUnidad() CLASS SQLUnidadesMedicionOperacionesModel
 
    TEXT INTO cSql
 
-   select unidades_medicion.codigo
+      SELECT 
+         unidades_medicion.codigo
 
-   FROM %1$s AS unidades_medicion
+      FROM %1$s AS unidades_medicion
 
-   WHERE unidades_medicion.sistema = 1
+         WHERE unidades_medicion.sistema = 1
 
    ENDTEXT
 

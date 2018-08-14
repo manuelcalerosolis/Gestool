@@ -253,6 +253,8 @@ CLASS SQLUnidadesMedicionModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getUnidadMedicionSistema()
+
    METHOD getInsertUnidadesMedicionSentence()
 
 END CLASS
@@ -296,6 +298,26 @@ METHOD getInsertUnidadesMedicionSentence() CLASS SQLUnidadesMedicionModel
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
+
+METHOD getUnidadMedicionSistema() CLASS SQLUnidadesMedicionModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT 
+         unidades_medicion.codigo
+
+      FROM %1$s AS unidades_medicion
+
+         WHERE unidades_medicion.sistema = 1
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName() )
+
+RETURN ( getSQLDatabase():getValue( cSql ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

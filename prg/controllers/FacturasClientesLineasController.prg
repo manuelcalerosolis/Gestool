@@ -166,7 +166,7 @@ METHOD End()
 
    ::oUnidadesMedicionController:End()
 
-   ::oFacturasClientesDescuentosLineasController:End()
+   // ::oFacturasClientesDescuentosLineasController:End()
 
    ::oHistoryManager:End()
 
@@ -242,6 +242,8 @@ RETURN ( nil )
 
 METHOD stampArticulo( hArticulo )
 
+   cursorWait()
+
    ::stampArticuloCodigo( hget( hArticulo, "codigo" ) )
 
    ::stampArticuloNombre( hget( hArticulo, "nombre" ) )
@@ -252,22 +254,7 @@ METHOD stampArticulo( hArticulo )
 
    ::stampArticuloDescuento()
 
-   /*
-   hset( hBuffer, "articulo_codigo",         hget( hArticulo, "codigo" ) )
-
-   hset( hBuffer, "unidad_medicion_codigo",  cUnidadMedicion )
-   
-   hset( hBuffer, "articulo_precio",         nPrecioBase )
-
-   hset( hBuffer, "descuento",               nDescuento )
-
-   ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
-
-   ::stampArticuloUnidaMedicionVentas()
-
-   ::stampArticuloPrecio()
-
-   ::stampArticuloDescuento()*/
+   cursorWE()
    
 RETURN ( .t. )
 
@@ -289,25 +276,38 @@ RETURN ( ::stampArticuloNombre( uValue ) )
 
 METHOD stampArticuloUnidaMedicionVentas()
 
-   local cUnidadMedicion   := SQLUnidadesMedicionOperacionesModel():getUnidadVentaWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
+   local cUnidadMedicion   
+
+   // Unidad de medición para ventas de este articulo--------------------------
+
+   cUnidadMedicion         := SQLUnidadesMedicionOperacionesModel():getUnidadVentaWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
    if !empty( cUnidadMedicion )
-      ::updateField( "unidad_medicion_codigo", cUnidadMedicion )
-      RETURN ( nil )
+      RETURN ( ::updateField( "unidad_medicion_codigo", cUnidadMedicion ) )
    end if 
 
-   cUnidadMedicion         := SQLUnidadesMedicionOperacionesModel():getUnidadDefectoWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) )
+   // Unidad de medición menor para este articulo de su grupo de unidades -----
+
+   cUnidadMedicion         := UnidadesMedicionGruposLineasRepository():getUnidadDefectoWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
    if !empty( cUnidadMedicion )
-      ::updateField( "unidad_medicion_codigo", cUnidadMedicion )
-      RETURN ( nil )
+      RETURN ( ::updateField( "unidad_medicion_codigo", cUnidadMedicion ) )
    end if 
 
-   cUnidadMedicion         := SQLUnidadesMedicionOperacionesModel():getUnidad()
+   // Unidad de medición menor en el grupo de la empresa-----------------------
+
+   cUnidadMedicion         := UnidadesMedicionGruposLineasRepository():getWhereEmpresa()
 
    if !empty( cUnidadMedicion )
-      ::updateField( "unidad_medicion_codigo", cUnidadMedicion )
-      RETURN ( nil )
+      RETURN ( ::updateField( "unidad_medicion_codigo", cUnidadMedicion ) )
+   end if 
+
+   // Unidad de medición del sistema-------------------------------------------
+
+   cUnidadMedicion         := SQLUnidadesMedicionModel():getUnidadMedicionSistema()
+
+   if !empty( cUnidadMedicion )
+      RETURN ( ::updateField( "unidad_medicion_codigo", cUnidadMedicion ) )
    end if 
 
 RETURN ( nil )
