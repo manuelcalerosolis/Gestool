@@ -25,15 +25,15 @@ METHOD New( oSenderController ) CLASS FacturasClientesDescuentosController
                                        "32" => "gc_symbol_percent_32",;
                                        "48" => "gc_symbol_percent_48" }
 
-   ::oModel                         := SQLFacturasClientesDescuentosModel():New( self )
+   ::oModel                      := SQLFacturasClientesDescuentosModel():New( self )
 
-   ::oBrowseView                    := FacturasClientesDescuentosBrowseView():New( self )
+   ::oBrowseView                 := FacturasClientesDescuentosBrowseView():New( self )
 
-   ::oDialogView                    := FacturasClientesDescuentosView():New( self )
+   ::oDialogView                 := FacturasClientesDescuentosView():New( self )
 
-   ::oValidator                     := FacturasClientesDescuentosValidator():New( self, ::oDialogView )
+   ::oValidator                  := FacturasClientesDescuentosValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := FacturasClientesDescuentosRepository():New( self )
+   ::oRepository                 := FacturasClientesDescuentosRepository():New( self )
 
    msgalert( ::oSenderController:className(), "parent" )
    msgalert( ::oModel:getSenderControllerParentUuid(), "getSenderControllerParentUuid" )

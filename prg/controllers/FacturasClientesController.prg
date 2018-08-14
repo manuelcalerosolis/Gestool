@@ -27,7 +27,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oClientesTarifasController
 
-   DATA oFacturasClientesDescuentosLineasController
+   DATA oFacturasClientesDescuentosController
 
    DATA oLineasController
 
@@ -103,7 +103,7 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oLineasController                                   := FacturasClientesLineasController():New( self )
    
-   ::oFacturasClientesDescuentosLineasController         := FacturasClientesDescuentosLineasController():New( self )
+   ::oFacturasClientesDescuentosController               := FacturasClientesDescuentosController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -135,7 +135,7 @@ METHOD End() CLASS FacturasClientesController
 
    ::oClientesTarifasController:End()
 
-   ::oFacturasClientesDescuentosLineasController:End()
+   ::oFacturasClientesDescuentosController:End()
 
    ::oLineasController:End()
 
@@ -189,12 +189,11 @@ RETURN ( nil )
 
 METHOD clientSetDescuentos() CLASS FacturasClientesController
 
-   SQLFacturasClientesDescuentosLineasModel():insertDescuentosWhereClienteUuid()
+   SQLFacturasClientesDescuentosModel():insertDescuentosWhereClienteUuid()
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
