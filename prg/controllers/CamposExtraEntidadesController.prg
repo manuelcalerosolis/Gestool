@@ -193,7 +193,7 @@ METHOD UpdateLine( uValue ) CLASS CamposExtraEntidadesController
    end if 
 
    if ::oModel:isEntityWhereUuid( ::oSenderController:getUuid(), cEntidad ) 
-      msgalert( "El nombre de la entidad ya existe" )
+      msgStop( "El nombre de la entidad ya existe" )
       RETURN ( nil )
    end if 
 

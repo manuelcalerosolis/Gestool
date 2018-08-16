@@ -250,7 +250,7 @@ METHOD Activate() CLASS BalanzasView
       ID          210 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( msgalert("test") )
+      ACTION      ( msginfo("test") )
 
    REDEFINE BUTTON ;
       ID          220 ;

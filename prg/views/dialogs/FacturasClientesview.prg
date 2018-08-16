@@ -15,8 +15,6 @@ CLASS FacturasClientesView FROM SQLBaseView
 
    METHOD addLinksToExplorerBar()
 
-   METHOD isClientEmpty()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -31,17 +29,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD isClientEmpty() CLASS FacturasClientesView
-
-RETURN ( empty( ::oController:getModelBuffer( "cliente_codigo" ) ) )
-
-//---------------------------------------------------------------------------//
-
 METHOD Activate() CLASS FacturasClientesView
-
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TRANSACION_COMERCIAL" ;
@@ -120,28 +108,17 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Lineas ------------------------------------------------------------------
 
-   REDEFINE BUTTON oBtnAppend ;
-      ID          500 ;
-      OF          ::oFolder:aDialogs[1] ;
-      WHEN        ( !::isClientEmpty() ) ;
+   TBtnBmp():ReDefine( 500, "new16",,,,, {|| ::oController:oLineasController:Append() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir líneas" )
 
-   oBtnAppend:bAction   := {|| ::oController:oLineasController:Append() }
+   TBtnBmp():ReDefine( 501, "edit16",,,,, {|| ::oController:oLineasController:Edit() }, ::oFolder:aDialogs[1], .f., , .f., "Modificar líneas" )
 
-   REDEFINE BUTTON oBtnEdit ;
-      ID          501 ;
-      OF          ::oFolder:aDialogs[1] ;
-      WHEN        ( !::isClientEmpty() ) ;
+   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::oController:oLineasController:Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
 
-   oBtnEdit:bAction     := {|| ::oController:oLineasController:Edit() }
-
-   REDEFINE BUTTON oBtnDelete ;
-      ID          502 ;
-      OF          ::oFolder:aDialogs[1] ;
-      WHEN        ( !::isClientEmpty() ) ;
-
-   oBtnDelete:bAction   := {|| ::oController:oLineasController:Delete() }
+   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::oController:oLineasController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
 
    ::oController:oLineasController:Activate( 600, ::oFolder:aDialogs[1] )
+
+   // Descuentos---------------------------------------------------------------
 
    ::oController:oFacturasClientesDescuentosController:Activate( 700, ::oFolder:aDialogs[1] )   
 
@@ -161,9 +138,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) } )
-      ::oDialog:AddFastKey( VK_F2, {|| if( !::isClientEmpty(), ::oController:oLineasController:Append(), ) } )
-      ::oDialog:AddFastKey( VK_F3, {|| if( !::isClientEmpty(), ::oController:oLineasController:Edit(), ) } )
-      ::oDialog:AddFastKey( VK_F4, {|| if( !::isClientEmpty(), ::oController:oLineasController:Delete(), ) } )
+      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oLineasController:Append() } )
+      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oLineasController:Edit() } )
+      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oLineasController:Delete() } )
    end if
 
    ::oDialog:bStart := {|| ::startDialog() }

@@ -23280,16 +23280,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 253, "Edit", ES_RIGHT|WS_BORDER, 515, 83, 120, 12
   CONTROL "", 260, "Edit", WS_BORDER|WS_TABSTOP, 423, 57, 90, 12
   CONTROL "", 261, "Edit", WS_BORDER|WS_TABSTOP, 515, 57, 120, 12
-  CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 4, 125, 50, 14
-  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 58, 125, 50, 14
-  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 113, 125, 50, 14
-  CONTROL "&Zoom", 503, "Button", WS_TABSTOP, 168, 125, 50, 14
-  CONTROL "S&ubir", 524, "Button", WS_TABSTOP, 277, 125, 50, 14
-  CONTROL "&Bajar", 525, "Button", WS_TABSTOP, 332, 125, 50, 14
-  CONTROL "Ocultar Esc&ll.", 526, "Button", WS_TABSTOP, 387, 125, 50, 14
-  CONTROL "Importar tarifa", 527, "Button", WS_TABSTOP, 441, 125, 50, 14
-  CONTROL "Lector series", 528, "Button", WS_TABSTOP, 571, 125, 50, 14
-  CONTROL "", 600, "SQLXBrowse", WS_TABSTOP|0x00300000, 4, 141, 633, 127
+  CONTROL "", 600, "SQLXBrowse", WS_TABSTOP|0x00300000, 4, 139, 633, 130
   CONTROL "", 4005, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 423, 4, 90, 12
   CONTROL "", 370, "SQLXBrowse", WS_GROUP|0x00200000, 273, 275, 207, 71
   CONTROL "", 110, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 423, 17, 90, 12
@@ -23305,10 +23296,10 @@ FONT 8, "Ms Sans Serif"
   CONTROL "N.I.F.", -1, "Static", WS_GROUP, 4, 33, 23, 8
   CONTROL "Domicilio", -1, "Static", WS_GROUP, 4, 46, 33, 8
   CONTROL "Código postal", -1, "Static", WS_GROUP, 4, 60, 48, 8
-  CONTROL "Provincia", -1, "Static", WS_GROUP, 4, 86, 35, 8
-  CONTROL "Teléfono", -1, "Static", WS_GROUP, 4, 99, 33, 8
+  CONTROL "Provincia", -1, "Static", WS_GROUP, 4, 87, 35, 8
+  CONTROL "Teléfono", -1, "Static", WS_GROUP, 4, 100, 33, 8
   CONTROL "Tarifa pers.", -1, "Static", WS_GROUP, 382, 113, 29, 8
-  CONTROL "Dirección", -1, "Static", WS_GROUP, 4, 111, 35, 8
+  CONTROL "Dirección", -1, "Static", WS_GROUP, 4, 113, 35, 8
   CONTROL "Almacén", -1, "Static", WS_GROUP, 382, 100, 33, 8
   CONTROL "Pago", 242, "Static", WS_GROUP, 382, 48, 22, 8
   CONTROL "Agente", 254, "Static", WS_GROUP, 382, 73, 29, 8
@@ -23322,6 +23313,11 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Serie", -1, "Static", WS_GROUP, 382, 8, 30, 8
   CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 423, 111, 90, 12
   CONTROL "", 271, "Edit", WS_BORDER|WS_TABSTOP, 515, 111, 120, 12
+  CONTROL "", 500, "TBtnBmp", 0x00000000, 55, 123, 14, 14
+  CONTROL "", 501, "TBtnBmp", 0x00000000, 69, 123, 14, 14
+  CONTROL "", 502, "TBtnBmp", 0x00000000, 83, 123, 14, 14
+  CONTROL "", 503, "TBtnBmp", 0x00000000, 97, 123, 14, 14
+  CONTROL "Líneas", -1, "Static", WS_GROUP, 5, 127, 35, 8
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN

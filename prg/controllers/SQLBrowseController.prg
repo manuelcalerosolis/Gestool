@@ -52,6 +52,8 @@ CLASS SQLBrowseController FROM SQLBaseController
    METHOD getBrowseViewName()                         INLINE ( ::oBrowseView:getName() )
 
    METHOD getBrowseViewState()                        INLINE ( ::oBrowseView:getState() )
+   
+   METHOD refreshBrowseView()                         INLINE ( ::oBrowseView:Refresh() )
 
    METHOD setId( cType, cName, nId )                  INLINE ( ::oConfiguracionVistasController:setId( cType, cName, nId ) )
    

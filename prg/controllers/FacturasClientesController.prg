@@ -31,11 +31,17 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oLineasController
 
+   DATA oHistoryManager
+
    METHOD New()
 
    METHOD End()
 
    METHOD loadedBlankBuffer() 
+
+   METHOD loadedBuffer()               INLINE ( ::oHistoryManager:Set( ::oModel:hBuffer ), ::oHistoryManager:Say() )
+
+   METHOD isClientFilled()             INLINE ( !empty( ::getModelBuffer( "cliente_codigo" ) ) )
 
    METHOD clientesSettedHelpText()
 
@@ -105,9 +111,15 @@ METHOD New( oController ) CLASS FacturasClientesController
    
    ::oFacturasClientesDescuentosController               := FacturasClientesDescuentosController():New( self )
 
+   ::oHistoryManager                                     := HistoryManager():New()
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',               {|| ::loadedBlankBuffer() } )
+
+   ::oModel:setEvent( 'loadedBuffer',                    {|| ::loadedBuffer() } )
+
+   ::oLineasController:setEvents( { 'appending', 'editing', 'deleting' }, {|| ::isClientFilled() }  )
 
    ::oClientesController:oGetSelector:setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
 
@@ -139,6 +151,8 @@ METHOD End() CLASS FacturasClientesController
 
    ::oLineasController:End()
 
+   ::oHistoryManager:End()
+
    ::Super:End()
 
 RETURN ( nil )
@@ -157,9 +171,15 @@ RETURN ( nil )
 
 METHOD clientesSettedHelpText() CLASS FacturasClientesController
 
+   if ::oHistoryManager:isEqual( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
+      RETURN ( nil )
+   end if          
+
    ::clientSetTarifa()
 
    ::clientSetDescuentos()
+
+   ::oHistoryManager:setkey( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
 
 RETURN ( nil )
 
@@ -189,7 +209,13 @@ RETURN ( nil )
 
 METHOD clientSetDescuentos() CLASS FacturasClientesController
 
-   SQLFacturasClientesDescuentosModel():insertDescuentosWhereClienteUuid()
+   ::oFacturasClientesDescuentosController:oModel:deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
+
+   ::oFacturasClientesDescuentosController:oModel:insertWhereClienteCodigo( ::getModelBuffer( "cliente_codigo" ) )
+
+   ::oFacturasClientesDescuentosController:refreshRowSetAndGoTop()
+
+   ::oFacturasClientesDescuentosController:refreshBrowseView()
 
 RETURN ( nil )
 

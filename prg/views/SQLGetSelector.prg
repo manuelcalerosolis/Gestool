@@ -57,11 +57,16 @@ CLASS GetSelector
    METHOD showMessage()
 
    METHOD cText( value )                        INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
+   METHOD varGet()                              INLINE ( if( !empty( ::oGet ), ::oGet:varGet(), ) )
+  
    METHOD Hide()                                INLINE ( if( !empty( ::oGet ), ::oGet:Hide(), ) )
    METHOD Show()                                INLINE ( if( !empty( ::oGet ), ::oGet:Show(), ) )
-   METHOD lValid()                              INLINE ( if( !empty( ::oGet ), ::oGet:lValid(), ) )
+  
    METHOD setFocus()                            INLINE ( if( !empty( ::oGet ), ::oGet:setFocus(), ) )
+  
    METHOD Refresh()                             INLINE ( if( !empty( ::oGet ), ::oGet:Refresh(), ) )
+  
+   METHOD lValid()                              INLINE ( if( !empty( ::oGet ), ::oGet:lValid(), ) )
    METHOD evalWhen()                            INLINE ( if( !empty( ::oGet ) .and. !empty( ::bWhen ), ( if( eval( ::bWhen ), ::oGet:Enable(), ::oGet:Disable() ) ), ) )
 
    // Events-------------------------------------------------------------------
@@ -218,8 +223,6 @@ METHOD loadHelpText( lSilenceMode ) CLASS GetSelector
    if isFalse( ::fireEvent( 'loading' ) )
       RETURN ( .f. )
    end if
-
-   // ::evalValue( ::oGet:varGet() )
 
    ::cleanHelpText()
 

@@ -345,8 +345,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   ? UnidadesMedicionGruposLineasRepository():getWhereEmpresa()
-
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
