@@ -63,6 +63,14 @@ RETURN ( Self )
 
 CLASS FacturasClientesDescuentosBrowseView FROM SQLBrowseView
 
+   DATA lFastEdit          INIT .t.
+
+   DATA lFooter            INIT .t.
+
+   DATA nFreeze            INIT 1
+
+   DATA nMarqueeStyle      INIT 3
+
    METHOD addColumns()                       
 
 ENDCLASS
@@ -102,6 +110,14 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nFootStyle          := :nDataStrAlign               
+      :nFooterType         := AGGR_SUM
+      :cEditPicture        := "@E 999.9999"
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := getBoldFont()
+      :cDataType           := "N"
+      :nEditType           := EDIT_GET
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloUnidades( oCol, uNewValue ) }
    end with
 
 RETURN ( self )

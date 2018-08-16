@@ -108,19 +108,27 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Lineas ------------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 500, "new16",,,,, {|| ::oController:oLineasController:Append() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir líneas" )
+   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:oLineasController:Append() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
 
-   TBtnBmp():ReDefine( 501, "edit16",,,,, {|| ::oController:oLineasController:Edit() }, ::oFolder:aDialogs[1], .f., , .f., "Modificar líneas" )
+   TBtnBmp():ReDefine( 502, "edit16",,,,, {|| ::oController:oLineasController:Edit() }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
 
-   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::oController:oLineasController:Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 503, "del16",,,,, {|| ::oController:oLineasController:Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
 
-   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::oController:oLineasController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 504, "refresh16",,,,, {|| ::oController:oLineasController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
 
-   ::oController:oLineasController:Activate( 600, ::oFolder:aDialogs[1] )
+   ::oController:oLineasController:Activate( 500, ::oFolder:aDialogs[1] )
 
    // Descuentos---------------------------------------------------------------
 
-   ::oController:oFacturasClientesDescuentosController:Activate( 700, ::oFolder:aDialogs[1] )   
+   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::oController:oLineasController:Append() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
+
+   TBtnBmp():ReDefine( 602, "edit16",,,,, {|| ::oController:oLineasController:Edit() }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
+
+   TBtnBmp():ReDefine( 603, "del16",,,,, {|| ::oController:oLineasController:Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
+
+   TBtnBmp():ReDefine( 604, "refresh16",,,,, {|| ::oController:oLineasController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+
+   ::oController:oFacturasClientesDescuentosController:Activate( 600, ::oFolder:aDialogs[1] )   
 
    // Botones generales--------------------------------------------------------
 
