@@ -160,7 +160,7 @@ METHOD End()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
+ 
 METHOD buildRowSetSentence( cType )
 
    local cColumnOrder         

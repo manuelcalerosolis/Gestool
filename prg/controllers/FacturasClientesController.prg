@@ -209,7 +209,6 @@ RETURN ( nil )
 
 METHOD clientSetDescuentos() CLASS FacturasClientesController
 
-   SQLFacturasClientesDescuentosModel():insertDescuentosWhereClienteUuid()
    ::oFacturasClientesDescuentosController:oModel:deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
 
    ::oFacturasClientesDescuentosController:oModel:insertWhereClienteCodigo( ::getModelBuffer( "cliente_codigo" ) )
@@ -217,7 +216,6 @@ METHOD clientSetDescuentos() CLASS FacturasClientesController
    ::oFacturasClientesDescuentosController:refreshRowSetAndGoTop()
 
    ::oFacturasClientesDescuentosController:refreshBrowseView()
-
 
 RETURN ( nil )
 
