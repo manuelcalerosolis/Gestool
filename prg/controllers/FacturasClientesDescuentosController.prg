@@ -102,11 +102,13 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :nWidth              := 130
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := EDIT_GET
+      /*:bOnPostEdit         := {|oCol, uNewValue | ::oController:updateField( 'nombre', uNewValue ) }*/
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'descuento'
-      :cHeader             := 'Descuento'
+      :cHeader             := 'Descuento %'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -117,7 +119,7 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :oFooterFont         := getBoldFont()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloUnidades( oCol, uNewValue ) }
+      :bOnPostEdit         := {|oCol, uNewValue | ::oController:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'descuento', ::getRowSet():fieldGet( 'descuento' ) ) }
    end with
 
 RETURN ( self )
@@ -223,9 +225,7 @@ CLASS SQLFacturasClientesDescuentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "facturas_clientes_descuentos"
 
-   METHOD getColumns()
-
-   METHOD insertWhereClienteUuid( uuidCliente ) 
+   METHOD getColumns() 
 
    METHOD insertWhereClienteCodigo( cCodigoCliente )
 
@@ -273,6 +273,11 @@ METHOD insertWhereClienteCodigo( cCodigoCliente ) CLASS SQLFacturasClientesDescu
 
       WHERE 
          descuentos.parent_uuid = clientes.uuid
+         AND ( descuentos.fecha_fin IS NULL 
+               OR descuentos.fecha_fin >= curdate() 
+               ) 
+         AND ( descuentos.fecha_inicio IS NULL
+               OR descuentos.fecha_inicio <= curdate() )
 
    ENDTEXT
 
@@ -281,30 +286,6 @@ METHOD insertWhereClienteCodigo( cCodigoCliente ) CLASS SQLFacturasClientesDescu
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
 //---------------------------------------------------------------------------//
-
-METHOD insertWhereClienteUuid( uuidCliente ) CLASS SQLFacturasClientesDescuentosModel
-
-   local cSql
-
-   TEXT INTO cSql
-
-      INSERT IGNORE 
-         INTO %1$s (uuid, parent_uuid, nombre, descuento)
-
-      SELECT 
-         UUID(), %3$s, descuentos.nombre, descuentos.descuento
-
-      FROM %2$s AS descuentos
-
-      WHERE 
-         descuentos.parent_uuid = %4$s
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), quoted( ::getSenderControllerParentUuid() ), quoted( uuidCliente ) )
-
-RETURN ( getSQLDatabase():Exec ( cSql ) )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -253,6 +253,7 @@ METHOD Activate() CLASS PropiedadesView
 
    ::oDialog:bStart  := {|| ::startActivate() }
 
+
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::oBitmap:end()
