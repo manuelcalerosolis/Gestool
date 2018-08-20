@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesDescuentosController FROM SQLNavigatorController
+CLASS FacturasClientesDescuentosController FROM SQLBrowseController
 
    METHOD New()
 
@@ -17,7 +17,7 @@ METHOD New( oSenderController ) CLASS FacturasClientesDescuentosController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "DescuentosLineas"
+   ::cTitle                      := "Facturas clientes descuentos"
 
    ::cName                       := "facturas_clientes_descuentos"
 
@@ -25,18 +25,15 @@ METHOD New( oSenderController ) CLASS FacturasClientesDescuentosController
                                        "32" => "gc_symbol_percent_32",;
                                        "48" => "gc_symbol_percent_48" }
 
-   ::oModel                         := SQLFacturasClientesDescuentosModel():New( self )
+   ::oModel                      := SQLFacturasClientesDescuentosModel():New( self )
 
-   ::oBrowseView                    := FacturasClientesDescuentosBrowseView():New( self )
+   ::oBrowseView                 := FacturasClientesDescuentosBrowseView():New( self )
 
-   ::oDialogView                    := FacturasClientesDescuentosView():New( self )
+   ::oDialogView                 := FacturasClientesDescuentosView():New( self )
 
-   ::oValidator                     := FacturasClientesDescuentosValidator():New( self, ::oDialogView )
+   ::oValidator                  := FacturasClientesDescuentosValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := FacturasClientesDescuentosRepository():New( self )
-
-   msgalert( ::oSenderController:className(), "parent" )
-   msgalert( ::oModel:getSenderControllerParentUuid(), "getSenderControllerParentUuid" )
+   ::oRepository                 := FacturasClientesDescuentosRepository():New( self )
 
 RETURN ( Self )
 
@@ -65,6 +62,14 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 CLASS FacturasClientesDescuentosBrowseView FROM SQLBrowseView
+
+   DATA lFastEdit          INIT .t.
+
+   DATA lFooter            INIT .t.
+
+   DATA nFreeze            INIT 1
+
+   DATA nMarqueeStyle      INIT 3
 
    METHOD addColumns()                       
 
@@ -105,6 +110,14 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nFootStyle          := :nDataStrAlign               
+      :nFooterType         := AGGR_SUM
+      :cEditPicture        := "@E 999.9999"
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := getBoldFont()
+      :cDataType           := "N"
+      :nEditType           := EDIT_GET
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloUnidades( oCol, uNewValue ) }
    end with
 
 RETURN ( self )
@@ -208,65 +221,68 @@ RETURN ( ::hValidators )
 
 CLASS SQLFacturasClientesDescuentosModel FROM SQLCompanyModel
 
-   METHOD New( oSenderController )
-
    DATA cTableName               INIT "facturas_clientes_descuentos"
 
    METHOD getColumns()
 
-   METHOD insertDescuentosWhereClienteUuid( uuidCliente ) 
+   METHOD insertWhereClienteUuid( uuidCliente ) 
 
-   /*METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
-
-   METHOD getParentUuidAttribute( value )*/
+   METHOD insertWhereClienteCodigo( cCodigoCliente )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController )
-
-   msgalert( oSenderController:className(), "SQLFacturasClientesDescuentosModel" )
-
-RETURN ( ::Super():New( oSenderController ) )
-
 METHOD getColumns() CLASS SQLFacturasClientesDescuentosModel
 
-   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                                   "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                          "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                                   "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                          "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                                   "default"   => {|| ::getSenderControllerParentUuid() } } )
+   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+                                          "default"   => {|| ::getSenderControllerParentUuid() } } )
 
-   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
-                                                   "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
+                                          "default"   => {|| space( 200 ) } }                      )
 
-
-   hset( ::hColumns, "descuento",               {  "create"    => "FLOAT(7,4)"                              ,;
-                                                   "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "descuento",      {  "create"    => "FLOAT(7,4)"                              ,;
+                                          "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-/*METHOD getParentUuidAttribute( value ) CLASS SQLDescuentosModel
+METHOD insertWhereClienteCodigo( cCodigoCliente ) CLASS SQLFacturasClientesDescuentosModel
 
-   if empty( ::oController )
-      RETURN ( value )
-   end if
+   local cSql
 
-   if empty( ::oController:oSenderController )
-      RETURN ( value )
-   end if
+   TEXT INTO cSql
 
-RETURN ( ::oController:oSenderController:getUuid() )*/
+      INSERT IGNORE INTO %1$s 
+         ( uuid, parent_uuid, nombre, descuento )
+
+      SELECT 
+         UUID(), %4$s, descuentos.nombre, descuentos.descuento
+
+      FROM %2$s AS descuentos
+
+      INNER JOIN %3$s AS clientes 
+         ON clientes.codigo = %5$s    
+
+      WHERE 
+         descuentos.parent_uuid = clientes.uuid
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), SQLClientesModel():getTableName(), quoted( ::getSenderControllerParentUuid() ), quoted( cCodigoCliente ) )
+
+RETURN ( getSQLDatabase():Exec ( cSql ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertDescuentosWhereClienteUuid( uuidCliente ) CLASS SQLFacturasClientesDescuentosModel
+METHOD insertWhereClienteUuid( uuidCliente ) CLASS SQLFacturasClientesDescuentosModel
 
    local cSql
 
@@ -280,18 +296,16 @@ METHOD insertDescuentosWhereClienteUuid( uuidCliente ) CLASS SQLFacturasClientes
 
       FROM %2$s AS descuentos
 
+      WHERE 
+         descuentos.parent_uuid = %4$s
+
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), ::getSenderControllerParentUuid() )
-
-
-
-   msgalert( ::getSenderControllerParentUuid(), "" )
-   msgalert( cSql )
-   logwrite( cSql )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), quoted( ::getSenderControllerParentUuid() ), quoted( uuidCliente ) )
 
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

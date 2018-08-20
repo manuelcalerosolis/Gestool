@@ -108,7 +108,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Lineas ------------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:oLineasController:Append() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:oLineasController:AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
 
    TBtnBmp():ReDefine( 502, "edit16",,,,, {|| ::oController:oLineasController:Edit() }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
 
@@ -120,15 +120,15 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Descuentos---------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::oController:oLineasController:Append() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::oController:oFacturasClientesDescuentosController:AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
 
-   TBtnBmp():ReDefine( 602, "edit16",,,,, {|| ::oController:oLineasController:Edit() }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
+   TBtnBmp():ReDefine( 602, "edit16",,,,, {|| MsgInfo( "Editar Descuentos" ) }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
 
-   TBtnBmp():ReDefine( 603, "del16",,,,, {|| ::oController:oLineasController:Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 603, "del16",,,,, {|| ::oController:oFacturasClientesDescuentosController:Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
 
-   TBtnBmp():ReDefine( 604, "refresh16",,,,, {|| ::oController:oLineasController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 604, "refresh16",,,,, {|| ::oController:oFacturasClientesDescuentosController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
 
-   ::oController:oFacturasClientesDescuentosController:Activate( 700, ::oFolder:aDialogs[1] )     
+   ::oController:oFacturasClientesDescuentosController:Activate( 600, ::oFolder:aDialogs[1] )   
 
    // Botones generales--------------------------------------------------------
 

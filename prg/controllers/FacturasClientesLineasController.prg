@@ -25,8 +25,6 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD Append()
-
    METHOD Edit()                       
 
    // Validaciones ------------------------------------------------------------
@@ -137,6 +135,8 @@ METHOD New( oController )
    ::setEvent( 'deletedSelection',           {|| ::oBrowseView:Refresh() } )
 
    ::setEvent( 'deletingLines',              {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
+
+   ::setEvent( 'exitAppended',               {|| ::oBrowseView:selectCol( ::oBrowseView:oColumnCodigo:nPos ) } )
 
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| hSet( ::oModel:hBuffer, "unidad_medicion_codigo", UnidadesMedicionGruposLineasRepository():getCodigoDefault() ) } )
 
@@ -433,53 +433,6 @@ METHOD deleteLines( uuid )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD Append()
-
-   local nId
-   local lAppend     := .t.   
-
-   if ::notUserAppend()
-      msgStop( "Acceso no permitido." )
-      RETURN ( .f. )
-   end if 
-
-   if isFalse( ::fireEvent( 'appending' ) )
-      RETURN ( .f. )
-   end if
-
-   ::setAppendMode()
-
-   ::saveRowSetRecno()
-
-   nId               := ::oModel:insertBlankBuffer()
-
-   if !empty( nId )
-
-      ::fireEvent( 'appended' ) 
-
-      ::refreshRowSetAndFindId( nId )
-
-   else 
-      
-      lAppend        := .f.
-
-      ::refreshRowSet()
-
-   end if 
-
-   ::refreshBrowseView()
-
-   ::fireEvent( 'exitAppended' ) 
-
-   if lAppend
-      ::oBrowseView:setFocus()
-      ::oBrowseView:selectCol( ::oBrowseView:oColumnCodigo:nPos )
-   end if 
-
-RETURN ( lAppend )
-
-//----------------------------------------------------------------------------//
 
 METHOD Edit()
 

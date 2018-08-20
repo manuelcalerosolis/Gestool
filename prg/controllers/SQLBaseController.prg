@@ -169,6 +169,8 @@ CLASS SQLBaseController
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
       METHOD isNotAppendMode()                        INLINE ( ::nMode != __append_mode__ )
 
+   METHOD AppendLineal()
+
    METHOD Duplicate()
       METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
       METHOD isDuplicateMode()                        INLINE ( ::nMode == __duplicate_mode__ )
@@ -366,6 +368,52 @@ METHOD Append()
    end while
 
    ::fireEvent( 'exitAppended' ) 
+
+RETURN ( lAppend )
+
+//----------------------------------------------------------------------------//
+
+METHOD AppendLineal() CLASS SQLBaseController
+
+   local nId
+   local lAppend     := .t.   
+
+   if ::notUserAppend()
+      msgStop( "Acceso no permitido." )
+      RETURN ( .f. )
+   end if 
+
+   if isFalse( ::fireEvent( 'appending' ) )
+      RETURN ( .f. )
+   end if
+
+   ::setAppendMode()
+
+   ::saveRowSetRecno()
+
+   nId               := ::oModel:insertBlankBuffer()
+
+   if !empty( nId )
+
+      ::fireEvent( 'appended' ) 
+
+      ::refreshRowSetAndFindId( nId )
+
+   else 
+      
+      lAppend        := .f.
+
+      ::refreshRowSet()
+
+   end if 
+
+   ::refreshBrowseView()
+
+   ::fireEvent( 'exitAppended' ) 
+
+   if lAppend
+      ::oBrowseView:setFocus()
+   end if 
 
 RETURN ( lAppend )
 
