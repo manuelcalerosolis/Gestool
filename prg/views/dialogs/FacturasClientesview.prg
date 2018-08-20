@@ -128,7 +128,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    TBtnBmp():ReDefine( 604, "refresh16",,,,, {|| ::oController:oLineasController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
 
-   ::oController:oFacturasClientesDescuentosController:Activate( 700, ::oFolder:aDialogs[1] )     
+   ::oController:oFacturasClientesDescuentosController:Activate( 600, ::oFolder:aDialogs[1] )     
 
    // Botones generales--------------------------------------------------------
 
