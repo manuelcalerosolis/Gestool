@@ -22543,7 +22543,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Aña&dir [F2]", 130, "Button", WS_TABSTOP, 50, 113, 50, 14
   CONTROL "&Modificar [F3]", 140, "Button", WS_TABSTOP, 106, 113, 50, 14
   CONTROL "&Eliminar [F4]", 150, "Button", WS_TABSTOP, 162, 113, 50, 14
-  CONTROL "", 160, "TXBrowse", WS_TABSTOP|0x00300000, 50, 129, 445, 187
+  CONTROL "", 160, "SQLXBrowse", WS_TABSTOP|0x00300000, 50, 129, 445, 187
   CONTROL "De tipo color", 122, "Static", WS_GROUP, 50, 83, 63, 8
   CONTROL "<a>Campos extra...</a>", 170, "SysLink", WS_TABSTOP, 44, 325, 88, 10
 }
