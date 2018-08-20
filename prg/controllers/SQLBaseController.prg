@@ -57,6 +57,7 @@ CLASS SQLBaseController
    METHOD getName()                                   INLINE ( ::cName )
 
    METHOD getSenderController()                       INLINE ( ::oSenderController ) 
+   METHOD getSenderControllerParentUuid()             INLINE ( iif( !empty( ::oSenderController ), ::oSenderController:getUuid(), space( 40 ) ) ) 
 
    METHOD getBrowseView()                             INLINE ( ::oBrowseView )
 

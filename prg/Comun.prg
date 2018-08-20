@@ -345,6 +345,19 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   local oCombinacionesController         := CombinacionesController():New()
+
+   oCombinacionesController:hPropertyList := getSQLDatabase():selectTrimedFetchHash( oCombinacionesController:oPropiedadesController:oModel:getPropertyList() ) 
+
+   if empty( oCombinacionesController:hPropertyList )
+      msgStop( "No se definieron propiedades" )
+      RETURN ( nil )
+   end if 
+
+   oCombinacionesController:DialogViewActivate( oCombinacionesController:oSelectorView )
+
+   oCombinacionesController:End()
+
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

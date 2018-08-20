@@ -9,6 +9,10 @@ CLASS FacturasClientesDescuentosController FROM SQLBrowseController
 
    METHOD End()
 
+   METHOD updateField( cField, uValue )
+
+   METHOD updateNombre( uValue )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -35,6 +39,8 @@ METHOD New( oSenderController ) CLASS FacturasClientesDescuentosController
 
    ::oRepository                 := FacturasClientesDescuentosRepository():New( self )
 
+   ::setEvent( 'exitAppended',   {|| ::oBrowseView:selectCol( ::oBrowseView:oColumnNombre:nPos ) } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -56,6 +62,29 @@ METHOD End() CLASS FacturasClientesDescuentosController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD updateField( cField, uValue ) CLASS FacturasClientesDescuentosController
+
+   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cField, uValue )
+   
+   ::getRowSet():Refresh()
+   
+   ::oBrowseView:Refresh()
+   
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateNombre( uValue ) CLASS FacturasClientesDescuentosController
+
+   msgalert( ::getSenderControllerParentUuid(), "uuid de la Facturas" )
+
+   if .t. // ::validate()
+      RETURN ( ::updateField( 'nombre', uValue ) )
+   end if 
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -70,6 +99,8 @@ CLASS FacturasClientesDescuentosBrowseView FROM SQLBrowseView
    DATA nFreeze            INIT 1
 
    DATA nMarqueeStyle      INIT 3
+
+   DATA oColumnNombre
 
    METHOD addColumns()                       
 
@@ -96,14 +127,14 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :lHide               := .t.
    end with
 
-   with object ( ::oBrowse:AddCol() )
+   with object ( ::oColumnNombre := ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
       :nWidth              := 130
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue | ::oController:oModel:updateFieldWhereId( ::getRowset():fieldGet( 'id' ) , 'nombre', ::getRowset():fieldGet( 'nombre' ) ) }
+      :bOnPostEdit         := {|oCol, uNewValue | ::oController:updateNombre( uNewValue ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -119,7 +150,7 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :oFooterFont         := getBoldFont()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue | ::oController:oModel:updateFieldWhereId( ::getRowset():fieldGet( 'id' ) , 'descuento', ::getRowset():fieldGet( 'descuento' ) ) }
+      :bOnPostEdit         := {|oCol, uNewValue | ::oController:updateField( 'descuento', uNewValue ) }
    end with
 
 RETURN ( self )

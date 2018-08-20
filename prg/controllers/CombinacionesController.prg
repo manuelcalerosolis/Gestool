@@ -448,6 +448,10 @@ METHOD generatePanelCombinations( oPanel )
 RETURN ( aPanelCombination )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS CombinacionesSelectorView FROM CombinacionesView 
 
@@ -460,7 +464,7 @@ END CLASS
 METHOD Activate() CLASS CombinacionesSelectorView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTAINER_COMBINACIONES" ;
+      RESOURCE    "CONTAINER_COMBINACIONES_SELECT" ;
       TITLE       ::LblTitle() + "Combinaciones de propiedades"
 
    REDEFINE BITMAP ::oBitmap ;
