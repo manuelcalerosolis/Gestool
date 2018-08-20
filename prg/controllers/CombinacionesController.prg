@@ -13,6 +13,8 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    DATA oCombinacionesPropiedadesController
 
+   DATA oSelectorView
+
    METHOD New()
 
    METHOD End()
@@ -59,6 +61,8 @@ METHOD New( oSenderController ) CLASS CombinacionesController
 
    ::oDialogView                          := CombinacionesView():New( self )
 
+   ::oSelectorView                        := CombinacionesSelectorView():New( self )
+
    ::oValidator                           := CombinacionesValidator():New( self, ::oDialogView )
 
    ::oRepository                          := CombinacionesRepository():New( self )
@@ -84,6 +88,8 @@ METHOD End() CLASS CombinacionesController
    ::oBrowseView:End()
 
    ::oDialogView:End()
+
+   ::oSelectorView:End()
 
    ::oValidator:End()
 
@@ -411,13 +417,9 @@ METHOD generateCombinations() CLASS CombinacionesView
    end if 
 
    if len( ::aCombinations ) > 1
-   
       ::oController:insertCombinations( permutateArray( ::aCombinations ) )
-   
    else
-   
       ::oController:insertOneCombination( ::aCombinations ) 
-
    end if 
 
    ::oController:refreshRowSetAndGoTop()
@@ -444,6 +446,53 @@ METHOD generatePanelCombinations( oPanel )
    next 
 
 RETURN ( aPanelCombination )
+
+//---------------------------------------------------------------------------//
+
+CLASS CombinacionesSelectorView FROM CombinacionesView 
+
+   METHOD Activate()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS CombinacionesSelectorView
+
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "CONTAINER_COMBINACIONES" ;
+      TITLE       ::LblTitle() + "Combinaciones de propiedades"
+
+   REDEFINE BITMAP ::oBitmap ;
+      ID          900 ;
+      RESOURCE    ::oController:getImage( "48" ) ;
+      TRANSPARENT ;
+      OF          ::oDialog ;
+
+   REDEFINE SAY   ::oMessage ;
+      ID          800 ;
+      FONT        getBoldFont() ;
+      OF          ::oDialog ;
+
+   ::redefineExplorerBar( 110 )
+
+   REDEFINE BUTTON ;
+      ID          IDOK ;
+      OF          ::oDialog ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+
+   REDEFINE BUTTON ;
+      ID          IDCANCEL ;
+      OF          ::oDialog ;
+      CANCEL ;
+      ACTION     ( ::oDialog:end() )
+
+   ::oDialog:bStart  := {|| ::startActivate() }
+
+   ACTIVATE DIALOG ::oDialog CENTER
+
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

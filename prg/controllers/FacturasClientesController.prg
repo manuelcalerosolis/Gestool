@@ -83,6 +83,7 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oRepository                                         := FacturasClientesRepository():New( self )
 
    ::oClientesController                                 := ClientesController():New( self )
+   ::oClientesController:setView( ::oDialogView )
 
    ::oArticulosController                                := ArticulosController():New( self )
 

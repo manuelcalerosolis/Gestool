@@ -55,10 +55,6 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD stampArticuloUnidaMedicionVentas()
 
-
-   METHOD stampArticuloUnidadMedicion()
-
-
    METHOD stampArticuloPrecio()
 
    METHOD stampArticuloUnidades( uValue )
@@ -277,15 +273,15 @@ METHOD stampArticuloUnidaMedicionVentas()
    cUnidadMedicion         := SQLUnidadesMedicionOperacionesModel():getUnidadVentaWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
    if !empty( cUnidadMedicion )
-      RETURN ( ::updateField( "unidad_medicion_codigo", cUnidadMedicion ) )
+      RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
    end if 
 
-   // Unidad de medición menor para este articulo de su grupo de unidades -----
+   // Unidad de medición menor para este articulo de su grupo de unidades------
 
    cUnidadMedicion         := UnidadesMedicionGruposLineasRepository():getUnidadDefectoWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
    if !empty( cUnidadMedicion )
-      RETURN ( ::updateField( "unidad_medicion_codigo", cUnidadMedicion ) )
+      RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
    end if 
 
    // Unidad de medición menor en el grupo de la empresa-----------------------
@@ -293,7 +289,7 @@ METHOD stampArticuloUnidaMedicionVentas()
    cUnidadMedicion         := UnidadesMedicionGruposLineasRepository():getWhereEmpresa()
 
    if !empty( cUnidadMedicion )
-      RETURN ( ::updateField( "unidad_medicion_codigo", cUnidadMedicion ) )
+      RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
    end if 
 
    // Unidad de medición del sistema-------------------------------------------
@@ -301,7 +297,7 @@ METHOD stampArticuloUnidaMedicionVentas()
    cUnidadMedicion         := SQLUnidadesMedicionModel():getUnidadMedicionSistema()
 
    if !empty( cUnidadMedicion )
-      RETURN ( ::updateField( "unidad_medicion_codigo", cUnidadMedicion ) )
+      RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
    end if 
 
 RETURN ( nil )
