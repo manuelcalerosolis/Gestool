@@ -109,13 +109,9 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oLineasController                                   := FacturasClientesLineasController():New( self )
    
-<<<<<<< HEAD
-   ::oFacturasClientesDescuentosController         := FacturasClientesDescuentosController():New( self )
-=======
    ::oFacturasClientesDescuentosController               := FacturasClientesDescuentosController():New( self )
 
    ::oHistoryManager                                     := HistoryManager():New()
->>>>>>> fb4209c256a24048d7141b5f177f058b95b3fb5f
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -213,9 +209,7 @@ RETURN ( nil )
 
 METHOD clientSetDescuentos() CLASS FacturasClientesController
 
-<<<<<<< HEAD
    SQLFacturasClientesDescuentosModel():insertDescuentosWhereClienteUuid()
-=======
    ::oFacturasClientesDescuentosController:oModel:deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
 
    ::oFacturasClientesDescuentosController:oModel:insertWhereClienteCodigo( ::getModelBuffer( "cliente_codigo" ) )
@@ -223,7 +217,7 @@ METHOD clientSetDescuentos() CLASS FacturasClientesController
    ::oFacturasClientesDescuentosController:refreshRowSetAndGoTop()
 
    ::oFacturasClientesDescuentosController:refreshBrowseView()
->>>>>>> fb4209c256a24048d7141b5f177f058b95b3fb5f
+
 
 RETURN ( nil )
 

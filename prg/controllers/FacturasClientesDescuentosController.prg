@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesDescuentosController FROM SQLBrowseController
+CLASS FacturasClientesDescuentosController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -17,11 +17,7 @@ METHOD New( oSenderController ) CLASS FacturasClientesDescuentosController
 
    ::Super:New( oSenderController )
 
-<<<<<<< HEAD
-   ::cTitle                      := "DescuentosFactura"
-=======
-   ::cTitle                      := "Facturas clientes descuentos"
->>>>>>> fb4209c256a24048d7141b5f177f058b95b3fb5f
+   ::cTitle                      := "DescuentosLineas"
 
    ::cName                       := "facturas_clientes_descuentos"
 
@@ -29,23 +25,18 @@ METHOD New( oSenderController ) CLASS FacturasClientesDescuentosController
                                        "32" => "gc_symbol_percent_32",;
                                        "48" => "gc_symbol_percent_48" }
 
-   ::oModel                      := SQLFacturasClientesDescuentosModel():New( self )
+   ::oModel                         := SQLFacturasClientesDescuentosModel():New( self )
 
-   ::oBrowseView                 := FacturasClientesDescuentosBrowseView():New( self )
+   ::oBrowseView                    := FacturasClientesDescuentosBrowseView():New( self )
 
-   ::oDialogView                 := FacturasClientesDescuentosView():New( self )
+   ::oDialogView                    := FacturasClientesDescuentosView():New( self )
 
-   ::oValidator                  := FacturasClientesDescuentosValidator():New( self, ::oDialogView )
+   ::oValidator                     := FacturasClientesDescuentosValidator():New( self, ::oDialogView )
 
-<<<<<<< HEAD
    ::oRepository                    := FacturasClientesDescuentosRepository():New( self )
 
-   /*msgalert( ::className(), "controller-controller")
    msgalert( ::oSenderController:className(), "parent" )
-   msgalert( ::oModel:getSenderControllerParentUuid(), "getSenderControllerParentUuid" )*/
-=======
-   ::oRepository                 := FacturasClientesDescuentosRepository():New( self )
->>>>>>> fb4209c256a24048d7141b5f177f058b95b3fb5f
+   msgalert( ::oModel:getSenderControllerParentUuid(), "getSenderControllerParentUuid" )
 
 RETURN ( Self )
 
@@ -74,14 +65,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 CLASS FacturasClientesDescuentosBrowseView FROM SQLBrowseView
-
-   DATA lFastEdit          INIT .t.
-
-   DATA lFooter            INIT .t.
-
-   DATA nFreeze            INIT 1
-
-   DATA nMarqueeStyle      INIT 3
 
    METHOD addColumns()                       
 
@@ -122,14 +105,6 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nFootStyle          := :nDataStrAlign               
-      :nFooterType         := AGGR_SUM
-      :cEditPicture        := "@E 999.9999"
-      :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
-      :cDataType           := "N"
-      :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloUnidades( oCol, uNewValue ) }
    end with
 
 RETURN ( self )
@@ -233,68 +208,65 @@ RETURN ( ::hValidators )
 
 CLASS SQLFacturasClientesDescuentosModel FROM SQLCompanyModel
 
+   METHOD New( oSenderController )
+
    DATA cTableName               INIT "facturas_clientes_descuentos"
 
    METHOD getColumns()
 
-   METHOD insertWhereClienteUuid( uuidCliente ) 
+   METHOD insertDescuentosWhereClienteUuid( uuidCliente ) 
 
-   METHOD insertWhereClienteCodigo( cCodigoCliente )
+   /*METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+
+   METHOD getParentUuidAttribute( value )*/
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD New( oSenderController )
+
+   msgalert( oSenderController:className(), "SQLFacturasClientesDescuentosModel" )
+
+RETURN ( ::Super():New( oSenderController ) )
+
 METHOD getColumns() CLASS SQLFacturasClientesDescuentosModel
 
-   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                          "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                          "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                                   "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                          "default"   => {|| ::getSenderControllerParentUuid() } } )
+   hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+                                                   "default"   => {|| ::getSenderControllerParentUuid() } } )
 
-   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
-                                          "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
+                                                   "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "descuento",      {  "create"    => "FLOAT(7,4)"                              ,;
-                                          "default"   => {|| 0 } }                                 )
+
+   hset( ::hColumns, "descuento",               {  "create"    => "FLOAT(7,4)"                              ,;
+                                                   "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertWhereClienteCodigo( cCodigoCliente ) CLASS SQLFacturasClientesDescuentosModel
+/*METHOD getParentUuidAttribute( value ) CLASS SQLDescuentosModel
 
-   local cSql
+   if empty( ::oController )
+      RETURN ( value )
+   end if
 
-   TEXT INTO cSql
+   if empty( ::oController:oSenderController )
+      RETURN ( value )
+   end if
 
-      INSERT IGNORE INTO %1$s 
-         ( uuid, parent_uuid, nombre, descuento )
-
-      SELECT 
-         UUID(), %4$s, descuentos.nombre, descuentos.descuento
-
-      FROM %2$s AS descuentos
-
-      INNER JOIN %3$s AS clientes 
-         ON clientes.codigo = %5$s    
-
-      WHERE 
-         descuentos.parent_uuid = clientes.uuid
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), SQLClientesModel():getTableName(), quoted( ::getSenderControllerParentUuid() ), quoted( cCodigoCliente ) )
-
-RETURN ( getSQLDatabase():Exec ( cSql ) )
+RETURN ( ::oController:oSenderController:getUuid() )*/
 
 //---------------------------------------------------------------------------//
 
-METHOD insertWhereClienteUuid( uuidCliente ) CLASS SQLFacturasClientesDescuentosModel
+METHOD insertDescuentosWhereClienteUuid( uuidCliente ) CLASS SQLFacturasClientesDescuentosModel
 
    local cSql
 
@@ -304,32 +276,22 @@ METHOD insertWhereClienteUuid( uuidCliente ) CLASS SQLFacturasClientesDescuentos
          INTO %1$s (uuid, parent_uuid, nombre, descuento)
 
       SELECT 
-         UUID(), /*%3$s,*/ descuentos.nombre, descuentos.descuento
+         UUID(), %3$s, descuentos.nombre, descuentos.descuento
 
       FROM %2$s AS descuentos
 
-<<<<<<< HEAD
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName()/*, ::getSenderControllerParentUuid()*/ )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), ::getSenderControllerParentUuid() )
 
 
-   msgalert( ::oController:className() , "controller" )
-   /*msgalert( ::getSenderControllerParentUuid(), "parent_uuid" )
+
+   msgalert( ::getSenderControllerParentUuid(), "" )
    msgalert( cSql )
-   logwrite( cSql )*/
-=======
-      WHERE 
-         descuentos.parent_uuid = %4$s
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), quoted( ::getSenderControllerParentUuid() ), quoted( uuidCliente ) )
->>>>>>> fb4209c256a24048d7141b5f177f058b95b3fb5f
+   logwrite( cSql )
 
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
