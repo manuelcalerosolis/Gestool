@@ -143,7 +143,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    ::oController:oLineasController:Activate( 600, ::oFolder:aDialogs[1] )
 
-   ::oController:oFacturasClientesDescuentosLineasController:Activate( 700, ::oFolder:aDialogs[1] )   
+   ::oController:oFacturasClientesDescuentosController:Activate( 700, ::oFolder:aDialogs[1] )   
 
    // Botones generales--------------------------------------------------------
 

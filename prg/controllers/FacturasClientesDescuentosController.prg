@@ -17,7 +17,7 @@ METHOD New( oSenderController ) CLASS FacturasClientesDescuentosController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "DescuentosLineas"
+   ::cTitle                      := "DescuentosFactura"
 
    ::cName                       := "facturas_clientes_descuentos"
 
@@ -35,8 +35,9 @@ METHOD New( oSenderController ) CLASS FacturasClientesDescuentosController
 
    ::oRepository                    := FacturasClientesDescuentosRepository():New( self )
 
+   /*msgalert( ::className(), "controller-controller")
    msgalert( ::oSenderController:className(), "parent" )
-   msgalert( ::oModel:getSenderControllerParentUuid(), "getSenderControllerParentUuid" )
+   msgalert( ::oModel:getSenderControllerParentUuid(), "getSenderControllerParentUuid" )*/
 
 RETURN ( Self )
 
@@ -276,19 +277,19 @@ METHOD insertDescuentosWhereClienteUuid( uuidCliente ) CLASS SQLFacturasClientes
          INTO %1$s (uuid, parent_uuid, nombre, descuento)
 
       SELECT 
-         UUID(), %3$s, descuentos.nombre, descuentos.descuento
+         UUID(), /*%3$s,*/ descuentos.nombre, descuentos.descuento
 
       FROM %2$s AS descuentos
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), ::getSenderControllerParentUuid() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName()/*, ::getSenderControllerParentUuid()*/ )
 
 
-
-   msgalert( ::getSenderControllerParentUuid(), "" )
+   msgalert( ::oController:className() , "controller" )
+   /*msgalert( ::getSenderControllerParentUuid(), "parent_uuid" )
    msgalert( cSql )
-   logwrite( cSql )
+   logwrite( cSql )*/
 
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
