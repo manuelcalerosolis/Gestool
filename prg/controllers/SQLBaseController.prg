@@ -768,7 +768,7 @@ METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
                                  {|| oRowSet:skip(1)  },;    
                                  {|| oRowSet:skip(-1) },;    
                                  {|| oRowSet:eof()    },;
-                                 {|nField| msgalert( nField ), oRowSet:fieldGet( nField ) } )
+                                 {|nField| msginfo( nField ), oRowSet:fieldGet( nField ) } )
                                  //  )      
     
 RETURN ( Self )    

@@ -73,8 +73,6 @@ METHOD get( cBrowseName )
                      "WHERE cCodUse = " + quoted( Auth():Codigo() ) + " AND " + ;
                            "cNomCfg = " + quoted( cBrowseName )
 
-   msgalert( cSql, "get ColumnasUsuariosModel" )
-
    if ::ExecuteSqlStatement( cSql, @cStm )
 
       RETURN ( {  "State"  => ( cStm )->cBrwCfg,;

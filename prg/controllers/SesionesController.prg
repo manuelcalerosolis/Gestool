@@ -123,8 +123,6 @@ METHOD CloseSession() CLASS SesionesController
 
    end if 
 
-   msgalert( "CloseSession" )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

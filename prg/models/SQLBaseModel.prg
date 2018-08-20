@@ -270,7 +270,7 @@ METHOD New( oController )
 
    if empty( ::hColumns ) .and. empty( ::getColumns() )
       msgstop( "La definición de columnas no puede estar vacia" )
-      RETURN ( Self )
+      RETURN ( self )
    end if 
 
    ::oController                 := oController
@@ -285,7 +285,7 @@ METHOD New( oController )
 
    ::cGeneralSelect              := "SELECT * FROM " + ::getTableName()    
 
-RETURN ( Self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -814,28 +814,35 @@ RETURN ( cSQLUpdate )
 
 METHOD getDeleteSentenceByUuid( uUuid )
 
-   local cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
-                           "WHERE uuid IN ( " 
-
-   if hb_isarray( uUuid )
-      aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
-      cSentence      := chgAtEnd( cSentence, ' )', 2 )
-   end if 
+   local cSentence   
 
    if hb_ischar( uUuid )
-      cSentence      += quoted( uUuid ) + ' )'
+      uUuid          := { uUuid }
    end if 
+
+   cSentence         := "DELETE FROM " + ::getTableName() + " " + ;
+                           "WHERE uuid IN ( " 
+
+   aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+
+   cSentence         := chgAtEnd( cSentence, ' )', 2 )
 
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentenceWhereParentUuid( aUuid )
+METHOD getDeleteSentenceWhereParentUuid( uUuid )
 
-   local cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
+   local cSentence   
+
+   if hb_ischar( uUuid )
+      uUuid          := { uUuid }
+   end if 
+
+   cSentence         := "DELETE FROM " + ::getTableName() + " " + ;
                            "WHERE parent_uuid IN ( " 
 
-   aeval( aUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+   aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
    cSentence         := chgAtEnd( cSentence, ' )', 2 )
 
@@ -953,11 +960,15 @@ METHOD loadBlankBuffer()
 
    ::hBuffer            := {=>}
 
+   ::fireEvent( 'loadingBuffer' )
+
    ::fireEvent( 'loadingBlankBuffer' )
 
    ::defaultCurrentBuffer()
 
    ::fireEvent( 'loadedBlankBuffer' )
+
+   ::fireEvent( 'loadedBuffer' )
 
 RETURN ( ::hBuffer )
 
@@ -967,12 +978,16 @@ METHOD loadCurrentBuffer( id )
 
    ::hBuffer            := {=>}
 
+   ::fireEvent( 'loadingBuffer' )
+
    ::fireEvent( 'loadingCurrentBuffer' )
 
    ::hBuffer            := ::getBufferById( id )
 
    ::fireEvent( 'loadedCurrentBuffer' )
 
+   ::fireEvent( 'loadedBuffer' )
+   
 RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
@@ -980,6 +995,8 @@ RETURN ( ::hBuffer )
 METHOD loadDuplicateBuffer( id ) 
 
    ::hBuffer            := {=>}
+
+   ::fireEvent( 'loadingBuffer' )
 
    ::fireEvent( 'loadingDuplicateBuffer' )
 
@@ -1001,6 +1018,8 @@ METHOD loadDuplicateBuffer( id )
 
    ::fireEvent( 'loadedDuplicateBuffer' )
 
+   ::fireEvent( 'loadedBuffer' )
+   
 RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
@@ -1207,6 +1226,8 @@ RETURN ( Self )
 METHOD deleteWhereParentUuid( uUuid )
 
    ::fireEvent( 'deletingWhereParentUuid' )
+
+   msgalert( ::getDeleteSentenceWhereParentUuid( uUuid ) )
 
    ::getDatabase():Execs( ::getDeleteSentenceWhereParentUuid( uUuid ) )
 
@@ -1517,15 +1538,10 @@ RETURN ( aColumns )
 
 METHOD getSenderControllerParentUuid() 
 
-   msgalert( "en SQLBaseModel" )  
-   msgalert( ::oController:Classname() ) 
-
    if empty( ::oController )
       RETURN ( space( 40 ) )
    end if
 
-   msgalert( ::oController:getSenderController():Classname() ) 
-   
    if empty( ::oController:getSenderController() )
       RETURN ( space( 40 ) )
    end if

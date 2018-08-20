@@ -41,10 +41,6 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD lValidUnidadMedicion( uValue )
    
-   // Historicos---------------------------------------------------------------
-
-   METHOD setHistoryManager()             INLINE ( ::oHistoryManager:Set( ::getRowSet():getValuesAsHash() ) )
-
    // Escritura de campos------------------------------------------------------
 
    METHOD updateField( cField, uValue )   
@@ -132,17 +128,17 @@ METHOD New( oController )
 
    ::oHistoryManager                         := HistoryManager():New()
 
-   ::setEvent( 'activating',           {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
+   ::setEvent( 'activating',                 {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
 
-   ::setEvent( 'closedDialog',         {|| ::closedDialog() } )
+   ::setEvent( 'closedDialog',               {|| ::closedDialog() } )
 
-   ::setEvent( 'appended',             {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',               {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',     {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'appended',                   {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'edited',                     {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'deletedSelection',           {|| ::oBrowseView:Refresh() } )
 
-   ::setEvent( 'deletingLines',        {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
+   ::setEvent( 'deletingLines',              {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',  {|| hSet( ::oModel:hBuffer, "unidad_medicion_codigo", UnidadesMedicionGruposLineasRepository():getCodigoDefault() ) } )
+   ::oModel:setEvent( 'loadedBlankBuffer',   {|| hSet( ::oModel:hBuffer, "unidad_medicion_codigo", UnidadesMedicionGruposLineasRepository():getCodigoDefault() ) } )
 
 RETURN ( Self )
 
@@ -165,8 +161,6 @@ METHOD End()
    ::oRelacionesEntidades:End()
 
    ::oUnidadesMedicionController:End()
-
-   // ::oFacturasClientesDescuentosLineasController:End()
 
    ::oHistoryManager:End()
 

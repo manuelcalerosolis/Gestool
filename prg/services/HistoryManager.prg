@@ -38,7 +38,7 @@ RETURN ( self )
 METHOD Set( hHash )
 
    if !empty( hHash )
-      ::hHash  := hHash 
+      ::hHash  := hclone( hHash )
    end if 
 
 RETURN ( nil )
