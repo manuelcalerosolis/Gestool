@@ -103,7 +103,7 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := EDIT_GET
-      /*:bOnPostEdit         := {|oCol, uNewValue | ::oController:updateField( 'nombre', uNewValue ) }*/
+      :bOnPostEdit         := {|oCol, uNewValue | ::oController:oModel:updateFieldWhereId( ::getRowset():fieldGet( 'id' ) , 'nombre', ::getRowset():fieldGet( 'nombre' ) ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -119,7 +119,7 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :oFooterFont         := getBoldFont()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue | ::oController:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'descuento', ::getRowSet():fieldGet( 'descuento' ) ) }
+      :bOnPostEdit         := {|oCol, uNewValue | ::oController:oModel:updateFieldWhereId( ::getRowset():fieldGet( 'id' ) , 'descuento', ::getRowset():fieldGet( 'descuento' ) ) }
    end with
 
 RETURN ( self )
