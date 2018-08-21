@@ -45,9 +45,9 @@ METHOD New( oSenderController ) CLASS CombinacionesController
 
    ::cName                                := "combinaciones"
 
-   ::hImage                               := {  "16" => "gc_cash_register_refresh_16",;
-                                                "32" => "gc_cash_register_refresh_32",;
-                                                "48" => "gc_cash_register_refresh_48" }
+   ::hImage                               := {  "16" => "gc_coathanger_16",;
+                                                "32" => "gc_coathanger_32",;
+                                                "48" => "gc_coathanger_48" }
 
    ::nLevel                               := Auth():Level( ::cName )
 
@@ -382,7 +382,11 @@ METHOD addLeftCheckBox( hProperty ) CLASS CombinacionesView
       RETURN ( nil )
    end if 
 
-   if hget( hProperty, "grupo_color" )
+   if empty( hProperty )
+      RETURN ( nil )
+   end if 
+
+   if ( hget( hProperty, "grupo_color" ) == 1 )
       oCheckBox      := ::oPanel:addLeftColorCheckBox( hget( hProperty, "propiedad_nombre" ), .f., hget( hProperty, "propiedad_color_rgb" ) )
    else
       oCheckBox      := ::oPanel:addLeftCheckBox( hget( hProperty, "propiedad_nombre" ), .f. )

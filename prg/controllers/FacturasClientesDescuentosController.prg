@@ -13,6 +13,8 @@ CLASS FacturasClientesDescuentosController FROM SQLBrowseController
 
    METHOD updateNombre( uValue )
 
+   METHOD updateDescuento( uValue )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -77,7 +79,6 @@ RETURN ( nil )
 
 METHOD updateNombre( uValue ) CLASS FacturasClientesDescuentosController
 
-   msgalert( ::getSenderControllerParentUuid(), "uuid de la Facturas" )
 
    if .t. // ::validate()
       RETURN ( ::updateField( 'nombre', uValue ) )
@@ -85,6 +86,14 @@ METHOD updateNombre( uValue ) CLASS FacturasClientesDescuentosController
 
 RETURN ( nil )
 
+//---------------------------------------------------------------------------//
+
+METHOD updateDescuento( uValue ) CLASS FacturasClientesDescuentosController
+
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
