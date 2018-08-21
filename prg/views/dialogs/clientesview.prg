@@ -186,19 +186,19 @@ RETURN ( self )
 METHOD redefineComercial() CLASS ClientesView
 
    ::oController:oCuentasRemesasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_remesa_codigo" ] ) )
-   ::oController:oCuentasRemesasController:oGetSelector:Activate( 110, 111, ::oFolder:aDialogs[2] )
+   ::oController:oCuentasRemesasController:oGetSelector:Build( { "idGet" => 110, "idText" => 111, "idLink" => 112, "oDialog" => ::oFolder:aDialogs[2] } )
 
    ::oController:oRutasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_codigo" ] ) )
-   ::oController:oRutasController:oGetSelector:Activate( 120, 121, ::oFolder:aDialogs[2] )
+   ::oController:oRutasController:oGetSelector:Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oFolder:aDialogs[2] } )
 
    ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
-   ::oController:oAgentesController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[2] )
+   ::oController:oAgentesController:oGetSelector:Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[2] } )
 
    ::oController:oClientesGruposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_grupo_codigo" ] ) )
-   ::oController:oClientesGruposController:oGetSelector:Activate( 140, 141, ::oFolder:aDialogs[2] )
+   ::oController:oClientesGruposController:oGetSelector:Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[2] } )
 
    ::oController:oFormasPagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
-   ::oController:oFormasPagoController:oGetSelector:Activate( 150, 151, ::oFolder:aDialogs[2] )
+   ::oController:oFormasPagoController:oGetSelector:Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[2] } )
 
    REDEFINE GET ::oController:oModel:hBuffer[ "primer_dia_pago" ] ;
       ID       160;

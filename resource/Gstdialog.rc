@@ -4144,7 +4144,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 61, 50, 50, 14
   CONTROL "&Zoom", 502, "Button", WS_TABSTOP, 116, 50, 50, 14
   CONTROL "&Eliminar [F4]", 503, "Button", WS_TABSTOP, 171, 50, 50, 14
-  CONTROL "", 400, "TXBrowse", 0x00200000, 6, 67, 229, 82
+  CONTROL "", 400, "SQLXBrowse", 0x00200000, 6, 67, 229, 82
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 134, 156, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 189, 156, 50, 14
   CONTROL "Descripción", -1, "Static", WS_GROUP, 7, 24, 41, 8
@@ -21961,7 +21961,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Datos", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 45, 30, 379, 37
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Comentarios", 800, "Static", WS_GROUP, 44, 3, 481, 24
-  CONTROL "", 160, "TXBrowse", WS_TABSTOP|0x00300000, 50, 100, 369, 136
+  CONTROL "", 160, "SQLXBrowse", WS_TABSTOP|0x00300000, 50, 100, 369, 136
   CONTROL "Líneas de comentarios", -1, "Button", BS_GROUPBOX, 45, 71, 379, 171
   CONTROL "Descripción *", -1, "Static", WS_GROUP, 50, 56, 46, 8
   CONTROL "<a>Campos extra...</a>", 170, "SysLink", WS_TABSTOP, 44, 248, 88, 10
@@ -22125,7 +22125,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Almacén", 800, "Static", WS_GROUP, 43, 3, 354, 27
   CONTROL "Zonas", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 221, 354, 147
-  CONTROL "", 150, "TXBrowse", WS_TABSTOP|0x00300000, 50, 249, 341, 113
+  CONTROL "", 150, "SQLXBrowse", WS_TABSTOP|0x00300000, 50, 249, 341, 113
   CONTROL "", 1061, "Edit", WS_BORDER|WS_TABSTOP, 212, 151, 180, 11
   CONTROL "Domicilio", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 43, 74, 354, 92
   CONTROL "Dirección", -1, "Static", WS_GROUP, 49, 89, 38, 8
@@ -22154,7 +22154,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Datos", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 353, 136
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Grupos de clientes", 800, "Static", WS_GROUP, 43, 3, 354, 27
-  CONTROL "", 160, "TXBrowse", WS_TABSTOP|0x00300000, 119, 69, 272, 91
+  CONTROL "", 160, "SQLXBrowse", WS_TABSTOP|0x00300000, 119, 69, 272, 91
   CONTROL "Grupo padre", -1, "Static", WS_GROUP, 50, 69, 48, 11
   CONTROL "<a>Campos extra...</a>", 120, "SysLink", WS_TABSTOP, 44, 172, 88, 10
 }
@@ -22446,7 +22446,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 231, "Edit", WS_BORDER|WS_TABSTOP, 148, 126, 296, 12
   CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 70, 140, 360, 12
   CONTROL "", 181, "TBtnBmp", 0x00000000, 432, 140, 12, 12
-  CONTROL "", 182, "TTagEver", WS_TABSTOP|0x00800000, 70, 153, 374, 40
+  CONTROL "", 183, "TTagEver", WS_TABSTOP|0x00800000, 70, 153, 374, 40
   CONTROL "", 190, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 70, 223, 76, 12
   CONTROL "", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 212, 10, 10
   CONTROL "", 210, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 70, 238, 10, 10
@@ -22454,21 +22454,21 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Lote actual", 221, "Static", WS_GROUP, 11, 253, 41, 8
   CONTROL "Código*", -1, "Static", WS_GROUP, 11, 13, 32, 8
   CONTROL "Nombre*", -1, "Static", WS_GROUP, 11, 26, 29, 8
-  CONTROL "Familia", -1, "Static", WS_GROUP, 11, 39, 27, 8
-  CONTROL "", -1, "Button", BS_GROUPBOX, 5, 2, 444, 197
-  CONTROL "Tipo", -1, "Static", WS_GROUP, 11, 52, 19, 8
-  CONTROL "Categoría", -1, "Static", WS_GROUP, 11, 65, 37, 8
-  CONTROL "Fabricantes", -1, "Static", WS_GROUP, 11, 78, 42, 8
-  CONTROL "Marcadores", -1, "Static", WS_GROUP, 11, 144, 42, 8
-  CONTROL "Tipo I.V.A.", -1, "Static", WS_GROUP, 11, 104, 39, 8
-  CONTROL "Impuestos esp.", -1, "Static", WS_GROUP, 11, 117, 53, 8
+  CONTROL "Familia", 122, "Static", WS_GROUP, 11, 39, 27, 8
+  CONTROL "", 182, "Button", BS_GROUPBOX, 5, 2, 444, 197
+  CONTROL "Tipo", 132, "Static", WS_GROUP, 11, 52, 19, 8
+  CONTROL "Categoría", 142, "Static", WS_GROUP, 11, 65, 37, 8
+  CONTROL "Fabricantes", 152, "Static", WS_GROUP, 11, 78, 42, 8
+  CONTROL "Marcadores", 185, "Static", WS_GROUP, 11, 144, 42, 8
+  CONTROL "Tipo I.V.A.", 162, "Static", WS_GROUP, 11, 104, 39, 8
+  CONTROL "Impuestos esp.", 172, "Static", WS_GROUP, 11, 117, 53, 8
   CONTROL "Otros", -1, "Button", BS_GROUPBOX, 5, 201, 444, 66
   CONTROL "Caducidad", -1, "Static", WS_GROUP, 11, 227, 53, 8
   CONTROL "", 191, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 148, 223, 80, 60
   CONTROL "Obsoleto", 202, "Static", WS_GROUP, 11, 214, 53, 8
   CONTROL "Solicitar lote", 212, "Static", WS_GROUP, 11, 240, 53, 8
-  CONTROL "Grupo unidades", -1, "Static", WS_GROUP, 11, 130, 55, 8
-  CONTROL "Temporada", -1, "Static", WS_GROUP, 11, 91, 42, 8
+  CONTROL "Grupo unidades", 232, "Static", WS_GROUP, 11, 130, 55, 8
+  CONTROL "Temporada", 252, "Static", WS_GROUP, 11, 91, 42, 8
 }
 
 FAMILIA_GENERAL DIALOG DISCARDABLE 35, -50, 456, 270
@@ -22490,8 +22490,8 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Nombre*", -1, "Static", WS_GROUP, 11, 36, 29, 8
   CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 5, 6, 368, 44
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 5, 53, 368, 43
-  CONTROL "Propiedad 1", -1, "Static", WS_GROUP, 11, 69, 45, 8
-  CONTROL "Propiedad 2", -1, "Static", WS_GROUP, 11, 83, 45, 8
+  CONTROL "Propiedad 1", 122, "Static", WS_GROUP, 11, 69, 45, 8
+  CONTROL "Propiedad 2", 132, "Static", WS_GROUP, 11, 83, 45, 8
   CONTROL "", 121, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 150, 65, 220, 12
   CONTROL "", 131, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 150, 79, 220, 12
   CONTROL "", 1010, "Static", SS_BITMAP|SS_CENTERIMAGE|WS_BORDER, 381, 6, 60, 56
@@ -22700,7 +22700,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Nombre*", -1, "Static", WS_GROUP, 11, 26, 29, 8
   CONTROL "Dirección", -1, "Static", WS_GROUP, 11, 74, 32, 8
   CONTROL "Población", -1, "Static", WS_GROUP, 11, 102, 33, 8
-  CONTROL "Código provincia", -1, "Static", WS_GROUP, 11, 116, 56, 8
+  CONTROL "Código provincia", 1041, "Static", WS_GROUP, 11, 116, 56, 8
   CONTROL "País", -1, "Static", WS_GROUP, 11, 144, 37, 8
   CONTROL "Teléfono", -1, "Static", WS_GROUP, 11, 158, 35, 8
   CONTROL "N.I.F. / C.I.F.", -1, "Static", WS_GROUP, 11, 41, 42, 8
@@ -22767,12 +22767,12 @@ FONT 8, "Ms Sans Serif"
   CONTROL "%", 4009, "Static", WS_GROUP, 169, 152, 9, 8
   CONTROL "Régimen", -1, "Static", WS_GROUP, 12, 125, 32, 10
   CONTROL "Forma de pago", -1, "Button", BS_GROUPBOX, 5, 69, 444, 40
-  CONTROL "Código", -1, "Static", WS_GROUP, 12, 82, 45, 8
+  CONTROL "Código", 152, "Static", WS_GROUP, 12, 82, 45, 8
   CONTROL "Valores", -1, "Button", BS_GROUPBOX, 5, 2, 444, 64
-  CONTROL "Grupo", -1, "Static", WS_GROUP, 11, 53, 25, 8, WS_EX_TRANSPARENT
-  CONTROL "Agente", -1, "Static", WS_GROUP, 11, 40, 46, 8, WS_EX_TRANSPARENT
-  CONTROL "Ruta", -1, "Static", WS_GROUP, 11, 27, 46, 8, WS_EX_TRANSPARENT
-  CONTROL "Remesa", -1, "Static", WS_GROUP, 11, 14, 45, 8
+  CONTROL "Grupo", 142, "Static", WS_GROUP, 11, 53, 25, 8, WS_EX_TRANSPARENT
+  CONTROL "Agente", 132, "Static", WS_GROUP, 11, 40, 46, 8, WS_EX_TRANSPARENT
+  CONTROL "Ruta", 122, "Static", WS_GROUP, 11, 27, 46, 8, WS_EX_TRANSPARENT
+  CONTROL "Remesa", 112, "Static", WS_GROUP, 11, 14, 45, 8
   CONTROL "Recargo", 202, "Static", WS_GROUP, 12, 138, 33, 10
   CONTROL "Bloquear", 222, "Static", WS_GROUP, 237, 125, 33, 10
   CONTROL "Bloq. al alcanzarlo", 282, "Static", WS_GROUP, 237, 179, 61, 9
@@ -23085,7 +23085,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Importe *", -1, "Static", WS_GROUP, 50, 72, 41, 8
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 102, 452, 38
   CONTROL "Descripción *", -1, "Static", WS_GROUP, 50, 86, 49, 8
-  CONTROL "Caja ", -1, "Static", WS_GROUP, 50, 126, 41, 8
+  CONTROL "Caja ", 142, "Static", WS_GROUP, 50, 126, 41, 8
   CONTROL "Sesión", -1, "Static", WS_GROUP, 50, 113, 41, 8
   CONTROL "Fecha y hora *", -1, "Static", WS_GROUP, 50, 44, 58, 8
   CONTROL "", 160, "TEXPLORERBAR", 0x02000000, 500, 32, 160, 108
@@ -23239,15 +23239,15 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Gasto", -1, "Static", WS_GROUP, 12, 83, 41, 8
   CONTROL "Estado", -1, "Button", BS_GROUPBOX, 6, 101, 444, 41
   CONTROL "Cobrado", 172, "Static", WS_GROUP, 12, 113, 67, 8
-  CONTROL "Código caja ", -1, "Static", WS_GROUP, 12, 125, 41, 8
-  CONTROL "", 192, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 182, 125, 261, 11
+  CONTROL "Código caja ", 192, "Static", WS_GROUP, 12, 125, 41, 8
+  CONTROL "", 191, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 182, 125, 261, 11
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 6, 145, 444, 89
-  CONTROL "Cliente", -1, "Static", WS_GROUP, 11, 156, 41, 8
-  CONTROL "", 202, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 182, 156, 260, 11
-  CONTROL "Forma de pago", -1, "Static", WS_GROUP, 11, 170, 54, 8
-  CONTROL "", 212, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 182, 170, 260, 11
-  CONTROL "Agente", -1, "Static", WS_GROUP, 12, 183, 41, 8
-  CONTROL "", 222, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 182, 183, 260, 11
+  CONTROL "Cliente", 202, "Static", WS_GROUP, 11, 156, 41, 8
+  CONTROL "", 201, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 182, 156, 260, 11
+  CONTROL "Forma de pago", 212, "Static", WS_GROUP, 11, 170, 64, 8
+  CONTROL "", 211, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 182, 170, 260, 11
+  CONTROL "Agente", 222, "Static", WS_GROUP, 12, 183, 41, 8
+  CONTROL "", 221, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 182, 183, 260, 11
   CONTROL "Concepto", -1, "Static", WS_GROUP, 12, 197, 41, 8
   CONTROL "Pagado por", -1, "Static", WS_GROUP, 12, 212, 41, 8
 }
@@ -23292,9 +23292,9 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Código postal", -1, "Static", WS_GROUP, 4, 60, 48, 8
   CONTROL "Provincia", -1, "Static", WS_GROUP, 4, 87, 35, 8
   CONTROL "Teléfono", -1, "Static", WS_GROUP, 4, 100, 33, 8
-  CONTROL "Tarifa pers.", -1, "Static", WS_GROUP, 382, 113, 29, 8
+  CONTROL "Tarifa pers.", 272, "Static", WS_GROUP, 382, 113, 29, 8
   CONTROL "Dirección", -1, "Static", WS_GROUP, 4, 113, 35, 8
-  CONTROL "Almacén", -1, "Static", WS_GROUP, 382, 100, 33, 8
+  CONTROL "Almacén", 232, "Static", WS_GROUP, 382, 100, 33, 8
   CONTROL "Pago", 242, "Static", WS_GROUP, 382, 48, 22, 8
   CONTROL "Agente", 254, "Static", WS_GROUP, 382, 73, 29, 8
   CONTROL "% Comisión", -1, "Static", WS_GROUP, 382, 86, 41, 8
@@ -23336,7 +23336,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 120, 54, 100, 12
   CONTROL "Apertura ", -1, "Static", WS_GROUP, 50, 58, 46, 8
   CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 120, 68, 100, 12
-  CONTROL "Caja", -1, "Static", WS_GROUP, 50, 72, 46, 8
+  CONTROL "Caja", 122, "Static", WS_GROUP, 50, 72, 46, 8
   CONTROL "", 121, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 221, 68, 197, 12
   CONTROL "Importe apertura de caja", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 88, 379, 42
   CONTROL "", 4006, "Edit", WS_BORDER|WS_TABSTOP, 120, 99, 100, 12
@@ -23400,7 +23400,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 203, "Edit", WS_BORDER|WS_TABSTOP, 244, 208, 45, 11
   CONTROL "", 204, "Edit", WS_BORDER|WS_TABSTOP, 291, 208, 36, 11
   CONTROL "", 205, "Edit", WS_BORDER|WS_TABSTOP, 329, 208, 163, 11
-  CONTROL "Cuenta bancaria", -1, "Static", WS_GROUP, 51, 198, 63, 8
+  CONTROL "Cuenta bancaria", 192, "Static", WS_GROUP, 51, 198, 63, 8
   CONTROL "Número de cuenta", -1, "Static", WS_GROUP, 51, 211, 63, 8
   CONTROL "Subcuenta cobro", -1, "Static", WS_GROUP, 51, 236, 60, 8
   CONTROL "", 211, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 208, 233, 282, 11
@@ -23441,8 +23441,8 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Grupo de unidades de medición", 800, "Static", WS_GROUP, 44, 3, 481, 24
   CONTROL "Nombre *", -1, "Static", WS_GROUP, 50, 58, 46, 8
   CONTROL "Unidades", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 43, 91, 529, 147
-  CONTROL "", 122, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 196, 68, 374, 12
-  CONTROL "Unidad Base *", -1, "Static", WS_GROUP, 50, 72, 63, 8
+  CONTROL "", 121, "Edit", ES_READONLY|WS_BORDER|WS_TABSTOP, 196, 68, 374, 12
+  CONTROL "Unidad Base *", 122, "Static", WS_GROUP, 50, 72, 63, 8
 }
 
 LINEA_GRUPO_UNIDAD_MEDICION DIALOG DISCARDABLE 193, 47, 430, 143

@@ -312,10 +312,9 @@ METHOD Activate() CLASS FormaPagoView
 
    ::oController:oBancosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "banco_uuid" ] ) )
    
-   ::oController:oBancosController:oGetSelector:setEvent( 'validated', {|| ::bancosControllerValidated() } )
+   /*::oController:oBancosController:oGetSelector:setEvent( 'validated', {|| ::bancosControllerValidated() } )*/
 
-   ::oController:oBancosController:oGetSelector:Activate( 190, 191, ::oDialog )
-
+   ::oController:oBancosController:oGetSelector:Build( { "idGet" => 190, "idText" => 191, "idSay" => 192, "oDialog" => ::oDialog } )
    REDEFINE GET   ::oGetIBANCodigoPais ;
       VAR         ::cGetIBANCodigoPais ;
       ID          200 ;

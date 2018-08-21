@@ -94,50 +94,50 @@ METHOD Activate() CLASS ArticulosView
    // Familias de articulos ---------------------------------------------------
 
    ::oController:oArticulosFamiliasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_familia_codigo" ] ) )
-   ::oController:oArticulosFamiliasController:oGetSelector:Activate( 120, 121, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oArticulosFamiliasController:oGetSelector:Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Tipos de articulos ------------------------------------------------------
 
    ::oController:oArticulosTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_tipo_codigo" ] ) )
-   ::oController:oArticulosTipoController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oArticulosTipoController:oGetSelector:Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Categorias de articulos--------------------------------------------------
 
    ::oController:oArticulosCategoriasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_categoria_codigo" ] ) )
-   ::oController:oArticulosCategoriasController:oGetSelector:Activate( 140, 141, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oArticulosCategoriasController:oGetSelector:Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[1] } )
    
    // Fabricantes de articulos--------------------------------------------------
 
    ::oController:oArticulosFabricantesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_fabricante_codigo" ] ) )
-   ::oController:oArticulosFabricantesController:oGetSelector:Activate( 150, 151, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oArticulosFabricantesController:oGetSelector:Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Tipo de IVA--------------------------------------------------------------
 
    ::oController:oTipoIvaController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_iva_codigo" ] ) )
-   ::oController:oTipoIvaController:oGetSelector:Activate( 160, 161, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oTipoIvaController:oGetSelector:Build( { "idGet" => 160, "idText" => 161, "idLink" => 162, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:oTipoIvaController:oGetSelector:bValid  := {|| ::oController:validateTipoIVA() }
 
    // Impuestos especiales-----------------------------------------------------
 
    ::oController:oImpuestosEspecialesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "impuesto_especial_codigo" ] ) )
-   ::oController:oImpuestosEspecialesController:oGetSelector:Activate( 170, 171, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oImpuestosEspecialesController:oGetSelector:Build( { "idGet" => 170, "idText" => 171, "idLink" => 172, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Unidades de medicion grupo-----------------------------------------------
 
    with object ( ::oController:oUnidadesMedicionGruposController:oGetSelector )
       :Bind( bSETGET( ::oController:oModel:hBuffer[ "unidades_medicion_grupos_codigo" ] ) )
-      :Activate( 230, 231, ::oFolder:aDialogs[ 1 ] )
+      :Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
       :setWhen( {|| ::oController:isNotZoomMode() .and. SQLUnidadesMedicionOperacionesModel():getNumeroOperacionesWhereArticulo( ::oController:getModelBuffer( "codigo" ) ) == 0 } )
    end with
 
    // Temporadas---------------------------------------------------------------
 
    ::oController:oArticulosTemporadasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_temporada_codigo" ] ) )
-   ::oController:oArticulosTemporadasController:oGetSelector:Activate( 250, 251, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oArticulosTemporadasController:oGetSelector:Build( { "idGet" => 250, "idText" => 251, "idLink" => 252, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Marcadores---------------------------------------------------------------
 
-   ::oController:oTagsController:oDialogView:ExternalRedefine( { "idGet" => 180, "idButton" => 181, "idTags" => 182 }, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oTagsController:oDialogView:ExternalRedefine( { "idGet" => 180, "idButton" => 181, "idTags" => 183 }, ::oFolder:aDialogs[ 1 ] )
 
    // Obsoleto-----------------------------------------------------------------
 
