@@ -11,9 +11,9 @@ CLASS FacturasClientesDescuentosController FROM SQLBrowseController
 
    METHOD updateField( cField, uValue )
 
-   METHOD updateNombre( uValue )
+   METHOD validateNombre( uValue )
 
-   METHOD updateDescuento( uValue )
+   METHOD validateDescuento( uValue )
 
 END CLASS
 
@@ -77,21 +77,34 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD updateNombre( uValue ) CLASS FacturasClientesDescuentosController
+METHOD validateDescuento() CLASS FacturasClientesDescuentosController
 
-
-   if .t. // ::validate()
-      RETURN ( ::updateField( 'nombre', uValue ) )
+   if empty( ::getRowSet:fieldGet( 'nombre' ) )
+      msgstop( "Debes introducir un nombre valido para el descuento" )
+      RETURN ( .f. )
    end if 
 
-RETURN ( nil )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD updateDescuento( uValue ) CLASS FacturasClientesDescuentosController
+METHOD validateNombre( oGet ) CLASS FacturasClientesDescuentosController
 
+   local cNombre  := oGet:varGet()
 
-RETURN ( nil )
+   msgalert( cNombre, "cNombre" )
+
+   if empty( cNombre )
+      msgstop( "Debes introducir un nombre valido para el descuento" )
+      RETURN ( .f. )
+   end if
+
+   if ::oModel:CountNombreWhereFacturaUuid( cNombre ) > 0
+      msgstop( "El nombre del descuento introducido ya existe" )
+      RETURN ( .f. )
+   end if
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -143,7 +156,8 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue | ::oController:updateNombre( uNewValue ) }
+      :bEditValid          := {| oGet, oCol | ::oController:validateNombre( oGet ) }
+      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'nombre', uNewValue ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -159,7 +173,8 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :oFooterFont         := getBoldFont()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue | ::oController:updateField( 'descuento', uNewValue ) }
+      :bEditValid          := {|| ::oController:validateDescuento() }
+      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'descuento', uNewValue ) }
    end with
 
 RETURN ( self )
@@ -269,6 +284,8 @@ CLASS SQLFacturasClientesDescuentosModel FROM SQLCompanyModel
 
    METHOD insertWhereClienteCodigo( cCodigoCliente )
 
+   METHOD CountNombreWhereFacturaUuid( cNombre )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -324,6 +341,27 @@ METHOD insertWhereClienteCodigo( cCodigoCliente ) CLASS SQLFacturasClientesDescu
    cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), SQLClientesModel():getTableName(), quoted( ::getSenderControllerParentUuid() ), quoted( cCodigoCliente ) )
 
 RETURN ( getSQLDatabase():Exec ( cSql ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD CountNombreWhereFacturaUuid( cNombre ) CLASS SQLFacturasClientesDescuentosModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT COUNT( facturas_clientes_descuentos.nombre )
+
+      FROM %1$s AS facturas_clientes_descuentos
+      
+      WHERE parent_uuid = %2$s
+         AND facturas_clientes_descuentos.nombre = %3$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( ::getSenderControllerParentUuid() ), quoted( cNombre ) )
+
+RETURN( getSQLDatabase():getValue ( cSql ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
