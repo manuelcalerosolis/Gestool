@@ -386,7 +386,7 @@ METHOD addLeftCheckBox( hProperty ) CLASS CombinacionesView
       RETURN ( nil )
    end if 
 
-   if ( hget( hProperty, "grupo_color" ) == 1 )
+   if hget( hProperty, "grupo_color" )
       oCheckBox      := ::oPanel:addLeftColorCheckBox( hget( hProperty, "propiedad_nombre" ), .f., hget( hProperty, "propiedad_color_rgb" ) )
    else
       oCheckBox      := ::oPanel:addLeftCheckBox( hget( hProperty, "propiedad_nombre" ), .f. )
@@ -567,6 +567,8 @@ METHOD getInitialSelect() CLASS SQLCombinacionesModel
    ENDTEXT
 
    cSql  := hb_strformat( cSql,  ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName() )
+
+   logwrite( cSql )
 
 RETURN ( cSql )
 

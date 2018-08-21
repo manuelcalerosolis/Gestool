@@ -223,6 +223,18 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cDataType           := "N"
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Propiedades'
+      :nWidth              := 100
+      :bEditValue          := {|| 'propiedades' }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := EDIT_GET_BUTTON
+      :bEditValid          := {|| msgalert( 'valid' ), .t. }
+      :bEditBlock          := {|| msgalert( 'selector de propiedades' ) }
+      :nBtnBmp             := 1
+      :AddResource( "Lupa" )
+   end with
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

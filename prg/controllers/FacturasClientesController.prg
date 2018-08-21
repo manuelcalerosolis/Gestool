@@ -31,6 +31,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oLineasController
 
+   DATA oCombinacionesController
+
    DATA oHistoryManager
 
    METHOD New()
@@ -112,6 +114,8 @@ METHOD New( oController ) CLASS FacturasClientesController
    
    ::oFacturasClientesDescuentosController               := FacturasClientesDescuentosController():New( self )
 
+   ::oCombinacionesController                            := CombinacionesController():New( self )
+
    ::oHistoryManager                                     := HistoryManager():New()
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
@@ -151,6 +155,8 @@ METHOD End() CLASS FacturasClientesController
    ::oFacturasClientesDescuentosController:End()
 
    ::oLineasController:End()
+
+   ::oCombinacionesController:End()
 
    ::oHistoryManager:End()
 
