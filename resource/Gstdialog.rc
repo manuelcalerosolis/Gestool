@@ -23284,7 +23284,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 130, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 423, 31, 90, 12
   CONTROL "Imp. incluidos", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 511, 310, 56, 10
   CONTROL "", 600, "SQLXBrowse", WS_GROUP|0x00200000, 4, 287, 245, 66
-  CONTROL "Número", -1, "Static", WS_GROUP, 382, 21, 30, 8
+  CONTROL "Número", -1, "Static", WS_GROUP, 380, 21, 30, 8
   CONTROL "Cliente", 171, "Static", WS_GROUP, 4, 7, 48, 8
   CONTROL "Nombre", -1, "Static", WS_GROUP, 4, 21, 30, 8
   CONTROL "N.I.F.", -1, "Static", WS_GROUP, 4, 33, 23, 8
@@ -23292,21 +23292,21 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Código postal", -1, "Static", WS_GROUP, 4, 60, 48, 8
   CONTROL "Provincia", -1, "Static", WS_GROUP, 4, 87, 35, 8
   CONTROL "Teléfono", -1, "Static", WS_GROUP, 4, 100, 33, 8
-  CONTROL "Tarifa pers.", -1, "Static", WS_GROUP, 382, 113, 29, 8
+  CONTROL "Tarifa pers.", -1, "Static", WS_GROUP, 380, 113, 29, 8
   CONTROL "Dirección", -1, "Static", WS_GROUP, 4, 113, 35, 8
-  CONTROL "Almacén", -1, "Static", WS_GROUP, 382, 100, 33, 8
-  CONTROL "Pago", 242, "Static", WS_GROUP, 382, 48, 22, 8
-  CONTROL "Agente", 254, "Static", WS_GROUP, 382, 73, 29, 8
-  CONTROL "% Comisión", -1, "Static", WS_GROUP, 382, 86, 41, 8
-  CONTROL "Ruta", 262, "Static", WS_GROUP, 382, 60, 21, 8
-  CONTROL "Fecha", -1, "Static", WS_GROUP, 382, 35, 25, 8
+  CONTROL "Almacén", 232, "Static", WS_GROUP, 380, 100, 33, 8
+  CONTROL "Pago", 242, "Static", WS_GROUP, 380, 48, 22, 8
+  CONTROL "Agente", 254, "Static", WS_GROUP, 380, 73, 29, 8
+  CONTROL "% Comisión", -1, "Static", WS_GROUP, 380, 87, 41, 8
+  CONTROL "Ruta", 262, "Static", WS_GROUP, 380, 60, 21, 8
+  CONTROL "Fecha", -1, "Static", WS_GROUP, 380, 35, 25, 8
   CONTROL "", 4001, "Edit", WS_BORDER|WS_TABSTOP, 454, 337, 64, 12
   CONTROL "", 4002, "Edit", WS_BORDER|WS_TABSTOP, 521, 337, 110, 12
   CONTROL "Delegación", 4003, "Static", WS_GROUP, 406, 341, 47, 8
   CONTROL "Población", 4004, "Static", WS_GROUP, 4, 74, 37, 8
-  CONTROL "Serie", -1, "Static", WS_GROUP, 382, 8, 30, 8
-  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 423, 111, 90, 12
-  CONTROL "", 271, "Edit", WS_BORDER|WS_TABSTOP, 515, 111, 120, 12
+  CONTROL "Serie", -1, "Static", WS_GROUP, 380, 8, 30, 8
+  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 423, 109, 90, 12
+  CONTROL "", 271, "Edit", WS_BORDER|WS_TABSTOP, 515, 109, 120, 12
   CONTROL "", 501, "TBtnBmp", 0x00000000, 55, 123, 14, 14
   CONTROL "", 502, "TBtnBmp", 0x00000000, 69, 123, 14, 14
   CONTROL "", 503, "TBtnBmp", 0x00000000, 83, 123, 14, 14

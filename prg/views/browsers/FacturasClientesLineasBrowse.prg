@@ -230,7 +230,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := EDIT_GET_BUTTON
       :bEditValid          := {|| msgalert( 'valid' ), .t. }
-      :bEditBlock          := {|| msgalert( 'selector de propiedades' ) }
+      :bEditBlock          := {|| ::getSenderController():oCombinacionesController:runViewSelector() }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
    end with

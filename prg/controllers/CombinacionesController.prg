@@ -21,6 +21,8 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    METHOD runViewGenerate()
 
+   METHOD runViewSelector()
+
    METHOD insertCombinations( aCombinations )
 
    METHOD insertCombination( aCombination )
@@ -117,6 +119,21 @@ METHOD runViewGenerate() CLASS CombinacionesController
    else 
       ::rollbackTransactionalMode()
    end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD runViewSelector() CLASS CombinacionesController
+
+   ::hPropertyList   := getSQLDatabase():selectTrimedFetchHash( ::oPropiedadesController:oModel:getPropertyList() ) 
+
+   if empty( ::hPropertyList )
+      msgStop( "No se definieron propiedades" )
+      RETURN ( nil )
+   end if 
+
+   ::DialogViewActivate( ::oSelectorView )
 
 RETURN ( nil )
 
@@ -297,7 +314,7 @@ METHOD Activate() CLASS CombinacionesView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_COMBINACIONES" ;
-      TITLE       ::LblTitle() + "Combinaciones de propiedades"
+      TITLE       ::LblTitle() + "combinaciones de propiedades"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -461,6 +478,8 @@ CLASS CombinacionesSelectorView FROM CombinacionesView
 
    METHOD Activate()
 
+   METHOD showCombinations( oPanel ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -469,7 +488,7 @@ METHOD Activate() CLASS CombinacionesSelectorView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_COMBINACIONES_SELECT" ;
-      TITLE       ::LblTitle() + "Combinaciones de propiedades"
+      TITLE       ::LblTitle() + "combinaciones de propiedades"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -488,7 +507,7 @@ METHOD Activate() CLASS CombinacionesSelectorView
       ID          IDOK ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+      ACTION      ( ::showCombinations() )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -501,6 +520,36 @@ METHOD Activate() CLASS CombinacionesSelectorView
    ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD showCombinations() CLASS CombinacionesSelectorView
+
+   local oPanel
+   local cSerial           := ""
+   local oControl
+   local aPanelCombination := {}
+
+   for each oPanel in ::oExplorerBar:aPanels
+      
+      for each oControl in oPanel:aControls
+
+         if ( oControl:className() == "TCHECKBOX" ) .and. ( oControl:varGet() )
+                  
+            aadd( aPanelCombination, oControl:Cargo )
+
+         end if 
+
+      next 
+
+   next 
+
+   aeval( aPanelCombination, {| hSelect | cSerial += hget( hSelect, "propiedad_uuid" ) + ", " } ) 
+
+   msgalert( cSerial, "cSerial" )
+   logwrite( cSerial )
+
+RETURN ( aPanelCombination )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -568,8 +617,6 @@ METHOD getInitialSelect() CLASS SQLCombinacionesModel
 
    cSql  := hb_strformat( cSql,  ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName() )
 
-   logwrite( cSql )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -585,7 +632,7 @@ METHOD getColumns() CLASS SQLCombinacionesModel
    hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 )"                              ,;
                                                 "default"   => {|| ::getSenderControllerParentUuid() } }    )
 
-   hset( ::hColumns, "incremento_precio",    {  "create"    => "FLOAT( 16,6 )"                              ,;
+   hset( ::hColumns, "incremento_precio",    {  "create"    => "FLOAT( 16, 6 )"                             ,;
                                                 "default"   => { 0 } }                                      ) 
 
 RETURN ( ::hColumns )

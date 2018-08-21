@@ -99,7 +99,7 @@ METHOD Activate() CLASS FacturasClientesView
    // Almacenes----------------------------------------------------------------
 
    ::oController:oAlmacenesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_codigo" ] ) )
-   ::oController:oAlmacenesController:oGetSelector:Activate( 230, 231, ::oFolder:aDialogs[1] )
+   ::oController:oAlmacenesController:oGetSelector:Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Tarifas------------------------------------------------------------------
 
