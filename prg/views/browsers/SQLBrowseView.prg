@@ -62,7 +62,9 @@ CLASS SQLBrowseView
 
    // Facades------------------------------------------------------------------
 
-   METHOD getController() INLINE ( ::oController:oController )
+   METHOD getController()                    INLINE ( ::oController:oController )
+
+   METHOD getSenderController()              INLINE ( ::oController:getSenderController() )
 
    METHOD getBrowse()                        INLINE ( ::oBrowse )
 
