@@ -395,7 +395,7 @@ METHOD addLeftCheckBox( hProperty ) CLASS CombinacionesView
 
    local oCheckBox
 
-   if empty( ::oPanel )
+   /*if empty( ::oPanel )
       RETURN ( nil )
    end if 
 
@@ -409,7 +409,7 @@ METHOD addLeftCheckBox( hProperty ) CLASS CombinacionesView
       oCheckBox      := ::oPanel:addLeftCheckBox( hget( hProperty, "propiedad_nombre" ), .f. )
    end if 
 
-   oCheckBox:Cargo   := hProperty
+   oCheckBox:Cargo   := hProperty*/
 
 RETURN ( oCheckBox )
 

@@ -255,16 +255,6 @@ METHOD Activate() CLASS ArticulosFamiliaView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   // Primera propiedad -------------------------------------------------------
-
-   ::oController:oPrimeraPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "primera_propiedad_uuid" ] ) )
-   ::oController:oPrimeraPropiedadController:oGetSelector:Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oFolder:aDialogs[1] } )
-
-   // Segunda propiedad -------------------------------------------------------
-
-   ::oController:oSegundaPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "segunda_propiedad_uuid" ] ) )
-   ::oController:oSegundaPropiedadController:oGetSelector:Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
-
    // Tactil-------------------------------------------------------------------
 
    REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "incluir_tpv_tactil" ] ;
