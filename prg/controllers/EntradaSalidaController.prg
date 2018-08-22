@@ -229,7 +229,7 @@ METHOD Activate() CLASS EntradaSalidaView
    
    /*::oController:oCajasController:oGetSelector:setEvent( 'validated', {|| ::CajasControllerValidated() } )*/
 
-   ::oController:oCajasController:oGetSelector:Build( { "idGet" => 140, "idText" => 141, "idSay" => 142, "oDialog" => ::oDialog } )
+   ::oController:oCajasController:oGetSelector:Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oDialog } )
 
    // cliente------------------------------------------------------------------------------------------------------------//
   

@@ -179,7 +179,7 @@ CLASS ArticulosFamiliaView FROM SQLBaseView
 
    DATA oCheckBoxMostrarComentario
 
-   DATA oCheckBoxArticuloNoAcumulable   
+   DATA oCheckBoxArticuloNoAcumulable  
 
    DATA oTreeRelaciones
 
@@ -311,7 +311,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
    // Comentarios -----------------------------------------------------------------
 
    ::oController:oComentariosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "comentario_uuid" ] ) )
-   ::oController:oComentariosController:oGetSelector:Build( { "idGet" => 180, "idText" => 181, "idSay" => 182, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oComentariosController:oGetSelector:Build( { "idGet" => 180, "idText" => 181, "idLink" => 182, "oDialog" => ::oFolder:aDialogs[1] } )
 
    REDEFINE CHECKBOX ::oCheckBoxMostrarComentario ;
       VAR         ::oController:oModel:hBuffer[ "mostrar_ventana_comentarios" ] ;

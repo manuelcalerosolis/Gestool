@@ -36,9 +36,9 @@ METHOD New( oSenderController ) CLASS CuentasBancariasController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Cuentas"
+   ::cTitle                      := "Cuentas bancarias"
 
-   ::cName                       := "cuenta_bancaria"
+   ::cName                       := "cuentas_bancarias"
 
    ::hImage                      := {  "16" => "gc_central_bank_euro_16",;
                                        "32" => "gc_central_bank_euro_32",;
@@ -81,7 +81,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD CalculaDigitoControl()
+METHOD CalculaDigitoControl() CLASS CuentasBancariasController
 
    lCalcDC( ::oModel:hBuffer[ "cuenta_codigo_entidad" ],;
             ::oModel:hBuffer[ "cuenta_codigo_oficina" ],;
@@ -220,6 +220,7 @@ METHOD addColumns() CLASS CuentasBancariasBrowseView
       :nWidth              := 50
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -231,10 +232,18 @@ METHOD addColumns() CLASS CuentasBancariasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre_banco'
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
+      :nWidth              := 50
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre_banco' ) }
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -356,10 +365,17 @@ RETURN ( ::oDialog:nResult )
 
 METHOD ExternalRedefine( oDialog ) CLASS CuentasBancariasView
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre_banco" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+      ID          1000 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          1010 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre_banco" ) ) ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "iban_codigo_pais" ] ;
@@ -439,11 +455,15 @@ CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cuentas_bancarias"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, codigo )"
+
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
 
    METHOD getSelectByOrder( cSQLSelect )  INLINE (cSQLSelect)
+
+   METHOD getWhereCodigoAndParent( cCodigo, ParentUuid )
 
    METHOD getColumns()
 
@@ -462,7 +482,10 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                    "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "nombre_banco",            {  "create"    => "VARCHAR( 140 )"                          ,;
+   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
+                                                   "default"   => {|| space( 20 ) } }                       )
+
+   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 140 )"                          ,;
                                                    "default"   => {|| space( 140 ) } }                      )
 
    hset( ::hColumns, "iban_codigo_pais",        {  "create"    => "VARCHAR( 2 )"                            ,;
@@ -500,7 +523,26 @@ METHOD getParentUuidAttribute( value ) CLASS SQLCuentasBancariasModel
 RETURN ( ::oController:oSenderController:getUuid() )
 
 //---------------------------------------------------------------------------//
+METHOD getWhereCodigoAndParent( cCodigo, ParentUuid ) CLASS SQLCuentasBancariasModel
 
+local cSql
+
+   TEXT INTO cSql
+
+   SELECT *
+
+   FROM %1$s AS cuentas_bancarias
+
+      WHERE cuentas_bancarias.codigo = %2$s 
+         AND cuentas_bancarias.parent_uuid = %3$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigo ), quoted( ParentUuid ) )
+
+   msgalert( cSql )
+
+RETURN ( )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -1454,6 +1454,7 @@ METHOD getWhereUuid( Uuid )
    cSQL        +=    "WHERE uuid = " + quoted( uuid )                         + " "    
    cSQL        +=    "LIMIT 1"
 
+
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
