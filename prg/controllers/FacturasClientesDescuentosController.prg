@@ -92,8 +92,6 @@ METHOD validateNombre( oGet ) CLASS FacturasClientesDescuentosController
 
    local cNombre  := oGet:varGet()
 
-   msgalert( cNombre, "cNombre" )
-
    if empty( cNombre )
       msgstop( "Debes introducir un nombre valido para el descuento" )
       RETURN ( .f. )

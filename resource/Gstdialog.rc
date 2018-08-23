@@ -22464,7 +22464,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Categoría", 142, "Static", WS_GROUP, 11, 65, 37, 8
   CONTROL "Fabricantes", 152, "Static", WS_GROUP, 11, 78, 48, 8
   CONTROL "Marcadores", 185, "Static", WS_GROUP, 11, 144, 42, 8
-  CONTROL "Tipo I.V.A.", 162, "Static", WS_GROUP, 11, 104, 39, 8
+  CONTROL "Tipo I.V.A.", 162, "Static", WS_GROUP, 11, 104, 53, 8
   CONTROL "Impuestos esp.", 172, "Static", WS_GROUP, 11, 117, 53, 8
   CONTROL "Otros", -1, "Button", BS_GROUPBOX, 5, 201, 444, 66
   CONTROL "Caducidad", -1, "Static", WS_GROUP, 11, 227, 53, 8

@@ -93,7 +93,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End()
+METHOD End() CLASS GetSelector
 
    if !empty( ::oEvents )
       ::oEvents:End()
@@ -184,7 +184,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validAction()
+METHOD validAction() CLASS GetSelector
 
    if isFalse( ::fireEvent( 'validating' ) )
       RETURN ( .f. )
@@ -256,7 +256,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD showMessage( lSilenceMode )
+METHOD showMessage( lSilenceMode ) CLASS GetSelector
 
    if lSilenceMode 
       RETURN ( self )
@@ -272,7 +272,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD cleanHelpText()
+METHOD cleanHelpText() CLASS GetSelector
 
    if isFalse( ::fireEvent( 'cleaningHelpText' ) )
       RETURN ( .f. )
@@ -286,7 +286,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setHelpText( value )               
+METHOD setHelpText( value ) CLASS GetSelector            
 
    if isFalse( ::fireEvent( 'settingHelpText' ) )
       RETURN ( .f. )
@@ -300,7 +300,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Hide()
+METHOD Hide() CLASS GetSelector
 
    if !empty( ::oGet )
       ::oGet:Hide()
@@ -314,7 +314,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Show()
+METHOD Show() CLASS GetSelector
 
    if !empty( ::oGet )
       ::oGet:Show()
