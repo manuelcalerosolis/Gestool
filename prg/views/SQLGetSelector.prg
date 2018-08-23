@@ -59,8 +59,8 @@ CLASS GetSelector
    METHOD cText( value )                        INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
    METHOD varGet()                              INLINE ( if( !empty( ::oGet ), ::oGet:varGet(), ) )
   
-   METHOD Hide()                                INLINE ( if( !empty( ::oGet ), ::oGet:Hide(), ) )
-   METHOD Show()                                INLINE ( if( !empty( ::oGet ), ::oGet:Show(), ) )
+   METHOD Hide()
+   METHOD Show()
   
    METHOD setFocus()                            INLINE ( if( !empty( ::oGet ), ::oGet:setFocus(), ) )
   
@@ -297,6 +297,34 @@ METHOD setHelpText( value )
    ::fireEvent( 'settedHelpText' ) 
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Hide()
+
+   if !empty( ::oGet )
+      ::oGet:Hide()
+   end if
+
+   if !empty( ::oLink )
+      ::oLink:Hide()
+   end if
+
+RETURN ( nil )                                
+
+//---------------------------------------------------------------------------//
+
+METHOD Show()
+
+   if !empty( ::oGet )
+      ::oGet:Show()
+   end if
+
+   if !empty( ::oLink )
+      ::oLink:Show()
+   end if
+
+RETURN ( nil )                                
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

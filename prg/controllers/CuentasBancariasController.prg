@@ -438,7 +438,7 @@ END CLASS
 METHOD getValidators() CLASS CuentasBancariasValidator
 
    ::hValidators  := {  "nombre_banco" =>         {  "required"           => "El nombre es un dato requerido",;
-                                                      "unique"             => "El nombre introducido ya existe" } }
+                                                      "unique"            => "El nombre introducido ya existe" } }
 
 RETURN ( ::hValidators )
 
@@ -455,15 +455,11 @@ CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cuentas_bancarias"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, codigo )"
-
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
 
    METHOD getSelectByOrder( cSQLSelect )  INLINE (cSQLSelect)
-
-   METHOD getWhereCodigoAndParent( cCodigo, ParentUuid )
 
    METHOD getColumns()
 
@@ -482,7 +478,7 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                    "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
+   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
                                                    "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 140 )"                          ,;
@@ -523,27 +519,6 @@ METHOD getParentUuidAttribute( value ) CLASS SQLCuentasBancariasModel
 RETURN ( ::oController:oSenderController:getUuid() )
 
 //---------------------------------------------------------------------------//
-METHOD getWhereCodigoAndParent( cCodigo, ParentUuid ) CLASS SQLCuentasBancariasModel
-
-local cSql
-
-   TEXT INTO cSql
-
-   SELECT *
-
-   FROM %1$s AS cuentas_bancarias
-
-      WHERE cuentas_bancarias.codigo = %2$s 
-         AND cuentas_bancarias.parent_uuid = %3$s
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigo ), quoted( ParentUuid ) )
-
-   msgalert( cSql )
-
-RETURN ( )
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

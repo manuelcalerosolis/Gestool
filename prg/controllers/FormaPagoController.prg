@@ -427,6 +427,8 @@ METHOD Activate() CLASS FormaPagoView
 
    ::oDialog:bStart  := {|| ::startActivate() }
 
+   ::bancosControllerValidated()
+
    ACTIVATE DIALOG ::oDialog CENTER
 
   ::oBitmap:end()
@@ -435,17 +437,16 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD bancosControllerValidated()
+METHOD bancosControllerValidated() CLASS FormaPagoView
 
    local hColumns    
    local CodigoBanco    := ::oController:oModel:hBuffer[ "banco_uuid" ]
-   local uuidPago       := ::oController:oModel:hBuffer[ "uuid" ]
-
+   
    if empty( CodigoBanco )
       RETURN ( nil )
    end if 
 
-   hColumns          := ::oController:oBancosController:oModel:getWhereCodigoAndParent( CodigoBanco, uuidPago ) 
+   hColumns          := ::oController:oBancosController:oModel:getWhereCodigo( CodigoBanco ) 
 
    if !( hb_ishash( hColumns ) )
       RETURN ( nil )

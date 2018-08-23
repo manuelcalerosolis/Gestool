@@ -177,7 +177,7 @@ METHOD redefineGeneral() CLASS ClientesView
       OF          ::oFolder:aDialogs[1]
 
    ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
-   ::oController:oArticulosTarifasController:oGetSelector:Activate( 150, 151, ::oFolder:aDialogs[1] )
+   ::oController:oArticulosTarifasController:oGetSelector:Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[1] } )
 
 RETURN ( self )
 
@@ -365,6 +365,16 @@ METHOD redefineContabilidad() CLASS ClientesView
       ID       340;
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[3]
+
+   REDEFINE SAY ::oInfoSubCuenta ;
+      PROMPT   "Cuenta venta" ;
+      FONT     getBoldFont() ; 
+      COLOR    rgb( 10, 152, 234 ) ;
+      ID       352 ;
+      OF       ::oFolder:aDialogs[3]
+
+   ::oInfoSubCuenta:lWantClick  := .t.
+   ::oInfoSubCuenta:OnClick     := {|| if( ::oController:isNotZoomMode(),  msgalert( "Informe cuenta venta del cliente" ), ) }
 
    REDEFINE GET ::oGetCuentaVenta ; 
       VAR      ::oController:oModel:hBuffer[ "cuenta_venta" ] ;
