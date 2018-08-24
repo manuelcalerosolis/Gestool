@@ -6,7 +6,7 @@
 
 CLASS SQLConfiguracionVistasGestoolController FROM SQLConfiguracionVistasController
 
-   METHOD New( oController )
+   //METHOD New( oController )
 
    METHOD getConfiguracionVistaModel() INLINE ( SQLConfiguracionVistasGestoolModel():New( self ) )
 
@@ -14,11 +14,11 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS SQLConfiguracionVistasGestoolController
+/*METHOD New( oSenderController ) CLASS SQLConfiguracionVistasGestoolController
 
    ::oSenderController                 := oSenderController
    
-RETURN ( Self )
+RETURN ( Self )*/
 
 //---------------------------------------------------------------------------//
 
