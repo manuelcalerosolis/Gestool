@@ -3305,8 +3305,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Recidbos'
-   oItem:cMessage       := 'Recidbos'
+   oItem:cPrompt        := 'Recibos'
+   oItem:cMessage       := 'Recibos'
    oItem:bAction        := {||RecibosController():New():ActivateNavigatorView() }
    oItem:cId            := "recibos"
    oItem:cBmp           := "gc_briefcase2_user_16"

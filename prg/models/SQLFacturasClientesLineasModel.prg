@@ -103,6 +103,12 @@ METHOD getColumns()
    hset( ::hColumns, "descuento",                  {  "create"    => "FLOAT( 7, 4 )"                  ,;
                                                       "default"   => {|| 0 } }                        )
 
+   hset( ::hColumns, "incremento_precio",          {  "create"    => "FLOAT ( 7,4 )"                  ,;
+                                                      "default"   => {|| 0 } }                        )
+
+   hset( ::hColumns, "iva",                        {  "create"    => "FLOAT ( 5,2 )"                  ,;
+                                                      "default"   => {|| 0 }  }                       )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//

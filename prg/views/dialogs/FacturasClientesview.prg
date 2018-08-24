@@ -193,14 +193,17 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
       RETURN ( self )
    end if
 
-   oPanel:AddLink( "Incidencias...",            {|| MsgInfo( "Incidencias" ) }, "gc_money_interest_16" )
+   oPanel:AddLink( "Incidencias...",;
+                     {|| ::oController:oIncidenciasController:activateDialogView() },;
+                         ::oController:oIncidenciasController:getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
+
       oPanel:AddLink(   "Campos extra...",;
                      {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
+                         ::oController:oCamposExtraValoresController:getImage( "16" ) )
    end if
 
 RETURN ( self )
