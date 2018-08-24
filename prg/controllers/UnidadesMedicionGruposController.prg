@@ -230,7 +230,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
 
    ::oController:oUnidadesMedicioncontroller:oGetSelector:setWhen( {|| Empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .AND. ::oController:isNotZoomMode() } )
 
-   ::oController:oUnidadesMedicioncontroller:oGetSelector:Build( { "idGet" => 120, "idText" => 121, "idSay" => 122, "oDialog" => ::oDialog } )
+   ::oController:oUnidadesMedicioncontroller:oGetSelector:Build( { "idGet" => 120, "idText" => 121,"idLink" => 122, "oDialog" => ::oDialog } )
 
    // Unidades equivalencia--------------------------------------------------------------------
 

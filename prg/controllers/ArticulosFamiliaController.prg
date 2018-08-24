@@ -179,7 +179,7 @@ CLASS ArticulosFamiliaView FROM SQLBaseView
 
    DATA oCheckBoxMostrarComentario
 
-   DATA oCheckBoxArticuloNoAcumulable   
+   DATA oCheckBoxArticuloNoAcumulable  
 
    DATA oTreeRelaciones
 
@@ -255,16 +255,6 @@ METHOD Activate() CLASS ArticulosFamiliaView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   // Primera propiedad -------------------------------------------------------
-
-   ::oController:oPrimeraPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "primera_propiedad_uuid" ] ) )
-   ::oController:oPrimeraPropiedadController:oGetSelector:Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oFolder:aDialogs[1] } )
-
-   // Segunda propiedad -------------------------------------------------------
-
-   ::oController:oSegundaPropiedadController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "segunda_propiedad_uuid" ] ) )
-   ::oController:oSegundaPropiedadController:oGetSelector:Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
-
    // Tactil-------------------------------------------------------------------
 
    REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "incluir_tpv_tactil" ] ;
@@ -321,7 +311,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
    // Comentarios -----------------------------------------------------------------
 
    ::oController:oComentariosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "comentario_uuid" ] ) )
-   ::oController:oComentariosController:oGetSelector:Build( { "idGet" => 180, "idText" => 181, "idSay" => 182, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oComentariosController:oGetSelector:Build( { "idGet" => 180, "idText" => 181, "idLink" => 182, "oDialog" => ::oFolder:aDialogs[1] } )
 
    REDEFINE CHECKBOX ::oCheckBoxMostrarComentario ;
       VAR         ::oController:oModel:hBuffer[ "mostrar_ventana_comentarios" ] ;

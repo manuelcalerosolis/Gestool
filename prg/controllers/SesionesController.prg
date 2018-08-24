@@ -240,7 +240,7 @@ METHOD Activate() CLASS SesionesView
       OF          ::oDialog
 
    ::oController:oCajasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "caja_codigo" ] ) )
-   ::oController:oCajasController:oGetSelector:Activate( 120, 121, ::oDialog )
+   ::oController:oCajasController:oGetSelector:Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oDialog } )
    ::oController:oCajasController:oGetSelector:setWhen( {|| .f. } )
 
    /*REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;

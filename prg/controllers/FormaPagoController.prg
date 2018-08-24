@@ -311,12 +311,11 @@ METHOD Activate() CLASS FormaPagoView
    // Banco--------------------------------------------------------------------
 
    ::oController:oBancosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "banco_uuid" ] ) )
-   
-   /*::oController:oBancosController:oGetSelector:setEvent( 'validated', {|| ::bancosControllerValidated() } )*/
+   ::oController:oBancosController:oGetSelector:setEvent( 'validated', {|| ::bancosControllerValidated() } )
+   ::oController:oBancosController:oGetSelector:Build( { "idGet" => 190, "idText" => 191, "idLink" => 192, "oDialog" => ::oDialog } )
 
-   ::oController:oBancosController:oGetSelector:Build( { "idGet" => 190, "idText" => 191, "idSay" => 192, "oDialog" => ::oDialog } )
    REDEFINE GET   ::oGetIBANCodigoPais ;
-      VAR         ::cGetIBANCodigoPais ;
+      VAR         ::cGetIBANCodigoPais ; 
       ID          200 ;
       WHEN        ( .f. ) ;
       OF          ::oDialog ;
@@ -428,6 +427,8 @@ METHOD Activate() CLASS FormaPagoView
 
    ::oDialog:bStart  := {|| ::startActivate() }
 
+   ::bancosControllerValidated()
+
    ACTIVATE DIALOG ::oDialog CENTER
 
   ::oBitmap:end()
@@ -436,16 +437,16 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD bancosControllerValidated()
+METHOD bancosControllerValidated() CLASS FormaPagoView
 
    local hColumns    
-   local uuidBanco   := ::oController:oModel:hBuffer[ "banco_uuid" ]
-
-   if empty( uuidBanco )
+   local CodigoBanco    := ::oController:oModel:hBuffer[ "banco_uuid" ]
+   
+   if empty( CodigoBanco )
       RETURN ( nil )
    end if 
 
-   hColumns          := ::oController:oBancosController:oModel:getWhereUuid( uuidBanco )  
+   hColumns          := ::oController:oBancosController:oModel:getWhereCodigo( CodigoBanco ) 
 
    if !( hb_ishash( hColumns ) )
       RETURN ( nil )
