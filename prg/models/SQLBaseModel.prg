@@ -398,7 +398,7 @@ RETURN ( cSQLSelect )
 
 METHOD getSelectSentence( cOrderBy, cOrientation ) 
 
-   local cSQLSelect        
+   local cSQL        
 
    if !empty( cOrderBy )
       ::setOrderBy( cOrderBy )
@@ -410,15 +410,15 @@ METHOD getSelectSentence( cOrderBy, cOrientation )
 
    ::fireEvent( 'gettingSelectSentence')
 
-   cSQLSelect              := ::getGeneralSelect()
+   cSQL              := ::getGeneralSelect()
 
-   cSQLSelect              := ::addFindWhere( cSQLSelect )
+   cSQL              := ::addFindWhere( cSQL )
 
-   cSQLSelect              := ::getSelectByOrder( cSQLSelect )
+   cSQL              := ::getSelectByOrder( cSQL )
 
    ::fireEvent( 'gotSelectSentence')
 
-RETURN ( cSQLSelect )
+RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
 

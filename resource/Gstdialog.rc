@@ -23292,7 +23292,6 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Código postal", -1, "Static", WS_GROUP, 4, 60, 48, 8
   CONTROL "Provincia", -1, "Static", WS_GROUP, 4, 87, 35, 8
   CONTROL "Teléfono", -1, "Static", WS_GROUP, 4, 100, 33, 8
-<<<<<<< HEAD
   CONTROL "Tarifa pers.", 272, "Static", WS_GROUP, 382, 113, 29, 8
   CONTROL "Dirección", -1, "Static", WS_GROUP, 4, 113, 35, 8
   CONTROL "Almacén", 232, "Static", WS_GROUP, 382, 100, 33, 8
@@ -23301,16 +23300,6 @@ FONT 8, "Ms Sans Serif"
   CONTROL "% Comisión", -1, "Static", WS_GROUP, 382, 86, 41, 8
   CONTROL "Ruta", 262, "Static", WS_GROUP, 382, 60, 21, 8
   CONTROL "Fecha", -1, "Static", WS_GROUP, 382, 35, 25, 8
-=======
-  CONTROL "Tarifa pers.", -1, "Static", WS_GROUP, 380, 113, 29, 8
-  CONTROL "Dirección", -1, "Static", WS_GROUP, 4, 113, 35, 8
-  CONTROL "Almacén", 232, "Static", WS_GROUP, 380, 100, 33, 8
-  CONTROL "Pago", 242, "Static", WS_GROUP, 380, 48, 22, 8
-  CONTROL "Agente", 254, "Static", WS_GROUP, 380, 73, 29, 8
-  CONTROL "% Comisión", -1, "Static", WS_GROUP, 380, 87, 41, 8
-  CONTROL "Ruta", 262, "Static", WS_GROUP, 380, 60, 21, 8
-  CONTROL "Fecha", -1, "Static", WS_GROUP, 380, 35, 25, 8
->>>>>>> 27b150a9521cab06f03e0e55992e702c4ba8c881
   CONTROL "", 4001, "Edit", WS_BORDER|WS_TABSTOP, 454, 337, 64, 12
   CONTROL "", 4002, "Edit", WS_BORDER|WS_TABSTOP, 521, 337, 110, 12
   CONTROL "Delegación", 4003, "Static", WS_GROUP, 406, 341, 47, 8

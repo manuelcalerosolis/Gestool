@@ -344,7 +344,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-
+/*
    local oCombinacionesController         := CombinacionesController():New()
 
    oCombinacionesController:hPropertyList := getSQLDatabase():selectTrimedFetchHash( oCombinacionesController:oPropiedadesController:oModel:getPropertyList() ) 
@@ -357,7 +357,7 @@ FUNCTION Test()
    oCombinacionesController:DialogViewActivate( oCombinacionesController:oSelectorView )
 
    oCombinacionesController:End()
-
+*/
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
