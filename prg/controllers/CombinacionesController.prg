@@ -133,7 +133,7 @@ METHOD runViewSelector() CLASS CombinacionesController
       RETURN ( nil )
    end if 
 
-   ::DialogViewActivate( ::oSelectorView )
+   ::dialogViewActivate()
 
 RETURN ( nil )
 
@@ -280,7 +280,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS CombinacionesView FROM SQLBaseView
 
@@ -395,7 +394,7 @@ METHOD addLeftCheckBox( hProperty ) CLASS CombinacionesView
 
    local oCheckBox
 
-   /*if empty( ::oPanel )
+   if empty( ::oPanel )
       RETURN ( nil )
    end if 
 
@@ -409,7 +408,7 @@ METHOD addLeftCheckBox( hProperty ) CLASS CombinacionesView
       oCheckBox      := ::oPanel:addLeftCheckBox( hget( hProperty, "propiedad_nombre" ), .f. )
    end if 
 
-   oCheckBox:Cargo   := hProperty*/
+   oCheckBox:Cargo   := hProperty
 
 RETURN ( oCheckBox )
 
@@ -586,6 +585,8 @@ CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
+   METHOD getSelectorWhereCodigoArticulo( cCodigoArticulo ) 
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -615,7 +616,48 @@ METHOD getInitialSelect() CLASS SQLCombinacionesModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql,  ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName() )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSelectorWhereCodigoArticulo( cCodigoArticulo ) CLASS SQLCombinacionesModel
+
+   local cSql 
+
+   TEXT INTO cSql
+
+   SELECT 
+      combinaciones.id AS id,
+      combinaciones.uuid AS uuid,
+      combinaciones.parent_uuid AS parent_uuid,
+      combinaciones.incremento_precio AS incremento_precio,
+      combinaciones_propiedades.id AS propiedades_id,
+      combinaciones_propiedades.uuid AS propiedades_uuid,
+      GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre
+   
+   FROM %1$s AS combinaciones 
+
+      INNER JOIN %4$s AS articulos
+         ON articulos.codigo = %5$s
+      
+      INNER JOIN %2$s AS combinaciones_propiedades
+         ON combinaciones_propiedades.parent_uuid = combinaciones.uuid
+
+      INNER JOIN %3$s AS articulos_propiedades_lineas
+         ON combinaciones_propiedades.propiedad_uuid = articulos_propiedades_lineas.uuid
+
+   WHERE combinaciones.parent_uuid = articulos.uuid
+
+   GROUP BY combinaciones.uuid
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
+
+   msgalert( cSql )
+   logwrite( cSql )
 
 RETURN ( cSql )
 
@@ -623,17 +665,17 @@ RETURN ( cSql )
 
 METHOD getColumns() CLASS SQLCombinacionesModel
 
-   hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
-                                                "default"   => {|| 0 } }                                    )
+   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
+                                             "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
-                                                "default"   => {|| win_uuidcreatestring() } }               )
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
+                                             "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 )"                              ,;
-                                                "default"   => {|| ::getSenderControllerParentUuid() } }    )
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 )"                              ,;
+                                             "default"   => {|| ::getSenderControllerParentUuid() } }    )
 
-   hset( ::hColumns, "incremento_precio",    {  "create"    => "FLOAT( 16, 6 )"                             ,;
-                                                "default"   => { 0 } }                                      ) 
+   hset( ::hColumns, "incremento_precio", {  "create"    => "FLOAT( 16, 6 )"                             ,;
+                                             "default"   => { 0 } }                                      ) 
 
 RETURN ( ::hColumns )
 

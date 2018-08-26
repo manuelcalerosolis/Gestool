@@ -273,30 +273,30 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
 
    oPanel:AddLink(   "Combinaciones...",;
                      {||   ::oController:oCombinacionesController:runViewGenerate() },;
-                           ::oController:oCombinacionesController:getImage( "16" ) )
+                     ::oController:oCombinacionesController:getImage( "16" ) )
 
    oPanel:AddLink(   "Codificación de proveedores...",;
                      {||   msgalert( "to-do" ) },;
-                           ::oController:oArticulosUnidadesMedicionController:getImage( "16" ) )
+                     ::oController:oArticulosUnidadesMedicionController:getImage( "16" ) )
  
    oPanel:AddLink(   "Imagenes...",;
                      {||   ::oController:oImagenesController:activateDialogView() },;
-                           ::oController:oImagenesController:getImage( "16" ) )
+                     ::oController:oImagenesController:getImage( "16" ) )
 
    oPanel:AddLink(   "Traducciones...",;
                      {||   ::oController:oTraduccionesController:activateDialogView() },;
-                           ::oController:oTraduccionesController:getImage( "16" ) )
+                     ::oController:oTraduccionesController:getImage( "16" ) )
 
    oPanel:AddLink(   "Unidad por operación...",;
                      {||   ::oController:oUnidadesMedicionOperacionesController:activateDialogView(),;
                            ::oController:oUnidadesMedicionGruposController:oGetSelector:evalWhen() },;
-                           ::oController:ounidadesmedicionoperacionesController:getImage( "16" ) )
+                     ::oController:ounidadesmedicionoperacionesController:getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
 
    oPanel:AddLink(   "Campos extra...",;
                      {||   ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                           ::oController:oCamposExtraValoresController:getImage( "16" ) )
+                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
 RETURN ( nil )
 

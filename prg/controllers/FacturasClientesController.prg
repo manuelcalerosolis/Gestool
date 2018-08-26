@@ -116,8 +116,6 @@ METHOD New( oController ) CLASS FacturasClientesController
    
    ::oFacturasClientesDescuentosController               := FacturasClientesDescuentosController():New( self )
 
-   ::oCombinacionesController                            := CombinacionesController():New( self )
-
    ::oCamposExtraValoresController                       :=CamposExtraValoresController():New( self )
 
    ::oHistoryManager                                     := HistoryManager():New()
@@ -161,8 +159,6 @@ METHOD End() CLASS FacturasClientesController
    ::oCamposExtraValoresController:End()
 
    ::oLineasController:End()
-
-   ::oCombinacionesController:End()
 
    ::oHistoryManager:End()
 

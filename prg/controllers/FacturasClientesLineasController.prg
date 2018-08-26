@@ -19,6 +19,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    DATA oArticulosPreciosDescuentosController
 
+   DATA oCombinacionesController
+
    DATA oHistoryManager
 
    METHOD New()
@@ -120,6 +122,8 @@ METHOD New( oController )
 
    ::oArticulosPreciosDescuentosController   := ArticulosPreciosDescuentosController():New( self )
 
+   ::oCombinacionesController                := CombinacionesController():New( self )
+
    ::oHistoryManager                         := HistoryManager():New()
 
    ::setEvent( 'activating',                 {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
@@ -157,6 +161,8 @@ METHOD End()
    ::oRelacionesEntidades:End()
 
    ::oUnidadesMedicionController:End()
+
+   ::oCombinacionesController:End()
 
    ::oHistoryManager:End()
 
