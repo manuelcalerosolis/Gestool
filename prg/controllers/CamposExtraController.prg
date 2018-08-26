@@ -3,7 +3,13 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraGestoolController FROM CamposExtraController
+CLASS CamposExtraGestoolController FROM SQLNavigatorGestoolController
+
+   METHOD New( oSenderController )
+   
+   METHOD End()
+
+   METHOD deleteEntitiesWhereEmpty()
 
    METHOD getModel()                            INLINE ( ::oModel := SQLCamposExtraGestoolModel():New( self ) )
 
@@ -14,6 +20,67 @@ CLASS CamposExtraGestoolController FROM CamposExtraController
    METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oSenderController ) CLASS CamposExtraGestoolController
+
+   ::Super:New( oSenderController )
+
+   ::cTitle                            := "Campos extra"
+
+   ::setName( "campos_extra" )
+
+   ::lTransactional                    := .t.
+
+
+   ::hImage                            := {  "16" => "gc_form_plus2_16",;
+                                             "32" => "gc_form_plus2_32",;
+                                             "48" => "gc_form_plus2_48" }
+
+   ::getLevel()
+
+   ::getModel()
+
+   ::oBrowseView                       := CamposExtraBrowseView():New( self )
+
+   ::oDialogView                       := CamposExtraView():New( self )
+
+   ::oValidator                        := CamposExtraValidator():New( self, ::oDialogView )
+
+   ::getCamposExtraEntidadesController()
+
+   ::setEvent( 'edited',      {|| ::deleteEntitiesWhereEmpty() } )
+   ::setEvent( 'appended',    {|| ::deleteEntitiesWhereEmpty() } )
+   ::setEvent( 'duplicated',  {|| ::deleteEntitiesWhereEmpty() } )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS CamposExtraGestoolController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oCamposExtraEntidadesController:End() 
+
+   ::Super:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteEntitiesWhereEmpty() CLASS CamposExtraGestoolController
+   
+   ::oCamposExtraEntidadesController:oModel:deleteBlankEntityWhereUuid( ::getUuid() )
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

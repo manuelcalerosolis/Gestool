@@ -6,25 +6,27 @@
 
 CLASS SQLConfiguracionVistasGestoolController FROM SQLConfiguracionVistasController
 
-   METHOD New( oController )
+   //METHOD New( oController )
+
+   METHOD getConfiguracionVistaModel() INLINE ( SQLConfiguracionVistasGestoolModel():New( self ) )
 
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS SQLConfiguracionVistasGestoolController
+/*METHOD New( oSenderController ) CLASS SQLConfiguracionVistasGestoolController
 
    ::oSenderController                 := oSenderController
-
-   ::oModel                            := SQLConfiguracionVistasGestoolModel():New( self )
    
-RETURN ( Self )
+RETURN ( Self )*/
 
 //---------------------------------------------------------------------------//
 
 CLASS SQLConfiguracionVistasController FROM SQLBaseController
 
    METHOD New( oController )
+
+   METHOD getConfiguracionVistaModel() INLINE ( SQLConfiguracionVistasModel():New( self ) )
 
    METHOD setId( cViewType, cViewName, nId ) ;
                                        INLINE ( ::oModel:setId( cViewType, cViewName, nId ) )
@@ -64,7 +66,7 @@ METHOD New( oSenderController ) CLASS SQLConfiguracionVistasController
 
    ::oSenderController                 := oSenderController
 
-   ::oModel                            := SQLConfiguracionVistasModel():New( self )
+   ::oModel                            := ::getConfiguracionVistaModel() 
    
 RETURN ( Self )
 

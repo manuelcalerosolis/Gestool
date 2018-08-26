@@ -368,7 +368,7 @@ METHOD ExternalRedefine( oDialog ) CLASS CuentasBancariasView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          1000 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
+      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 

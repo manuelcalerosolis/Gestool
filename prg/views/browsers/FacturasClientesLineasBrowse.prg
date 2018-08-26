@@ -235,6 +235,28 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :AddResource( "Lupa" )
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'incremento_precio'
+      :cHeader             := 'Incremento'
+      :nWidth              := 80
+      :cEditPicture        := "@E 999.9999"
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := EDIT_GET
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateField( 'incremento_precio', uNewValue ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'iva'
+      :cHeader             := 'IVA'
+      :nWidth              := 80
+      :cEditPicture        := "@E 999.9999"
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'iva' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := EDIT_GET
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateField( 'iva', uNewValue ) }
+   end with
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
