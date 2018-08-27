@@ -40,6 +40,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD validateLote()               
 
    METHOD lValidUnidadMedicion( uValue )
+
+   METHOD validateIva( uValue)
    
    // Escritura de campos------------------------------------------------------
 
@@ -489,5 +491,27 @@ METHOD lValidUnidadMedicion( uValue )
    end if
 
 RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
+
+METHOD validateIva( uValue )
+
+   local nPorcentaje    :=uValue:VarGet()
+
+   local cCount   
+
+    if empty(nPorcentaje)
+      msgstop("El IVA es un dato obligatorio")
+      RETURN ( .f. )
+   end if
+
+   cCount               := SQLTiposIvaModel():CountIvaWherePorcentaje( nPorcentaje )
+
+   if cCount <= 0
+      msgstop("No existe el IVA introducido")
+      RETURN ( .f. )
+   end if
+
+RETURN( .t. )
 
 //----------------------------------------------------------------------------//

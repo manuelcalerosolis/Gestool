@@ -369,7 +369,7 @@ METHOD CountIvaWherePorcentaje( nPorcentaje ) CLASS SQLTiposIvaModel
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( nPorcentaje ) )
 
-RETURN (msgalert (getSQLDatabase():getValue ( cSql )))
+RETURN (getSQLDatabase():getValue ( cSql ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
