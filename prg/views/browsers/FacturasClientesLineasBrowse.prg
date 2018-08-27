@@ -239,10 +239,10 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cSortOrder          := 'incremento_precio'
       :cHeader             := 'Incremento'
       :nWidth              := 80
+      :cEditPicture        := "@E 99,999,999.999999"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nFootStyle          := :nDataStrAlign               
-      :cEditPicture        := "@E 999.9999"
       :cFooterPicture      := :cEditPicture
       :oFooterFont         := getBoldFont()
       :cDataType           := "N"

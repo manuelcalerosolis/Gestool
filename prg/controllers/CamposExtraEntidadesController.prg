@@ -6,9 +6,9 @@ CLASS CamposExtraEntidadesGestoolController FROM CamposExtraEntidadesController
    CLASSDATA aEntidades INIT  {  "empresas" =>     { "nombre" => "Empresas", "icono" => "gc_factory_16"  },;
                                  "usuarios" =>     { "nombre" => "Usuarios", "icono" => "gc_businesspeople_16"  } }
 
-   METHOD getModel()                   INLINE ( ::oModel := SQLCamposExtraEntidadesGestoolModel():New( self ) )
+   METHOD getModel()                         INLINE ( ::oModel := SQLCamposExtraEntidadesGestoolModel():New( self ) )
 
-   METHOD getConfiguracionVistaModel() INLINE ( msgalert( "SQLConfiguracionVistasGestoolModel" ), SQLConfiguracionVistasGestoolModel():New( self ) )
+   METHOD getConfiguracionVistasController() INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
 END CLASS
 
