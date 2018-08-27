@@ -68,6 +68,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD stampArticuloUnidadMedicion( uValue )
 
    METHOD stampArticuloUnidadMedicionFactor()
+
+   METHOD stampArticuloIva ( cCodigoArticulo )
    
    // Dialogos-----------------------------------------------------------------
 
@@ -250,6 +252,8 @@ METHOD stampArticulo( hArticulo )
 
    ::stampArticuloDescuento()
 
+   ::stampArticuloIva( hget( hArticulo, "codigo" ) )
+
    cursorWE()
    
 RETURN ( .t. )
@@ -363,6 +367,16 @@ METHOD stampArticuloUnidadMedicionFactor()
       ::stampArticuloDescuento()
       
    end if 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD stampArticuloIva( cCodigoArticulo )
+
+   local nPorcentajeIva     := SQLTiposIvaModel():getIvaWhereArticuloCodigo ( cCodigoArticulo )
+
+   ::updateField( 'iva', nPorcentajeIva )
 
 RETURN ( nil )
 

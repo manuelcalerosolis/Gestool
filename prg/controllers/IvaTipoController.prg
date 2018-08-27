@@ -293,6 +293,8 @@ CLASS SQLTiposIvaModel FROM SQLCompanyModel
 
    METHOD getPorcentajeWhereCodigo( cCodigo )   INLINE ( ::getField( "porcentaje", "codigo", cCodigo ) )
 
+   METHOD getIvaWhereArticuloCodigo( cCodigoArticulo )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -324,6 +326,28 @@ METHOD getColumns() CLASS SQLTiposIvaModel
                                              "default"   => {|| space( 20 ) } }                       )
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getIvaWhereArticuloCodigo( cCodigoArticulo ) CLASS SQLTiposIvaModel
+
+local cSQL
+
+   TEXT INTO cSql
+
+      SELECT tipos_iva.porcentaje
+
+      FROM %1$s AS tipos_iva
+
+      INNER JOIN %2$s AS articulos
+         ON tipos_iva.codigo=articulos.tipo_iva_codigo AND articulos.codigo= %3$s
+
+      ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) ) 
+
+
+RETURN ( getSQLDatabase():getValue ( cSql ) ) 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

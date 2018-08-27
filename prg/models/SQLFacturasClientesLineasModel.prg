@@ -61,6 +61,7 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
 
    METHOD duplicateByUuid( originalUuid, duplicatedUuid )
 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -100,13 +101,13 @@ METHOD getColumns()
    hset( ::hColumns, "unidad_medicion_factor",     {  "create"    => "DECIMAL(19,6)"                  ,;
                                                       "default"   => {|| 1 } }                        )
 
-   hset( ::hColumns, "descuento",                  {  "create"    => "FLOAT( 7, 4 )"                  ,;
+   hset( ::hColumns, "descuento",                  {  "create"    => "FLOAT(7,4)"                     ,;
                                                       "default"   => {|| 0 } }                        )
 
-   hset( ::hColumns, "incremento_precio",          {  "create"    => "FLOAT ( 7,4 )"                  ,;
+   hset( ::hColumns, "incremento_precio",          {  "create"    => "FLOAT (7,4)"                    ,;
                                                       "default"   => {|| 0 } }                        )
 
-   hset( ::hColumns, "iva",                        {  "create"    => "FLOAT ( 5,2 )"                  ,;
+   hset( ::hColumns, "iva",                        {  "create"    => "FLOAT (7,4)"                    ,;
                                                       "default"   => {|| 0 }  }                       )
 
 RETURN ( ::hColumns )
@@ -135,7 +136,9 @@ METHOD getInitialSelect()
          unidad_medicion_codigo,                                      
          descuento,       
          ( @importe_descuento := IF( descuento IS NULL OR descuento = 0, 0, @total_bruto * descuento / 100 ) ),
-         ( @total_bruto - @importe_descuento ) AS total_precio
+         ( @total_bruto - @importe_descuento ) AS total_precio,
+         incremento_precio,
+         iva
 
       FROM %1$s    
 
