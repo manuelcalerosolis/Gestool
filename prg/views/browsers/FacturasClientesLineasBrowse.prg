@@ -239,22 +239,34 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cSortOrder          := 'incremento_precio'
       :cHeader             := 'Incremento'
       :nWidth              := 80
+<<<<<<< HEAD
       :cEditPicture        := "@E 99,999,999.999999"
+=======
+>>>>>>> c298eaec7a4007a46239006e4d5c4f452d8cd832
       :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nFootStyle          := :nDataStrAlign               
+      :cEditPicture        := "@E 999.9999"
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := getBoldFont()
+      :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateField( 'incremento_precio', uNewValue ) }
+      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'incremento_precio', uNewValue ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'iva'
-      :cHeader             := 'IVA'
+      :cHeader             := '% IVA'
       :nWidth              := 80
-      :cEditPicture        := "@E 999.9999"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'iva' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nFootStyle          := :nDataStrAlign               
+      :cEditPicture        := "@E 999.9999"
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := getBoldFont()
+      :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateField( 'iva', uNewValue ) }
+      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'iva', uNewValue ) }
    end with
 
 RETURN ( nil )
