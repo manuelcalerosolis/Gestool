@@ -5,6 +5,8 @@
 
 CLASS CamposExtraGestoolController FROM SQLNavigatorGestoolController
 
+   DATA oCamposExtraEntidadesController
+
    METHOD New( oSenderController )
    
    METHOD End()

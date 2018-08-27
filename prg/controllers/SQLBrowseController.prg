@@ -109,8 +109,6 @@ METHOD Activate( nId, oDialog )
 
    ::fireEvent( 'activating' )     
 
-   msgalert( ::oModel:getSelectSentence(), "getSelectSentence" )
-
    ::oRowSet:buildPad( ::oModel:getSelectSentence() )
 
    ::oBrowseView:ActivateDialog( oDialog, nId )

@@ -656,9 +656,6 @@ METHOD getSelectorWhereCodigoArticulo( cCodigoArticulo ) CLASS SQLCombinacionesM
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
 
-   msgalert( cSql )
-   logwrite( cSql )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -679,6 +676,7 @@ METHOD getColumns() CLASS SQLCombinacionesModel
 
 RETURN ( ::hColumns )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

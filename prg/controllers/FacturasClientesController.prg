@@ -45,7 +45,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD loadedBlankBuffer() 
 
-   METHOD loadedBuffer()               INLINE ( ::oHistoryManager:Set( ::oModel:hBuffer ), ::oHistoryManager:Say() )
+   METHOD loadedBuffer()               INLINE ( ::oHistoryManager:Set( ::oModel:hBuffer ) )
 
    METHOD isClientFilled()             INLINE ( !empty( ::getModelBuffer( "cliente_codigo" ) ) )
 
@@ -118,15 +118,13 @@ METHOD New( oController ) CLASS FacturasClientesController
    
    ::oFacturasClientesDescuentosController               := FacturasClientesDescuentosController():New( self )
 
-<<<<<<< HEAD
-   ::oCamposExtraValoresController                       :=CamposExtraValoresController():New( self )
-=======
+   ::oCamposExtraValoresController                       := CamposExtraValoresController():New( self )
+
    ::oCombinacionesController                            := CombinacionesController():New( self )
 
    ::oCamposExtraValoresController                       := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oIncidenciasController                              := IncidenciasController():New( self )
->>>>>>> 8dee60af65bfae33c6ad61217f12eb856b48e28c
 
    ::oHistoryManager                                     := HistoryManager():New()
 
