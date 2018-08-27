@@ -118,11 +118,8 @@ METHOD New( oController ) CLASS FacturasClientesController
    
    ::oFacturasClientesDescuentosController               := FacturasClientesDescuentosController():New( self )
 
-<<<<<<< HEAD
    ::oCamposExtraValoresController                       := CamposExtraValoresController():New( self )
 
-=======
->>>>>>> c298eaec7a4007a46239006e4d5c4f452d8cd832
    ::oCombinacionesController                            := CombinacionesController():New( self )
 
    ::oCamposExtraValoresController                       := CamposExtraValoresController():New( self, ::oModel:cTableName )
