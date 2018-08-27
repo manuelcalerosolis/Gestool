@@ -262,6 +262,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :oFooterFont         := getBoldFont()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
+      :bEditValid          := {|oGet, oCol| msgalert(oGet),SQLTiposIvaModel():CountIvaWherePorcentaje( oGet ) }
       :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'iva', uNewValue ) }
    end with
 
