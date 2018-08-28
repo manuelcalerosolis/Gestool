@@ -10,7 +10,7 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    DATA lFooter            INIT .t.
 
-   DATA nFreeze            INIT 1
+   DATA nFreeze            INIT 3
 
    DATA nMarqueeStyle      INIT 3
 
@@ -186,6 +186,22 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'incremento_precio'
+      :cHeader             := 'Incremento'
+      :nWidth              := 80
+      :cEditPicture        := "@E 99,999,999.999999"
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nFootStyle          := :nDataStrAlign               
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := getBoldFont()
+      :cDataType           := "N"
+      :nEditType           := EDIT_GET
+      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'incremento_precio', uNewValue ) }
+      :lHide               := .t.
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'total_bruto'
       :cHeader             := 'Total bruto'
       :nWidth              := 80
@@ -207,6 +223,23 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cEditPicture        := "@E 999.9999"
       :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'iva'
+      :cHeader             := '% IVA'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'iva' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nFootStyle          := :nDataStrAlign               
+      :cEditPicture        := "@E 999.9999"
+      :cFooterPicture      := :cEditPicture
+      :oFooterFont         := getBoldFont()
+      :cDataType           := "N"
+      :nEditType           := EDIT_GET
+      :bEditValid          := {|uNewValue| ::oController:validateIva( uNewValue ) }
+      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'iva', uNewValue ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -233,37 +266,6 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bEditBlock          := {|| ::oController:oCombinacionesController:runViewSelector( ::getRowSet():fieldGet( 'articulo_codigo' ) ) }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'incremento_precio'
-      :cHeader             := 'Incremento'
-      :nWidth              := 80
-      :cEditPicture        := "@E 99,999,999.999999"
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nFootStyle          := :nDataStrAlign               
-      :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
-      :cDataType           := "N"
-      :nEditType           := EDIT_GET
-      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'incremento_precio', uNewValue ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'iva'
-      :cHeader             := '% IVA'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'iva' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nFootStyle          := :nDataStrAlign               
-      :cEditPicture        := "@E 999.9999"
-      :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
-      :cDataType           := "N"
-      :nEditType           := EDIT_GET
-      :bEditValid          := {|uNewValue| ::oController:validateIva( uNewValue ) }
-      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'iva', uNewValue ) }
    end with
 
 RETURN ( nil )

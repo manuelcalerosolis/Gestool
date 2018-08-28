@@ -36,6 +36,8 @@ CLASS SQLBrowseView
 
    DATA cName
 
+   DATA nFreeze                              INIT 0
+
    DATA oEvents
 
    METHOD New( oController )
@@ -256,6 +258,7 @@ METHOD Create( oWindow )
    ::oBrowse:lFastEdit        := ::lFastEdit
    ::oBrowse:lMultiSelect     := ::lMultiSelect
    ::oBrowse:nColSel          := ::nColSel
+   ::oBrowse:nFreeze          := ::nFreeze
 
    // Propiedades del control--------------------------------------------------
 

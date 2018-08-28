@@ -39,7 +39,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD validateLote()               
 
-   METHOD lValidUnidadMedicion( uValue )
+   METHOD validateUnidadMedicion( uValue )
 
    METHOD validateIva( uValue)
    
@@ -71,7 +71,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD stampArticuloUnidadMedicionFactor()
 
-   METHOD stampArticuloIva ( cCodigoArticulo )
+   METHOD stampArticuloIva()
    
    // Dialogos-----------------------------------------------------------------
 
@@ -254,7 +254,7 @@ METHOD stampArticulo( hArticulo )
 
    ::stampArticuloDescuento()
 
-   ::stampArticuloIva( hget( hArticulo, "codigo" ) )
+   ::stampArticuloIva()
 
    cursorWE()
    
@@ -374,11 +374,13 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD stampArticuloIva( cCodigoArticulo )
+METHOD stampArticuloIva()
 
-   local nPorcentajeIva     := SQLTiposIvaModel():getIvaWhereArticuloCodigo ( cCodigoArticulo )
+   local nPorcentajeIva     := SQLTiposIvaModel():getIvaWhereArticuloCodigo( ::getRowSet():fieldGet( 'articulo_codigo' ) )
 
-   ::updateField( 'iva', nPorcentajeIva )
+   if hb_isnumeric( nPorcentajeIva )
+      ::updateField( 'iva', nPorcentajeIva )
+   end if 
 
 RETURN ( nil )
 
@@ -478,7 +480,7 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD lValidUnidadMedicion( uValue )
+METHOD validateUnidadMedicion( uValue )
 
    local cValue   := uValue:VarGet()
 
@@ -496,22 +498,17 @@ RETURN ( .t. )
 
 METHOD validateIva( uValue )
 
-   local nPorcentaje    :=uValue:VarGet()
+   local nPorcentaje    := uValue:VarGet()
 
-   local cCount   
+    if empty( nPorcentaje )
+      RETURN ( .t. )
+   end if
 
-    if empty(nPorcentaje)
-      msgstop("El IVA es un dato obligatorio")
+   if SQLTiposIvaModel():CountIvaWherePorcentaje( nPorcentaje ) <= 0
+      msgstop( "No existe el IVA introducido" )
       RETURN ( .f. )
    end if
 
-   cCount               := SQLTiposIvaModel():CountIvaWherePorcentaje( nPorcentaje )
-
-   if cCount <= 0
-      msgstop("No existe el IVA introducido")
-      RETURN ( .f. )
-   end if
-
-RETURN( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
