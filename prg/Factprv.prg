@@ -559,9 +559,9 @@ STATIC FUNCTION OpenFiles( lExt )
 
       // Limitaciones de cajero y cajas--------------------------------------------------------
 
-      if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
+      /*if SQLAjustableModel():getRolFiltrarVentas( Auth():rolUuid() )
          cFiltroUsuario       := "Field->cCodUsr == '" + Auth():Codigo()  + "' .and. Field->cCodCaj == '" + Application():CodigoCaja() + "'"
-      end if
+      end if*/
 
       EnableAcceso()
 
@@ -653,6 +653,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
    local nLevel
    local lEuro          := .f.
    local oLiq
+   local oScript
 
    DEFAULT oMenuItem    := _MENUITEM_
    DEFAULT oWnd         := oWnd()
@@ -1156,6 +1157,13 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
             LEVEL    ACC_EDIT
 
    end if
+
+   DEFINE BTNSHELL oScript RESOURCE "gc_folder_document_" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oScript:Expand() ) ;
+      TOOLTIP  "Scripts" ;
+
+      ImportScript( oWndBrw, oScript, "FacturasProveedores", nView )
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
       ACTION   ( oRotor:Expand() ) ;
