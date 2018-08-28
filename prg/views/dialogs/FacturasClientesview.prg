@@ -29,7 +29,7 @@ METHOD Activating() CLASS FacturasClientesView
 
    ::oController:oFacturasClientesDescuentosController:buildRowSet()   
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -183,7 +183,7 @@ METHOD startDialog() CLASS FacturasClientesView
 
    ::oController:oClientesController:oGetSelector:setFocus()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -194,7 +194,7 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
    if ::oController:isZoomMode()
-      RETURN ( self )
+      RETURN ( nil )
    end if
 
    oPanel:AddLink( "Incidencias...",;
@@ -210,7 +210,7 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
                          ::oController:oCamposExtraValoresController:getImage( "16" ) )
    end if
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

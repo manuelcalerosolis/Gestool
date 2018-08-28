@@ -422,7 +422,14 @@ RETURN ( oCheckBox )
 
 METHOD changeCheckBox( uValue, oCheckBox ) CLASS CombinacionesView
 
-   msgalert( uValue, "changeCheckBox" )
+   local cCaption   := oCheckBox:cCaption
+
+   if uValue
+      ::oController:oRowSet:setFilter( {|| cCaption $ ::getRowSet():fieldGet( 'articulos_propiedades_nombre' ) } )
+      ::oController:oRowSet:Refresh()
+   end if 
+
+   msgalert( cCaption, "changeCheckBox" )
 
    msgalert( oCheckBox:className(), "changeCheckBox className" )
 
