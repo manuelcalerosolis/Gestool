@@ -426,6 +426,7 @@ METHOD changeCheckBox( uValue, oCheckBox ) CLASS CombinacionesView
 
    if uValue
       ::oController:oRowSet:setFilter( {|| cCaption $ ::getRowSet():fieldGet( 'articulos_propiedades_nombre' ) } )
+      ::oController:oRowSet:Refresh()
    end if 
 
    msgalert( cCaption, "changeCheckBox" )
