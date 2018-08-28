@@ -25,6 +25,10 @@ METHOD Activating() CLASS FacturasClientesView
       ::oController:oModel:hBuffer()
    end if 
 
+   ::oController:oFacturasClientesLineasController:buildRowSet()
+
+   ::oController:oFacturasClientesDescuentosController:buildRowSet()   
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -108,15 +112,15 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Lineas ------------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:oLineasController:AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:oFacturasClientesLineasController:AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
 
-   TBtnBmp():ReDefine( 502, "edit16",,,,, {|| ::oController:oLineasController:Edit() }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
+   TBtnBmp():ReDefine( 502, "edit16",,,,, {|| ::oController:oFacturasClientesLineasController:Edit() }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
 
-   TBtnBmp():ReDefine( 503, "del16",,,,, {|| ::oController:oLineasController:Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 503, "del16",,,,, {|| ::oController:oFacturasClientesLineasController:Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
 
-   TBtnBmp():ReDefine( 504, "refresh16",,,,, {|| ::oController:oLineasController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 504, "refresh16",,,,, {|| ::oController:oFacturasClientesLineasController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
 
-   ::oController:oLineasController:Activate( 500, ::oFolder:aDialogs[1] )
+   ::oController:oFacturasClientesLineasController:Activate( 500, ::oFolder:aDialogs[1] )
 
    // Descuentos---------------------------------------------------------------
 
@@ -146,9 +150,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) } )
-      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oLineasController:Append() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oLineasController:Edit() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oLineasController:Delete() } )
+      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oFacturasClientesLineasController:Append() } )
+      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oFacturasClientesLineasController:Edit() } )
+      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oFacturasClientesLineasController:Delete() } )
    end if
 
    ::oDialog:bStart := {|| ::startDialog() }
@@ -173,7 +177,7 @@ METHOD startDialog() CLASS FacturasClientesView
 
    ::oController:oAgentesController:oGetSelector:Start()
 
-   ::oController:oLineasController:oBrowseView:Refresh()
+   ::oController:oFacturasClientesLineasController:oBrowseView:Refresh()
 
    ::oController:oArticulosTarifasController:oGetSelector:start()
 

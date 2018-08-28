@@ -29,7 +29,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oFacturasClientesDescuentosController
 
-   DATA oLineasController
+   DATA oFacturasClientesLineasController
 
    DATA oCombinacionesController
 
@@ -114,7 +114,7 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oClientesTarifasController                          := ClientesTarifasController():New( self )
 
-   ::oLineasController                                   := FacturasClientesLineasController():New( self )
+   ::oFacturasClientesLineasController                   := FacturasClientesLineasController():New( self )
    
    ::oFacturasClientesDescuentosController               := FacturasClientesDescuentosController():New( self )
 
@@ -134,7 +134,7 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oModel:setEvent( 'loadedBuffer',                    {|| ::loadedBuffer() } )
 
-   ::oLineasController:setEvents( { 'appending', 'editing', 'deleting' }, {|| ::isClientFilled() }  )
+   ::oFacturasClientesLineasController:setEvents( { 'appending', 'editing', 'deleting' }, {|| ::isClientFilled() }  )
 
    ::oClientesController:oGetSelector:setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
 
@@ -168,7 +168,7 @@ METHOD End() CLASS FacturasClientesController
    
    ::oIncidenciasController:End()
 
-   ::oLineasController:End()
+   ::oFacturasClientesLineasController:End()
 
    ::oHistoryManager:End()
 

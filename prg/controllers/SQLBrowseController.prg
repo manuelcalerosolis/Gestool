@@ -73,6 +73,8 @@ CLASS SQLBrowseController FROM SQLBaseController
    
    METHOD getState( cType, cName )                    INLINE ( ::oConfiguracionVistasController:getState( cType, cName ) )
 
+   METHOD buildRowSet() 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -109,13 +111,21 @@ METHOD Activate( nId, oDialog )
 
    ::fireEvent( 'activating' )     
 
-   ::oRowSet:buildPad( ::oModel:getSelectSentence() )
-
    ::oBrowseView:ActivateDialog( oDialog, nId )
 
    ::fireEvent( 'activated' )     
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildRowSet() 
+
+   if !empty( ::oModel )
+      ::oRowSet:buildPad( ::oModel:getSelectSentence() )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -205,7 +215,7 @@ METHOD startBrowse( oCombobox )
       RETURN ( nil )
    end if 
 
-   if (!empty( oCombobox ) )
+   if ( !empty( oCombobox ) )
       oCombobox:SetItems( ::oDialogView:getoBrowse():getColumnHeaders() )
    endif
 
@@ -216,7 +226,7 @@ METHOD startBrowse( oCombobox )
       RETURN ( nil )
    end if 
    
-   if (!empty( oCombobox ) )
+   if ( !empty( oCombobox ) )
       oCombobox:set( oColumn:cHeader )
    endif
 

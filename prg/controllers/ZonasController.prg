@@ -96,6 +96,8 @@ METHOD Activating() CLASS ZonasView
       ::oController:oModel:hBuffer()
    end if 
 
+   ::oController:oUbicacionesController:buildRowSet()
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -106,10 +108,9 @@ RETURN ( self )
 
 METHOD Activate() CLASS ZonasView
 
-   local oBtnAppend
    local oBtnEdit
+   local oBtnAppend
    local oBtnDelete
-
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "ZONAS" ;

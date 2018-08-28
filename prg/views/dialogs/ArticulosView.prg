@@ -25,6 +25,8 @@ CLASS ArticulosView FROM SQLBaseView
 
    DATA oSayCodificacionProveedores
   
+   METHOD Activating()
+
    METHOD Activate()
 
    METHOD startActivate()
@@ -42,6 +44,13 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+METHOD Activating() CLASS ArticulosView
+
+   ::oController:oArticulosPreciosController:buildRowSet()
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ArticulosView

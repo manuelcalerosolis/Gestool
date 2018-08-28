@@ -191,10 +191,10 @@ END CLASS
 
 METHOD Activate() CLASS UnidadesMedicionGruposView
 
-   local oSayCamposExtra
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "GRUPO_UNIDAD_MEDICION" ;

@@ -35,15 +35,15 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::Super:New( oController )
 
-   ::lTransactional                 := .t.
+   ::lTransactional                          := .t.
 
-   ::hImage                         := {  "16" => "gc_money_interest_16",;
-                                          "32" => "gc_money_interest_32",;
-                                          "48" => "gc_money_interest_48" }
+   ::hImage                                  := {  "16" => "gc_money_interest_16",;
+                                                   "32" => "gc_money_interest_32",;
+                                                   "48" => "gc_money_interest_48" }
 
-   ::cTitle                         := "Precios de artículos"
+   ::cTitle                                  := "Precios de artículos"
 
-   ::cName                          := "articulos_precios"
+   ::cName                                   := "articulos_precios"
 
    ::oDialogView                             := ArticulosPreciosView():New( self )
 
@@ -57,7 +57,7 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::getBrowseView()
 
-   ::oBrowseView:setEvent( 'created', {|| ::oBrowseView:setLDblClick( {|| nil } ) } )
+   ::oBrowseView:setEvent( 'created',        {|| ::oBrowseView:setLDblClick( {|| nil } ) } )
 
 RETURN ( Self )
 

@@ -139,6 +139,8 @@ CLASS PropiedadesView FROM SQLBaseView
    DATA oSayCamposExtra
 
    DATA oGetTipo
+
+   METHOD Activating()
   
    METHOD Activate()
 
@@ -151,14 +153,21 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+METHOD Activating() CLASS PropiedadesView
+
+   ::oController:oPropiedadesLineasController:buidRowSet()
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS PropiedadesView
 
-   local oSayCamposExtra
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "PROPIEDADES_MEDIUM" ;
@@ -252,7 +261,6 @@ METHOD Activate() CLASS PropiedadesView
    end if
 
    ::oDialog:bStart  := {|| ::startActivate() }
-
 
    ACTIVATE DIALOG ::oDialog CENTER
 
