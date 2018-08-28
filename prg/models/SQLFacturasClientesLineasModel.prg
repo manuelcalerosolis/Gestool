@@ -110,6 +110,9 @@ METHOD getColumns()
    hset( ::hColumns, "iva",                        {  "create"    => "FLOAT (7,4)"                    ,;
                                                       "default"   => {|| 0 }  }                       )
 
+   hset( ::hColumns, "almacen_codigo",             {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
+                                                      "default"   => {|| space( 20 ) } }              )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -138,9 +141,10 @@ METHOD getInitialSelect()
          ( @importe_descuento := IF( descuento IS NULL OR descuento = 0, 0, @total_bruto * descuento / 100 ) ),
          ( @total_bruto - @importe_descuento ) AS total_precio,
          incremento_precio,
-         iva
+         iva,
+         almacen_codigo
 
-      FROM %1$s    
+      FROM %1$s AS facturas_clientes_lineas   
 
    ENDTEXT
 

@@ -37,12 +37,16 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD validColumnNombreArticulo( oCol, uValue, nKey )  
 
+   METHOD postValidateAlmacenCodigo( oCol, uValue, nKey )
+
    METHOD validateLote()               
 
    METHOD validateUnidadMedicion( uValue )
 
    METHOD validateIva( uValue)
    
+   METHOD validAlmacenCodigo( oGet, oCol )
+
    // Escritura de campos------------------------------------------------------
 
    METHOD updateField( cField, uValue )   
@@ -51,11 +55,16 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD stampArticulo( hArticulo )
 
+   METHOD stampAlmacen( hAlmacen )
+
    METHOD stampArticuloCodigo( cCodigoArticulo ) ;
                                           INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ) )
 
    METHOD stampArticuloNombre( cNombreArticulo ) ;
                                           INLINE ( ::updateField( "articulo_nombre", cNombreArticulo ) )
+
+   METHOD stampAlmacenCodigo( cCodigoAlmacen ) ;
+                                          INLINE ( ::updateField( "almacen_codigo", cCodigoAlmacen ) )
 
    METHOD stampArticuloUnidaMedicionVentas()
 
@@ -66,6 +75,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD stampArticuloDescuento()
 
    METHOD getHashArticuloWhereCodigo( cCodigo )
+
+   METHOD getHashAlmacenWhereCodigo( cCodigo )
 
    METHOD stampArticuloUnidadMedicion( uValue )
 
@@ -186,8 +197,22 @@ METHOD validArticuloCodigo( oGet, oCol )
 
 RETURN ( ::validate( "articulo_codigo", uValue ) )
 
+
 //---------------------------------------------------------------------------//
 
+METHOD validAlmacenCodigo( oGet, oCol )
+
+   local uValue   := oGet:varGet()
+
+   if SQLAlmacenesModel():CountAlmacenWhereCodigo( uValue ) <= 0 
+      msgStop( "El almacén introducido no existe" )
+      RETURN( .f. )
+   end if
+   ::updateField ( 'almacen_codigo', uValue)
+
+RETURN ( .t. ) 
+
+//---------------------------------------------------------------------------//
 METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
 
    local hArticulo 
@@ -216,13 +241,51 @@ METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
       RETURN ( .f. )
    end if 
 
+
 RETURN ( ::stampArticulo( hArticulo ) )
 
+//---------------------------------------------------------------------------//
+
+METHOD postValidateAlmacenCodigo( oCol, uValue, nKey )
+
+   local hAlmacen
+
+if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
+      RETURN ( .t. )
+   end if
+
+   if hb_ishash( uValue )
+      if ::oHistoryManager:isEqual( "almacen_codigo", hget( uValue, "codigo" ) )
+         RETURN ( .f. )
+      end if          
+      RETURN ( ::stampAlmacen( uValue ) )
+   end if 
+
+   if !hb_ischar( uValue )
+      RETURN ( .f. )
+   end if 
+
+   if ::oHistoryManager:isEqual( "almacen_codigo", uValue )
+      RETURN ( .f. )
+   end if          
+msgalert(uValue ,"uValue")
+   hAlmacen   := ::getHashAlmacenWhereCodigo( uValue )
+   msgalert(hAlmacen,"hash")
+   if empty( hAlmacen )
+      RETURN ( .f. )
+   end if 
+RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD getHashArticuloWhereCodigo( cCodigo )
    
 RETURN ( SQLArticulosModel():getHashWhere( "codigo", cCodigo ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHashAlmacenWhereCodigo( cCodigo )
+   
+RETURN ( SQLAlmacenesModel():getHashWhere( "codigo", cCodigo ) )
 
 //---------------------------------------------------------------------------//
 
@@ -258,6 +321,14 @@ METHOD stampArticulo( hArticulo )
 
    cursorWE()
    
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampAlmacen( hAlmacen )
+
+::stampAlmacenCodigo( hget (hAlmacen, "codigo" ) )
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//

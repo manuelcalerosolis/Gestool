@@ -3049,7 +3049,7 @@ FUNCTION CreateMainSQLAcceso()
    // Otros--------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso() 
-   oGrupo:nBigItems     := 9
+   oGrupo:nBigItems     := 10
    oGrupo:cPrompt       := 'Global'
    oGrupo:cLittleBitmap := "gc_folder2_16"
    oGrupo:cBigBitmap    := "gc_folder2_32"
@@ -3142,6 +3142,16 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cId            := "tipos_de_impresoras"
    oItem:cBmp           := "gc_printer2_16"
    oItem:cBmpBig        := "gc_printer2_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := "Tipos de direcciones"
+   oItem:cMessage       := "Acceso a los tipos de direcciones"
+   oItem:bAction        := {|| TiposDireccionesController():New():ActivateNavigatorView() }
+   oItem:cId            := "tipos_de_direcciones"
+   oItem:cBmp           := "gc_signpost3_16"
+   oItem:cBmpBig        := "gc_signpost3_32"
    oItem:lShow          := .f.
 
    // Compras-------------------------------------------------------------------

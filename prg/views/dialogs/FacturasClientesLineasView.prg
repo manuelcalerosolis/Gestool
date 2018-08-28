@@ -42,6 +42,9 @@ CLASS FacturasClientesLineasView FROM SQLBaseView
    DATA oSayUnidadesArticulo
    DATA oSayPrecioArticulo
 
+   DATA oGetCodigoAlmacen
+   DATA oGetNombreAlmacen
+
    DATA oBrowsePropertyView
 
    METHOD New()
@@ -233,6 +236,18 @@ METHOD Activate()
          OF          ::oDialog
 
       ::oGetPrecioArticulo:bChange     := {|| ::refreshUnidadesImportes() }
+
+      // Almacén---------------------------------------------------------------
+      REDEFINE GET   ::oGetCodigoAlmacen ;
+         VAR         ::oController:oModel:hBuffer[ "codigo_almacen" ] ;
+         ID          300 ;
+         WHEN        ( ::oController:isAppendMode() ) ; 
+         PICTURE     "@!" ;
+         BITMAP      "Lupa" ;
+         OF          ::oDialog  
+
+      /*::oGetCodigoAlmacen:bKeyDown := {|nKey| ::searchCodeGS128( nKey ) }*/
+      ::oGetCodigoAlmacen:bValid   := {|| ::oController:validAlmacenCodigo() }
 
       // Total Importe---------------------------------------------------------
 

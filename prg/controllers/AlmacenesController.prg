@@ -361,6 +361,8 @@ CLASS SQLAlmacenesModel FROM SQLCompanyModel
 
    METHOD getInsertAlmacenSentence()
 
+   METHOD CountAlmacenWhereCodigo( cCodigoAlmacen)
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -411,6 +413,27 @@ METHOD getInsertAlmacenSentence() CLASS SQLAlmacenesModel
                            "( " + quoted( win_uuidcreatestring() ) + ", '1', 'Principal', 1 )"
 
 RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
+
+METHOD CountAlmacenWhereCodigo( cCodigoAlmacen ) CLASS SQLAlmacenesModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT COUNT(*)
+
+   FROM %1$s AS almacenes
+    
+   WHERE almacenes.codigo = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigoAlmacen ) )
+
+
+RETURN ( getSQLDatabase():getValue ( cSql ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

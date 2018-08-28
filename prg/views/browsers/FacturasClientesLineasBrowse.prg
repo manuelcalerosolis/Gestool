@@ -20,6 +20,8 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    DATA oColumnUnidadMedicion
 
+   DATA oColumnCodigoAlmacen
+
    METHOD Create( oWindow )
 
    METHOD addColumns()
@@ -264,6 +266,21 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nEditType           := EDIT_GET_BUTTON
       :bEditValid          := {|| msgalert( 'valid' ), .t. }
       :bEditBlock          := {|| ::oController:oCombinacionesController:runViewSelector( ::getRowSet():fieldGet( 'articulo_codigo' ) ) }
+      :nBtnBmp             := 1
+      :AddResource( "Lupa" )
+   end with
+
+
+   with object ( ::oColumnCodigoAlmacen := ::oBrowse:AddCol() )
+      :cSortOrder          := 'almacen_codigo'
+      :cHeader             := 'Código almacén'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'almacen_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := EDIT_GET_BUTTON
+      /*:bEditValid          := {|oGet, oCol| ::oController:validAlmacenCodigo( oGet, oCol ) }*/
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateAlmacenCodigo( oCol, uNewValue, nKey ) }
+      :bEditBlock          := {|| ::oController:oSenderController:oAlmacenesController:ActivateSelectorView() }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
    end with
