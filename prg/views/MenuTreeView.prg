@@ -210,8 +210,6 @@ METHOD End()
 
    cursorWait()
 
-   msgalert( "end class MenuTreeView")
-
    aeval( ::oImageList:aBitmaps, {|oBitmap| oBitmap:End() } )
 
    ::oImageList:End()
