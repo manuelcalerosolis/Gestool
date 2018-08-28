@@ -246,8 +246,6 @@ CLASS SQLImpresorasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "impresoras"
 
-   DATA cConstraints             INIT "FOREIGN KEY (parent_uuid) REFERENCES " + SQLUnidadesMedicionGruposModel():getTableName() + " (uuid) ON DELETE CASCADE"
-
    METHOD getColumns()
 
    METHOD getInitialSelect()
