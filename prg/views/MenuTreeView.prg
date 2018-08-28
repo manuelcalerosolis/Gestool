@@ -37,7 +37,6 @@ CLASS MenuTreeView
    DATA oEvents
 
    METHOD New( oSender )
-
    METHOD End()
 
    METHOD Exit()
@@ -209,13 +208,15 @@ METHOD End()
       RETURN ( nil )
    end if
 
-   sysrefresh()
+   cursorWait()
+
+   msgalert( "end class MenuTreeView")
 
    aeval( ::oImageList:aBitmaps, {|oBitmap| oBitmap:End() } )
 
    ::oImageList:End()
 
-   sysrefresh()
+   cursorWE()
 
 RETURN ( nil )
 
