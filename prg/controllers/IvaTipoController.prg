@@ -295,6 +295,8 @@ CLASS SQLTiposIvaModel FROM SQLCompanyModel
 
    METHOD getIvaWhereArticuloCodigo( cCodigoArticulo )
 
+   METHOD CountIvaWherePorcentaje( nPorcentaje )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -348,6 +350,26 @@ local cSQL
 
 
 RETURN ( getSQLDatabase():getValue ( cSql ) ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD CountIvaWherePorcentaje( nPorcentaje ) CLASS SQLTiposIvaModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT COUNT(*)
+
+   FROM %1$s AS tipos_iva
+    
+   WHERE tipos_iva.porcentaje = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( nPorcentaje ) )
+
+RETURN (getSQLDatabase():getValue ( cSql ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
