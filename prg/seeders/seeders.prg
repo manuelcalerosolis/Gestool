@@ -95,7 +95,7 @@ METHOD insertEmpresas() CLASS SQLGestoolSeeders
 
    // Direcciones--------------------------------------------------------------
 
-   hBuffer        := SQLDireccionesModel():loadBlankBuffer()
+   hBuffer        := SQLDireccionesGestoolModel():loadBlankBuffer()
 
    hset( hBuffer, "principal",      1                   )
    hset( hBuffer, "parent_uuid",    field->Uuid         )
@@ -106,7 +106,7 @@ METHOD insertEmpresas() CLASS SQLGestoolSeeders
    hset( hBuffer, "telefono",       field->cTlf         )
    hset( hBuffer, "email",          field->email        )
                         
-   nId            := SQLDireccionesModel():insertIgnoreBuffer( hBuffer )
+   nId            := SQLDireccionesGestoolModel():insertIgnoreBuffer( hBuffer )
 
 RETURN ( self )
 
