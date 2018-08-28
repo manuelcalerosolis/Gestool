@@ -425,9 +425,14 @@ METHOD changeCheckBox( uValue, oCheckBox ) CLASS CombinacionesView
    local cCaption   := oCheckBox:cCaption
 
    if uValue
-      ::oController:oRowSet:setFilter( {|| cCaption $ ::getRowSet():fieldGet( 'articulos_propiedades_nombre' ) } )
-      ::oController:oRowSet:Refresh()
+      ::oController:oModel:insertHaving( cCaption )
+   else 
+      ::oController:oModel:deleteHaving( cCaption )
    end if 
+
+   ::oController:oRowSet:Refresh()
+
+   ::oController:oBrowseView:Refresh()
 
    msgalert( cCaption, "changeCheckBox" )
 
@@ -565,11 +570,17 @@ CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
    DATA cGroupBy                 INIT "GROUP BY uuid"
 
+   DATA aHaving                  INIT {}
+
    METHOD getColumns()
 
    METHOD getInitialSelect()
 
    METHOD getSelectorWhereCodigoArticulo( cCodigoArticulo ) 
+
+   METHOD insertHaving( cNombre )
+
+   METHOD deleteHaving( cNombre )
    
 END CLASS
 
@@ -659,6 +670,30 @@ METHOD getColumns() CLASS SQLCombinacionesModel
                                              "default"   => { 0 } }                                      ) 
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertHaving( cNombre )
+
+   aadd( ::aHaving, cNombre )
+
+   msgalert( hb_valtoexp( ::aHaving ), "aHaving" )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteHaving( cNombre )
+
+   local nPosition   := ascan( ::aHaving, {|c| c == cNombre } ) 
+
+   if nPosition != 0
+      adel( ::aHaving, nPosition, .t. )
+   end if 
+
+   msgalert( hb_valtoexp( ::aHaving ), "aHaving" )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
