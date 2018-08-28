@@ -124,8 +124,12 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD runViewSelector() CLASS CombinacionesController
+METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
 
+   if empty( cCodigoArticulo )
+      RETURN ( nil )
+   end if 
+   
    ::hPropertyList   := getSQLDatabase():selectTrimedFetchHash( ::oPropiedadesController:oModel:getPropertyList() ) 
 
    if empty( ::hPropertyList )
@@ -133,9 +137,9 @@ METHOD runViewSelector() CLASS CombinacionesController
       RETURN ( nil )
    end if 
 
-   ::dialogViewActivate()
+   ::oRowSet:buildPad( ::oModel:getSelectorWhereCodigoArticulo( cCodigoArticulo ) )
 
-RETURN ( nil )
+RETURN ( ::dialogViewActivate( ::oSelectorView ) )
 
 //---------------------------------------------------------------------------//
 
@@ -283,17 +287,15 @@ RETURN ( nil )
 
 CLASS CombinacionesView FROM SQLBaseView
 
-   DATA oPanel
-
    DATA cGroupProperty
 
    DATA aCombinations
 
-   DATA aPanelNode
+   DATA oPanel
 
-   DATA nFirstPanelSelected
-  
    METHOD Activate()
+
+   METHOD redefineBrowse()          INLINE ( ::oController:Activate( 100, ::oDialog ) )
 
    METHOD startActivate()
 
@@ -304,6 +306,8 @@ CLASS CombinacionesView FROM SQLBaseView
    METHOD generateCombinations()
 
    METHOD generatePanelCombinations( oPanel )
+
+   METHOD changeCheckBox( uValue, oCheckBox )
 
 END CLASS
 
@@ -326,7 +330,7 @@ METHOD Activate() CLASS CombinacionesView
       FONT        getBoldFont() ;
       OF          ::oDialog ;
 
-   ::oController:Activate( 100, ::oDialog )
+   ::redefineBrowse()
 
    ::redefineExplorerBar( 110 )
 
@@ -408,9 +412,21 @@ METHOD addLeftCheckBox( hProperty ) CLASS CombinacionesView
       oCheckBox      := ::oPanel:addLeftCheckBox( hget( hProperty, "propiedad_nombre" ), .f. )
    end if 
 
+   oCheckBox:bChange := {| uValue, oCheckBox | ::changeCheckBox( uValue, oCheckBox ) }
+
    oCheckBox:Cargo   := hProperty
 
 RETURN ( oCheckBox )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeCheckBox( uValue, oCheckBox ) CLASS CombinacionesView
+
+   msgalert( uValue, "changeCheckBox" )
+
+   msgalert( oCheckBox:className(), "changeCheckBox className" )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -475,50 +491,11 @@ RETURN ( aPanelCombination )
 
 CLASS CombinacionesSelectorView FROM CombinacionesView 
 
-   METHOD Activate()
+   METHOD redefineBrowse()          INLINE ( ::oController:oBrowseView:ActivateDialog( ::oDialog, 100 ) )         
 
    METHOD showCombinations( oPanel ) 
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD Activate() CLASS CombinacionesSelectorView
-
-   DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTAINER_COMBINACIONES_SELECT" ;
-      TITLE       ::LblTitle() + "combinaciones de propiedades"
-
-   REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
-      RESOURCE    ::oController:getImage( "48" ) ;
-      TRANSPARENT ;
-      OF          ::oDialog ;
-
-   REDEFINE SAY   ::oMessage ;
-      ID          800 ;
-      FONT        getBoldFont() ;
-      OF          ::oDialog ;
-
-   ::redefineExplorerBar( 110 )
-
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( ::showCombinations() )
-
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      CANCEL ;
-      ACTION     ( ::oDialog:end() )
-
-   ::oDialog:bStart  := {|| ::startActivate() }
-
-   ACTIVATE DIALOG ::oDialog CENTER
-
-RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
