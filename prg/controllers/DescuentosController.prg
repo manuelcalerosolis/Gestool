@@ -198,14 +198,6 @@ METHOD addColumns() CLASS DescuentosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'descuento'
-      :cHeader             := 'Descuento'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
       :cHeader             := 'Nombre'
       :nWidth              := 300
@@ -214,12 +206,11 @@ METHOD addColumns() CLASS DescuentosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cantidad_minima'
-      :cHeader             := 'Mínimo'
-      :nWidth              := 120
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad_minima' ) }
+      :cSortOrder          := 'descuento'
+      :cHeader             := 'Descuento'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descuento' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -278,34 +269,28 @@ METHOD Activate() CLASS DescuentosView
       FONT        getBoldFont() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descuento" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          100 ;
+      VALID       ( ::oController:validate( "nombre" ) ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "descuento" ] ;
+      ID          110 ;
       SPINNER ;
       PICTURE     "@E 999.9999" ;
       VALID       ( ::oController:validate( "descuento" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cantidad_minima" ] ;
-      ID          120 ;
-      SPINNER ;
-      PICTURE     "@E 999999" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog
-
    REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_inicio" ] ;
-      ID          130 ;
+      ID          120 ;
       SPINNER ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_fin" ] ;
-      ID          140 ;
+      ID          130 ;
       SPINNER ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
@@ -349,7 +334,9 @@ END CLASS
 
 METHOD getValidators() CLASS DescuentosValidator
 
-   ::hValidators  := {  "descuento" =>           {  "required"              => "El porcentaje de descuento es un dato requerido" } }
+   ::hValidators  := {     "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
+                                                         "unique"             => "El nombre introducido ya existe" },;
+                           "descuento" =>             {  "required"           => "El porcentaje de descuento es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -364,7 +351,7 @@ RETURN ( ::hValidators )
 
 CLASS SQLDescuentosModel FROM SQLCompanyModel
 
-   DATA cTableName               INIT "descuentos"
+   DATA cTableName               INIT "clientes_descuentos"
 
    METHOD getColumns()
 
@@ -400,8 +387,6 @@ METHOD getColumns() CLASS SQLDescuentosModel
    hset( ::hColumns, "descuento",               {  "create"    => "FLOAT(7,4)"                              ,;
                                                    "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "cantidad_minima",         {  "create"    => "INT UNSIGNED"                            ,;
-                                                   "default"   => {|| 0 } }                                 )
 
 RETURN ( ::hColumns )
 
@@ -424,9 +409,6 @@ RETURN ( ::oController:oSenderController:getUuid() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS DescuentosRepository FROM SQLBaseRepository
 
@@ -434,5 +416,8 @@ CLASS DescuentosRepository FROM SQLBaseRepository
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

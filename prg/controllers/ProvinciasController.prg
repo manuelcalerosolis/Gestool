@@ -5,7 +5,9 @@
 
 CLASS ProvinciasGestoolController FROM ProvinciasController
 
-   METHOD getModel()          INLINE ( ::oModel := SQLProvinciasGestoolModel():New( self ) )
+   METHOD getModel()                            INLINE ( ::oModel := SQLProvinciasGestoolModel():New( self ) )
+   
+   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
 END CLASS
 

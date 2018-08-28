@@ -13,4 +13,5 @@
 #define MANIFEST       24
 
 
-#define Fechas  65535
+
+#define Tarifa  65535

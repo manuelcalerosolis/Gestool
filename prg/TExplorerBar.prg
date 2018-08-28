@@ -553,7 +553,6 @@ RETURN ( oChk )
 
 //----------------------------------------------------------------------------//
 
-
 METHOD Destroy() CLASS TTaskPanel
 
    aeval( ::aBitmaps,;

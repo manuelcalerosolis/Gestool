@@ -39,6 +39,8 @@ CLASS SQLRowSet
    METHOD FindString( nId )
    METHOD FindId( nId )
 
+   METHOD getValuesAsHash()                           INLINE ( if( !empty( ::oRowSet ), ::oRowSet:getValuesAsHash(), ) ) 
+
    METHOD Build( cSentence )          
    METHOD BuildPad( cSentence )                       INLINE ::Build( cSentence, .t. )          
 

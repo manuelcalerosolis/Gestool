@@ -19,29 +19,29 @@ METHOD New( oSenderController ) CLASS ArticulosCategoriasController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Articulos categorias"
+   ::cTitle                         := "Articulos categorias"
 
-   ::cName                       := "articulos_categorias"
+   ::cName                          := "articulos_categorias"
 
-   ::hImage                      := {  "16" => "gc_photographic_filters_16",;
-                                       "32" => "gc_photographic_filters_32",;
-                                       "48" => "gc_photographic_filters_48" }
+   ::hImage                         := {  "16" => "gc_photographic_filters_16",;
+                                          "32" => "gc_photographic_filters_32",;
+                                          "48" => "gc_photographic_filters_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLArticulosCategoriasModel():New( self )
+   ::oModel                         := SQLArticulosCategoriasModel():New( self )
 
-   ::oBrowseView                 := ArticulosCategoriasBrowseView():New( self )
+   ::oBrowseView                    := ArticulosCategoriasBrowseView():New( self )
 
-   ::oDialogView                 := ArticulosCategoriasView():New( self )
+   ::oDialogView                    := ArticulosCategoriasView():New( self )
 
-   ::oValidator                  := ArticulosCategoriasValidator():New( self, ::oDialogView )
+   ::oValidator                     := ArticulosCategoriasValidator():New( self, ::oDialogView )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
-   ::oRepository                 := ArticulosCategoriasRepository():New( self )
+   ::oRepository                    := ArticulosCategoriasRepository():New( self )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oGetSelector                   := GetSelector():New( self )
 
 RETURN ( Self )
 

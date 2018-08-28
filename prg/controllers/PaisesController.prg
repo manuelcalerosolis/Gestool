@@ -5,9 +5,11 @@
 
 CLASS PaisesGestoolController FROM PaisesController
 
-   METHOD getModel()          INLINE ( ::oModel := SQLPaisesGestoolModel():New( self ) )
+   METHOD getModel()                            INLINE ( ::oModel := SQLPaisesGestoolModel():New( self ) )
 
-   METHOD getLevel()          INLINE ( nil )
+   METHOD getLevel()                            INLINE ( nil )
+
+   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
 END CLASS
 

@@ -39,7 +39,7 @@ CLASS SQLDialogController FROM SQLNavigatorController
    METHOD activateSelectorView()
    METHOD activateSelectorViewNoCenter()              INLINE ( ::ActivateSelectorView( .f. ) )
 
-   METHOD closeAllWindows()                           INLINE ( if( !empty( oWnd() ), ( SysRefresh(), oWnd():CloseAll(), SysRefresh() ), ) )
+   METHOD closeAllWindows()                           INLINE ( iif( !empty( oWnd() ), ( SysRefresh(), oWnd():CloseAll(), SysRefresh() ), ) )
 
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
 
@@ -49,9 +49,13 @@ CLASS SQLDialogController FROM SQLNavigatorController
 
    METHOD reBuildRowSet()
 
-   METHOD getComboBoxOrder()                          INLINE ( if( !empty( ::oSelectorView ) .and. ::oSelectorView:isActive(), ::oSelectorView:getComboBoxOrder(), ::oWindowsBar:oComboBox() ) )
+   METHOD getComboBoxOrder()                          INLINE ( iif( !empty( ::oSelectorView ) .and. ::oSelectorView:isActive(),;
+                                                                     ::oSelectorView:getComboBoxOrder(),;
+                                                                     ::oWindowsBar:oComboBox() ) )
 
    METHOD onChangeCombo( oColumn )
+
+   METHOD setComboColumn( oColumn )   
 
    METHOD getNavigatorView()                          INLINE ( ::oNavigatorView )
 
@@ -61,7 +65,7 @@ CLASS SQLDialogController FROM SQLNavigatorController
 
    METHOD DisableWindowsBar()
 
-   METHOD onChangeSearch()                            INLINE ( if( !empty( ::oNavigatorView ), ::oNavigatorView:onChangeSearch(), ) )
+   METHOD onChangeSearch()                            INLINE ( iif( !empty( ::oNavigatorView ), ::oNavigatorView:onChangeSearch(), ) )
 
    METHOD hideEditAndDeleteButtonFilter()
 
@@ -508,9 +512,21 @@ RETURN ( Self )
 
 METHOD onChangeCombo( oColumn )
 
-   local oComboBox   := ::getComboBoxOrder()
+   ::setComboColumn( oColumn )
 
-   if empty( oComboBox )
+   ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
+
+   ::getBrowse():changeColumnOrder( oColumn )
+
+   ::getBrowse():refreshCurrent()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD setComboColumn( oColumn )
+
+   if empty( ::getComboBoxOrder() )
       RETURN ( Self )
    end if 
 
@@ -518,25 +534,10 @@ METHOD onChangeCombo( oColumn )
       RETURN ( Self )
    end if 
 
-   if empty( oColumn )
-      oColumn        := ::getBrowse():getColumnByHeader( oComboBox:VarGet() )
-   end if 
+   ::getComboBoxOrder():Set( oColumn:cHeader )
 
-   if empty( oColumn )
-      RETURN ( Self )
-   end if 
-
-   oComboBox:Set( oColumn:cHeader )
-
-   ::getBrowse():changeColumnOrder( oColumn )
-
-   ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
-
-   ::getBrowse():refreshCurrent()
-
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
 
    

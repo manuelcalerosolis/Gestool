@@ -2981,7 +2981,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          VAR      aTmp[ _CSITUAC ] ;
          ID       218 ;
          WHEN     ( lWhen );
-         ITEMS    ( SQLSituacionesModel():getArrayNombres() ) ;
+         ITEMS    ( SQLSituacionesModel():getNombres() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE CHECKBOX aGet[ _LIVAINC ] ;
@@ -8842,7 +8842,7 @@ Static Function EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpPed )
    			VAR 	 aTmp[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("cSitua")) ] ;
          	ID       200 ;
          	WHEN     ( nMode != ZOOM_MODE );
-         	ITEMS    ( SQLSituacionesModel():getArrayNombres() ) ;
+         	ITEMS    ( SQLSituacionesModel():getNombres() ) ;
          	OF       oDlg
 
         REDEFINE GET aGet[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ;

@@ -25,15 +25,15 @@ METHOD Activating() CLASS FacturasClientesView
       ::oController:oModel:hBuffer()
    end if 
 
+   ::oController:oFacturasClientesLineasController:buildRowSet()
+
+   ::oController:oFacturasClientesDescuentosController:buildRowSet()   
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS FacturasClientesView
-
-   local oBtnAppend
-   local oBtnEdit
-   local oBtnDelete
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TRANSACION_COMERCIAL" ;
@@ -46,7 +46,7 @@ METHOD Activate() CLASS FacturasClientesView
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      PROMPT      "Clientes" ;
+      PROMPT      "Facturas de clientes" ;
       ID          800 ;
       FONT        getBoldFont() ;
       OF          ::oDialog
@@ -64,7 +64,7 @@ METHOD Activate() CLASS FacturasClientesView
    // Cliente------------------------------------------------------------------
 
    ::oController:oClientesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) )
-   ::oController:oClientesController:oGetSelector:Build( { "idGet" => 170, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oClientesController:oGetSelector:Build( { "idGet" => 170, "idLink" => 171, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Serie-------------------------------------------------------------------
 
@@ -88,47 +88,51 @@ METHOD Activate() CLASS FacturasClientesView
    // Formas de pago------------------------------------------------------------
 
    ::oController:oFormasPagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
-   ::oController:oFormasPagoController:oGetSelector:Activate( 240, 241, ::oFolder:aDialogs[1] )
+   ::oController:oFormasPagoController:oGetSelector:Build( { "idGet" => 240, "idText" => 241, "idLink" => 242, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Rutas--------------------------------------------------------------------
 
    ::oController:oRutasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_codigo" ] ) )
-   ::oController:oRutasController:oGetSelector:Activate( 260, 261, ::oFolder:aDialogs[1] )
+   ::oController:oRutasController:oGetSelector:Build( { "idGet" => 260, "idText" => 261, "idLink" => 262, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Agentes------------------------------------------------------------------
 
    ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
-   ::oController:oAgentesController:oGetSelector:Activate( 250, 251, ::oFolder:aDialogs[1] )
+   ::oController:oAgentesController:oGetSelector:Build( { "idGet" => 250, "idText" => 251, "idLink" => 254, "oDialog" => ::oFolder:aDialogs[1] } )
 
-   // Almacenes-----------------------------------------------------------------
+   // Almacenes----------------------------------------------------------------
 
    ::oController:oAlmacenesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_codigo" ] ) )
-   ::oController:oAlmacenesController:oGetSelector:Activate( 230, 231, ::oFolder:aDialogs[1] )
+   ::oController:oAlmacenesController:oGetSelector:Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
+
+   // Tarifas------------------------------------------------------------------
+
+   ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
+   ::oController:oArticulosTarifasController:oGetSelector:Build( { "idGet" => 270, "idText" => 271, "idLink" => 272, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Lineas ------------------------------------------------------------------
 
-   REDEFINE BUTTON oBtnAppend ;
-      ID          500 ;
-      OF          ::oFolder:aDialogs[1] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:oFacturasClientesLineasController:AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
 
-   oBtnAppend:bAction   := {|| ::oController:oLineasController:Append() }
+   TBtnBmp():ReDefine( 502, "edit16",,,,, {|| ::oController:oFacturasClientesLineasController:Edit() }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
 
-   REDEFINE BUTTON oBtnEdit ;
-      ID          501 ;
-      OF          ::oFolder:aDialogs[1] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+   TBtnBmp():ReDefine( 503, "del16",,,,, {|| ::oController:oFacturasClientesLineasController:Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
 
-   oBtnEdit:bAction     := {|| ::oController:oLineasController:Edit() }
+   TBtnBmp():ReDefine( 504, "refresh16",,,,, {|| ::oController:oFacturasClientesLineasController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
 
-   REDEFINE BUTTON oBtnDelete ;
-      ID          502 ;
-      OF          ::oFolder:aDialogs[1] ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+   ::oController:oFacturasClientesLineasController:Activate( 500, ::oFolder:aDialogs[1] )
 
-   oBtnDelete:bAction   := {|| ::oController:oLineasController:Delete() }
+   // Descuentos---------------------------------------------------------------
 
-   ::oController:oLineasController:Activate( 600, ::oFolder:aDialogs[1] )   
+   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::oController:oFacturasClientesDescuentosController:AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
+
+   TBtnBmp():ReDefine( 602, "edit16",,,,, {|| MsgInfo( "Editar Descuentos" ) }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
+
+   TBtnBmp():ReDefine( 603, "del16",,,,, {|| ::oController:oFacturasClientesDescuentosController:Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
+
+   TBtnBmp():ReDefine( 604, "refresh16",,,,, {|| ::oController:oFacturasClientesDescuentosController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+
+   ::oController:oFacturasClientesDescuentosController:Activate( 600, ::oFolder:aDialogs[1] )   
 
    // Botones generales--------------------------------------------------------
 
@@ -146,6 +150,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oFacturasClientesLineasController:Append() } )
+      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oFacturasClientesLineasController:Edit() } )
+      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oFacturasClientesLineasController:Delete() } )
    end if
 
    ::oDialog:bStart := {|| ::startDialog() }
@@ -170,7 +177,11 @@ METHOD startDialog() CLASS FacturasClientesView
 
    ::oController:oAgentesController:oGetSelector:Start()
 
-   ::oController:oLineasController:oBrowseView:Refresh()
+   ::oController:oFacturasClientesLineasController:oBrowseView:Refresh()
+
+   ::oController:oArticulosTarifasController:oGetSelector:start()
+
+   ::oController:oClientesController:oGetSelector:setFocus()
 
 RETURN ( self )
 
@@ -186,12 +197,17 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
       RETURN ( self )
    end if
 
-   oPanel:AddLink( "Incidencias...",            {|| MsgInfo( "Incidencias" ) }, "gc_money_interest_16" )
+   oPanel:AddLink( "Incidencias...",;
+                     {|| ::oController:oIncidenciasController:activateDialogView() },;
+                         ::oController:oIncidenciasController:getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Campos extra...",        {|| MsgInfo( "Incidencias" ) }, "gc_money_interest_16" )
+
+      oPanel:AddLink(   "Campos extra...",;
+                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
+                         ::oController:oCamposExtraValoresController:getImage( "16" ) )
    end if
 
 RETURN ( self )

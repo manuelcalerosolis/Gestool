@@ -222,7 +222,7 @@ METHOD Activate() CLASS TraduccionesView
       OF          ::oDialog
 
    ::oController:oLenguajesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "lenguaje_uuid" ] ) )
-   ::oController:oLenguajesController:oGetSelector:Activate( 100, 101, ::oDialog )
+   ::oController:oLenguajesController:oGetSelector:Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "texto" ] ;
       ID          110 ;

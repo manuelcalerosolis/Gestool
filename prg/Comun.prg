@@ -10,6 +10,10 @@
 
 #define NUMERO_TARIFAS  6
 
+#command CTEXT TO VAR <v> => #pragma __cstream|<v>:=%s
+
+memvar nId
+
 static oWnd
 static oWndBar
 static oDlgProgress
@@ -182,9 +186,7 @@ RETURN nil
 
 FUNCTION CreateMainSQLWindow( oIconApp )
 
-   // if !( lInitCheck() )
-   //    RETURN nil
-   // end if 
+   Test()
 
    // Carga o no la imagen de fondo--------------------------------------------
 
@@ -343,17 +345,9 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   // SQLContadoresModel():insertSerie( "movimientos_almacen", "ABC", 1 )
+   SQLCombinacionesModel():getSelectorWhereCodigoArticulo( '00' ) 
 
-   // msgalert( SQLContadoresModel():isSerie( "movimientos_almacen", "ABC" ), "ABC" )
-
-   // msgalert( SQLContadoresModel():isSerie( "movimientos_almacen", "CCC" ), "CCC" )
-
-   // msgalert( hb_valtoexp( SQLContadoresModel():getLastCounter( "movimientos_almacen" ) ), "getLastCounter" )
-
-   //FacturasClientesController():New():ActivateNavigatorView()
-
-RETURN nil
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -3300,8 +3294,8 @@ FUNCTION CreateMainSQLAcceso()
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Recidbos'
-   oItem:cMessage       := 'Recidbos'
+   oItem:cPrompt        := 'Recibos'
+   oItem:cMessage       := 'Recibos'
    oItem:bAction        := {||RecibosController():New():ActivateNavigatorView() }
    oItem:cId            := "recibos"
    oItem:cBmp           := "gc_briefcase2_user_16"
@@ -5966,7 +5960,17 @@ RETURN ( if( dSysDate != nil, dSysDate, Date() ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION aEmp() ; RETURN ( aEmpresa )
+FUNCTION aEmp( nField ) 
+
+   if empty( nField )
+      RETURN ( aEmpresa )
+   end if 
+
+   if empty( aEmpresa )
+      RETURN ( nil )
+   end if 
+   
+RETURN ( if( nField > 1 .and. nField < len( aEmpresa ), aEmpresa[ nField ], nil ) )
 
 //---------------------------------------------------------------------------//
 

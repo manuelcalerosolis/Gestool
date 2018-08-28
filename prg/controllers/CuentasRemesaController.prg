@@ -365,8 +365,6 @@ METHOD getInitialSelect() CLASS SQLCuentasRemesaModel
                      "FROM " + ::getTableName() + " AS remesa"                                                   + " " + ;
                         "INNER JOIN " + ::getCuentasBancariasTablename() +" AS bancaria ON remesa.uuid = bancaria.parent_uuid"  + " "
 
-                        logwrite( cSelect )
-
 RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//

@@ -56,8 +56,6 @@ CLASS SQLXBrowse FROM TXBrowse
 
    // Actions-------------------------------------------------------------------
 
-   METHOD RButtonDown( nRow, nCol, nFlags )
-
    METHOD ExportToExcel()
 
    METHOD MakeTotals( aCols )
@@ -72,6 +70,12 @@ CLASS SQLXBrowse FROM TXBrowse
 
    METHOD setViewType( cViewType )              INLINE ( ::cViewType := cViewType )
    METHOD getViewType()                         INLINE ( ::cViewType )
+
+   METHOD setChange( bChange )                  INLINE ( ::bChange := bChange )
+   METHOD getChange()                           INLINE ( ::bChange )
+
+   METHOD setGotFocus( bGotFocus )              INLINE ( ::bGotFocus := bGotFocus )
+   METHOD getGotFocus()                         INLINE ( ::bGotFocus )
 
    METHOD setFilterInRowSet( cFilterExpresion )
 
@@ -94,104 +98,6 @@ METHOD New( oController, oWnd )
    ::lSortDescend    := .f. 
 
 RETURN ( Self )
-
-//------------------------------------------------------------------------//
-/*
-Montamos el menu------------------------------------------------------------
-*/
-
-METHOD RButtonDown( nRow, nCol, nFlags )
-
-   local oCol
-   local oMenu
-   local bMenuSelect
-
-   oMenu             := MenuBegin( .t. )
-   bMenuSelect       := ::bMenuSelect
-
-   ::bMenuSelect     := nil
-
-   if !empty( ::SelectedCol():cSortOrder ) .and. hb_isnil( ::SelectedCol():Cargo ) 
-
-   MenuAddItem( "Filtro rápido", "Establecer fitro rápido en columna actual", .f., .t., , , "gc_funnel_add_16", oMenu )
-
-      MenuBegin( .f., , , .f., .f., , , , , , , , , , , , .f., .t., .f., .t. )
-
-         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' IN (" + toSqlString( ::SelectedCol():Value() ) + ")", "", .f., .t., {|| ::oController:buildInFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
-         
-         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' NOT IN ('" + toSqlString( ::SelectedCol():Value() ) + "')", "", .f., .t., {|| ::oController:buildNotInFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
-
-         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' > '" + toSqlString( ::SelectedCol():Value() ) + "'", "", .f., .t., {|| ::oController:buildBiggerFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
-
-         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' < '" + toSqlString( ::SelectedCol():Value() ) + "'", "", .f., .t., {|| ::oController:buildSmallerFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
-
-         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' LIKE '" + toSqlString( ::SelectedCol():Value() ) + "%'", "", .f., .t., {|| ::oController:buildStartLikeFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
-
-         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' LIKE '%" + toSqlString( ::SelectedCol():Value() ) + "'", "", .f., .t., {|| ::oController:buildEndLikeFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
-
-         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' LIKE '%" + toSqlString( ::SelectedCol():Value() ) + "%'", "", .f., .t., {|| ::oController:buildLikeFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
-
-         MenuAddItem()
-
-         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' IN (...)", "", .f., .t., {|| ::oController:buildCustomInFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
-
-         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' NOT IN (...)", "", .f., .t., {|| ::oController:buildCustomNotInFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
-
-         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' > '", "", .f., .t., {|| ::oController:buildCustomBiggerFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
-
-         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' < '", "", .f., .t., {|| ::oController:buildCustomSmallerFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
-
-         MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' LIKE '%...%'", "", .f., .t., {|| ::oController:buildCustomLikeFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
-         
-         MenuAddItem()
-
-         MenuAddItem( "Limpiar filtro", "", .f., .t., {|| ::oController:clearFilter() }, "gc_funnel_broom_16" )
-
-      MenuEnd()
-
-   end if 
-
-   MenuAddItem( "Columnas", "Columnas de la rejilla de datos", .f., .t., , , "gc_table_selection_column_16", oMenu )
-
-      MenuBegin( .f., , , .f., .f., , , , , , , , , , , , .f., .t., .f., .t. )
-
-         for each oCol in ::aCols
-            MenuAddItem( oCol:cHeader, , !oCol:lHide, ( Len( ::aDisplay ) != 1 .or. oCol:nPos != 1 ), GenMenuBlock( oCol ) )
-         next
-
-      MenuEnd()
-
-      MenuAddItem( "Seleccionar &todo", "Selecciona todas las filas de la rejilla", .f., .t., {|| ::SelectAll() }, , "gc_table_selection_all_16", oMenu )
-
-      MenuAddItem( "&Quitar selección", "Quita la selección de todas las filas de la rejilla", .f., .t., {|| ::SelectNone() }, , "gc_table_16", oMenu )
-
-      MenuAddItem()
-
-      MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
-
-      MenuAddItem()
-
-      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::oController:saveState() }, , "gc_table_selection_column_disk_16", oMenu )
-
-      MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::setOriginalState() }, , "gc_table_selection_column_refresh_16", oMenu )
-
-   MenuEnd() 
-
-   oMenu:Activate( nRow, nCol, Self )
-
-   ::bMenuSelect     := bMenuSelect
-
-   oMenu:end()
-
-   ::SetFocus()
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-STATIC FUNCTION GenMenuBlock( oCol )
-
-RETURN {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
 
 //----------------------------------------------------------------------------//
 

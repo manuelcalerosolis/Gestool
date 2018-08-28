@@ -28,6 +28,9 @@ METHOD getColumns() CLASS SQLClientesModel
    hset( ::hColumns, "cuenta_remesa_codigo",       {  "create"    => "VARCHAR( 20 )"       ,;
                                                       "default"   => {|| space( 20 ) } }   )
 
+   hset( ::hColumns, "tarifa_codigo",              {  "create"    => "VARCHAR( 20 )"       ,;
+                                                      "default"   => {|| space( 20 ) } }   )
+
    hset( ::hColumns, "ruta_codigo",                {  "create"    => "VARCHAR( 20 )"       ,;
                                                       "default"   => {|| space( 20 ) } }   )
 
@@ -120,7 +123,7 @@ METHOD getInitialSelect() CLASS SQLClientesModel
                         "clientes.cliente_grupo_codigo AS cliente_grupo_codigo,"                                           + " " + ;
                         "clientes_grupos.nombre AS nombre_grupo_cliente,"                                                  + " " + ;
                         "clientes.cuenta_remesa_codigo AS cuenta_remesa_codigo,"                                           + " " + ;
-                        "cuentas_remesa.nombre AS nombre_remesa,"                                                           + " " + ;
+                        "cuentas_remesa.nombre AS nombre_remesa,"                                                          + " " + ;
                         "clientes.ruta_codigo AS ruta_codigo,"                                                             + " " + ;
                         "rutas.nombre AS nombre_ruta,"                                                                     + " " + ;
                         "direcciones.direccion AS direccion,"                                                              + " " + ;
@@ -129,9 +132,11 @@ METHOD getInitialSelect() CLASS SQLClientesModel
                         "direcciones.codigo_postal AS codigo_postal,"                                                      + " " + ;
                         "direcciones.telefono AS telefono,"                                                                + " " + ;
                         "direcciones.movil AS movil,"                                                                      + " " + ;
-                        "direcciones.email AS email "                                                                      + " " + ;
+                        "direcciones.movil AS movil,"                                                                      + " " + ;
+                        "tarifas.codigo AS tarifa_codigo, "                                                                + " " + ;
+                        "tarifas.nombre AS tarifa_nombre "                                                                 + " " + ;
                      "FROM " + ::getTableName() + " AS clientes"                                                           + " " + ;
-                        "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                        + " " + ;  
+                        "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                               + " " + ;  
                            "ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"                          + " " + ;  
                         "LEFT JOIN " + SQLFormaPagoModel():getTableName() + " forma_pago"                                  + " " + ;  
                            "ON clientes.forma_pago_codigo = forma_pago.codigo"                                             + " " + ;
@@ -142,7 +147,10 @@ METHOD getInitialSelect() CLASS SQLClientesModel
                         "LEFT JOIN " + SQLClientesGruposModel():getTableName() + " clientes_grupos"                        + " " + ;
                            "ON clientes.cliente_grupo_codigo = clientes_grupos.codigo"                                     + " " + ;
                         "LEFT JOIN " + SQLCuentasRemesaModel():getTableName() + " cuentas_remesa"                          + " " + ;
-                           "ON clientes.cuenta_remesa_codigo = cuentas_remesa.codigo"                    
+                           "ON clientes.cuenta_remesa_codigo = cuentas_remesa.codigo"                                      + " " + ;
+                        "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " tarifas "                             + " " + ;
+                           "ON clientes.tarifa_codigo = tarifas.codigo "
+
 
 RETURN ( cSelect )
 
@@ -155,6 +163,8 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLClientesModel
                         "clientes.codigo AS codigo,"                                                                       + " " + ;
                         "clientes.nombre AS nombre,"                                                                       + " " + ;
                         "clientes.dni AS dni,"                                                                             + " " + ;
+                        "clientes.tarifa_codigo AS tarifa_codigo,"                                                         + " " + ;
+                        "tarifas.nombre AS tarifa_nombre,"                                                                 + " " + ;
                         "direcciones.direccion AS direccion,"                                                              + " " + ;
                         "direcciones.poblacion AS poblacion,"                                                              + " " + ;
                         "direcciones.provincia AS provincia,"                                                              + " " + ;
@@ -163,8 +173,10 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLClientesModel
                         "direcciones.movil AS movil,"                                                                      + " " + ;
                         "direcciones.email AS email"                                                                       + " " + ;
                      "FROM " + ::getTableName() + " AS clientes"                                                           + " " + ;
-                        "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                        + " " + ;  
+                        "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                               + " " + ;  
                            "ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"                          + " " + ;
+                        "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " tarifas "                             + " " + ;
+                           "ON clientes.tarifa_codigo = tarifas.codigo"                                                    + " " + ;
                      "WHERE clientes." + cBy + " = " + quoted( cId ) 
 
 RETURN ( cSelect )

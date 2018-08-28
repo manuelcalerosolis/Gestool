@@ -13,45 +13,67 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    DATA oSearchView
 
-   DATA aProperties                    INIT {}
-
    DATA aSelectDelete                  INIT {}
 
    DATA oUnidadesMedicionController
 
+   DATA oArticulosPreciosDescuentosController
+
+   DATA oCombinacionesController
+
+   DATA oHistoryManager
+
    METHOD New()
 
-   METHOD Append()
+   METHOD End()
 
-   METHOD Edit()                       INLINE ( .t. )
+   METHOD Edit()                       
 
    // Validaciones ------------------------------------------------------------
 
-   METHOD validColumnCodigoArticulo( oCol, uValue, nKey )  
+   METHOD validArticuloCodigo( oGet, oCol )
+
+   METHOD postValidateArticuloCodigo( oCol, uValue, nKey )  
 
    METHOD validColumnNombreArticulo( oCol, uValue, nKey )  
 
    METHOD validateLote()               
 
-   METHOD validatePrimeraPropiedad()   INLINE ( iif(  ::validate( "valor_primera_propiedad" ),;
-                                                      ::stampPropertyName( "codigo_primera_propiedad" , "valor_primera_propiedad", ::oDialogView:oGetValorPrimeraPropiedad ),;
-                                                      .f. ) )
+   METHOD validateUnidadMedicion( uValue )
 
-   METHOD validateSegundaPropiedad()   INLINE ( iif(  ::validate( "valor_segunda_propiedad" ),;
-                                                      ::stampPropertyName( "codigo_segunda_propiedad" , "valor_segunda_propiedad", ::oDialogView:oGetValorSegundaPropiedad ),;
-                                                      .f. ) )
-
-   METHOD lValidUnidadMedicion( uValue )
+   METHOD validateIva( uValue)
    
-   // Otros--------------------------------------------------------------------
+   // Escritura de campos------------------------------------------------------
+
+   METHOD updateField( cField, uValue )   
+
+   // stamps de articulos------------------------------------------------------
 
    METHOD stampArticulo( hArticulo )
 
-   METHOD stampArticuloNombre( uValue )
+   METHOD stampArticuloCodigo( cCodigoArticulo ) ;
+                                          INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ) )
 
-   METHOD isChangeArticulo()
+   METHOD stampArticuloNombre( cNombreArticulo ) ;
+                                          INLINE ( ::updateField( "articulo_nombre", cNombreArticulo ) )
 
-   METHOD getHashArticulo()
+   METHOD stampArticuloUnidaMedicionVentas()
+
+   METHOD stampArticuloPrecio()
+
+   METHOD stampArticuloUnidades( uValue )
+
+   METHOD stampArticuloDescuento()
+
+   METHOD getHashArticuloWhereCodigo( cCodigo )
+
+   METHOD stampArticuloUnidadMedicion( uValue )
+
+   METHOD stampArticuloUnidadMedicionFactor()
+
+   METHOD stampArticuloIva()
+   
+   // Dialogos-----------------------------------------------------------------
 
    METHOD runDialogSeries()
 
@@ -69,11 +91,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD refreshBrowse()              INLINE ( iif(  !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
 
-   METHOD updateUnidadMedicion( x )
 
    METHOD loadUnidadesMedicion()
-
-   METHOD updateFieldWhereId( cField, uValue )    INLINE ( ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cField, uValue ), ::getRowSet():Refresh(), ::refreshBrowse() )
 
 END CLASS
 
@@ -83,45 +102,93 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::lTransactional                    := .t.
+   ::lTransactional                          := .t.
 
-   ::cTitle                            := "Facturas clientes líneas"
+   ::cTitle                                  := "Facturas clientes líneas"
 
    ::setName( "lineas_facturas_clientes" )
 
-   ::oModel                            := SQLFacturasClientesLineasModel():New( self )
+   ::oModel                                  := SQLFacturasClientesLineasModel():New( self )
 
-   ::oBrowseView                       := FacturasClientesLineasBrowseView():New( self )
+   ::oBrowseView                             := FacturasClientesLineasBrowseView():New( self )
 
-   ::oDialogView                       := FacturasClientesLineasView():New( self )
+   ::oDialogView                             := FacturasClientesLineasView():New( self )
 
-   ::oValidator                        := FacturasClientesLineasValidator():New( self )
+   ::oValidator                              := FacturasClientesLineasValidator():New( self )
 
-   ::oSearchView                       := SQLSearchView():New( self )
+   ::oSearchView                             := SQLSearchView():New( self )
 
-   ::oSeriesControler                  := NumerosSeriesController():New( self )
+   ::oSeriesControler                        := NumerosSeriesController():New( self )
 
-   ::oRelacionesEntidades              := RelacionesEntidadesController():New( self )
+   ::oRelacionesEntidades                    := RelacionesEntidadesController():New( self )
 
-   ::oUnidadesMedicionController       := UnidadesMedicionGruposLineasController():New( self )
+   ::oUnidadesMedicionController             := UnidadesMedicionGruposLineasController():New( self )
 
-   ::setEvent( 'activating',           {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
+   ::oArticulosPreciosDescuentosController   := ArticulosPreciosDescuentosController():New( self )
 
-   ::setEvent( 'closedDialog',         {|| ::closedDialog() } )
+   ::oCombinacionesController                := CombinacionesController():New( self )
 
-   ::setEvent( 'appended',             {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',               {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',     {|| ::oBrowseView:Refresh() } )
+   ::oHistoryManager                         := HistoryManager():New()
 
-   ::setEvent( 'deletingLines',        {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
+   ::setEvent( 'activating',                 {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',  {|| hSet( ::oModel:hBuffer, "unidad_medicion_codigo", UnidadesMedicionGruposLineasRepository():getCodigoDefault() ) } )
+   ::setEvent( 'closedDialog',               {|| ::closedDialog() } )
+
+   ::setEvent( 'appended',                   {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'edited',                     {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'deletedSelection',           {|| ::oBrowseView:Refresh() } )
+
+   ::setEvent( 'deletingLines',              {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
+
+   ::setEvent( 'exitAppended',               {|| ::oBrowseView:selectCol( ::oBrowseView:oColumnCodigo:nPos ) } )
+
+   ::oModel:setEvent( 'loadedBlankBuffer',   {|| hSet( ::oModel:hBuffer, "unidad_medicion_codigo", UnidadesMedicionGruposLineasRepository():getCodigoDefault() ) } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD validColumnCodigoArticulo( oCol, uValue, nKey )
+METHOD End()
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oSearchView:End()
+
+   ::oSeriesControler:End()
+
+   ::oRelacionesEntidades:End()
+
+   ::oUnidadesMedicionController:End()
+
+   ::oCombinacionesController:End()
+
+   ::oHistoryManager:End()
+
+   ::Super:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD validArticuloCodigo( oGet, oCol )
+
+   local uValue   := oGet:varGet()
+
+   if empty( uValue )
+      RETURN ( .t. )
+   end if 
+
+RETURN ( ::validate( "articulo_codigo", uValue ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
 
    local hArticulo 
 
@@ -130,6 +197,9 @@ METHOD validColumnCodigoArticulo( oCol, uValue, nKey )
    end if
 
    if hb_ishash( uValue )
+      if ::oHistoryManager:isEqual( "articulo_codigo", hget( uValue, "codigo" ) )
+         RETURN ( .f. )
+      end if          
       RETURN ( ::stampArticulo( uValue ) )
    end if 
 
@@ -137,16 +207,58 @@ METHOD validColumnCodigoArticulo( oCol, uValue, nKey )
       RETURN ( .f. )
    end if 
 
-   if !( ::validate( "articulo_codigo", uValue ) )
+   if ::oHistoryManager:isEqual( "articulo_codigo", uValue )
       RETURN ( .f. )
-   end if 
+   end if          
 
-   hArticulo   := SQLArticulosModel():getHashWhere( "codigo", uValue )
+   hArticulo   := ::getHashArticuloWhereCodigo( uValue )
    if empty( hArticulo )
       RETURN ( .f. )
    end if 
 
 RETURN ( ::stampArticulo( hArticulo ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHashArticuloWhereCodigo( cCodigo )
+   
+RETURN ( SQLArticulosModel():getHashWhere( "codigo", cCodigo ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateField( cField, uValue )
+
+   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cField, uValue )
+   
+   ::getRowSet():Refresh()
+   
+   ::oBrowseView:Refresh()
+   
+   ::oHistoryManager:Set( ::getRowSet():getValuesAsHash() )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampArticulo( hArticulo )
+
+   cursorWait()
+
+   ::stampArticuloCodigo( hget( hArticulo, "codigo" ) )
+
+   ::stampArticuloNombre( hget( hArticulo, "nombre" ) )
+
+   ::stampArticuloUnidaMedicionVentas()
+
+   ::stampArticuloPrecio()
+
+   ::stampArticuloDescuento()
+
+   ::stampArticuloIva()
+
+   cursorWE()
+   
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -164,66 +276,115 @@ RETURN ( ::stampArticuloNombre( uValue ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD stampArticulo( hArticulo )
+METHOD stampArticuloUnidaMedicionVentas()
 
-   local hBuffer
+   local cUnidadMedicion   
 
-   if !empty( hArticulo )
-      ::hArticulo    := hArticulo
+   // Unidad de medición para ventas de este articulo--------------------------
+
+   cUnidadMedicion         := SQLUnidadesMedicionOperacionesModel():getUnidadVentaWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
+
+   if !empty( cUnidadMedicion )
+      RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
    end if 
 
-   hBuffer           := {  "articulo_codigo"          => hget( ::hArticulo, "codigo" ),;
-                           "articulo_nombre"          => hget( ::hArticulo, "nombre" ),;
-                           "unidad_medicion_codigo"   => UnidadesMedicionGruposLineasRepository():getCodigoDefault( hget( ::hArticulo, "codigo" ) ) }
+   // Unidad de medición menor para este articulo de su grupo de unidades------
 
-   ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
+   cUnidadMedicion         := UnidadesMedicionGruposLineasRepository():getUnidadDefectoWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
-   ::getRowSet():Refresh()
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD stampArticuloNombre( uValue )
-
-   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), "articulo_nombre", uValue )
-
-   ::getRowSet():Refresh()
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD isChangeArticulo()
-
-   local cCodigoArticulo
-
-   cCodigoArticulo   := ::getModelBuffer( "articulo_codigo" )
-   if empty( cCodigoArticulo )
-      RETURN ( .f. )
-   end if  
-
-   if !( ::oDialogView:oGetCodigoArticulo:isOriginalChanged( cCodigoArticulo ) )
-      RETURN ( .f. )
-   end if
-
-   ::oDialogView:oGetCodigoArticulo:setOriginal( cCodigoArticulo )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD getHashArticulo()
-
-   ::hArticulo       := ArticulosModel():getHash( ::getModelBuffer( "articulo_codigo" ) )
-
-   if empty( ::hArticulo )
-      RETURN ( .f. )
+   if !empty( cUnidadMedicion )
+      RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
    end if 
 
+   // Unidad de medición menor en el grupo de la empresa-----------------------
+
+   cUnidadMedicion         := UnidadesMedicionGruposLineasRepository():getWhereEmpresa()
+
+   if !empty( cUnidadMedicion )
+      RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
+   end if 
+
+   // Unidad de medición del sistema-------------------------------------------
+
+   cUnidadMedicion         := SQLUnidadesMedicionModel():getUnidadMedicionSistema()
+
+   if !empty( cUnidadMedicion )
+      RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampArticuloUnidades( oCol, uValue )
+
+   ::updateField( 'articulo_unidades', uValue )
+
+   ::stampArticuloDescuento()
+
+   ::oBrowseView:makeTotals( oCol )
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD stampArticuloDescuento()
+
+   local nDescuento     := SQLArticulosPreciosDescuentosModel():getDescuentoWhereArticuloCodigo( ::getRowSet():fieldGet( 'articulo_codigo' ), ::oSenderController:getModelBuffer( 'tarifa_codigo' ), ::getRowSet():fieldGet( 'total_unidades' ), ::oSenderController:getModelBuffer( 'fecha' ) )
+
+   ::updateField( 'descuento', nDescuento )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampArticuloPrecio()
+
+   local nPrecioBase    := SQLArticulosPreciosModel():getPrecioBaseWhereArticuloCodigoAndTarifaCodigo( ::getRowSet():fieldget( "articulo_codigo" ), ::oSenderController:getModelBuffer( "tarifa_codigo" ) )
+
+   ::updateField( 'articulo_precio', nPrecioBase )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampArticuloUnidadMedicion( uValue )
+      
+   ::updateField( 'unidad_medicion_codigo', uValue )
+
+   ::stampArticuloUnidadMedicionFactor()
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD stampArticuloUnidadMedicionFactor()
+      
+   local nFactor  := UnidadesMedicionGruposLineasRepository():getFactorWhereUnidadMedicion( ::getRowSet():fieldGet( 'articulo_codigo' ), ::getRowSet():fieldGet( 'unidad_medicion_codigo' ) ) 
+
+   if nFactor > 0
+      
+      ::updateField( 'unidad_medicion_factor', nFactor )
+
+      ::stampArticuloDescuento()
+      
+   end if 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD stampArticuloIva()
+
+   local nPorcentajeIva     := SQLTiposIvaModel():getIvaWhereArticuloCodigo( ::getRowSet():fieldGet( 'articulo_codigo' ) )
+
+   if hb_isnumeric( nPorcentajeIva )
+      ::updateField( 'iva', nPorcentajeIva )
+   end if 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
 
 METHOD validateLote()
 
@@ -251,14 +412,6 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD closedDialog()
-
-   ::aProperties     := {}
-
-   if !( ::oDialogView:oBrowsePropertyView:lVisible() )
-      RETURN ( .t. )
-   end if 
-
-   ::aProperties     := ::oDialogView:oBrowsePropertyView:getProperties()
 
 RETURN ( .t. )
 
@@ -301,65 +454,21 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Append()
+METHOD Edit()
 
    local nId
-   local lAppend     := .t.   
+   local cCodigoArticulo   := ::getRowSet():fieldGet( 'articulo_codigo' )
 
-   if ::notUserAppend()
-      msgStop( "Acceso no permitido." )
-      RETURN ( .f. )
+   if empty( cCodigoArticulo )
+      RETURN ( nil )
    end if 
 
-   if isFalse( ::fireEvent( 'appending' ) )
-      RETURN ( .f. )
-   end if
-
-   ::setAppendMode()
-
-   ::saveRowSetRecno()
-
-   nId               := ::oModel:insertBlankBuffer()
-
-   if !empty( nId )
-
-      ::fireEvent( 'appended' ) 
-
-      ::refreshRowSetAndFindId( nId )
-
-   else 
-      
-      lAppend        := .f.
-
-      ::refreshRowSet()
-
+   nId                     := ::oSenderController:oArticulosController:oModel:getIdWhereCodigo( cCodigoArticulo )
+   if empty( nId )
+      RETURN ( nil )
    end if 
 
-   ::refreshBrowseView()
-
-   ::fireEvent( 'exitAppended' ) 
-
-   if lAppend
-      ::oBrowseView:setFocus()
-      ::oBrowseView:selectCol( ::oBrowseView:oColumnCodigo:nPos )
-   end if 
-
-RETURN ( lAppend )
-
-//----------------------------------------------------------------------------//
-
-METHOD updateUnidadMedicion( uValue )
-      
-   local hBuffer           := {  "unidad_medicion_codigo"          => uValue,;
-                                 "unidad_medicion_factor"          => UnidadesMedicionGruposLineasRepository():getFactorWhereUnidadMedicion( ::getRowSet():fieldGet( 'articulo_codigo' ), uValue ) }
-
-   ::oModel:updateBufferWhereId( ::getRowSet():fieldGet( 'id' ), hBuffer )
-
-   ::getRowSet():Refresh()
-
-   ::refreshBrowse()
-
-Return ( nil )
+RETURN ( ::oSenderController:oArticulosController:Edit( nId ) )
 
 //----------------------------------------------------------------------------//
 
@@ -367,15 +476,15 @@ METHOD loadUnidadesMedicion()
 
    ::oBrowseView:oColumnUnidadMedicion:aEditListTxt := UnidadesMedicionGruposLineasRepository():getCodigos( ::getRowSet():fieldGet( 'articulo_codigo' ) )
 
-Return ( .t. )
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD lValidUnidadMedicion( uValue )
+METHOD validateUnidadMedicion( uValue )
 
-   local cValue   :=  uValue:VarGet()
+   local cValue   := uValue:VarGet()
 
-   if !hb_ischar( cValue )
+   if !( hb_ischar( cValue ) )
       RETURN ( .f. )
    end if 
 
@@ -383,6 +492,23 @@ METHOD lValidUnidadMedicion( uValue )
       RETURN ( .f. )
    end if
 
-Return ( .t. )
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
+
+METHOD validateIva( uValue )
+
+   local nPorcentaje    := uValue:VarGet()
+
+    if empty( nPorcentaje )
+      RETURN ( .t. )
+   end if
+
+   if SQLTiposIvaModel():CountIvaWherePorcentaje( nPorcentaje ) <= 0
+      msgstop( "No existe el IVA introducido" )
+      RETURN ( .f. )
+   end if
+
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//

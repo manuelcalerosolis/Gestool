@@ -3,6 +3,20 @@
 
 CLASS ClientGetSelector FROM GetSelector
 
+   DATA idGet          
+   DATA idText         
+   DATA idSay          
+   DATA idNif          
+   DATA idDireccion    
+   DATA idCodigoPostal 
+   DATA idPoblacion    
+   DATA idProvincia    
+   DATA idTelefono     
+   DATA idTarifa       
+   DATA idLink         
+
+   DATA oDlg
+
    DATA oGetNif
    DATA cGetNif                     INIT ""
 
@@ -21,6 +35,9 @@ CLASS ClientGetSelector FROM GetSelector
    DATA oGetTelefono
    DATA cGetTelefono                INIT ""
 
+   DATA oGetTarifa
+   DATA cGetTarifa                  INIT ""
+
    METHOD Build( hBuilder ) 
 
    METHOD Activate()
@@ -37,83 +54,95 @@ END CLASS
 
 METHOD Build( hBuilder ) CLASS ClientGetSelector
 
-   local idGet          := if( hhaskey( hBuilder, "idGet" ),            hBuilder[ "idGet" ],          nil )
-   local idText         := if( hhaskey( hBuilder, "idText" ),           hBuilder[ "idText" ],         nil )
-   local idSay          := if( hhaskey( hBuilder, "idSay" ),            hBuilder[ "idSay"],           nil )
-   local idNif          := if( hhaskey( hBuilder, "idNif" ),            hBuilder[ "idNif" ],          nil )
-   local idDireccion    := if( hhaskey( hBuilder, "idDireccion" ),      hBuilder[ "idDireccion" ],    nil )
-   local idCodigoPostal := if( hhaskey( hBuilder, "idCodigoPostal" ),   hBuilder[ "idCodigoPostal" ], nil )
-   local idPoblacion    := if( hhaskey( hBuilder, "idPoblacion" ),      hBuilder[ "idPoblacion" ],    nil )
-   local idProvincia    := if( hhaskey( hBuilder, "idProvincia" ),      hBuilder[ "idProvincia" ],    nil )
-   local idTelefono     := if( hhaskey( hBuilder, "idTelefono" ),       hBuilder[ "idTelefono" ],     nil )
+   ::idGet           := if( hhaskey( hBuilder, "idGet" ),            hBuilder[ "idGet" ],          nil )
+   ::idText          := if( hhaskey( hBuilder, "idText" ),           hBuilder[ "idText" ],         nil )
+   ::idSay           := if( hhaskey( hBuilder, "idSay" ),            hBuilder[ "idSay"],           nil )
+   ::idNif           := if( hhaskey( hBuilder, "idNif" ),            hBuilder[ "idNif" ],          nil )
+   ::idDireccion     := if( hhaskey( hBuilder, "idDireccion" ),      hBuilder[ "idDireccion" ],    nil )
+   ::idCodigoPostal  := if( hhaskey( hBuilder, "idCodigoPostal" ),   hBuilder[ "idCodigoPostal" ], nil )
+   ::idPoblacion     := if( hhaskey( hBuilder, "idPoblacion" ),      hBuilder[ "idPoblacion" ],    nil )
+   ::idProvincia     := if( hhaskey( hBuilder, "idProvincia" ),      hBuilder[ "idProvincia" ],    nil )
+   ::idTelefono      := if( hhaskey( hBuilder, "idTelefono" ),       hBuilder[ "idTelefono" ],     nil )
+   ::idTarifa        := if( hhaskey( hBuilder, "idTarifa" ),         hBuilder[ "idTarifa" ],       nil )
+   ::idLink          := if( hhaskey( hBuilder, "idLink" ),           hBuilder[ "idLink" ],         nil )
 
-   local oDlg           := if( hhaskey( hBuilder, "oDialog" ),          hBuilder[ "oDialog" ],        nil )
+   ::oDlg            := if( hhaskey( hBuilder, "oDialog" ),          hBuilder[ "oDialog" ],        nil )
 
-RETURN ( ::Activate( idGet, idText, idSay, idNif, idDireccion, idCodigoPostal, idPoblacion, idProvincia, idTelefono, oDlg ) )
+RETURN ( ::Activate() )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate( idGet, idText, idSay, idNif, idDireccion, idCodigoPostal, idPoblacion, idProvincia, idTelefono, oDlg ) CLASS ClientGetSelector
+METHOD Activate() CLASS ClientGetSelector
 
-   ::Super:Activate( idGet, idText, oDlg, idSay )
+   ::Super:Activate( ::idGet, ::idText, ::oDlg, ::idSay, ::idLink )
 
-   if !empty( idNif )
+   if !empty( ::idNif )
 
       REDEFINE GET   ::oGetNif ;
          VAR         ::cGetNif ;
-         ID          idNif ;
+         ID          ::idNif ;
          WHEN        ( .f. ) ;
-         OF          oDlg
+         OF          ::oDlg
 
    end if 
 
-   if !empty( idDireccion )
+   if !empty( ::idDireccion )
 
       REDEFINE GET   ::oGetDireccion ;
          VAR         ::cGetDireccion ;
-         ID          idDireccion ;
+         ID          ::idDireccion ;
          WHEN        ( .f. ) ;
-         OF          oDlg
+         OF          ::oDlg
 
    end if 
 
-   if !empty( idCodigoPostal )
+   if !empty( ::idCodigoPostal )
 
       REDEFINE GET   ::oGetCodigoPostal ;
          VAR         ::cGetCodigoPostal ;
-         ID          idCodigoPostal ;
+         ID          ::idCodigoPostal ;
          WHEN        ( .f. ) ;
-         OF          oDlg
+         OF          ::oDlg
 
    end if 
 
-   if !empty( idPoblacion )
+   if !empty( ::idPoblacion )
 
       REDEFINE GET   ::oGetPoblacion ;
          VAR         ::cGetPoblacion ;
-         ID          idPoblacion ;
+         ID          ::idPoblacion ;
          WHEN        ( .f. ) ;
-         OF          oDlg
+         OF          ::oDlg
 
    end if 
 
-   if !empty( idProvincia )
+   if !empty( ::idProvincia )
 
       REDEFINE GET   ::oGetProvincia ;
          VAR         ::cGetProvincia ;
-         ID          idProvincia ;
+         ID          ::idProvincia ;
          WHEN        ( .f. ) ;
-         OF          oDlg
+         OF          ::oDlg
 
    end if 
 
-   if !empty( idTelefono )
+   if !empty( ::idTelefono )
 
       REDEFINE GET   ::oGetTelefono ;
          VAR         ::cGetTelefono ;
-         ID          idTelefono ;
+         ID          ::idTelefono ;
          WHEN        ( .f. ) ;
-         OF          oDlg
+         OF          ::oDlg
+
+   end if 
+
+   if !empty( ::idTarifa )
+
+      REDEFINE GET   ::oGetTarifa ;
+         VAR         ::cGetTarifa ;
+         ID          ::idTarifa ;
+         WHEN        ( .f. ) ;
+         OF          ::oDlg
 
    end if 
 
@@ -136,6 +165,8 @@ METHOD cleanHelpText()
    if( !empty( ::oGetProvincia ),      ::oGetProvincia:cText( "" ), )
 
    if( !empty( ::oGetTelefono ),       ::oGetTelefono:cText( "" ), )
+
+   if( !empty( ::oGetTarifa ),         ::oGetTarifa:cText( "" ), )
 
 RETURN ( nil )
 
@@ -160,6 +191,8 @@ METHOD setHelpText( value )
    if( !empty( ::oGetProvincia ),      ::oGetProvincia:cText( value[ "provincia" ] ), ) 
 
    if( !empty( ::oGetTelefono ),       ::oGetTelefono:cText( value[ "telefono" ] ), ) 
+
+   if( !empty( ::oGetTarifa ),         ::oGetTarifa:cText( value[ "tarifa_codigo" ] ), ) 
 
 RETURN ( nil )
 

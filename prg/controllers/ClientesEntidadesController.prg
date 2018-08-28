@@ -34,9 +34,9 @@ METHOD New( oSenderController ) CLASS ClientesEntidadesController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Entidades"
+   ::cTitle                      := "Entidades_clientes"
 
-   ::cName                       := "Entidades"
+   ::cName                       := "Entidades clientes"
 
    ::hImage                      := {  "16" => "gc_university_16",;
                                        "32" => "gc_university_32",;
@@ -281,7 +281,7 @@ METHOD Activate() CLASS ClientesEntidadesView
       OF          ::oDialog 
 
    ::oController:oEntidadesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "entidad_uuid" ] ) )
-   ::oController:oEntidadesController:oGetSelector:Activate( 100, 101, ::oDialog )
+   ::oController:oEntidadesController:oGetSelector:Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
 
    REDEFINE COMBOBOX ::oRol ;
       VAR         ::oController:oModel:hBuffer[ "rol" ] ;
@@ -357,17 +357,31 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLClientesEntidadesModel
 
-   local cSelect  := "SELECT clientes_entidades.id,"                                               + " " + ;
-                        "clientes_entidades.uuid,"                                                 + " " + ;
-                        "clientes_entidades.rol,"                                                  + " " + ;
-                        "clientes_entidades.parent_uuid,"                                          + " " + ;
-                        "entidades.uuid,"                                                          + " " + ;
-                        "entidades.nombre as nombre_entidad"                                       + " " + ;
-                     "FROM clientes_entidades"                                                     + " " + ;
-                     "INNER JOIN entidades ON clientes_entidades.entidad_uuid = entidades.uuid"    + " " + ;
-                     "INNER JOIN clientes ON clientes_entidades.parent_uuid = clientes.uuid"       + " "
+ local cSql
 
-RETURN ( cSelect )
+   TEXT INTO cSql
+
+      SELECT clientes_entidades.id,
+             clientes_entidades.uuid,
+             clientes_entidades.rol,
+             clientes_entidades.parent_uuid,
+             entidades.uuid,
+             entidades.nombre as nombre_entidad
+
+      FROM %1$s AS clientes_entidades
+
+      INNER JOIN %2$s AS entidades
+         ON clientes_entidades.entidad_uuid = entidades.uuid
+
+      INNER JOIN %3$s AS clientes
+         ON clientes_entidades.parent_uuid = clientes.uuid
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLEntidadesModel():getTableName(), SQLClientesModel():getTableName() )
+
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 

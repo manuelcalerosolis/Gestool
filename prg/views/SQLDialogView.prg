@@ -72,6 +72,10 @@ RETURN ( Self )
 
 METHOD Activate()
 
+   if isFalse( ::fireEvent( 'activating' ) )
+      RETURN ( .f. )
+   end if
+
    DEFINE DIALOG           ::oDialog ;
       RESOURCE             "SELECTOR_DIALOG" ;
       TITLE                ::getTitle()
@@ -88,7 +92,7 @@ METHOD Activate()
          ID                110 ;
          OF                ::oDialog
 
-      ::oComboBoxOrder:bChange      := {|| ::onChangeCombo() } 
+      ::oComboBoxOrder:bChange      := {|| ::oController:onChangeCombo() } 
 
       // Browse-----------------------------------------------------------------
 
@@ -101,6 +105,8 @@ METHOD Activate()
       ::getGetSearch():bChange      := {|| ::onChangeSearch() }
 
    ACTIVATE DIALOG ::oDialog CENTER
+
+   ::fireEvent( 'activated' ) 
 
 RETURN ( nil )
 
@@ -195,7 +201,17 @@ RETURN ( Self )
 
 METHOD defaultTitle()
 
-   local cTitle   := ::oController:getTitle() + " : "  
+   local cTitle   
+
+   cTitle         := ::oController:getTitle() + " : "  
+
+   if empty( ::oController:oSenderController:oModel )
+      RETURN ( cTitle )
+   end if 
+
+   if empty( ::oController:oSenderController:oModel:hBuffer )
+      RETURN ( cTitle )
+   end if 
 
    if hhaskey( ::oController:oSenderController:oModel:hBuffer, "codigo" ) 
       cTitle      += alltrim( ::oController:oSenderController:oModel:hBuffer[ "codigo" ] ) + " - "

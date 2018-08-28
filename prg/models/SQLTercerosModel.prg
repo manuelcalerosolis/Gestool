@@ -19,8 +19,8 @@ METHOD getColumns() CLASS SQLTercerosModel
    hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"        ,;
                                                 "default"   => {|| win_uuidcreatestring() } }         )
 
-   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 12 )"                        ,;
-                                                "default"   => {|| space( 12 ) } }                    )
+   hset( ::hColumns, "codigo",               {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"        ,;
+                                                "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "nombre",               {  "create"    => "VARCHAR( 140 )"                       ,;
                                                 "default"   => {|| space( 140 ) } }                   )

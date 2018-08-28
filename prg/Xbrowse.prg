@@ -2142,7 +2142,7 @@ METHOD IsDisplayPosVisible( nPos, lComplete ) CLASS TXBrowse
       nWidth += ::ColAtPos( nFor ):nWidth + COL_SEPARATOR
    next
 
-   if lcomplete
+   if lComplete
       nWidth += ::ColAtPos( nPos ):nWidth + COL_SEPARATOR
 
 //    2008-03-30
@@ -11730,7 +11730,7 @@ METHOD PostEdit( xValue, lButton, lDirectAssign ) CLASS TXBrwColumn
 
    if ! Empty( ::nFooterType ) .or. ;
       ( ::cDataType == 'N' .and. ( ::cFooter != nil .or. ::bFooter != nil .or. ::nTotal != nil ) )
-      ::RecalcTotal( uOriginal, ::Value )
+      // ::RecalcTotal( uOriginal, ::Value )
       ::RefreshFooter()
    endif
 
@@ -13658,4 +13658,3 @@ function FW_ArrSum( aArray, bnCol, nStart, nCount )
 return nRet
 
 //----------------------------------------------------------------------------//
-

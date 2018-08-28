@@ -7,7 +7,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS UsuariosController FROM SQLNavigatorController
+CLASS UsuariosController FROM SQLNavigatorGestoolController
    
    DATA oAjustableController 
 
@@ -238,7 +238,7 @@ METHOD checkSuperUser() CLASS UsuariosController
 
    local hUsuario
 
-   hUsuario       := ::oModel:getWhere( "super_user = 1" )
+   hUsuario       := ::oModel:getWhere( "super_user", "=", 1 )
    if !hb_ishash( hUsuario )
       msgStop( "No se ha definido super usuario" )
       RETURN ( .f. )
@@ -402,7 +402,7 @@ RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD isPasswordExclude( cPassword )
+METHOD isPasswordExclude( cPassword ) CLASS SQLUsuariosModel
 
    if ( "NOPASSWORD" $ appParamsMain() .or. "NOPASSWORD" $ appParamsSecond() )
       RETURN ( .t. )

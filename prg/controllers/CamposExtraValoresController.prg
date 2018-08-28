@@ -5,7 +5,9 @@
 
 CLASS CamposExtraValoresGestoolController FROM CamposExtraValoresController
 
-   METHOD getModel()                          INLINE ( ::oModel := SQLCamposExtraValoresGestoolModel():New( self ) )
+   METHOD getModel()                            INLINE ( ::oModel := SQLCamposExtraValoresGestoolModel():New( self ) )
+
+   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
 END CLASS
 

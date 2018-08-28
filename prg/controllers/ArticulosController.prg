@@ -27,6 +27,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oUnidadesMedicionGruposController
 
+   DATA oUnidadesMedicionOperacionesController
+
    DATA oTraduccionesController
 
    DATA oImagenesController
@@ -44,6 +46,10 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD getPrecioCosto()        
 
    METHOD getPorcentajeIVA()
+
+   METHOD validatePrecioCosto()
+   
+   METHOD validateTipoIVA()
 
    METHOD validColumnArticulosFamiliaBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFamiliasController:oModel, "articulo_familia_codigo" ) )
@@ -100,6 +106,8 @@ METHOD New() CLASS ArticulosController
    ::oRepository                             := ArticulosRepository():New( self )
 
    ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, 'clientes' )
+
+   ::oUnidadesMedicionOperacionesController  := UnidadesMedicionOperacionesController():New( self )
 
    ::oTagsController                         := TagsController():New( self )
 
@@ -181,6 +189,8 @@ METHOD End() CLASS ArticulosController
 
    ::oImagenesController:End()
 
+   ::oUnidadesMedicionOperacionesController:End()
+
    ::oTraduccionesController:End()
 
    ::oArticulosTemporadasController:End()
@@ -223,17 +233,56 @@ RETURN ( ::oTipoIvaController:oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[
 
 METHOD insertPreciosWhereArticulo() CLASS ArticulosController
 
-   local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
+   local uuidArticulo   
 
-   if empty( uuidArticulo )
-      RETURN ( Self )
+   if empty( ::oModel )
+      RETURN ( nil )
    end if 
 
-   SQLArticulosPreciosModel():insertPreciosWhereArticulo( uuidArticulo )   
+   if empty( ::oModel:hBuffer )
+      RETURN ( nil )
+   end if 
 
-RETURN ( Self )
+   uuidArticulo      := hget( ::oModel:hBuffer, "uuid" )
+
+   if empty( uuidArticulo )
+      RETURN ( nil )
+   end if 
+
+   ::oArticulosPreciosController:oModel:insertPreciosWhereArticulo( uuidArticulo )   
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD validatePrecioCosto() CLASS ArticulosController
+
+   local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
+   local nPrecioCosto   := hget( ::oModel:hBuffer, "precio_costo" )
+
+   ::oModel:updateFieldWhereUuid( uuidArticulo, "precio_costo", nPrecioCosto )
+
+   ::oArticulosPreciosController:oRepository:callUpdatePreciosWhereUuidArticulo( uuidArticulo )
+   
+   ::oArticulosPreciosController:refreshRowSet()
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD validateTipoIVA() CLASS ArticulosController
+
+   local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
+   local cCodigoTipoIVA := hget( ::oModel:hBuffer, "tipo_iva_codigo" )
+
+   ::oModel:updateFieldWhereUuid( uuidArticulo, "tipo_iva_codigo", cCodigoTipoIVA )
+
+   ::oArticulosPreciosController:oRepository:callUpdatePreciosWhereUuidArticulo( uuidArticulo )
+   
+   ::oArticulosPreciosController:refreshRowSet()
+
+RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

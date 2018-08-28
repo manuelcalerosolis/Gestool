@@ -18,81 +18,136 @@ CLASS SQLAjustableModel FROM SQLBaseModel
    METHOD setValue( cAjusteUuid, uAjusteValue, cAjustableTipo, cAjustableUuid )
    METHOD setLogic( cAjusteUuid, lAjusteValue, cAjustableTipo, cAjustableUuid )
 
-   METHOD setUsuarioCajaExclusiva( uAjusteValue, cAjustableUuid )       INLINE ( ::setValue( 'caja_exclusiva', uAjusteValue, 'usuarios', cAjustableUuid ) )
-   METHOD setUsuarioPcEnUso( uAjusteValue, cAjustableUuid )             INLINE ( ::setValue( 'pc_en_uso', uAjusteValue, 'usuarios', cAjustableUuid ) )
-   METHOD setUsuarioEmpresaEnUso( uAjusteValue, cAjustableUuid )        INLINE ( ::setValue( 'empresa_en_uso', uAjusteValue, 'usuarios', cAjustableUuid ) )
-   METHOD setUsuarioEmpresaExclusiva( uAjusteValue, cAjustableUuid )    INLINE ( ::setValue( 'empresa_exclusiva', uAjusteValue, 'usuarios', cAjustableUuid ) )
-   METHOD setUsuarioAlmacenExclusivo( uAjusteValue, cAjustableUuid )    INLINE ( ::setValue( 'almacen_exclusivo', uAjusteValue, 'usuarios', cAjustableUuid ) )
-   METHOD setUsuarioDelegacionExclusiva( uAjusteValue, cAjustableUuid ) INLINE ( ::setValue( 'delegacion_exclusiva', uAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioCajaExclusiva( uAjusteValue, cAjustableUuid ) ;      
+                                 INLINE ( ::setValue( 'caja_exclusiva', uAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioPcEnUso( uAjusteValue, cAjustableUuid ) ;            
+                                 INLINE ( ::setValue( 'pc_en_uso', uAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioEmpresaEnUso( uAjusteValue, cAjustableUuid ) ;       
+                                 INLINE ( ::setValue( 'empresa_en_uso', uAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioEmpresaExclusiva( uAjusteValue, cAjustableUuid ) ;   
+                                 INLINE ( ::setValue( 'empresa_exclusiva', uAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioAlmacenExclusivo( uAjusteValue, cAjustableUuid ) ;   
+                                 INLINE ( ::setValue( 'almacen_exclusivo', uAjusteValue, 'usuarios', cAjustableUuid ) )
+   METHOD setUsuarioDelegacionExclusiva( uAjusteValue, cAjustableUuid ) ;
+                                 INLINE ( ::setValue( 'delegacion_exclusiva', uAjusteValue, 'usuarios', cAjustableUuid ) )
 
-   METHOD setRolMostrarRentabilidad( uAjusteValue, cAjustableUuid )     INLINE ( ::setLogic( 'mostrar_rentabilidad', uAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolCambiarPrecios( uAjusteValue, cAjustableUuid )          INLINE ( ::setLogic( 'cambiar_precios', uAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolVerPreciosCosto( uAjusteValue, cAjustableUuid )         INLINE ( ::setLogic( 'ver_precios_costo', uAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolConfirmacionEliminacion( uAjusteValue, cAjustableUuid ) INLINE ( ::setLogic( 'confirmacion_eliminacion', uAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolFiltrarVentas( uAjusteValue, cAjustableUuid )           INLINE ( ::setLogic( 'fitrar_ventas_por_usuario', uAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolAbrirCajonPortamonedas( uAjusteValue, cAjustableUuid )  INLINE ( ::setLogic( 'abrir_cajon_portamonedas', uAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolAlbaranEntregado( uAjusteValue, cAjustableUuid )        INLINE ( ::setLogic( 'albaran_entregado', uAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolAsistenteGenerarFacturas( uAjusteValue, cAjustableUuid )INLINE ( ::setLogic( 'asistente_generar_facturas', uAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolCambiarEstado( uAjusteValue, cAjustableUuid )           INLINE ( ::setLogic( 'cambiar_estado', uAjusteValue, 'roles', cAjustableUuid ) )
-   METHOD setRolCambiarCampos( uAjusteValue, cAjustableUuid )           INLINE ( ::setLogic( 'cambiar_campos', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolMostrarRentabilidad( uAjusteValue, cAjustableUuid ) ;    
+                                 INLINE ( ::setLogic( 'mostrar_rentabilidad', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolCambiarPrecios( uAjusteValue, cAjustableUuid ) ;         
+                                 INLINE ( ::setLogic( 'cambiar_precios', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolVerPreciosCosto( uAjusteValue, cAjustableUuid ) ;        
+                                 INLINE ( ::setLogic( 'ver_precios_costo', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolConfirmacionEliminacion( uAjusteValue, cAjustableUuid ) ;
+                                 INLINE ( ::setLogic( 'confirmacion_eliminacion', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolFiltrarVentas( uAjusteValue, cAjustableUuid ) ;          
+                                 INLINE ( ::setLogic( 'fitrar_ventas_por_usuario', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolAbrirCajonPortamonedas( uAjusteValue, cAjustableUuid ) ; 
+                                 INLINE ( ::setLogic( 'abrir_cajon_portamonedas', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolAlbaranEntregado( uAjusteValue, cAjustableUuid ) ;       
+                                 INLINE ( ::setLogic( 'albaran_entregado', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolAsistenteGenerarFacturas( uAjusteValue, cAjustableUuid );
+                                 INLINE ( ::setLogic( 'asistente_generar_facturas', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolCambiarEstado( uAjusteValue, cAjustableUuid ) ;          
+                                 INLINE ( ::setLogic( 'cambiar_estado', uAjusteValue, 'roles', cAjustableUuid ) )
+   METHOD setRolCambiarCampos( uAjusteValue, cAjustableUuid ) ;          
+                                 INLINE ( ::setLogic( 'cambiar_campos', uAjusteValue, 'roles', cAjustableUuid ) )
 
-   METHOD setUltimaEmpresaInMac( uuidEmpresa, cMacAddress )             INLINE ( ::set( '', uuidEmpresa, 'ultima_empresa', cMacAddress ) )
-   METHOD getUltimaEmpresaInMac( cMacAddress )                          INLINE ( ::getValueWhereMac( 'ultima_empresa', cMacAddress, '' ) )
+   METHOD setUltimaEmpresaInMac( uuidEmpresa, cMacAddress ) ;            
+                                 INLINE ( ::set( '', uuidEmpresa, 'ultima_empresa', cMacAddress ) )
+   METHOD getUltimaEmpresaInMac( cMacAddress ) ;            
+                                 INLINE ( ::getValueWhereMac( 'ultima_empresa', cMacAddress, '' ) )
 
-   METHOD setUltimoUsuarioInMac( uuidUsuario, cMacAddress )             INLINE ( ::set( '', uuidUsuario, 'ultimo_usuario', cMacAddress ) )
-   METHOD getUltimoUsuarioInMac( cMacAddress )                          INLINE ( ::getValueWhereMac( 'ultimo_usuario', cMacAddress ) )
+   METHOD setUltimoUsuarioInMac( uuidUsuario, cMacAddress ) ;            
+                                 INLINE ( ::set( '', uuidUsuario, 'ultimo_usuario', cMacAddress ) )
+   METHOD getUltimoUsuarioInMac( cMacAddress ) ;            
+                                 INLINE ( ::getValueWhereMac( 'ultimo_usuario', cMacAddress ) )
 
    METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    METHOD getLogic( cUuid, cTipo, cAjuste, lDefault ) 
 
-   METHOD getUsuarioCajaExclusiva( cUuid )                              INLINE ( ::getValue( cUuid, 'usuarios', 'caja_exclusiva', space( 40 ) ) )   
-   METHOD getUsuarioPcEnUso( cUuid )                                    INLINE ( ::getValue( cUuid, 'usuarios', 'pc_en_uso', '' ) )
-   METHOD getUsuarioEmpresaEnUso( cUuid )                               INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_en_uso', '' ) )
-   METHOD getUsuarioEmpresaExclusiva( cUuid )                           INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_exclusiva', space( 40 ) ) )   
+   METHOD getUsuarioCajaExclusiva( cUuid ) ;
+                                 INLINE ( ::getValue( cUuid, 'usuarios', 'caja_exclusiva', space( 40 ) ) )   
+   METHOD getUsuarioPcEnUso( cUuid ) ;
+                                 INLINE ( ::getValue( cUuid, 'usuarios', 'pc_en_uso', '' ) )
+   METHOD getUsuarioEmpresaEnUso( cUuid ) ;
+                                 INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_en_uso', '' ) )
+   METHOD getUsuarioEmpresaExclusiva( cUuid ) ;
+                                 INLINE ( ::getValue( cUuid, 'usuarios', 'empresa_exclusiva', space( 40 ) ) )   
    METHOD getUsuarioEmpresa( cUuid )                                    
-   METHOD getUsuarioAlmacenExclusivo( cUuid )                           INLINE ( ::getValue( cUuid, 'usuarios', 'almacen_exclusivo', space( 40 ) ) )   
-   METHOD getUsuarioDelegacionExclusiva( cUuid )                        INLINE ( ::getValue( cUuid, 'usuarios', 'delegacion_exclusiva', space( 40 ) ) )   
+   METHOD getUsuarioAlmacenExclusivo( cUuid ) ;
+                                 INLINE ( ::getValue( cUuid, 'usuarios', 'almacen_exclusivo', space( 40 ) ) )   
+   METHOD getUsuarioDelegacionExclusiva( cUuid ) ;
+                                 INLINE ( ::getValue( cUuid, 'usuarios', 'delegacion_exclusiva', space( 40 ) ) )   
 
-   METHOD getRolMostrarRentabilidad( cUuid )                            INLINE ( ::getLogic( cUuid, 'roles', 'mostrar_rentabilidad', .t. ) )   
-   METHOD getRolNoMostrarRentabilidad( cUuid )                          INLINE ( !::getRolMostrarRentabilidad( cUuid ) )   
+   METHOD getRolMostrarRentabilidad( cUuid ) ;
+                                 INLINE ( ::getLogic( cUuid, 'roles', 'mostrar_rentabilidad', .t. ) )   
+   METHOD getRolNoMostrarRentabilidad( cUuid ) ;
+                                 INLINE ( !::getRolMostrarRentabilidad( cUuid ) )   
    
-   METHOD getRolCambiarPrecios( cUuid )                                 INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_precios', .t. ) )   
-   METHOD getRolNoCambiarPrecios( cUuid )                               INLINE ( !::getRolCambiarPrecios( cUuid ) )   
+   METHOD getRolCambiarPrecios( cUuid )                                 ;
+                                 INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_precios', .t. ) )   
+   METHOD getRolNoCambiarPrecios( cUuid )                               ;
+                                 INLINE ( !::getRolCambiarPrecios( cUuid ) )   
    
-   METHOD getRolVerPreciosCosto( cUuid )                                INLINE ( ::getLogic( cUuid, 'roles', 'ver_precios_costo', .t. ) )   
-   METHOD getRolNoVerPreciosCosto( cUuid )                              INLINE ( !::getRolVerPreciosCosto( cUuid ) )   
+   METHOD getRolVerPreciosCosto( cUuid )                                ;
+                                 INLINE ( ::getLogic( cUuid, 'roles', 'ver_precios_costo', .t. ) )   
+   METHOD getRolNoVerPreciosCosto( cUuid )                              ;
+                                 INLINE ( !::getRolVerPreciosCosto( cUuid ) )   
    
-   METHOD getRolConfirmacionEliminacion( cUuid )                        INLINE ( ::getLogic( cUuid, 'roles', 'confirmacion_eliminacion', .t. ) )   
-   METHOD getRolNoConfirmacionEliminacion( cUuid )                      INLINE ( !::getRolConfirmacionEliminacion( cUuid ) )   
+   METHOD getRolConfirmacionEliminacion( cUuid )                        ;
+                                 INLINE ( ::getLogic( cUuid, 'roles', 'confirmacion_eliminacion', .t. ) )   
+   METHOD getRolNoConfirmacionEliminacion( cUuid )                      ;
+                                 INLINE ( !::getRolConfirmacionEliminacion( cUuid ) )   
    
-   METHOD getRolFiltrarVentas( cUuid )                                  INLINE ( ::getLogic( cUuid, 'roles', 'fitrar_ventas_por_usuario', .t. ) )   
-   METHOD getRolNoFiltrarVentas( cUuid )                                INLINE ( !::getRolFiltrarVentas( cUuid ) )   
+   METHOD getRolFiltrarVentas( cUuid )                                  ;
+                                 INLINE ( ::getLogic( cUuid, 'roles', 'fitrar_ventas_por_usuario', .t. ) )   
+   METHOD getRolNoFiltrarVentas( cUuid )                                ;
+                                 INLINE ( !::getRolFiltrarVentas( cUuid ) )   
    
-   METHOD getRolAbrirCajonPortamonedas( cUuid )                         INLINE ( ::getLogic( cUuid, 'roles', 'abrir_cajon_portamonedas', .t. ) )   
+   METHOD getRolAbrirCajonPortamonedas( cUuid )                         ;
+                                 INLINE ( ::getLogic( cUuid, 'roles', 'abrir_cajon_portamonedas', .t. ) )   
 
-   METHOD setEmpresaSeleccionarUsuarios( uAjusteValue, cAjustableUuid ) INLINE ( ::setLogic( 'seleccionar_usuarios', uAjusteValue, 'empresas', cAjustableUuid ) )
-   METHOD getEmpresaSeleccionarUsuarios( cUuid )                        INLINE ( ::getLogic( cUuid, 'empresas', 'seleccionar_usuarios', .f. ) )   
+   METHOD setEmpresaSeleccionarUsuarios( uAjusteValue, cAjustableUuid ) ;
+                                 INLINE ( ::setLogic( 'seleccionar_usuarios', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getEmpresaSeleccionarUsuarios( cUuid );
+                                 INLINE ( ::getLogic( cUuid, 'empresas', 'seleccionar_usuarios', .f. ) )   
 
-   METHOD getRolAlbaranEntregado( cUuid )                               INLINE ( ::getLogic( cUuid, 'roles', 'albaran_entregado', .t. ) )   
-   METHOD getRolNoAlbaranEntregado( cUuid )                             INLINE ( !::getRolAlbaranEntregado( cUuid ) )
+   METHOD getRolAlbaranEntregado( cUuid );
+                                 INLINE ( ::getLogic( cUuid, 'roles', 'albaran_entregado', .t. ) )   
+   METHOD getRolNoAlbaranEntregado( cUuid );
+                                 INLINE ( !::getRolAlbaranEntregado( cUuid ) )
 
-   METHOD getRolAsistenteGenerarFacturas( cUuid )                       INLINE ( ::getLogic( cUuid, 'roles', 'asistente_generar_facturas', .t. ) )   
-   METHOD getRolNoAsistenteGenerarFacturas( cUuid )                     INLINE ( !::getRolAsistenteGenerarFacturas( cUuid ) )
+   METHOD getRolAsistenteGenerarFacturas( cUuid );
+                                 INLINE ( ::getLogic( cUuid, 'roles', 'asistente_generar_facturas', .t. ) )   
+   METHOD getRolNoAsistenteGenerarFacturas( cUuid );
+                                 INLINE ( !::getRolAsistenteGenerarFacturas( cUuid ) )
 
-   METHOD getRolCambiarEstado( cUuid )                                  INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_estado', .t. ) )   
-   METHOD getRolNoCambiarEstado( cUuid )                                INLINE ( !::getRolCambiarEstado( cUuid ) )
+   METHOD getRolCambiarEstado( cUuid );
+                                 INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_estado', .t. ) )   
+   METHOD getRolNoCambiarEstado( cUuid );
+                                 INLINE ( !::getRolCambiarEstado( cUuid ) )
 
-   METHOD getRolCambiarCampos( cUuid )                                  INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_campos', .t. ) )   
-   METHOD getRolNoCambiarCampos( cUuid )                                INLINE ( !::getRolCambiarCampos( cUuid ) )
+   METHOD getRolCambiarCampos( cUuid );
+                                 INLINE ( ::getLogic( cUuid, 'roles', 'cambiar_campos', .t. ) )   
+   METHOD getRolNoCambiarCampos( cUuid );
+                                 INLINE ( !::getRolCambiarCampos( cUuid ) )
 
-   METHOD setEmpresaDelegacionDefecto( uAjusteValue, cAjustableUuid )   INLINE ( ::setValue( 'delegacion_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
-   METHOD getEmpresaDelegacionDefecto( cUuid )                          INLINE ( ::getValue( cUuid, 'empresas', 'delegacion_defecto', space( 40 ) ) )   
+   METHOD setEmpresaDelegacionDefecto( uAjusteValue, cAjustableUuid );
+                                 INLINE ( ::setValue( 'delegacion_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getEmpresaDelegacionDefecto( cUuid );
+                                 INLINE ( ::getValue( cUuid, 'empresas', 'delegacion_defecto', space( 40 ) ) )   
 
    METHOD setEmpresaUnidadesGrupoDefecto( uAjusteValue, cAjustableUuid );
-                                                                        INLINE ( ::setValue( 'unidades_grupo_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
-   METHOD getEmpresaUnidadesGrupoDefecto( cCodigo )                     INLINE ( ::getValue( cCodigo, 'empresas', 'unidades_grupo_defecto', __grupo_unidades_medicion__ ) )   
+                                 INLINE ( ::setValue( 'unidades_grupo_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getEmpresaUnidadesGrupoDefecto( cCodigo );
+                                 INLINE ( ::getValue( cCodigo, 'empresas', 'unidades_grupo_defecto', __grupo_unidades_medicion__ ) )   
 
    METHOD getValueWhereMac( cTipoAjuste, cMacAddress, uDefault )
+
+   METHOD setEmpresaTarifaDefecto( uAjusteValue, cAjustableUuid );
+                                 INLINE ( ::setValue( 'tarifas_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getEmpresaTarifaDefecto( cCodigo );
+                                 INLINE ( padr( ::getValue( cCodigo, 'empresas', 'tarifas_defecto', __tarifa_base__ ), 20 ) )   
 
 END CLASS
 
@@ -187,7 +242,7 @@ METHOD getValue( cUuid, cTipo, cAjuste, uDefault )
    uValue            := ::getDatabase():getValue( cSentence )
 
    if hb_ischar( uValue ) 
-      RETURN ( uValue ) 
+      RETURN ( alltrim( uValue ) )
    endif
 
 RETURN ( uDefault )
@@ -231,7 +286,7 @@ METHOD getValueWhereMac( cTipoAjuste, cMacAddress, uDefault )
 
    cSentence         := "SELECT ajuste_valor "
    cSentence         +=    "FROM " + ::getTableName() + " "
-   cSentence         += "WHERE ajustable_uuid = " + quoted( cMacAddress ) + " "
+   cSentence         += "WHERE ajustable_uuid = " + quotedNotEscaped( cMacAddress ) + " "
    cSentence         +=    "AND ajustable_tipo = " + quoted( cTipoAjuste )
 
    uValue            := ::getDatabase():getValue( cSentence )

@@ -26,6 +26,8 @@ CLASS CompanyManager
    METHOD getDatabase()                INLINE ( 'gestool' + '_' + ::codigo )
    METHOD getTableName( cTableName )   INLINE ( ::getDatabase() + '.' + cTableName )
 
+   METHOD getDefaultTarifa()           INLINE ( SQLAjustableModel():getEmpresaTarifaDefecto( ::uuid ) )
+
 END CLASS
 
 //--------------------------------------------------------------------------//

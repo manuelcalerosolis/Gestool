@@ -1,25 +1,25 @@
-HB                   = 	\harbour_bcc582\
+HB                   = 	\harbour_bcc7\
 
-HBINCLUDE            = 	\harbour_bcc582\include
-FWINCLUDE            = 	\fwh1705\include
+HBINCLUDE            = 	\harbour_bcc7\include
+FWINCLUDE            = 	\fwh1801\include
 GTINCLUDE            = 	.\Include
 
-HBLIB                = 	\harbour_bcc582\lib
-FWLIB                = 	\fwh1705\lib
+HBLIB                = 	\harbour_bcc7\lib
+FWLIB                = 	\fwh1801\lib
 
 RESOURCE             = 	.\resource
 
-BORLAND              = 	\bcc582
-BORLANDLIB           = 	\bcc582\lib
+BORLAND              = 	\bcc73
+BORLANDLIB           = 	\bcc73\lib
 
 IMG2PDFLIB           = 	\img2Pdf
 
-OBJ                  = 	obj1705
+OBJ                  = 	obj1801
 
 SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Commands;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	.\C
 
-PPO 					   = 	ppo1705
+PPO 					   = 	ppo1801
 
 EXE 					   = 	bin\$(TARGET).exe
 
@@ -153,6 +153,7 @@ SessionManager.prg  												\
 StoreManager.prg 													\
 DelegationManager.prg 											\
 ApplicationManager.prg 											\
+HistoryManager.prg 												\
 Oferta.prg              										\
 Internet.prg            										\
 Intitem.prg             										\
@@ -402,9 +403,14 @@ ArticulosView.prg 															\
 ArticulosValidator.prg 														\
 SQLArticulosModel.prg 														\
 ArticulosPreciosController.prg 											\
+ArticulosPreciosView.prg 													\
+ArticulosPreciosBrowseView.prg											\
+SQLArticulosPreciosModel.prg												\
+ArticulosPreciosRepository.prg											\
 ZonasController.prg 															\
 ArticulosFabricantesController.prg 										\
 ImagenesController.prg 														\
+UnidadesMedicionOperacionesController.prg 							\
 TraduccionesController.prg 												\
 AgentesController.prg 														\
 MovimientosAlmacenView.prg													\
@@ -708,15 +714,17 @@ NumeroDocumentoController.prg 											\
 SQLDialogView.prg 															\
 CalculaPrecioCommand.prg 													\
 DescuentosController.prg 													\
+ArticulosPreciosDescuentosController.prg 								\
 ClientesBrowseView.prg 														\
 TercerosBrowseView.prg 														\
 SqlFacturasClientesModel.prg 												\
 SqlFacturasClientesLineasModel.prg										\
 FacturasClientesController.prg 											\
 FacturasClientesLineasController.prg									\
-FacturasClientesLineasBrowse.prg										\
+FacturasClientesDescuentosController.prg								\
+FacturasClientesLineasBrowse.prg											\
 FacturasClientesLineasView.prg											\
-FacturasClientesView.prg 												\
+FacturasClientesView.prg 													\
 ClientesTarifasController.prg 											\
 
 C               =       	            								\
@@ -840,6 +848,7 @@ DelegationManager.obj 														\
 BoxManager.obj                                     				\
 SessionManager.obj 															\
 ApplicationManager.obj 														\
+HistoryManager.obj 															\
 Oferta.obj                                         				\
 Internet.obj                                       				\
 Intitem.obj                                        				\
@@ -1102,9 +1111,14 @@ ArticulosView.obj 															\
 ArticulosValidator.obj 														\
 SQLArticulosModel.obj 														\
 ArticulosPreciosController.obj       									\
+ArticulosPreciosView.obj 													\
+ArticulosPreciosBrowseView.obj											\
+SQLArticulosPreciosModel.obj												\
+ArticulosPreciosRepository.obj											\
 ZonasController.obj       													\
 ArticulosFabricantesController.obj       								\
 ImagenesController.obj       												\
+UnidadesMedicionOperacionesController.obj       					\
 TraduccionesController.obj 												\
 AgentesController.obj     		  											\
 MovimientosAlmacenesLineasModel.obj 									\
@@ -1402,15 +1416,17 @@ NumeroDocumentoController.obj 											\
 SQLDialogView.obj 															\
 CalculaPrecioCommand.obj 													\
 DescuentosController.obj 													\
+ArticulosPreciosDescuentosController.obj 								\
 ClientesBrowseView.obj 														\
 TercerosBrowseView.obj 														\
 SQLFacturasClientesModel.obj 												\
 SQLFacturasClientesLineasModel.obj 										\
 FacturasClientesController.obj 											\
 FacturasClientesLineasController.obj 									\
+FacturasClientesDescuentosController.obj 								\
 FacturasClientesLineasBrowse.obj 										\
 FacturasClientesLineasView.obj 											\
-FacturasClientesView.obj 												\
+FacturasClientesView.obj 													\
 ClientesTarifasController.obj 											\
 
 .PRG.OBJ:
@@ -1543,6 +1559,7 @@ $(OBJ)\DelegationManager.obj        									+
 $(OBJ)\BoxManager.obj      												+
 $(OBJ)\SessionManager.obj    												+
 $(OBJ)\ApplicationManager.obj												+
+$(OBJ)\HistoryManager.obj													+
 $(OBJ)\Oferta.obj                										+
 $(OBJ)\Internet.obj              										+
 $(OBJ)\Intitem.obj               										+
@@ -1789,9 +1806,14 @@ $(OBJ)\ArticulosView.obj    												+
 $(OBJ)\ArticulosValidator.obj												+
 $(OBJ)\SQLArticulosModel.obj												+
 $(OBJ)\ArticulosPreciosController.obj    								+
+$(OBJ)\ArticulosPreciosView.obj    										+
+$(OBJ)\ArticulosPreciosBrowseView.obj    								+
+$(OBJ)\SQLArticulosPreciosModel.obj    								+
+$(OBJ)\ArticulosPreciosRepository.obj    								+
 $(OBJ)\ZonasController.obj    											+
 $(OBJ)\ArticulosFabricantesController.obj    						+
 $(OBJ)\ImagenesController.obj    										+
+$(OBJ)\UnidadesMedicionOperacionesController.obj    				+
 $(OBJ)\TraduccionesController.obj    									+
 $(OBJ)\AgentesController.obj    											+
 $(OBJ)\MovimientosAlmacenView.obj 										+
@@ -2068,40 +2090,43 @@ $(OBJ)\PedidosProveedoresLineasModel.obj 							   +
 $(OBJ)\RelacionesEntidadesController.obj 							   +
 $(OBJ)\CentroCosteModel.obj 												+
 $(OBJ)\TransportistasModel.obj 											+
-$(OBJ)\MdiChild.obj 													+
-$(OBJ)\SQLComboSelector.obj 											+
-$(OBJ)\CompanyManager.obj 												+
+$(OBJ)\MdiChild.obj 															+
+$(OBJ)\SQLComboSelector.obj 												+
+$(OBJ)\CompanyManager.obj 													+
 $(OBJ)\TercerosController.obj 											+
 $(OBJ)\ClientesController.obj 											+
 $(OBJ)\ProveedoresController.obj 										+
-$(OBJ)\SQLTercerosModel.obj 											+
-$(OBJ)\SQLclientesModel.obj 											+
+$(OBJ)\SQLTercerosModel.obj 												+
+$(OBJ)\SQLclientesModel.obj 												+
 $(OBJ)\SQLProveedoresModel.obj 		  									+
-$(OBJ)\ClientesView.obj 												+
-$(OBJ)\ClientesValidator.obj 											+
-$(OBJ)\SqlGetSelector.obj 												+
+$(OBJ)\ClientesView.obj 													+
+$(OBJ)\ClientesValidator.obj 												+
+$(OBJ)\SqlGetSelector.obj 													+
 $(OBJ)\SqlClientGetSelector.obj											+
 $(OBJ)\NumeroDocumentoController.obj									+
-$(OBJ)\SQLDialogView.obj 												+
-$(OBJ)\CalculaPrecioCommand.obj 										+
-$(OBJ)\DescuentosController.obj 										+
+$(OBJ)\SQLDialogView.obj 													+
+$(OBJ)\CalculaPrecioCommand.obj 											+
+$(OBJ)\DescuentosController.obj 											+
+$(OBJ)\ArticulosPreciosDescuentosController.obj 					+
 $(OBJ)\ClientesBrowseView.obj 											+
 $(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\SqlFacturasClientesModel.obj 				    				+
-$(OBJ)\SqlFacturasClientesLineasModel.obj 	    						+
+$(OBJ)\SqlFacturasClientesLineasModel.obj 	    					+
 $(OBJ)\FacturasClientesController.obj 									+
 $(OBJ)\FacturasClientesLineasController.obj 							+
+$(OBJ)\FacturasClientesDescuentosController.obj 					+
 $(OBJ)\FacturasClientesLineasBrowse.obj 								+
 $(OBJ)\FacturasClientesLineasView.obj 									+
-$(OBJ)\FacturasClientesView.obj 										+
+$(OBJ)\FacturasClientesView.obj 											+
 $(OBJ)\ClientesTarifasController.obj 									+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+
 $(FWLIB)\FiveHC.lib              										+
+$(FWLIB)\libcurl.lib             										+
 $(HBLIB)\hdo.lib               											+
-$(HBLIB)\mylist.lib 													+
-$(HBLIB)\rdlmysql.lib 													+
+$(HBLIB)\mylist.lib 															+
+$(HBLIB)\rdlmysql.lib 														+
 $(HBLIB)\libmysql.lib            										+
 $(HBLIB)\Eagle1.lib              										+
 $(HBLIB)\hbwin.lib               										+

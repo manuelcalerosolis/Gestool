@@ -5,13 +5,15 @@
 
 CLASS DireccionesGestoolController FROM DireccionesController
 
-   METHOD getModel()                      INLINE ( ::oModel := SQLDireccionesGestoolModel():New( self ) )
+   METHOD getModel()                            INLINE ( ::oModel := SQLDireccionesGestoolModel():New( self ) )
 
-   METHOD getCodigosPostalesController()  INLINE ( ::oCodigosPostalesController  := CodigosPostalesGestoolController():New( self ) )
+   METHOD getCodigosPostalesController()        INLINE ( ::oCodigosPostalesController  := CodigosPostalesGestoolController():New( self ) )
 
-   METHOD getPaisesController()           INLINE ( ::oPaisesController := PaisesGestoolController():New( self ) )
+   METHOD getPaisesController()                 INLINE ( ::oPaisesController := PaisesGestoolController():New( self ) )
 
-   METHOD getProvinciasController()       INLINE ( ::oProvinciasController := ProvinciasGestoolController():New( self ) )
+   METHOD getProvinciasController()             INLINE ( ::oProvinciasController := ProvinciasGestoolController():New( self ) )
+
+   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
 END CLASS
 
@@ -35,9 +37,9 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
-   METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
-   METHOD loadPrincipalBlankBuffer()   INLINE ( ::oModel:loadPrincipalBlankBuffer() )
-   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
+   METHOD loadBlankBuffer()               INLINE ( ::oModel:loadBlankBuffer() )
+   METHOD loadPrincipalBlankBuffer()      INLINE ( ::oModel:loadPrincipalBlankBuffer() )
+   METHOD insertBuffer()                  INLINE ( ::oModel:insertBuffer() )
 
    METHOD loadedCurrentBuffer( uuidEntidad ) 
    METHOD updateBuffer( uuidEntidad )

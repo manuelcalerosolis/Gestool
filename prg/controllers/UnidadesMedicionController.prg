@@ -43,7 +43,7 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionController
 
    ::oGetSelector                   := GetSelector():New( self )
 
-   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
+   ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 
@@ -253,6 +253,8 @@ CLASS SQLUnidadesMedicionModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getUnidadMedicionSistema()
+
    METHOD getInsertUnidadesMedicionSentence()
 
 END CLASS
@@ -271,7 +273,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
                                              "default"   => {|| space( 20 ) } }                        )
    
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) UNIQUE"                   ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "codigo_iso",        {  "create"    => "VARCHAR( 6 )"                            ,;
@@ -296,6 +298,26 @@ METHOD getInsertUnidadesMedicionSentence() CLASS SQLUnidadesMedicionModel
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
+
+METHOD getUnidadMedicionSistema() CLASS SQLUnidadesMedicionModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT 
+         unidades_medicion.codigo
+
+      FROM %1$s AS unidades_medicion
+
+         WHERE unidades_medicion.sistema = 1
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName() )
+
+RETURN ( getSQLDatabase():getValue( cSql ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

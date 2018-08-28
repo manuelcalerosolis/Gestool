@@ -106,11 +106,11 @@ RETURN ( nil )
 
 METHOD loadData() CLASS EnviromentController
 
-   ::aComboCajas                       := ::oCajasController:oModel:getArrayNombres()
+   ::aComboCajas                       := ::oCajasController:oModel:getNombres()
 
    ::cComboCaja                        := atail( ::aComboCajas )
 
-   ::aComboAlmacenes                   := ::oAlmacenesController:oModel:getArrayNombres()
+   ::aComboAlmacenes                   := ::oAlmacenesController:oModel:getNombres()
 
    ::cComboAlmacen                     := atail( ::aComboAlmacenes )
 
@@ -234,11 +234,13 @@ CLASS EnviromentView FROM SQLBaseView
       METHOD startActivate()
       METHOD Validate()
 
-   METHOD showDelegaciones()     INLINE ( ::oSayDelegaciones:Show(), ::oComboDelegaciones:Show() )
-   METHOD hideDelegaciones()     INLINE ( ::oSayDelegaciones:Hide(), ::oComboDelegaciones:Hide() )
+   METHOD showDelegaciones()     INLINE ( if( !empty( ::oSayDelegaciones ),   ::oSayDelegaciones:Show(), ),;
+                                          if( !empty( ::oComboDelegaciones ), ::oComboDelegaciones:Show(), ) )
+   METHOD hideDelegaciones()     INLINE ( if( !empty( ::oSayDelegaciones ),   ::oSayDelegaciones:Hide(), ),;
+                                          if( !empty( ::oComboDelegaciones ), ::oComboDelegaciones:Hide(), ) )
 
-   METHOD showSaySessiones()     INLINE ( ::oSaySessiones:Show() )
-   METHOD hideSaySessiones()     INLINE ( ::oSaySessiones:Hide() )
+   METHOD showSaySessiones()     INLINE ( if( !empty( ::oSaySessiones ), ::oSaySessiones:Show(), ) )
+   METHOD hideSaySessiones()     INLINE ( if( !empty( ::oSaySessiones ), ::oSaySessiones:Hide(), ) )
    
 END CLASS
 

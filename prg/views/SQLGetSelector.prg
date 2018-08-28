@@ -9,8 +9,10 @@ CLASS GetSelector
 
    DATA bValue
 
-   DATA bValid
+   DATA cPicture                                  
 
+   DATA oLink
+   
    DATA oGet
    DATA cGet
 
@@ -21,6 +23,7 @@ CLASS GetSelector
    DATA oEvents
 
    DATA bWhen
+   DATA bValid
 
    METHOD New( oSender )
    METHOD End()                                 
@@ -42,8 +45,8 @@ CLASS GetSelector
    METHOD validAction()
 
    METHOD loadHelpText()
-      METHOD cleanHelpText()                    INLINE ( ::oGet:oHelptext:cText( "" ) )
-      METHOD setHelpText( value )               INLINE ( ::oGet:oHelptext:cText( value ) )
+      METHOD cleanHelpText()                    
+      METHOD setHelpText( value )               
 
    METHOD getFields()                           INLINE ( ::uFields   := ::oController:oModel:getField( "nombre", ::getKey(), ::oGet:varGet() ) )
    
@@ -53,8 +56,18 @@ CLASS GetSelector
 
    METHOD showMessage()
 
-   METHOD Hide()                                INLINE ( if( !empty( ::oGet ), ::oGet:Hide(), ) )
-   METHOD Show()                                INLINE ( if( !empty( ::oGet ), ::oGet:Show(), ) )
+   METHOD cText( value )                        INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
+   METHOD varGet()                              INLINE ( if( !empty( ::oGet ), ::oGet:varGet(), ) )
+  
+   METHOD Hide()
+   METHOD Show()
+  
+   METHOD setFocus()                            INLINE ( if( !empty( ::oGet ), ::oGet:setFocus(), ) )
+  
+   METHOD Refresh()                             INLINE ( if( !empty( ::oGet ), ::oGet:Refresh(), ) )
+  
+   METHOD lValid()                              INLINE ( if( !empty( ::oGet ), ::oGet:lValid(), ) )
+   METHOD evalWhen()                            INLINE ( if( !empty( ::oGet ) .and. !empty( ::bWhen ), ( if( eval( ::bWhen ), ::oGet:Enable(), ::oGet:Disable() ) ), ) )
 
    // Events-------------------------------------------------------------------
 
@@ -80,7 +93,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End()
+METHOD End() CLASS GetSelector
 
    if !empty( ::oEvents )
       ::oEvents:End()
@@ -95,31 +108,47 @@ METHOD Build( hBuilder ) CLASS GetSelector
    local idGet    := if( hhaskey( hBuilder, "idGet" ),   hBuilder[ "idGet" ],    nil )
    local idText   := if( hhaskey( hBuilder, "idText" ),  hBuilder[ "idText" ],   nil )
    local idSay    := if( hhaskey( hBuilder, "idSay" ),   hBuilder[ "idSay"],     nil )
+   local idLink   := if( hhaskey( hBuilder, "idLink" ),  hBuilder[ "idLink"],    nil )
    local oDlg     := if( hhaskey( hBuilder, "oDialog" ), hBuilder[ "oDialog" ],  nil )
 
-RETURN ( ::Activate( idGet, idText, oDlg, idSay ) )
+RETURN ( ::Activate( idGet, idText, oDlg, idSay, idLink ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate( idGet, idText, oDlg, idSay ) CLASS GetSelector
+METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
 
    if isFalse( ::fireEvent( 'activating' ) )
       RETURN ( nil )
    end if
 
-   ::cGet         := eval( ::bValue )
+   ::cGet               := eval( ::bValue )
 
-   REDEFINE GET   ::oGet ;
-      VAR         ::cGet ;
-      ID          idGet ;
-      IDTEXT      idText ;
-      IDSAY       idSay ;
-      BITMAP      "Lupa" ;
-      OF          oDlg
+   REDEFINE GET         ::oGet ;
+      VAR               ::cGet ;
+      ID                idGet ;
+      PICTURE           ::cPicture ;
+      UPDATE ;
+      IDTEXT            idText ;
+      IDSAY             idSay ;
+      BITMAP            "Lupa" ;
+      OF                oDlg
 
-   ::oGet:bHelp   := {|| ::helpAction() }
-   ::oGet:bValid  := {|| ::validAction() }
-   ::oGet:bWhen   := ::bWhen
+   ::oGet:bHelp         := {|| ::helpAction() }
+   ::oGet:bValid        := {|| ::validAction() }
+   ::oGet:bWhen         := ::bWhen
+
+   if !empty( idLink )   
+
+   REDEFINE SAY         ::oLink ;
+      FONT              getBoldFont() ; 
+      COLOR             rgb( 10, 152, 234 ) ;
+      ID                idLink ;
+      OF                oDlg ;
+
+   ::oLink:lWantClick   := .t.
+   ::oLink:OnClick      := {|| ::oController:Edit( ::oController:oModel:getIdWhereCodigo( ::cGet ) ) }
+
+   end if 
 
    ::fireEvent( 'activated' ) 
 
@@ -155,19 +184,25 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD validAction()
+METHOD validAction() CLASS GetSelector
 
    if isFalse( ::fireEvent( 'validating' ) )
       RETURN ( .f. )
    end if
 
-   if empty( ::bValid ) .or. eval( ::bValid, ::cGet )
+   ::evalValue( ::oGet:varGet() )
+
+   if empty( ::bValid ) .or. eval( ::bValid, ::oGet )
 
       ::loadHelpText()
 
       ::fireEvent( 'validated' )
 
       RETURN ( .t. )
+
+   else
+   
+      ::oGet:oWnd:nLastKey    := 0
 
    end if 
 
@@ -188,8 +223,6 @@ METHOD loadHelpText( lSilenceMode ) CLASS GetSelector
    if isFalse( ::fireEvent( 'loading' ) )
       RETURN ( .f. )
    end if
-
-   ::evalValue( ::oGet:varGet() )
 
    ::cleanHelpText()
 
@@ -223,7 +256,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD showMessage( lSilenceMode )
+METHOD showMessage( lSilenceMode ) CLASS GetSelector
 
    if lSilenceMode 
       RETURN ( self )
@@ -236,6 +269,62 @@ METHOD showMessage( lSilenceMode )
    end if 
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD cleanHelpText() CLASS GetSelector
+
+   if isFalse( ::fireEvent( 'cleaningHelpText' ) )
+      RETURN ( .f. )
+   end if
+
+   ::oGet:oHelptext:cText( "" ) 
+
+   ::fireEvent( 'cleanedHelpText' ) 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD setHelpText( value ) CLASS GetSelector            
+
+   if isFalse( ::fireEvent( 'settingHelpText' ) )
+      RETURN ( .f. )
+   end if
+
+   ::oGet:oHelptext:cText( value ) 
+
+   ::fireEvent( 'settedHelpText' ) 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Hide() CLASS GetSelector
+
+   if !empty( ::oGet )
+      ::oGet:Hide()
+   end if
+
+   if !empty( ::oLink )
+      ::oLink:Hide()
+   end if
+
+RETURN ( nil )                                
+
+//---------------------------------------------------------------------------//
+
+METHOD Show() CLASS GetSelector
+
+   if !empty( ::oGet )
+      ::oGet:Show()
+   end if
+
+   if !empty( ::oLink )
+      ::oLink:Show()
+   end if
+
+RETURN ( nil )                                
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

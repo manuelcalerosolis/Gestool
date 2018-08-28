@@ -11,7 +11,6 @@ CLASS FacturasClientesLineasValidator FROM SQLBaseValidator
    METHOD isCodeGS128( value )
    METHOD existArticulo( value )                   
 
-   METHOD existPropiedad( value, propiedad )
    METHOD existOrEmptyPrimeraPropiedad( value )    INLINE ( ::existPropiedad( value, "codigo_primera_propiedad" ) )
    METHOD existOrEmptySegundaPropiedad( value )    INLINE ( ::existPropiedad( value, "codigo_segunda_propiedad" ) )
 
@@ -23,10 +22,9 @@ END CLASS
 
 METHOD getValidators()
 
-   ::hValidators  := {  "codigo_articulo"          => {  "isCodeGS128"           => "",;
-                                                         "required"              => "El artículo es un dato requerido",;
+   ::hValidators  := {  "articulo_codigo"          => {  "isCodeGS128"           => "",;
                                                          "existArticulo"         => "El artículo {value}, no existe" },;
-                        "nombre_articulo"          => {  "required"              => "El nombre del artículo es un dato requerido" },;
+                        "articulo_nombre"          => {  "required"              => "El nombre del artículo es un dato requerido" },;
                         "unidad_medicion_codigo"   => {  "existUnidadMedicion"   => "La unidad de medición no existe" } }
 
 RETURN ( ::hValidators )
@@ -61,41 +59,13 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD existPropiedad( value, propiedad )
-
-   if empty( value )
-      RETURN ( .t. )
-   end if
-
-   if empty( ::oController )
-      RETURN ( .t. )
-   end if
-
-   if empty( ::oController:getModelBuffer( propiedad ) )
-      RETURN ( .t. )
-   end if
-
-RETURN ( PropiedadesLineasModel():exist( ::oController:getModelBuffer( propiedad ), value ) )
-
-//---------------------------------------------------------------------------//
-
 METHOD existArticulo( value )
 
-   local cId
-
    if empty( value )
       RETURN ( .t. )
    end if 
 
-   if ArticulosModel():exist( value )
-      RETURN ( .t. )
-   end if 
-
-   cId                     := ArticulosCodigosBarraModel():getCodigo( value )
-
-   if !empty( cId )
-      ::oController:setModelBufferPadr( "codigo_articulo", cId )
-      ::oController:oDialogView:oGetCodigoArticulo:Refresh()
+   if SQLArticulosModel():isWhereCodigo( value )
       RETURN ( .t. )
    end if 
 
@@ -114,7 +84,7 @@ METHOD existUnidadMedicion( value )
 
    aValores          := UnidadesMedicionGruposLineasRepository():getCodigos( ::oController:getRowSet():fieldGet( 'articulo_codigo' ) )
 
-   if aScan( aValores, AllTrim( value ) ) != 0
+   if ascan( aValores, alltrim( value ) ) != 0
       RETURN ( .t. )
    end if
 

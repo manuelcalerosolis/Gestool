@@ -418,7 +418,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       end if
 
       if !Empty( TiposImpresorasRepository() )
-         aTiposImpresoras  := SQLTiposImpresorasModel():getArrayNombres()  
+         aTiposImpresoras  := SQLTiposImpresorasModel():getNombres()  
       end if
 
       oFabricantesController     := ArticulosFabricantesController():New()

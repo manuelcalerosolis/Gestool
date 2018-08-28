@@ -8,15 +8,14 @@
 
 //------------------------------------------------------------------------//
 
-CLASS SQLBrowseableView 
-
-   DATA oController
+CLASS SQLBrowseableView FROM SQLBaseView
 
    DATA oModel 
 
    DATA oMenuTreeView
 
    METHOD New( oController )
+
    METHOD End()
 
    // Facades -----------------------------------------------------------------
@@ -39,8 +38,7 @@ CLASS SQLBrowseableView
 
    // Browse-------------------------------------------------------------------
 
-   METHOD getBrowseView()                    INLINE ( ::oController:oBrowseView )
-   METHOD getSQLBrowseView()                 INLINE ( ::oController:oBrowseView )
+   METHOD getBrowseView()                    INLINE ( iif( !empty( ::oController ), ::oController:oBrowseView, ) )
 
    METHOD getBrowse()                        INLINE ( ::getBrowseView():oBrowse )
 
@@ -69,7 +67,7 @@ ENDCLASS
 
 METHOD New( oController )
 
-   ::oController           := oController
+   ::Super:New( oController )
 
    ::oMenuTreeView         := MenuTreeView():New( Self )
 
@@ -84,6 +82,8 @@ METHOD End()
       ::oMenuTreeView         := nil
    end if 
 
+   ::Super:End()
+
    Self                       := nil
 
 RETURN ( nil )
@@ -92,14 +92,9 @@ RETURN ( nil )
 
 METHOD onChangeCombo( oColumn )
 
-   local oComboBox   := ::getComboBoxOrder()
-
-   if empty( oComboBox )
-      RETURN ( Self )
-   end if 
-
    if empty( oColumn )
-      oColumn        := ::getBrowse():getColumnByHeader( oComboBox:VarGet() )
+      oColumn        := ::getBrowse():getColumnByHeader( ::getComboBoxOrder():VarGet() )
+      
    end if 
 
    if empty( oColumn )

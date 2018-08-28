@@ -338,31 +338,31 @@ METHOD Activate() CLASS RecibosView
 
    ::oController:oCajasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "codigo_caja" ] ) )
    
-   ::oController:oCajasController:oGetSelector:setEvent( 'validated', {|| ::CajasControllerValidated() } )
+   /*::oController:oCajasController:oGetSelector:setEvent( 'validated', {|| ::CajasControllerValidated() } )*/
 
-   ::oController:oCajasController:oGetSelector:Activate( 190, 192, ::oFolder:aDialogs[1] )
+   ::oController:oCajasController:oGetSelector:Build( { "idGet" => 190, "idText" => 191, "idLink" => 192, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // cliente------------------------------------------------------------------------------------------------------------//
 
    ::oController:oClientesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente" ] ) )
 
-   ::oController:oClientesController:oGetSelector:Build( { "idGet" => 200, "idText" => 202, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oClientesController:oGetSelector:Build( { "idGet" => 200, "idText" => 201, "idLink" => 202, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Forma de pago-----------------------------------------------------------------------------------------------------//
 
    ::oController:oFormasPagosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago" ] ) )
    
-   ::oController:oFormasPagosController:oGetSelector:setEvent( 'validated', {|| ::FormasPagosControllerValidated() } )
+   /*::oController:oFormasPagosController:oGetSelector:setEvent( 'validated', {|| ::FormasPagosControllerValidated() } )*/
 
-   ::oController:oFormasPagosController:oGetSelector:Activate( 210, 212, ::oFolder:aDialogs[1] )
+   ::oController:oFormasPagosController:oGetSelector:Build( { "idGet" => 210, "idText" => 211, "idLink" => 212, "oDialog" => ::oFolder:aDialogs[1] } )
 
 //Agentes---------------------------------------------------------------------------------------------------------//
 
    ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente" ] ) )
    
-   ::oController:oAgentesController:oGetSelector:setEvent( 'validated', {|| ::AgentesControllerValidated() } )
+   /*::oController:oAgentesController:oGetSelector:setEvent( 'validated', {|| ::AgentesControllerValidated() } )*/
 
-   ::oController:oAgentesController:oGetSelector:Activate( 220, 222, ::oFolder:aDialogs[1] )
+   ::oController:oAgentesController:oGetSelector:Build( { "idGet" => 220, "idText" => 221, "idLink" => 222, "oDialog" => ::oFolder:aDialogs[1] } )
 
 //-----------------------------------------------------------------------------------------------------------------//
 

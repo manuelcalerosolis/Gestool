@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS PermisosController FROM SQLNavigatorController
+CLASS PermisosController FROM SQLNavigatorGestoolController
    
    DATA cUuidRoles
 

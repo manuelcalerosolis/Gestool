@@ -5,9 +5,11 @@
 
 CLASS CodigosPostalesGestoolController FROM CodigosPostalesController
 
-   METHOD getModel()                   INLINE ( ::oModel := SQLCodigosPostalesGestoolModel():New( self ) )
+   METHOD getModel()                            INLINE ( ::oModel := SQLCodigosPostalesGestoolModel():New( self ) )
 
-   METHOD getProvinciasController()    INLINE ( ::oProvinciasController := ProvinciasGestoolController():New( self ) )
+   METHOD getProvinciasController()             INLINE ( ::oProvinciasController := ProvinciasGestoolController():New( self ) )
+   
+   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
 END CLASS
 

@@ -835,8 +835,6 @@ METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS SQLCompanySeeders
    cTipoDocumento       := alltrim( cTipoDocumento )
    cClave               := alltrim( cClave )
    
-   msgalert( cTipoDocumento, "cTipoDocumento" )
-
    do case 
       case cTipoDocumento == "20" // "Artículos" => "20"
          
@@ -847,8 +845,6 @@ METHOD getEntidadUuid( cTipoDocumento, cClave ) CLASS SQLCompanySeeders
          cEntidadUuid   := ClientesModel():getUuid( cClave )
 
    end case
-
-   msgalert( cEntidadUuid, "cEntidadUuid" )
 
 RETURN ( cEntidadUuid )
 

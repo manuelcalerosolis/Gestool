@@ -62,7 +62,7 @@ METHOD Create( nView ) CLASS InvoiceCustomer
 
    ::oProductStock         := ProductStock():init( self )
 
-   ::oStore                := Store():init( self )
+   ::oStore                := Stores():init( self )
 
    ::oPayment              := Payment():init( self )
 
@@ -122,7 +122,7 @@ METHOD New() CLASS InvoiceCustomer
 
    ::oProductStock         := ProductStock():init( self )
 
-   ::oStore                := Store():init( self )
+   ::oStore                := Stores():init( self )
 
    ::oPayment              := Payment():init( self )
 

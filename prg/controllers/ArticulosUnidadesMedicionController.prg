@@ -172,8 +172,6 @@ METHOD Activate() CLASS ArticulosUnidadesMedicionView
 
    ::oController:oUnidadesMedicionController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_medicion_codigo" ] ) )
    ::oController:oUnidadesMedicionController:oGetSelector:Activate( 100, 101, ::oDialog )
-   //::oController:oUnidadesMedicionController:oGetSelector:setView( ::oDialogView )
-   // ::oController:oUnidadesMedicionController:oGetSelector:setValid( {| uValue | msgalert( uValue, "dentro de setValid" ), ::oController:validate( "unidad_medicion_uuid", uValue  ) } )
 
    REDEFINE GET   ::oGetCantidad ;
       VAR         ::oController:oModel:hBuffer[ "cantidad" ] ;
@@ -237,7 +235,7 @@ END CLASS
 
 METHOD getValidators() CLASS ArticulosUnidadesMedicionValidator
 
-   ::hValidators  := {  "unidad_medicion_codigo" =>  {  "required"  => "El código es un dato requerido",;
+   ::hValidators  := {  "unidad_medicion_codigo" =>  {  "required"   => "El código es un dato requerido",;
                                                          "unique"    => "El código introducido ya existe" } }
 
 RETURN ( ::hValidators )

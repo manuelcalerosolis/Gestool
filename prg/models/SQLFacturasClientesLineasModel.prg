@@ -13,7 +13,7 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
    DATA cConstraints          INIT  "PRIMARY KEY ( id ), "                       + ; 
                                        "KEY ( uuid ), "                          + ;
                                        "KEY ( parent_uuid ), "                   + ;
-                                       "KEY ( articulo_codigo ) "               
+                                       "KEY ( articulo_codigo ) "              
 
    METHOD getColumns()
 
@@ -61,6 +61,7 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
 
    METHOD duplicateByUuid( originalUuid, duplicatedUuid )
 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -100,28 +101,54 @@ METHOD getColumns()
    hset( ::hColumns, "unidad_medicion_factor",     {  "create"    => "DECIMAL(19,6)"                  ,;
                                                       "default"   => {|| 1 } }                        )
 
+   hset( ::hColumns, "descuento",                  {  "create"    => "FLOAT(7,4)"                     ,;
+                                                      "default"   => {|| 0 } }                        )
+
+   hset( ::hColumns, "incremento_precio",          {  "create"    => "FLOAT (7,4)"                    ,;
+                                                      "default"   => {|| 0 } }                        )
+
+   hset( ::hColumns, "iva",                        {  "create"    => "FLOAT (7,4)"                    ,;
+                                                      "default"   => {|| 0 }  }                       )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
 METHOD getInitialSelect()
 
-   local cSelect  := "SELECT id, "                                                        + ;
-                        "uuid, "                                                          + ;
-                        "parent_uuid, "                                                   + ;
-                        "articulo_codigo, "                                               + ;
-                        "articulo_nombre, "                                               + ;
-                        "fecha_caducidad, "                                               + ;
-                        "lote, "                                                          + ;
-                        "articulo_unidades, "                                             + ;
-                        "articulo_precio, "                                               + ;
-                        "articulo_unidades * articulo_precio as total_precio, "           + ;
-                        "unidad_medicion_codigo, "                                        + ;
-                        "unidad_medicion_factor, "                                        + ;
-                        "articulo_unidades * unidad_medicion_factor as unidades_stock "   + ;
-                     "FROM " + ::getTableName()    
+   local cSql
 
-RETURN ( cSelect )
+   TEXT INTO cSql
+
+      SELECT 
+         id,
+         uuid,                                                        
+         parent_uuid,                                                 
+         articulo_codigo,                                             
+         articulo_nombre,                                             
+         fecha_caducidad,                                             
+         lote,                                                        
+         articulo_unidades,                                           
+         unidad_medicion_factor,                                      
+         ( @total_unidades := articulo_unidades * unidad_medicion_factor ) as total_unidades, 
+         articulo_precio,                                             
+         ( @total_bruto := ROUND( @total_unidades * articulo_precio, 2 ) ) as total_bruto,
+         unidad_medicion_codigo,                                      
+         descuento,       
+         ( @importe_descuento := IF( descuento IS NULL OR descuento = 0, 0, @total_bruto * descuento / 100 ) ),
+         ( @total_bruto - @importe_descuento ) AS total_precio,
+         incremento_precio,
+         iva
+
+      FROM %1$s    
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName() )
+
+   logwrite( cSql )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 

@@ -3,6 +3,10 @@
 #include "Xbrowse.Ch"
 
 //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
 
 CLASS SQLBrowseView
 
@@ -11,6 +15,8 @@ CLASS SQLBrowseView
    DATA oBrowse
 
    DATA oController
+
+   DATA bMenuSelect
 
    DATA lFooter                              INIT .f.
    
@@ -22,6 +28,18 @@ CLASS SQLBrowseView
 
    DATA nColSel                              INIT 1
 
+   DATA bSelectedColumnDblClick
+
+   DATA bChange
+
+   DATA cType 
+
+   DATA cName
+
+   DATA nFreeze                              INIT 0
+
+   DATA oEvents
+
    METHOD New( oController )
    METHOD End()
 
@@ -29,65 +47,95 @@ CLASS SQLBrowseView
 
    METHOD ActivateDialog()
    METHOD ActivateMDI()
+
+   METHOD onDblClick()
    
    METHOD setSize( nTop, nLeft, nRight, nBottom ) 
 
    METHOD setFooter( lFooter )               INLINE ( ::lFooter := lFooter )
 
+   // Type and name -----------------------------------------------------------
+
+   METHOD getType()                          INLINE ( if( hb_isnil( ::cType ), "", ::cType ) )
+   METHOD setType( cType )                   INLINE ( ::cType := cType )
+
+   METHOD getName()                          INLINE ( if( empty( ::cName ), ::getController():getName(), ::cName ) )
+   METHOD setName( cName )                   INLINE ( ::cName := cName )
+
    // Facades------------------------------------------------------------------
 
-   METHOD getBrowse()                        INLINE ( ::oBrowse )
-   METHOD getBrowseSelected()                INLINE ( ::oBrowse:aSelected )
-   METHOD getSaveState()                     INLINE ( ::oBrowse:SaveState() )
-   METHOD setSaveState( cState )             INLINE ( ::oBrowse:restoreState( cState ) )
+   METHOD getController()                    INLINE ( ::oController:oController )
 
-   METHOD getColumnByHeader( cHeader )       INLINE ( ::oBrowse:getColumnByHeader( cHeader ) )
-   METHOD getColumnOrder( cSortOrder )       INLINE ( ::oBrowse:getColumnOrder( cSortOrder ) )
-   METHOD getColumnOrderHeader( cSortOrder ) INLINE ( ::oBrowse:getColumnOrderHeader( cSortOrder ) )
+   METHOD getSenderController()              INLINE ( ::oController:getSenderController() )
+
+   METHOD getBrowse()                        INLINE ( ::oBrowse )
+
+   METHOD getState()                         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:saveState(), ) )
+   
+   METHOD getBrowseSelected()                INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:aSelected, ) )
+
+   METHOD getColumnByHeader( cHeader )       INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnByHeader( cHeader ), ) )
+   
+   METHOD getColumnOrder( cSortOrder )       INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnOrder( cSortOrder ), ) )
+   
+   METHOD getColumnOrderHeader( cSortOrder ) INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnOrderHeader( cSortOrder ), ) )
 
    METHOD setColumnOrder( cSortOrder, cColumnOrientation ) ;
-                                             INLINE ( ::oBrowse:setColumnOrder( cSortOrder, cColumnOrientation ) )
-   METHOD setFirstColumnOrder()              INLINE ( ::oBrowse:setFirstColumnOrder() )
+                                             INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setColumnOrder( cSortOrder, cColumnOrientation ), ) )
+   
+   METHOD setFirstColumnOrder()              INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setFirstColumnOrder(), ) )
 
    METHOD getColumnHeaderByOrder( cSortOrder )  
-   METHOD getColumnOrderByHeader( cHeader )  INLINE ( ::oBrowse:getColumnOrderByHeader( cHeader ) )
+   METHOD getColumnOrderByHeader( cHeader )  INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnOrderByHeader( cHeader ), ) )
 
-   METHOD getColumnSortOrder()               INLINE ( ::oBrowse:getColumnSortOrder() )
-   METHOD getColumnSortOrientation()         INLINE ( ::oBrowse:getColumnSortOrientation() )
+   METHOD getColumnSortOrder()               INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnSortOrder(), ) )
+   METHOD getColumnSortOrientation()         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnSortOrientation(), ) )
 
-   METHOD selectColumnOrder( oCol )          INLINE ( ::oBrowse:selectColumnOrder( oCol ) )
-   METHOD refreshCurrent()                   INLINE ( ::oBrowse:refreshCurrent() )
+   METHOD selectColumnOrder( oCol )          INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:selectColumnOrder( oCol ), ) )
+   METHOD refreshCurrent()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:refreshCurrent(), ) )
 
-   METHOD createFromCode()                   INLINE ( ::oBrowse:CreateFromCode() )
-   METHOD createFromResource( id )           INLINE ( ::oBrowse:CreateFromResource( id ) )
+   METHOD createFromCode()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:CreateFromCode(), ) )
+   METHOD createFromResource( id )           INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:CreateFromResource( id ), ) )
 
-   METHOD setLDblClick( bLDblClick )         INLINE ( ::oBrowse:bLDblClick    := bLDblClick )
-   METHOD setLDClickDatas( bLDClickDatas )   INLINE ( ::oBrowse:bLDClickDatas := bLDClickDatas )
+   METHOD setLDblClick( bLDblClick )         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:bLDblClick    := bLDblClick, ) )
+   METHOD setLDClickDatas( bLDClickDatas )   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:bLDClickDatas := bLDClickDatas, ) )
 
-   METHOD Refresh()                          INLINE ( if( !empty( ::oBrowse ), ( ::oBrowse:makeTotals(), ::oBrowse:Refresh() ), ) )
-   METHOD goTop()                            INLINE ( if( !empty( ::oBrowse ), ::oBrowse:goTop(), ) )
+   METHOD Refresh()                          INLINE ( iif( !empty( ::oBrowse ), ( ::oBrowse:makeTotals(), ::oBrowse:Refresh() ), ) )
+   METHOD goTop()                            INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:goTop(), ) )
 
-   METHOD setViewTypeToNavigator()           INLINE ( ::oBrowse:setViewType( "navigator" ) )
-   METHOD setViewTypeToSelector()            INLINE ( ::oBrowse:setViewType( "selector" ) )
-   METHOD getViewType()                      INLINE ( ::oBrowse:getViewType() )
+   METHOD setViewTypeToNavigator()           INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setViewType( "navigator" ), ) )
+   METHOD setViewTypeToSelector()            INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setViewType( "selector" ), ) )
+   METHOD getViewType()                      INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getViewType(), ) )
 
-   METHOD setFocus()                         INLINE ( ::oBrowse:setFocus() )
+   METHOD setFocus()                         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setFocus(), ) )
 
-   METHOD selectCol( nCol, lOffset )         INLINE ( ::oBrowse:selectCol( nCol, lOffset ) )
+   METHOD selectCol( nCol, lOffset )         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:selectCol( nCol, lOffset ), ) )
+
+   METHOD SelectedCol()                      INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:SelectedCol(), ) )
+
+   METHOD hWnd()                             INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:hWnd, ) )
+
+   METHOD oPopup()                           INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:oPopup, ) )
+
+   METHOD getSelectedCol()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:SelectedCol(), ) )
+
+   METHOD changeColumnOrder( oCol )          INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:changeColumnOrder( oCol ), ) )
+
+   METHOD setOriginalState()                 INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:setOriginalState(), ) )
+
+   METHOD getFirstVisibleColumn()            INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getFirstVisibleColumn(), ) )
+
+   METHOD makeTotals( aCols )                INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:makeTotals( aCols ), ) )
 
    // Controller---------------------------------------------------------------
 
    METHOD setController( oController )       INLINE ( ::oController := oController )
    METHOD getController()                    INLINE ( ::oController )
 
-   METHOD getSenderController()              INLINE ( ::oController:oSenderController )
-
-   METHOD isNotSenderControllerZoomMode()    INLINE ( empty( ::getSenderController() ) .or. ::getSenderController():isNotZoomMode() )
+   METHOD isNotSenderControllerZoomMode()    INLINE ( empty( ::getController() ) .or. ::getController():isNotZoomMode() )
    
-   METHOD getName()                          INLINE ( ::getController():getName() )
-
-   METHOD getComboBoxOrder()                 INLINE ( if( !empty( ::oController ), ::oController:getComboBoxOrder(), ) )
-   METHOD getMenuTreeView()                  INLINE ( if( !empty( ::oController ), ::oController:getMenuTreeView(), ) )
+   METHOD getComboBoxOrder()                 INLINE ( iif( !empty( ::getController() ), ::getController():getComboBoxOrder(), ) )
+   METHOD getMenuTreeView()                  INLINE ( iif( !empty( ::getController() ), ::getController():getMenuTreeView(), ) )
 
    // Models-------------------------------------------------------------------
 
@@ -97,9 +145,16 @@ CLASS SQLBrowseView
 
    METHOD getRowSet()                        INLINE ( ::getController():getRowSet() )
 
-   // Columns------------------------------------------------------------------
+   // Selected Columns---------------------------------------------------------
 
    METHOD insertSelectedColumn()
+
+   METHOD setSelectedColumnDblClick( bLDClick ) ;
+                                             INLINE ( ::bSelectedColumnDblClick := bLDClick )
+
+   METHOD getSelectedColumnDblClick()        INLINE ( ::bSelectedColumnDblClick )
+
+   // Columns------------------------------------------------------------------
 
    METHOD addColumns()                       VIRTUAL
 
@@ -109,28 +164,54 @@ CLASS SQLBrowseView
 
    METHOD getFirstColumnHeader()
 
-   METHOD getSelectedCol()                   INLINE ( if( !empty( ::oBrowse ), ::oBrowse:SelectedCol(), nil ) )
-
    // Events---------------------------------------------------------------------
 
    METHOD onKeyChar( nKey )
 
    METHOD onClickHeader( oColumn )          
 
-   // State--------------------------------------------------------------------
+   METHOD findId( nId )
 
-   METHOD restoreState()                     
-   METHOD setState( cBrowseState )
+   // Vistas manege -----------------------------------------------------------
 
-   METHOD setId( nId )
-  
+   METHOD setState( cState )
+
+   METHOD restoreState()
+
+   METHOD saveStateView()           
+
+   METHOD setIdView( cType, cName, nId )              
+
+   METHOD getIdView( cType, cName )                       
+
+   METHOD setColumnOrderView( cType, cName, cColumnOrder ) 
+
+   METHOD getColumnOrderView( cType, cName )          
+
+   METHOD setColumnOrientationView( cType, cName, cColumnOrientation ) 
+                                                      
+   METHOD getColumnOrientationView( cType, cName )    
+
+   METHOD getStateView( cType, cName )        
+
+   // Menus--------------------------------------------------------------------
+
+   METHOD BuildMenu( nRow, nCol, nFlags )
+
+   // Events-------------------------------------------------------------------
+
+   METHOD setEvent( cEvent, bEvent )         INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
+   METHOD fireEvent( cEvent )                INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
 METHOD New( oController )
 
-   ::oController              := oController
+   ::oController                             := oController
+
+   ::oEvents                                 := Events():New()
 
 RETURN ( Self )
 
@@ -140,11 +221,15 @@ METHOD End()
 
    CursorWait()
 
+   if !empty( ::oEvents )
+      ::oEvents:End()
+   end if 
+
    if !empty( ::oBrowse )
       ::oBrowse:End()
    end if 
 
-   Self                       := nil
+   self                                      := nil
 
    CursorWE()
 
@@ -160,6 +245,8 @@ METHOD Create( oWindow )
       RETURN ( nil )
    endif
 
+   ::fireEvent( 'creating' )
+
    ::oBrowse                  := SQLXBrowse():New( ::oController, oWindow )
    ::oBrowse:l2007            := .f.
 
@@ -171,6 +258,7 @@ METHOD Create( oWindow )
    ::oBrowse:lFastEdit        := ::lFastEdit
    ::oBrowse:lMultiSelect     := ::lMultiSelect
    ::oBrowse:nColSel          := ::nColSel
+   ::oBrowse:nFreeze          := ::nFreeze
 
    // Propiedades del control--------------------------------------------------
 
@@ -180,7 +268,7 @@ METHOD Create( oWindow )
    ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 221, 221, 221 ) } }
 
-   ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
+   ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::BuildMenu( nRow, nCol, nFlags ) }
 
    ::oBrowse:setRowSet( ::getRowSet() )
 
@@ -189,10 +277,28 @@ METHOD Create( oWindow )
    ::oBrowse:bKeyChar         := {|nKey| ::getController():onKeyChar( nKey ) }
 
    if ::isNotSenderControllerZoomMode() 
-      ::setLDblClick( {|| ::getController():Edit(), ::Refresh() } )
+      ::setLDblClick( {|| ::onDblClick() } )
    end if 
 
+   ::fireEvent( 'created' )
+
 RETURN ( ::oBrowse )
+
+//---------------------------------------------------------------------------//
+
+METHOD onDblClick()
+
+   if isFalse( ::fireEvent( 'doubleClicking' ) )
+      RETURN ( .f. )
+   end if
+
+   ::getController():Edit()
+
+   ::Refresh() 
+
+   ::fireEvent( 'doubleClicked' )
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -220,13 +326,15 @@ METHOD getFirstColumnHeader()
 
    local oCol
 
-   if hb_isarray( ::oBrowse:aCols )
-      for each oCol in ::oBrowse:aCols 
-         if !( oCol:lHide ) .and. !empty( oCol:cHeader )
-            RETURN ( oCol:cHeader )
-         end if 
-      next
-   end if 
+   if !hb_isarray( ::oBrowse:aCols )
+      RETURN ( "" )
+   end if
+
+   for each oCol in ::oBrowse:aCols 
+      if !( oCol:lHide ) .and. !empty( oCol:cHeader )
+         RETURN ( oCol:cHeader )
+      end if 
+   next
 
 RETURN ( "" )
 
@@ -234,7 +342,13 @@ RETURN ( "" )
 
 METHOD onClickHeader( oColumn ) 
 
-RETURN ( ::getController():onChangeCombo( oColumn ) )
+   ::fireEvent( 'onclickheader' )
+
+   ::getController():onChangeCombo( oColumn )
+
+   ::fireEvent( 'onclickedheader' )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -246,6 +360,8 @@ RETURN ( heval( ::oController:oMenuTreeView:hFastKey, {|k,v| msgalert( nKey, "nK
 
 METHOD ActivateDialog( oDialog, nId )
 
+   ::fireEvent( 'activatingDialog' )
+
    ::Create( oDialog )
 
    ::setViewTypeToSelector()
@@ -254,13 +370,19 @@ METHOD ActivateDialog( oDialog, nId )
 
    ::addColumns()
 
-   ::CreateFromResource( nId )
+   ::createFromResource( nId )
+
+   ::restoreState()
+
+   ::fireEvent( 'activatedDialog' )
 
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 METHOD ActivateMDI( oWindow, nTop, nLeft, nRight, nBottom )
+
+   ::fireEvent( 'activatingMDI' )
 
    ::Create( oWindow )
 
@@ -276,6 +398,8 @@ METHOD ActivateMDI( oWindow, nTop, nLeft, nRight, nBottom )
 
    ::restoreState()
 
+   ::fireEvent( 'activatedMDI' )
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -289,38 +413,41 @@ METHOD setSize( nTop, nLeft, nRight, nBottom )
    ::oBrowse:nRight     := nRight 
    ::oBrowse:nBottom    := nBottom 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertSelectedColumn()
 
    if !( ::oBrowse:lMultiSelect )
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
-   with object (::oBrowse:InsCol( 1 ) )
+   with object ( ::oBrowse:InsCol( 1 ) )
       :Cargo         := .t.
-      :bEditValue    := { || ascan( ::oBrowse:aSelected, ::oBrowse:BookMark ) > 0 }
-      :nHeadBmpNo    := { || if( len( ::oBrowse:aSelected ) == ::oBrowse:nLen, 1, 2 ) }
+      :nWidth        := 20
+      :bLDClickData  := ::getSelectedColumnDblClick()
+      :bEditValue    := {|| ascan( ::oBrowse:aSelected, ::oBrowse:BookMark ) > 0 }
+      :nHeadBmpNo    := {|| if( len( ::oBrowse:aSelected ) == ::oBrowse:nLen, 1, 2 ) }
+      :bLClickHeader := {|| if( len( ::oBrowse:aSelected ) == ::oBrowse:KeyCount(), ( ::oBrowse:SelectNone(), ::oBrowse:Select( 1 ) ), ::oBrowse:SelectAll() ) }
       :setCheck()
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setId( nId )
+METHOD findId( nId )
 
    if empty( nId )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    ::getRowSet():findId( nId )
 
    ::oBrowse:SelectCurrent()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //------------------------------------------------------------------------//
 
@@ -346,19 +473,217 @@ METHOD restoreState()
       ::oController:restoreState()
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //------------------------------------------------------------------------//
 
-METHOD setState( cBrowseState )
+METHOD setState( cState )
 
-   ::oBrowse:getOriginalState()
-
-   if !empty( cBrowseState )
-      ::oBrowse:restoreState( cBrowseState )
+   if !empty( cState )
+      ::oBrowse:restoreState( cState )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //------------------------------------------------------------------------//
+
+METHOD BuildMenu( nRow, nCol, nFlags )
+
+   local oCol
+   local oMenu
+   local bMenuSelect
+
+   ::fireEvent( 'buildingMenu' )
+
+   oMenu             := MenuBegin( .t., , ::oBrowse )
+   bMenuSelect       := ::bMenuSelect
+
+   ::bMenuSelect     := nil
+
+   if !empty( ::oBrowse:SelectedCol():cSortOrder ) .and. hb_isnil( ::oBrowse:SelectedCol():Cargo ) 
+
+   MenuAddItem( "Filtro rápido", "Establecer fitro rápido en columna actual", .f., .t., , , "gc_funnel_add_16", oMenu )
+
+   MenuBegin( .f., , ::oBrowse, .f., .f., , , , , , , , , , , , .f., .t., .f., .t. )
+
+      MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' IN (" + toSqlString( ::SelectedCol():Value() ) + ")", "", .f., .t., {|| ::oController:buildInFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+      
+      MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' NOT IN ('" + toSqlString( ::SelectedCol():Value() ) + "')", "", .f., .t., {|| ::oController:buildNotInFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+      MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' > '" + toSqlString( ::SelectedCol():Value() ) + "'", "", .f., .t., {|| ::oController:buildBiggerFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+      MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' < '" + toSqlString( ::SelectedCol():Value() ) + "'", "", .f., .t., {|| ::oController:buildSmallerFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+      MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' LIKE '" + toSqlString( ::SelectedCol():Value() ) + "%'", "", .f., .t., {|| ::oController:buildStartLikeFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+      MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' LIKE '%" + toSqlString( ::SelectedCol():Value() ) + "'", "", .f., .t., {|| ::oController:buildEndLikeFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+      MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' LIKE '%" + toSqlString( ::SelectedCol():Value() ) + "%'", "", .f., .t., {|| ::oController:buildLikeFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+      MenuAddItem()
+
+      MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' IN (...)", "", .f., .t., {|| ::oController:buildCustomInFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+      MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' NOT IN (...)", "", .f., .t., {|| ::oController:buildCustomNotInFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+      MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' > '", "", .f., .t., {|| ::oController:buildCustomBiggerFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+      MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' < '", "", .f., .t., {|| ::oController:buildCustomSmallerFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+
+      MenuAddItem( "'" + ::SelectedCol():cSortOrder + "' LIKE '%...%'", "", .f., .t., {|| ::oController:buildCustomLikeFilter( ::SelectedCol():cSortOrder, ::SelectedCol():Value() ) }, "gc_funnel_add_16" )
+      
+      MenuAddItem()
+
+      MenuAddItem( "Limpiar filtro", "", .f., .t., {|| ::oController:clearFilter() }, "gc_funnel_broom_16" )
+
+   MenuEnd()
+
+   end if 
+
+   MenuAddItem( "Columnas", "Columnas de la rejilla de datos", .f., .t., , , "gc_table_selection_column_16", oMenu )
+
+      MenuBegin( .f., , , .f., .f., , , , , , , , , , , , .f., .t., .f., .t. )
+
+         for each oCol in ::oBrowse:aCols
+            MenuAddItem( oCol:cHeader, , !oCol:lHide, ( len( ::oBrowse:aDisplay ) != 1 .or. oCol:nPos != 1 ), GenMenuBlock( oCol ) )
+         next
+
+      MenuEnd()
+
+      MenuAddItem( "Seleccionar &todo", "Selecciona todas las filas de la rejilla", .f., .t., {|| ::SelectAll() }, , "gc_table_selection_all_16", oMenu )
+
+      MenuAddItem( "&Quitar selección", "Quita la selección de todas las filas de la rejilla", .f., .t., {|| ::SelectNone() }, , "gc_table_16", oMenu )
+
+      MenuAddItem()
+
+      MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "gc_spreadsheet_sum_16", oMenu )
+
+      MenuAddItem()
+
+      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .f., .t., {|| ::saveStateView() }, , "gc_table_selection_column_disk_16", oMenu )
+
+      MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .f., .t., {|| ::setOriginalState() }, , "gc_table_selection_column_refresh_16", oMenu )
+
+   MenuEnd() 
+
+   oMenu:Activate( nRow, nCol, ::oBrowse )
+
+   ::bMenuSelect     := bMenuSelect
+
+   oMenu:end()
+
+   ::SetFocus()
+
+   ::fireEvent( 'buildedMenu' )
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+STATIC FUNCTION GenMenuBlock( oCol )
+
+RETURN {|| iif( oCol:lHide, oCol:Show(), oCol:Hide() ) }
+
+//----------------------------------------------------------------------------//
+
+METHOD saveStateView()              
+
+   if empty( ::getController() )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::getController():saveState() )
+
+//----------------------------------------------------------------------------//
+
+METHOD setIdView( cType, cName, nId )              
+
+   DEFAULT cType  := ::getType()
+   DEFAULT cName  := ::getName()
+
+   if empty( ::getController() )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::getController():setId( cType, cName, nId ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD getIdView( cType, cName )
+
+   DEFAULT cType  := ::getType()
+   DEFAULT cName  := ::getName()
+
+   if empty( ::getController() )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::getController():getId( cType, cName ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD setColumnOrderView( cType, cName, cColumnOrder ) 
+
+   DEFAULT cType  := ::getType()
+   DEFAULT cName  := ::getName()
+
+   if empty( ::getController() )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::getController():setColumnOrder( cType, cName, cColumnOrder ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getColumnOrderView( cType, cName )          
+   
+   DEFAULT cType  := ::getType()
+   DEFAULT cName  := ::getName()
+
+   if empty( ::getController() )
+      RETURN ( "" )
+   end if 
+
+RETURN ( ::getController():getColumnOrder( cType, cName ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD setColumnOrientationView( cType, cName, cColumnOrientation )
+
+   DEFAULT cType  := ::getType()
+   DEFAULT cName  := ::getName()
+
+   if empty( ::getController() )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::getController():setColumnOrientation( cType, cName, cColumnOrientation ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD getColumnOrientationView( cType, cName ) 
+
+   DEFAULT cType  := ::getType()
+   DEFAULT cName  := ::getName()
+
+   if empty( ::getController() )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::getController():getColumnOrientation( cType, cName ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD getStateView( cType, cName )                
+
+   DEFAULT cType  := ::getType()
+   DEFAULT cName  := ::getName()
+
+   if empty( ::getController() )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::getController():getState( cType, cName ) )
+
+//----------------------------------------------------------------------------//
 

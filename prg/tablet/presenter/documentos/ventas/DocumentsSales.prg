@@ -203,7 +203,7 @@ METHOD Build( oSender ) CLASS DocumentsSales
 
    ::oProductStock         := ProductStock():init( self )
 
-   ::oStore                := Store():init( self )
+   ::oStore                := Stores():init( self )
 
    ::oPayment              := Payment():init( self )
 

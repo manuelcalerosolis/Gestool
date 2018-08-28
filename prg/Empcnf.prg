@@ -1279,17 +1279,19 @@ RETURN ( cRutCnt )
 
  FUNCTION cPatImg( cPath )
 
-   local cPatImg  := Rtrim( aEmp()[ _CDIRIMG ] )
+   local cPatImg  := aEmp( _CDIRIMG ) 
 
-   if !Empty( cPatImg )
-      if Right( cPatImg, 1 ) != "\"
+   if !empty( cPatImg )
+      
+      cPatImg     := alltrim( cPatImg )
+
+      if right( cPatImg, 1 ) != "\"
          cPatImg  := cPatImg += "\"
       end if
+
    end if
 
 RETURN ( cPatImg )
-
-//---------------------------------------------------------------------------//
 
 //----------------------------------------------------------------------------//
 

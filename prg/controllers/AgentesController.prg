@@ -305,7 +305,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartActivate() CLASS AgentesView
 
-   local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+   local oPanel                  := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
 
    oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, "gc_form_plus2_16" )
 

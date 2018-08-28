@@ -2,31 +2,61 @@
 #include "factu.ch" 
 #include "hdo.ch"
 
+//---------------------------------------------------------------------------//
+
+CLASS SQLConfiguracionVistasGestoolController FROM SQLConfiguracionVistasController
+
+   //METHOD New( oController )
+
+   METHOD getConfiguracionVistaModel() INLINE ( SQLConfiguracionVistasGestoolModel():New( self ) )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+/*METHOD New( oSenderController ) CLASS SQLConfiguracionVistasGestoolController
+
+   ::oSenderController                 := oSenderController
+   
+RETURN ( Self )*/
+
+//---------------------------------------------------------------------------//
+
 CLASS SQLConfiguracionVistasController FROM SQLBaseController
 
    METHOD New( oController )
 
-   METHOD setId( cViewType, cViewName, nId )    INLINE ( ::oModel:setId( cViewType, cViewName, nId ) )
-   METHOD getId( cViewType, cViewName )         INLINE ( ::oModel:getId( cViewType, cViewName ) )
+   METHOD getConfiguracionVistaModel() INLINE ( SQLConfiguracionVistasModel():New( self ) )
+
+   METHOD setId( cViewType, cViewName, nId ) ;
+                                       INLINE ( ::oModel:setId( cViewType, cViewName, nId ) )
+   
+   METHOD getId( cViewType, cViewName ) ;
+                                       INLINE ( ::oModel:getId( cViewType, cViewName ) )
 
    METHOD setColumnOrder( cViewType, cViewName, cColumnOrder ) ;
-                                                INLINE ( ::oModel:setColumnOrder( cViewType, cViewName, cColumnOrder ) )
+                                       INLINE ( ::oModel:setColumnOrder( cViewType, cViewName, cColumnOrder ) )
+   
    METHOD getColumnOrder( cViewType, cViewName ) ;
-                                                INLINE ( ::oModel:getColumnOrder( cViewType, cViewName ) )
+                                       INLINE ( ::oModel:getColumnOrder( cViewType, cViewName ) )
 
    METHOD setState( cViewType, cViewName, cState ) ;
-                                                INLINE ( ::oModel:setState( cViewType, cViewName, cState ) )
-   METHOD getState( cViewType, cViewName )      INLINE ( ::oModel:getState( cViewType, cViewName ) )
+                                       INLINE ( ::oModel:setState( cViewType, cViewName, cState ) )
+   
+   METHOD getState( cViewType, cViewName ) ;
+                                       INLINE ( ::oModel:getState( cViewType, cViewName ) )
 
-   METHOD getColumnOrderNavigator( cViewName )  INLINE ( ::oModel:getColumnOrderNavigator( cViewName ) )
+   METHOD getColumnOrderNavigator( cViewName ) ;
+                                       INLINE ( ::oModel:getColumnOrderNavigator( cViewName ) )
 
    METHOD setColumnOrientation( cViewType, cViewName, cColumnOrientation ) ;
-                                                INLINE ( ::oModel:setColumnOrientation( cViewType, cViewName, cColumnOrientation ) ) 
+                                       INLINE ( ::oModel:setColumnOrientation( cViewType, cViewName, cColumnOrientation ) ) 
+   
    METHOD getColumnOrientation( cViewType, cViewName ) ;
-                                                INLINE ( ::oModel:getColumnOrientation( cViewType, cViewName ) ) 
+                                       INLINE ( ::oModel:getColumnOrientation( cViewType, cViewName ) ) 
 
    METHOD getColumnOrientationNavigator( cViewName ) ;
-                                                INLINE ( ::oModel:getColumnOrientationNavigator( cViewName ) )
+                                       INLINE ( ::oModel:getColumnOrientationNavigator( cViewName ) )
 
 ENDCLASS
 
@@ -36,7 +66,7 @@ METHOD New( oSenderController ) CLASS SQLConfiguracionVistasController
 
    ::oSenderController                 := oSenderController
 
-   ::oModel                            := SQLConfiguracionVistasModel():New( self )
+   ::oModel                            := ::getConfiguracionVistaModel() 
    
 RETURN ( Self )
 
@@ -46,11 +76,19 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLConfiguracionVistasModel FROM SQLBaseModel
+CLASS SQLConfiguracionVistasGestoolModel FROM SQLConfiguracionVistasModel
+
+   METHOD getTableName()                     INLINE ( "gestool." + ::cTableName )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS SQLConfiguracionVistasModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "configuracion_vistas"
 
-   DATA cConstraints                         INIT  "PRIMARY KEY ( id ), UNIQUE KEY ( usuario_codigo, view_type, view_name )"
+   DATA cConstraints                         INIT  "PRIMARY KEY ( id ), UNIQUE KEY ( usuario_uuid, view_type, view_name )"
 
    METHOD getColumns()
 
@@ -81,6 +119,7 @@ CLASS SQLConfiguracionVistasModel FROM SQLBaseModel
 
    METHOD setNavigator( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
                                                             INLINE ( ::set( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
+   
    METHOD setSelector( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
                                                             INLINE ( ::set( "selector", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
    
@@ -101,7 +140,7 @@ METHOD getColumns() CLASS SQLConfiguracionVistasModel
    ::hColumns  := {  "id"                 =>  { "create" => "INTEGER AUTO_INCREMENT"      },;
                      "view_type"          =>  { "create" => "VARCHAR( 40 ) NOT NULL"      },;
                      "view_name"          =>  { "create" => "VARCHAR( 60 ) NOT NULL"      },;
-                     "usuario_codigo"     =>  { "create" => "VARCHAR( 20 ) NOT NULL"      },;                     
+                     "usuario_uuid"       =>  { "create" => "VARCHAR( 40 ) NOT NULL"      },;                     
                      "browse_state"       =>  { "create" => "TEXT"                        },;
                      "column_order"       =>  { "create" => "VARCHAR( 60 )"               },;
                      "column_orientation" =>  { "create" => "CHARACTER( 1 )"	            },;
@@ -119,7 +158,7 @@ METHOD get( cViewType, cViewName ) CLASS SQLConfiguracionVistasModel
                            "WHERE "                                                                + ;
                               "view_type = " + quoted( cViewType )   + " AND "                     + ;
                               "view_name = " + quoted( cViewName )   + " AND "                     + ;
-                              "usuario_codigo = " + quoted( Auth():Codigo() ) + " "                + ; 
+                              "usuario_uuid = " + quoted( Auth():Uuid() ) + " "                    + ; 
                            "LIMIT 1"
 
    aFetch            := getSQLDatabase():selectFetchHash( cSentence, .f. )
@@ -168,22 +207,22 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
 
    local cSentence  
 
-   if empty( cViewType )
-      RETURN ( Self )
+   if hb_isnil( cViewType )
+      RETURN ( nil )
    end if 
 
-   if empty( cViewName )
-      RETURN ( Self )
+   if hb_isnil( cViewName )
+      RETURN ( nil )
    end if 
 
    if empty( cBrowseState ) .and. empty( cColumnOrder ) .and. empty( cOrientation ) .and. empty( idToFind )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
    
    cSentence            := "INSERT INTO " + ::getTableName() + " ( "                               
    cSentence            +=       "view_type, "                                               
    cSentence            +=       "view_name, "     
-   cSentence            +=       "usuario_codigo, "     
+   cSentence            +=       "usuario_uuid, "     
 
    if !empty( cBrowseState )                                          
       cBrowseState      := getSQLDatabase():escapeStr( cBrowseState ) 
@@ -207,7 +246,7 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
    cSentence            += "VALUES ( "                                                    
    cSentence            +=       quoted( cViewType ) + ", "                          
    cSentence            +=       quoted( cViewName ) + ", "  
-   cSentence            +=       quoted( Auth():Codigo() ) + ", "
+   cSentence            +=       quoted( Auth():Uuid() ) + ", "
 
    if !empty( cBrowseState )                                          
       cSentence         +=       quoted( cBrowseState ) + ", "                               
@@ -249,21 +288,21 @@ METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idTo
 
    cSentence            := chgAtEnd( cSentence, '', 2 )
 
-   getSQLDatabase():Exec( cSentence  )
+   getSQLDatabase():TransactionalExec( cSentence  )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD delete( cViewType, cViewName ) CLASS SQLConfiguracionVistasModel
 
-   local cSentence   := "DELETE FROM " + ::getTableName() + " "                              + ;
-                           "WHERE "                                                          + ;
-                              "view_type = " + quoted( cViewType ) + " AND "                 + ;
-                              "view_name = " + quoted( cViewName ) + " AND "                 + ;
-                              "usuario_codigo = " + quoted( Auth():Codigo() )
+   local cSentence      := "DELETE FROM " + ::getTableName() + " "                              + ;
+                              "WHERE "                                                          + ;
+                                 "view_type = " + quoted( cViewType ) + " AND "                 + ;
+                                 "view_name = " + quoted( cViewName ) + " AND "                 + ;
+                                 "usuario_uuid = " + quoted( Auth():Uuid() )
 
-   getSQLDatabase():Exec( cSentence  )
+   getSQLDatabase():TransactionalExec( cSentence  )
 
 RETURN ( nil )
        

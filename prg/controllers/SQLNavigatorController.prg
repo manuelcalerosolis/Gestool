@@ -1,9 +1,21 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-CLASS SQLNavigatorController FROM SQLBaseController
+CLASS SQLNavigatorGestoolController FROM SQLNavigatorController
+
+   METHOD getConfiguracionVistasController()          INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+
+CLASS SQLNavigatorController FROM SQLBrowseController
 
    DATA oSelectorView
 
@@ -12,8 +24,6 @@ CLASS SQLNavigatorController FROM SQLBaseController
    DATA oDialogModalView
 
    DATA oFilterController 
-
-   DATA oViewController
 
    DATA lDocuments                                    INIT .f.
 
@@ -30,6 +40,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
    DATA oWindowsBar
 
    METHOD New()
+
    METHOD End()
 
    METHOD setName( cName )                            INLINE ( ::Super:setName( cName ), if( !empty( ::oFilterController ), ::oFilterController:setTableToFilter( cName ), ) ) 
@@ -37,6 +48,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
    METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) )
 
    METHOD buildRowSetSentence() 
+
    METHOD buildRowSetSentenceNavigator()              INLINE ( ::buildRowSetSentence( 'navigator' ) )
 
    METHOD activateNavigatorView()
@@ -48,13 +60,13 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD closeAllWindows()                           INLINE ( if( !empty( oWnd() ), ( SysRefresh(), oWnd():CloseAll(), SysRefresh() ), ) )
 
+   METHOD saveState()
+
    METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
 
    METHOD addFastKey( uKey, bAction )
 
    METHOD onKeyChar( nKey )
-
-   METHOD reBuildRowSet()
 
    METHOD getComboBoxOrder()                          
 
@@ -74,8 +86,7 @@ CLASS SQLNavigatorController FROM SQLBaseController
 
    METHOD showEditAndDeleteButtonFilter()
 
-   METHOD getIds()                                    INLINE ( ::oBrowseView:getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected ) )
-   METHOD getBrowseViewType()                         INLINE ( ::oBrowseView:getViewType() )
+   METHOD getIds()                                    INLINE ( ::getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected ) )
 
    // Filters manege-----------------------------------------------------------
 
@@ -87,16 +98,10 @@ CLASS SQLNavigatorController FROM SQLBaseController
    METHOD setFilter()                                                                                                       
    METHOD clearFilter() 
 
-   METHOD buildFilter( cExpresion )
-   METHOD buildInFilter( cField, cValue )             INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " IN (" + toSqlString( cValue ) + ")", "" ) ) )
-   METHOD buildNotInFilter( cField, cValue )          INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " NOT IN (" + toSqlString( cValue ) + ")", "" ) ) )
-   METHOD buildBiggerFilter( cField, cValue )         INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " > " + toSqlString( cValue ), "" ) ) )
-   METHOD buildSmallerFilter( cField, cValue )        INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " < " + toSqlString( cValue ), "" ) ) )
-   METHOD buildStartLikeFilter( cField, cValue )      INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( alltrim( cstr( cValue ) ) + "%" ), "" ) ) )
-   METHOD buildEndLikeFilter( cField, cValue )        INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( "%" + alltrim( cstr( cValue ) ) ), "" ) ) )
-   METHOD buildLikeFilter( cField, cValue )           INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( "%" + alltrim( cstr( cValue ) ) + "%" ), "" ) ) )
+   METHOD buildFilter()
 
    METHOD buildCustomFilter( cField, cValue, cOperator )
+
    METHOD buildCustomInFilter( cField, cValue )       INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "IN (...)" ),;
                                                                      ::buildInFilter( cField, cValue ), ) )
    METHOD buildCustomNotInFilter( cField, cValue )    INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "NOT IN (...)" ),;
@@ -107,25 +112,6 @@ CLASS SQLNavigatorController FROM SQLBaseController
                                                                      ::buildSmallerFilter( cField, cValue ), ) )
    METHOD buildCustomLikeFilter( cField, cValue )     INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
                                                                      ::buildLikeFilter( cField, cValue ), ) )
-
-   // Vistas manege -----------------------------------------------------------
-
-   METHOD restoreState()
-   METHOD saveState()
-
-   METHOD setIdView( cType, cName, nId )              INLINE ( iif( !empty( ::oViewController ), ::oViewController:setId( cType, cName, nId ), ) )
-   METHOD getIdView( cType, cName )                   INLINE ( iif( !empty( ::oViewController ), ::oViewController:getId( cType, cName ), ) )
-
-   METHOD setColumnOrderView( cType, cName, cColumnOrder ) ;
-                                                      INLINE ( iif( !empty( ::oViewController ), ::oViewController:setColumnOrder( cType, cName, cColumnOrder ), ) )
-   METHOD getColumnOrderView( cType, cName )          INLINE ( iif( !empty( ::oViewController ), ::oViewController:getColumnOrder( cType, cName ), ) )
-
-   METHOD setColumnOrientationView( cType, cName, cColumnOrientation ) ;
-                                                      INLINE ( iif( !empty( ::oViewController ), ::oViewController:setColumnOrientation( cType, cName, cColumnOrientation ), ) )
-   METHOD getColumnOrientationView( cType, cName )    INLINE ( iif( !empty( ::oViewController ), ::oViewController:getColumnOrientation( cType, cName ), ) )
-
-   METHOD setStateView( cType, cName, cState )        INLINE ( iif( !empty( ::oViewController ), ::oViewController:setState( cType, cName, cState ), ) )
-   METHOD getStateView( cType, cName )                INLINE ( iif( !empty( ::oViewController ), ::oViewController:getState( cType, cName ), ) )
 
 END CLASS
 
@@ -140,8 +126,6 @@ METHOD New( oSenderController )
    ::oSelectorView                                    := SQLSelectorView():New( self )
 
    ::oDialogModalView                                 := SQLDialogView():New( self )
-
-   ::oViewController                                  := SQLConfiguracionVistasController():New( self )
 
    ::oFilterController                                := SQLFiltrosController():New( self ) 
 
@@ -163,10 +147,6 @@ METHOD End()
       ::oSelectorView:End()
    end if 
 
-   if !empty( ::oViewController )
-      ::oViewController:End() 
-   end if 
-
    if !empty( ::oFilterController )
       ::oFilterController:End() 
    end if 
@@ -180,15 +160,23 @@ METHOD End()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
+ 
 METHOD buildRowSetSentence( cType )
 
-   local cColumnOrder         := ::getColumnOrderView( cType, ::getName() )
-   local cColumnOrientation   := ::getColumnOrientationView( cType, ::getName() )
+   local cColumnOrder         
+   local cColumnOrientation   
 
-   ::oRowSet:build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
+   if !empty( ::oBrowseView )
 
-RETURN ( self )
+      cColumnOrder            := ::oBrowseView:getColumnOrderView( cType, ::getName() )
+      
+      cColumnOrientation      := ::oBrowseView:getColumnOrientationView( cType, ::getName() )
+
+   end if 
+
+   ::oRowSet:Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -219,7 +207,7 @@ METHOD activateNavigatorView()
 
    cursorWE()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -245,7 +233,7 @@ METHOD activateSelectorView( lCenter )
 RETURN ( ::oSelectorView:Activate( lCenter ) )
 
 //---------------------------------------------------------------------------//
-
+/*
 METHOD restoreState()
 
    local nId                  := ::getIdView( ::getBrowseViewType(), ::getName() )
@@ -269,19 +257,20 @@ METHOD restoreState()
 
 RETURN ( self )
 
+*/
 //---------------------------------------------------------------------------//
 
 METHOD saveState()
 
    CursorWait()
 
-   ::setIdView( ::getBrowseViewType(), ::getName(), ::getRowSet:fieldget( "id" ) )
+   ::setId( ::getBrowseViewType(), ::getName(), ::getRowSet:fieldget( "id" ) )
 
-   ::setColumnOrderView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrder() )
+   ::setColumnOrder( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrder() )
 
-   ::setColumnOrientationView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrientation() )
+   ::setColumnOrientation( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrientation() )
 
-   ::setStateView( ::getBrowseViewType(), ::getName(), ::oBrowseView:getSaveState() ) 
+   ::setState( ::getBrowseViewType(), ::getName(), ::oBrowseView:getState() ) 
 
    CursorWE()
 
@@ -451,14 +440,38 @@ METHOD buildFilter( cFilter )
    ::getModel():insertFilterWhere( cFilter )
 
    if !empty( ::oFilterController )
+
       ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
+
+      ::oFilterController:showCleanButtonFilter()   
+
    end if 
 
    ::reBuildRowSet()
    
-RETURN ( self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+
+METHOD buildCustomFilter( cField, cValue, cOperator )
+
+   if empty( ::oFilterController )
+      RETURN ( .f. )
+   end if 
+
+   ::oFilterController:oCustomView:setText( "'" + cField + "' " + cOperator )
+
+   ::oFilterController:oCustomView:setValue( cValue )
+
+   if !( ::oFilterController:oCustomView:Activate() )
+      RETURN ( .f. )
+   end if 
+
+   cValue            := alltrim( ::oFilterController:oCustomView:getValue() )
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
 
 METHOD clearFilter()
 
@@ -470,41 +483,6 @@ METHOD clearFilter()
 
    ::reBuildRowSet()
    
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD buildCustomFilter( cField, cValue, cOperator )
-
-   if empty( ::oFilterController )
-      RETURN ( .f. )
-   end if 
-
-   ::oFilterController:oCustomView:setText( "'" + cField + "' " + cOperator )
-   ::oFilterController:oCustomView:setValue( cValue )
-
-   if !( ::oFilterController:oCustomView:Activate() )
-      RETURN ( .f. )
-   end if 
-
-   cValue            := alltrim( ::oFilterController:oCustomView:getValue() )
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD reBuildRowSet()
-
-   local nId
-
-   nId               := ::oRowSet:fieldGet( ::getModelColumnKey() )
-   
-   ::oRowSet:build( ::getModel():getSelectSentence() )
-
-   ::oRowSet:findString( nId )
-      
-   ::getBrowse():Refresh()
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -592,30 +570,30 @@ METHOD onChangeCombo( oColumn )
    local oComboBox   := ::getComboBoxOrder()
 
    if empty( oComboBox )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
-   if empty( ::getBrowse() )
-      RETURN ( Self )
-   end if 
-
-   if empty( oColumn )
-      oColumn        := ::getBrowse():getColumnByHeader( oComboBox:VarGet() )
+   if empty( ::getBrowseView() )
+      RETURN ( nil )
    end if 
 
    if empty( oColumn )
-      RETURN ( Self )
+      oColumn        := ::getBrowseView():getColumnByHeader( oComboBox:VarGet() )
+   end if 
+
+   if empty( oColumn )
+      RETURN ( nil )
    end if 
 
    oComboBox:Set( oColumn:cHeader )
 
-   ::getBrowse():changeColumnOrder( oColumn )
+   ::getBrowseView():changeColumnOrder( oColumn )
 
    ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
-   ::getBrowse():refreshCurrent()
+   ::getBrowseView():refreshCurrent()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

@@ -205,9 +205,17 @@ RETURN ( nil )
 
 METHOD End()
 
-   if !empty( ::oImageList )
-      ::oImageList:End()
-   end if 
+   if empty( ::oImageList )
+      RETURN ( nil )
+   end if
+
+   sysrefresh()
+
+   aeval( ::oImageList:aBitmaps, {|oBitmap| oBitmap:End() } )
+
+   ::oImageList:End()
+
+   sysrefresh()
 
 RETURN ( nil )
 

@@ -1,4 +1,4 @@
-#include "hbclass.ch"
+#include "FiveWin.ch"
 
 #define CRLF chr( 13 ) + chr( 10 )
 

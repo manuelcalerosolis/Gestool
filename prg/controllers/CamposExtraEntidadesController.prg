@@ -6,7 +6,9 @@ CLASS CamposExtraEntidadesGestoolController FROM CamposExtraEntidadesController
    CLASSDATA aEntidades INIT  {  "empresas" =>     { "nombre" => "Empresas", "icono" => "gc_factory_16"  },;
                                  "usuarios" =>     { "nombre" => "Usuarios", "icono" => "gc_businesspeople_16"  } }
 
-   METHOD getModel()             INLINE ( ::oModel := SQLCamposExtraEntidadesGestoolModel():New( self ) )
+   METHOD getModel()                         INLINE ( ::oModel := SQLCamposExtraEntidadesGestoolModel():New( self ) )
+
+   METHOD getConfiguracionVistasController() INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
 END CLASS
 
@@ -15,7 +17,7 @@ END CLASS
 CLASS CamposExtraEntidadesController FROM SQLBrowseController
 
    CLASSDATA aEntidades INIT  {  "articulos" =>                            { "nombre" => "Artículos",  "icono" => "gc_object_cube_16"                                     } ,;
-                                 "articulos_temporada" =>                  { "nombre" => "Temporadas", "icono" => "gc_cloud_sun_16"                                       } ,;
+                                 "articulos_temporadas" =>                 { "nombre" => "Temporadas", "icono" => "gc_cloud_sun_16"                                       } ,;
                                  "articulos_categorias" =>                 { "nombre" => "Categorias", "icono" => "gc_photographic_filters_16"                            } ,;
                                  "articulos_propiedades" =>                { "nombre" => "Propiedades", "icono" => "gc_coathanger_16"                                     } ,;
                                  "articulos_familias" =>                   { "nombre" => "Familias",  "icono" => "gc_cubes_16"                                            } ,;
@@ -53,7 +55,7 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "entidades" =>                            { "nombre" => "Entidades", "icono" => "gc_office_building2_16"                                 } ,;
                                  "cuentas_remesa" =>                       { "nombre" => "Cuentas de remesa", "icono" => "gc_notebook2_16"                                } ,;
                                  "cuentas_bancarias" =>                    { "nombre" => "Cuentas bancarias", "icono" => "gc_central_bank_euro_16"                        } ,;
-                                 "iva_tipos" =>                            { "nombre" => "Tipos de IVA", "icono" => "gc_moneybag_16"                                      } ,;
+                                 "tipos_iva" =>                            { "nombre" => "Tipos de IVA", "icono" => "gc_moneybag_16"                                      } ,;
                                  "impuestos_especiales" =>                 { "nombre" => "Impuestos especiales", "icono" => "gc_moneybag_euro_16"                         } ,;
                                  "orden_comandas" =>                       { "nombre" => "Orden de comandas", "icono" => "gc_sort_az_descending_16"                       } ,;
                                  "divisas_monetarias" =>                   { "nombre" => "Divisas monetarias", "icono" => "gc_currency_euro_16"                           } ,;
@@ -61,8 +63,9 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                  "unidades_medicion" =>                    { "nombre" => "Unidades de medición", "icono" => "gc_tape_measure2_16"                         } ,;
                                  "unidades_medicion_grupos" =>             { "nombre" => "Grupos de unidades de medición", "icono" => "gc_tape_measure2_16"               } ,;
                                  "rutas" =>                                { "nombre" => "Rutas", "icono" => "gc_map_route_16"                                            } ,;
-                                 "entradas_salidas" =>                     { "nombre" => "Entradas y salidas de caja", "icono" => "gc_cash_register_refresh_16"           } ,;
-                                 "lineas_propiedades" =>                   { "nombre" => "Líneas de propiedades",  "icono" => "gc_coathanger_16"                          } }   
+                                 "cajas_entradas_salidas" =>               { "nombre" => "Entradas y salidas de caja", "icono" => "gc_cash_register_refresh_16"           } ,;
+                                 "lineas_propiedades" =>                   { "nombre" => "Líneas de propiedades",  "icono" => "gc_coathanger_16"                          } ,;
+                                 "listin" =>                               { "nombre" => "Listín telefónico", "icono" => "gc_book_telephone_16"                           } }   
 
    METHOD New( oController )
 
@@ -193,7 +196,7 @@ METHOD UpdateLine( uValue ) CLASS CamposExtraEntidadesController
    end if 
 
    if ::oModel:isEntityWhereUuid( ::oSenderController:getUuid(), cEntidad ) 
-      msgalert( "El nombre de la entidad ya existe" )
+      msgStop( "El nombre de la entidad ya existe" )
       RETURN ( nil )
    end if 
 

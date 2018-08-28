@@ -5,6 +5,8 @@
 
 CLASS FacturasClientesController FROM SQLNavigatorController
 
+   DATA oArticulosTarifasController
+
    DATA oClientesController
 
    DATA oArticulosController
@@ -23,7 +25,19 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oContadoresModel
 
-   DATA oLineasController
+   DATA oClientesTarifasController
+
+   DATA oFacturasClientesDescuentosController
+
+   DATA oFacturasClientesLineasController
+
+   DATA oCombinacionesController
+
+   DATA oCamposExtraValoresController
+
+   DATA oIncidenciasController
+
+   DATA oHistoryManager
 
    METHOD New()
 
@@ -31,64 +45,100 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD loadedBlankBuffer() 
 
-   METHOD insertedBuffer()
+   METHOD loadedBuffer()               INLINE ( ::oHistoryManager:Set( ::oModel:hBuffer ) )
+
+   METHOD isClientFilled()             INLINE ( !empty( ::getModelBuffer( "cliente_codigo" ) ) )
+
+   METHOD clientesSettedHelpText()
+
+   METHOD clientesCleanedHelpText()    INLINE ( ::oArticulosTarifasController:oGetSelector:cText( space( 20 ) ),;
+                                                ::oArticulosTarifasController:oGetSelector:lValid() )
+
+   METHOD clientSetTarifa()
+
+   METHOD clientSetDescuentos()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS FacturasClientesController
+METHOD New( oController ) CLASS FacturasClientesController
 
-   ::Super:New()
+   ::Super:New( oController )
 
-   ::cTitle                      := "Facturas de clientes"
+   ::cTitle                                              := "Facturas de clientes"
 
-   ::cName                       := "facturas_clientes"
+   ::cName                                               := "facturas_clientes"
    
-   ::lTransactional              := .t.
+   ::lTransactional                                      := .t.
 
-   ::hImage                      := {  "16" => "gc_document_text_user_16",;
-                                       "32" => "gc_document_text_user_32",;
-                                       "48" => "gc_document_text_user_48" }
+   ::hImage                                              := {  "16" => "gc_document_text_user_16",;
+                                                               "32" => "gc_document_text_user_32",;
+                                                               "48" => "gc_document_text_user_48" }
 
-   ::oModel                      := SQLFacturasClientesModel():New( self )
+   ::oModel                                              := SQLFacturasClientesModel():New( self )
 
-   ::oContadoresModel            := SQLContadoresModel():New( self )
+   ::oContadoresModel                                    := SQLContadoresModel():New( self )
 
-   ::oDialogView                 := FacturasClientesView():New( self )
+   ::oDialogView                                         := FacturasClientesView():New( self )
 
-   ::oValidator                  := FacturasClientesValidator():New( self, ::oDialogView )
+   ::oValidator                                          := FacturasClientesValidator():New( self, ::oDialogView )
 
-   ::oBrowseView                 := FacturasClientesBrowseView():New( self )
+   ::oBrowseView                                         := FacturasClientesBrowseView():New( self )
 
-   ::oRepository                 := FacturasClientesRepository():New( self )
+   ::oRepository                                         := FacturasClientesRepository():New( self )
 
-   ::oClientesController         := ClientesController():New( self )
+   ::oClientesController                                 := ClientesController():New( self )
+   ::oClientesController:setView( ::oDialogView )
 
-   ::oArticulosController        := ArticulosController():New( self )
+   ::oArticulosController                                := ArticulosController():New( self )
 
-   ::oNumeroDocumentoComponent   := NumeroDocumentoComponent():New( self )
+   ::oArticulosTarifasController                         := ArticulosTarifasController():New( self )
+   ::oArticulosTarifasController:setView( ::oDialogView )
 
-   ::oSerieDocumentoComponent    := SerieDocumentoComponent():New( self )
+   ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
 
-   ::oFormasPagoController       := FormasPagosController():New( self )   
+   ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
+
+   ::oFormasPagoController                               := FormasPagosController():New( self )   
    ::oFormasPagoController:setView( ::oDialogView )
 
-   ::oRutasController            := RutasController():New( self )
+   ::oRutasController                                    := RutasController():New( self )
    ::oRutasController:setView( ::oDialogView )
 
-   ::oAgentesController          := AgentesController():New( self )
+   ::oAgentesController                                  := AgentesController():New( self )
    ::oAgentesController:setView( ::oDialogView )
 
-   ::oAlmacenesController        := AlmacenesController():New( self )
+   ::oAlmacenesController                                := AlmacenesController():New( self )
    ::oAlmacenesController:setView( ::oDialogView )
 
-   ::oLineasController           := FacturasClientesLineasController():New( self )
+   ::oClientesTarifasController                          := ClientesTarifasController():New( self )
+
+   ::oFacturasClientesLineasController                   := FacturasClientesLineasController():New( self )
+   
+   ::oFacturasClientesDescuentosController               := FacturasClientesDescuentosController():New( self )
+
+   ::oCamposExtraValoresController                       := CamposExtraValoresController():New( self )
+
+   ::oCombinacionesController                            := CombinacionesController():New( self )
+
+   ::oCamposExtraValoresController                       := CamposExtraValoresController():New( self, ::oModel:cTableName )
+
+   ::oIncidenciasController                              := IncidenciasController():New( self )
+
+   ::oHistoryManager                                     := HistoryManager():New()
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',      {|| ::insertedBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',               {|| ::loadedBlankBuffer() } )
+
+   ::oModel:setEvent( 'loadedBuffer',                    {|| ::loadedBuffer() } )
+
+   ::oFacturasClientesLineasController:setEvents( { 'appending', 'editing', 'deleting' }, {|| ::isClientFilled() }  )
+
+   ::oClientesController:oGetSelector:setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
+
+   ::oClientesController:oGetSelector:setEvent( 'cleanedHelpText', {|| ::clientesCleanedHelpText() } )
 
 RETURN ( Self )
 
@@ -105,33 +155,90 @@ METHOD End() CLASS FacturasClientesController
    ::oRutasController:End()
 
    ::oAgentesController:End()
-
+ 
    ::oAlmacenesController:End()
 
-   ::oLineasController:End()
+   ::oArticulosTarifasController:End()
+
+   ::oClientesTarifasController:End()
+
+   ::oFacturasClientesDescuentosController:End()
+
+   ::oCamposExtraValoresController:End()
+   
+   ::oIncidenciasController:End()
+
+   ::oFacturasClientesLineasController:End()
+
+   ::oHistoryManager:End()
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() 
+METHOD loadedBlankBuffer() CLASS FacturasClientesController
 
    hset( ::oModel:hBuffer, "serie",    ::oContadoresModel:getDocumentSerie( ::cName ) )
    
    hset( ::oModel:hBuffer, "numero",   ::oContadoresModel:getDocumentCounter( ::cName ) )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertedBuffer() 
+METHOD clientesSettedHelpText() CLASS FacturasClientesController
 
-   // padr( ::oContadoresModel:insertDocumentCounter( ::cName ), 50 ) )
+   if ::oHistoryManager:isEqual( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
+      RETURN ( nil )
+   end if          
 
-RETURN ( Self )
+   ::clientSetTarifa()
 
+   ::clientSetDescuentos()
+
+   ::oHistoryManager:setkey( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD clientSetTarifa() CLASS FacturasClientesController
+
+   local cCodigoTarifa
+
+   if empty( ::oClientesController:oGetSelector:uFields )
+      RETURN ( nil )
+   end if 
+
+   cCodigoTarifa     := hget( ::oClientesController:oGetSelector:uFields, "tarifa_codigo" )
+
+   if empty( cCodigoTarifa )
+      cCodigoTarifa  := Company():getDefaultTarifa()
+   end if
+
+   ::oArticulosTarifasController:oGetSelector:cText( cCodigoTarifa )
+   
+   ::oArticulosTarifasController:oGetSelector:lValid()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD clientSetDescuentos() CLASS FacturasClientesController
+
+   ::oFacturasClientesDescuentosController:oModel:deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
+
+   ::oFacturasClientesDescuentosController:oModel:insertWhereClienteCodigo( ::getModelBuffer( "cliente_codigo" ) )
+
+   ::oFacturasClientesDescuentosController:refreshRowSetAndGoTop()
+
+   ::oFacturasClientesDescuentosController:refreshBrowseView()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -303,7 +410,23 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'tarifa_codigo'
+      :cHeader             := 'Código tarifa'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'tarifa_nombre'
+      :cHeader             := 'Nombre tarifa'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

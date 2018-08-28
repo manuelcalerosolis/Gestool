@@ -5,7 +5,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS RolesController FROM SQLNavigatorController
+CLASS RolesController FROM SQLNavigatorGestoolController
 
    DATA oAjustableController 
 

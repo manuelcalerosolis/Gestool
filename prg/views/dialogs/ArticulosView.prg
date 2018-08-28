@@ -25,6 +25,8 @@ CLASS ArticulosView FROM SQLBaseView
 
    DATA oSayCodificacionProveedores
   
+   METHOD Activating()
+
    METHOD Activate()
 
    METHOD startActivate()
@@ -33,6 +35,8 @@ CLASS ArticulosView FROM SQLBaseView
 
    METHOD changeLote()           INLINE ( iif( ::oController:oModel:hBuffer[ "lote" ], ::oGetLoteActual:Show(), ::oGetLoteActual:Hide() ) )
 
+   METHOD changeNombre()         INLINE ( ::oMessage:setText( "Artículo : " + alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) ) ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -40,9 +44,18 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+METHOD Activating() CLASS ArticulosView
+
+   ::oController:oArticulosPreciosController:buildRowSet()
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ArticulosView
+
+   local oGetNombre
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
@@ -78,55 +91,62 @@ METHOD Activate() CLASS ArticulosView
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   oGetNombre ;
+      VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oFolder:aDialogs[1]
+      
+   oGetNombre:bChange   := {|| ::changeNombre() }
 
    // Familias de articulos ---------------------------------------------------
 
    ::oController:oArticulosFamiliasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_familia_codigo" ] ) )
-   ::oController:oArticulosFamiliasController:oGetSelector:Activate( 120, 121, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oArticulosFamiliasController:oGetSelector:Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Tipos de articulos ------------------------------------------------------
 
    ::oController:oArticulosTipoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_tipo_codigo" ] ) )
-   ::oController:oArticulosTipoController:oGetSelector:Activate( 130, 131, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oArticulosTipoController:oGetSelector:Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Categorias de articulos--------------------------------------------------
 
    ::oController:oArticulosCategoriasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_categoria_codigo" ] ) )
-   ::oController:oArticulosCategoriasController:oGetSelector:Activate( 140, 141, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oArticulosCategoriasController:oGetSelector:Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[1] } )
    
    // Fabricantes de articulos--------------------------------------------------
 
    ::oController:oArticulosFabricantesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_fabricante_codigo" ] ) )
-   ::oController:oArticulosFabricantesController:oGetSelector:Activate( 150, 151, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oArticulosFabricantesController:oGetSelector:Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Tipo de IVA--------------------------------------------------------------
 
    ::oController:oTipoIvaController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_iva_codigo" ] ) )
-   ::oController:oTipoIvaController:oGetSelector:Activate( 160, 161, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oTipoIvaController:oGetSelector:Build( { "idGet" => 160, "idText" => 161, "idLink" => 162, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oTipoIvaController:oGetSelector:bValid  := {|| ::oController:validateTipoIVA() }
 
    // Impuestos especiales-----------------------------------------------------
 
    ::oController:oImpuestosEspecialesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "impuesto_especial_codigo" ] ) )
-   ::oController:oImpuestosEspecialesController:oGetSelector:Activate( 170, 171, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oImpuestosEspecialesController:oGetSelector:Build( { "idGet" => 170, "idText" => 171, "idLink" => 172, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Unidades de medicion grupo-----------------------------------------------
 
-   ::oController:oUnidadesMedicionGruposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidades_medicion_grupos_codigo" ] ) )
-   ::oController:oUnidadesMedicionGruposController:oGetSelector:Activate( 230, 231, ::oFolder:aDialogs[ 1 ] )
+   with object ( ::oController:oUnidadesMedicionGruposController:oGetSelector )
+      :Bind( bSETGET( ::oController:oModel:hBuffer[ "unidades_medicion_grupos_codigo" ] ) )
+      :Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
+      :setWhen( {|| ::oController:isNotZoomMode() .and. SQLUnidadesMedicionOperacionesModel():getNumeroOperacionesWhereArticulo( ::oController:getModelBuffer( "codigo" ) ) == 0 } )
+   end with
 
    // Temporadas---------------------------------------------------------------
 
    ::oController:oArticulosTemporadasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_temporada_codigo" ] ) )
-   ::oController:oArticulosTemporadasController:oGetSelector:Activate( 250, 251, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oArticulosTemporadasController:oGetSelector:Build( { "idGet" => 250, "idText" => 251, "idLink" => 252, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Marcadores---------------------------------------------------------------
 
-   ::oController:oTagsController:oDialogView:ExternalRedefine( { "idGet" => 180, "idButton" => 181, "idTags" => 182 }, ::oFolder:aDialogs[ 1 ] )
+   ::oController:oTagsController:oDialogView:ExternalRedefine( { "idGet" => 180, "idButton" => 181, "idTags" => 183 }, ::oFolder:aDialogs[ 1 ] )
 
    // Obsoleto-----------------------------------------------------------------
 
@@ -175,15 +195,14 @@ METHOD Activate() CLASS ArticulosView
       VAR         ::oController:oModel:hBuffer[ "precio_costo" ] ;
       ID          100 ;
       PICTURE     "@E 99999999.999999" ;
+      SPINNER ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validatePrecioCosto() ) ;
       OF          ::oFolder:aDialogs[2]
 
    ::oController:oArticulosPreciosController:Activate( 130, ::oFolder:aDialogs[2] )
 
-   // Táctil ------------------------------------------------------------------
-
-
-   // Botones Articulos -------------------------------------------------------
+   // Botones artículos -------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -204,6 +223,8 @@ METHOD Activate() CLASS ArticulosView
    ::oDialog:bStart  := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
+
+   ::oController:oArticulosPreciosController:saveState()
 
    ::oBitmap:end()
 
@@ -235,13 +256,17 @@ METHOD startActivate() CLASS ArticulosView
 
    ::oController:oTagsController:oDialogView:Start()
 
+   ::oController:oArticulosFamiliasController:oGetSelector:Start()
+
+   ::changeNombre()
+
    ::changeLote()
 
    ::oGetCodigo:SetFocus()
 
    ::oController:oCombinacionesController:oGetSelector:Start()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -256,28 +281,33 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
    end if
 
    oPanel:AddLink(   "Combinaciones...",;
-                     {|| ::oController:oCombinacionesController:runViewGenerate() },;
+                     {||   ::oController:oCombinacionesController:runViewGenerate() },;
                      ::oController:oCombinacionesController:getImage( "16" ) )
 
    oPanel:AddLink(   "Codificación de proveedores...",;
-                     {|| msgalert( "to-do" ) },;
+                     {||   msgalert( "to-do" ) },;
                      ::oController:oArticulosUnidadesMedicionController:getImage( "16" ) )
  
    oPanel:AddLink(   "Imagenes...",;
-                     {|| ::oController:oImagenesController:activateDialogView() },;
+                     {||   ::oController:oImagenesController:activateDialogView() },;
                      ::oController:oImagenesController:getImage( "16" ) )
 
    oPanel:AddLink(   "Traducciones...",;
-                     {|| ::oController:oTraduccionesController:activateDialogView() },;
+                     {||   ::oController:oTraduccionesController:activateDialogView() },;
                      ::oController:oTraduccionesController:getImage( "16" ) )
+
+   oPanel:AddLink(   "Unidad por operación...",;
+                     {||   ::oController:oUnidadesMedicionOperacionesController:activateDialogView(),;
+                           ::oController:oUnidadesMedicionGruposController:oGetSelector:evalWhen() },;
+                     ::oController:ounidadesmedicionoperacionesController:getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
 
    oPanel:AddLink(   "Campos extra...",;
-                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
+                     {||   ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
                      ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

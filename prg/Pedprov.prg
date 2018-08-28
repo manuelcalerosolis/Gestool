@@ -1850,7 +1850,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       REDEFINE COMBOBOX aGet[ _CSITUAC ] VAR aTmp[ _CSITUAC ] ;
          ID       218 ;
          WHEN     ( nMode != ZOOM_MODE );
-         ITEMS    ( SQLSituacionesModel():getArrayNombres() ) ;
+         ITEMS    ( SQLSituacionesModel():getNombres() ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CCENTROCOSTE ] VAR aTmp[ _CCENTROCOSTE ] ;

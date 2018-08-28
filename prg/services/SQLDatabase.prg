@@ -40,7 +40,10 @@ CLASS SQLDatabase
 
    METHOD Exec( cSql )        
    METHOD ExecWithOutParse( cSql )        INLINE ( ::Exec( cSql, .f. ) )     
+   
    METHOD Execs( aSql ) 
+   METHOD ExecsWithOutParse( aSql )       INLINE ( ::Execs( aSql, .f. ) )
+
    METHOD TransactionalExec( cSql )       INLINE ( ::BeginTransaction(), ::Exec( cSql ), ::Commit() )            
    
    METHOD Query( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Query( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
@@ -48,6 +51,8 @@ CLASS SQLDatabase
    METHOD Parse( cSql )                   INLINE ( if( !empty( ::oConexion ), ::oConexion:Parse( cSql ), msgstop( "No ha conexiones disponibles" ) ) )
 
    METHOD escapeStr( cEscape )            INLINE ( if( !empty( ::oConexion ), ::oConexion:escapeStr( cEscape ), cEscape ) ) 
+
+   METHOD genStatement( cStatement )
 
    METHOD selectFetch( cSql )
 
@@ -90,6 +95,8 @@ CLASS SQLDatabase
                                                    "User : " + ::cUserMySQL         + CRLF + ;
                                                    "Password : " + ::cPasswordMySQL + CRLF + ;
                                                    "Port : " + alltrim( str( ::nPortMySQL ) ) )
+
+   METHOD showError( e )
 
 ENDCLASS
 
@@ -166,6 +173,8 @@ RETURN ( lConnect )
 
 METHOD isParseError( cSentence )
 
+   local e
+
    if empty( cSentence )
       msgstop( "La sentencia esta vacia", "SQLDatabase" )
       RETURN ( .t. )  
@@ -178,11 +187,19 @@ METHOD isParseError( cSentence )
 
    ::oConexion:Ping()
 
-   if !::oConexion:Parse( cSentence )
-      msgstop( cSentence, "Error en el comando SQL" / 2 )
+   try
+      
+      ::oConexion:Parse( cSentence )
+
+   catch e
+      
       logwrite( cSentence )
-      RETURN ( .t. )  
-   end if 
+
+      ::showError( e )
+
+      RETURN ( .t. )
+
+   end 
 
 RETURN ( .f. )
 
@@ -190,8 +207,8 @@ RETURN ( .f. )
 
 METHOD Exec( cSentence, lParse )
 
+   local e
    local lExec    := .t.
-   local oError
 
    DEFAULT lParse := .t.
 
@@ -207,9 +224,11 @@ METHOD Exec( cSentence, lParse )
    
       ::oConexion:Exec( cSentence )
        
-   catch oError
+   catch e
 
-      eval( errorBlock(), oError )
+      logwrite( cSentence )   
+
+      ::showError( e )
 
       lExec       := .f.
    
@@ -219,13 +238,48 @@ RETURN ( lExec )
 
 //----------------------------------------------------------------------------//
 
-METHOD Execs( cSentence )
+METHOD Execs( cSentence, lParse )
 
    if hb_isarray( cSentence )
-      RETURN ( aeval( cSentence, {|cSql| ::Exec( cSql ) } ) ) 
+      RETURN ( aeval( cSentence, {|cSql| ::Exec( cSql, lParse ) } ) ) 
    end if 
 
-RETURN ( ::Exec( cSentence ) ) 
+RETURN ( ::Exec( cSentence, lParse ) ) 
+
+//----------------------------------------------------------------------------//
+
+METHOD genStatement( cSentence )
+/*
+   local cExpr, cContain, uContain
+
+   while "{{" $ cSentence
+      
+      cExpr          := substr( cSentence, at( "{{", cSentence ) + 2, at( "}}", cSentence ) - at( "{{", cSentence ) - 2 )
+
+      msgalert( cExpr, "cExpr" )
+
+      if "|" $ cExpr
+         
+         msgalert( valtype( &( "{" + cExpr + " }" ) ), "valtype" )
+         
+         uContain    := eval( &( "{" + cExpr + " }" ) )
+      else
+         uContain    := eval( &( "{||" + cExpr + " }" ) )
+      end if 
+
+      msgalert( uContain, "uContain" )
+
+      cContain    := transform( uContain, "@" )
+
+      msgalert( cContain, "cContain" )
+
+      cSentence   := strtran( cSentence, "{{" + cExpr + "}}", cContain, 1 )
+
+      msgalert( cSentence, "cSentence" )
+
+    end
+*/
+RETURN ( cSentence )
 
 //----------------------------------------------------------------------------//
 
@@ -560,7 +614,20 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-Function getSQLDatabase()
+METHOD showError( e )
+
+   do case 
+      case ( "Duplicate entry " $ e:Description )
+         msgstop( "Clave primaria duplicada, la combinación de datos ya existe", "Error" )
+      otherwise
+         msgstop( e:SubSystem + ";" + padl( e:SubCode, 4 ) + ";" + e:Operation + ";" + e:Description, "Error en sentencia" )  
+   end case
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION getSQLDatabase()
 
    if empty( oSqlDatabase )
       oSqlDatabase            := SQLDatabase():New()
@@ -570,7 +637,7 @@ RETURN ( oSqlDatabase )
 
 //----------------------------------------------------------------------------//
 
-Function getSQLCompany( cCompanyDatabase )
+FUNCTION getSQLCompany( cCompanyDatabase )
 
    if empty( oSqlCompany )
       oSqlCompany             := SQLDatabase():New( cCompanyDatabase )
@@ -581,7 +648,7 @@ RETURN ( oSqlCompany )
 
 //----------------------------------------------------------------------------//
 
-Function endSQLCompany( cCompanyDatabase )
+FUNCTION endSQLCompany( cCompanyDatabase )
 
    if !empty( oSqlCompany )
       oSqlCompany:Disconnect()

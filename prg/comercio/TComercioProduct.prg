@@ -137,7 +137,7 @@ METHOD buildProductInformation( idProduct ) CLASS TComercioProduct
    end if 
 
    // if !( ::isProductInIncremental( idProduct ) )
-   //    msgalert( "salida de productos incremental")
+   //    msgstop( "salida de productos incremental")
    //    RETURN ( .f. )
    // end if 
 

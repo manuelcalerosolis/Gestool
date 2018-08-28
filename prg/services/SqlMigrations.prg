@@ -87,7 +87,7 @@ RETURN ( aeval( ::aRepositories, {|oRepository| ::checkRepository( oRepository )
 
 METHOD checkRepository( oRepository ) CLASS SQLBaseMigrations
 
-   getSQLDatabase():Execs( oRepository:getSQLFunctions() )
+   getSQLDatabase():ExecsWithOutParse( oRepository:getSQLFunctions() )
 
 RETURN ( Self )
 
@@ -186,7 +186,7 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLAjustableModel():New() )
 
-   aadd( ::aModels, SQLConfiguracionVistasModel():New() )
+   aadd( ::aModels, SQLConfiguracionVistasGestoolModel():New() )
 
    aadd( ::aModels, SQLCamposExtraGestoolModel():New() )
 
@@ -213,6 +213,7 @@ METHOD checkValues() CLASS SQLGestoolMigrations
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
@@ -224,6 +225,8 @@ CLASS SQLCompanyMigrations FROM SQLBaseMigrations
    METHOD Run( cCodigoEmpresa )
 
    METHOD addModels()
+
+   METHOD addRepositories()
 
    METHOD checkValues()
 
@@ -242,6 +245,10 @@ METHOD Run( cCodigoEmpresa ) CLASS SQLCompanyMigrations
    ::checkModels( Company():getDatabase() )
 
    ::checkValues()
+
+   ::addRepositories()
+
+   ::checkRepositories()
 
 RETURN ( Self )
 
@@ -323,6 +330,8 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLArticulosUnidadesMedicionModel():New() )
 
+   aadd( ::aModels, SQLUnidadesMedicionOperacionesModel():New() )
+
    aadd( ::aModels, SQLDivisasMonetariasModel():New() )
 
    aadd( ::aModels, SQLImpuestosEspecialesModel():New() )
@@ -347,9 +356,9 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLTageableModel():New() )
                                       
-   //aadd( ::aModels, SQLTiposVentasModel():New() )
+   aadd( ::aModels, SQLConfiguracionVistasModel():New() )
 
-   aadd( ::aModels, SQLConfiguracionesCompanyModel():New() )
+   aadd( ::aModels, SQLConfiguracionesCompanyModel():New() ) 
 
    //aadd( ::aModels, SQLMovimientosAlmacenModel():New() )
 
@@ -375,11 +384,15 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLTraduccionesModel():New() ) 
 
-   aadd( ::aModels, SQLDescuentosModel():New() ) 
+   aadd( ::aModels, SQLDescuentosModel():New() )
+    
+   aadd( ::aModels, SQLArticulosPreciosDescuentosModel():New() ) 
 
    aadd( ::aModels, SQLFacturasClientesModel():New() ) 
 
    aadd( ::aModels, SQLFacturasClientesLineasModel():New() ) 
+
+   aadd( ::aModels, SQLFacturasClientesDescuentosModel():New() ) 
 
    aadd( ::aModels, SQLCamposExtraModel():New() )
 
@@ -416,4 +429,13 @@ METHOD checkValues() CLASS SQLCompanyMigrations
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
+
+METHOD addRepositories() CLASS SQLCompanyMigrations
+
+   aadd( ::aRepositories, ArticulosPreciosRepository():New() )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 

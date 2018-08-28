@@ -11,10 +11,6 @@ CLASS UnidadesMedicionGruposLineasController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ) == 1,;
-                                             ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ),;
-                                             ( .t. ) ) )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -47,7 +43,7 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposLineasController
 
    ::oGetSelector                   := GetSelector():New( self )
 
-   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
+   ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 
@@ -378,7 +374,7 @@ RETURN ( cSelect )
 
 METHOD getSentenceInserLineaUnidadBase( uuidParent, cCodigoBaseUnidad ) CLASS SQLUnidadesMedicionGruposLineasModel
 
-   local cSentence   := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                      + " " + ;
+   local cSentence   := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                         + " " + ;
                            "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )"   + " " + ;
                         "VALUES"                                                                                              + " " + ;
                            "( UUID(), " + quoted( uuidParent ) + ", " + quoted( cCodigoBaseUnidad ) + ", 1, 1, 1 )"
@@ -409,8 +405,6 @@ CLASS UnidadesMedicionGruposLineasRepository FROM SQLBaseRepository
 
    METHOD getSentenceWhereCodigoArticulo( cCodigoArticulo )
 
-
-
    METHOD getWhereGrupoSistema( cCodigoGrupo )
 
    METHOD getWhereEmpresa( cCodigoGrupo )
@@ -437,6 +431,8 @@ CLASS UnidadesMedicionGruposLineasRepository FROM SQLBaseRepository
 
    METHOD getFactorWhereUnidadGrupoSistema( cCodigoUnidad )
 
+   METHOD getUnidadDefectoWhereArticulo( cCodigoArticulo )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -448,7 +444,7 @@ METHOD getSentenceWhereGrupoSistema( cField ) CLASS UnidadesMedicionGruposLineas
    DEFAULT cField    := "unidad_alternativa_codigo"
 
    cSelect           := "SELECT lineas." + cField                                                                 + " " + ;
-                        "FROM "+ ::getTableName() + " AS lineas"                                                  + " " + ;
+                        "FROM " + ::getTableName() + " AS lineas"                                                  + " " + ;
                         "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"             + " " + ;         
                            "ON lineas.parent_uuid = grupos.uuid"                                                  + " " + ;         
                         "WHERE grupos.sistema = 1"
@@ -504,7 +500,7 @@ RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereGrupoSiste
 
 METHOD getWhereEmpresa() CLASS UnidadesMedicionGruposLineasRepository
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereEmpresa() ) )
+RETURN ( ::getDatabase():getValue( ::getSentenceWhereEmpresa() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -649,6 +645,35 @@ METHOD getFactorWhereUnidadGrupoSistema( cCodigoUnidad ) CLASS UnidadesMedicionG
                         "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )   
 
 RETURN ( ::getDatabase():getValue( cSentence ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUnidadDefectoWhereArticulo( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      unidades_medicion_grupos_lineas.unidad_alternativa_codigo
+
+      FROM %1$s AS unidades_medicion_grupos_lineas
+
+      INNER JOIN %2$s AS unidades_medicion_grupos
+         ON unidades_medicion_grupos_lineas.parent_uuid = unidades_medicion_grupos.uuid 
+
+      INNER JOIN %3$s AS articulos
+         ON articulos.unidades_medicion_grupos_codigo = unidades_medicion_grupos.codigo AND articulos.codigo = %4$s
+
+      ORDER BY unidades_medicion_grupos_lineas.cantidad_base ASC
+      
+      LIMIT 1      
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLUnidadesMedicionGruposModel():getTableName(), SQLArticulosModel():getTableName(), cCodigoArticulo )
+
+RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

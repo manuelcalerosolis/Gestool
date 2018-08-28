@@ -25,6 +25,7 @@ METHOD addColumns() CLASS ArticulosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'uuid'
       :cHeader             := 'Uuid'
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }

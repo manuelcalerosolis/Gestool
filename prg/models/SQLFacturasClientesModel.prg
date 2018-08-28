@@ -60,6 +60,9 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
    hset( ::hColumns, "transportista_codigo",          {  "create"    => "VARCHAR( 20 )"                        ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
+   hset( ::hColumns, "tarifa_codigo",                 {  "create"    => "VARCHAR( 20 )"                        ,;
+                                                         "default"   => {|| space( 20 ) } }                    )
+
    ::getTimeStampColumns()
 
    ::getClosedColumns()
@@ -84,12 +87,17 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
                         "direcciones.codigo_postal AS direccion_codigo_postal,"                       + " " + ;
                         "direcciones.telefono AS direccion_telefono,"                                 + " " + ;
                         "direcciones.movil AS direccion_movil,"                                       + " " + ;
-                        "direcciones.email AS direccion_email"                                        + " " + ;
+                        "direcciones.email AS direccion_email,"                                       + " " + ;
+                        "tarifas.codigo AS tarifa_codigo, "                                           + " " + ;
+                        "tarifas.nombre AS tarifa_nombre "                                            + " " + ;
                      "FROM " + ::getTableName() + " AS facturas_clientes"                             + " " + ;
                         "LEFT JOIN " + SQLClientesModel():getTableName() + " clientes"                + " " + ;  
                            "ON facturas_clientes.cliente_codigo = clientes.codigo"                    + " " + ;  
                         "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"          + " " + ;  
-                           "ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal" 
+                           "ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"     + " " + ;
+                        "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " tarifas "        + " " + ;
+                           "ON facturas_clientes.tarifa_codigo = tarifas.codigo "
+
 
 RETURN ( cSelect )
 

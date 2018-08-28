@@ -80,10 +80,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS FormaPagoBrowseView FROM SQLBrowseView
 
@@ -120,7 +116,8 @@ METHOD addColumns() CLASS FormaPagoBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tactil' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :SetCheck( { "Sel16", "Nil16" } )
-      :AddResource( "TACTIL16" )
+      :AddResource( "Tactil16" )
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -145,6 +142,7 @@ METHOD addColumns() CLASS FormaPagoBrowseView
       :nWidth              := 50
       :bEditValue          := {|| ::getRowSet():fieldGet( 'posicion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
 RETURN ( self )
@@ -217,7 +215,6 @@ METHOD New( oController ) CLASS FormaPagoView
                            "Porcentaje"            => "gc_symbol_percent_16",;
                            "Cesta de compra"       => "gc_shopping_cart_16" }
 
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -227,7 +224,7 @@ METHOD startActivate()
    ::oController:oBancosController:oGetSelector:Start()
    ::addLinksToExplorerBar()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -314,13 +311,11 @@ METHOD Activate() CLASS FormaPagoView
    // Banco--------------------------------------------------------------------
 
    ::oController:oBancosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "banco_uuid" ] ) )
-   
    ::oController:oBancosController:oGetSelector:setEvent( 'validated', {|| ::bancosControllerValidated() } )
-
-   ::oController:oBancosController:oGetSelector:Activate( 190, 191, ::oDialog )
+   ::oController:oBancosController:oGetSelector:Build( { "idGet" => 190, "idText" => 191, "idLink" => 192, "oDialog" => ::oDialog } )
 
    REDEFINE GET   ::oGetIBANCodigoPais ;
-      VAR         ::cGetIBANCodigoPais ;
+      VAR         ::cGetIBANCodigoPais ; 
       ID          200 ;
       WHEN        ( .f. ) ;
       OF          ::oDialog ;
@@ -432,6 +427,8 @@ METHOD Activate() CLASS FormaPagoView
 
    ::oDialog:bStart  := {|| ::startActivate() }
 
+   ::bancosControllerValidated()
+
    ACTIVATE DIALOG ::oDialog CENTER
 
   ::oBitmap:end()
@@ -440,16 +437,16 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD bancosControllerValidated()
+METHOD bancosControllerValidated() CLASS FormaPagoView
 
    local hColumns    
-   local uuidBanco   := ::oController:oModel:hBuffer[ "banco_uuid" ]
-
-   if empty( uuidBanco )
+   local CodigoBanco    := ::oController:oModel:hBuffer[ "banco_uuid" ]
+   
+   if empty( CodigoBanco )
       RETURN ( nil )
    end if 
 
-   hColumns          := ::oController:oBancosController:oModel:getWhereUuid( uuidBanco )  
+   hColumns          := ::oController:oBancosController:oModel:getWhereCodigo( CodigoBanco ) 
 
    if !( hb_ishash( hColumns ) )
       RETURN ( nil )
@@ -491,7 +488,7 @@ METHOD addLinksToExplorerBar() CLASS FormaPagoView
                      {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
                      ::oController:oCamposExtraValoresController:getImage( "16" ) )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -15,10 +15,6 @@ CLASS UnidadesMedicionGruposController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD isSystemRegister()     INLINE ( iif( ::getRowSet():fieldGet( 'sistema' ) == 1,;
-                                             ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ),;
-                                             .t. ) )
-
    METHOD insertLineaUnidadBase()
 
 END CLASS
@@ -57,7 +53,7 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposController
 
    ::oGetSelector                            := GetSelector():New( self )
 
-   ::setEvents( { 'editing', 'deleting' }, {|| ::isSystemRegister() } )
+   ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
 
@@ -195,10 +191,10 @@ END CLASS
 
 METHOD Activate() CLASS UnidadesMedicionGruposView
 
-   local oSayCamposExtra
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
+   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "GRUPO_UNIDAD_MEDICION" ;
@@ -219,7 +215,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() );
       OF          ::oDialog ;
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -234,7 +230,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
 
    ::oController:oUnidadesMedicioncontroller:oGetSelector:setWhen( {|| Empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .AND. ::oController:isNotZoomMode() } )
 
-   ::oController:oUnidadesMedicioncontroller:oGetSelector:Activate( 120, 122, ::oDialog )
+   ::oController:oUnidadesMedicioncontroller:oGetSelector:Build( { "idGet" => 120, "idText" => 121,"idLink" => 122, "oDialog" => ::oDialog } )
 
    // Unidades equivalencia--------------------------------------------------------------------
 
@@ -409,17 +405,17 @@ METHOD getInsertUnidadesMedicionGruposSentence() CLASS SQLUnidadesMedicionGrupos
    local aSentence      := {} 
    local cCodigoDefecto := quoted( __grupo_unidades_medicion__ )
 
-   cSentence         := "INSERT IGNORE INTO " + ::getTableName()                       + " " + ;
-                           "( uuid, codigo, nombre, unidad_base_codigo, sistema )"     + " " + ;
-                        "VALUES"                                                       + " " + ;
-                           "( " + quoted( uuid ) + ", " + cCodigoDefecto + ", 'Unidades', " + cCodigoDefecto + ", 1 )"
+   cSentence            := "INSERT IGNORE INTO " + ::getTableName()                       + " " + ;
+                              "( uuid, codigo, nombre, unidad_base_codigo, sistema )"     + " " + ;
+                           "VALUES"                                                       + " " + ;
+                              "( " + quoted( uuid ) + ", " + cCodigoDefecto + ", 'Unidades', " + cCodigoDefecto + ", 1 )"
 
    aadd( aSentence, cSentence )
 
-   cSentence         := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                         + " " + ;
-                           "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )"   + " " + ;
-                        "VALUES"                                                                                              + " " + ;
-                           "( UUID(), " + quoted( uuid ) + ", " + cCodigoDefecto + ", 1, 1, 1 )"
+   cSentence            := "INSERT IGNORE INTO " + SQLUnidadesMedicionGruposLineasModel():getTableName()                         + " " + ;
+                              "( uuid, parent_uuid, unidad_alternativa_codigo, cantidad_alternativa, cantidad_base, sistema )"   + " " + ;
+                           "VALUES"                                                                                              + " " + ;
+                              "( UUID(), " + quoted( uuid ) + ", " + cCodigoDefecto + ", 1, 1, 1 )"
 
    aadd( aSentence, cSentence )
 

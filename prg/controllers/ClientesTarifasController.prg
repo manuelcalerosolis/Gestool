@@ -104,6 +104,8 @@ CLASS SQLClientesTarifasModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
+   METHOD getTarifasNombreWhereClienteCodigo( cCodigoCliente )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -128,17 +130,37 @@ RETURN ( ::hColumns )
 
 METHOD getInitialSelect() CLASS SQLClientesTarifasModel
 
-   local cSelect  := "SELECT clientes_tarifas.id AS id, "                                                      + ;
-                        "clientes_tarifas.uuid AS uuid, "                                                      + ;
-                        "clientes_tarifas.parent_uuid AS parent_uuid, "                                        + ;
-                        "clientes_tarifas.tarifa_uuid AS tarifa_uuid, "                                        + ;
-                        "articulos_tarifas.nombre AS tarifa "                                                  + ;
-                     "FROM " + ::getTableName() + " AS clientes_tarifas "                                      + ;   
-                        "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " ON clientes_tarifas.tarifa_uuid = articulos_tarifas.uuid"
+   local cSelect  := "SELECT clientes_tarifas.id AS id, "                                 +  ;
+                        "clientes_tarifas.uuid AS uuid, "                                 +  ;
+                        "clientes_tarifas.parent_uuid AS parent_uuid, "                   +  ;
+                        "clientes_tarifas.tarifa_uuid AS tarifa_uuid, "                   +  ;
+                        "articulos_tarifas.nombre AS tarifa "                             +  ;
+                     "FROM " + ::getTableName() + " AS clientes_tarifas "                 +  ;   
+                        "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " "    +  ;
+                           "ON clientes_tarifas.tarifa_uuid = articulos_tarifas.uuid"
 
 RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
+
+METHOD getTarifasNombreWhereClienteCodigo( cCodigoCliente ) CLASS SQLClientesTarifasModel
+
+   local aNombres
+   local cSelect  := "SELECT articulos_tarifas.nombre AS tarifa "                         +  ;
+                     "FROM " + ::getTableName() + " AS clientes_tarifas "                 +  ;   
+                        "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " "    +  ;
+                           "ON clientes_tarifas.tarifa_uuid = articulos_tarifas.uuid "    +  ;
+                        "LEFT JOIN " + SQLClientesModel():getTableName() + " "            +  ;
+                           "ON clientes_tarifas.parent_uuid = clientes.uuid "             +  ;
+                     "WHERE clientes.codigo = " + quoted( cCodigoCliente )
+
+   aNombres       := ::getDatabase():selectFetchArrayOneColumn( cSelect )
+
+   if ascan( aNombres, __tarifa_base__ ) == 0
+      ains( aNombres, 1, __tarifa_base__, .t. )
+   end if 
+
+RETURN ( aNombres )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

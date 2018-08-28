@@ -96,32 +96,40 @@ RETURN ( ::hColumns )
 
 METHOD getInsertAjustesSentence()
 
-   local cSentence 
+   local cSql 
 
-   cSentence  := "INSERT IGNORE INTO " + ::getTableName() + " "
-   cSentence  +=    "( uuid, ajuste, sistema, tipo_dato, valor_minimo, valor_maximo ) "
-   cSentence  += "VALUES "
-   cSentence  +=    "( UUID(), 'empresa_exclusiva',         '1',  'alphanumeric', NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'caja_exclusiva',            '1',  'alphanumeric', NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'almacen_exclusivo',         '1',  'alphanumeric', NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'delegacion_exclusiva',      '1',  'alphanumeric', NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'pc_en_uso',                 '1',  'alphanumeric', NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'empresa_en_uso',            '1',  'alphanumeric', NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'mostrar_rentabilidad',      '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'cambiar_precios',           '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'ver_precios_costo',         '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'confirmacion_eliminacion',  '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'fitrar_ventas_por_usuario', '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'abrir_cajon_portamonedas',  '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'seleccionar_usuarios',      '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'albaran_entregado',         '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'asistente_generar_facturas','1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'cambiar_estado',            '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'cambiar_campos',            '1',  'boolean',      NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'delegacion_defecto',        '1',  'alphanumeric', NULL, NULL ), "
-   cSentence  +=    "( UUID(), 'unidades_grupo_defecto',    '1',  'alphanumeric', NULL, NULL )"
+   TEXT INTO cSql
 
-RETURN ( cSentence )
+      INSERT IGNORE INTO %1$s 
+         ( uuid, ajuste, sistema, tipo_dato, valor_minimo, valor_maximo )
+      
+      VALUES    
+         ( UUID(), 'empresa_exclusiva',         '1',  'alphanumeric', NULL, NULL ), 
+         ( UUID(), 'caja_exclusiva',            '1',  'alphanumeric', NULL, NULL ), 
+         ( UUID(), 'almacen_exclusivo',         '1',  'alphanumeric', NULL, NULL ), 
+         ( UUID(), 'delegacion_exclusiva',      '1',  'alphanumeric', NULL, NULL ), 
+         ( UUID(), 'pc_en_uso',                 '1',  'alphanumeric', NULL, NULL ), 
+         ( UUID(), 'empresa_en_uso',            '1',  'alphanumeric', NULL, NULL ), 
+         ( UUID(), 'mostrar_rentabilidad',      '1',  'boolean',      NULL, NULL ), 
+         ( UUID(), 'cambiar_precios',           '1',  'boolean',      NULL, NULL ), 
+         ( UUID(), 'ver_precios_costo',         '1',  'boolean',      NULL, NULL ), 
+         ( UUID(), 'confirmacion_eliminacion',  '1',  'boolean',      NULL, NULL ), 
+         ( UUID(), 'fitrar_ventas_por_usuario', '1',  'boolean',      NULL, NULL ), 
+         ( UUID(), 'abrir_cajon_portamonedas',  '1',  'boolean',      NULL, NULL ), 
+         ( UUID(), 'seleccionar_usuarios',      '1',  'boolean',      NULL, NULL ), 
+         ( UUID(), 'albaran_entregado',         '1',  'boolean',      NULL, NULL ), 
+         ( UUID(), 'asistente_generar_facturas','1',  'boolean',      NULL, NULL ), 
+         ( UUID(), 'cambiar_estado',            '1',  'boolean',      NULL, NULL ), 
+         ( UUID(), 'cambiar_campos',            '1',  'boolean',      NULL, NULL ), 
+         ( UUID(), 'delegacion_defecto',        '1',  'alphanumeric', NULL, NULL ), 
+         ( UUID(), 'unidades_grupo_defecto',    '1',  'alphanumeric', NULL, NULL ), 
+         ( UUID(), 'tarifas_defecto',           '1',  'alphanumeric', NULL, NULL )
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName() )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 

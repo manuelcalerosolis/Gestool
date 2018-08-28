@@ -5,8 +5,6 @@
 
 CLASS SQLBaseController
 
-   CLASSDATA oInstance 
-
    DATA oSenderController
 
    DATA oExportableController                            
@@ -50,7 +48,6 @@ CLASS SQLBaseController
    DATA oView
 
    METHOD New()
-   METHOD Instance()                                  INLINE ( if( empty( ::oInstance ), ::oInstance := ::New(), ), ::oInstance ) 
    METHOD End()
 
    METHOD setDirectory( cDirectory )                  INLINE ( ::cDirectory := cDirectory )
@@ -60,6 +57,11 @@ CLASS SQLBaseController
    METHOD getName()                                   INLINE ( ::cName )
 
    METHOD getSenderController()                       INLINE ( ::oSenderController ) 
+   METHOD getSenderControllerParentUuid()             INLINE ( iif( !empty( ::oSenderController ), ::oSenderController:getUuid(), space( 40 ) ) ) 
+
+   METHOD getBrowseView()                             INLINE ( ::oBrowseView )
+
+   METHOD getBrowseViewType()                         INLINE ( ::oBrowseView:getViewType() )
 
    // Modelo -----------------------------------------------------------------
 
@@ -109,7 +111,8 @@ CLASS SQLBaseController
    METHOD getIdFromRowSet()                           INLINE ( iif(  !empty( ::getRowSet() ),;
                                                                      ::getRowSet():fieldGet( ::oModel:cColumnKey ), nil ) )
 
-   METHOD isSystemRegister()                          
+   METHOD isRowSetSystemRegister()                          
+   METHOD isNotRowSetSystemRegister()                       INLINE ( !( ::isRowSetSystemRegister() ) )
 
    METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( iif(  !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
@@ -130,19 +133,6 @@ CLASS SQLBaseController
 
    METHOD Validate( cColumn, uValue )                 INLINE ( iif( !empty( ::oValidator ), ::oValidator:Validate( cColumn, uValue ), ) )
    METHOD Assert( cColumn, uValue )                   INLINE ( iif( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
-
-   // Browse------------------------------------------------------------------
-
-   METHOD getBrowseView()                             INLINE ( ::oBrowseView )
-   METHOD getBrowse()                                 INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:getBrowse(), ) )
-
-   METHOD refreshBrowseView()                         INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
-   METHOD refreshBrowseViewAndGoTop()                 INLINE ( if( !empty( ::oBrowseView ), ( ::oBrowseView:goTop(), ::oBrowseView:Refresh() ), ) )
-
-   METHOD isBrowseColumnEdit()                        
-
-   METHOD startBrowse( oCombobox )
-   METHOD restoreBrowseState()
 
    // Access -----------------------------------------------------------------
 
@@ -179,6 +169,8 @@ CLASS SQLBaseController
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
       METHOD isNotAppendMode()                        INLINE ( ::nMode != __append_mode__ )
+
+   METHOD AppendLineal()
 
    METHOD Duplicate()
       METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
@@ -254,6 +246,25 @@ CLASS SQLBaseController
    METHOD setView( oView )                            INLINE ( ::oView := oView )
    METHOD getView()                                   INLINE ( if( empty( ::oView ), ::oDialogView, ::oView ) )
 
+   // Refresh
+
+   METHOD refreshBrowseView()                         INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) ) 
+
+   // Filters------------------------------------------------------------------
+
+   METHOD buildFilter( cExpresion )
+   METHOD buildInFilter( cField, cValue )             INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " IN (" + toSqlString( cValue ) + ")", "" ) ) )
+   METHOD buildNotInFilter( cField, cValue )          INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " NOT IN (" + toSqlString( cValue ) + ")", "" ) ) )
+   METHOD buildBiggerFilter( cField, cValue )         INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " > " + toSqlString( cValue ), "" ) ) )
+   METHOD buildSmallerFilter( cField, cValue )        INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " < " + toSqlString( cValue ), "" ) ) )
+   METHOD buildStartLikeFilter( cField, cValue )      INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( alltrim( cstr( cValue ) ) + "%" ), "" ) ) )
+   METHOD buildEndLikeFilter( cField, cValue )        INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( "%" + alltrim( cstr( cValue ) ) ), "" ) ) )
+   METHOD buildLikeFilter( cField, cValue )           INLINE ( ::buildFilter( iif( !empty( cField ) .and. !empty( cValue ), cField + " LIKE " + toSqlString( "%" + alltrim( cstr( cValue ) ) + "%" ), "" ) ) )
+
+   METHOD clearFilter()
+
+   METHOD reBuildRowSet()   
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -289,69 +300,6 @@ METHOD End()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
-METHOD isBrowseColumnEdit()
-
-   local oSelectedColumn   
-
-   if !empty( ::oBrowseView ) 
-
-      oSelectedColumn   := ::oBrowseView:getSelectedCol()
-   
-      if !empty( oSelectedColumn )
-         RETURN ( oSelectedColumn:nEditType != 0 )
-      end if 
-   
-   end if 
-
-RETURN ( .f. )   
-
-//---------------------------------------------------------------------------//
-
-METHOD startBrowse( oCombobox )
-
-   local oColumn
-
-   if empty( ::oDialogView:getoBrowse() )
-      RETURN ( Self )
-   end if 
-
-   if (!empty( oCombobox ) )
-      oCombobox:SetItems( ::oDialogView:getoBrowse():getColumnHeaders() )
-   endif
-
-   ::restoreBrowseState()
-
-   oColumn        := ::oDialogView:getoBrowse():getColumnOrder( ::oModel:cColumnOrder )
-   if empty( oColumn )
-      RETURN ( Self )
-   end if 
-   
-   if (!empty( oCombobox ) )
-      oCombobox:set( oColumn:cHeader )
-   endif
-
-   ::oDialogView:getoBrowse():selectColumnOrder( oColumn, ::oModel:cOrientation )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD restoreBrowseState()
-
-   if empty( ::oDialogView:getoBrowse() )
-      RETURN ( Self )
-   end if 
-
-   if empty( ::oDialogView:getBrowseState() )
-      RETURN ( Self )
-   end if 
-
-   ::oDialogView:getoBrowse():restoreState( ::oDialogView:getBrowseState() )
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
 
 METHOD Append()
 
@@ -421,6 +369,52 @@ METHOD Append()
    end while
 
    ::fireEvent( 'exitAppended' ) 
+
+RETURN ( lAppend )
+
+//----------------------------------------------------------------------------//
+
+METHOD AppendLineal() CLASS SQLBaseController
+
+   local nId
+   local lAppend     := .t.   
+
+   if ::notUserAppend()
+      msgStop( "Acceso no permitido." )
+      RETURN ( .f. )
+   end if 
+
+   if isFalse( ::fireEvent( 'appending' ) )
+      RETURN ( .f. )
+   end if
+
+   ::setAppendMode()
+
+   ::saveRowSetRecno()
+
+   nId               := ::oModel:insertBlankBuffer()
+
+   if !empty( nId )
+
+      ::fireEvent( 'appended' ) 
+
+      ::refreshRowSetAndFindId( nId )
+
+   else 
+      
+      lAppend        := .f.
+
+      ::refreshRowSet()
+
+   end if 
+
+   ::refreshBrowseView()
+
+   ::fireEvent( 'exitAppended' ) 
+
+   if lAppend
+      ::oBrowseView:setFocus()
+   end if 
 
 RETURN ( lAppend )
 
@@ -566,6 +560,7 @@ METHOD postEdit()
 
    do case
       case ::dialgOkAndGoTo()
+
          if ::refreshRowSetAndFindId( ::oDialogView:idGoTo )
             ::Edit()
          else 
@@ -573,12 +568,17 @@ METHOD postEdit()
          end if 
 
       case ::dialgOkAndDown()
+
          ::goDownRowSet()
+      
          ::Edit()
 
       case ::dialgOkAndUp()
+
          ::goUpRowSet()
+      
          ::Edit()
+         
    end case 
 
 RETURN ( self )
@@ -743,7 +743,7 @@ METHOD changeModelOrderAndOrientation( cOrderBy, cOrientation )
 
    local nId           
 
-   if empty(::oRowSet)
+   if empty( ::oRowSet )
       RETURN ( self )
    end if 
 
@@ -779,18 +779,13 @@ RETURN ( ::oRowSet:findString( uValue, cColumn ) )
 
 //----------------------------------------------------------------------------//
 
-METHOD isSystemRegister()
+METHOD isRowSetSystemRegister()
 
    if empty( ::oRowSet )
       RETURN ( .t. )
    end if 
 
-   if ::oRowSet:fieldGet( 'sistema' ) == 1
-      msgStop( "Este registro pertenece al sistema, no se puede alterar." )
-      RETURN ( .f. )
-   end if 
-
-RETURN ( .t. )
+RETURN ( ::oRowSet:fieldGet( 'sistema' ) == 1 )
 
 //----------------------------------------------------------------------------//
 
@@ -822,7 +817,7 @@ METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
                                  {|| oRowSet:skip(1)  },;    
                                  {|| oRowSet:skip(-1) },;    
                                  {|| oRowSet:eof()    },;
-                                 {|nField| msgalert( nField ), oRowSet:fieldGet( nField ) } )
+                                 {|nField| msginfo( nField ), oRowSet:fieldGet( nField ) } )
                                  //  )      
     
 RETURN ( Self )    
@@ -871,5 +866,41 @@ METHOD validColumnBrowse( oCol, uValue, nKey, oModel, cFieldName )
    ::RefreshRowSet()
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildFilter( cFilter )
+
+   ::getModel():insertFilterWhere( cFilter )
+
+   ::reBuildRowSet()
+   
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD clearFilter()
+
+   ::getModel():clearFilterWhere()
+
+   ::reBuildRowSet()
+   
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD reBuildRowSet()
+
+   local nId
+
+   nId               := ::oRowSet:fieldGet( ::getModelColumnKey() )
+   
+   ::oRowSet:build( ::getModel():getSelectSentence() )
+
+   ::oRowSet:findString( nId )
+      
+   ::getBrowseView():Refresh()
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
