@@ -3148,10 +3148,10 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de direcciones"
    oItem:cMessage       := "Acceso a los tipos de direcciones"
-   oItem:bAction        := {|| TiposDireccionesController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| DireccionesTiposController():New():ActivateNavigatorView() }
    oItem:cId            := "tipos_de_direcciones"
-   oItem:cBmp           := "gc_signpost3_16"
-   oItem:cBmpBig        := "gc_signpost3_32"
+   oItem:cBmp           := "gc_map_route_16"
+   oItem:cBmpBig        := "gc_map_route_32"
    oItem:lShow          := .f.
 
    // Compras-------------------------------------------------------------------

@@ -667,7 +667,8 @@ PedidosProveedoresModel.prg												\
 UsuariosModel.prg 															\
 DelegacionesModel.prg 														\
 TiposImpresorasController.prg 											\
-TiposDireccionesController.prg 											\
+DireccionesTiposController.prg 											\
+DireccionesTipoDocumentoController.prg 								\
 SQLEtiquetasModel.prg 														\
 ConfiguracionEmpresasModel.prg 											\
 TiposVentasModel.prg 														\
@@ -1352,7 +1353,8 @@ MaterialesConsumidosLineasModel.obj 									\
 UsuariosModel.obj																\
 DelegacionesModel.obj														\
 TiposImpresorasController.obj 											\
-TiposDireccionesController.obj 											\
+DireccionesTiposController.obj 											\
+DireccionesTipoDocumentoController.obj 								\
 TagsController.obj 															\
 UsuariosController.obj														\
 AccessController.obj															\
@@ -2054,7 +2056,8 @@ $(OBJ)\MaterialesConsumidosLineasModel.obj 							+
 $(OBJ)\UsuariosModel.obj 													+
 $(OBJ)\DelegacionesModel.obj 												+
 $(OBJ)\TiposImpresorasController.obj               				+
-$(OBJ)\TiposDireccionesController.obj               				+
+$(OBJ)\DireccionesTiposController.obj               				+
+$(OBJ)\DireccionesTipoDocumentoController.obj               	+
 $(OBJ)\TagsController.obj                 							+
 $(OBJ)\UsuariosController.obj               							+
 $(OBJ)\AccessController.obj               							+

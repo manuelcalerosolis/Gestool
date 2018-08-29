@@ -258,7 +258,9 @@ METHOD addModels() CLASS SQLCompanyMigrations
 
    aadd( ::aModels, SQLTiposImpresorasModel():New() )
 
-   aadd( ::aModels, SQLTiposDireccionesModel():New() )
+   aadd( ::aModels, SQLDireccionesTiposModel():New() )
+
+   aadd( ::aModels, SQLDireccionesTipoDocumentoModel():New() )
 
    aadd( ::aModels, SQLTagsModel():New() )
 
