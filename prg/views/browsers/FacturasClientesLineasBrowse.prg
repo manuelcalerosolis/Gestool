@@ -22,6 +22,8 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    DATA oColumnCodigoAlmacen
 
+   DATA oColumnCodigoAgente
+
    METHOD Create( oWindow )
 
    METHOD addColumns()
@@ -278,11 +280,54 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'almacen_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := EDIT_GET_BUTTON
-      /*:bEditValid          := {|oGet, oCol| ::oController:validAlmacenCodigo( oGet, oCol ) }*/
+      :bEditValid          := {|oGet, oCol| ::oController:validAlmacenCodigo( oGet, oCol ) }
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateAlmacenCodigo( oCol, uNewValue, nKey ) }
       :bEditBlock          := {|| ::oController:oSenderController:oAlmacenesController:ActivateSelectorView() }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'almacen_nombre'
+      :cHeader             := 'Nombre almacén'
+      :nWidth              := 180
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'almacen_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   
+   end with
+
+   with object ( ::oColumnCodigoAgente := ::oBrowse:AddCol() )
+      :cSortOrder          := 'agente_codigo'
+      :cHeader             := 'Código agente'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'agente_codigo' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nEditType           := EDIT_GET_BUTTON
+      :bEditValid          := {|oGet, oCol| ::oController:validAgenteCodigo( oGet, oCol ) }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateAgenteCodigo( oCol, uNewValue, nKey ) }
+      :bEditBlock          := {|| ::oController:oSenderController:oAgentesController:ActivateSelectorView() }
+      :nBtnBmp             := 1
+      :AddResource( "Lupa" )
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'agente_nombre'
+      :cHeader             := 'Nombre agente'
+      :nWidth              := 180
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'agente_nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'agente_comision'
+      :cHeader             := '% Comisión agente'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'agente_comision' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :cEditPicture        := "@E 999.99"
+      :nEditType           := EDIT_GET
+      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'agente_comision', uNewValue ) }
    end with
 
 RETURN ( nil )

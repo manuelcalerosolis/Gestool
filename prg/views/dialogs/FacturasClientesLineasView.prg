@@ -239,15 +239,26 @@ METHOD Activate()
 
       // Almacén---------------------------------------------------------------
       REDEFINE GET   ::oGetCodigoAlmacen ;
-         VAR         ::oController:oModel:hBuffer[ "codigo_almacen" ] ;
+         VAR         ::oController:oModel:hBuffer[ "almacen_codigo" ] ;
          ID          300 ;
          WHEN        ( ::oController:isAppendMode() ) ; 
          PICTURE     "@!" ;
          BITMAP      "Lupa" ;
          OF          ::oDialog  
 
-      /*::oGetCodigoAlmacen:bKeyDown := {|nKey| ::searchCodeGS128( nKey ) }*/
       ::oGetCodigoAlmacen:bValid   := {|| ::oController:validAlmacenCodigo() }
+
+      //Agente-----------------------------------------------------------------
+
+      REDEFINE GET   ::oGetCodigoAlmacen ;
+         VAR         ::oController:oModel:hBuffer[ "agente_codigo" ] ;
+         ID          400 ;
+         WHEN        ( ::oController:isAppendMode() ) ; 
+         PICTURE     "@!" ;
+         BITMAP      "Lupa" ;
+         OF          ::oDialog  
+
+      /*::oGetCodigoAlmacen:bValid   := {|| ::oController:validAlmacenCodigo() }*/
 
       // Total Importe---------------------------------------------------------
 

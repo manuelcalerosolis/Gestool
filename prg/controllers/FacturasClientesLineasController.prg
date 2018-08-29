@@ -39,6 +39,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD postValidateAlmacenCodigo( oCol, uValue, nKey )
 
+   METHOD postValidateAgenteCodigo( oCol, uValue, nKey )
+
    METHOD validateLote()               
 
    METHOD validateUnidadMedicion( uValue )
@@ -46,6 +48,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD validateIva( uValue)
    
    METHOD validAlmacenCodigo( oGet, oCol )
+
+   METHOD validAgenteCodigo( oGet, oCol )
 
    // Escritura de campos------------------------------------------------------
 
@@ -57,6 +61,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD stampAlmacen( hAlmacen )
 
+   METHOD stampAgente( hAgente )
+
    METHOD stampArticuloCodigo( cCodigoArticulo ) ;
                                           INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ) )
 
@@ -65,6 +71,9 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD stampAlmacenCodigo( cCodigoAlmacen ) ;
                                           INLINE ( ::updateField( "almacen_codigo", cCodigoAlmacen ) )
+
+   METHOD stampAgenteCodigo( cCodigoAgente ) ;
+                                          INLINE ( ::updateField( "agente_codigo", cCodigoAgente ) )
 
    METHOD stampArticuloUnidaMedicionVentas()
 
@@ -78,11 +87,15 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD getHashAlmacenWhereCodigo( cCodigo )
 
+   METHOD getHashAgenteWhereCodigo( cCodigo )
+
    METHOD stampArticuloUnidadMedicion( uValue )
 
    METHOD stampArticuloUnidadMedicionFactor()
 
    METHOD stampArticuloIva()
+
+   METHOD stampAgenteComision()
    
    // Dialogos-----------------------------------------------------------------
 
@@ -213,6 +226,22 @@ METHOD validAlmacenCodigo( oGet, oCol )
 RETURN ( .t. ) 
 
 //---------------------------------------------------------------------------//
+
+METHOD validAgenteCodigo( oGet, oCol )
+
+   local uValue   := oGet:varGet()
+
+   if SQLAgentesModel():CountAgenteWhereCodigo( uValue ) <= 0 
+      msgStop( "El agente introducido no existe" )
+      RETURN( .f. )
+   end if
+   ::updateField ( 'agente_codigo', uValue)
+   ::stampAgenteComision()
+
+RETURN ( .t. ) 
+
+//---------------------------------------------------------------------------//
+
 METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
 
    local hArticulo 
@@ -268,13 +297,42 @@ if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
    if ::oHistoryManager:isEqual( "almacen_codigo", uValue )
       RETURN ( .f. )
    end if          
-msgalert(uValue ,"uValue")
    hAlmacen   := ::getHashAlmacenWhereCodigo( uValue )
-   msgalert(hAlmacen,"hash")
    if empty( hAlmacen )
       RETURN ( .f. )
    end if 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD postValidateAgenteCodigo( oCol, uValue, nKey )
+
+   local hAgente
+
+if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
+      RETURN ( .t. )
+   end if
+
+   if hb_ishash( uValue )
+      if ::oHistoryManager:isEqual( "agente_codigo", hget( uValue, "codigo" ) )
+         RETURN ( .f. )
+      end if          
+      RETURN ( ::stampAgente( uValue ) )
+   end if 
+
+   if !hb_ischar( uValue )
+      RETURN ( .f. )
+   end if 
+
+   if ::oHistoryManager:isEqual( "agente_codigo", uValue )
+      RETURN ( .f. )
+   end if          
+   hAgente   := ::getHashAgenteWhereCodigo( uValue )
+   if empty( hAgente )
+      RETURN ( .f. )
+   end if 
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 
 METHOD getHashArticuloWhereCodigo( cCodigo )
@@ -286,6 +344,12 @@ RETURN ( SQLArticulosModel():getHashWhere( "codigo", cCodigo ) )
 METHOD getHashAlmacenWhereCodigo( cCodigo )
    
 RETURN ( SQLAlmacenesModel():getHashWhere( "codigo", cCodigo ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHashAgenteWhereCodigo( cCodigo )
+   
+RETURN ( SQLAgentesModel():getHashWhere( "codigo", cCodigo ) )
 
 //---------------------------------------------------------------------------//
 
@@ -328,6 +392,16 @@ RETURN ( .t. )
 METHOD stampAlmacen( hAlmacen )
 
 ::stampAlmacenCodigo( hget (hAlmacen, "codigo" ) )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampAgente( hAgente )
+
+::stampAgenteCodigo( hget (hAgente, "codigo" ) )
+
+::stampAgenteComision()
 
 RETURN ( .t. )
 
@@ -451,6 +525,18 @@ METHOD stampArticuloIva()
 
    if hb_isnumeric( nPorcentajeIva )
       ::updateField( 'iva', nPorcentajeIva )
+   end if 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD stampAgenteComision()
+
+   local nComision     := SQLAgentesModel():getComisionWhereAgenteCodigo( ::getRowSet():fieldGet( 'agente_codigo' ) )
+
+   if hb_isnumeric( nComision )
+      ::updateField( 'agente_comision', nComision )
    end if 
 
 RETURN ( nil )
@@ -583,3 +669,4 @@ METHOD validateIva( uValue )
 RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
+
