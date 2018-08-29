@@ -349,6 +349,10 @@ CLASS SQLAgentesModel FROM SQLCompanyModel
 
    METHOD getGeneralSelect()
 
+   METHOD CountAgenteWhereCodigo( cCodigoAgente )
+
+   METHOD getComisionWhereAgenteCodigo( cCodigoAgente )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -394,7 +398,45 @@ METHOD getColumns() CLASS SQLAgentesModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD CountAgenteWhereCodigo( cCodigoAgente ) CLASS SQLAgentesModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT COUNT(*)
+
+   FROM %1$s AS agentes
+    
+   WHERE agentes.codigo = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( cCodigoAgente ) )
+
+RETURN ( getSQLDatabase():getValue ( cSql ) )
+
 //---------------------------------------------------------------------------//
+
+METHOD getComisionWhereAgenteCodigo( cCodigoAgente ) CLASS SQLAgentesModel
+
+local cSQL
+
+   TEXT INTO cSql
+
+      SELECT agentes.comision
+
+      FROM %1$s AS agentes
+
+      WHERE agentes.codigo = %2$s
+
+      ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted(cCodigoAgente) ) 
+
+RETURN ( getSQLDatabase():getValue ( cSql ) ) 
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

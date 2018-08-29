@@ -113,6 +113,12 @@ METHOD getColumns()
    hset( ::hColumns, "almacen_codigo",             {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
                                                       "default"   => {|| space( 20 ) } }              )
 
+   hset( ::hColumns, "agente_codigo",              {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
+                                                      "default"   => {|| space( 20 ) } }              )
+
+   hset( ::hColumns, "agente_comision",            {  "create"    => "FLOAT( 5,2 )"                   ,;
+                                                      "default"   => {|| 0 } }                         )
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -124,9 +130,9 @@ METHOD getInitialSelect()
    TEXT INTO cSql
 
       SELECT 
-         id,
-         uuid,                                                        
-         parent_uuid,                                                 
+         facturas_clientes_lineas.id,
+         facturas_clientes_lineas.uuid,                                                        
+         facturas_clientes_lineas.parent_uuid,                                                 
          articulo_codigo,                                             
          articulo_nombre,                                             
          fecha_caducidad,                                             
@@ -142,13 +148,23 @@ METHOD getInitialSelect()
          ( @total_bruto - @importe_descuento ) AS total_precio,
          incremento_precio,
          iva,
-         almacen_codigo
+         almacen_codigo,
+         almacenes.nombre AS almacen_nombre,
+         agente_codigo,
+         agentes.nombre AS agente_nombre,
+         agente_comision
+         
+      FROM %1$s AS facturas_clientes_lineas
 
-      FROM %1$s AS facturas_clientes_lineas   
+      LEFT JOIN %2$s AS almacenes
+         ON almacenes.codigo = facturas_clientes_lineas.almacen_codigo
+
+      LEFT JOIN %3$s AS agentes
+         ON agentes.codigo = facturas_clientes_lineas.agente_codigo   
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName() )
 
    logwrite( cSql )
 

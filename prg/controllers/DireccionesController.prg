@@ -25,6 +25,8 @@ END CLASS
 
 CLASS DireccionesController FROM SQLNavigatorController
 
+   DATA oGetSelector
+
    DATA oPaisesController
 
    DATA oProvinciasController
@@ -92,6 +94,8 @@ METHOD New( oController ) CLASS DireccionesController
 
    ::oValidator                     := DireccionesValidator():New( self, ::oDialogView )
 
+   ::oGetSelector                   := GetSelector():New( self )
+
    ::getCodigosPostalesController()
 
    ::getPaisesController()
@@ -113,6 +117,8 @@ METHOD End() CLASS DireccionesController
    ::oDialogView:End()
 
    ::oValidator:End()
+
+   ::oGetSelector:End()
 
    ::oPaisesController:End()
 
@@ -638,7 +644,7 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "direcciones"
 
-   METHOD loadPrincipalBlankBuffer()   INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
+   METHOD loadPrincipalBlankBuffer()   INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ), hset( ::hBuffer, "nombre", "Principal" ) )
 
    METHOD insertPrincipalBlankBuffer() INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
 
