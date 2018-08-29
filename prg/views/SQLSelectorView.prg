@@ -21,6 +21,7 @@ CLASS SQLSelectorView FROM SQLBrowseableView
 
    DATA lMultiselect                            INIT ( .f. )
 
+   METHOD New( oController )
    METHOD End()
 
    METHOD Activate( bInitActivate )
@@ -46,6 +47,30 @@ CLASS SQLSelectorView FROM SQLBrowseableView
    METHOD getSelectedBuffer()                   INLINE ( if( ::lMultiselect, ::aSelectedBuffer, ::hSelectedBuffer ) )
 
 ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD New( oController )
+
+   ::Super:New( oController )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD End()
+
+   if !empty( ::oDialog )
+      ::oDialog:End()
+   end if 
+   
+   ::Super:End()
+
+   ::oDialog               := nil
+
+   self                    := nil
+
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -92,18 +117,6 @@ METHOD Activate( lCenter )
    ::oController:saveState()
 
 RETURN ( ::getSelectedBuffer() )
-
-//----------------------------------------------------------------------------//
-
-METHOD End()
-
-   if !empty( ::oDialog )
-      ::oDialog:End()
-   end if 
-
-   ::oDialog            := nil
-
-RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

@@ -167,7 +167,7 @@ METHOD Activate() CLASS ArticulosUnidadesMedicionView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    ::oController:oUnidadesMedicionController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_medicion_codigo" ] ) )

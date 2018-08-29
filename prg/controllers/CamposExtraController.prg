@@ -368,7 +368,7 @@ METHOD Activate() CLASS CamposExtraView
 
    REDEFINE SAY   ::oMessage ;
       ID          IDMESSAGE ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE FOLDER ::oFolder ;

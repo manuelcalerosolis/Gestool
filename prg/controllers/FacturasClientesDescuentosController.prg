@@ -168,7 +168,7 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :nFooterType         := AGGR_SUM
       :cEditPicture        := "@E 999.9999"
       :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
+      :oFooterFont         := oFontBold()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
       :bEditValid          := {|| ::oController:validateDescuento() }
@@ -206,7 +206,7 @@ METHOD Activate() CLASS FacturasClientesDescuentosView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;

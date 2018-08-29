@@ -87,7 +87,7 @@ METHOD New( oController ) CLASS GetSelector
 
    ::oEvents      := Events():New()
 
-   ::bWhen        := {|| ::oController:getSenderController():isNotZoomMode() } 
+   //::bWhen        := {|| ::oController:getSenderController():isNotZoomMode() } 
 
 RETURN ( Self )
 
@@ -95,9 +95,13 @@ RETURN ( Self )
 
 METHOD End() CLASS GetSelector
 
+   ::oController  := nil
+
    if !empty( ::oEvents )
       ::oEvents:End()
    end if 
+
+   ::oEvents      := nil
 
 RETURN ( nil )
 
@@ -140,7 +144,7 @@ METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
    if !empty( idLink )   
 
    REDEFINE SAY         ::oLink ;
-      FONT              getBoldFont() ; 
+      FONT              oFontBold() ; 
       COLOR             rgb( 10, 152, 234 ) ;
       ID                idLink ;
       OF                oDlg ;

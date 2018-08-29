@@ -324,14 +324,14 @@ METHOD Activate() CLASS CuentasBancariasView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    ::ExternalRedefine( ::oDialog )
 
       REDEFINE SAY   ::oSayCamposExtra ;
       PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
+      FONT        oFontBold() ; 
       COLOR       rgb( 10, 152, 234 ) ;
       ID          200 ;
       OF          ::oDialog ;

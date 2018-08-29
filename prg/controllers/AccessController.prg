@@ -325,7 +325,7 @@ METHOD Activate() CLASS AccessView
    REDEFINE SAY   ::oSayError ;
       ID          120 ;
       COLOR       Rgb( 183, 28, 28 ) ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE BUTTON ;

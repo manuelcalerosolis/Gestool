@@ -64,6 +64,8 @@ END CLASS
 
 METHOD New( oController ) CLASS FacturasClientesController
 
+   msgalert( "New" )
+
    ::Super:New( oController )
 
    ::cTitle                                              := "Facturas de clientes"
@@ -78,8 +80,6 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oModel                                              := SQLFacturasClientesModel():New( self )
 
-   ::oContadoresModel                                    := SQLContadoresModel():New( self )
-
    ::oDialogView                                         := FacturasClientesView():New( self )
 
    ::oValidator                                          := FacturasClientesValidator():New( self, ::oDialogView )
@@ -88,9 +88,12 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oRepository                                         := FacturasClientesRepository():New( self )
 
+   ::oContadoresModel                                    := SQLContadoresModel():New( self )
+
    ::oClientesController                                 := ClientesController():New( self )
    ::oClientesController:setView( ::oDialogView )
 
+/*
    ::oArticulosController                                := ArticulosController():New( self )
 
    ::oArticulosTarifasController                         := ArticulosTarifasController():New( self )
@@ -139,15 +142,30 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oClientesController:oGetSelector:setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
 
    ::oClientesController:oGetSelector:setEvent( 'cleanedHelpText', {|| ::clientesCleanedHelpText() } )
-
+*/
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS FacturasClientesController
 
+   ::oModel:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oBrowseView:End()
+
+   ::oRepository:End()
+
+   ::oContadoresModel:End()
+
    ::oClientesController:End()
 
+   msgalert( "End" )
+
+/*
    ::oArticulosController:End()
 
    ::oFormasPagoController:End()
@@ -171,7 +189,7 @@ METHOD End() CLASS FacturasClientesController
    ::oFacturasClientesLineasController:End()
 
    ::oHistoryManager:End()
-
+*/
    ::Super:End()
 
 RETURN ( nil )

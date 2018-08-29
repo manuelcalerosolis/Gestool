@@ -148,13 +148,42 @@ METHOD New( oSender )
 
    ::oSender      := oSender
 
-   ::oEvents      := Events():New()   
-
    ::oImageList   := TImageList():New( 16, 16 )
+
+   ::oEvents      := Events():New()   
 
 RETURN ( self )
 
 //----------------------------------------------------------------------------//
+
+METHOD End()
+
+   cursorWait()
+
+   if !empty( ::oImageList )
+   
+      aeval( ::oImageList:aBitmaps, {|oBitmap| oBitmap:End() } )
+
+      ::oImageList:End()
+
+   end if
+
+   ::oEvents:End()
+ 
+   ::oSender      := nil
+
+   ::oEvents      := nil
+
+   ::oImageList   := nil
+
+   self           := nil
+
+   cursorWE()
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
 
 METHOD ActivateMDI( nWidth, nHeight )
 
@@ -195,26 +224,8 @@ METHOD Default()
    ::oTreeView:bChanged := {|| ::onChange() }
 
    if !empty( ::getController():getImage( "16" ) )
-      ::oButtonMain     := ::oTreeView:Add( ::getController():cTitle, ::AddImage( ::getController():getImage( "16" ) ) )
+      ::oButtonMain     := ::oTreeView:Add( ::getController():cTitle, ::addImage( ::getController():getImage( "16" ) ) )
    end if 
-
-RETURN ( nil )
-
-//----------------------------------------------------------------------------//
-
-METHOD End()
-
-   if empty( ::oImageList )
-      RETURN ( nil )
-   end if
-
-   cursorWait()
-
-   aeval( ::oImageList:aBitmaps, {|oBitmap| oBitmap:End() } )
-
-   ::oImageList:End()
-
-   cursorWE()
 
 RETURN ( nil )
 
@@ -251,7 +262,7 @@ METHOD AddButton( cText, cResource, bAction, uKey, nLevel, oGroup, lAllowExit )
       RETURN ( nil )
    end if
 
-   oTreeButton          := oGroup:Add( cText, ::AddImage( cResource ), bAction )
+   oTreeButton          := oGroup:Add( cText, ::addImage( cResource ), bAction )
    oTreeButton:Cargo    := lAllowExit
 
    ::getController():addFastKey( uKey, bAction )
@@ -260,7 +271,7 @@ RETURN ( oTreeButton )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddImage( cImage )
+METHOD addImage( cImage )
 
    local oImage
    local nImageList  := 0

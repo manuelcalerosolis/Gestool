@@ -300,7 +300,7 @@ METHOD Activate() CLASS ArticulosTarifasView
    REDEFINE SAY   ::oMessage ;
       PROMPT      "Tarifa" ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    ::redefineExplorerBar()

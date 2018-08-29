@@ -79,10 +79,13 @@ METHOD End()
 
    if !empty( ::oMenuTreeView )
       ::oMenuTreeView:end()
-      ::oMenuTreeView         := nil
    end if 
 
    ::Super:End()
+
+   ::oController              := nil 
+
+   ::oMenuTreeView            := nil
 
    Self                       := nil
 
@@ -94,7 +97,6 @@ METHOD onChangeCombo( oColumn )
 
    if empty( oColumn )
       oColumn        := ::getBrowse():getColumnByHeader( ::getComboBoxOrder():VarGet() )
-      
    end if 
 
    if empty( oColumn )

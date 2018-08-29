@@ -327,7 +327,7 @@ METHOD Activate() CLASS CombinacionesView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog ;
 
    ::redefineBrowse()

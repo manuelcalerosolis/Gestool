@@ -11,7 +11,7 @@ CLASS SQLBaseRepository
    DATA oController
 
    METHOD New()
-   METHOD End()                                 VIRTUAL
+   METHOD End()                                 
 
    METHOD getController()                       INLINE ( ::oController )
 
@@ -29,11 +29,20 @@ END CLASS
 
 METHOD New( oController )
 
-   ::oController  := oController
+   ::oController                                := oController
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD End()
+
+   ::oController                                := nil
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD getAll() 
 

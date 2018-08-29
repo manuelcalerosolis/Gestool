@@ -244,7 +244,7 @@ METHOD Activate() CLASS FormaPagoView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog ;
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;

@@ -70,7 +70,7 @@ METHOD Activate() CLASS ArticulosView
    REDEFINE SAY   ::oMessage ;
       PROMPT      "Artículos" ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    ::redefineExplorerBar()

@@ -292,7 +292,7 @@ METHOD Activate() CLASS EnviromentView
 
    REDEFINE SAY   ::oSaySessiones ;
       PROMPT      "Iniciar una sesión de trabajo..." ;
-      FONT        getBoldFont() ; 
+      FONT        oFontBold() ; 
       COLOR       rgb( 10, 152, 234 ) ;
       ID          110 ;
       OF          ::oDialog ;

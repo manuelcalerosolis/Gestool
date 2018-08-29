@@ -221,6 +221,10 @@ METHOD End()
 
    CursorWait()
 
+   if !empty( ::oController )
+      ::oController                          := nil
+   end if 
+
    if !empty( ::oEvents )
       ::oEvents:End()
    end if 

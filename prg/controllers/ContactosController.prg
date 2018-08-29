@@ -273,7 +273,7 @@ METHOD Activate() CLASS ContactosView
 
     REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
    
    ::ExternalRedefine( ::oDialog )

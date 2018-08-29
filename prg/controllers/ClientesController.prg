@@ -43,8 +43,9 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::oValidator                     := ClientesValidator():New( self, ::oDialogView )
 
+/*
    ::oBrowseView                    := ClientesBrowseView():New( self )
-
+   
    ::oAgentesController             := AgentesController():New( self )
    ::oAgentesController:setView( ::oDialogView )
 
@@ -95,7 +96,7 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
-
+*/
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -104,13 +105,12 @@ METHOD End() CLASS ClientesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
-
    ::oDialogView:End()
 
    ::oValidator:End()
 
-   ::oRepository:End()
+/*
+   ::oBrowseView:End()
 
    ::oContactosController:End()
 
@@ -143,8 +143,15 @@ METHOD End() CLASS ClientesController
    ::oDireccionesController:End()
 
    ::oGetSelector:End()
-
+*/
+   
    ::Super:End()
+   
+   ::oModel             := nil 
+
+   ::oDialogView        := nil
+
+   ::oValidator         := nil
 
 RETURN ( nil )
 

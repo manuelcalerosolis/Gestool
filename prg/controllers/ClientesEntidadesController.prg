@@ -277,7 +277,7 @@ METHOD Activate() CLASS ClientesEntidadesView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog 
 
    ::oController:oEntidadesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "entidad_uuid" ] ) )

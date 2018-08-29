@@ -73,19 +73,29 @@ RETURN ( Self )
 
 METHOD End()
 
-   if !empty( ::oController )
-      ::oController:End()
-      ::oController     := nil
-   end if 
-
    if !empty( ::oTopWebBar )
       ::oTopWebBar:End()
-      ::oTopWebBar      := nil
+   end if 
+
+   if !empty( ::oHorizontalSplitter )
+      ::oHorizontalSplitter:End()
+   end if 
+
+   if !empty( ::oVerticalSplitter )
+      ::oVerticalSplitter:End()
    end if 
 
    ::Super():End()
 
-   Self                 := nil 
+   ::oController           := nil
+
+   ::oTopWebBar            := nil
+   
+   ::oHorizontalSplitter   := nil
+   
+   ::oVerticalSplitter     := nil
+
+   Self                    := nil 
 
 RETURN ( .t. )
 

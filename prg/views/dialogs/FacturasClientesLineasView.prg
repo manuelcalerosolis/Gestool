@@ -254,7 +254,7 @@ METHOD Activate()
       REDEFINE SAY   ::oSayTotalImporte ;
          PROMPT      ::nTotalImporteArticulo() ;
          ID          210 ;
-         FONT        getBoldFont() ;
+         FONT        oFontBold() ;
          PICTURE     cPirDiv() ;
          OF          ::oDialog
 
@@ -262,7 +262,7 @@ METHOD Activate()
 
       REDEFINE SAY   ::oSayTextImporte ;
          ID          211 ;
-         FONT        getBoldFont() ;
+         FONT        oFontBold() ;
          OF          ::oDialog
 
       ::oSayTextImporte:lVisible       := .t.

@@ -13,8 +13,6 @@ CLASS SQLBaseModel
 
    DATA oEvents
 
-   DATA oStatement
-
    DATA cTableName
 
    DATA cAs
@@ -277,7 +275,7 @@ METHOD New( oController )
 
    ::oDatabase                   := getSQLDatabase()
 
-   ::oEvents                     := Events():New()
+   // ::oEvents                     := Events():New()
 
    if empty( ::cColumnKey )
       ::cColumnKey               := hGetKeyAt( ::hColumns, 1 )
@@ -291,7 +289,17 @@ RETURN ( self )
 
 METHOD End()
 
-   ::oEvents:End()
+   if !empty( ::oEvents )
+      ::oEvents:End()
+   end if 
+
+   ::oController                 := nil
+
+   ::oDatabase                   := nil
+   
+   ::oEvents                     := nil
+
+   self                          := nil
    
 RETURN ( nil )
 

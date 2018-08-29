@@ -89,7 +89,7 @@ METHOD Activate() CLASS ClientesView
    REDEFINE SAY   ::oMessage ;
       PROMPT      "Clientes" ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE FOLDER ::oFolder ;
@@ -343,7 +343,7 @@ METHOD redefineContabilidad() CLASS ClientesView
 
    REDEFINE SAY ::oInfoSubCuenta ;
       PROMPT   "Subcuenta..." ;
-      FONT     getBoldFont() ; 
+      FONT     oFontBold() ; 
       COLOR    rgb( 10, 152, 234 ) ;
       ID       320 ;
       OF       ::oFolder:aDialogs[3]
@@ -368,7 +368,7 @@ METHOD redefineContabilidad() CLASS ClientesView
 
    REDEFINE SAY ::oInfoSubCuenta ;
       PROMPT   "Cuenta venta" ;
-      FONT     getBoldFont() ; 
+      FONT     oFontBold() ; 
       COLOR    rgb( 10, 152, 234 ) ;
       ID       352 ;
       OF       ::oFolder:aDialogs[3]
@@ -387,7 +387,7 @@ METHOD redefineContabilidad() CLASS ClientesView
 
    REDEFINE SAY ::oInfoSubCuentaDescuento ;
       PROMPT   "Descuento..." ;
-      FONT     getBoldFont() ; 
+      FONT     oFontBold() ; 
       COLOR    rgb( 10, 152, 234 ) ;
       ID       360 ;
       OF       ::oFolder:aDialogs[3]
