@@ -25,7 +25,7 @@ CLASS GetSelector
    DATA bWhen
    DATA bValid
 
-   METHOD New( oSender )
+   METHOD New( oController )
    METHOD End()                                 
 
    METHOD setKey( cKey )                        INLINE ( ::cKey := cKey )
@@ -87,7 +87,7 @@ METHOD New( oController ) CLASS GetSelector
 
    ::oEvents      := Events():New()
 
-   //::bWhen        := {|| ::oController:getSenderController():isNotZoomMode() } 
+   ::bWhen        := {|| ::oController:getSenderController():isNotZoomMode() } 
 
 RETURN ( Self )
 
@@ -95,13 +95,15 @@ RETURN ( Self )
 
 METHOD End() CLASS GetSelector
 
+   ::oEvents:End()
+
    ::oController  := nil
 
-   if !empty( ::oEvents )
-      ::oEvents:End()
-   end if 
-
    ::oEvents      := nil
+
+   ::bWhen        := nil
+
+   self           := nil
 
 RETURN ( nil )
 

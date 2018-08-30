@@ -31,7 +31,7 @@ METHOD New( oController )
 
    ::oController                                := oController
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -39,10 +39,11 @@ METHOD End()
 
    ::oController                                := nil
 
-Return ( Self )
+   ::oDatabase                                  := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD getAll() 
 
@@ -53,50 +54,3 @@ RETURN ( hResult )
 
 //---------------------------------------------------------------------------//
 
-/*
-METHOD getUuidWhereColumn( uValue, cColumn, uDefault ) 
-
-   local uuid
-   local cSQL  := "SELECT uuid FROM " + ::getTableName()                + " " + ;
-                     "WHERE " + cColumn + " = " + toSqlString( uValue ) + " " + ;
-                     "LIMIT 1"
-
-   uuid        := ::getDatabase():getValue( cSQL )
-   if !empty( uuid )
-      RETURN ( uuid )
-   end if 
-
-RETURN ( uDefault )
-
-//---------------------------------------------------------------------------//
-
-METHOD getWhereUuid( Uuid )
-
-   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
-   cSQL        +=    "WHERE uuid = " + quoted( uuid )                         + " "    
-   cSQL        +=    "LIMIT 1"
-
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getWhereCodigo( cCodigo )
-
-   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
-   cSQL        +=    "WHERE codigo = " + quoted( cCodigo )                    + " "    
-   cSQL        +=    "LIMIT 1"
-
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD getWhereNombre( cNombre )
-
-   local cSQL  := "SELECT * FROM " + ::getTableName()                         + " "    
-   cSQL        +=    "WHERE nombre = " + quoted( cNombre )                    + " "    
-   cSQL        +=    "LIMIT 1"
-
-RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
-
-//---------------------------------------------------------------------------//
-*/

@@ -50,7 +50,7 @@ METHOD New( oController ) CLASS ContactosController
 
    ::oRepository                    := ContactosRepository():New( self )
 
-   ::oGetSelector                := GetSelector():New( self )
+   ::oGetSelector                   := GetSelector():New( self )
    
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
@@ -58,7 +58,7 @@ METHOD New( oController ) CLASS ContactosController
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
-RETURN ( Self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -74,9 +74,25 @@ METHOD End() CLASS ContactosController
 
    ::oRepository:End()
 
+   ::oGetSelector:End()
+
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                := nil
+
+   ::oBrowseView           := nil
+
+   ::oDialogView           := nil
+
+   ::oValidator            := nil
+
+   ::oRepository           := nil
+
+   ::oGetSelector          := nil
+
+   self                    := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -88,7 +104,7 @@ METHOD gettingSelectSentence() CLASS ContactosController
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -107,7 +123,7 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS ContactosController
 
    ::oModel:loadCurrentBuffer( idContacto )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -118,12 +134,12 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS ContactosController
    idContacto          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idContacto )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:updateBuffer()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -134,12 +150,12 @@ METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS ContactosController
    idContacto          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idContacto )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:loadDuplicateBuffer( idContacto )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -147,25 +163,20 @@ METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS ContactosController
 
    hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD deleteBuffer( aUuidEntidades ) CLASS ContactosController
 
    if empty( aUuidEntidades )
-      RETURN ( self )
+      RETURN ( nil )
    end if
 
    ::oModel:deleteWhereParentUuid( aUuidEntidades )
 
-RETURN ( self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -239,10 +250,8 @@ METHOD addColumns() CLASS ContactosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -296,7 +305,6 @@ METHOD Activate() CLASS ContactosView
 
 RETURN ( ::oDialog:nResult )
 
-
 //---------------------------------------------------------------------------//
 
 METHOD ExternalRedefine( oDialog ) CLASS ContactosView
@@ -323,7 +331,7 @@ METHOD ExternalRedefine( oDialog ) CLASS ContactosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -345,9 +353,6 @@ METHOD getValidators() CLASS ContactosValidator
 
 RETURN ( ::hValidators )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -416,10 +421,6 @@ RETURN ( ::oController:oSenderController:getUuid() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS ContactosRepository FROM SQLBaseRepository
 
@@ -431,5 +432,4 @@ CLASS ContactosRepository FROM SQLBaseRepository
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

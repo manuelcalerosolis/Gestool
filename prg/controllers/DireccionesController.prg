@@ -34,7 +34,6 @@ CLASS DireccionesController FROM SQLNavigatorController
    DATA oCodigosPostalesController
 
    METHOD New()
-
    METHOD End()
 
    METHOD gettingSelectSentence()
@@ -63,9 +62,6 @@ CLASS DireccionesController FROM SQLNavigatorController
 
 END CLASS
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -160,7 +156,7 @@ METHOD gettingSelectSentence() CLASS DireccionesController
 
    ::oModel:setOthersWhere( "principal = 0" )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -179,7 +175,7 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS DireccionesController
 
    ::oModel:loadCurrentBuffer( idDireccion )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -190,12 +186,12 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS DireccionesController
    idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idDireccion )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:updateBuffer()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -206,12 +202,12 @@ METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DireccionesController
    idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idDireccion )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:loadDuplicateBuffer( idDireccion )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -219,19 +215,19 @@ METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS DireccionesController
 
    hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD deleteBuffer( aUuidEntidades ) CLASS DireccionesController
 
    if empty( aUuidEntidades )
-      RETURN ( self )
+      RETURN ( nil )
    end if
 
    ::oModel:deleteWhereParentUuid( aUuidEntidades )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

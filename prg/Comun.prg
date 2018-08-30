@@ -347,7 +347,7 @@ FUNCTION Test()
 
    local n      
 
-   ClientesController():New():End() 
+   EntidadesController():New():End() 
 
    msgalert(   "MemUsed: " + AllTrim( Transform( MemUsed(), "999,999,999,999" ) ) + ;
                " MemMax: " + Alltrim( Transform( MemMax(), "999,999,999,999" ) ) + ;
@@ -356,7 +356,7 @@ FUNCTION Test()
 
    for n := 1 to 100 
 
-   ClientesController():New():End() 
+   EntidadesController():New():End()  
 
    hb_gcall( .t. )
 

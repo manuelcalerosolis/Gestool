@@ -87,6 +87,8 @@ METHOD End() CLASS CamposExtraValoresController
 
    ::Super:End()
 
+   self                                := nil
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

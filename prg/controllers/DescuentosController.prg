@@ -6,6 +6,7 @@
 CLASS DescuentosController FROM SQLNavigatorController
 
    METHOD New()
+   METHOD End()
 
    METHOD gettingSelectSentence()
 
@@ -19,8 +20,6 @@ CLASS DescuentosController FROM SQLNavigatorController
    METHOD loadedDuplicateBuffer( uuidEntidad )
 
    METHOD deleteBuffer( aUuidEntidades )
-
-   METHOD End()
 
 END CLASS
 
@@ -38,17 +37,17 @@ METHOD New( oSenderController ) CLASS DescuentosController
                                        "32" => "gc_symbol_percent_32",;
                                        "48" => "gc_symbol_percent_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                         := SQLDescuentosModel():New( self )
+   ::oModel                      := SQLDescuentosModel():New( self )
 
-   ::oBrowseView                    := DescuentosBrowseView():New( self )
+   ::oBrowseView                 := DescuentosBrowseView():New( self )
 
-   ::oDialogView                    := DescuentosView():New( self )
+   ::oDialogView                 := DescuentosView():New( self )
 
-   ::oValidator                     := DescuentosValidator():New( self, ::oDialogView )
+   ::oValidator                  := DescuentosValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := DescuentosRepository():New( self )
+   ::oRepository                 := DescuentosRepository():New( self )
 
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
@@ -56,8 +55,7 @@ METHOD New( oSenderController ) CLASS DescuentosController
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
-
-RETURN ( Self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -75,7 +73,9 @@ METHOD End() CLASS DescuentosController
 
    ::Super:End()
 
-RETURN ( Self )
+   self                             := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -87,7 +87,7 @@ METHOD gettingSelectSentence() CLASS DescuentosController
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -106,7 +106,7 @@ METHOD LoadedCurrentBuffer( uuiddescuento ) CLASS DescuentosController
 
    ::oModel:loadCurrentBuffer( idDescuento )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -117,12 +117,12 @@ METHOD UpdateBuffer( uuidDescuento ) CLASS DescuentosController
    idDescuento          := ::oModel:getIdWhereParentUuid( uuidDescuento )
    if empty( idDescuento )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:updateBuffer()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -133,12 +133,12 @@ METHOD loadedDuplicateCurrentBuffer( uuidDescuento ) CLASS DescuentosController
    idDescuento          := ::oModel:getIdWhereParentUuid( uuidDescuento )
    if empty( idDescuento )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:loadDuplicateBuffer( idDescuento )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -146,19 +146,19 @@ METHOD loadedDuplicateBuffer( uuidDescuento ) CLASS DescuentosController
 
    hset( ::oModel:hBuffer, "parent_uuid", uuidDescuento )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD deleteBuffer( aUuidEntidades ) CLASS DescuentosController
 
    if empty( aUuidEntidades )
-      RETURN ( self )
+      RETURN ( nil )
    end if
 
    ::oModel:deleteWhereParentUuid( aUuidEntidades )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -231,7 +231,7 @@ METHOD addColumns() CLASS DescuentosBrowseView
       :lHide               := .t.
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

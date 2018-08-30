@@ -45,6 +45,8 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::oBrowseView                    := ClientesBrowseView():New( self )
    
+   ::oGetSelector                   := ClientGetSelector():New( self )
+
    ::oAgentesController             := AgentesController():New( self )
    ::oAgentesController:setView( ::oDialogView )
 
@@ -57,7 +59,6 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oCuentasRemesasController      := CuentasRemesaController():New( self )
    ::oCuentasRemesasController:setView( ::oDialogView )
 
-/*
    ::oRutasController               := RutasController():New( self )
    ::oRutasController:setView( ::oDialogView )
 
@@ -80,9 +81,9 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::oClientesEntidadesController   := ClientesEntidadesController():New( self )
 
+/*
    ::oClientesTarifasController     := ClientesTarifasController():New( self )
 
-   ::oGetSelector                   := ClientGetSelector():New( self )
    
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -111,6 +112,8 @@ METHOD End() CLASS ClientesController
 
    ::oBrowseView:End()
 
+   ::oGetSelector:End()
+
    ::oAgentesController:End()
 
    ::oArticulosTarifasController:End()
@@ -118,8 +121,13 @@ METHOD End() CLASS ClientesController
    ::oFormasPagoController:End()
 
    ::oCuentasRemesasController:End()
-   
-/*
+
+   ::oRutasController:End()
+
+   ::oClientesGruposController:End()
+
+   ::oDireccionesController:End()
+
    ::oContactosController:End()
 
    ::oIncidenciasController:End()
@@ -134,15 +142,8 @@ METHOD End() CLASS ClientesController
 
    ::oClientesEntidadesController:End()
 
+/*
    ::oClientesTarifasController:End()
-
-   ::oRutasController:End()
-
-   ::oClientesGruposController :End()
-
-   ::oDireccionesController:End()
-
-   ::oGetSelector:End()
 */
    
    ::Super:End()
@@ -155,6 +156,8 @@ METHOD End() CLASS ClientesController
 
    ::oBrowseView                 := nil 
 
+   ::oGetSelector                := nil
+
    ::oAgentesController          := nil
    
    ::oArticulosTarifasController := nil
@@ -162,6 +165,18 @@ METHOD End() CLASS ClientesController
    ::oFormasPagoController       := nil
 
    ::oCuentasRemesasController   := nil
+
+   ::oRutasController            := nil
+
+   ::oClientesGruposController   := nil
+
+   ::oDireccionesController      := nil
+
+   ::oContactosController        := nil
+
+   ::oIncidenciasController      := nil
+
+   ::oDocumentosController       := nil
 
    self                          := nil
 

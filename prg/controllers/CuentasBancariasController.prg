@@ -7,6 +7,9 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
 
    DATA oCamposExtraValoresController
 
+   METHOD New()
+   METHOD End()
+
    METHOD CalculaIBAN()
 
    METHOD CalculaDigitoControl()
@@ -24,10 +27,6 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
-   METHOD New()
-
-   METHOD End()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -36,35 +35,57 @@ METHOD New( oSenderController ) CLASS CuentasBancariasController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Cuentas bancarias"
+   ::cTitle                         := "Cuentas bancarias"
 
-   ::cName                       := "cuentas_bancarias"
+   ::cName                          := "cuentas_bancarias"
 
-   ::hImage                      := {  "16" => "gc_central_bank_euro_16",;
-                                       "32" => "gc_central_bank_euro_32",;
-                                       "48" => "gc_central_bank_euro_48" }
+   ::hImage                         := {  "16" => "gc_central_bank_euro_16",;
+                                          "32" => "gc_central_bank_euro_32",;
+                                          "48" => "gc_central_bank_euro_48" }
 
-   ::nLevel                      := Auth():Level( ::cName )
+   ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                      := SQLCuentasBancariasModel():New( self )
+   ::oModel                         := SQLCuentasBancariasModel():New( self )
 
-   ::oBrowseView                 := CuentasBancariasBrowseView():New( self )
+   ::oBrowseView                    := CuentasBancariasBrowseView():New( self )
 
-   ::oDialogView                 := CuentasBancariasView():New( self )
+   ::oDialogView                    := CuentasBancariasView():New( self )
 
-   ::oValidator                  := CuentasBancariasValidator():New( self, ::oDialogView )
+   ::oValidator                     := CuentasBancariasValidator():New( self, ::oDialogView )
+
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
-   ::oGetSelector                := GetSelector():New( self )
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::setEvent( 'appended',                            {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                              {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',                    {|| ::oBrowseView:Refresh() } ) 
+   ::setEvent( 'appended',          {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'edited',            {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'deletedSelection',  {|| ::oBrowseView:Refresh() } ) 
 
-RETURN ( Self )
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS CuentasBancariasController
+
+   ::oModel:End()
+
+   ::oBrowseView:End()
+
+   ::oDialogView:End()
+
+   ::oValidator:End()
+
+   ::oGetSelector:End()
+
+   ::oCamposExtraValoresController:End()
+
+   ::Super:End()
+
+   self                             := nil        
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -95,26 +116,6 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS CuentasBancariasController
-
-   ::oModel:End()
-
-   ::oBrowseView:End()
-
-   ::oDialogView:End()
-
-   ::oValidator:End()
-
-   ::oGetSelector:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::Super:End()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
 METHOD gettingSelectSentence() CLASS CuentasBancariasController
 
    local uuid        := ::getSenderController():getUuid() 
@@ -123,7 +124,7 @@ METHOD gettingSelectSentence() CLASS CuentasBancariasController
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -142,7 +143,7 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS CuentasBancariasController
 
    ::oModel:loadCurrentBuffer( idCuentaBanco )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -153,12 +154,12 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS CuentasBancariasController
    idCuentaBanco          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idCuentaBanco )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:updateBuffer()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -169,12 +170,12 @@ METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS CuentasBancariasControl
    idCuentaBanco          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idCuentaBanco )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:loadDuplicateBuffer( idCuentaBanco )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -182,19 +183,19 @@ METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS CuentasBancariasController
 
    hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD deleteBuffer( aUuidEntidades ) CLASS CuentasBancariasController
 
    if empty( aUuidEntidades )
-      RETURN ( self )
+      RETURN ( nil )
    end if
 
    ::oModel:deleteWhereParentUuid( aUuidEntidades )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -417,8 +418,7 @@ METHOD ExternalRedefine( oDialog ) CLASS CuentasBancariasView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

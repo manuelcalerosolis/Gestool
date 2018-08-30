@@ -41,18 +41,17 @@ METHOD New( oSenderController ) CLASS EntidadesController
 
    ::oValidator                           := EntidadesValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController               := DireccionesController():New( self )
+   ::oRepository                          := TransportistasRepository():New( self )
 
+   ::oGetSelector                         := GetSelector():New( self )
+
+   ::oDireccionesController               := DireccionesController():New( self )
+   
    ::oDireccionesController:oValidator    := DireccionesValidator():New( ::oDireccionesController, ::oDialogView )
 
    ::oCamposExtraValoresController        := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
-
    ::oContactosController                 := ContactosController():New( self )
-
-   ::oRepository                          := TransportistasRepository():New( self )
-
-   ::oGetSelector                         := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -92,19 +91,22 @@ METHOD End() CLASS EntidadesController
 
    ::oValidator:End()
 
+   ::oRepository:End()
+
+   ::oGetSelector:End()
+
+
+
+
    ::oDireccionesController:End()
 
    ::oContactosController:End()
 
    ::oCamposExtraValoresController:End()
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
-
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
