@@ -221,10 +221,6 @@ METHOD End()
 
    CursorWait()
 
-   if !empty( ::oController )
-      ::oController                          := nil
-   end if 
-
    if !empty( ::oEvents )
       ::oEvents:End()
    end if 
@@ -232,6 +228,12 @@ METHOD End()
    if !empty( ::oBrowse )
       ::oBrowse:End()
    end if 
+      
+   ::oController                             := nil
+
+   ::oEvents                                 := nil
+
+   ::oBrowse                                 := nil
 
    self                                      := nil
 

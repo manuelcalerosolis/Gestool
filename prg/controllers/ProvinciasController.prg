@@ -60,6 +60,7 @@ METHOD New( oSenderController ) CLASS ProvinciasController
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS ProvinciasController
 
    ::oModel:End()
@@ -72,7 +73,17 @@ METHOD End() CLASS ProvinciasController
 
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                := nil
+
+   ::oBrowseView           := nil
+
+   ::oDialogView           := nil
+
+   ::oValidator            := nil
+
+   self                    := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -90,9 +101,8 @@ METHOD getSelectorProvincia( oGet ) CLASS ProvinciasController
       oGet:cText( "" )
    end if
    
-RETURN ( Self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -153,13 +163,9 @@ END CLASS
 
 METHOD Activate() CLASS ProvinciasView
 
-   local oDlg
    local oBmpGeneral
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
 
-   DEFINE DIALOG  oDlg ;
+   DEFINE DIALOG  ::oDialog ;
       RESOURCE    "PROVINCIA" ;
       TITLE       ::LblTitle() + "provincia"
 
@@ -167,42 +173,42 @@ METHOD Activate() CLASS ProvinciasView
       ID          900 ;
       RESOURCE    ::oController:getImage( "48" ) ;
       TRANSPARENT ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       ID          100 ;
       WHEN        ( ::oController:isAppendOrDuplicateMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "provincia" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "provincia" ) ) ;
-      OF          oDlg
+      OF          ::oDialog
 
    REDEFINE BUTTON ;
       ID          IDOK ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( oDlg ), oDlg:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
-      OF          oDlg ;
+      OF          ::oDialog ;
       CANCEL ;
-      ACTION      ( oDlg:end() )
+      ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      oDlg:AddFastKey( VK_F5, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG ::oDialog CENTER
 
    oBmpGeneral:end()
 
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -225,7 +231,6 @@ METHOD getValidators() CLASS ProvinciasValidator
                                                    "onlyAlphanumeric"   => "EL código no puede contener caracteres especiales" } ,;
                            "provincia" =>       {  "required"           => "La provincia es un datos requerido",;
                                                    "unique"             => "La provincia introducida ya existe" } }                      
-
 
 RETURN ( ::hValidators )
 

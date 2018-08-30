@@ -37,15 +37,15 @@ METHOD New( oSenderController ) CLASS CuentasRemesaController
 
    ::oDialogView                    := CuentasRemesaView():New( self )
 
-   ::oBancosController              := CuentasBancariasController():new( self )
-
-   ::oValidator                     := CuentasRemesaValidator():New( self, ::oDialogView )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::oRepository                    := CuentasRemesaRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
+
+   ::oValidator                     := CuentasRemesaValidator():New( self, ::oDialogView )
+
+   ::oBancosController              := CuentasBancariasController():new( self )
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oBancosController:loadBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oBancosController:insertBuffer() } )
@@ -58,7 +58,7 @@ METHOD New( oSenderController ) CLASS CuentasRemesaController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oBancosController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
-RETURN ( Self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -74,11 +74,33 @@ METHOD End() CLASS CuentasRemesaController
 
    ::oRepository:End()
 
+   ::oGetSelector:End()
+
+   ::oBancosController:End()
+
    ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                         := nil
+
+   ::oBrowseView                    := nil
+
+   ::oDialogView                    := nil
+
+   ::oValidator                     := nil
+
+   ::oRepository                    := nil
+
+   ::oGetSelector                   := nil
+
+   ::oBancosController              := nil
+
+   ::oCamposExtraValoresController  := nil
+
+   self                             := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -140,7 +162,7 @@ METHOD addColumns() CLASS CuentasRemesaBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -166,7 +188,7 @@ METHOD startActivate()
 
    ::oController:oBancosController:oGetSelector:Start()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

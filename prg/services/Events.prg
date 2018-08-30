@@ -8,6 +8,7 @@ CLASS Events
    DATA hEvents                                       
  
    METHOD New()
+
    METHOD End()
 
    METHOD Set( cEvent, bEvent )
@@ -18,7 +19,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController )
+METHOD New()
 
    ::hEvents                        := {=>}
 
@@ -29,6 +30,8 @@ RETURN ( self )
 METHOD End()
 
    ::hEvents                        := nil
+
+   self                             := nil
 
 RETURN ( nil )
 

@@ -7,11 +7,11 @@ CLASS DireccionesGestoolController FROM DireccionesController
 
    METHOD getModel()                            INLINE ( ::oModel := SQLDireccionesGestoolModel():New( self ) )
 
-   METHOD getCodigosPostalesController()        INLINE ( ::oCodigosPostalesController  := CodigosPostalesGestoolController():New( self ) )
+   METHOD getCodigosPostalesController()        INLINE ( ::oCodigosPostalesController     := CodigosPostalesGestoolController():New( self ) )
 
-   METHOD getPaisesController()                 INLINE ( ::oPaisesController := PaisesGestoolController():New( self ) )
+   METHOD getPaisesController()                 INLINE ( ::oPaisesController              := PaisesGestoolController():New( self ) )
 
-   METHOD getProvinciasController()             INLINE ( ::oProvinciasController := ProvinciasGestoolController():New( self ) )
+   METHOD getProvinciasController()             INLINE ( ::oProvinciasController          := ProvinciasGestoolController():New( self ) )
 
    METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
@@ -53,13 +53,13 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    METHOD externalStartDialog()           INLINE ( ::oDialogView:StartDialog() )
 
-   METHOD getModel()                      INLINE ( ::oModel := SQLDireccionesModel():New( self ) )
+   METHOD getModel()                      INLINE ( ::oModel                      := SQLDireccionesModel():New( self ) )
 
    METHOD getCodigosPostalesController()  INLINE ( ::oCodigosPostalesController  := CodigosPostalesController():New( self ) )
 
-   METHOD getPaisesController()           INLINE ( ::oPaisesController := PaisesController():New( self ) )
+   METHOD getPaisesController()           INLINE ( ::oPaisesController           := PaisesController():New( self ) )
 
-   METHOD getProvinciasController()       INLINE ( ::oProvinciasController := ProvinciasController():New( self ) )
+   METHOD getProvinciasController()       INLINE ( ::oProvinciasController       := ProvinciasController():New( self ) )
 
 END CLASS
 
@@ -120,13 +120,33 @@ METHOD End() CLASS DireccionesController
 
    ::oGetSelector:End()
 
+   ::oCodigosPostalesController:End()
+
    ::oPaisesController:End()
 
    ::oProvinciasController:End()
 
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                            := nil
+
+   ::oBrowseView                       := nil
+
+   ::oDialogView                       := nil
+
+   ::oValidator                        := nil
+
+   ::oGetSelector                      := nil
+
+   ::oCodigosPostalesController        := nil
+
+   ::oPaisesController                 := nil
+
+   ::oProvinciasController             := nil
+
+   self                                := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

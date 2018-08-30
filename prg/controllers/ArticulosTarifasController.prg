@@ -41,6 +41,8 @@ METHOD New( oSenderController ) CLASS ArticulosTarifasController
 
    ::oModel                         := SQLArticulosTarifasModel():New( self )
 
+   ::oRepository                    := ArticulosTarifasRepository():New( self )
+
    ::oBrowseView                    := ArticulosTarifasBrowseView():New( self )
 
    ::oDialogView                    := ArticulosTarifasView():New( self )
@@ -52,8 +54,6 @@ METHOD New( oSenderController ) CLASS ArticulosTarifasController
    ::oArticulosPreciosController    := ArticulosPreciosTarifasController():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oRepository                    := ArticulosTarifasRepository():New( self )
 
    ::setEvents( { 'appended', 'duplicated' },  {|| ::endAppendedTarifa() } )
 
@@ -83,7 +83,23 @@ METHOD End() CLASS ArticulosTarifasController
 
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                         := nil
+
+   ::oBrowseView                    := nil
+
+   ::oDialogView                    := nil
+
+   ::oValidator                     := nil
+
+   ::oRepository                    := nil
+
+   ::oArticulosPreciosController    := nil
+
+   ::oCamposExtraValoresController  := nil
+
+   self                             := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

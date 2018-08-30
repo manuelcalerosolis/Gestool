@@ -52,9 +52,9 @@ RETURN ( oFontTotal )
 
 FUNCTION oFontBold()
 
-   // if empty( oFontBold )
-   //    oFontBold   := TFont():New( "Ms Sans Serif", 0, -8, .f., .t. )
-   // end if 
+   if empty( oFontBold )
+      oFontBold   := TFont():New( "Ms Sans Serif", 0, -8, .f., .t. )
+   end if 
 
 RETURN ( nil )
 

@@ -38,22 +38,22 @@ METHOD New( oSenderController ) CLASS AgentesController
    ::oModel                         := SQLAgentesModel():New( self )
 
    ::oBrowseView                    := AgentesBrowseView():New( self )
+  
+   ::oRepository                    := AgentesRepository():New( self )
 
    ::oDialogView                    := AgentesView():New( self )
 
    ::oValidator                     := AgentesValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController         := DireccionesController():New( self )
+   ::oGetSelector                   := GetSelector():New( self )
 
-   ::oRepository                    := AgentesRepository():New( self )
+   ::oDireccionesController         := DireccionesController():New( self )
 
    ::oPaisesController              := PaisesController():New( self )
 
    ::oProvinciasController          := ProvinciasController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'agentes')
-
-   ::oGetSelector                   := GetSelector():New( self )
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'agentes' )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -78,21 +78,47 @@ METHOD End() CLASS AgentesController
 
    ::oBrowseView:End()
 
+   ::oRepository:End()
+
    ::oDialogView:End()
 
    ::oValidator:End()
 
-   ::oDireccionesController:End()
+   ::oGetSelector:End()
 
-   ::oRepository:End()
+   ::oDireccionesController:End()
 
    ::oPaisesController:End()
 
    ::oProvinciasController:End()
 
+   ::oCamposExtraValoresController:End()
+
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                         := nil
+
+   ::oBrowseView                    := nil
+
+   ::oDialogView                    := nil
+
+   ::oValidator                     := nil
+
+   ::oGetSelector                   := nil
+
+   ::oDireccionesController         := nil
+
+   ::oRepository                    := nil
+
+   ::oPaisesController              := nil
+
+   ::oProvinciasController          := nil
+
+   ::oCamposExtraValoresController  := nil
+
+   self                             := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -185,7 +211,7 @@ METHOD addColumns() CLASS AgentesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

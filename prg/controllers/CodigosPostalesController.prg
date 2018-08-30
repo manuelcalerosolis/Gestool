@@ -43,6 +43,8 @@ METHOD New( oSenderController ) CLASS CodigosPostalesController
                                     "32" => "gc_postage_stamp_32",;
                                     "48" => "gc_postage_stamp_48" }
 
+   ::getModel()                                    
+
    ::oBrowseView              := CodigosPostalesBrowseView():New( self )
 
    ::oDialogView              := CodigosPostalesView():New( self )
@@ -52,9 +54,7 @@ METHOD New( oSenderController ) CLASS CodigosPostalesController
    ::getProvinciasController()
 
    if empty( oSenderController )
-
       ::nLevel                := Auth():Level( ::cName )
-   
    end if 
 
 RETURN ( Self )
@@ -75,7 +75,19 @@ METHOD End() CLASS CodigosPostalesController
 
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                   := nil
+
+   ::oBrowseView              := nil
+
+   ::oDialogView              := nil
+
+   ::oValidator               := nil
+
+   ::oProvinciasController    := nil
+
+   self                       := nil 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

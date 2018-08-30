@@ -43,7 +43,6 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::oValidator                     := ClientesValidator():New( self, ::oDialogView )
 
-/*
    ::oBrowseView                    := ClientesBrowseView():New( self )
    
    ::oAgentesController             := AgentesController():New( self )
@@ -58,6 +57,7 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oCuentasRemesasController      := CuentasRemesaController():New( self )
    ::oCuentasRemesasController:setView( ::oDialogView )
 
+/*
    ::oRutasController               := RutasController():New( self )
    ::oRutasController:setView( ::oDialogView )
 
@@ -109,16 +109,22 @@ METHOD End() CLASS ClientesController
 
    ::oValidator:End()
 
-/*
    ::oBrowseView:End()
 
+   ::oAgentesController:End()
+
+   ::oArticulosTarifasController:End()
+
+   ::oFormasPagoController:End()
+
+   ::oCuentasRemesasController:End()
+   
+/*
    ::oContactosController:End()
 
    ::oIncidenciasController:End()
 
    ::oDocumentosController:End()
-
-   ::oArticulosTarifasController:End()
 
    ::oCuentasBancariasController:End()
 
@@ -129,12 +135,6 @@ METHOD End() CLASS ClientesController
    ::oClientesEntidadesController:End()
 
    ::oClientesTarifasController:End()
-
-   ::oAgentesController:End()
-
-   ::oFormasPagoController:End()
-
-   ::oCuentasRemesasController:End()
 
    ::oRutasController:End()
 
@@ -147,11 +147,23 @@ METHOD End() CLASS ClientesController
    
    ::Super:End()
    
-   ::oModel             := nil 
+   ::oModel                      := nil 
 
-   ::oDialogView        := nil
+   ::oDialogView                 := nil
 
-   ::oValidator         := nil
+   ::oValidator                  := nil
+
+   ::oBrowseView                 := nil 
+
+   ::oAgentesController          := nil
+   
+   ::oArticulosTarifasController := nil
+   
+   ::oFormasPagoController       := nil
+
+   ::oCuentasRemesasController   := nil
+
+   self                          := nil
 
 RETURN ( nil )
 

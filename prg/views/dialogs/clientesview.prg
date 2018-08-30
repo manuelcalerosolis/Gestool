@@ -4,6 +4,7 @@
 CLASS ClientesView FROM SQLBaseView
   
    DATA oExplorerBar
+
    DATA oGetDni
    DATA oGetProvincia
    DATA oGetPoblacion
@@ -70,7 +71,7 @@ METHOD Activating() CLASS ClientesView
       ::oController:oModel:hBuffer()
    end if 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -110,10 +111,6 @@ METHOD Activate() CLASS ClientesView
 
    ::redefineExplorerBar()
 
-   /*
-   Botones generales-----------------------------------------------------------
-   */
-
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDialog ;
@@ -143,7 +140,6 @@ RETURN ( ::oDialog:nResult )
 METHOD redefineGeneral() CLASS ClientesView
 
    local oSay
-
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
@@ -179,7 +175,7 @@ METHOD redefineGeneral() CLASS ClientesView
    ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
    ::oController:oArticulosTarifasController:oGetSelector:Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[1] } )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -334,8 +330,7 @@ METHOD redefineComercial() CLASS ClientesView
 
    TBtnBmp():ReDefine( 350, "gc_recycle_16",,,,,{|| ::loadFechaLlamada() }, ::oFolder:aDialogs[2], .f., {|| ::oController:isNotZoomMode() }, .f. )
 
-
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -410,10 +405,11 @@ METHOD redefineContabilidad() CLASS ClientesView
       WHEN     ( ::oController:isNotZoomMode() ) ;
       OF       ::oFolder:aDialogs[3]
 
-   RETURN ( self )
-//---------------------------------------------------------------------------//
-METHOD startDialog()
+RETURN ( nil )
 
+//---------------------------------------------------------------------------//
+
+METHOD startDialog() CLASS ClientesView
 
    ::addLinksToExplorerBar()
    
@@ -444,7 +440,7 @@ METHOD startDialog()
       ::oRiesgoAlcanzado:Hide()
    end if
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -471,7 +467,7 @@ METHOD addLinksToExplorerBar() CLASS ClientesView
       oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
    end if
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -498,7 +494,7 @@ METHOD changeBloqueo() CLASS ClientesView
    
    ::oGetCausaBloqueo:Refresh()
 
-Return ( self )
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -508,11 +504,11 @@ METHOD loadFechaLlamada() CLASS ClientesView
 
    ::oGetFechaUltimaLlamada:Refresh()
 
-Return ( self )
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD changeAutorizacioncredito()
+METHOD changeAutorizacioncredito() CLASS ClientesView
 
    if ::oController:oModel:hBuffer[ "autorizado_venta_credito" ]
       
@@ -542,7 +538,7 @@ METHOD changeAutorizacioncredito()
    ::oRiesgo:Refresh()
    ::oRiesgoAlcanzado:Refresh() 
 
-Return ( self )
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

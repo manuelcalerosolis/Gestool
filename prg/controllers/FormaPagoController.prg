@@ -39,17 +39,17 @@ METHOD New( oSenderController ) CLASS FormasPagosController
 
    ::oDialogView                    := FormaPagoView():New( self )
 
-   ::oBancosController              := CuentasBancariasController():new( self )
-
-   ::oDocumentosController          :=  DocumentosController():New( self )
-
    ::oValidator                     := FormaPagoValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::oRepository                    := FormaPagoRepository():New( self )
-
+   
    ::oGetSelector                   := GetSelector():New( self )
+   
+   ::oBancosController              := CuentasBancariasController():new( self )
+
+   ::oDocumentosController          := DocumentosController():New( self )
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
 RETURN ( Self )
 
@@ -67,13 +67,37 @@ METHOD End() CLASS FormasPagosController
 
    ::oRepository:End()
 
-   ::oCamposExtraValoresController:End()
+   ::oGetSelector:End()
+
+   ::oBancosController:End()
 
    ::oDocumentosController:End()
 
+   ::oCamposExtraValoresController:End()
+
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                            := nil
+
+   ::oBrowseView                       := nil
+
+   ::oDialogView                       := nil
+
+   ::oValidator                        := nil
+
+   ::oRepository                       := nil
+
+   ::oGetSelector                      := nil
+
+   ::oBancosController                 := nil
+
+   ::oDocumentosController             := nil
+
+   ::oCamposExtraValoresController     := nil
+
+   self                                := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -145,7 +169,7 @@ METHOD addColumns() CLASS FormaPagoBrowseView
       :lHide               := .t.
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -222,6 +246,7 @@ RETURN ( self )
 METHOD startActivate()
 
    ::oController:oBancosController:oGetSelector:Start()
+   
    ::addLinksToExplorerBar()
 
 RETURN ( nil )
@@ -475,7 +500,7 @@ METHOD addLinksToExplorerBar() CLASS FormaPagoView
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
    if ::oController:isZoomMode()
-      RETURN ( self )
+      RETURN ( nil )
    end if
 
    oPanel:AddLink(   "Documentos...",;

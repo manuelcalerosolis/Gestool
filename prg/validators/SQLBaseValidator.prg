@@ -9,6 +9,7 @@ CLASS SQLBaseValidator
    DATA oController
 
    DATA hAsserts
+
    DATA hValidators
 
    DATA cColumnToProced
@@ -18,7 +19,7 @@ CLASS SQLBaseValidator
    DATA uValue
   
    METHOD New()
-   METHOD End()                           VIRTUAL
+   METHOD End()                           
 
    METHOD setValue( uValue )              INLINE   ( ::uValue := uValue )
 
@@ -71,7 +72,21 @@ METHOD New( oController )
 
    ::oController                 := oController
 
-Return ( Self )
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End()     
+
+   ::oController                 := nil                      
+   
+   ::hAsserts                    := nil
+   
+   ::hValidators                 := nil
+
+   self                          := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

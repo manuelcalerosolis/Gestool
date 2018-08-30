@@ -275,7 +275,7 @@ METHOD New( oController )
 
    ::oDatabase                   := getSQLDatabase()
 
-   // ::oEvents                     := Events():New()
+   ::oEvents                     := Events():New()
 
    if empty( ::cColumnKey )
       ::cColumnKey               := hGetKeyAt( ::hColumns, 1 )
@@ -298,6 +298,10 @@ METHOD End()
    ::oDatabase                   := nil
    
    ::oEvents                     := nil
+
+   ::hColumns                    := nil
+
+   ::cGeneralSelect              := nil
 
    self                          := nil
    
