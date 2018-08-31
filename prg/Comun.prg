@@ -344,10 +344,10 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-
+/*
    local n      
 
-   EntidadesController():New():End() 
+   ClientesController():New():End() 
 
    msgalert(   "MemUsed: " + AllTrim( Transform( MemUsed(), "999,999,999,999" ) ) + ;
                " MemMax: " + Alltrim( Transform( MemMax(), "999,999,999,999" ) ) + ;
@@ -356,17 +356,17 @@ FUNCTION Test()
 
    for n := 1 to 100 
 
-   EntidadesController():New():End()  
+      ClientesController():New():End()  
 
-   hb_gcall( .t. )
+      hb_gcall( .t. )
 
    next
 
-      msgalert(   "MemUsed: " + AllTrim( Transform( MemUsed(), "999,999,999,999" ) ) + ;
-                  " MemMax: " + Alltrim( Transform( MemMax(), "999,999,999,999" ) ) + ;
-                  " Resources: " + AllTrim( Str( GetFreeSystemResources( 1 ) ) ) + "%" + ;
-                  " Running time: " + TimeFromStart(), "fin" )
-
+   msgalert(   "MemUsed: " + AllTrim( Transform( MemUsed(), "999,999,999,999" ) ) + ;
+               " MemMax: " + Alltrim( Transform( MemMax(), "999,999,999,999" ) ) + ;
+               " Resources: " + AllTrim( Str( GetFreeSystemResources( 1 ) ) ) + "%" + ;
+               " Running time: " + TimeFromStart(), "fin" )
+*/
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
@@ -3272,7 +3272,7 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Clientes'
    oItem:cMessage       := 'Solicitar cliente'
-   oItem:bAction        := {|| ClientesController():New():End() } // ActivateNavigatorView() }
+   oItem:bAction        := {|| ClientesController():New():ActivateNavigatorView() }
    oItem:cId            := "clientes"
    oItem:cBmp           := "gc_user_16"
    oItem:cBmpBig        := "gc_user_32"
@@ -3308,7 +3308,7 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Facturas de clientes'
    oItem:cMessage       := 'Facturas de clientes'
-   oItem:bAction        := {|| FacturasClientesController():New():End() } // ActivateNavigatorView() }
+   oItem:bAction        := {|| FacturasClientesController():New():ActivateNavigatorView() }
    oItem:cId            := "facturas_clientes"
    oItem:cBmp           := "gc_document_text_user_16"
    oItem:cBmpBig        := "gc_document_text_user_32"

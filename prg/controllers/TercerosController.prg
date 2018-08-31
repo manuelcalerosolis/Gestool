@@ -59,13 +59,7 @@ METHOD New( oSenderController) CLASS TercerosController
 
    ::Super:New( oSenderController )
 
-   ::lTransactional              := .t.
-
-   ::oBrowseView                 := TercerosBrowseView():New( self )
-
-   ::oRepository                 := TercerosRepository():New( self )
-
-   ::oGetSelector                := GetSelector():New( self )
+   ::lTransactional     := .t.
 
 RETURN ( Self )
 
@@ -73,21 +67,9 @@ RETURN ( Self )
 
 METHOD End() CLASS TercerosController
 
-   ::oBrowseView:End()
-
-   ::oRepository:End()
-
-   ::oGetSelector:End()
-
    ::Super:End()
 
-   ::oBrowseView     := nil
-
-   ::oRepository     := nil
-
-   ::oGetSelector    := nil
-
-   self              := nil
+   self                 := nil
 
 RETURN ( nil )
 
@@ -172,7 +154,6 @@ METHOD DireccionesControllerLoadedDuplicateBuffer()
 
 RETURN ( self )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

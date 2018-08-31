@@ -57,6 +57,8 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
 
    METHOD validMDIChild()
 
+   METHOD postEndMDIChild()
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -86,8 +88,6 @@ METHOD End()
    end if 
 
    ::Super():End()
-
-   ::oController           := nil
 
    ::oTopWebBar            := nil
    
@@ -127,9 +127,9 @@ METHOD Activate()
 
    ::oMdiChild:bKeyDown    := {|nKey, nFlags| ::keyDown( nKey, nFlags ) }
    ::oMdiChild:bValid      := {|| ::validMDIChild() }
-   ::oMdiChild:bPostEnd    := {|| ::End() }
+   ::oMdiChild:bPostEnd    := {|| ::postEndMDIChild() }
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -138,6 +138,18 @@ METHOD validMDIChild()
    ::oController:saveState()
 
 RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
+
+METHOD postEndMDIChild()
+
+   ::End()
+
+   if !empty( ::oController )
+      ::oController:endNavigatorView()
+   end if 
+
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

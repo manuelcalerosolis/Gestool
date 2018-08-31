@@ -1239,8 +1239,6 @@ METHOD deleteWhereParentUuid( uUuid )
 
    ::fireEvent( 'deletingWhereParentUuid' )
 
-   msgalert( ::getDeleteSentenceWhereParentUuid( uUuid ) )
-
    ::getDatabase():Execs( ::getDeleteSentenceWhereParentUuid( uUuid ) )
 
    ::fireEvent( 'deletedWhereParentUuid' )

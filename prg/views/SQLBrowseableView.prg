@@ -83,8 +83,6 @@ METHOD End()
 
    ::Super:End()
 
-   ::oController              := nil 
-
    ::oMenuTreeView            := nil
 
    Self                       := nil

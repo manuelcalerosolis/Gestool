@@ -50,7 +50,7 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oAgentesController             := AgentesController():New( self )
    ::oAgentesController:setView( ::oDialogView )
 
-   ::oArticulosTarifasController    := ArticulosTarifasController():New( self )
+   ::oArticulosTarifasController    := ArticulosTarifasController():New( self ) 
    ::oArticulosTarifasController:setView( ::oDialogView )
 
    ::oFormasPagoController          := FormasPagosController():New( self )
@@ -81,10 +81,8 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::oClientesEntidadesController   := ClientesEntidadesController():New( self )
 
-/*
    ::oClientesTarifasController     := ClientesTarifasController():New( self )
 
-   
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
@@ -97,7 +95,7 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
-*/
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -142,9 +140,7 @@ METHOD End() CLASS ClientesController
 
    ::oClientesEntidadesController:End()
 
-/*
    ::oClientesTarifasController:End()
-*/
    
    ::Super:End()
    
@@ -177,6 +173,8 @@ METHOD End() CLASS ClientesController
    ::oIncidenciasController      := nil
 
    ::oDocumentosController       := nil
+
+   ::oClientesTarifasController  := nil
 
    self                          := nil
 

@@ -94,8 +94,6 @@ METHOD Build( cSentence, lPad )
 
    DEFAULT lPad   := .f.
 
-   msgalert (cSentence)
-
    if empty( cSentence )
       msgStop( "La sentencia esta vacia", "SQLRowSet" )
       RETURN ( nil )

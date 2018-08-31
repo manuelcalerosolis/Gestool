@@ -38,9 +38,9 @@ METHOD New( oController ) CLASS ClientesTarifasController
    ::oArticulosTarifasController    := ArticulosTarifasController():New( self )
 
    ::oDialogModalView:setEvent( 'addingduplicatebutton', {|| .f. } )
-   ::oDialogModalView:setEvent( 'addingeditbutton', {|| .f. } )
-   ::oDialogModalView:setEvent( 'addingzoombutton', {|| .f. } )
-   ::oDialogModalView:setEvent( 'appending', {|| ::ApenndLinea() } )
+   ::oDialogModalView:setEvent( 'addingeditbutton',      {|| .f. } )
+   ::oDialogModalView:setEvent( 'addingzoombutton',      {|| .f. } )
+   ::oDialogModalView:setEvent( 'appending',             {|| ::ApenndLinea() } )
 
 RETURN ( Self )
 
@@ -50,11 +50,15 @@ METHOD End() CLASS ClientesTarifasController
 
    ::oModel:End()
 
+   ::oBrowseView:End()
+
    ::oArticulosTarifasController:End()
 
    ::Super:End()
 
-RETURN ( .t. )
+   self                             := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

@@ -52,6 +52,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD buildRowSetSentenceNavigator()              INLINE ( ::buildRowSetSentence( 'navigator' ) )
 
    METHOD activateNavigatorView()
+   METHOD endNavigatorView()
 
    METHOD activateDialogView()
 
@@ -139,10 +140,6 @@ METHOD End()
 
    cursorWait()
 
-   if ::lEnableWindowsBar
-      ::DisableWindowsBar()
-   end if
-
    if !empty( ::oNavigatorView )
       ::oNavigatorView:End()
    end if 
@@ -229,6 +226,18 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD endNavigatorView()
+
+   if ::lEnableWindowsBar
+      ::DisableWindowsBar()
+   end if
+
+   ::End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD activateSelectorView( lCenter )
 
    DEFAULT lCenter   := .t.
@@ -251,32 +260,6 @@ METHOD activateSelectorView( lCenter )
 RETURN ( ::oSelectorView:Activate( lCenter ) )
 
 //---------------------------------------------------------------------------//
-/*
-METHOD restoreState()
-
-   local nId                  := ::getIdView( ::getBrowseViewType(), ::getName() )
-   local cColumnOrder         := ::getColumnOrderView( ::getBrowseViewType(), ::getName() )
-   local cColumnOrientation   := ::getColumnOrientationView( ::getBrowseViewType(), ::getName() )
-   local cState               := ::getStateView( ::getBrowseViewType(), ::getName() ) 
-
-   if empty( cColumnOrder )
-      ::oBrowseView:setFirstColumnOrder()
-   else
-      ::oBrowseView:setColumnOrder( cColumnOrder, cColumnOrientation )
-   end if 
-
-   if !empty( cState )
-      ::oBrowseView:setSaveState( cState )
-   end if 
-
-   if !empty( nId )
-      ::oBrowseView:setId( nId )
-   end if 
-
-RETURN ( self )
-
-*/
-//---------------------------------------------------------------------------//
 
 METHOD saveState()
 
@@ -292,7 +275,7 @@ METHOD saveState()
 
    CursorWE()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -328,7 +311,7 @@ METHOD addFastKey( uKey, bAction )
       hset( ::hFastKey, uKey, bAction )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -362,7 +345,7 @@ METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
                                  {|| oRowSet:eof()    },;
                                  {|nField| msgalert( nField ), oRowSet:fieldGet( nField ) } )
     
-RETURN ( Self )    
+RETURN ( nil )    
     
 //---------------------------------------------------------------------------//
 
@@ -398,17 +381,17 @@ METHOD deleteFilter()
    local cFilter  := ::oWindowsBar:GetComboFilter()
 
    if empty( cFilter )
-      RETURN ( Self )  
+      RETURN ( nil )  
    end if 
 
    if empty( ::oFilterController )
-      RETURN ( Self )  
+      RETURN ( nil )  
    end if 
 
    nId            := ::oFilterController:oModel:getId( cFilter )
 
    if empty( nId )
-      RETURN ( Self )    
+      RETURN ( nil )    
    end if 
       
    if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿Desea eliminar el registro en curso?", "Confirme eliminación" )
@@ -417,7 +400,7 @@ METHOD deleteFilter()
       ::oFilterController:oModel:deleteById( { nId } )
    end if 
 
-RETURN ( Self )    
+RETURN ( nil )    
     
 //---------------------------------------------------------------------------//
 
@@ -449,7 +432,7 @@ METHOD setFilter( cFilterName )
 
    ::reBuildRowSet()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -501,14 +484,14 @@ METHOD clearFilter()
 
    ::reBuildRowSet()
    
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD EnableWindowsBar()
 
    if empty( ::oWindowsBar )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    ::oWindowsBar:enableGet()
@@ -537,14 +520,14 @@ METHOD EnableWindowsBar()
 
    ::lEnableWindowsBar  := .t.
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD DisableWindowsBar()
 
    if empty( ::oWindowsBar )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    ::oWindowsBar:disableGet()
@@ -555,7 +538,7 @@ METHOD DisableWindowsBar()
 
    ::oWindowsBar:hideAddButtonFilter()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -567,7 +550,7 @@ METHOD hideEditAndDeleteButtonFilter()
 
    ::oWindowsBar:HideDeleteButtonFilter()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -579,7 +562,7 @@ METHOD showEditAndDeleteButtonFilter()
 
    ::oWindowsBar:ShowDeleteButtonFilter()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -625,7 +608,11 @@ METHOD getComboBoxOrder()
       RETURN ( ::oDialogModalView:getComboBoxOrder() )
    end if 
 
-RETURN ( ::oWindowsBar:oComboBox() ) 
+   if !empty( ::oWindowsBar )
+      RETURN ( ::oWindowsBar:oComboBox() ) 
+   end if 
+
+RETURN ( nil ) 
 
 //---------------------------------------------------------------------------//
    

@@ -100,8 +100,6 @@ METHOD End()
       ::oTimer:End()
    end if 
    
-   ::oController  := nil
-
    ::oEvents      := nil
    
    ::oTimer       := nil
