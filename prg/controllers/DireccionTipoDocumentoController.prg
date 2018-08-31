@@ -3,11 +3,11 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesTipoDocumentoController FROM SQLNavigatorController
+CLASS DireccionTipoDocumentoController FROM SQLNavigatorController
 
    DATA oDireccionesController
 
-   DATA oDireccionesTiposController
+   DATA oDireccionTiposController
 
    METHOD New()
 
@@ -17,7 +17,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS DireccionesTipoDocumentoController
+METHOD New( oSenderController ) CLASS DireccionTipoDocumentoController
 
    ::Super:New( oSenderController )
 
@@ -31,19 +31,19 @@ METHOD New( oSenderController ) CLASS DireccionesTipoDocumentoController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLDireccionesTipoDocumentoModel():New( self )
+   ::oModel                         := SQLDireccionTipoDocumentoModel():New( self )
 
-   ::oBrowseView                    := DireccionesTipoDocumentoBrowseView():New( self )
+   ::oBrowseView                    := DireccionTipoDocumentoBrowseView():New( self )
 
-   ::oDialogView                    := DireccionesTipoDocumentoView():New( self )
+   ::oDialogView                    := DireccionTipoDocumentoView():New( self )
 
-   ::oValidator                     := DireccionesTipoDocumentoValidator():New( self, ::oDialogView )
+   ::oValidator                     := DireccionTipoDocumentoValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := DireccionesTipoDocumentoRepository():New( self )
+   ::oRepository                    := DireccionTipoDocumentoRepository():New( self )
 
    ::oDireccionesController         := DireccionesController():New( self )
 
-   ::oDireccionesTiposController    := DireccionesTiposController():New( self )
+   ::oDireccionTiposController      := DireccionTiposController():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
 
@@ -51,7 +51,7 @@ METHOD New( oSenderController ) CLASS DireccionesTipoDocumentoController
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS DireccionesTipoDocumentoController
+METHOD End() CLASS DireccionTipoDocumentoController
 
    ::oModel:End()
 
@@ -65,7 +65,7 @@ METHOD End() CLASS DireccionesTipoDocumentoController
 
    ::oDireccionesController:End()
 
-   ::oDireccionesTiposController:End()
+   ::oDireccionTiposController:End()
 
    ::oGetSelector:End()
 
@@ -79,7 +79,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesTipoDocumentoBrowseView FROM SQLBrowseView
+CLASS DireccionTipoDocumentoBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -87,9 +87,9 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS DireccionesTipoDocumentoBrowseView
+METHOD addColumns() CLASS DireccionTipoDocumentoBrowseView
 
-   /*with object ( ::oBrowse:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
       :cHeader             := 'Id'
       :nWidth              := 80
@@ -107,65 +107,69 @@ METHOD addColumns() CLASS DireccionesTipoDocumentoBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cantidad_alternativa'
-      :cHeader             := 'Cantidad'
+      :cSortOrder          := 'parent_uuid'
+      :cHeader             := 'Parent uuid'
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad_alternativa' ) }
-      :cEditPicture        := "@E 999999999.999999"
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'unidad_alternativa_codigo'
-      :cHeader             := 'Código de unidad alternativa'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_alternativa_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'parent_uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'unidad_alternativa_nombre'
-      :cHeader             := 'Nombre de unidad alternativa'
-      :nWidth              := 150
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_alternativa_nombre' ) }
+      :cSortOrder          := 'tipo'
+      :cHeader             := 'Tipo de dirección'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'tipo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cantidad_base'
-      :cHeader             := 'Cantidad'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cantidad_base' ) }
-      :cEditPicture        := "@E 999999999.999999"
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'direccion'
+      :cHeader             := 'Dirección'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
       with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'unidad_base_codigo'
-      :cHeader             := 'Código de unidad base'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_base_codigo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'unidad_base_nombre'
-      :cHeader             := 'Nombre de unidad base'
+      :cSortOrder          := 'poblacion'
+      :cHeader             := 'Población'
       :nWidth              := 150
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_base_nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'poblacion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'sistema'
-      :cHeader             := 'Sistema'
-      :nWidth              := 60
-      :bEditValue          := {|| if( ::getRowSet():fieldGet( 'sistema' ) == 1, 'Sistema', '' ) }
+      :cSortOrder          := 'provincia'
+      :cHeader             := 'Provincia'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'provincia' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with*/
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'codigo_postal'
+      :cHeader             := 'Código postal'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_postal' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'pais'
+      :cHeader             := 'País'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'pais' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
 
 RETURN ( self )
 
@@ -175,7 +179,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesTipoDocumentoView FROM SQLBaseView
+CLASS DireccionTipoDocumentoView FROM SQLBaseView
 
    METHOD Activate()
 
@@ -185,14 +189,15 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS DireccionesTipoDocumentoView
+METHOD Activate() CLASS DireccionTipoDocumentoView
 
    local oDialog
    local oBmpGeneral
+   local uuidCliente       := SQLClientesModel():getUuidWhereCodigo( ::oController:oSenderController:getmodelbuffer( "cliente_codigo") )
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "DIRECCION_TIPO_DOCUMENTO" ;
-      TITLE       ::LblTitle() + "incidencia"
+      TITLE       ::LblTitle() + " tipo de dirección"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -207,14 +212,14 @@ METHOD Activate() CLASS DireccionesTipoDocumentoView
 
    //Tipo-------------------------------------------------------------------
 
-   ::oController:oDireccionesTiposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_uuid" ] ) )
-   ::oController:oDireccionesTiposController:oGetSelector:Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
+   ::oController:oDireccionTiposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_uuid" ] ) )
+   ::oController:oDireccionTiposController:oGetSelector:Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
 
    //Direccion--------------------------------------------------------------
-
-   ::oController:oDireccionesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "direccion_uuid" ] ) )
-   
-
+   msgalert( ::oController:oSenderController:className(), " tipo" )
+   msgalert( uuidCliente, "uuidcliente" )
+   ::oController:oDireccionesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "nombre_direccion" ] ) )
+   ::oController:oDireccionesController:oGetSelector:Build( { "idGet" => 110, "idText" => 120, /*"idDireccion" => 130, "idCodigoPostal" => 140, "idPoblacion" => 150, "idProvincia" => 160,*/ "oDialog" => ::oDialog } )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -246,17 +251,18 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD StartActivate() CLASS DireccionesTipoDocumentoView
+METHOD StartActivate() CLASS DireccionTipoDocumentoView
 
    ::oController:oDireccionesController:oGetSelector:Start()
 
-   ::oController:oDireccionesTiposController:oGetSelector:Start()
+   ::oController:oDireccionTiposController:oGetSelector:Start()
+
 
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesTipoDocumentoValidator FROM SQLBaseValidator
+CLASS DireccionTipoDocumentoValidator FROM SQLBaseValidator
 
    METHOD getValidators()
  
@@ -264,7 +270,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS DireccionesTipoDocumentoValidator
+METHOD getValidators() CLASS DireccionTipoDocumentoValidator
 
    ::hValidators  := {  "nombre" =>       {  "required"           => "La descripción es un dato requerido",;
                                              "unique"             => "La descripción introducida ya existe" },;
@@ -278,17 +284,27 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLDireccionesTipoDocumentoModel FROM SQLCompanyModel
+CLASS SQLDireccionTipoDocumentoModel FROM SQLCompanyModel
 
-   DATA cTableName                                 INIT "direcciones_tipo_documento"
+   DATA cTableName                                 INIT "direccion_tipo_documento"
 
    METHOD getColumns()
+
+   METHOD getTipoUuidAttribute( uValue ) ; 
+                                        INLINE ( if( empty( uValue ), space( 3 ), SQLDireccionTiposModel():getCodigoWhereUuid( uValue ) ) )
+
+   METHOD setTipoUuidAttribute( uValue ) ;
+                                        INLINE ( if( empty( uValue ), "", SQLDireccionTiposModel():getUuidWhereCodigo( uValue ) ) )                          
+
+   METHOD getInitialSelect()
+
+   
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLDireccionesTipoDocumentoModel
+METHOD getColumns() CLASS SQLDireccionTipoDocumentoModel
 
    hset( ::hColumns, "id",                            {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                                          "default"   => {|| 0 } }                                 )
@@ -299,23 +315,62 @@ METHOD getColumns() CLASS SQLDireccionesTipoDocumentoModel
    hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR( 40 )"                           ,;
                                                          "default"   => {|| ::getSenderControllerParentUuid() } }  )
 
-   hset( ::hColumns, "direccion_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                         "default"   => {|| space( 40 ) } }                        )
-
    hset( ::hColumns, "tipo_uuid",                     {  "create"    => "VARCHAR( 40 )"                           ,;
                                                          "default"   => {|| space( 40 ) } }                        )
+
+   hset( ::hColumns, "nombre_direccion",              {  "create"    => "VARCHAR( 140 )"                          ,;
+                                                         "default"   => {|| space( 140 ) } }                       )
 
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getInitialSelect() CLASS SQLDireccionTipoDocumentoModel                                                               
+
+   local cSql
+
+   TEXT INTO cSql
+
+  SELECT direccion_tipo_documento.id AS id,
+      direccion_tipo_documento.uuid AS uuid,
+      direccion_tipo_documento.parent_uuid AS parent_uuid,
+      direccion_tipo.nombre AS tipo,
+      direcciones.nombre AS nombre,
+      direcciones.direccion AS direccion,
+      direcciones.poblacion AS poblacion,
+      direcciones.codigo_provincia AS codigo_provincia,
+      direcciones.provincia AS provincia,
+      direcciones.codigo_postal AS codigo_postal,
+      direcciones.codigo_pais AS codigo_pais,
+      paises.nombre AS pais
+
+   FROM %1$s AS direccion_tipo_documento
+
+   INNER JOIN %2$s AS direccion_tipo
+      ON direccion_tipo_documento.tipo_uuid = direccion_tipo.uuid
+
+   INNER JOIN %3$s AS direcciones
+      ON direccion_tipo_documento.nombre_direccion = direcciones.nombre 
+
+INNER JOIN %4$s AS paises
+   ON direcciones.codigo_pais = paises.codigo
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDireccionTiposModel():getTableName(), SQLDireccionesModel():getTableName(), SQLPaisesModel():getTableName() )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesTipoDocumentoRepository FROM SQLBaseRepository
+CLASS DireccionTipoDocumentoRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLDireccionesTipoDocumentoModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLDireccionTipoDocumentoModel():getTableName() ) 
 
 END CLASS
 

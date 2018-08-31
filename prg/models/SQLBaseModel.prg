@@ -98,7 +98,7 @@ CLASS SQLBaseModel
    METHOD getAlterTableSentences()
    
    METHOD getGeneralSelect()
-   METHOD getInitialSelect()                          INLINE ( "SELECT * FROM " + ::getTableName() )
+   METHOD getInitialSelect()             INLINE ( "SELECT * FROM " + ::getTableName() )
 
    METHOD getField( cField, cBy, cId )
    METHOD getHashWhere( cBy, cId )
@@ -462,7 +462,7 @@ METHOD addParentUuidWhere( cSQLSelect )
       RETURN ( cSQLSelect )
    end if
 
-   uuid           := ::oController:getSenderController():getUuid() 
+   uuid           := ::oController:getSenderController():getUuid()
 
    if !empty( uuid )
       cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".parent_uuid = " + quoted( uuid )

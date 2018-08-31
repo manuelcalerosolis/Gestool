@@ -11,6 +11,7 @@ CLASS ClientGetSelector FROM GetSelector
    DATA idCodigoPostal 
    DATA idPoblacion    
    DATA idProvincia    
+   DATA idPais    
    DATA idTelefono     
    DATA idTarifa       
    DATA idLink         
@@ -31,6 +32,10 @@ CLASS ClientGetSelector FROM GetSelector
 
    DATA oGetProvincia
    DATA cGetProvincia               INIT ""
+
+   DATA oGetPais
+   DATA cGetPais                    INIT ""
+
 
    DATA oGetTelefono
    DATA cGetTelefono                INIT ""
@@ -62,6 +67,7 @@ METHOD Build( hBuilder ) CLASS ClientGetSelector
    ::idCodigoPostal  := if( hhaskey( hBuilder, "idCodigoPostal" ),   hBuilder[ "idCodigoPostal" ], nil )
    ::idPoblacion     := if( hhaskey( hBuilder, "idPoblacion" ),      hBuilder[ "idPoblacion" ],    nil )
    ::idProvincia     := if( hhaskey( hBuilder, "idProvincia" ),      hBuilder[ "idProvincia" ],    nil )
+   ::idPais          := if( hhaskey( hBuilder, "idPais" ),           hBuilder[ "idPais" ],         nil )
    ::idTelefono      := if( hhaskey( hBuilder, "idTelefono" ),       hBuilder[ "idTelefono" ],     nil )
    ::idTarifa        := if( hhaskey( hBuilder, "idTarifa" ),         hBuilder[ "idTarifa" ],       nil )
    ::idLink          := if( hhaskey( hBuilder, "idLink" ),           hBuilder[ "idLink" ],         nil )
@@ -126,6 +132,16 @@ METHOD Activate() CLASS ClientGetSelector
 
    end if 
 
+   if !empty( ::idPais )
+
+      REDEFINE GET   ::oGetPais ;
+         VAR         ::cGetPais ;
+         ID          ::idPais ;
+         WHEN        ( .f. ) ;
+         OF          ::oDlg
+
+   end if 
+
    if !empty( ::idTelefono )
 
       REDEFINE GET   ::oGetTelefono ;
@@ -164,6 +180,8 @@ METHOD cleanHelpText()
 
    if( !empty( ::oGetProvincia ),      ::oGetProvincia:cText( "" ), )
 
+   if( !empty( ::oGetPais ),           ::oGetPais:cText( "" ), )
+
    if( !empty( ::oGetTelefono ),       ::oGetTelefono:cText( "" ), )
 
    if( !empty( ::oGetTarifa ),         ::oGetTarifa:cText( "" ), )
@@ -188,7 +206,9 @@ METHOD setHelpText( value )
 
    if( !empty( ::oGetPoblacion ),      ::oGetPoblacion:cText( value[ "poblacion" ] ), ) 
 
-   if( !empty( ::oGetProvincia ),      ::oGetProvincia:cText( value[ "provincia" ] ), ) 
+   if( !empty( ::oGetProvincia ),      ::oGetProvincia:cText( value[ "provincia" ] ), )
+
+   if( !empty( ::oGetPais ),           ::oGetPais:cText( value[ "pais" ] ), ) 
 
    if( !empty( ::oGetTelefono ),       ::oGetTelefono:cText( value[ "telefono" ] ), ) 
 

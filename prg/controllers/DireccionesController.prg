@@ -654,6 +654,8 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
 
    METHOD getParentUuidAttribute( value )
 
+   METHOD addParentUuidWhere( cSQLSelect, uuidCliente )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -718,6 +720,38 @@ METHOD getParentUuidAttribute( value ) CLASS SQLDireccionesModel
 
 RETURN ( ::oController:oSenderController:getUuid() )
 
+//---------------------------------------------------------------------------//
+
+METHOD addParentUuidWhere( cSQLSelect, uuidCliente ) CLASS SQLDireccionesModel
+
+   local uuid        
+
+   if !::isParentUuidColumn()
+      RETURN ( cSQLSelect )
+   end if 
+
+   if empty( ::oController )
+      RETURN ( cSQLSelect )
+   end if
+
+   if empty( ::oController:getSenderController() )
+      RETURN ( cSQLSelect )
+   end if
+
+   if !empty( uuidCliente )
+      cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".parent_uuid = " + quoted( uuidCliente )
+      RETURN( cSQLSelect )
+   end if 
+
+   uuid           := ::oController:getSenderController():getUuid()
+
+   if !empty( uuid )
+      cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".parent_uuid = " + quoted( uuid )
+   end if 
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

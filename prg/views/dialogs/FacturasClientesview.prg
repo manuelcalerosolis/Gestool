@@ -202,8 +202,8 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
                          ::oController:oIncidenciasController:getImage( "16" ) )
 
    oPanel:AddLink( "Tipo de direcciones...",;
-                     {|| ::oController:oDireccionesTipoDocumentoController:activateDialogView() },;
-                         ::oController:oDireccionesTipoDocumentoController:getImage( "16" ) )
+                     {|| ::oController:oDireccionTipoDocumentoController:activateDialogView() },;
+                         ::oController:oDireccionTipoDocumentoController:getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 

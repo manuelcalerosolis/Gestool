@@ -29,7 +29,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oFacturasClientesDescuentosController
 
-   DATA oDireccionesTipoDocumentoController
+   DATA oDireccionTipoDocumentoController
 
    DATA oFacturasClientesLineasController
 
@@ -120,7 +120,7 @@ METHOD New( oController ) CLASS FacturasClientesController
    
    ::oFacturasClientesDescuentosController               := FacturasClientesDescuentosController():New( self )
 
-   ::oDireccionesTipoDocumentoController                 := DireccionesTipoDocumentoController():New( self )
+   ::oDireccionTipoDocumentoController                   := DireccionTipoDocumentoController():New( self )
 
    ::oCamposExtraValoresController                       := CamposExtraValoresController():New( self )
 
@@ -168,7 +168,7 @@ METHOD End() CLASS FacturasClientesController
 
    ::oFacturasClientesDescuentosController:End()
 
-   ::oDireccionesTipoDocumentoController:End()
+   ::oDireccionTipoDocumentoController:End()
 
    ::oCamposExtraValoresController:End()
    

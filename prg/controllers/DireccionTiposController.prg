@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesTiposController FROM SQLNavigatorController
+CLASS DireccionTiposController FROM SQLNavigatorController
 
    METHOD New()
 
@@ -13,7 +13,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS DireccionesTiposController
+METHOD New( oSenderController ) CLASS DireccionTiposController
 
    ::Super:New( oSenderController )
 
@@ -27,22 +27,22 @@ METHOD New( oSenderController ) CLASS DireccionesTiposController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLDireccionesTiposModel():New( self )
+   ::oModel                         := SQLDireccionTiposModel():New( self )
 
-   ::oBrowseView                    := DireccionesTiposBrowseView():New( self )
+   ::oBrowseView                    := DireccionTiposBrowseView():New( self )
 
-   ::oDialogView                    := DireccionesTiposView():New( self )
+   ::oDialogView                    := DireccionTiposView():New( self )
 
-   ::oValidator                     := DireccionesTiposValidator():New( self, ::oDialogView )
+   ::oValidator                     := DireccionTiposValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := DireccionesTiposRepository():New( self )
+   ::oRepository                    := DireccionTiposRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-METHOD End() CLASS DireccionesTiposController
+METHOD End() CLASS DireccionTiposController
 
    ::oModel:End()
 
@@ -70,7 +70,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesTiposBrowseView FROM SQLBrowseView
+CLASS DireccionTiposBrowseView FROM SQLBrowseView
 
    METHOD addColumns()                       
 
@@ -78,7 +78,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD addColumns() CLASS DireccionesTiposBrowseView
+METHOD addColumns() CLASS DireccionTiposBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
@@ -123,7 +123,7 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesTiposView FROM SQLBaseView
+CLASS DireccionTiposView FROM SQLBaseView
   
    METHOD Activate()
 
@@ -131,7 +131,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS DireccionesTiposView
+METHOD Activate() CLASS DireccionTiposView
 
    local oBmpGeneral
    local oSayCamposExtra
@@ -193,7 +193,7 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesTiposValidator FROM SQLBaseValidator
+CLASS DireccionTiposValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
@@ -202,7 +202,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getValidators() CLASS DireccionesTiposValidator
+METHOD getValidators() CLASS DireccionTiposValidator
 
    ::hValidators  := {  "nombre" =>                {  "required"           => "El tipo es un dato requerido",;
                                                       "unique"             => "El tipo introducido ya existe" },;
@@ -219,7 +219,7 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLDireccionesTiposModel FROM SQLCompanyModel
+CLASS SQLDireccionTiposModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "direccion_tipo"
 
@@ -229,7 +229,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns() CLASS SQLDireccionesTiposModel
+METHOD getColumns() CLASS SQLDireccionTiposModel
 
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
                                              "default"   => {|| 0 } }                                 )
@@ -256,9 +256,9 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS DireccionesTiposRepository FROM SQLBaseRepository
+CLASS DireccionTiposRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLDireccionesTiposModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLDireccionTiposModel():getTableName() ) 
 
 END CLASS
 
