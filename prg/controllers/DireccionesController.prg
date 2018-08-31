@@ -7,11 +7,11 @@ CLASS DireccionesGestoolController FROM DireccionesController
 
    METHOD getModel()                            INLINE ( ::oModel := SQLDireccionesGestoolModel():New( self ) )
 
-   METHOD getCodigosPostalesController()        INLINE ( ::oCodigosPostalesController  := CodigosPostalesGestoolController():New( self ) )
+   METHOD getCodigosPostalesController()        INLINE ( ::oCodigosPostalesController     := CodigosPostalesGestoolController():New( self ) )
 
-   METHOD getPaisesController()                 INLINE ( ::oPaisesController := PaisesGestoolController():New( self ) )
+   METHOD getPaisesController()                 INLINE ( ::oPaisesController              := PaisesGestoolController():New( self ) )
 
-   METHOD getProvinciasController()             INLINE ( ::oProvinciasController := ProvinciasGestoolController():New( self ) )
+   METHOD getProvinciasController()             INLINE ( ::oProvinciasController          := ProvinciasGestoolController():New( self ) )
 
    METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
@@ -34,7 +34,6 @@ CLASS DireccionesController FROM SQLNavigatorController
    DATA oCodigosPostalesController
 
    METHOD New()
-
    METHOD End()
 
    METHOD gettingSelectSentence()
@@ -53,19 +52,16 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    METHOD externalStartDialog()           INLINE ( ::oDialogView:StartDialog() )
 
-   METHOD getModel()                      INLINE ( ::oModel := SQLDireccionesModel():New( self ) )
+   METHOD getModel()                      INLINE ( ::oModel                      := SQLDireccionesModel():New( self ) )
 
    METHOD getCodigosPostalesController()  INLINE ( ::oCodigosPostalesController  := CodigosPostalesController():New( self ) )
 
-   METHOD getPaisesController()           INLINE ( ::oPaisesController := PaisesController():New( self ) )
+   METHOD getPaisesController()           INLINE ( ::oPaisesController           := PaisesController():New( self ) )
 
-   METHOD getProvinciasController()       INLINE ( ::oProvinciasController := ProvinciasController():New( self ) )
+   METHOD getProvinciasController()       INLINE ( ::oProvinciasController       := ProvinciasController():New( self ) )
 
 END CLASS
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -120,13 +116,33 @@ METHOD End() CLASS DireccionesController
 
    ::oGetSelector:End()
 
+   ::oCodigosPostalesController:End()
+
    ::oPaisesController:End()
 
    ::oProvinciasController:End()
 
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                            := nil
+
+   ::oBrowseView                       := nil
+
+   ::oDialogView                       := nil
+
+   ::oValidator                        := nil
+
+   ::oGetSelector                      := nil
+
+   ::oCodigosPostalesController        := nil
+
+   ::oPaisesController                 := nil
+
+   ::oProvinciasController             := nil
+
+   self                                := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -140,7 +156,7 @@ METHOD gettingSelectSentence() CLASS DireccionesController
 
    ::oModel:setOthersWhere( "principal = 0" )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -159,7 +175,7 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS DireccionesController
 
    ::oModel:loadCurrentBuffer( idDireccion )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -170,12 +186,12 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS DireccionesController
    idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idDireccion )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:updateBuffer()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -186,12 +202,12 @@ METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DireccionesController
    idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idDireccion )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:loadDuplicateBuffer( idDireccion )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -199,19 +215,19 @@ METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS DireccionesController
 
    hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD deleteBuffer( aUuidEntidades ) CLASS DireccionesController
 
    if empty( aUuidEntidades )
-      RETURN ( self )
+      RETURN ( nil )
    end if
 
    ::oModel:deleteWhereParentUuid( aUuidEntidades )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -364,7 +380,7 @@ METHOD Activate() CLASS DireccionesView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;

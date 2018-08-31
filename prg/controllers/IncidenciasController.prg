@@ -6,6 +6,7 @@
 CLASS IncidenciasController FROM SQLNavigatorController
 
    METHOD New()
+   METHOD End()
 
    METHOD gettingSelectSentence()
 
@@ -20,8 +21,6 @@ CLASS IncidenciasController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
-   METHOD End()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -30,13 +29,13 @@ METHOD New( oSenderController ) CLASS IncidenciasController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Incidencias"
+   ::cTitle                         := "Incidencias"
 
-   ::cName                       := "incidencias_sql"
+   ::cName                          := "incidencias_sql"
 
-   ::hImage                      := {  "16" => "gc_hint_16",;
-                                       "32" => "gc_hint_32",;
-                                       "48" => "gc_hint_48" }
+   ::hImage                         := {  "16" => "gc_hint_16",;
+                                          "32" => "gc_hint_32",;
+                                          "48" => "gc_hint_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -56,10 +55,10 @@ METHOD New( oSenderController ) CLASS IncidenciasController
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS IncidenciasController
 
    ::oModel:End()
@@ -74,7 +73,19 @@ METHOD End() CLASS IncidenciasController
 
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                := nil
+
+   ::oBrowseView           := nil
+
+   ::oDialogView           := nil
+
+   ::oValidator            := nil
+
+   ::oRepository           := nil
+
+   self                    := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -86,7 +97,7 @@ METHOD gettingSelectSentence() CLASS IncidenciasController
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -105,7 +116,7 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS IncidenciasController
 
    ::oModel:loadCurrentBuffer( idIncidencia )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -116,12 +127,12 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS IncidenciasController
    idIncidencia          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idIncidencia )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:updateBuffer()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -132,12 +143,12 @@ METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS IncidenciasController
    idIncidencia          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idIncidencia )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:loadDuplicateBuffer( idIncidencia )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -145,19 +156,19 @@ METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS IncidenciasController
 
    hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD deleteBuffer( aUuidEntidades ) CLASS IncidenciasController
 
    if empty( aUuidEntidades )
-      RETURN ( self )
+      RETURN ( nil )
    end if
 
    ::oModel:deleteWhereParentUuid( aUuidEntidades )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -235,7 +246,7 @@ METHOD addColumns() CLASS IncidenciasBrowseView
       :lHide               := .t.
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -276,7 +287,7 @@ METHOD Activate() CLASS IncidenciasView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
@@ -343,7 +354,7 @@ METHOD startDialog() CLASS IncidenciasView
       ::oGetFechaResolucion:Refresh()
    end if
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -363,7 +374,7 @@ METHOD changeFechaResolucion() CLASS IncidenciasView
 
    ::oGetFechaResolucion:Refresh()
 
-Return ( self )
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -37,15 +37,16 @@ METHOD New( oSenderController ) CLASS ClientesGruposController
 
    ::oValidator                     := ClientesGruposValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::oRepository                    := ClientesGruposRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS ClientesGruposController
 
    ::oModel:End()
@@ -58,16 +59,30 @@ METHOD End() CLASS ClientesGruposController
 
    ::oRepository:End()
 
+   ::oGetSelector:End()
+
    ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                         := nil
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+   ::oBrowseView                    := nil
+
+   ::oDialogView                    := nil
+
+   ::oValidator                     := nil
+
+   ::oRepository                    := nil
+
+   ::oGetSelector                   := nil
+
+   ::oCamposExtraValoresController  := nil
+
+   self                             := nil
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -117,10 +132,8 @@ METHOD addColumns() CLASS ClientesGruposBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -139,8 +152,6 @@ END CLASS
 
 METHOD Activate() CLASS ClientesGruposView
 
-   local oBmpGeneral
-
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CLIENTES_GRUPO" ;
       TITLE       ::LblTitle() + "grupo de clientes"
@@ -153,7 +164,7 @@ METHOD Activate() CLASS ClientesGruposView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog ;
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -171,7 +182,7 @@ METHOD Activate() CLASS ClientesGruposView
 
    REDEFINE SAY   ::oSayCamposExtra ;
       PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
+      FONT        oFontBold() ; 
       COLOR       rgb( 10, 152, 234 ) ;
       ID          120 ;
       OF          ::oDialog ;
@@ -206,12 +217,10 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS ClientesGruposValidator FROM SQLBaseValidator
 
    METHOD getValidators()
-
  
 END CLASS
 
@@ -230,9 +239,6 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS SQLClientesGruposModel FROM SQLCompanyModel
 
@@ -246,24 +252,20 @@ END CLASS
 
 METHOD getColumns() CLASS SQLClientesGruposModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                    "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                    "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
-                                             "default"   => {|| space( 20 ) } }                        )
+   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                            ,;
+                                    "default"   => {|| space( 20 ) } }                        )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
+                                    "default"   => {|| space( 200 ) } }                       )
 
 RETURN ( ::hColumns )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -276,5 +278,4 @@ CLASS ClientesGruposRepository FROM SQLBaseRepository
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

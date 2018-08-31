@@ -132,7 +132,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nFootStyle          := :nDataStrAlign               
       :nFooterType         := AGGR_SUM
       :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
+      :oFooterFont         := oFontBold()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:stampArticuloUnidades( oCol, uNewValue ) }
@@ -172,7 +172,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nFootStyle          := :nDataStrAlign               
       :nFooterType         := AGGR_SUM
       :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
+      :oFooterFont         := oFontBold()
       :cDataType           := "N"
    end with
 
@@ -198,7 +198,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nFootStyle          := :nDataStrAlign               
       :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
+      :oFooterFont         := oFontBold()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
       :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'incremento_precio', uNewValue ) }
@@ -215,7 +215,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nFootStyle          := :nDataStrAlign               
       :nFooterType         := AGGR_SUM
       :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
+      :oFooterFont         := oFontBold()
       :cDataType           := "N"
       :lHide               := .t.
    end with
@@ -238,7 +238,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nFootStyle          := :nDataStrAlign               
       :cEditPicture        := "@E 999.9999"
       :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
+      :oFooterFont         := oFontBold()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
       :bEditValid          := {|uNewValue| ::oController:validateIva( uNewValue ) }
@@ -256,7 +256,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nFootStyle          := :nDataStrAlign               
       :nFooterType         := AGGR_SUM
       :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
+      :oFooterFont         := oFontBold()
       :cDataType           := "N"
    end with
 

@@ -165,7 +165,7 @@ METHOD Activate() CLASS UnidadesMedicionView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog ;
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -189,7 +189,7 @@ METHOD Activate() CLASS UnidadesMedicionView
 
    REDEFINE SAY   ::oSayCamposExtra ;
       PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
+      FONT        oFontBold() ; 
       COLOR       rgb( 10, 152, 234 ) ;
       ID          130 ;
       OF          ::oDialog ;

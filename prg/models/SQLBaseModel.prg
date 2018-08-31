@@ -13,8 +13,6 @@ CLASS SQLBaseModel
 
    DATA oEvents
 
-   DATA oStatement
-
    DATA cTableName
 
    DATA cAs
@@ -291,7 +289,21 @@ RETURN ( self )
 
 METHOD End()
 
-   ::oEvents:End()
+   if !empty( ::oEvents )
+      ::oEvents:End()
+   end if 
+
+   ::oController                 := nil
+
+   ::oDatabase                   := nil
+   
+   ::oEvents                     := nil
+
+   ::hColumns                    := nil
+
+   ::cGeneralSelect              := nil
+
+   self                          := nil
    
 RETURN ( nil )
 

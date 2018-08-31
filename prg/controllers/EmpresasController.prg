@@ -99,7 +99,9 @@ METHOD New( oSenderController ) CLASS EmpresasController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
-   ::oNavigatorView:oMenuTreeView:setEvent( 'addedRefreshButton',     {|| ::addExtraButtons() } )
+   if !empty( ::oNavigatorView )
+      ::oNavigatorView:oMenuTreeView:setEvent( 'addedRefreshButton',     {|| ::addExtraButtons() } )
+   end if 
 
 RETURN ( Self )
 
@@ -360,7 +362,7 @@ METHOD Activate() CLASS EmpresasView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;

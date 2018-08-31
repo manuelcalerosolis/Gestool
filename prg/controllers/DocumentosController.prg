@@ -6,6 +6,7 @@
 CLASS DocumentosController FROM SQLNavigatorController
 
    METHOD New()
+   METHOD End()
 
    METHOD gettingSelectSentence()
 
@@ -22,8 +23,6 @@ CLASS DocumentosController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
-   METHOD End()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -32,13 +31,13 @@ METHOD New( oSenderController ) CLASS DocumentosController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Documentos"
+   ::cTitle                         := "Documentos"
 
-   ::cName                       := "documentos"
+   ::cName                          := "documentos"
 
-   ::hImage                      := {  "16" => "gc_document_text_gear_16",;
-                                       "32" => "gc_document_text_gear_32",;
-                                       "48" => "gc_document_text_gear_48" }
+   ::hImage                         := {  "16" => "gc_document_text_gear_16",;
+                                          "32" => "gc_document_text_gear_32",;
+                                          "48" => "gc_document_text_gear_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -58,8 +57,7 @@ METHOD New( oSenderController ) CLASS DocumentosController
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
-
-RETURN ( Self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -77,7 +75,9 @@ METHOD End() CLASS DocumentosController
 
    ::Super:End()
 
-RETURN ( Self )
+   self                 := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -89,7 +89,7 @@ METHOD loadedBlankBuffer() CLASS DocumentosController
       hset( ::oModel:hBuffer, "parent_uuid", uuid )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD gettingSelectSentence() CLASS DocumentosController
@@ -98,7 +98,7 @@ METHOD gettingSelectSentence() CLASS DocumentosController
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -117,7 +117,7 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS DocumentosController
 
    ::oModel:loadCurrentBuffer( idDocumento )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -128,12 +128,12 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS DocumentosController
    idDocumento          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idDocumento )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:updateBuffer()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -144,12 +144,12 @@ METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DocumentosController
    idDocumento          := ::oModel:getIdWhereParentUuid( uuidEntidad )
    if empty( idDocumento )
       ::oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::oModel:loadDuplicateBuffer( idDocumento )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -157,19 +157,19 @@ METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS DocumentosController
 
    hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD deleteBuffer( aUuidEntidades ) CLASS DocumentosController
 
    if empty( aUuidEntidades )
-      RETURN ( self )
+      RETURN ( nil )
    end if
 
    ::oModel:deleteWhereParentUuid( aUuidEntidades )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -232,7 +232,7 @@ METHOD addColumns() CLASS DocumentosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -252,10 +252,8 @@ END CLASS
 
 METHOD Activate() CLASS DocumentosView
 
-   local oDialog
-   local oGetDocumento
    local oDocumento
-   local oBmpGeneral
+   local oGetDocumento
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "DOCUMENTO" ;
@@ -269,7 +267,7 @@ METHOD Activate() CLASS DocumentosView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog 
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -319,26 +317,21 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS DocumentosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
- 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD getValidators() CLASS DocumentosValidator
 
-   ::hValidators  := {  "nombre" =>           {  "required"              => "El nombre es un dato requerido" } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -351,11 +344,13 @@ CLASS SQLDocumentosModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+   METHOD getIdWhereParentUuid( uuid ) ;           
+                                 INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
-   METHOD updateDocumentoWhereUuid( uValue, uuid )    INLINE ( ::updateFieldWhereUuid( uuid, 'ruta_documento', uValue ) )
+   METHOD updateDocumentoWhereUuid( uValue, uuid ) ;
+                                 INLINE ( ::updateFieldWhereUuid( uuid, 'ruta_documento', uValue ) )
 
-   METHOD SetDocumentoAttribute( uValue )             
+   METHOD setDocumentoAttribute( uValue )             
 
    METHOD getParentUuidAttribute( value )
 
@@ -427,8 +422,6 @@ RETURN ( cRelativeDocumentApplicationStorage() + cNombreDocumento )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS DocumentosRepository FROM SQLBaseRepository
 
@@ -436,5 +429,4 @@ CLASS DocumentosRepository FROM SQLBaseRepository
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -25,7 +25,7 @@ CLASS GetSelector
    DATA bWhen
    DATA bValid
 
-   METHOD New( oSender )
+   METHOD New( oController )
    METHOD End()                                 
 
    METHOD setKey( cKey )                        INLINE ( ::cKey := cKey )
@@ -95,9 +95,15 @@ RETURN ( Self )
 
 METHOD End() CLASS GetSelector
 
-   if !empty( ::oEvents )
-      ::oEvents:End()
-   end if 
+   ::oEvents:End()
+
+   ::oController  := nil
+
+   ::oEvents      := nil
+
+   ::bWhen        := nil
+
+   self           := nil
 
 RETURN ( nil )
 
@@ -140,7 +146,7 @@ METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
    if !empty( idLink )   
 
    REDEFINE SAY         ::oLink ;
-      FONT              getBoldFont() ; 
+      FONT              oFontBold() ; 
       COLOR             rgb( 10, 152, 234 ) ;
       ID                idLink ;
       OF                oDlg ;

@@ -36,7 +36,7 @@ METHOD Activate() CLASS ArticulosPreciosView
    REDEFINE SAY      ::oMessage ;
       PROMPT         "Tarifa : " + ::getTarifaName() ;
       ID             800 ;
-      FONT           getBoldFont() ;
+      FONT           oFontBold() ;
       OF             ::oDialog
 
    REDEFINE GET      ::oGetSearch ;

@@ -225,13 +225,19 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    end case
 
+   // Destruimos el icono -----------------------------------------------------
+
    if !empty( oIconApp )
-      oIconApp:end()
+      oIconApp:Destroy()
    end if
 
    // Conexión con SQL---------------------------------------------------------
 
    getSQLDatabase():Disconnect() 
+
+   // Informe de perdida de recursos-------------------------------------------
+
+   checkRes()
 
 RETURN ( nil )
 
@@ -654,20 +660,3 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION GetSysFont()
-
-RETURN "Ms Sans Serif" 
-
-//---------------------------------------------------------------------------//
-
-FUNCTION getBoldFont()
-
-   static oBoldFont 
-
-   if empty( oBoldFont )
-      oBoldFont   := TFont():New( GetSysFont(), 0, -8, .f., .t. )
-   end if 
-
-RETURN ( oBoldFont )
-
-//---------------------------------------------------------------------------//

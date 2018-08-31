@@ -268,7 +268,7 @@ METHOD Activate() CLASS RecibosView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       PROMPT      "Recibos";
       OF          ::oDialog ;
 

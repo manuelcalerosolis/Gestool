@@ -73,9 +73,8 @@ METHOD New( nTop, nLeft, nWidth, nHeight, nCtlHeight, cBitmap,;
             nStyle      := nOr( WS_CHILD, WS_VISIBLE, WS_CLIPSIBLINGS, WS_CLIPCHILDREN ) ,;
             nCtlHeight  := 30 ,;
             lPixel      := .t.,;
-            oBrush      := TBrush():New( , Rgb( 255,255,255 ) )
-
-            // oFont       := TFont():New( "Segoe UI Light", 0, -48, .f., .f. ),; //TFont():New( "Verdana", 0, -22, .f., .t. ),;
+            oBrush      := TBrush():New( , Rgb( 255,255,255 ) ),;
+            oFont       := TFont():New( "Ms Sans Serif", 6, 12, .f. )
 
    ::nStyle       = nStyle
    ::nId          = ::GetNewId()
@@ -99,7 +98,7 @@ METHOD New( nTop, nLeft, nWidth, nHeight, nCtlHeight, cBitmap,;
    
    //::oFont        = oFont
 
-   ::setFont( oFontBigTitle() )
+   ::setFont( oFont )
 
    if ValType( cResBmp ) == "C" .or. ValType( cBitmap ) == "C"
       ::LoadImage( cResBmp, cBitmap )
@@ -131,8 +130,8 @@ METHOD Redefine(  nId, nCtlHeight, cBitmap, cResBmp, nClrFore, nClrBack, nStyle,
             nCtlHeight  := 30 ,;
             lPixel      := .t.,;
             oWnd        := GetWndDefault(),;
-            oBrush      := TBrush():New( , nClrBack )
-            // oFont       := TFont():New( "Verdana", 0, -22, .f., .t. ),;
+            oBrush      := TBrush():New( , nClrBack ),;
+            oFont       := TFont():New( "Ms Sans Serif", 6, 12, .f. )
 
    ::nStyle       = nStyle
    ::nId          = nId
@@ -148,9 +147,8 @@ METHOD Redefine(  nId, nCtlHeight, cBitmap, cResBmp, nClrFore, nClrBack, nStyle,
    ::nHelpID      = nHelpID
    ::nClrLine     = Rgb( 255, 154, 49 )
    ::oBrush       = oBrush
-   // ::oFont        = oFont
 
-   ::setFont( oFontBigTitle() )
+   ::setFont( oFont )
 
    ::LoadImage( cResBmp, cBitmap )
 
@@ -215,9 +213,9 @@ METHOD Destroy() CLASS TWebBar
       ::oBrush:End()
    end if
 
-   // if ::oFont != nil
-   //    ::oFont:End()
-   // end if
+   if ::oFont != nil
+      ::oFont:End()
+   end if
 
    PalBmpFree( ::hBitmap, ::hPalette )
 

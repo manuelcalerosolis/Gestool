@@ -224,7 +224,7 @@ METHOD Activate() CLASS SesionesView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "numero" ] ;
@@ -332,7 +332,7 @@ METHOD Activate() CLASS SesionesCloseView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "numero" ] ;

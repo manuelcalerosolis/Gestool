@@ -48,7 +48,7 @@ METHOD Activate() CLASS FacturasClientesView
    REDEFINE SAY   ::oMessage ;
       PROMPT      "Facturas de clientes" ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE FOLDER ::oFolder ;

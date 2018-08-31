@@ -44,6 +44,8 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oValidator                     := ClientesValidator():New( self, ::oDialogView )
 
    ::oBrowseView                    := ClientesBrowseView():New( self )
+   
+   ::oGetSelector                   := ClientGetSelector():New( self )
 
    ::oAgentesController             := AgentesController():New( self )
    ::oAgentesController:setView( ::oDialogView )
@@ -79,9 +81,9 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::oClientesEntidadesController   := ClientesEntidadesController():New( self )
 
+/*
    ::oClientesTarifasController     := ClientesTarifasController():New( self )
 
-   ::oGetSelector                   := ClientGetSelector():New( self )
    
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -95,7 +97,7 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
-
+*/
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -104,21 +106,33 @@ METHOD End() CLASS ClientesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
-
    ::oDialogView:End()
 
    ::oValidator:End()
 
-   ::oRepository:End()
+   ::oBrowseView:End()
+
+   ::oGetSelector:End()
+
+   ::oAgentesController:End()
+
+   ::oArticulosTarifasController:End()
+
+   ::oFormasPagoController:End()
+
+   ::oCuentasRemesasController:End()
+
+   ::oRutasController:End()
+
+   ::oClientesGruposController:End()
+
+   ::oDireccionesController:End()
 
    ::oContactosController:End()
 
    ::oIncidenciasController:End()
 
    ::oDocumentosController:End()
-
-   ::oArticulosTarifasController:End()
 
    ::oCuentasBancariasController:End()
 
@@ -128,23 +142,43 @@ METHOD End() CLASS ClientesController
 
    ::oClientesEntidadesController:End()
 
+/*
    ::oClientesTarifasController:End()
-
-   ::oAgentesController:End()
-
-   ::oFormasPagoController:End()
-
-   ::oCuentasRemesasController:End()
-
-   ::oRutasController:End()
-
-   ::oClientesGruposController :End()
-
-   ::oDireccionesController:End()
-
-   ::oGetSelector:End()
-
+*/
+   
    ::Super:End()
+   
+   ::oModel                      := nil 
+
+   ::oDialogView                 := nil
+
+   ::oValidator                  := nil
+
+   ::oBrowseView                 := nil 
+
+   ::oGetSelector                := nil
+
+   ::oAgentesController          := nil
+   
+   ::oArticulosTarifasController := nil
+   
+   ::oFormasPagoController       := nil
+
+   ::oCuentasRemesasController   := nil
+
+   ::oRutasController            := nil
+
+   ::oClientesGruposController   := nil
+
+   ::oDireccionesController      := nil
+
+   ::oContactosController        := nil
+
+   ::oIncidenciasController      := nil
+
+   ::oDocumentosController       := nil
+
+   self                          := nil
 
 RETURN ( nil )
 

@@ -501,7 +501,7 @@ METHOD CreateSearchBar( oWnd )
    @ 124, 4 GET      ::oGet ;
             VAR      ::cGet ;
             OF       ::oRebar ;
-            FONT     oFontLittelTitle() ;
+            FONT     oFontLittleTitle() ;
             PIXEL    SIZE 210, 21
 
    ::oGet:cBmp       := "Lupa"
@@ -512,7 +512,7 @@ METHOD CreateSearchBar( oWnd )
             ITEMS    ::aComboBox ;
             STYLE    2 ;
             OF       ::oRebar ;
-            FONT     oFontLittelTitle() ;
+            FONT     oFontLittleTitle() ;
             PIXEL    SIZE 200, 30
 
    @ 124, 426 COMBOBOX ::oComboFilter ;
@@ -520,7 +520,7 @@ METHOD CreateSearchBar( oWnd )
             ITEMS    ::aComboFilter ;
             STYLE    2 ;
             OF       ::oRebar ;
-            FONT     oFontLittelTitle() ;
+            FONT     oFontLittleTitle() ;
             PIXEL    SIZE 200, 30
 
    ::oComboFilter:Disable()
@@ -574,7 +574,7 @@ METHOD CreateSearchBar( oWnd )
             ITEMS    ::aYearComboBox ;
             STYLE    3 ;
             OF       ::oRebar ;
-            FONT     oFontLittelTitle() ;
+            FONT     oFontLittleTitle() ;
             PIXEL    SIZE 60, 30
 
 RETURN ( Self )

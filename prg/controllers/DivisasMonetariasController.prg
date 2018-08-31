@@ -180,7 +180,7 @@ METHOD Activate() CLASS DivisasMonetariasView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog ;
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -293,7 +293,7 @@ METHOD Activate() CLASS DivisasMonetariasView
 
    REDEFINE SAY   ::oSayCamposExtra ;
       PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
+      FONT        oFontBold() ; 
       COLOR       rgb( 10, 152, 234 ) ;
       ID          250 ;
       OF          ::oDialog ;

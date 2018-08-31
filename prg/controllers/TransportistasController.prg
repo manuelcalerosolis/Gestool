@@ -199,7 +199,7 @@ METHOD Activate() CLASS TransportistasView
    REDEFINE SAY   ::oMessage ;
       PROMPT      "Transportista" ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;

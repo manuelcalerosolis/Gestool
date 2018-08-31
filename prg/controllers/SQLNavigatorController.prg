@@ -143,8 +143,16 @@ METHOD End()
       ::DisableWindowsBar()
    end if
 
+   if !empty( ::oNavigatorView )
+      ::oNavigatorView:End()
+   end if 
+
    if !empty( ::oSelectorView )
       ::oSelectorView:End()
+   end if 
+
+   if !empty( ::oDialogModalView )
+      ::oDialogModalView:End()
    end if 
 
    if !empty( ::oFilterController )
@@ -153,7 +161,17 @@ METHOD End()
 
    ::Super():End()
 
-   Self                       := nil
+   ::oNavigatorView           := nil
+
+   ::oSelectorView            := nil
+
+   ::oDialogModalView         := nil
+
+   ::oFilterController        := nil
+
+   ::oWindowsBar              := nil
+
+   self                       := nil
 
    cursorWE()
 

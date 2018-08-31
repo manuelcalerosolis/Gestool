@@ -228,6 +228,12 @@ METHOD End()
    if !empty( ::oBrowse )
       ::oBrowse:End()
    end if 
+      
+   ::oController                             := nil
+
+   ::oEvents                                 := nil
+
+   ::oBrowse                                 := nil
 
    self                                      := nil
 

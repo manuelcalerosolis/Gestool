@@ -19,13 +19,13 @@ METHOD New( oSenderController ) CLASS RutasController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Rutas"
+   ::cTitle                         := "Rutas"
 
-   ::cName                       := "rutas"
+   ::cName                          := "rutas"
 
-   ::hImage                      := {  "16" => "gc_map_route_16",;
-                                       "32" => "gc_map_route_32",;
-                                       "48" => "gc_map_route_48" }
+   ::hImage                         := {  "16" => "gc_map_route_16",;
+                                          "32" => "gc_map_route_32",;
+                                          "48" => "gc_map_route_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -37,15 +37,16 @@ METHOD New( oSenderController ) CLASS RutasController
 
    ::oValidator                     := RutasValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::oRepository                    := RutasRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
 
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
 METHOD End() CLASS RutasController
 
    ::oModel:End()
@@ -64,12 +65,24 @@ METHOD End() CLASS RutasController
 
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                         := nil
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+   ::oBrowseView                    := nil
+
+   ::oDialogView                    := nil
+
+   ::oValidator                     := nil
+
+   ::oRepository                    := nil
+
+   ::oGetSelector                   := nil
+
+   ::oCamposExtraValoresController  := nil
+
+   self                             := nil
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -119,10 +132,8 @@ METHOD addColumns() CLASS RutasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -156,7 +167,7 @@ METHOD Activate() CLASS RutasView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog ;
    
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
@@ -174,7 +185,7 @@ METHOD Activate() CLASS RutasView
 
    REDEFINE SAY   ::oSayCamposExtra ;
       PROMPT      "Campos extra..." ;
-      FONT        getBoldFont() ; 
+      FONT        oFontBold() ; 
       COLOR       rgb( 10, 152, 234 ) ;
       ID          120 ;
       OF          ::oDialog ;
@@ -209,23 +220,21 @@ RETURN ( ::oDialog:nResult )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS RutasValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
- 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD getValidators() CLASS RutasValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"           => "La ruta es un dato requerido",;
-                                                      "unique"             => "La ruta introducida ya existe" },;
-                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe" } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "La ruta es un dato requerido",;
+                                          "unique"    => "La ruta introducida ya existe" },;
+                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
+                                          "unique"    => "EL código introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -258,16 +267,12 @@ METHOD getColumns() CLASS SQLRutasModel
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
                                              "default"   => {|| space( 20 ) } }                        )
 
-   hset( ::hColumns, "nombre",           {  "create"    => "VARCHAR( 200 )"                           ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                           ,;
                                              "default"  => {|| space( 200 ) } }                       )
    
 
 RETURN ( ::hColumns )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -280,5 +285,4 @@ CLASS RutasRepository FROM SQLBaseRepository
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

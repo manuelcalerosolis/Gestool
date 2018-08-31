@@ -32,10 +32,6 @@
    #endif
 #endif
 
-static oFontLittelTitle
-static oFontBigTitle
-static oFontTotal
-
 #ifndef __PDA__
 
 //------------------------------------------------------------------------// 
@@ -423,7 +419,7 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
 
    // Fuentes en funcion del estilo--------------------------------------------
 
-   ::setFont( oFontLittelTitle() )
+   ::setFont( oFontLittleTitle() )
 
    // Tamaño de la ventana siempre a pixels------------------------------------
 
@@ -2903,7 +2899,6 @@ Function _aFld( aFields, aColSel )
 return aFld
 
 //---------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
 
 Function Equal( uFirst, uSecond, lExact )
 
@@ -2933,44 +2928,3 @@ return .f.
 
 //----------------------------------------------------------------------------//
 
-Function oFontLittelTitle()
-
-   if empty( oFontLittelTitle )
-      oFontLittelTitle  := TFont():New( "Ms Sans Serif", 6, 12, .f. )
-   end if
-
-Return ( oFontLittelTitle )
-
-//----------------------------------------------------------------------------//
-
-Function oFontLittelTitleEnd()
-
-   if !empty( oFontLittelTitle )
-      oFontLittelTitle:end()
-   end if
-
-   oFontLittelTitle     := nil
-
-Return ( nil )
-
-//----------------------------------------------------------------------------//
-
-Function oFontBigTitle()
-
-   if empty( oFontBigTitle )
-      oFontBigTitle     := TFont():New( "Segoe UI Light", 0, -48, .f., .f. )
-   end if
-
-Return ( oFontBigTitle )
-
-//----------------------------------------------------------------------------//
-
-Function oFontTotal()
-
-   if empty( oFontTotal )
-      oFontTotal        := TFont():New( "Arial", 8, 26, .f., .t. )
-   end if
-
-Return ( oFontTotal )
-
-//----------------------------------------------------------------------------//

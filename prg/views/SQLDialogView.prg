@@ -24,7 +24,6 @@ CLASS SQLDialogView FROM SQLBrowseableView
    DATA bInitActivate
 
    METHOD New( oController )
-
    METHOD End()
 
    METHOD Activate( bInitActivate )
@@ -70,6 +69,34 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD End()
+
+   if !empty( ::oDialog )
+      ::oDialog:End()
+   end if 
+
+   if !empty( ::oMenuTreeView )
+      ::oMenuTreeView:End()
+   end if 
+
+   if !empty( ::oEvents )
+      ::oEvents:End()
+   end if 
+
+   ::oMenuTreeView         := nil
+
+   ::oEvents               := nil
+
+   ::oDialog               := nil
+
+   ::oController           := nil
+
+   self                    := nil
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
 METHOD Activate()
 
    if isFalse( ::fireEvent( 'activating' ) )
@@ -107,18 +134,6 @@ METHOD Activate()
    ACTIVATE DIALOG ::oDialog CENTER
 
    ::fireEvent( 'activated' ) 
-
-RETURN ( nil )
-
-//----------------------------------------------------------------------------//
-
-METHOD End()
-
-   if !empty( ::oDialog )
-      ::oDialog:End()
-   end if 
-
-   ::oDialog            := nil
 
 RETURN ( nil )
 

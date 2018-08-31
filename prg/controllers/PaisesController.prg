@@ -43,9 +43,9 @@ METHOD New( oSenderController ) CLASS PaisesController
                                     "32" => "gc_globe_32",;
                                     "48" => "gc_globe_48" }
 
-   ::getModel()
-
    ::getLevel()
+
+   ::getModel()
 
    ::oBrowseView              := PaisesBrowseView():New( self )
 
@@ -69,13 +69,23 @@ METHOD End() CLASS PaisesController
 
    ::Super:End()
 
-RETURN ( Self )
+   ::oModel                := nil
+
+   ::oBrowseView           := nil
+
+   ::oDialogView           := nil
+
+   ::oValidator            := nil
+
+   self                    := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD getSelectorPais( oGet ) CLASS PaisesController
 
-   local hResult := ::ActivateSelectorView()
+   local hResult           := ::ActivateSelectorView()
 
    if hb_isnil( hResult )
       RETURN ( Self )
@@ -159,7 +169,7 @@ METHOD Activate() CLASS PaisesView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;

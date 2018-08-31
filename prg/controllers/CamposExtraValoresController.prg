@@ -87,6 +87,8 @@ METHOD End() CLASS CamposExtraValoresController
 
    ::Super:End()
 
+   self                                := nil
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -380,7 +382,7 @@ METHOD Activate() CLASS CamposExtraValoresView
 
    REDEFINE SAY   ::oMessage ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    ::oController:oBrowseView:ActivateDialog( ::oDialog, 100 )

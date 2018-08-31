@@ -152,7 +152,7 @@ METHOD Activate() CLASS PropiedadesLineasView
    REDEFINE SAY   ::oMessage ;
       PROMPT      "Lineas de propiedades" ;
       ID          800 ;
-      FONT        getBoldFont() ;
+      FONT        oFontBold() ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;

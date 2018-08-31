@@ -133,7 +133,7 @@ METHOD addColumns()
       :nFootStyle          := :nDataStrAlign               
       :nFooterType         := AGGR_SUM
       :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
+      :oFooterFont         := oFontBold()
       :cDataType           := "N"
    end with
 
@@ -147,7 +147,7 @@ METHOD addColumns()
       :nFootStyle          := :nDataStrAlign               
       :nFooterType         := AGGR_SUM
       :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
+      :oFooterFont         := oFontBold()
       :cDataType           := "N"
    end with
 
@@ -162,7 +162,7 @@ METHOD addColumns()
       :nFootStyle          := :nDataStrAlign               
       :nFooterType         := AGGR_SUM
       :cFooterPicture      := :cEditPicture
-      :oFooterFont         := getBoldFont()
+      :oFooterFont         := oFontBold()
       :cDataType           := "N"
    end with
 
@@ -187,7 +187,7 @@ METHOD addColumns()
          :nFootStyle       := :nDataStrAlign               
          :nFooterType      := AGGR_SUM
          :cFooterPicture   := :cEditPicture
-         :oFooterFont      := getBoldFont()
+         :oFooterFont      := oFontBold()
          :cDataType        := "N"
       end with
 

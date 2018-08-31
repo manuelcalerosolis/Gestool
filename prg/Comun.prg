@@ -150,7 +150,7 @@ FUNCTION CreateMainWindow( oIconApp )
    // Mensajes-----------------------------------------------------------------
 
    oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
-   oWnd:oMsgBar:setFont( oFontLittelTitle() )
+   oWnd:oMsgBar:setFont( oFontLittleTitle() )
 
    oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100, , , , .t. )
 
@@ -208,7 +208,7 @@ FUNCTION CreateMainSQLWindow( oIconApp )
    // Mensajes-----------------------------------------------------------------
 
    oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
-   oWnd:oMsgBar:setFont( oFontLittelTitle() )
+   oWnd:oMsgBar:setFont( oFontLittleTitle() )
 
    oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100, , , , .t. )
 
@@ -345,7 +345,27 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   SQLCombinacionesModel():getSelectorWhereCodigoArticulo( '00' ) 
+   local n      
+
+   EntidadesController():New():End() 
+
+   msgalert(   "MemUsed: " + AllTrim( Transform( MemUsed(), "999,999,999,999" ) ) + ;
+               " MemMax: " + Alltrim( Transform( MemMax(), "999,999,999,999" ) ) + ;
+               " Resources: " + AllTrim( Str( GetFreeSystemResources( 1 ) ) ) + "%" + ;
+               " Running time: " + TimeFromStart(), "inicio" )
+
+   for n := 1 to 100 
+
+   EntidadesController():New():End()  
+
+   hb_gcall( .t. )
+
+   next
+
+      msgalert(   "MemUsed: " + AllTrim( Transform( MemUsed(), "999,999,999,999" ) ) + ;
+                  " MemMax: " + Alltrim( Transform( MemMax(), "999,999,999,999" ) ) + ;
+                  " Resources: " + AllTrim( Str( GetFreeSystemResources( 1 ) ) ) + "%" + ;
+                  " Running time: " + TimeFromStart(), "fin" )
 
 RETURN ( nil )
 
@@ -1003,8 +1023,6 @@ Static FUNCTION FinishAplication() //  Static FUNCTION
    freeResources()
 
    cursorWE()
-
-   checkRes()
 
    /* winExec( "notepad checkres.txt" ) */
 
@@ -3254,7 +3272,7 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Clientes'
    oItem:cMessage       := 'Solicitar cliente'
-   oItem:bAction        := {|| ClientesController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| ClientesController():New():End() } // ActivateNavigatorView() }
    oItem:cId            := "clientes"
    oItem:cBmp           := "gc_user_16"
    oItem:cBmpBig        := "gc_user_32"
@@ -3290,7 +3308,7 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Facturas de clientes'
    oItem:cMessage       := 'Facturas de clientes'
-   oItem:bAction        := {|| FacturasClientesController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| FacturasClientesController():New():End() } // ActivateNavigatorView() }
    oItem:cId            := "facturas_clientes"
    oItem:cBmp           := "gc_document_text_user_16"
    oItem:cBmpBig        := "gc_document_text_user_32"
@@ -7269,7 +7287,7 @@ FUNCTION CreateAdminSQLWindow( oIconApp )
    // Mensajes-----------------------------------------------------------------
 
    oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
-   oWnd:oMsgBar:setFont( oFontLittelTitle() )
+   oWnd:oMsgBar:setFont( oFontLittleTitle() )
 
    // Abrimos la ventana-------------------------------------------------------
 

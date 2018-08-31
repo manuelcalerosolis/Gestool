@@ -95,6 +95,8 @@ METHOD End()
 
    ::oConfiguracionVistasController:End()
 
+   ::Super:End()
+
    Self                                      := nil
 
    CursorWE()

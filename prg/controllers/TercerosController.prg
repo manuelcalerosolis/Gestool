@@ -57,13 +57,13 @@ END CLASS
 
 METHOD New( oSenderController) CLASS TercerosController
 
-   ::Super:New( oSenderController)
+   ::Super:New( oSenderController )
+
+   ::lTransactional              := .t.
 
    ::oBrowseView                 := TercerosBrowseView():New( self )
 
    ::oRepository                 := TercerosRepository():New( self )
-
-   ::lTransactional              := .t.
 
    ::oGetSelector                := GetSelector():New( self )
 
@@ -73,9 +73,23 @@ RETURN ( Self )
 
 METHOD End() CLASS TercerosController
 
+   ::oBrowseView:End()
+
+   ::oRepository:End()
+
+   ::oGetSelector:End()
+
    ::Super:End()
 
-RETURN ( Self )
+   ::oBrowseView     := nil
+
+   ::oRepository     := nil
+
+   ::oGetSelector    := nil
+
+   self              := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

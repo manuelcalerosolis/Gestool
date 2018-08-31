@@ -59,28 +59,34 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End( oSenderController )
+METHOD End()
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
-      ::oDialogView                    := nil
    end if 
 
    if !empty( ::oCustomView )
       ::oCustomView:End()
-      ::oCustomView                    := nil
    end if 
 
    if !empty( ::oModel )
       ::oModel:End()
-      ::oModel                         := nil
    end if 
    
    if !empty( ::oValidator )
       ::oValidator:End()
-      ::oValidator                     := nil
    end if 
 
+   ::oSenderController                 := nil
+
+   ::oDialogView                       := nil
+
+   ::oCustomView                       := nil
+   
+   ::oModel                            := nil
+   
+   ::oValidator                        := nil
+   
    Self                                := nil
 
 RETURN ( nil )

@@ -45,7 +45,7 @@ Printer.prg             										\
 Webbar.prg              										\
 Webmap.prg              										\
 Timaglst.prg            										\
-Tinitshell.prg          										\
+GestoolFont.prg          										\
 TTagEver.prg 														\
 WebBrow.prg             										\
 TMySql.prg              										\
@@ -735,7 +735,7 @@ Treeview.c 					               								\
 OBJS            =                                  				\
 $(TARGETOBJ)                                       				\
 SQLDatabase.obj 																\
-Tinitshell.obj                                     				\
+GestoolFont.obj                                     				\
 TTagEver.obj 																	\
 WebBrow.obj                                        				\
 TMySql.obj                                         				\
@@ -1449,7 +1449,7 @@ $(EXE) 						: $(RESOURCE)\GstDialog.Res $(OBJS)
 (BORLAND)\lib\c0w32.obj                                     	+
 $(OBJ)\$(TARGETOBJ)                                         	+
 $(OBJ)\SQLDatabase.obj                                      	+
-$(OBJ)\Tinitshell.obj                                       	+
+$(OBJ)\GestoolFont.obj                                       	+
 $(OBJ)\TTagEver.obj 															+
 $(OBJ)\WebBrow.obj                                          	+
 $(OBJ)\TMySql.obj                                           	+
