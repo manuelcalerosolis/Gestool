@@ -237,7 +237,15 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
 
    // Informe de perdida de recursos-------------------------------------------
 
-   checkRes()
+   freeResources()
+
+   hb_gcall(.t.)
+   CLEAR MEMORY
+   if file( "checkres.txt" )
+      ferase( "checkres.txt" )
+   endif
+   
+   CheckRes()
 
 RETURN ( nil )
 

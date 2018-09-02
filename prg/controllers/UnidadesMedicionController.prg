@@ -39,9 +39,9 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionController
 
    ::oRepository                    := UnidadesMedicionRepository():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::oGetSelector                   := GetSelector():New( self )
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -67,7 +67,9 @@ METHOD End() CLASS UnidadesMedicionController
 
    ::Super:End()
 
-RETURN ( Self )
+   self                             := nil 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -126,7 +128,7 @@ METHOD addColumns() CLASS UnidadesMedicionBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

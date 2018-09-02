@@ -39,9 +39,9 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposLineasController
 
    ::oRepository                    := UnidadesMedicionGruposLineasRepository():New( self )
 
-   ::oUnidadesMedicionController    := UnidadesMedicionController():New( self )
-
    ::oGetSelector                   := GetSelector():New( self )
+
+   // ::oUnidadesMedicionController    := UnidadesMedicionController():New( self )
 
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -61,13 +61,15 @@ METHOD End() CLASS UnidadesMedicionGruposLineasController
 
    ::oRepository:End()
 
-   ::oUnidadesMedicionController:End()
-
    ::oGetSelector:End()
+
+   // ::oUnidadesMedicionController:End()
 
    ::Super:End()
 
-RETURN ( Self )
+   self                             := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -163,7 +165,7 @@ METHOD addColumns() CLASS UnidadesMedicionGruposLineasBrowseView
       :lHide               := .t.
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -202,7 +204,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
       FONT        oFontBold() ;
       OF          ::oDialog ;
 
-// unidad alternativa-------------------------------------------------------------------------------------------------------//
+   // unidad alternativa-------------------------------------------------------------------------------------------------------//
 
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_alternativa_codigo" ] ) )
    
@@ -217,8 +219,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
       WHEN        ( .f. ) ;
       OF          ::oDialog ;
 
-
-// unidad base--------------------------------------------------------------------------------------------------------------//
+   // unidad base--------------------------------------------------------------------------------------------------------------//
 
    REDEFINE GET   cUnidadBaseCodigo ;
       ID          140 ;
@@ -260,7 +261,6 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
 
   ::oBitmap:end()
   
-
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
@@ -269,7 +269,7 @@ METHOD StartActivate() CLASS UnidadesMedicionGruposLineasView
 
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Start()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

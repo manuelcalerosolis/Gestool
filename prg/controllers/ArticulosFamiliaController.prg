@@ -9,10 +9,6 @@ CLASS ArticulosFamiliasController FROM SQLNavigatorController
 
    DATA oComentariosController
 
-   DATA oPrimeraPropiedadController
-
-   DATA oSegundaPropiedadController
-
    DATA oTraduccionesController
 
    DATA oCamposExtraValoresController
@@ -49,9 +45,7 @@ METHOD New( oSenderController ) CLASS ArticulosFamiliasController
 
    ::oRepository                    := ArticulosFamiliaRepository():New( self )
 
-   ::oPrimeraPropiedadController    := PropiedadesController():New( self )
-
-   ::oSegundaPropiedadController    := PropiedadesController():New( self )
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oImagenesController            := ImagenesController():New( self )
 
@@ -60,8 +54,6 @@ METHOD New( oSenderController ) CLASS ArticulosFamiliasController
    ::oTraduccionesController        := TraduccionesController():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -92,6 +84,8 @@ METHOD End() CLASS ArticulosFamiliasController
 
    ::oRepository:End()
 
+   ::oGetSelector:End()
+
    ::oImagenesController:End()
 
    ::oComentariosController:End()
@@ -102,9 +96,10 @@ METHOD End() CLASS ArticulosFamiliasController
 
    ::Super:End()
 
-RETURN ( Self )
+   self                                := nil
 
-//---------------------------------------------------------------------------//
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -153,10 +148,8 @@ METHOD addColumns() CLASS ArticulosFamiliaBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -385,7 +378,6 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD endActivate()
 
    if validateDialog( ::oFolder:aDialogs )
@@ -547,10 +539,6 @@ METHOD startActivate()
    CursorWait()
 
    ::addLinksToExplorerBar()
-
-   ::oController:oPrimeraPropiedadController:oGetSelector:Start()
-
-   ::oController:oSegundaPropiedadController:oGetSelector:Start()
 
    ::oController:oComentariosController:oGetSelector:Start()
 

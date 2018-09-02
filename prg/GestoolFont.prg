@@ -8,10 +8,16 @@ static oFontLittleTitle
 
 //----------------------------------------------------------------------------//
 
+FUNCTION GetSysFont()
+
+RETURN "Ms Sans Serif"
+
+//----------------------------------------------------------------------------//
+
 FUNCTION oFontLittleTitle()
 
    if empty( oFontLittleTitle )
-      oFontLittleTitle  := TFont():New( "Ms Sans Serif", 6, 12, .f. )
+      oFontLittleTitle  := TFont():New( GetSysFont(), 6, 12, .f. )
    end if
 
 RETURN ( oFontLittleTitle )
@@ -32,11 +38,11 @@ RETURN ( nil )
 
 FUNCTION oFontBigTitle()
 
-   // if empty( oFontBigTitle )
-   //    oFontBigTitle     := TFont():New( "Segoe UI Light", 0, -48, .f., .f. )
-   // end if
+   if empty( oFontBigTitle )
+      oFontBigTitle     := TFont():New( "Segoe UI Light", 0, -48, .f., .f. )
+   end if
 
-RETURN ( nil )
+RETURN ( oFontBigTitle )
 
 //----------------------------------------------------------------------------//
 
@@ -53,7 +59,7 @@ RETURN ( oFontTotal )
 FUNCTION oFontBold()
 
    if empty( oFontBold )
-      oFontBold   := TFont():New( "Ms Sans Serif", 0, -8, .f., .t. )
+      oFontBold   := TFont():New( GetSysFont(), 0, -8, .f., .t. )
    end if 
 
 RETURN ( nil )

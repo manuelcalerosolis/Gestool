@@ -37,11 +37,11 @@ METHOD New( oSenderController ) CLASS ArticulosCategoriasController
 
    ::oValidator                     := ArticulosCategoriasValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::oRepository                    := ArticulosCategoriasRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
 RETURN ( Self )
 
@@ -58,18 +58,16 @@ METHOD End() CLASS ArticulosCategoriasController
 
    ::oRepository:End()
 
-   ::oCamposExtraValoresController:End()
-
    ::oGetSelector:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
-RETURN ( Self )
+   self                             := nil
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -127,10 +125,8 @@ METHOD addColumns() CLASS ArticulosCategoriasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

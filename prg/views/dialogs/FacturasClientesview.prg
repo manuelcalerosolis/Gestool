@@ -54,8 +54,8 @@ METHOD Activate() CLASS FacturasClientesView
    REDEFINE FOLDER ::oFolder ;
       ID          500 ;
       OF          ::oDialog ;
-      PROMPT      "General",;
-                  "Comercial";
+      PROMPT      "General" ,;
+                  "Comercial" ;
       DIALOGS     "TRANSACION_GENERAL" ,;
                   "CLIENTE_COMERCIAL" 
 

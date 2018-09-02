@@ -41,13 +41,13 @@ METHOD New( oSenderController ) CLASS ArticulosFabricantesController
 
    ::oValidator                     := ArticulosFabricantesValidator():New( self, ::oDialogView )
 
-   ::oImagenesController            := ImagenesController():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::oRepository                    := ArticulosFabricantesRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
+
+   ::oImagenesController            := ImagenesController():New( self )
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -76,17 +76,19 @@ METHOD End() CLASS ArticulosFabricantesController
 
    ::oValidator:End()
 
-   ::oImagenesController:End()
-
-   ::oCamposExtraValoresController:End()
-
    ::oRepository:End()
 
    ::oGetSelector:End()
 
+   ::oImagenesController:End()
+
+   ::oCamposExtraValoresController:End()
+
    ::Super:End()
 
-RETURN ( Self )
+   self                             := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

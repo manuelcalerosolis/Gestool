@@ -77,25 +77,13 @@ METHOD End() CLASS ArticulosTarifasController
 
    ::oRepository:End()
 
+   ::oGetSelector:End()
+
    ::oArticulosPreciosController:End()
 
    ::oCamposExtraValoresController:End()
 
    ::Super:End()
-
-   ::oModel                         := nil
-
-   ::oBrowseView                    := nil
-
-   ::oDialogView                    := nil
-
-   ::oValidator                     := nil
-
-   ::oRepository                    := nil
-
-   ::oArticulosPreciosController    := nil
-
-   ::oCamposExtraValoresController  := nil
 
    self                             := nil
 

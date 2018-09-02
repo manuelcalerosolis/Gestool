@@ -66,8 +66,6 @@ END CLASS
 
 METHOD New( oController ) CLASS FacturasClientesController
 
-   msgalert( "New" )
-
    ::Super:New( oController )
 
    ::cTitle                                              := "Facturas de clientes"
@@ -95,15 +93,10 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oClientesController                                 := ClientesController():New( self )
    ::oClientesController:setView( ::oDialogView )
 
-/*
    ::oArticulosController                                := ArticulosController():New( self )
 
    ::oArticulosTarifasController                         := ArticulosTarifasController():New( self )
    ::oArticulosTarifasController:setView( ::oDialogView )
-
-   ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
-
-   ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
 
    ::oFormasPagoController                               := FormasPagosController():New( self )   
    ::oFormasPagoController:setView( ::oDialogView )
@@ -146,7 +139,11 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oClientesController:oGetSelector:setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
 
    ::oClientesController:oGetSelector:setEvent( 'cleanedHelpText', {|| ::clientesCleanedHelpText() } )
-*/
+
+   ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
+
+   ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -167,10 +164,9 @@ METHOD End() CLASS FacturasClientesController
 
    ::oClientesController:End()
 
-   msgalert( "End" )
-
-/*
    ::oArticulosController:End()
+
+   ::oArticulosTarifasController:End()
 
    ::oFormasPagoController:End()
 
@@ -179,8 +175,6 @@ METHOD End() CLASS FacturasClientesController
    ::oAgentesController:End()
  
    ::oAlmacenesController:End()
-
-   ::oArticulosTarifasController:End()
 
    ::oClientesTarifasController:End()
 
@@ -195,8 +189,14 @@ METHOD End() CLASS FacturasClientesController
    ::oFacturasClientesLineasController:End()
 
    ::oHistoryManager:End()
-*/
+
+   ::oNumeroDocumentoComponent:End()
+
+   ::oSerieDocumentoComponent:End()
+
    ::Super:End()
+
+   self                                                  := nil
 
 RETURN ( nil )
 

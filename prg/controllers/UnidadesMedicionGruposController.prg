@@ -45,13 +45,13 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposController
 
    ::oRepository                             := UnidadesMedicionGruposRepository():New( self )
 
-   ::oUnidadesMedicionGruposLineasController := UnidadesMedicionGruposLineasController():New( self )
+   ::oGetSelector                            := GetSelector():New( self )
 
    ::oUnidadesMedicionController             := UnidadesMedicionController():New( self )
 
-   ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, ::oModel:cTableName )
+   ::oUnidadesMedicionGruposLineasController := UnidadesMedicionGruposLineasController():New( self )
 
-   ::oGetSelector                            := GetSelector():New( self )
+   ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -71,27 +71,23 @@ METHOD End() CLASS UnidadesMedicionGruposController
 
    ::oRepository:End()
 
-   ::oUnidadesMedicionGruposLineasController:End()
+   ::oGetSelector:End()
 
    ::oUnidadesMedicionController:End()
 
-   ::oCamposExtraValoresController:End()
+   ::oUnidadesMedicionGruposLineasController:End()
 
-   ::oGetSelector:End()
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
-RETURN ( Self )
+   self                                      := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD insertLineaUnidadBase() CLASS UnidadesMedicionGruposController
-
-   local cSelect  := ""
-
-   /*
-   Primero comprobamos que no hayan lineas
-   */
 
    if empty( ::oUnidadesMedicionGruposLineasController:oModel:getField( 'uuid', 'parent_uuid', ::getUuid() ) )
 
@@ -99,7 +95,7 @@ METHOD insertLineaUnidadBase() CLASS UnidadesMedicionGruposController
 
    end if
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -167,7 +163,7 @@ METHOD addColumns() CLASS UnidadesMedicionGruposBrowseView
       :lHide               := .t.
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -300,7 +296,7 @@ METHOD StartActivate() CLASS UnidadesMedicionGruposView
 
    ::oController:oUnidadesMedicioncontroller:oGetSelector:Start()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

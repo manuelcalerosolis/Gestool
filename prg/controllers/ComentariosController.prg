@@ -21,13 +21,13 @@ METHOD New( oSenderController ) CLASS ComentariosController
 
    ::Super:New( oSenderController )
 
-   ::cTitle                      := "Comentarios"
+   ::cTitle                         := "Comentarios"
 
-   ::cName                       := "comentarios"
+   ::cName                          := "comentarios"
 
-   ::hImage                      := {  "16" => "gc_message_16",;
-                                       "32" => "gc_message_32",;
-                                       "48" => "gc_message_48" }
+   ::hImage                         := {  "16" => "gc_message_16",;
+                                          "32" => "gc_message_32",;
+                                          "48" => "gc_message_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
 
@@ -37,15 +37,15 @@ METHOD New( oSenderController ) CLASS ComentariosController
 
    ::oDialogView                    := ComentariosView():New( self )
 
-   ::oComentariosLineasController   := ComentariosLineasController():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::oValidator                     := ComentariosValidator():New( self, ::oDialogView )
 
    ::oRepository                    := ComentariosRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )   
+
+   ::oComentariosLineasController   := ComentariosLineasController():New( self )
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
 RETURN ( Self )
 
@@ -61,15 +61,19 @@ METHOD End() CLASS ComentariosController
 
    ::oValidator:End()
 
+   ::oRepository:End()
+
+   ::oGetSelector:End()
+
    ::oComentariosLineasController:End()
 
    ::oCamposExtraValoresController:End()
 
-   ::oRepository:End()
-
    ::Super:End()
 
-RETURN ( Self )
+   self                             := nil                   
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -120,7 +124,7 @@ METHOD addColumns() CLASS ComentariosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -148,9 +152,6 @@ RETURN ( ::oController:oComentariosLineasController:BuildRowSet() )
 
 METHOD Activate() CLASS ComentariosView
 
-   local oDialog 
-   local oBmpGeneral
-   local oSayCamposExtra
    local oBtnEdit
    local oBtnAppend
    local oBtnDelete
@@ -282,18 +283,17 @@ END CLASS
 
 METHOD getColumns() CLASS SQLComentariosModel
 
-   hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
-                                             "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",       {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;                          
+                                    "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
-                                             "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",     {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;                                  
+                                    "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
-                                             "default"   => {|| space( 20 ) } }                        )
+   hset( ::hColumns, "codigo",   {  "create"    => "VARCHAR( 20 )"                            ,;
+                                    "default"   => {|| space( 20 ) } }                        )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
-
+   hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
+                                    "default"   => {|| space( 200 ) } }                       )
 
 RETURN ( ::hColumns )
 

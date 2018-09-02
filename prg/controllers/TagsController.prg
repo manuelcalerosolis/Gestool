@@ -63,6 +63,8 @@ METHOD End() CLASS TagsController
 
    ::Super:End()
 
+   self                    := nil                                
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

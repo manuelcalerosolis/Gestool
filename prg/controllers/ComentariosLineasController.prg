@@ -55,11 +55,11 @@ METHOD End() CLASS ComentariosLineasController
 
    ::oValidator:End()
 
-   /*::oRepository:End()*/
-
    ::Super:End()
 
-RETURN ( Self )
+   self                          := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -71,7 +71,7 @@ METHOD loadedBlankBuffer() CLASS ComentariosLineasController
       hset( ::oModel:hBuffer, "parent_uuid", uuid )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -83,7 +83,7 @@ METHOD gettingSelectSentence() CLASS ComentariosLineasController
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -140,7 +140,7 @@ METHOD addColumns() CLASS ComentariosLineasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

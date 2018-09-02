@@ -53,10 +53,6 @@ METHOD New( oSenderController ) CLASS CombinacionesController
 
    ::nLevel                               := Auth():Level( ::cName )
 
-   ::oPropiedadesController               := PropiedadesController():New( self )
-
-   ::oPropiedadesLineasController         := PropiedadesLineasController():New( self )
-
    ::oModel                               := SQLCombinacionesModel():New( self )
 
    ::oBrowseView                          := CombinacionesBrowseView():New( self )
@@ -69,21 +65,19 @@ METHOD New( oSenderController ) CLASS CombinacionesController
 
    ::oRepository                          := CombinacionesRepository():New( self )
 
-   ::oCombinacionesPropiedadesController  := CombinacionesPropiedadesController():New( self )
-
    ::oGetSelector                         := GetSelector():New( self ) 
+
+   ::oPropiedadesController               := PropiedadesController():New( self )
+
+   ::oPropiedadesLineasController         := PropiedadesLineasController():New( self )
+
+   ::oCombinacionesPropiedadesController  := CombinacionesPropiedadesController():New( self )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS CombinacionesController
-
-   ::oPropiedadesController:End()
-
-   ::oPropiedadesLineasController:End()
-
-   ::oCombinacionesPropiedadesController:End()
 
    ::oModel:End()
 
@@ -97,7 +91,15 @@ METHOD End() CLASS CombinacionesController
 
    ::oRepository:End()
 
+   ::oPropiedadesController:End()
+
+   ::oPropiedadesLineasController:End()
+
+   ::oCombinacionesPropiedadesController:End()
+
    ::Super:End()
+
+   self                                   := nil
 
 RETURN ( nil )
 

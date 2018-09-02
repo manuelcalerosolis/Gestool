@@ -113,10 +113,10 @@ METHOD New() CLASS ArticulosController
 
    ::oImagenesController                     := ImagenesController():New( self )
 
-   ::oTraduccionesController                 := TraduccionesController():New( self )
-
    ::oArticulosFamiliasController            := ArticulosFamiliasController():New( self )
    ::oArticulosFamiliasController:setView( ::oDialogView )
+
+   ::oTraduccionesController                 := TraduccionesController():New( self )
 
    ::oArticulosTipoController                := ArticulosTipoController():New( self )
    ::oArticulosTipoController:setView( ::oDialogView )
@@ -169,9 +169,15 @@ METHOD End() CLASS ArticulosController
 
    ::oCamposExtraValoresController:End()
 
+   ::oUnidadesMedicionOperacionesController:End()
+
    ::oTagsController:End()
 
+   ::oImagenesController:End()
+   
    ::oArticulosFamiliasController:End()
+   
+   ::oTraduccionesController:End()
 
    ::oArticulosTipoController:End()
 
@@ -179,27 +185,25 @@ METHOD End() CLASS ArticulosController
 
    ::oArticulosFabricantesController:End()
 
-   ::oArticulosPreciosController:End()
-
    ::oTipoIvaController:End()
 
    ::oImpuestosEspecialesController:End()
 
+   ::oArticulosPreciosController:End()
+
    ::oArticulosUnidadesMedicionController:End()
-
-   ::oImagenesController:End()
-
-   ::oUnidadesMedicionOperacionesController:End()
-
-   ::oTraduccionesController:End()
 
    ::oArticulosTemporadasController:End()
 
-   ::oCombinacionesController:End()
+   ::oUnidadesMedicionGruposController:End()
 
+   ::oCombinacionesController:End()
+   
    ::Super:End()
 
-RETURN ( Self )
+   self                                      := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

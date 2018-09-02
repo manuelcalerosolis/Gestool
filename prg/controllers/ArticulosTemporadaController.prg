@@ -35,13 +35,11 @@ METHOD New( oSenderController ) CLASS ArticulosTemporadasController
 
    ::oDialogView                    := ArticulosTemporadaView():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::oValidator                     := ArticulosTemporadaValidator():New( self, ::oDialogView )
 
-   ::oRepository                    := ArticulosTemporadaRepository():New( self )
-
    ::oGetSelector                   := GetSelector():New( self )
+   
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
 RETURN ( Self )
 
@@ -57,13 +55,15 @@ METHOD End() CLASS ArticulosTemporadasController
 
    ::oValidator:End()
 
-   ::oRepository:End()
-
    ::oGetSelector:End()
+
+   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
-RETURN ( Self )
+   self                             := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -304,10 +304,3 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosTemporadaRepository FROM SQLBaseRepository
-
-   METHOD getTableName()         INLINE ( SQLArticulosTemporadasModel():getTableName() ) 
-
-END CLASS
-
-//---------------------------------------------------------------------------//

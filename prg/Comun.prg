@@ -145,19 +145,19 @@ FUNCTION CreateMainWindow( oIconApp )
 
    oWnd:Cargo                 := appParamsMain()
 
-   oWnd:bKeyDown              := { | nKey | StdKey( nKey ) }  
+   oWnd:bKeyDown              := {| nKey | StdKey( nKey ) }  
 
    // Mensajes-----------------------------------------------------------------
 
-   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
-   oWnd:oMsgBar:setFont( oFontLittleTitle() )
+   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), oFontLittleTitle(), .f. )
+   oWnd:oMsgBar:lPaint3L      := .f.
 
    oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100, , , , .t. )
 
    oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( dtoc( getsysdate() ) ) + 12,,,, .t., { || SelSysDate() } )
    oWnd:oMsgBar:oDate:lTimer  := .t.
    oWnd:oMsgBar:oDate:bMsg    := {|| GetSysDate() }
-   oWnd:oMsgBar:CheckTimer()
+   oWnd:oMsgBar:checkTimer()
 
    oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " + Rtrim( Auth():Nombre() ), 200,,,, .t. )
 
@@ -186,6 +186,8 @@ RETURN nil
 
 FUNCTION CreateMainSQLWindow( oIconApp )
 
+   msgalert( "CreateMainSQLWindow" )
+
    Test()
 
    // Carga o no la imagen de fondo--------------------------------------------
@@ -207,8 +209,8 @@ FUNCTION CreateMainSQLWindow( oIconApp )
 
    // Mensajes-----------------------------------------------------------------
 
-   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
-   oWnd:oMsgBar:setFont( oFontLittleTitle() )
+   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), oFontLittleTitle(), .f. )
+   oWnd:oMsgBar:lPaint3L      := .f.
 
    oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100, , , , .t. )
 
@@ -347,7 +349,7 @@ FUNCTION Test()
 /*
    local n      
 
-   ClientesController():New():End() 
+   ArticulosController():New():End() 
 
    msgalert(   "MemUsed: " + AllTrim( Transform( MemUsed(), "999,999,999,999" ) ) + ;
                " MemMax: " + Alltrim( Transform( MemMax(), "999,999,999,999" ) ) + ;
@@ -356,7 +358,7 @@ FUNCTION Test()
 
    for n := 1 to 100 
 
-      ClientesController():New():End()  
+      ArticulosController():New():End()  
 
       hb_gcall( .t. )
 
@@ -7286,8 +7288,7 @@ FUNCTION CreateAdminSQLWindow( oIconApp )
 
    // Mensajes-----------------------------------------------------------------
 
-   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
-   oWnd:oMsgBar:setFont( oFontLittleTitle() )
+   oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), oFontLittleTitle(), .f. )
 
    // Abrimos la ventana-------------------------------------------------------
 
