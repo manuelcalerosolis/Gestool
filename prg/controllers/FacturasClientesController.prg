@@ -148,7 +148,9 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
 
    ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
+<<<<<<< HEAD
 */
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -352,7 +354,7 @@ END CLASS
 
 METHOD getValidators() CLASS FacturasClientesValidator
 
-   ::hValidators  := {  "codigo" =>    {  "required"   => "El c贸digo del cliente es un dato requerido"  } ,;  
+   ::hValidators  := {  "codigo" =>    {  "required"   => "El c骴igo del cliente es un dato requerido"  } ,;  
                         "nombre" =>    {  "required"   => "El nombre del cliente es un dato requerido" }  }
 
 RETURN ( ::hValidators )
@@ -392,7 +394,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'numero'
-      :cHeader             := 'N煤mero'
+      :cHeader             := 'N鷐ero'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'numero' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -400,7 +402,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'delegacion_uuid'    
-      :cHeader             := 'Delegaci贸n uuid'
+      :cHeader             := 'Delegaci髇 uuid'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'delegacion_uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -409,7 +411,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'sesion_uuid'
-      :cHeader             := 'Sesi贸n uuid'
+      :cHeader             := 'Sesi髇 uuid'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'sesion_uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -418,7 +420,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'cliente_codigo'
-      :cHeader             := 'C贸digo cliente'
+      :cHeader             := 'C骴igo cliente'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -434,7 +436,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direccion_direccion'
-      :cHeader             := 'Direcci贸n'
+      :cHeader             := 'Direcci髇'
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_direccion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -442,7 +444,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direccion_poblacion'
-      :cHeader             := 'Poblaci贸n'
+      :cHeader             := 'Poblaci髇'
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_poblacion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -450,7 +452,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direccion_codigo_provincia'
-      :cHeader             := 'C贸digo provincia'
+      :cHeader             := 'C骴igo provincia'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_codigo_provincia' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -466,7 +468,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direccion_codigo_postal'
-      :cHeader             := 'C贸digo postal'
+      :cHeader             := 'C骴igo postal'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_codigo_postal' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -474,7 +476,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direccion_telefono'
-      :cHeader             := 'Tel茅fono'
+      :cHeader             := 'Tel閒ono'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_telefono' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -482,7 +484,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direccion_movil'
-      :cHeader             := 'M贸vil'
+      :cHeader             := 'M髒il'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_movil' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -498,7 +500,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tarifa_codigo'
-      :cHeader             := 'C贸digo tarifa'
+      :cHeader             := 'C骴igo tarifa'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }

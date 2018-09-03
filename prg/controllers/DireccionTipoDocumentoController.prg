@@ -215,8 +215,8 @@ METHOD Activate() CLASS DireccionTipoDocumentoView
 
    //Direccion--------------------------------------------------------------
 
-   ::oController:oDireccionesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "nombre_direccion" ] ) )
-   ::oController:oDireccionesController:oGetSelector:Build( { "idGet" => 110, "idText" => 120, /*"idDireccion" => 130, "idCodigoPostal" => 140, "idPoblacion" => 150, "idProvincia" => 160,*/ "oDialog" => ::oDialog } )
+   ::oController:oDireccionesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "direccion_uuid" ] ) )
+   ::oController:oDireccionesController:oClientGetSelector:Build( { "idGet" => 110, "idText" => 120, "idDireccion" => 130, "idCodigoPostal" => 140, "idPoblacion" => 150, "idProvincia" => 160, "oDialog" => ::oDialog } )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -291,7 +291,13 @@ CLASS SQLDireccionTipoDocumentoModel FROM SQLCompanyModel
                                         INLINE ( if( empty( uValue ), space( 3 ), SQLDireccionTiposModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setTipoUuidAttribute( uValue ) ;
-                                        INLINE ( if( empty( uValue ), "", SQLDireccionTiposModel():getUuidWhereCodigo( uValue ) ) )                          
+                                        INLINE ( if( empty( uValue ), "", SQLDireccionTiposModel():getUuidWhereCodigo( uValue ) ) )
+                       
+   /*METHOD getDireccionUuidAttribute( uValue ) ; 
+                                        INLINE ( if( empty( uValue ), "", SQLDireccionesModel():getNombreWhereUuid( uValue ) ) )
+
+   METHOD setDireccionUuidAttribute( uValue ) ;
+                                        INLINE ( if( empty( uValue ), space( 40 ), SQLDireccionesModel():getUuidWhereNombre( uValue ) ) )*/
 
    METHOD getInitialSelect()
 
@@ -315,8 +321,8 @@ METHOD getColumns() CLASS SQLDireccionTipoDocumentoModel
    hset( ::hColumns, "tipo_uuid",                     {  "create"    => "VARCHAR( 40 )"                           ,;
                                                          "default"   => {|| space( 40 ) } }                        )
 
-   hset( ::hColumns, "nombre_direccion",              {  "create"    => "VARCHAR( 140 )"                          ,;
-                                                         "default"   => {|| space( 140 ) } }                       )
+   hset( ::hColumns, "direccion_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                         "default"   => {|| space( 40 ) } }                        )
 
 RETURN ( ::hColumns )
 
@@ -347,7 +353,7 @@ METHOD getInitialSelect() CLASS SQLDireccionTipoDocumentoModel
       ON direccion_tipo_documento.tipo_uuid = direccion_tipo.uuid
 
    INNER JOIN %3$s AS direcciones
-      ON direccion_tipo_documento.nombre_direccion = direcciones.nombre 
+      ON direccion_tipo_documento.direccion_uuid = direcciones.uuid 
 
    INNER JOIN %4$s AS paises
       ON direcciones.codigo_pais = paises.codigo

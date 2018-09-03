@@ -27,6 +27,8 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    DATA oGetSelector
 
+   DATA oClientGetSelector
+
    DATA oPaisesController
 
    DATA oProvinciasController
@@ -97,6 +99,9 @@ METHOD New( oController ) CLASS DireccionesController
 
    ::oGetSelector                   := GetSelector():New( self )
 
+   ::oClientGetSelector             := ClientGetSelector():New( self )
+   ::oClientGetSelector:setkey("uuid")
+
    ::getCodigosPostalesController()
 
    ::getPaisesController()
@@ -104,6 +109,7 @@ METHOD New( oController ) CLASS DireccionesController
    ::getProvinciasController()
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
+
 
 RETURN ( Self )
 
@@ -368,7 +374,7 @@ CLASS DireccionesView FROM SQLBaseView
 
    METHOD ExternalCoreRedefine( oDialog )
 
-   METHOD ExternalContactRedefine( oDialog )   
+   METHOD ExternalContactRedefine( oDialog )
 
    METHOD StartDialog()
    
@@ -665,6 +671,7 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
 
    DATA cTableName                        INIT "direcciones"
 
+
    METHOD loadPrincipalBlankBuffer()      INLINE ( ::loadBlankBuffer(),;
                                                    hset( ::hBuffer, "principal", .t. ),;
                                                    hset( ::hBuffer, "nombre", "Principal" ) )
@@ -678,6 +685,7 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
    METHOD getParentUuidAttribute( value )
 
    METHOD addParentUuidWhere( cSQLSelect ) INLINE ( cSQLSelect )
+
 
 END CLASS
 

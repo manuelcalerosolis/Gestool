@@ -158,6 +158,7 @@ METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
 
    ::fireEvent( 'activated' ) 
 
+
 RETURN ( ::oGet )
 
 //---------------------------------------------------------------------------//

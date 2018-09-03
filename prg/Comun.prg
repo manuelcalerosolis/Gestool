@@ -354,11 +354,11 @@ FUNCTION Test()
 
    nMemUsed          := MemUsed()
 
-   for n := 1 to 1000 
+   for n := 1 to 10 
 
       ArticulosController():New():End()  
 
-      hb_gcall( .t. )
+      // hb_gcall( .t. )
 
    next
 
