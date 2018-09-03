@@ -168,7 +168,7 @@ METHOD buildRowSetSentence()
 
    ::oRowSet:build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

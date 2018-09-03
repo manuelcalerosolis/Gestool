@@ -49,6 +49,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD loadedBuffer()               INLINE ( ::oHistoryManager:Set( ::oModel:hBuffer ) )
 
+   METHOD getClientUuid() 
+
    METHOD isClientFilled()             INLINE ( !empty( ::getModelBuffer( "cliente_codigo" ) ) )
 
    METHOD clientesSettedHelpText()
@@ -134,6 +136,9 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oModel:setEvent( 'loadedBuffer',                    {|| ::loadedBuffer() } )
 
+   ::oDireccionTipoDocumentoController:setEvent( 'activatingDialogView',         {|| ::isClientFilled() } ) 
+   ::oDireccionTipoDocumentoController:oModel:setEvent( 'gettingSelectSentence', {|| ::getClientUuid() } )
+
    ::oFacturasClientesLineasController:setEvents( { 'appending', 'editing', 'deleting' }, {|| ::isClientFilled() }  )
 
    ::oClientesController:oGetSelector:setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
@@ -207,6 +212,19 @@ METHOD loadedBlankBuffer() CLASS FacturasClientesController
    hset( ::oModel:hBuffer, "serie",    ::oContadoresModel:getDocumentSerie( ::cName ) )
    
    hset( ::oModel:hBuffer, "numero",   ::oContadoresModel:getDocumentCounter( ::cName ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getClientUuid() CLASS FacturasClientesController
+
+   local uuidClient 
+
+   uuidClient  := ::oClientesController:oModel:getUuidWhereCodigo( ::getModelBuffer( "cliente_codigo" ) )
+   if !empty( uuidClient )
+      ::oDireccionTipoDocumentoController:oDireccionesController:setUuidParent( uuidClient )
+   end if 
 
 RETURN ( nil )
 

@@ -282,18 +282,22 @@ RETURN ( nil )
 METHOD activateDialogView()
 
    if empty( ::oDialogModalView )
-      RETURN ( nil )
+      RETURN ( .f. )
    end if 
 
    if ::notUserAccess()
       msgStop( "Acceso no permitido." )
-      RETURN ( nil )
+      RETURN ( .f. )
+   end if
+
+   if isFalse( ::fireEvent( 'activatingDialogView' ) )
+      RETURN ( .f. )
    end if
 
    ::buildRowSetSentence()   
 
    if empty( ::oRowSet:get() )
-      RETURN ( nil )
+      RETURN ( .f. )
    end if
 
 RETURN ( ::oDialogModalView:Activate() )

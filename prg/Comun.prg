@@ -186,8 +186,6 @@ RETURN nil
 
 FUNCTION CreateMainSQLWindow( oIconApp )
 
-   msgalert( "CreateMainSQLWindow" )
-
    Test()
 
    // Carga o no la imagen de fondo--------------------------------------------

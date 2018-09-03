@@ -371,6 +371,8 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addGroupBy( cSQLSelect )
 
+   logwrite( cSQLSelect )
+
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
@@ -420,7 +422,7 @@ METHOD getSelectSentence( cOrderBy, cOrientation )
       ::setOrientation( cOrientation )
    end if 
 
-   ::fireEvent( 'gettingSelectSentence')
+   ::fireEvent( 'gettingSelectSentence' )
 
    cSQL              := ::getGeneralSelect()
 

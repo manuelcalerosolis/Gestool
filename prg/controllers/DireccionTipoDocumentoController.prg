@@ -40,14 +40,14 @@ METHOD New( oSenderController ) CLASS DireccionTipoDocumentoController
    ::oValidator                     := DireccionTipoDocumentoValidator():New( self, ::oDialogView )
 
    ::oRepository                    := DireccionTipoDocumentoRepository():New( self )
+   
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oDireccionesController         := DireccionesController():New( self )
 
    ::oDireccionTiposController      := DireccionTiposController():New( self )
 
-   ::oGetSelector                   := GetSelector():New( self )
-
-   RETURN ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -63,15 +63,17 @@ METHOD End() CLASS DireccionTipoDocumentoController
 
    ::oRepository:End()
 
+   ::oGetSelector:End()
+
    ::oDireccionesController:End()
 
    ::oDireccionTiposController:End()
 
-   ::oGetSelector:End()
-
    ::Super:End()
 
-RETURN ( Self )
+   self                             := nil
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -191,10 +193,6 @@ END CLASS
 
 METHOD Activate() CLASS DireccionTipoDocumentoView
 
-   local oDialog
-   local oBmpGeneral
-   local uuidCliente       := SQLClientesModel():getUuidWhereCodigo( ::oController:oSenderController:getmodelbuffer( "cliente_codigo") )
-
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "DIRECCION_TIPO_DOCUMENTO" ;
       TITLE       ::LblTitle() + " tipo de dirección"
@@ -216,8 +214,7 @@ METHOD Activate() CLASS DireccionTipoDocumentoView
    ::oController:oDireccionTiposController:oGetSelector:Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
 
    //Direccion--------------------------------------------------------------
-   msgalert( ::oController:oSenderController:className(), " tipo" )
-   msgalert( uuidCliente, "uuidcliente" )
+
    ::oController:oDireccionesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "nombre_direccion" ] ) )
    ::oController:oDireccionesController:oGetSelector:Build( { "idGet" => 110, "idText" => 120, /*"idDireccion" => 130, "idCodigoPostal" => 140, "idPoblacion" => 150, "idProvincia" => 160,*/ "oDialog" => ::oDialog } )
 
@@ -257,7 +254,6 @@ METHOD StartActivate() CLASS DireccionTipoDocumentoView
 
    ::oController:oDireccionTiposController:oGetSelector:Start()
 
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -276,6 +272,7 @@ METHOD getValidators() CLASS DireccionTipoDocumentoValidator
                                              "unique"             => "La descripción introducida ya existe" },;
                         "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
                                              "unique"             => "EL código introducido ya existe"  } }
+
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -331,7 +328,7 @@ METHOD getInitialSelect() CLASS SQLDireccionTipoDocumentoModel
 
    TEXT INTO cSql
 
-  SELECT direccion_tipo_documento.id AS id,
+   SELECT direccion_tipo_documento.id AS id,
       direccion_tipo_documento.uuid AS uuid,
       direccion_tipo_documento.parent_uuid AS parent_uuid,
       direccion_tipo.nombre AS tipo,
@@ -352,8 +349,8 @@ METHOD getInitialSelect() CLASS SQLDireccionTipoDocumentoModel
    INNER JOIN %3$s AS direcciones
       ON direccion_tipo_documento.nombre_direccion = direcciones.nombre 
 
-INNER JOIN %4$s AS paises
-   ON direcciones.codigo_pais = paises.codigo
+   INNER JOIN %4$s AS paises
+      ON direcciones.codigo_pais = paises.codigo
 
    ENDTEXT
 

@@ -197,11 +197,11 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
       RETURN ( nil )
    end if
 
-   oPanel:AddLink( "Incidencias...",;
+   oPanel:AddLink(   "Incidencias...",;
                      {|| ::oController:oIncidenciasController:activateDialogView() },;
                          ::oController:oIncidenciasController:getImage( "16" ) )
 
-   oPanel:AddLink( "Tipo de direcciones...",;
+   oPanel:AddLink(   "Tipo de direcciones...",;
                      {|| ::oController:oDireccionTipoDocumentoController:activateDialogView() },;
                          ::oController:oDireccionTipoDocumentoController:getImage( "16" ) )
 
@@ -210,8 +210,8 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
    if ::oController:isNotZoomMode()
 
       oPanel:AddLink(   "Campos extra...",;
-                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                         ::oController:oCamposExtraValoresController:getImage( "16" ) )
+                        {||   ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
+                              ::oController:oCamposExtraValoresController:getImage( "16" ) )
    end if
 
 RETURN ( nil )
