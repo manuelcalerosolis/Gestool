@@ -9,7 +9,7 @@ CLASS AjustableController FROM SQLBaseController
 
    METHOD End()
 
-   METHOD getModel()       INLINE ( ::oModel := SQLAjustableModel():New( self ) )
+   METHOD getAjustableModel() INLINE ( ::oModel := SQLAjustableModel():New( self ) )
 
 END CLASS
 
@@ -18,12 +18,12 @@ END CLASS
 METHOD New( oController )
 
    ::Super:New( oController )
+   
+   ::getAjustableModel()
 
-   ::oDialogView           := AjustableView():New( self )
+   ::oDialogView              := AjustableView():New( self )
 
    ::oDialogView:setEvent( 'startingActivate', {|| oController:startingActivate() } )
-
-   ::getModel()
 
 RETURN ( Self )
 
@@ -38,6 +38,10 @@ METHOD End()
    if !empty( ::oDialogView )
       ::oDialogView:End()
    end if 
+
+   ::Super:End()
+   
+   self                       := nil
 
 RETURN ( nil )
 

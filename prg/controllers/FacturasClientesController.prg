@@ -96,7 +96,7 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oClientesController:setView( ::oDialogView )
 
    ::oArticulosController                                := ArticulosController():New( self )
-
+/*
    ::oArticulosTarifasController                         := ArticulosTarifasController():New( self )
    ::oArticulosTarifasController:setView( ::oDialogView )
 
@@ -148,60 +148,104 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
 
    ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
-
+*/
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS FacturasClientesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
-   ::oContadoresModel:End()
+   if !empty( ::oContadoresModel )
+      ::oContadoresModel:End()
+   end if
 
-   ::oClientesController:End()
+   if !empty( ::oClientesController )
+      ::oClientesController:End()
+   end if
 
-   ::oArticulosController:End()
+   if !empty( ::oArticulosController )
+      ::oArticulosController:End()
+   end if
 
-   ::oArticulosTarifasController:End()
+   if !empty( ::oArticulosTarifasController )
+      ::oArticulosTarifasController:End()
+   end if 
 
-   ::oFormasPagoController:End()
+   if !empty( ::oFormasPagoController )
+      ::oFormasPagoController:End()
+   end if 
 
-   ::oRutasController:End()
+   if !empty( ::oRutasController )
+      ::oRutasController:End()
+   end if 
 
-   ::oAgentesController:End()
+   if !empty( ::oAgentesController )
+      ::oAgentesController:End()
+   end if 
  
-   ::oAlmacenesController:End()
+   if !empty( ::oAlmacenesController )
+      ::oAlmacenesController:End()
+   end if 
 
-   ::oClientesTarifasController:End()
+   if !empty( ::oClientesTarifasController )
+      ::oClientesTarifasController:End()
+   end if 
 
-   ::oFacturasClientesDescuentosController:End()
+   if !empty( ::oFacturasClientesDescuentosController )
+      ::oFacturasClientesDescuentosController:End()
+   end if 
 
-   ::oDireccionTipoDocumentoController:End()
+   if !empty( ::oDireccionTipoDocumentoController )
+      ::oDireccionTipoDocumentoController:End()
+   end if 
 
-   ::oCamposExtraValoresController:End()
+   if !empty( ::oCamposExtraValoresController )
+      ::oCamposExtraValoresController:End()
+   end if 
    
-   ::oIncidenciasController:End()
+   if !empty( ::oIncidenciasController )
+      ::oIncidenciasController:End()
+   end if 
 
-   ::oFacturasClientesLineasController:End()
+   if !empty( ::oFacturasClientesLineasController )
+      ::oFacturasClientesLineasController:End()
+   end if 
 
-   ::oHistoryManager:End()
+   if !empty( ::oHistoryManager )
+      ::oHistoryManager:End()
+   end if 
 
-   ::oNumeroDocumentoComponent:End()
+   if !empty( ::oNumeroDocumentoComponent )
+      ::oNumeroDocumentoComponent:End()
+   end if 
 
-   ::oSerieDocumentoComponent:End()
+   if !empty( ::oSerieDocumentoComponent )
+      ::oSerieDocumentoComponent:End()
+   end if 
 
    ::Super:End()
 
-   self                                                  := nil
+   hb_gcall( .t. )
 
 RETURN ( nil )
 

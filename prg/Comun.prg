@@ -152,9 +152,9 @@ FUNCTION CreateMainWindow( oIconApp )
    oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), oFontLittleTitle(), .f. )
    oWnd:oMsgBar:lPaint3L      := .f.
 
-   oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100, , , , .t. )
+   oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100, , , , .t., {|| hb_gcall( .t. ) } )
 
-   oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( dtoc( getsysdate() ) ) + 12,,,, .t., { || SelSysDate() } )
+   oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( dtoc( getsysdate() ) ) + 12, , , , .t., {|| SelSysDate() } )
    oWnd:oMsgBar:oDate:lTimer  := .t.
    oWnd:oMsgBar:oDate:bMsg    := {|| GetSysDate() }
    oWnd:oMsgBar:checkTimer()
@@ -344,17 +344,17 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-/*
+
    local n      
+   local nMemUsed    := MemUsed()
+
+   CursorWait()
 
    ArticulosController():New():End() 
 
-   msgalert(   "MemUsed: " + AllTrim( Transform( MemUsed(), "999,999,999,999" ) ) + ;
-               " MemMax: " + Alltrim( Transform( MemMax(), "999,999,999,999" ) ) + ;
-               " Resources: " + AllTrim( Str( GetFreeSystemResources( 1 ) ) ) + "%" + ;
-               " Running time: " + TimeFromStart(), "inicio" )
+   nMemUsed          := MemUsed()
 
-   for n := 1 to 100 
+   for n := 1 to 1000 
 
       ArticulosController():New():End()  
 
@@ -362,11 +362,11 @@ FUNCTION Test()
 
    next
 
-   msgalert(   "MemUsed: " + AllTrim( Transform( MemUsed(), "999,999,999,999" ) ) + ;
-               " MemMax: " + Alltrim( Transform( MemMax(), "999,999,999,999" ) ) + ;
-               " Resources: " + AllTrim( Str( GetFreeSystemResources( 1 ) ) ) + "%" + ;
-               " Running time: " + TimeFromStart(), "fin" )
-*/
+   msgalert(   "* MemUsed: " + AllTrim( Transform( MemUsed(), "999,999,999,999" ) )                   + CRLF + ;
+               "* MemInit: " + Alltrim( Transform( nMemUsed, "999,999,999,999" ) )                    + CRLF + ;
+               "* Diferences: " + AllTrim( Transform( MemUsed() - nMemUsed, "999,999,999,999" ) )     + CRLF + ;
+               "* Running time: " + TimeFromStart(), "fin" )
+
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

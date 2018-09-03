@@ -96,28 +96,6 @@ METHOD End() CLASS AgentesController
 
    ::Super:End()
 
-   ::oModel                         := nil
-
-   ::oBrowseView                    := nil
-
-   ::oDialogView                    := nil
-
-   ::oValidator                     := nil
-
-   ::oGetSelector                   := nil
-
-   ::oDireccionesController         := nil
-
-   ::oRepository                    := nil
-
-   ::oPaisesController              := nil
-
-   ::oProvinciasController          := nil
-
-   ::oCamposExtraValoresController  := nil
-
-   self                             := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -246,7 +224,7 @@ METHOD Activating() CLASS AgentesView
       ::oController:oModel:hBuffer()
    end if 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

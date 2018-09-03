@@ -277,10 +277,6 @@ METHOD New( oSenderController )
 
    ::oRowSet                                          := SQLRowSet():New( self )
 
-   ::oExportableController                            := ExportableController():New( self )
-
-   logwrite( "New ->" + self:classname() )
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -295,15 +291,11 @@ METHOD End()
       ::oRowSet:End()
    end if
 
-   ::oEvents      := nil
+   ::oEvents                  := nil
    
-   ::oRowSet      := nil
+   ::oRowSet                  := nil
 
-   logwrite( "End ->" + self:classname() )
-
-   self           := nil
-
-   hb_gcall( .t. )
+   ::oView                    := nil
 
 RETURN ( nil )
 

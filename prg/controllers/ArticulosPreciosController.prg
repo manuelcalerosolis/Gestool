@@ -19,13 +19,13 @@ CLASS ArticulosPreciosController FROM SQLBrowseController
 
    METHOD UpdatePreciosAndRefresh() 
 
-   METHOD getModel()                INLINE ( ::oModel := SQLArticulosPreciosModel():New( self ) )
+   METHOD getArticulosPreciosModel()   INLINE ( ::oModel := SQLArticulosPreciosModel():New( self ) )
 
-   METHOD getBrowseView()           INLINE ( ::oBrowseView := ArticulosPreciosBrowseView():New( self ) )
+   METHOD getBrowseView()              INLINE ( ::oBrowseView := ArticulosPreciosBrowseView():New( self ) )
 
-   METHOD getUuid()                 INLINE ( iif(  !empty( ::getRowSet() ),;
-                                                   ::getRowSet():fieldGet( 'uuid' ),;
-                                                   nil ) )
+   METHOD getUuid()                    INLINE ( iif(  !empty( ::getRowSet() ),;
+                                                      ::getRowSet():fieldGet( 'uuid' ),;
+                                                      nil ) )
 
 END CLASS
 
@@ -45,17 +45,17 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::cName                                   := "articulos_precios"
 
+   ::getArticulosPreciosModel()
+
    ::oDialogView                             := ArticulosPreciosView():New( self )
 
    ::oValidator                              := ArticulosPreciosValidator():New( self )
 
    ::oRepository                             := ArticulosPreciosRepository():New( self )
 
-   ::oArticulosPreciosDescuentosController   := ArticulosPreciosDescuentosController():New( self )
-
-   ::getModel()
-
    ::getBrowseView()
+
+   ::oArticulosPreciosDescuentosController   := ArticulosPreciosDescuentosController():New( self )
 
    ::oBrowseView:setEvent( 'created',        {|| ::oBrowseView:setLDblClick( {|| nil } ) } )
 
@@ -65,17 +65,29 @@ RETURN ( Self )
 
 METHOD End() CLASS ArticulosPreciosController
 
-   ::oDialogView:End()
-
    ::oModel:End()
 
-   ::oBrowseView:End()
+   ::oDialogView:End()
 
-   ::oArticulosPreciosDescuentosController:End()
+   ::oBrowseView:End()
 
    ::oValidator:End()
 
    ::oRepository:End()
+
+   ::oArticulosPreciosDescuentosController:End()
+
+   ::oModel                                  := nil
+
+   ::oDialogView                             := nil
+
+   ::oBrowseView                             := nil
+
+   ::oValidator                              := nil
+
+   ::oRepository                             := nil
+
+   ::oArticulosPreciosDescuentosController   := nil
 
    ::Super:End()
 
@@ -125,9 +137,9 @@ RETURN ( ::UpdatePreciosAndRefresh() )
 
 CLASS ArticulosPreciosTarifasController FROM ArticulosPreciosController
 
-   METHOD getModel()                INLINE ( ::oModel := SQLArticulosPreciosTarifasModel():New( self ) )
+   METHOD getArticulosPreciosModel()   INLINE ( ::oModel := SQLArticulosPreciosTarifasModel():New( self ) )
 
-   METHOD getBrowseView()           INLINE ( ::oBrowseView := ArticulosPreciosTarifasBrowseView():New( self ) )
+   METHOD getBrowseView()              INLINE ( ::oBrowseView := ArticulosPreciosTarifasBrowseView():New( self ) )
  
 END CLASS
 

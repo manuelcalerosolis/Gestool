@@ -74,29 +74,57 @@ RETURN ( Self )
 
 METHOD End() CLASS ArticulosFamiliasController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+      ::oModel                         := nil
+   end if       
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+      ::oBrowseView                    := nil
+   end if       
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+      ::oDialogView                    := nil
+   end if       
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+      ::oValidator                     := nil
+   end if       
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+      ::oRepository                    := nil
+   end if       
 
-   ::oGetSelector:End()
+   if !empty( ::oGetSelector )
+      ::oGetSelector:End()
+      ::oGetSelector                   := nil
+   end if       
 
-   ::oImagenesController:End()
+   if !empty( ::oImagenesController )
+      ::oImagenesController:End()
+      ::oImagenesController            := nil
+   end if       
 
-   ::oComentariosController:End()
+   if !empty( ::oComentariosController )
+      ::oComentariosController:End()
+      ::oComentariosController         := nil
+   end if       
 
-   ::oTraduccionesController:End()
+   if !empty( ::oTraduccionesController )
+      ::oTraduccionesController:End()
+      ::oTraduccionesController        := nil
+   end if       
 
-   ::oCamposExtraValoresController:End()
+   if !empty( ::oCamposExtraValoresController )
+      ::oCamposExtraValoresController:End()
+      ::oCamposExtraValoresController  := nil
+   end if       
 
    ::Super:End()
-
-   self                                := nil
 
 RETURN ( nil )
 

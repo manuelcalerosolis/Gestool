@@ -79,9 +79,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ArticulosController
+METHOD New( oSenderController ) CLASS ArticulosController
 
-   ::Super:New()
+   ::Super:New( oSenderController )
 
    ::cTitle                                  := "Artículos"
 
@@ -105,7 +105,7 @@ METHOD New() CLASS ArticulosController
 
    ::oRepository                             := ArticulosRepository():New( self )
 
-   ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, 'clientes' )
+   ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, ::cName )
 
    ::oUnidadesMedicionOperacionesController  := UnidadesMedicionOperacionesController():New( self )
 
@@ -127,17 +127,17 @@ METHOD New() CLASS ArticulosController
    ::oArticulosFabricantesController         := ArticulosFabricantesController():New( self )
    ::oArticulosFabricantesController:setView( ::oDialogView )
 
-   ::oTipoIvaController                      := TipoIvaController():New( self )
-   ::oTipoIvaController:setView( ::oDialogView )
-
-   ::oImpuestosEspecialesController          := ImpuestosEspecialesController():New( self )
-   ::oImpuestosEspecialesController:setView( ::oDialogView )
-
    ::oArticulosPreciosController             := ArticulosPreciosController():New( self )
    ::oArticulosPreciosController:setView( ::oDialogView )
 
    ::oArticulosUnidadesMedicionController    := ArticulosUnidadesMedicionController():New( self )
    ::oArticulosUnidadesMedicionController:setView( ::oDialogView )
+
+   ::oTipoIvaController                      := TipoIvaController():New( self )
+   ::oTipoIvaController:setView( ::oDialogView )
+
+   ::oImpuestosEspecialesController          := ImpuestosEspecialesController():New( self )
+   ::oImpuestosEspecialesController:setView( ::oDialogView )
 
    ::oArticulosTemporadasController          := ArticulosTemporadasController():New( self )
    ::oArticulosTemporadasController:setView( ::oDialogView )
@@ -157,51 +157,112 @@ RETURN ( Self )
 
 METHOD End() CLASS ArticulosController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End() 
+      ::oModel                                     := nil
+   end if 
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+      ::oBrowseView                                := nil
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+      ::oDialogView                                := nil
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+      ::oValidator                                 := nil
+   end if 
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+      ::oRepository                                := nil
+   end if 
 
-   ::oCamposExtraValoresController:End()
+   if !empty( ::oCamposExtraValoresController )
+      ::oCamposExtraValoresController:End()
+      ::oCamposExtraValoresController              := nil
+   end if 
 
-   ::oUnidadesMedicionOperacionesController:End()
+   if !empty( ::oUnidadesMedicionOperacionesController )
+      ::oUnidadesMedicionOperacionesController:End()
+      ::oUnidadesMedicionOperacionesController     := nil
+   end if 
 
-   ::oTagsController:End()
+   if !empty( ::oTagsController )
+      ::oTagsController:End()
+      ::oTagsController                            := nil
+   end if 
 
-   ::oImagenesController:End()
+   if !empty( ::oImagenesController )
+      ::oImagenesController:End()
+      ::oImagenesController                        := nil
+   end if 
    
-   ::oArticulosFamiliasController:End()
+   if !empty( ::oArticulosFamiliasController )
+      ::oArticulosFamiliasController:End()
+      ::oArticulosFamiliasController               := nil
+   end if 
    
-   ::oTraduccionesController:End()
+   if !empty( ::oTraduccionesController )
+      ::oTraduccionesController:End()
+      ::oTraduccionesController                    := nil
+   end if 
 
-   ::oArticulosTipoController:End()
+   if !empty( ::oArticulosTipoController )
+      ::oArticulosTipoController:End()
+      ::oArticulosTipoController                   := nil
+   end if 
 
-   ::oArticulosCategoriasController:End()
+   if !empty( ::oArticulosCategoriasController )
+      ::oArticulosCategoriasController:End()
+      ::oArticulosCategoriasController             := nil
+   end if 
 
-   ::oArticulosFabricantesController:End()
+   if !empty( ::oArticulosFabricantesController )
+      ::oArticulosFabricantesController:End()
+      ::oArticulosFabricantesController            := nil
+   end if 
 
-   ::oTipoIvaController:End()
+   if !empty( ::oTipoIvaController )
+      ::oTipoIvaController:End()
+      ::oTipoIvaController                         := nil
+   end if 
 
-   ::oImpuestosEspecialesController:End()
+   if !empty( ::oImpuestosEspecialesController )
+      ::oImpuestosEspecialesController:End()
+      ::oImpuestosEspecialesController             := nil
+   end if 
 
-   ::oArticulosPreciosController:End()
+   if !empty( ::oArticulosPreciosController )
+      ::oArticulosPreciosController:End()
+      ::oArticulosPreciosController                := nil
+   end if 
 
-   ::oArticulosUnidadesMedicionController:End()
+   if !empty( ::oArticulosUnidadesMedicionController )
+      ::oArticulosUnidadesMedicionController:End()
+      ::oArticulosUnidadesMedicionController       := nil
+   end if 
 
-   ::oArticulosTemporadasController:End()
+   if !empty( ::oArticulosTemporadasController )
+      ::oArticulosTemporadasController:End()
+      ::oArticulosTemporadasController             := nil
+   end if 
 
-   ::oUnidadesMedicionGruposController:End()
+   if !empty( ::oUnidadesMedicionGruposController )
+      ::oUnidadesMedicionGruposController:End()
+      ::oUnidadesMedicionGruposController          := nil
+   end if 
 
-   ::oCombinacionesController:End()
-   
+   if !empty( ::oCombinacionesController )
+      ::oCombinacionesController:End()
+       ::oCombinacionesController                  := nil
+   end if 
+  
    ::Super:End()
-
-   self                                      := nil
 
 RETURN ( nil )
 
@@ -209,11 +270,11 @@ RETURN ( nil )
 
 METHOD getPrecioCosto() CLASS ArticulosController
 
-   if empty(::oModel)
+   if empty( ::oModel )
       RETURN ( 0 )
    end if 
 
-   if empty(::oModel:hBuffer)
+   if empty( ::oModel:hBuffer )
       RETURN ( 0 )
    end if 
 

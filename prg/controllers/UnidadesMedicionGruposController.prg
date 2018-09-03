@@ -79,9 +79,25 @@ METHOD End() CLASS UnidadesMedicionGruposController
 
    ::oCamposExtraValoresController:End()
 
-   ::Super:End()
+   ::oModel                                  := nil
 
-   self                                      := nil
+   ::oBrowseView                             := nil
+
+   ::oDialogView                             := nil
+
+   ::oValidator                              := nil
+
+   ::oRepository                             := nil
+
+   ::oGetSelector                            := nil
+
+   ::oUnidadesMedicionController             := nil
+
+   ::oUnidadesMedicionGruposLineasController := nil
+
+   ::oCamposExtraValoresController           := nil
+
+   ::Super:End()
 
 RETURN ( nil )
 

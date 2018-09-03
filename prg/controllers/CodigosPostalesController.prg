@@ -5,7 +5,7 @@
 
 CLASS CodigosPostalesGestoolController FROM CodigosPostalesController
 
-   METHOD getModel()                            INLINE ( ::oModel := SQLCodigosPostalesGestoolModel():New( self ) )
+   METHOD getCodigosPostalesGestoolModel()                            INLINE ( ::oModel := SQLCodigosPostalesGestoolModel():New( self ) )
 
    METHOD getProvinciasController()             INLINE ( ::oProvinciasController := ProvinciasGestoolController():New( self ) )
    
@@ -23,7 +23,7 @@ CLASS CodigosPostalesController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD getModel()                   INLINE ( ::oModel := SQLCodigosPostalesModel():New( self ) )
+   METHOD getCodigosPostalesGestoolModel()                   INLINE ( ::oModel := SQLCodigosPostalesModel():New( self ) )
 
    METHOD getProvinciasController()    INLINE ( ::oProvinciasController := ProvinciasController():New( self ) )
 
@@ -43,7 +43,11 @@ METHOD New( oSenderController ) CLASS CodigosPostalesController
                                     "32" => "gc_postage_stamp_32",;
                                     "48" => "gc_postage_stamp_48" }
 
-   ::getModel()                                    
+   if empty( oSenderController )
+      ::nLevel                := Auth():Level( ::cName )
+   end if 
+
+   ::getCodigosPostalesGestoolModel()                                    
 
    ::oBrowseView              := CodigosPostalesBrowseView():New( self )
 
@@ -52,10 +56,6 @@ METHOD New( oSenderController ) CLASS CodigosPostalesController
    ::oValidator               := CodigosPostalesValidator():New( self )
 
    ::getProvinciasController()
-
-   if empty( oSenderController )
-      ::nLevel                := Auth():Level( ::cName )
-   end if 
 
 RETURN ( Self )
 

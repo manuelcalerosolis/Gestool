@@ -74,8 +74,6 @@ METHOD End() CLASS TraduccionesController
 
    ::Super:End()
 
-   self                    := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

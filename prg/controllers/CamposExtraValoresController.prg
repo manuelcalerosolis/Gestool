@@ -5,7 +5,7 @@
 
 CLASS CamposExtraValoresGestoolController FROM CamposExtraValoresController
 
-   METHOD getModel()                            INLINE ( ::oModel := SQLCamposExtraValoresGestoolModel():New( self ) )
+   METHOD getCamposExtraValoresModel()                      INLINE ( ::oModel := SQLCamposExtraValoresGestoolModel():New( self ) )
 
    METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
@@ -21,11 +21,11 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
 
    DATA oCamposExtraValoresController
 
-   METHOD New( self )
+   METHOD New( oSenderController, cEntidad )
 
    METHOD End()
 
-   METHOD getModel()                                        INLINE ( ::oModel := SQLCamposExtraValoresModel():New( self ) )
+   METHOD getCamposExtraValoresModel()                      INLINE ( ::oModel := SQLCamposExtraValoresModel():New( self ) )
 
    METHOD setEntidad( cEntidad )                            INLINE ( ::cEntidad := cEntidad )
 
@@ -61,7 +61,7 @@ METHOD New( oSenderController, cEntidad ) CLASS CamposExtraValoresController
                                              "32" => "gc_form_plus2_32",;
                                              "48" => "gc_form_plus2_48" }
 
-   ::getModel()
+   ::getCamposExtraValoresModel()
 
    ::oBrowseView                       := CamposExtraValoresBrowseView():New( self )
 

@@ -59,9 +59,19 @@ METHOD End() CLASS ArticulosTemporadasController
 
    ::oCamposExtraValoresController:End()
 
-   ::Super:End()
+   ::oModel                         := nil
 
-   self                             := nil
+   ::oBrowseView                    := nil
+
+   ::oDialogView                    := nil
+
+   ::oValidator                     := nil
+
+   ::oGetSelector                   := nil
+
+   ::oCamposExtraValoresController  := nil
+   
+   ::Super:End()
 
 RETURN ( nil )
 

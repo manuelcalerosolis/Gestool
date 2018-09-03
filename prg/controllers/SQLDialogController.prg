@@ -175,14 +175,14 @@ RETURN ( nil )
 METHOD activateNavigatorView()
 
    if empty( ::oNavigatorView )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    if ::notUserAccess()
       msgStop( "Acceso no permitido." )
-      RETURN ( Self )
+      RETURN ( nil )
    end if
-
+/*
    cursorWait()
 
    ::closeAllWindows()
@@ -198,8 +198,8 @@ METHOD activateNavigatorView()
    endif 
 
    cursorWE()
-
-RETURN ( Self )
+*/
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

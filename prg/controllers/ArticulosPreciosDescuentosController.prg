@@ -67,6 +67,16 @@ METHOD End() CLASS ArticulosPreciosDescuentosController
 
    ::Super:End()
 
+   ::oModel       := nil
+
+   ::oBrowseView  := nil
+
+   ::oDialogView  := nil
+
+   ::oValidator   := nil
+
+   ::oRepository  := nil
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

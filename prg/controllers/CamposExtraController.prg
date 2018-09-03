@@ -13,7 +13,7 @@ CLASS CamposExtraGestoolController FROM SQLNavigatorGestoolController
 
    METHOD deleteEntitiesWhereEmpty()
 
-   METHOD getModel()                            INLINE ( ::oModel := SQLCamposExtraGestoolModel():New( self ) )
+   METHOD getCamposExtraModel()                 INLINE ( ::oModel := SQLCamposExtraGestoolModel():New( self ) )
 
    METHOD getLevel()                            INLINE ( nil )
 
@@ -42,7 +42,7 @@ METHOD New( oSenderController ) CLASS CamposExtraGestoolController
 
    ::getLevel()
 
-   ::getModel()
+   ::getCamposExtraModel()
 
    ::oBrowseView                       := CamposExtraBrowseView():New( self )
 
@@ -100,7 +100,7 @@ CLASS CamposExtraController FROM SQLNavigatorController
 
    METHOD deleteEntitiesWhereEmpty()
 
-   METHOD getModel()                            INLINE ( ::oModel := SQLCamposExtraModel():New( self ) )
+   METHOD getCamposExtraModel()                 INLINE ( ::oModel := SQLCamposExtraModel():New( self ) )
 
    METHOD getLevel()                            INLINE ( ::nLevel := Auth():Level( ::getName() ) )
 
@@ -120,14 +120,13 @@ METHOD New( oSenderController ) CLASS CamposExtraController
 
    ::lTransactional                    := .t.
 
-
    ::hImage                            := {  "16" => "gc_form_plus2_16",;
                                              "32" => "gc_form_plus2_32",;
                                              "48" => "gc_form_plus2_48" }
 
    ::getLevel()
 
-   ::getModel()
+   ::getCamposExtraModel()
 
    ::oBrowseView                       := CamposExtraBrowseView():New( self )
 

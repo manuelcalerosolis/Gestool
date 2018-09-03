@@ -5,7 +5,7 @@
 
 CLASS PaisesGestoolController FROM PaisesController
 
-   METHOD getModel()                            INLINE ( ::oModel := SQLPaisesGestoolModel():New( self ) )
+   METHOD getPaisesModel()                      INLINE ( ::oModel := SQLPaisesGestoolModel():New( self ) )
 
    METHOD getLevel()                            INLINE ( nil )
 
@@ -23,9 +23,9 @@ CLASS PaisesController FROM SQLNavigatorController
 
    METHOD getSelectorPais( oGet )
 
-   METHOD getModel()          INLINE ( ::oModel := SQLPaisesModel():New( self ) )
+   METHOD getPaisesModel()                      INLINE ( ::oModel := SQLPaisesModel():New( self ) )
 
-   METHOD getLevel()          INLINE ( iif( empty( ::oSenderController ), ::nLevel := Auth():Level( ::cName ), ) ) 
+   METHOD getLevel()                            INLINE ( iif( empty( ::oSenderController ), ::nLevel := Auth():Level( ::cName ), ) ) 
 
 END CLASS
 
@@ -45,7 +45,7 @@ METHOD New( oSenderController ) CLASS PaisesController
 
    ::getLevel()
 
-   ::getModel()
+   ::getPaisesModel()
 
    ::oBrowseView              := PaisesBrowseView():New( self )
 

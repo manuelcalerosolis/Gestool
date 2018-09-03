@@ -37,12 +37,12 @@ METHOD New( oSenderController ) CLASS TipoIvaController
 
    ::oValidator                     := TipoIvaValidator():New( self, ::oDialogView )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::oRepository                    := TipoIvaRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
    ::oGetSelector:cPicture          := "@!"
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
 RETURN ( Self )
 
@@ -60,13 +60,27 @@ METHOD End() CLASS TipoIvaController
 
    ::oRepository:End()
 
+   ::oGetSelector:End()
+
    ::oCamposExtraValoresController:End()
 
-   ::oGetSelector:End()
+   ::oModel                         := nil
+
+   ::oBrowseView                    := nil
+
+   ::oDialogView                    := nil
+
+   ::oValidator                     := nil
+
+   ::oRepository                    := nil
+
+   ::oGetSelector                   := nil
+
+   ::oCamposExtraValoresController  := nil
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
