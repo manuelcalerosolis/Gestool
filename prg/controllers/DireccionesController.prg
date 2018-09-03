@@ -5,7 +5,7 @@
 
 CLASS DireccionesGestoolController FROM DireccionesController
 
-   METHOD getModel()                            INLINE ( ::oModel := SQLDireccionesGestoolModel():New( self ) )
+   METHOD getDireccionesModel()                 INLINE ( ::oModel                         := SQLDireccionesGestoolModel():New( self ) )
 
    METHOD getCodigosPostalesController()        INLINE ( ::oCodigosPostalesController     := CodigosPostalesGestoolController():New( self ) )
 
@@ -33,6 +33,8 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    DATA oCodigosPostalesController
 
+   DATA uuidParent                      
+
    METHOD New()
    METHOD End()
 
@@ -52,13 +54,16 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    METHOD externalStartDialog()           INLINE ( ::oDialogView:StartDialog() )
 
-   METHOD getModel()                      INLINE ( ::oModel                      := SQLDireccionesModel():New( self ) )
+   METHOD getDireccionesModel()           INLINE ( ::oModel                      := SQLDireccionesModel():New( self ) )
 
    METHOD getCodigosPostalesController()  INLINE ( ::oCodigosPostalesController  := CodigosPostalesController():New( self ) )
 
    METHOD getPaisesController()           INLINE ( ::oPaisesController           := PaisesController():New( self ) )
 
    METHOD getProvinciasController()       INLINE ( ::oProvinciasController       := ProvinciasController():New( self ) )
+
+   METHOD setUuidParent( uuidParent )  INLINE ( ::uuidParent := uuidParent )
+   METHOD getUuidParent()              INLINE ( ::uuidParent )
 
 END CLASS
 
@@ -82,7 +87,7 @@ METHOD New( oController ) CLASS DireccionesController
                                           "32" => "gc_signpost3_32",;
                                           "48" => "gc_signpost3_48" }
 
-   ::getModel()                        
+   ::getDireccionesModel()                        
 
    ::oBrowseView                    := DireccionesBrowseView():New( self )
 
@@ -148,7 +153,14 @@ RETURN ( nil )
 
 METHOD gettingSelectSentence() CLASS DireccionesController
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getUuidParent()
+
+   if !empty( uuid )
+      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      RETURN ( nil )
+   end if 
+
+   uuid              := ::getSenderController():getUuid() 
 
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
@@ -334,10 +346,8 @@ METHOD addColumns() CLASS DireccionesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -501,7 +511,7 @@ METHOD ExternalContactRedefine( oDialog )
       VALID       ( ::oController:validate( "email" ) ) ;
       OF          oDialog
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -509,13 +519,8 @@ METHOD StartDialog()
 
    ::oGetPais:oHelpText:cText( ::oController:oPaisesController:getModel():getField( "nombre", "codigo", ::oController:oModel:hBuffer[ "codigo_pais" ] ) )
 
-RETURN ( Self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -658,19 +663,21 @@ END CLASS
 
 CLASS SQLDireccionesModel FROM SQLCompanyModel
 
-   DATA cTableName                     INIT "direcciones"
+   DATA cTableName                        INIT "direcciones"
 
-   METHOD loadPrincipalBlankBuffer()   INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ), hset( ::hBuffer, "nombre", "Principal" ) )
+   METHOD loadPrincipalBlankBuffer()      INLINE ( ::loadBlankBuffer(),;
+                                                   hset( ::hBuffer, "principal", .t. ),;
+                                                   hset( ::hBuffer, "nombre", "Principal" ) )
 
-   METHOD insertPrincipalBlankBuffer() INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
+   METHOD insertPrincipalBlankBuffer()    INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
 
    METHOD getColumns()
 
-   METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+   METHOD getIdWhereParentUuid( uuid )    INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
 
-   METHOD addParentUuidWhere( cSQLSelect, uuidCliente )
+   METHOD addParentUuidWhere( cSQLSelect ) INLINE ( cSQLSelect )
 
 END CLASS
 
@@ -681,10 +688,10 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL "                   ,;
+   hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL "                 ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
    hset( ::hColumns, "principal",         {  "create"    => "TINYINT ( 1 )"                           ,;
@@ -699,8 +706,8 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "poblacion",         {  "create"    => "VARCHAR( 100 )"                          ,;
                                              "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "codigo_provincia",  {  "create"    => "VARCHAR( 8 )"                           ,;
-                                             "default"   => {|| space( 8 ) } }                       )
+   hset( ::hColumns, "codigo_provincia",  {  "create"    => "VARCHAR( 8 )"                            ,;
+                                             "default"   => {|| space( 8 ) } }                        )
 
    hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 100 )"                          ,;
                                              "default"   => {|| space( 100 ) } }                      )
@@ -735,37 +742,6 @@ METHOD getParentUuidAttribute( value ) CLASS SQLDireccionesModel
    end if
 
 RETURN ( ::oController:oSenderController:getUuid() )
-
-//---------------------------------------------------------------------------//
-
-METHOD addParentUuidWhere( cSQLSelect, uuidCliente ) CLASS SQLDireccionesModel
-
-   local uuid        
-
-   if !::isParentUuidColumn()
-      RETURN ( cSQLSelect )
-   end if 
-
-   if empty( ::oController )
-      RETURN ( cSQLSelect )
-   end if
-
-   if empty( ::oController:getSenderController() )
-      RETURN ( cSQLSelect )
-   end if
-
-   if !empty( uuidCliente )
-      cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".parent_uuid = " + quoted( uuidCliente )
-      RETURN( cSQLSelect )
-   end if 
-
-   uuid           := ::oController:getSenderController():getUuid()
-
-   if !empty( uuid )
-      cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".parent_uuid = " + quoted( uuid )
-   end if 
-
-RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
