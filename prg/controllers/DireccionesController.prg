@@ -27,8 +27,6 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    DATA oGetSelector
 
-   DATA oClientGetSelector
-
    DATA oPaisesController
 
    DATA oProvinciasController
@@ -97,10 +95,11 @@ METHOD New( oController ) CLASS DireccionesController
 
    ::oValidator                     := DireccionesValidator():New( self, ::oDialogView )
 
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oClientGetSelector             := ClientGetSelector():New( self )
-   ::oClientGetSelector:setkey("uuid")
+   ::oGetSelector                   := DireccionGetSelector():New( self )
+   ::oGetSelector:setKey( "uuid" )
+   ::oGetSelector:setPrompt( "nombre" )
+   
+   ? ::oGetSelector:getPrompt()
 
    ::getCodigosPostalesController()
 
@@ -686,6 +685,10 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
 
    METHOD addParentUuidWhere( cSQLSelect ) INLINE ( cSQLSelect )
 
+   METHOD getClienteDireccion( cBy, Uuid ) ;
+                                 INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccion( cBy, Uuid ) ) ) )
+
+   METHOD getSentenceClienteDireccion( cBy, Uuid )
 
 END CLASS
 
@@ -750,6 +753,35 @@ METHOD getParentUuidAttribute( value ) CLASS SQLDireccionesModel
    end if
 
 RETURN ( ::oController:oSenderController:getUuid() )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceClienteDireccion( cBy, Uuid ) CLASS SQLDireccionesModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT direcciones.uuid AS uuid,
+      direcciones.nombre AS nombre,
+      direcciones.direccion AS direccion,
+      direcciones.poblacion AS poblacion,
+      direcciones.provincia AS provincia,
+      direcciones.codigo_postal AS codigo_postal,
+      paises.nombre AS nombre_pais
+
+   FROM %1$s AS direcciones 
+
+   INNER JOIN %2$s AS paises
+      ON direcciones.codigo_pais = paises.codigo
+
+   WHERE direcciones.%3$s = %4$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLPaisesModel():getTableName(), cBy , quoted( Uuid ) )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

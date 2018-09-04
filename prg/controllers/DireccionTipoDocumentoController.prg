@@ -216,7 +216,7 @@ METHOD Activate() CLASS DireccionTipoDocumentoView
    //Direccion--------------------------------------------------------------
 
    ::oController:oDireccionesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "direccion_uuid" ] ) )
-   ::oController:oDireccionesController:oClientGetSelector:Build( { "idGet" => 110, "idText" => 120, "idDireccion" => 130, "idCodigoPostal" => 140, "idPoblacion" => 150, "idProvincia" => 160, "oDialog" => ::oDialog } )
+   ::oController:oDireccionesController:oGetSelector:Build( { "idGet" => 110, "idText" => 112, "idDireccion" => 113, "idCodigoPostal" => 114, "idPoblacion" => 115, "idProvincia" => 116, "idPais" => 117, "oDialog" => ::oDialog } )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -285,6 +285,8 @@ CLASS SQLDireccionTipoDocumentoModel FROM SQLCompanyModel
 
    DATA cTableName                                 INIT "direccion_tipo_documento"
 
+   DATA cConstraints                               INIT "PRIMARY KEY (parent_uuid, tipo_uuid)"
+
    METHOD getColumns()
 
    METHOD getTipoUuidAttribute( uValue ) ; 
@@ -318,7 +320,7 @@ METHOD getColumns() CLASS SQLDireccionTipoDocumentoModel
    hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR( 40 )"                           ,;
                                                          "default"   => {|| ::getSenderControllerParentUuid() } }  )
 
-   hset( ::hColumns, "tipo_uuid",                     {  "create"    => "VARCHAR( 40 )"                           ,;
+   hset( ::hColumns, "tipo_uuid",                     {  "create"    => "VARCHAR( 40 ) NOT NULL"                           ,;
                                                          "default"   => {|| space( 40 ) } }                        )
 
    hset( ::hColumns, "direccion_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;

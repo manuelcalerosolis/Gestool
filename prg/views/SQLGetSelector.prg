@@ -17,6 +17,10 @@ CLASS GetSelector
    DATA cGet
 
    DATA cKey                                    INIT  "codigo"
+   DATA cPrompt
+
+   DATA selectedKey
+   DATA selectedPrompt
 
    DATA uFields
 
@@ -31,6 +35,10 @@ CLASS GetSelector
    METHOD setKey( cKey )                        INLINE ( ::cKey := cKey )
    METHOD getKey()                              INLINE ( ::cKey )
 
+   METHOD setPrompt( cPrompt )                  INLINE ( ::cPrompt := cPrompt, msgalert( ::cPrompt, "aisgnado" ) )
+   METHOD getPrompt()                           INLINE ( if( empty( ::cPrompt ), ::getKey(), ::cPrompt ) )
+   METHOD assignPrompt( value )                 INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
+
    METHOD getView()                             INLINE ( ::oController:getView() )
 
    METHOD Build( hBuilder )
@@ -41,8 +49,9 @@ CLASS GetSelector
    METHOD setValid( bValid )                    INLINE ( ::bValid := bValid )
 
    METHOD helpAction()
-
    METHOD validAction()
+
+   METHOD assignResults( hResult )
 
    METHOD loadHelpText()
       METHOD cleanHelpText()                    
@@ -56,7 +65,6 @@ CLASS GetSelector
 
    METHOD showMessage()
 
-   METHOD cText( value )                        INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
    METHOD varGet()                              INLINE ( if( !empty( ::oGet ), ::oGet:varGet(), ) )
   
    METHOD Hide()
@@ -158,7 +166,6 @@ METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
 
    ::fireEvent( 'activated' ) 
 
-
 RETURN ( ::oGet )
 
 //---------------------------------------------------------------------------//
@@ -177,17 +184,27 @@ METHOD helpAction() CLASS GetSelector
       RETURN ( .f. )
    end if 
 
-   if hhaskey( hResult, ::getKey() )
-
-      ::oGet:cText( hGet( hResult, ::getKey() ) )
-
-      ::evalValue( hGet( hResult, ::getKey() ) )
-
-   end if
+   ::assignResults( hResult )
 
    ::fireEvent( 'helped' ) 
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD assignResults( hResult ) CLASS GetSelector
+
+   if hhaskey( hResult, ::getPrompt() )
+      ::selectedPrompt  := hGet( hResult, ::getPrompt() )
+      ::assignPrompt( ::selectedPrompt )
+   end if 
+   
+   if hhaskey( hResult, ::getKey() )
+      ::selectedKey     := hGet( hResult, ::getKey() )
+      ::evalValue( ::selectedKey )
+   end if
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -197,7 +214,7 @@ METHOD validAction() CLASS GetSelector
       RETURN ( .f. )
    end if
 
-   ::evalValue( ::oGet:varGet() )
+   ::evalValue( ::selectedKey )
 
    if empty( ::bValid ) .or. eval( ::bValid, ::oGet )
 
@@ -266,7 +283,7 @@ RETURN ( .t. )
 METHOD showMessage( lSilenceMode ) CLASS GetSelector
 
    if lSilenceMode 
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    if empty( ::getView() ) .or. empty( ::getView():oMessage )
@@ -275,7 +292,7 @@ METHOD showMessage( lSilenceMode ) CLASS GetSelector
       ::getView():showMessage( ::oController:cTitle + " no encontrado" )
    end if 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
