@@ -208,7 +208,7 @@ METHOD setHelpText( value )
 
    if( !empty( ::oGetProvincia ),      ::oGetProvincia:cText( value[ "provincia" ] ), )
 
-   if( !empty( ::oGetPais ),           ::oGetPais:cText( value[ "pais" ] ), ) 
+   if( !empty( ::oGetPais ),           ::oGetPais:cText( value[ "nombre_pais" ] ), ) 
 
    if( !empty( ::oGetTelefono ),       ::oGetTelefono:cText( value[ "telefono" ] ), ) 
 
