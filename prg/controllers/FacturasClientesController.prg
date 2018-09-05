@@ -3,6 +3,29 @@
 
 //---------------------------------------------------------------------------//
 
+FUNCTION FacturasClientesController1000()
+
+   local n
+   local oController    
+
+   for n := 1 to 1000
+
+      oController          := FacturasClientesController():New()
+
+      oController:ActivateNavigatorView()
+
+      MsgWait( "Please, " + str( n ), "This is a test", 5 )
+
+      oController:closeAllWindows()
+
+      MsgWait( "Please, " + str( n ), "This is a test", 5 )
+
+   next 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oArticulosTarifasController
@@ -41,7 +64,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oHistoryManager
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -55,7 +78,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD clientesSettedHelpText()
 
-   METHOD clientesCleanedHelpText()    INLINE ( ::oArticulosTarifasController:oGetSelector:assignPrompt( space( 20 ) ),;
+   METHOD clientesCleanedHelpText()    INLINE ( ::oArticulosTarifasController:oGetSelector:cText( space( 20 ) ),;
                                                 ::oArticulosTarifasController:oGetSelector:lValid() )
 
    METHOD clientSetTarifa()
@@ -149,7 +172,6 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -158,90 +180,112 @@ METHOD End() CLASS FacturasClientesController
 
    if !empty( ::oModel )
       ::oModel:End()
+      ::oModel                                           := nil
    end if 
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
+      ::oDialogView                                      := nil
    end if 
 
    if !empty( ::oValidator )
       ::oValidator:End()
+      ::oValidator                                       := nil
    end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
+      ::oBrowseView                                      := nil
    end if 
 
    if !empty( ::oRepository )
       ::oRepository:End()
+      ::oRepository                                      := nil
    end if
 
    if !empty( ::oContadoresModel )
       ::oContadoresModel:End()
+      ::oContadoresModel                                 := nil
    end if
 
    if !empty( ::oClientesController )
       ::oClientesController:End()
+      ::oClientesController                              := nil
    end if
 
    if !empty( ::oArticulosController )
       ::oArticulosController:End()
+      ::oArticulosController                             := nil
    end if
 
    if !empty( ::oArticulosTarifasController )
       ::oArticulosTarifasController:End()
+      ::oArticulosTarifasController                      := nil
    end if 
 
    if !empty( ::oFormasPagoController )
       ::oFormasPagoController:End()
+      ::oFormasPagoController                            := nil
    end if 
 
    if !empty( ::oRutasController )
       ::oRutasController:End()
+      ::oRutasController                                 := nil
    end if 
 
    if !empty( ::oAgentesController )
       ::oAgentesController:End()
+      ::oAgentesController                               := nil
    end if 
  
    if !empty( ::oAlmacenesController )
       ::oAlmacenesController:End()
+      ::oAlmacenesController                             := nil
    end if 
 
    if !empty( ::oClientesTarifasController )
       ::oClientesTarifasController:End()
+      ::oClientesTarifasController                       := nil
    end if 
 
    if !empty( ::oFacturasClientesDescuentosController )
       ::oFacturasClientesDescuentosController:End()
+      ::oFacturasClientesDescuentosController            := nil
    end if 
 
    if !empty( ::oDireccionTipoDocumentoController )
       ::oDireccionTipoDocumentoController:End()
+      ::oDireccionTipoDocumentoController                := nil
    end if 
 
    if !empty( ::oCamposExtraValoresController )
       ::oCamposExtraValoresController:End()
+      ::oCamposExtraValoresController                    := nil
    end if 
    
    if !empty( ::oIncidenciasController )
       ::oIncidenciasController:End()
+      ::oIncidenciasController                           := nil
    end if 
 
    if !empty( ::oFacturasClientesLineasController )
       ::oFacturasClientesLineasController:End()
+      ::oFacturasClientesLineasController                := nil
    end if 
 
    if !empty( ::oHistoryManager )
       ::oHistoryManager:End()
+      ::oHistoryManager                                  := nil
    end if 
 
    if !empty( ::oNumeroDocumentoComponent )
       ::oNumeroDocumentoComponent:End()
+      ::oNumeroDocumentoComponent                        := nil
    end if 
 
    if !empty( ::oSerieDocumentoComponent )
       ::oSerieDocumentoComponent:End()
+      ::oSerieDocumentoComponent                         := nil
    end if 
 
    ::Super:End()
@@ -393,7 +437,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'numero'
-      :cHeader             := 'N?mero'
+      :cHeader             := 'Número'
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'numero' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }

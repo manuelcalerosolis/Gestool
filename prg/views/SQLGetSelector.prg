@@ -17,10 +17,6 @@ CLASS GetSelector
    DATA cGet
 
    DATA cKey                                    INIT  "codigo"
-   DATA cPrompt
-
-   DATA selectedKey
-   DATA selectedPrompt
 
    DATA uFields
 
@@ -37,7 +33,8 @@ CLASS GetSelector
 
    METHOD setPrompt( cPrompt )                  INLINE ( ::cPrompt := cPrompt, msgalert( ::cPrompt, "aisgnado" ) )
    METHOD getPrompt()                           INLINE ( if( empty( ::cPrompt ), ::getKey(), ::cPrompt ) )
-   METHOD assignPrompt( value )                 INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
+   
+   METHOD cText( value )                        INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
 
    METHOD getView()                             INLINE ( ::oController:getView() )
 
@@ -110,8 +107,6 @@ METHOD End() CLASS GetSelector
    ::oEvents      := nil
 
    ::bWhen        := nil
-
-   self           := nil
 
 RETURN ( nil )
 
@@ -194,14 +189,12 @@ RETURN ( .t. )
 
 METHOD assignResults( hResult ) CLASS GetSelector
 
-   if hhaskey( hResult, ::getPrompt() )
-      ::selectedPrompt  := hGet( hResult, ::getPrompt() )
-      ::assignPrompt( ::selectedPrompt )
-   end if 
-   
    if hhaskey( hResult, ::getKey() )
-      ::selectedKey     := hGet( hResult, ::getKey() )
-      ::evalValue( ::selectedKey )
+
+      ::cText( hGet( hResult, ::getKey() ) )
+
+      ::evalValue( hGet( hResult, ::getKey() ) )
+
    end if
 
 RETURN ( nil )
@@ -214,7 +207,7 @@ METHOD validAction() CLASS GetSelector
       RETURN ( .f. )
    end if
 
-   ::evalValue( ::selectedKey )
+   ::evalValue( ::oGet:varGet() )
 
    if empty( ::bValid ) .or. eval( ::bValid, ::oGet )
 

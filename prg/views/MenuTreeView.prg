@@ -435,7 +435,6 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-
 METHOD addPrintSerialButton( cWorkArea )
 
    if isFalse( ::fireEvent( 'addingPrintSerialButton' ) )

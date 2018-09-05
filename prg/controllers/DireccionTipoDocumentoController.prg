@@ -71,8 +71,6 @@ METHOD End() CLASS DireccionTipoDocumentoController
 
    ::Super:End()
 
-   self                             := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -283,27 +281,25 @@ RETURN ( ::hValidators )
 
 CLASS SQLDireccionTipoDocumentoModel FROM SQLCompanyModel
 
-   DATA cTableName                                 INIT "direccion_tipo_documento"
+   DATA cTableName                        INIT "direccion_tipo_documento"
 
-   DATA cConstraints                               INIT "PRIMARY KEY (parent_uuid, tipo_uuid)"
+   DATA cConstraints                      INIT "PRIMARY KEY (parent_uuid, tipo_uuid)"
 
    METHOD getColumns()
 
    METHOD getTipoUuidAttribute( uValue ) ; 
-                                        INLINE ( if( empty( uValue ), space( 3 ), SQLDireccionTiposModel():getCodigoWhereUuid( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), space( 3 ), SQLDireccionTiposModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setTipoUuidAttribute( uValue ) ;
-                                        INLINE ( if( empty( uValue ), "", SQLDireccionTiposModel():getUuidWhereCodigo( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), "", SQLDireccionTiposModel():getUuidWhereCodigo( uValue ) ) )
                        
-   /*METHOD getDireccionUuidAttribute( uValue ) ; 
-                                        INLINE ( if( empty( uValue ), "", SQLDireccionesModel():getNombreWhereUuid( uValue ) ) )
+   METHOD getDireccionUuidAttribute( uValue ) ; 
+                                          INLINE ( if( empty( uValue ), "", SQLDireccionesModel():getNombreWhereUuid( uValue ) ) )
 
    METHOD setDireccionUuidAttribute( uValue ) ;
-                                        INLINE ( if( empty( uValue ), space( 40 ), SQLDireccionesModel():getUuidWhereNombre( uValue ) ) )*/
+                                          INLINE ( if( empty( uValue ), space( 40 ), SQLDireccionesModel():getUuidWhereCodigoClienteAndNombre( uValue ) ) )
 
    METHOD getInitialSelect()
-
-   
 
 END CLASS
 

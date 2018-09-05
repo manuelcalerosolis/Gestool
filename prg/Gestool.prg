@@ -74,11 +74,7 @@ EXIT PROCEDURE ExitAplication()
 
    __mvClear()
 
-   if file( "checkres.txt" )
-      ferase( "checkres.txt" )
-   endif
-
-   checkRes()
+   writeResources()
 
    winExec( "notepad checkres.txt" )
 

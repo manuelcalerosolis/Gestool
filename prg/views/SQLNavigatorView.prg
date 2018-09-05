@@ -149,8 +149,6 @@ METHOD postEndMDIChild()
       ::oController:endNavigatorView()
    end if 
 
-   msgalert( "postEndMDIChild" )
-
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

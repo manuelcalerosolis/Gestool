@@ -215,7 +215,7 @@ FUNCTION CreateMainSQLWindow( oIconApp )
    oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( dtoc( getsysdate() ) ) + 12,,,, .t., { || SelSysDate() } )
    oWnd:oMsgBar:oDate:lTimer  := .t.
    oWnd:oMsgBar:oDate:bMsg    := {|| GetSysDate() }
-   oWnd:oMsgBar:CheckTimer()
+   oWnd:oMsgBar:checkTimer()
 
    oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " +    rtrim( Auth():Nombre() ), 200,,,, .t. )
 
@@ -3308,7 +3308,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Facturas de clientes'
    oItem:cMessage       := 'Facturas de clientes'
-   oItem:bAction        := {|| FacturasClientesController():New():ActivateNavigatorView() }
+   //oItem:bAction        := {|| FacturasClientesController():New():ActivateNavigatorView() }
+   oItem:bAction        := {|| FacturasClientesController1000() }
    oItem:cId            := "facturas_clientes"
    oItem:cBmp           := "gc_document_text_user_16"
    oItem:cBmpBig        := "gc_document_text_user_32"
@@ -7097,7 +7098,6 @@ RETURN ( hash )
 
 //---------------------------------------------------------------------------//
 
-
 FUNCTION getFieldNameFromDictionary( cName, hashDictionary )
 
   local cFieldName  := ""
@@ -7129,6 +7129,8 @@ FUNCTION HtmlConvertChars( cString, cQuote_style, aTranslations )
 
 RETURN TranslateStrings( cString, aTranslations )
 
+//---------------------------------------------------------------------------//
+
 FUNCTION TranslateStrings( cString, aTranslate )
 
    local aTran
@@ -7140,6 +7142,8 @@ FUNCTION TranslateStrings( cString, aTranslate )
    next
 
 RETURN cString
+
+//---------------------------------------------------------------------------//
 
 FUNCTION HtmlEntities( cString, cQuote_style )
 
@@ -7201,9 +7205,13 @@ FUNCTION validTime( uTime )
 
 RETURN ( .t. )
 
+//---------------------------------------------------------------------------//
+
 FUNCTION validHour( nHour )
 
 RETURN ( nHour >= 0 .and. nHour <= 23 )
+
+//---------------------------------------------------------------------------//
 
 FUNCTION validMinutesSeconds( nMinutes )
 
@@ -7333,6 +7341,8 @@ FUNCTION nNumeroTarifa( cNombreTarifa )
 
 RETURN ( 1 )
 
+//---------------------------------------------------------------------------//
+
 FUNCTION inicializateHashVariables()
 
    hVariables := {=>}
@@ -7409,7 +7419,7 @@ static Function getScafolding()
                               {  "Directory"    => cPatLabels(),;   
                                  "Backup"       => .t.,;
                                  "Subdirectory" => ;
-                                 { "Directory"  => cPatLabels() + "Movimientos almacen\" } },;
+                              { "Directory"  => cPatLabels() + "Movimientos almacen\" } },;
                               {  "Directory"    => cPatReporting(),;  
                                  "Backup"       => .t. },;
                               {  "Directory"    => cPatUserReporting(),;   
@@ -7437,12 +7447,19 @@ static Function getScafolding()
 
 RETURN ( hScafolding )
 
-/*
-SHOWTASKBAR() // Habilita
-HIDETASKBAR() // Desabilita
-TIRA_X()      // Desabilita o X da Janela
-PISCA_EXE()   // Vai Piscar o Seu EXE na Barra do Windows
-*/
+//---------------------------------------------------------------------------//
+
+FUNCTION writeResources()
+
+   if file( "checkres.txt" )
+      ferase( "checkres.txt" )
+   endif
+
+   checkRes()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 
 #pragma BEGINDUMP
 

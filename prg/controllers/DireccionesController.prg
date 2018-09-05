@@ -35,7 +35,7 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    DATA uuidParent                      
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()
 
    METHOD gettingSelectSentence()
@@ -62,8 +62,8 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    METHOD getProvinciasController()       INLINE ( ::oProvinciasController       := ProvinciasController():New( self ) )
 
-   METHOD setUuidParent( uuidParent )  INLINE ( ::uuidParent := uuidParent )
-   METHOD getUuidParent()              INLINE ( ::uuidParent )
+   METHOD setUuidParent( uuidParent )     INLINE ( ::uuidParent := uuidParent )
+   METHOD getUuidParent()                 INLINE ( ::uuidParent )
 
 END CLASS
 
@@ -97,10 +97,7 @@ METHOD New( oController ) CLASS DireccionesController
 
    ::oGetSelector                   := DireccionGetSelector():New( self )
    ::oGetSelector:setKey( "uuid" )
-   ::oGetSelector:setPrompt( "nombre" )
    
-   ? ::oGetSelector:getPrompt()
-
    ::getCodigosPostalesController()
 
    ::getPaisesController()
@@ -108,7 +105,6 @@ METHOD New( oController ) CLASS DireccionesController
    ::getProvinciasController()
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
-
 
 RETURN ( Self )
 
@@ -132,8 +128,6 @@ METHOD End() CLASS DireccionesController
 
    ::oProvinciasController:End()
 
-   ::Super:End()
-
    ::oModel                            := nil
 
    ::oBrowseView                       := nil
@@ -150,7 +144,7 @@ METHOD End() CLASS DireccionesController
 
    ::oProvinciasController             := nil
 
-   self                                := nil
+   ::Super:End()
 
 RETURN ( nil )
 
@@ -622,7 +616,6 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS DireccionesEntidadesValidator FROM DireccionesValidator
 
@@ -664,7 +657,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS SQLDireccionesModel FROM SQLCompanyModel
 
@@ -686,10 +678,12 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
    METHOD addParentUuidWhere( cSQLSelect ) INLINE ( cSQLSelect )
 
    METHOD getClienteDireccion( cBy, Uuid ) ;
-                                 INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccion( cBy, Uuid ) ) ) )
+                                          INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccion( cBy, Uuid ) ) ) )
 
    METHOD getSentenceClienteDireccion( cBy, Uuid )
 
+   METHOD getUuidWhereCodigoClienteAndNombre( cNombre )
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -753,6 +747,26 @@ METHOD getParentUuidAttribute( value ) CLASS SQLDireccionesModel
    end if
 
 RETURN ( ::oController:oSenderController:getUuid() )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUuidWhereCodigoClienteAndNombre( cNombre ) CLASS SQLDireccionesModel
+   
+   msgalert( "getUuidWhereCodigoClienteAndNombre" )
+
+   if empty( ::oController )
+      RETURN ( "" )
+   end if 
+
+   if empty( ::oController:getUuidParent() )
+      RETURN ( "" )
+   end if 
+
+   msgalert( ::oController:getUuidParent(), "uuidCliente" )
+
+   msgalert( cNombre, "cNombre" )
+
+RETURN ( "" )
 
 //---------------------------------------------------------------------------//
 
