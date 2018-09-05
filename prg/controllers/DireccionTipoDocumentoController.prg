@@ -124,10 +124,10 @@ METHOD addColumns() CLASS DireccionTipoDocumentoBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
       :nWidth              := 150
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -214,7 +214,7 @@ METHOD Activate() CLASS DireccionTipoDocumentoView
    //Direccion--------------------------------------------------------------
 
    ::oController:oDireccionesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "direccion_uuid" ] ) )
-   ::oController:oDireccionesController:oGetSelector:Build( { "idGet" => 110, "idText" => 112, "idDireccion" => 113, "idCodigoPostal" => 114, "idPoblacion" => 115, "idProvincia" => 116, "idPais" => 117, "oDialog" => ::oDialog } )
+   ::oController:oDireccionesController:oGetSelector:Build( { "idGet" => 110, "idText" => 112, "idCodigoPostal" => 113, "idPoblacion" => 114, "idProvincia" => 115, "idPais" => 116, "oDialog" => ::oDialog } )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -294,10 +294,10 @@ CLASS SQLDireccionTipoDocumentoModel FROM SQLCompanyModel
                                           INLINE ( if( empty( uValue ), "", SQLDireccionTiposModel():getUuidWhereCodigo( uValue ) ) )
                        
    METHOD getDireccionUuidAttribute( uValue ) ; 
-                                          INLINE ( if( empty( uValue ), "", SQLDireccionesModel():getNombreWhereUuid( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), space( 20 ), SQLDireccionesModel():getCodigoWhereUuid( uValue ) ) )
 
-   METHOD setDireccionUuidAttribute( uValue ) ;
-                                          INLINE ( if( empty( uValue ), space( 40 ), SQLDireccionesModel():getUuidWhereCodigoClienteAndNombre( uValue ) ) )
+   /*METHOD setDireccionUuidAttribute( uValue ) ;
+                                          INLINE ( if( empty( uValue ), space( 40 ), SQLDireccionesModel():getUuidWhereCodigoClienteAndNombre( uValue ) ) )*/
 
    METHOD getInitialSelect()
 
@@ -336,7 +336,7 @@ METHOD getInitialSelect() CLASS SQLDireccionTipoDocumentoModel
       direccion_tipo_documento.uuid AS uuid,
       direccion_tipo_documento.parent_uuid AS parent_uuid,
       direccion_tipo.nombre AS tipo,
-      direcciones.nombre AS nombre,
+      direcciones.codigo AS codigo,
       direcciones.direccion AS direccion,
       direcciones.poblacion AS poblacion,
       direcciones.codigo_provincia AS codigo_provincia,
