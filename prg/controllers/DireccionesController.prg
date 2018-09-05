@@ -96,7 +96,7 @@ METHOD New( oController ) CLASS DireccionesController
    ::oValidator                     := DireccionesValidator():New( self, ::oDialogView )
 
    ::oGetSelector                   := DireccionGetSelector():New( self )
-   ::oGetSelector:setKey( "uuid" )
+   //::oGetSelector:setKey( "uuid" )
    
    ::getCodigosPostalesController()
 
@@ -274,10 +274,10 @@ METHOD addColumns() CLASS DireccionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
+      :cSortOrder          := 'codigo'
+      :cHeader             := 'Código'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -392,10 +392,10 @@ METHOD Activate() CLASS DireccionesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
+      VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
    ::ExternalRedefine( ::oDialog )
@@ -542,7 +542,7 @@ END CLASS
 
 METHOD getValidators() CLASS DireccionesValidator
 
-   ::hValidators  := {  "nombre" =>             {  "required"        => "El nombre es un dato requerido" },; 
+   ::hValidators  := {  "codigo" =>             {  "required"        => "El nombre es un dato requerido" },; 
                         "codigo_postal" =>      {  "codigoPostal"    => "" },;
                         "codigo_provincia" =>   {  "codigoProvincia" => "" },;
                         "codigo_pais" =>        {  "codigoPais"      => "" },;
@@ -662,10 +662,12 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
 
    DATA cTableName                        INIT "direcciones"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, codigo )"
+
 
    METHOD loadPrincipalBlankBuffer()      INLINE ( ::loadBlankBuffer(),;
                                                    hset( ::hBuffer, "principal", .t. ),;
-                                                   hset( ::hBuffer, "nombre", "Principal" ) )
+                                                   hset( ::hBuffer, "codigo", "0" ) )
 
    METHOD insertPrincipalBlankBuffer()    INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
 
@@ -702,8 +704,8 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "principal",         {  "create"    => "TINYINT ( 1 )"                           ,;
                                              "default"   => {|| "0" } }                               )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
-                                             "default"   => {|| space( 140 ) } }                      )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                          ,;
+                                             "default"   => {|| space( 20 ) } }                      )
 
    hset( ::hColumns, "direccion",         {  "create"    => "VARCHAR( 150 )"                          ,;
                                              "default"   => {|| space( 150 ) } }                      )
@@ -770,14 +772,14 @@ RETURN ( "" )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceClienteDireccion( cBy, Uuid ) CLASS SQLDireccionesModel
+METHOD getSentenceClienteDireccion( cBy, cId ) CLASS SQLDireccionesModel
 
    local cSql
 
    TEXT INTO cSql
 
    SELECT direcciones.uuid AS uuid,
-      direcciones.nombre AS nombre,
+      direcciones.codigo AS codigo,
       direcciones.direccion AS direccion,
       direcciones.poblacion AS poblacion,
       direcciones.provincia AS provincia,
@@ -793,7 +795,7 @@ METHOD getSentenceClienteDireccion( cBy, Uuid ) CLASS SQLDireccionesModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLPaisesModel():getTableName(), cBy , quoted( Uuid ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLPaisesModel():getTableName(), cBy , quoted( cId ) )
 
 RETURN ( cSql )
 
