@@ -3308,8 +3308,8 @@ FUNCTION CreateMainSQLAcceso()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Facturas de clientes'
    oItem:cMessage       := 'Facturas de clientes'
-   //oItem:bAction        := {|| FacturasClientesController():New():ActivateNavigatorView() }
-   oItem:bAction        := {|| FacturasClientesController1000() }
+   oItem:bAction        := {|| FacturasClientesController():New():ActivateNavigatorView() }
+   // oItem:bAction        := {|| FacturasClientesController1000() }
    oItem:cId            := "facturas_clientes"
    oItem:cBmp           := "gc_document_text_user_16"
    oItem:cBmpBig        := "gc_document_text_user_32"
