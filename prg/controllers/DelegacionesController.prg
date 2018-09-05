@@ -9,7 +9,7 @@ CLASS DelegacionesController FROM SQLNavigatorGestoolController
 
    DATA oCamposExtraValoresController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -39,11 +39,11 @@ METHOD New( oSenderController ) CLASS DelegacionesController
 
    ::oValidator                     := DelegacionesValidator():New( self, ::oDialogView )
 
-   ::oDireccionesController         := DireccionesGestoolController():New( self )
+   ::oRepository                    := DelegacionesRepository():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresGestoolController():New( self, ::oModel:cTableName )
-
-   ::oRepository                    := DelegacionesRepository():New( self )
+   
+   ::oDireccionesController         := DireccionesGestoolController():New( self )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
@@ -70,13 +70,29 @@ METHOD End() CLASS DelegacionesController
 
    ::oValidator:End()
 
+   ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
+
    ::oDireccionesController:End()
 
-   ::oRepository:End()
+   ::oModel                         := nil
+
+   ::oBrowseView                    := nil
+
+   ::oDialogView                    := nil
+
+   ::oValidator                     := nil
+
+   ::oRepository                    := nil
+
+   ::oCamposExtraValoresController  := nil
+
+   ::oDireccionesController         := nil
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

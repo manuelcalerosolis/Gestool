@@ -28,8 +28,10 @@ CLASS EnviromentController FROM SQLBaseController
    DATA aComboDelegaciones
    DATA cComboDelegacion
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()
+
+   METHOD Activate()                   
 
    METHOD isShow()
 
@@ -88,17 +90,46 @@ RETURN ( Self )
 
 METHOD End() CLASS EnviromentController
 
-   ::oCajasController:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+      ::oDialogView              := nil
+   end if 
 
-   ::oSesionesController:End()
+   if !empty( ::oCajasController )
+      ::oCajasController:End()
+      ::oCajasController         := nil
+   end if 
 
-   ::oAlmacenesController:End()
+   if !empty( ::oSesionesController )
+      ::oSesionesController:End()
+      ::oSesionesController      := nil
+   end if 
 
-   ::oDelegacionesController:End()
+   if !empty( ::oAlmacenesController )
+      ::oAlmacenesController:End()
+      ::oAlmacenesController     := nil
+   end if 
+
+   if !empty( ::oDelegacionesController )
+      ::oDelegacionesController:End()
+      ::oDelegacionesController  := nil
+   end if 
    
    ::Super:End()
 
-   Self                                := nil
+   hb_gcall( .t. )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS EnviromentController
+
+   ::New()
+
+   ::Show()
+
+   ::End()
 
 RETURN ( nil )
 

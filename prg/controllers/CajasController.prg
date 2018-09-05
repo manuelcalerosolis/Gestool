@@ -9,7 +9,7 @@ CLASS CajasController FROM SQLNavigatorController
 
    DATA oImpresorasController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -40,12 +40,12 @@ METHOD New( oSenderController) CLASS CajasController
    ::oValidator                     := CajasValidator():New( self, ::oDialogView )
 
    ::oRepository                    := CajasRepository():New( self )
+   
+   ::oGetSelector                   := GetSelector():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oImpresorasController          := ImpresorasController():New( self, ::oModel:cTableName )
-
-   ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -73,12 +73,26 @@ METHOD End() CLASS CajasController
 
    ::oGetSelector:End()
 
+   ::oModel                         := nil
+
+   ::oBrowseView                    := nil
+
+   ::oDialogView                    := nil
+
+   ::oValidator                     := nil
+
+   ::oCamposExtraValoresController  := nil
+
+   ::oImpresorasController          := nil
+
+   ::oRepository                    := nil
+
+   ::oGetSelector                   := nil
+
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -135,7 +149,7 @@ METHOD addColumns() CLASS CajasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

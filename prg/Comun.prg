@@ -219,13 +219,13 @@ FUNCTION CreateMainSQLWindow( oIconApp )
 
    oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : " +    rtrim( Auth():Nombre() ), 200,,,, .t. )
 
-   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + rtrim( Application():codigoDelegacion() ), 200,,,, .t., {|| EnviromentController():New():Show() } )
+   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : " + rtrim( Application():codigoDelegacion() ), 200,,,, .t., {|| EnviromentController():Activate() } )
 
-   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  +      rtrim( Box():Nombre() ), 200,,,, .t., {|| EnviromentController():New():Show() } )
+   oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "  +      rtrim( Box():Nombre() ), 200,,,, .t., {|| EnviromentController():Activate() } )
    
-   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " +    rtrim( Application():codigoAlmacen() ), 200,,,, .t., {|| EnviromentController():New():Show() } )
+   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : " +    rtrim( Application():codigoAlmacen() ), 200,,,, .t., {|| EnviromentController():Activate() } )
 
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : " +     alltrim( str( Session():Numero() ) ) , 100,,,, .t., {|| EnviromentController():New():Show() } ) 
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : " +     alltrim( str( Session():Numero() ) ) , 100,,,, .t., {|| EnviromentController():Activate() } ) 
 
    // Abrimos la ventana-------------------------------------------------------
 

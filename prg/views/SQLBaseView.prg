@@ -94,20 +94,18 @@ METHOD End()
 
    if !empty( ::oEvents )
       ::oEvents:End()
+      ::oEvents                                       := nil
    end if 
 
    if !empty( ::oTimer )
       ::oTimer:End()
+      ::oTimer                                        := nil
    end if 
+
+   ::oController                                      := nil
+
+   hb_gcall( .t. )
    
-   ::oEvents      := nil
-   
-   ::oTimer       := nil
-
-   ::hTextMode    := nil
-
-   self           := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -129,7 +127,7 @@ METHOD ShowMessage( cMessage )
       ::oTimer:Activate()
    end if 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -148,7 +146,7 @@ METHOD RestoreMessage()
       ::oTimer:DeActivate()
    end if 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

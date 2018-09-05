@@ -15,7 +15,7 @@ CLASS AlmacenesController FROM SQLNavigatorController
 
    DATA oCamposExtraValoresController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -47,19 +47,19 @@ METHOD New( oSenderController ) CLASS AlmacenesController
 
    ::oValidator                     := AlmacenesValidator():New( self, ::oDialogView )
 
+   ::oGetSelector                   := GetSelector():New( self )
+
+   ::oRepository                    := AlmacenesRepository():New( self )
+
+   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
+   
    ::oDireccionesController         := DireccionesController():New( self )
 
    ::oZonasController               := ZonasController():New( self )
 
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oRepository                    := AlmacenesRepository():New( self )
-
    ::oPaisesController              := PaisesController():New( self )
 
    ::oProvinciasController          := ProvinciasController():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -92,21 +92,45 @@ METHOD End() CLASS AlmacenesController
 
    ::oValidator:End()
 
+   ::oGetSelector:End()
+
+   ::oRepository:End()
+
+   ::oCamposExtraValoresController:End()
+
    ::oDireccionesController:End()
 
    ::oZonasController:End()
-
-   ::oRepository:End()
 
    ::oPaisesController:End()
 
    ::oProvinciasController:End()
 
-   ::oGetSelector:End()
+   ::oModel                         := nil
+
+   ::oBrowseView                    := nil
+
+   ::oDialogView                    := nil
+
+   ::oValidator                     := nil
+
+   ::oGetSelector                   := nil
+
+   ::oRepository                    := nil
+
+   ::oCamposExtraValoresController  := nil
+
+   ::oDireccionesController         := nil
+
+   ::oZonasController               := nil
+
+   ::oPaisesController              := nil
+
+   ::oProvinciasController          := nil
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -114,7 +138,7 @@ METHOD gettingSelectSentence() CLASS AlmacenesController
 
    ::oModel:setGeneralWhere( "almacen_uuid = ''" )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

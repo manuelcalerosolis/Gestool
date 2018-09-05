@@ -9,7 +9,7 @@ CLASS SesionesController FROM SQLNavigatorController
 
    DATA oCajasController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -75,6 +75,20 @@ METHOD End() CLASS SesionesController
    ::oRepository:End()
 
    ::oCajasController:End()
+
+   ::oModel             := nil
+
+   ::oBrowseView        := nil
+
+   ::oDialogView        := nil
+
+   ::oDialogCloseView   := nil
+
+   ::oValidator         := nil
+
+   ::oRepository        := nil
+
+   ::oCajasController   := nil
 
    ::Super:End()
 
