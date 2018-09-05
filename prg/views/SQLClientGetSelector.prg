@@ -208,8 +208,6 @@ METHOD setHelpText( value )
 
    if( !empty( ::oGetProvincia ),      ::oGetProvincia:cText( value[ "provincia" ] ), )
 
-   if( !empty( ::oGetPais ),           ::oGetPais:cText( value[ "nombre_pais" ] ), ) 
-
    if( !empty( ::oGetTelefono ),       ::oGetTelefono:cText( value[ "telefono" ] ), ) 
 
    if( !empty( ::oGetTarifa ),         ::oGetTarifa:cText( value[ "tarifa_codigo" ] ), ) 
