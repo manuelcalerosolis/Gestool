@@ -96,9 +96,11 @@ CLASS SQLBaseModel
    METHOD getAlterTableSentences()
    
    METHOD getGeneralSelect()
-   METHOD getInitialSelect()             INLINE ( "SELECT * FROM " + ::getTableName() )
+   METHOD getInitialSelect()                          INLINE ( "SELECT * FROM " + ::getTableName() )
 
    METHOD getField( cField, cBy, cId )
+   METHOD getFieldWhere( cField, hWhere )
+
    METHOD getHashWhere( cBy, cId )
 
    METHOD getWhereIdSelect( id )
@@ -757,6 +759,8 @@ METHOD getInsertSentence( hBuffer, lIgnore )
 
    ::fireEvent( 'gotInsertSentence' ) 
 
+   logwrite( ::cSQLInsert )
+
 RETURN ( ::cSQLInsert )
 
 //---------------------------------------------------------------------------//
@@ -1381,6 +1385,22 @@ RETURN ( ::getDatabase():getValue( cSql ) )
 
 //----------------------------------------------------------------------------//
 
+METHOD getFieldWhere( cField, hWhere )
+
+   local cSql        := "SELECT " + cField                                       + " "                              
+   cSql              +=    "FROM " + ::getTableName()                            + " "
+
+   hEval( hWhere,; 
+      {|k,v| cSql    += ::getWhereOrAnd( cSql ) + k + " = " + toSQLString( v )   + " " } )
+
+   cSql              +=    "LIMIT 1"
+
+   msgalert( cSql, "cSql" )
+
+RETURN ( ::getDatabase():getValue( cSql ) )
+
+//----------------------------------------------------------------------------//
+
 METHOD Count( oController )
 
    local cSql  := "SELECT COUNT(*) FROM " + ::getTableName()    
@@ -1464,7 +1484,6 @@ METHOD getWhereUuid( Uuid )
    cSQL        +=    "WHERE uuid = " + quoted( uuid )                         + " "    
    cSQL        +=    "LIMIT 1"
 
-
 RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
@@ -1503,6 +1522,7 @@ METHOD getColumnWhereUuid( uuid, cColumn )
    local cSQL     := "SELECT " + cColumn + " FROM " + ::getTableName()  + " " + ;
                         "WHERE uuid = " + quoted( uuid )                + " " + ;
                         "LIMIT 1"
+
 RETURN ( ::getDatabase():getValue( cSQL ) )
 
 //---------------------------------------------------------------------------//

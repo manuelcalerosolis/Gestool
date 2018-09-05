@@ -13,6 +13,10 @@ CLASS DireccionTipoDocumentoController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD getUuid()
+
+   METHOD setDireccionesUuid()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -47,6 +51,8 @@ METHOD New( oSenderController ) CLASS DireccionTipoDocumentoController
 
    ::oDireccionTiposController      := DireccionTiposController():New( self )
 
+   ::oDireccionesController:setEvent( 'gettingSelectSentence', {|| ::getParentUuid() } ) 
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -69,7 +75,45 @@ METHOD End() CLASS DireccionTipoDocumentoController
 
    ::oDireccionTiposController:End()
 
+   ::oModel                      := nil
+
+   ::oBrowseView                 := nil
+
+   ::oDialogView                 := nil
+
+   ::oValidator                  := nil
+
+   ::oRepository                 := nil
+
+   ::oGetSelector                := nil
+
+   ::oDireccionesController      := nil
+
+   ::oDireccionTiposController   := nil
+
    ::Super:End()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getUuid() CLASS DireccionTipoDocumentoController
+
+RETURN ( ::oSenderController:getClientUuid() )
+
+//---------------------------------------------------------------------------//
+
+METHOD setDireccionesUuid() CLASS DireccionTipoDocumentoController
+
+   local uuidDireccion
+
+   uuidDireccion  := ::oDireccionesController:oModel:getFieldWhere( 'uuid', { 'codigo' => ::oModel:getBuffer( 'direccion_uuid' ), 'parent_uuid' => ::oSenderController:getClientUuid() } )
+
+   if !empty( uuidDireccion )
+      ::oModel:setBuffer( 'direccion_uuid', uuidDireccion )
+   end if 
+
+   msgalert( hb_valtoexp( ::oModel:hBuffer ), "setDireccionesUuid" )
 
 RETURN ( nil )
 
@@ -171,7 +215,7 @@ METHOD addColumns() CLASS DireccionTipoDocumentoBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -184,6 +228,8 @@ CLASS DireccionTipoDocumentoView FROM SQLBaseView
    METHOD Activate()
 
    METHOD StartActivate()
+
+   METHOD Activated()            INLINE ( ::oController:setDireccionesUuid() )
 
 END CLASS
 
@@ -206,12 +252,12 @@ METHOD Activate() CLASS DireccionTipoDocumentoView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   //Tipo-------------------------------------------------------------------
+   // Tipo-------------------------------------------------------------------
 
    ::oController:oDireccionTiposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_uuid" ] ) )
    ::oController:oDireccionTiposController:oGetSelector:Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
 
-   //Direccion--------------------------------------------------------------
+   // Direccion--------------------------------------------------------------
 
    ::oController:oDireccionesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "direccion_uuid" ] ) )
    ::oController:oDireccionesController:oGetSelector:Build( { "idGet" => 110, "idText" => 112, "idCodigoPostal" => 113, "idPoblacion" => 114, "idProvincia" => 115, "idPais" => 116, "oDialog" => ::oDialog } )
@@ -295,9 +341,6 @@ CLASS SQLDireccionTipoDocumentoModel FROM SQLCompanyModel
                        
    METHOD getDireccionUuidAttribute( uValue ) ; 
                                           INLINE ( if( empty( uValue ), space( 20 ), SQLDireccionesModel():getCodigoWhereUuid( uValue ) ) )
-
-   /*METHOD setDireccionUuidAttribute( uValue ) ;
-                                          INLINE ( if( empty( uValue ), space( 40 ), SQLDireccionesModel():getUuidWhereCodigoClienteAndNombre( uValue ) ) )*/
 
    METHOD getInitialSelect()
 

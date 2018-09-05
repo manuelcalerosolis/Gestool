@@ -610,15 +610,11 @@ METHOD Zoom( nId )
 
    ::oModel:loadCurrentBuffer( nId )
 
-   ::oDialogView:Activating()
-
    ::fireEvent( 'openingDialog' )
 
-   ::oDialogView:Activate()
+   ::DialogViewActivate()   
 
    ::fireEvent( 'closedDialog' )    
-
-   ::oDialogView:Activated()
 
    ::fireEvent( 'zoomed' ) 
 
@@ -639,6 +635,8 @@ METHOD DialogViewActivate( oDialogView )
    oDialogView:Activating()
 
    ::uDialogResult         := oDialogView:Activate()
+   
+   oDialogView:Activated()
 
    if hb_islogical( ::uDialogResult )
       RETURN ( ::uDialogResult )
@@ -647,8 +645,6 @@ METHOD DialogViewActivate( oDialogView )
    if hb_isnumeric( ::uDialogResult ) .and. ( ::uDialogResult != IDCANCEL )
       RETURN ( .t. )
    end if 
-
-   oDialogView:Activated()
 
 RETURN ( .f. )
 

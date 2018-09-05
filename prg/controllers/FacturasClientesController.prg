@@ -308,14 +308,7 @@ RETURN ( nil )
 
 METHOD getClientUuid() CLASS FacturasClientesController
 
-   local uuidClient 
-
-   uuidClient  := ::oClientesController:oModel:getUuidWhereCodigo( ::getModelBuffer( "cliente_codigo" ) )
-   if !empty( uuidClient )
-      ::oDireccionTipoDocumentoController:oDireccionesController:setUuidParent( uuidClient )
-   end if 
-
-RETURN ( nil )
+RETURN ( ::oClientesController:oModel:getUuidWhereCodigo( ::getModelBuffer( "cliente_codigo" ) ) )
 
 //---------------------------------------------------------------------------//
 

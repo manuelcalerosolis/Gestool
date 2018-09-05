@@ -36,7 +36,6 @@ CLASS ClientGetSelector FROM GetSelector
    DATA oGetPais
    DATA cGetPais                    INIT ""
 
-
    DATA oGetTelefono
    DATA cGetTelefono                INIT ""
 
