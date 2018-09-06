@@ -18,12 +18,8 @@ METHOD getFields() CLASS DireccionGetSelector
    if empty( uuidParent )
       RETURN ( nil )
    end if 
-
-   msgalert( uuidParent, "::getFields" )
    
    ::uFields   := ::oController:oModel:getClienteDireccion( ::getKey(), ::oGet:varGet(), uuidParent ) 
-
-   msgalert( hb_valtoexp( ::uFields ) )
 
 RETURN ( ::uFields )
 

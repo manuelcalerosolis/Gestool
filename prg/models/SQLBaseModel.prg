@@ -1395,8 +1395,6 @@ METHOD getFieldWhere( cField, hWhere )
 
    cSql              +=    "LIMIT 1"
 
-   msgalert( cSql, "cSql" )
-
 RETURN ( ::getDatabase():getValue( cSql ) )
 
 //----------------------------------------------------------------------------//
