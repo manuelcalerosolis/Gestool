@@ -66,8 +66,6 @@ RETURN
 
 EXIT PROCEDURE ExitAplication()
 
-   // Informe de perdida de recursos-------------------------------------------
-
    freeResources()
 
    hb_gcall( .t. )
