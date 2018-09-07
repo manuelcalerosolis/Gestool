@@ -33,6 +33,8 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    DATA oCodigosPostalesController
 
+   DATA lPrincipal                        INIT .f.
+
    METHOD New() CONSTRUCTOR
    METHOD End()
 
@@ -61,6 +63,10 @@ CLASS DireccionesController FROM SQLNavigatorController
    METHOD getProvinciasController()       INLINE ( ::oProvinciasController       := ProvinciasController():New( self ) )
 
    METHOD getUuidParent()                 INLINE ( ::oSenderController:getUuid() )
+
+   METHOD includePrincipal()              INLINE ( ::lPrincipal := .t. )
+   METHOD excludePrincipal()              INLINE ( ::lPrincipal := .f. )
+   METHOD getPrincipal()                  INLINE ( ::lPrincipal )
 
 END CLASS
 
@@ -148,27 +154,17 @@ RETURN ( nil )
 
 METHOD gettingSelectSentence() CLASS DireccionesController
 
-   local uuid        
-
-/*
-   local uuid        := ::getParentUuid()
-
-   if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
-      RETURN ( nil )
-   end if 
-*/
+   local uuid      
 
    uuid              := ::getSenderController():getUuid() 
 
-   ? "gettingSelectSentence"
-   ? uuid
-
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
-   ::oModel:setOthersWhere( "principal = 0" )
+   if !( ::getPrincipal() )
+      ::oModel:setOthersWhere( "codigo != 0" )
+   end if
 
 RETURN ( nil )
 
@@ -397,7 +393,7 @@ METHOD Activate() CLASS DireccionesView
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
@@ -669,7 +665,6 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
 
 
    METHOD loadPrincipalBlankBuffer()      INLINE ( ::loadBlankBuffer(),;
-                                                   hset( ::hBuffer, "principal", .t. ),;
                                                    hset( ::hBuffer, "codigo", "0" ) )
 
    METHOD insertPrincipalBlankBuffer()    INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
@@ -701,9 +696,6 @@ METHOD getColumns() CLASS SQLDireccionesModel
 
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL "                 ,;
                                              "default"   => {|| space( 40 ) } }                       )
-
-   hset( ::hColumns, "principal",         {  "create"    => "TINYINT ( 1 )"                           ,;
-                                             "default"   => {|| "0" } }                               )
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 20 ) } }                       )
@@ -779,8 +771,6 @@ METHOD getSentenceClienteDireccion( cBy, cId, uuidParent ) CLASS SQLDireccionesM
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLPaisesModel():getTableName(), cBy , quoted( cId ), quoted( uuidParent ) )
 
-   msgalert( cSql, "getSentenceClienteDireccion" )
-   logwrite( cSql )
 
 RETURN ( cSql )
 

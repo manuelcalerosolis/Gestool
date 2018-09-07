@@ -94,7 +94,7 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
                         "LEFT JOIN " + SQLClientesModel():getTableName() + " clientes"                + " " + ;  
                            "ON facturas_clientes.cliente_codigo = clientes.codigo"                    + " " + ;  
                         "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"          + " " + ;  
-                           "ON clientes.uuid = direcciones.parent_uuid AND direcciones.principal"     + " " + ;
+                           "ON clientes.uuid = direcciones.parent_uuid AND direcciones.codigo = 0"    + " " + ;
                         "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " tarifas "        + " " + ;
                            "ON facturas_clientes.tarifa_codigo = tarifas.codigo "
 

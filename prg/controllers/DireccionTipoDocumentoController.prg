@@ -48,6 +48,7 @@ METHOD New( oSenderController ) CLASS DireccionTipoDocumentoController
    ::oGetSelector                   := GetSelector():New( self )
 
    ::oDireccionesController         := DireccionesController():New( self )
+   ::oDireccionesController:includePrincipal()
 
    ::oDireccionTiposController      := DireccionTiposController():New( self )
 
@@ -112,8 +113,6 @@ METHOD setDireccionesUuid() CLASS DireccionTipoDocumentoController
    if !empty( uuidDireccion )
       ::oModel:setBuffer( 'direccion_uuid', uuidDireccion )
    end if 
-
-   msgalert( hb_valtoexp( ::oModel:hBuffer ), "setDireccionesUuid" )
 
 RETURN ( nil )
 
@@ -256,11 +255,14 @@ METHOD Activate() CLASS DireccionTipoDocumentoView
 
    ::oController:oDireccionTiposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_uuid" ] ) )
    ::oController:oDireccionTiposController:oGetSelector:Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
+   ::oController:oDireccionTiposController:oGetSelector:setValid( {|| ::oController:validate( "tipo_uuid" ) } )
+   
 
    // Direccion--------------------------------------------------------------
 
    ::oController:oDireccionesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "direccion_uuid" ] ) )
-   ::oController:oDireccionesController:oGetSelector:Build( { "idGet" => 110, "idText" => 112, "idCodigoPostal" => 113, "idPoblacion" => 114, "idProvincia" => 115, "idPais" => 116, "oDialog" => ::oDialog } )
+   ::oController:oDireccionesController:oGetSelector:Build( { "idGet" => 110, "idLink" => 111, "idText" => 112, "idCodigoPostal" => 113, "idPoblacion" => 114, "idProvincia" => 115, "idPais" => 116, "oDialog" => ::oDialog } )
+   ::oController:oDireccionesController:oGetSelector:setValid( {|| ::oController:validate( "direccion_uuid" ) } )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -312,10 +314,8 @@ END CLASS
 
 METHOD getValidators() CLASS DireccionTipoDocumentoValidator
 
-   ::hValidators  := {  "nombre" =>       {  "required"           => "La descripción es un dato requerido",;
-                                             "unique"             => "La descripción introducida ya existe" },;
-                        "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
-                                             "unique"             => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "tipo_uuid" =>       {  "required"  => "El tipo es un dato requerido" },;
+                        "direccion_uuid" =>  {  "required"  => "La dirección es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
