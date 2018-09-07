@@ -25,7 +25,7 @@ CLASS SQLXBrowse FROM TXBrowse
 
    DATA cViewType                               AS CHARACTER   INIT "navigator"
 
-   METHOD New( oController, oWnd )
+   METHOD New( oController, oWnd ) CONSTRUCTOR
 
    METHOD setRowSet( oRowSet )
    METHOD setHashList( oHashList )
@@ -79,45 +79,40 @@ CLASS SQLXBrowse FROM TXBrowse
 
    METHOD setFilterInRowSet( cFilterExpresion )
 
-   METHOD getSelectedCol()                      INLINE ::SelectedCol()
+   METHOD getSelectedCol()                      INLINE ( ::SelectedCol() )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController, oWnd ) 
+METHOD New( oController, oWnd ) CLASS SQLXBrowse 
 
-   ::oController     := oController
+   ::oController        := oController
 
    ::Super:New( oWnd )
-
-   ::lAutoSort       := .t.
-   ::l2007           := .f.
-   ::bClrSel         := {|| { CLR_BLACK, Rgb( 221, 221, 221 ) } }
-   ::bClrSelFocus    := {|| { CLR_BLACK, Rgb( 221, 221, 221 ) } }
-   ::lSortDescend    := .f. 
 
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD setRowSet( oRowSet )
+METHOD setRowSet( oRowSet ) CLASS SQLXBrowse
 
    if empty( oRowSet )
       RETURN ( nil )
    end if       
 
    ::lAutoSort       := .f.
-   ::nDataType       := DATATYPE_USER
    ::nRowHeight      := 20
+
+   ::nDataType       := DATATYPE_USER
    ::bGoTop          := {|| oRowSet:Get():GoTop() }
    ::bGoBottom       := {|| oRowSet:Get():GoBottom() }
+   ::bSkip           := {| n | oRowSet:Get():Skipper( n ) }
    ::bBof            := {|| oRowSet:Get():Bof() }
    ::bEof            := {|| oRowSet:Get():Eof() }
    ::bKeyCount       := {|| oRowSet:Get():RecCount() }
-   ::bSkip           := {| n | oRowSet:Get():Skipper( n ) }
-   ::bKeyNo          := {| n | oRowSet:Get():RecNo() }
-   ::bBookMark       := {| n | iif( n == nil, oRowSet:Get():RecNo(), oRowSet:Get():GoTo( n ) ) }
+   ::bBookMark       := {| n | if( n == nil, oRowSet:Get():RecNo(), oRowSet:Get():GoTo( n ) ) }
+   ::bKeyNo          := {| n | if( n == nil, oRowSet:Get():RecNo(), oRowSet:Get():GoTo( n ) ) }
 
    if ::oVScroll() != nil
       ::oVscroll():SetRange( 1, oRowSet:Get():RecCount() )
@@ -125,11 +120,11 @@ METHOD setRowSet( oRowSet )
 
    ::lFastEdit       := .t.
 
-RETURN nil
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD setHashList( oContainer )
+METHOD setHashList( oContainer ) CLASS SQLXBrowse
 
    ::lAutoSort       := .f.
    ::nDataType       := DATATYPE_USER
@@ -140,7 +135,7 @@ METHOD setHashList( oContainer )
    ::bEof            := {|| oContainer:oHashList:Eof() }
    ::bKeyCount       := {|| oContainer:oHashList:RecCount() }
    ::bSkip           := {| n | oContainer:oHashList:Skipper( n ) }
-   ::bKeyNo          := {| n | oContainer:oHashList:RecNo() }
+   ::bKeyNo          := {| n | iif( n == nil, oContainer:oHashList:RecNo(), oContainer:oHashList:GoTo( n ) ) }
    ::bBookMark       := {| n | iif( n == nil, oContainer:oHashList:RecNo(), oContainer:oHashList:GoTo( n ) ) }
 
    if ::oVScroll() != nil 
@@ -149,11 +144,11 @@ METHOD setHashList( oContainer )
 
    ::lFastEdit       := .t.
 
-RETURN nil
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD ExportToExcel()
+METHOD ExportToExcel() CLASS SQLXBrowse
 
    local oError
    local oBlock
@@ -175,11 +170,11 @@ METHOD ExportToExcel()
 
    ErrorBlock( oBlock )
 
-RETURN nil
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD MakeTotals() 
+METHOD MakeTotals() CLASS SQLXBrowse
 
    local uBm
    local aCols    := {}
@@ -205,7 +200,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD getColumnByHeaders()
+METHOD getColumnByHeaders() CLASS SQLXBrowse
 
    ::aHeaders  := {}
 
@@ -215,7 +210,7 @@ RETURN ( ::aHeaders )
 
 //----------------------------------------------------------------------------//
 
-METHOD changeColumnOrder( oCol )
+METHOD changeColumnOrder( oCol ) CLASS SQLXBrowse
 
    if empty( oCol )
       RETURN ( Self )
@@ -233,7 +228,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD getColumnByHeader( cHeader )
+METHOD getColumnByHeader( cHeader ) CLASS SQLXBrowse
 
    local nPosition   
 
@@ -251,7 +246,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD getColumnOrder( cOrder )
+METHOD getColumnOrder( cOrder ) CLASS SQLXBrowse
 
    local nPosition   
 
@@ -269,7 +264,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD getColumnSortOrder()
+METHOD getColumnSortOrder() CLASS SQLXBrowse
 
    local oColumnOrder   := ::getColumnOrder()
 
@@ -281,7 +276,7 @@ RETURN ( "" )
 
 //------------------------------------------------------------------------//
 
-METHOD getColumnSortOrientation()
+METHOD getColumnSortOrientation() CLASS SQLXBrowse
 
    local oColumnOrder   := ::getColumnOrder()
 
@@ -293,7 +288,7 @@ RETURN ( "" )
 
 //------------------------------------------------------------------------//
 
-METHOD getColumnBySortOrder( cSortOrder )
+METHOD getColumnBySortOrder( cSortOrder ) CLASS SQLXBrowse
 
    local nPosition   
 
@@ -310,7 +305,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD getColumnOrderByHeader( cHeader )
+METHOD getColumnOrderByHeader( cHeader ) CLASS SQLXBrowse
 
    local oCol     := ::getColumnByHeader( cHeader )
 
@@ -322,7 +317,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD getFirstVisibleColumn()
+METHOD getFirstVisibleColumn() CLASS SQLXBrowse
 
    local oCol
 
@@ -336,7 +331,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD setFilterInRowSet( cFilterExpresion )
+METHOD setFilterInRowSet( cFilterExpresion ) CLASS SQLXBrowse
 
    ::oRowSet:setFilter( { || ::oRowSet:fieldGet( 1 ) == 1 } )
 
@@ -344,7 +339,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setColumnOrder( cSortOrder, cColumnOrientation )
+METHOD setColumnOrder( cSortOrder, cColumnOrientation ) CLASS SQLXBrowse
 
    local oColumn
 
@@ -362,7 +357,7 @@ RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
-METHOD setFirstColumnOrder()
+METHOD setFirstColumnOrder() CLASS SQLXBrowse
 
    local oColumn
 
@@ -377,4 +372,3 @@ METHOD setFirstColumnOrder()
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
-

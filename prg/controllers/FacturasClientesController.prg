@@ -78,8 +78,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD clientesSettedHelpText()
 
-   METHOD clientesCleanedHelpText()    INLINE ( ::oArticulosTarifasController:oGetSelector:cText( space( 20 ) ),;
-                                                ::oArticulosTarifasController:oGetSelector:lValid() )
+   METHOD clientesCleanedHelpText()    
 
    METHOD clientSetTarifa()
 
@@ -296,7 +295,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer() CLASS FacturasClientesController
+METHOD loadedBlankBuffer() CLASS FacturasClientesController 
 
    hset( ::oModel:hBuffer, "serie",    ::oContadoresModel:getDocumentSerie( ::cName ) )
    
@@ -306,7 +305,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getClientUuid() CLASS FacturasClientesController
+METHOD getClientUuid() CLASS FacturasClientesController 
 
 RETURN ( ::oClientesController:oModel:getUuidWhereCodigo( ::getModelBuffer( "cliente_codigo" ) ) )
 
@@ -323,6 +322,16 @@ METHOD clientesSettedHelpText() CLASS FacturasClientesController
    ::clientSetDescuentos()
 
    ::oHistoryManager:setkey( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD clientesCleanedHelpText()  
+
+   ::oArticulosTarifasController:oGetSelector:cText( space( 20 ) )
+
+   ::oArticulosTarifasController:oGetSelector:lValid() 
 
 RETURN ( nil )
 

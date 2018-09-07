@@ -95,9 +95,7 @@ METHOD End()
    
    ::oVerticalSplitter     := nil
 
-   Self                    := nil 
-
-RETURN ( .t. )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -148,8 +146,6 @@ METHOD postEndMDIChild()
    if !empty( ::oController )
       ::oController:endNavigatorView()
    end if 
-
-   msgalert( "postEndMDIChild" )
 
 RETURN ( nil )
 

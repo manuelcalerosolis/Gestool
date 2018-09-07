@@ -65,12 +65,6 @@ END CLASS
 
 METHOD New() CLASS EnviromentController
 
-   freeResources()
-
-   writeResources()
-
-   winExec( "notepad checkres.txt" )
-
    ::Super:New()
 
    ::cTitle                            := "Enviroment"
@@ -122,14 +116,6 @@ METHOD End() CLASS EnviromentController
    end if 
    
    ::Super:End()
-
-   hb_gcall( .t. )
-
-   freeResources()
-
-   writeResources()
-
-   winExec( "notepad checkres.txt" )
 
 RETURN ( nil )
 

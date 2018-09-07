@@ -344,7 +344,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
-
+/*
    local n      
    local nMemUsed    := MemUsed()
 
@@ -358,15 +358,13 @@ FUNCTION Test()
 
       ArticulosController():New():End()  
 
-      // hb_gcall( .t. )
-
    next
 
    msgalert(   "* MemUsed: " + AllTrim( Transform( MemUsed(), "999,999,999,999" ) )                   + CRLF + ;
                "* MemInit: " + Alltrim( Transform( nMemUsed, "999,999,999,999" ) )                    + CRLF + ;
                "* Diferences: " + AllTrim( Transform( MemUsed() - nMemUsed, "999,999,999,999" ) )     + CRLF + ;
                "* Running time: " + TimeFromStart(), "fin" )
-
+*/
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

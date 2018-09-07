@@ -2,7 +2,7 @@ HB                   = 	\harbour_bcc7\
 
 HBINCLUDE            = 	\harbour_bcc7\include
 FWINCLUDE            = 	\fwh1801\include
-GTINCLUDE            = 	.\Include
+GTINCLUDE            = 	.\include
 
 HBLIB                = 	\harbour_bcc7\lib
 FWLIB                = 	\fwh1801\lib
@@ -255,7 +255,6 @@ Tutil.prg               													\
 Tidxutil.prg            													\
 Tindex.prg              													\
 Stock.prg               													\
-Xbrowse.prg                												\
 IXbrowse.prg            													\
 SQLXbrowse.prg            													\
 Autoseek.prg            													\
@@ -977,7 +976,6 @@ Tutil.obj               													\
 Tidxutil.obj            													\
 Tindex.obj              													\
 Stock.obj               													\
-Xbrowse.obj             													\
 IXbrowse.obj            													\
 SQLXbrowse.obj         														\
 Autoseek.obj            													\
@@ -1435,7 +1433,7 @@ FacturasClientesView.obj 													\
 ClientesTarifasController.obj 											\
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
@@ -1680,7 +1678,6 @@ $(OBJ)\Tutil.obj                											+
 $(OBJ)\Tidxutil.obj             											+
 $(OBJ)\Tindex.obj               											+
 $(OBJ)\Stock.obj                											+
-$(OBJ)\Xbrowse.obj               										+
 $(OBJ)\IXbrowse.obj             											+
 $(OBJ)\SQLXbrowse.obj             										+
 $(OBJ)\Autoseek.obj             											+
