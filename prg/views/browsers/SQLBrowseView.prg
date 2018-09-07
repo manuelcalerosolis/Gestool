@@ -259,14 +259,13 @@ METHOD Create( oWindow )
    ::oBrowse:lRecordSelector  := .t.
    ::oBrowse:lAutoSort        := .t.
    ::oBrowse:lSortDescend     := .f.  
+   ::oBrowse:lGDIP            := .f.
 
    ::oBrowse:lFooter          := ::lFooter
    ::oBrowse:lFastEdit        := ::lFastEdit
    ::oBrowse:lMultiSelect     := ::lMultiSelect
    ::oBrowse:nColSel          := ::nColSel
    ::oBrowse:nFreeze          := ::nFreeze
-
-   // Propiedades del control--------------------------------------------------
 
    ::oBrowse:nMarqueeStyle    := ::nMarqueeStyle
 

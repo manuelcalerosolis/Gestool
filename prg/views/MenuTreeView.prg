@@ -233,9 +233,13 @@ RETURN ( nil )
 
 METHOD Exit()
 
+   msgalert( "Exit")
+
    if empty( ::oSender ) 
       RETURN ( nil )
    end if 
+
+   msgalert( ::oSender:getWindow():ClassName(), "::oSender:getWindow():ClassName()" )
 
    ::oSender:getWindow():End()
 

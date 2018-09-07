@@ -16,6 +16,8 @@ CLASS GetSelector
    DATA oGet
    DATA cGet
 
+   DATA cOriginal
+
    DATA cKey                                    INIT  "codigo"
 
    DATA uFields
@@ -31,7 +33,7 @@ CLASS GetSelector
    METHOD setKey( cKey )                        INLINE ( ::cKey := cKey )
    METHOD getKey()                              INLINE ( ::cKey )
 
-   METHOD setPrompt( cPrompt )                  INLINE ( ::cPrompt := cPrompt, msgalert( ::cPrompt, "aisgnado" ) )
+   METHOD setPrompt( cPrompt )                  INLINE ( ::cPrompt := cPrompt )
    METHOD getPrompt()                           INLINE ( if( empty( ::cPrompt ), ::getKey(), ::cPrompt ) )
    
    METHOD cText( value )                        INLINE ( if( !empty( ::oGet ), ::oGet:cText( value ), ) )
@@ -58,7 +60,7 @@ CLASS GetSelector
    
    METHOD start()                               INLINE ( ::loadHelpText( .t. ) )
 
-   METHOD evalValue( value )                    INLINE ( eval( ::bValue, value ) )
+   METHOD evalValue( value )                    INLINE ( eval( ::bValue, value ), ::setOriginal( value ) )
 
    METHOD showMessage()
 
@@ -81,6 +83,12 @@ CLASS GetSelector
 
    METHOD setWhen( bWhen )                      INLINE ( if( !empty( bWhen ),    ::bWhen        := bWhen, ),;
                                                          if( !empty( ::oGet ),   ::oGet:bWhen   := ::bWhen, ) )
+
+   METHOD isChangeGet()                         INLINE ( ::varGet() != ::getOriginal() )
+   METHOD isNotChangeGet()                      INLINE ( ::varGet() == ::getOriginal() )
+
+   METHOD setOriginal( cOriginal )              INLINE ( ::cOriginal := cOriginal )
+   METHOD getOriginal()                         INLINE ( ::cOriginal )
 
 END CLASS
 
@@ -131,6 +139,8 @@ METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
    end if
 
    ::cGet               := eval( ::bValue )
+
+   ::setOriginal( ::cGet )
 
    REDEFINE GET         ::oGet ;
       VAR               ::cGet ;
@@ -207,7 +217,11 @@ METHOD validAction() CLASS GetSelector
       RETURN ( .f. )
    end if
 
-   ::evalValue( ::oGet:varGet() )
+   if ::isNotChangeGet()
+      RETURN ( .t. )
+   end if 
+
+   ::evalValue( ::varGet() )
 
    if empty( ::bValid ) .or. eval( ::bValid, ::oGet )
 

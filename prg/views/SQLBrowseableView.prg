@@ -81,11 +81,9 @@ METHOD End()
       ::oMenuTreeView:end()
    end if 
 
-   ::Super:End()
-
    ::oMenuTreeView            := nil
 
-   Self                       := nil
+   ::Super:End()
 
 RETURN ( nil )
 
@@ -98,7 +96,7 @@ METHOD onChangeCombo( oColumn )
    end if 
 
    if empty( oColumn )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
@@ -109,7 +107,7 @@ METHOD onChangeCombo( oColumn )
 
    ::getBrowse():setFocus()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -122,12 +120,12 @@ METHOD onChangeSearch()
    local cColumnOrder   := ::getBrowse():getColumnOrderByHeader( cOrder )
 
    if empty( oSearch )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    if empty( cColumnOrder )
       msgInfo( "La columna seleccionada no permite busquedas" ) 
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    uValue               := oSearch:oGet:Buffer()
