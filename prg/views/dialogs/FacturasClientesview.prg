@@ -109,7 +109,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
    ::oController:oArticulosTarifasController:oGetSelector:Build( { "idGet" => 270, "idText" => 271, "idLink" => 272, "oDialog" => ::oFolder:aDialogs[1] } )
-
+   
    // Lineas ------------------------------------------------------------------
 
    TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:oFacturasClientesLineasController:AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
@@ -180,6 +180,8 @@ METHOD startDialog() CLASS FacturasClientesView
    ::oController:oFacturasClientesLineasController:oBrowseView:Refresh()
 
    ::oController:oArticulosTarifasController:oGetSelector:start()
+
+   ::oController:oAlmacenesController:oGetSelector:start()
 
    ::oController:oClientesController:oGetSelector:setFocus()
 

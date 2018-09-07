@@ -164,7 +164,6 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLClientesModel
                         "clientes.nombre AS nombre,"                                                                       + " " + ;
                         "clientes.dni AS dni,"                                                                             + " " + ;
                         "clientes.tarifa_codigo AS tarifa_codigo,"                                                         + " " + ;
-                        "tarifas.nombre AS tarifa_nombre,"                                                                 + " " + ;
                         "direcciones.direccion AS direccion,"                                                              + " " + ;
                         "direcciones.poblacion AS poblacion,"                                                              + " " + ;
                         "direcciones.provincia AS provincia,"                                                              + " " + ;
@@ -174,9 +173,9 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLClientesModel
                         "direcciones.email AS email"                                                                       + " " + ;
                      "FROM " + ::getTableName() + " AS clientes"                                                           + " " + ;
                         "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                               + " " + ;  
-                           "ON clientes.uuid = direcciones.parent_uuid AND direcciones.codigo = 0"                          + " " + ;
+                            "ON clientes.uuid = direcciones.parent_uuid AND direcciones.codigo = 0"                        + " " + ;
                         "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " tarifas "                             + " " + ;
-                           "ON clientes.tarifa_codigo = tarifas.codigo"                                                    + " " + ;
+                           "ON clientes.tarifa_codigo = tarifas.codigo"                                                    + " " 
                      "WHERE clientes." + cBy + " = " + quoted( cId ) 
 
 RETURN ( cSelect )

@@ -39,9 +39,6 @@ CLASS ClientGetSelector FROM GetSelector
    DATA oGetTelefono
    DATA cGetTelefono                INIT ""
 
-   DATA oGetTarifa
-   DATA cGetTarifa                  INIT ""
-
    METHOD Build( hBuilder ) 
 
    METHOD Activate()
@@ -68,9 +65,7 @@ METHOD Build( hBuilder ) CLASS ClientGetSelector
    ::idProvincia     := if( hhaskey( hBuilder, "idProvincia" ),      hBuilder[ "idProvincia" ],    nil )
    ::idPais          := if( hhaskey( hBuilder, "idPais" ),           hBuilder[ "idPais" ],         nil )
    ::idTelefono      := if( hhaskey( hBuilder, "idTelefono" ),       hBuilder[ "idTelefono" ],     nil )
-   ::idTarifa        := if( hhaskey( hBuilder, "idTarifa" ),         hBuilder[ "idTarifa" ],       nil )
    ::idLink          := if( hhaskey( hBuilder, "idLink" ),           hBuilder[ "idLink" ],         nil )
-
    ::oDlg            := if( hhaskey( hBuilder, "oDialog" ),          hBuilder[ "oDialog" ],        nil )
 
 RETURN ( ::Activate() )
@@ -151,15 +146,6 @@ METHOD Activate() CLASS ClientGetSelector
 
    end if 
 
-   if !empty( ::idTarifa )
-
-      REDEFINE GET   ::oGetTarifa ;
-         VAR         ::cGetTarifa ;
-         ID          ::idTarifa ;
-         WHEN        ( .f. ) ;
-         OF          ::oDlg
-
-   end if 
 
 RETURN ( ::oGet )
 
@@ -183,7 +169,6 @@ METHOD cleanHelpText()
 
    if( !empty( ::oGetTelefono ),       ::oGetTelefono:cText( "" ), )
 
-   if( !empty( ::oGetTarifa ),         ::oGetTarifa:cText( "" ), )
 
 RETURN ( nil )
 
@@ -209,7 +194,6 @@ METHOD setHelpText( value )
 
    if( !empty( ::oGetTelefono ),       ::oGetTelefono:cText( value[ "telefono" ] ), ) 
 
-   if( !empty( ::oGetTarifa ),         ::oGetTarifa:cText( value[ "tarifa_codigo" ] ), ) 
 
 RETURN ( nil )
 
