@@ -61,7 +61,6 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
 
    METHOD duplicateByUuid( originalUuid, duplicatedUuid )
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -165,8 +164,6 @@ METHOD getInitialSelect()
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName() )
-
-   logwrite( cSql )
 
 RETURN ( cSql )
 

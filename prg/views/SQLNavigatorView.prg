@@ -20,7 +20,7 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
    DATA oVerticalSplitter
    DATA oHorizontalSplitter
 
-   METHOD New( oController )
+   METHOD New( oController ) CONSTRUCTOR
    METHOD End()
 
    METHOD Activate()
@@ -63,7 +63,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( oController )
+METHOD New( oController ) CLASS SQLNavigatorView
 
    ::Super():New( oController )
 
@@ -73,7 +73,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End()
+METHOD End() CLASS SQLNavigatorView
 
    if !empty( ::oTopWebBar )
       ::oTopWebBar:End()
@@ -87,19 +87,19 @@ METHOD End()
       ::oVerticalSplitter:End()
    end if 
 
-   ::Super():End()
-
    ::oTopWebBar            := nil
    
    ::oHorizontalSplitter   := nil
    
    ::oVerticalSplitter     := nil
 
+   ::Super():End()
+
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD Activate()
+METHOD Activate() CLASS SQLNavigatorView
 
    ::CreateMDIChild()
 
@@ -124,14 +124,16 @@ METHOD Activate()
    // Eventos------------------------------------------------------------------
 
    ::oMdiChild:bKeyDown    := {|nKey, nFlags| ::keyDown( nKey, nFlags ) }
+
    ::oMdiChild:bValid      := {|| ::validMDIChild() }
+
    ::oMdiChild:bPostEnd    := {|| ::postEndMDIChild() }
 
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD validMDIChild()
+METHOD validMDIChild() CLASS SQLNavigatorView
 
    ::oController:saveState()
 
@@ -139,7 +141,7 @@ RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
-METHOD postEndMDIChild()
+METHOD postEndMDIChild() CLASS SQLNavigatorView
 
    ::End()
 
@@ -151,7 +153,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD CreateTopWebBar()
+METHOD CreateTopWebBar() CLASS SQLNavigatorView
 
    ::oTopWebBar            := TWebBar():New( 0, dfnTreeViewWidth, ::aRect[ 4 ] - dfnTreeViewWidth, dfnSplitterHeight,,,, dfnTextColorTop, dfnBackColorTop, , , , , , ::oMdiChild )
    
@@ -161,7 +163,7 @@ RETURN ( ::oTopWebBar  )
 
 //----------------------------------------------------------------------------//
 
-METHOD CreateSplitters()
+METHOD CreateSplitters() CLASS SQLNavigatorView
 
    ::oHorizontalSplitter   := TSplitter():New(  /*nRow*/ dfnSplitterHeight, /*nCol*/ dfnTreeViewWidth, /*lVertical*/ .f.,;
                                                 /*aPrevCtrols*/ { ::oTopWebBar }, /*lAdjPrev*/ .t.,;
@@ -178,7 +180,7 @@ METHOD CreateSplitters()
                                                 /*bChange*/, /*nWidth*/ dfnSplitterWidth, /*nHeight*/ ::aRect[ 3 ] - dfnSplitterHeight, /*lPixel*/ .t., /*l3D*/.t.,;
                                                 /*nClrBack*/ , /*lDesign*/ .f., /*lUpdate*/ .t., /*lStyle*/ .t. )  
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

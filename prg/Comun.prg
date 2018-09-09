@@ -344,6 +344,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 FUNCTION Test()
+
 /*
    local n      
    local nMemUsed    := MemUsed()
@@ -365,6 +366,7 @@ FUNCTION Test()
                "* Diferences: " + AllTrim( Transform( MemUsed() - nMemUsed, "999,999,999,999" ) )     + CRLF + ;
                "* Running time: " + TimeFromStart(), "fin" )
 */
+
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

@@ -295,8 +295,6 @@ METHOD End()
    
    ::oRowSet                  := nil
 
-   ::oView                    := nil
-
    hb_gcall( .t. )
 
 RETURN ( nil )

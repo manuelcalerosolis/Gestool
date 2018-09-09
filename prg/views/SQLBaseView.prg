@@ -6,11 +6,13 @@
 
 CLASS SQLBaseView
   
+   CLASSDATA oEvents 
+
+   CLASSDATA oTimer
+
+   CLASSDATA oFontBold
+
    DATA oController
-
-   DATA oEvents 
-
-   DATA oTimer
 
    DATA oDialog
    DATA oFolder
@@ -34,7 +36,7 @@ CLASS SQLBaseView
 
    DATA oExplorerBar
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()      
 
    METHOD Activate()                                  VIRTUAL
@@ -84,6 +86,8 @@ METHOD New( oController )
 
    ::oEvents                                          := Events():New()
 
+   ::oFontBold                                        := TFont():New( GetSysFont(), 0, -8, .f., .t. )
+
    ::oTimer                                           := TTimer():New( 4000, {|| ::RestoreMessage() } )
 
 RETURN ( self )
@@ -94,19 +98,28 @@ METHOD End()
 
    if !empty( ::oEvents )
       ::oEvents:End()
-      ::oEvents                                       := nil
    end if 
 
    if !empty( ::oTimer )
       ::oTimer:End()
-      ::oTimer                                        := nil
    end if 
 
-   ::oController                                      := nil
+   if !empty( ::oFontBold )
+      msgalert( ::oController:ClassName(), "oFontBold end" )
+      ::oFontBold:End()
+   end if 
 
-   hb_gcall( .t. )
+   ::oEvents                                          := nil
+
+   ::oTimer                                           := nil
+
+   ::oFontBold                                        := nil
+
    
-RETURN ( nil )
+
+   // msgwait( "CLASS SQLBaseView END", "", 1 )
+   
+RETURN ( hb_gcall( .t. ) )
 
 //---------------------------------------------------------------------------//
 

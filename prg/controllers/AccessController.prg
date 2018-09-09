@@ -35,7 +35,7 @@ CLASS AccessController FROM SQLBaseController
 
    DATA cMacAddress                    INIT ""
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()
 
    METHOD validUserPassword( cUsuario, cPassword )
@@ -85,17 +85,61 @@ RETURN ( Self )
 
 METHOD End() CLASS AccessController
 
+   ::oAccessView:End()
+
+   ::oAccessTactilView:End()
+
    ::oUsuariosController:End()
    
    ::oEmpresasController:End()
 
    ::oAjustableController:End()
+
+   ::oAccessView           := nil
+
+   ::oAccessTactilView     := nil
+
+   ::oUsuariosController   := nil
    
+   ::oEmpresasController   := nil
+
+   ::oAjustableController  := nil
+
    ::Super:End()
 
-   Self                                := nil
+   msgalert("AccessController end")
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD isLogin() CLASS AccessController
+
+   local isLogin  := .f.
+
+   ::New()
+
+   ::loadUsersAndCompanies()
+
+   isLogin        := ::oAccessView:Activate() == IDOK
+
+   if ( isLogin )
+
+      if !empty( ::hUsuario )
+         Auth( ::hUsuario )
+      end if 
+
+      if ::isSelectCompany() .and. !empty( ::hEmpresa )
+         Company( ::hEmpresa )
+      end if 
+
+      ::saveUsersAndCompanies()
+
+   end if 
+
+   ::End()
+
+RETURN ( isLogin )
 
 //---------------------------------------------------------------------------//
 
@@ -143,7 +187,7 @@ METHOD loadSuperAdmin() CLASS AccessController
    ::aComboUsuarios        := { __admin_name__ }
    ::cComboUsuario         := __admin_name__
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -154,28 +198,6 @@ METHOD saveUsersAndCompanies() CLASS AccessController
    ::oAjustableController:oModel:setUltimoUsuarioInMac( Auth():uuid(), ::getMacAddress() )
 
 RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD isLogin() CLASS AccessController
-
-   ::loadUsersAndCompanies()
-
-   if ( ::oAccessView:Activate() != IDOK )
-      RETURN ( .f. )
-   end if 
-
-   if !empty( ::hUsuario )
-      Auth( ::hUsuario )
-   end if 
-
-   if ::isSelectCompany() .and. !empty( ::hEmpresa )
-      Company( ::hEmpresa )
-   end if 
-
-   ::saveUsersAndCompanies()
-
-RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -325,7 +347,7 @@ METHOD Activate() CLASS AccessView
    REDEFINE SAY   ::oSayError ;
       ID          120 ;
       COLOR       Rgb( 183, 28, 28 ) ;
-      FONT        oFontBold() ;
+      FONT        ::oFontBold ;
       OF          ::oDialog
 
    REDEFINE BUTTON ;
@@ -442,7 +464,7 @@ METHOD initActivate() CLASS AccessTactilView
       :Create( ::oListView )
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

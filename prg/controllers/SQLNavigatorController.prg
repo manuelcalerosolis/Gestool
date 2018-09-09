@@ -39,7 +39,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    DATA oWindowsBar
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -156,8 +156,6 @@ METHOD End()
       ::oFilterController:End() 
    end if 
 
-   ::Super():End()
-
    ::oNavigatorView           := nil
 
    ::oSelectorView            := nil
@@ -168,7 +166,7 @@ METHOD End()
 
    ::oWindowsBar              := nil
 
-   self                       := nil
+   ::Super():End()
 
    cursorWE()
 
@@ -198,12 +196,12 @@ RETURN ( nil )
 METHOD activateNavigatorView()
 
    if empty( ::oNavigatorView )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    if ::notUserAccess()
       msgStop( "Acceso no permitido." )
-      RETURN ( Self )
+      RETURN ( nil )
    end if
 
    cursorWait()
