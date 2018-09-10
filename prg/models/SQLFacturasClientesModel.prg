@@ -7,7 +7,9 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getInitialSelect() 
+   METHOD getInitialSelect()
+
+   METHOD stampPrecioTotalDescuento( UuidFactura ) 
 
 END CLASS
 
@@ -100,6 +102,22 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
 
 
 RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD stampPrecioTotalDescuento( UuidFactura ) CLASS SQLFacturasClientesModel
+
+local cSql
+
+ TEXT INTO cSql
+ call PrecioTotalConDescuento( %1$s )
+ ENDTEXT
+
+   cSql  := hb_strformat( cSql, quoted( UuidFactura ) )
+
+   //msgalert( getSQLDataBase():getValue ( cSql ) )
+
+RETURN( /*getSQLDataBase():getValue( cSql )*/ 10058.365)
 
 //---------------------------------------------------------------------------//
 

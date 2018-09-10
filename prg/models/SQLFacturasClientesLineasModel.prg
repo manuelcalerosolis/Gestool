@@ -61,12 +61,17 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
 
    METHOD duplicateByUuid( originalUuid, duplicatedUuid )
 
+   METHOD getSentenceCountLineas( UuidParent )
+
+   METHOD isLinesWhereUuidParent( UuidParent )           INLINE  0//getSQLDatabase():getValue(::getSentenceCountLineas( UuidParent ) )
+
+
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getColumns()
+METHOD getColumns() CLASS SQLFacturasClientesLineasModel
 
    hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT"         ,;
                                                       "default"   => {|| 0 } }                        )
@@ -123,7 +128,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInitialSelect()
+METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
 
    local cSql
 
@@ -166,13 +171,11 @@ METHOD getInitialSelect()
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName() )
 
-   logwrite( cSql )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertSentence()
+METHOD getInsertSentence() CLASS SQLFacturasClientesLineasModel
 
    local nId
 
@@ -188,7 +191,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD addInsertSentence( aSQLInsert, oProperty )
+METHOD addInsertSentence( aSQLInsert, oProperty ) CLASS SQLFacturasClientesLineasModel
 
    if empty( oProperty:Value )
       RETURN ( nil )
@@ -207,7 +210,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD addUpdateSentence( aSQLUpdate, oProperty )
+METHOD addUpdateSentence( aSQLUpdate, oProperty ) CLASS SQLFacturasClientesLineasModel
 
    aadd( aSQLUpdate, "UPDATE " + ::getTableName() + " " +                                                       ;
                         "SET unidades_articulo = " + toSqlString( oProperty:Value )                + ", " + ;
@@ -218,7 +221,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD addDeleteSentence( aSQLUpdate, oProperty )
+METHOD addDeleteSentence( aSQLUpdate, oProperty ) CLASS SQLFacturasClientesLineasModel
 
    aadd( aSQLUpdate, "DELETE FROM " + ::getTableName() + " " +                          ;
                         "WHERE uuid = " + quoted( oProperty:Uuid ) + "; " )
@@ -227,7 +230,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD addDeleteSentenceById( aSQLUpdate, nId )
+METHOD addDeleteSentenceById( aSQLUpdate, nId ) CLASS SQLFacturasClientesLineasModel
 
    aadd( aSQLUpdate, "DELETE FROM " + ::getTableName() + " " +                          ;
                         "WHERE id = " + quoted( nId ) + "; " )
@@ -236,7 +239,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteWhereUuid( uuid )
+METHOD deleteWhereUuid( uuid ) CLASS SQLFacturasClientesLineasModel
 
    local cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
                            "WHERE parent_uuid = " + quoted( uuid )
@@ -245,7 +248,7 @@ RETURN ( ::getDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD aUuidToDelete( aParentsUuid )
+METHOD aUuidToDelete( aParentsUuid ) CLASS SQLFacturasClientesLineasModel
 
    local cSentence   
 
@@ -260,7 +263,7 @@ RETURN ( ::getDatabase():selectFetchArray( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentenceFromParentsUuid( aParentsUuid )
+METHOD getDeleteSentenceFromParentsUuid( aParentsUuid ) CLASS SQLFacturasClientesLineasModel
 
    local aUuid       := ::aUuidToDelete( aParentsUuid )
 
@@ -272,7 +275,7 @@ RETURN ( "" )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSubSentenceTotalUnidadesLinea( cTable, cAs )
+METHOD getSQLSubSentenceTotalUnidadesLinea( cTable, cAs ) CLASS SQLFacturasClientesLineasModel
 
    DEFAULT cTable    := ""
    DEFAULT cAs       := "total_unidades"
@@ -289,7 +292,7 @@ RETURN ( cTable + "unidades_articulo AS " + cAs + " " )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSubSentenceTotalPrecioLinea( cTable, cAs )
+METHOD getSQLSubSentenceTotalPrecioLinea( cTable, cAs ) CLASS SQLFacturasClientesLineasModel
 
    DEFAULT cTable    := ""
    DEFAULT cAs       := "total_precio"
@@ -306,7 +309,7 @@ RETURN ( cTable + "unidades_articulo * " + cTable + "precio_articulo AS " + cAs 
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs )
+METHOD getSQLSubSentenceSumatorioUnidadesLinea( cTable, cAs ) CLASS SQLFacturasClientesLineasModel
 
    DEFAULT cAs       := "total_unidades"
 
@@ -324,7 +327,7 @@ RETURN ( "SUM( " + cTable + "unidades_articulo ) AS " + cAs + " " )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSubSentenceSumatorioTotalPrecioLinea( cTable, cAs )
+METHOD getSQLSubSentenceSumatorioTotalPrecioLinea( cTable, cAs ) CLASS SQLFacturasClientesLineasModel
 
    DEFAULT cAs       := "total_precio"
 
@@ -342,7 +345,7 @@ RETURN ( "SUM( " + cTable + "unidades_articulo * " + cTable + "precio_articulo )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSentenceNotSent( aFetch )
+METHOD getSentenceNotSent( aFetch ) CLASS SQLFacturasClientesLineasModel
 
    local cSentence   := "SELECT * FROM " + ::getTableName() + " "
 
@@ -356,13 +359,13 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getIdProductAdded()
+METHOD getIdProductAdded() CLASS SQLFacturasClientesLineasModel
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getUpdateUnitsSentece( id )
+METHOD getUpdateUnitsSentece( id ) CLASS SQLFacturasClientesLineasModel
    
    local cSentence   := "UPDATE " + ::getTableName() +                                                                                  + " " +  ;
                            "SET unidades_articulo = unidades_articulo + " + toSQLString( hget( ::hBuffer, "unidades_articulo" ) )   + " " +  ;
@@ -372,7 +375,7 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD createTemporalTableWhereUuid( originalUuid )
+METHOD createTemporalTableWhereUuid( originalUuid ) CLASS SQLFacturasClientesLineasModel
 
    local cSentence
 
@@ -386,7 +389,7 @@ RETURN ( ::getDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD alterTemporalTableWhereUuid()
+METHOD alterTemporalTableWhereUuid() CLASS SQLFacturasClientesLineasModel
 
    local cSentence
 
@@ -396,7 +399,7 @@ RETURN ( ::getDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD replaceUuidInTemporalTable( duplicatedUuid )
+METHOD replaceUuidInTemporalTable( duplicatedUuid ) CLASS SQLFacturasClientesLineasModel
 
    local cSentence
 
@@ -409,7 +412,7 @@ RETURN ( ::getDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertTemporalTable()
+METHOD insertTemporalTable() CLASS SQLFacturasClientesLineasModel
 
    local cSentence
 
@@ -420,7 +423,7 @@ RETURN ( ::getDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD dropTemporalTable()
+METHOD dropTemporalTable() CLASS SQLFacturasClientesLineasModel
 
    local cSentence
 
@@ -430,7 +433,7 @@ RETURN ( ::getDatabase():Exec( cSentence ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD duplicateByUuid( originalUuid, duplicatedUuid )
+METHOD duplicateByUuid( originalUuid, duplicatedUuid ) CLASS SQLFacturasClientesLineasModel
 
    if !( ::createTemporalTableWhereUuid( originalUuid ) )
       RETURN ( nil )
@@ -451,3 +454,25 @@ METHOD duplicateByUuid( originalUuid, duplicatedUuid )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD getSentenceCountLineas( UuidParent ) CLASS SQLFacturasClientesLineasModel
+
+   local cSql
+
+   TEXT INTO cSql
+      SELECT COUNT (*)
+
+      FROM %1$s AS facturas_clientes_lineas
+
+      WHERE facturas_clientes_lineas.parent_uuid = %2$s  
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( UuidParent ) )
+
+   msgalert ( cSql )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+

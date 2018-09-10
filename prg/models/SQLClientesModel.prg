@@ -175,7 +175,7 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLClientesModel
                         "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                               + " " + ;  
                             "ON clientes.uuid = direcciones.parent_uuid AND direcciones.codigo = 0"                        + " " + ;
                         "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " tarifas "                             + " " + ;
-                           "ON clientes.tarifa_codigo = tarifas.codigo"                                                    + " " 
+                           "ON clientes.tarifa_codigo = tarifas.codigo"                                                    + " " + ;
                      "WHERE clientes." + cBy + " = " + quoted( cId ) 
 
 RETURN ( cSelect )

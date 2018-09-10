@@ -64,6 +64,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oHistoryManager
 
+   DATA oTotalConDescuento   INIT 0
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -83,6 +85,10 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    METHOD clientSetTarifa()
 
    METHOD clientSetDescuentos()
+
+   METHOD ThereIsLineas()
+
+   METHOD CalculatePrecioTotal()      INLINE ::oFacturasClientesLineasController:oModel:CalculatePrecioTotalLineas( ::getModelBuffer( 'uuid' ) ) 
 
 END CLASS
 
@@ -370,6 +376,18 @@ METHOD clientSetDescuentos() CLASS FacturasClientesController
    ::oFacturasClientesDescuentosController:refreshBrowseView()
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD ThereIsLineas() CLASS FacturasClientesController
+
+local nLineas  := ::oFacturasClientesLineasController:oModel:isLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) )
+
+if nLineas > 0
+   RETURN( .f. )
+end if
+
+RETURN( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
