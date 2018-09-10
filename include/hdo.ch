@@ -2,8 +2,8 @@
 // Proyecto: Harbour Data Objects hdo
 // Fichero: hdo.ch
 // Descripcion: includes de programas con hdo
-// Autor: Manu Exposito 2015-17
-// Fecha: 15/01/2017
+// Autor: Manu Exposito 2014-18
+// Fecha: 10/09/2018
 //------------------------------------------------------------------------------
 
 #ifndef HDO_CH_
