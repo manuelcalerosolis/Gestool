@@ -65,7 +65,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    ::oController:oClientesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) )
    ::oController:oClientesController:oGetSelector:Build( { "idGet" => 170, "idLink" => 171, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:oClientesController:oGetSelector:setWhen( {|| .f. } )
+   ::oController:oClientesController:oGetSelector:setWhen( {|| ::oController:ThereIsLineas() } )
 
    // Serie-------------------------------------------------------------------
 
@@ -110,6 +110,15 @@ METHOD Activate() CLASS FacturasClientesView
 
    ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
    ::oController:oArticulosTarifasController:oGetSelector:Build( { "idGet" => 270, "idText" => 271, "idLink" => 272, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oArticulosTarifasController:oGetSelector:setWhen( {|| ::oController:ThereIsLineas() } )
+
+   //Total---------------------------------------------------------------------
+   REDEFINE SAY      ::oController:oTotalConDescuento ;
+         VAR         ::oController:oModel:stampPrecioTotalDescuento( ::oController:oModel:hBuffer[ "uuid" ] );
+         ID          280 ;
+         FONT        oFontBold() ;
+         OF          ::oFolder:aDialogs[1]
+
    
    // Lineas ------------------------------------------------------------------
 

@@ -105,7 +105,6 @@ METHOD End()
    end if 
 
    if !empty( ::oFontBold )
-      msgalert( ::oController:ClassName(), "oFontBold end" )
       ::oFontBold:End()
    end if 
 
@@ -114,8 +113,6 @@ METHOD End()
    ::oTimer                                           := nil
 
    ::oFontBold                                        := nil
-
-   
 
    // msgwait( "CLASS SQLBaseView END", "", 1 )
    
