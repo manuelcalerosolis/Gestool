@@ -61,15 +61,10 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
 
    METHOD duplicateByUuid( originalUuid, duplicatedUuid )
 
-<<<<<<< HEAD
-=======
-   METHOD getSentenceCountLineas( UuidParent )
+   METHOD getSentenceCountLineas( uuidParent )
 
-   METHOD isLinesWhereUuidParent( UuidParent )           INLINE  0//getSQLDatabase():getValue(::getSentenceCountLineas( UuidParent ) )
+   METHOD countLinesWhereUuidParent( uuidParent )  INLINE ( getSQLDatabase():getValue( ::getSentenceCountLineas( uuidParent ) ) )
 
-
-
->>>>>>> 3fb455ebab9f1a02bfb38bfda40afe84c4281bee
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -463,7 +458,8 @@ METHOD getSentenceCountLineas( UuidParent ) CLASS SQLFacturasClientesLineasModel
    local cSql
 
    TEXT INTO cSql
-      SELECT COUNT (*)
+
+      SELECT COUNT(*)
 
       FROM %1$s AS facturas_clientes_lineas
 

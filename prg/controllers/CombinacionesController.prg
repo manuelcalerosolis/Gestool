@@ -536,9 +536,6 @@ METHOD showCombinations() CLASS CombinacionesSelectorView
 
    aeval( aPanelCombination, {| hSelect | cSerial += hget( hSelect, "propiedad_uuid" ) + ", " } ) 
 
-   msgalert( cSerial, "cSerial" )
-   logwrite( cSerial )
-
 RETURN ( aPanelCombination )
 
 //---------------------------------------------------------------------------//

@@ -7,39 +7,44 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
 
    METHOD getTableName()                  INLINE ( SQLFacturasClientesModel():getTableName() ) 
 
-   METHOD getSQLFunctions()               INLINE ( {  ::dropProcedurePrecioTotalConDescuento(),;
-                                                      ::createProcedurePrecioTotalConDescuento() } )
+   METHOD getSQLFunctions()               INLINE ( {  ::dropProcedureTotales(),;
+                                                      ::createProcedureTotales() } )
 
-   METHOD dropProcedurePrecioTotalConDescuento()  
+   METHOD dropProcedureTotales()  
 
-   METHOD createProcedurePrecioTotalConDescuento()
+   METHOD createProcedureTotales()
 
-   METHOD callPrecioTotalConDescuento( UuidFactura )
-  
+   METHOD callTotals( uuidFactura )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD dropProcedurePrecioTotalConDescuento() CLASS FacturasClientesRepository 
+METHOD dropProcedureTotales() CLASS FacturasClientesRepository 
 
-RETURN ( "DROP PROCEDURE IF EXISTS " + Company():getTableName( 'PrecioTotalConDescuento' ) + ";" )
-
-//---------------------------------------------------------------------------//
-
-METHOD callPrecioTotalConDescuento( UuidFactura ) CLASS FacturasClientesRepository
-
-RETURN ( getSQLDatabase():Exec( "CALL " + Company():getTableName( 'PrecioTotalConDescuento' ) + "( " + UuidFactura + " )" ) )
+RETURN ( "DROP PROCEDURE IF EXISTS " + Company():getTableName( 'FacturasClientesTotales' ) + ";" )
 
 //---------------------------------------------------------------------------//
 
-METHOD createProcedurePrecioTotalConDescuento() CLASS FacturasClientesRepository
+METHOD callTotals( uuidFactura ) CLASS FacturasClientesRepository
+
+   local hTotals  
+
+   getSQLDatabase():Exec( "CALL " + Company():getTableName( 'FacturasClientesTotales' ) + "( '" + uuidFactura + "', @totalBruto, @totalDescuento )" ) 
+   
+   hTotals           := getSQLDatabase():selectFetchHash( "SELECT @totalBruto AS totalBruto, @totalDescuento AS totalDescuento" ) 
+
+RETURN ( atail( hTotals ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD createProcedureTotales( uuidFactura ) CLASS FacturasClientesRepository
 
    local cSQL
 
    TEXT INTO cSql
 
-   CREATE DEFINER=`root`@`localhost` PROCEDURE %1$s ( IN `UuidFactura` CHAR(40) ) 
+   CREATE DEFINER=`root`@`localhost` PROCEDURE %1$s ( IN uuidFactura CHAR( 40 ), OUT totalBruto DECIMAL( 19, 6 ), OUT totalDescuento DECIMAL( 19, 6 ) )
       LANGUAGE SQL 
       NOT DETERMINISTIC 
       CONTAINS SQL 
@@ -47,34 +52,39 @@ METHOD createProcedurePrecioTotalConDescuento() CLASS FacturasClientesRepository
       COMMENT '' 
       BEGIN 
 
-      Declare totalprecio decimal(19,6);
-      Declare totaldescuento decimal(7,4);
-      Declare descuentoeuros decimal(19,6);
-      Declare preciocondescuento decimal(19,6);
+      DECLARE importeBruto          DECIMAL( 19, 6 );
+      DECLARE importeDescuento      DECIMAL( 19, 6 );
+      DECLARE importeFactura        DECIMAL( 19, 6 );
+      DECLARE porcentajeDescuento   DECIMAL( 7, 4 );
 
-      SET @totalprecio = (SELECT SUM(facturas_clientes_lineas.unidad_medicion_factor * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio )
-                           FROM %2$s AS facturas_clientes_lineas 
-                           WHERE facturas_clientes_lineas.parent_uuid = %4$s);
+      SET importeBruto        =  (  SELECT 
+                                       SUM( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio )
+                                       FROM %2$s AS facturas_clientes_lineas 
+                                       WHERE facturas_clientes_lineas.parent_uuid = uuidFactura );
 
-      SET @totaldescuento = (SELECT SUM(facturas_clientes_descuentos.descuento)
-                              FROM %3$s AS facturas_clientes_descuentos
-                              WHERE facturas_clientes_descuentos.parent_uuid = %4$s); 
+      SET porcentajeDescuento =  (  SELECT SUM(facturas_clientes_descuentos.descuento)
+                                    FROM %3$s AS facturas_clientes_descuentos
+                                    WHERE facturas_clientes_descuentos.parent_uuid = uuidFactura ); 
 
-      SET @descuentoeuros= (@totalprecio * @totaldescuento /100); 
+      SET importeDescuento   = ( importeBruto * porcentajeDescuento / 100 ); 
 
-      SET @preciocondescuento = @totalprecio - @descuentoeuros ; 
+      SET importeFactura     = importeBruto; 
 
-      SELECT @preciocondescuento AS total_con_descuento;
+      IF importeDescuento IS NOT NULL THEN 
+         SET importeFactura  = importeBruto - importeDescuento; 
+      END IF;
+
+      SELECT importeBruto     INTO totalBruto;
+      SELECT importeDescuento INTO totalDescuento;
 
       END
 
    ENDTEXT
 
    cSql  := hb_strformat(  cSql,;
-                           Company():getTableName( 'PrecioTotalConDescuento' ),;
-                           SQLFactutasClientesLineasModel():getTableName(),;,;
-                           SQLFactutasClientesDescuentosModel():getTableName(),;
-                           quoted( UuidFactura ) )
+                           Company():getTableName( 'FacturasClientesTotales' ),;
+                           SQLFacturasClientesLineasModel():getTableName(),;
+                           SQLFacturasClientesDescuentosModel():getTableName() )
 
 RETURN ( cSQL )
 

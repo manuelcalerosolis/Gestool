@@ -759,8 +759,6 @@ METHOD getInsertSentence( hBuffer, lIgnore )
 
    ::fireEvent( 'gotInsertSentence' ) 
 
-   logwrite( ::cSQLInsert )
-
 RETURN ( ::cSQLInsert )
 
 //---------------------------------------------------------------------------//

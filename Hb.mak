@@ -628,6 +628,7 @@ FacturasProveedoresLineasModel.prg 										\
 RectificativasProveedoresLineasModel.prg 								\ 
 TransaccionesComercialesLineasModel.prg 								\
 FacturasClientesModel.prg 													\
+FacturasClientesRepository.prg 											\
 TicketsClientesLineasModel.prg 											\
 TicketsClientesPagosModel.prg 											\
 RecibosClientesModel.prg 													\
@@ -1342,6 +1343,7 @@ AlbaranesProveedoresLineasModel.obj 									\
 FacturasProveedoresLineasModel.obj 										\
 RectificativasProveedoresLineasModel.obj 								\
 FacturasClientesModel.obj 													\
+FacturasClientesRepository.obj											\
 TicketsClientesLineasModel.obj 											\
 TicketsClientesPagosModel.obj 											\
 TicketsClientesModel.obj 													\
@@ -1423,6 +1425,7 @@ ArticulosPreciosDescuentosController.obj 								\
 ClientesBrowseView.obj 														\
 TercerosBrowseView.obj 														\
 SQLFacturasClientesModel.obj 												\
+FacturasClientesRepository.obj 											\
 SQLFacturasClientesLineasModel.obj 										\
 FacturasClientesController.obj 											\
 FacturasClientesLineasController.obj 									\
@@ -2116,6 +2119,7 @@ $(OBJ)\ArticulosPreciosDescuentosController.obj 					+
 $(OBJ)\ClientesBrowseView.obj 											+
 $(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\SqlFacturasClientesModel.obj 				    				+
+$(OBJ)\FacturasClientesRepository.obj 				    				+
 $(OBJ)\SqlFacturasClientesLineasModel.obj 	    					+
 $(OBJ)\FacturasClientesController.obj 									+
 $(OBJ)\FacturasClientesLineasController.obj 							+

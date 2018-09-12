@@ -301,6 +301,8 @@ METHOD selectFetch( cSentence, fetchType, attributePad )
       oStatement        := ::Query( cSentence )
 
       oStatement:setAttribute( STMT_ATTR_STR_PAD, attributePad )
+
+      oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY )         
    
       aFetch            := oStatement:fetchAll( fetchType )
 
@@ -408,6 +410,8 @@ METHOD getValue( cSentence )
       oStatement     := ::Query( cSentence )
 
       oStatement:setAttribute( STMT_ATTR_STR_PAD, .t. )
+   
+      oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY )         
       
       if oStatement:fetchDirect()
          uValue      := oStatement:getValue( 1 ) 
@@ -585,13 +589,7 @@ METHOD exportTable( hFileName, cTable )
 
    oQuery         := ::Query( "SELECT Count(*) " + cTable )
 
-   logwrite( hb_valtoexp( oQuery:fetch() ) )
-
    aFetch         := oQuery:fetch()
-
-   logwrite( cTable )
-   logwrite( hb_valtoexp( aFetch ) )
-   logwrite( "registros " + str( nCount ) )
 
    oQuery:free()
 
@@ -658,6 +656,3 @@ FUNCTION endSQLCompany( cCompanyDatabase )
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
-
-
-

@@ -345,6 +345,16 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+ //quotedNotEscaped( ::getModelBuffer( 'uuid' ) )
+
+   msgalert( "CALL " + Company():getTableName( 'FacturasClientesTotales' ) + "( '61982471-c6ac-4b99-b84f-e564ec8c6f06' );" )
+
+   logwrite( "CALL " + Company():getTableName( 'FacturasClientesTotales' ) + "( '61982471-c6ac-4b99-b84f-e564ec8c6f06' );" )
+
+   msgalert( hb_valtoexp( FacturasClientesRepository():callTotals( '61982471-c6ac-4b99-b84f-e564ec8c6f06' ) ) )
+
+   msgalert( "salgo del test" )
+
 /*
    local n      
    local nMemUsed    := MemUsed()
@@ -6456,8 +6466,7 @@ FUNCTION LogWrite( cText, cFileName )
 
       fSeek( nHand, 0 , 2 )
 
-      fWrite( nHand, Time() + '-' + Trans( Seconds(), "999999.9999" ) + Space( 1 ) )
-      fWrite( nHand, cValToChar( cText ) + CRLF )
+      fWrite( nHand, Time() + '-' + Trans( Seconds(), "999999.9999" ) + ">" + cValToChar( cText ) + CRLF )
       
       fClose( nHand )
 
