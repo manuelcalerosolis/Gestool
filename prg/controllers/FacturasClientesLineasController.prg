@@ -64,7 +64,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD stampAgente( hAgente )
 
    METHOD stampArticuloCodigo( cCodigoArticulo ) ;
-                                          INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ) )
+                                          INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ), ::oSenderController:calculateTotals( ::oSenderController:getModelBuffer('uuid') ) )
 
    METHOD stampArticuloNombre( cNombreArticulo ) ;
                                           INLINE ( ::updateField( "articulo_nombre", cNombreArticulo ) )

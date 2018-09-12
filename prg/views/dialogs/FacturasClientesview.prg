@@ -10,7 +10,13 @@ CLASS FacturasClientesView FROM SQLBaseView
    DATA oGetNumero
 
    DATA oTotalBruto
-   DATA nTotalBruto              INIT 0
+   DATA nTotalBruto                    INIT 0
+   DATA oTotalIva
+   DATA nTotalIva                      INIT 0
+   DATA oTotalDescuento
+   DATA nTotalDescuento                INIT 0
+   DATA oTotalImporte
+   DATA nTotalImporte                  INIT 0
    
    METHOD Activate()
 
@@ -117,13 +123,32 @@ METHOD Activate() CLASS FacturasClientesView
    ::oController:oArticulosTarifasController:oGetSelector:Build( { "idGet" => 270, "idText" => 271, "idLink" => 272, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:oArticulosTarifasController:oGetSelector:setWhen( {|| ::oController:isNotLines() } )
 
-   //Total---------------------------------------------------------------------
+   //Totales------------------------------------------------------------------
    REDEFINE SAY      ::oTotalBruto ;
          VAR         ::nTotalBruto ;
          ID          280 ;
          FONT        oFontBold() ;
          OF          ::oFolder:aDialogs[1]
    
+
+   REDEFINE SAY      ::oTotalIva ;
+         VAR         ::nTotalIva ;
+         ID          290 ;
+         FONT        oFontBold() ;
+         OF          ::oFolder:aDialogs[1]
+
+   REDEFINE SAY      ::oTotalDescuento ;
+         VAR         ::nTotalDescuento ;
+         ID          300 ;
+         FONT        oFontBold() ;
+         OF          ::oFolder:aDialogs[1]
+
+   REDEFINE SAY      ::oTotalImporte ;
+         VAR         ::nTotalImporte ;
+         ID          310 ;
+         FONT        oFontBold() ;
+         OF          ::oFolder:aDialogs[1]
+
    // Lineas ------------------------------------------------------------------
 
    TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:oFacturasClientesLineasController:AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )

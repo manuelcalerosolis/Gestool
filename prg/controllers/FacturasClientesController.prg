@@ -391,6 +391,9 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
    msgalert( hb_valtoexp( hTotals ), "calculateTotals" )
 
    ::oDialogView:oTotalBruto:setText( hget( hTotals, "totalBruto" ) )
+   ::oDialogView:oTotalIva:setText( hget( hTotals, "totalIva" ) )
+   ::oDialogView:oTotalDescuento:setText( hget( hTotals, "totalDescuento" ) )
+   ::oDialogView:oTotalImporte:setText( hget( hTotals, "totalImporte" ) )
 
 RETURN ( hTotals )
 

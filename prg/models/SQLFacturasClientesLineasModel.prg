@@ -469,8 +469,6 @@ METHOD getSentenceCountLineas( UuidParent ) CLASS SQLFacturasClientesLineasModel
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( UuidParent ) )
 
-   msgalert ( cSql )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
