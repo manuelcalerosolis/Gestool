@@ -349,11 +349,7 @@ FUNCTION Test()
 
    msgalert( "CALL " + Company():getTableName( 'FacturasClientesTotales' ) + "( '61982471-c6ac-4b99-b84f-e564ec8c6f06' );" )
 
-   logwrite( "CALL " + Company():getTableName( 'FacturasClientesTotales' ) + "( '61982471-c6ac-4b99-b84f-e564ec8c6f06' );" )
-
-   msgalert( hb_valtoexp( FacturasClientesRepository():callTotals( '61982471-c6ac-4b99-b84f-e564ec8c6f06' ) ) )
-
-   msgalert( "salgo del test" )
+   msgalert( hb_valtoexp( FacturasClientesRepository():getTotals( '61982471-c6ac-4b99-b84f-e564ec8c6f06' ) ) )
 
 /*
    local n      

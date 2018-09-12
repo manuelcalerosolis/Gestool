@@ -169,6 +169,8 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName() )
 
+   logwrite( cSql )
+
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
