@@ -389,16 +389,21 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
    local aTotals        := {}
    local nImporte       := 0
    local nDescuento     := 0
+   local nNeto          := 0
 
    DEFAULT uuidFactura  := ::getUuid()
 
    aTotals              := ::oRepository:getTotals( uuidFactura )
+
+   msgalert(hb_valtoexp(aTotals))
 
    if !empty( aTotals )
    
       aeval( aTotals, {|h| nBruto      += hget( h, "importeBruto" ) } )
       
       aeval( aTotals, {|h| nIva        += hget( h, "importeIVA" ) } )
+
+      aeval( aTotals, {|h| nNeto        += hget( h, "importeNeto" ) } )
 
       aeval( aTotals, {|h| nDescuento  += hget( h, "importeBruto" ) - hget( h, "importeNeto" ) } )
 
@@ -413,6 +418,8 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
    ::oDialogView:oTotalDescuento:setText( nDescuento )
 
    ::oDialogView:oTotalImporte:setText( nImporte )
+
+   ::oDialogView:oTotalBase:setText( nNeto )
 
 RETURN ( nil )
 

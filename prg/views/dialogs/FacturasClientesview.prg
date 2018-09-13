@@ -15,6 +15,8 @@ CLASS FacturasClientesView FROM SQLBaseView
    DATA nTotalIva                      INIT 0
    DATA oTotalDescuento
    DATA nTotalDescuento                INIT 0
+   DATA oTotalBase
+   DATA nTotalBase                     INIT 0
    DATA oTotalImporte
    DATA nTotalImporte                  INIT 0
    
@@ -132,23 +134,33 @@ METHOD Activate() CLASS FacturasClientesView
       PICTURE     "@E 999,999,999.99" ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAY      ::oTotalIva ;
-         VAR         ::nTotalIva ;
-         ID          290 ;
-         FONT        oFontBold() ;
-         OF          ::oFolder:aDialogs[1]
+   REDEFINE SAY   ::oTotalDescuento ;
+      VAR         ::nTotalDescuento ;
+      ID          290 ;
+      FONT        oFontBold() ;
+      PICTURE     "@E 999,999,999.99" ;
+      OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAY      ::oTotalDescuento ;
-         VAR         ::nTotalDescuento ;
-         ID          300 ;
-         FONT        oFontBold() ;
-         OF          ::oFolder:aDialogs[1]
+   REDEFINE SAY   ::oTotalBase ;
+      VAR         ::nTotalBase ;
+      ID          300 ;
+      FONT        oFontBold() ;
+      PICTURE     "@E 999,999,999.99" ;
+      OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAY      ::oTotalImporte ;
-         VAR         ::nTotalImporte ;
-         ID          310 ;
-         FONT        oFontBold() ;
-         OF          ::oFolder:aDialogs[1]
+   REDEFINE SAY   ::oTotalIva ;
+      VAR         ::nTotalIva ;
+      ID          310 ;
+      FONT        oFontBold() ;
+      PICTURE     "@E 999,999,999.99" ;
+      OF          ::oFolder:aDialogs[1]
+
+   REDEFINE SAY   ::oTotalImporte ;
+      VAR         ::nTotalImporte ;
+      ID          320 ;
+      FONT        oFontBold() ;
+      PICTURE     "@E 999,999,999.99" ;
+      OF          ::oFolder:aDialogs[1]
 
    // Lineas ------------------------------------------------------------------
 

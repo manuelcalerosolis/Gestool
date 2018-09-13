@@ -35,7 +35,7 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
       ( @neto := lineas.importeBruto - IF( facturas_clientes_descuentos.descuento IS NULL, 0, ( lineas.importeBruto * facturas_clientes_descuentos.descuento / 100 ) ) ) AS importeNeto,
       lineas.iva AS porcentajeIVA, 
       ( @iva := IF( lineas.iva IS NULL, 0, @neto * lineas.iva / 100 ) ) AS importeIVA, 
-      ( @neto + @iva ) AS importeTotal 
+      ( @neto + @iva ) AS importeTotal
       
    FROM 
    (

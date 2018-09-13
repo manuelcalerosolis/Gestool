@@ -45,7 +45,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD validateUnidadMedicion( uValue )
 
-   METHOD validateIva( uValue)
+   METHOD validateIva( uValue )
    
    METHOD validAlmacenCodigo( oGet, oCol )
 
@@ -664,7 +664,9 @@ RETURN ( .t. )
 
 METHOD validateIva( uValue )
 
-   local nPorcentaje    := uValue:VarGet()
+   local nPorcentajeEquivalencia
+   local nPorcentaje                   := uValue:VarGet()
+   local bRecargo                      := SQLClientesModel():getField( "recargo_equivalencia", "codigo", ::oSenderController:getModelBuffer( 'cliente_codigo' ) )
 
     if empty( nPorcentaje )
       RETURN ( .t. )
@@ -674,7 +676,13 @@ METHOD validateIva( uValue )
       msgstop( "No existe el IVA introducido" )
       RETURN ( .f. )
    end if
-
+   msgalert( bRecargo )
+   if bRecargo != 0
+   nPorcentajeEquivalencia := SQLTiposIvaModel():getField( "recargo_equivalencia", "porcentaje", nPorcentaje )
+   
+   //::updateField( 'iva', nPorcentajeIva )
+   msgalert( nPorcentajeEquivalencia )
+   end if
    ::oSenderController:calculateTotals() 
 
 RETURN ( .t. )

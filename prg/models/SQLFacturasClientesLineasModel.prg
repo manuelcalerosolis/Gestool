@@ -113,6 +113,9 @@ METHOD getColumns() CLASS SQLFacturasClientesLineasModel
    hset( ::hColumns, "iva",                        {  "create"    => "FLOAT (7,4)"                    ,;
                                                       "default"   => {|| 0 }  }                       )
 
+   hset( ::hColumns, "recargo_equivalencia",       {  "create"    => "FLOAT (7,4)"                    ,;
+                                                      "default"   => {|| 0 }  }                       )
+
    hset( ::hColumns, "almacen_codigo",             {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
                                                       "default"   => {|| space( 20 ) } }              )
 
@@ -151,6 +154,7 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
          ( @total_bruto - @importe_descuento ) AS total_precio,
          incremento_precio,
          iva,
+         recargo_equivalencia,
          almacen_codigo,
          almacenes.nombre AS almacen_nombre,
          agente_codigo,
