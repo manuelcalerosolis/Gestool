@@ -84,6 +84,8 @@ METHOD validateDescuento() CLASS FacturasClientesDescuentosController
       RETURN ( .f. )
    end if 
 
+   ::oSenderController:calculateTotals( ::oSenderController:getModelBuffer('uuid') ) 
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//

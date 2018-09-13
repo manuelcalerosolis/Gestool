@@ -469,6 +469,8 @@ METHOD stampArticuloUnidades( oCol, uValue )
 
    ::oBrowseView:makeTotals( oCol )
 
+   ::oSenderController:calculateTotals( ::oSenderController:getModelBuffer('uuid') )
+
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -499,6 +501,8 @@ METHOD stampArticuloUnidadMedicion( uValue )
 
    ::stampArticuloUnidadMedicionFactor()
 
+   ::oSenderController:calculateTotals( ::oSenderController:getModelBuffer('uuid') ) 
+
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
@@ -523,7 +527,7 @@ METHOD stampArticuloIva()
 
    local nPorcentajeIva     := SQLTiposIvaModel():getIvaWhereArticuloCodigo( ::getRowSet():fieldGet( 'articulo_codigo' ) )
 
-   if hb_isnumeric( nPorcentajeIva )
+   if hb_isnumeric( nPorcentajeIva ) 
       ::updateField( 'iva', nPorcentajeIva )
    end if 
 
@@ -606,7 +610,7 @@ METHOD deleteLines( uuid )
    ::oModel:deleteWhereUuid( uuid )
 
    ::fireEvent( 'deletedLines' )
-
+ 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -665,6 +669,8 @@ METHOD validateIva( uValue )
       msgstop( "No existe el IVA introducido" )
       RETURN ( .f. )
    end if
+
+   ::oSenderController:calculateTotals( ::oSenderController:getModelBuffer('uuid') ) 
 
 RETURN ( .t. )
 

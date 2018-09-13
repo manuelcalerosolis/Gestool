@@ -365,7 +365,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 
-METHOD refreshUnidadesImportes()       
+METHOD refreshUnidadesImportes()      
 
 RETURN ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
 
