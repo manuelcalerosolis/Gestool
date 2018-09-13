@@ -31,6 +31,8 @@ METHOD New( oSenderController ) CLASS FacturasClientesDescuentosController
                                        "32" => "gc_symbol_percent_32",;
                                        "48" => "gc_symbol_percent_48" }
 
+   ::lTransactional              := .t.
+
    ::oModel                      := SQLFacturasClientesDescuentosModel():New( self )
 
    ::oBrowseView                 := FacturasClientesDescuentosBrowseView():New( self )
@@ -61,7 +63,7 @@ METHOD End() CLASS FacturasClientesDescuentosController
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -73,6 +75,8 @@ METHOD updateField( cField, uValue ) CLASS FacturasClientesDescuentosController
    
    ::oBrowseView:Refresh()
    
+   ::oSenderController:calculateTotals() 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -83,8 +87,6 @@ METHOD validateDescuento() CLASS FacturasClientesDescuentosController
       msgstop( "Debes introducir un nombre valido para el descuento" )
       RETURN ( .f. )
    end if 
-
-   ::oSenderController:calculateTotals( ::oSenderController:getModelBuffer('uuid') ) 
 
 RETURN ( .t. )
 

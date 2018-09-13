@@ -64,7 +64,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD stampAgente( hAgente )
 
    METHOD stampArticuloCodigo( cCodigoArticulo ) ;
-                                          INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ), ::oSenderController:calculateTotals( ::oSenderController:getModelBuffer('uuid') ) )
+                                          INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ) ) 
 
    METHOD stampArticuloNombre( cNombreArticulo ) ;
                                           INLINE ( ::updateField( "articulo_nombre", cNombreArticulo ) )
@@ -210,7 +210,6 @@ METHOD validArticuloCodigo( oGet, oCol )
 
 RETURN ( ::validate( "articulo_codigo", uValue ) )
 
-
 //---------------------------------------------------------------------------//
 
 METHOD validAlmacenCodigo( oGet, oCol )
@@ -270,7 +269,6 @@ METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
       RETURN ( .f. )
    end if 
 
-
 RETURN ( ::stampArticulo( hArticulo ) )
 
 //---------------------------------------------------------------------------//
@@ -309,7 +307,7 @@ METHOD postValidateAgenteCodigo( oCol, uValue, nKey )
 
    local hAgente
 
-if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
+   if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
       RETURN ( .t. )
    end if
 
@@ -327,10 +325,13 @@ if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
    if ::oHistoryManager:isEqual( "agente_codigo", uValue )
       RETURN ( .f. )
    end if          
+   
    hAgente   := ::getHashAgenteWhereCodigo( uValue )
+   
    if empty( hAgente )
       RETURN ( .f. )
    end if 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -383,6 +384,8 @@ METHOD stampArticulo( hArticulo )
 
    ::stampArticuloIva()
 
+   ::oSenderController:calculateTotals()
+
    cursorWE()
    
 RETURN ( .t. )
@@ -391,7 +394,7 @@ RETURN ( .t. )
 
 METHOD stampAlmacen( hAlmacen )
 
-::stampAlmacenCodigo( hget (hAlmacen, "codigo" ) )
+   ::stampAlmacenCodigo( hget( hAlmacen, "codigo" ) )
 
 RETURN ( .t. )
 
@@ -399,9 +402,9 @@ RETURN ( .t. )
 
 METHOD stampAgente( hAgente )
 
-::stampAgenteCodigo( hget (hAgente, "codigo" ) )
+   ::stampAgenteCodigo( hget( hAgente, "codigo" ) )
 
-::stampAgenteComision()
+   ::stampAgenteComision()
 
 RETURN ( .t. )
 
@@ -469,7 +472,7 @@ METHOD stampArticuloUnidades( oCol, uValue )
 
    ::oBrowseView:makeTotals( oCol )
 
-   ::oSenderController:calculateTotals( ::oSenderController:getModelBuffer('uuid') )
+   ::oSenderController:calculateTotals()
 
 RETURN ( .t. )
 
@@ -480,6 +483,8 @@ METHOD stampArticuloDescuento()
    local nDescuento     := SQLArticulosPreciosDescuentosModel():getDescuentoWhereArticuloCodigo( ::getRowSet():fieldGet( 'articulo_codigo' ), ::oSenderController:getModelBuffer( 'tarifa_codigo' ), ::getRowSet():fieldGet( 'total_unidades' ), ::oSenderController:getModelBuffer( 'fecha' ) )
 
    ::updateField( 'descuento', nDescuento )
+
+   ::oSenderController:calculateTotals()
 
 RETURN ( .t. )
 
@@ -501,7 +506,7 @@ METHOD stampArticuloUnidadMedicion( uValue )
 
    ::stampArticuloUnidadMedicionFactor()
 
-   ::oSenderController:calculateTotals( ::oSenderController:getModelBuffer('uuid') ) 
+   ::oSenderController:calculateTotals() 
 
 RETURN ( nil )
 
@@ -670,7 +675,7 @@ METHOD validateIva( uValue )
       RETURN ( .f. )
    end if
 
-   ::oSenderController:calculateTotals( ::oSenderController:getModelBuffer('uuid') ) 
+   ::oSenderController:calculateTotals() 
 
 RETURN ( .t. )
 

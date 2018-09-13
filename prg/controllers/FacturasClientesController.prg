@@ -169,9 +169,11 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oDireccionTipoDocumentoController:oModel:setEvent( 'gettingSelectSentence', {|| ::getClientUuid() } )
 
    ::oFacturasClientesLineasController:setEvents( { 'appending', 'editing', 'deleting' }, {|| ::isClientFilled() }  )
+   ::oFacturasClientesLineasController:setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
+
+   ::oFacturasClientesDescuentosController:setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
    ::oClientesController:oGetSelector:setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
-
    ::oClientesController:oGetSelector:setEvent( 'cleanedHelpText', {|| ::clientesCleanedHelpText() } )
 
    ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
@@ -382,20 +384,37 @@ RETURN ( nil )
 
 METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
 
-   local hTotals         := 0
+   local nIva           := 0
+   local nBruto         := 0
+   local aTotals        := {}
+   local nImporte       := 0
+   local nDescuento     := 0
 
-   DEFAULT uuidFactura  := '61982471-c6ac-4b99-b84f-e564ec8c6f06' //quotedNotEscaped( ::getModelBuffer( 'uuid' ) )
+   DEFAULT uuidFactura  := ::getUuid()
 
-   hTotals               := ::oRepository:getTotals( uuidFactura )
+   aTotals              := ::oRepository:getTotals( uuidFactura )
+
+   if !empty( aTotals )
    
-   msgalert( hb_valtoexp( hTotals ), "calculateTotals" )
+      aeval( aTotals, {|h| nBruto      += hget( h, "importeBruto" ) } )
+      
+      aeval( aTotals, {|h| nIva        += hget( h, "importeIVA" ) } )
 
-   ::oDialogView:oTotalBruto:setText( hget( hTotals, "totalBruto" ) )
-   ::oDialogView:oTotalIva:setText( hget( hTotals, "totalIva" ) )
-   ::oDialogView:oTotalDescuento:setText( hget( hTotals, "totalDescuento" ) )
-   ::oDialogView:oTotalImporte:setText( hget( hTotals, "totalImporte" ) )
+      aeval( aTotals, {|h| nDescuento  += hget( h, "importeBruto" ) - hget( h, "importeNeto" ) } )
 
-RETURN ( hTotals )
+      aeval( aTotals, {|h| nImporte    += hget( h, "importeTotal" ) } )
+
+   end if 
+
+   ::oDialogView:oTotalBruto:setText( nBruto )
+   
+   ::oDialogView:oTotalIva:setText( nIva )
+   
+   ::oDialogView:oTotalDescuento:setText( nDescuento )
+
+   ::oDialogView:oTotalImporte:setText( nImporte )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

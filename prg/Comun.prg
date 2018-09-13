@@ -345,13 +345,13 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
- //quotedNotEscaped( ::getModelBuffer( 'uuid' ) )
+//quotedNotEscaped( ::getModelBuffer( 'uuid' ) )
+/*
 
    msgalert( "CALL " + Company():getTableName( 'FacturasClientesTotales' ) + "( '61982471-c6ac-4b99-b84f-e564ec8c6f06' );" )
 
    msgalert( hb_valtoexp( FacturasClientesRepository():getTotals( '61982471-c6ac-4b99-b84f-e564ec8c6f06' ) ) )
 
-/*
    local n      
    local nMemUsed    := MemUsed()
 

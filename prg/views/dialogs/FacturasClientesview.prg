@@ -124,12 +124,13 @@ METHOD Activate() CLASS FacturasClientesView
    ::oController:oArticulosTarifasController:oGetSelector:setWhen( {|| ::oController:isNotLines() } )
 
    //Totales------------------------------------------------------------------
-   REDEFINE SAY      ::oTotalBruto ;
-         VAR         ::nTotalBruto ;
-         ID          280 ;
-         FONT        oFontBold() ;
-         OF          ::oFolder:aDialogs[1]
-   
+
+   REDEFINE SAY   ::oTotalBruto ;
+      VAR         ::nTotalBruto ;
+      ID          280 ;
+      FONT        oFontBold() ;
+      PICTURE     "@E 999,999,999.99" ;
+      OF          ::oFolder:aDialogs[1]
 
    REDEFINE SAY      ::oTotalIva ;
          VAR         ::nTotalIva ;
@@ -224,7 +225,7 @@ METHOD startDialog() CLASS FacturasClientesView
 
    ::oController:oClientesController:oGetSelector:setFocus()
 
-   ::oController:calculateTotals( ::oController:oModel:hBuffer[ "uuid" ] )
+   ::oController:calculateTotals()
 
 RETURN ( nil )
 
