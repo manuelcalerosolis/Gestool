@@ -57,8 +57,6 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLFacturasClientesLineasModel():getTableName(), SQLFacturasClientesDescuentosModel():getTableName(), quoted( uuidFactura ) )
 
-   logwrite( cSql )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
