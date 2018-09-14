@@ -477,5 +477,5 @@ METHOD getSentenceCountLineas( UuidParent ) CLASS SQLFacturasClientesLineasModel
 
 RETURN ( cSql )
 
-//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------// 
 

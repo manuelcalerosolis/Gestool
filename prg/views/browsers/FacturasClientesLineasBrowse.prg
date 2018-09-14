@@ -243,7 +243,6 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nEditType           := EDIT_GET
       :bEditValid          := {|uNewValue| ::oController:validateIva( uNewValue ) }
       :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'iva', uNewValue ) }
-      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )

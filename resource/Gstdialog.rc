@@ -23313,13 +23313,15 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Bruto", -1, "Static", WS_GROUP, 464, 277, 49, 8
   CONTROL "IVA", -1, "Static", WS_GROUP, 464, 316, 42, 8
   CONTROL "Descuento", -1, "Static", WS_GROUP, 464, 290, 71, 8
-  CONTROL "Total", -1, "Static", WS_GROUP, 463, 329, 71, 8
+  CONTROL "Total", -1, "Static", WS_GROUP, 463, 342, 71, 8
   CONTROL "0", 280, "Static", SS_RIGHT|WS_GROUP, 545, 277, 90, 8
   CONTROL "0", 290, "Static", SS_RIGHT|WS_GROUP, 545, 290, 90, 8
   CONTROL "0", 310, "Static", SS_RIGHT|WS_GROUP, 545, 316, 90, 8
-  CONTROL "0", 320, "Static", SS_RIGHT|WS_GROUP, 545, 329, 90, 8
+  CONTROL "0", 330, "Static", SS_RIGHT|WS_GROUP, 545, 342, 90, 8
   CONTROL "0", 300, "Static", SS_RIGHT|WS_GROUP, 545, 303, 90, 8
   CONTROL "Base", -1, "Static", WS_GROUP, 464, 303, 71, 8
+  CONTROL "", 320, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 542, 328, 10, 10
+  CONTROL "Recargo equivalencia", 322, "Static", WS_GROUP, 464, 329, 76, 8
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN

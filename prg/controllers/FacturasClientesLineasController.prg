@@ -666,7 +666,7 @@ METHOD validateIva( uValue )
 
    local nPorcentajeEquivalencia
    local nPorcentaje                   := uValue:VarGet()
-   local bRecargo                      := SQLClientesModel():getField( "recargo_equivalencia", "codigo", ::oSenderController:getModelBuffer( 'cliente_codigo' ) )
+   local bRecargo                      := ::oSenderController:oModel:hBuffer[ 'recargo' ]
 
     if empty( nPorcentaje )
       RETURN ( .t. )
@@ -676,16 +676,21 @@ METHOD validateIva( uValue )
       msgstop( "No existe el IVA introducido" )
       RETURN ( .f. )
    end if
-   msgalert( bRecargo )
-   if bRecargo != 0
-   nPorcentajeEquivalencia := SQLTiposIvaModel():getField( "recargo_equivalencia", "porcentaje", nPorcentaje )
-   
-   //::updateField( 'iva', nPorcentajeIva )
-   msgalert( nPorcentajeEquivalencia )
+
+   if bRecargo = .t.
+   nPorcentajeEquivalencia := SQLTiposIvaModel():getField( "recargo", "porcentaje", nPorcentaje )
+   ::updateField( "recargo_equivalencia", nPorcentajeEquivalencia )
    end if
+
+   if bRecargo = .f.
+   ::updateField("recargo_equivalencia", )
+   end if
+
    ::oSenderController:calculateTotals() 
 
 RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
+
+
 

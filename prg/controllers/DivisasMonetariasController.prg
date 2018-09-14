@@ -166,7 +166,7 @@ END CLASS
 
 METHOD Activate() CLASS DivisasMonetariasView
 
-   local oBmpGeneral
+   local oBmpGeneral 
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "DIVISA_MONETARIA" ;

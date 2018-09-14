@@ -390,6 +390,7 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
    local nImporte       := 0
    local nDescuento     := 0
    local nNeto          := 0
+   local nRecargo       := 0
 
    DEFAULT uuidFactura  := ::getUuid()
 
@@ -403,7 +404,9 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
       
       aeval( aTotals, {|h| nIva        += hget( h, "importeIVA" ) } )
 
-      aeval( aTotals, {|h| nNeto        += hget( h, "importeNeto" ) } )
+      aeval( aTotals, {|h| nRecargo        += hget( h, "importeRecargo" ) } )
+
+      aeval( aTotals, {|h| nNeto       += hget( h, "importeNeto" ) } )
 
       aeval( aTotals, {|h| nDescuento  += hget( h, "importeBruto" ) - hget( h, "importeNeto" ) } )
 
@@ -616,4 +619,5 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
 

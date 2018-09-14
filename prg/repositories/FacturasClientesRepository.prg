@@ -34,8 +34,9 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
       lineas.importeBruto AS importeBruto,
       ( @neto := lineas.importeBruto - IF( facturas_clientes_descuentos.descuento IS NULL, 0, ( lineas.importeBruto * facturas_clientes_descuentos.descuento / 100 ) ) ) AS importeNeto,
       lineas.iva AS porcentajeIVA, 
-      ( @iva := IF( lineas.iva IS NULL, 0, @neto * lineas.iva / 100 ) ) AS importeIVA, 
-      ( @neto + @iva ) AS importeTotal
+      ( @recargo := IF( lineas.recargo_equivalencia IS NULL, 0, @neto * lineas.recargo_equivalencia / 100) ) AS importeRecargo,
+      ( @iva := IF( lineas.iva IS NULL, 0, @neto * lineas.iva / 100 + @recargo) ) AS importeIVA,  
+      ( @neto + @iva) AS importeTotal
       
    FROM 
    (
@@ -43,6 +44,7 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
       SUM(  
             @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) - IF( facturas_clientes_lineas.descuento IS NULL, 0, @importeLinea * facturas_clientes_lineas.descuento / 100 ) ) AS importeBruto,
             facturas_clientes_lineas.iva,
+            facturas_clientes_lineas.recargo_equivalencia,
             facturas_clientes_lineas.descuento,
             facturas_clientes_lineas.parent_uuid
       FROM %2$s AS facturas_clientes_lineas 

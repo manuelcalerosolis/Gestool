@@ -42,6 +42,9 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
    hset( ::hColumns, "cliente_codigo",                {  "create"    => "VARCHAR( 20 )"                        ,;
                                                          "default"   => {|| space( 20 ) } }                    )
 
+   hset( ::hColumns, "recargo",                       {  "create"    => "TINYINT( 1 )"                         ,;
+                                                         "default"   => {|| .f. } }                              )
+
    hset( ::hColumns, "direccion_principal_uuid",      {  "create"    => "VARCHAR( 40 )"                        ,;
                                                          "default"   => {|| space( 40 ) } }                    )
 
@@ -78,6 +81,7 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
                         "CONCAT( facturas_clientes.serie, '/', facturas_clientes.numero ) AS numero," + " " + ;
                         "facturas_clientes.delegacion_uuid AS delegacion_uuid,"                       + " " + ;
                         "facturas_clientes.sesion_uuid AS sesion_uuid,"                               + " " + ;
+                        "facturas_clientes.recargo AS recargo,"                                       + " " + ;
                         "facturas_clientes.cliente_codigo AS cliente_codigo,"                         + " " + ;
                         "clientes.nombre AS cliente_nombre,"                                          + " " + ;
                         "direcciones.direccion AS direccion_direccion,"                               + " " + ;
