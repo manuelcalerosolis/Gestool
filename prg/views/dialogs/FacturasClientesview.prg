@@ -236,6 +236,8 @@ METHOD startDialog() CLASS FacturasClientesView
    ::oController:oAgentesController:oGetSelector:Start()
 
    ::oController:oFacturasClientesLineasController:oBrowseView:Refresh()
+   
+   ::oController:oFacturasClientesDescuentosController:oBrowseView:Refresh()
 
    ::oController:oArticulosTarifasController:oGetSelector:start()
 

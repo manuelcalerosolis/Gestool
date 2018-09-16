@@ -32,7 +32,11 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
 
    SELECT
       lineas.importeBruto AS importeBruto,
-      ( @neto := lineas.importeBruto - IF( facturas_clientes_descuentos.descuento IS NULL, 0, ( lineas.importeBruto * facturas_clientes_descuentos.descuento / 100 ) ) ) AS importeNeto,
+      ( @descuento := ( SELECT 
+         SUM( facturas_clientes_descuentos.descuento ) 
+         FROM %3$s 
+         WHERE facturas_clientes_descuentos.parent_uuid = %4$s ) ) AS totalDescuentos,
+      ( @neto := lineas.importeBruto - IF( @descuento IS NULL, 0, ( lineas.importeBruto * @descuento / 100 ) ) ) AS importeNeto,
       lineas.iva AS porcentajeIVA, 
       ( @recargo := IF( lineas.recargo_equivalencia IS NULL, 0, @neto * lineas.recargo_equivalencia / 100) ) AS importeRecargo,
       ( @iva := IF( lineas.iva IS NULL, 0, @neto * lineas.iva / 100 + @recargo) ) AS importeIVA,  
@@ -42,22 +46,21 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
    (
    SELECT 
       SUM(  
-            @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) - IF( facturas_clientes_lineas.descuento IS NULL, 0, @importeLinea * facturas_clientes_lineas.descuento / 100 ) ) AS importeBruto,
-            facturas_clientes_lineas.iva,
-            facturas_clientes_lineas.recargo_equivalencia,
-            facturas_clientes_lineas.descuento,
-            facturas_clientes_lineas.parent_uuid
+         @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) - IF( facturas_clientes_lineas.descuento IS NULL, 0, @importeLinea * facturas_clientes_lineas.descuento / 100 ) ) AS importeBruto,
+         facturas_clientes_lineas.iva,
+         facturas_clientes_lineas.recargo_equivalencia,
+         facturas_clientes_lineas.descuento,
+         facturas_clientes_lineas.parent_uuid
       FROM %2$s AS facturas_clientes_lineas 
          WHERE facturas_clientes_lineas.parent_uuid = %4$s 
          GROUP BY facturas_clientes_lineas.iva
    ) lineas
 
-   LEFT JOIN %3$s AS facturas_clientes_descuentos 
-      ON facturas_clientes_descuentos.parent_uuid = lineas.parent_uuid
-
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLFacturasClientesLineasModel():getTableName(), SQLFacturasClientesDescuentosModel():getTableName(), quoted( uuidFactura ) )
+
+   logwrite( cSql )
 
 RETURN ( cSql )
 

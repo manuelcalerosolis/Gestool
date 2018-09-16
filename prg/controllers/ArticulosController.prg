@@ -157,8 +157,6 @@ RETURN ( Self )
 
 METHOD End() CLASS ArticulosController
 
-   msgalert( "ArticulosController END" )
-
    if !empty( ::oModel )
       ::oModel:End() 
       ::oModel                                     := nil

@@ -168,13 +168,13 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oDireccionTipoDocumentoController:setEvent( 'activatingDialogView',         {|| ::isClientFilled() } ) 
    ::oDireccionTipoDocumentoController:oModel:setEvent( 'gettingSelectSentence', {|| ::getClientUuid() } )
 
-   ::oFacturasClientesLineasController:setEvents( { 'appending', 'editing', 'deleting' }, {|| ::isClientFilled() }  )
+   ::oFacturasClientesLineasController:setEvent( 'appending',        {|| ::isClientFilled() }  )
    ::oFacturasClientesLineasController:setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
    ::oFacturasClientesDescuentosController:setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
-   ::oClientesController:oGetSelector:setEvent( 'settedHelpText', {|| ::clientesSettedHelpText() } )
-   ::oClientesController:oGetSelector:setEvent( 'cleanedHelpText', {|| ::clientesCleanedHelpText() } )
+   ::oClientesController:oGetSelector:setEvent( 'settedHelpText',    {|| ::clientesSettedHelpText() } )
+   ::oClientesController:oGetSelector:setEvent( 'cleanedHelpText',   {|| ::clientesCleanedHelpText() } )
 
    ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
 
@@ -404,7 +404,7 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
       
       aeval( aTotals, {|h| nIva        += hget( h, "importeIVA" ) } )
 
-      aeval( aTotals, {|h| nRecargo        += hget( h, "importeRecargo" ) } )
+      aeval( aTotals, {|h| nRecargo    += hget( h, "importeRecargo" ) } )
 
       aeval( aTotals, {|h| nNeto       += hget( h, "importeNeto" ) } )
 

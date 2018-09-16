@@ -665,25 +665,30 @@ METHOD Delete( aSelectedRecno )
    local lDelete        := .f.
    local cNumbersOfDeletes
 
+   msgalert( "Delete" )
+
    if ::notUserDelete()
       msgStop( "Acceso no permitido" )
       RETURN ( .f. )
    end if 
 
    if !hb_isarray( aSelectedRecno )
+      msgalert( "!hb_isarray( aSelectedRecno )")
       RETURN ( .f. )
    end if 
 
-
    if len( aSelectedRecno ) == 0
+      msgalert( "len( aSelectedRecno ) == 0" )
       RETURN ( .f. )
    end if 
 
    if len( aSelectedRecno ) == 1 .and. atail( aSelectedRecno ) == 0
+      msgalert( "len( aSelectedRecno ) == 1 .and. atail( aSelectedRecno ) == 0" )
       RETURN ( .f. )
    end if 
 
    if isFalse( ::fireEvent( 'deleting' ) )
+   msgalert( 'deleting' )
       RETURN ( .f. )
    end if
 

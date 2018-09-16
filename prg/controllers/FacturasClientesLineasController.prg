@@ -55,6 +55,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD updateField( cField, uValue )   
 
+   METHOD updateImpuestos( uValue )
+
    // stamps de articulos------------------------------------------------------
 
    METHOD stampArticulo( hArticulo )
@@ -107,7 +109,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD Search()
 
-   METHOD deleteLines( cId )
+   METHOD deleteLines( uuid )
 
    METHOD getUuid()                    INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
                                                       hget( ::oModel:hBuffer, "uuid" ),;
@@ -277,7 +279,7 @@ METHOD postValidateAlmacenCodigo( oCol, uValue, nKey )
 
    local hAlmacen
 
-if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
+   if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
       RETURN ( .t. )
    end if
 
@@ -295,10 +297,12 @@ if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
    if ::oHistoryManager:isEqual( "almacen_codigo", uValue )
       RETURN ( .f. )
    end if          
+
    hAlmacen   := ::getHashAlmacenWhereCodigo( uValue )
    if empty( hAlmacen )
       RETURN ( .f. )
    end if 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -532,9 +536,9 @@ METHOD stampArticuloIva()
 
    local nPorcentajeIva     := SQLTiposIvaModel():getIvaWhereArticuloCodigo( ::getRowSet():fieldGet( 'articulo_codigo' ) )
 
-   if hb_isnumeric( nPorcentajeIva ) 
-      ::updateField( 'iva', nPorcentajeIva )
-   end if 
+   if hb_isnumeric( nPorcentajeIva )
+      ::updateImpuestos( nPorcentajeIva )
+   end if
 
 RETURN ( nil )
 
@@ -547,6 +551,26 @@ METHOD stampAgenteComision()
    if hb_isnumeric( nComision )
       ::updateField( 'agente_comision', nComision )
    end if 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD updateImpuestos( nPorcentajeIva )
+
+   local nPorcentajeRecargo
+
+   ::updateField( 'iva', nPorcentajeIva )
+
+   nPorcentajeRecargo         := SQLTiposIvaModel():getField( "recargo", "porcentaje", nPorcentajeIVA )
+   
+   msgalert( nPorcentajeRecargo, "nPorcentajeRecargo" )
+
+   if hb_isnumeric( nPorcentajeRecargo )
+      ::updateField( "recargo_equivalencia", nPorcentajeRecargo )
+   end if 
+
+   ::oSenderController:calculateTotals() 
 
 RETURN ( nil )
 
@@ -602,7 +626,7 @@ METHOD Search()
 
    ::oSearchView:Activate()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -616,7 +640,7 @@ METHOD deleteLines( uuid )
 
    ::fireEvent( 'deletedLines' )
  
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -664,29 +688,19 @@ RETURN ( .t. )
 
 METHOD validateIva( uValue )
 
-   local nPorcentajeEquivalencia
-   local nPorcentaje                   := uValue:VarGet()
-   local bRecargo                      := ::oSenderController:oModel:hBuffer[ 'recargo' ]
+   local nPorcentajeIVA                  
+   local nPorcentajeRecargo
 
-    if empty( nPorcentaje )
+   nPorcentajeIVA             := uValue:VarGet()
+
+    if empty( nPorcentajeIVA )
       RETURN ( .t. )
    end if
 
-   if SQLTiposIvaModel():CountIvaWherePorcentaje( nPorcentaje ) <= 0
+   if SQLTiposIvaModel():CountIvaWherePorcentaje( nPorcentajeIVA ) <= 0
       msgstop( "No existe el IVA introducido" )
       RETURN ( .f. )
    end if
-
-   if bRecargo = .t.
-   nPorcentajeEquivalencia := SQLTiposIvaModel():getField( "recargo", "porcentaje", nPorcentaje )
-   ::updateField( "recargo_equivalencia", nPorcentajeEquivalencia )
-   end if
-
-   if bRecargo = .f.
-   ::updateField("recargo_equivalencia", )
-   end if
-
-   ::oSenderController:calculateTotals() 
 
 RETURN ( .t. )
 

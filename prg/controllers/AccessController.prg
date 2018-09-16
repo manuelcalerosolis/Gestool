@@ -107,8 +107,6 @@ METHOD End() CLASS AccessController
 
    ::Super:End()
 
-   msgalert("AccessController end")
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

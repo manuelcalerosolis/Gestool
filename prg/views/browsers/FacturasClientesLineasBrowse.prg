@@ -238,11 +238,22 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nFootStyle          := :nDataStrAlign               
       :cEditPicture        := "@E 999.9999"
       :cFooterPicture      := :cEditPicture
-      :oFooterFont         := oFontBold()
       :cDataType           := "N"
       :nEditType           := EDIT_GET
       :bEditValid          := {|uNewValue| ::oController:validateIva( uNewValue ) }
-      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'iva', uNewValue ) }
+      :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateImpuestos( uNewValue ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'recargo_equivalecia'
+      :cHeader             := '% R.E.'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'recargo_equivalecia' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :nFootStyle          := :nDataStrAlign               
+      :cEditPicture        := "@E 999.9999"
+      :cDataType           := "N"
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
