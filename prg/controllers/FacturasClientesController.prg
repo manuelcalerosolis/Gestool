@@ -384,16 +384,17 @@ RETURN ( nil )
 
 METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
 
-   local nIva           := 0
+   local hTotals
+   /*local nIva           := 0
    local nBruto         := 0
    local aTotals        := {}
    local nImporte       := 0
    local nDescuento     := 0
    local nNeto          := 0
    local nRecargo       := 0
-
+*/
    DEFAULT uuidFactura  := ::getUuid()
-
+/*
    aTotals              := ::oRepository:getTotals( uuidFactura )
 
    msgalert(hb_valtoexp(aTotals))
@@ -412,17 +413,28 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
 
       aeval( aTotals, {|h| nImporte    += hget( h, "importeTotal" ) } )
 
-   end if 
+   end if */
 
-   ::oDialogView:oTotalBruto:setText( nBruto )
+   hTotals              := ::oRepository:calltotals( uuidFactura )
+
+   ::oDialogView:oTotalBruto:setText( hget( hTotals, "totalBruto" ) )
+
+   ::oDialogView:oTotalDescuento:setText( hget( hTotals, "totalDescuento" ) )
+
+   ::oDialogView:oTotalIva:setText( hget( hTotals, "totalIva" ) )
+
+   ::oDialogView:oTotalImporte:setText( hget( hTotals, "totalImporte" ) )
+
+   ::oDialogView:oTotalBase:setText( hget( hTotals, "totalBase" ) )
+
    
-   ::oDialogView:oTotalIva:setText( nIva )
+   /*::oDialogView:oTotalIva:setText( nIva )
    
    ::oDialogView:oTotalDescuento:setText( nDescuento )
 
    ::oDialogView:oTotalImporte:setText( nImporte )
 
-   ::oDialogView:oTotalBase:setText( nNeto )
+   ::oDialogView:oTotalBase:setText( nNeto )*/
 
 RETURN ( nil )
 
@@ -610,6 +622,15 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'recargo'
+      :cHeader             := "Recargo"
+      :bStrData            := {|| "" }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'recargo' ) == 1 }
+      :nWidth              := 60
+      :SetCheck( { "Sel16", "Nil16" } )
    end with
 
 RETURN ( nil )

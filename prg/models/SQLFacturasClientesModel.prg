@@ -43,7 +43,7 @@ METHOD getColumns() CLASS SQLFacturasClientesModel
                                                          "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "recargo",                       {  "create"    => "TINYINT( 1 )"                         ,;
-                                                         "default"   => {|| .f. } }                              )
+                                                         "default"   => {|| 1 } }                              )
 
    hset( ::hColumns, "direccion_principal_uuid",      {  "create"    => "VARCHAR( 40 )"                        ,;
                                                          "default"   => {|| space( 40 ) } }                    )
