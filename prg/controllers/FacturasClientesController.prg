@@ -630,6 +630,7 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       :bStrData            := {|| "" }
       :bEditValue          := {|| ::getRowSet():fieldGet( 'recargo' ) == 1 }
       :nWidth              := 60
+      //:bValid             :={||::click( ::getRowSet():fieldGet( 'recargo' ) )  }
       :SetCheck( { "Sel16", "Nil16" } )
    end with
 

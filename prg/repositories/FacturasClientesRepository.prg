@@ -107,6 +107,7 @@ local cSQL
       DECLARE porcentajeDescuento   DECIMAL( 7, 4 );
       DECLARE ivaTotal              DECIMAL( 19, 6 );
       DECLARE base                  DECIMAL( 19, 6 );
+      DECLARE recargo               TINYINT( 1 );
       DECLARE importeRecargo        DECIMAL( 19, 6 );
       
 /*sacamos el importe total de las lineas*/
@@ -131,28 +132,28 @@ local cSQL
                                     WHERE facturas_clientes_descuentos.parent_uuid = uuidFactura );
 
 /*calculamos la base*/
-      SET base                =  (  SELECT SUM(descuentolinea.pdescuento -descuentolinea.pdescuento * porcentajeDescuento / 100)
+      SET base                =  (  SELECT SUM(descuentoLinea.pdescuento - descuentoLinea.pdescuento * IFNULL( porcentajeDescuento, 0) / 100)
                                     FROM(
                                           SELECT 
                                              SUM( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) 
                                                 * facturas_clientes_lineas.articulo_unidades 
                                                 * facturas_clientes_lineas.articulo_precio )
-                                          - SUM( (IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 )  
+                                             - SUM( (IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 )  
                                                 * facturas_clientes_lineas.articulo_unidades 
                                                 * facturas_clientes_lineas.articulo_precio 
                                                 * (IFNULL( facturas_clientes_lineas.descuento, 0 ) ) /100)) as pdescuento
                                              FROM %2$s AS facturas_clientes_lineas
                                              WHERE facturas_clientes_lineas.parent_uuid =uuidFactura
-                                             GROUP BY id) descuentolinea);
+                                             GROUP BY id) descuentoLinea);
 
       SET importeDescuento    =  ( importeBruto - base );
 
 /*Calculamos el iva por cada linea, ya que pueden contener impuestos diferentes*/
 
-      SET ivaTotal            =  ( SELECT SUM(descuentototallinea.lineasiniva * descuentototallinea.iva /100) AS ivatotal
+      SET ivaTotal            =  ( SELECT SUM(descuenTototalLinea.lineasiniva * descuenTototalLinea.iva /100) AS ivatotal
                                     FROM(
-                                       SELECT (descuentolinea.pdescuento -descuentolinea.pdescuento * porcentajeDescuento / 100) as lineasiniva,
-                                                descuentolinea.iva   
+                                       SELECT (descuentoLinea.pdescuento - descuentoLinea.pdescuento * IFNULL(porcentajeDescuento,0) / 100) as lineasiniva,
+                                                descuentoLinea.iva   
                                        FROM(
                                           SELECT 
                                               IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) 
@@ -165,12 +166,18 @@ local cSQL
                                                 facturas_clientes_lineas.iva
                                              FROM %2$s AS facturas_clientes_lineas
                                              WHERE facturas_clientes_lineas.parent_uuid = uuidFactura
-                                             GROUP BY id,iva) descuentolinea) as descuentototallinea );
-/*calculamos el rescargo si existiera*/
-      SET importeRecargo =          ( SELECT SUM(descuentototallinea.lineasiniva * descuentototallinea.recargo_equivalencia /100) AS recargoTotal
+                                             GROUP BY id,iva) descuentoLinea) as descuenTototalLinea );
+/*comprobamos si existe recargo*/
+      SET recargo =                 (  SELECT recargo 
+                                       FROM %4$s AS facturas_clientes
+                                       WHERE facturas_clientes.uuid= uuidFactura );
+
+/*calculamos el rescargo si existe el recargo*/
+IF recargo = 1 THEN
+      SET importeRecargo =          ( SELECT SUM(descuenTototalLinea.lineasiniva * descuenTototalLinea.recargo_equivalencia /100) AS recargoTotal
                                        FROM(
-                                          SELECT (descuentolinea.pdescuento -descuentolinea.pdescuento * porcentajeDescuento / 100) as lineasiniva,
-                                                   descuentolinea.recargo_equivalencia   
+                                          SELECT (descuentoLinea.pdescuento -descuentoLinea.pdescuento * IFNULL( porcentajeDescuento, 0) / 100) as lineasiniva,
+                                                   descuentoLinea.recargo_equivalencia   
                                           FROM(
                                              SELECT 
                                                 IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) 
@@ -183,7 +190,8 @@ local cSQL
                                                 facturas_clientes_lineas.recargo_equivalencia
                                              FROM facturas_clientes_lineas AS facturas_clientes_lineas
                                              WHERE facturas_clientes_lineas.parent_uuid = uuidFactura
-                                             GROUP BY id,iva) descuentolinea) as descuentototallinea  );                                
+                                             GROUP BY id,iva) descuentoLinea) as descuenTototalLinea  );
+      END IF;                             
 
 /*calculamos el importe total de la factura, restando los descuentos y sumando el iva*/
       SET importeFactura     = base + ivaTotal; 
@@ -205,7 +213,8 @@ local cSQL
    cSql  := hb_strformat(  cSql,;
                            Company():getTableName( 'FacturasClientesTotales' ),;
                            SQLFacturasClientesLineasModel():getTableName(),;
-                           SQLFacturasClientesDescuentosModel():getTableName() )
+                           SQLFacturasClientesDescuentosModel():getTableName(),;
+                           SQLFacturasClientesModel():getTableName() )
 
 RETURN ( cSQL )
 

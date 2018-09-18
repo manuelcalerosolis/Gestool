@@ -155,7 +155,7 @@ METHOD Activate() CLASS FacturasClientesView
       PICTURE     "@E 999,999,999.99" ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "recargo" ]  ;
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "recargo" ] ;
       ID          320 ;
       IDSAY       322 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;

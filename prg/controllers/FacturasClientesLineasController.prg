@@ -571,6 +571,7 @@ METHOD updateImpuestos( nPorcentajeIva )
    end if 
 
    ::oSenderController:calculateTotals() 
+   msgalert( ::oSenderController:oModel:hBuffer['recargo'] )
 
 RETURN ( nil )
 
