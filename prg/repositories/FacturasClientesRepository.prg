@@ -107,7 +107,8 @@ local cSQL
       DECLARE porcentajeDescuento   DECIMAL( 7, 4 );
       DECLARE ivaTotal              DECIMAL( 19, 6 );
       DECLARE base                  DECIMAL( 19, 6 );
-      DECLARE importeDescontado     DECIMAL( 19, 6 );
+      DECLARE importeRecargo        DECIMAL( 19, 6 );
+      
 /*sacamos el importe total de las lineas*/
       SET importeBruto        =  (  SELECT 
                                        SUM( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) 
@@ -130,7 +131,7 @@ local cSQL
                                     WHERE facturas_clientes_descuentos.parent_uuid = uuidFactura );
 
 /*calculamos la base*/
-      SET base =                 (  SELECT SUM(descuentolinea.pdescuento -descuentolinea.pdescuento * porcentajeDescuento / 100)
+      SET base                =  (  SELECT SUM(descuentolinea.pdescuento -descuentolinea.pdescuento * porcentajeDescuento / 100)
                                     FROM(
                                           SELECT 
                                              SUM( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) 
@@ -150,7 +151,7 @@ local cSQL
 
       SET ivaTotal            =  ( SELECT SUM(descuentototallinea.lineasiniva * descuentototallinea.iva /100) AS ivatotal
                                     FROM(
-                                       SELECT (descuentolinea.pdescuento -descuentolinea.pdescuento * 18.25 / 100) as lineasiniva,
+                                       SELECT (descuentolinea.pdescuento -descuentolinea.pdescuento * porcentajeDescuento / 100) as lineasiniva,
                                                 descuentolinea.iva   
                                        FROM(
                                           SELECT 
@@ -165,13 +166,30 @@ local cSQL
                                              FROM %2$s AS facturas_clientes_lineas
                                              WHERE facturas_clientes_lineas.parent_uuid = uuidFactura
                                              GROUP BY id,iva) descuentolinea) as descuentototallinea );
-                                             
+/*calculamos el rescargo si existiera*/
+      SET importeRecargo =          ( SELECT SUM(descuentototallinea.lineasiniva * descuentototallinea.recargo_equivalencia /100) AS recargoTotal
+                                       FROM(
+                                          SELECT (descuentolinea.pdescuento -descuentolinea.pdescuento * porcentajeDescuento / 100) as lineasiniva,
+                                                   descuentolinea.recargo_equivalencia   
+                                          FROM(
+                                             SELECT 
+                                                IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) 
+                                                   * facturas_clientes_lineas.articulo_unidades 
+                                                   * facturas_clientes_lineas.articulo_precio 
+                                                - (IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 )  
+                                                   * facturas_clientes_lineas.articulo_unidades 
+                                                   * facturas_clientes_lineas.articulo_precio 
+                                                   * (IFNULL( facturas_clientes_lineas.descuento, 0 ) ) /100) as pdescuento, 
+                                                facturas_clientes_lineas.recargo_equivalencia
+                                             FROM facturas_clientes_lineas AS facturas_clientes_lineas
+                                             WHERE facturas_clientes_lineas.parent_uuid = uuidFactura
+                                             GROUP BY id,iva) descuentolinea) as descuentototallinea  );                                
 
 /*calculamos el importe total de la factura, restando los descuentos y sumando el iva*/
       SET importeFactura     = base + ivaTotal; 
 
-      IF importeDescuento IS NOT NULL THEN 
-         SET importeFactura  = base + ivaTotal; 
+      IF importeRecargo IS NOT NULL THEN 
+         SET importeFactura  = base + ivaTotal + importeRecargo; 
       END IF;
 
       SELECT importeBruto           INTO totalBruto;
