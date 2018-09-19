@@ -520,10 +520,6 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    METHOD setParentUuidAttribute( nombre )   
 
-   METHOD getActivaAttribute( activa )       INLINE ( if( hb_isnil( activa ), .t., ( activa == 1 ) ) )
-
-   METHOD setActivaAttribute( activa )       INLINE ( if( hb_isnil( activa ), 1, if( activa, 1, 0 ) ) )
-
    METHOD getInitialSelect()
 
    METHOD getTarifaWhereTarifaParent( uuidTarifaParent ) ;

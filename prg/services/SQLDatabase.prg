@@ -302,6 +302,8 @@ METHOD selectFetch( cSentence, fetchType, attributePad )
 
       oStatement:setAttribute( STMT_ATTR_STR_PAD, attributePad )
 
+      oStatement:setAttribute( STMT_ATTR_TINY_AS_BOOL, .t. )
+
       //oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY )         
    
       aFetch            := oStatement:fetchAll( fetchType )
@@ -410,6 +412,8 @@ METHOD getValue( cSentence )
       oStatement     := ::Query( cSentence )
 
       oStatement:setAttribute( STMT_ATTR_STR_PAD, .t. )
+
+      oStatement:setAttribute( STMT_ATTR_TINY_AS_BOOL, .t. )
    
       //oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY )         
       

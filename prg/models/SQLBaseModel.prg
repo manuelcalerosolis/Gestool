@@ -721,7 +721,7 @@ METHOD isBufferSystemRegister( hBuffer )
    end if 
 
    if ( hhaskey( hBuffer, "sistema" ) )
-      RETURN ( hget( hBuffer, "sistema" ) == 1 )
+      RETURN ( hget( hBuffer, "sistema" ) )
    end if 
 
 RETURN ( .f. )
