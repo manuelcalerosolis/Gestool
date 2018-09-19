@@ -27,6 +27,8 @@ CLASS SQLBaseController
 
    DATA lTransactional                                INIT .f.
 
+   DATA lInsertable                                   INIT .f.
+
    DATA nLevel                                        INIT __permission_full__ 
 
    DATA nMode                                         AS NUMERIC
@@ -169,6 +171,8 @@ CLASS SQLBaseController
       METHOD setAppendMode()                          INLINE ( ::setMode( __append_mode__ ) )
       METHOD isAppendMode()                           INLINE ( ::nMode == __append_mode__ )
       METHOD isNotAppendMode()                        INLINE ( ::nMode != __append_mode__ )
+
+   METHOD Insert()
 
    METHOD AppendLineal()
 
@@ -333,6 +337,79 @@ METHOD Append()
          ::fireEvent( 'closedDialog' )    
 
          nId         := ::oModel:insertBuffer()    
+         
+         ::commitTransactionalMode()
+
+         if !empty( nId )
+            ::refreshRowSetAndFindId( nId )
+         else 
+            ::refreshRowSet()
+         end if 
+
+         ::refreshBrowseView()
+
+         ::fireEvent( 'appended' ) 
+
+         if ::isContinuousAppend()
+            loop
+         else 
+            exit
+         end if 
+
+      else
+         
+         lAppend     := .f.
+
+         ::fireEvent( 'cancelAppended' ) 
+
+         ::restoreRowSetRecno()
+
+         ::rollbackTransactionalMode()
+
+         exit
+
+      end if
+
+   end while
+
+   ::fireEvent( 'exitAppended' ) 
+
+RETURN ( lAppend )
+
+//----------------------------------------------------------------------------//
+
+METHOD Insert()
+
+   local nId
+   local uResult
+   local lAppend     := .t.   
+
+   if ::notUserAppend()
+      msgStop( "Acceso no permitido." )
+      RETURN ( .f. )
+   end if 
+
+   if isFalse( ::fireEvent( 'appending' ) )
+      RETURN ( .f. )
+   end if
+
+   ::setAppendMode()
+
+   while .t.
+
+      ::beginTransactionalMode()
+
+      ::saveRowSetRecno()
+
+      nId            := ::oModel:insertBlankBuffer()
+
+      ::fireEvent( 'openingDialog' )     
+
+      if ::DialogViewActivate()
+
+         ::fireEvent( 'closedDialog' )    
+
+         ::oModel:updateBuffer()    
          
          ::commitTransactionalMode()
 

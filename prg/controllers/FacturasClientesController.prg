@@ -84,6 +84,10 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD clientSetTarifa()
 
+   METHOD clientSetRecargo()
+
+   METHOD clientChangeRecargo( lRecargo )
+
    METHOD clientSetDescuentos()
 
    METHOD isLines()
@@ -104,6 +108,8 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::cName                                               := "facturas_clientes"
    
    ::lTransactional                                      := .t.
+
+   ::lInsertable                                         := .t.
 
    ::hImage                                              := {  "16" => "gc_document_text_user_16",;
                                                                "32" => "gc_document_text_user_32",;
@@ -330,6 +336,8 @@ METHOD clientesSettedHelpText() CLASS FacturasClientesController
 
    ::clientSetDescuentos()
 
+   ::clientSetRecargo()
+
    ::oHistoryManager:setkey( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
 
 RETURN ( nil )
@@ -382,13 +390,39 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD clientSetRecargo() CLASS FacturasClientesController
+
+   if empty( ::oClientesController:oGetSelector:uFields )
+      RETURN ( nil )
+   end if 
+
+   ::oDialogView:oRecargoEquivalencia:SetCheck( hget( ::oClientesController:oGetSelector:uFields, "recargo_equivalencia" ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD clientChangeRecargo() CLASS FacturasClientesController
+
+   ::oModel:updateFieldWhereId( ::oModel:getBufferColumnKey(), "recargo", ::oModel:hBuffer[ "recargo" ] )
+
+   ::calculateTotals()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
 
    local hTotal
 
    DEFAULT uuidFactura  := ::getUuid()
 
+   msgalert( uuidFactura, "uuidFactura" )
+
    hTotal               := ::oRepository:getTotal( uuidFactura )
+
+   msgalert( hb_valtoexp( hTotal ), "hTotal" )
 
    if empty( hTotal )
       RETURN ( nil )

@@ -117,6 +117,7 @@ METHOD getInitialSelect() CLASS SQLClientesModel
                         "clientes.establecimiento AS establecimiento,"                                                     + " " + ;
                         "clientes.fecha_ultima_llamada AS fecha_ultima_llamada,"                                           + " " + ;
                         "clientes.forma_pago_codigo AS forma_pago_codigo,"                                                 + " " + ;
+                        "clientes.recargo_equivalencia AS recargo_equivalencia,"                                           + " " + ;
                         "forma_pago.nombre AS nombre_forma_pago,"                                                          + " " + ;
                         "clientes.agente_codigo AS agente_codigo,"                                                         + " " + ;
                         "agentes.nombre AS nombre_agente,"                                                                 + " " + ;
@@ -131,7 +132,6 @@ METHOD getInitialSelect() CLASS SQLClientesModel
                         "direcciones.provincia AS provincia,"                                                              + " " + ;
                         "direcciones.codigo_postal AS codigo_postal,"                                                      + " " + ;
                         "direcciones.telefono AS telefono,"                                                                + " " + ;
-                        "direcciones.movil AS movil,"                                                                      + " " + ;
                         "direcciones.movil AS movil,"                                                                      + " " + ;
                         "tarifas.codigo AS tarifa_codigo, "                                                                + " " + ;
                         "tarifas.nombre AS tarifa_nombre "                                                                 + " " + ;
@@ -164,6 +164,7 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLClientesModel
                         "clientes.nombre AS nombre,"                                                                       + " " + ;
                         "clientes.dni AS dni,"                                                                             + " " + ;
                         "clientes.tarifa_codigo AS tarifa_codigo,"                                                         + " " + ;
+                        "clientes.recargo_equivalencia AS recargo_equivalencia,"                                           + " " + ;
                         "direcciones.direccion AS direccion,"                                                              + " " + ;
                         "direcciones.poblacion AS poblacion,"                                                              + " " + ;
                         "direcciones.provincia AS provincia,"                                                              + " " + ;

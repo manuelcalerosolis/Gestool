@@ -21,6 +21,7 @@ CLASS FacturasClientesView FROM SQLBaseView
    DATA nTotalBase                     INIT 0
    DATA oTotalImporte
    DATA nTotalImporte                  INIT 0
+   DATA oRecargoEquivalencia
    
    METHOD Activate()
 
@@ -80,7 +81,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    ::oController:oClientesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) )
    ::oController:oClientesController:oGetSelector:Build( { "idGet" => 170, "idLink" => 171, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:oClientesController:oGetSelector:setWhen( {|| ::oController:isNotLines() } )
+   ::oController:oClientesController:oGetSelector:setWhen( {|| ::oController:isNotLines() .or. empty( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) } )
 
    // Serie-------------------------------------------------------------------
 
@@ -157,11 +158,14 @@ METHOD Activate() CLASS FacturasClientesView
       PICTURE     "@E 999,999,999.99" ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "recargo" ] ;
+   REDEFINE SAYCHECKBOX ::oRecargoEquivalencia ;
+      VAR         ::oController:oModel:hBuffer[ "recargo" ] ;
       ID          320 ;
       IDSAY       322 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
+
+   ::oRecargoEquivalencia:bChange   := {|| ::oController:clientChangeRecargo() }
 
    REDEFINE SAY   ::oTotalRecargo ;
       VAR         ::nTotalRecargo ;

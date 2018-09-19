@@ -62,7 +62,9 @@ CLASS MenuTreeView
 
    METHOD addSearchButton()    
 
-   METHOD addAppendButton()    
+   METHOD addAppendButton() 
+
+   METHOD addInsertButton()   
    
    METHOD addDuplicateButton() 
    
@@ -80,10 +82,12 @@ CLASS MenuTreeView
 
    METHOD addCloseButton()
 
+   METHOD addAppendOrInsertButton()       INLINE ( if( ::getController():lInsertable, ::addInsertButton(), ::addAppendButton() ) )
+
    METHOD addGeneralButton()              INLINE ( ::fireEvent( 'addingGeneralButton' ),;
                                                    ::addSearchButton(),;
                                                    ::addRefreshButton(),;
-                                                   ::addAppendButton(),;
+                                                   ::addAppendOrInsertButton(),;
                                                    ::addDuplicateButton(),;
                                                    ::addEditButton(),;
                                                    ::addZoomButton(),;
@@ -183,7 +187,6 @@ METHOD End()
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
-
 
 METHOD ActivateMDI( nWidth, nHeight )
 
@@ -338,6 +341,20 @@ METHOD AddAppendButton()
    end if 
 
    ::AddButton( "Añadir", "New16", {|| ::getController():Append(), ::oSender:Refresh() }, "A", ACC_APPD ) 
+   
+   ::fireEvent( 'addedAppendButton' )
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD AddInsertButton()    
+
+   if isFalse( ::fireEvent( 'addingAppendButton' ) )
+      RETURN ( nil )
+   end if 
+
+   ::AddButton( "Añadir", "New16", {|| ::getController():Insert(), ::oSender:Refresh() }, "A", ACC_APPD ) 
    
    ::fireEvent( 'addedAppendButton' )
 

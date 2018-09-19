@@ -146,7 +146,6 @@ METHOD Activate() CLASS ClientGetSelector
 
    end if 
 
-
 RETURN ( ::oGet )
 
 //---------------------------------------------------------------------------//
@@ -168,7 +167,6 @@ METHOD cleanHelpText()
    if( !empty( ::oGetPais ),           ::oGetPais:cText( "" ), )
 
    if( !empty( ::oGetTelefono ),       ::oGetTelefono:cText( "" ), )
-
 
 RETURN ( nil )
 

@@ -186,7 +186,9 @@ CLASS SQLBaseModel
    
    // Busquedas----------------------------------------------------------------
 
-   METHOD getBuffer( cColumn )                        
+   METHOD getBuffer( cColumn )    
+   METHOD getBufferColumnKey()                        INLINE ( ::getBuffer( ::cColumnKey ) )
+                    
    METHOD setBuffer( cColumn, uValue )
    METHOD setBufferPadr( cColumn, uValue )
    
@@ -205,7 +207,7 @@ CLASS SQLBaseModel
    METHOD loadCurrentBuffer()
    METHOD defaultCurrentBuffer()
 
-   METHOD insertBlankBuffer()                         INLINE ( ::loadBlankBuffer(), ::insertBuffer() ) 
+   METHOD insertBlankBuffer()                         INLINE ( ::loadBlankBuffer(), ::insertBuffer( ::hBuffer ) ) 
 
    // Events-------------------------------------------------------------------
 
@@ -791,6 +793,8 @@ METHOD getUpdateSentence( hBuffer )
 
    ::fireEvent( 'gotUpdateSentence' )   
 
+   msgalert( ::cSQLUpdate )
+
 RETURN ( ::cSQLUpdate )
 
 //---------------------------------------------------------------------------//
@@ -1126,16 +1130,21 @@ RETURN ( uValue )
 METHOD insertBuffer( hBuffer )
 
    local nId
+   local cSQLInsert
 
-   ::getInsertSentence( hBuffer )
+   cSQLInsert     := ::getInsertSentence( hBuffer )
+
+   if empty( cSQLInsert )
+      RETURN ( nil )
+   end if 
 
    ::fireEvent( 'insertingBuffer' )
 
-   if !empty( ::cSQLInsert )
-      ::getDatabase():Execs( ::cSQLInsert )
-   end if 
+   ::getDatabase():Execs( cSQLInsert )
 
-   nId         := ::getDatabase():LastInsertId()
+   nId            := ::getDatabase():LastInsertId()
+
+   hset( hBuffer, ::cColumnKey, nId )
 
    ::fireEvent( 'insertedBuffer' )
 
@@ -1245,7 +1254,7 @@ METHOD deleteWhereParentUuid( uUuid )
 
    ::fireEvent( 'deletedWhereParentUuid' )
    
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
