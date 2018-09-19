@@ -9,7 +9,11 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
 
    METHOD getSentenceTotals( uuidFactura ) 
 
+   METHOD getSentenceTotal( uuidFactura )
+
    METHOD getTotals( uuidFactura )        INLINE ( ::getDatabase():selectFetchHash( ::getSentenceTotals( uuidFactura ) ) )
+
+   METHOD getTotal( uuidFactura )         INLINE ( ::getDatabase():selectFetchHash( ::getSentenceTotal( uuidFactura ) ) )
 
    METHOD getSQLFunctions()               INLINE ( {  ::dropProcedureTotales(),;
                                                       ::createProcedureTotales() } )
@@ -31,34 +35,73 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
    TEXT INTO cSql
 
    SELECT
-      lineas.importeBruto AS importeBruto,
+      ROUND( lineas.importeBruto, 2 ) AS importeBruto,
+
       ( @descuento := ( SELECT 
          SUM( facturas_clientes_descuentos.descuento ) 
          FROM %3$s 
          WHERE facturas_clientes_descuentos.parent_uuid = %4$s ) ) AS totalDescuentos,
-      ( @neto := lineas.importeBruto - IF( @descuento IS NULL, 0, ( lineas.importeBruto * @descuento / 100 ) ) ) AS importeNeto,
+
+      ( @aplicarRecargo := ( SELECT recargo
+         FROM %1$s 
+         WHERE facturas_clientes.uuid = %4$s ) ) AS aplicarRecargo,
+
+      ( @neto := lineas.importeBruto - IF( @descuento IS NULL, 0, ROUND( ( lineas.importeBruto * @descuento / 100 ), 2 ) ) ) AS importeNeto,
+      
       lineas.iva AS porcentajeIVA, 
-      ( @recargo := IF( lineas.recargo_equivalencia IS NULL, 0, @neto * lineas.recargo_equivalencia / 100) ) AS importeRecargo,
-      ( @iva := IF( lineas.iva IS NULL, 0, @neto * lineas.iva / 100 + @recargo) ) AS importeIVA,  
-      ( @neto + @iva) AS importeTotal
+
+      lineas.recargo_equivalencia AS recargoEquivalencia,
+
+      ( @iva := IF( lineas.iva IS NULL, 0, ROUND( @neto * lineas.iva / 100 + @recargo, 2 ) ) ) AS importeIVA,  
+
+      ( @recargo := IF( @aplicarRecargo = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) ) AS importeRecargo,
+
+      ( @neto + @iva + @recargo ) AS importeTotal
       
    FROM 
-   (
-   SELECT 
-      SUM(  
-         @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) - IF( facturas_clientes_lineas.descuento IS NULL, 0, @importeLinea * facturas_clientes_lineas.descuento / 100 ) ) AS importeBruto,
-         facturas_clientes_lineas.iva,
-         facturas_clientes_lineas.recargo_equivalencia,
-         facturas_clientes_lineas.descuento,
-         facturas_clientes_lineas.parent_uuid
-      FROM %2$s AS facturas_clientes_lineas 
-         WHERE facturas_clientes_lineas.parent_uuid = %4$s 
-         GROUP BY facturas_clientes_lineas.iva
-   ) lineas
+      (
+      SELECT 
+         SUM(  
+            @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) - IF( facturas_clientes_lineas.descuento IS NULL, 0, @importeLinea * facturas_clientes_lineas.descuento / 100 ) ) AS importeBruto,
+            facturas_clientes_lineas.iva,
+            facturas_clientes_lineas.recargo_equivalencia,
+            facturas_clientes_lineas.descuento,
+            facturas_clientes_lineas.parent_uuid
+         FROM %2$s AS facturas_clientes_lineas 
+            WHERE facturas_clientes_lineas.parent_uuid = %4$s 
+            GROUP BY facturas_clientes_lineas.iva
+      ) lineas
 
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLFacturasClientesLineasModel():getTableName(), SQLFacturasClientesDescuentosModel():getTableName(), quoted( uuidFactura ) )
+
+   logwrite( cSql )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceTotal( uuidFactura ) CLASS FacturasClientesRepository
+
+   local cSql
+
+   cSql  := "SELECT "
+
+   TEXT INTO cSql
+
+   SELECT
+      SUM( totales.importeBruto ),
+      SUM( totales.importeNeto ),
+      SUM( totales.importeIVA ),
+      SUM( totales.importeRecargo ),
+      SUM( totales.importeTotal )
+
+      FROM ( %1$s ) totales
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getSentenceTotals( uuidFactura ), SQLFacturasClientesLineasModel():getTableName(), SQLFacturasClientesDescuentosModel():getTableName(), quoted( uuidFactura ) )
 
    logwrite( cSql )
 
@@ -110,19 +153,21 @@ local cSQL
       DECLARE recargo               TINYINT( 1 );
       DECLARE importeRecargo        DECIMAL( 19, 6 );
       
-/*sacamos el importe total de las lineas*/
+      /*sacamos el importe total de las lineas*/
+
       SET importeBruto        =  (  SELECT 
                                        SUM( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) 
                                           * facturas_clientes_lineas.articulo_unidades 
                                           * facturas_clientes_lineas.articulo_precio )
                                        FROM %2$s AS facturas_clientes_lineas 
                                        WHERE facturas_clientes_lineas.parent_uuid = uuidFactura );
+
 /*sacamos el descuento que tiene cada linea si lo tuviera*/      
       SET descuentoLineas     = ( SELECT 
                                     SUM( (IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) 
                                        * facturas_clientes_lineas.articulo_unidades 
                                        * facturas_clientes_lineas.articulo_precio 
-                                       * (IFNULL( facturas_clientes_lineas.descuento, 0 ) ) /100)) 
+                                       * ( IFNULL( facturas_clientes_lineas.descuento, 0 ) ) / 100 ) ) 
                                  FROM %2$s AS facturas_clientes_lineas 
                                  WHERE facturas_clientes_lineas.parent_uuid = uuidFactura);
    /*sacamos el porcentaje total de descuentos de la cabecera de la factura*/
