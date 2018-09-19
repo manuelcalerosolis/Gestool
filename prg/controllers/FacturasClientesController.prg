@@ -384,57 +384,27 @@ RETURN ( nil )
 
 METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
 
-   local hTotals
-   /*local nIva           := 0
-   local nBruto         := 0
-   local aTotals        := {}
-   local nImporte       := 0
-   local nDescuento     := 0
-   local nNeto          := 0
-   local nRecargo       := 0
-*/
+   local hTotal
+
    DEFAULT uuidFactura  := ::getUuid()
-/*
-   aTotals              := ::oRepository:getTotals( uuidFactura )
 
-   msgalert(hb_valtoexp(aTotals))
+   hTotal               := ::oRepository:getTotal( uuidFactura )
 
-   if !empty( aTotals )
-   
-      aeval( aTotals, {|h| nBruto      += hget( h, "importeBruto" ) } )
-      
-      aeval( aTotals, {|h| nIva        += hget( h, "importeIVA" ) } )
+   if empty( hTotal )
+      RETURN ( nil )
+   end if 
 
-      aeval( aTotals, {|h| nRecargo    += hget( h, "importeRecargo" ) } )
+   ::oDialogView:oTotalBruto:setText( hget( hTotal, "importeBruto" ) )
 
-      aeval( aTotals, {|h| nNeto       += hget( h, "importeNeto" ) } )
+   ::oDialogView:oTotalDescuento:setText( hget( hTotal, "importeBruto" ) - hget( hTotal, "importeNeto" ) )
 
-      aeval( aTotals, {|h| nDescuento  += hget( h, "importeBruto" ) - hget( h, "importeNeto" ) } )
+   ::oDialogView:oTotalIva:setText( hget( hTotal, "importeIVA" ) )
 
-      aeval( aTotals, {|h| nImporte    += hget( h, "importeTotal" ) } )
+   ::oDialogView:oTotalRecargo:setText( hget( hTotal, "importeRecargo" ) )
 
-   end if */
+   ::oDialogView:oTotalImporte:setText( hget( hTotal, "importeTotal" ) )
 
-   hTotals              := ::oRepository:calltotals( uuidFactura )
-
-   ::oDialogView:oTotalBruto:setText( hget( hTotals, "totalBruto" ) )
-
-   ::oDialogView:oTotalDescuento:setText( hget( hTotals, "totalDescuento" ) )
-
-   ::oDialogView:oTotalIva:setText( hget( hTotals, "totalIva" ) )
-
-   ::oDialogView:oTotalImporte:setText( hget( hTotals, "totalImporte" ) )
-
-   ::oDialogView:oTotalBase:setText( hget( hTotals, "totalBase" ) )
-
-   
-   /*::oDialogView:oTotalIva:setText( nIva )
-   
-   ::oDialogView:oTotalDescuento:setText( nDescuento )
-
-   ::oDialogView:oTotalImporte:setText( nImporte )
-
-   ::oDialogView:oTotalBase:setText( nNeto )*/
+   ::oDialogView:oTotalBase:setText( hget( hTotal, "importeNeto" ) )
 
 RETURN ( nil )
 

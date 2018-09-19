@@ -13,7 +13,7 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
 
    METHOD getTotals( uuidFactura )        INLINE ( ::getDatabase():selectFetchHash( ::getSentenceTotals( uuidFactura ) ) )
 
-   METHOD getTotal( uuidFactura )         INLINE ( ::getDatabase():selectFetchHash( ::getSentenceTotal( uuidFactura ) ) )
+   METHOD getTotal( uuidFactura )         
 
    METHOD getSQLFunctions()               INLINE ( {  ::dropProcedureTotales(),;
                                                       ::createProcedureTotales() } )
@@ -76,8 +76,6 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLFacturasClientesLineasModel():getTableName(), SQLFacturasClientesDescuentosModel():getTableName(), quoted( uuidFactura ) )
 
-   logwrite( cSql )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -86,16 +84,14 @@ METHOD getSentenceTotal( uuidFactura ) CLASS FacturasClientesRepository
 
    local cSql
 
-   cSql  := "SELECT "
-
    TEXT INTO cSql
 
    SELECT
-      SUM( totales.importeBruto ),
-      SUM( totales.importeNeto ),
-      SUM( totales.importeIVA ),
-      SUM( totales.importeRecargo ),
-      SUM( totales.importeTotal )
+      SUM( totales.importeBruto ) AS importeBruto,
+      SUM( totales.importeNeto ) AS importeNeto,
+      SUM( totales.importeIVA ) AS importeIVA,
+      SUM( totales.importeRecargo ) AS importeRecargo,
+      SUM( totales.importeTotal ) AS importeTotal
 
       FROM ( %1$s ) totales
 
@@ -103,9 +99,15 @@ METHOD getSentenceTotal( uuidFactura ) CLASS FacturasClientesRepository
 
    cSql  := hb_strformat( cSql, ::getSentenceTotals( uuidFactura ), SQLFacturasClientesLineasModel():getTableName(), SQLFacturasClientesDescuentosModel():getTableName(), quoted( uuidFactura ) )
 
-   logwrite( cSql )
-
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTotal( uuidFactura )
+
+   local aTotal   := ::getDatabase():selectFetchHash( ::getSentenceTotal( uuidFactura ) ) 
+
+RETURN ( if( !empty( aTotal ), atail( aTotal ), nil ) )
 
 //---------------------------------------------------------------------------//
 
@@ -122,8 +124,6 @@ METHOD callTotals( uuidFactura ) CLASS FacturasClientesRepository
    getSQLDatabase():Exec( "CALL " + Company():getTableName( 'FacturasClientesTotales' ) + "( '" + uuidFactura + "', @totalBruto, @totalDescuento, @totalIva, @totalImporte, @totalBase )" ) 
    
    hTotals           := getSQLDatabase():selectFetchHash( "SELECT @totalBruto AS totalBruto, @totalDescuento AS totalDescuento, @totalIva AS totalIva, @totalImporte AS totalImporte, @totalBase AS totalBase" ) 
-
-   msgalert( hb_valtoexp(atail( hTotals )) )
 
 RETURN ( atail( hTotals ) )
 

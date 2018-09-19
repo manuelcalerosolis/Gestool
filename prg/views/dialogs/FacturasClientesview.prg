@@ -13,6 +13,8 @@ CLASS FacturasClientesView FROM SQLBaseView
    DATA nTotalBruto                    INIT 0
    DATA oTotalIva
    DATA nTotalIva                      INIT 0
+   DATA oTotalRecargo
+   DATA nTotalRecargo                  INIT 0
    DATA oTotalDescuento
    DATA nTotalDescuento                INIT 0
    DATA oTotalBase
@@ -159,6 +161,13 @@ METHOD Activate() CLASS FacturasClientesView
       ID          320 ;
       IDSAY       322 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oFolder:aDialogs[1]
+
+   REDEFINE SAY   ::oTotalRecargo ;
+      VAR         ::nTotalRecargo ;
+      ID          323 ;
+      FONT        oFontBold() ;
+      PICTURE     "@E 999,999,999.99" ;
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE SAY   ::oTotalImporte ;
