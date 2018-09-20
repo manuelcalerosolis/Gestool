@@ -404,7 +404,7 @@ RETURN ( nil )
 
 METHOD clientChangeRecargo() CLASS FacturasClientesController
 
-   ::oModel:updateFieldWhereId( ::oModel:getBufferColumnKey(), "recargo", ::oModel:hBuffer[ "recargo" ] )
+   ::oModel:updateFieldWhereId( ::oModel:getBufferColumnKey(), "recargo_equivalencia", ::oModel:hBuffer[ "recargo_equivalencia" ] )
 
    ::calculateTotals()
 
@@ -428,17 +428,17 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
       RETURN ( nil )
    end if 
 
-   ::oDialogView:oTotalBruto:setText( hget( hTotal, "importeBruto" ) )
+   ::oDialogView:oTotalBruto:setText( hget( hTotal, "totalBruto" ) )
 
-   ::oDialogView:oTotalDescuento:setText( hget( hTotal, "importeBruto" ) - hget( hTotal, "importeNeto" ) )
+   ::oDialogView:oTotalDescuento:setText( hget( hTotal, "totalDescuento" ) )
 
-   ::oDialogView:oTotalIva:setText( hget( hTotal, "importeIVA" ) )
+   ::oDialogView:oTotalIva:setText( hget( hTotal, "totalIVA" ) )
 
-   ::oDialogView:oTotalRecargo:setText( hget( hTotal, "importeRecargo" ) )
+   ::oDialogView:oTotalRecargo:setText( hget( hTotal, "totalRecargo" ) )
 
-   ::oDialogView:oTotalImporte:setText( hget( hTotal, "importeTotal" ) )
+   ::oDialogView:oTotalImporte:setText( hget( hTotal, "totalDocumento" ) )
 
-   ::oDialogView:oTotalBase:setText( hget( hTotal, "importeNeto" ) )
+   ::oDialogView:oTotalBase:setText( hget( hTotal, "totalNeto" ) )
 
 RETURN ( nil )
 
@@ -468,8 +468,10 @@ END CLASS
 
 METHOD getValidators() CLASS FacturasClientesValidator
 
-   ::hValidators  := {  "codigo" =>    {  "required"   => "El c?igo del cliente es un dato requerido"  } ,;  
-                        "nombre" =>    {  "required"   => "El nombre del cliente es un dato requerido" }  }
+   ::hValidators  := {  "cliente_codigo"     =>  {  "required"   => "El código del cliente es un dato requerido" } ,;  
+                        "forma_pago_codigo"  =>  {  "required"   => "El código de la forma de pago es un dato requerido" },;  
+                        "almacen_codigo"     =>  {  "required"   => "El código del almacén es un dato requerido" },;
+                        "tarifa_codigo"      =>  {  "required"   => "El código de la tarifa es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -629,10 +631,10 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'recargo'
-      :cHeader             := "Recargo"
+      :cSortOrder          := 'recargo_equivalencia'
+      :cHeader             := "Recargo equivalencia"
       :bStrData            := {|| "" }
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'recargo' ) == 1 }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'recargo_equivalencia' ) == 1 }
       :nWidth              := 60
       //:bValid             :={||::click( ::getRowSet():fieldGet( 'recargo' ) )  }
       :SetCheck( { "Sel16", "Nil16" } )

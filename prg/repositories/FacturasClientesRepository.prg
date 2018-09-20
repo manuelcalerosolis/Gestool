@@ -38,31 +38,35 @@ METHOD getSentenceTotals( uuidFactura ) CLASS FacturasClientesRepository
       ROUND( lineas.importeBruto, 2 ) AS importeBruto,
 
       ( @descuento := ( SELECT 
-         SUM( facturas_clientes_descuentos.descuento ) 
-         FROM %3$s 
-         WHERE facturas_clientes_descuentos.parent_uuid = %4$s ) ) AS totalDescuentos,
+                           SUM( facturas_clientes_descuentos.descuento ) 
+                        FROM %3$s AS facturas_clientes_descuentos 
+                        WHERE facturas_clientes_descuentos.parent_uuid = %4$s ) ) AS totalDescuentosPie,
 
-      ( @aplicarRecargo := ( SELECT recargo
-         FROM %1$s 
-         WHERE facturas_clientes.uuid = %4$s ) ) AS aplicarRecargo,
+      ( @totalDescuento :=  IF( @descuento IS NULL, 0, ROUND( ( ( lineas.importeBruto - lineas.descuentoTotalLinea ) * @descuento / 100 ) ) ) + lineas.descuentoTotalLinea ) as totalDescuento,
 
-      ( @neto := lineas.importeBruto - IF( @descuento IS NULL, 0, ROUND( ( lineas.importeBruto * @descuento / 100 ), 2 ) ) ) AS importeNeto,
+      ( @aplicarRecargo := ( SELECT recargo_equivalencia
+                              FROM %1$s AS facturas_clientes 
+                              WHERE facturas_clientes.uuid = %4$s ) ) AS aplicarRecargo,
+
+      ( @neto := ROUND( lineas.importeBruto - @totalDescuento, 2 ) ) AS importeNeto,
       
       lineas.iva AS porcentajeIVA, 
 
       lineas.recargo_equivalencia AS recargoEquivalencia,
 
-      ( @iva := IF( lineas.iva IS NULL, 0, ROUND( @neto * lineas.iva / 100 + @recargo, 2 ) ) ) AS importeIVA,  
+      ( @iva := IF( lineas.iva IS NULL, 0, ROUND( @neto * lineas.iva / 100 , 2 ) ) ) AS importeIVA,  
 
       ( @recargo := IF( @aplicarRecargo = 0 OR lineas.recargo_equivalencia IS NULL, 0, ROUND( @neto * lineas.recargo_equivalencia / 100, 2 ) ) ) AS importeRecargo,
 
-      ( @neto + @iva + @recargo ) AS importeTotal
+      ROUND( ( @neto + @iva + @recargo ), 2 ) AS importeTotal
       
    FROM 
       (
       SELECT 
-         SUM(  
-            @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) - IF( facturas_clientes_lineas.descuento IS NULL, 0, @importeLinea * facturas_clientes_lineas.descuento / 100 ) ) AS importeBruto,
+        ROUND( SUM(  
+            ( @importeLinea := ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) ) ), 2 ) AS importeBruto,
+        ROUND( SUM( 
+            @descuentoLinea := IF( facturas_clientes_lineas.descuento IS NULL, 0, ( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) * facturas_clientes_lineas.articulo_unidades * facturas_clientes_lineas.articulo_precio ) ) *  IFNULL(facturas_clientes_lineas.descuento,0) / 100 ) ,2 ) AS descuentoTotalLinea ,
             facturas_clientes_lineas.iva,
             facturas_clientes_lineas.recargo_equivalencia,
             facturas_clientes_lineas.descuento,
@@ -87,11 +91,12 @@ METHOD getSentenceTotal( uuidFactura ) CLASS FacturasClientesRepository
    TEXT INTO cSql
 
    SELECT
-      SUM( totales.importeBruto ) AS importeBruto,
-      SUM( totales.importeNeto ) AS importeNeto,
-      SUM( totales.importeIVA ) AS importeIVA,
-      SUM( totales.importeRecargo ) AS importeRecargo,
-      SUM( totales.importeTotal ) AS importeTotal
+      SUM( totales.importeBruto ) AS totalBruto,
+      SUM( totales.importeNeto ) AS totalNeto,
+      SUM( totales.importeIVA ) AS totalIVA,
+      SUM( totales.importeRecargo ) AS totalRecargo,
+      SUM( totales.totalDescuento ) AS totalDescuento,
+      SUM( totales.importeTotal ) AS totalDocumento
 
       FROM ( %1$s ) totales
 
@@ -213,7 +218,7 @@ local cSQL
                                              WHERE facturas_clientes_lineas.parent_uuid = uuidFactura
                                              GROUP BY id,iva) descuentoLinea) as descuenTototalLinea );
 /*comprobamos si existe recargo*/
-      SET recargo =                 (  SELECT recargo 
+      SET recargo =                 (  SELECT recargo_equivalencia 
                                        FROM %4$s AS facturas_clientes
                                        WHERE facturas_clientes.uuid= uuidFactura );
 
