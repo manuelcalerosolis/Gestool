@@ -728,6 +728,7 @@ FacturasClientesLineasBrowse.prg											\
 FacturasClientesLineasView.prg											\
 FacturasClientesView.prg 													\
 ClientesTarifasController.prg 											\
+Server.prg 																		\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1434,6 +1435,7 @@ FacturasClientesLineasBrowse.obj 										\
 FacturasClientesLineasView.obj 											\
 FacturasClientesView.obj 													\
 ClientesTarifasController.obj 											\
+Server.obj 																		\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /o$(OBJ)\$&.c
@@ -2128,6 +2130,7 @@ $(OBJ)\FacturasClientesLineasBrowse.obj 								+
 $(OBJ)\FacturasClientesLineasView.obj 									+
 $(OBJ)\FacturasClientesView.obj 											+
 $(OBJ)\ClientesTarifasController.obj 									+
+$(OBJ)\Server.obj 															+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+
@@ -2137,12 +2140,11 @@ $(HBLIB)\hdo.lib               											+
 $(HBLIB)\mylist.lib 															+
 $(HBLIB)\rdlmysql.lib 														+
 $(HBLIB)\libmysql.lib            										+
-$(HBLIB)\Eagle1.lib              										+
 $(HBLIB)\hbwin.lib               										+
-$(HBLIB)\gtwin.lib               										+ 
 $(HBLIB)\gtgui.lib               										+ 
+$(HBLIB)\gtwin.lib               										+ 
 $(HBLIB)\hbrtl.lib               										+ 
-$(HBLIB)\hbvm.lib                										+ 
+$(HBLIB)\hbvmmt.lib                										+ 
 $(HBLIB)\hblang.lib              										+
 $(HBLIB)\hbmacro.lib             										+
 $(HBLIB)\hbrdd.lib               										+ 
@@ -2153,6 +2155,12 @@ $(HBLIB)\hbsix.lib               										+
 $(HBLIB)\hbusrrdd.lib            										+ 
 $(HBLIB)\hbdebug.lib             										+
 $(HBLIB)\hbcommon.lib            										+
+$(HBLIB)\hbhttpd.lib            											+
+$(HBLIB)\hbssl.lib            											+
+$(HBLIB)\hbssls.lib            											+
+$(HBLIB)\libeay32.lib           											+
+$(HBLIB)\libssl32.lib           											+
+$(HBLIB)\hbtipssl.lib           											+
 $(HBLIB)\hbpp.lib                										+ 
 $(HBLIB)\hbcpage.lib             										+
 $(HBLIB)\hbcplr.lib              										+

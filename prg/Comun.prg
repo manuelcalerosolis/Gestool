@@ -5,6 +5,8 @@
 #include "Xbrowse.ch"
 #include "hbwin.ch"
 #include "HdoCommon.ch"
+#include "hbthread.ch"
+#include "gif.ch"
 
 #define CS_DBLCLKS      8
 
@@ -13,6 +15,8 @@
 #command CTEXT TO VAR <v> => #pragma __cstream|<v>:=%s
 
 memvar nId
+
+static oPnel1
 
 static oWnd
 static oWndBar
@@ -345,33 +349,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-//quotedNotEscaped( ::getModelBuffer( 'uuid' ) )
-/*
-
-   msgalert( "CALL " + Company():getTableName( 'FacturasClientesTotales' ) + "( '61982471-c6ac-4b99-b84f-e564ec8c6f06' );" )
-
-   msgalert( hb_valtoexp( FacturasClientesRepository():getTotals( '61982471-c6ac-4b99-b84f-e564ec8c6f06' ) ) )
-
-   local n      
-   local nMemUsed    := MemUsed()
-
-   CursorWait()
-
-   ArticulosController():New():End() 
-
-   nMemUsed          := MemUsed()
-
-   for n := 1 to 10 
-
-      ArticulosController():New():End()  
-
-   next
-
-   msgalert(   "* MemUsed: " + AllTrim( Transform( MemUsed(), "999,999,999,999" ) )                   + CRLF + ;
-               "* MemInit: " + Alltrim( Transform( nMemUsed, "999,999,999,999" ) )                    + CRLF + ;
-               "* Diferences: " + AllTrim( Transform( MemUsed() - nMemUsed, "999,999,999,999" ) )     + CRLF + ;
-               "* Running time: " + TimeFromStart(), "fin" )
-*/
+   RunServer()
 
 RETURN ( nil )
 
@@ -7466,6 +7444,136 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+Function TestMt()
+
+   local oWnd
+   local oBar
+   local oBtt1
+   local oBtt2
+   local uTh1
+   local uTh2
+   local uTh3
+   local nPress  := 0
+
+   DEFINE DIALOG oWnd FROM 0, 0 TO 660, 1100 TITLE "Test" PIXEL //MDI
+
+      DEFINE BUTTONBAR oBar SIZE 48, 48 OF oWnd
+      DEFINE BUTTON oBtt1 PROMPT "Salir" OF oBar ACTION oWnd:End() TOOLTIP "Salir" 
+      DEFINE BUTTON oBtt2 PROMPT "Test"  OF oBar ;
+         ACTION ( nPress++, ;
+                  uTh1 := hb_threadStart( HB_THREAD_INHERIT_PUBLIC, @WTest(), "Hello", 120, nPress ),;
+                  uTh2 := hb_threadStart( HB_THREAD_INHERIT_PUBLIC, @WTest(), 333, 120, nPress ),;
+                  MsgWait( "Process", "Modal", 5  )) 
+   
+   ACTIVATE DIALOG oWnd ;
+      ON INIT ( HazPnel( oWnd ), CrearGif( oWnd ) ) ;
+      VALID ( hb_threadTerminateAll(), .T. )
+
+Return NIL 
+
+//----------------------------------------------------------------------------//
+
+Function WTest( u, nF, nPress )
+
+   local x := 1
+   if Valtype( u ) = "N"
+      For x = 1 to 300 step 15
+         @ nF + x, 60 + ( ( nPress - 1 ) * 110 ) SAY "Thread " + StrZero( nPress + 1, 2 ) ;
+            OF oPnel1 PIXEL COLOR CLR_BLACK 
+         SysRefresh()
+         hb_idleSleep( 0.8 )
+      Next x
+   else
+      For x = 1 to 300 step 15
+         @ nF + x, 4 + ( ( nPress - 1 ) * 110 ) SAY "Thread " + StrZero( nPress, 2 ) ;
+            OF oPnel1 PIXEL COLOR CLR_RED
+         SysRefresh()
+         hb_idleSleep( 0.8 )
+      Next x
+   endif
+
+Return nil
+
+//----------------------------------------------------------------------------//
+
+Function HazPnel( oWnd )
+
+   @ 50, 400 PANEL oPnel1 OF oWnd SIZE 600, 550
+   oPnel1:SetColor( CLR_BLACK, CLR_YELLOW )
+   
+Return oPnel1
+
+//----------------------------------------------------------------------------//
+
+Function CrearGif( oDlg )
+   
+   local oGif
+
+   @ 60, 10 GIF oGif FILE "..\gifs\matrix.gif" OF oDlg SIZE 100, 100 //ADJUST //
+
+Return nil
+
+//----------------------------------------------------------------------------//
+
+FUNCTION E1EXECDIRECT()
+RETURN ( nil )
+
+FUNCTION TMSQUERY()
+RETURN ( nil )
+
+FUNCTION TMSCOMMAND()
+RETURN ( nil )
+
+FUNCTION TMSCONNECT()
+RETURN ( nil )
+
+FUNCTION TMSDATABASE()
+RETURN ( nil )
+
+FUNCTION MYGENCLASS()
+RETURN ( nil )
+
+FUNCTION MYGENDATAFIELD()
+RETURN ( nil )
+
+FUNCTION E1FIELDAUTOINC()
+RETURN ( nil )
+
+FUNCTION E1LISTKEY()
+RETURN ( nil )
+
+FUNCTION E1ISAUTOINC()
+RETURN ( nil )
+
+FUNCTION E1ISNUMERIC()
+RETURN ( nil )
+
+FUNCTION E1LOAD()
+RETURN ( nil )
+
+FUNCTION E1IMPORTDATA()
+RETURN ( nil )
+
+FUNCTION E1SETBLANK()
+RETURN ( nil )
+
+FUNCTION TSQLVIRTUAL()
+RETURN ( nil )
+
+FUNCTION E1ISERROR()
+RETURN ( nil )
+
+FUNCTION E1ERROR()
+RETURN ( nil )
+
+FUNCTION E1ERRNO()
+RETURN ( nil )
+
+FUNCTION E1STATE()
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
 #pragma BEGINDUMP
 
 #include "windows.h"
@@ -7476,8 +7584,8 @@ RETURN ( nil )
 #include "hbstack.h"
 #include "hbapiitm.h"
 #include "hbapigt.h"
-#include "hbstack.h"
 #include "urlmon.h"
+#include "hbapiitm.h" 
 
 HB_MAXUINT hb_dateMilliSeconds( void );
 
@@ -7531,6 +7639,21 @@ HB_FUNC( DOWNLOADFILE )
 HB_FUNC( HB_MILLISECONDS )
 {
    hb_retnl( hb_dateMilliSeconds() );
+}
+
+HB_FUNC( CHGATEND )
+{
+    const char * szStr1 = hb_parc( 1 );
+    const char * szStr2 = hb_parc( 2 );
+    unsigned int uiLen = hb_parclen( 1 ) - hb_parni( 3 );
+    unsigned int uiTotalLen = uiLen + hb_parclen( 2 );
+    char * szRet = (char *) hb_xgrab( uiTotalLen + 1 );
+
+    hb_xmemcpy( szRet, szStr1, uiLen );
+    szRet[ uiLen ] = '\0';
+    hb_xstrcat( szRet, szStr2, NULL );
+
+    hb_retclen_buffer( szRet, uiTotalLen );
 }
 
 #pragma ENDDUMP

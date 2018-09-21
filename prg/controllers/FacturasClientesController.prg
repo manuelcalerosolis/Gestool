@@ -418,8 +418,6 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
 
    DEFAULT uuidFactura  := ::getUuid()
 
-   msgalert( uuidFactura, "uuidFactura" )
-
    hTotal               := ::oRepository:getTotal( uuidFactura )
 
    msgalert( hb_valtoexp( hTotal ), "hTotal" )
@@ -428,17 +426,17 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
       RETURN ( nil )
    end if 
 
-   ::oDialogView:oTotalBruto:setText( hget( hTotal, "importeBruto" ) )
+   ::oDialogView:oTotalBruto:setText( hget( hTotal, "totalBruto" ) )
+   
+   ::oDialogView:oTotalBase:setText( hget( hTotal, "totalNeto" ) )
 
-   ::oDialogView:oTotalDescuento:setText( hget( hTotal, "importeBruto" ) - hget( hTotal, "importeNeto" ) )
+   ::oDialogView:oTotalDescuento:setText( hget( hTotal, "totalBruto" ) - hget( hTotal, "totalNeto" ) )
 
-   ::oDialogView:oTotalIva:setText( hget( hTotal, "importeIVA" ) )
+   ::oDialogView:oTotalIva:setText( hget( hTotal, "totalIVA" ) )
 
-   ::oDialogView:oTotalRecargo:setText( hget( hTotal, "importeRecargo" ) )
+   ::oDialogView:oTotalRecargo:setText( hget( hTotal, "totalRecargo" ) )
 
-   ::oDialogView:oTotalImporte:setText( hget( hTotal, "importeTotal" ) )
-
-   ::oDialogView:oTotalBase:setText( hget( hTotal, "importeNeto" ) )
+   ::oDialogView:oTotalImporte:setText( hget( hTotal, "totalDocumento" ) )
 
 RETURN ( nil )
 
