@@ -14,14 +14,48 @@
 #include "hbclass.ch"
 #include "error.ch"
 
+#include "hbthread.ch"
+
 #require "hbssl"
 #require "hbhttpd"
 
 REQUEST __HBEXTERN__HBSSL__
 
-MEMVAR server, GET, post, cookie, session
+MEMVAR server, get, post, cookie, session
 
-FUNCTION RunServer( cOption, nPort )
+static uthreadServer
+
+//---------------------------------------------------------------------------//
+
+FUNCTION StartServer()
+   
+   if empty( uthreadServer )
+      uthreadServer  := hb_threadStart( HB_THREAD_INHERIT_PUBLIC, @RunServer() )
+   end if 
+
+RETURN ( nil )   
+
+//---------------------------------------------------------------------------//
+
+FUNCTION StopServer()
+
+   if empty( uthreadServer )
+      RETURN ( nil )   
+   end if 
+
+   hb_memowrit( ".uhttpd.stop", "" )
+
+   if hb_threadQuitRequest( uthreadServer )
+      msgalert("hb_threadQuitRequest")
+
+      uthreadServer  := nil
+   end if 
+
+RETURN ( nil )   
+
+//---------------------------------------------------------------------------//
+
+FUNCTION RunServer( nPort )
 
    local hMap
    local oServer
@@ -30,17 +64,11 @@ FUNCTION RunServer( cOption, nPort )
    local oLogAccess
    local oLogError
 
-   DEFAULT cOption   := ""
    DEFAULT nPort     := 8002
 
-   if cOption == "stop"
-      hb_memowrit( ".uhttpd.stop", "" )
-      RETURN ( nil )
-   else
-      hb_vferase( ".uhttpd.stop" )
-   endif
+   hb_vferase( ".uhttpd.stop" )
 
-   oLogAccess  := UHttpdLog():New( "ws_access.log" )
+   oLogAccess        := UHttpdLog():New( "ws_access.log" )
 
    if ! oLogAccess:Add( "" )
       oLogAccess:Close()
@@ -48,7 +76,7 @@ FUNCTION RunServer( cOption, nPort )
       RETURN ( nil )
    endif
 
-   oLogError   := UHttpdLog():New( "ws_error.log" )
+   oLogError         := UHttpdLog():New( "ws_error.log" )
 
    if ! oLogError:Add( "" )
       oLogError:Close()
@@ -58,9 +86,8 @@ FUNCTION RunServer( cOption, nPort )
    endif
 
    oServer           := UHttpdNew()
-   // oServer:lHasSSL   := .f.
 
-   IF ! oServer:Run( { ;
+   if ! oServer:Run( { ;
          "FirewallFilter"        => "", ;
          "LogAccess"             => {| m | oLogAccess:Add( m + hb_eol() ) }, ;
          "LogError"              => {| m | oLogError:Add( m + hb_eol() ) }, ;
@@ -70,16 +97,21 @@ FUNCTION RunServer( cOption, nPort )
          "SSL"                   => .f., ;
          "Mount"                 => { ;
          "/hello"                => {|| UWrite( "Hello!" ) }, ;
-         "/test"                 => {|| hb_jsonEncode( { "id" => 1, "name" => "Manuel" }, .t. ) }, ;
+         "/v1/clientType"        => {|| ClientHttpController():New():getJSON() }, ;
+         "/v1/clientType/*"      => {| cPath | ClientHttpController():New( cPath ):getJSON() }, ;
          "/info"                 => {|| UProcInfo() }, ;
          "/files/*"              => {| x | qout( hb_dirbase() + "/files/" + X ), UProcFiles( hb_dirbase() + "/files/" + X, .F. ) }, ;
          "/"                     => {|| URedirect( "/info" ) } } } )
 
       oLogError:Close()
       oLogAccess:Close()
+      
       msgStop( oServer:cError, "Server error :" )
+      
       ErrorLevel( 1 )
+
       RETURN ( nil )
+
    endif
 
    oLogError:Close()

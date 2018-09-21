@@ -60,7 +60,7 @@ CLASS GetSelector
    
    METHOD start()                               INLINE ( ::loadHelpText( .t. ) )
 
-   METHOD evalValue( value )                    INLINE ( eval( ::bValue, value ), ::setOriginal( value ) )
+   METHOD evalValue( value )                    INLINE ( eval( ::bValue, value ) )
 
    METHOD showMessage()
 
@@ -217,27 +217,25 @@ METHOD validAction() CLASS GetSelector
       RETURN ( .f. )
    end if
 
-   if ::isNotChangeGet()
-      RETURN ( .t. )
-   end if 
-
    ::evalValue( ::varGet() )
 
-   if empty( ::bValid ) .or. eval( ::bValid, ::oGet )
+   if !empty( ::bValid ) .and. !eval( ::bValid, ::oGet ) 
+      RETURN ( .f. )
+   end if 
+
+   ::fireEvent( 'validated' )
+
+   ::oGet:oWnd:nLastKey    := 0
+
+   if ::isChangeGet()
 
       ::loadHelpText()
 
-      ::fireEvent( 'validated' )
+      ::setOriginal( ::varGet() )
 
-      RETURN ( .t. )
+   end if  
 
-   else
-   
-      ::oGet:oWnd:nLastKey    := 0
-
-   end if 
-
-RETURN ( .f. )
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

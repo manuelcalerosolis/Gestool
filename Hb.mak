@@ -16,7 +16,7 @@ IMG2PDFLIB           = 	\img2Pdf
 
 OBJ                  = 	obj1801
 
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Commands;.\Prg\Services;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\Comercio;.\Prg\Models;.\Prg\Seeders;.\Prg\Views;.\Prg\Views\Dialogs;.\Prg\Views\Browsers;.\Prg\Controllers;.\Prg\Validators;.\Prg\Repositories;.\Prg\Commands;.\Prg\Services;.\Prg\Http;.\Prg\Reports;.\Prg\Tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	.\C
 
 PPO 					   = 	ppo1801
@@ -729,6 +729,8 @@ FacturasClientesLineasView.prg											\
 FacturasClientesView.prg 													\
 ClientesTarifasController.prg 											\
 Server.prg 																		\
+BaseHttpService.prg 															\
+BaseHttpController.prg														\
 
 C               =       	            								\
 Img2pdf.c               	            								\
@@ -1436,6 +1438,8 @@ FacturasClientesLineasView.obj 											\
 FacturasClientesView.obj 													\
 ClientesTarifasController.obj 											\
 Server.obj 																		\
+BaseHttpService.obj 															\
+BaseHttpController.obj														\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /o$(OBJ)\$&.c
@@ -2131,6 +2135,8 @@ $(OBJ)\FacturasClientesLineasView.obj 									+
 $(OBJ)\FacturasClientesView.obj 											+
 $(OBJ)\ClientesTarifasController.obj 									+
 $(OBJ)\Server.obj 															+
+$(OBJ)\BaseHttpService.obj													+
+$(OBJ)\BaseHttpController.obj												+
 $(OBJ)\Events.obj              		
 $<,$*
 $(FWLIB)\FiveH.lib               										+

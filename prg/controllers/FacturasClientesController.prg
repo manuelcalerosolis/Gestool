@@ -404,7 +404,7 @@ RETURN ( nil )
 
 METHOD clientChangeRecargo() CLASS FacturasClientesController
 
-   ::oModel:updateFieldWhereId( ::oModel:getBufferColumnKey(), "recargo", ::oModel:hBuffer[ "recargo" ] )
+   ::oModel:updateFieldWhereId( ::oModel:getBufferColumnKey(), "recargo_equivalencia", ::oModel:hBuffer[ "recargo_equivalencia" ] )
 
    ::calculateTotals()
 
@@ -430,7 +430,7 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
    
    ::oDialogView:oTotalBase:setText( hget( hTotal, "totalNeto" ) )
 
-   ::oDialogView:oTotalDescuento:setText( hget( hTotal, "totalBruto" ) - hget( hTotal, "totalNeto" ) )
+   ::oDialogView:oTotalDescuento:setText( hget( hTotal, "totalDescuento" ) )
 
    ::oDialogView:oTotalIva:setText( hget( hTotal, "totalIVA" ) )
 
@@ -466,8 +466,10 @@ END CLASS
 
 METHOD getValidators() CLASS FacturasClientesValidator
 
-   ::hValidators  := {  "codigo" =>    {  "required"   => "El c?igo del cliente es un dato requerido"  } ,;  
-                        "nombre" =>    {  "required"   => "El nombre del cliente es un dato requerido" }  }
+   ::hValidators  := {  "cliente_codigo"     =>  {  "required"   => "El código del cliente es un dato requerido" } ,;  
+                        "forma_pago_codigo"  =>  {  "required"   => "El código de la forma de pago es un dato requerido" },;  
+                        "almacen_codigo"     =>  {  "required"   => "El código del almacén es un dato requerido" },;
+                        "tarifa_codigo"      =>  {  "required"   => "El código de la tarifa es un dato requerido" } }
 
 RETURN ( ::hValidators )
 
@@ -627,10 +629,10 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'recargo'
-      :cHeader             := "Recargo"
+      :cSortOrder          := 'recargo_equivalencia'
+      :cHeader             := "Recargo equivalencia"
       :bStrData            := {|| "" }
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'recargo' ) == 1 }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'recargo_equivalencia' ) == 1 }
       :nWidth              := 60
       //:bValid             :={||::click( ::getRowSet():fieldGet( 'recargo' ) )  }
       :SetCheck( { "Sel16", "Nil16" } )

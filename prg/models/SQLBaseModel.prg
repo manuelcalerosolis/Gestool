@@ -160,6 +160,9 @@ CLASS SQLBaseModel
 
    METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
 
+   METHOD findAll( nOffset, nLimit )
+   METHOD getByUuid( uuid )
+
    // Where for columns--------------------------------------------------------
 
    METHOD isEmpresaColumn()                           INLINE ( hb_hhaskey( ::hColumns, "empresa_codigo" ) )
@@ -400,6 +403,7 @@ RETURN ( ::getWhereSelect( "codigo", "=", codigo ) )
 METHOD getWhereSelect( cField, cOperator, uValue )
 
    local cSQLSelect        := ::cGeneralSelect + " "
+
    cSQLSelect              += "WHERE "
    
    if !empty( ::cAs )
@@ -922,6 +926,20 @@ METHOD getValueField( cColumn, uValue )
    end if
 
 RETURN ( uValue )
+
+//---------------------------------------------------------------------------//
+
+METHOD findAll( nOffset, nLimit )
+
+RETURN ( ::getDatabase():selectTrimedFetchHash( ::getGeneralSelect() ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getByUuid( uuid )
+
+   local cGeneralSelect    := ::cGeneralSelect + " WHERE uuid = " + quoted( uuid )
+
+RETURN ( ::getDatabase():selectTrimedFetchHash( cGeneralSelect ) )
 
 //---------------------------------------------------------------------------//
 

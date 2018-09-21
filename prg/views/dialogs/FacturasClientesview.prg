@@ -82,6 +82,7 @@ METHOD Activate() CLASS FacturasClientesView
    ::oController:oClientesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) )
    ::oController:oClientesController:oGetSelector:Build( { "idGet" => 170, "idLink" => 171, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:oClientesController:oGetSelector:setWhen( {|| ::oController:isNotLines() .or. empty( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) } )
+   ::oController:oClientesController:oGetSelector:setValid( {|| ::oController:validate( "cliente_codigo" ) } )
 
    // Serie-------------------------------------------------------------------
 
@@ -105,9 +106,22 @@ METHOD Activate() CLASS FacturasClientesView
    // Formas de pago------------------------------------------------------------
 
    ::oController:oFormasPagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
-   ::oController:oFormasPagoController:oGetSelector:Build( { "idGet" => 240, "idText" => 241, "idLink" => 242, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oFormasPagoController:oGetSelector:Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oFormasPagoController:oGetSelector:setValid( {|| ::oController:validate( "forma_pago_codigo" ) } )
 
-   // Rutas--------------------------------------------------------------------
+   // Almacenes----------------------------------------------------------------
+
+   ::oController:oAlmacenesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_codigo" ] ) )
+   ::oController:oAlmacenesController:oGetSelector:Build( { "idGet" => 240, "idText" => 241, "idLink" => 242, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oAlmacenesController:oGetSelector:setValid( {|| ::oController:validate( "almacen_codigo" ) } )
+   // Tarifas------------------------------------------------------------------
+
+   ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
+   ::oController:oArticulosTarifasController:oGetSelector:Build( { "idGet" => 250, "idText" => 251, "idLink" => 252, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oArticulosTarifasController:oGetSelector:setWhen( {|| ::oController:isNotLines() } )
+   ::oController:oArticulosTarifasController:oGetSelector:setValid( {|| ::oController:validate( "tarifa_codigo" ) } )
+
+    // Rutas--------------------------------------------------------------------
 
    ::oController:oRutasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_codigo" ] ) )
    ::oController:oRutasController:oGetSelector:Build( { "idGet" => 260, "idText" => 261, "idLink" => 262, "oDialog" => ::oFolder:aDialogs[1] } )
@@ -115,18 +129,7 @@ METHOD Activate() CLASS FacturasClientesView
    // Agentes------------------------------------------------------------------
 
    ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
-   ::oController:oAgentesController:oGetSelector:Build( { "idGet" => 250, "idText" => 251, "idLink" => 254, "oDialog" => ::oFolder:aDialogs[1] } )
-
-   // Almacenes----------------------------------------------------------------
-
-   ::oController:oAlmacenesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_codigo" ] ) )
-   ::oController:oAlmacenesController:oGetSelector:Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
-
-   // Tarifas------------------------------------------------------------------
-
-   ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
-   ::oController:oArticulosTarifasController:oGetSelector:Build( { "idGet" => 270, "idText" => 271, "idLink" => 272, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:oArticulosTarifasController:oGetSelector:setWhen( {|| ::oController:isNotLines() } )
+   ::oController:oAgentesController:oGetSelector:Build( { "idGet" => 270, "idText" => 271, "idLink" => 272, "oDialog" => ::oFolder:aDialogs[1] } )
 
    //Totales------------------------------------------------------------------
 
@@ -159,7 +162,7 @@ METHOD Activate() CLASS FacturasClientesView
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE SAYCHECKBOX ::oRecargoEquivalencia ;
-      VAR         ::oController:oModel:hBuffer[ "recargo" ] ;
+      VAR         ::oController:oModel:hBuffer[ "recargo_equivalencia" ] ;
       ID          320 ;
       IDSAY       322 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -259,7 +262,6 @@ METHOD startDialog() CLASS FacturasClientesView
    ::oController:oClientesController:oGetSelector:setFocus()
 
    ::oController:calculateTotals()
-   msgalert( ::oController:oModel:hBuffer['recargo'] )
 
 RETURN ( nil )
 

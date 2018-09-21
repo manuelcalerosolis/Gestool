@@ -349,7 +349,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   RunServer()
+   TestMt()
 
 RETURN ( nil )
 
@@ -3443,6 +3443,32 @@ FUNCTION CreateMainSQLAcceso()
    oItem:cMessage       := 'Acceso al listín telefónico'
    oItem:bAction        := {|| ListinController():New():ActivateNavigatorView() }
    oItem:cId            := "listin_telefonico"
+   oItem:cBmp           := "gc_book_telephone_16"
+   oItem:cBmpBig        := "gc_book_telephone_32"
+   oItem:lShow          := .f.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 2
+   oGrupo:cPrompt       := 'Servidor'
+   oGrupo:cLittleBitmap := "gc_notebook2_16"
+   oGrupo:cBigBitmap    := "gc_notebook2_32"
+
+   oItem                := oItemHerramientas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Iniciar servidor web'
+   oItem:cMessage       := 'Iniciar servidor web'
+   oItem:bAction        := {|| StartServer() }
+   oItem:cId            := "iniciar_servidor"
+   oItem:cBmp           := "gc_book_telephone_16"
+   oItem:cBmpBig        := "gc_book_telephone_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemHerramientas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Parar servidor web'
+   oItem:cMessage       := 'Parar servidor web'
+   oItem:bAction        := {|| StopServer() }
+   oItem:cId            := "parar_servidor"
    oItem:cBmp           := "gc_book_telephone_16"
    oItem:cBmpBig        := "gc_book_telephone_32"
    oItem:lShow          := .f.

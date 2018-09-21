@@ -9,6 +9,8 @@ CLASS SQLClientesModel FROM SQLTercerosModel
 
    METHOD getInitialSelect()
 
+   METHOD getByUuid( uuid ) 
+
    METHOD getSentenceClienteDireccionPrincipal( cBy, cId )
 
    METHOD getClienteDireccionPrincipal( cBy, cId ) ;
@@ -151,8 +153,17 @@ METHOD getInitialSelect() CLASS SQLClientesModel
                         "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " tarifas "                             + " " + ;
                            "ON clientes.tarifa_codigo = tarifas.codigo "
 
-
 RETURN ( cSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getByUuid( uuid ) CLASS SQLClientesModel
+
+   local cGeneralSelect    := ::getInitialSelect()
+
+   cGeneralSelect          += " WHERE clientes.uuid = " + quoted( uuid )
+
+RETURN ( ::getDatabase():selectTrimedFetchHash( cGeneralSelect ) )
 
 //---------------------------------------------------------------------------//
 
