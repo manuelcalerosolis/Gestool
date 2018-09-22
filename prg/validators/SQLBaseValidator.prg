@@ -64,6 +64,16 @@ CLASS SQLBaseValidator
 
    METHOD getView()                       INLINE ( ::oController:getView() )
 
+   // Busquedas comnues en la aplicacion---------------------------------------
+
+   METHOD clienteExist( cCodigo )         INLINE ( SQLClientesModel():isWhereCodigo( cCodigo ) )
+
+   METHOD formaPagoExist( cCodigo )       INLINE ( SQLFormaPagoModel():isWhereCodigo( cCodigo ) )
+
+   METHOD almacenExist( cCodigo )         INLINE ( SQLAlmacenesModel():isWhereCodigo( cCodigo ) )
+
+   METHOD tarifaExist( cCodigo )          INLINE ( SQLArticulosTarifasModel():isWhereCodigo( cCodigo ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -177,12 +187,12 @@ METHOD getUniqueSenctence( uValue )
    local id
    local cSQLSentence
 
-   cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
-   cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
+   cSQLSentence         := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
+   cSQLSentence         +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
 
-   id                := ::oController:getModelBufferColumnKey()
+   id                   := ::oController:getModelBufferColumnKey()
    if !empty( id )
-      cSQLSentence   +=    "AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )
+      cSQLSentence      +=    "AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )
    end if 
 
 RETURN ( cSQLSentence )
@@ -402,7 +412,6 @@ CLASS SQLParentValidator FROM SQLBaseValidator
 
    METHOD numeroDocumento( value )
 
-
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -443,17 +452,17 @@ RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 METHOD numeroDocumento( value ) CLASS SQLParentValidator
 
    local nAt
-   local cSerie   := ""
+   local cSerie      := ""
    local nNumero
 
-   value          := alltrim( value )
+   value             := alltrim( value )
 
-   nAt            := rat( "/", value )
+   nAt               := rat( "/", value )
    if nAt != 0
-      nNumero     := substr( value, nAt + 1 )
-      cSerie      := substr( value, 1, nAt  )
+      nNumero        := substr( value, nAt + 1 )
+      cSerie         := substr( value, 1, nAt  )
    else
-      nNumero     := value
+      nNumero        := value
    end if  
 
    if !hb_regexlike( "^[0-9]{1,6}$", nNumero )

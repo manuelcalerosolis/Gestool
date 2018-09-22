@@ -15,7 +15,6 @@ CLASS SQLBrowseableView FROM SQLBaseView
    DATA oMenuTreeView
 
    METHOD New( oController )
-
    METHOD End()
 
    // Facades -----------------------------------------------------------------
@@ -52,8 +51,6 @@ CLASS SQLBrowseableView FROM SQLBaseView
    METHOD RefreshRowSet()                    INLINE ( iif(  !empty( ::oController ) .and. !empty( ::oController:oRowSet ),;
                                                             ::oController:oRowSet:Refresh(),;
                                                             ::Refresh() ) )
-
-   //--------------------------------------------------------------------------
 
    METHOD getMenuTreeView()                  INLINE ( ::oMenuTreeView )
 

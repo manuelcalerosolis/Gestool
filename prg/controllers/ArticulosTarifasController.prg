@@ -85,8 +85,6 @@ METHOD End() CLASS ArticulosTarifasController
 
    ::Super:End()
 
-   self                             := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

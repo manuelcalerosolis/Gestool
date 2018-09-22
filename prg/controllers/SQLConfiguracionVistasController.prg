@@ -78,7 +78,7 @@ RETURN ( Self )
 
 CLASS SQLConfiguracionVistasGestoolModel FROM SQLConfiguracionVistasModel
 
-   METHOD getTableName()                     INLINE ( "gestool." + ::cTableName )
+   METHOD getTableName()               INLINE ( "gestool." + ::cTableName )
 
 END CLASS
 
@@ -86,23 +86,25 @@ END CLASS
 
 CLASS SQLConfiguracionVistasModel FROM SQLCompanyModel
 
-   DATA cTableName                           INIT "configuracion_vistas"
+   DATA cTableName                     INIT "configuracion_vistas"
 
-   DATA cConstraints                         INIT  "PRIMARY KEY ( id ), UNIQUE KEY ( usuario_uuid, view_type, view_name )"
+   DATA cConstraints                   INIT  "PRIMARY KEY ( id ), UNIQUE KEY ( usuario_uuid, view_type, view_name )"
 
    METHOD getColumns()
 
    METHOD get( cViewType, cViewName )
 
    METHOD getNavigator( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
-                                                            INLINE ( ::get( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
+                                       INLINE ( ::get( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
 
    METHOD getFieldName( cViewName )
    
    METHOD getState( cViewType, cViewName )
-   METHOD setState( cViewType, cViewName, cBrowseState )    INLINE ( ::set( cViewType, cViewName, cBrowseState ) )
+   METHOD setState( cViewType, cViewName, cBrowseState ) ;
+                                       INLINE ( ::set( cViewType, cViewName, cBrowseState ) )
 
-   METHOD getStateNavigator( cViewName )                    INLINE ( ::getState( "navigator", cViewName ) )   
+   METHOD getStateNavigator( cViewName ) ;
+                                       INLINE ( ::getState( "navigator", cViewName ) )   
 
    METHOD getColumnOrder( cViewType, cViewName )            INLINE ( ::getFieldName( cViewType, cViewName, "column_order" ) )
    METHOD getColumnOrderNavigator( cViewName )              INLINE ( ::getFieldName( "navigator", cViewName, "column_order" ) )
@@ -118,16 +120,16 @@ CLASS SQLConfiguracionVistasModel FROM SQLCompanyModel
    METHOD set( cViewType, cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind )
 
    METHOD setNavigator( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
-                                                            INLINE ( ::set( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
+                                       INLINE ( ::set( "navigator", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
    
    METHOD setSelector( cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) ;
-                                                            INLINE ( ::set( "selector", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
+                                       INLINE ( ::set( "selector", cViewName, cBrowseState, cColumnOrder, cOrientation, idToFind ) )
    
    METHOD setColumnOrder( cViewType, cViewName, cColumnOrder ) ;
-                                                            INLINE ( ::set( cViewType, cViewName, nil, cColumnOrder ) ) 
+                                       INLINE ( ::set( cViewType, cViewName, nil, cColumnOrder ) ) 
 
    METHOD setColumnOrientation( cViewType, cViewName, cColumnOrientation ) ;
-                                                            INLINE ( ::set( cViewType, cViewName, nil, nil, cColumnOrientation ) ) 
+                                       INLINE ( ::set( cViewType, cViewName, nil, nil, cColumnOrientation ) ) 
 
    METHOD delete( cViewType, cViewName )
 
@@ -173,7 +175,7 @@ RETURN ( nil )
 
 METHOD getFieldName( cViewType, cViewName, cFieldName ) CLASS SQLConfiguracionVistasModel
 
-   local aFetch   := ::get( cViewType, cViewName )
+   local aFetch      := ::get( cViewType, cViewName )
 
    if empty( aFetch )
       RETURN ( nil )
@@ -186,18 +188,18 @@ RETURN ( hget( aFetch, cFieldName ) )
 METHOD getState( cViewType, cViewName ) CLASS SQLConfiguracionVistasModel
 
    local cState
-   local hFetch   := ::get( cViewType, cViewName )
+   local hFetch      := ::get( cViewType, cViewName )
 
    if empty( hFetch )
       RETURN ( nil )
    end if 
    
-   cState         := hget( hFetch, "browse_state" )
+   cState            := hget( hFetch, "browse_state" )
    if empty( cState )
       RETURN ( nil )
    end if 
 
-   cState         := strtran( cState, '\"', '"' )
+   cState            := strtran( cState, '\"', '"' )
 
 RETURN ( cState )
        

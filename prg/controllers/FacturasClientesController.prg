@@ -167,9 +167,8 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',               {|| ::loadedBlankBuffer() } )
-
    ::oModel:setEvent( 'loadedBuffer',                    {|| ::loadedBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',               {|| ::loadedBlankBuffer() } )
 
    ::oDireccionTipoDocumentoController:setEvent( 'activatingDialogView',         {|| ::isClientFilled() } ) 
    ::oDireccionTipoDocumentoController:oModel:setEvent( 'gettingSelectSentence', {|| ::getClientUuid() } )
@@ -304,8 +303,6 @@ METHOD End() CLASS FacturasClientesController
 
    ::Super:End()
 
-   hb_gcall( .t. )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -347,8 +344,6 @@ RETURN ( nil )
 METHOD clientesCleanedHelpText()  
 
    ::oArticulosTarifasController:oGetSelector:cText( space( 20 ) )
-
-   ::oArticulosTarifasController:oGetSelector:lValid() 
 
 RETURN ( nil )
 
@@ -420,8 +415,6 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
 
    hTotal               := ::oRepository:getTotal( uuidFactura )
 
-   msgalert( hb_valtoexp( hTotal ), "hTotal" )
-
    if empty( hTotal )
       RETURN ( nil )
    end if 
@@ -466,10 +459,14 @@ END CLASS
 
 METHOD getValidators() CLASS FacturasClientesValidator
 
-   ::hValidators  := {  "cliente_codigo"     =>  {  "required"   => "El código del cliente es un dato requerido" } ,;  
-                        "forma_pago_codigo"  =>  {  "required"   => "El código de la forma de pago es un dato requerido" },;  
-                        "almacen_codigo"     =>  {  "required"   => "El código del almacén es un dato requerido" },;
-                        "tarifa_codigo"      =>  {  "required"   => "El código de la tarifa es un dato requerido" } }
+   ::hValidators  := {  "cliente_codigo"     => {  "required"        => "El código del cliente es un dato requerido",;
+                                                   "clienteExist"    => "El código del cliente no existe" } ,;  
+                        "forma_pago_codigo"  => {  "required"        => "El código de la forma de pago es un dato requerido",;
+                                                   "formaPagoExist"  => "El código de la forma de pago no existe" } ,;  
+                        "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
+                                                   "almacenExist"    => "El código del almacén no existe" } ,;  
+                        "tarifa_codigo"      => {  "required"        => "El código de la tarifa es un dato requerido",; 
+                                                   "tarifaExist"     => "El código de la tarifa no existe" } }  
 
 RETURN ( ::hValidators )
 
@@ -478,172 +475,4 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-
-CLASS FacturasClientesBrowseView FROM SQLBrowseView
-
-   METHOD addColumns()                       
-
-ENDCLASS
-
-//----------------------------------------------------------------------------//
-
-METHOD addColumns() CLASS FacturasClientesBrowseView
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid'
-      :cHeader             := 'Uuid'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'numero'
-      :cHeader             := 'Número'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'numero' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'delegacion_uuid'    
-      :cHeader             := 'Delegación uuid'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'delegacion_uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'sesion_uuid'
-      :cHeader             := 'Sesión uuid'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'sesion_uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cliente_codigo'
-      :cHeader             := 'Código cliente'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_codigo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'cliente_nombre'
-      :cHeader             := 'Nombre cliente'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cliente_nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'direccion_direccion'
-      :cHeader             := 'Dirección'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_direccion' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'direccion_poblacion'
-      :cHeader             := 'Población'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_poblacion' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'direccion_codigo_provincia'
-      :cHeader             := 'Código provincia'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_codigo_provincia' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'direccion_provincia'
-      :cHeader             := 'Provincia'
-      :nWidth              := 150
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_provincia' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'direccion_codigo_postal'
-      :cHeader             := 'Código postal'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_codigo_postal' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'direccion_telefono'
-      :cHeader             := 'Teléfono'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_telefono' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'direccion_movil'
-      :cHeader             := 'Móvil'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_movil' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'direccion_email'
-      :cHeader             := 'Mail'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion_email' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'tarifa_codigo'
-      :cHeader             := 'Código tarifa'
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_codigo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'tarifa_nombre'
-      :cHeader             := 'Nombre tarifa'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'tarifa_nombre' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'recargo_equivalencia'
-      :cHeader             := "Recargo equivalencia"
-      :bStrData            := {|| "" }
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'recargo_equivalencia' ) == 1 }
-      :nWidth              := 60
-      //:bValid             :={||::click( ::getRowSet():fieldGet( 'recargo' ) )  }
-      :SetCheck( { "Sel16", "Nil16" } )
-   end with
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
 

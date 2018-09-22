@@ -162,8 +162,6 @@ RETURN ( self )
 
 METHOD End()
 
-   cursorWait()
-
    if !empty( ::oImageList )
    
       aeval( ::oImageList:aBitmaps, {|oBitmap| oBitmap:End() } )
@@ -179,10 +177,6 @@ METHOD End()
    ::oEvents      := nil
 
    ::oImageList   := nil
-
-   self           := nil
-
-   cursorWE()
 
 RETURN ( nil )
 
@@ -236,20 +230,12 @@ RETURN ( nil )
 
 METHOD Exit()
 
-   msgalert( "Exit")
-
    if empty( ::oSender ) 
       RETURN ( nil )
    end if 
 
-   msgalert( ::oSender:ClassName(), "::oSender:ClassName()" )
-
-   msgalert( ::oSender:getWindow():ClassName(), "::oSender:getWindow():ClassName()" )
-
    ::oSender:getWindow():End()
    
-   // ::oSender:End()
-
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

@@ -96,8 +96,6 @@ METHOD New( nTop, nLeft, nWidth, nHeight, nCtlHeight, cBitmap,;
    ::oBrush       = oBrush
    ::nOption      = 1
    
-   //::oFont        = oFont
-
    ::setFont( oFont )
 
    if ValType( cResBmp ) == "C" .or. ValType( cBitmap ) == "C"

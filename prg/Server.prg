@@ -23,6 +23,7 @@ REQUEST __HBEXTERN__HBSSL__
 
 MEMVAR server, get, post, cookie, session
 
+static oServer
 static uthreadServer
 
 //---------------------------------------------------------------------------//
@@ -45,9 +46,15 @@ FUNCTION StopServer()
 
    hb_memowrit( ".uhttpd.stop", "" )
 
-   if hb_threadQuitRequest( uthreadServer )
-      msgalert("hb_threadQuitRequest")
+   if !empty( oServer )
 
+      msgalert( "oServer stop")
+
+      oServer:Stop()
+      oServer        := nil
+   end if 
+
+   if hb_threadQuitRequest( uthreadServer )
       uthreadServer  := nil
    end if 
 
@@ -58,7 +65,6 @@ RETURN ( nil )
 FUNCTION RunServer( nPort )
 
    local hMap
-   local oServer
    local hConfig
 
    local oLogAccess

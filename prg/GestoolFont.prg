@@ -10,7 +10,7 @@ static oFontLittleTitle
 
 FUNCTION GetSysFont()
 
-RETURN "Ms Sans Serif"
+RETURN ( "Ms Sans Serif" ) // "Ms Sans Serif"
 
 //----------------------------------------------------------------------------//
 
@@ -42,7 +42,7 @@ FUNCTION oFontBigTitle()
    //    oFontBigTitle     := TFont():New( "Segoe UI Light", 0, -48, .f., .f. )
    // end if
 
-RETURN ( TFont():New( "Segoe UI Light", 0, -48, .f., .f. ) )
+RETURN ( TFont():New( "Segoe UI", 0, -48, .f., .f. ) )
 
 //----------------------------------------------------------------------------//
 
@@ -52,7 +52,7 @@ FUNCTION oFontTotal()
    //    oFontTotal        := TFont():New( "Arial", 8, 26, .f., .t. )
    // end if
 
-RETURN ( TFont():New( "Arial", 8, 26, .f., .t. ) )
+RETURN ( TFont():New( GetSysFont(), 8, 26, .f., .t. ) )
 
 //----------------------------------------------------------------------------//
 

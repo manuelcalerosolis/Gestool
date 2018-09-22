@@ -168,13 +168,9 @@ METHOD Refresh()
       RETURN ( Self )
    end if 
    
-   cursorWait()
-
    ::oComboBox:setItems( ::oController:oRepository:getNombres() )
 
-   cursorWE()
-
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

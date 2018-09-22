@@ -91,15 +91,9 @@ RETURN ( self )
 
 METHOD End()
 
-   CursorWait()
-
    ::oConfiguracionVistasController:End()
 
    ::Super:End()
-
-   Self                                      := nil
-
-   CursorWE()
 
 RETURN ( nil )
 
@@ -181,11 +175,7 @@ RETURN ( nil )
 
 METHOD saveState()
 
-   CursorWait()
-
    ::setState( ::getBrowseViewType(), ::getBrowseViewName(), ::getBrowseViewState() ) 
-
-   CursorWE()
 
 RETURN ( nil )
 

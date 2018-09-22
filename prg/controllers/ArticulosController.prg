@@ -264,17 +264,7 @@ METHOD End() CLASS ArticulosController
   
    ::Super:End()
 
-   freeResources()
-
-   hb_gcall( .t. )
-
-   __mvClear()
-
-   writeResources()
-
-   winExec( "notepad checkres.txt" )
-
-RETURN ( nil )
+RETURN ( hb_gcall( .t. ) )
 
 //---------------------------------------------------------------------------//
 

@@ -67,7 +67,7 @@ METHOD New( oController ) CLASS SQLNavigatorView
 
    ::Super():New( oController )
 
-   ::aRect              := GetWndRect( GetDeskTopWindow() )
+   ::aRect                 := GetWndRect( GetDeskTopWindow() )
 
 RETURN ( Self )
 
@@ -143,20 +143,30 @@ RETURN ( .t. )
 
 METHOD postEndMDIChild() CLASS SQLNavigatorView
 
+   cursorWait()
+
+   sysRefresh()
+
    ::End()
+
+   sysRefresh()
 
    if !empty( ::oController )
       ::oController:endNavigatorView()
    end if 
 
-RETURN ( nil )
+   sysRefresh()
+
+   cursorWE()
+
+RETURN ( hb_gcall( .t. ) )
 
 //----------------------------------------------------------------------------//
 
 METHOD CreateTopWebBar() CLASS SQLNavigatorView
 
-   ::oTopWebBar            := TWebBar():New( 0, dfnTreeViewWidth, ::aRect[ 4 ] - dfnTreeViewWidth, dfnSplitterHeight,,,, dfnTextColorTop, dfnBackColorTop, , , , , , ::oMdiChild )
-   
+   ::oTopWebBar            := TWebBar():New( 0, dfnTreeViewWidth, ::aRect[ 4 ] - dfnTreeViewWidth, dfnSplitterHeight, , , , dfnTextColorTop, dfnBackColorTop, , , oFontBigTitle(), , , ::oMdiChild )
+
    ::oTopWebBar:Say( 0, dfnSplitterWidth + 10, ::oController:cTitle ) 
 
 RETURN ( ::oTopWebBar  )

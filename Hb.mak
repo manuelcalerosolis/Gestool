@@ -725,6 +725,7 @@ FacturasClientesController.prg 											\
 FacturasClientesLineasController.prg									\
 FacturasClientesDescuentosController.prg								\
 FacturasClientesLineasBrowse.prg											\
+FacturasClientesBrowseView.prg 											\
 FacturasClientesLineasView.prg											\
 FacturasClientesView.prg 													\
 ClientesTarifasController.prg 											\
@@ -1434,6 +1435,7 @@ FacturasClientesController.obj 											\
 FacturasClientesLineasController.obj 									\
 FacturasClientesDescuentosController.obj 								\
 FacturasClientesLineasBrowse.obj 										\
+FacturasClientesBrowseView.obj 											\
 FacturasClientesLineasView.obj 											\
 FacturasClientesView.obj 													\
 ClientesTarifasController.obj 											\
@@ -2131,6 +2133,7 @@ $(OBJ)\FacturasClientesController.obj 									+
 $(OBJ)\FacturasClientesLineasController.obj 							+
 $(OBJ)\FacturasClientesDescuentosController.obj 					+
 $(OBJ)\FacturasClientesLineasBrowse.obj 								+
+$(OBJ)\FacturasClientesBrowseView.obj 									+
 $(OBJ)\FacturasClientesLineasView.obj 									+
 $(OBJ)\FacturasClientesView.obj 											+
 $(OBJ)\ClientesTarifasController.obj 									+

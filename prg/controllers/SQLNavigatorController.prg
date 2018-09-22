@@ -138,8 +138,6 @@ RETURN ( self )
 
 METHOD End()
 
-   cursorWait()
-
    if !empty( ::oNavigatorView )
       ::oNavigatorView:End()
    end if 
@@ -167,8 +165,6 @@ METHOD End()
    ::oWindowsBar              := nil
 
    ::Super():End()
-
-   cursorWE()
 
 RETURN ( nil )
 
@@ -492,6 +488,8 @@ RETURN ( nil )
 
 METHOD EnableWindowsBar()
 
+   local oColumn
+
    if empty( ::oWindowsBar )
       RETURN ( nil )
    end if 
@@ -502,7 +500,15 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:setComboBoxChange( {|| ::onChangeCombo() } )
 
-   ::oWindowsBar:setComboBoxItem( ::oBrowseView:getColumnHeaderByOrder( ::getModel():getOrderBy() ) )
+   oColumn              := ::oBrowseView:getColumnBySortOrder( ::getModel():getOrderBy() )
+
+   if !empty( oColumn )
+   
+      ::oWindowsBar:setComboBoxItem( oColumn:cHeader )
+
+      ::oBrowseView:selectColumnOrder( oColumn, ::getModel():getOrientation() )
+
+   end if 
 
    ::oWindowsBar:enableComboFilter( ::getFilters() )
 

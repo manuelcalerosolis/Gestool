@@ -77,6 +77,8 @@ CLASS SQLBrowseView
    METHOD getColumnByHeader( cHeader )       INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnByHeader( cHeader ), ) )
    
    METHOD getColumnOrder( cSortOrder )       INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnOrder( cSortOrder ), ) )
+   METHOD getColumnBySortOrder( cSortOrder ) INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnBySortOrder( cSortOrder ), ) )
+   METHOD getHeaderBySortOrder( cSortOrder ) 
    
    METHOD getColumnOrderHeader( cSortOrder ) INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnOrderHeader( cSortOrder ), ) )
 
@@ -91,7 +93,9 @@ CLASS SQLBrowseView
    METHOD getColumnSortOrder()               INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnSortOrder(), ) )
    METHOD getColumnSortOrientation()         INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:getColumnSortOrientation(), ) )
 
-   METHOD selectColumnOrder( oCol )          INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:selectColumnOrder( oCol ), ) )
+   METHOD selectColumnOrder( oColumn, cOrientation ) ;
+                                             INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:selectColumnOrder( oColumn, cOrientation ), ) )
+   
    METHOD refreshCurrent()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:refreshCurrent(), ) )
 
    METHOD createFromCode()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:CreateFromCode(), ) )
@@ -219,8 +223,6 @@ RETURN ( Self )
 
 METHOD End()
 
-   CursorWait()
-
    if !empty( ::oEvents )
       ::oEvents:End()
    end if 
@@ -234,10 +236,6 @@ METHOD End()
    ::oEvents                                 := nil
 
    ::oBrowse                                 := nil
-
-   self                                      := nil
-
-   CursorWE()
 
 RETURN ( nil )
 
@@ -312,6 +310,8 @@ METHOD getColumnsHeaders()
    local aHeaders    := {}
 
    aeval( ::oBrowse:aCols, {|oCol| aadd( aHeaders, oCol:cHeader ) } )
+
+   msgalert( hb_valtoexp( aHeaders ), "aHeaders" )
 
 RETURN ( aHeaders )
 
@@ -461,6 +461,20 @@ METHOD getColumnHeaderByOrder( cSortOrder )
    local oColumn
 
    oColumn                    := ::getColumnOrder( cSortOrder )
+
+   if empty( oColumn )
+      RETURN ( "" )
+   end if 
+
+RETURN ( oColumn:cHeader )
+
+//------------------------------------------------------------------------//
+
+METHOD getHeaderBySortOrder( cSortOrder )
+
+   local oColumn
+
+   oColumn                    := ::getColumnBySortOrder( cSortOrder )
 
    if empty( oColumn )
       RETURN ( "" )

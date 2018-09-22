@@ -114,6 +114,7 @@ METHOD Activate() CLASS FacturasClientesView
    ::oController:oAlmacenesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_codigo" ] ) )
    ::oController:oAlmacenesController:oGetSelector:Build( { "idGet" => 240, "idText" => 241, "idLink" => 242, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:oAlmacenesController:oGetSelector:setValid( {|| ::oController:validate( "almacen_codigo" ) } )
+
    // Tarifas------------------------------------------------------------------
 
    ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
@@ -251,17 +252,17 @@ METHOD startDialog() CLASS FacturasClientesView
 
    ::oController:oAgentesController:oGetSelector:Start()
 
+   ::oController:oArticulosTarifasController:oGetSelector:Start()
+
+   ::oController:oAlmacenesController:oGetSelector:Start()
+
    ::oController:oFacturasClientesLineasController:oBrowseView:Refresh()
    
    ::oController:oFacturasClientesDescuentosController:oBrowseView:Refresh()
 
-   ::oController:oArticulosTarifasController:oGetSelector:start()
-
-   ::oController:oAlmacenesController:oGetSelector:start()
+   ::oController:calculateTotals()
 
    ::oController:oClientesController:oGetSelector:setFocus()
-
-   ::oController:calculateTotals()
 
 RETURN ( nil )
 

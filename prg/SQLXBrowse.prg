@@ -250,11 +250,15 @@ METHOD getColumnOrder( cOrder ) CLASS SQLXBrowse
 
    local nPosition   
 
+   msgalert( cOrder, "METHOD getColumnOrder( cOrder ) CLASS SQLXBrowse" )
+
    if !empty( cOrder )
       nPosition   := ascan( ::aCols, {|o| o:cOrder == cOrder } )
    else 
       nPosition   := ascan( ::aCols, {|o| !empty( o:cOrder ) .and. !( o:lHide ) } )
    end if 
+
+   msgalert( nPosition, "METHOD getColumnOrder( cOrder ) CLASS SQLXBrowse" )
 
    if nPosition != 0
       RETURN ( ::aCols[ nPosition ] )

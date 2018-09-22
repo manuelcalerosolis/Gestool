@@ -128,8 +128,6 @@ RETURN ( self )
 
 METHOD End()
 
-   cursorWait()
-
    ::DisableWindowsBar()
 
    if !empty( ::oSelectorView )
@@ -148,10 +146,6 @@ METHOD End()
    end if 
 
    ::Super():End()
-
-   Self                       := nil
-
-   cursorWE()
 
 RETURN ( nil )
 

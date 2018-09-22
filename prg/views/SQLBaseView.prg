@@ -6,11 +6,11 @@
 
 CLASS SQLBaseView
   
-   CLASSDATA oEvents 
+   DATA oEvents 
 
-   CLASSDATA oTimer
+   DATA oTimer
 
-   CLASSDATA oFontBold
+   DATA oFontBold
 
    DATA oController
 
@@ -86,7 +86,7 @@ METHOD New( oController )
 
    ::oEvents                                          := Events():New()
 
-   ::oFontBold                                        := TFont():New( GetSysFont(), 0, -8, .f., .t. )
+   ::oFontBold                                        := TFont():New( getSysFont(), 0, -8, .f., .t. )
 
    ::oTimer                                           := TTimer():New( 4000, {|| ::RestoreMessage() } )
 
@@ -114,8 +114,6 @@ METHOD End()
 
    ::oFontBold                                        := nil
 
-   // msgwait( "CLASS SQLBaseView END", "", 1 )
-   
 RETURN ( hb_gcall( .t. ) )
 
 //---------------------------------------------------------------------------//
@@ -215,6 +213,6 @@ METHOD redefineExplorerBar( idExplorerBar )
    ::oExplorerBar:nBottomColor  := rgb( 255, 255, 255 )
    ::oExplorerBar:nTopColor     := rgb( 255, 255, 255 )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
