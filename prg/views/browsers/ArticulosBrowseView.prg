@@ -17,43 +17,43 @@ ENDCLASS
 METHOD addColumns() CLASS ArticulosBrowseView
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
+      :cSortOrder          := "id"
+      :cHeader             := "Id"
       :nWidth              := 60
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "id" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid'
-      :cHeader             := 'Uuid'
+      :cSortOrder          := "uuid"
+      :cHeader             := "Uuid"
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "uuid" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
+      :cSortOrder          := "codigo"
+      :cHeader             := "Código"
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "codigo" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
+      :cSortOrder          := "nombre"
+      :cHeader             := "Nombre"
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "nombre" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulo_familia_codigo'
-      :cHeader             := 'Código familia'
+      :cSortOrder          := "articulo_familia_codigo"
+      :cHeader             := "Código familia"
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_familia_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "articulo_familia_codigo" ) }
       :lHide               := .t.
       
       if ::oController:isUserEdit()
@@ -66,19 +66,19 @@ METHOD addColumns() CLASS ArticulosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulo_familia_nombre'
-      :cHeader             := 'Familia'
+      :cSortOrder          := "articulo_familia_nombre"
+      :cHeader             := "Familia"
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_familia_nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "articulo_familia_nombre" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulo_tipo_codigo'
-      :cHeader             := 'Código tipo'
+      :cSortOrder          := "articulo_tipo_codigo"
+      :cHeader             := "Código tipo"
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_tipo_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "articulo_tipo_codigo" ) }
       :lHide               := .t.
       
       if ::oController:isUserEdit()
@@ -91,10 +91,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulo_tipo_nombre'
-      :cHeader             := 'Tipo'
+      :cSortOrder          := "articulo_tipo_nombre"
+      :cHeader             := "Tipo"
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_tipo_nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "articulo_tipo_nombre" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -102,10 +102,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    // Categoria----------------------------------------------------------------
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulo_categoria_codigo'
-      :cHeader             := 'Código categoría'
+      :cSortOrder          := "articulo_categoria_codigo"
+      :cHeader             := "Código categoría"
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_categoria_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "articulo_categoria_codigo" ) }
       :lHide               := .t.
       
       if ::oController:isUserEdit()
@@ -118,10 +118,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulo_categoria_nombre'
-      :cHeader             := 'Categoría'
+      :cSortOrder          := "articulo_categoria_nombre"
+      :cHeader             := "Categoría"
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_categoria_nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "articulo_categoria_nombre" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -129,10 +129,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    // Fabricante----------------------------------------------------------------
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulo_fabricante_codigo'
-      :cHeader             := 'Código fabricante'
+      :cSortOrder          := "articulo_fabricante_codigo"
+      :cHeader             := "Código fabricante"
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_fabricante_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "articulo_fabricante_codigo" ) }
       :lHide               := .t.
       
       if ::oController:isUserEdit()
@@ -145,10 +145,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulo_fabricante_nombre'
-      :cHeader             := 'Fabricante'
+      :cSortOrder          := "articulo_fabricante_nombre"
+      :cHeader             := "Fabricante"
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_fabricante_nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "articulo_fabricante_nombre" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -156,10 +156,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    // Temporada----------------------------------------------------------------
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulo_temporada_codigo'
-      :cHeader             := 'Código temporada'
+      :cSortOrder          := "articulo_temporada_codigo"
+      :cHeader             := "Código temporada"
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_temporada_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "articulo_temporada_codigo" ) }
       :lHide               := .t.
       
       if ::oController:isUserEdit()
@@ -172,10 +172,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'articulo_temporada_nombre'
-      :cHeader             := 'Temporada'
+      :cSortOrder          := "articulo_temporada_nombre"
+      :cHeader             := "Temporada"
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_temporada_nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "articulo_temporada_nombre" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -183,10 +183,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    // IVA----------------------------------------------------------------------
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'iva_tipo_codigo'
-      :cHeader             := 'Código IVA'
+      :cSortOrder          := "iva_tipo_codigo"
+      :cHeader             := "Código IVA"
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'tipo_iva_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "tipo_iva_codigo" ) }
       :lHide               := .t.
       
       if ::oController:isUserEdit()
@@ -199,10 +199,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'tipo_iva_nombre'
-      :cHeader             := 'IVA'
+      :cSortOrder          := "tipo_iva_nombre"
+      :cHeader             := "IVA"
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'tipo_iva_nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "tipo_iva_nombre" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -210,10 +210,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    // Impuestos especiales-----------------------------------------------------
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'impuesto_especial_codigo'
-      :cHeader             := 'Código impuesto especial'
+      :cSortOrder          := "impuesto_especial_codigo"
+      :cHeader             := "Código impuesto especial"
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'impuesto_especial_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "impuesto_especial_codigo" ) }
       :lHide               := .t.
       
       if ::oController:isUserEdit()
@@ -226,10 +226,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'impuesto_especial_nombre'
-      :cHeader             := 'Impuesto especial'
+      :cSortOrder          := "impuesto_especial_nombre"
+      :cHeader             := "Impuesto especial"
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'impuesto_especial_nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "impuesto_especial_nombre" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -237,10 +237,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    // grupos de unidades de medicion-------------------------------------------
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'unidades_medicion_grupos_codigo'
-      :cHeader             := 'Código grupo unidades medición'
+      :cSortOrder          := "unidades_medicion_grupos_codigo"
+      :cHeader             := "Código grupo unidades medición"
       :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidades_medicion_grupos_codigo' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "unidades_medicion_grupos_codigo" ) }
       :lHide               := .t.
       
       if ::oController:isUserEdit()
@@ -253,10 +253,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'unidades_medicion_grupos_nombre'
-      :cHeader             := 'Grupo unidades medición'
+      :cSortOrder          := "unidades_medicion_grupos_nombre"
+      :cHeader             := "Grupo unidades medición"
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'unidades_medicion_grupos_nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( "unidades_medicion_grupos_nombre" ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with

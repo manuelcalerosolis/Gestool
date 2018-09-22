@@ -177,6 +177,8 @@ METHOD saveState()
 
    ::setState( ::getBrowseViewType(), ::getBrowseViewName(), ::getBrowseViewState() ) 
 
+   msgalert( ::getBrowseViewState(), "saveState" ) 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

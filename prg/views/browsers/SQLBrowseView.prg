@@ -311,8 +311,6 @@ METHOD getColumnsHeaders()
 
    aeval( ::oBrowse:aCols, {|oCol| aadd( aHeaders, oCol:cHeader ) } )
 
-   msgalert( hb_valtoexp( aHeaders ), "aHeaders" )
-
 RETURN ( aHeaders )
 
 //---------------------------------------------------------------------------//

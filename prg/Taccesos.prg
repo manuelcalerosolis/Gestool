@@ -119,7 +119,7 @@ CLASS TAcceso
    METHOD CreateCarpetaOfficeBar( aAccesos )
    METHOD CreateBotonesOfficeBar( aAcceso, oCarpeta, oGrupo )
 
-   METHOD SetComboBoxItems( aItems )      INLINE ( if( !empty( ::oComboBox ), ::oComboBox:SetItems( aItems ), ) )
+   METHOD SetComboBoxItems( aItems )      INLINE ( if( !empty( ::oComboBox ), ( msgalert( hb_valtoexp( aItems ), "SetComboBoxItems" ), ::oComboBox:SetItems( aItems ) ), ) )
    METHOD GetComboBoxItems()              INLINE ( if( !empty( ::oComboBox ), ::oComboBox:aItems, {} ) )
    METHOD SetComboBoxSelect( nItems )     INLINE ( if( !empty( ::oComboBox ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboBox:Select( nItems ) ), ) )
    METHOD SetComboBoxItem( cItem )        INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:Set( cItem ) ), ) )
@@ -128,7 +128,7 @@ CLASS TAcceso
    METHOD GetComboBoxAt()                 INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:nAt ), 0 ) )
 
    METHOD DisableComboBox()               INLINE ( if( !empty( ::oComboBox ), ( ::SetComboBoxItems( {} ), ::oComboBox:Hide() ), ) )
-   METHOD EnableComboBox( aItems )        INLINE ( if( !empty( ::oComboBox ) .and. IsArray( aItems ), ( ::SetComboBoxItems( aItems ), ::oComboBox:Show(), ::oComboBox:Enable(), ::oComboBox:Select( 1 ) ), ) )
+   METHOD EnableComboBox( aItems )        INLINE ( if( !empty( ::oComboBox ) .and. hb_isarray( aItems ), ( ::SetComboBoxItems( aItems ), ::oComboBox:Show(), ::oComboBox:Enable(), ::oComboBox:Select( 1 ) ), ) )
    METHOD HideComboBox()                  INLINE ( if( !empty( ::oComboBox ), ::oComboBox:Hide(), ) )
    METHOD setCombo( cItem )               INLINE ( if( !empty( ::oComboBox ), ::oComboBox:Set( cItem ), ) )
 
