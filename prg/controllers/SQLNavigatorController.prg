@@ -154,16 +154,6 @@ METHOD End()
       ::oFilterController:End() 
    end if 
 
-   ::oNavigatorView           := nil
-
-   ::oSelectorView            := nil
-
-   ::oDialogModalView         := nil
-
-   ::oFilterController        := nil
-
-   ::oWindowsBar              := nil
-
    ::Super():End()
 
 RETURN ( nil )

@@ -63,25 +63,23 @@ RETURN ( Self )
 
 METHOD End() CLASS ProvinciasController
 
-   ::oModel:End()
+   if !empty(::oModel)
+      ::oModel:End()
+   end if 
 
-   ::oBrowseView:End()
+   if !empty(::oBrowseView)
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty(::oDialogView)
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty(::oValidator)
+      ::oValidator:End()
+   end if 
 
    ::Super:End()
-
-   ::oModel                := nil
-
-   ::oBrowseView           := nil
-
-   ::oDialogView           := nil
-
-   ::oValidator            := nil
-
-   self                    := nil
 
 RETURN ( nil )
 

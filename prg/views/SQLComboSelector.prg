@@ -22,6 +22,7 @@ CLASS ComboSelector
    DATA bValue
 
    METHOD New( oSender )
+   METHOD End()                                 VIRTUAL
 
    METHOD Activate( idLink, idCombobox, oDlg )
    METHOD Bind( bValue )                        INLINE ( ::bValue := bValue )
@@ -82,7 +83,7 @@ METHOD cargaDatos() CLASS ComboSelector
 
    ::cComboBox       := ::oController:oModel:getNombreWhereUuid( eval( ::bValue ) ) 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -93,7 +94,7 @@ METHOD ResourceLink() CLASS ComboSelector
    ::oUrlLink              := TUrlLink():Redefine( ::idLink, ::oDialog, , , , , ::nColorUrlLink, ::nColorUrlLink, ::nColorUrlLink, .t. )
    ::oUrlLink:bAction      := {|| ::ActionLink() }
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -103,7 +104,7 @@ METHOD ResourceComboBox() CLASS ComboSelector
    ::oComboBox:lIncSearch  := .t.
    ::oComboBox:cToolTip    := "Buscando : " + ( ::oComboBox:cSearchKey )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -116,7 +117,7 @@ METHOD ActionLink() CLASS ComboSelector
    hResult                                   := ::oController:ActivateSelectorViewNoCenter()
 
    if hb_isnil( hResult )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    if hHaskey( hResult, "uuid" )
@@ -127,7 +128,7 @@ METHOD ActionLink() CLASS ComboSelector
       ::oComboBox:set( hGet( hResult, "nombre" ) )
    end if
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -150,7 +151,7 @@ METHOD moveSelectorView() CLASS ComboSelector
 
    ::oController:oSelectorView:oDialog:Move( nRow, nCol )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -158,23 +159,20 @@ METHOD ChangeComboBox() CLASS ComboSelector
 
    eval( ::bValue, ::oController:oRepository:getUuidWhereNombre( ::cComboBox ) )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD Refresh()
 
    if empty( ::oComboBox )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
    
    ::oComboBox:setItems( ::oController:oRepository:getNombres() )
 
 RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

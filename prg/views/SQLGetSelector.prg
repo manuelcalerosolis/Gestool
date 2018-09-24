@@ -108,13 +108,9 @@ RETURN ( Self )
 
 METHOD End() CLASS GetSelector
 
-   ::oEvents:End()
-
-   ::oController  := nil
-
-   ::oEvents      := nil
-
-   ::bWhen        := nil
+   if !empty( ::oEvents )
+      ::oEvents:End()
+   end if 
 
 RETURN ( nil )
 

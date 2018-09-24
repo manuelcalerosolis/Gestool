@@ -95,16 +95,6 @@ METHOD End() CLASS AccessController
 
    ::oAjustableController:End()
 
-   ::oAccessView           := nil
-
-   ::oAccessTactilView     := nil
-
-   ::oUsuariosController   := nil
-   
-   ::oEmpresasController   := nil
-
-   ::oAjustableController  := nil
-
    ::Super:End()
 
 RETURN ( nil )

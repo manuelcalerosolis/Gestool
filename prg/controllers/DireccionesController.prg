@@ -5,7 +5,7 @@
 
 CLASS DireccionesGestoolController FROM DireccionesController
 
-   METHOD getDireccionesModel()                 INLINE ( ::oModel                         := SQLDireccionesGestoolModel():New( self ) )
+   METHOD getModel()                            INLINE ( if( empty( ::oModel ), ::oModel := SQLDireccionesGestoolModel():New( self ), ), ::oModel )
 
    METHOD getCodigosPostalesController()        INLINE ( ::oCodigosPostalesController     := CodigosPostalesGestoolController():New( self ) )
 
@@ -53,8 +53,8 @@ CLASS DireccionesController FROM SQLNavigatorController
    METHOD deleteBuffer( aUuidEntidades )
 
    METHOD externalStartDialog()           INLINE ( ::oDialogView:StartDialog() )
-
-   METHOD getDireccionesModel()           INLINE ( ::oModel                      := SQLDireccionesModel():New( self ) )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLDireccionesModel():New( self ), ), ::oModel )
 
    METHOD getCodigosPostalesController()  INLINE ( ::oCodigosPostalesController  := CodigosPostalesController():New( self ) )
 
@@ -90,7 +90,7 @@ METHOD New( oController ) CLASS DireccionesController
                                           "32" => "gc_signpost3_32",;
                                           "48" => "gc_signpost3_48" }
 
-   ::getDireccionesModel()                        
+   ::getModel()                        
 
    ::oBrowseView                    := DireccionesBrowseView():New( self )
 
@@ -114,7 +114,9 @@ RETURN ( Self )
 
 METHOD End() CLASS DireccionesController
 
-   ::oModel:End()
+   if !empty(::oModel)
+      ::oModel:End()
+   end if 
 
    ::oBrowseView:End()
 
@@ -129,22 +131,6 @@ METHOD End() CLASS DireccionesController
    ::oPaisesController:End()
 
    ::oProvinciasController:End()
-
-   ::oModel                            := nil
-
-   ::oBrowseView                       := nil
-
-   ::oDialogView                       := nil
-
-   ::oValidator                        := nil
-
-   ::oGetSelector                      := nil
-
-   ::oCodigosPostalesController        := nil
-
-   ::oPaisesController                 := nil
-
-   ::oProvinciasController             := nil
 
    ::Super:End()
 

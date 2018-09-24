@@ -86,8 +86,7 @@ METHOD End() CLASS AgentesController
       ::oValidator:End()
    end if 
 
-
-   logwriteSeconds( "AgentesController ::Super:End()" )
+   ::Super:End()
 
 RETURN ( nil )
 

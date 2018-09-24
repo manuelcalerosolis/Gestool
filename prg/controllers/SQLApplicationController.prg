@@ -35,39 +35,41 @@ END CLASS
 
 METHOD End() CLASS SQLApplicationController
 
-   logwriteSeconds( "AgentesController oValidator" )
+   logwriteSeconds( "sqlApplicationController oValidator" )
    
    if !empty( ::oGetSelector )
       ::oGetSelector:End()
    end if 
    
-   logwriteSeconds( "AgentesController oGetSelector" )
+   logwriteSeconds( "sqlApplicationController oGetSelector" )
 
    if !empty( ::oDireccionesController )
       ::oDireccionesController:End()
    end if 
    
-   logwriteSeconds( "AgentesController oDireccionesController" )
+   logwriteSeconds( "sqlApplicationController oDireccionesController" )
 
    if !empty( ::oPaisesController )
       ::oPaisesController:End()
    end if 
    
-   logwriteSeconds( "AgentesController oPaisesController" )
+   logwriteSeconds( "sqlApplicationController oPaisesController" )
 
    if !empty( ::oProvinciasController )
       ::oProvinciasController:End()
    end if 
    
-   logwriteSeconds( "AgentesController oProvinciasController" )
+   logwriteSeconds( "sqlApplicationController oProvinciasController" )
 
    if !empty( ::oCamposExtraValoresController )
       ::oCamposExtraValoresController:End()
    end if 
 
-   logwriteSeconds( "AgentesController oCamposExtraValoresController" )
+   logwriteSeconds( "sqlApplicationController oCamposExtraValoresController" )
    
    ::Super:End()
+
+   logwriteSeconds( "sqlApplicationController ::Super:End()" )
 
 RETURN ( nil )
 

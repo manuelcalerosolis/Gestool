@@ -75,18 +75,6 @@ METHOD End() CLASS CodigosPostalesController
 
    ::Super:End()
 
-   ::oModel                   := nil
-
-   ::oBrowseView              := nil
-
-   ::oDialogView              := nil
-
-   ::oValidator               := nil
-
-   ::oProvinciasController    := nil
-
-   self                       := nil 
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

@@ -114,6 +114,8 @@ METHOD End()
    ::oDialogView:End()
 
    ::oCamposExtraValoresController:End()
+
+   ::oGetSelector:End()
    
    ::oAjustableController:End()
 
@@ -123,7 +125,7 @@ METHOD End()
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
