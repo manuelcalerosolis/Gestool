@@ -613,6 +613,7 @@ SQLBaseModel.prg 																\
 SQLCompanyModel.prg															\
 SQLContadoresModel.prg														\
 SQLBaseController.prg 														\
+SQLApplicationController.prg 												\
 SQLNavigatorController.prg													\
 SQLBrowseController.prg														\
 SQLHeaderController.prg 													\
@@ -1327,10 +1328,11 @@ backupView.obj                                     				\
 ReindexaPresenter.obj                              				\
 ReindexaView.obj                                   				\
 BaseModel.obj 																	\
-SQLBaseModel.Obj 																\
-SQLCompanyModel.Obj 															\
-SQLContadoresModel.Obj 														\
-SQLBaseController.Obj 														\
+SQLBaseModel.obj 																\
+SQLCompanyModel.obj 															\
+SQLContadoresModel.obj 														\
+SQLBaseController.obj 														\
+SQLApplicationController.obj 												\
 SQLNavigatorController.obj 												\
 SQLBrowseController.obj 													\
 SQLHeaderController.obj														\
@@ -2034,6 +2036,7 @@ $(OBJ)\SQLBaseModel.obj 													+
 $(OBJ)\SQLCompanyModel.obj 												+
 $(OBJ)\SQLContadoresModel.obj 											+
 $(OBJ)\SQLBaseController.obj 												+
+$(OBJ)\SQLApplicationController.obj 									+
 $(OBJ)\SQLNavigatorController.obj										+
 $(OBJ)\SQLBrowseController.obj											+
 $(OBJ)\SQLHeaderController.obj 											+

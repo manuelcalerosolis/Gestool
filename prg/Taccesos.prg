@@ -30,7 +30,7 @@ CLASS TAcceso
 
    DATA  oComboBox
    DATA  cComboBox
-   DATA  aComboBox                  INIT  {}
+   DATA  aComboBox                  INIT  {'id', 'código'}
 
    DATA  oComboFilter
    DATA  cComboFilter               INIT  __txtFilters__ 
@@ -50,12 +50,8 @@ CLASS TAcceso
 
    DATA  aAccesos
 
-   DATA  lBig              INIT  .f.
-   DATA  lTactil           INIT  .f.
-
-   DATA  aStruct           INIT  {  { "cCodUse",   "C",  3,  0, "" },;
-                                    { "cOpcion",   "C", 20,  0, "" },;
-                                    { "lShow",     "L",  1,  0, "" } }   
+   DATA  lBig                       INIT  .f.
+   DATA  lTactil                    INIT  .f.
 
    DATA  nLittleButtons
 
@@ -119,7 +115,7 @@ CLASS TAcceso
    METHOD CreateCarpetaOfficeBar( aAccesos )
    METHOD CreateBotonesOfficeBar( aAcceso, oCarpeta, oGrupo )
 
-   METHOD SetComboBoxItems( aItems )      INLINE ( if( !empty( ::oComboBox ), ( msgalert( hb_valtoexp( aItems ), "SetComboBoxItems" ), ::oComboBox:SetItems( aItems ) ), ) )
+   METHOD SetComboBoxItems( aItems )      INLINE ( if( !empty( ::oComboBox ), ::oComboBox:SetItems( aItems, .t. ), ) )
    METHOD GetComboBoxItems()              INLINE ( if( !empty( ::oComboBox ), ::oComboBox:aItems, {} ) )
    METHOD SetComboBoxSelect( nItems )     INLINE ( if( !empty( ::oComboBox ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboBox:Select( nItems ) ), ) )
    METHOD SetComboBoxItem( cItem )        INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:Set( cItem ) ), ) )
@@ -128,7 +124,7 @@ CLASS TAcceso
    METHOD GetComboBoxAt()                 INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:nAt ), 0 ) )
 
    METHOD DisableComboBox()               INLINE ( if( !empty( ::oComboBox ), ( ::SetComboBoxItems( {} ), ::oComboBox:Hide() ), ) )
-   METHOD EnableComboBox( aItems )        INLINE ( if( !empty( ::oComboBox ) .and. hb_isarray( aItems ), ( ::SetComboBoxItems( aItems ), ::oComboBox:Show(), ::oComboBox:Enable(), ::oComboBox:Select( 1 ) ), ) )
+   METHOD EnableComboBox( aItems )        INLINE ( if( !empty( ::oComboBox ) .and. hb_isarray( aItems ), ( ::oComboBox:Show(), ::oComboBox:Enable(), ::oComboBox:SetItems( aItems, .t. ), ::oComboBox:Select( 1 ) ), ) )
    METHOD HideComboBox()                  INLINE ( if( !empty( ::oComboBox ), ::oComboBox:Hide(), ) )
    METHOD setCombo( cItem )               INLINE ( if( !empty( ::oComboBox ), ::oComboBox:Set( cItem ), ) )
 
@@ -287,7 +283,7 @@ METHOD CreateTree( oTree, aAccesos )
 
    next
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -387,7 +383,7 @@ METHOD Save( oDlg )
 
    oDlg:End( IDOK )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -397,7 +393,7 @@ METHOD SaveTree( Uuid, aItems )
             {|oItem| ::saveItem( Uuid, oItem, ::oTree:GetCheck( oItem ) ),;
                      if( !empty( oItem:aItems ), ::SaveTree( Uuid, oItem:aItems ), ) } )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -407,7 +403,7 @@ METHOD saveItem( Uuid, oItem, lVisible )
       SQLUsuarioFavoritosModel():set( Uuid, oItem:bAction, lVisible ) 
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -419,7 +415,7 @@ METHOD setItem( Uuid, oItem )
       ::oTree:SetCheck( oItem, .t. )
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -438,6 +434,7 @@ RETURN nil
 
 METHOD CreateButtonBar( oWnd, lCreateButtonBar )
 
+   DEFAULT oWnd               := oWnd()
    DEFAULT lCreateButtonBar   := .t.
 
    ::oReBar                   := TPanelEx():New( 0, 0, if( ::lTactil, 124, 150 ), 1000, oWnd, Rgb( 255, 255, 255 ), .f. ) 
@@ -451,7 +448,7 @@ METHOD CreateButtonBar( oWnd, lCreateButtonBar )
       ::HideSearchBar()
    end if
 
-RETURN ( Self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -492,7 +489,7 @@ METHOD CreateToolbar( aAccesos )
 
    next
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -505,7 +502,6 @@ METHOD CreateSearchBar( oWnd )
             PIXEL    SIZE 210, 21
 
    ::oGet:cBmp       := "Lupa"
-   // ::oGet:bLostFocus := {|| ::oGet:cText( Space( 200 ) ), if( !empty( ::oGet:bChange ), Eval( ::oGet:bChange ), ) }
 
    @ 124, 220 COMBOBOX ::oComboBox ;
             VAR      ::cComboBox ;
@@ -577,7 +573,7 @@ METHOD CreateSearchBar( oWnd )
             FONT     oFontLittleTitle() ;
             PIXEL    SIZE 60, 30
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -615,7 +611,7 @@ METHOD EndSearchBar( oWnd )
       ::oYearComboBox:End()
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -636,7 +632,7 @@ METHOD CreateLogo()
 
    end if
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -652,7 +648,7 @@ METHOD AddToolBar( oAcceso, cCurUsr )
       end if
    end if
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -717,7 +713,7 @@ METHOD CreateOfficeBar()
       end if
    next
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -742,7 +738,7 @@ METHOD ReCreateOfficeBar()
    ::oOfficeBar:GetCoords()
    ::oOfficeBar:Refresh()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -755,7 +751,7 @@ METHOD CreateCarpetaOfficeBar( oAcceso )
 
    ::CreateBotonesOfficeBar( oAcceso:aAccesos, oCarpeta )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -811,7 +807,7 @@ METHOD CreateBotonesOfficeBar( aAcceso, oCarpeta )
 
    next
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -885,7 +881,7 @@ METHOD CreateFavoritosOfficeBar()
    
    oBoton   := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32", "Salir", 1, {|| if ( !empty( oWnd() ), oWnd():End(), ) }, , , .f., .f., .f. )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -904,7 +900,7 @@ METHOD EnableComboFilter( aItems )
          aeval( aItems, {|cItem| aadd( ::aComboFilter, cItem ) } )
       end if 
 
-      ::oComboFilter:SetItems( ::aComboFilter )
+      ::oComboFilter:SetItems( ::aComboFilter, .t. )
       
       ::oComboFilter:Set( ::cComboFilter )
 
@@ -913,7 +909,7 @@ METHOD EnableComboFilter( aItems )
 
    end if
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -961,7 +957,7 @@ METHOD End()
    ::oComboBox             := nil 
    ::oComboFilter          := nil
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -981,7 +977,7 @@ METHOD setYearComboBox( nYear )
 
    eval( ::oYearComboBox:bChange )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

@@ -5,17 +5,17 @@
 
 CLASS AgentesController FROM SQLNavigatorController
 
-   DATA oDireccionesController
-
-   DATA oPaisesController
-
-   DATA oProvinciasController
-
-   DATA oCamposExtraValoresController
-
    METHOD New()
 
    METHOD End()
+
+   METHOD getBrowseView()           INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := AgentesBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := AgentesRepository():New( self ), ), ::oRepository ) 
+
+   METHOD getDialogView()           INLINE ( if( empty( ::oDialogView ), ::oDialogView := AgentesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()            INLINE ( if( empty( ::oValidator ), ::oValidator := AgentesValidator():New( self, ::getDialogView() ), ), ::oValidator )
 
 END CLASS
 
@@ -37,36 +37,18 @@ METHOD New( oSenderController ) CLASS AgentesController
 
    ::oModel                         := SQLAgentesModel():New( self )
 
-   ::oBrowseView                    := AgentesBrowseView():New( self )
-  
-   ::oRepository                    := AgentesRepository():New( self )
-
-   ::oDialogView                    := AgentesView():New( self )
-
-   ::oValidator                     := AgentesValidator():New( self, ::oDialogView )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oDireccionesController         := DireccionesController():New( self )
-
-   ::oPaisesController              := PaisesController():New( self )
-
-   ::oProvinciasController          := ProvinciasController():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'agentes' )
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:updateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -74,27 +56,38 @@ RETURN ( Self )
 
 METHOD End() CLASS AgentesController
 
-   ::oModel:End()
+   logwriteSeconds( "AgentesController" )
 
-   ::oBrowseView:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
+   
+   logwriteSeconds( "AgentesController oModel" )
 
-   ::oRepository:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
+   
+   logwriteSeconds( "AgentesController oBrowseView" )
 
-   ::oDialogView:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
-   ::oValidator:End()
+   logwriteSeconds( "AgentesController oRepository" )
+   
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oGetSelector:End()
+   logwriteSeconds( "AgentesController oDialogView" )
 
-   ::oDireccionesController:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oPaisesController:End()
 
-   ::oProvinciasController:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::Super:End()
+   logwriteSeconds( "AgentesController ::Super:End()" )
 
 RETURN ( nil )
 
@@ -212,7 +205,7 @@ CLASS AgentesView FROM SQLBaseView
 
    METHOD Activating()
 
-   METHOD getDireccionesController()      INLINE ( ::oController:oDireccionesController )
+   METHOD getDireccionesController()      INLINE ( ::oController:getDireccionesController() )
 
 END CLASS
 
@@ -277,7 +270,7 @@ METHOD Activate() CLASS AgentesView
       PICTURE     "@E 999.99" ;
       OF          ::oDialog
 
-   ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
+   ::oController:getDireccionesController():getDialogView():ExternalRedefine( ::oDialog )
 
    ::redefineExplorerBar( 200 )
 
@@ -311,9 +304,9 @@ METHOD StartActivate() CLASS AgentesView
 
    local oPanel                  := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
 
-   oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, "gc_form_plus2_16" )
+   oPanel:AddLink( "Campos extra...", {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }, "gc_form_plus2_16" )
 
-   ::oController:oDireccionesController:oDialogView:StartDialog()
+   ::oController:getDireccionesController():getDialogView():StartDialog()
 
 RETURN ( self )
 

@@ -7,8 +7,6 @@
 
 CLASS SQLBaseModel
   
-   DATA oDatabase
-
    DATA oController
 
    DATA oEvents
@@ -51,7 +49,7 @@ CLASS SQLBaseModel
 
    DATA aRecordsToDelete
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()
 
    METHOD setSQLInsert( cSQLInsert )                  INLINE ( ::cSQLInsert := cSQLInsert )
@@ -65,8 +63,7 @@ CLASS SQLBaseModel
 
    // Facades -----------------------------------------------------------------
 
-   METHOD setDatabase( oDb )                          INLINE ( ::oDatabase := oDb )
-   METHOD getDatabase()                               INLINE ( if( empty( ::oDatabase ), getSQLDatabase(), ::oDatabase ) )
+   METHOD getDatabase()                               INLINE ( getSQLDatabase() )
 
    METHOD getTableName()                              INLINE ( "gestool." + ::cTableName )
 
@@ -280,8 +277,6 @@ METHOD New( oController )
 
    ::oController                 := oController
 
-   ::oDatabase                   := getSQLDatabase()
-
    ::oEvents                     := Events():New()
 
    if empty( ::cColumnKey )
@@ -300,18 +295,10 @@ METHOD End()
       ::oEvents:End()
    end if 
 
-   ::oController                 := nil
-
-   ::oDatabase                   := nil
-   
    ::oEvents                     := nil
 
-   ::hColumns                    := nil
+   ::oController                 := nil
 
-   ::cGeneralSelect              := nil
-
-   self                          := nil
-   
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -601,7 +588,7 @@ METHOD getAlterTableSentences( cDatabaseMySQL, aSchemaColumns )
       RETURN ( self )
    end if 
 
-   DEFAULT cDatabaseMySQL  := ::oDatabase:cDatabaseMySQL
+   DEFAULT cDatabaseMySQL  := getSQLDatabase():cDatabaseMySQL
 
    aAlter                  := {}
    hColumns                := ::getTableColumns()

@@ -102,47 +102,114 @@ RETURN ( Self )
 
 METHOD End() CLASS ClientesController
 
+   local nSeconds
+
+   nSeconds    := seconds()
+
    ::oModel:End()
+
+   logwrite( "model -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
 
    ::oDialogView:End()
 
+   logwrite( "oDialogView -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
+
    ::oValidator:End()
+
+   logwrite( "oValidator -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
 
    ::oBrowseView:End()
 
+   logwrite( "oBrowseView -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
+
    ::oGetSelector:End()
+
+   logwrite( "oGetSelector -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
 
    ::oAgentesController:End()
 
+   logwrite( "oAgentesController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
+
    ::oArticulosTarifasController:End()
+
+   logwrite( "oArticulosTarifasController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
 
    ::oFormasPagoController:End()
 
+   logwrite( "oFormasPagoController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
+
    ::oCuentasRemesasController:End()
+
+   logwrite( "oCuentasRemesasController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
 
    ::oRutasController:End()
 
+   logwrite( "oRutasController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
+
    ::oClientesGruposController:End()
+
+   logwrite( "oClientesGruposController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
 
    ::oDireccionesController:End()
 
+   logwrite( "oDireccionesController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
+
    ::oContactosController:End()
+
+   logwrite( "oContactosController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
 
    ::oIncidenciasController:End()
 
+   logwrite( "oIncidenciasController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
+
    ::oDocumentosController:End()
+
+   logwrite( "oDocumentosController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
 
    ::oCuentasBancariasController:End()
 
+   logwrite( "oCuentasBancariasController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
+
    ::oCamposExtraValoresController:End()
+
+   logwrite( "oCamposExtraValoresController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
 
    ::oDescuentosController:End()
 
+   logwrite( "oDescuentosController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
+
    ::oClientesEntidadesController:End()
 
+   logwrite( "oClientesEntidadesController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
+
    ::oClientesTarifasController:End()
-   
+ 
+    logwrite( "oClientesTarifasController -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
+  
    ::Super:End()
+
+   logwrite( "::Super:End() -> " + str( seconds() - nSeconds ) )
+   nSeconds    := seconds()
    
    ::oModel                      := nil 
 
@@ -175,8 +242,6 @@ METHOD End() CLASS ClientesController
    ::oDocumentosController       := nil
 
    ::oClientesTarifasController  := nil
-
-   self                          := nil
 
 RETURN ( nil )
 

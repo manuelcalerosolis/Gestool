@@ -125,8 +125,6 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oRepository                                         := FacturasClientesRepository():New( self )
 
-   ::oContadoresModel                                    := SQLContadoresModel():New( self )
-
    ::oClientesController                                 := ClientesController():New( self )
    ::oClientesController:setView( ::oDialogView )
 
@@ -191,117 +189,204 @@ RETURN ( Self )
 
 METHOD End() CLASS FacturasClientesController
 
+   local nSeconds
+
+   nSeconds    := seconds()
+
    if !empty( ::oModel )
       ::oModel:End()
       ::oModel                                           := nil
    end if 
+
+   logwrite( nSeconds - seconds() )
+   logwrite( "model" )
+   nSeconds    := seconds()
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
       ::oDialogView                                      := nil
    end if 
 
+   logwrite( nSeconds - seconds() )
+   logwrite( "oDialogView" )
+   nSeconds    := seconds()
+
    if !empty( ::oValidator )
       ::oValidator:End()
       ::oValidator                                       := nil
    end if 
 
-   if !empty( ::oBrowseView )
-      ::oBrowseView:End()
-      ::oBrowseView                                      := nil
-   end if 
+   logwrite( nSeconds - seconds() )
+   logwrite( "oValidator" )
+   nSeconds    := seconds()
 
    if !empty( ::oRepository )
       ::oRepository:End()
       ::oRepository                                      := nil
    end if
 
-   if !empty( ::oContadoresModel )
-      ::oContadoresModel:End()
-      ::oContadoresModel                                 := nil
-   end if
+   logwrite( nSeconds - seconds() )
+   logwrite( "oRepository" )
+   nSeconds    := seconds()
+
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+      ::oBrowseView                                      := nil
+   end if 
+
+   logwrite( nSeconds - seconds() )
+   logwrite( "oBrowseView" )
+   nSeconds    := seconds()
 
    if !empty( ::oClientesController )
       ::oClientesController:End()
       ::oClientesController                              := nil
    end if
 
+   logwrite( nSeconds - seconds() )
+   logwrite( "oClientesController" )
+   nSeconds    := seconds()
+
    if !empty( ::oArticulosController )
       ::oArticulosController:End()
       ::oArticulosController                             := nil
    end if
+
+   logwrite( nSeconds - seconds() )
+   logwrite( "oArticulosController" )
+   nSeconds    := seconds()
 
    if !empty( ::oArticulosTarifasController )
       ::oArticulosTarifasController:End()
       ::oArticulosTarifasController                      := nil
    end if 
 
+   logwrite( nSeconds - seconds() )
+   logwrite( "oArticulosTarifasController" )
+   nSeconds    := seconds()
+
    if !empty( ::oFormasPagoController )
       ::oFormasPagoController:End()
       ::oFormasPagoController                            := nil
    end if 
+
+   logwrite( nSeconds - seconds() )
+   logwrite( "oFormasPagoController" )
+   nSeconds    := seconds()
 
    if !empty( ::oRutasController )
       ::oRutasController:End()
       ::oRutasController                                 := nil
    end if 
 
+   logwrite( nSeconds - seconds() )
+   logwrite( "oRutasController" )
+   nSeconds    := seconds()
+
    if !empty( ::oAgentesController )
       ::oAgentesController:End()
       ::oAgentesController                               := nil
    end if 
+
+   logwrite( nSeconds - seconds() )
+   logwrite( "oAgentesController" )
+   nSeconds    := seconds()
  
    if !empty( ::oAlmacenesController )
       ::oAlmacenesController:End()
       ::oAlmacenesController                             := nil
    end if 
 
+   logwrite( nSeconds - seconds() )
+   logwrite( "oAlmacenesController" )
+   nSeconds    := seconds()
+
    if !empty( ::oClientesTarifasController )
       ::oClientesTarifasController:End()
       ::oClientesTarifasController                       := nil
    end if 
+
+   logwrite( nSeconds - seconds() )
+   logwrite( "oClientesTarifasController" )
+   nSeconds    := seconds()
 
    if !empty( ::oFacturasClientesDescuentosController )
       ::oFacturasClientesDescuentosController:End()
       ::oFacturasClientesDescuentosController            := nil
    end if 
 
+   logwrite( nSeconds - seconds() )
+   logwrite( "oFacturasClientesDescuentosController" )
+   nSeconds    := seconds()
+
    if !empty( ::oDireccionTipoDocumentoController )
       ::oDireccionTipoDocumentoController:End()
       ::oDireccionTipoDocumentoController                := nil
    end if 
 
+   logwrite( nSeconds - seconds() )
+   logwrite( "oDireccionTipoDocumentoController" )
+   nSeconds    := seconds()
+
    if !empty( ::oCamposExtraValoresController )
       ::oCamposExtraValoresController:End()
       ::oCamposExtraValoresController                    := nil
    end if 
+
+   logwrite( nSeconds - seconds() )
+   logwrite( "oCamposExtraValoresController" )
+   nSeconds    := seconds()
    
    if !empty( ::oIncidenciasController )
       ::oIncidenciasController:End()
       ::oIncidenciasController                           := nil
    end if 
 
+   logwrite( nSeconds - seconds() )
+   logwrite( "oIncidenciasController" )
+   nSeconds    := seconds()
+
    if !empty( ::oFacturasClientesLineasController )
       ::oFacturasClientesLineasController:End()
       ::oFacturasClientesLineasController                := nil
    end if 
+
+   logwrite( nSeconds - seconds() )
+   logwrite( "oIncidenciasController" )
+   nSeconds    := seconds()
 
    if !empty( ::oHistoryManager )
       ::oHistoryManager:End()
       ::oHistoryManager                                  := nil
    end if 
 
+   logwrite( nSeconds - seconds() )
+   logwrite( "oIncidenciasController" )
+   nSeconds    := seconds()
+
    if !empty( ::oNumeroDocumentoComponent )
       ::oNumeroDocumentoComponent:End()
       ::oNumeroDocumentoComponent                        := nil
    end if 
+
+   logwrite( nSeconds - seconds() )
+   logwrite( "oNumeroDocumentoComponent" )
+   nSeconds    := seconds()
 
    if !empty( ::oSerieDocumentoComponent )
       ::oSerieDocumentoComponent:End()
       ::oSerieDocumentoComponent                         := nil
    end if 
 
+   logwrite( nSeconds - seconds() )
+   logwrite( "oSerieDocumentoComponent" )
+   nSeconds    := seconds()
+
    ::Super:End()
+
+   logwrite( nSeconds - seconds() )
+   logwrite( "::Super:End()" )
+   nSeconds    := seconds()
 
 RETURN ( nil )
 
@@ -309,9 +394,9 @@ RETURN ( nil )
 
 METHOD loadedBlankBuffer() CLASS FacturasClientesController 
 
-   hset( ::oModel:hBuffer, "serie",    ::oContadoresModel:getDocumentSerie( ::cName ) )
+   hset( ::oModel:hBuffer, "serie",    SQLContadoresModel():getDocumentSerie( ::cName ) )
    
-   hset( ::oModel:hBuffer, "numero",   ::oContadoresModel:getDocumentCounter( ::cName ) )
+   hset( ::oModel:hBuffer, "numero",   SQLContadoresModel():getDocumentCounter( ::cName ) )
 
 RETURN ( nil )
 

@@ -358,11 +358,11 @@ METHOD Activate() CLASS RecibosView
 
 //Agentes---------------------------------------------------------------------------------------------------------//
 
-   ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente" ] ) )
+   ::oController:oAgentesController:getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "agente" ] ) )
    
-   /*::oController:oAgentesController:oGetSelector:setEvent( 'validated', {|| ::AgentesControllerValidated() } )*/
+   /*::oController:oAgentesController:getSelector():setEvent( 'validated', {|| ::AgentesControllerValidated() } )*/
 
-   ::oController:oAgentesController:oGetSelector:Build( { "idGet" => 220, "idText" => 221, "idLink" => 222, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oAgentesController:getSelector():Build( { "idGet" => 220, "idText" => 221, "idLink" => 222, "oDialog" => ::oFolder:aDialogs[1] } )
 
 //-----------------------------------------------------------------------------------------------------------------//
 
@@ -412,7 +412,7 @@ METHOD StartActivate() CLASS RecibosView
 
 ::oController:oFormasPagosController:oGetSelector:Start()
 
-::oController:oAgentesController:oGetSelector:Start()
+::oController:oAgentesController:getSelector():Start()
 
 RETURN ( self )
 

@@ -23,8 +23,6 @@ CLASS SQLBaseController
 
    DATA oRepository
 
-   DATA oBrowseView
-
    DATA lTransactional                                INIT .f.
 
    DATA lInsertable                                   INIT .f.
@@ -45,8 +43,6 @@ CLASS SQLBaseController
 
    DATA cDirectory 
 
-   DATA oGetSelector
-
    DATA oView
 
    METHOD New()
@@ -60,10 +56,6 @@ CLASS SQLBaseController
 
    METHOD getSenderController()                       INLINE ( ::oSenderController ) 
    METHOD getSenderControllerParentUuid()             INLINE ( iif( !empty( ::oSenderController ), ::oSenderController:getUuid(), space( 40 ) ) ) 
-
-   METHOD getBrowseView()                             INLINE ( ::oBrowseView )
-
-   METHOD getBrowseViewType()                         INLINE ( ::oBrowseView:getViewType() )
 
    // Modelo -----------------------------------------------------------------
 
@@ -133,8 +125,10 @@ CLASS SQLBaseController
 
    // Validator----------------------------------------------------------------
 
-   METHOD Validate( cColumn, uValue )                 INLINE ( iif( !empty( ::oValidator ), ::oValidator:Validate( cColumn, uValue ), ) )
-   METHOD Assert( cColumn, uValue )                   INLINE ( iif( !empty( ::oValidator ), ::oValidator:Assert( cColumn, uValue ), ) )
+   METHOD getValidator()                              INLINE ( ::oValidator )
+
+   METHOD Validate( cColumn, uValue )                 INLINE ( ::getValidator():Validate( cColumn, uValue ) )
+   METHOD Assert( cColumn, uValue )                   INLINE ( ::getValidator():Assert( cColumn, uValue ) )
 
    // Access -----------------------------------------------------------------
 
@@ -173,8 +167,6 @@ CLASS SQLBaseController
       METHOD isNotAppendMode()                        INLINE ( ::nMode != __append_mode__ )
 
    METHOD Insert()
-
-   METHOD AppendLineal()
 
    METHOD Duplicate()
       METHOD setDuplicateMode()                       INLINE ( ::setMode( __duplicate_mode__ ) )
@@ -249,10 +241,6 @@ CLASS SQLBaseController
 
    METHOD setView( oView )                            INLINE ( ::oView := oView )
    METHOD getView()                                   INLINE ( if( empty( ::oView ), ::oDialogView, ::oView ) )
-
-   // Refresh
-
-   METHOD refreshBrowseView()                         INLINE ( if( !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) ) 
 
    // Filters------------------------------------------------------------------
 
@@ -451,52 +439,6 @@ RETURN ( lAppend )
 
 //----------------------------------------------------------------------------//
 
-METHOD AppendLineal() CLASS SQLBaseController
-
-   local nId
-   local lAppend     := .t.   
-
-   if ::notUserAppend()
-      msgStop( "Acceso no permitido." )
-      RETURN ( .f. )
-   end if 
-
-   if isFalse( ::fireEvent( 'appending' ) )
-      RETURN ( .f. )
-   end if
-
-   ::setAppendMode()
-
-   ::saveRowSetRecno()
-
-   nId               := ::oModel:insertBlankBuffer()
-
-   if !empty( nId )
-
-      ::fireEvent( 'appended' ) 
-
-      ::refreshRowSetAndFindId( nId )
-
-   else 
-      
-      lAppend        := .f.
-
-      ::refreshRowSet()
-
-   end if 
-
-   ::refreshBrowseView()
-
-   ::fireEvent( 'exitAppended' ) 
-
-   if lAppend
-      ::oBrowseView:setFocus()
-   end if 
-
-RETURN ( lAppend )
-
-//----------------------------------------------------------------------------//
-
 METHOD Duplicate( nId )
 
    local lDuplicate  := .t. 
@@ -638,10 +580,10 @@ METHOD postEdit()
    do case
       case ::dialgOkAndGoTo()
 
-         if ::refreshRowSetAndFindId( ::oDialogView:idGoTo )
+         if ::refreshRowSetAndFindId( ::getDialogView():idGoTo )
             ::Edit()
          else 
-            msgStop( "El identificador " + alltrim( str( ::oDialogView:idGoTo ) ) + " no puede ser localizado" )
+            msgStop( "El identificador " + alltrim( str( ::getDialogView():idGoTo ) ) + " no puede ser localizado" )
          end if 
 
       case ::dialgOkAndDown()
@@ -701,9 +643,9 @@ RETURN ( .t. )
 
 METHOD DialogViewActivate( oDialogView )
 
-   DEFAULT oDialogView     := ::oDialogView
+   DEFAULT oDialogView     := ::getDialogView()
 
-   if empty( ::oDialogView )
+   if empty( oDialogView )
       RETURN ( .f. )
    end if 
 
@@ -727,7 +669,7 @@ RETURN ( .f. )
 
 METHOD DialogViewEnd( oDialogView )
 
-   DEFAULT oDialogView     := ::oDialogView
+   DEFAULT oDialogView     := ::getDialogView()
 
    if !empty( oDialogView )
       oDialogView:EndActivate()
@@ -963,7 +905,7 @@ METHOD clearFilter()
 
    ::reBuildRowSet()
    
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -979,6 +921,6 @@ METHOD reBuildRowSet()
       
    ::getBrowseView():Refresh()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//

@@ -498,12 +498,16 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:enableComboBox( ::oBrowseView:getColumnsHeaders() )
 
+   // ::oWindowsBar:oComboBox:Show()
+   // ::oWindowsBar:oComboBox:Enable()
+   // ::oWindowsBar:oComboBox:setItems( ::oBrowseView:getColumnsHeaders(), .f. )
+
    ::oWindowsBar:setComboBoxChange( {|| ::onChangeCombo() } )
 
    oColumn              := ::oBrowseView:getColumnBySortOrder( ::getModel():getOrderBy() )
 
    if !empty( oColumn )
-   
+
       ::oWindowsBar:setComboBoxItem( oColumn:cHeader )
 
       ::oBrowseView:selectColumnOrder( oColumn, ::getModel():getOrientation() )

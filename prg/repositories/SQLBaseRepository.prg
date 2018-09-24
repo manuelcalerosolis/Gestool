@@ -6,8 +6,6 @@
 
 CLASS SQLBaseRepository
 
-   DATA oDatabase
-
    DATA oController
 
    METHOD New()
@@ -15,8 +13,7 @@ CLASS SQLBaseRepository
 
    METHOD getController()                       INLINE ( ::oController )
 
-   METHOD setDatabase( oDb )                    INLINE ( ::oDatabase := oDb )
-   METHOD getDatabase()                         INLINE ( if( empty( ::oDatabase ), getSQLDatabase(), ::oDatabase ) )
+   METHOD getDatabase()                         INLINE ( getSQLDatabase() )
 
    METHOD getModel()                            INLINE ( ::getController():getModel() )
    METHOD getModelTableName()                   INLINE ( ::getController():getModelTableName()  )
@@ -36,10 +33,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD End()
-
-   ::oController                                := nil
-
-   ::oDatabase                                  := nil
 
 RETURN ( nil )
 

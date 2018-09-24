@@ -7,11 +7,15 @@ CLASS ClientesTarifasController FROM SQLNavigatorController
 
    DATA oArticulosTarifasController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD ApenndLinea()
+
+   METHOD getBrowseView()                    INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ClientesTarifasBrowseView():New( self ), ), ::oBrowseView )
+   
+   METHOD getArticulosTarifasController()    INLINE ( if( empty( ::oArticulosTarifasController ), ::oArticulosTarifasController := ArticulosTarifasController():New( self ), ), ::oArticulosTarifasController )
 
 END CLASS
 
@@ -33,10 +37,6 @@ METHOD New( oController ) CLASS ClientesTarifasController
 
    ::oModel                         := SQLClientesTarifasModel():New( self )
 
-   ::oBrowseView                    := ClientesTarifasBrowseView():New( self )
-
-   ::oArticulosTarifasController    := ArticulosTarifasController():New( self )
-
    ::oDialogModalView:setEvent( 'addingduplicatebutton', {|| .f. } )
    ::oDialogModalView:setEvent( 'addingeditbutton',      {|| .f. } )
    ::oDialogModalView:setEvent( 'addingzoombutton',      {|| .f. } )
@@ -50,13 +50,15 @@ METHOD End() CLASS ClientesTarifasController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oArticulosTarifasController:End()
+   if !empty( ::oArticulosTarifasController )
+      ::oArticulosTarifasController:End()
+   end if 
 
    ::Super:End()
-
-   self                             := nil
 
 RETURN ( nil )
 
@@ -68,17 +70,17 @@ METHOD ApenndLinea()
    local aLines      := {}
    local hBuffer     := {=>}
 
-   ::oArticulosTarifasController:oSelectorView:setLogicMultiselect( .t. )
+   ::getArticulosTarifasController():oSelectorView:setLogicMultiselect( .t. )
 
-   aLines            := ::oArticulosTarifasController:activateSelectorView()
+   aLines            := ::getArticulosTarifasController():activateSelectorView()
 
-   if Empty( aLines )
-      Return ( .f. )
+   if empty( aLines )
+      RETURN ( .f. )
    end if
 
    for each hLine in aLines
 
-      hBuffer        := ::oModel():loadBlankBuffer()
+      hBuffer        := ::oModel:loadBlankBuffer()
 
       hSet( hBuffer, "parent_uuid", ::oSenderController:getUuid() )
       hSet( hBuffer, "tarifa_uuid", hGet( hLine, "uuid" ) )
@@ -88,6 +90,7 @@ METHOD ApenndLinea()
    next
 
    ::getRowSet():RefreshAndGoTop()
+   
    ::oBrowseView:getBrowse():Refresh()
 
 RETURN ( .f. )

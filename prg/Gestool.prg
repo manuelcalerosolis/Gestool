@@ -22,6 +22,7 @@
 #define FONT_NAME             "Segoe UI" 
 
 static hDLLRich
+static nSeconds               := 0
 
 //---------------------------------------------------------------------------//
 
@@ -50,11 +51,11 @@ RETURN
 
 INIT PROCEDURE InitAplication()
 
-   REQUEST HB_LANG_ES         // Para establecer idioma de Mensajes, fechas, etc..
-   REQUEST HB_CODEPAGE_ESWIN  // Para establecer código de página a Español (Ordenación, etc..)
+   REQUEST HB_LANG_ES            // Para establecer idioma de Mensajes, fechas, etc..
+   REQUEST HB_CODEPAGE_ESWIN     // Para establecer código de página a Español (Ordenación, etc..)
 
-   hb_langselect( "ES" )      // Para mensajes, fechas, etc..
-   hb_setcodepage( "ESWIN" )  // Para ordenación (arrays, cadenas, etc..) *Requiere CodePage.lib
+   hb_langselect( "ES" )         // Para mensajes, fechas, etc..
+   hb_setcodepage( "ESWIN" )     // Para ordenación (arrays, cadenas, etc..) *Requiere CodePage.lib
 
    loadLibrary( "Riched20.dll" ) // Cargamos la libreria para richedit
    
@@ -303,3 +304,12 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION logwriteSeconds( cText )
+
+   logwrite( cText + " -> " + str( seconds() - nSeconds ) )
+
+   nSeconds := seconds()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//

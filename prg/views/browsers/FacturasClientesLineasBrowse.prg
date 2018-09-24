@@ -10,7 +10,7 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    DATA lFooter            INIT .t.
 
-   DATA nFreeze            INIT 3
+   // DATA nFreeze            INIT 3
 
    DATA nMarqueeStyle      INIT 3
 
@@ -235,9 +235,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'iva' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nFootStyle          := :nDataStrAlign               
       :cEditPicture        := "@E 999.9999"
-      :cFooterPicture      := :cEditPicture
       :cDataType           := "N"
       :nEditType           := EDIT_GET
       :bEditValid          := {|uNewValue| ::oController:validateIva( uNewValue ) }
@@ -245,12 +243,11 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'recargo_equivalecia'
+      :cSortOrder          := 'recargo_equivalencia'
       :cHeader             := '% R.E.'
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'recargo_equivalecia' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'recargo_equivalencia' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :nFootStyle          := :nDataStrAlign               
       :cEditPicture        := "@E 999.9999"
       :cDataType           := "N"
       :lHide               := .t.

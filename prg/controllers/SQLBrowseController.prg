@@ -5,7 +5,7 @@
 
 CLASS SQLBrowseGestoolController FROM SQLBrowseController
 
-   METHOD getConfiguracionVistasController()          INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+   METHOD getConfiguracionVistasController()          INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS 
 
@@ -15,17 +15,17 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLBrowseController FROM SQLBaseController
+CLASS SQLBrowseController FROM SQLApplicationController
 
    DATA oBrowseView
 
    DATA oConfiguracionVistasController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD getConfiguracionVistasController()          INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasController():New( self ) )
+   METHOD getConfiguracionVistasController()          INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasController():New( self ), ), ::oConfiguracionVistasController )
 
    METHOD Activate()
 
@@ -47,33 +47,39 @@ CLASS SQLBrowseController FROM SQLBaseController
 
    METHOD saveState()
 
-   METHOD getBrowseViewType()                         INLINE ( ::oBrowseView:getViewType() )
-
-   METHOD getBrowseViewName()                         INLINE ( ::oBrowseView:getName() )
-
-   METHOD getBrowseViewState()                        INLINE ( ::oBrowseView:getState() )
+   METHOD getBrowseView()                             INLINE ( ::oBrowseView )
    
-   METHOD refreshBrowseView()                         INLINE ( ::oBrowseView:Refresh() )
+   METHOD getBrowseViewType()                         INLINE ( ::getBrowseView():getViewType() )
 
-   METHOD setId( cType, cName, nId )                  INLINE ( ::oConfiguracionVistasController:setId( cType, cName, nId ) )
+   METHOD getBrowseViewName()                         INLINE ( ::getBrowseView():getName() )
+
+   METHOD getBrowseViewState()                        INLINE ( ::getBrowseView():getState() )
    
-   METHOD getId( cType, cName )                       INLINE ( ::oConfiguracionVistasController:getId( cType, cName ) )
+   METHOD refreshBrowseView()                         INLINE ( ::getBrowseView():Refresh() )
+
+   METHOD setFocusBrowseView()                        INLINE ( ::getBrowseView():setFocus() )
+
+   METHOD setId( cType, cName, nId )                  INLINE ( ::getConfiguracionVistasController():setId( cType, cName, nId ) )
+   
+   METHOD getId( cType, cName )                       INLINE ( ::getConfiguracionVistasController():getId( cType, cName ) )
 
    METHOD setColumnOrder( cType, cName, cColumnOrder ) ;
-                                                      INLINE ( ::oConfiguracionVistasController:setColumnOrder( cType, cName, cColumnOrder ) )
+                                                      INLINE ( ::getConfiguracionVistasController():setColumnOrder( cType, cName, cColumnOrder ) )
    
-   METHOD getColumnOrder( cType, cName )              INLINE ( ::oConfiguracionVistasController:getColumnOrder( cType, cName ) )
+   METHOD getColumnOrder( cType, cName )              INLINE ( ::getConfiguracionVistasController():getColumnOrder( cType, cName ) )
 
    METHOD setColumnOrientation( cType, cName, cColumnOrientation ) ;
-                                                      INLINE ( ::oConfiguracionVistasController:setColumnOrientation( cType, cName, cColumnOrientation ) )
+                                                      INLINE ( ::getConfiguracionVistasController():setColumnOrientation( cType, cName, cColumnOrientation ) )
    
-   METHOD getColumnOrientation( cType, cName )        INLINE ( ::oConfiguracionVistasController:getColumnOrientation( cType, cName ) ) 
+   METHOD getColumnOrientation( cType, cName )        INLINE ( ::getConfiguracionVistasController():getColumnOrientation( cType, cName ) ) 
 
-   METHOD setState( cType, cName, cState )            INLINE ( ::oConfiguracionVistasController:setState( cType, cName, cState ) )
+   METHOD setState( cType, cName, cState )            INLINE ( ::getConfiguracionVistasController():setState( cType, cName, cState ) )
    
-   METHOD getState( cType, cName )                    INLINE ( ::oConfiguracionVistasController:getState( cType, cName ) )
+   METHOD getState( cType, cName )                    INLINE ( ::getConfiguracionVistasController():getState( cType, cName ) )
 
    METHOD buildRowSet() 
+
+   METHOD appendLineal() 
 
 END CLASS
 
@@ -91,7 +97,9 @@ RETURN ( self )
 
 METHOD End()
 
-   ::oConfiguracionVistasController:End()
+   if !empty( ::oConfiguracionVistasController )
+      ::oConfiguracionVistasController:End()
+   end if 
 
    ::Super:End()
 
@@ -101,13 +109,13 @@ RETURN ( nil )
 
 METHOD Activate( nId, oDialog )
 
-   if empty( ::oBrowseView )
+   if empty( ::getBrowseView() )
       RETURN ( Self )
    end if 
 
    ::fireEvent( 'activating' )     
 
-   ::oBrowseView:ActivateDialog( oDialog, nId )
+   ::getBrowseView():ActivateDialog( oDialog, nId )
 
    ::fireEvent( 'activated' )     
 
@@ -131,9 +139,9 @@ METHOD onChangeCombo( oColumn )
 
    ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
-   ::oBrowseView:getBrowse():changeColumnOrder( oColumn )
+   ::getBrowseView():getBrowse():changeColumnOrder( oColumn )
 
-   ::oBrowseView:getBrowse():refreshCurrent()
+   ::getBrowseView():getBrowse():refreshCurrent()
 
 RETURN ( nil )
 
@@ -157,7 +165,7 @@ RETURN ( nil )
 
 METHOD Delete()
 
-RETURN ( ::Super:Delete( ::oBrowseView:getBrowseSelected() ) )
+RETURN ( ::Super:Delete( ::getBrowseView():getBrowseSelected() ) )
 
 //----------------------------------------------------------------------------//
 
@@ -166,7 +174,7 @@ METHOD restoreState()
    local cState               := ::getState( ::getBrowseViewType(), ::getBrowseViewName() ) 
 
    if !empty( cState )
-      ::oBrowseView:setState( cState )
+      ::getBrowseView():setState( cState )
    end if 
 
 RETURN ( nil )
@@ -187,16 +195,16 @@ METHOD isBrowseColumnEdit()
 
    local oSelectedColumn   
 
-   if !empty( ::oBrowseView ) 
+   if empty( ::getBrowseView() ) 
+      RETURN ( .f. ) 
+   end if   
 
-      oSelectedColumn   := ::oBrowseView:getSelectedCol()
-   
-      if !empty( oSelectedColumn )
-         RETURN ( oSelectedColumn:nEditType != 0 )
-      end if 
-   
+   oSelectedColumn   := ::getBrowseView():getSelectedCol()
+
+   if !empty( oSelectedColumn )
+      RETURN ( oSelectedColumn:nEditType != 0 )
    end if 
-
+   
 RETURN ( .f. )   
 
 //---------------------------------------------------------------------------//
@@ -205,17 +213,17 @@ METHOD startBrowse( oCombobox )
 
    local oColumn
 
-   if empty( ::oDialogView:getoBrowse() )
+   if empty( ::getDialogView():getoBrowse() )
       RETURN ( nil )
    end if 
 
    if ( !empty( oCombobox ) )
-      oCombobox:SetItems( ::oDialogView:getoBrowse():getColumnHeaders() )
+      oCombobox:SetItems( ::getDialogView():getoBrowse():getColumnHeaders() )
    endif
 
    ::restoreBrowseState()
 
-   oColumn        := ::oDialogView:getoBrowse():getColumnOrder( ::oModel:cColumnOrder )
+   oColumn        := ::getDialogView():getoBrowse():getColumnOrder( ::oModel:cColumnOrder )
    if empty( oColumn )
       RETURN ( nil )
    end if 
@@ -224,7 +232,7 @@ METHOD startBrowse( oCombobox )
       oCombobox:set( oColumn:cHeader )
    endif
 
-   ::oDialogView:getoBrowse():selectColumnOrder( oColumn, ::oModel:cOrientation )
+   ::getDialogView():getoBrowse():selectColumnOrder( oColumn, ::oModel:cOrientation )
 
 RETURN ( nil )
 
@@ -232,17 +240,62 @@ RETURN ( nil )
 
 METHOD restoreBrowseState()
 
-   if empty( ::oDialogView:getoBrowse() )
+   if empty( ::getDialogView():getoBrowse() )
       RETURN ( nil )
    end if 
 
-   if empty( ::oDialogView:getBrowseState() )
+   if empty( ::getDialogView():getBrowseState() )
       RETURN ( nil )
    end if 
 
-   ::oDialogView:getoBrowse():restoreState( ::oDialogView:getBrowseState() )
+   ::getDialogView():getoBrowse():restoreState( ::getDialogView():getBrowseState() )
 
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
+METHOD AppendLineal() CLASS SQLBrowseController
+
+   local nId
+   local lAppend     := .t.   
+
+   if ::notUserAppend()
+      msgStop( "Acceso no permitido." )
+      RETURN ( .f. )
+   end if 
+
+   if isFalse( ::fireEvent( 'appending' ) )
+      RETURN ( .f. )
+   end if
+
+   ::setAppendMode()
+
+   ::saveRowSetRecno()
+
+   nId               := ::oModel:insertBlankBuffer()
+
+   if !empty( nId )
+
+      ::fireEvent( 'appended' ) 
+
+      ::refreshRowSetAndFindId( nId )
+
+   else 
+      
+      lAppend        := .f.
+
+      ::refreshRowSet()
+
+   end if 
+
+   ::refreshBrowseView()
+
+   ::fireEvent( 'exitAppended' ) 
+
+   if lAppend
+      ::setFocusBrowseView()
+   end if 
+
+RETURN ( lAppend )
+
+//----------------------------------------------------------------------------//

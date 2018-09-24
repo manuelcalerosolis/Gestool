@@ -183,7 +183,7 @@ METHOD MakeTotals() CLASS SQLXBrowse
       {|oCol| if( !empty( oCol:nFooterType ), ( oCol:nTotal := 0.0, aadd( aCols, oCol ) ), ) } )
 
    if empty( aCols )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    uBm            := eval( ::bBookMark )
@@ -196,7 +196,7 @@ METHOD MakeTotals() CLASS SQLXBrowse
 
    eval( ::bBookMark, uBm )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -224,7 +224,7 @@ METHOD changeColumnOrder( oCol ) CLASS SQLXBrowse
       oCol:cOrder := 'A'
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -250,15 +250,11 @@ METHOD getColumnOrder( cOrder ) CLASS SQLXBrowse
 
    local nPosition   
 
-   msgalert( cOrder, "METHOD getColumnOrder( cOrder ) CLASS SQLXBrowse" )
-
    if !empty( cOrder )
       nPosition   := ascan( ::aCols, {|o| o:cOrder == cOrder } )
    else 
       nPosition   := ascan( ::aCols, {|o| !empty( o:cOrder ) .and. !( o:lHide ) } )
    end if 
-
-   msgalert( nPosition, "METHOD getColumnOrder( cOrder ) CLASS SQLXBrowse" )
 
    if nPosition != 0
       RETURN ( ::aCols[ nPosition ] )
@@ -357,7 +353,7 @@ METHOD setColumnOrder( cSortOrder, cColumnOrientation ) CLASS SQLXBrowse
       oColumn:cOrder          := cColumnOrientation
    end if 
 
-RETURN ( Self )
+RETURN ( nil )
 
 //------------------------------------------------------------------------//
 
@@ -373,6 +369,6 @@ METHOD setFirstColumnOrder() CLASS SQLXBrowse
 
    oColumn:cOrder             := 'D'
 
-RETURN ( Self )
+RETURN ( nil )
 
 //------------------------------------------------------------------------//

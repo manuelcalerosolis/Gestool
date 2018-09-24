@@ -129,8 +129,8 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Agentes------------------------------------------------------------------
 
-   ::oController:oAgentesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
-   ::oController:oAgentesController:oGetSelector:Build( { "idGet" => 270, "idText" => 271, "idLink" => 272, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:oAgentesController:getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
+   ::oController:oAgentesController:getSelector():Build( { "idGet" => 270, "idText" => 271, "idLink" => 272, "oDialog" => ::oFolder:aDialogs[1] } )
 
    //Totales------------------------------------------------------------------
 
@@ -250,7 +250,7 @@ METHOD startDialog() CLASS FacturasClientesView
 
    ::oController:oRutasController:oGetSelector:Start()
 
-   ::oController:oAgentesController:oGetSelector:Start()
+   ::oController:oAgentesController:getSelector():Start()
 
    ::oController:oArticulosTarifasController:oGetSelector:Start()
 

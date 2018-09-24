@@ -40,7 +40,7 @@ CLASS SQLBrowseView
 
    DATA oEvents
 
-   METHOD New( oController )
+   METHOD New( oController ) CONSTRUCTOR
    METHOD End()
 
    METHOD Create()
@@ -230,8 +230,6 @@ METHOD End()
    if !empty( ::oBrowse )
       ::oBrowse:End()
    end if 
-      
-   ::oController                             := nil
 
    ::oEvents                                 := nil
 
@@ -512,7 +510,7 @@ METHOD BuildMenu( nRow, nCol, nFlags )
 
    ::fireEvent( 'buildingMenu' )
 
-   oMenu             := MenuBegin( .t., , ::oBrowse )
+   oMenu             := MenuBegin( .t., , ::oBrowse, , , , , , , , , , , , , , , , , .t. )
    bMenuSelect       := ::bMenuSelect
 
    ::bMenuSelect     := nil

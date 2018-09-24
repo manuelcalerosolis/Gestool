@@ -37,7 +37,7 @@ CLASS SQLBrowseableView FROM SQLBaseView
 
    // Browse-------------------------------------------------------------------
 
-   METHOD getBrowseView()                    INLINE ( iif( !empty( ::oController ), ::oController:oBrowseView, ) )
+   METHOD getBrowseView()                    INLINE ( iif( !empty( ::oController ), ::oController:getBrowseView(), ) )
 
    METHOD getBrowse()                        INLINE ( ::getBrowseView():oBrowse )
 
