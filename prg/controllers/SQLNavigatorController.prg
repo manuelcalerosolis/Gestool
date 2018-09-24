@@ -5,7 +5,7 @@
 
 CLASS SQLNavigatorGestoolController FROM SQLNavigatorController
 
-   METHOD getConfiguracionVistasController()          INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+   METHOD getConfiguracionVistasController()    INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS
 

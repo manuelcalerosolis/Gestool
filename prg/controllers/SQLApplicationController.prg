@@ -7,6 +7,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oGetSelector
 
+   DATA oCodigosPostalesController
+
    DATA oDireccionesController
 
    DATA oPaisesController
@@ -15,7 +17,12 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oCamposExtraValoresController
 
+   DATA oConfiguracionVistasController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
+
+   METHOD getCodigosPostalesController();
+                                    INLINE ( if( empty( ::oCodigosPostalesController ), ::oCodigosPostalesController := CodigosPostalesController():New( self ), ), ::oCodigosPostalesController )
 
    METHOD getDireccionesController();
                                     INLINE ( if( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesController():New( self ), ), ::oDireccionesController )
@@ -26,6 +33,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getCamposExtraValoresController();
                                     INLINE ( if( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresController():New( self, 'agentes' ), ), ::oCamposExtraValoresController )
+
+   METHOD getConfiguracionVistasController();
+                                    INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasController():New( self ), ), ::oConfiguracionVistasController )
 
    METHOD End()
 
@@ -41,6 +51,10 @@ METHOD End() CLASS SQLApplicationController
       ::oGetSelector:End()
    end if 
    
+   if !empty( ::oCodigosPostalesController )
+      ::oCodigosPostalesController:End()
+   end if 
+
    logwriteSeconds( "sqlApplicationController oGetSelector" )
 
    if !empty( ::oDireccionesController )
@@ -66,7 +80,11 @@ METHOD End() CLASS SQLApplicationController
    end if 
 
    logwriteSeconds( "sqlApplicationController oCamposExtraValoresController" )
-   
+  
+   if !empty( ::oConfiguracionVistasController )
+      ::oConfiguracionVistasController:End()
+   end if 
+
    ::Super:End()
 
    logwriteSeconds( "sqlApplicationController ::Super:End()" )

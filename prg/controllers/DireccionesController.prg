@@ -7,13 +7,13 @@ CLASS DireccionesGestoolController FROM DireccionesController
 
    METHOD getModel()                            INLINE ( if( empty( ::oModel ), ::oModel := SQLDireccionesGestoolModel():New( self ), ), ::oModel )
 
-   METHOD getCodigosPostalesController()        INLINE ( ::oCodigosPostalesController     := CodigosPostalesGestoolController():New( self ) )
+   METHOD getCodigosPostalesController()        INLINE ( if( empty( ::oCodigosPostalesController ), ::oCodigosPostalesController := CodigosPostalesGestoolController():New( self ), ), ::oCodigosPostalesController )
 
-   METHOD getPaisesController()                 INLINE ( ::oPaisesController              := PaisesGestoolController():New( self ) )
+   METHOD getPaisesController()                 INLINE ( if( empty( ::oPaisesController ), ::oPaisesController := PaisesGestoolController():New( self ), ), ::oPaisesController )
 
-   METHOD getProvinciasController()             INLINE ( ::oProvinciasController          := ProvinciasGestoolController():New( self ) )
+   METHOD getProvinciasController()             INLINE ( if( empty( ::oProvinciasController ), ::oProvinciasController := ProvinciasGestoolController():New( self ), ), ::oProvinciasController )
 
-   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+   METHOD getConfiguracionVistasController()    INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS
 
@@ -24,14 +24,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 CLASS DireccionesController FROM SQLNavigatorController
-
-   DATA oGetSelector
-
-   DATA oPaisesController
-
-   DATA oProvinciasController
-
-   DATA oCodigosPostalesController
 
    DATA lPrincipal                        INIT .f.
 
@@ -55,12 +47,6 @@ CLASS DireccionesController FROM SQLNavigatorController
    METHOD externalStartDialog()           INLINE ( ::oDialogView:StartDialog() )
    
    METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLDireccionesModel():New( self ), ), ::oModel )
-
-   METHOD getCodigosPostalesController()  INLINE ( ::oCodigosPostalesController  := CodigosPostalesController():New( self ) )
-
-   METHOD getPaisesController()           INLINE ( ::oPaisesController           := PaisesController():New( self ) )
-
-   METHOD getProvinciasController()       INLINE ( ::oProvinciasController       := ProvinciasController():New( self ) )
 
    METHOD getUuidParent()                 INLINE ( ::oSenderController:getUuid() )
 
@@ -100,12 +86,6 @@ METHOD New( oController ) CLASS DireccionesController
 
    ::oGetSelector                   := DireccionGetSelector():New( self )
    
-   ::getCodigosPostalesController()
-
-   ::getPaisesController()
-
-   ::getProvinciasController()
-
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 RETURN ( Self )
@@ -125,12 +105,6 @@ METHOD End() CLASS DireccionesController
    ::oValidator:End()
 
    ::oGetSelector:End()
-
-   ::oCodigosPostalesController:End()
-
-   ::oPaisesController:End()
-
-   ::oProvinciasController:End()
 
    ::Super:End()
 
@@ -453,7 +427,7 @@ METHOD ExternalCoreRedefine( oDialog )
       VALID       ( ::oController:validate( "codigo_provincia" ) ) ;
       OF          oDialog
 
-   ::oGetCodigoProvincia:bHelp  := {|| ::oController:oProvinciasController:getSelectorProvincia( ::oGetCodigoProvincia ), ::oGetCodigoProvincia:lValid() }
+   ::oGetCodigoProvincia:bHelp  := {|| ::oController:getProvinciasController():getSelectorProvincia( ::oGetCodigoProvincia ), ::oGetCodigoProvincia:lValid() }
 
    REDEFINE GET   ::oGetProvincia ;
       VAR         ::oController:oModel:hBuffer[ "provincia" ] ;
@@ -471,7 +445,7 @@ METHOD ExternalCoreRedefine( oDialog )
       BITMAP      "LUPA" ;
       OF          oDialog
 
-   ::oGetPais:bHelp  := {|| ::oController:oPaisesController:getSelectorPais( ::oGetPais ), ::oGetPais:lValid() }
+   ::oGetPais:bHelp  := {|| ::oController:getPaisesController():getSelectorPais( ::oGetPais ), ::oGetPais:lValid() }
 
 RETURN ( Self )
 
@@ -501,7 +475,7 @@ RETURN ( nil )
 
 METHOD StartDialog()
 
-   ::oGetPais:oHelpText:cText( ::oController:oPaisesController:getModel():getField( "nombre", "codigo", ::oController:oModel:hBuffer[ "codigo_pais" ] ) )
+   ::oGetPais:oHelpText:cText( ::oController:getPaisesController():getModel():getField( "nombre", "codigo", ::oController:oModel:hBuffer[ "codigo_pais" ] ) )
 
 RETURN ( nil )
 
@@ -548,7 +522,7 @@ METHOD codigoPostal( value )
 
    if empty( ::oController:oDialogView:oGetPoblacion:varget() )
 
-      cPoblacion  := ::oController:oCodigosPostalesController:getModel():getField( "poblacion", "codigo", value )
+      cPoblacion  := ::oController:getCodigosPostalesController():getModel():getField( "poblacion", "codigo", value )
       if !empty( cPoblacion )
          ::oController:oDialogView:oGetPoblacion:cText( cPoblacion )
       end if 
@@ -557,7 +531,7 @@ METHOD codigoPostal( value )
 
    if empty( ::oController:oDialogView:oGetCodigoProvincia:varget() )
 
-      cProvincia  := ::oController:oCodigosPostalesController:getModel():getField( "provincia", "codigo", value )
+      cProvincia  := ::oController:getCodigosPostalesController():getModel():getField( "provincia", "codigo", value )
 
       MsgInfo( cProvincia, "cProvincia" )
 
@@ -565,7 +539,7 @@ METHOD codigoPostal( value )
          ::oController:oDialogView:oGetCodigoProvincia:cText( cProvincia )
          ::oController:oDialogView:oGetCodigoProvincia:lValid()
       else
-         ::oController:oDialogView:oGetCodigoProvincia:cText( Space( 100 ) )
+         ::oController:oDialogView:oGetCodigoProvincia:cText( space( 100 ) )
       end if 
 
    end if 
@@ -580,7 +554,7 @@ METHOD codigoProvincia( value )
       RETURN ( .t. )
    end if 
 
-   ::oController:oDialogView:oGetProvincia:cText( ::oController:oProvinciasController:getModel():getField( "provincia", "codigo", value ) )
+   ::oController:oDialogView:oGetProvincia:cText( ::oController:getProvinciasController():getModel():getField( "provincia", "codigo", value ) )
 
 RETURN ( .t. )
 
@@ -592,7 +566,7 @@ METHOD codigoPais( value )
       RETURN ( .t. )
    end if 
 
-   ::oController:oDialogView:oGetPais:oHelpText:cText( ::oController:oPaisesController:getModel():getField( "nombre", "codigo", value ) )
+   ::oController:oDialogView:oGetPais:oHelpText:cText( ::oController:getPaisesController():getModel():getField( "nombre", "codigo", value ) )
 
 RETURN ( .t. )
 
