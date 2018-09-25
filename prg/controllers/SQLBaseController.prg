@@ -43,8 +43,6 @@ CLASS SQLBaseController
 
    DATA cDirectory 
 
-   DATA oView
-
    METHOD New()
    METHOD End()
 
@@ -238,9 +236,6 @@ CLASS SQLBaseController
    // Validador para las columnas editables del browseview---------------------
 
    METHOD validColumnBrowse( uValue, nKey, oModel, cFieldName )
-
-   METHOD setView( oView )                            INLINE ( ::oView := oView )
-   METHOD getView()                                   INLINE ( if( empty( ::oView ), ::oDialogView, ::oView ) )
 
    // Filters------------------------------------------------------------------
 

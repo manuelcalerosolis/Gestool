@@ -5,10 +5,6 @@
 
 CLASS ArticulosTarifasController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   DATA oArticulosPreciosController
-
    METHOD New()
 
    METHOD End()
@@ -20,6 +16,16 @@ CLASS ArticulosTarifasController FROM SQLNavigatorController
    METHOD endEditedTarifa()
 
    METHOD updatedTarifa( uuidTarifaActualizar, lCosto )
+
+   // Construcciones tardias---------------------------------------------------
+
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosTarifasRepository():New( self ), ), ::oRepository )
+
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosTarifasBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ArticulosTarifasView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := ArticulosTarifasValidator():New( self ), ), ::oValidator )
 
 END CLASS
 
@@ -41,21 +47,7 @@ METHOD New( oSenderController ) CLASS ArticulosTarifasController
 
    ::oModel                         := SQLArticulosTarifasModel():New( self )
 
-   ::oRepository                    := ArticulosTarifasRepository():New( self )
-
-   ::oBrowseView                    := ArticulosTarifasBrowseView():New( self )
-
-   ::oDialogView                    := ArticulosTarifasView():New( self )
-
-   ::oValidator                     := ArticulosTarifasValidator():New( self, ::oDialogView )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oArticulosPreciosController    := ArticulosPreciosTarifasController():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::setEvents( { 'appended', 'duplicated' },  {|| ::endAppendedTarifa() } )
+   ::setEvents( { 'appended', 'duplicated' }, {|| ::endAppendedTarifa() } )
 
    ::setEvent( 'edited',            {|| ::endEditedTarifa() } )
 
@@ -69,19 +61,21 @@ METHOD End() CLASS ArticulosTarifasController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty(::oBrowseView)
+      ::oBrowseView:End()
+   end if   
 
-   ::oDialogView:End()
+   if !empty(::oDialogView)
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty(::oValidator)
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
-
-   ::oArticulosPreciosController:End()
-
-   ::oCamposExtraValoresController:End()
+   if !empty(::oRepository)
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -115,7 +109,7 @@ METHOD endAppendedTarifa() CLASS ArticulosTarifasController
 
    uuidTarifaActualizar := hget( ::oModel:hBuffer, "uuid" )
 
-   ::oArticulosPreciosController:oModel:insertPrecioWhereTarifa( uuidTarifaActualizar )
+   ::getArticulosPreciosController():oModel:insertPrecioWhereTarifa( uuidTarifaActualizar )
 
    oWaitMessage:End()
 
@@ -133,7 +127,7 @@ METHOD endEditedTarifa() CLASS ArticulosTarifasController
 
    uuidTarifaActualizar := hget( ::oModel:hBuffer, "uuid" )
 
-   ::oArticulosPreciosController:oModel:updatePrecioWhereTarifa( uuidTarifaActualizar )
+   ::getArticulosPreciosController():oModel:updatePrecioWhereTarifa( uuidTarifaActualizar )
 
    oWaitMessage:End()
 
@@ -149,7 +143,7 @@ METHOD updatedTarifa( uuidTarifaActualizar, lCosto ) CLASS ArticulosTarifasContr
 
    DEFAULT lCosto       := .f.
 
-   ::oArticulosPreciosController:oModel:insertUpdatePrecioWhereTarifa( uuidTarifaActualizar, lCosto )
+   ::getArticulosPreciosController():oModel:insertUpdatePrecioWhereTarifa( uuidTarifaActualizar, lCosto )
 
    cTarifaParent        := ::oModel:getTarifaWhereTarifaParent( uuidTarifaActualizar )
 
@@ -402,14 +396,14 @@ METHOD startActivate() CLASS ArticulosTarifasView
    end if
 
    oPanel:AddLink(   "Precios...",;
-                     {|| ::oController:oArticulosPreciosController:Edit( ::oController:getUuid() ) },;
-                     ::oController:oArticulosPreciosController:getImage( "16" ) )
+                     {|| ::oController:getArticulosPreciosController():Edit( ::oController:getUuid() ) },;
+                     ::oController:getArticulosPreciosController():getImage( "16" ) )
 
    oPanel           := ::oExplorerBar:AddPanel( "Otros", nil, 1 )
 
    oPanel:AddLink(   "Campos extra...",;
-                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
+                     {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
+                     ::oController:getCamposExtraValoresController():getImage( "16" ) )
 
 RETURN ( nil )
 

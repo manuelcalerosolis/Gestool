@@ -11,8 +11,6 @@ CLASS TercerosController FROM SQLNavigatorController
 
    DATA oProvinciasController
 
-   DATA oAgentesController
-
    DATA oFormasPagoController
 
    DATA oCuentasRemesasController

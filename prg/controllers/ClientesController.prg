@@ -5,21 +5,29 @@
 
 CLASS ClientesController FROM TercerosController
 
-   DATA oArticulosTarifasController
-
    METHOD New()
 
    METHOD End()
 
-   METHOD validColumnAgentesBrowse( uValue, nKey )             INLINE ( ::validColumnBrowse( uValue, nKey, ::oAgentesController:oModel, "agente_uuid" ) )
+   METHOD validColumnAgentesBrowse( uValue, nKey )             INLINE ( ::validColumnBrowse( uValue, nKey, ::getAgentesController():oModel, "agente_uuid" ) )
 
-   METHOD validColumnFormasdePagoBrowse( uValue, nKey )        INLINE ( ::validColumnBrowse( uValue, nKey, ::oFormasPagoController:oModel, "forma_pago_uuid" ) )
+   METHOD validColumnFormasdePagoBrowse( uValue, nKey )        INLINE ( ::validColumnBrowse( uValue, nKey, ::getFormasPagoController():oModel, "forma_pago_uuid" ) )
 
    METHOD validColumnRutasBrowse( uValue, nKey )               INLINE ( ::validColumnBrowse( uValue, nKey, ::oRutasController:oModel, "ruta_uuid" ) )
 
    METHOD validColumnGruposBrowse( uValue, nKey )              INLINE ( ::validColumnBrowse( uValue, nKey, ::oClientesGruposController:oModel, "cliente_grupo_uuid" ) )
 
    METHOD validColumnCuentasRemesasBrowse( uValue, nKey )      INLINE ( ::validColumnBrowse( uValue, nKey, ::oCuentasRemesasController:oModel, "cuenta_remesa_uuid" ) )
+
+   // Construcciones tardias---------------------------------------------------
+
+   METHOD getDialogView()                                      INLINE ( if( empty( ::oDialogView ), ::oDialogView := ClientesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                                       INLINE ( if( empty(  ::oValidator ), ::oValidator := ClientesValidator():New( self, ::getDialogView() ), ), ::oValidator )
+
+   METHOD getBrowseView()                                      INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ClientesBrowseView():New( self ), ), ::oBrowseView )
+   
+   METHOD getSelector()                                        INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := ClientGetSelector():New( self ), ), ::oGetSelector )
 
 END CLASS
 
@@ -39,23 +47,6 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::oModel                         := SQLClientesModel():New( self )
 
-   ::oDialogView                    := ClientesView():New( self )
-
-   ::oValidator                     := ClientesValidator():New( self, ::oDialogView )
-
-   ::oBrowseView                    := ClientesBrowseView():New( self )
-   
-   ::oGetSelector                   := ClientGetSelector():New( self )
-
-   ::oAgentesController             := AgentesController():New( self )
-   ::oAgentesController:setView( ::oDialogView )
-
-   ::oArticulosTarifasController    := ArticulosTarifasController():New( self ) 
-   ::oArticulosTarifasController:setView( ::oDialogView )
-
-   ::oFormasPagoController          := FormasPagosController():New( self )
-   ::oFormasPagoController:setView( ::oDialogView )
-
    ::oCuentasRemesasController      := CuentasRemesaController():New( self )
    ::oCuentasRemesasController:setView( ::oDialogView )
 
@@ -70,8 +61,6 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oContactosController           := ContactosController():New( self )
 
    ::oIncidenciasController         := IncidenciasController():New( self )
-
-   ::oDocumentosController          := DocumentosController():New( self )
 
    ::oCuentasBancariasController    := CuentasBancariasController():New( self )
 
@@ -94,7 +83,7 @@ METHOD New( oSenderController ) CLASS ClientesController
    ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
    ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -102,146 +91,47 @@ RETURN ( Self )
 
 METHOD End() CLASS ClientesController
 
-   local nSeconds
-
-   nSeconds    := seconds()
-
    ::oModel:End()
 
-   logwrite( "model -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
+   if !empty(::oDialogView)
+      ::oDialogView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty(::oValidator)
+      ::oValidator:End()
+   end if 
 
-   logwrite( "oDialogView -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
+   if !empty(::oBrowseView)
+      ::oBrowseView:End()
+   end if 
 
-   ::oValidator:End()
-
-   logwrite( "oValidator -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-
-   ::oBrowseView:End()
-
-   logwrite( "oBrowseView -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-
-   ::oGetSelector:End()
-
-   logwrite( "oGetSelector -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-
-   ::oAgentesController:End()
-
-   logwrite( "oAgentesController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-
-   ::oArticulosTarifasController:End()
-
-   logwrite( "oArticulosTarifasController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-
-   ::oFormasPagoController:End()
-
-   logwrite( "oFormasPagoController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
+   if !empty(::oGetSelector)
+      ::oGetSelector:End()
+   end if 
 
    ::oCuentasRemesasController:End()
 
-   logwrite( "oCuentasRemesasController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-
    ::oRutasController:End()
-
-   logwrite( "oRutasController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
 
    ::oClientesGruposController:End()
 
-   logwrite( "oClientesGruposController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-
    ::oDireccionesController:End()
-
-   logwrite( "oDireccionesController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
 
    ::oContactosController:End()
 
-   logwrite( "oContactosController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-
    ::oIncidenciasController:End()
-
-   logwrite( "oIncidenciasController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-
-   ::oDocumentosController:End()
-
-   logwrite( "oDocumentosController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
 
    ::oCuentasBancariasController:End()
 
-   logwrite( "oCuentasBancariasController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-
    ::oCamposExtraValoresController:End()
-
-   logwrite( "oCamposExtraValoresController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
 
    ::oDescuentosController:End()
 
-   logwrite( "oDescuentosController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-
    ::oClientesEntidadesController:End()
-
-   logwrite( "oClientesEntidadesController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
 
    ::oClientesTarifasController:End()
  
-    logwrite( "oClientesTarifasController -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-  
    ::Super:End()
-
-   logwrite( "::Super:End() -> " + str( seconds() - nSeconds ) )
-   nSeconds    := seconds()
-   
-   ::oModel                      := nil 
-
-   ::oDialogView                 := nil
-
-   ::oValidator                  := nil
-
-   ::oBrowseView                 := nil 
-
-   ::oGetSelector                := nil
-
-   ::oAgentesController          := nil
-   
-   ::oArticulosTarifasController := nil
-   
-   ::oFormasPagoController       := nil
-
-   ::oCuentasRemesasController   := nil
-
-   ::oRutasController            := nil
-
-   ::oClientesGruposController   := nil
-
-   ::oDireccionesController      := nil
-
-   ::oContactosController        := nil
-
-   ::oIncidenciasController      := nil
-
-   ::oDocumentosController       := nil
-
-   ::oClientesTarifasController  := nil
 
 RETURN ( nil )
 

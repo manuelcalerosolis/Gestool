@@ -160,7 +160,7 @@ METHOD redefineGeneral() CLASS ClientesView
       VALID       ( CheckCif( ::oGetDni ) );
       OF          ::oFolder:aDialogs[1]
 
-   ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oFolder:aDialogs[1] )
+   ::oController:getDireccionesController():getDialogView():ExternalRedefine( ::oFolder:aDialogs[1] )
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "web" ] ;
       ID          130 ;
@@ -172,8 +172,8 @@ METHOD redefineGeneral() CLASS ClientesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
-   ::oController:oArticulosTarifasController:oGetSelector:Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getArticulosTarifasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
+   ::oController:getArticulosTarifasController():getSelector():Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[1] } )
 
 RETURN ( nil )
 
@@ -187,8 +187,8 @@ METHOD redefineComercial() CLASS ClientesView
    ::oController:oRutasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_codigo" ] ) )
    ::oController:oRutasController:oGetSelector:Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oFolder:aDialogs[2] } )
 
-   ::oController:oAgentesController:getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
-   ::oController:oAgentesController:getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[2] } )
+   ::oController:getAgentesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
+   ::oController:getAgentesController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[2] } )
 
    ::oController:oClientesGruposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_grupo_codigo" ] ) )
    ::oController:oClientesGruposController:oGetSelector:Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[2] } )
@@ -413,9 +413,9 @@ METHOD startDialog() CLASS ClientesView
 
    ::addLinksToExplorerBar()
    
-   ::oController:oAgentesController:getSelector():Start()
+   ::oController:getAgentesController():getSelector():Start()
 
-   ::oController:oArticulosTarifasController:oGetSelector:Start()
+   ::oController:getArticulosTarifasController():getSelector():Start()
 
    ::oController:oFormasPagoController:oGetSelector:Start()
 

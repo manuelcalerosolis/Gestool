@@ -5,7 +5,7 @@
 
 CLASS DocumentosController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()
 
    METHOD gettingSelectSentence()
@@ -22,6 +22,14 @@ CLASS DocumentosController FROM SQLNavigatorController
    METHOD loadedDuplicateBuffer( uuidEntidad )
 
    METHOD deleteBuffer( aUuidEntidades )
+
+   METHOD getBrowseView()           INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := DocumentosBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()           INLINE ( if( empty( ::oDialogView ), ::oDialogView := DocumentosView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()            INLINE ( if( empty( ::oValidator ), ::oValidator  := DocumentosValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := DocumentosRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -43,17 +51,9 @@ METHOD New( oSenderController ) CLASS DocumentosController
 
    ::oModel                         := SQLDocumentosModel():New( self )
 
-   ::oBrowseView                    := DocumentosBrowseView():New( self )
-
-   ::oDialogView                    := DocumentosView():New( self )
-
-   ::oValidator                     := DocumentosValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := DocumentosRepository():New( self )
-
-   ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
+   // ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
+   // ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
+   // ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
@@ -65,17 +65,23 @@ METHOD End() CLASS DocumentosController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
    ::Super:End()
-
-   self                 := nil
 
 RETURN ( nil )
 
@@ -90,6 +96,7 @@ METHOD loadedBlankBuffer() CLASS DocumentosController
    end if 
 
 RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 
 METHOD gettingSelectSentence() CLASS DocumentosController
@@ -98,6 +105,7 @@ METHOD gettingSelectSentence() CLASS DocumentosController
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -176,10 +184,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS DocumentosBrowseView FROM SQLBrowseView
 
@@ -234,8 +238,6 @@ METHOD addColumns() CLASS DocumentosBrowseView
 
 RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -5,15 +5,19 @@
 
 CLASS FormasPagosController FROM SQLNavigatorController
 
-   DATA oBancosController
-
-   DATA oCamposExtraValoresController
-
    DATA oDocumentosController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   METHOD getBrowseView()     INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FormaPagoBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()     INLINE ( if( empty( ::oDialogView ), ::oDialogView := FormaPagoView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()      INLINE ( if( empty( ::oValidator ), ::oValidator := FormaPagoValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()     INLINE ( if( empty( ::oRepository ), ::oRepository := FormaPagoRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -35,22 +39,6 @@ METHOD New( oSenderController ) CLASS FormasPagosController
 
    ::oModel                         := SQLFormaPagoModel():New( self )
 
-   ::oBrowseView                    := FormaPagoBrowseView():New( self )
-
-   ::oDialogView                    := FormaPagoView():New( self )
-
-   ::oValidator                     := FormaPagoValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := FormaPagoRepository():New( self )
-   
-   ::oGetSelector                   := GetSelector():New( self )
-   
-   ::oBancosController              := CuentasBancariasController():new( self )
-
-   ::oDocumentosController          := DocumentosController():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -59,43 +47,23 @@ METHOD End() CLASS FormasPagosController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
-
-   ::oBancosController:End()
-
-   ::oDocumentosController:End()
-
-   ::oCamposExtraValoresController:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
-
-   ::oModel                            := nil
-
-   ::oBrowseView                       := nil
-
-   ::oDialogView                       := nil
-
-   ::oValidator                        := nil
-
-   ::oRepository                       := nil
-
-   ::oGetSelector                      := nil
-
-   ::oBancosController                 := nil
-
-   ::oDocumentosController             := nil
-
-   ::oCamposExtraValoresController     := nil
-
-   self                                := nil
 
 RETURN ( nil )
 
@@ -245,7 +213,7 @@ RETURN ( self )
 
 METHOD startActivate()
 
-   ::oController:oBancosController:oGetSelector:Start()
+   ::oController:getCuentasBancariasController():oGetSelector():Start()
    
    ::addLinksToExplorerBar()
 
@@ -335,9 +303,9 @@ METHOD Activate() CLASS FormaPagoView
       
    // Banco--------------------------------------------------------------------
 
-   ::oController:oBancosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "banco_uuid" ] ) )
-   ::oController:oBancosController:oGetSelector:setEvent( 'validated', {|| ::bancosControllerValidated() } )
-   ::oController:oBancosController:oGetSelector:Build( { "idGet" => 190, "idText" => 191, "idLink" => 192, "oDialog" => ::oDialog } )
+   ::oController:getCuentasBancariasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "banco_uuid" ] ) )
+   ::oController:getCuentasBancariasController():getSelector():setEvent( 'validated', {|| ::bancosControllerValidated() } )
+   ::oController:getCuentasBancariasController():getSelector():Build( { "idGet" => 190, "idText" => 191, "idLink" => 192, "oDialog" => ::oDialog } )
 
    REDEFINE GET   ::oGetIBANCodigoPais ;
       VAR         ::cGetIBANCodigoPais ; 
@@ -471,7 +439,7 @@ METHOD bancosControllerValidated() CLASS FormaPagoView
       RETURN ( nil )
    end if 
 
-   hColumns          := ::oController:oBancosController:oModel:getWhereCodigo( CodigoBanco ) 
+   hColumns          := ::oController:getCuentasBancariasController():oModel:getWhereCodigo( CodigoBanco ) 
 
    if !( hb_ishash( hColumns ) )
       RETURN ( nil )
@@ -504,14 +472,14 @@ METHOD addLinksToExplorerBar() CLASS FormaPagoView
    end if
 
    oPanel:AddLink(   "Documentos...",;
-                    {|| ::oController:oDocumentosController:activateDialogView( ::oController:getUuid() ) },;
-                     ::oController:oDocumentosController:getImage( "16" ) )
+                    {|| ::oController:getDocumentosController():activateDialogView( ::oController:getUuid() ) },;
+                     ::oController:getDocumentosController():getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
 
    oPanel:AddLink(   "Campos extra...",;
-                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
+                     {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
+                     ::oController:getCamposExtraValoresController():getImage( "16" ) )
 
 RETURN ( nil )
 
@@ -551,10 +519,10 @@ CLASS SQLFormaPagoModel FROM SQLCompanyModel
    METHOD getColumns()
 
    METHOD getBancoUuidAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oBancosController:oModel():getCodigoWhereUuid( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:getCuentasBancariasController():oModel:getCodigoWhereUuid( uValue ) ) )
 
    METHOD setBancoUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:oBancosController:oModel():getUuidWhereCodigo( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), "", ::oController:getCuentasBancariasController():oModel:getUuidWhereCodigo( uValue ) ) )
 
 END CLASS
 

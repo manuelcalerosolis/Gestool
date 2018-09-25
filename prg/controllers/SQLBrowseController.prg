@@ -17,6 +17,8 @@ END CLASS
 
 CLASS SQLBrowseController FROM SQLApplicationController
 
+   DATA oView
+
    DATA oBrowseView
 
    DATA oConfiguracionVistasController
@@ -81,13 +83,19 @@ CLASS SQLBrowseController FROM SQLApplicationController
 
    METHOD appendLineal() 
 
+   METHOD setView( oView )                            INLINE ( ::oView := oView )
+   METHOD getView()                                   INLINE ( if( empty( ::oView ), ::oDialogView, ::oView ) )
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController )
+METHOD New( oSenderController, oView )
 
    ::Super:New( oSenderController )
+
+   ::setView( oView )
 
    ::getConfiguracionVistasController()
 

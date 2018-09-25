@@ -37,6 +37,8 @@ METHOD New( oSenderController ) CLASS AgentesController
 
    ::oModel                         := SQLAgentesModel():New( self )
 
+
+
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
@@ -56,31 +58,21 @@ RETURN ( Self )
 
 METHOD End() CLASS AgentesController
 
-   logwriteSeconds( "AgentesController" )
-
    if !empty( ::oModel )
       ::oModel:End()
    end if 
    
-   logwriteSeconds( "AgentesController oModel" )
-
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
    end if 
    
-   logwriteSeconds( "AgentesController oBrowseView" )
-
    if !empty( ::oRepository )
       ::oRepository:End()
    end if 
 
-   logwriteSeconds( "AgentesController oRepository" )
-   
    if !empty( ::oDialogView )
       ::oDialogView:End()
    end if 
-
-   logwriteSeconds( "AgentesController oDialogView" )
 
    if !empty( ::oValidator )
       ::oValidator:End()

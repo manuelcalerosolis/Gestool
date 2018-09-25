@@ -1137,7 +1137,9 @@ METHOD insertBuffer( hBuffer )
    local nId
    local cSQLInsert
 
-   cSQLInsert     := ::getInsertSentence( hBuffer )
+   DEFAULT hBuffer   := ::hBuffer
+
+   cSQLInsert        := ::getInsertSentence( hBuffer )
 
    if empty( cSQLInsert )
       RETURN ( nil )
@@ -1147,7 +1149,7 @@ METHOD insertBuffer( hBuffer )
 
    ::getDatabase():Execs( cSQLInsert )
 
-   nId            := ::getDatabase():LastInsertId()
+   nId               := ::getDatabase():LastInsertId()
 
    hset( hBuffer, ::cColumnKey, nId )
 

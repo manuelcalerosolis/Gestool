@@ -44,15 +44,25 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
-   METHOD externalStartDialog()           INLINE ( ::oDialogView:StartDialog() )
-   
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLDireccionesModel():New( self ), ), ::oModel )
-
    METHOD getUuidParent()                 INLINE ( ::oSenderController:getUuid() )
 
    METHOD includePrincipal()              INLINE ( ::lPrincipal := .t. )
    METHOD excludePrincipal()              INLINE ( ::lPrincipal := .f. )
    METHOD getPrincipal()                  INLINE ( ::lPrincipal )
+
+   // Creaciones tardias-------------------------------------------------------
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLDireccionesModel():New( self ), ), ::oModel )
+   
+   METHOD getBrowseView()                 INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := DireccionesBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()                 INLINE ( if( empty( ::oDialogView ), ::oDialogView := DireccionesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE ( if( empty( ::oValidator ), ::oValidator := DireccionesValidator():New( self, ::getDialogView() ), ), ::oValidator )
+   
+   METHOD getSelector()                   INLINE ( if( empty( ::oSelector ), ::oSelector := DireccionesGetSelector():New( self ), ), ::oSelector )
+
+   METHOD externalStartDialog()           INLINE ( ::getDialogView():StartDialog() )
 
 END CLASS
 
@@ -77,14 +87,6 @@ METHOD New( oController ) CLASS DireccionesController
                                           "48" => "gc_signpost3_48" }
 
    ::getModel()                        
-
-   ::oBrowseView                    := DireccionesBrowseView():New( self )
-
-   ::oDialogView                    := DireccionesView():New( self )
-
-   ::oValidator                     := DireccionesValidator():New( self, ::oDialogView )
-
-   ::oGetSelector                   := DireccionGetSelector():New( self )
    
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
@@ -98,13 +100,21 @@ METHOD End() CLASS DireccionesController
       ::oModel:End()
    end if 
 
-   ::oBrowseView:End()
+   if !empty(::oBrowseView)
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty(::oDialogView)
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty(::oValidator)
+      ::oValidator:End()
+   end if 
 
-   ::oGetSelector:End()
+   if !empty(::oGetSelector)
+      ::oGetSelector:End()
+   end if 
 
    ::Super:End()
 
@@ -520,26 +530,26 @@ METHOD codigoPostal( value )
       RETURN ( .t. )
    end if 
 
-   if empty( ::oController:oDialogView:oGetPoblacion:varget() )
+   if empty( ::oController:getDialogView():oGetPoblacion:varget() )
 
       cPoblacion  := ::oController:getCodigosPostalesController():getModel():getField( "poblacion", "codigo", value )
       if !empty( cPoblacion )
-         ::oController:oDialogView:oGetPoblacion:cText( cPoblacion )
+         ::oController:getDialogView():oGetPoblacion:cText( cPoblacion )
       end if 
 
    end if 
 
-   if empty( ::oController:oDialogView:oGetCodigoProvincia:varget() )
+   if empty( ::oController:getDialogView():oGetCodigoProvincia:varget() )
 
       cProvincia  := ::oController:getCodigosPostalesController():getModel():getField( "provincia", "codigo", value )
 
       MsgInfo( cProvincia, "cProvincia" )
 
       if !empty( cProvincia )
-         ::oController:oDialogView:oGetCodigoProvincia:cText( cProvincia )
-         ::oController:oDialogView:oGetCodigoProvincia:lValid()
+         ::oController:getDialogView():oGetCodigoProvincia:cText( cProvincia )
+         ::oController:getDialogView():oGetCodigoProvincia:lValid()
       else
-         ::oController:oDialogView:oGetCodigoProvincia:cText( space( 100 ) )
+         ::oController:getDialogView():oGetCodigoProvincia:cText( space( 100 ) )
       end if 
 
    end if 
@@ -554,7 +564,7 @@ METHOD codigoProvincia( value )
       RETURN ( .t. )
    end if 
 
-   ::oController:oDialogView:oGetProvincia:cText( ::oController:getProvinciasController():getModel():getField( "provincia", "codigo", value ) )
+   ::oController:getDialogView():oGetProvincia:cText( ::oController:getProvinciasController():getModel():getField( "provincia", "codigo", value ) )
 
 RETURN ( .t. )
 
@@ -566,7 +576,7 @@ METHOD codigoPais( value )
       RETURN ( .t. )
    end if 
 
-   ::oController:oDialogView:oGetPais:oHelpText:cText( ::oController:getPaisesController():getModel():getField( "nombre", "codigo", value ) )
+   ::oController:getDialogView():oGetPais:oHelpText:cText( ::oController:getPaisesController():getModel():getField( "nombre", "codigo", value ) )
 
 RETURN ( .t. )
 

@@ -5,9 +5,7 @@
 
 CLASS CuentasBancariasController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()
 
    METHOD CalculaIBAN()
@@ -26,6 +24,12 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
    METHOD loadedDuplicateBuffer( uuidEntidad )
 
    METHOD deleteBuffer( aUuidEntidades )
+
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := CuentasBancariasBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := CuentasBancariasView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := CuentasBancariasValidator():New( self ), ), ::oValidator )
 
 END CLASS
 
@@ -47,21 +51,11 @@ METHOD New( oSenderController ) CLASS CuentasBancariasController
 
    ::oModel                         := SQLCuentasBancariasModel():New( self )
 
-   ::oBrowseView                    := CuentasBancariasBrowseView():New( self )
+   ::oFilterController:setTableToFilter( ::oModel:getTableName() )
 
-   ::oDialogView                    := CuentasBancariasView():New( self )
-
-   ::oValidator                     := CuentasBancariasValidator():New( self, ::oDialogView )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
-   ::setEvent( 'appended',          {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',            {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',  {|| ::oBrowseView:Refresh() } ) 
+   // ::setEvent( 'appended',          {|| ::oBrowseView:Refresh() } )
+   // ::setEvent( 'edited',            {|| ::oBrowseView:Refresh() } )
+   // ::setEvent( 'deletedSelection',  {|| ::oBrowseView:Refresh() } ) 
 
 RETURN ( self )
 
@@ -71,19 +65,19 @@ METHOD End() CLASS CuentasBancariasController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
-
-   ::oGetSelector:End()
-
-   ::oCamposExtraValoresController:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
    ::Super:End()
-
-   self                             := nil        
 
 RETURN ( nil )
 
@@ -96,7 +90,7 @@ METHOD CalculaIBAN()
                ::oModel:hBuffer[ "cuenta_codigo_oficina" ],;
                ::oModel:hBuffer[ "cuenta_digito_control" ],;
                ::oModel:hBuffer[ "cuenta_numero" ],;
-               ::oDialogView:oIBAN ) 
+               ::getDialogView():oIBAN ) 
 
 RETURN ( .t. )
 
@@ -108,9 +102,9 @@ METHOD CalculaDigitoControl() CLASS CuentasBancariasController
             ::oModel:hBuffer[ "cuenta_codigo_oficina" ],;
             ::oModel:hBuffer[ "cuenta_digito_control" ],;
             ::oModel:hBuffer[ "cuenta_numero" ],;
-            ::oDialogView:oDigitoControl )
+            ::getDialogView():oDigitoControl )
 
-   ::oDialogView:oIBAN:lValid() 
+   ::getDialogView():oIBAN:lValid() 
 
 RETURN ( .t. )
 

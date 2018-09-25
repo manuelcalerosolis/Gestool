@@ -19,13 +19,17 @@ CLASS ArticulosPreciosController FROM SQLBrowseController
 
    METHOD UpdatePreciosAndRefresh() 
 
-   METHOD getArticulosPreciosModel()   INLINE ( ::oModel := SQLArticulosPreciosModel():New( self ) )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ),        ::oModel := SQLArticulosPreciosModel():New( self ), ), ::oModel )
 
-   METHOD getBrowseView()              INLINE ( ::oBrowseView := ArticulosPreciosBrowseView():New( self ) )
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ),   ::oBrowseView := ArticulosPreciosBrowseView():New( self ), ), ::oBrowseView )
 
-   METHOD getUuid()                    INLINE ( iif(  !empty( ::getRowSet() ),;
-                                                      ::getRowSet():fieldGet( 'uuid' ),;
-                                                      nil ) )
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ),   ::oDialogView := ArticulosPreciosView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ),    ::oValidator := ArticulosPreciosValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ),   ::oRepository := ArticulosPreciosRepository():New( self ), ), ::oRepository )
+
+   METHOD getUuid()                    INLINE ( if( !empty( ::getRowSet() ),  ::getRowSet():fieldGet( 'uuid' ), nil ) )
 
 END CLASS
 
@@ -45,15 +49,7 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::cName                                   := "articulos_precios"
 
-   ::getArticulosPreciosModel()
-
-   ::oDialogView                             := ArticulosPreciosView():New( self )
-
-   ::oValidator                              := ArticulosPreciosValidator():New( self )
-
-   ::oRepository                             := ArticulosPreciosRepository():New( self )
-
-   ::getBrowseView()
+   ::getModel()
 
    ::oArticulosPreciosDescuentosController   := ArticulosPreciosDescuentosController():New( self )
 
@@ -67,27 +63,23 @@ METHOD End() CLASS ArticulosPreciosController
 
    ::oModel:End()
 
-   ::oDialogView:End()
+   if !empty(::oDialogView)
+      ::oDialogView:End()
+   end if 
 
-   ::oBrowseView:End()
+   if !empty(::oBrowseView)
+      ::oBrowseView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty(::oValidator)
+      ::oValidator:End()
+   end if 
 
-   ::oRepository:End()
+   if !empty(::oRepository)
+      ::oRepository:End()
+   end if 
 
    ::oArticulosPreciosDescuentosController:End()
-
-   ::oModel                                  := nil
-
-   ::oDialogView                             := nil
-
-   ::oBrowseView                             := nil
-
-   ::oValidator                              := nil
-
-   ::oRepository                             := nil
-
-   ::oArticulosPreciosDescuentosController   := nil
 
    ::Super:End()
 
@@ -135,20 +127,6 @@ RETURN ( ::UpdatePreciosAndRefresh() )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS ArticulosPreciosTarifasController FROM ArticulosPreciosController
-
-   METHOD getArticulosPreciosModel()   INLINE ( ::oModel := SQLArticulosPreciosTarifasModel():New( self ) )
-
-   METHOD getBrowseView()              INLINE ( ::oBrowseView := ArticulosPreciosTarifasBrowseView():New( self ) )
- 
-END CLASS
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
 CLASS ArticulosPreciosValidator FROM SQLBaseValidator
 
    METHOD getValidators()
@@ -162,6 +140,20 @@ METHOD getValidators() CLASS ArticulosPreciosValidator
    ::hValidators  := {  "margen" =>    {  "Positive"  => "El valor debe ser mayor o igual a cero" } }
 
 RETURN ( ::hValidators )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ArticulosPreciosTarifasController FROM ArticulosPreciosController
+
+   METHOD getModel()          INLINE ( if( empty( ::oModel ),        ::oModel := SQLArticulosPreciosTarifasModel():New( self ), ), ::oModel )
+
+   METHOD getBrowseView()     INLINE ( if( empty( ::oBrowseView ),   ::oBrowseView := ArticulosPreciosTarifasBrowseView():New( self ), ), ::oBrowseView )
+ 
+END CLASS
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

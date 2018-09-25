@@ -13,6 +13,14 @@ CLASS ArticulosPreciosDescuentosController FROM SQLNavigatorController
 
    METHOD activatingDialogModalView()
 
+   METHOD getBrowseView()           INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosPreciosDescuentosBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()           INLINE ( if( empty( ::oDialogView ), ::oDialogView := ArticulosPreciosDescuentosView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator ()           INLINE ( if( empty( ::oValidator ), ::oValidator := ArticulosPreciosDescuentosValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosPreciosDescuentosRepository():New( self ), ), ::oRepository )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -33,19 +41,11 @@ METHOD New( oSenderController ) CLASS ArticulosPreciosDescuentosController
 
    ::oModel                         := SQLArticulosPreciosDescuentosModel():New( self )
 
-   ::oBrowseView                    := ArticulosPreciosDescuentosBrowseView():New( self )
-
-   ::oDialogView                    := ArticulosPreciosDescuentosView():New( self )
-
-   ::oValidator                     := ArticulosPreciosDescuentosValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := ArticulosPreciosDescuentosRepository():New( self )
-
    ::oDialogModalView:setEvent( 'activating', {|| ::activatingDialogModalView() } )
 
-   ::setEvent( 'appending',                     {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'appending',                     {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'edited',                        {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'deletedSelection',              {|| ::getBrowseView():Refresh() } )
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
@@ -57,25 +57,23 @@ METHOD End() CLASS ArticulosPreciosDescuentosController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
    ::Super:End()
-
-   ::oModel       := nil
-
-   ::oBrowseView  := nil
-
-   ::oDialogView  := nil
-
-   ::oValidator   := nil
-
-   ::oRepository  := nil
 
 RETURN ( nil )
 

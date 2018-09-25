@@ -5,9 +5,10 @@
 
 CLASS CamposExtraValoresGestoolController FROM CamposExtraValoresController
 
-   METHOD getCamposExtraValoresModel()                      INLINE ( ::oModel := SQLCamposExtraValoresGestoolModel():New( self ) )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraValoresGestoolModel():New( self ), ), ::oModel )
 
-   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+   METHOD getConfiguracionVistasController() ;
+                                       INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS
 
@@ -25,13 +26,11 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD getCamposExtraValoresModel()                      INLINE ( ::oModel := SQLCamposExtraValoresModel():New( self ) )
+   METHOD setEntidad( cEntidad ) ;
+                                       INLINE ( ::cEntidad := cEntidad )
 
-   METHOD setEntidad( cEntidad )                            INLINE ( ::cEntidad := cEntidad )
-
-   METHOD setUuidEntidad( uuidEntidad )                     INLINE ( ::uuidEntidad := uuidEntidad )
-
-   METHOD NewArticulo( cEntidad, uuidEntidad )              INLINE ( ::New( 'articulos', uuidEntidad ) )
+   METHOD setUuidEntidad( uuidEntidad ) ;
+                                       INLINE ( ::uuidEntidad := uuidEntidad )
 
    METHOD Edit( uuidEntidad ) 
 
@@ -41,15 +40,23 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
 
    METHOD gettingSelectSentence()
 
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraValoresModel():New( self ), ), ::oModel )
+
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := CamposExtraValoresBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := CamposExtraValoresView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator  ), ::oValidator  := CamposExtraValoresValidator():New( self ), ), ::oValidator )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController, cEntidad ) CLASS CamposExtraValoresController
+METHOD New( oSenderController ) CLASS CamposExtraValoresController
 
    ::Super:New( oSenderController )
 
-   ::setEntidad( cEntidad ) 
+   ::setEntidad( oSenderController:getModel():getTableName() ) 
 
    ::cTitle                            := "Campos extra valores"
 
@@ -61,13 +68,7 @@ METHOD New( oSenderController, cEntidad ) CLASS CamposExtraValoresController
                                              "32" => "gc_form_plus2_32",;
                                              "48" => "gc_form_plus2_48" }
 
-   ::getCamposExtraValoresModel()
-
-   ::oBrowseView                       := CamposExtraValoresBrowseView():New( self )
-
-   ::oDialogView                       := CamposExtraValoresView():New( self )
-
-   ::oValidator                        := CamposExtraValoresValidator():New( self, ::oDialogView )
+   ::getModel()
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )   
 
@@ -79,15 +80,19 @@ METHOD End() CLASS CamposExtraValoresController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
    ::Super:End()
-
-   self                                := nil
 
 RETURN ( nil )
 
@@ -382,7 +387,7 @@ METHOD Activate() CLASS CamposExtraValoresView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   ::oController:oBrowseView:ActivateDialog( ::oDialog, 100 )
+   ::oController:getBrowseView():ActivateDialog( ::oDialog, 100 )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -425,8 +430,8 @@ END CLASS
 METHOD getValidators() CLASS CamposExtraValoresValidator
 
    ::hValidators  := {  "campo_extra_relacion_uuid"   => {  "required"     => "El lugar donde se encuentra el campo extra es un dato requerido"},; 
-                        "uuid_registro"               => {  "required"     => "El Registro es un dato requerido",;
-                                                            "unique"       => "El Registro introducido ya existe" } }
+                        "uuid_registro"               => {  "required"     => "El registro es un dato requerido",;
+                                                            "unique"       => "El registro introducido ya existe" } }
 
 RETURN ( ::hValidators )
 

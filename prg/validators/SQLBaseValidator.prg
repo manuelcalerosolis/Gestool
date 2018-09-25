@@ -18,7 +18,7 @@ CLASS SQLBaseValidator
 
    DATA uValue
   
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()                           
 
    METHOD setValue( uValue )              INLINE   ( ::uValue := uValue )
@@ -62,7 +62,7 @@ CLASS SQLBaseValidator
 
    METHOD numeroDocumento( value )
 
-   METHOD getView()                       INLINE ( ::oController:getView() )
+   METHOD getDialogView()                 INLINE ( ::oController:getDialogView() )
 
    // Busquedas comnues en la aplicacion---------------------------------------
 
@@ -155,14 +155,14 @@ METHOD sayMessage( cMessage )
 
    local cText    := strtran( cMessage, "{value}", alltrim( cvaltostr( ::uValue ) ) )
 
-   if empty( ::getView() ) .or. empty( ::getView():oMessage )
+   if empty( ::getDialogView() ) .or. empty( ::getDialogView():oMessage )
       msgstop( cText, "Error" )
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
-   ::getView():showMessage( cText )
+   ::getDialogView():showMessage( cText )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

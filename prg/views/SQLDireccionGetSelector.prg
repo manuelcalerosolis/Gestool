@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS DireccionGetSelector FROM ClientGetSelector
+CLASS DireccionesGetSelector FROM ClientGetSelector
 
    METHOD getFields()               
 
@@ -11,7 +11,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getFields() CLASS DireccionGetSelector
+METHOD getFields() CLASS DireccionesGetSelector
 
    local uuidParent  := ::oController:getUuidParent()
 
@@ -25,7 +25,7 @@ RETURN ( ::uFields )
 
 //---------------------------------------------------------------------------//
 
-METHOD setHelpText( value ) CLASS DireccionGetSelector
+METHOD setHelpText( value ) CLASS DireccionesGetSelector
 
    if !( hb_ishash( value ) )
       RETURN ( nil )

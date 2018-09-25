@@ -19,6 +19,18 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oConfiguracionVistasController
 
+   DATA oAgentesController
+
+   DATA oArticulosTarifasController
+
+   DATA oArticulosPreciosDescuentosController
+
+   DATA oCuentasBancariasController
+
+   DATA oDocumentosController
+
+   DATA oFormasPagosController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -32,10 +44,28 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getProvinciasController() INLINE ( if( empty( ::oProvinciasController ), ::oProvinciasController := ProvinciasController():New( self ), ), ::oProvinciasController )
 
    METHOD getCamposExtraValoresController();
-                                    INLINE ( if( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresController():New( self, 'agentes' ), ), ::oCamposExtraValoresController )
+                                    INLINE ( if( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresController():New( self ), ), ::oCamposExtraValoresController )
 
    METHOD getConfiguracionVistasController();
                                     INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasController():New( self ), ), ::oConfiguracionVistasController )
+
+   METHOD getAgentesController()    INLINE ( if( empty( ::oAgentesController ), ::oAgentesController := AgentesController():New( self ), ), ::oAgentesController )
+   
+   METHOD getArticulosTarifasController();
+                                    INLINE ( if( empty( ::oArticulosTarifasController ), ::oArticulosTarifasController := ArticulosTarifasController():New( self ), ), ::oArticulosTarifasController )
+
+   METHOD getArticulosPreciosDescuentosController();
+                                    INLINE ( if( empty( ::oArticulosPreciosDescuentosController ), ::oArticulosPreciosDescuentosController := ArticulosPreciosDescuentosController():New( self ), ), ::oArticulosPreciosDescuentosController )
+
+   METHOD getCuentasBancariasController();
+                                    INLINE ( if( empty( ::oCuentasBancariasController ), ::oCuentasBancariasController := CuentasBancariasController():New( self ), ), ::oCuentasBancariasController )
+
+   METHOD getDocumentosController();
+                                    INLINE ( if( empty( ::oDocumentosController ), ::oDocumentosController := DocumentosController():New( self ), ), ::oCuentasBancariasController )
+
+   METHOD getFormasPagosController();
+                                    INLINE ( if( empty( ::oFormasPagosController ), ::oFormasPagosController := FormasPagosController():New( self ), ), ::oFormasPagosController )
+
 
    METHOD End()
 
@@ -83,6 +113,30 @@ METHOD End() CLASS SQLApplicationController
   
    if !empty( ::oConfiguracionVistasController )
       ::oConfiguracionVistasController:End()
+   end if 
+
+   if !empty( ::oAgentesController )
+      ::oAgentesController:End()
+   end if 
+
+   if !empty( ::oArticulosTarifasController )
+      ::oArticulosTarifasController:End()
+   end if 
+
+   if !empty( ::oArticulosPreciosDescuentosController )   
+      ::oArticulosPreciosDescuentosController:End()
+   end if 
+
+   if !empty( ::oCuentasBancariasController )   
+      ::oCuentasBancariasController:End()
+   end if 
+
+   if !empty( ::oDocumentosController )   
+      ::oDocumentosController:End()
+   end if 
+
+   if !empty( ::oFormasPagosController )   
+      ::oFormasPagosController:End()
    end if 
 
    ::Super:End()
