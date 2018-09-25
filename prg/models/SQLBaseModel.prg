@@ -146,7 +146,7 @@ CLASS SQLBaseModel
    METHOD addFindWhere( cSQLSelect )
 
    METHOD setOrderBy( cOrderBy )                      INLINE ( ::cOrderBy        := cOrderBy )
-   METHOD getOrderBy()                                INLINE ( ::cOrderBy )
+   METHOD getOrderBy()                                INLINE ( if( !empty( ::cAs ) .and. !empty( ::cOrderBy ), ::cAs + "." + ::cOrderBy, ::cOrderBy ) )
 
    METHOD setOrientation( cOrientation )              INLINE ( ::cOrientation    := cOrientation )
    METHOD getOrientation()                            INLINE ( ::cOrientation )
@@ -522,14 +522,14 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD addFindWhere( cSQLSelect )
+METHOD addFindWhere( cSQLSelect, aSortOrders )
 
    if empty( ::getOrderBy() ) .or. empty( ::cFind )
       RETURN ( cSQLSelect )
    end if 
 
    cSQLSelect     += space( 1 )
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::getOrderBy() +") LIKE '%" + Upper( ::cFind ) + "%'" 
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::getOrderBy() + ") LIKE '%" + upper( ::cFind ) + "%'" 
 
 RETURN ( cSQLSelect )
 
