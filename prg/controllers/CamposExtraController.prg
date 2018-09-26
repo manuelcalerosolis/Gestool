@@ -151,8 +151,6 @@ METHOD New( oSenderController ) CLASS CamposExtraController
 
    ::getModel()
 
-   ::getCamposExtraEntidadesController()
-
    ::setEvent( 'edited',      {|| ::deleteEntitiesWhereEmpty() } )
    ::setEvent( 'appended',    {|| ::deleteEntitiesWhereEmpty() } )
    ::setEvent( 'duplicated',  {|| ::deleteEntitiesWhereEmpty() } )
@@ -183,7 +181,7 @@ METHOD End() CLASS CamposExtraController
 
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -191,7 +189,7 @@ METHOD deleteEntitiesWhereEmpty()
    
    ::getCamposExtraEntidadesController():oModel:deleteBlankEntityWhereUuid( ::getUuid() )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -272,7 +270,7 @@ METHOD addColumns() CLASS CamposExtraBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -314,7 +312,7 @@ CLASS CamposExtraView FROM SQLBaseView
 
    DATA aListaValores                  
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD enableLongitud()             INLINE ( ::verticalShow( ::oLongitud ), ::verticalShow( ::oDecimales ) )
 
@@ -496,9 +494,11 @@ METHOD Activate() CLASS CamposExtraView
 
    oBtnDelete:bAction   := {|| ::oController:getCamposExtraEntidadesController():Delete( ::oController:getCamposExtraEntidadesController():getBrowseView():oBrowse:aSelected ) }
 
+   // Browse de entidades -----------------------------------------------------
+   
    ::oController:getCamposExtraEntidadesController():Activate( 120, ::oFolder:aDialogs[ 2 ] )
 
-   // Botones ------------------------------------------------------------------
+   // Botones -----------------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
