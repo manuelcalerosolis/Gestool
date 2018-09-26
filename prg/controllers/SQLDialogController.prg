@@ -436,10 +436,6 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:enableGet()
 
-   ::oWindowsBar:enableComboBox( ::oBrowseView:getColumnsHeaders() )
-
-   ::oWindowsBar:setComboBoxChange( {|| ::onChangeCombo() } )
-
    ::oWindowsBar:setComboBoxItem( ::oBrowseView:getColumnHeaderByOrder( ::getModel():getOrderBy() ) )
 
    ::oWindowsBar:enableComboFilter( ::getFilters() )
@@ -469,8 +465,6 @@ METHOD DisableWindowsBar()
    end if 
 
    ::oWindowsBar:disableGet()
-
-   ::oWindowsBar:disableComboBox()
 
    ::oWindowsBar:disableComboFilter()
 

@@ -27,6 +27,7 @@ CLASS TAcceso
 
    DATA  oGet
    DATA  cGet                       INIT  Space( 200 )
+   DATA  bGetChange                 
 
    DATA  oComboBox
    DATA  cComboBox
@@ -55,7 +56,8 @@ CLASS TAcceso
 
    DATA  nLittleButtons
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
+   METHOD End()
 
    METHOD Add()
 
@@ -92,7 +94,6 @@ CLASS TAcceso
    METHOD CreateSearchBar()
    METHOD EndSearchBar()
    METHOD HideSearchBar()                 INLINE ( ::HideGet(),;
-                                                   ::HideComboBox(),;
                                                    ::HideComboFilter(),;
                                                    ::HideDeleteButtonFilter(),;
                                                    ::HideAddButtonFilter(),;
@@ -112,21 +113,10 @@ CLASS TAcceso
    METHOD ReCreateOfficeBar()
    METHOD InsertOfficeBand()              INLINE ( ::oReBar:InsertBand( ::oOfficeBar ) )
 
+   METHOD setBitmapGet()
+
    METHOD CreateCarpetaOfficeBar( aAccesos )
    METHOD CreateBotonesOfficeBar( aAcceso, oCarpeta, oGrupo )
-
-   METHOD SetComboBoxItems( aItems )      INLINE ( if( !empty( ::oComboBox ), ::oComboBox:SetItems( aItems, .t. ), ) )
-   METHOD GetComboBoxItems()              INLINE ( if( !empty( ::oComboBox ), ::oComboBox:aItems, {} ) )
-   METHOD SetComboBoxSelect( nItems )     INLINE ( if( !empty( ::oComboBox ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboBox:Select( nItems ) ), ) )
-   METHOD SetComboBoxItem( cItem )        INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:Set( cItem ) ), ) )
-   METHOD SetComboBoxChange( bBlock )     INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:bChange := bBlock ), ) )
-   METHOD GetComboBox()                   INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:VarGet() ), "" ) )
-   METHOD GetComboBoxAt()                 INLINE ( if( !empty( ::oComboBox ), ( ::oComboBox:nAt ), 0 ) )
-
-   METHOD DisableComboBox()               INLINE ( if( !empty( ::oComboBox ), ( ::SetComboBoxItems( {} ), ::oComboBox:Hide() ), ) )
-   METHOD EnableComboBox( aItems )        INLINE ( if( !empty( ::oComboBox ) .and. hb_isarray( aItems ), ( ::oComboBox:Show(), ::oComboBox:Enable(), ::oComboBox:SetItems( aItems, .t. ), ::oComboBox:Select( 1 ) ), ) )
-   METHOD HideComboBox()                  INLINE ( if( !empty( ::oComboBox ), ::oComboBox:Hide(), ) )
-   METHOD setCombo( cItem )               INLINE ( if( !empty( ::oComboBox ), ::oComboBox:Set( cItem ), ) )
 
    METHOD setComboFilterItem( cItem )     INLINE ( if( !empty( ::oComboFilter ), ( ::oComboFilter:Set( cItem ) ), ) )
    METHOD setComboFilterItems( aItems )   INLINE ( if( !empty( ::oComboFilter ), ::oComboFilter:SetItems( aItems ), ) )
@@ -143,7 +133,9 @@ CLASS TAcceso
    METHOD SetComboFilter( cItem )         INLINE ( if( !empty( ::oComboFilter ), ( ::oComboFilter:Set( cItem ), ::evalComboFilterChange() ), ) )
    METHOD AddComboFilter( cItem )         INLINE ( if( !empty( ::oComboFilter ), ::oComboFilter:Add( cItem ), ) )
 
-   METHOD SetGetChange( bBlock )          INLINE ( if( !empty( ::oGet ), ( ::oGet:bChange       := bBlock ), ) )
+   METHOD SetGetChange( bBlock )          INLINE ( if( !empty( ::oGet ), ( ::bGetChange         := bBlock ), ) )
+   METHOD EvalGetChange( bBlock )         
+
    METHOD SetGetPostKey( bBlock )         INLINE ( if( !empty( ::oGet ), ( ::oGet:bPostKey      := bBlock ), ) )
    METHOD SetGetValid( bBlock )           INLINE ( if( !empty( ::oGet ), ( ::oGet:bValid        := bBlock ), ) )
    METHOD SetGetLostFocus( bBlock )       INLINE ( if( !empty( ::oGet ), ( ::oGet:bLostFocus    := bBlock ), ) )
@@ -191,8 +183,6 @@ CLASS TAcceso
 
    METHOD Disable()                       INLINE ( CursorWait(),  if( !empty( ::oOfficeBar ), ( ::oOfficeBar:Disable(), SysRefresh() ), ) )
    METHOD Enable()                        INLINE ( CursorWE(),    if( !empty( ::oOfficeBar ), ( ::oOfficeBar:Enable(), SysRefresh() ), ) )
-
-   METHOD End()
 
 ENDCLASS
 
@@ -499,19 +489,13 @@ METHOD CreateSearchBar( oWnd )
             VAR      ::cGet ;
             OF       ::oRebar ;
             FONT     oFontLittleTitle() ;
-            PIXEL    SIZE 210, 21
+            PIXEL    SIZE 210, 21 ;
 
+   ::oGet:bChange    := {| nKey, nFlags, oGet | ::evalGetChange( nKey, nFlags, oGet ) }
+   ::oGet:bHelp      := {|| ::oGet:cText( space( 200 ) ), ::evalGetChange() }
    ::oGet:cBmp       := "Lupa"
 
-   @ 124, 220 COMBOBOX ::oComboBox ;
-            VAR      ::cComboBox ;
-            ITEMS    ::aComboBox ;
-            STYLE    2 ;
-            OF       ::oRebar ;
-            FONT     oFontLittleTitle() ;
-            PIXEL    SIZE 200, 30
-
-   @ 124, 426 COMBOBOX ::oComboFilter ;
+   @ 124, 220 COMBOBOX ::oComboFilter ;
             VAR      ::cComboFilter ;
             ITEMS    ::aComboFilter ;
             STYLE    2 ;
@@ -521,7 +505,7 @@ METHOD CreateSearchBar( oWnd )
 
    ::oComboFilter:Disable()
 
-   @ 125, 632 BTNBMP ::oButtonAddFilter ;
+   @ 125, 432 BTNBMP ::oButtonAddFilter ;
             RESOURCE "gc_funnel_add_16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
@@ -583,10 +567,6 @@ METHOD EndSearchBar( oWnd )
       ::oGet:End()
    end if 
 
-   if !empty( ::oComboBox )
-      ::oComboBox:End()
-   end if 
-
    if !empty( ::oComboFilter )
       ::oComboFilter:End()
    end if 
@@ -612,6 +592,42 @@ METHOD EndSearchBar( oWnd )
    end if 
 
 RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD setBitmapGet()
+
+   local cText    
+
+   ::oGet:Assign()
+
+   cText       := alltrim( ::oGet:VarGet() )
+
+   if empty( cText ) .and. ( ::oGet:oBmp:cResName != "Lupa" )
+      ::oGet:oBmp:setBmp( "Lupa" )
+   end if 
+
+   if !empty( cText ) .and. ( ::oGet:oBmp:cResName != "Del16" )
+      ::oGet:oBmp:setBmp( "Del16" )
+   end if 
+
+RETURN ( .t. )
+
+//----------------------------------------------------------------------------//
+
+METHOD EvalGetChange( nKey, nFlags, oGet )
+
+   if empty( ::oGet )
+      RETURN ( .t. )
+   end if 
+
+   if !empty( ::bGetChange )
+      eval( ::bGetChange, nKey, nFlags, oGet ) 
+   end if 
+
+   ::setBitmapGet()
+
+RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
@@ -939,10 +955,6 @@ METHOD End()
       ::oButtonDeleteFilter:End()
    end if 
 
-   if !empty( ::oComboBox )
-      ::oComboBox:End()
-   end if 
-
    if !empty( ::oComboFilter )
       ::oComboFilter:End()
    end if 
@@ -954,7 +966,6 @@ METHOD End()
    ::oButtonCleanFilter    := nil 
    ::oButtonEditFilter     := nil 
    ::oButtonDeleteFilter   := nil 
-   ::oComboBox             := nil 
    ::oComboFilter          := nil
 
 RETURN ( nil )

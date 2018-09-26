@@ -774,11 +774,9 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD findInModel( uValue )
+METHOD findInModel( uValue, aColumns )
 
-   msgalert( hb_valtoexp( ::getBrowseView():getVisibleColumnsSortOrder() ), "findInModel" )
-
-   ::oModel:setFind( uValue )
+   ::oModel:setFind( uValue, aColumns )
 
    ::oRowSet:buildPad( ::oModel:getSelectSentence() )
 

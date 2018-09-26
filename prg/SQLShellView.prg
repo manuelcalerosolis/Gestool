@@ -64,7 +64,6 @@ METHOD Activate()
    ::AutoButtons()
 
    ::oShell:setDoubleClickInData(   {|| ::oController:Edit() } )
-   ::oShell:setComboBoxChange(      {|| ::changeCombo( ::oShell:getCombobox() ) } )
    ::oShell:setValid(               {|| ::oController:saveHistory( "_shell", ::oShell:getBrowse() ) } )
    ::oShell:setEnd(                 {|| ::oController:endModel() } )
 

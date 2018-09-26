@@ -488,14 +488,6 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:setGetChange( {|| ::onChangeSearch() } )
 
-   ::oWindowsBar:enableComboBox( ::oBrowseView:getColumnsHeaders() )
-
-   // ::oWindowsBar:oComboBox:Show()
-   // ::oWindowsBar:oComboBox:Enable()
-   // ::oWindowsBar:oComboBox:setItems( ::oBrowseView:getColumnsHeaders(), .f. )
-
-   ::oWindowsBar:setComboBoxChange( {|| ::onChangeCombo() } )
-
    oColumn              := ::oBrowseView:getColumnBySortOrder( ::getModel():getOrderBy() )
 
    if !empty( oColumn )
@@ -534,8 +526,6 @@ METHOD DisableWindowsBar()
 
    ::oWindowsBar:disableGet()
 
-   ::oWindowsBar:disableComboBox()
-
    ::oWindowsBar:disableComboFilter()
 
    ::oWindowsBar:hideAddButtonFilter()
@@ -570,25 +560,13 @@ RETURN ( nil )
 
 METHOD onChangeCombo( oColumn )
 
-   local oComboBox   := ::getComboBoxOrder()
-
-   if empty( oComboBox )
+   if empty( oColumn )
       RETURN ( nil )
    end if 
 
    if empty( ::getBrowseView() )
       RETURN ( nil )
    end if 
-
-   if empty( oColumn )
-      oColumn        := ::getBrowseView():getColumnByHeader( oComboBox:VarGet() )
-   end if 
-
-   if empty( oColumn )
-      RETURN ( nil )
-   end if 
-
-   oComboBox:Set( oColumn:cHeader )
 
    ::getBrowseView():changeColumnOrder( oColumn )
 

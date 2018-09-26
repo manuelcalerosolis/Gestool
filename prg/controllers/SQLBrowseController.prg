@@ -143,8 +143,8 @@ RETURN ( nil )
 
 METHOD onChangeCombo( oColumn )
 
-   ::setComboColumn( oColumn )
-
+   msgalert( oColumn:cSortOrder, oColumn:cOrder )
+   
    ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
    ::getBrowseView():getBrowse():changeColumnOrder( oColumn )

@@ -5,7 +5,7 @@ CLASS SQLClientesModel FROM SQLTercerosModel
 
    DATA cTableName               INIT "clientes"
 
-   DATA cAs                      INIT "clientes"
+   // DATA cAs                      INIT "clientes"
 
    METHOD getColumns()
 

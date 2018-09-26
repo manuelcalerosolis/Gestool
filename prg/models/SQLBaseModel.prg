@@ -47,6 +47,8 @@ CLASS SQLBaseModel
 
    DATA cFind
 
+   DATA aColumns                                      INIT {}
+
    DATA aRecordsToDelete
 
    METHOD New() CONSTRUCTOR
@@ -144,6 +146,7 @@ CLASS SQLBaseModel
    METHOD addFilterWhere( cSQLSelect )
 
    METHOD addFindWhere( cSQLSelect )
+   METHOD getExpresionToFind()
 
    METHOD setOrderBy( cOrderBy )                      INLINE ( ::cOrderBy        := cOrderBy )
    METHOD getOrderBy()                                INLINE ( if( !empty( ::cAs ) .and. !empty( ::cOrderBy ), ::cAs + "." + ::cOrderBy, ::cOrderBy ) )
@@ -178,13 +181,13 @@ CLASS SQLBaseModel
 
    // Busquedas----------------------------------------------------------------
 
-   METHOD setFind( cFind )                            INLINE ( ::cFind := cFind )
+   METHOD setFind( cFind, aColumns )                  INLINE ( ::cFind := cFind, ::aColumns := aColumns )
 
    METHOD getBufferById( nId )
    METHOD getBufferByUuid( uuid )
    METHOD getBufferByCodigo( cCodigo )
    
-   // Busquedas----------------------------------------------------------------
+   // Buffer-------------------------------------------------------------------
 
    METHOD getBuffer( cColumn )    
    METHOD getBufferColumnKey()                        INLINE ( ::getBuffer( ::cColumnKey ) )
@@ -522,16 +525,37 @@ RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
 
-METHOD addFindWhere( cSQLSelect, aSortOrders )
+METHOD addFindWhere( cSQLSelect )
 
-   if empty( ::getOrderBy() ) .or. empty( ::cFind )
+   if empty( ::cFind )
+      RETURN ( cSQLSelect )
+   end if 
+
+   if empty( ::cOrderBy ) .and. empty( ::aColumns )
       RETURN ( cSQLSelect )
    end if 
 
    cSQLSelect     += space( 1 )
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + "UPPER(" + ::getOrderBy() + ") LIKE '%" + upper( ::cFind ) + "%'" 
+   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) 
+   cSQLSelect     += ::getExpresionToFind()
 
 RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD getExpresionToFind()
+
+   local cExpresionToFind  := ""
+
+   if !empty( ::aColumns )
+      aeval( ::aColumns, {|cColumn| cExpresionToFind += "UPPER(" + cColumn + ") LIKE '%" + upper( ::cFind ) + "%' OR " } )
+      cExpresionToFind     := chgAtEnd( cExpresionToFind, '', 4 )
+      RETURN ( cExpresionToFind )
+   end if 
+
+   cExpresionToFind        += "UPPER(" + ::cOrderBy + ") LIKE '%" + upper( ::cFind ) + "%'" 
+
+RETURN ( cExpresionToFind )
 
 //---------------------------------------------------------------------------//
 
