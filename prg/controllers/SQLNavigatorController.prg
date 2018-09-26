@@ -486,6 +486,8 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:enableGet()
 
+   ::oWindowsBar:setGetChange( {|| ::onChangeSearch() } )
+
    ::oWindowsBar:enableComboBox( ::oBrowseView:getColumnsHeaders() )
 
    // ::oWindowsBar:oComboBox:Show()
@@ -515,8 +517,6 @@ METHOD EnableWindowsBar()
    ::oWindowsBar:setActionEditButtonFilter( {|| ::editFilter() } )
 
    ::oWindowsBar:setActionDeleteButtonFilter( {|| ::deleteFilter() } )
-
-   ::oWindowsBar:setGetChange( {|| ::onChangeSearch() } )
 
    ::oNavigatorView:Refresh()
 

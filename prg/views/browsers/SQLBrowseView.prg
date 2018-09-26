@@ -10,8 +10,6 @@
 
 CLASS SQLBrowseView
 
-   DATA oModel
-
    DATA oBrowse
 
    DATA oController
@@ -165,6 +163,8 @@ CLASS SQLBrowseView
    METHOD getColumnsHeaders()
 
    METHOD getVisibleColumnsHeaders()   
+
+   METHOD getVisibleColumnsSortOrder()
 
    METHOD getFirstColumnHeader()
 
@@ -320,6 +320,16 @@ METHOD getVisibleColumnsHeaders()
    aeval( ::oBrowse:aCols, {|oCol| if( oCol:lHide, , aadd( aHeaders, oCol:cHeader ) ) } )
 
 RETURN ( aHeaders )
+
+//---------------------------------------------------------------------------//
+
+METHOD getVisibleColumnsSortOrder()
+
+   local aSortOrders := {}
+
+   aeval( ::oBrowse:aCols, {|oCol| if( oCol:lHide .or. empty( oCol:cSortOrder ), , aadd( aSortOrders, oCol:cSortOrder ) ) } )
+
+RETURN ( aSortOrders )
 
 //---------------------------------------------------------------------------//
 
