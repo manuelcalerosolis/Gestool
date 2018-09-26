@@ -5,7 +5,7 @@
 
 CLASS AgentesController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 

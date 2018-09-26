@@ -5,7 +5,7 @@
 
 CLASS ArticulosTarifasController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 

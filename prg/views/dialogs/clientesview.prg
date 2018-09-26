@@ -181,20 +181,20 @@ RETURN ( nil )
 
 METHOD redefineComercial() CLASS ClientesView
 
-   ::oController:oCuentasRemesasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_remesa_codigo" ] ) )
-   ::oController:oCuentasRemesasController:oGetSelector:Build( { "idGet" => 110, "idText" => 111, "idLink" => 112, "oDialog" => ::oFolder:aDialogs[2] } )
+   ::oController:getCuentasRemesaController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_remesa_codigo" ] ) )
+   ::oController:getCuentasRemesaController():getSelector():Build( { "idGet" => 110, "idText" => 111, "idLink" => 112, "oDialog" => ::oFolder:aDialogs[2] } )
 
-   ::oController:oRutasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_codigo" ] ) )
-   ::oController:oRutasController:oGetSelector:Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oFolder:aDialogs[2] } )
+   ::oController:getRutasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_codigo" ] ) )
+   ::oController:getRutasController():getSelector():Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oFolder:aDialogs[2] } )
 
    ::oController:getAgentesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
    ::oController:getAgentesController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[2] } )
 
-   ::oController:oClientesGruposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_grupo_codigo" ] ) )
-   ::oController:oClientesGruposController:oGetSelector:Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[2] } )
+   ::oController:getClientesGruposController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_grupo_codigo" ] ) )
+   ::oController:getClientesGruposController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[2] } )
 
-   ::oController:oFormasPagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
-   ::oController:oFormasPagoController:oGetSelector:Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[2] } )
+   ::oController:getFormasPagosController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
+   ::oController:getFormasPagosController():getSelector():Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[2] } )
 
    REDEFINE GET ::oController:oModel:hBuffer[ "primer_dia_pago" ] ;
       ID       160;
@@ -417,15 +417,15 @@ METHOD startDialog() CLASS ClientesView
 
    ::oController:getArticulosTarifasController():getSelector():Start()
 
-   ::oController:oFormasPagoController:oGetSelector:Start()
+   ::oController:getFormasPagosController():getSelector():Start()
 
-   ::oController:oCuentasRemesasController:oGetSelector:Start()
+   ::oController:getCuentasRemesaController():getSelector():Start()
 
-   ::oController:oRutasController:oGetSelector:Start()
+   ::oController:getRutasController():getSelector():Start()
 
-   ::oController:oClientesGruposController:oGetSelector:Start()
+   ::oController:getClientesGruposController():getSelector():Start()
 
-   ::oController:oDireccionesController:externalStartDialog()
+   ::oController:getDireccionesController():externalStartDialog()
 
    if !::oController:oModel:hBuffer[ "bloqueado" ]
       ::oGetFechaBloqueo:Hide()
@@ -451,20 +451,20 @@ METHOD addLinksToExplorerBar() CLASS ClientesView
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Tarifas...",             {|| ::oController:oClientesTarifasController:activateDialogView() }, ::oController:oClientesTarifasController:getImage( "16" ) )
-      oPanel:AddLink( "Direcciones...",         {|| ::oController:oDireccionesController:activateDialogView() }, ::oController:oDireccionesController:getImage( "16" ) )
-      oPanel:AddLink( "Contactos...",           {|| ::oController:oContactosController:activateDialogView() }, ::oController:oContactosController:getImage( "16" ) )
-      oPanel:AddLink( "Cuentas bancarias...",   {|| ::oController:oCuentasBancariasController:activateDialogView() }, ::oController:oCuentasBancariasController:getImage( "16" ) )
-      oPanel:AddLink( "Incidencias...",         {|| ::oController:oIncidenciasController:activateDialogView() }, ::oController:oIncidenciasController:getImage( "16" ) )
-      oPanel:AddLink( "Documentos...",          {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
-      oPanel:AddLink( "Entidades facturae...",  {|| ::oController:oClientesEntidadesController:activateDialogView() }, ::oController:oClientesEntidadesController:getImage( "16" ) )
-      oPanel:AddLink( "Descuentos...",          {|| ::oController:oDescuentosController:activateDialogView( ::oController:getUuid() ) }, ::oController:oDescuentosController:getImage( "16" ) )
+      oPanel:AddLink( "Tarifas...",             {|| ::oController:getClientesTarifasController():activateDialogView() }, ::oController:getClientesTarifasController():getImage( "16" ) )
+      oPanel:AddLink( "Direcciones...",         {|| ::oController:getDireccionesController():activateDialogView() }, ::oController:getDireccionesController():getImage( "16" ) )
+      oPanel:AddLink( "Contactos...",           {|| ::oController:getContactosController():activateDialogView() }, ::oController:getContactosController():getImage( "16" ) )
+      oPanel:AddLink( "Cuentas bancarias...",   {|| ::oController:getCuentasBancariasController():activateDialogView() }, ::oController:getCuentasBancariasController():getImage( "16" ) )
+      oPanel:AddLink( "Incidencias...",         {|| ::oController:getIncidenciasController():activateDialogView() }, ::oController:getIncidenciasController():getImage( "16" ) )
+      oPanel:AddLink( "Documentos...",          {|| ::oController:getDocumentosController():activateDialogView() }, ::oController:getDocumentosController():getImage( "16" ) )
+      oPanel:AddLink( "Entidades facturae...",  {|| ::oController:getClientesEntidadesController():activateDialogView() }, ::oController:getClientesEntidadesController():getImage( "16" ) )
+      oPanel:AddLink( "Descuentos...",          {|| ::oController:getDescuentosController():activateDialogView( ::oController:getUuid() ) }, ::oController:getDescuentosController():getImage( "16" ) )
    end if
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+      oPanel:AddLink( "Campos extra...",        {|| ::getController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }, ::oController:getCamposExtraValoresController():getImage( "16" ) )
    end if
 
 RETURN ( nil )

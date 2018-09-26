@@ -13,11 +13,11 @@ CLASS ClientesController FROM TercerosController
 
    METHOD validColumnFormasdePagoBrowse( uValue, nKey )        INLINE ( ::validColumnBrowse( uValue, nKey, ::getFormasPagoController():oModel, "forma_pago_uuid" ) )
 
-   METHOD validColumnRutasBrowse( uValue, nKey )               INLINE ( ::validColumnBrowse( uValue, nKey, ::oRutasController:oModel, "ruta_uuid" ) )
+   METHOD validColumnRutasBrowse( uValue, nKey )               INLINE ( ::validColumnBrowse( uValue, nKey, ::getRutasController():oModel, "ruta_uuid" ) )
 
-   METHOD validColumnGruposBrowse( uValue, nKey )              INLINE ( ::validColumnBrowse( uValue, nKey, ::oClientesGruposController:oModel, "cliente_grupo_uuid" ) )
+   METHOD validColumnGruposBrowse( uValue, nKey )              INLINE ( ::validColumnBrowse( uValue, nKey, ::getClientesGruposController():oModel, "cliente_grupo_uuid" ) )
 
-   METHOD validColumnCuentasRemesasBrowse( uValue, nKey )      INLINE ( ::validColumnBrowse( uValue, nKey, ::oCuentasRemesasController:oModel, "cuenta_remesa_uuid" ) )
+   METHOD validColumnCuentasRemesasBrowse( uValue, nKey )      INLINE ( ::validColumnBrowse( uValue, nKey, ::getCuentasRemesasController():oModel, "cuenta_remesa_uuid" ) )
 
    // Construcciones tardias---------------------------------------------------
 
@@ -47,43 +47,18 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::oModel                         := SQLClientesModel():New( self )
 
-   ::oCuentasRemesasController      := CuentasRemesaController():New( self )
-   ::oCuentasRemesasController:setView( ::oDialogView )
-
-   ::oRutasController               := RutasController():New( self )
-   ::oRutasController:setView( ::oDialogView )
-
-   ::oClientesGruposController      := ClientesGruposController():New( self )
-   ::oClientesGruposController:setView( ::oDialogView )
-
-   ::oDireccionesController         := DireccionesController():New( self )
-
-   ::oContactosController           := ContactosController():New( self )
-
-   ::oIncidenciasController         := IncidenciasController():New( self )
-
-   ::oCuentasBancariasController    := CuentasBancariasController():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oDescuentosController          := DescuentosController():New( self )
-
-   ::oClientesEntidadesController   := ClientesEntidadesController():New( self )
-
-   ::oClientesTarifasController     := ClientesTarifasController():New( self )
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:updateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -108,28 +83,6 @@ METHOD End() CLASS ClientesController
    if !empty(::oGetSelector)
       ::oGetSelector:End()
    end if 
-
-   ::oCuentasRemesasController:End()
-
-   ::oRutasController:End()
-
-   ::oClientesGruposController:End()
-
-   ::oDireccionesController:End()
-
-   ::oContactosController:End()
-
-   ::oIncidenciasController:End()
-
-   ::oCuentasBancariasController:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::oDescuentosController:End()
-
-   ::oClientesEntidadesController:End()
-
-   ::oClientesTarifasController:End()
  
    ::Super:End()
 

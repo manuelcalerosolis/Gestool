@@ -7,7 +7,7 @@ CLASS ArticulosPreciosController FROM SQLBrowseController
 
    DATA oArticulosPreciosDescuentosController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 

@@ -5,7 +5,7 @@
 
 CLASS ContactosController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -22,6 +22,16 @@ CLASS ContactosController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ContactosBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ContactosView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ContactosValidator():New( self  ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := ContactosRepository():New( self ), ), ::oRepository )
+      
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -41,16 +51,6 @@ METHOD New( oController ) CLASS ContactosController
    ::nLevel                         := Auth():Level( ::cName )
 
    ::oModel                         := SQLContactosModel():New( self )
-
-   ::oBrowseView                    := ContactosBrowseView():New( self )
-
-   ::oDialogView                    := ContactosView():New( self )
-
-   ::oValidator                     := ContactosValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := ContactosRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
    
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
@@ -65,32 +65,23 @@ RETURN ( self )
 METHOD End() CLASS ContactosController
 
    ::oModel:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oBrowseView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oValidator:End()
-
-   ::oRepository:End()
-
-   ::oGetSelector:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
    ::Super:End()
-
-   ::oModel                := nil
-
-   ::oBrowseView           := nil
-
-   ::oDialogView           := nil
-
-   ::oValidator            := nil
-
-   ::oRepository           := nil
-
-   ::oGetSelector          := nil
-
-   self                    := nil
 
 RETURN ( nil )
 

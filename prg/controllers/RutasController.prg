@@ -5,11 +5,19 @@
 
 CLASS RutasController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construccion tardia-------------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := RutasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := RutasView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := RutasValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := RutasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -31,18 +39,6 @@ METHOD New( oSenderController ) CLASS RutasController
 
    ::oModel                         := SQLRutasModel():New( self )
 
-   ::oBrowseView                    := RutasBrowseView():New( self )
-
-   ::oDialogView                    := RutasView():New( self )
-
-   ::oValidator                     := RutasValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := RutasRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -51,35 +47,23 @@ METHOD End() CLASS RutasController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
-
-   ::oCamposExtraValoresController:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
-
-   ::oModel                         := nil
-
-   ::oBrowseView                    := nil
-
-   ::oDialogView                    := nil
-
-   ::oValidator                     := nil
-
-   ::oRepository                    := nil
-
-   ::oGetSelector                   := nil
-
-   ::oCamposExtraValoresController  := nil
-
-   self                             := nil
 
 RETURN ( nil )
 

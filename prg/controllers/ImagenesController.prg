@@ -22,6 +22,15 @@ CLASS ImagenesController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ImagenesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ImagenesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ImagenesValidator():New( self ), ), ::oValidator )
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -42,12 +51,6 @@ METHOD New( oSenderController ) CLASS ImagenesController
 
    ::oModel                := SQLImagenesModel():New( self )
 
-   ::oBrowseView           := ImagenesBrowseView():New( self )
-
-   ::oDialogView           := ImagenesView():New( self )
-
-   ::oValidator            := ImagenesValidator():New( self, ::oDialogView )
-
    // ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    // ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
    // ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
@@ -63,11 +66,17 @@ METHOD End() CLASS ImagenesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
    ::Super:End()
 

@@ -5,7 +5,7 @@
 
 CLASS DescuentosController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()
 
    METHOD gettingSelectSentence()
@@ -21,6 +21,16 @@ CLASS DescuentosController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := DescuentosBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := DescuentosView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := DescuentosValidator():New( self  ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := DescuentosRepository():New( self ), ), ::oRepository )
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -41,14 +51,6 @@ METHOD New( oSenderController ) CLASS DescuentosController
 
    ::oModel                      := SQLDescuentosModel():New( self )
 
-   ::oBrowseView                 := DescuentosBrowseView():New( self )
-
-   ::oDialogView                 := DescuentosView():New( self )
-
-   ::oValidator                  := DescuentosValidator():New( self, ::oDialogView )
-
-   ::oRepository                 := DescuentosRepository():New( self )
-
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
@@ -63,17 +65,23 @@ METHOD End() CLASS DescuentosController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
-
-   self                             := nil
 
 RETURN ( nil )
 

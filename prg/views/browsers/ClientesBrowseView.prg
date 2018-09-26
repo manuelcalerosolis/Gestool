@@ -168,7 +168,7 @@ METHOD addColumns() CLASS ClientesBrowseView
       if ::oController:isUserEdit()
          :nEditType        := 5
          :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnFormasdePagoBrowse( uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oFormasPagoController:ActivateSelectorView() }
+         :bEditBlock       := {|| ::oController:getFormasPagoController():ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
@@ -195,7 +195,7 @@ METHOD addColumns() CLASS ClientesBrowseView
       if ::oController:isUserEdit()
          :nEditType        := 5
          :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnRutasBrowse( uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oRutasController:ActivateSelectorView() }
+         :bEditBlock       := {|| ::oController:getRutasController():ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
@@ -249,7 +249,7 @@ METHOD addColumns() CLASS ClientesBrowseView
       if ::oController:isUserEdit()
          :nEditType        := 5
          :bOnPostEdit      := {|oCol, uNewValue, nKey| ::oController:validColumnCuentasRemesasBrowse( uNewValue, nKey ) }
-         :bEditBlock       := {|| ::oController:oCuentasRemesasController:ActivateSelectorView() }
+         :bEditBlock       := {|| ::oController:getCuentasRemesasController():ActivateSelectorView() }
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
       end if
