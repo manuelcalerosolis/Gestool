@@ -76,14 +76,6 @@ METHOD End() CLASS CuentasRemesaController
 
    ::Super:End()
 
-   ::oDialogView                    := nil
-
-   ::oValidator                     := nil
-
-   ::oRepository                    := nil
-
-   self                             := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

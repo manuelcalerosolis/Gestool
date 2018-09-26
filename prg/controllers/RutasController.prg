@@ -15,7 +15,7 @@ CLASS RutasController FROM SQLNavigatorController
 
    METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := RutasView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := RutasValidator():New( self  ), ), ::oValidator )
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := RutasValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := RutasRepository():New( self ), ), ::oRepository )
 
@@ -64,18 +64,6 @@ METHOD End() CLASS RutasController
    end if
 
    ::Super:End()
-
-   ::oModel                         := nil
-
-   ::oBrowseView                    := nil
-
-   ::oDialogView                    := nil
-
-   ::oValidator                     := nil
-
-   ::oRepository                    := nil
-
-   self                             := nil
 
 RETURN ( nil )
 

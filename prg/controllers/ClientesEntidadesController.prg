@@ -79,8 +79,6 @@ METHOD End() CLASS ClientesEntidadesController
 
    ::Super:End()
 
-   self                                := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

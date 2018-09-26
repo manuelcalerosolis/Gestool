@@ -83,10 +83,6 @@ METHOD End() CLASS ContactosController
 
    ::Super:End()
 
-   ::oModel                := nil
-
-   self                    := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

@@ -79,10 +79,6 @@ METHOD End() CLASS IncidenciasController
    
    ::Super:End()
 
-   ::oModel                := nil
-
-   self                    := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

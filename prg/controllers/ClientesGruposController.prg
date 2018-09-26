@@ -66,18 +66,6 @@ METHOD End() CLASS ClientesGruposController
 
    ::Super:End()
 
-   ::oModel                         := nil
-
-   ::oBrowseView                    := nil
-
-   ::oDialogView                    := nil
-
-   ::oValidator                     := nil
-
-   ::oRepository                    := nil
-
-   self                             := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

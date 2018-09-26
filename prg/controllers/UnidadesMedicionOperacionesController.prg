@@ -5,9 +5,19 @@
 
 CLASS UnidadesMedicionOperacionesController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionOperacionesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionOperacionesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionOperacionesValidator():New( self  ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := UnidadesMedicionOperacionesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -31,16 +41,6 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionOperacionesController
 
    ::oModel                         := SQLUnidadesMedicionOperacionesModel():New( self )
 
-   ::oBrowseView                    := UnidadesMedicionOperacionesBrowseView():New( self )
-
-   ::oDialogView                    := UnidadesMedicionOperacionesView():New( self )
-
-   ::oValidator                     := UnidadesMedicionOperacionesValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := UnidadesMedicionOperacionesRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -49,15 +49,21 @@ METHOD End() CLASS UnidadesMedicionOperacionesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 

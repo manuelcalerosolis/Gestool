@@ -5,11 +5,20 @@
 
 CLASS TagsController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD insertTag()
+
+   //Contrucciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := TagsBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := TagsView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := TagsValidator():New( self  ), ), ::oValidator )
+
 
 END CLASS
 
@@ -30,12 +39,6 @@ METHOD New( oController ) CLASS TagsController
    ::nLevel                := Auth():Level( "marcadores" )
 
    ::oModel                := SQLTagsModel():New( self )
-
-   ::oBrowseView           := TagsBrowseView():New( self )
-
-   ::oDialogView           := TagsView():New( self )
-
-   ::oValidator            := TagsValidator():New( self )
 
    ::oFilterController:setTableToFilter( ::getName() )
 

@@ -55,6 +55,16 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oCamposExtraValoresController*/
 
+   DATA oUnidadesMedicionOperacionesController
+
+   DATA oTagsController
+
+   DATA oImagenesController
+
+   DATA oComentariosController
+
+   DATA oComentariosLineasController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -125,6 +135,21 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getCamposExtraValoresController();
                                     INLINE ( if( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresController():New( self ), ), ::oCamposExtraValoresController )*/
+
+   METHOD getUnidadesMedicionOperacionesController();
+                                    INLINE ( if( empty( ::oUnidadesMedicionOperacionesController ), ::oUnidadesMedicionOperacionesController := UnidadesMedicionOperacionesController():New( self ), ), ::oUnidadesMedicionOperacionesController )
+
+   METHOD getTagsController();
+                                    INLINE ( if( empty( ::oTagsController ), ::oTagsController := TagsController():New( self ), ), ::oTagsController )
+
+   METHOD getImagenesController();
+                                    INLINE ( if( empty( ::oImagenesController ), ::oImagenesController := ImagenesController():New( self ), ), ::oImagenesController )
+
+   METHOD getComentariosController();
+                                    INLINE ( if( empty( ::oComentariosController ), ::oComentariosController := ComentariosController():New( self ), ), ::oComentariosController )
+
+   METHOD getComentariosLineasController();
+                                    INLINE ( if( empty( ::oComentariosLineasController ), ::oComentariosLineasController := ComentariosLineasController():New( self ), ), ::oComentariosLineasController )
 
 
    METHOD End()
@@ -246,6 +271,26 @@ METHOD End() CLASS SQLApplicationController
    if !empty( ::oCamposExtraValoresController )   
       ::oCamposExtraValoresController:End()
    end if */
+
+   if !empty( ::oUnidadesMedicionOperacionesController )   
+      ::oUnidadesMedicionOperacionesController:End()
+   end if 
+
+   if !empty( ::oTagsController )   
+      ::oTagsController:End()
+   end if 
+
+   if !empty( ::oImagenesController )   
+      ::oImagenesController:End()
+   end if  
+
+   if !empty( ::oComentariosController )   
+      ::oComentariosController:End()
+   end if  
+
+   if !empty( ::oComentariosLineasController )   
+      ::oComentariosLineasController:End()
+   end if 
 
    ::Super:End()
 

@@ -5,7 +5,7 @@
 
 CLASS ComentariosLineasController FROM SQLBrowseController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -13,6 +13,15 @@ CLASS ComentariosLineasController FROM SQLBrowseController
 
    METHOD gettingSelectSentence()
 
+   //Contrucciones tardias-----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ComentariosLineasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ComentariosLineasView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ComentariosLineasValidator():New( self ), ), ::oValidator )
+
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -29,15 +38,9 @@ METHOD New( oSenderController ) CLASS ComentariosLineasController
 
    ::oModel                      := SQLComentariosLineasModel():New( self )
 
-   ::oBrowseView                 := ComentariosLineasBrowseView():New( self )
-
-   ::oDialogView                 := ComentariosLineasView():New( self )
-
-   ::oValidator                  := ComentariosLineasValidator():New( self, ::oDialogView )
-
-   ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'appended',                      {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'edited',                        {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'deletedSelection',              {|| ::getBrowseView():Refresh() } )
 
    ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
@@ -49,15 +52,19 @@ METHOD End() CLASS ComentariosLineasController
 
    ::oModel:End()
 
+   if !empty( ::oBrowseView )
    ::oBrowseView:End()
+   end if
 
+   if !empty( ::oDialogView )
    ::oDialogView:End()
+   end if
 
+   if !empty( ::oValidator )
    ::oValidator:End()
+   end if
 
    ::Super:End()
-
-   self                          := nil
 
 RETURN ( nil )
 

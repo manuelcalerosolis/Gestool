@@ -83,8 +83,6 @@ METHOD End() CLASS DescuentosController
 
    ::Super:End()
 
-   self                             := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

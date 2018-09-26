@@ -5,15 +5,11 @@
 
 CLASS ArticulosFamiliasController FROM SQLNavigatorController
 
-   DATA oImagenesController
-
-   DATA oComentariosController
-
    DATA oTraduccionesController
 
    DATA oCamposExtraValoresController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -45,28 +41,22 @@ METHOD New( oSenderController ) CLASS ArticulosFamiliasController
 
    ::oRepository                    := ArticulosFamiliaRepository():New( self )
 
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oImagenesController            := ImagenesController():New( self )
-
-   ::oComentariosController         := ComentariosController():New( self )
-
    ::oTraduccionesController        := TraduccionesController():New( self )
 
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oImagenesController:loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oImagenesController:insertBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getImagenesController():loadPrincipalBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::getImagenesController():insertBuffer() } )
 
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oImagenesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oImagenesController:updateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getImagenesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::getImagenesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oImagenesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oImagenesController:loadedDuplicateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getImagenesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getImagenesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oImagenesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::getImagenesController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -102,17 +92,7 @@ METHOD End() CLASS ArticulosFamiliasController
    if !empty( ::oGetSelector )
       ::oGetSelector:End()
       ::oGetSelector                   := nil
-   end if       
-
-   if !empty( ::oImagenesController )
-      ::oImagenesController:End()
-      ::oImagenesController            := nil
-   end if       
-
-   if !empty( ::oComentariosController )
-      ::oComentariosController:End()
-      ::oComentariosController         := nil
-   end if       
+   end if           
 
    if !empty( ::oTraduccionesController )
       ::oTraduccionesController:End()
@@ -300,11 +280,11 @@ METHOD Activate() CLASS ArticulosFamiliaView
    // Imagen-------------------------------------------------------------------
 
    REDEFINE GET   ::oGetImagen ;
-      VAR         ::oController:oImagenesController:oModel:hBuffer[ "imagen" ] ;
+      VAR         ::oController:getImagenesController():oModel:hBuffer[ "imagen" ] ;
       ID          160 ;
       IDSAY       161 ;
       BITMAP      "Folder" ;
-      WHEN        ( ::oController:oImagenesController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getImagenesController():isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
    ::oGetImagen:bHelp      := {|| GetBmp( ::oGetImagen, ::oBmpImagen ) }
@@ -312,7 +292,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    REDEFINE IMAGE ::oBmpImagen ;
       ID          1010 ;
-      FILE        cFileBmpName( ::oController:oImagenesController:oModel:hBuffer[ "imagen" ] ) ;
+      FILE        cFileBmpName( ::oController:getImagenesController():oModel:hBuffer[ "imagen" ] ) ;
       OF          ::oFolder:aDialogs[1]
 
    ::oBmpImagen:SetColor( , getsyscolor( 15 ) )
@@ -331,8 +311,8 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    // Comentarios -----------------------------------------------------------------
 
-   ::oController:oComentariosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "comentario_uuid" ] ) )
-   ::oController:oComentariosController:oGetSelector:Build( { "idGet" => 180, "idText" => 181, "idLink" => 182, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getComentariosController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "comentario_uuid" ] ) )
+   ::oController:getComentariosController():getSelector():Build( { "idGet" => 180, "idText" => 181, "idLink" => 182, "oDialog" => ::oFolder:aDialogs[1] } )
 
    REDEFINE CHECKBOX ::oCheckBoxMostrarComentario ;
       VAR         ::oController:oModel:hBuffer[ "mostrar_ventana_comentarios" ] ;
@@ -429,7 +409,7 @@ METHOD changeIncluirTPVTactil()
       ::oGetPosicion:Show()
       ::oCheckBoxMostrarComentario:Show()
       ::oCheckBoxArticuloNoAcumulable:Show()
-      ::oController:oComentariosController:oGetSelector:Show()
+      ::oController:getComentariosController():getSelector():Show()
    else
       ::oGetColorRGB:Hide()
       ::oGetImagen:Hide()
@@ -437,7 +417,7 @@ METHOD changeIncluirTPVTactil()
       ::oGetPosicion:Hide()
       ::oCheckBoxMostrarComentario:Hide()
       ::oCheckBoxArticuloNoAcumulable:Hide()
-      ::oController:oComentariosController:oGetSelector:Hide()
+      ::oController:getComentariosController():geetSelector():Hide()
    end if 
 
 RETURN ( self )
@@ -568,7 +548,7 @@ METHOD startActivate()
 
    ::addLinksToExplorerBar()
 
-   ::oController:oComentariosController:oGetSelector:Start()
+   ::oController:getComentariosController():getSelector():Start()
 
    ::loadTreeRelaciones()
 

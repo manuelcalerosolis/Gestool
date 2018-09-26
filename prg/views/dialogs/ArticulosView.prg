@@ -146,7 +146,7 @@ METHOD Activate() CLASS ArticulosView
 
    // Marcadores---------------------------------------------------------------
 
-   ::oController:oTagsController:oDialogView:ExternalRedefine( { "idGet" => 180, "idButton" => 181, "idTags" => 183 }, ::oFolder:aDialogs[ 1 ] )
+   ::oController:getTagsController():getDialogView():ExternalRedefine( { "idGet" => 180, "idButton" => 181, "idTags" => 183 }, ::oFolder:aDialogs[ 1 ] )
 
    // Obsoleto-----------------------------------------------------------------
 
@@ -254,7 +254,7 @@ METHOD startActivate() CLASS ArticulosView
    
    ::oController:oArticulosTemporadasController:oGetSelector:Start()
 
-   ::oController:oTagsController:oDialogView:Start()
+   ::oController:getTagsController():getDialogView():Start()
 
    ::oController:oArticulosFamiliasController:oGetSelector:Start()
 
@@ -289,17 +289,17 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
                      ::oController:oArticulosUnidadesMedicionController:getImage( "16" ) )
  
    oPanel:AddLink(   "Imagenes...",;
-                     {||   ::oController:oImagenesController:activateDialogView() },;
-                     ::oController:oImagenesController:getImage( "16" ) )
+                     {||   ::oController:getImagenesController():activateDialogView() },;
+                     ::oController:getImagenesController():getImage( "16" ) )
 
    oPanel:AddLink(   "Traducciones...",;
                      {||   ::oController:oTraduccionesController:activateDialogView() },;
                      ::oController:oTraduccionesController:getImage( "16" ) )
 
    oPanel:AddLink(   "Unidad por operación...",;
-                     {||   ::oController:oUnidadesMedicionOperacionesController:activateDialogView(),;
+                     {||   ::oController:getUnidadesMedicionOperacionesController():activateDialogView(),;
                            ::oController:oUnidadesMedicionGruposController:oGetSelector:evalWhen() },;
-                     ::oController:ounidadesmedicionoperacionesController:getImage( "16" ) )
+                     ::oController:getunidadesmedicionoperacionesController():getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
 

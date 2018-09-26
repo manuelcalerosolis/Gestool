@@ -21,17 +21,11 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oCamposExtraValoresController
 
-   DATA oTagsController
-
    DATA oArticulosUnidadesMedicionController
 
    DATA oUnidadesMedicionGruposController
 
-   DATA oUnidadesMedicionOperacionesController
-
    DATA oTraduccionesController
-
-   DATA oImagenesController
 
    DATA oArticulosTemporadasController
 
@@ -75,6 +69,16 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD validColumnUnidadesMedicionGruposBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oUnidadesMedicionGruposController:oModel, "unidades_medicion_grupos_codigo" ) )
 
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosValidator():New( self  ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := ArticulosRepository():New( self ), ), ::oRepository )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -97,21 +101,7 @@ METHOD New( oSenderController ) CLASS ArticulosController
 
    ::oModel                                  := SQLArticulosModel():New( self )
 
-   ::oBrowseView                             := ArticulosBrowseView():New( self )
-
-   ::oDialogView                             := ArticulosView():New( self )
-
-   ::oValidator                              := ArticulosValidator():New( self, ::oDialogView )
-
-   ::oRepository                             := ArticulosRepository():New( self )
-
-   ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, ::cName )
-
-   ::oUnidadesMedicionOperacionesController  := UnidadesMedicionOperacionesController():New( self )
-
-   ::oTagsController                         := TagsController():New( self )
-
-   ::oImagenesController                     := ImagenesController():New( self )
+   /*::oCamposExtraValoresController           := CamposExtraValoresController():New( self, ::cName )*/
 
    ::oArticulosFamiliasController            := ArticulosFamiliasController():New( self )
    ::oArticulosFamiliasController:setView( ::oDialogView )
@@ -159,107 +149,74 @@ METHOD End() CLASS ArticulosController
 
    if !empty( ::oModel )
       ::oModel:End() 
-      ::oModel                                     := nil
    end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
-      ::oBrowseView                                := nil
    end if 
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
-      ::oDialogView                                := nil
    end if 
 
    if !empty( ::oValidator )
       ::oValidator:End()
-      ::oValidator                                 := nil
    end if 
 
    if !empty( ::oRepository )
       ::oRepository:End()
-      ::oRepository                                := nil
    end if 
 
    if !empty( ::oCamposExtraValoresController )
       ::oCamposExtraValoresController:End()
-      ::oCamposExtraValoresController              := nil
-   end if 
-
-   if !empty( ::oUnidadesMedicionOperacionesController )
-      ::oUnidadesMedicionOperacionesController:End()
-      ::oUnidadesMedicionOperacionesController     := nil
-   end if 
-
-   if !empty( ::oTagsController )
-      ::oTagsController:End()
-      ::oTagsController                            := nil
-   end if 
-
-   if !empty( ::oImagenesController )
-      ::oImagenesController:End()
-      ::oImagenesController                        := nil
    end if 
    
    if !empty( ::oArticulosFamiliasController )
       ::oArticulosFamiliasController:End()
-      ::oArticulosFamiliasController               := nil
    end if 
    
    if !empty( ::oTraduccionesController )
       ::oTraduccionesController:End()
-      ::oTraduccionesController                    := nil
    end if 
 
    if !empty( ::oArticulosTipoController )
       ::oArticulosTipoController:End()
-      ::oArticulosTipoController                   := nil
    end if 
 
    if !empty( ::oArticulosCategoriasController )
       ::oArticulosCategoriasController:End()
-      ::oArticulosCategoriasController             := nil
    end if 
 
    if !empty( ::oArticulosFabricantesController )
       ::oArticulosFabricantesController:End()
-      ::oArticulosFabricantesController            := nil
    end if 
 
    if !empty( ::oTipoIvaController )
       ::oTipoIvaController:End()
-      ::oTipoIvaController                         := nil
    end if 
 
    if !empty( ::oImpuestosEspecialesController )
       ::oImpuestosEspecialesController:End()
-      ::oImpuestosEspecialesController             := nil
    end if 
 
    if !empty( ::oArticulosPreciosController )
       ::oArticulosPreciosController:End()
-      ::oArticulosPreciosController                := nil
    end if 
 
    if !empty( ::oArticulosUnidadesMedicionController )
       ::oArticulosUnidadesMedicionController:End()
-      ::oArticulosUnidadesMedicionController       := nil
    end if 
 
    if !empty( ::oArticulosTemporadasController )
       ::oArticulosTemporadasController:End()
-      ::oArticulosTemporadasController             := nil
    end if 
 
    if !empty( ::oUnidadesMedicionGruposController )
       ::oUnidadesMedicionGruposController:End()
-      ::oUnidadesMedicionGruposController          := nil
    end if 
 
    if !empty( ::oCombinacionesController )
       ::oCombinacionesController:End()
-       ::oCombinacionesController                  := nil
    end if 
   
    ::Super:End()

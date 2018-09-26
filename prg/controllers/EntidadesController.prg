@@ -89,8 +89,6 @@ METHOD End() CLASS EntidadesController
 
    ::Super:End()
 
-   self                                   := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

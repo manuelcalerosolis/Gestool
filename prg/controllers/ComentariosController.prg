@@ -5,13 +5,21 @@
 
 CLASS ComentariosController FROM SQLNavigatorController
 
-   DATA oComentariosLineasController
-
    DATA oCamposExtraValoresController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ComentariosBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ComentariosView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ComentariosValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := ComentariosRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -33,18 +41,6 @@ METHOD New( oSenderController ) CLASS ComentariosController
 
    ::oModel                         := SQLComentariosModel():New( self )
 
-   ::oBrowseView                    := ComentariosBrowseView():New( self )
-
-   ::oDialogView                    := ComentariosView():New( self )
-
-   ::oValidator                     := ComentariosValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := ComentariosRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )   
-
-   ::oComentariosLineasController   := ComentariosLineasController():New( self )
-
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
 RETURN ( Self )
@@ -55,19 +51,23 @@ METHOD End() CLASS ComentariosController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if   
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
-   ::oGetSelector:End()
-
-   ::oComentariosLineasController:End()
-
-   ::oCamposExtraValoresController:End()
+   //::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -146,7 +146,7 @@ END CLASS
 
 METHOD Activating()
 
-RETURN ( ::oController:oComentariosLineasController:BuildRowSet() )
+RETURN ( ::oController:getComentariosLineasController():BuildRowSet() )
 
 //---------------------------------------------------------------------------//
 
@@ -199,23 +199,23 @@ METHOD Activate() CLASS ComentariosView
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-  oBtnAppend:bAction   := {|| ::oController:oComentariosLineasController:Append() }
+  oBtnAppend:bAction   := {|| ::oController:getComentariosLineasController():Append() }
 
    REDEFINE BUTTON oBtnEdit ;
       ID          130 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnEdit:bAction   := {|| ::oController:oComentariosLineasController:Edit() }
+   oBtnEdit:bAction   := {|| ::oController:getComentariosLineasController():Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
       ID          150 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnDelete:bAction  := {|| ::oController:oComentariosLineasController:Delete() }
+   oBtnDelete:bAction  := {|| ::oController:getComentariosLineasController():Delete() }
 
-   ::oController:oComentariosLineasController:Activate( 160, ::oDialog )
+   ::oController:getComentariosLineasController():Activate( 160, ::oDialog )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -230,9 +230,9 @@ METHOD Activate() CLASS ComentariosView
       ACTION     ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oComentariosLineasController:Append() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oComentariosLineasController:Edit() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oComentariosLineasController:Delete() } )
+      ::oDialog:AddFastKey( VK_F2, {|| ::oController:getComentariosLineasController():Append() } )
+      ::oDialog:AddFastKey( VK_F3, {|| ::oController:getComentariosLineasController():Edit() } )
+      ::oDialog:AddFastKey( VK_F4, {|| ::oController:getComentariosLineasController():Delete() } )
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
