@@ -5,13 +5,19 @@
 
 CLASS CuentasRemesaController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   DATA oBancosController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CuentasRemesaBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := CuentasRemesaView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::Repository ), ::oRepository := CuentasRemesaRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := CuentasRemesaValidator():New( self  ), ), ::oValidator ) 
 
 END CLASS
 
@@ -33,30 +39,16 @@ METHOD New( oSenderController ) CLASS CuentasRemesaController
 
    ::oModel                         := SQLCuentasRemesaModel():New( self )
 
-   ::oBrowseView                    := CuentasRemesaBrowseView():New( self )
-
-   ::oDialogView                    := CuentasRemesaView():New( self )
-
-   ::oRepository                    := CuentasRemesaRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oValidator                     := CuentasRemesaValidator():New( self, ::oDialogView )
-
-   ::oBancosController              := CuentasBancariasController():new( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oBancosController:loadBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oBancosController:insertBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getCuentasBancariasController():loadBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::getCuentasBancariasController():insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oBancosController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oBancosController:updateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getCuentasBancariasController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::getCuentasBancariasController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oBancosController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oBancosController:loadedDuplicateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getCuentasBancariasController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getCuentasBancariasController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oBancosController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::getCuentasBancariasController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
 RETURN ( self )
 
@@ -66,37 +58,29 @@ METHOD End() CLASS CuentasRemesaController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
-
-   ::oBancosController:End()
-
-   ::oCamposExtraValoresController:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
-
-   ::oModel                         := nil
-
-   ::oBrowseView                    := nil
 
    ::oDialogView                    := nil
 
    ::oValidator                     := nil
 
    ::oRepository                    := nil
-
-   ::oGetSelector                   := nil
-
-   ::oBancosController              := nil
-
-   ::oCamposExtraValoresController  := nil
 
    self                             := nil
 
@@ -186,7 +170,7 @@ END CLASS
 
 METHOD startActivate()
 
-   ::oController:oBancosController:oGetSelector:Start()
+   ::oController:getCuentasBancariasController():getSelector():Start()
 
 RETURN ( nil )
 
@@ -232,10 +216,11 @@ METHOD Activate() CLASS CuentasRemesaView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    //Banco---------------------------------------------------------------------
-   ::oController:oBancosController:oDialogView:ExternalRedefine( ::oDialog )
+
+   ::oController:getCuentasBancariasController():getDialogView():ExternalRedefine( ::oDialog )
 
    //-----------------------------------------------------------------------------
 

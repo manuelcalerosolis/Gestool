@@ -6,9 +6,11 @@ CLASS CamposExtraEntidadesGestoolController FROM CamposExtraEntidadesController
    CLASSDATA aEntidades          INIT  {  "empresas" =>  { "nombre" => "Empresas", "icono" => "gc_factory_16"  },;
                                           "usuarios" =>  { "nombre" => "Usuarios", "icono" => "gc_businesspeople_16"  } }
 
-   METHOD getCamposExtraEntidadesModel()     INLINE ( ::oModel := SQLCamposExtraEntidadesGestoolModel():New( self ) )
-
    METHOD getConfiguracionVistasController() INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getModel()     INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraEntidadesGestoolModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -67,11 +69,9 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
                                           "lineas_propiedades" =>                   { "nombre" => "Líneas de propiedades",  "icono" => "gc_coathanger_16"                          } ,;
                                           "listin" =>                               { "nombre" => "Listín telefónico", "icono" => "gc_book_telephone_16"                           } }   
 
-   METHOD New( oController )
+   METHOD New( oController ) CONSTRUCTOR
 
    METHOD End()
-
-   METHOD getCamposExtraEntidadesModel()     INLINE ( ::oModel := SQLCamposExtraEntidadesModel():New( self ) )
 
    METHOD getNombresEntidades()
 
@@ -84,6 +84,16 @@ CLASS CamposExtraEntidadesController FROM SQLBrowseController
    METHOD assertAppend()
 
    METHOD gettingSelectSentence()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraEntidadesModel():New( self ), ), ::oModel )
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CamposExtraEntidadesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := CamposExtraEntidadesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := CamposExtraEntidadesValidator():New( self  ), ), ::oValidator )
 
 END CLASS
 
@@ -101,19 +111,15 @@ METHOD New( oController ) CLASS CamposExtraEntidadesController
                                     "32" => "gc_user_message_32",;
                                     "48" => "gc_user_message_48" }
 
-   ::getCamposExtraEntidadesModel()
-
-   ::oBrowseView              := CamposExtraEntidadesBrowseView():New( self )
-
-   ::oDialogView              := CamposExtraEntidadesView():New( self )
-
-   ::oValidator               := CamposExtraEntidadesValidator():New( self, ::oDialogView )
+   ::getModel()
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
    
    ::setEvent( 'appending',            {|| ::assertAppend() } )
    ::setEvent( 'appended',             {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',     {|| ::oBrowseView:Refresh() } )
+
+   msgalert( ::oRowset:ClassName(), "creacion de rowset" )   
 
 RETURN ( Self )
 
@@ -123,15 +129,21 @@ METHOD End() CLASS CamposExtraEntidadesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
    ::Super:End()
 
-   self                          := nil
+   msgalert( ::oRowset:ClassName(), "destruccion de CamposExtraEntidadesController" )   
 
 RETURN ( nil )
 

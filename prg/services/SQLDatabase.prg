@@ -415,7 +415,7 @@ METHOD getValue( cSentence )
 
       oStatement:setAttribute( STMT_ATTR_TINY_AS_BOOL, .t. )
    
-      oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY )         
+      oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY )   
       
       if oStatement:fetchDirect()
          uValue      := oStatement:getValue( 1 ) 

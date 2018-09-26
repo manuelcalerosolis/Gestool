@@ -31,6 +31,30 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFormasPagosController
 
+   DATA oCuentasRemesaController
+
+   DATA oRutasController
+
+   DATA oClientesGruposController
+
+   DATA oContactosController
+
+   DATA oIncidenciasController
+
+   DATA oDescuentosController
+
+   DATA oClientesEntidadesController
+
+   DATA oEntidadesController
+
+   DATA oClientesTarifasController
+
+   /*DATA oCamposExtraController
+
+   DATA oCamposExtraEntidadesController
+
+   DATA oCamposExtraValoresController*/
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -65,6 +89,42 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getFormasPagosController();
                                     INLINE ( if( empty( ::oFormasPagosController ), ::oFormasPagosController := FormasPagosController():New( self ), ), ::oFormasPagosController )
+
+   METHOD getCuentasRemesaController();
+                                    INLINE ( if( empty( ::oCuentasRemesaController ), ::oCuentasRemesaController := CuentasRemesaController():New( self ), ), ::oCuentasRemesaController )
+
+   METHOD getRutasController();
+                                    INLINE ( if( empty( ::oRutasController ), ::oRutasController := RutasController():New( self ), ), ::oRutasController )
+
+   METHOD getClientesGruposController();
+                                    INLINE ( if( empty( ::oClientesGruposController ), ::oClientesGruposController := ClientesGruposController():New( self ), ), ::oClientesGruposController )
+
+   METHOD getContactosController();
+                                    INLINE ( if( empty( ::oContactosController ), ::oContactosController := ContactosController():New( self ), ), ::oContactosController )
+
+   METHOD getIncidenciasController();
+                                    INLINE ( if( empty( ::oIncidenciasController ), ::oIncidenciasController := IncidenciasController():New( self ), ), ::oIncidenciasController )
+
+   METHOD getDescuentosController();
+                                    INLINE ( if( empty( ::oDescuentosController ), ::oDescuentosController := DescuentosController():New( self ), ), ::oDescuentosController )
+
+   METHOD getClientesEntidadesController();
+                                    INLINE ( if( empty( ::oClientesEntidadesController ), ::oClientesEntidadesController := ClientesEntidadesController():New( self ), ), ::oClientesEntidadesController )
+
+   METHOD getEntidadesController();
+                                    INLINE ( if( empty( ::oEntidadesController ), ::oEntidadesController := EntidadesController():New( self ), ), ::oEntidadesController )
+
+   METHOD getClientesTarifasController();
+                                    INLINE ( if( empty( ::oClientesTarifasController ), ::oClientesTarifasController := ClientesTarifasController():New( self ), ), ::oClientesTarifasController )
+
+   /*METHOD getCamposExtraController();
+                                    INLINE ( if( empty( ::oCamposExtraController ), ::oCamposExtraController := CamposExtraController():New( self ), ), ::oCamposExtraController )
+
+   METHOD getCamposExtraEntidadesController();
+                                    INLINE ( if( empty( ::oCamposExtraEntidadesController ), ::oCamposExtraEntidadesController := CamposExtraEntidadesController():New( self ), ), ::oCamposExtraEntidadesController )
+
+   METHOD getCamposExtraValoresController();
+                                    INLINE ( if( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresController():New( self ), ), ::oCamposExtraValoresController )*/
 
 
    METHOD End()
@@ -137,7 +197,55 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oFormasPagosController )   
       ::oFormasPagosController:End()
+   end if
+
+   if !empty( ::oCuentasRemesaController )   
+      ::oCuentasRemesaController:End()
    end if 
+
+   if !empty( ::oRutasController )   
+      ::oRutasController:End()
+   end if  
+
+  if !empty( ::oClientesGruposController )   
+      ::oClientesGruposController:End()
+   end if 
+
+   if !empty( ::oContactosController )   
+      ::oContactosController:End()
+   end if 
+
+   if !empty( ::oIncidenciasController )   
+      ::oIncidenciasController:End()
+   end if 
+
+   if !empty( ::oDescuentosController )   
+      ::oDescuentosController:End()
+   end if 
+
+   if !empty( ::oClientesEntidadesController )   
+      ::oClientesEntidadesController:End()
+   end if 
+
+   if !empty( ::oEntidadesController )   
+      ::oEntidadesController:End()
+   end if 
+
+   if !empty( ::oClientesTarifasController )   
+      ::oClientesTarifasController:End()
+   end if 
+
+   /*if !empty( ::oCamposExtraController )   
+      ::oCamposExtraController:End()
+   end if 
+
+   if !empty( ::oCamposExtraEntidadesController )   
+      ::oCamposExtraEntidadesController:End()
+   end if 
+
+   if !empty( ::oCamposExtraValoresController )   
+      ::oCamposExtraValoresController:End()
+   end if */
 
    ::Super:End()
 

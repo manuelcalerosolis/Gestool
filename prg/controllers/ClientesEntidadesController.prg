@@ -5,9 +5,7 @@
 
 CLASS ClientesEntidadesController FROM SQLNavigatorController
 
-   DATA oEntidadesController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()
 
    METHOD gettingSelectSentence()
@@ -24,6 +22,14 @@ CLASS ClientesEntidadesController FROM SQLNavigatorController
    METHOD loadedDuplicateBuffer( uuidEntidad )
 
    METHOD deleteBuffer( aUuidEntidades )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ClientesEntidadesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ClientesEntidadesView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()                 INLINE( if( empty( ::Repository ), ::oRepository := ClientesEntidadesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -45,14 +51,6 @@ METHOD New( oSenderController ) CLASS ClientesEntidadesController
 
    ::oModel                         := SQLClientesEntidadesModel():New( self )
 
-   ::oBrowseView                    := ClientesEntidadesBrowseView():New( self )
-
-   ::oDialogView                    := ClientesEntidadesView():New( self )
-
-   ::oRepository                    := ClientesEntidadesRepository():New( self )
-
-   ::oEntidadesController           := EntidadesController():New( self )
-
    ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
    ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
@@ -67,13 +65,17 @@ METHOD End() CLASS ClientesEntidadesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oRepository:End()
-
-   ::oEntidadesController:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
    ::Super:End()
 
@@ -277,8 +279,8 @@ METHOD Activate() CLASS ClientesEntidadesView
       FONT        oFontBold() ;
       OF          ::oDialog 
 
-   ::oController:oEntidadesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "entidad_uuid" ] ) )
-   ::oController:oEntidadesController:oGetSelector:Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
+   ::oController:getEntidadesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "entidad_uuid" ] ) )
+   ::oController:getEntidadesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
 
    REDEFINE COMBOBOX ::oRol ;
       VAR         ::oController:oModel:hBuffer[ "rol" ] ;
@@ -315,7 +317,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate()
 
-   ::oController:oEntidadesController:oGetSelector:Start()
+   ::oController:getEntidadesController():oGetSelector:Start()
 
 RETURN ( nil )
 

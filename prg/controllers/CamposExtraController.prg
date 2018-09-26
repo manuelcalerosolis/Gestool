@@ -7,19 +7,30 @@ CLASS CamposExtraGestoolController FROM SQLNavigatorGestoolController
 
    DATA oCamposExtraEntidadesController
 
-   METHOD New( oSenderController )
+   METHOD New( oSenderController ) CONSTRUCTOR
    
    METHOD End()
 
    METHOD deleteEntitiesWhereEmpty()
 
-   METHOD getCamposExtraModel()                 INLINE ( ::oModel := SQLCamposExtraGestoolModel():New( self ) )
-
    METHOD getLevel()                            INLINE ( nil )
 
-   METHOD getCamposExtraEntidadesController()   INLINE ( ::oCamposExtraEntidadesController := CamposExtraEntidadesGestoolController():New( self ) )
+   
 
    METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CamposExtraBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := CamposExtraView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := CamposExtraValidator():New( self  ), ), ::oValidator )
+
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraGestoolModel():New( self ), ), ::oModel )
+
+   METHOD getCamposExtraEntidadesController();
+                                          INLINE ( if( empty( ::oCamposExtraEntidadesController ), ::oCamposExtraEntidadesController := CamposExtraEntidadesGestoolController():New( self ), ), ::oCamposExtraEntidadesController )
 
 END CLASS
 
@@ -42,13 +53,7 @@ METHOD New( oSenderController ) CLASS CamposExtraGestoolController
 
    ::getLevel()
 
-   ::getCamposExtraModel()
-
-   ::oBrowseView                       := CamposExtraBrowseView():New( self )
-
-   ::oDialogView                       := CamposExtraView():New( self )
-
-   ::oValidator                        := CamposExtraValidator():New( self, ::oDialogView )
+   ::getModel()
 
    ::getCamposExtraEntidadesController()
 
@@ -64,13 +69,21 @@ METHOD End() CLASS CamposExtraGestoolController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oCamposExtraEntidadesController:End() 
+   if !empty( ::oCamposExtraEntidadesController )
+      ::oCamposExtraEntidadesController:End() 
+   end if 
 
    ::Super:End()
 
@@ -80,7 +93,7 @@ RETURN ( Self )
 
 METHOD deleteEntitiesWhereEmpty() CLASS CamposExtraGestoolController
    
-   ::oCamposExtraEntidadesController:oModel:deleteBlankEntityWhereUuid( ::getUuid() )
+   ::getCamposExtraEntidadesController():oModel:deleteBlankEntityWhereUuid( ::getUuid() )
 
 RETURN ( Self )
 
@@ -94,17 +107,27 @@ CLASS CamposExtraController FROM SQLNavigatorController
 
    DATA oCamposExtraEntidadesController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD deleteEntitiesWhereEmpty()
 
-   METHOD getCamposExtraModel()                 INLINE ( ::oModel := SQLCamposExtraModel():New( self ) )
-
    METHOD getLevel()                            INLINE ( ::nLevel := Auth():Level( ::getName() ) )
 
-   METHOD getCamposExtraEntidadesController()   INLINE ( ::oCamposExtraEntidadesController := CamposExtraEntidadesController():New( self ) )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CamposExtraBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := CamposExtraView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := CamposExtraValidator():New( self  ), ), ::oValidator )
+
+   METHOD getModel()                      INLINE( if( empty( ::oModel ), ::oModel := SQLCamposExtraModel():New( self ), ), ::oModel ) 
+
+   METHOD getCamposExtraEntidadesController();  
+                                          INLINE( if( empty( ::oCamposExtraEntidadesController ), ::oCamposExtraEntidadesController := CamposExtraEntidadesController():New( self ), ), ::oCamposExtraEntidadesController )
 
 END CLASS
 
@@ -126,13 +149,7 @@ METHOD New( oSenderController ) CLASS CamposExtraController
 
    ::getLevel()
 
-   ::getCamposExtraModel()
-
-   ::oBrowseView                       := CamposExtraBrowseView():New( self )
-
-   ::oDialogView                       := CamposExtraView():New( self )
-
-   ::oValidator                        := CamposExtraValidator():New( self, ::oDialogView )
+   ::getModel()
 
    ::getCamposExtraEntidadesController()
 
@@ -148,13 +165,21 @@ METHOD End() CLASS CamposExtraController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oCamposExtraEntidadesController:End()
+   if !empty( ::oCamposExtraEntidadesController )
+      ::oCamposExtraEntidadesController:End()
+   end if 
 
    ::Super:End()
 
@@ -164,7 +189,7 @@ RETURN ( Self )
 
 METHOD deleteEntitiesWhereEmpty()
    
-   ::oCamposExtraEntidadesController:oModel:deleteBlankEntityWhereUuid( ::getUuid() )
+   ::getCamposExtraEntidadesController():oModel:deleteBlankEntityWhereUuid( ::getUuid() )
 
 RETURN ( Self )
 
@@ -462,16 +487,16 @@ METHOD Activate() CLASS CamposExtraView
       OF          ::oFolder:aDialogs[ 2 ] ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnAppend:bAction   := {|| ::oController:oCamposExtraEntidadesController:Append() }
+   oBtnAppend:bAction   := {|| ::oController:getCamposExtraEntidadesController():Append() }
 
    REDEFINE BUTTON oBtnDelete ;
       ID          110 ;
       OF          ::oFolder:aDialogs[ 2 ] ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnDelete:bAction   := {|| ::oController:oCamposExtraEntidadesController:Delete( ::oController:oCamposExtraEntidadesController:oBrowseView:oBrowse:aSelected ) }
+   oBtnDelete:bAction   := {|| ::oController:getCamposExtraEntidadesController():Delete( ::oController:getCamposExtraEntidadesController():getBrowseView():oBrowse:aSelected ) }
 
-   ::oController:oCamposExtraEntidadesController:Activate( 120, ::oFolder:aDialogs[ 2 ] )
+   ::oController:getCamposExtraEntidadesController():Activate( 120, ::oFolder:aDialogs[ 2 ] )
 
    // Botones ------------------------------------------------------------------
 

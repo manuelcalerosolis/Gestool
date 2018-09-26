@@ -5,10 +5,12 @@
 
 CLASS CamposExtraValoresGestoolController FROM CamposExtraValoresController
 
-   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraValoresGestoolModel():New( self ), ), ::oModel )
-
    METHOD getConfiguracionVistasController() ;
                                        INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraValoresGestoolModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -22,7 +24,7 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
 
    DATA oCamposExtraValoresController
 
-   METHOD New( oSenderController, cEntidad )
+   METHOD New( oSenderController, cEntidad ) CONSTRUCTOR
 
    METHOD End()
 
@@ -39,6 +41,8 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
    METHOD insertIgnoreCamposExtraValores( hValor )
 
    METHOD gettingSelectSentence()
+
+   //Construcciones tardias----------------------------------------------------
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraValoresModel():New( self ), ), ::oModel )
 

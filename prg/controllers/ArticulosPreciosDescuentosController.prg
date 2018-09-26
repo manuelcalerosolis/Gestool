@@ -5,7 +5,7 @@
 
 CLASS ArticulosPreciosDescuentosController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD gettingSelectSentence()
 

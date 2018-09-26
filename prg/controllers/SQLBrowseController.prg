@@ -117,13 +117,19 @@ RETURN ( nil )
 
 METHOD Activate( nId, oDialog )
 
+   msgalert( "Activate de SQLBrowseController" )
+
    if empty( ::getBrowseView() )
       RETURN ( Self )
    end if 
 
    ::fireEvent( 'activating' )     
 
+   msgalert( "getBrowseView():ActivateDialog( oDialog, nId )" )
+   
    ::getBrowseView():ActivateDialog( oDialog, nId )
+
+   msgalert( "despues > getBrowseView():ActivateDialog( oDialog, nId )" )
 
    ::fireEvent( 'activated' )     
 

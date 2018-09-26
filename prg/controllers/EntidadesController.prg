@@ -5,15 +5,19 @@
 
 CLASS EntidadesController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   DATA oDireccionesController
-
-   DATA oContactosController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := EntidadesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := EntidadesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := EntidadesValidator():New( self  ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := EntidadesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -34,48 +38,30 @@ METHOD New( oSenderController ) CLASS EntidadesController
    ::nLevel                               := Auth():Level( ::cName )
 
    ::oModel                               := SQLEntidadesModel():New( self )
-
-   ::oBrowseView                          := EntidadesBrowseView():New( self )
-
-   ::oDialogView                          := EntidadesView():New( self )
-
-   ::oValidator                           := EntidadesValidator():New( self, ::oDialogView )
-
-   ::oRepository                          := TransportistasRepository():New( self )
-
-   ::oGetSelector                         := GetSelector():New( self )
-
-   ::oDireccionesController               := DireccionesController():New( self )
-
-   ::oDireccionesController:oValidator    := DireccionesValidator():New( ::oDireccionesController, ::oDialogView )
-
-   ::oCamposExtraValoresController        := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oContactosController                 := ContactosController():New( self )
-
+   
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:updateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oContactosController:loadBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oContactosController:insertBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getContactosController():loadBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::getContactosController():insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oContactosController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oContactosController:updateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getContactosController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::getContactosController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oContactosController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oContactosController:loadedDuplicateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getContactosController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getContactosController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oContactosController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::getContactosController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -85,21 +71,21 @@ METHOD End() CLASS EntidadesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
-
-   ::oDireccionesController:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::oContactosController:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -275,11 +261,11 @@ METHOD Activate() CLASS EntidadesView
 
    // Direcciones--------------------------------------------------------------
 
-   ::oController:oDireccionesController:oDialogView:ExternalCoreRedefine( ::oDialog )
+   ::oController:getDireccionesController():getDialogView():ExternalCoreRedefine( ::oDialog )
 
    // Contacto-----------------------------------------------------------------
 
-   ::oController:oContactosController:oDialogView:ExternalRedefine( ::oDialog )
+   ::oController:getContactosController():getDialogView():ExternalRedefine( ::oDialog )
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "web" ] ;
       ID          150 ;
@@ -309,7 +295,7 @@ METHOD Activate() CLASS EntidadesView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -339,9 +325,9 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartDialog()
 
-   ::oController:oDireccionesController:oDialogView:StartDialog() 
+   ::oController:getDireccionesController():oDialogView:StartDialog() 
    
-   ::oController:oContactosController:oDialogView( ::oDialog ) 
+   ::oController:getContactosController():oDialogView( ::oDialog ) 
 
 RETURN ( nil )
 
