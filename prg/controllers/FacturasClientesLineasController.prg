@@ -9,21 +9,11 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    DATA oSeriesControler
 
-   DATA oRelacionesEntidades
-
    DATA oSearchView
 
    DATA aSelectDelete                  INIT {}
 
-   DATA oUnidadesMedicionController
-
-   DATA oArticulosPreciosDescuentosController
-
-   DATA oCombinacionesController
-
-   DATA oHistoryManager
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -115,10 +105,20 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
                                                       hget( ::oModel:hBuffer, "uuid" ),;
                                                       nil ) )
 
-   METHOD refreshBrowse()              INLINE ( iif(  !empty( ::oBrowseView ), ::oBrowseView:Refresh(), ) )
+   METHOD refreshBrowse()              INLINE ( iif(  !empty( ::getBrowseView() ), ::getBrowseView():Refresh(), ) )
 
 
    METHOD loadUnidadesMedicion()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesLineasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := FacturasClientesLineasView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := FacturasClientesLineasValidator():New( self ), ), ::oValidator )
+
+   METHOD getHistoryManager()             INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New( self ), ), ::oHistoryManager )
 
 END CLASS
 
@@ -136,37 +136,21 @@ METHOD New( oController )
 
    ::oModel                                  := SQLFacturasClientesLineasModel():New( self )
 
-   ::oBrowseView                             := FacturasClientesLineasBrowseView():New( self )
-
-   ::oDialogView                             := FacturasClientesLineasView():New( self )
-
-   ::oValidator                              := FacturasClientesLineasValidator():New( self )
-
    ::oSearchView                             := SQLSearchView():New( self )
 
    ::oSeriesControler                        := NumerosSeriesController():New( self )
-
-   ::oRelacionesEntidades                    := RelacionesEntidadesController():New( self )
-
-   ::oUnidadesMedicionController             := UnidadesMedicionGruposLineasController():New( self )
-
-   ::oArticulosPreciosDescuentosController   := ArticulosPreciosDescuentosController():New( self )
-
-   ::oCombinacionesController                := CombinacionesController():New( self )
-
-   ::oHistoryManager                         := HistoryManager():New()
 
    ::setEvent( 'activating',                 {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
 
    ::setEvent( 'closedDialog',               {|| ::closedDialog() } )
 
-   ::setEvent( 'appended',                   {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                     {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',           {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'appended',                   {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'edited',                     {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'deletedSelection',           {|| ::getBrowseView():Refresh() } )
 
    ::setEvent( 'deletingLines',              {|| ::oSeriesControler:deletedSelected( ::aSelectDelete ) } )
 
-   ::setEvent( 'exitAppended',               {|| ::oBrowseView:selectCol( ::oBrowseView:oColumnCodigo:nPos ) } )
+   ::setEvent( 'exitAppended',               {|| ::getBrowseView():selectCol( ::getBrowseView():oColumnCodigo:nPos ) } )
 
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| hSet( ::oModel:hBuffer, "unidad_medicion_codigo", UnidadesMedicionGruposLineasRepository():getCodigoDefault() ) } )
 
@@ -178,23 +162,25 @@ METHOD End()
 
    ::oModel:End()
 
-   ::oBrowseView:End()
-
-   ::oDialogView:End()
-
-   ::oValidator:End()
-
    ::oSearchView:End()
 
    ::oSeriesControler:End()
 
-   ::oRelacionesEntidades:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oUnidadesMedicionController:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oCombinacionesController:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oHistoryManager:End()
+   if !empty( ::oHistoryManager )
+      ::oHistoryManager:End()
+   end if 
 
    ::Super:End()
 
@@ -252,7 +238,7 @@ METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
    end if
 
    if hb_ishash( uValue )
-      if ::oHistoryManager:isEqual( "articulo_codigo", hget( uValue, "codigo" ) )
+      if ::getHistoryManager():isEqual( "articulo_codigo", hget( uValue, "codigo" ) )
          RETURN ( .f. )
       end if          
       RETURN ( ::stampArticulo( uValue ) )
@@ -262,7 +248,7 @@ METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
       RETURN ( .f. )
    end if 
 
-   if ::oHistoryManager:isEqual( "articulo_codigo", uValue )
+   if ::getHistoryManager():isEqual( "articulo_codigo", uValue )
       RETURN ( .f. )
    end if          
 
@@ -284,7 +270,7 @@ METHOD postValidateAlmacenCodigo( oCol, uValue, nKey )
    end if
 
    if hb_ishash( uValue )
-      if ::oHistoryManager:isEqual( "almacen_codigo", hget( uValue, "codigo" ) )
+      if ::getHistoryManager():isEqual( "almacen_codigo", hget( uValue, "codigo" ) )
          RETURN ( .f. )
       end if          
       RETURN ( ::stampAlmacen( uValue ) )
@@ -294,7 +280,7 @@ METHOD postValidateAlmacenCodigo( oCol, uValue, nKey )
       RETURN ( .f. )
    end if 
 
-   if ::oHistoryManager:isEqual( "almacen_codigo", uValue )
+   if ::getHistoryManager():isEqual( "almacen_codigo", uValue )
       RETURN ( .f. )
    end if          
 
@@ -316,7 +302,7 @@ METHOD postValidateAgenteCodigo( oCol, uValue, nKey )
    end if
 
    if hb_ishash( uValue )
-      if ::oHistoryManager:isEqual( "agente_codigo", hget( uValue, "codigo" ) )
+      if ::getHistoryManager():isEqual( "agente_codigo", hget( uValue, "codigo" ) )
          RETURN ( .f. )
       end if          
       RETURN ( ::stampAgente( uValue ) )
@@ -326,7 +312,7 @@ METHOD postValidateAgenteCodigo( oCol, uValue, nKey )
       RETURN ( .f. )
    end if 
 
-   if ::oHistoryManager:isEqual( "agente_codigo", uValue )
+   if ::getHistoryManager():isEqual( "agente_codigo", uValue )
       RETURN ( .f. )
    end if          
    
@@ -364,9 +350,9 @@ METHOD updateField( cField, uValue )
    
    ::getRowSet():Refresh()
    
-   ::oBrowseView:Refresh()
+   ::getBrowseView():Refresh()
    
-   ::oHistoryManager:Set( ::getRowSet():getValuesAsHash() )
+   ::getHistoryManager():Set( ::getRowSet():getValuesAsHash() )
 
 RETURN ( nil )
 
@@ -474,7 +460,7 @@ METHOD stampArticuloUnidades( oCol, uValue )
 
    ::stampArticuloDescuento()
 
-   ::oBrowseView:makeTotals( oCol )
+   ::getBrowseView():makeTotals( oCol )
 
    ::oSenderController:calculateTotals()
 
@@ -585,11 +571,11 @@ METHOD validateLote()
       RETURN ( .t. )
    end if  
 
-   if !( ::oDialogView:oGetLote:isOriginalChanged( cLote ) )
+   if !( ::getDialogView():oGetLote:isOriginalChanged( cLote ) )
       RETURN ( .t. )
    end if 
 
-   ::oDialogView:oGetLote:setOriginal( cLote )
+   ::getDialogView():oGetLote:setOriginal( cLote )
 
 RETURN ( .t. )
 
@@ -609,12 +595,12 @@ RETURN ( .t. )
 
 METHOD runDialogSeries()
 
-   if Empty( ::oDialogView:nTotalUnidadesArticulo() )
+   if Empty( ::getDialogView():nTotalUnidadesArticulo() )
       msgStop( "El número de unidades no puede ser 0 para editar números de serie" )
       RETURN ( .f. )
    end if
 
-   ::oSeriesControler:SetTotalUnidades( ::oDialogView:nTotalUnidadesArticulo() )
+   ::oSeriesControler:SetTotalUnidades( ::getDialogView():nTotalUnidadesArticulo() )
 
    ::oSeriesControler:Edit( hget( ::oModel:hBuffer, "id" ) )
 
@@ -664,7 +650,7 @@ RETURN ( ::oSenderController:oArticulosController:Edit( nId ) )
 
 METHOD loadUnidadesMedicion()
 
-   ::oBrowseView:oColumnUnidadMedicion:aEditListTxt := UnidadesMedicionGruposLineasRepository():getCodigos( ::getRowSet():fieldGet( 'articulo_codigo' ) )
+   ::getBrowseView():oColumnUnidadMedicion:aEditListTxt := UnidadesMedicionGruposLineasRepository():getCodigos( ::getRowSet():fieldGet( 'articulo_codigo' ) )
 
 RETURN ( .t. )
 

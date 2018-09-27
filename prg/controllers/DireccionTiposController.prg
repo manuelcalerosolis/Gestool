@@ -5,9 +5,19 @@
 
 CLASS DireccionTiposController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := DireccionTiposBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := DireccionTiposView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := DireccionTiposValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := DireccionTiposRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -29,16 +39,6 @@ METHOD New( oSenderController ) CLASS DireccionTiposController
 
    ::oModel                         := SQLDireccionTiposModel():New( self )
 
-   ::oBrowseView                    := DireccionTiposBrowseView():New( self )
-
-   ::oDialogView                    := DireccionTiposView():New( self )
-
-   ::oValidator                     := DireccionTiposValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := DireccionTiposRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -46,15 +46,21 @@ METHOD End() CLASS DireccionTiposController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 

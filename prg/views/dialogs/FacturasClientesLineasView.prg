@@ -413,7 +413,7 @@ METHOD EdtRecMenu()
                MESSAGE  "Establecer relaciones entre distintas entidades" ;
                RESOURCE "gc_graph_claw_16" ;
                WHEN     ( ::getController():isNotZoomMode() ) ;   
-               ACTION   ( ::oController:oRelacionesEntidades:Edit() )
+               ACTION   ( ::oController:getRelacionesEntidades():Edit() )
 
             SEPARATOR
 

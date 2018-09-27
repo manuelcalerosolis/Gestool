@@ -5,7 +5,7 @@
 
 CLASS FacturasClientesDescuentosController FROM SQLBrowseController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -14,6 +14,15 @@ CLASS FacturasClientesDescuentosController FROM SQLBrowseController
    METHOD validateNombre( uValue )
 
    METHOD validateDescuento( uValue )
+
+   //Construcciones tardias----------------------------------------------------
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesDescuentosBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := FacturasClientesDescuentosView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := FacturasClientesDescuentosValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesDescuentosRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -35,15 +44,7 @@ METHOD New( oSenderController ) CLASS FacturasClientesDescuentosController
 
    ::oModel                      := SQLFacturasClientesDescuentosModel():New( self )
 
-   ::oBrowseView                 := FacturasClientesDescuentosBrowseView():New( self )
-
-   ::oDialogView                 := FacturasClientesDescuentosView():New( self )
-
-   ::oValidator                  := FacturasClientesDescuentosValidator():New( self, ::oDialogView )
-
-   ::oRepository                 := FacturasClientesDescuentosRepository():New( self )
-
-   ::setEvent( 'exitAppended',   {|| ::oBrowseView:selectCol( ::oBrowseView:oColumnNombre:nPos ) } )
+   ::setEvent( 'exitAppended',   {|| ::getBrowseView():selectCol( ::getBrowseView():oColumnNombre:nPos ) } )
 
 RETURN ( Self )
 
@@ -53,13 +54,21 @@ METHOD End() CLASS FacturasClientesDescuentosController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
    ::Super:End()
 
@@ -73,7 +82,7 @@ METHOD updateField( cField, uValue ) CLASS FacturasClientesDescuentosController
    
    ::getRowSet():Refresh()
    
-   ::oBrowseView:Refresh()
+   ::getBrowseView():Refresh()
    
    ::oSenderController:calculateTotals() 
 

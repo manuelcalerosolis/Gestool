@@ -28,41 +28,11 @@ RETURN ( nil )
 
 CLASS FacturasClientesController FROM SQLNavigatorController
 
-   DATA oArticulosTarifasController
-
-   DATA oClientesController
-
-   DATA oArticulosController
-
    DATA oSerieDocumentoComponent
 
    DATA oNumeroDocumentoComponent
 
-   DATA oFormasPagoController
-
-   DATA oRutasController
-
-   DATA oAgentesController
-
-   DATA oAlmacenesController
-
    DATA oContadoresModel
-
-   DATA oClientesTarifasController
-
-   DATA oFacturasClientesDescuentosController
-
-   DATA oDireccionTipoDocumentoController
-
-   DATA oFacturasClientesLineasController
-
-   DATA oCombinacionesController
-
-   DATA oCamposExtraValoresController
-
-   DATA oIncidenciasController
-
-   DATA oHistoryManager
 
    DATA oTotalConDescuento             INIT 0
 
@@ -72,7 +42,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD loadedBlankBuffer() 
 
-   METHOD loadedBuffer()               INLINE ( ::oHistoryManager:Set( ::oModel:hBuffer ) )
+   METHOD loadedBuffer()               INLINE ( ::getHistoryManager():Set( ::oModel:hBuffer ) )
 
    METHOD getClientUuid() 
 
@@ -104,6 +74,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesBrowseView():New( self ), ), ::oBrowseView )
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
+   
+   METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New( self ), ), ::oHistoryManager )
 
 END CLASS
 
@@ -127,59 +99,21 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oModel                                              := SQLFacturasClientesModel():New( self )
 
-   ::oClientesController                                 := ClientesController():New( self )
-   ::oClientesController:setView( ::getDialogView() )
-
-   ::oArticulosController                                := ArticulosController():New( self )
-
-   ::oArticulosTarifasController                         := ArticulosTarifasController():New( self )
-   ::oArticulosTarifasController:setView( ::getDialogView() )
-
-   ::oFormasPagoController                               := FormasPagosController():New( self )   
-   ::oFormasPagoController:setView( ::getDialogView() )
-
-   ::oRutasController                                    := RutasController():New( self )
-   ::oRutasController:setView( ::getDialogView() )
-
-   ::oAgentesController                                  := AgentesController():New( self )
-   ::oAgentesController:setView( ::getDialogView() )
-
-   ::oAlmacenesController                                := AlmacenesController():New( self )
-   ::oAlmacenesController:setView( ::getDialogView() )
-
-   ::oClientesTarifasController                          := ClientesTarifasController():New( self )
-
-   ::oFacturasClientesLineasController                   := FacturasClientesLineasController():New( self )
-   
-   ::oFacturasClientesDescuentosController               := FacturasClientesDescuentosController():New( self )
-
-   ::oDireccionTipoDocumentoController                   := DireccionTipoDocumentoController():New( self )
-
-   ::oCamposExtraValoresController                       := CamposExtraValoresController():New( self )
-
-   ::oCombinacionesController                            := CombinacionesController():New( self )
-
-   ::oCamposExtraValoresController                       := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oIncidenciasController                              := IncidenciasController():New( self )
-
-   ::oHistoryManager                                     := HistoryManager():New()
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBuffer',                    {|| ::loadedBuffer() } )
    ::oModel:setEvent( 'loadedBlankBuffer',               {|| ::loadedBlankBuffer() } )
 
-   ::oDireccionTipoDocumentoController:setEvent( 'activatingDialogView',         {|| ::isClientFilled() } ) 
-   ::oDireccionTipoDocumentoController:oModel:setEvent( 'gettingSelectSentence', {|| ::getClientUuid() } )
+   ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',         {|| ::isClientFilled() } ) 
+   ::getDireccionTipoDocumentoController():oModel:setEvent( 'gettingSelectSentence', {|| ::getClientUuid() } )
 
-   ::oFacturasClientesLineasController:setEvent( 'appending',        {|| ::isClientFilled() }  )
-   ::oFacturasClientesLineasController:setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
+   ::getFacturasClientesLineasController():setEvent( 'appending',        {|| ::isClientFilled() }  )
+   ::getFacturasClientesLineasController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
-   ::oFacturasClientesDescuentosController:setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
+   ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
-   ::oClientesController:oGetSelector:setEvent( 'settedHelpText',    {|| ::clientesSettedHelpText() } )
-   ::oClientesController:oGetSelector:setEvent( 'cleanedHelpText',   {|| ::clientesCleanedHelpText() } )
+   ::getClientesController():getSelector():setEvent( 'settedHelpText',    {|| ::clientesSettedHelpText() } )
+   ::getClientesController():getSelector():setEvent( 'cleanedHelpText',   {|| ::clientesCleanedHelpText() } )
 
    ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
 
@@ -213,131 +147,10 @@ METHOD End() CLASS FacturasClientesController
       ::oBrowseView:End()
    end if 
 
-   if !empty( ::oClientesController )
-      ::oClientesController:End()
-      ::oClientesController                              := nil
-   end if
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oClientesController" )
-   nSeconds    := seconds()
-
-   if !empty( ::oArticulosController )
-      ::oArticulosController:End()
-      ::oArticulosController                             := nil
-   end if
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oArticulosController" )
-   nSeconds    := seconds()
-
-   if !empty( ::oArticulosTarifasController )
-      ::oArticulosTarifasController:End()
-      ::oArticulosTarifasController                      := nil
-   end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oArticulosTarifasController" )
-   nSeconds    := seconds()
-
-   if !empty( ::oFormasPagoController )
-      ::oFormasPagoController:End()
-      ::oFormasPagoController                            := nil
-   end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oFormasPagoController" )
-   nSeconds    := seconds()
-
-   if !empty( ::oRutasController )
-      ::oRutasController:End()
-      ::oRutasController                                 := nil
-   end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oRutasController" )
-   nSeconds    := seconds()
-
-   if !empty( ::oAgentesController )
-      ::oAgentesController:End()
-      ::oAgentesController                               := nil
-   end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oAgentesController" )
-   nSeconds    := seconds()
- 
-   if !empty( ::oAlmacenesController )
-      ::oAlmacenesController:End()
-      ::oAlmacenesController                             := nil
-   end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oAlmacenesController" )
-   nSeconds    := seconds()
-
-   if !empty( ::oClientesTarifasController )
-      ::oClientesTarifasController:End()
-      ::oClientesTarifasController                       := nil
-   end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oClientesTarifasController" )
-   nSeconds    := seconds()
-
-   if !empty( ::oFacturasClientesDescuentosController )
-      ::oFacturasClientesDescuentosController:End()
-      ::oFacturasClientesDescuentosController            := nil
-   end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oFacturasClientesDescuentosController" )
-   nSeconds    := seconds()
-
-   if !empty( ::oDireccionTipoDocumentoController )
-      ::oDireccionTipoDocumentoController:End()
-      ::oDireccionTipoDocumentoController                := nil
-   end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oDireccionTipoDocumentoController" )
-   nSeconds    := seconds()
-
-   if !empty( ::oCamposExtraValoresController )
-      ::oCamposExtraValoresController:End()
-      ::oCamposExtraValoresController                    := nil
-   end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oCamposExtraValoresController" )
-   nSeconds    := seconds()
-   
-   if !empty( ::oIncidenciasController )
-      ::oIncidenciasController:End()
-      ::oIncidenciasController                           := nil
-   end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oIncidenciasController" )
-   nSeconds    := seconds()
-
-   if !empty( ::oFacturasClientesLineasController )
-      ::oFacturasClientesLineasController:End()
-      ::oFacturasClientesLineasController                := nil
-   end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oIncidenciasController" )
-   nSeconds    := seconds()
-
    if !empty( ::oHistoryManager )
       ::oHistoryManager:End()
       ::oHistoryManager                                  := nil
    end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oIncidenciasController" )
-   nSeconds    := seconds()
 
    if !empty( ::oNumeroDocumentoComponent )
       ::oNumeroDocumentoComponent:End()
@@ -379,13 +192,13 @@ RETURN ( nil )
 
 METHOD getClientUuid() CLASS FacturasClientesController 
 
-RETURN ( ::oClientesController:oModel:getUuidWhereCodigo( ::getModelBuffer( "cliente_codigo" ) ) )
+RETURN ( ::getClientesController():oModel:getUuidWhereCodigo( ::getModelBuffer( "cliente_codigo" ) ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD clientesSettedHelpText() CLASS FacturasClientesController
 
-   if ::oHistoryManager:isEqual( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
+   if ::getHistoryManager():isEqual( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
       RETURN ( nil )
    end if          
 
@@ -395,7 +208,7 @@ METHOD clientesSettedHelpText() CLASS FacturasClientesController
 
    ::clientSetRecargo()
 
-   ::oHistoryManager:setkey( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
+   ::getHistoryManager():setkey( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
 
 RETURN ( nil )
 
@@ -403,7 +216,7 @@ RETURN ( nil )
 
 METHOD clientesCleanedHelpText()  
 
-   ::oArticulosTarifasController:oGetSelector:cText( space( 20 ) )
+   ::getArticulosTarifasController():getSelector():cText( space( 20 ) )
 
 RETURN ( nil )
 
@@ -413,19 +226,19 @@ METHOD clientSetTarifa() CLASS FacturasClientesController
 
    local cCodigoTarifa
 
-   if empty( ::oClientesController:oGetSelector:uFields )
+   if empty( ::getClientesController():getSelector():uFields )
       RETURN ( nil )
    end if 
 
-   cCodigoTarifa     := hget( ::oClientesController:oGetSelector:uFields, "tarifa_codigo" )
+   cCodigoTarifa     := hget( ::getClientesController():getSelector():uFields, "tarifa_codigo" )
 
    if empty( cCodigoTarifa )
       cCodigoTarifa  := Company():getDefaultTarifa()
    end if
 
-   ::oArticulosTarifasController:oGetSelector:cText( cCodigoTarifa )
+   ::getArticulosTarifasController():getSelector():cText( cCodigoTarifa )
    
-   ::oArticulosTarifasController:oGetSelector:lValid()
+   ::getArticulosTarifasController():getSelector():lValid()
 
 RETURN ( nil )
 
@@ -433,13 +246,13 @@ RETURN ( nil )
 
 METHOD clientSetDescuentos() CLASS FacturasClientesController
 
-   ::oFacturasClientesDescuentosController:oModel:deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
+   ::getFacturasClientesDescuentosController():oModel:deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
 
-   ::oFacturasClientesDescuentosController:oModel:insertWhereClienteCodigo( ::getModelBuffer( "cliente_codigo" ) )
+   ::getFacturasClientesDescuentosController():oModel:insertWhereClienteCodigo( ::getModelBuffer( "cliente_codigo" ) )
 
-   ::oFacturasClientesDescuentosController:refreshRowSetAndGoTop()
+   ::getFacturasClientesDescuentosController():refreshRowSetAndGoTop()
 
-   ::oFacturasClientesDescuentosController:refreshBrowseView()
+   ::getFacturasClientesDescuentosController():refreshBrowseView()
 
 RETURN ( nil )
 
@@ -447,11 +260,11 @@ RETURN ( nil )
 
 METHOD clientSetRecargo() CLASS FacturasClientesController
 
-   if empty( ::oClientesController:oGetSelector:uFields )
+   if empty( ::getClientesController():getSelector():uFields )
       RETURN ( nil )
    end if 
 
-   ::getDialogView():oRecargoEquivalencia:SetCheck( hget( ::oClientesController:oGetSelector:uFields, "recargo_equivalencia" ) )
+   ::getDialogView():oRecargoEquivalencia:SetCheck( hget( ::getClientesController():getSelector():uFields, "recargo_equivalencia" ) )
 
 RETURN ( nil )
 
@@ -499,7 +312,7 @@ METHOD isLines() CLASS FacturasClientesController
 
    local nLineas  
 
-   nLineas  := ::oFacturasClientesLineasController:oModel:countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) )
+   nLineas  := ::getFacturasClientesLineasController():oModel:countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) )
 
 RETURN ( nLineas > 0 )
 

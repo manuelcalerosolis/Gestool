@@ -41,9 +41,9 @@ METHOD Activating() CLASS FacturasClientesView
       ::oController:oModel:hBuffer()
    end if 
 
-   ::oController:oFacturasClientesLineasController:buildRowSet()
+   ::oController:getFacturasClientesLineasController():buildRowSet()
 
-   ::oController:oFacturasClientesDescuentosController:buildRowSet()   
+   ::oController:getFacturasClientesDescuentosController():buildRowSet()   
 
 RETURN ( nil )
 
@@ -79,10 +79,10 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Cliente------------------------------------------------------------------
 
-   ::oController:oClientesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) )
-   ::oController:oClientesController:oGetSelector:Build( { "idGet" => 170, "idLink" => 171, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:oClientesController:oGetSelector:setWhen( {|| ::oController:isNotLines() .or. empty( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) } )
-   ::oController:oClientesController:oGetSelector:setValid( {|| ::oController:validate( "cliente_codigo" ) } )
+   ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) )
+   ::oController:getClientesController():getSelector():Build( { "idGet" => 170, "idLink" => 171, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getClientesController():getSelector():setWhen( {|| ::oController:isNotLines() .or. empty( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) } )
+   ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "cliente_codigo" ) } )
 
    // Serie-------------------------------------------------------------------
 
@@ -105,32 +105,32 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Formas de pago------------------------------------------------------------
 
-   ::oController:oFormasPagoController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
-   ::oController:oFormasPagoController:oGetSelector:Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:oFormasPagoController:oGetSelector:setValid( {|| ::oController:validate( "forma_pago_codigo" ) } )
+   ::oController:getFormasPagoController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
+   ::oController:getFormasPagoController():getSelector():Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getFormasPagoController():getSelector():setValid( {|| ::oController:validate( "forma_pago_codigo" ) } )
 
    // Almacenes----------------------------------------------------------------
 
-   ::oController:oAlmacenesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_codigo" ] ) )
-   ::oController:oAlmacenesController:oGetSelector:Build( { "idGet" => 240, "idText" => 241, "idLink" => 242, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:oAlmacenesController:oGetSelector:setValid( {|| ::oController:validate( "almacen_codigo" ) } )
+   ::oController:getAlmacenesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_codigo" ] ) )
+   ::oController:getAlmacenesController():getSelector():Build( { "idGet" => 240, "idText" => 241, "idLink" => 242, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getAlmacenesController():getSelector():setValid( {|| ::oController:validate( "almacen_codigo" ) } )
 
    // Tarifas------------------------------------------------------------------
 
-   ::oController:oArticulosTarifasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
-   ::oController:oArticulosTarifasController:oGetSelector:Build( { "idGet" => 250, "idText" => 251, "idLink" => 252, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:oArticulosTarifasController:oGetSelector:setWhen( {|| ::oController:isNotLines() } )
-   ::oController:oArticulosTarifasController:oGetSelector:setValid( {|| ::oController:validate( "tarifa_codigo" ) } )
+   ::oController:getArticulosTarifasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
+   ::oController:getArticulosTarifasController():getSelector():Build( { "idGet" => 250, "idText" => 251, "idLink" => 252, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getArticulosTarifasController():getSelector():setWhen( {|| ::oController:isNotLines() } )
+   ::oController:getArticulosTarifasController():getSelector():setValid( {|| ::oController:validate( "tarifa_codigo" ) } )
 
     // Rutas--------------------------------------------------------------------
 
-   ::oController:oRutasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_codigo" ] ) )
-   ::oController:oRutasController:oGetSelector:Build( { "idGet" => 260, "idText" => 261, "idLink" => 262, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getRutasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_codigo" ] ) )
+   ::oController:getRutasController():getSelector():Build( { "idGet" => 260, "idText" => 261, "idLink" => 262, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Agentes------------------------------------------------------------------
 
-   ::oController:oAgentesController:getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
-   ::oController:oAgentesController:getSelector():Build( { "idGet" => 270, "idText" => 271, "idLink" => 272, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getAgentesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
+   ::oController:getAgentesController():getSelector():Build( { "idGet" => 270, "idText" => 271, "idLink" => 272, "oDialog" => ::oFolder:aDialogs[1] } )
 
    //Totales------------------------------------------------------------------
 
@@ -187,27 +187,27 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Lineas ------------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:oFacturasClientesLineasController:AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:getFacturasClientesLineasController():AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
 
-   TBtnBmp():ReDefine( 502, "edit16",,,,, {|| ::oController:oFacturasClientesLineasController:Edit() }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
+   TBtnBmp():ReDefine( 502, "edit16",,,,, {|| ::oController:getFacturasClientesLineasController():Edit() }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
 
-   TBtnBmp():ReDefine( 503, "del16",,,,, {|| ::oController:oFacturasClientesLineasController:Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 503, "del16",,,,, {|| ::oController:getFacturasClientesLineasController():Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
 
-   TBtnBmp():ReDefine( 504, "refresh16",,,,, {|| ::oController:oFacturasClientesLineasController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 504, "refresh16",,,,, {|| ::oController:getFacturasClientesLineasController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
 
-   ::oController:oFacturasClientesLineasController:Activate( 500, ::oFolder:aDialogs[1] )
+   ::oController:getFacturasClientesLineasController():Activate( 500, ::oFolder:aDialogs[1] )
 
    // Descuentos---------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::oController:oFacturasClientesDescuentosController:AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::oController:getFacturasClientesDescuentosController():AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
 
    TBtnBmp():ReDefine( 602, "edit16",,,,, {|| MsgInfo( "Editar Descuentos" ) }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
 
-   TBtnBmp():ReDefine( 603, "del16",,,,, {|| ::oController:oFacturasClientesDescuentosController:Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
+   TBtnBmp():ReDefine( 603, "del16",,,,, {|| ::oController:getFacturasClientesDescuentosController():Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
 
-   TBtnBmp():ReDefine( 604, "refresh16",,,,, {|| ::oController:oFacturasClientesDescuentosController:refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 604, "refresh16",,,,, {|| ::oController:getFacturasClientesDescuentosController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
 
-   ::oController:oFacturasClientesDescuentosController:Activate( 600, ::oFolder:aDialogs[1] )   
+   ::oController:getFacturasClientesDescuentosController():Activate( 600, ::oFolder:aDialogs[1] )   
 
    // Botones generales--------------------------------------------------------
 
@@ -225,9 +225,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    if ::oController:isNotZoomMode() 
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) } )
-      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oFacturasClientesLineasController:Append() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oFacturasClientesLineasController:Edit() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oFacturasClientesLineasController:Delete() } )
+      ::oDialog:AddFastKey( VK_F2, {|| ::oController:getFacturasClientesLineasController():Append() } )
+      ::oDialog:AddFastKey( VK_F3, {|| ::oController:getFacturasClientesLineasController():Edit() } )
+      ::oDialog:AddFastKey( VK_F4, {|| ::oController:getFacturasClientesLineasController():Delete() } )
    end if
 
    ::oDialog:bStart := {|| ::startDialog() }
@@ -244,25 +244,25 @@ METHOD startDialog() CLASS FacturasClientesView
 
    ::addLinksToExplorerBar()
 
-   ::oController:oClientesController:oGetSelector:Start()
+   ::oController:getClientesController():getSelector():Start()
 
-   ::oController:oFormasPagoController:oGetSelector:Start()
+   ::oController:getFormasPagoController():getSelector():Start()
 
-   ::oController:oRutasController:oGetSelector:Start()
+   ::oController:getRutasController():getSelector():Start()
 
-   ::oController:oAgentesController:getSelector():Start()
+   ::oController:getAgentesController():getSelector():Start()
 
-   ::oController:oArticulosTarifasController:oGetSelector:Start()
+   ::oController:getArticulosTarifasController():getSelector():Start()
 
-   ::oController:oAlmacenesController:oGetSelector:Start()
+   ::oController:getAlmacenesController():getSelector():Start()
 
-   ::oController:oFacturasClientesLineasController:oBrowseView:Refresh()
+   ::oController:getFacturasClientesLineasController():getBrowseView():Refresh()
    
-   ::oController:oFacturasClientesDescuentosController:oBrowseView:Refresh()
+   ::oController:getFacturasClientesDescuentosController():getBrowseView():Refresh()
 
    ::oController:calculateTotals()
 
-   ::oController:oClientesController:oGetSelector:setFocus()
+   ::oController:getClientesController():getSelector():setFocus()
 
 RETURN ( nil )
 
@@ -283,8 +283,8 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
                          ::oController:oIncidenciasController:getImage( "16" ) )
 
    oPanel:AddLink(   "Tipo de direcciones...",;
-                     {|| ::oController:oDireccionTipoDocumentoController:activateDialogView() },;
-                         ::oController:oDireccionTipoDocumentoController:getImage( "16" ) )
+                     {|| ::oController:getDireccionTipoDocumentoController():activateDialogView() },;
+                         ::oController:getDireccionTipoDocumentoController():getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
