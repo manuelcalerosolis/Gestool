@@ -5,17 +5,23 @@
 
 CLASS DireccionTipoDocumentoController FROM SQLNavigatorController
 
-   DATA oDireccionesController
-
-   DATA oDireccionTiposController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD getUuid()
 
    METHOD setDireccionesUuid()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := DireccionTipoDocumentoBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := DireccionTipoDocumentoView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := DireccionTipoDocumentoValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := DireccionTipoDocumentoRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -37,22 +43,9 @@ METHOD New( oSenderController ) CLASS DireccionTipoDocumentoController
 
    ::oModel                         := SQLDireccionTipoDocumentoModel():New( self )
 
-   ::oBrowseView                    := DireccionTipoDocumentoBrowseView():New( self )
+   ::getDireccionesController():includePrincipal()
 
-   ::oDialogView                    := DireccionTipoDocumentoView():New( self )
-
-   ::oValidator                     := DireccionTipoDocumentoValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := DireccionTipoDocumentoRepository():New( self )
-   
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oDireccionesController         := DireccionesController():New( self )
-   ::oDireccionesController:includePrincipal()
-
-   ::oDireccionTiposController      := DireccionTiposController():New( self )
-
-   ::oDireccionesController:setEvent( 'gettingSelectSentence', {|| ::getParentUuid() } ) 
+   ::getDireccionesController():setEvent( 'gettingSelectSentence', {|| ::getParentUuid() } ) 
 
 RETURN ( Self )
 
@@ -62,35 +55,21 @@ METHOD End() CLASS DireccionTipoDocumentoController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
-
-   ::oDireccionesController:End()
-
-   ::oDireccionTiposController:End()
-
-   ::oModel                      := nil
-
-   ::oBrowseView                 := nil
-
-   ::oDialogView                 := nil
-
-   ::oValidator                  := nil
-
-   ::oRepository                 := nil
-
-   ::oGetSelector                := nil
-
-   ::oDireccionesController      := nil
-
-   ::oDireccionTiposController   := nil
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
    ::Super:End()
 
@@ -108,7 +87,7 @@ METHOD setDireccionesUuid() CLASS DireccionTipoDocumentoController
 
    local uuidDireccion
 
-   uuidDireccion  := ::oDireccionesController:oModel:getFieldWhere( 'uuid', { 'codigo' => ::oModel:getBuffer( 'direccion_uuid' ), 'parent_uuid' => ::oSenderController:getClientUuid() } )
+   uuidDireccion  := ::getDireccionesController():oModel:getFieldWhere( 'uuid', { 'codigo' => ::oModel:getBuffer( 'direccion_uuid' ), 'parent_uuid' => ::oSenderController:getClientUuid() } )
 
    if !empty( uuidDireccion )
       ::oModel:setBuffer( 'direccion_uuid', uuidDireccion )
@@ -253,16 +232,16 @@ METHOD Activate() CLASS DireccionTipoDocumentoView
 
    // Tipo-------------------------------------------------------------------
 
-   ::oController:oDireccionTiposController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_uuid" ] ) )
-   ::oController:oDireccionTiposController:oGetSelector:Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
-   ::oController:oDireccionTiposController:oGetSelector:setValid( {|| ::oController:validate( "tipo_uuid" ) } )
+   ::oController:getDireccionTiposController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_uuid" ] ) )
+   ::oController:getDireccionTiposController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
+   ::oController:getDireccionTiposController():getSelector():setValid( {|| ::oController:validate( "tipo_uuid" ) } )
    
 
    // Direccion--------------------------------------------------------------
 
-   ::oController:oDireccionesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "direccion_uuid" ] ) )
-   ::oController:oDireccionesController:oGetSelector:Build( { "idGet" => 110, "idLink" => 111, "idText" => 112, "idCodigoPostal" => 113, "idPoblacion" => 114, "idProvincia" => 115, "idPais" => 116, "oDialog" => ::oDialog } )
-   ::oController:oDireccionesController:oGetSelector:setValid( {|| ::oController:validate( "direccion_uuid" ) } )
+   ::oController:getDireccionesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "direccion_uuid" ] ) )
+   ::oController:getDireccionesController():getSelector():Build( { "idGet" => 110, "idLink" => 111, "idText" => 112, "idCodigoPostal" => 113, "idPoblacion" => 114, "idProvincia" => 115, "idPais" => 116, "oDialog" => ::oDialog } )
+   ::oController:getDireccionesController():getSelector():setValid( {|| ::oController:validate( "direccion_uuid" ) } )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -296,9 +275,9 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartActivate() CLASS DireccionTipoDocumentoView
 
-   ::oController:oDireccionesController:oGetSelector:Start()
+   ::oController:getDireccionesController():getSelector():Start()
 
-   ::oController:oDireccionTiposController:oGetSelector:Start()
+   ::oController:getDireccionTiposController():getSelector():Start()
 
 RETURN ( self )
 

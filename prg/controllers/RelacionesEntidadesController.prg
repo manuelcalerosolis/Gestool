@@ -7,7 +7,9 @@ CLASS RelacionesEntidadesController FROM SQLNavigatorController
 
    DATA aRelacionables
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
+
+   METHOD End()
 
    METHOD Edit()
 
@@ -18,6 +20,14 @@ CLASS RelacionesEntidadesController FROM SQLNavigatorController
    METHOD DeleteLine()
 
    METHOD SearchEntidad()
+
+   //Construcciones tardias----------------------------------------------------
+
+   /*METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := RelacionesEntidadesBrowseView():New( self ), ), ::oBrowseView ) */
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := RelacionesEntidadesView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := RelacionesEntidadesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -39,13 +49,32 @@ METHOD New( oSenderController ) CLASS RelacionesEntidadesController
 
    ::oModel                := SQLRelacionesEntidadesModel():New( self )
 
-   ::oDialogView           := RelacionesEntidadesView():New( self )
-
-   ::oRepository           := RelacionesEntidadesRepository():New( self )
-
-   ::oBrowseView           := RelacionesEntidadesLineasBrowseView():New( self )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS RelacionesEntidadesController
+
+   ::oModel:End()
+
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
+
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
+
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if    
+
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
+
+RETURN( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -61,7 +90,7 @@ METHOD Edit() CLASS RelacionesEntidadesController
 
    ::beginTransactionalMode()
 
-   ::oRowSet      := ::oRepository:getRowRelacionesEntidades( hget( ::oSenderController:oModel:hBuffer, "uuid" ) )
+   ::oRowSet      := ::getRepository():getRowRelacionesEntidades( hget( ::oSenderController:oModel:hBuffer, "uuid" ) )
 
    ::fireEvent( 'openingDialog' )
 
@@ -99,7 +128,7 @@ METHOD AppendLine() CLASS RelacionesEntidadesController
 
    ::oRowSet:refreshAndFindId( id )
 
-   ::oBrowseView:oBrowse:Refresh()
+   ::getBrowseView():oBrowse:Refresh()
 
 RETURN ( nil )
 
@@ -111,7 +140,7 @@ METHOD DeleteLine() CLASS RelacionesEntidadesController
 
    ::oRowSet:Refresh()
    
-   ::oBrowseView:oBrowse:Refresh()
+   ::getBrowseView():oBrowse:Refresh()
 
 RETURN ( nil )
 
@@ -122,7 +151,7 @@ METHOD UpdateLine( uNewValue, cCampo ) CLASS RelacionesEntidadesController
    ::oModel:updateFieldWhereId( ::oRowSet:fieldGet( 'id' ), cCampo, uNewValue )
    
    ::oRowSet:Refresh()
-   ::oBrowseView:oBrowse:Refresh()
+   ::getBrowseView():oBrowse:Refresh()
 
 RETURN ( nil )
 
@@ -212,7 +241,7 @@ CLASS RelacionesEntidadesView FROM SQLBaseView
 
    METHOD Activate()
 
-   METHOD getBrowse()      INLINE ( ::oController:oBrowseView:oBrowse )
+   METHOD getBrowse()      INLINE ( ::oController:getBrowseView():oBrowse )
    METHOD getModel()       INLINE ( ::oController:oModel )
    METHOD getSenderModel() INLINE ( ::oController:oSenderController:oModel )
 
@@ -243,7 +272,7 @@ METHOD Activate() CLASS RelacionesEntidadesView
 
       // Buttons lineas--------------------------------------------------------
 
-      ::oController:oBrowseView:ActivateDialog( ::oDialog, 100 )
+      ::oController:getBrowseView():ActivateDialog( ::oDialog, 100 )
 
       REDEFINE BUTTON ;
          ID          IDOK ;

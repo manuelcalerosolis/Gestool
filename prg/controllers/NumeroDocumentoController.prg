@@ -94,7 +94,7 @@ CLASS NumeroDocumentoComponent
 
    DATA cGet
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 

@@ -73,6 +73,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oTraduccionesController
 
+   DATA oArticulosController
+
    DATA oArticulosFamiliasController
 
    DATA oArticulosTipoController
@@ -102,6 +104,18 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oCombinacionesPropiedadesController
 
    DATA oCombinacionesController
+
+   DATA oFacturasClientesDescuentosController
+
+   DATA oDireccionTiposController
+
+   DATA oDireccionTipoDocumentoController
+
+   DATA oRelacionesEntidadesController
+
+   DATA oFacturasClientesLineasController
+
+   DATA oFacturasClientesController
 
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
@@ -201,6 +215,9 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getTraduccionesController();
                                     INLINE ( if( empty( ::oTraduccionesController ), ::oTraduccionesController := TraduccionesController():New( self ), ), ::oTraduccionesController )
 
+   METHOD getArticulosController();
+                                    INLINE ( if( empty( ::oArticulosController ), ::oArticulosController := ArticulosController():New( self ), ), ::oArticulosController )
+
    METHOD getArticulosFamiliasController();
                                     INLINE ( if( empty( ::oArticulosFamiliasController ), ::oArticulosFamiliasController := ArticulosFamiliasController():New( self ), ), ::oArticulosFamiliasController )
 
@@ -245,6 +262,24 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getCombinacionesController();
                                     INLINE ( if( empty( ::oCombinacionesController ), ::oCombinacionesController := CombinacionesController():New( self ), ), ::oCombinacionesController )
+
+   METHOD getFacturasClientesDescuentosController();
+                                    INLINE ( if( empty( ::oFacturasClientesDescuentosController ), ::oFacturasClientesDescuentosController := FacturasClientesDescuentosController():New( self ), ), ::oFacturasClientesDescuentosController )
+
+   METHOD getDireccionTiposController();
+                                    INLINE ( if( empty( ::oDireccionTiposController ), ::oDireccionTiposController := DireccionTiposController():New( self ), ), ::oDireccionTiposController )
+
+   METHOD getDireccionTipoDocumentoController();
+                                    INLINE ( if( empty( ::oDireccionTipoDocumentoController ), ::oDireccionTipoDocumentoController := DireccionTipoDocumentoController():New( self ), ), ::oDireccionTipoDocumentoController )
+
+   METHOD getRelacionesEntidadesController();
+                                    INLINE ( if( empty( ::oRelacionesEntidadesController ), ::oRelacionesEntidadesController := RelacionesEntidadesController():New( self ), ), ::oRelacionesEntidadesController )
+
+   METHOD getFacturasClientesLineasController();
+                                    INLINE ( if( empty( ::oFacturasClientesLineasController ), ::oFacturasClientesLineasController := FacturasClientesLineasController():New( self ), ), ::oFacturasClientesLineasController )
+
+   METHOD getFacturasClientesController();
+                                    INLINE ( if( empty( ::oFacturasClientesController ), ::oFacturasClientesController := FacturasClientesController():New( self ), ), ::oFacturasClientesController )
 
    METHOD End()
 
@@ -402,6 +437,10 @@ METHOD End() CLASS SQLApplicationController
       ::oTraduccionesController:End()
    end if 
 
+   if !empty( ::oArticulosController )   
+      ::oArticulosController:End()
+   end if    
+
    if !empty( ::oArticulosFamiliasController )   
       ::oArticulosFamiliasController:End()
    end if 
@@ -460,6 +499,30 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oCombinacionesController )   
       ::oCombinacionesController:End()
+   end if    
+
+   if !empty( ::oFacturasClientesDescuentosController )   
+      ::oFacturasClientesDescuentosController:End()
+   end if    
+
+   if !empty( ::oDireccionTiposController )   
+      ::oDireccionTiposController:End()
+   end if    
+
+   if !empty( ::oDireccionTipoDocumentoController )   
+      ::oDireccionTipoDocumentoController:End()
+   end if    
+
+   if !empty( ::oRelacionesEntidadesController )   
+      ::oRelacionesEntidadesController:End()
+   end if    
+
+   if !empty( ::oFacturasClientesLineasController )   
+      ::oFacturasClientesLineasController:End()
+   end if   
+
+   if !empty( ::oFacturasClientesController )   
+      ::oFacturasClientesController:End()
    end if 
 
    ::Super:End()
