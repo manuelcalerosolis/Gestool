@@ -5,13 +5,21 @@
 
 CLASS PropiedadesController FROM SQLNavigatorController
 
-   DATA oPropiedadesLineasController
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD isColorProperty()         INLINE ( iif( !empty(::oModel) .and. !empty(::oModel:hBuffer), ::oModel:hBuffer[ "color" ], .f. ) ) 
+   METHOD isColorProperty()         INLINE ( iif( !empty(::oModel) .and. !empty(::oModel:hBuffer), ::oModel:hBuffer[ "color" ], .f. ) )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := PropiedadesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := PropiedadesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := PropiedadesValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := PropiedadesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -33,14 +41,6 @@ METHOD New( oSenderController ) CLASS PropiedadesController
 
    ::oModel                         := SQLPropiedadesModel():New( self )
 
-   ::oBrowseView                    := PropiedadesBrowseView():New( self )
-
-   ::oDialogView                    := PropiedadesView():New( self )
-
-   ::oValidator                     := PropiedadesValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := PropiedadesRepository():New( self )
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
@@ -51,13 +51,18 @@ METHOD End() CLASS PropiedadesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
-
-   ::oDialogView:End()
-
-   ::oValidator:End()
-
-   ::oRepository:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
    ::Super:End()
 

@@ -5,8 +5,6 @@
 
 CLASS ArticulosController FROM SQLNavigatorController
 
-   DATA oCombinacionesController
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -77,8 +75,6 @@ METHOD New( oSenderController ) CLASS ArticulosController
 
    ::oModel                                  := SQLArticulosModel():New( self )
 
-   ::oCombinacionesController                := CombinacionesController():New( self )
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvents( { 'loadedBlankBuffer', 'loadedCurrentBuffer' }, {|| ::insertPreciosWhereArticulo() } )
@@ -107,10 +103,6 @@ METHOD End() CLASS ArticulosController
 
    if !empty( ::oRepository )
       ::oRepository:End()
-   end if 
-
-   if !empty( ::oCombinacionesController )
-      ::oCombinacionesController:End()
    end if 
   
    ::Super:End()
@@ -164,7 +156,7 @@ METHOD insertPreciosWhereArticulo() CLASS ArticulosController
    if empty( uuidArticulo )
       RETURN ( nil )
    end if 
-
+   
    ::getArticulosPreciosController():oModel:insertPreciosWhereArticulo( uuidArticulo )   
 
 RETURN ( nil )
