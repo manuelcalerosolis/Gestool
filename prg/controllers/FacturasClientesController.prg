@@ -191,6 +191,8 @@ RETURN ( Self )
 
 METHOD End() CLASS FacturasClientesController
 
+   local nSeconds    := seconds() 
+
    if !empty( ::oModel )
       ::oModel:End()
    end if 

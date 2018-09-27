@@ -25,8 +25,6 @@ CLASS ArticulosView FROM SQLBaseView
 
    DATA oSayCodificacionProveedores
   
-   METHOD Activating()
-
    METHOD Activate()
 
    METHOD startActivate()
@@ -43,16 +41,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-METHOD Activating() CLASS ArticulosView
-
-msgalert()
-
-   ::oController:getArticulosPreciosController():buildRowSet()
-
-RETURN ( nil )
-
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS ArticulosView
@@ -109,8 +97,8 @@ METHOD Activate() CLASS ArticulosView
 
    // Tipos de articulos ------------------------------------------------------
 
-   ::oController:getArticulosTipoController():getetSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_tipo_codigo" ] ) )
-   ::oController:getArticulosTipoController():getetSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getArticulosTipoController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_tipo_codigo" ] ) )
+   ::oController:getArticulosTipoController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Categorias de articulos--------------------------------------------------
 
@@ -135,7 +123,7 @@ METHOD Activate() CLASS ArticulosView
 
    // Unidades de medicion grupo-----------------------------------------------
 
-   with object ( ::oController:oUnidadesMedicionGruposController:oGetSelector )
+   with object ( ::oController:getUnidadesMedicionGruposController():getSelector() )
       :Bind( bSETGET( ::oController:oModel:hBuffer[ "unidades_medicion_grupos_codigo" ] ) )
       :Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
       :setWhen( {|| ::oController:isNotZoomMode() .and. SQLUnidadesMedicionOperacionesModel():getNumeroOperacionesWhereArticulo( ::oController:getModelBuffer( "codigo" ) ) == 0 } )
