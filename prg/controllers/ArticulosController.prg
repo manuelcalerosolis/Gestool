@@ -31,7 +31,7 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    DATA oCombinacionesController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 

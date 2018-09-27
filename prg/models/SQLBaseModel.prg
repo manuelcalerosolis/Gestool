@@ -808,8 +808,6 @@ METHOD getUpdateSentence( hBuffer )
 
    ::fireEvent( 'gotUpdateSentence' )   
 
-   msgalert( ::cSQLUpdate )
-
 RETURN ( ::cSQLUpdate )
 
 //---------------------------------------------------------------------------//

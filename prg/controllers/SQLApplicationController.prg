@@ -49,11 +49,11 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oClientesTarifasController
 
-   /*DATA oCamposExtraController
+   DATA oCamposExtraController
 
    DATA oCamposExtraEntidadesController
 
-   DATA oCamposExtraValoresController*/
+   DATA oCamposExtraValoresController
 
    DATA oUnidadesMedicionOperacionesController
 
@@ -127,14 +127,14 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getClientesTarifasController();
                                     INLINE ( if( empty( ::oClientesTarifasController ), ::oClientesTarifasController := ClientesTarifasController():New( self ), ), ::oClientesTarifasController )
 
-   /*METHOD getCamposExtraController();
+   METHOD getCamposExtraController();
                                     INLINE ( if( empty( ::oCamposExtraController ), ::oCamposExtraController := CamposExtraController():New( self ), ), ::oCamposExtraController )
 
    METHOD getCamposExtraEntidadesController();
                                     INLINE ( if( empty( ::oCamposExtraEntidadesController ), ::oCamposExtraEntidadesController := CamposExtraEntidadesController():New( self ), ), ::oCamposExtraEntidadesController )
 
    METHOD getCamposExtraValoresController();
-                                    INLINE ( if( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresController():New( self ), ), ::oCamposExtraValoresController )*/
+                                    INLINE ( if( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresController():New( self ), ), ::oCamposExtraValoresController )
 
    METHOD getUnidadesMedicionOperacionesController();
                                     INLINE ( if( empty( ::oUnidadesMedicionOperacionesController ), ::oUnidadesMedicionOperacionesController := UnidadesMedicionOperacionesController():New( self ), ), ::oUnidadesMedicionOperacionesController )
@@ -150,7 +150,6 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getComentariosLineasController();
                                     INLINE ( if( empty( ::oComentariosLineasController ), ::oComentariosLineasController := ComentariosLineasController():New( self ), ), ::oComentariosLineasController )
-
 
    METHOD End()
 
@@ -260,7 +259,7 @@ METHOD End() CLASS SQLApplicationController
       ::oClientesTarifasController:End()
    end if 
 
-   /*if !empty( ::oCamposExtraController )   
+   if !empty( ::oCamposExtraController )   
       ::oCamposExtraController:End()
    end if 
 
@@ -270,7 +269,7 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oCamposExtraValoresController )   
       ::oCamposExtraValoresController:End()
-   end if */
+   end if 
 
    if !empty( ::oUnidadesMedicionOperacionesController )   
       ::oUnidadesMedicionOperacionesController:End()

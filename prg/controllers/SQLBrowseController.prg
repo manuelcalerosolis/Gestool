@@ -79,7 +79,7 @@ CLASS SQLBrowseController FROM SQLApplicationController
    
    METHOD getState( cType, cName )                    INLINE ( ::getConfiguracionVistasController():getState( cType, cName ) )
 
-   METHOD buildRowSet() 
+   METHOD buildRowSetSentence() 
 
    METHOD appendLineal() 
 
@@ -117,19 +117,15 @@ RETURN ( nil )
 
 METHOD Activate( nId, oDialog )
 
-   msgalert( "Activate de SQLBrowseController" )
-
    if empty( ::getBrowseView() )
       RETURN ( Self )
    end if 
 
+   ::buildRowSetSentence()
+
    ::fireEvent( 'activating' )     
 
-   msgalert( "getBrowseView():ActivateDialog( oDialog, nId )" )
-   
    ::getBrowseView():ActivateDialog( oDialog, nId )
-
-   msgalert( "despues > getBrowseView():ActivateDialog( oDialog, nId )" )
 
    ::fireEvent( 'activated' )     
 
@@ -137,7 +133,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildRowSet() 
+METHOD buildRowSetSentence() 
 
    if !empty( ::oModel )
       ::oRowSet:buildPad( ::oModel:getSelectSentence() )
@@ -149,8 +145,6 @@ RETURN ( nil )
 
 METHOD onChangeCombo( oColumn )
 
-   msgalert( oColumn:cSortOrder, oColumn:cOrder )
-   
    ::changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
    ::getBrowseView():getBrowse():changeColumnOrder( oColumn )
@@ -198,8 +192,6 @@ RETURN ( nil )
 METHOD saveState()
 
    ::setState( ::getBrowseViewType(), ::getBrowseViewName(), ::getBrowseViewState() ) 
-
-   msgalert( ::getBrowseViewState(), "saveState" ) 
 
 RETURN ( nil )
 
