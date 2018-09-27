@@ -89,12 +89,11 @@ RETURN ( nil )
 METHOD onChangeCombo( oColumn )
 
    if empty( oColumn )
-      oColumn        := ::getBrowse():getColumnByHeader( ::getComboBoxOrder():VarGet() )
-   end if 
-
-   if empty( oColumn )
+      msgalert( "lacolumna esta vacia" )
       RETURN ( nil )
    end if 
+
+   msgalert( oColumn:cSortOrder, oColumn:cOrder )
 
    ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
@@ -113,14 +112,13 @@ METHOD onChangeSearch()
    local uValue
    local nRecCount
    local oSearch        := ::getGetSearch()
-   local cOrder         := ::getComboBoxOrder():varGet()
-   local cColumnOrder   := ::getBrowse():getColumnOrderByHeader( cOrder )
+   local aColumns       := ::getBrowseView():getVisibleColumnsSortOrder()
 
    if empty( oSearch )
       RETURN ( nil )
    end if 
 
-   if empty( cColumnOrder )
+   if empty( aColumns )
       msgInfo( "La columna seleccionada no permite busquedas" ) 
       RETURN ( nil )
    end if 
@@ -130,10 +128,10 @@ METHOD onChangeSearch()
    uValue               := strtran( uValue, chr( 8 ), "" )
    
    /*
-   nRecCount            := ::getController():findInRowSet( uValue, cColumnOrder )
+   nRecCount            := ::getController():findInRowSet( uValue, aColumns )
    */
 
-   nRecCount            := ::getController():findInModel( uValue, cColumnOrder )
+   nRecCount            := ::getController():findInModel( uValue, aColumns )
 
    if hb_isnumeric( nRecCount )
       if nRecCount >= 0

@@ -809,7 +809,6 @@ METHOD End( lForceExit ) CLASS TShell
    if !empty( ::oWndBar )
 
       ::oWndBar:DisableGet()
-      ::oWndBar:DisableComboBox()
       ::oWndBar:DisableComboFilter()
       ::oWndBar:HideYearCombobox()
 
@@ -1837,7 +1836,6 @@ METHOD addSeaBar( cSearchType, nLenSearchType ) CLASS TShell
 
    if !empty( ::oWndBar )
 
-      ::oWndBar:SetComboBoxChange(              {|| ::ChgCombo() } )
       ::oWndBar:SetComboFilterChange(           {|| ::ChgFilter() } )
 
       ::oWndBar:SetActionAddButtonFilter(       {|| ::AddFilter() } )

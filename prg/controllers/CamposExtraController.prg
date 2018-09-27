@@ -3,99 +3,26 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS CamposExtraGestoolController FROM SQLNavigatorGestoolController
-
-   DATA oCamposExtraEntidadesController
-
-   METHOD New( oSenderController ) CONSTRUCTOR
-   
-   METHOD End()
-
-   METHOD deleteEntitiesWhereEmpty()
+CLASS CamposExtraGestoolController FROM CamposExtraController
 
    METHOD getLevel()                            INLINE ( nil )
-
-   
 
    METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CamposExtraBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()                       INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CamposExtraBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := CamposExtraView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()                       INLINE( if( empty( ::oDialogView ), ::oDialogView := CamposExtraView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := CamposExtraValidator():New( self  ), ), ::oValidator )
+   METHOD getValidator()                        INLINE( if( empty( ::oValidator ), ::oValidator := CamposExtraValidator():New( self  ), ), ::oValidator )
 
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraGestoolModel():New( self ), ), ::oModel )
+   METHOD getModel()                            INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraGestoolModel():New( self ), ), ::oModel )
 
    METHOD getCamposExtraEntidadesController();
-                                          INLINE ( if( empty( ::oCamposExtraEntidadesController ), ::oCamposExtraEntidadesController := CamposExtraEntidadesGestoolController():New( self ), ), ::oCamposExtraEntidadesController )
+                                                INLINE ( if( empty( ::oCamposExtraEntidadesController ), ::oCamposExtraEntidadesController := CamposExtraEntidadesGestoolController():New( self ), ), ::oCamposExtraEntidadesController )
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD New( oSenderController ) CLASS CamposExtraGestoolController
-
-   ::Super:New( oSenderController )
-
-   ::cTitle                            := "Campos extra"
-
-   ::setName( "campos_extra" )
-
-   ::lTransactional                    := .t.
-
-
-   ::hImage                            := {  "16" => "gc_form_plus2_16",;
-                                             "32" => "gc_form_plus2_32",;
-                                             "48" => "gc_form_plus2_48" }
-
-   ::getLevel()
-
-   ::getModel()
-
-   ::getCamposExtraEntidadesController()
-
-   ::setEvent( 'edited',      {|| ::deleteEntitiesWhereEmpty() } )
-   ::setEvent( 'appended',    {|| ::deleteEntitiesWhereEmpty() } )
-   ::setEvent( 'duplicated',  {|| ::deleteEntitiesWhereEmpty() } )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD End() CLASS CamposExtraGestoolController
-
-   ::oModel:End()
-
-   if !empty( ::oBrowseView )
-      ::oBrowseView:End()
-   end if 
-
-   if !empty( ::oDialogView )
-      ::oDialogView:End()
-   end if 
-
-   if !empty( ::oValidator )
-      ::oValidator:End()
-   end if 
-
-   if !empty( ::oCamposExtraEntidadesController )
-      ::oCamposExtraEntidadesController:End() 
-   end if 
-
-   ::Super:End()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD deleteEntitiesWhereEmpty() CLASS CamposExtraGestoolController
-   
-   ::getCamposExtraEntidadesController():oModel:deleteBlankEntityWhereUuid( ::getUuid() )
-
-RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -105,8 +32,6 @@ RETURN ( Self )
 
 CLASS CamposExtraController FROM SQLNavigatorController
 
-   DATA oCamposExtraEntidadesController
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -115,19 +40,15 @@ CLASS CamposExtraController FROM SQLNavigatorController
 
    METHOD getLevel()                            INLINE ( ::nLevel := Auth():Level( ::getName() ) )
 
-
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CamposExtraBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()                       INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CamposExtraBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := CamposExtraView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()                       INLINE( if( empty( ::oDialogView ), ::oDialogView := CamposExtraView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := CamposExtraValidator():New( self  ), ), ::oValidator )
+   METHOD getValidator()                        INLINE( if( empty( ::oValidator ), ::oValidator := CamposExtraValidator():New( self  ), ), ::oValidator )
 
-   METHOD getModel()                      INLINE( if( empty( ::oModel ), ::oModel := SQLCamposExtraModel():New( self ), ), ::oModel ) 
-
-   METHOD getCamposExtraEntidadesController();  
-                                          INLINE( if( empty( ::oCamposExtraEntidadesController ), ::oCamposExtraEntidadesController := CamposExtraEntidadesController():New( self ), ), ::oCamposExtraEntidadesController )
+   METHOD getModel()                            INLINE( if( empty( ::oModel ), ::oModel := SQLCamposExtraModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -150,8 +71,6 @@ METHOD New( oSenderController ) CLASS CamposExtraController
    ::getLevel()
 
    ::getModel()
-
-   ::getCamposExtraEntidadesController()
 
    ::setEvent( 'edited',      {|| ::deleteEntitiesWhereEmpty() } )
    ::setEvent( 'appended',    {|| ::deleteEntitiesWhereEmpty() } )
@@ -177,13 +96,9 @@ METHOD End() CLASS CamposExtraController
       ::oValidator:End()
    end if 
 
-   if !empty( ::oCamposExtraEntidadesController )
-      ::oCamposExtraEntidadesController:End()
-   end if 
-
    ::Super:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -191,7 +106,7 @@ METHOD deleteEntitiesWhereEmpty()
    
    ::getCamposExtraEntidadesController():oModel:deleteBlankEntityWhereUuid( ::getUuid() )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -272,10 +187,8 @@ METHOD addColumns() CLASS CamposExtraBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
-RETURN ( self )
+RETURN ( nil )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -314,7 +227,7 @@ CLASS CamposExtraView FROM SQLBaseView
 
    DATA aListaValores                  
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD enableLongitud()             INLINE ( ::verticalShow( ::oLongitud ), ::verticalShow( ::oDecimales ) )
 
@@ -333,6 +246,7 @@ CLASS CamposExtraView FROM SQLBaseView
    METHOD addListaValores()
 
    METHOD Activate()
+   
    METHOD Activating()
 
 END CLASS
@@ -371,7 +285,7 @@ METHOD Activating() CLASS CamposExtraView
       ::oController:oModel:hBuffer[ "tipo" ]    := "Texto"
    end if 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -496,9 +410,11 @@ METHOD Activate() CLASS CamposExtraView
 
    oBtnDelete:bAction   := {|| ::oController:getCamposExtraEntidadesController():Delete( ::oController:getCamposExtraEntidadesController():getBrowseView():oBrowse:aSelected ) }
 
+   // Browse de entidades -----------------------------------------------------
+   
    ::oController:getCamposExtraEntidadesController():Activate( 120, ::oFolder:aDialogs[ 2 ] )
 
-   // Botones ------------------------------------------------------------------
+   // Botones -----------------------------------------------------------------
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -571,8 +487,6 @@ RETURN ( ::hValidators )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS SQLCamposExtraGestoolModel FROM SQLCamposExtraModel
 
@@ -634,10 +548,6 @@ RETURN ( ::hColumns )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS CamposExtraRepository FROM SQLBaseRepository
 
@@ -645,7 +555,6 @@ CLASS CamposExtraRepository FROM SQLBaseRepository
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

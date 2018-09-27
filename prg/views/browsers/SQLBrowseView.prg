@@ -355,6 +355,8 @@ METHOD onClickHeader( oColumn )
 
    ::fireEvent( 'onclickheader' )
 
+   msgalert( oColumn:cHeader, "cHeader" )
+
    ::getController():onChangeCombo( oColumn )
 
    ::fireEvent( 'onclickedheader' )
