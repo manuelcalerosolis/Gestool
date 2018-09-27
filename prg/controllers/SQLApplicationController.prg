@@ -23,6 +23,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oArticulosTarifasController
 
+   DATA oArticulosPreciosController
+
    DATA oArticulosPreciosDescuentosController
 
    DATA oCuentasBancariasController
@@ -34,6 +36,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oCuentasRemesaController
 
    DATA oRutasController
+
+   DATA oClientesController
 
    DATA oClientesGruposController
 
@@ -93,6 +97,12 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oPropiedadesLineasController
 
+   DATA oPropiedadesController
+
+   DATA oCombinacionesPropiedadesController
+
+   DATA oCombinacionesController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -119,6 +129,9 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getArticulosPreciosDescuentosController();
                                     INLINE ( if( empty( ::oArticulosPreciosDescuentosController ), ::oArticulosPreciosDescuentosController := ArticulosPreciosDescuentosController():New( self ), ), ::oArticulosPreciosDescuentosController )
 
+   METHOD getArticulosPreciosController();
+                                    INLINE ( if( empty( ::oArticulosPreciosController ), ::oArticulosPreciosController := ArticulosPreciosController():New( self ), ), ::oArticulosPreciosController )
+
    METHOD getCuentasBancariasController();
                                     INLINE ( if( empty( ::oCuentasBancariasController ), ::oCuentasBancariasController := CuentasBancariasController():New( self ), ), ::oCuentasBancariasController )
 
@@ -133,6 +146,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getRutasController();
                                     INLINE ( if( empty( ::oRutasController ), ::oRutasController := RutasController():New( self ), ), ::oRutasController )
+
+   METHOD getClientesController();
+                                    INLINE ( if( empty( ::oClientesController ), ::oClientesController := ClientesController():New( self ), ), ::oClientesController )
 
    METHOD getClientesGruposController();
                                     INLINE ( if( empty( ::oClientesGruposController ), ::oClientesGruposController := ClientesGruposController():New( self ), ), ::oClientesGruposController )
@@ -221,6 +237,15 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getPropiedadesLineasController();
                                     INLINE ( if( empty( ::oPropiedadesLineasController ), ::oPropiedadesLineasController := PropiedadesLineasController():New( self ), ), ::oPropiedadesLineasController )
 
+   METHOD getPropiedadesController();
+                                    INLINE ( if( empty( ::oPropiedadesController ), ::oPropiedadesController := PropiedadesController():New( self ), ), ::oPropiedadesController )
+
+   METHOD getCombinacionesPropiedadesController();
+                                    INLINE ( if( empty( ::oCombinacionesPropiedadesController ), ::oCombinacionesPropiedadesController := CombinacionesPropiedadesController():New( self ), ), ::oCombinacionesPropiedadesController )
+
+   METHOD getCombinacionesController();
+                                    INLINE ( if( empty( ::oCombinacionesController ), ::oCombinacionesController := CombinacionesController():New( self ), ), ::oCombinacionesController )
+
    METHOD End()
 
 END CLASS
@@ -279,6 +304,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oArticulosPreciosDescuentosController )   
       ::oArticulosPreciosDescuentosController:End()
+   end if    
+
+   if !empty( ::oArticulosPreciosController )   
+      ::oArticulosPreciosController:End()
    end if 
 
    if !empty( ::oCuentasBancariasController )   
@@ -299,6 +328,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oRutasController )   
       ::oRutasController:End()
+   end if    
+
+   if !empty( ::oClientesController )   
+      ::oClientesController:End()
    end if  
 
   if !empty( ::oClientesGruposController )   
@@ -415,6 +448,18 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oPropiedadesLineasController )   
       ::oPropiedadesLineasController:End()
+   end if    
+
+   if !empty( ::oPropiedadesController )   
+      ::oPropiedadesController:End()
+   end if    
+
+   if !empty( ::oCombinacionesPropiedadesController )   
+      ::oCombinacionesPropiedadesController:End()
+   end if    
+
+   if !empty( ::oCombinacionesController )   
+      ::oCombinacionesController:End()
    end if 
 
    ::Super:End()

@@ -5,17 +5,9 @@
 
 CLASS CombinacionesController FROM SQLBrowseController
 
-   DATA oPropiedadesController
-
-   DATA oPropiedadesLineasController
-
    DATA hPropertyList
 
-   DATA oCombinacionesPropiedadesController
-
-   DATA oSelectorView
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -34,6 +26,18 @@ CLASS CombinacionesController FROM SQLBrowseController
    METHOD isCombinationInRowSet( cCombinationName )   INLINE ( ::getRowSet():findString( cCombinationName, 'articulos_propiedades_nombre' ) )
 
    METHOD updateIncrementoPrecio( nIncrementoPrecio )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CombinacionesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := CombinacionesView():New( self ), ), ::oDialogView )
+
+   METHOD getSelectorView()               INLINE( if( empty( ::oSelectorView ), ::oSelectorView := CombinacionesSelectorView():New( self ), ), ::oSelectorView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := CombinacionesValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := CombinacionesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -55,24 +59,6 @@ METHOD New( oSenderController ) CLASS CombinacionesController
 
    ::oModel                               := SQLCombinacionesModel():New( self )
 
-   ::oBrowseView                          := CombinacionesBrowseView():New( self )
-
-   ::oDialogView                          := CombinacionesView():New( self )
-
-   ::oSelectorView                        := CombinacionesSelectorView():New( self )
-
-   ::oValidator                           := CombinacionesValidator():New( self, ::oDialogView )
-
-   ::oRepository                          := CombinacionesRepository():New( self )
-
-   ::oGetSelector                         := GetSelector():New( self ) 
-
-   ::oPropiedadesController               := PropiedadesController():New( self )
-
-   ::oPropiedadesLineasController         := PropiedadesLineasController():New( self )
-
-   ::oCombinacionesPropiedadesController  := CombinacionesPropiedadesController():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -81,25 +67,27 @@ METHOD End() CLASS CombinacionesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oSelectorView:End()
+   if !empty( ::oSelectorView )
+      ::oSelectorView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oPropiedadesController:End()
-
-   ::oPropiedadesLineasController:End()
-
-   ::oCombinacionesPropiedadesController:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
-
-   self                                   := nil
 
 RETURN ( nil )
 
@@ -107,7 +95,7 @@ RETURN ( nil )
 
 METHOD runViewGenerate() CLASS CombinacionesController
 
-   ::hPropertyList  := getSQLDatabase():selectTrimedFetchHash( ::oPropiedadesController:oModel:getPropertyList() ) 
+   ::hPropertyList  := getSQLDatabase():selectTrimedFetchHash( ::getPropiedadesController():oModel:getPropertyList() ) 
 
    if empty( ::hPropertyList )
       msgStop( "No se definieron propiedades" )
@@ -132,7 +120,7 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
       RETURN ( nil )
    end if 
    
-   ::hPropertyList   := getSQLDatabase():selectTrimedFetchHash( ::oPropiedadesController:oModel:getPropertyList() ) 
+   ::hPropertyList   := getSQLDatabase():selectTrimedFetchHash( ::getPropiedadesController():oModel:getPropertyList() ) 
 
    if empty( ::hPropertyList )
       msgStop( "No se definieron propiedades" )
@@ -141,7 +129,7 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
 
    ::oRowSet:buildPad( ::oModel:getSelectorWhereCodigoArticulo( cCodigoArticulo ) )
 
-RETURN ( ::dialogViewActivate( ::oSelectorView ) )
+RETURN ( ::dialogViewActivate( ::getSelectorView() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -159,7 +147,7 @@ METHOD insertCombination( aCombination ) CLASS CombinacionesController
 
       if ::oModel:insertBlankBuffer() != 0
 
-         ::oCombinacionesPropiedadesController:insertProperties( aCombination, ::oModel:getBuffer( "uuid" ) )
+         ::getCombinacionesPropiedadesController():insertProperties( aCombination, ::oModel:getBuffer( "uuid" ) )
 
       end if 
 
@@ -182,7 +170,7 @@ METHOD insertOneCombination( aCombinations ) CLASS CombinacionesController
 
          if ::oModel:insertBlankBuffer() != 0
 
-            ::oCombinacionesPropiedadesController:insertProperty( hget( hCombination, "propiedad_uuid" ), ::oModel:getBuffer( "uuid" ) )
+            ::getCombinacionesPropiedadesController():insertProperty( hget( hCombination, "propiedad_uuid" ), ::oModel:getBuffer( "uuid" ) )
 
          end if 
 
@@ -434,7 +422,7 @@ METHOD changeCheckBox( uValue, oCheckBox ) CLASS CombinacionesView
 
    ::oController:oRowSet:Refresh()
 
-   ::oController:oBrowseView:Refresh()
+   ::oController:getBrowseView():Refresh()
 
    msgalert( cCaption, "changeCheckBox" )
 
@@ -505,7 +493,7 @@ RETURN ( aPanelCombination )
 
 CLASS CombinacionesSelectorView FROM CombinacionesView 
 
-   METHOD redefineBrowse()          INLINE ( ::oController:oBrowseView:ActivateDialog( ::oDialog, 100 ) )         
+   METHOD redefineBrowse()          INLINE ( ::oController:getBrowseView():ActivateDialog( ::oDialog, 100 ) )         
 
    METHOD showCombinations( oPanel ) 
 

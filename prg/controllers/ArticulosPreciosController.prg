@@ -5,8 +5,6 @@
 
 CLASS ArticulosPreciosController FROM SQLBrowseController
 
-   DATA oArticulosPreciosDescuentosController
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -55,9 +53,7 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::getModel()
 
-   ::oArticulosPreciosDescuentosController   := ArticulosPreciosDescuentosController():New( self )
-
-   ::oBrowseView:setEvent( 'created',        {|| ::oBrowseView:setLDblClick( {|| nil } ) } )
+   ::getBrowseView():setEvent( 'created',        {|| ::getBrowseView():setLDblClick( {|| nil } ) } )
 
 RETURN ( Self )
 
@@ -83,8 +79,6 @@ METHOD End() CLASS ArticulosPreciosController
       ::oRepository:End()
    end if 
 
-   ::oArticulosPreciosDescuentosController:End()
-
    ::Super:End()
 
 RETURN ( nil )
@@ -93,7 +87,7 @@ RETURN ( nil )
 
 METHOD UpdatePreciosAndRefresh() 
 
-   ::oRepository:callUpdatePreciosWhereUuidArticulo( ::getRowSet():fieldGet( 'articulo_uuid' ) )
+   ::getRepository():callUpdatePreciosWhereUuidArticulo( ::getRowSet():fieldGet( 'articulo_uuid' ) )
 
    ::getRowSet():Refresh()
 
@@ -105,7 +99,7 @@ RETURN ( nil )
 
 METHOD setPrecioBase( oCol, nPrecioBase ) CLASS ArticulosPreciosController
 
-   ::oRepository:callUpdatePrecioBaseWhereUuid( ::getRowSet():fieldGet( 'uuid' ), nPrecioBase )
+   ::getRepository():callUpdatePrecioBaseWhereUuid( ::getRowSet():fieldGet( 'uuid' ), nPrecioBase )
 
 RETURN ( ::UpdatePreciosAndRefresh() )
 
@@ -113,7 +107,7 @@ RETURN ( ::UpdatePreciosAndRefresh() )
 
 METHOD setPrecioIVAIncluido( oCol, nPrecioIVAIncluido ) CLASS ArticulosPreciosController
 
-   ::oRepository:callUpdatePrecioIvaIncluidoWhereUuid( ::getRowSet():fieldGet( 'uuid' ), nPrecioIVAIncluido )
+   ::getRepository():callUpdatePrecioIvaIncluidoWhereUuid( ::getRowSet():fieldGet( 'uuid' ), nPrecioIVAIncluido )
 
 RETURN ( ::UpdatePreciosAndRefresh() )
 

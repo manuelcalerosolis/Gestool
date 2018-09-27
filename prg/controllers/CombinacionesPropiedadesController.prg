@@ -5,13 +5,21 @@
 
 CLASS CombinacionesPropiedadesController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD insertProperties( aCombination )
 
    METHOD insertProperty( uuidCombination, uuidParent )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CombinacionesPropiedadesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := CombinacionesPropiedadesView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := CombinacionesPropiedadesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -31,15 +39,7 @@ METHOD New( oSenderController ) CLASS CombinacionesPropiedadesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLCombinacionesPropiedadesModel():New( self )
-
-   ::oBrowseView                    := CombinacionesPropiedadesBrowseView():New( self )
-
-   ::oDialogView                    := CombinacionesPropiedadesView():New( self )
-
-   ::oRepository                    :=CombinacionesPropiedadesRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )   
+   ::oModel                         := SQLCombinacionesPropiedadesModel():New( self )  
 
 RETURN ( Self )
 
@@ -49,11 +49,17 @@ METHOD End() CLASS CombinacionesPropiedadesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 

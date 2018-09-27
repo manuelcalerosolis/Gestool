@@ -47,6 +47,8 @@ END CLASS
 
 METHOD Activating() CLASS ArticulosView
 
+msgalert()
+
    ::oController:getArticulosPreciosController():buildRowSet()
 
 RETURN ( nil )
@@ -262,7 +264,7 @@ METHOD startActivate() CLASS ArticulosView
 
    ::oGetCodigo:SetFocus()
 
-   ::oController:oCombinacionesController:oGetSelector:Start()
+   ::oController:getCombinacionesController():getSelector():Start()
 
 RETURN ( nil )
 
@@ -279,8 +281,8 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
    end if
 
    oPanel:AddLink(   "Combinaciones...",;
-                     {||   ::oController:oCombinacionesController:runViewGenerate() },;
-                     ::oController:oCombinacionesController:getImage( "16" ) )
+                     {||   ::oController:getCombinacionesController():runViewGenerate() },;
+                     ::oController:getCombinacionesController():getImage( "16" ) )
 
    oPanel:AddLink(   "Codificación de proveedores...",;
                      {||   msgalert( "to-do" ) },;
