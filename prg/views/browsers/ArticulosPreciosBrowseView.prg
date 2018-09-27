@@ -55,6 +55,15 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :lHide               := .t.
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'articulo_uuid'
+      :cHeader             := 'Articulo Uuid'
+      :nWidth              := 200
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulo_uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
+   end with
+
    ::addSpecialColumns()
 
    with object ( ::oBrowse:AddCol() )

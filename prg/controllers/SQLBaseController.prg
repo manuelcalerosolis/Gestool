@@ -759,7 +759,7 @@ METHOD changeModelOrderAndOrientation( cOrderBy, cOrientation )
    local nId           
 
    if empty( ::oRowSet )
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    nId                  := ::oRowSet:fieldGet( ::getModelColumnKey() )
@@ -770,7 +770,7 @@ METHOD changeModelOrderAndOrientation( cOrderBy, cOrientation )
 
    ::oRowSet:findId( nId )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

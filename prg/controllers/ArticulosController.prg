@@ -20,19 +20,19 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD validateTipoIVA()
 
    METHOD validColumnArticulosFamiliaBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosFamiliasController():oModel, "articulo_familia_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosFamiliasController():oModel, "familia_codigo" ) )
 
    METHOD validColumnArticulosTipoBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosTipoController():oModel, "articulo_tipo_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosTipoController():oModel, "tipo_codigo" ) )
 
    METHOD validColumnArticulosCategoriasBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosCategoriasController():oModel, "articulo_categoria_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosCategoriasController():oModel, "categoria_codigo" ) )
 
    METHOD validColumnArticulosFabricantesBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosFabricantesController():oModel, "articulo_fabricante_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosFabricantesController():oModel, "fabricante_codigo" ) )
 
    METHOD validColumnArticulosTemporadasBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosTemporadasController():oModel, "articulo_temporada_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosTemporadasController():oModel, "temporada_codigo" ) )
 
    METHOD validColumnTiposIvaBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getTipoIvaController():oModel, "tipo_iva_codigo" ) )
@@ -64,6 +64,8 @@ METHOD New( oSenderController ) CLASS ArticulosController
    ::cTitle                                  := "Artículos"
 
    ::cName                                   := "articulos"
+
+   ::lInsertable                             := .t.
 
    ::hImage                                  := {  "16" => "gc_object_cube_16",;
                                                    "32" => "gc_object_cube_32",;
@@ -167,6 +169,8 @@ METHOD validatePrecioCosto() CLASS ArticulosController
 
    local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
    local nPrecioCosto   := hget( ::oModel:hBuffer, "precio_costo" )
+
+   msgalert( nPrecioCosto, "nPrecioCosto")
 
    ::oModel:updateFieldWhereUuid( uuidArticulo, "precio_costo", nPrecioCosto )
 

@@ -7,8 +7,6 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos"
 
-   DATA cAs                      INIT "articulos"
-
    METHOD getColumns()
 
    METHOD getInitialSelect()
@@ -31,19 +29,19 @@ METHOD getColumns() CLASS SQLArticulosModel
    hset( ::hColumns, "nombre",                     {  "create"    => "VARCHAR( 200 )"                          ,;
                                                       "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "articulo_familia_codigo",    {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "familia_codigo",    {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "articulo_tipo_codigo",       {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "tipo_codigo",       {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "articulo_categoria_codigo",  {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "categoria_codigo",  {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "articulo_fabricante_codigo", {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "fabricante_codigo", {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "articulo_temporada_codigo",  {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "temporada_codigo",  {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "tipo_iva_codigo",            {  "create"    => "VARCHAR( 20 )"                           ,;
@@ -92,35 +90,35 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
                         "articulos.lote AS lote, "                                                                         + ;
                         "articulos.lote_actual AS lote_actual, "                                                           + ;
                         "articulos.precio_costo AS precio_costo, "                                                         + ;
-                        "articulos.articulo_familia_codigo, "                                                              + ;
+                        "articulos.familia_codigo AS familia_codigo, "                                                              + ;
                         "articulos_familias.nombre AS articulo_familia_nombre, "                                           + ;
-                        "articulos.articulo_tipo_codigo, "                                                                 + ;
+                        "articulos.tipo_codigo AS tipo_codigo, "                                                                 + ;
                         "articulos_tipos.nombre AS articulo_tipo_nombre, "                                                 + ;
-                        "articulos.articulo_categoria_codigo, "                                                            + ;
+                        "articulos.categoria_codigo AS categoria_codigo, "                                                            + ;
                         "articulos_categorias.nombre AS articulo_categoria_nombre, "                                       + ;
-                        "articulos.articulo_fabricante_codigo, "                                                           + ;
+                        "articulos.fabricante_codigo AS fabricante_codigo, "                                                           + ;
                         "articulos_fabricantes.nombre AS articulo_fabricante_nombre, "                                     + ;
-                        "articulos.tipo_iva_codigo, "                                                                      + ;
+                        "articulos.tipo_iva_codigo AS tipo_iva_codigo, "                                                                      + ;
                         "tipos_iva.nombre AS tipo_iva_nombre, "                                                            + ;
-                        "articulos.impuesto_especial_codigo, "                                                             + ;
+                        "articulos.impuesto_especial_codigo AS impuesto_especial_codigo, "                                                             + ;
                         "impuestos_especiales.nombre AS impuesto_especial_nombre, "                                        + ;
-                        "articulos.unidades_medicion_grupos_codigo, "                                                      + ;
+                        "articulos.unidades_medicion_grupos_codigo AS unidades_medicion_grupos_codigo, "                                                      + ;
                         "unidades_medicion_grupos.nombre AS unidades_medicion_grupos_nombre, "                             + ;
-                        "articulos.articulo_temporada_codigo, "                                                            + ;
+                        "articulos.temporada_codigo AS temporada_codigo, "                                                            + ;
                         "articulos_temporadas.nombre AS articulo_temporada_nombre "                                        + ;
                      "FROM " + ::getTableName() + " AS articulos "                                                         + ;
                         "LEFT JOIN " + SQLArticulosFamiliaModel():getTableName() + " AS articulos_familias "               + ;
-                           "ON articulos.articulo_familia_codigo = articulos_familias.codigo "                             + ;
+                           "ON articulos.familia_codigo = articulos_familias.codigo "                             + ;
                         "LEFT JOIN " + SQLArticulosTipoModel():getTableName() + " AS articulos_tipos "                     + ; 
-                           "ON articulos.articulo_tipo_codigo = articulos_tipos.codigo "                                   + ;
+                           "ON articulos.tipo_codigo = articulos_tipos.codigo "                                   + ;
                         "LEFT JOIN " + SQLArticulosTipoModel():getTableName() + " AS articulos_categorias "                + ;
-                           "ON articulos.articulo_categoria_codigo = articulos_categorias.codigo "                         + ; 
+                           "ON articulos.categoria_codigo = articulos_categorias.codigo "                         + ; 
                         "LEFT JOIN " + SQLArticulosCategoriasModel():getTableName() + " AS articulos_fabricantes "         + ;
-                           "ON articulos.articulo_fabricante_codigo = articulos_fabricantes.codigo "                       + ;
+                           "ON articulos.fabricante_codigo = articulos_fabricantes.codigo "                       + ;
                         "LEFT JOIN " + SQLArticulosCategoriasModel():getTableName() + " AS tipos_iva "                     + ;
                            "ON articulos.tipo_iva_codigo = tipos_iva.codigo "                                              + ;
                         "LEFT JOIN " + SQLArticulosTemporadasModel():getTableName() + " AS articulos_temporadas "          + ;
-                           "ON articulos.articulo_temporada_codigo = articulos_temporadas.codigo "                         + ;
+                           "ON articulos.temporada_codigo = articulos_temporadas.codigo "                         + ;
                         "LEFT JOIN " + SQLImpuestosEspecialesModel():getTableName() + " AS impuestos_especiales "          + ;
                            "ON articulos.impuesto_especial_codigo = impuestos_especiales.codigo "                          + ;
                         "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS unidades_medicion_grupos "   + ;

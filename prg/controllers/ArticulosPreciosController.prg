@@ -31,8 +31,6 @@ CLASS ArticulosPreciosController FROM SQLBrowseController
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ),   ::oRepository := ArticulosPreciosRepository():New( self ), ), ::oRepository )
 
-   
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -53,7 +51,7 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::getModel()
 
-   ::getBrowseView():setEvent( 'created',        {|| ::getBrowseView():setLDblClick( {|| nil } ) } )
+   ::getBrowseView():setEvent( 'created',    {|| ::getBrowseView():setLDblClick( {|| nil } ) } )
 
 RETURN ( Self )
 

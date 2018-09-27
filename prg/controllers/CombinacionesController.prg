@@ -7,6 +7,8 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    DATA hPropertyList
 
+   DATA oSelectorView
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()

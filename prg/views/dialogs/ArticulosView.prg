@@ -92,22 +92,22 @@ METHOD Activate() CLASS ArticulosView
 
    // Familias de articulos ---------------------------------------------------
 
-   ::oController:getArticulosFamiliasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_familia_codigo" ] ) )
+   ::oController:getArticulosFamiliasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "familia_codigo" ] ) )
    ::oController:getArticulosFamiliasController():getSelector():Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Tipos de articulos ------------------------------------------------------
 
-   ::oController:getArticulosTipoController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_tipo_codigo" ] ) )
+   ::oController:getArticulosTipoController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_codigo" ] ) )
    ::oController:getArticulosTipoController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Categorias de articulos--------------------------------------------------
 
-   ::oController:getArticulosCategoriasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_categoria_codigo" ] ) )
+   ::oController:getArticulosCategoriasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "categoria_codigo" ] ) )
    ::oController:getArticulosCategoriasController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[1] } )
    
    // Fabricantes de articulos--------------------------------------------------
 
-   ::oController:getArticulosFabricantesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_fabricante_codigo" ] ) )
+   ::oController:getArticulosFabricantesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "fabricante_codigo" ] ) )
    ::oController:getArticulosFabricantesController():getSelector():Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Tipo de IVA--------------------------------------------------------------
@@ -131,7 +131,7 @@ METHOD Activate() CLASS ArticulosView
 
    // Temporadas---------------------------------------------------------------
 
-   ::oController:getArticulosTemporadasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "articulo_temporada_codigo" ] ) )
+   ::oController:getArticulosTemporadasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "temporada_codigo" ] ) )
    ::oController:getArticulosTemporadasController():getSelector():Build( { "idGet" => 250, "idText" => 251, "idLink" => 252, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Marcadores---------------------------------------------------------------
@@ -186,9 +186,13 @@ METHOD Activate() CLASS ArticulosView
       ID          100 ;
       PICTURE     "@E 99999999.999999" ;
       SPINNER ;
+      ON UP       ( ::oGetPrecioCosto:ScrollNumber( 1 ), ::oController:validatePrecioCosto() ) ;
+      ON DOWN     ( ::oGetPrecioCosto:ScrollNumber( -1 ), ::oController:validatePrecioCosto() ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validatePrecioCosto() ) ;
       OF          ::oFolder:aDialogs[2]
+
+   // Browse de precios -------------------------------------------------------
 
    ::oController:getArticulosPreciosController():Activate( 130, ::oFolder:aDialogs[2] )
 
@@ -198,7 +202,7 @@ METHOD Activate() CLASS ArticulosView
       ID          IDOK ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -207,7 +211,7 @@ METHOD Activate() CLASS ArticulosView
       ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) } )
    end if
 
    ::oDialog:bStart  := {|| ::startActivate() }
