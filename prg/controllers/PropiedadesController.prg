@@ -128,8 +128,6 @@ CLASS PropiedadesView FROM SQLBaseView
 
    DATA oGetTipo
 
-   METHOD Activating()
-  
    METHOD Activate()
 
    METHOD startActivate()
@@ -140,14 +138,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-METHOD Activating() CLASS PropiedadesView
-
-   ::oController:getPropiedadesLineasController():buidRowSet()
-
-RETURN ( nil )
-
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS PropiedadesView

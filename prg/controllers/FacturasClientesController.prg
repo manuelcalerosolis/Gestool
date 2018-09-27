@@ -95,6 +95,16 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD calculateTotals( uuidFactura )  
 
+   // Contrucciones tardias----------------------------------------------------
+
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := FacturasClientesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasClientesValidator():New( self ), ), ::oValidator ) 
+
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -117,33 +127,25 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oModel                                              := SQLFacturasClientesModel():New( self )
 
-   ::oDialogView                                         := FacturasClientesView():New( self )
-
-   ::oValidator                                          := FacturasClientesValidator():New( self, ::oDialogView )
-
-   ::oBrowseView                                         := FacturasClientesBrowseView():New( self )
-
-   ::oRepository                                         := FacturasClientesRepository():New( self )
-
    ::oClientesController                                 := ClientesController():New( self )
-   ::oClientesController:setView( ::oDialogView )
+   ::oClientesController:setView( ::getDialogView() )
 
    ::oArticulosController                                := ArticulosController():New( self )
 
    ::oArticulosTarifasController                         := ArticulosTarifasController():New( self )
-   ::oArticulosTarifasController:setView( ::oDialogView )
+   ::oArticulosTarifasController:setView( ::getDialogView() )
 
    ::oFormasPagoController                               := FormasPagosController():New( self )   
-   ::oFormasPagoController:setView( ::oDialogView )
+   ::oFormasPagoController:setView( ::getDialogView() )
 
    ::oRutasController                                    := RutasController():New( self )
-   ::oRutasController:setView( ::oDialogView )
+   ::oRutasController:setView( ::getDialogView() )
 
    ::oAgentesController                                  := AgentesController():New( self )
-   ::oAgentesController:setView( ::oDialogView )
+   ::oAgentesController:setView( ::getDialogView() )
 
    ::oAlmacenesController                                := AlmacenesController():New( self )
-   ::oAlmacenesController:setView( ::oDialogView )
+   ::oAlmacenesController:setView( ::getDialogView() )
 
    ::oClientesTarifasController                          := ClientesTarifasController():New( self )
 
@@ -189,54 +191,25 @@ RETURN ( Self )
 
 METHOD End() CLASS FacturasClientesController
 
-   local nSeconds
-
-   nSeconds    := seconds()
-
    if !empty( ::oModel )
       ::oModel:End()
-      ::oModel                                           := nil
    end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "model" )
-   nSeconds    := seconds()
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
-      ::oDialogView                                      := nil
    end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oDialogView" )
-   nSeconds    := seconds()
 
    if !empty( ::oValidator )
       ::oValidator:End()
-      ::oValidator                                       := nil
    end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oValidator" )
-   nSeconds    := seconds()
 
    if !empty( ::oRepository )
       ::oRepository:End()
-      ::oRepository                                      := nil
    end if
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oRepository" )
-   nSeconds    := seconds()
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
-      ::oBrowseView                                      := nil
    end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oBrowseView" )
-   nSeconds    := seconds()
 
    if !empty( ::oClientesController )
       ::oClientesController:End()
@@ -476,7 +449,7 @@ METHOD clientSetRecargo() CLASS FacturasClientesController
       RETURN ( nil )
    end if 
 
-   ::oDialogView:oRecargoEquivalencia:SetCheck( hget( ::oClientesController:oGetSelector:uFields, "recargo_equivalencia" ) )
+   ::getDialogView():oRecargoEquivalencia:SetCheck( hget( ::oClientesController:oGetSelector:uFields, "recargo_equivalencia" ) )
 
 RETURN ( nil )
 
@@ -504,17 +477,17 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
       RETURN ( nil )
    end if 
 
-   ::oDialogView:oTotalBruto:setText( hget( hTotal, "totalBruto" ) )
+   ::getDialogView():oTotalBruto:setText( hget( hTotal, "totalBruto" ) )
    
-   ::oDialogView:oTotalBase:setText( hget( hTotal, "totalNeto" ) )
+   ::getDialogView():oTotalBase:setText( hget( hTotal, "totalNeto" ) )
 
-   ::oDialogView:oTotalDescuento:setText( hget( hTotal, "totalDescuento" ) )
+   ::getDialogView():oTotalDescuento:setText( hget( hTotal, "totalDescuento" ) )
 
-   ::oDialogView:oTotalIva:setText( hget( hTotal, "totalIVA" ) )
+   ::getDialogView():oTotalIva:setText( hget( hTotal, "totalIVA" ) )
 
-   ::oDialogView:oTotalRecargo:setText( hget( hTotal, "totalRecargo" ) )
+   ::getDialogView():oTotalRecargo:setText( hget( hTotal, "totalRecargo" ) )
 
-   ::oDialogView:oTotalImporte:setText( hget( hTotal, "totalDocumento" ) )
+   ::getDialogView():oTotalImporte:setText( hget( hTotal, "totalDocumento" ) )
 
 RETURN ( nil )
 

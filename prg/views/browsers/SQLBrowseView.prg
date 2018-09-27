@@ -355,8 +355,6 @@ METHOD onClickHeader( oColumn )
 
    ::fireEvent( 'onclickheader' )
 
-   msgalert( oColumn:cHeader, "cHeader" )
-
    ::getController():onChangeCombo( oColumn )
 
    ::fireEvent( 'onclickedheader' )
@@ -438,7 +436,7 @@ METHOD insertSelectedColumn()
 
    with object ( ::oBrowse:InsCol( 1 ) )
       :Cargo         := .t.
-      :nWidth        := 20
+      :nWidth        := 24
       :bLDClickData  := ::getSelectedColumnDblClick()
       :bEditValue    := {|| ascan( ::oBrowse:aSelected, ::oBrowse:BookMark ) > 0 }
       :nHeadBmpNo    := {|| if( len( ::oBrowse:aSelected ) == ::oBrowse:nLen, 1, 2 ) }
