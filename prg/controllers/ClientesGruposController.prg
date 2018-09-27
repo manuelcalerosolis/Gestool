@@ -173,7 +173,7 @@ METHOD Activate() CLASS ClientesGruposView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

@@ -5,11 +5,19 @@
 
 CLASS ArticulosUnidadesMedicionController FROM SQLNavigatorController
 
-   DATA oUnidadesMedicionController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosUnidadesMedicionBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosUnidadesMedicionView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosUnidadesMedicionValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosUnidadesMedicionRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -31,15 +39,6 @@ METHOD New( oController ) CLASS ArticulosUnidadesMedicionController
 
    ::oModel                         := SQLArticulosUnidadesMedicionModel():New( self )
 
-   ::oDialogView                    := ArticulosUnidadesMedicionView():New( self )
-
-   ::oBrowseView                    := ArticulosUnidadesMedicionBrowseView():New( self )
-
-   ::oValidator                     := ArticulosUnidadesMedicionValidator():New( self )
-
-   ::oRepository                    := ArticulosUnidadesMedicionRepository():New( self )
-
-   ::oUnidadesMedicionController    := UnidadesMedicionController():New( self )
 
 RETURN ( Self )
 
@@ -49,15 +48,21 @@ METHOD End() CLASS ArticulosUnidadesMedicionController
 
    ::oModel:End()
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oRepository:End()
-
-   ::oUnidadesMedicionController:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
    ::Super:End()
 
@@ -170,8 +175,8 @@ METHOD Activate() CLASS ArticulosUnidadesMedicionView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   ::oController:oUnidadesMedicionController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_medicion_codigo" ] ) )
-   ::oController:oUnidadesMedicionController:oGetSelector:Activate( 100, 101, ::oDialog )
+   ::oController:getUnidadesMedicionController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_medicion_codigo" ] ) )
+   ::oController:getUnidadesMedicionController():getSelector():Activate( 100, 101, ::oDialog )
 
    REDEFINE GET   ::oGetCantidad ;
       VAR         ::oController:oModel:hBuffer[ "cantidad" ] ;
@@ -215,7 +220,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartDialog()
 
-   ::oController:oUnidadesMedicionController:oGetSelector:Start()
+   ::oController:getUnidadesMedicionController():getSelector():Start()
 
 RETURN ( Self )
 

@@ -5,11 +5,19 @@
 
 CLASS ImpuestosEspecialesController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ImpuestosEspecialesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ImpuestosEspecialesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ImpuestosEspecialesValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ImpuestosEspecialesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -31,18 +39,6 @@ METHOD New( oSenederController ) CLASS ImpuestosEspecialesController
 
    ::oModel                         := SQLImpuestosEspecialesModel():New( self )
 
-   ::oBrowseView                    := ImpuestosEspecialesBrowseView():New( self )
-
-   ::oDialogView                    := ImpuestosEspecialesView():New( self )
-
-   ::oValidator                     := ImpuestosEspecialesValidator():New( self, ::oDialogView )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oRepository                    := ImpuestosEspecialesRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -50,17 +46,18 @@ METHOD End() CLASS ImpuestosEspecialesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
-
-   ::oDialogView:End()
-
-   ::oValidator:End()
-
-   ::oRepository:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::oGetSelector:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -219,7 +216,7 @@ METHOD Activate() CLASS ImpuestosEspecialesView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

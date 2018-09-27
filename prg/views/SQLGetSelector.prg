@@ -9,7 +9,7 @@ CLASS GetSelector
 
    DATA bValue
 
-   DATA cPicture                                  
+   DATA cPicture                                INIT "@!"                                  
 
    DATA oLink
    

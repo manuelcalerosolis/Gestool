@@ -5,11 +5,21 @@
 
 CLASS PropiedadesLineasController FROM SQLBrowseController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD isNotColorProperty()   INLINE ( !::oSenderController:isColorProperty() )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := PropiedadesLineasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := PropiedadesLineasView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := PropiedadesLineasValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := PropiedadesLineasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -25,14 +35,6 @@ METHOD New( oController ) CLASS PropiedadesLineasController
 
    ::oModel                      := SQLPropiedadesLineasModel():New( self )
 
-   ::oBrowseView                 := PropiedadesLineasBrowseView():New( self )
-
-   ::oDialogView                 := PropiedadesLineasView():New( self )
-
-   ::oValidator                  := PropiedadesLineasValidator():New( self, ::oDialogView )
-
-   ::oRepository                 := PropiedadesLineasRepository():New( self )
-
    //::oModel:setEvent( 'gettingSelectSentence',  {|| ::oModel:gettingSelectSentence() } ) 
 
 RETURN ( Self )
@@ -43,13 +45,21 @@ METHOD End() CLASS PropiedadesLineasController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
    ::Super:End()
 

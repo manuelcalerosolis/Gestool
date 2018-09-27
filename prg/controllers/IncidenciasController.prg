@@ -28,7 +28,7 @@ CLASS IncidenciasController FROM SQLNavigatorController
 
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := IncidenciasValidator():New( self  ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := IncidenciasRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := IncidenciasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 

@@ -29,7 +29,7 @@ CLASS DescuentosController FROM SQLNavigatorController
 
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := DescuentosValidator():New( self  ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := DescuentosRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := DescuentosRepository():New( self ), ), ::oRepository )
    
 END CLASS
 

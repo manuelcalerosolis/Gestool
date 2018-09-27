@@ -25,6 +25,8 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
+   //Construcciones tardias----------------------------------------------------
+
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := CuentasBancariasBrowseView():New( self ), ), ::oBrowseView )
 
    METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := CuentasBancariasView():New( self ), ), ::oDialogView )
@@ -332,7 +334,7 @@ METHOD Activate() CLASS CuentasBancariasView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

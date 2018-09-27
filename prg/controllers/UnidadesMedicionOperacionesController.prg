@@ -17,7 +17,7 @@ CLASS UnidadesMedicionOperacionesController FROM SQLNavigatorController
 
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionOperacionesValidator():New( self  ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := UnidadesMedicionOperacionesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionOperacionesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 

@@ -65,6 +65,34 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oComentariosLineasController
 
+   DATA oLenguajesController
+
+   DATA oTraduccionesController
+
+   DATA oArticulosFamiliasController
+
+   DATA oArticulosTipoController
+
+   DATA oArticulosCategoriasController
+
+   DATA oArticulosFabricantesController
+
+   DATA oTipoIvaController
+
+   DATA oImpuestosEspecialesController
+
+   DATA oUnidadesMedicionController
+
+   DATA oArticulosUnidadesMedicionController
+
+   DATA oUnidadesMedicionGruposLineasController
+
+   DATA oUnidadesMedicionGruposController
+
+   DATA oArticulosTemporadasController
+
+   DATA oPropiedadesLineasController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -151,6 +179,47 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getComentariosLineasController();
                                     INLINE ( if( empty( ::oComentariosLineasController ), ::oComentariosLineasController := ComentariosLineasController():New( self ), ), ::oComentariosLineasController )
 
+   METHOD getLenguajesController();
+                                    INLINE ( if( empty( ::oLenguajesController ), ::oLenguajesController := LenguajesController():New( self ), ), ::oLenguajesController )
+
+   METHOD getTraduccionesController();
+                                    INLINE ( if( empty( ::oTraduccionesController ), ::oTraduccionesController := TraduccionesController():New( self ), ), ::oTraduccionesController )
+
+   METHOD getArticulosFamiliasController();
+                                    INLINE ( if( empty( ::oArticulosFamiliasController ), ::oArticulosFamiliasController := ArticulosFamiliasController():New( self ), ), ::oArticulosFamiliasController )
+
+   METHOD getArticulosTipoController();
+                                    INLINE ( if( empty( ::oArticulosTipoController ), ::oArticulosTipoController := ArticulosTipoController():New( self ), ), ::oArticulosTipoController )
+
+   METHOD getArticulosCategoriasController();
+                                    INLINE ( if( empty( ::oArticulosCategoriasController ), ::oArticulosCategoriasController := ArticulosCategoriasController():New( self ), ), ::oArticulosCategoriasController )
+
+   METHOD getArticulosFabricantesController();
+                                    INLINE ( if( empty( ::oArticulosFabricantesController ), ::oArticulosFabricantesController := ArticulosFabricantesController():New( self ), ), ::oArticulosFabricantesController )
+
+   METHOD getTipoIvaController();
+                                    INLINE ( if( empty( ::oTipoIvaController ), ::oTipoIvaController := TipoIvaController():New( self ), ), ::oTipoIvaController )
+
+   METHOD getImpuestosEspecialesController();
+                                    INLINE ( if( empty( ::oImpuestosEspecialesController ), ::oImpuestosEspecialesController := ImpuestosEspecialesController():New( self ), ), ::oImpuestosEspecialesController )
+
+   METHOD getUnidadesMedicionController();
+                                    INLINE ( if( empty( ::oUnidadesMedicionController ), ::oUnidadesMedicionController := UnidadesMedicionController():New( self ), ), ::oUnidadesMedicionController )
+
+   METHOD getArticulosUnidadesMedicionController();
+                                    INLINE ( if( empty( ::oArticulosUnidadesMedicionController ), ::oArticulosUnidadesMedicionController := ArticulosUnidadesMedicionController():New( self ), ), ::oArticulosUnidadesMedicionController )
+
+   METHOD getUnidadesMedicionGruposLineasController();
+                                    INLINE ( if( empty( ::oUnidadesMedicionGruposLineasController ), ::oUnidadesMedicionGruposLineasController := UnidadesMedicionGruposLineasController():New( self ), ), ::oUnidadesMedicionGruposLineasController )
+
+   METHOD getUnidadesMedicionGruposController();
+                                    INLINE ( if( empty( ::oUnidadesMedicionGruposController ), ::oUnidadesMedicionGruposController := UnidadesMedicionGruposController():New( self ), ), ::oUnidadesMedicionGruposController )
+
+   METHOD getArticulosTemporadasController();
+                                    INLINE ( if( empty( ::oArticulosTemporadasController ), ::oArticulosTemporadasController := ArticulosTemporadasController():New( self ), ), ::oArticulosTemporadasController )
+
+   METHOD getPropiedadesLineasController();
+                                    INLINE ( if( empty( ::oPropiedadesLineasController ), ::oPropiedadesLineasController := PropiedadesLineasController():New( self ), ), ::oPropiedadesLineasController )
 
    METHOD End()
 
@@ -290,6 +359,62 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oComentariosLineasController )   
       ::oComentariosLineasController:End()
+   end if 
+
+   if !empty( ::oLenguajesController )   
+      ::oLenguajesController:End()
+   end if 
+
+   if !empty( ::oTraduccionesController )   
+      ::oTraduccionesController:End()
+   end if 
+
+   if !empty( ::oArticulosFamiliasController )   
+      ::oArticulosFamiliasController:End()
+   end if 
+
+   if !empty( ::oArticulosTipoController )   
+      ::oArticulosTipoController:End()
+   end if 
+
+   if !empty( ::oArticulosCategoriasController )   
+      ::oArticulosCategoriasController:End()
+   end if 
+
+   if !empty( ::oArticulosFabricantesController )   
+      ::oArticulosFabricantesController:End()
+   end if  
+
+   if !empty( ::oTipoIvaController )   
+      ::oTipoIvaController:End()
+   end if 
+
+   if !empty( ::oImpuestosEspecialesController )   
+      ::oImpuestosEspecialesController:End()
+   end if    
+
+   if !empty( ::oUnidadesMedicionController )   
+      ::oUnidadesMedicionController:End()
+   end if    
+
+   if !empty( ::oArticulosUnidadesMedicionController )   
+      ::oArticulosUnidadesMedicionController:End()
+   end if    
+
+   if !empty( ::oUnidadesMedicionGruposLineasController )   
+      ::oUnidadesMedicionGruposLineasController:End()
+   end if    
+
+   if !empty( ::oUnidadesMedicionGruposController )   
+      ::oUnidadesMedicionGruposController:End()
+   end if    
+
+   if !empty( ::oArticulosTemporadasController )   
+      ::oArticulosTemporadasController:End()
+   end if    
+
+   if !empty( ::oPropiedadesLineasController )   
+      ::oPropiedadesLineasController:End()
    end if 
 
    ::Super:End()

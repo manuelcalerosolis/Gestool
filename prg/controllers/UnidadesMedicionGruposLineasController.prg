@@ -5,11 +5,19 @@
 
 CLASS UnidadesMedicionGruposLineasController FROM SQLBrowseController
 
-   DATA oUnidadesMedicionController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionGruposLineasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionGruposLineasView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionGruposLineasValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionGruposLineasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -31,18 +39,6 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposLineasController
 
    ::oModel                         := SQLUnidadesMedicionGruposLineasModel():New( self )
 
-   ::oBrowseView                    := UnidadesMedicionGruposLineasBrowseView():New( self )
-
-   ::oDialogView                    := UnidadesMedicionGruposLineasView():New( self )
-
-   ::oValidator                     := UnidadesMedicionGruposLineasValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := UnidadesMedicionGruposLineasRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
-   // ::oUnidadesMedicionController    := UnidadesMedicionController():New( self )
-
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
@@ -53,21 +49,25 @@ METHOD End() CLASS UnidadesMedicionGruposLineasController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
-   ::oGetSelector:End()
 
-   // ::oUnidadesMedicionController:End()
 
    ::Super:End()
-
-   self                             := nil
 
 RETURN ( nil )
 
@@ -206,11 +206,11 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
 
    // unidad alternativa-------------------------------------------------------------------------------------------------------//
 
-   ::oController:oUnidadesMedicioncontroller:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_alternativa_codigo" ] ) )
+   ::oController:getUnidadesMedicioncontroller():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_alternativa_codigo" ] ) )
    
-   //::oController:oUnidadesMedicioncontroller:oGetSelector:setEvent( 'validated', {|| ::UnidadesMedicionControllerValidated() } )
+   //::oController:getUnidadesMedicioncontroller():oGetSelector:setEvent( 'validated', {|| ::UnidadesMedicionControllerValidated() } )
 
-   ::oController:oUnidadesMedicioncontroller:oGetSelector:Activate( 120, 122, ::oDialog )
+   ::oController:getUnidadesMedicioncontroller():getSelector():Activate( 120, 122, ::oDialog )
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "cantidad_alternativa" ] ;
       ID          130 ;
@@ -267,7 +267,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartActivate() CLASS UnidadesMedicionGruposLineasView
 
-   ::oController:oUnidadesMedicioncontroller:oGetSelector:Start()
+   ::oController:getUnidadesMedicioncontroller():getSelector():Start()
 
 RETURN ( nil )
 

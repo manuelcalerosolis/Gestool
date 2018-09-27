@@ -5,11 +5,19 @@
 
 CLASS TipoIvaController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := TipoIvaBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := TipoIvaView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := TipoIvaValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := TipoIvaRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -31,19 +39,6 @@ METHOD New( oSenderController ) CLASS TipoIvaController
 
    ::oModel                         := SQLTiposIvaModel():New( self )
 
-   ::oBrowseView                    := TipoIvaBrowseView():New( self )
-
-   ::oDialogView                    := TipoIvaView():New( self )
-
-   ::oValidator                     := TipoIvaValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := TipoIvaRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
-   ::oGetSelector:cPicture          := "@!"
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -52,31 +47,21 @@ METHOD End() CLASS TipoIvaController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::oModel                         := nil
-
-   ::oBrowseView                    := nil
-
-   ::oDialogView                    := nil
-
-   ::oValidator                     := nil
-
-   ::oRepository                    := nil
-
-   ::oGetSelector                   := nil
-
-   ::oCamposExtraValoresController  := nil
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
    ::Super:End()
 
@@ -247,7 +232,7 @@ METHOD Activate() CLASS TipoIvaView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

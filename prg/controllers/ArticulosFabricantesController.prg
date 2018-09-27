@@ -5,15 +5,19 @@
 
 CLASS ArticulosFabricantesController FROM SQLNavigatorController
 
-   DATA oImagenesController
-
-   DATA oCamposExtraValoresController
-
-   DATA oGetSelector
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //COnstrucciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosFabricantesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosFabricantesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosFabricantesValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosFabricantesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -35,32 +39,18 @@ METHOD New( oSenderController ) CLASS ArticulosFabricantesController
 
    ::oModel                         := SQLArticulosFabricantesModel():New( self )
 
-   ::oBrowseView                    := ArticulosFabricantesBrowseView():New( self )
-
-   ::oDialogView                    := ArticulosFabricantesView():New( self )
-
-   ::oValidator                     := ArticulosFabricantesValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := ArticulosFabricantesRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oImagenesController            := ImagenesController():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oImagenesController:loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oImagenesController:insertBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getImagenesController():loadPrincipalBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::getImagenesController():insertBuffer() } )
 
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oImagenesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oImagenesController:updateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getImagenesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::getImagenesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oImagenesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oImagenesController:loadedDuplicateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getImagenesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getImagenesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oImagenesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::getImagenesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -70,19 +60,21 @@ METHOD End() CLASS ArticulosFabricantesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
-
-   ::oImagenesController:End()
-
-   ::oCamposExtraValoresController:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -164,7 +156,7 @@ CLASS ArticulosFabricantesView FROM SQLBaseView
 
     DATA oSayCamposExtra
 
-   METHOD getImagenesController()   INLINE ( ::oController:oImagenesController )
+   //METHOD getImagenesController()   INLINE ( ::oController:oImagenesController )
 
 END CLASS
 
@@ -244,7 +236,7 @@ METHOD Activate() CLASS ArticulosFabricantesView
       OF          ::oDialog
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

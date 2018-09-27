@@ -5,11 +5,19 @@
 
 CLASS UnidadesMedicionController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -31,18 +39,6 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionController
 
    ::oModel                         := SQLUnidadesMedicionModel():New( self )
 
-   ::oBrowseView                    := UnidadesMedicionBrowseView():New( self )
-
-   ::oDialogView                    := UnidadesMedicionView():New( self )
-
-   ::oValidator                     := UnidadesMedicionValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := UnidadesMedicionRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
@@ -53,21 +49,23 @@ METHOD End() CLASS UnidadesMedicionController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
-
-   ::oCamposExtraValoresController:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
    ::Super:End()
-
-   self                             := nil 
 
 RETURN ( nil )
 
@@ -197,7 +195,7 @@ METHOD Activate() CLASS UnidadesMedicionView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

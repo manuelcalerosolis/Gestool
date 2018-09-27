@@ -30,7 +30,7 @@ CLASS ContactosController FROM SQLNavigatorController
 
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ContactosValidator():New( self  ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := ContactosRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ContactosRepository():New( self ), ), ::oRepository )
       
 END CLASS
 

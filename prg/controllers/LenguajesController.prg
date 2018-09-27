@@ -5,13 +5,23 @@
 
 CLASS LenguajesController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD SetSelectorToGet( oGet, oSay )
 
    METHOD validLenguajeFromGet( oGet, oSay )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := LenguajesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := LenguajesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := LenguajesValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := LenguajesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -33,16 +43,6 @@ METHOD New( oSenderController ) CLASS LenguajesController
 
    ::oModel                   := SQLLenguajesModel():New( self )
 
-   ::oBrowseView              := LenguajesBrowseView():New( self )
-
-   ::oDialogView              := LenguajesView():New( self )
-
-   ::oValidator               := LenguajesValidator():New( self, ::oDialogView )
-
-   ::oRepository              := LenguajesRepository():New( self )
-
-   ::oGetSelector             := GetSelector():New( self )
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
@@ -53,19 +53,23 @@ METHOD End() CLASS LenguajesController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
-
-   self                          := nil
 
 RETURN ( nil )
 

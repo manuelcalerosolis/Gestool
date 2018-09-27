@@ -5,13 +5,19 @@
 
 CLASS ArticulosFamiliasController FROM SQLNavigatorController
 
-   DATA oTraduccionesController
-
-   DATA oCamposExtraValoresController
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosFamiliaBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosFamiliaView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosFamiliaValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosFamiliaRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -33,18 +39,6 @@ METHOD New( oSenderController ) CLASS ArticulosFamiliasController
 
    ::oModel                         := SQLArticulosFamiliaModel():New( self )
 
-   ::oBrowseView                    := ArticulosFamiliaBrowseView():New( self )
-
-   ::oDialogView                    := ArticulosFamiliaView():New( self )
-
-   ::oValidator                     := ArticulosFamiliaValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := ArticulosFamiliaRepository():New( self )
-
-   ::oTraduccionesController        := TraduccionesController():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getImagenesController():loadPrincipalBlankBuffer() } )
@@ -56,7 +50,7 @@ METHOD New( oSenderController ) CLASS ArticulosFamiliasController
    ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getImagenesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
    ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getImagenesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::getImagenesController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::getImagenesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -92,17 +86,7 @@ METHOD End() CLASS ArticulosFamiliasController
    if !empty( ::oGetSelector )
       ::oGetSelector:End()
       ::oGetSelector                   := nil
-   end if           
-
-   if !empty( ::oTraduccionesController )
-      ::oTraduccionesController:End()
-      ::oTraduccionesController        := nil
-   end if       
-
-   if !empty( ::oCamposExtraValoresController )
-      ::oCamposExtraValoresController:End()
-      ::oCamposExtraValoresController  := nil
-   end if       
+   end if                 
 
    ::Super:End()
 
@@ -373,14 +357,14 @@ METHOD addLinksToExplorerBar() CLASS ArticulosFamiliaView
    end if
   
    oPanel:AddLink(   "Traducciones...",;
-                     {|| ::oController:oTraduccionesController:activateDialogView() },;
-                     ::oController:oTraduccionesController:getImage( "16" ) )
+                     {|| ::oController:getTraduccionesController():activateDialogView() },;
+                     ::oController:getTraduccionesController():getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
 
    oPanel:AddLink(   "Campos extra...",;
-                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
+                     {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
+                     ::oController:getCamposExtraValoresController():getImage( "16" ) )
 
 RETURN ( self )
 
@@ -590,7 +574,7 @@ RETURN ( ::hValidators )
 
 METHOD sameFamily()
 
-   local uuidSelected := ::oController:oDialogView:getSelectedUuidTreeRelaciones()
+   local uuidSelected := ::oController:getDialogView():getSelectedUuidTreeRelaciones()
 
    if empty( uuidSelected )
       RETURN ( .t. )
@@ -684,11 +668,11 @@ METHOD setFamiliaUuidAttribute( value )
       RETURN ( value )
    end if 
 
-   if empty( ::oController:oDialogView )
+   if empty( ::oController:getDialogView() )
       RETURN ( value )
    end if 
 
-RETURN ( ::oController:oDialogView:uuidSelected )
+RETURN ( ::oController:getDialogView():uuidSelected )
 
 //---------------------------------------------------------------------------//
 

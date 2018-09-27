@@ -5,8 +5,6 @@
 
 CLASS ComentariosController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -19,7 +17,7 @@ CLASS ComentariosController FROM SQLNavigatorController
 
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ComentariosValidator():New( self ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := ComentariosRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ComentariosRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -40,8 +38,6 @@ METHOD New( oSenderController ) CLASS ComentariosController
    ::nLevel                         := Auth():Level( ::cName )
 
    ::oModel                         := SQLComentariosModel():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
 RETURN ( Self )
 
@@ -66,8 +62,6 @@ METHOD End() CLASS ComentariosController
    if !empty( ::oRepository )
       ::oRepository:End()
    end if
-
-   //::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -192,7 +186,7 @@ METHOD Activate() CLASS ComentariosView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON oBtnAppend ;
       ID          120 ;

@@ -5,11 +5,19 @@
 
 CLASS ArticulosCategoriasController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosCategoriasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosCategoriasView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosCategoriasValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosCategoriasRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -31,18 +39,6 @@ METHOD New( oSenderController ) CLASS ArticulosCategoriasController
 
    ::oModel                         := SQLArticulosCategoriasModel():New( self )
 
-   ::oBrowseView                    := ArticulosCategoriasBrowseView():New( self )
-
-   ::oDialogView                    := ArticulosCategoriasView():New( self )
-
-   ::oValidator                     := ArticulosCategoriasValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := ArticulosCategoriasRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -50,21 +46,23 @@ METHOD End() CLASS ArticulosCategoriasController
 
    ::oModel:End()
 
+   if !empty( ::oBrowseView )
    ::oBrowseView:End()
+   end if
 
+   if !empty( ::oDialogView )
    ::oDialogView:End()
+   end if
 
+   if !empty( ::oValidator )
    ::oValidator:End()
+   end if
 
+   if !empty( ::oRepository )
    ::oRepository:End()
-
-   ::oGetSelector:End()
-
-   ::oCamposExtraValoresController:End()
+   end if
 
    ::Super:End()
-
-   self                             := nil
 
 RETURN ( nil )
 
@@ -216,7 +214,7 @@ METHOD Activate() CLASS ArticulosCategoriasView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

@@ -7,9 +7,7 @@ CLASS PropiedadesController FROM SQLNavigatorController
 
    DATA oPropiedadesLineasController
 
-   DATA oCamposExtraValoresController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -43,12 +41,6 @@ METHOD New( oSenderController ) CLASS PropiedadesController
 
    ::oRepository                    := PropiedadesRepository():New( self )
 
-   ::oPropiedadesLineasController   := PropiedadesLineasController():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oGetSelector                   := GetSelector():New( self )   
-
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
@@ -66,10 +58,6 @@ METHOD End() CLASS PropiedadesController
    ::oValidator:End()
 
    ::oRepository:End()
-
-   ::oPropiedadesLineasController:End()
-
-   ::oCamposExtraValoresController:End()
 
    ::Super:End()
 
@@ -156,7 +144,7 @@ END CLASS
 
 METHOD Activating() CLASS PropiedadesView
 
-   ::oController:oPropiedadesLineasController:buidRowSet()
+   ::oController:getPropiedadesLineasController():buidRowSet()
 
 RETURN ( nil )
 
@@ -211,23 +199,23 @@ METHOD Activate() CLASS PropiedadesView
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnAppend:bAction   := {|| ::oController:oPropiedadesLineasController:Append() }
+   oBtnAppend:bAction   := {|| ::oController:getPropiedadesLineasController():Append() }
 
    REDEFINE BUTTON oBtnEdit ;
       ID          140 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnEdit:bAction   := {|| ::oController:oPropiedadesLineasController:Edit() }
+   oBtnEdit:bAction   := {|| ::oController:getPropiedadesLineasController():Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
       ID          150 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnDelete:bAction   := {|| ::oController:oPropiedadesLineasController:Delete() }
+   oBtnDelete:bAction   := {|| ::oController:getPropiedadesLineasController():Delete() }
 
-   ::oController:oPropiedadesLineasController:Activate( 160, ::oDialog )
+   ::oController:getPropiedadesLineasController():Activate( 160, ::oDialog )
 
    REDEFINE SAY   ::oSayCamposExtra ;
       PROMPT      "Campos extra..." ;
@@ -237,7 +225,7 @@ METHOD Activate() CLASS PropiedadesView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    // Botones------------------------------------------------------------------
 
@@ -254,9 +242,9 @@ METHOD Activate() CLASS PropiedadesView
       ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oPropiedadesLineasController:Append() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oPropiedadesLineasController:Edit() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oPropiedadesLineasController:Delete() } )
+      ::oDialog:AddFastKey( VK_F2, {|| ::oController:getPropiedadesLineasController():Append() } )
+      ::oDialog:AddFastKey( VK_F3, {|| ::oController:getPropiedadesLineasController():Edit() } )
+      ::oDialog:AddFastKey( VK_F4, {|| ::oController:getPropiedadesLineasController():Delete() } )
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 

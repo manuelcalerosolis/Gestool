@@ -19,6 +19,10 @@ CLASS ArticulosPreciosController FROM SQLBrowseController
 
    METHOD UpdatePreciosAndRefresh() 
 
+   METHOD getUuid()                    INLINE ( if( !empty( ::getRowSet() ),  ::getRowSet():fieldGet( 'uuid' ), nil ) )
+
+   //Construcciones tardias----------------------------------------------------
+
    METHOD getModel()                   INLINE ( if( empty( ::oModel ),        ::oModel := SQLArticulosPreciosModel():New( self ), ), ::oModel )
 
    METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ),   ::oBrowseView := ArticulosPreciosBrowseView():New( self ), ), ::oBrowseView )
@@ -29,7 +33,7 @@ CLASS ArticulosPreciosController FROM SQLBrowseController
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ),   ::oRepository := ArticulosPreciosRepository():New( self ), ), ::oRepository )
 
-   METHOD getUuid()                    INLINE ( if( !empty( ::getRowSet() ),  ::getRowSet():fieldGet( 'uuid' ), nil ) )
+   
 
 END CLASS
 

@@ -5,11 +5,17 @@
 
 CLASS ArticulosTemporadasController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosTemporadaBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosTemporadaView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosTemporadaValidator():New( self ), ), ::oValidator )
 
 END CLASS
 
@@ -31,16 +37,6 @@ METHOD New( oSenderController ) CLASS ArticulosTemporadasController
 
    ::oModel                         := SQLArticulosTemporadasModel():New( self )
 
-   ::oBrowseView                    := ArticulosTemporadaBrowseView():New( self )
-
-   ::oDialogView                    := ArticulosTemporadaView():New( self )
-
-   ::oValidator                     := ArticulosTemporadaValidator():New( self, ::oDialogView )
-
-   ::oGetSelector                   := GetSelector():New( self )
-   
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -49,27 +45,17 @@ METHOD End() CLASS ArticulosTemporadasController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
-
-   ::oGetSelector:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::oModel                         := nil
-
-   ::oBrowseView                    := nil
-
-   ::oDialogView                    := nil
-
-   ::oValidator                     := nil
-
-   ::oGetSelector                   := nil
-
-   ::oCamposExtraValoresController  := nil
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
    
    ::Super:End()
 
@@ -224,7 +210,7 @@ METHOD Activate() CLASS ArticulosTemporadaView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

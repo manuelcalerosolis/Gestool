@@ -5,30 +5,6 @@
 
 CLASS ArticulosController FROM SQLNavigatorController
 
-   DATA oArticulosTipoController
-
-   DATA oArticulosCategoriasController
-
-   DATA oArticulosFamiliasController
-
-   DATA oArticulosFabricantesController
-
-   DATA oArticulosPreciosController
-
-   DATA oTipoIvaController
-
-   DATA oImpuestosEspecialesController
-
-   DATA oCamposExtraValoresController
-
-   DATA oArticulosUnidadesMedicionController
-
-   DATA oUnidadesMedicionGruposController
-
-   DATA oTraduccionesController
-
-   DATA oArticulosTemporadasController
-
    DATA oCombinacionesController
 
    METHOD New()
@@ -46,28 +22,28 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD validateTipoIVA()
 
    METHOD validColumnArticulosFamiliaBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFamiliasController:oModel, "articulo_familia_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosFamiliasController():oModel, "articulo_familia_codigo" ) )
 
    METHOD validColumnArticulosTipoBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosTipoController:oModel, "articulo_tipo_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosTipoController():oModel, "articulo_tipo_codigo" ) )
 
    METHOD validColumnArticulosCategoriasBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosCategoriasController:oModel, "articulo_categoria_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosCategoriasController():oModel, "articulo_categoria_codigo" ) )
 
    METHOD validColumnArticulosFabricantesBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosFabricantesController:oModel, "articulo_fabricante_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosFabricantesController():oModel, "articulo_fabricante_codigo" ) )
 
    METHOD validColumnArticulosTemporadasBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oArticulosTemporadasController:oModel, "articulo_temporada_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getArticulosTemporadasController():oModel, "articulo_temporada_codigo" ) )
 
    METHOD validColumnTiposIvaBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oTipoIvaController:oModel, "tipo_iva_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getTipoIvaController():oModel, "tipo_iva_codigo" ) )
 
    METHOD validColumnImpuestosEspecialesBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oImpuestosEspecialesController:oModel, "impuesto_especial_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getImpuestosEspecialesController():oModel, "impuesto_especial_codigo" ) )
 
    METHOD validColumnUnidadesMedicionGruposBrowse( oCol, uValue, nKey ) ;
-         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::oUnidadesMedicionGruposController:oModel, "unidades_medicion_grupos_codigo" ) )
+         INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getUnidadesMedicionGruposController():oModel, "unidades_medicion_grupos_codigo" ) )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -101,40 +77,6 @@ METHOD New( oSenderController ) CLASS ArticulosController
 
    ::oModel                                  := SQLArticulosModel():New( self )
 
-   /*::oCamposExtraValoresController           := CamposExtraValoresController():New( self, ::cName )*/
-
-   ::oArticulosFamiliasController            := ArticulosFamiliasController():New( self )
-   ::oArticulosFamiliasController:setView( ::oDialogView )
-
-   ::oTraduccionesController                 := TraduccionesController():New( self )
-
-   ::oArticulosTipoController                := ArticulosTipoController():New( self )
-   ::oArticulosTipoController:setView( ::oDialogView )
-
-   ::oArticulosCategoriasController          := ArticulosCategoriasController():New( self )
-   ::oArticulosCategoriasController:setView( ::oDialogView )
-
-   ::oArticulosFabricantesController         := ArticulosFabricantesController():New( self )
-   ::oArticulosFabricantesController:setView( ::oDialogView )
-
-   ::oArticulosPreciosController             := ArticulosPreciosController():New( self )
-   ::oArticulosPreciosController:setView( ::oDialogView )
-
-   ::oArticulosUnidadesMedicionController    := ArticulosUnidadesMedicionController():New( self )
-   ::oArticulosUnidadesMedicionController:setView( ::oDialogView )
-
-   ::oTipoIvaController                      := TipoIvaController():New( self )
-   ::oTipoIvaController:setView( ::oDialogView )
-
-   ::oImpuestosEspecialesController          := ImpuestosEspecialesController():New( self )
-   ::oImpuestosEspecialesController:setView( ::oDialogView )
-
-   ::oArticulosTemporadasController          := ArticulosTemporadasController():New( self )
-   ::oArticulosTemporadasController:setView( ::oDialogView )
-
-   ::oUnidadesMedicionGruposController       := UnidadesMedicionGruposController():New( self )
-   ::oUnidadesMedicionGruposController:setView( ::oDialogView )
-
    ::oCombinacionesController                := CombinacionesController():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
@@ -165,54 +107,6 @@ METHOD End() CLASS ArticulosController
 
    if !empty( ::oRepository )
       ::oRepository:End()
-   end if 
-
-   if !empty( ::oCamposExtraValoresController )
-      ::oCamposExtraValoresController:End()
-   end if 
-   
-   if !empty( ::oArticulosFamiliasController )
-      ::oArticulosFamiliasController:End()
-   end if 
-   
-   if !empty( ::oTraduccionesController )
-      ::oTraduccionesController:End()
-   end if 
-
-   if !empty( ::oArticulosTipoController )
-      ::oArticulosTipoController:End()
-   end if 
-
-   if !empty( ::oArticulosCategoriasController )
-      ::oArticulosCategoriasController:End()
-   end if 
-
-   if !empty( ::oArticulosFabricantesController )
-      ::oArticulosFabricantesController:End()
-   end if 
-
-   if !empty( ::oTipoIvaController )
-      ::oTipoIvaController:End()
-   end if 
-
-   if !empty( ::oImpuestosEspecialesController )
-      ::oImpuestosEspecialesController:End()
-   end if 
-
-   if !empty( ::oArticulosPreciosController )
-      ::oArticulosPreciosController:End()
-   end if 
-
-   if !empty( ::oArticulosUnidadesMedicionController )
-      ::oArticulosUnidadesMedicionController:End()
-   end if 
-
-   if !empty( ::oArticulosTemporadasController )
-      ::oArticulosTemporadasController:End()
-   end if 
-
-   if !empty( ::oUnidadesMedicionGruposController )
-      ::oUnidadesMedicionGruposController:End()
    end if 
 
    if !empty( ::oCombinacionesController )
@@ -249,7 +143,7 @@ METHOD getPorcentajeIVA() CLASS ArticulosController
       RETURN ( 0 )
    end if 
 
-RETURN ( ::oTipoIvaController:oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[ "tipo_iva_codigo" ] ) )
+RETURN ( ::getTipoIvaController():oModel:getPorcentajeWhereCodigo( ::oModel:hBuffer[ "tipo_iva_codigo" ] ) )
 
 //---------------------------------------------------------------------------//
 
@@ -271,7 +165,7 @@ METHOD insertPreciosWhereArticulo() CLASS ArticulosController
       RETURN ( nil )
    end if 
 
-   ::oArticulosPreciosController:oModel:insertPreciosWhereArticulo( uuidArticulo )   
+   ::getArticulosPreciosController():oModel:insertPreciosWhereArticulo( uuidArticulo )   
 
 RETURN ( nil )
 
@@ -284,9 +178,9 @@ METHOD validatePrecioCosto() CLASS ArticulosController
 
    ::oModel:updateFieldWhereUuid( uuidArticulo, "precio_costo", nPrecioCosto )
 
-   ::oArticulosPreciosController:oRepository:callUpdatePreciosWhereUuidArticulo( uuidArticulo )
+   ::getArticulosPreciosController():getRepository():callUpdatePreciosWhereUuidArticulo( uuidArticulo )
    
-   ::oArticulosPreciosController:refreshRowSet()
+   ::getArticulosPreciosController():refreshRowSet()
 
 RETURN ( .t. )
 
@@ -299,9 +193,9 @@ METHOD validateTipoIVA() CLASS ArticulosController
 
    ::oModel:updateFieldWhereUuid( uuidArticulo, "tipo_iva_codigo", cCodigoTipoIVA )
 
-   ::oArticulosPreciosController:oRepository:callUpdatePreciosWhereUuidArticulo( uuidArticulo )
+   ::getArticulosPreciosController():getRepository():callUpdatePreciosWhereUuidArticulo( uuidArticulo )
    
-   ::oArticulosPreciosController:refreshRowSet()
+   ::getArticulosPreciosController():refreshRowSet()
 
 RETURN ( .t. )
 

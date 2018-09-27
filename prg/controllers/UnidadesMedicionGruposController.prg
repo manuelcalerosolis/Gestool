@@ -5,17 +5,21 @@
 
 CLASS UnidadesMedicionGruposController FROM SQLNavigatorController
 
-   DATA oUnidadesMedicionGruposLineasController
-
-   DATA oCamposExtraValoresController
-
-   DATA oUnidadesMedicionController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD insertLineaUnidadBase()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionGruposBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionGruposView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionGruposValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionGruposRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -37,22 +41,6 @@ METHOD New( oSenderController ) CLASS UnidadesMedicionGruposController
 
    ::oModel                                  := SQLUnidadesMedicionGruposModel():New( self )
 
-   ::oBrowseView                             := UnidadesMedicionGruposBrowseView():New( self )
-
-   ::oDialogView                             := UnidadesMedicionGruposView():New( self )
-
-   ::oValidator                              := UnidadesMedicionGruposValidator():New( self, ::oDialogView )
-
-   ::oRepository                             := UnidadesMedicionGruposRepository():New( self )
-
-   ::oGetSelector                            := GetSelector():New( self )
-
-   ::oUnidadesMedicionController             := UnidadesMedicionController():New( self )
-
-   ::oUnidadesMedicionGruposLineasController := UnidadesMedicionGruposLineasController():New( self )
-
-   ::oCamposExtraValoresController           := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
@@ -63,39 +51,21 @@ METHOD End() CLASS UnidadesMedicionGruposController
 
    ::oModel:End()
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
-
-   ::oUnidadesMedicionController:End()
-
-   ::oUnidadesMedicionGruposLineasController:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::oModel                                  := nil
-
-   ::oBrowseView                             := nil
-
-   ::oDialogView                             := nil
-
-   ::oValidator                              := nil
-
-   ::oRepository                             := nil
-
-   ::oGetSelector                            := nil
-
-   ::oUnidadesMedicionController             := nil
-
-   ::oUnidadesMedicionGruposLineasController := nil
-
-   ::oCamposExtraValoresController           := nil
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
    ::Super:End()
 
@@ -105,9 +75,9 @@ RETURN ( nil )
 
 METHOD insertLineaUnidadBase() CLASS UnidadesMedicionGruposController
 
-   if empty( ::oUnidadesMedicionGruposLineasController:oModel:getField( 'uuid', 'parent_uuid', ::getUuid() ) )
+   if empty( ::getUnidadesMedicionGruposLineasController():oModel:getField( 'uuid', 'parent_uuid', ::getUuid() ) )
 
-      ::oUnidadesMedicionGruposLineasController:oModel:insertLineaUnidadBase( ::oModel:hBuffer[ "uuid" ], ::oModel:hBuffer[ "unidad_base_codigo" ] )
+      ::getUnidadesMedicionGruposLineasController():oModel:insertLineaUnidadBase( ::oModel:hBuffer[ "uuid" ], ::oModel:hBuffer[ "unidad_base_codigo" ] )
 
    end if
 
@@ -236,26 +206,26 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   ::oController:oUnidadesMedicioncontroller:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) )
+   ::oController:getUnidadesMedicioncontroller():oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) )
    
-   ::oController:oUnidadesMedicioncontroller:oGetSelector:setEvent( 'validated', {|| ::validatedUnidadesMedicioncontroller() } )
+   ::oController:getUnidadesMedicioncontroller():oGetSelector:setEvent( 'validated', {|| ::validatedUnidadesMedicioncontroller() } )
 
-   ::oController:oUnidadesMedicioncontroller:oGetSelector:setWhen( {|| Empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .AND. ::oController:isNotZoomMode() } )
+   ::oController:getUnidadesMedicioncontroller():oGetSelector:setWhen( {|| Empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .AND. ::oController:isNotZoomMode() } )
 
-   ::oController:oUnidadesMedicioncontroller:oGetSelector:Build( { "idGet" => 120, "idText" => 121,"idLink" => 122, "oDialog" => ::oDialog } )
+   ::oController:getUnidadesMedicioncontroller():oGetSelector:Build( { "idGet" => 120, "idText" => 121,"idLink" => 122, "oDialog" => ::oDialog } )
 
    // Unidades equivalencia--------------------------------------------------------------------
 
    REDEFINE BUTTON oBtnAppend ;
       ID          130 ;
       OF          ::oDialog ;
-      ACTION      ( ::oController:oUnidadesMedicionGruposLineasController:Append() ) ;
+      ACTION      ( ::oController:getUnidadesMedicionGruposLineasController():Append() ) ;
       WHEN        ( !empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
 
    REDEFINE BUTTON oBtnEdit ;
       ID          140 ;
       OF          ::oDialog ;
-      ACTION      ( ::oController:oUnidadesMedicionGruposLineasController:Edit() ) ;
+      ACTION      ( ::oController:getUnidadesMedicionGruposLineasController():Edit() ) ;
       WHEN        ( !empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
 
    // oBtnEdit:bAction   := {||  }
@@ -263,10 +233,10 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
    REDEFINE BUTTON oBtnDelete ;
       ID          150 ;
       OF          ::oDialog ;
-      ACTION      ( ::oController:oUnidadesMedicionGruposLineasController:Delete() ) ;
+      ACTION      ( ::oController:getUnidadesMedicionGruposLineasController():Delete() ) ;
       WHEN        ( !empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
 
-   ::oController:oUnidadesMedicionGruposLineasController:Activate( 160, ::oDialog ) 
+   ::oController:getUnidadesMedicionGruposLineasController():Activate( 160, ::oDialog ) 
 
    // campos extra-------------------------------------------------------------
 
@@ -278,7 +248,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    // botones------------------------------------------------------------------
 
@@ -310,7 +280,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartActivate() CLASS UnidadesMedicionGruposView
 
-   ::oController:oUnidadesMedicioncontroller:oGetSelector:Start()
+   ::oController:getUnidadesMedicioncontroller():getSelector():Start()
 
 RETURN ( nil )
 
@@ -320,9 +290,9 @@ METHOD validatedUnidadesMedicioncontroller() CLASS UnidadesMedicionGruposView
 
    ::oController:insertLineaUnidadBase()
    
-   ::oController:oUnidadesMedicionGruposLineasController:RefreshRowSetAndGoTop()
+   ::oController:getUnidadesMedicionGruposLineasController():RefreshRowSetAndGoTop()
    
-   ::oController:oUnidadesMedicionGruposLineasController:RefreshBrowseView()
+   ::oController:getUnidadesMedicionGruposLineasController():RefreshBrowseView()
 
 Return ( self )
 

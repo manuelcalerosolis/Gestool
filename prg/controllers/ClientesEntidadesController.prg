@@ -29,7 +29,7 @@ CLASS ClientesEntidadesController FROM SQLNavigatorController
 
    METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ClientesEntidadesView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()                 INLINE( if( empty( ::Repository ), ::oRepository := ClientesEntidadesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()                 INLINE( if( empty( ::oRepository ), ::oRepository := ClientesEntidadesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 

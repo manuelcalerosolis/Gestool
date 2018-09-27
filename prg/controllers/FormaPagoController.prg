@@ -5,8 +5,6 @@
 
 CLASS FormasPagosController FROM SQLNavigatorController
 
-   DATA oDocumentosController
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()

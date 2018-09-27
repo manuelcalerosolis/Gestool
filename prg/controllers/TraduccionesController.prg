@@ -5,9 +5,7 @@
 
 CLASS TraduccionesController FROM SQLNavigatorController
 
-   DATA oLenguajesController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -20,6 +18,14 @@ CLASS TraduccionesController FROM SQLNavigatorController
    METHOD loadedDuplicateBuffer( uuidEntidad )
 
    METHOD deleteBuffer( aUuidEntidades )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := TraduccionesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := TraduccionesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := TraduccionesValidator():New( self ), ), ::oValidator )
 
 END CLASS
 
@@ -41,17 +47,9 @@ METHOD New( oSenderController ) CLASS TraduccionesController
 
    ::oModel                := SQLTraduccionesModel():New( self )
 
-   ::oBrowseView           := TraduccionesBrowseView():New( self )
-
-   ::oDialogView           := TraduccionesView():New( self )
-
-   ::oValidator            := TraduccionesValidator():New( self, ::oDialogView )
-
-   ::oLenguajesController  := LenguajesController():New( self )
-
-   ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'appended',                      {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'edited',                        {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'deletedSelection',              {|| ::getBrowseView():Refresh() } )
 
    ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
@@ -63,14 +61,17 @@ RETURN ( Self )
 METHOD End() CLASS TraduccionesController
 
    ::oModel:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oDialogView:End()
-
-   ::oValidator:End()
-
-   ::oLenguajesController:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
    ::Super:End()
 
@@ -221,8 +222,8 @@ METHOD Activate() CLASS TraduccionesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   ::oController:oLenguajesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "lenguaje_uuid" ] ) )
-   ::oController:oLenguajesController:oGetSelector:Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
+   ::oController:getLenguajesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "lenguaje_uuid" ] ) )
+   ::oController:getLenguajesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "texto" ] ;
       ID          110 ;
@@ -267,7 +268,7 @@ METHOD startActivate()
 
    CursorWait()
 
-   ::oController:oLenguajesController:oGetSelector:Start()
+   ::oController:getLenguajesController():getSelector():Start()
 
    CursorWE()
 
