@@ -93,8 +93,6 @@ METHOD onChangeCombo( oColumn )
       RETURN ( nil )
    end if 
 
-   msgalert( oColumn:cSortOrder, oColumn:cOrder )
-
    ::getController():changeModelOrderAndOrientation( oColumn:cSortOrder, oColumn:cOrder )
 
    ::getBrowse():selectColumnOrder( oColumn )

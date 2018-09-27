@@ -11,13 +11,13 @@ CLASS ArticulosFamiliasController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosFamiliaBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()           INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosFamiliaBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosFamiliaView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()           INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosFamiliaView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosFamiliaValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()            INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosFamiliaValidator():New( self ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosFamiliaRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosFamiliaRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -127,7 +127,7 @@ METHOD addColumns() CLASS ArticulosFamiliaBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
@@ -401,7 +401,7 @@ METHOD changeIncluirTPVTactil()
       ::oGetPosicion:Hide()
       ::oCheckBoxMostrarComentario:Hide()
       ::oCheckBoxArticuloNoAcumulable:Hide()
-      ::oController:getComentariosController():geetSelector():Hide()
+      ::oController:getComentariosController():getSelector():Hide()
    end if 
 
 RETURN ( self )

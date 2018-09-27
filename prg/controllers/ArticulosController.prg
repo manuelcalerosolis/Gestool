@@ -170,8 +170,6 @@ METHOD validatePrecioCosto() CLASS ArticulosController
    local uuidArticulo   := hget( ::oModel:hBuffer, "uuid" )
    local nPrecioCosto   := hget( ::oModel:hBuffer, "precio_costo" )
 
-   msgalert( nPrecioCosto, "nPrecioCosto")
-
    ::oModel:updateFieldWhereUuid( uuidArticulo, "precio_costo", nPrecioCosto )
 
    ::getArticulosPreciosController():getRepository():callUpdatePreciosWhereUuidArticulo( uuidArticulo )

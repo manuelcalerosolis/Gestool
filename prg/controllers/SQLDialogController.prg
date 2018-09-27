@@ -305,11 +305,11 @@ METHOD editFilter()
    local cFilter  := ::oWindowsBar:GetComboFilter()
 
    if empty( cFilter )
-      RETURN ( Self )  
+      RETURN ( nil )  
    end if 
 
    if empty( ::oFilterController )
-      RETURN ( Self )  
+      RETURN ( nil )  
    end if 
 
 RETURN ( ::oFilterController:EditByText( cFilter ) )    
@@ -322,17 +322,17 @@ METHOD deleteFilter()
    local cFilter  := ::oWindowsBar:GetComboFilter()
 
    if empty( cFilter )
-      RETURN ( Self )  
+      RETURN ( nil )  
    end if 
 
    if empty( ::oFilterController )
-      RETURN ( Self )  
+      RETURN ( nil )  
    end if 
 
    nId            := ::oFilterController:oModel:getId( cFilter )
 
    if empty( nId )
-      RETURN ( Self )    
+      RETURN ( nil )    
    end if 
       
    if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿Desea eliminar el registro en curso?", "Confirme eliminación" )
@@ -341,7 +341,7 @@ METHOD deleteFilter()
       ::oFilterController:oModel:deleteById( { nId } )
    end if 
 
-RETURN ( Self )    
+RETURN ( nil )    
     
 //---------------------------------------------------------------------------//
 
@@ -369,7 +369,7 @@ METHOD setFilter( cFilterName )
 
    ::reBuildRowSet()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -381,7 +381,7 @@ METHOD buildFilter( cFilter )
 
    ::reBuildRowSet()
    
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -393,7 +393,7 @@ METHOD clearFilter()
 
    ::reBuildRowSet()
    
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -424,19 +424,17 @@ METHOD reBuildRowSet()
       
    ::getBrowse():Refresh()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD EnableWindowsBar()
 
    if empty( ::oWindowsBar )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    ::oWindowsBar:enableGet()
-
-   ::oWindowsBar:setComboBoxItem( ::oBrowseView:getColumnHeaderByOrder( ::getModel():getOrderBy() ) )
 
    ::oWindowsBar:enableComboFilter( ::getFilters() )
 
@@ -454,14 +452,14 @@ METHOD EnableWindowsBar()
 
    ::oNavigatorView:Refresh()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
 METHOD DisableWindowsBar()
 
    if empty( ::oWindowsBar )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    ::oWindowsBar:disableGet()
@@ -470,7 +468,7 @@ METHOD DisableWindowsBar()
 
    ::oWindowsBar:hideAddButtonFilter()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

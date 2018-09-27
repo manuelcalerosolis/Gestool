@@ -18,9 +18,6 @@ CLASS SQLDialogView FROM SQLBrowseableView
    DATA oGetSearch
    DATA cGetSearch                              INIT space( 200 )
 
-   DATA oComboBoxOrder
-   DATA cComboBoxOrder
-
    DATA bInitActivate
 
    METHOD New( oController )
@@ -35,7 +32,6 @@ CLASS SQLDialogView FROM SQLBrowseableView
    METHOD Start()
 
    METHOD getGetSearch()                        INLINE ( ::oGetSearch )
-   METHOD getComboBoxOrder()                    INLINE ( ::oComboBoxOrder )
    METHOD getWindow()                           INLINE ( ::oDialog )
 
    METHOD getSelectedBuffer()                   INLINE ( ::hSelectedBuffer )
@@ -113,13 +109,6 @@ METHOD Activate()
          PICTURE           "@!" ;
          BITMAP            "Find" ;
          OF                ::oDialog
-
-      REDEFINE COMBOBOX    ::oComboBoxOrder ;
-         VAR               ::cComboBoxOrder ;
-         ID                110 ;
-         OF                ::oDialog
-
-      ::oComboBoxOrder:bChange      := {|| ::oController:onChangeCombo() } 
 
       // Browse-----------------------------------------------------------------
 
@@ -201,10 +190,6 @@ METHOD Start()
 
       oBoton               := TDotNetButton():New( 60, oGrupo, "del32",                      "Eliminar",       ++nCount, {|| ::oController:Delete( ::getBrowse():aSelected ), ::Refresh() }, , , .f., .f., .f. )
       oBoton               := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",           "Salir",          ++nCount, {|| ::oDialog:end() }, , , .f., .f., .f. )
-
-   ::oComboBoxOrder:SetItems( ::getBrowseView():getColumnsHeaders() )
-
-   ::oComboBoxOrder:Set( ::getBrowseView():getColumnOrderHeader() )
 
    ::oController:restoreState() 
 

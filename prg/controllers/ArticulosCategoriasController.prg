@@ -88,7 +88,6 @@ METHOD addColumns() CLASS ArticulosCategoriasBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -102,7 +101,7 @@ METHOD addColumns() CLASS ArticulosCategoriasBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 50
+      :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with

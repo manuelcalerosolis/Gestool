@@ -29,19 +29,19 @@ METHOD getColumns() CLASS SQLArticulosModel
    hset( ::hColumns, "nombre",                     {  "create"    => "VARCHAR( 200 )"                          ,;
                                                       "default"   => {|| space( 200 ) } }                      )
 
-   hset( ::hColumns, "familia_codigo",    {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "familia_codigo",             {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "tipo_codigo",       {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "tipo_codigo",                {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "categoria_codigo",  {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "categoria_codigo",           {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "fabricante_codigo", {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "fabricante_codigo",          {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "temporada_codigo",  {  "create"    => "VARCHAR( 20 )"                           ,;
+   hset( ::hColumns, "temporada_codigo",           {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "tipo_iva_codigo",            {  "create"    => "VARCHAR( 20 )"                           ,;

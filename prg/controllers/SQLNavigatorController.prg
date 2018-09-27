@@ -87,7 +87,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD showEditAndDeleteButtonFilter()
 
-   METHOD getIds()                                    INLINE ( ::getRowSet():idFromRecno( ::oBrowseView:oBrowse:aSelected ) )
+   METHOD getIds()                                    INLINE ( ::getRowSet():idFromRecno( ::getBrowseView():oBrowse:aSelected ) )
 
    // Filters manege-----------------------------------------------------------
 
@@ -105,12 +105,16 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD buildCustomInFilter( cField, cValue )       INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "IN (...)" ),;
                                                                      ::buildInFilter( cField, cValue ), ) )
+   
    METHOD buildCustomNotInFilter( cField, cValue )    INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "NOT IN (...)" ),;
                                                                      ::buildNotInFilter( cField, cValue ), ) )
+   
    METHOD buildCustomBiggerFilter( cField, cValue )   INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "> (...)" ),;
                                                                      ::buildBiggerFilter( cField, cValue ), ) )
+   
    METHOD buildCustomSmallerFilter( cField, cValue )  INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "< (...)" ),;
                                                                      ::buildSmallerFilter( cField, cValue ), ) )
+   
    METHOD buildCustomLikeFilter( cField, cValue )     INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
                                                                      ::buildLikeFilter( cField, cValue ), ) )
 
@@ -165,11 +169,11 @@ METHOD buildRowSetSentence( cType )
    local cColumnOrder         
    local cColumnOrientation   
 
-   if !empty( ::oBrowseView )
+   if !empty( ::getBrowseView() )
 
-      cColumnOrder            := ::oBrowseView:getColumnOrderView( cType, ::getName() )
+      cColumnOrder            := ::getBrowseView():getColumnOrderView( cType, ::getName() )
       
-      cColumnOrientation      := ::oBrowseView:getColumnOrientationView( cType, ::getName() )
+      cColumnOrientation      := ::getBrowseView():getColumnOrientationView( cType, ::getName() )
 
    end if 
 
@@ -251,11 +255,11 @@ METHOD saveState()
 
    ::setId( ::getBrowseViewType(), ::getName(), ::getRowSet:fieldget( "id" ) )
 
-   ::setColumnOrder( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrder() )
+   ::setColumnOrder( ::getBrowseViewType(), ::getName(), ::getBrowseView():getColumnSortOrder() )
 
-   ::setColumnOrientation( ::getBrowseViewType(), ::getName(), ::oBrowseView:getColumnSortOrientation() )
+   ::setColumnOrientation( ::getBrowseViewType(), ::getName(), ::getBrowseView():getColumnSortOrientation() )
 
-   ::setState( ::getBrowseViewType(), ::getName(), ::oBrowseView:getState() ) 
+   ::setState( ::getBrowseViewType(), ::getName(), ::getBrowseView():getState() ) 
 
    CursorWE()
 
@@ -488,14 +492,10 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:setGetChange( {|| ::onChangeSearch() } )
 
-   oColumn              := ::oBrowseView:getColumnBySortOrder( ::getModel():getOrderBy() )
+   oColumn              := ::getBrowseView():getColumnBySortOrder( ::getModel():getOrderBy() )
 
    if !empty( oColumn )
-
-      ::oWindowsBar:setComboBoxItem( oColumn:cHeader )
-
-      ::oBrowseView:selectColumnOrder( oColumn, ::getModel():getOrientation() )
-
+      ::getBrowseView():selectColumnOrder( oColumn, ::getModel():getOrientation() )
    end if 
 
    ::oWindowsBar:enableComboFilter( ::getFilters() )

@@ -10,9 +10,6 @@ CLASS SQLSelectorView FROM SQLBrowseableView
    DATA oGetSearch
    DATA cGetSearch                              INIT space( 200 )
 
-   DATA oComboBoxOrder
-   DATA cComboBoxOrder
-
    DATA bInitActivate
 
    DATA hSelectedBuffer
@@ -41,7 +38,6 @@ CLASS SQLSelectorView FROM SQLBrowseableView
    METHOD Start()
 
    METHOD getGetSearch()                        INLINE ( ::oGetSearch )
-   METHOD getComboBoxOrder()                    INLINE ( ::oComboBoxOrder )
    METHOD getWindow()                           INLINE ( ::oDialog )
 
    METHOD getSelectedBuffer()                   INLINE ( if( ::lMultiselect, ::aSelectedBuffer, ::hSelectedBuffer ) )
@@ -88,13 +84,6 @@ METHOD Activate( lCenter )
          PICTURE           "@!" ;
          BITMAP            "FIND" ;
          OF                ::oDialog
-
-      REDEFINE COMBOBOX    ::oComboBoxOrder ;
-         VAR               ::cComboBoxOrder ;
-         ID                110 ;
-         OF                ::oDialog
-
-      ::oComboBoxOrder:bChange      := {|| ::onChangeCombo() } 
 
       // Menu------------------------------------------------------------------
 
@@ -180,10 +169,6 @@ METHOD Start()
    ::oMenuTreeView:Default()
 
    ::oMenuTreeView:AddSelectorButtons()
-
-   ::oComboBoxOrder:SetItems( ::getBrowseView():getColumnsHeaders() )
-
-   ::oComboBoxOrder:Set( ::getBrowseView():getColumnOrderHeader() )
 
    ::oController:restoreState()
 

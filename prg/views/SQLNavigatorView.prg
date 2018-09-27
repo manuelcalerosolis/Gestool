@@ -28,7 +28,6 @@ CLASS SQLNavigatorView FROM SQLBrowseableView
    // Facades------------------------------------------------------------------
 
    METHOD getComboBoxOrder()                 INLINE ( ::oController:oWindowsBar:oComboBox() )
-   METHOD setItemComboBoxOrder( cItem )      INLINE ( ::oController:oWindowsBar:setComboBoxItem( cItem ) )
    METHOD setChangeComboBoxOrder( bChange )  INLINE ( ::oController:oWindowsBar:oComboBox:bChange := bChange )   
 
    METHOD getGetSearch()                     INLINE ( ::oController:oWindowsBar:oGet() )
