@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS ClientesView FROM SQLBaseView
+CLASS TercerosView FROM SQLBaseView
   
    DATA oExplorerBar
 
@@ -65,7 +65,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activating() CLASS ClientesView
+METHOD Activating() CLASS TercerosView
 
    if ::oController:isAppendOrDuplicateMode()
       ::oController:oModel:hBuffer()
@@ -75,7 +75,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS ClientesView
+METHOD Activate() CLASS TercerosView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
@@ -137,7 +137,7 @@ RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD redefineGeneral() CLASS ClientesView
+METHOD redefineGeneral() CLASS TercerosView
 
    local oSay
 
@@ -179,7 +179,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD redefineComercial() CLASS ClientesView
+METHOD redefineComercial() CLASS TercerosView
 
    ::oController:getCuentasRemesaController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cuenta_remesa_codigo" ] ) )
    ::oController:getCuentasRemesaController():getSelector():Build( { "idGet" => 110, "idText" => 111, "idLink" => 112, "oDialog" => ::oFolder:aDialogs[2] } )
@@ -334,7 +334,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD redefineContabilidad() CLASS ClientesView
+METHOD redefineContabilidad() CLASS TercerosView
 
    REDEFINE SAY ::oInfoSubCuenta ;
       PROMPT   "Subcuenta..." ;
@@ -409,7 +409,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD startDialog() CLASS ClientesView
+METHOD startDialog() CLASS TercerosView
 
    ::addLinksToExplorerBar()
    
@@ -444,7 +444,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD addLinksToExplorerBar() CLASS ClientesView
+METHOD addLinksToExplorerBar() CLASS TercerosView
 
    local oPanel
 
@@ -471,7 +471,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD changeBloqueo() CLASS ClientesView
+METHOD changeBloqueo() CLASS TercerosView
 
    if ::oController:oModel:hBuffer[ "bloqueado" ]
       
@@ -498,7 +498,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadFechaLlamada() CLASS ClientesView
+METHOD loadFechaLlamada() CLASS TercerosView
 
    hSet( ::oController:oModel:hBuffer, "fecha_ultima_llamada", date() )
 
@@ -508,7 +508,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD changeAutorizacioncredito() CLASS ClientesView
+METHOD changeAutorizacioncredito() CLASS TercerosView
 
    if ::oController:oModel:hBuffer[ "autorizado_venta_credito" ]
       

@@ -49,6 +49,22 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD DireccionesControllerLoadedDuplicateBuffer()
 
+   METHOD validColumnFormasdePagoBrowse( uValue, nKey )        INLINE ( ::validColumnBrowse( uValue, nKey, ::getFormasPagoController():oModel, "forma_pago_uuid" ) )
+
+   METHOD validColumnRutasBrowse( uValue, nKey )               INLINE ( ::validColumnBrowse( uValue, nKey, ::getRutasController():oModel, "ruta_uuid" ) )
+
+   METHOD validColumnGruposBrowse( uValue, nKey )              INLINE ( ::validColumnBrowse( uValue, nKey, ::getClientesGruposController():oModel, "cliente_grupo_uuid" ) )
+
+   METHOD validColumnCuentasRemesasBrowse( uValue, nKey )      INLINE ( ::validColumnBrowse( uValue, nKey, ::getCuentasRemesasController():oModel, "cuenta_remesa_uuid" ) )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getDialogView()                                      INLINE ( if( empty( ::oDialogView ), ::oDialogView := TercerosView():New( self ), ), ::oDialogView )
+
+   METHOD getBrowseView()                                      INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := TercerosBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getSelector()                                        INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := ClientGetSelector():New( self ), ), ::oGetSelector )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -59,15 +75,42 @@ METHOD New( oSenderController) CLASS TercerosController
 
    ::lTransactional     := .t.
 
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
+   
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
+
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
+   
+   ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS TercerosController
 
-   ::Super:End()
+   ::oModel:End()
 
-   self                 := nil
+   if !empty(::oDialogView)
+      ::oDialogView:End()
+   end if 
+
+   if !empty(::oValidator)
+      ::oValidator:End()
+   end if 
+
+   if !empty(::oBrowseView)
+      ::oBrowseView:End()
+   end if 
+
+   if !empty(::oGetSelector)
+      ::oGetSelector:End()
+   end if 
+
+   ::Super:End()
 
 RETURN ( nil )
 
@@ -79,17 +122,17 @@ METHOD DireccionesControllerLoadCurrentBuffer()
    local uuid        := hget( ::oModel:hBuffer, "uuid" )
 
    if empty( uuid )
-      ::oDireccionesController:oModel:insertBuffer()
+      ::getDireccionesController():oModel:insertBuffer()
    end if 
 
-   idDireccion          := ::oDireccionesController:oModel:getIdWhereParentUuid( uuid )
+   idDireccion          := ::getDireccionesController():oModel:getIdWhereParentUuid( uuid )
 
    if empty( idDireccion )
-      ::oDireccionesController:oModel:loadBlankBuffer()
-      idDireccion       := ::oDireccionesController:oModel:insertBuffer()
+      ::getDireccionesController():oModel:loadBlankBuffer()
+      idDireccion       := ::getDireccionesController():oModel:insertBuffer()
    end if 
 
-   ::oDireccionesController:oModel:loadCurrentBuffer( idDireccion )
+   ::getDireccionesController():oModel:loadCurrentBuffer( idDireccion )
 
 RETURN ( self )
 
@@ -100,13 +143,13 @@ METHOD DireccionesControllerUpdateBuffer()
    local idDireccion     
    local uuid     := hget( ::oModel:hBuffer, "uuid" )
 
-   idDireccion          := ::oDireccionesController:oModel:getIdWhereParentUuid( uuid )
+   idDireccion          := ::getDireccionesController():oModel:getIdWhereParentUuid( uuid )
    if empty( idDireccion )
-      ::oDireccionesController:oModel:insertBuffer()
+      ::getDireccionesController():oModel:insertBuffer()
       RETURN ( self )
    end if 
 
-   ::oDireccionesController:oModel:updateBuffer()
+   ::getDireccionesController():oModel:updateBuffer()
 
 RETURN ( self )
 
@@ -120,7 +163,7 @@ METHOD DireccionesControllerDeleteBuffer()
       RETURN ( self )
    end if
 
-   ::oDireccionesController:oModel:deleteWhereParentUuid( aUuid )
+   ::getDireccionesController():oModel:deleteWhereParentUuid( aUuid )
 
    RETURN ( self )
 //---------------------------------------------------------------------------//
@@ -132,13 +175,13 @@ METHOD DireccionesControllerLoadedDuplicateCurrentBuffer()
 
    uuid           := hget( ::oModel:hBuffer, "uuid" )
 
-   idDireccion          := ::oDireccionesController:oModel:getIdWhereParentUuid( uuid )
+   idDireccion          := ::getDireccionesController():oModel:getIdWhereParentUuid( uuid )
    if empty( idDireccion )
-      ::oDireccionesController:oModel:insertBuffer()
+      ::getDireccionesController():oModel:insertBuffer()
       RETURN ( self )
    end if 
 
-   ::oDireccionesController:oModel:loadDuplicateBuffer( idDireccion )
+   ::getDireccionesController():oModel:loadDuplicateBuffer( idDireccion )
 
 RETURN ( self )
 
@@ -148,7 +191,7 @@ METHOD DireccionesControllerLoadedDuplicateBuffer()
 
    local uuid     := hget( ::oModel:hBuffer, "uuid" )
 
-   hset( ::oDireccionesController:oModel:hBuffer, "parent_uuid", uuid )
+   hset( ::getDireccionesController():oModel:hBuffer, "parent_uuid", uuid )
 
 RETURN ( self )
 

@@ -5,7 +5,7 @@
 
 CLASS ProveedoresController FROM TercerosController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
 END CLASS
 
@@ -13,7 +13,7 @@ END CLASS
 
 METHOD New() CLASS ProveedoresController
 
-   ::Super:New()
+   
 
    ::cTitle                      := "Proveedores"
 
@@ -25,6 +25,10 @@ METHOD New() CLASS ProveedoresController
 
    ::oModel                      := SQLProveedoresModel():New( self )
 
+   ::Super:New()
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+

@@ -154,7 +154,7 @@ CLASS SQLApplicationController FROM SQLBaseController
                                     INLINE ( if( empty( ::oCuentasBancariasController ), ::oCuentasBancariasController := CuentasBancariasController():New( self ), ), ::oCuentasBancariasController )
 
    METHOD getDocumentosController();
-                                    INLINE ( if( empty( ::oDocumentosController ), ::oDocumentosController := DocumentosController():New( self ), ), ::oCuentasBancariasController )
+                                    INLINE ( if( empty( ::oDocumentosController ), ::oDocumentosController := DocumentosController():New( self ), ), ::oDocumentosController )
 
    METHOD getFormasPagosController();
                                     INLINE ( if( empty( ::oFormasPagosController ), ::oFormasPagosController := FormasPagosController():New( self ), ), ::oFormasPagosController )

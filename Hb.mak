@@ -708,7 +708,7 @@ ProveedoresController.prg 													\
 SQLTercerosModel.prg 														\
 SQLClientesModel.prg 														\
 SQLProveedoresModel.prg 		  											\
-ClientesView.prg 																\
+TercerosView.prg 																\
 ClientesValidator.prg 														\
 SqlGetSelector.prg 															\
 SqlClientGetSelector.prg													\
@@ -719,6 +719,7 @@ CalculaPrecioCommand.prg 													\
 DescuentosController.prg 													\
 ArticulosPreciosDescuentosController.prg 								\
 ClientesBrowseView.prg 														\
+ProveedoresBrowseView.prg 													\
 TercerosBrowseView.prg 														\
 SqlFacturasClientesModel.prg 												\
 SqlFacturasClientesLineasModel.prg										\
@@ -1418,7 +1419,7 @@ ProveedoresController.obj 													\
 SQLTercerosModel.obj 														\
 SQLclientesModel.obj 														\
 SQLProveedoresModel.obj 		  											\
-ClientesView.obj 																\
+TercerosView.obj 																\
 ClientesValidator.obj 														\
 SqlGetSelector.obj 															\
 SqlClientGetSelector.obj 													\
@@ -1429,6 +1430,7 @@ CalculaPrecioCommand.obj 													\
 DescuentosController.obj 													\
 ArticulosPreciosDescuentosController.obj 								\
 ClientesBrowseView.obj 														\
+ProveedoresBrowseView.obj 													\
 TercerosBrowseView.obj 														\
 SQLFacturasClientesModel.obj 												\
 FacturasClientesRepository.obj 											\
@@ -2117,7 +2119,7 @@ $(OBJ)\ProveedoresController.obj 										+
 $(OBJ)\SQLTercerosModel.obj 												+
 $(OBJ)\SQLclientesModel.obj 												+
 $(OBJ)\SQLProveedoresModel.obj 		  									+
-$(OBJ)\ClientesView.obj 													+
+$(OBJ)\TercerosView.obj 													+
 $(OBJ)\ClientesValidator.obj 												+
 $(OBJ)\SqlGetSelector.obj 													+
 $(OBJ)\SqlClientGetSelector.obj											+
@@ -2128,6 +2130,7 @@ $(OBJ)\CalculaPrecioCommand.obj 											+
 $(OBJ)\DescuentosController.obj 											+
 $(OBJ)\ArticulosPreciosDescuentosController.obj 					+
 $(OBJ)\ClientesBrowseView.obj 											+
+$(OBJ)\ProveedoresBrowseView.obj 										+
 $(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\SqlFacturasClientesModel.obj 				    				+
 $(OBJ)\FacturasClientesRepository.obj 				    				+
