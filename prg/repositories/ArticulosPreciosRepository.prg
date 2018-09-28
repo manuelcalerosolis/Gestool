@@ -226,13 +226,13 @@ METHOD createFunctionUpdatePrecioWhereIdPrecio() CLASS ArticulosPreciosRepositor
                AND ( articulos_tarifas.valido_hasta IS NULL OR articulos_tarifas.valido_hasta <= CURDATE() ) 
             ); 
 
-         SET precio_base = ( precio_costo * margen / 100 ) + ( precio_costo );
-         SET precio_iva_incluido = ( precio_base * porcentaje_iva / 100 ) + ( precio_base );
+         SET precio_base         = ( precio_costo * margen / 100 ) + ( precio_costo );
+         SET precio_iva_incluido = ( precio_base ) + ( precio_base * IFNULL( porcentaje_iva, 0 ) / 100 );
 
          IF precio_base > 0 THEN 
-            SET margen_real = ( ( precio_base - precio_costo ) / precio_base * 100 );
+            SET margen_real      = ( ( precio_base - precio_costo ) / precio_base * 100 );
          ELSE 
-            SET margen_real = 0;
+            SET margen_real      = 0;
          END IF;
 
          UPDATE %2$s AS articulos_precios 
