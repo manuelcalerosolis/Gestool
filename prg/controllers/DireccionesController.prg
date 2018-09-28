@@ -60,7 +60,7 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    METHOD getValidator()                  INLINE ( if( empty( ::oValidator ), ::oValidator := DireccionesValidator():New( self, ::getDialogView() ), ), ::oValidator )
    
-   METHOD getSelector()                   INLINE ( if( empty( ::oSelector ), ::oSelector := DireccionesGetSelector():New( self ), ), ::oSelector )
+   METHOD getSelector()                   INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := DireccionesGetSelector():New( self ), ), ::oGetSelector )
 
    METHOD externalStartDialog()           INLINE ( ::getDialogView():StartDialog() )
 

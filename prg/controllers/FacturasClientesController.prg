@@ -30,6 +30,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oSerieDocumentoComponent
 
+   DATA oHistoryManager
+
    DATA oNumeroDocumentoComponent
 
    DATA oContadoresModel
@@ -75,7 +77,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
    
-   METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New( self ), ), ::oHistoryManager )
+   METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
 
 END CLASS
 
@@ -118,6 +120,8 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
 
    ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
+
+   ::oContadoresModel                                    := SQLContadoresModel():New( self )
 
 RETURN ( Self )
 
@@ -200,7 +204,7 @@ METHOD clientesSettedHelpText() CLASS FacturasClientesController
 
    if ::getHistoryManager():isEqual( "cliente_codigo", ::getModelBuffer( "cliente_codigo" ) )
       RETURN ( nil )
-   end if          
+   end if         
 
    ::clientSetTarifa()
 
@@ -286,7 +290,7 @@ METHOD calculateTotals( uuidFactura ) CLASS FacturasClientesController
 
    DEFAULT uuidFactura  := ::getUuid()
 
-   hTotal               := ::oRepository:getTotal( uuidFactura )
+   hTotal               := ::getRepository():getTotal( uuidFactura )
 
    if empty( hTotal )
       RETURN ( nil )

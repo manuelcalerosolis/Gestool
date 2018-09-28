@@ -23,8 +23,6 @@ CLASS RelacionesEntidadesController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   /*METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := RelacionesEntidadesBrowseView():New( self ), ), ::oBrowseView ) */
-
    METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := RelacionesEntidadesView():New( self ), ), ::oDialogView )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := RelacionesEntidadesRepository():New( self ), ), ::oRepository )
