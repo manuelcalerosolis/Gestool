@@ -157,7 +157,7 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
       :nWidth              := 20
       :AddResource( "gc_more2_16" )
       :bBmpData            := {|| 1 }
-      :bLDClickData        := {|| ::oController:oArticulosPreciosDescuentosController:activateDialogView() }
+      :bLDClickData        := {|| ::oController:getArticulosPreciosDescuentosController():activateDialogView() }
    end with
 
 RETURN ( nil )
