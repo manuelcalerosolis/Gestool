@@ -66,6 +66,9 @@ METHOD Validate() CLASS SerieDocumentoComponent
 
    local cSerie   := alltrim( ::oGet:varGet() )
 
+   msgalert(::oSenderController:cName, "cname")
+   msgalert(cSerie, "cSerie")
+
    if ::oSenderController:oContadoresModel:isSerie( ::oSenderController:cName, cSerie )
       RETURN ( .t. )
    end if

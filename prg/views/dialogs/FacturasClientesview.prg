@@ -41,9 +41,9 @@ METHOD Activating() CLASS FacturasClientesView
       ::oController:oModel:hBuffer()
    end if 
 
-   ::oController:getFacturasClientesLineasController():buildRowSet()
+   //::oController:getFacturasClientesLineasController():buildRowSet()
 
-   ::oController:getFacturasClientesDescuentosController():buildRowSet()   
+   //::oController:getFacturasClientesDescuentosController():buildRowSet()   
 
 RETURN ( nil )
 
@@ -105,9 +105,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Formas de pago------------------------------------------------------------
 
-   ::oController:getFormasPagoController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
-   ::oController:getFormasPagoController():getSelector():Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:getFormasPagoController():getSelector():setValid( {|| ::oController:validate( "forma_pago_codigo" ) } )
+   ::oController:getFormasPagosController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
+   ::oController:getFormasPagosController():getSelector():Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getFormasPagosController():getSelector():setValid( {|| ::oController:validate( "forma_pago_codigo" ) } )
 
    // Almacenes----------------------------------------------------------------
 
@@ -246,7 +246,7 @@ METHOD startDialog() CLASS FacturasClientesView
 
    ::oController:getClientesController():getSelector():Start()
 
-   ::oController:getFormasPagoController():getSelector():Start()
+   ::oController:getFormasPagosController():getSelector():Start()
 
    ::oController:getRutasController():getSelector():Start()
 
@@ -279,8 +279,8 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
    end if
 
    oPanel:AddLink(   "Incidencias...",;
-                     {|| ::oController:oIncidenciasController:activateDialogView() },;
-                         ::oController:oIncidenciasController:getImage( "16" ) )
+                     {|| ::oController:getIncidenciasController():activateDialogView() },;
+                         ::oController:getIncidenciasController():getImage( "16" ) )
 
    oPanel:AddLink(   "Tipo de direcciones...",;
                      {|| ::oController:getDireccionTipoDocumentoController():activateDialogView() },;
@@ -291,8 +291,8 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
    if ::oController:isNotZoomMode()
 
       oPanel:AddLink(   "Campos extra...",;
-                        {||   ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                              ::oController:oCamposExtraValoresController:getImage( "16" ) )
+                        {||   ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
+                              ::oController:getCamposExtraValoresController():getImage( "16" ) )
    end if
 
 RETURN ( nil )

@@ -5,6 +5,8 @@
 
 CLASS FacturasClientesLineasController FROM SQLBrowseController
 
+   DATA oHistoryManager
+
    DATA hArticulo
 
    DATA oSeriesControler
@@ -118,7 +120,7 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := FacturasClientesLineasValidator():New( self ), ), ::oValidator )
 
-   METHOD getHistoryManager()             INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New( self ), ), ::oHistoryManager )
+   METHOD getHistoryManager()             INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
 
 END CLASS
 

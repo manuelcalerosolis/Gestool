@@ -117,6 +117,10 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFacturasClientesController
 
+   DATA oAlmacenesController
+
+   DATA oDireccionTipoDocumentoController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -280,6 +284,12 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getFacturasClientesController();
                                     INLINE ( if( empty( ::oFacturasClientesController ), ::oFacturasClientesController := FacturasClientesController():New( self ), ), ::oFacturasClientesController )
+
+   METHOD getAlmacenesController();
+                                    INLINE ( if( empty( ::oAlmacenesController ), ::oAlmacenesController := AlmacenesController():New( self ), ), ::oAlmacenesController )
+
+   METHOD getDireccionTipoDocumentoController();
+                                    INLINE ( if( empty( ::oDireccionTipoDocumentoController ), ::oDireccionTipoDocumentoController := DireccionTipoDocumentoController():New( self ), ), ::oDireccionTipoDocumentoController )
 
    METHOD End()
 
@@ -523,6 +533,14 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oFacturasClientesController )   
       ::oFacturasClientesController:End()
+   end if 
+
+   if !empty( ::oAlmacenesController )   
+      ::oAlmacenesController:End()
+   end if    
+
+   if !empty( ::oDireccionTipoDocumentoController )   
+      ::oDireccionTipoDocumentoController:End()
    end if 
 
    ::Super:End()
