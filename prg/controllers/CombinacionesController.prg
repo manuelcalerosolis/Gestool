@@ -5,9 +5,13 @@
 
 CLASS CombinacionesController FROM SQLBrowseController
 
+   DATA cCodigoArticulo
+
    DATA hPropertyList
 
    DATA oSelectorView
+
+   DATA aHaving                  INIT {}
 
    METHOD New() CONSTRUCTOR
 
@@ -28,6 +32,12 @@ CLASS CombinacionesController FROM SQLBrowseController
    METHOD isCombinationInRowSet( cCombinationName )   INLINE ( ::getRowSet():findString( cCombinationName, 'articulos_propiedades_nombre' ) )
 
    METHOD updateIncrementoPrecio( nIncrementoPrecio )
+
+   METHOD insertHaving( hProperty )
+
+   METHOD deleteHaving( hProperty )
+
+   METHOD updateHavingSentence()
 
    //Construcciones tardias----------------------------------------------------
 
@@ -122,6 +132,8 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
       RETURN ( nil )
    end if 
    
+   ::cCodigoArticulo := cCodigoArticulo
+
    ::hPropertyList   := getSQLDatabase():selectTrimedFetchHash( ::getPropiedadesController():oModel:getPropertyList() ) 
 
    if empty( ::hPropertyList )
@@ -129,7 +141,7 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
       RETURN ( nil )
    end if 
 
-   ::oRowSet:buildPad( ::oModel:getSelectorWhereCodigoArticulo( cCodigoArticulo ) )
+   ::oRowSet:buildPad( ::oModel:getSelectWhereCodigoArticulo( cCodigoArticulo ) )
 
 RETURN ( ::dialogViewActivate( ::getSelectorView() ) )
 
@@ -211,6 +223,48 @@ METHOD updateIncrementoPrecio( nIncrementoPrecio ) CLASS CombinacionesController
    ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'incremento_precio', nIncrementoPrecio )
 
    ::refreshRowSet()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertHaving( hProperty ) CLASS CombinacionesController
+
+   aadd( ::aHaving, hProperty )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteHaving( hProperty ) CLASS CombinacionesController
+
+   local nPosition
+
+   nPosition      := ascan( ::aHaving, {|h| hget( h, "propiedad_uuid" ) == hget( hProperty, "propiedad_uuid" ) } ) 
+
+   if nPosition != 0
+      adel( ::aHaving, nPosition, .t. )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD updateHavingSentence() CLASS CombinacionesController
+
+   local cGeneralHaving    := ""
+
+   msgalert( hb_valtoexp( ::aHaving ), "aHaving" )
+
+   aeval( ::aHaving, {|cHaving| cGeneralHaving += 'articulos_propiedades_nombre LIKE ' + quoted( '%' + cHaving + '%' ) + ' AND ' } )
+
+   if !empty( cGeneralHaving )
+      cGeneralHaving       := chgAtEnd( cGeneralHaving, '', 5 )
+   end if 
+
+   ::oModel:setGeneralHaving( cGeneralHaving )
+   
+   msgalert( cGeneralHaving, "cGeneralHaving" )
 
 RETURN ( nil )
 
@@ -362,6 +416,10 @@ METHOD startActivate() CLASS CombinacionesView
 
    local hProperty
 
+   ::oController:aHaving   := {}
+
+   msgalert( hb_valtoexp( ::oController:hPropertyList ), "hPropertyList" )
+
    for each hProperty in ::oController:hPropertyList
       
       ::addPanel( hProperty )
@@ -414,21 +472,18 @@ RETURN ( oCheckBox )
 
 METHOD changeCheckBox( uValue, oCheckBox ) CLASS CombinacionesView
 
-   local cCaption   := oCheckBox:cCaption
+   local hCargo      := oCheckBox:Cargo
 
    if uValue
-      ::oController:oModel:insertHaving( cCaption )
+      msgalert( hb_valtoexp( oCheckBox:Cargo ), "changeCheckBox" )
+      ::oController:insertHaving( hCargo )
    else 
-      ::oController:oModel:deleteHaving( cCaption )
+      ::oController:deleteHaving( hCargo )
    end if 
 
-   ::oController:oRowSet:Refresh()
+   ::oController:oRowSet:buildPad( ::oController:oModel:getSelectWhereCodigoArticuloHaving( ::oController:cCodigoArticulo, ::oController:aHaving ) )
 
    ::oController:getBrowseView():Refresh()
-
-   msgalert( cCaption, "changeCheckBox" )
-
-   msgalert( oCheckBox:className(), "changeCheckBox className" )
 
 RETURN ( nil )
 
@@ -559,18 +614,16 @@ CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
    DATA cGroupBy                 INIT "GROUP BY uuid"
 
-   DATA aHaving                  INIT {}
-
    METHOD getColumns()
 
    METHOD getInitialSelect()
 
-   METHOD getSelectorWhereCodigoArticulo( cCodigoArticulo ) 
+   METHOD getSelectWhereCodigoArticulo( cCodigoArticulo )
 
-   METHOD insertHaving( cNombre )
+   METHOD getSelectWhereCodigoArticuloHaving( cCodigoArticulo, aHaving ) 
 
-   METHOD deleteHaving( cNombre )
-   
+   METHOD getHaving( aHaving )
+  
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -606,7 +659,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSelectorWhereCodigoArticulo( cCodigoArticulo ) CLASS SQLCombinacionesModel
+METHOD getSelectWhereCodigoArticulo() CLASS SQLCombinacionesModel
 
    local cSql 
 
@@ -619,7 +672,7 @@ METHOD getSelectorWhereCodigoArticulo( cCodigoArticulo ) CLASS SQLCombinacionesM
       combinaciones.incremento_precio AS incremento_precio,
       combinaciones_propiedades.id AS propiedades_id,
       combinaciones_propiedades.uuid AS propiedades_uuid,
-      GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre
+      GROUP_CONCAT( CONCAT( " ", articulos_propiedades_lineas.nombre, " " ) ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre
    
    FROM %1$s AS combinaciones 
 
@@ -632,15 +685,63 @@ METHOD getSelectorWhereCodigoArticulo( cCodigoArticulo ) CLASS SQLCombinacionesM
       INNER JOIN %3$s AS articulos_propiedades_lineas
          ON combinaciones_propiedades.propiedad_uuid = articulos_propiedades_lineas.uuid
 
-   WHERE combinaciones.parent_uuid = articulos.uuid
+   WHERE combinaciones.parent_uuid = articulos.uuid 
 
    GROUP BY combinaciones.uuid
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), quoted( ::oController:cCodigoArticulo ) )
 
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSelectWhereCodigoArticuloHaving( cCodigoArticulo, aHaving ) CLASS SQLCombinacionesModel
+
+   local cSql        
+
+   cSql              := ::getSelectWhereCodigoArticulo( cCodigoArticulo )
+
+   cSql              += ::getHaving( aHaving )
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHaving( aHaving ) CLASS SQLCombinacionesModel
+
+   local cGroup
+   local cHaving     
+   local hProperty
+
+   if empty( aHaving )
+      RETURN ( "" )
+   end if 
+
+   cHaving           := " HAVING ( "
+
+   aHaving           := asort( aHaving, , , {|x,y| hget( x, "grupo_id" ) < hget( y, "grupo_id" ) } )
+
+   for each hProperty in aHaving
+
+      if !empty( cGroup )
+         if hget( hProperty, "grupo_id" ) == cGroup
+            cHaving  += " OR "
+         else 
+            cHaving  += ") AND ("
+         end if 
+      end if 
+
+      cHaving        += "articulos_propiedades_nombre LIKE " + quoted( "% " + hget( hProperty, "propiedad_nombre" ) + " %" ) 
+
+      cGroup         := hget( hProperty, "grupo_id" ) 
+
+   next 
+
+   cHaving           += " )"
+
+RETURN ( cHaving )
 
 //---------------------------------------------------------------------------//
 
@@ -659,30 +760,6 @@ METHOD getColumns() CLASS SQLCombinacionesModel
                                              "default"   => { 0 } }                                      ) 
 
 RETURN ( ::hColumns )
-
-//---------------------------------------------------------------------------//
-
-METHOD insertHaving( cNombre )
-
-   aadd( ::aHaving, cNombre )
-
-   msgalert( hb_valtoexp( ::aHaving ), "aHaving" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD deleteHaving( cNombre )
-
-   local nPosition   := ascan( ::aHaving, {|c| c == cNombre } ) 
-
-   if nPosition != 0
-      adel( ::aHaving, nPosition, .t. )
-   end if 
-
-   msgalert( hb_valtoexp( ::aHaving ), "aHaving" )
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

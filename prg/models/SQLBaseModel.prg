@@ -25,6 +25,8 @@ CLASS SQLBaseModel
 
    DATA cGeneralWhere
 
+   DATA cGeneralHaving
+
    DATA cFilterWhere                                  INIT ""
 
    DATA cOthersWhere
@@ -131,8 +133,13 @@ CLASS SQLBaseModel
 
    METHOD setGeneralSelect( cSelect )                 INLINE ( ::cGeneralSelect  := cSelect )
 
+   METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
    METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
    METHOD addGeneralWhere( cSQLSelect )
+   
+   METHOD getHavingOrAnd( cSQLSelect )                INLINE ( if( hb_at( "HAVING", cSQLSelect ) != 0, " AND ", " HAVING " ) )
+   METHOD setGeneralHaving( cHaving )                 INLINE ( ::cGeneralHaving := cHaving )
+   METHOD addGeneralHaving( cSQLSelect )
    
    METHOD addParentUuidWhere()                           
 
@@ -158,7 +165,6 @@ CLASS SQLBaseModel
    METHOD getGroupBy()                                INLINE ( ::cGroupBy )
    METHOD addGroupBy( cSQLSelect )
 
-   METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
 
    METHOD findAll( nOffset, nLimit )
    METHOD getByUuid( uuid )
@@ -368,6 +374,8 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addGroupBy( cSQLSelect )
 
+   cSQLSelect              := ::addGeneralHaving( cSQLSelect )
+
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
@@ -428,6 +436,8 @@ METHOD getSelectSentence( cOrderBy, cOrientation )
 
    ::fireEvent( 'gotSelectSentence')
 
+   logwrite( cSQL )
+
 RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
@@ -439,6 +449,21 @@ METHOD addGeneralWhere( cSQLSelect )
    end if 
    
    cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cGeneralWhere 
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD addGeneralHaving( cSQLSelect )
+
+   if empty( ::cGeneralHaving )
+      RETURN ( cSQLSelect )
+   end if 
+   
+   cSQLSelect     += ::getHavingOrAnd( cSQLSelect ) + ::cGeneralHaving 
+
+   msgalert( cSQLSelect, "addGeneralHaving" )
+   logwrite( cSQLSelect )
 
 RETURN ( cSQLSelect )
 
