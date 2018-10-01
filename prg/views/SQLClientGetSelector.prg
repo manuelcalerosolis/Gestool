@@ -178,6 +178,8 @@ METHOD setHelpText( value )
       RETURN ( nil )
    end if 
 
+   msgalert( hb_valtoexp( value ), "value" )
+
    ::Super():setHelpText( value[ "nombre" ] )
 
    if( !empty( ::oGetNif ),            ::oGetNif:cText( value[ "dni" ] ), ) 

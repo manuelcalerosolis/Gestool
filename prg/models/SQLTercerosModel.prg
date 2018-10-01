@@ -133,46 +133,46 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
    TEXT INTO cSql
 
    SELECT %2$s.id AS id,
-          %2$s.uuid AS uuid,
-          %2$s.codigo AS codigo,
-          %2$s.dni AS dni,
-          %2$s.establecimiento AS establecimiento,
-          %2$s.fecha_ultima_llamada AS fecha_ultima_llamada,
-          %2$s.forma_pago_codigo AS forma_pago_codigo,
-          %2$s.recargo_equivalencia AS recargo_equivalencia,
-          forma_pago.nombre AS nombre_forma_pago,                                                         
-          %2$s.agente_codigo AS agente_codigo,                                                       
-          agentes.nombre AS nombre_agente,
-          %2$s.cliente_grupo_codigo AS cliente_grupo_codigo,
-          clientes_grupos.nombre AS nombre_grupo_cliente,
-          %2$s.cuenta_remesa_codigo AS cuenta_remesa_codigo,
-          cuentas_remesa.nombre AS nombre_remesa,
-          %2$s.ruta_codigo AS ruta_codigo,
-          rutas.nombre AS nombre_ruta,
-          direcciones.direccion AS direccion,
-          direcciones.poblacion AS poblacion,
-          direcciones.provincia AS provincia,
-          direcciones.codigo_postal AS codigo_postal,
-          direcciones.telefono AS telefono,
-          direcciones.movil AS movil,
-          tarifas.codigo AS tarifa_codigo,
-          tarifas.nombre AS tarifa_nombre 
+         %2$s.uuid AS uuid,
+         %2$s.codigo AS codigo,
+         %2$s.nombre AS nombre,
+         %2$s.dni AS dni,
+         %2$s.establecimiento AS establecimiento,
+         %2$s.fecha_ultima_llamada AS fecha_ultima_llamada,
+         %2$s.forma_pago_codigo AS forma_pago_codigo,
+         %2$s.recargo_equivalencia AS recargo_equivalencia,
+         forma_pago.nombre AS nombre_forma_pago,                                                         
+         %2$s.agente_codigo AS agente_codigo,                                                       
+         agentes.nombre AS nombre_agente,
+         %2$s.cliente_grupo_codigo AS cliente_grupo_codigo,
+         clientes_grupos.nombre AS nombre_grupo_cliente,
+         %2$s.cuenta_remesa_codigo AS cuenta_remesa_codigo,
+         cuentas_remesa.nombre AS nombre_remesa,
+         %2$s.ruta_codigo AS ruta_codigo,
+         rutas.nombre AS nombre_ruta,
+         direcciones.direccion AS direccion,
+         direcciones.poblacion AS poblacion,
+         direcciones.provincia AS provincia,
+         direcciones.codigo_postal AS codigo_postal,
+         direcciones.telefono AS telefono,
+         direcciones.movil AS movil,
+         tarifas.codigo AS tarifa_codigo,
+         tarifas.nombre AS tarifa_nombre 
    FROM %1$s AS %2$s
-   LEFT JOIN %3$s AS direcciones 
-         ON %2$s.uuid = direcciones.parent_uuid AND direcciones.codigo = 0  
-   LEFT JOIN %4$s AS forma_pago  
-         ON %2$s.forma_pago_codigo = forma_pago.codigo
-   LEFT JOIN %5$s AS agentes   
-         ON %2$s.agente_codigo = agentes.codigo
-   LEFT JOIN %6$s AS rutas
-         ON %2$s.ruta_codigo = rutas.codigo
-   LEFT JOIN %7$s AS clientes_grupos
-         ON %2$s.cliente_grupo_codigo = clientes_grupos.codigo
-   LEFT JOIN %8$s AS cuentas_remesa
-         ON %2$s.cuenta_remesa_codigo = cuentas_remesa.codigo
-   LEFT JOIN %9$s AS tarifas 
-         ON %2$s.tarifa_codigo = tarifas.codigo           
-
+      LEFT JOIN %3$s AS direcciones 
+            ON %2$s.uuid = direcciones.parent_uuid AND direcciones.codigo = 0  
+      LEFT JOIN %4$s AS forma_pago  
+            ON %2$s.forma_pago_codigo = forma_pago.codigo
+      LEFT JOIN %5$s AS agentes   
+            ON %2$s.agente_codigo = agentes.codigo
+      LEFT JOIN %6$s AS rutas
+            ON %2$s.ruta_codigo = rutas.codigo
+      LEFT JOIN %7$s AS clientes_grupos
+            ON %2$s.cliente_grupo_codigo = clientes_grupos.codigo
+      LEFT JOIN %8$s AS cuentas_remesa
+            ON %2$s.cuenta_remesa_codigo = cuentas_remesa.codigo
+      LEFT JOIN %9$s AS tarifas 
+            ON %2$s.tarifa_codigo = tarifas.codigo
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), ::cTableName, SQLDireccionesModel():getTableName(), SQLFormaPagoModel():getTableName(), SQLAgentesModel():getTableName(), SQLRutasModel():getTableName(), SQLClientesGruposModel():getTableName(), SQLCuentasRemesaModel():getTableName(), SQLArticulosTarifasModel():getTableName() )
@@ -198,23 +198,30 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLTercerosModel
    TEXT INTO cSql
 
       SELECT %2$s.id AS id,
-          %2$s.uuid AS uuid,
-          %2$s.codigo AS codigo,
-          %2$s.dni AS dni,
-          %2$s.tarifa_codigo AS tarifa_codigo,
-          %2$s.recargo_equivalencia AS recargo_equivalencia,
-          direcciones.direccion AS direccion,
-          direcciones.poblacion AS poblacion,
-          direcciones.provincia AS provincia,
-                        "direcciones.codigo_postal AS codigo_postal,"                                                      + " " + ;
-                        "direcciones.telefono AS telefono,"                                                                + " " + ;
-                        "direcciones.movil AS movil,"                                                                      + " " + ;
-                        "direcciones.email AS email"                                                                       + " " + ;
+         %2$s.uuid AS uuid,
+         %2$s.codigo AS codigo,
+         %2$s.nombre AS nombre,
+         %2$s.dni AS dni,
+         %2$s.tarifa_codigo AS tarifa_codigo,
+         %2$s.recargo_equivalencia AS recargo_equivalencia,
+         direcciones.direccion AS direccion,
+         direcciones.poblacion AS poblacion,
+         direcciones.provincia AS provincia,
+         direcciones.codigo_postal AS codigo_postal,
+         direcciones.telefono AS telefono,         
+         direcciones.movil AS movil,               
+         direcciones.email AS email                
+      FROM %1$s AS %2$s
+         LEFT JOIN %3$s direcciones
+            ON %2$s.uuid = direcciones.parent_uuid AND direcciones.codigo = 0
+         LEFT JOIN %4$s tarifas
+            ON %2$s.tarifa_codigo = tarifas.codigo
+      WHERE %2$s.%5$s = %6$s  
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), ::cTableName,  )
-
+   cSql  := hb_strformat( cSql, ::getTableName(), ::cTableName, SQLDireccionesModel():getTableName(), SQLArticulosTarifasModel():getTableName(), cBy, quoted( cId ) )
+/*
    local cSelect  := "SELECT clientes.id AS id,"                                                                           + " " + ;
                         ::cTableName + ".uuid AS uuid,"                                                                           + " " + ;
                         "clientes.codigo AS codigo,"                                                                       + " " + ;
@@ -235,7 +242,8 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLTercerosModel
                         "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " tarifas "                             + " " + ;
                            "ON clientes.tarifa_codigo = tarifas.codigo"                                                    + " " + ;
                      "WHERE clientes." + cBy + " = " + quoted( cId ) 
+*/
 
-RETURN ( cSelect )
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
