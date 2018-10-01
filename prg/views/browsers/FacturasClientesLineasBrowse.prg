@@ -186,7 +186,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nFootStyle          := :nDataStrAlign               
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateField( 'articulo_precio', uNewValue ) }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateField( 'articulo_precio', uNewValue ), ::oController:oSenderController:calculateTotals() }
    end with
 
    with object ( ::oBrowse:AddCol() )

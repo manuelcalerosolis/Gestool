@@ -79,7 +79,7 @@ METHOD Activate() CLASS TercerosView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_MEDIUM_EXTENDED" ;
-      TITLE       ::LblTitle() + "cliente"
+      TITLE       ::LblTitle() + ::oController:cTitle
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -88,7 +88,7 @@ METHOD Activate() CLASS TercerosView
       OF          ::oDialog
 
    REDEFINE SAY   ::oMessage ;
-      PROMPT      "Clientes" ;
+      PROMPT      ::oController:cMessage ;
       ID          800 ;
       FONT        oFontBold() ;
       OF          ::oDialog
@@ -96,12 +96,12 @@ METHOD Activate() CLASS TercerosView
    REDEFINE FOLDER ::oFolder ;
       ID          500 ;
       OF          ::oDialog ;
-      PROMPT      "General",;
-                  "Comercial",;
-                  "Contabilidad";
+      PROMPT      "General" ,;
+                  "Comercial" ,;
+                  "Contabilidad" ;
       DIALOGS     "CLIENTE_GENERAL" ,;
-                  "CLIENTE_COMERCIAL",;
-                  "CLIENTE_CONTABILIDAD";
+                  "CLIENTE_COMERCIAL" ,;
+                  "CLIENTE_CONTABILIDAD"
 
    ::redefineGeneral()   
 
@@ -415,8 +415,6 @@ METHOD startDialog() CLASS TercerosView
    
    ::oController:getAgentesController():getSelector():Start()
 
-   ::oController:getArticulosTarifasController():getSelector():Start()
-
    ::oController:getFormasPagosController():getSelector():Start()
 
    ::oController:getCuentasRemesaController():getSelector():Start()
@@ -426,6 +424,12 @@ METHOD startDialog() CLASS TercerosView
    ::oController:getClientesGruposController():getSelector():Start()
 
    ::oController:getDireccionesController():externalStartDialog()
+
+   if ::oController:isClient
+      ::oController:getArticulosTarifasController():getSelector():Start()
+   else
+      ::oController:getArticulosTarifasController():getSelector():Hide()
+   end if 
 
    if !::oController:oModel:hBuffer[ "bloqueado" ]
       ::oGetFechaBloqueo:Hide()
@@ -451,14 +455,19 @@ METHOD addLinksToExplorerBar() CLASS TercerosView
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
+
+      if ::oController:isClient
       oPanel:AddLink( "Tarifas...",             {|| ::oController:getClientesTarifasController():activateDialogView() }, ::oController:getClientesTarifasController():getImage( "16" ) )
+      oPanel:AddLink( "Descuentos...",          {|| ::oController:getDescuentosController():activateDialogView( ::oController:getUuid() ) }, ::oController:getDescuentosController():getImage( "16" ) )
+   
+   end if 
+      
       oPanel:AddLink( "Direcciones...",         {|| ::oController:getDireccionesController():activateDialogView() }, ::oController:getDireccionesController():getImage( "16" ) )
       oPanel:AddLink( "Contactos...",           {|| ::oController:getContactosController():activateDialogView() }, ::oController:getContactosController():getImage( "16" ) )
       oPanel:AddLink( "Cuentas bancarias...",   {|| ::oController:getCuentasBancariasController():activateDialogView() }, ::oController:getCuentasBancariasController():getImage( "16" ) )
       oPanel:AddLink( "Incidencias...",         {|| ::oController:getIncidenciasController():activateDialogView() }, ::oController:getIncidenciasController():getImage( "16" ) )
       oPanel:AddLink( "Documentos...",          {|| ::oController:getDocumentosController():activateDialogView() }, ::oController:getDocumentosController():getImage( "16" ) )
       oPanel:AddLink( "Entidades facturae...",  {|| ::oController:getClientesEntidadesController():activateDialogView() }, ::oController:getClientesEntidadesController():getImage( "16" ) )
-      oPanel:AddLink( "Descuentos...",          {|| ::oController:getDescuentosController():activateDialogView( ::oController:getUuid() ) }, ::oController:getDescuentosController():getImage( "16" ) )
    end if
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 

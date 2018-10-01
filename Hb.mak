@@ -709,7 +709,7 @@ SQLTercerosModel.prg 														\
 SQLClientesModel.prg 														\
 SQLProveedoresModel.prg 		  											\
 TercerosView.prg 																\
-ClientesValidator.prg 														\
+TercerosValidator.prg 														\
 SqlGetSelector.prg 															\
 SqlClientGetSelector.prg													\
 SqlDireccionGetSelector.prg												\
@@ -1420,7 +1420,7 @@ SQLTercerosModel.obj 														\
 SQLclientesModel.obj 														\
 SQLProveedoresModel.obj 		  											\
 TercerosView.obj 																\
-ClientesValidator.obj 														\
+TercerosValidator.obj 														\
 SqlGetSelector.obj 															\
 SqlClientGetSelector.obj 													\
 SqlDireccionGetSelector.obj 												\
@@ -2120,7 +2120,7 @@ $(OBJ)\SQLTercerosModel.obj 												+
 $(OBJ)\SQLclientesModel.obj 												+
 $(OBJ)\SQLProveedoresModel.obj 		  									+
 $(OBJ)\TercerosView.obj 													+
-$(OBJ)\ClientesValidator.obj 												+
+$(OBJ)\TercerosValidator.obj 												+
 $(OBJ)\SqlGetSelector.obj 													+
 $(OBJ)\SqlClientGetSelector.obj											+
 $(OBJ)\SqlDireccionGetSelector.obj										+

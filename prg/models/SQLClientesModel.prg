@@ -5,6 +5,5 @@ CLASS SQLClientesModel FROM SQLTercerosModel
 
    DATA cTableName               INIT "clientes"
 
-
 END CLASS
 

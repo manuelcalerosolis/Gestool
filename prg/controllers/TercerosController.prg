@@ -5,6 +5,10 @@
 
 CLASS TercerosController FROM SQLNavigatorController
 
+   DATA cMessage
+
+   DATA isClient                      
+
    DATA oDireccionesController
 
    DATA oPaisesController
@@ -62,6 +66,8 @@ CLASS TercerosController FROM SQLNavigatorController
    METHOD getDialogView()                                      INLINE ( if( empty( ::oDialogView ), ::oDialogView := TercerosView():New( self ), ), ::oDialogView )
 
    METHOD getBrowseView()                                      INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := TercerosBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getValidator()                                       INLINE( if( empty( ::oValidator ), ::oValidator := TercerosValidator():New( self ), ), ::oValidator )
 
    METHOD getSelector()                                        INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := ClientGetSelector():New( self ), ), ::oGetSelector )
 
@@ -141,7 +147,7 @@ RETURN ( self )
 METHOD DireccionesControllerUpdateBuffer()
 
    local idDireccion     
-   local uuid     := hget( ::oModel:hBuffer, "uuid" )
+   local uuid           := hget( ::oModel:hBuffer, "uuid" )
 
    idDireccion          := ::getDireccionesController():oModel:getIdWhereParentUuid( uuid )
    if empty( idDireccion )
