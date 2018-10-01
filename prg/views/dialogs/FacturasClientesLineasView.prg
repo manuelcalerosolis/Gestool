@@ -336,7 +336,7 @@ RETURN ( notCaja( ::oController:oModel:hBuffer[ "cajas_articulo" ] ) * ::oContro
 
 METHOD nTotalImporteArticulo()         
 
-RETURN ( ::nTotalUnidadesArticulo() * ::oController:oModel:hBuffer[ "precio_articulo" ] )
+RETURN ( ::nTotalUnidadesArticulo() * ::oController:oModel:hBuffer[ "precio_articulo" ]  )
 
 //---------------------------------------------------------------------------//
 
@@ -365,7 +365,7 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 
-METHOD refreshUnidadesImportes()      
+METHOD refreshUnidadesImportes()     
 
 RETURN ( ::oSayTotalUnidades():Refresh(), ::oSayTotalImporte():Refresh() )
 

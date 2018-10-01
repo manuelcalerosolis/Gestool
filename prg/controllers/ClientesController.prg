@@ -11,11 +11,6 @@ CLASS ClientesController FROM TercerosController
 
    METHOD validColumnAgentesBrowse( uValue, nKey )             INLINE ( ::validColumnBrowse( uValue, nKey, ::getAgentesController():oModel, "agente_uuid" ) )
 
-   // Construcciones tardias---------------------------------------------------
-
-
-   METHOD getValidator()                                       INLINE ( if( empty(  ::oValidator ), ::oValidator := ClientesValidator():New( self, ::getDialogView() ), ), ::oValidator )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -24,7 +19,11 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::cTitle                         := "Clientes"
 
+   ::cMessage                       := "Cliente"
+
    ::cName                          := "clientes_sql"
+
+   ::isClient                       := .t.
 
    ::hImage                         := {  "16" => "gc_user_16",;
                                           "32" => "gc_user_32",;

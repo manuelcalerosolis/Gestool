@@ -221,28 +221,6 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLTercerosModel
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), ::cTableName, SQLDireccionesModel():getTableName(), SQLArticulosTarifasModel():getTableName(), cBy, quoted( cId ) )
-/*
-   local cSelect  := "SELECT clientes.id AS id,"                                                                           + " " + ;
-                        ::cTableName + ".uuid AS uuid,"                                                                           + " " + ;
-                        "clientes.codigo AS codigo,"                                                                       + " " + ;
-                        "clientes.nombre AS nombre,"                                                                       + " " + ;
-                        "clientes.dni AS dni,"                                                                             + " " + ;
-                        "clientes.tarifa_codigo AS tarifa_codigo,"                                                         + " " + ;
-                        "clientes.recargo_equivalencia AS recargo_equivalencia,"                                           + " " + ;
-                        "direcciones.direccion AS direccion,"                                                              + " " + ;
-                        "direcciones.poblacion AS poblacion,"                                                              + " " + ;
-                        "direcciones.provincia AS provincia,"                                                              + " " + ;
-                        "direcciones.codigo_postal AS codigo_postal,"                                                      + " " + ;
-                        "direcciones.telefono AS telefono,"                                                                + " " + ;
-                        "direcciones.movil AS movil,"                                                                      + " " + ;
-                        "direcciones.email AS email"                                                                       + " " + ;
-                     "FROM " + ::getTableName() + " AS clientes"                                                           + " " + ;
-                        "LEFT JOIN " + SQLDireccionesModel():getTableName() + " direcciones"                               + " " + ;  
-                            "ON clientes.uuid = direcciones.parent_uuid AND direcciones.codigo = 0"                        + " " + ;
-                        "LEFT JOIN " + SQLArticulosTarifasModel():getTableName() + " tarifas "                             + " " + ;
-                           "ON clientes.tarifa_codigo = tarifas.codigo"                                                    + " " + ;
-                     "WHERE clientes." + cBy + " = " + quoted( cId ) 
-*/
 
 RETURN ( cSql )
 

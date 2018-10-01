@@ -551,8 +551,6 @@ METHOD updateImpuestos( nPorcentajeIva )
    ::updateField( 'iva', nPorcentajeIva )
 
    nPorcentajeRecargo         := SQLTiposIvaModel():getField( "recargo", "porcentaje", nPorcentajeIVA )
-   
-   msgalert( nPorcentajeRecargo, "nPorcentajeRecargo" )
 
    if hb_isnumeric( nPorcentajeRecargo )
       ::updateField( "recargo_equivalencia", nPorcentajeRecargo )
