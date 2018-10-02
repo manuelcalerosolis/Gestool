@@ -452,7 +452,7 @@ METHOD addPrintSerialButton( cWorkArea )
       RETURN ( nil )
    end if 
 
-   ::oButtonPrint    := ::AddButton( "Imprimir series", "Imp16", {|| ::getController():printSerialDocument() }, nil, ACC_IMPR )
+   ::oButtonPrint    := ::AddButton( "Imprimir series", "Imp16", {|| ::getController():getImprimirSeriesController():Activate() }, nil, ACC_IMPR )
 
    ::fireEvent( 'addedPrintSerialButton') 
 

@@ -25,6 +25,7 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    DATA oReport
 
    METHOD New()
+   
    METHOD End()
 
    METHOD validateNumero()          

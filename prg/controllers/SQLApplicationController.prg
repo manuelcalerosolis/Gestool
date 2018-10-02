@@ -123,6 +123,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oConfiguracionesController
 
+   DATA oImprimirSeriesController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -295,6 +297,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getConfiguracionesController();
                                     INLINE ( if( empty( ::oConfiguracionesController ), ::oConfiguracionesController := ConfiguracionesController():New( self ), ), ::oConfiguracionesController )
+
+   METHOD getImprimirSeriesController();
+                                    INLINE ( if( empty( ::oImprimirSeriesController ), ::oImprimirSeriesController := ImprimirSeriesController():New( self ), ), ::oImprimirSeriesController )
 
    METHOD End()
 
@@ -550,6 +555,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oConfiguracionesController )
       ::oConfiguracionesController:End()
+   end if 
+
+   if !empty( ::oImprimirSeriesController )
+      ::oImprimirSeriesController:End()
    end if 
 
    ::Super:End()
