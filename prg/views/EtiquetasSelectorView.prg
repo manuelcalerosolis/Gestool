@@ -60,7 +60,7 @@ CLASS EtiquetasSelectorView FROM SQLBaseView
 
    METHOD getColumnOrder()             INLINE ( ::oBrowse:getColumnOrder():cOrder )
 
-   METHOD getRegistrosSeleccionados()  INLINE ( "( " + alltrim( str( len( ::oController:getIds() ) ) ) + ") registro(s) seleccionado(s)" )
+   METHOD getRegistrosSeleccionados()  
 
    METHOD Anterior() 
 
@@ -419,5 +419,17 @@ METHOD limpiarUnidades()
    ::oBrowse:Refresh()
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getRegistrosSeleccionados()
+
+   local nLen  := len( ::oController:getIds() )
+
+   if nLen > 1 
+      RETURN ( hb_ntos( nLen ) + " registros seleccionados" )
+   end if 
+
+RETURN ( hb_ntos( nLen ) + "registro seleccionado" )
 
 //---------------------------------------------------------------------------//

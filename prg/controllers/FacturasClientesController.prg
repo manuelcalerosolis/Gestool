@@ -79,6 +79,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    
    METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
    
+   METHOD getReport()                  INLINE ( if( empty( ::oReport ), ::oReport := FacturasClientesReport():New(), ), ::oReport )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -158,6 +160,11 @@ METHOD End() CLASS FacturasClientesController
    if !empty( ::oHistoryManager )
       ::oHistoryManager:End()
    end if 
+
+   if !empty( ::oReport )
+      ::oReport:End()
+   end if 
+
 
    if !empty( ::oNumeroDocumentoComponent )
       ::oNumeroDocumentoComponent:End()

@@ -26,9 +26,6 @@ END CLASS
 
 METHOD buildRowSet( uIds )
 
-   local oMovimientosAlmacenSelect        
-   local oLineasMovimientosAlmacenSelect
-
    DEFAULT uIds                        := ::getIds()
 
    ::oMovimientosAlmacenRowSet         := SQLRowSet();   

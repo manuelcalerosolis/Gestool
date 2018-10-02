@@ -26,7 +26,7 @@ CLASS SQLBaseReport
 
    DATA cDevice                           INIT IS_SCREEN
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -247,11 +247,11 @@ METHOD loadDocuments()
       RETURN ( self )
    end if 
 
-   ::oDialogView:oListboxFile:setItems( {} )
+   ::getDialogView():oListboxFile:setItems( {} )
 
-   aeval( aFiles, {|aFile| ::oDialogView:oListboxFile:add( getFileNoExt( aFile[ 1 ] ) ) } )
+   aeval( aFiles, {|aFile| ::getDialogView():oListboxFile:add( getFileNoExt( aFile[ 1 ] ) ) } )
 
-   ::oDialogView:oListboxFile:goTop()
+   ::getDialogView():oListboxFile:goTop()
 
 RETURN ( self )
 

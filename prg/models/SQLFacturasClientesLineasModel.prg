@@ -15,6 +15,8 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
                                        "KEY ( parent_uuid ), "                   + ;
                                        "KEY ( articulo_codigo ) "              
 
+   DATA cGroupBy              INIT "GROUP BY facturas_clientes_lineas.id"
+
    METHOD getColumns()
 
    METHOD getInitialSelect()
@@ -181,63 +183,10 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
       LEFT JOIN %5$s AS articulos_propiedades_lineas
          ON articulos_propiedades_lineas.uuid = combinaciones_propiedades.propiedad_uuid
          
-      /*GROUP BY facturas_clientes_lineas.id*/
        
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName() )
-
-   logwrite( cSql )
-
-<<<<<<< HEAD
-   /*
-      SELECT 
-         facturas_clientes_lineas.id,
-         facturas_clientes_lineas.uuid,                                                        
-         facturas_clientes_lineas.parent_uuid,                                                 
-         facturas_clientes_lineas.articulo_codigo,                                             
-         facturas_clientes_lineas.articulo_nombre,                                             
-         facturas_clientes_lineas.fecha_caducidad,                                             
-         facturas_clientes_lineas.lote,                                                        
-         facturas_clientes_lineas.articulo_unidades,                                           
-         facturas_clientes_lineas.unidad_medicion_factor,                                      
-         ( @total_unidades := articulo_unidades * unidad_medicion_factor ) as total_unidades, 
-         facturas_clientes_lineas.articulo_precio,                                             
-         ( @total_bruto := ROUND( @total_unidades * articulo_precio, 2 ) ) as total_bruto,
-         facturas_clientes_lineas.unidad_medicion_codigo,                                      
-         facturas_clientes_lineas.descuento,       
-         ( @importe_descuento := IF( descuento IS NULL OR descuento = 0, 0, @total_bruto * descuento / 100 ) ),
-         ( @total_bruto - @importe_descuento ) AS total_precio,
-         facturas_clientes_lineas.incremento_precio,
-         facturas_clientes_lineas.iva,
-         facturas_clientes_lineas.recargo_equivalencia,
-         facturas_clientes_lineas.almacen_codigo,
-         almacenes.nombre AS almacen_nombre,
-         facturas_clientes_lineas.agente_codigo,
-         agentes.nombre AS agente_nombre,
-         facturas_clientes_lineas.agente_comision,
-         combinaciones_propiedades.propiedad_uuid,
-         facturas_clientes_lineas.combinaciones_uuid,
-         GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre 
-         
-      FROM gestool_00VG.facturas_clientes_lineas AS facturas_clientes_lineas
-
-      LEFT JOIN gestool_00VG.almacenes AS almacenes
-         ON almacenes.codigo = facturas_clientes_lineas.almacen_codigo
-
-      LEFT JOIN gestool_00VG.agentes AS agentes
-         ON agentes.codigo = facturas_clientes_lineas.agente_codigo
-  
-      LEFT JOIN gestool_00VG.combinaciones_propiedades AS combinaciones_propiedades
-         ON combinaciones_propiedades.parent_uuid = facturas_clientes_lineas.combinaciones_uuid
-
-      LEFT JOIN gestool_00VG.articulos_propiedades_lineas AS articulos_propiedades_lineas
-         ON articulos_propiedades_lineas.uuid = combinaciones_propiedades.propiedad_uuid
-         
-      GROUP BY facturas_clientes_lineas.id
-*/
-=======
->>>>>>> 402b5a481149f6d1f8df1f2adfd75b9f42695808
 
 RETURN ( cSql )
 

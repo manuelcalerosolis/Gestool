@@ -9,8 +9,6 @@ CLASS ImprimirSeriesController FROM SQLPrintController
 
    METHOD End()
 
-   METHOD Activate()
-
    METHOD showDocument()
 
    METHOD newDocument()
@@ -32,8 +30,6 @@ METHOD New( oController )
    ::Super:New( oController )
 
    ::cDirectory                        := cPatDocuments( oController:cName )    
-
-   MSGALERT( ::cDirectory, "cDirectory" )
 
 RETURN ( Self )
 
@@ -86,7 +82,7 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter )
    oWaitMeter:setTotal( len( aIds ) )
    oWaitMeter:Run()
 
-   oReport           := MovimientosAlmacenReport():New( self )
+   oReport           := ::oController:getReport()
 
    oReport:createFastReport()
 
