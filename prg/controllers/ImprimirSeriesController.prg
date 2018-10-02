@@ -5,7 +5,9 @@
 
 CLASS ImprimirSeriesController FROM SQLPrintController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
+
+   METHOD End()
 
    METHOD Activate()
 
@@ -17,6 +19,10 @@ CLASS ImprimirSeriesController FROM SQLPrintController
 
    METHOD getSortedIds()
 
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ImprimirSeriesView():New( self ), ), ::oDialogView )
+
+   METHOD Activate()                   INLINE ( ::getDialogView():Activate() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -25,33 +31,33 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::cDirectory                        := cPatDocuments( "Movimientos almacen" )    
+   ::cDirectory                        := cPatDocuments( oController:cName )    
 
-   ::oDialogView                       := ImprimirSeriesView():New( self )
+   MSGALERT( ::cDirectory, "cDirectory" )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate()
+METHOD End()
 
-   ::oDialogView:Activate()
-   
-RETURN ( Self )
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
+
+   ::Super:End()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD getSortedIds()
 
-   if empty(::oDialogView)
-      RETURN ( ::getIds() )
-   end if 
-
-   if ::oDialogView:lInvertirOrden
-      RETURN ( asort( ::getIds(), , , {|x,y| x > y} ) )
+   if ::getDialogView():lInvertirOrden
+      RETURN ( asort( ::getIds(), , , {|x,y| x > y } ) )
    end if 
    
-RETURN ( asort( ::getIds(), , , {|x,y| x < y} ) )
+RETURN ( asort( ::getIds(), , , {|x,y| x < y } ) )
 
 //---------------------------------------------------------------------------//
 
@@ -128,14 +134,14 @@ METHOD editDocument()
 
    local oReport  
 
-   ::setFileName( ::oDialogView:cListboxFile )
+   ::setFileName( ::getDialogView():cListboxFile )
 
    if empty( ::getFileName() )
       msgStop( "No hay formato definido" )
       RETURN ( self )  
    end if 
 
-   oReport  := MovimientosAlmacenReport():New( self )
+   oReport     := MovimientosAlmacenReport():New( self )
 
    oReport:createFastReport()
 

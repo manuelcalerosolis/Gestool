@@ -235,7 +235,6 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
       GROUP BY facturas_clientes_lineas.id
 */
 
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
