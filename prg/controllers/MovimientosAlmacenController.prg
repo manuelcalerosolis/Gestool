@@ -18,8 +18,6 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oEtiquetasController
 
-   DATA oConfiguracionesController
-
    DATA oImprimirSeriesController
 
    DATA oNumeroDocumentoComponent

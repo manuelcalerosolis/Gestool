@@ -101,19 +101,22 @@ METHOD getColumns() CLASS SQLFacturasClientesLineasModel
    hset( ::hColumns, "unidad_medicion_codigo",     {  "create"    => "VARCHAR( 20 )"                  ,;
                                                       "default"   => {|| space( 20 ) } }              )
 
-   hset( ::hColumns, "unidad_medicion_factor",     {  "create"    => "DECIMAL( 19, 6 )"                  ,;
+   hset( ::hColumns, "unidad_medicion_factor",     {  "create"    => "DECIMAL( 19, 6 )"               ,;
                                                       "default"   => {|| 1 } }                        )
 
-   hset( ::hColumns, "descuento",                  {  "create"    => "FLOAT( 7, 4 )"                     ,;
+   hset( ::hColumns, "descuento",                  {  "create"    => "FLOAT( 7, 4 )"                  ,;
                                                       "default"   => {|| 0 } }                        )
+
+   hset( ::hColumns, "combinaciones_uuid",         {  "create"    => "VARCHAR( 40 )"                  ,;
+                                                      "default"   => {|| space( 40 ) } } )
 
    hset( ::hColumns, "incremento_precio",          {  "create"    => "FLOAT( 19, 6)"                  ,;
                                                       "default"   => {|| 0 } }                        )
 
-   hset( ::hColumns, "iva",                        {  "create"    => "FLOAT( 7, 4 )"                    ,;
+   hset( ::hColumns, "iva",                        {  "create"    => "FLOAT( 7, 4 )"                  ,;
                                                       "default"   => {|| 0 }  }                       )
 
-   hset( ::hColumns, "recargo_equivalencia",       {  "create"    => "FLOAT( 7, 4 )"                    ,;
+   hset( ::hColumns, "recargo_equivalencia",       {  "create"    => "FLOAT( 7, 4 )"                  ,;
                                                       "default"   => {|| 0 }  }                       )
 
    hset( ::hColumns, "almacen_codigo",             {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
@@ -122,8 +125,8 @@ METHOD getColumns() CLASS SQLFacturasClientesLineasModel
    hset( ::hColumns, "agente_codigo",              {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
                                                       "default"   => {|| space( 20 ) } }              )
 
-   hset( ::hColumns, "agente_comision",            {  "create"    => "FLOAT( 7, 4 )"                   ,;
-                                                      "default"   => {|| 0 } }                         )
+   hset( ::hColumns, "agente_comision",            {  "create"    => "FLOAT( 7, 4 )"                  ,;
+                                                      "default"   => {|| 0 } }                        )
 
 RETURN ( ::hColumns )
 

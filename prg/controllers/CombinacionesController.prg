@@ -128,6 +128,8 @@ RETURN ( nil )
 
 METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
 
+   local oReturn
+
    if empty( cCodigoArticulo )
       RETURN ( nil )
    end if 
@@ -143,7 +145,11 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
 
    ::oRowSet:buildPad( ::oModel:getSelectWhereCodigoArticulo( cCodigoArticulo ) )
 
-RETURN ( ::dialogViewActivate( ::getSelectorView() ) )
+   if ::dialogViewActivate( ::getSelectorView() )
+      RETURN ( ::oRowSet:fieldGet( 'uuid' ) )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -659,7 +665,7 @@ RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSelectWhereCodigoArticulo() CLASS SQLCombinacionesModel
+METHOD getSelectWhereCodigoArticulo( cCodigoArticulo ) CLASS SQLCombinacionesModel
 
    local cSql 
 
@@ -691,7 +697,7 @@ METHOD getSelectWhereCodigoArticulo() CLASS SQLCombinacionesModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), quoted( ::oController:cCodigoArticulo ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
 
 RETURN ( cSql )
 

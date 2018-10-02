@@ -33,6 +33,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD postValidateAgenteCodigo( oCol, uValue, nKey )
 
+   METHOD postValidateProperty( oCol, uValue, nKey )
+
    METHOD validateLote()               
 
    METHOD validateUnidadMedicion( uValue )
@@ -56,6 +58,9 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD stampAlmacen( hAlmacen )
 
    METHOD stampAgente( hAgente )
+
+   METHOD stampProperty( cProperty ) ;
+                                          INLINE ( /*::updateField( "articulo_codigo", cProperty )*/msgalert( "propiedad" ) )
 
    METHOD stampArticuloCodigo( cCodigoArticulo ) ;
                                           INLINE ( ::updateField( "articulo_codigo", cCodigoArticulo ) ) 
@@ -83,6 +88,11 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD getHashAgenteWhereCodigo( cCodigo )
 
+   METHOD getHashPropertyWhereUuid( Uuid ) ;
+                                          INLINE (  getSQLDataBase():Exec( ::getSetencePropertyWhereUuid( uuid ) ) )
+
+   METHOD getSetencePropertyWhereUuid( Uuid )
+
    METHOD stampArticuloUnidadMedicion( uValue )
 
    METHOD stampArticuloUnidadMedicionFactor()
@@ -103,11 +113,11 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD deleteLines( uuid )
 
-   METHOD getUuid()                    INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
-                                                      hget( ::oModel:hBuffer, "uuid" ),;
-                                                      nil ) )
+   METHOD getUuid()                       INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+                                                         hget( ::oModel:hBuffer, "uuid" ),;
+                                                         nil ) )
 
-   METHOD refreshBrowse()              INLINE ( iif(  !empty( ::getBrowseView() ), ::getBrowseView():Refresh(), ) )
+   METHOD refreshBrowse()                 INLINE ( iif(  !empty( ::getBrowseView() ), ::getBrowseView():Refresh(), ) )
 
 
    METHOD loadUnidadesMedicion()
@@ -224,7 +234,9 @@ METHOD validAgenteCodigo( oGet, oCol )
       msgStop( "El agente introducido no existe" )
       RETURN( .f. )
    end if
-   ::updateField ( 'agente_codigo', uValue)
+
+   ::updateField ( 'agente_codigo', uValue )
+   
    ::stampAgenteComision()
 
 RETURN ( .t. ) 
@@ -328,6 +340,22 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD postValidateProperty( oCol, uValue, nKey )
+
+   local hProperty
+
+   if empty( uValue )
+      RETURN ( .f. )
+   end if 
+
+   msgalert( uValue, "postValidateProperty" )
+
+   ::updateField ( 'combinaciones_uuid', uValue )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD getHashArticuloWhereCodigo( cCodigo )
    
 RETURN ( SQLArticulosModel():getHashWhere( "codigo", cCodigo ) )
@@ -343,6 +371,36 @@ RETURN ( SQLAlmacenesModel():getHashWhere( "codigo", cCodigo ) )
 METHOD getHashAgenteWhereCodigo( cCodigo )
    
 RETURN ( SQLAgentesModel():getHashWhere( "codigo", cCodigo ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSetencePropertyWhereUuid( Uuid )
+
+ local cSql 
+
+   TEXT INTO cSql
+
+   SELECT   combinaciones.id,
+            combinaciones.uuid, 
+            combinaciones.incremento_precio,
+            GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre
+   FROM %1$s AS combinaciones
+
+   INNER JOIN %2$s AS combinaciones_propiedades
+      ON combinaciones_propiedades.parent_uuid = combinaciones.uuid
+   
+   INNER JOIN %3$s AS articulos_propiedades_lineas
+      ON combinaciones_propiedades.propiedad_uuid = articulos_propiedades_lineas.uuid
+   
+WHERE combinaciones.uuid= %4$s
+
+    ENDTEXT
+
+   cSql  := hb_strformat( cSql, SQLCombinacionesModel():getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), quoted( uuid ) )
+   
+   msgalert( cSql )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 

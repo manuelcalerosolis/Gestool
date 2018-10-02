@@ -47,7 +47,7 @@ CLASS SQLBaseController
    METHOD End()
 
    METHOD setDirectory( cDirectory )                  INLINE ( ::cDirectory := cDirectory )
-   METHOD getDirectory()                              INLINE ( ::cDirectory )
+   METHOD getDirectory()                              INLINE ( if( empty( ::cDirectory ), ::getName(), ::cDirectory ) )
 
    METHOD setName( cName )                            INLINE ( ::cName := cName )
    METHOD getName()                                   INLINE ( ::cName )
@@ -104,7 +104,7 @@ CLASS SQLBaseController
                                                                      ::getRowSet():fieldGet( ::oModel:cColumnKey ), nil ) )
 
    METHOD isRowSetSystemRegister()                          
-   METHOD isNotRowSetSystemRegister()                       INLINE ( !( ::isRowSetSystemRegister() ) )
+   METHOD isNotRowSetSystemRegister()                 INLINE ( !( ::isRowSetSystemRegister() ) )
 
    METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( iif(  !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )

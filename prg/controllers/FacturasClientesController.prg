@@ -78,7 +78,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    METHOD getRepository()              INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesRepository():New( self ), ), ::oRepository )
    
    METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
-
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -95,11 +95,23 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::lInsertable                                         := .t.
 
+   ::lDocuments                                          := .t.
+
+   ::lConfig                                             := .t.
+
+   ::lOthers                                             := .t.
+
    ::hImage                                              := {  "16" => "gc_document_text_user_16",;
                                                                "32" => "gc_document_text_user_32",;
                                                                "48" => "gc_document_text_user_48" }
 
    ::oModel                                              := SQLFacturasClientesModel():New( self )
+
+   ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
+
+   ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
+
+   ::oContadoresModel                                    := SQLContadoresModel():New( self )
 
    ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
@@ -117,19 +129,11 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::getClientesController():getSelector():setEvent( 'settedHelpText',    {|| ::clientesSettedHelpText() } )
    ::getClientesController():getSelector():setEvent( 'cleanedHelpText',   {|| ::clientesCleanedHelpText() } )
 
-   ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
-
-   ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
-
-   ::oContadoresModel                                    := SQLContadoresModel():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS FacturasClientesController
-
-   local nSeconds    := seconds() 
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -153,32 +157,17 @@ METHOD End() CLASS FacturasClientesController
 
    if !empty( ::oHistoryManager )
       ::oHistoryManager:End()
-      ::oHistoryManager                                  := nil
    end if 
 
    if !empty( ::oNumeroDocumentoComponent )
       ::oNumeroDocumentoComponent:End()
-      ::oNumeroDocumentoComponent                        := nil
    end if 
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "oNumeroDocumentoComponent" )
-   nSeconds    := seconds()
 
    if !empty( ::oSerieDocumentoComponent )
       ::oSerieDocumentoComponent:End()
-      ::oSerieDocumentoComponent                         := nil
    end if 
 
-   logwrite( nSeconds - seconds() )
-   logwrite( "oSerieDocumentoComponent" )
-   nSeconds    := seconds()
-
    ::Super:End()
-
-   logwrite( nSeconds - seconds() )
-   logwrite( "::Super:End()" )
-   nSeconds    := seconds()
 
 RETURN ( nil )
 
