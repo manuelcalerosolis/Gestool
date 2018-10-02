@@ -143,6 +143,8 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
       RETURN ( nil )
    end if 
 
+   msgalert( hb_valtoexp( ::hPropertyList ) )
+
    ::oRowSet:buildPad( ::oModel:getSelectWhereCodigoArticulo( cCodigoArticulo ) )
 
    if ::dialogViewActivate( ::getSelectorView() )
