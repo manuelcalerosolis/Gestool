@@ -163,7 +163,9 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
          facturas_clientes_lineas.agente_codigo,
          agentes.nombre AS agente_nombre,
          facturas_clientes_lineas.agente_comision,
-         GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre
+         combinaciones_propiedades.propiedad_uuid,
+         facturas_clientes_lineas.combinaciones_uuid,
+         GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre 
          
       FROM %1$s AS facturas_clientes_lineas
 
@@ -172,22 +174,22 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
 
       LEFT JOIN %3$s AS agentes
          ON agentes.codigo = facturas_clientes_lineas.agente_codigo
+  
+      LEFT JOIN %4$s AS combinaciones_propiedades
+         ON combinaciones_propiedades.parent_uuid = facturas_clientes_lineas.combinaciones_uuid
 
-      LEFT JOIN %4$s AS combinaciones
-         ON combinaciones.uuid = facturas_clientes_lineas.combinaciones_uuid
+      LEFT JOIN %5$s AS articulos_propiedades_lineas
+         ON articulos_propiedades_lineas.uuid = combinaciones_propiedades.propiedad_uuid
          
-      LEFT JOIN %5$s AS combinaciones_propiedades
-         ON combinaciones_propiedades.parent_uuid = combinaciones.uuid
-   
-      LEFT JOIN %6$s AS articulos_propiedades_lineas
-         ON combinaciones_propiedades.propiedad_uuid = articulos_propiedades_lineas.uuid
+      /*GROUP BY facturas_clientes_lineas.id*/
        
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName(), SQLCombinacionesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLCombinacionesPropiedadesModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName() )
 
    logwrite( cSql )
 
+<<<<<<< HEAD
    /*
       SELECT 
          facturas_clientes_lineas.id,
@@ -234,6 +236,8 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
          
       GROUP BY facturas_clientes_lineas.id
 */
+=======
+>>>>>>> 402b5a481149f6d1f8df1f2adfd75b9f42695808
 
 RETURN ( cSql )
 
