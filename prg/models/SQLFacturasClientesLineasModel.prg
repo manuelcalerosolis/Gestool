@@ -142,27 +142,28 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
          facturas_clientes_lineas.id,
          facturas_clientes_lineas.uuid,                                                        
          facturas_clientes_lineas.parent_uuid,                                                 
-         articulo_codigo,                                             
-         articulo_nombre,                                             
-         fecha_caducidad,                                             
-         lote,                                                        
-         articulo_unidades,                                           
-         unidad_medicion_factor,                                      
+         facturas_clientes_lineas.articulo_codigo,                                             
+         facturas_clientes_lineas.articulo_nombre,                                             
+         facturas_clientes_lineas.fecha_caducidad,                                             
+         facturas_clientes_lineas.lote,                                                        
+         facturas_clientes_lineas.articulo_unidades,                                           
+         facturas_clientes_lineas.unidad_medicion_factor,                                      
          ( @total_unidades := articulo_unidades * unidad_medicion_factor ) as total_unidades, 
-         articulo_precio,                                             
+         facturas_clientes_lineas.articulo_precio,                                             
          ( @total_bruto := ROUND( @total_unidades * articulo_precio, 2 ) ) as total_bruto,
-         unidad_medicion_codigo,                                      
-         descuento,       
+         facturas_clientes_lineas.unidad_medicion_codigo,                                      
+         facturas_clientes_lineas.descuento,       
          ( @importe_descuento := IF( descuento IS NULL OR descuento = 0, 0, @total_bruto * descuento / 100 ) ),
          ( @total_bruto - @importe_descuento ) AS total_precio,
-         incremento_precio,
-         iva,
-         recargo_equivalencia,
-         almacen_codigo,
+         facturas_clientes_lineas.incremento_precio,
+         facturas_clientes_lineas.iva,
+         facturas_clientes_lineas.recargo_equivalencia,
+         facturas_clientes_lineas.almacen_codigo,
          almacenes.nombre AS almacen_nombre,
-         agente_codigo,
+         facturas_clientes_lineas.agente_codigo,
          agentes.nombre AS agente_nombre,
-         agente_comision
+         facturas_clientes_lineas.agente_comision,
+         GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre
          
       FROM %1$s AS facturas_clientes_lineas
 
@@ -170,11 +171,21 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
          ON almacenes.codigo = facturas_clientes_lineas.almacen_codigo
 
       LEFT JOIN %3$s AS agentes
-         ON agentes.codigo = facturas_clientes_lineas.agente_codigo   
+         ON agentes.codigo = facturas_clientes_lineas.agente_codigo
+
+      LEFT JOIN %4$s AS combinaciones
+         ON combinaciones.uuid = facturas_clientes_lineas.combinaciones_uuid
+         
+      LEFT JOIN %5$s AS combinaciones_propiedades
+         ON combinaciones_propiedades.parent_uuid = combinaciones.uuid
+   
+      LEFT JOIN %6$s AS articulos_propiedades_lineas
+         ON combinaciones_propiedades.propiedad_uuid = articulos_propiedades_lineas.uuid
+       
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName(), SQLCombinacionesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosPropiedadesLineasModel():getTableName() )
 
    logwrite( cSql )
 
