@@ -5,6 +5,8 @@
 
 CLASS FacturasClientesLineasController FROM SQLBrowseController
 
+   DATA cGroupBy                 INIT "GROUP BY facturas_clientes_lineas.id"
+
    DATA oHistoryManager
 
    DATA hArticulo
