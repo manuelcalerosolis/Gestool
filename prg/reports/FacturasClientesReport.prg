@@ -62,7 +62,7 @@ METHOD setUserDataSet()
                                     {|| ::oFacturasClientesRowSet:eof() },;
                                     {|cField| ::oFacturasClientesRowSet:fieldGet( cField ) } )
 
-   ::oFastReport:setUserDataSet(   "Líneas de movimientos de almacén",;
+   ::oFastReport:setUserDataSet(   "Líneas de facturas de clientes",;
                                     SQLMovimientosAlmacenLineasModel():getSerializeColumns(),;
                                     {|| ::oLineasFacturasClientesRowSet:gotop() },;
                                     {|| ::oLineasFacturasClientesRowSet:skip( 1 ) },;

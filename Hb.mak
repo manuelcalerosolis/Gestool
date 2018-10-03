@@ -2,7 +2,6 @@ HB                   = 	\harbour_bcc7\
 
 HBINCLUDE            = 	\harbour_bcc7\include
 FWINCLUDE            = 	\fwh1801\include
-GTINCLUDE            = 	.\include
 
 HBLIB                = 	\harbour_bcc7\lib
 FWLIB                = 	\fwh1801\lib
