@@ -8,8 +8,6 @@ CLASS MovimientosAlmacenRepository FROM SQLBaseRepository
 
    METHOD getTableName()            INLINE ( SQLMovimientosAlmacenModel():getTableName() )
 
-   METHOD getSQLSentenceByIdOrLast( id ) 
-
    METHOD getSQLSentenceIdByNumber( nNumber ) 
 
    METHOD getIdByNumber( nNumber )  INLINE ( getSQLDataBase():getValue( ::getSQLSentenceIdByNumber( nNumber ) ) )
@@ -25,29 +23,6 @@ CLASS MovimientosAlmacenRepository FROM SQLBaseRepository
    METHOD getLastNumberByUser( cUser )
 
 END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD getSQLSentenceByIdOrLast( uId ) 
-
-   local cSql  := "SELECT * FROM " + ::getTableName() + " " 
-
-   if empty( uId )
-      cSql     +=    "ORDER BY id DESC LIMIT 1"
-      RETURN ( cSql )
-   end if 
-
-   if hb_isnumeric( uId )
-      cSql     +=    "WHERE id = " + alltrim( str( uId ) ) 
-   end if 
-
-   if hb_isarray( uId ) 
-      cSql     +=    "WHERE id IN ( " 
-      aeval( uId, {| v | cSql += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
-      cSql     := chgAtEnd( cSql, ' )', 2 )
-   end if
-
-RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 

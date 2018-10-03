@@ -104,8 +104,6 @@ METHOD getSentenceTotal( uuidFactura ) CLASS FacturasClientesRepository
 
    cSql  := hb_strformat( cSql, ::getSentenceTotals( uuidFactura ) )
 
-   logwrite( cSql )
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
@@ -138,7 +136,7 @@ RETURN ( atail( hTotals ) )
 
 METHOD createProcedureTotales( uuidFactura ) CLASS FacturasClientesRepository
 
-local cSQL
+   local cSQL
 
    TEXT INTO cSql
 
@@ -160,7 +158,7 @@ local cSQL
       DECLARE recargo               TINYINT( 1 );
       DECLARE importeRecargo        DECIMAL( 19, 6 );
       
-      /*sacamos el importe total de las lineas*/
+      /* Sacamos el importe total de las lineas*/
 
       SET importeBruto        =  (  SELECT 
                                        SUM( IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) 
@@ -169,7 +167,8 @@ local cSQL
                                        FROM %2$s AS facturas_clientes_lineas 
                                        WHERE facturas_clientes_lineas.parent_uuid = uuidFactura );
 
-/*sacamos el descuento que tiene cada linea si lo tuviera*/      
+      /* Sacamos el descuento que tiene cada linea si lo tuviera */    
+
       SET descuentoLineas     = ( SELECT 
                                     SUM( (IFNULL( facturas_clientes_lineas.unidad_medicion_factor, 1 ) 
                                        * facturas_clientes_lineas.articulo_unidades 
@@ -177,13 +176,15 @@ local cSQL
                                        * ( IFNULL( facturas_clientes_lineas.descuento, 0 ) ) / 100 ) ) 
                                  FROM %2$s AS facturas_clientes_lineas 
                                  WHERE facturas_clientes_lineas.parent_uuid = uuidFactura);
-   /*sacamos el porcentaje total de descuentos de la cabecera de la factura*/
+      
+      /* sacamos el porcentaje total de descuentos de la cabecera de la factura*/
 
       SET porcentajeDescuento =  (  SELECT SUM(facturas_clientes_descuentos.descuento)
                                     FROM %3$s AS facturas_clientes_descuentos
                                     WHERE facturas_clientes_descuentos.parent_uuid = uuidFactura );
 
-/*calculamos la base*/
+      /* calculamos la base */
+
       SET base                =  (  SELECT SUM(descuentoLinea.pdescuento - descuentoLinea.pdescuento * IFNULL( porcentajeDescuento, 0) / 100)
                                     FROM(
                                           SELECT 
@@ -219,14 +220,17 @@ local cSQL
                                              FROM %2$s AS facturas_clientes_lineas
                                              WHERE facturas_clientes_lineas.parent_uuid = uuidFactura
                                              GROUP BY id,iva) descuentoLinea) as descuenTototalLinea );
-/*comprobamos si existe recargo*/
+      /* Comprobamos si existe recargo */
+      
       SET recargo =                 (  SELECT recargo_equivalencia 
                                        FROM %4$s AS facturas_clientes
                                        WHERE facturas_clientes.uuid= uuidFactura );
 
-/*calculamos el rescargo si existe el recargo*/
-IF recargo = 1 THEN
-      SET importeRecargo =          ( SELECT SUM(descuenTototalLinea.lineasiniva * descuenTototalLinea.recargo_equivalencia /100) AS recargoTotal
+      /* Calculamos el rescargo si existe el recargo*/
+
+      IF recargo = 1 THEN
+         
+         SET importeRecargo =       ( SELECT SUM(descuenTototalLinea.lineasiniva * descuenTototalLinea.recargo_equivalencia /100) AS recargoTotal
                                        FROM(
                                           SELECT (descuentoLinea.pdescuento -descuentoLinea.pdescuento * IFNULL( porcentajeDescuento, 0) / 100) as lineasiniva,
                                                    descuentoLinea.recargo_equivalencia   
@@ -243,9 +247,11 @@ IF recargo = 1 THEN
                                              FROM facturas_clientes_lineas AS facturas_clientes_lineas
                                              WHERE facturas_clientes_lineas.parent_uuid = uuidFactura
                                              GROUP BY id,iva) descuentoLinea) as descuenTototalLinea  );
+      
       END IF;                             
 
-/*calculamos el importe total de la factura, restando los descuentos y sumando el iva*/
+      /* Calculamos el importe total de la factura, restando los descuentos y sumando el iva*/
+      
       SET importeFactura     = base + ivaTotal; 
 
       IF importeRecargo IS NOT NULL THEN 

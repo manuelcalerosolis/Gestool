@@ -418,6 +418,7 @@ MovimientosAlmacenLineasBrowseView.prg									\
 EtiquetasSelectorView.prg													\
 SQLBaseReport.prg 															\
 MovimientosAlmacenReport.prg												\
+FacturasClientesReport.prg													\
 MovimientosAlmacenLabel.prg												\
 ImportadorMovimientosAlmacenLineasView.prg							\
 CapturadorMovimientosAlmacenLineasView.prg							\
@@ -630,6 +631,7 @@ RectificativasProveedoresLineasModel.prg 								\
 TransaccionesComercialesLineasModel.prg 								\
 FacturasClientesModel.prg 													\
 FacturasClientesRepository.prg 											\
+FacturasClientesLineasRepository.prg									\
 TicketsClientesLineasModel.prg 											\
 TicketsClientesPagosModel.prg 											\
 RecibosClientesModel.prg 													\
@@ -1139,6 +1141,7 @@ MovimientosAlmacenLineasBrowseView.obj									\
 EtiquetasSelectorView.obj													\
 SQLBaseReport.obj 															\
 MovimientosAlmacenReport.obj												\
+FacturasClientesReport.obj													\
 MovimientosAlmacenLabel.obj 												\
 ImportadorMovimientosAlmacenLineasView.obj							\
 CapturadorMovimientosAlmacenLineasView.obj							\
@@ -1351,6 +1354,7 @@ FacturasProveedoresLineasModel.obj 										\
 RectificativasProveedoresLineasModel.obj 								\
 FacturasClientesModel.obj 													\
 FacturasClientesRepository.obj											\
+FacturasClientesLineasRepository.obj									\
 TicketsClientesLineasModel.obj 											\
 TicketsClientesPagosModel.obj 											\
 TicketsClientesModel.obj 													\
@@ -1838,6 +1842,7 @@ $(OBJ)\MovimientosAlmacenBrowseView.obj								+
 $(OBJ)\MovimientosAlmacenLineasBrowseView.obj						+
 $(OBJ)\EtiquetasSelectorView.obj											+
 $(OBJ)\MovimientosAlmacenReport.obj 									+
+$(OBJ)\FacturasClientesReport.obj 										+
 $(OBJ)\MovimientosAlmacenLabel.obj 										+
 $(OBJ)\SQLBaseReport.obj 													+
 $(OBJ)\SQLTageableModel.obj 												+
@@ -2134,6 +2139,7 @@ $(OBJ)\ProveedoresBrowseView.obj 										+
 $(OBJ)\TercerosBrowseView.obj 											+
 $(OBJ)\SqlFacturasClientesModel.obj 				    				+
 $(OBJ)\FacturasClientesRepository.obj 				    				+
+$(OBJ)\FacturasClientesLineasRepository.obj 				    		+
 $(OBJ)\SqlFacturasClientesLineasModel.obj 	    					+
 $(OBJ)\FacturasClientesController.obj 									+
 $(OBJ)\FacturasClientesLineasController.obj 							+

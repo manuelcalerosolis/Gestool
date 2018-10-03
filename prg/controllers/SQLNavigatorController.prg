@@ -25,6 +25,8 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    DATA oFilterController 
 
+   DATA oReport
+
    DATA lDocuments                                    INIT .f.
 
    DATA lOthers                                       INIT .f.

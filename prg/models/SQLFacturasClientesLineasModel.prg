@@ -15,6 +15,8 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
                                        "KEY ( parent_uuid ), "                   + ;
                                        "KEY ( articulo_codigo ) "              
 
+   DATA cGroupBy              INIT "GROUP BY facturas_clientes_lineas.id"
+
    METHOD getColumns()
 
    METHOD getInitialSelect()
@@ -169,12 +171,22 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
       LEFT JOIN %3$s AS agentes
          ON agentes.codigo = facturas_clientes_lineas.agente_codigo   
 
+<<<<<<< HEAD
+=======
+      LEFT JOIN %5$s AS articulos_propiedades_lineas
+         ON articulos_propiedades_lineas.uuid = combinaciones_propiedades.propiedad_uuid
+         
+       
+>>>>>>> 9f3a5595d6e03739a39a6a73164745d86c8f6423
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName() )
 
+<<<<<<< HEAD
    logwrite( cSql )
 
+=======
+>>>>>>> 9f3a5595d6e03739a39a6a73164745d86c8f6423
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

@@ -269,8 +269,8 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Propiedades'
-      :nWidth              := 100
-      :bEditValue          := {|| 'propiedades' }
+      :nWidth              := 180
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_propiedades_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := EDIT_GET_BUTTON
       :bEditValid          := {|| msgalert( 'valid' ), .t. }
