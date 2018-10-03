@@ -45,25 +45,12 @@ CLASS SQLConfiguracionesModel FROM SQLBaseModel
 
    METHOD getAndIncValue( cDocumento, cClave, uDefault )
 
-   // Movimientos almacen------------------------------------------------------
-
    METHOD getItemsMovimientosAlmacen()           
    METHOD setItemsMovimientosAlmacen()
    METHOD getDocumentoMovimientosAlmacen()         INLINE ( alltrim( ::getValue( 'movimientos_almacen', 'documento', '' ) ) )
    METHOD getCopiasMovimientosAlmacen()            INLINE ( ::getNumeric( 'movimientos_almacen', 'copias', 1 ) )
 
    METHOD getAndIncContadorMovimientoAlmacen()     INLINE ( ::getAndIncValue( 'movimientos_almacen', 'contador', 1 ) )
-
-   // Facturas clientes--------------------------------------------------------
-
-   METHOD getItemsFacturasClientes()               VIRTUAL
-   METHOD setItemsFacturasClientes()               VIRTUAL
-   METHOD getDocumentoFacturasClientes()           INLINE ( alltrim( ::getValue( 'facturas_clientes', 'documento', '' ) ) )
-   METHOD getCopiasFacturasClientes()              INLINE ( ::getNumeric( 'facturas_clientes', 'copias', 1 ) )
-
-   METHOD getAndIncContadorFacturasClientes()      INLINE ( ::getAndIncValue( 'facturas_clientes', 'contador', 1 ) )
-
-   // Series-------------------------------------------------------------------
 
    METHOD isSerie( cName, cSerie )                 INLINE ( !empty( ::getValue( cName, 'serie', cSerie ) ) )
    METHOD setSerie( cName, cSerie )                INLINE ( ::setValue( cName, 'serie', cSerie ) )

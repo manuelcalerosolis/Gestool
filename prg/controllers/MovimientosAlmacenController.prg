@@ -18,6 +18,8 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oEtiquetasController
 
+   DATA oConfiguracionesController
+
    DATA oImprimirSeriesController
 
    DATA oNumeroDocumentoComponent
@@ -25,7 +27,6 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
    DATA oReport
 
    METHOD New()
-   
    METHOD End()
 
    METHOD validateNumero()          

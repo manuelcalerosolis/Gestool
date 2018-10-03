@@ -128,8 +128,6 @@ RETURN ( nil )
 
 METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
 
-   local oReturn
-
    if empty( cCodigoArticulo )
       RETURN ( nil )
    end if 
@@ -143,15 +141,9 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
       RETURN ( nil )
    end if 
 
-   msgalert( hb_valtoexp( ::hPropertyList ) )
-
    ::oRowSet:buildPad( ::oModel:getSelectWhereCodigoArticulo( cCodigoArticulo ) )
 
-   if ::dialogViewActivate( ::getSelectorView() )
-      RETURN ( ::oRowSet:fieldGet( 'uuid' ) )
-   end if 
-
-RETURN ( nil )
+RETURN ( ::dialogViewActivate( ::getSelectorView() ) )
 
 //---------------------------------------------------------------------------//
 
