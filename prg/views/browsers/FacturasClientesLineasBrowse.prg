@@ -273,7 +273,6 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'articulos_propiedades_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :nEditType           := EDIT_GET_BUTTON
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateProperty( oCol, uNewValue, nKey ) }
       :bEditValid          := {|| msgalert( 'valid' ), .t. }
       :bEditBlock          := {|| ::oController:getCombinacionesController():runViewSelector( ::getRowSet():fieldGet( 'articulo_codigo' ) ) }
       :nBtnBmp             := 1
