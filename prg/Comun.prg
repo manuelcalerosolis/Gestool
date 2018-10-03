@@ -349,6 +349,8 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   // SQLFacturasClientesLineasModel():getSerializeColumnsSelect()
+
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

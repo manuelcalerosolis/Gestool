@@ -121,6 +121,10 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oDireccionTipoDocumentoController
 
+   DATA oConfiguracionesController
+
+   DATA oImprimirSeriesController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -291,6 +295,12 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getDireccionTipoDocumentoController();
                                     INLINE ( if( empty( ::oDireccionTipoDocumentoController ), ::oDireccionTipoDocumentoController := DireccionTipoDocumentoController():New( self ), ), ::oDireccionTipoDocumentoController )
 
+   METHOD getConfiguracionesController();
+                                    INLINE ( if( empty( ::oConfiguracionesController ), ::oConfiguracionesController := ConfiguracionesController():New( self ), ), ::oConfiguracionesController )
+
+   METHOD getImprimirSeriesController();
+                                    INLINE ( if( empty( ::oImprimirSeriesController ), ::oImprimirSeriesController := ImprimirSeriesController():New( self ), ), ::oImprimirSeriesController )
+
    METHOD End()
 
 END CLASS
@@ -299,8 +309,6 @@ END CLASS
 
 METHOD End() CLASS SQLApplicationController
 
-   logwriteSeconds( "sqlApplicationController oValidator" )
-   
    if !empty( ::oGetSelector )
       ::oGetSelector:End()
    end if 
@@ -309,32 +317,22 @@ METHOD End() CLASS SQLApplicationController
       ::oCodigosPostalesController:End()
    end if 
 
-   logwriteSeconds( "sqlApplicationController oGetSelector" )
-
    if !empty( ::oDireccionesController )
       ::oDireccionesController:End()
    end if 
    
-   logwriteSeconds( "sqlApplicationController oDireccionesController" )
-
    if !empty( ::oPaisesController )
       ::oPaisesController:End()
    end if 
    
-   logwriteSeconds( "sqlApplicationController oPaisesController" )
-
    if !empty( ::oProvinciasController )
       ::oProvinciasController:End()
    end if 
    
-   logwriteSeconds( "sqlApplicationController oProvinciasController" )
-
    if !empty( ::oCamposExtraValoresController )
       ::oCamposExtraValoresController:End()
    end if 
 
-   logwriteSeconds( "sqlApplicationController oCamposExtraValoresController" )
-  
    if !empty( ::oConfiguracionVistasController )
       ::oConfiguracionVistasController:End()
    end if 
@@ -542,10 +540,16 @@ METHOD End() CLASS SQLApplicationController
    if !empty( ::oDireccionTipoDocumentoController )   
       ::oDireccionTipoDocumentoController:End()
    end if 
+  
+   if !empty( ::oConfiguracionesController )
+      ::oConfiguracionesController:End()
+   end if 
+
+   if !empty( ::oImprimirSeriesController )
+      ::oImprimirSeriesController:End()
+   end if 
 
    ::Super:End()
-
-   logwriteSeconds( "sqlApplicationController ::Super:End()" )
 
 RETURN ( nil )
 

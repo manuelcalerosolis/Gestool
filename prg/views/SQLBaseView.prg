@@ -56,7 +56,7 @@ CLASS SQLBaseView
                                                                      hSet( ::oController:oModel:hBuffer, cName, uValue ) ) )
 
    METHOD getController()                             INLINE ( ::oController )    
-   METHOD getSenderController()                       INLINE ( ::oController:oSenderController )    
+   METHOD getController()                       INLINE ( ::oController:oSenderController )    
 
    METHOD getComboBoxOrder()                          VIRTUAL
 

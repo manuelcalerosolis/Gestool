@@ -147,7 +147,7 @@ RETURN ( nil )
 
 METHOD gettingSelectSentence()
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
@@ -193,7 +193,7 @@ METHOD assertAppend() CLASS CamposExtraEntidadesController
       RETURN ( .t. )
    end if 
 
-RETURN ( ::oModel:isNotBlankEntityWhereUuid( ::getSenderController():getUuid() ) )
+RETURN ( ::oModel:isNotBlankEntityWhereUuid( ::getController():getUuid() ) )
 
 //---------------------------------------------------------------------------//
 

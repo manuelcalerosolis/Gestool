@@ -52,7 +52,7 @@ CLASS SQLBaseController
    METHOD setName( cName )                            INLINE ( ::cName := cName )
    METHOD getName()                                   INLINE ( ::cName )
 
-   METHOD getSenderController()                       INLINE ( ::oSenderController ) 
+   METHOD getController()                       INLINE ( ::oSenderController ) 
    METHOD getSenderControllerParentUuid()             INLINE ( iif( !empty( ::oSenderController ), ::oSenderController:getUuid(), space( 40 ) ) ) 
 
    // Modelo -----------------------------------------------------------------

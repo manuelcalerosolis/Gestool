@@ -120,7 +120,7 @@ METHOD showDocument()
 
    ::oDialog:disable()
 
-   ::oController:showDocument() 
+   ::oController:showDocument( IS_PRINTER, ::cListboxFile, ::nCopies, ::cPrinter )
 
    ::oDialog:enable()
 

@@ -85,7 +85,7 @@ RETURN ( nil )
 
 METHOD gettingSelectSentence() CLASS IncidenciasController
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )

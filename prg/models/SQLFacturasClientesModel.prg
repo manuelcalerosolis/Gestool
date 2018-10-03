@@ -7,6 +7,8 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getColumnsSelect()
+
    METHOD getInitialSelect() 
 
 END CLASS
@@ -74,30 +76,44 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
+METHOD getColumnsSelect() CLASS SQLFacturasClientesModel
+
+   local cColumns
+
+   TEXT INTO cColumns
+      facturas_clientes.id AS id,
+      facturas_clientes.uuid AS uuid,
+      CONCAT( facturas_clientes.serie, '/', facturas_clientes.numero ) AS numero,
+      facturas_clientes.delegacion_uuid AS delegacion_uuid,
+      facturas_clientes.sesion_uuid AS sesion_uuid,
+      facturas_clientes.recargo_equivalencia AS recargo_equivalencia,
+      facturas_clientes.cliente_codigo AS cliente_codigo,
+      clientes.nombre AS cliente_nombre,
+      direcciones.direccion AS direccion_direccion,
+      direcciones.poblacion AS direccion_poblacion,
+      direcciones.codigo_provincia AS direccion_codigo_provincia,
+      direcciones.provincia AS direccion_provincia,
+      direcciones.codigo_postal AS direccion_codigo_postal,
+      direcciones.telefono AS direccion_telefono,
+      direcciones.movil AS direccion_movil,
+      direcciones.email AS direccion_email,
+      tarifas.codigo AS tarifa_codigo,
+      tarifas.nombre AS tarifa_nombre
+   ENDTEXT
+
+RETURN ( cColumns )
+
+//---------------------------------------------------------------------------//
+
 METHOD getInitialSelect() CLASS SQLFacturasClientesModel
 
    local cSql
 
    TEXT INTO cSql
 
-   SELECT facturas_clientes.id AS id,
-      facturas_clientes.uuid AS uuid,
-      CONCAT( facturas_clientes.serie, '/', facturas_clientes.numero ) AS numero,
-      facturas_clientes.delegacion_uuid AS delegacion_uuid,                     
-      facturas_clientes.sesion_uuid AS sesion_uuid,                             
-      facturas_clientes.recargo_equivalencia AS recargo_equivalencia,                                     
-      facturas_clientes.cliente_codigo AS cliente_codigo,                       
-      clientes.nombre AS cliente_nombre,                                        
-      direcciones.direccion AS direccion_direccion,                             
-      direcciones.poblacion AS direccion_poblacion,                             
-      direcciones.codigo_provincia AS direccion_codigo_provincia,               
-      direcciones.provincia AS direccion_provincia,                             
-      direcciones.codigo_postal AS direccion_codigo_postal,                     
-      direcciones.telefono AS direccion_telefono,                               
-      direcciones.movil AS direccion_movil,                                     
-      direcciones.email AS direccion_email,                                     
-      tarifas.codigo AS tarifa_codigo,                                          
-      tarifas.nombre AS tarifa_nombre                                           
+   SELECT
+      %5$s 
+
    FROM %1$s AS facturas_clientes
       LEFT JOIN %2$s clientes  
          ON facturas_clientes.cliente_codigo = clientes.codigo
@@ -108,7 +124,7 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), SQLArticulosTarifasModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), SQLArticulosTarifasModel():getTableName(), ::getColumnsSelect() )
 
 RETURN ( cSql )
 

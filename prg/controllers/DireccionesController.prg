@@ -126,7 +126,7 @@ METHOD gettingSelectSentence() CLASS DireccionesController
 
    local uuid      
 
-   uuid              := ::getSenderController():getUuid() 
+   uuid              := ::getController():getUuid() 
 
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )

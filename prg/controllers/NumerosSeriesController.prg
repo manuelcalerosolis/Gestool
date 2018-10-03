@@ -93,7 +93,7 @@ RETURN ( Self )
 
 METHOD loadedBlankBuffer()
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       hset( ::oModel:hBuffer, "parent_uuid", uuid )

@@ -15,11 +15,13 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
                                        "KEY ( parent_uuid ), "                   + ;
                                        "KEY ( articulo_codigo ) "              
 
-   DATA cGroupBy              INIT "GROUP BY facturas_clientes_lineas.id"
-
    METHOD getColumns()
 
+   METHOD getColumnsSelect()
+
    METHOD getInitialSelect()
+
+   METHOD getInitialWhereParentUuid( uuidParent )
 
    METHOD getInsertSentence()
 
@@ -103,19 +105,22 @@ METHOD getColumns() CLASS SQLFacturasClientesLineasModel
    hset( ::hColumns, "unidad_medicion_codigo",     {  "create"    => "VARCHAR( 20 )"                  ,;
                                                       "default"   => {|| space( 20 ) } }              )
 
-   hset( ::hColumns, "unidad_medicion_factor",     {  "create"    => "DECIMAL( 19, 6 )"                  ,;
+   hset( ::hColumns, "unidad_medicion_factor",     {  "create"    => "DECIMAL( 19, 6 )"               ,;
                                                       "default"   => {|| 1 } }                        )
 
-   hset( ::hColumns, "descuento",                  {  "create"    => "FLOAT( 7, 4 )"                     ,;
+   hset( ::hColumns, "descuento",                  {  "create"    => "FLOAT( 7, 4 )"                  ,;
                                                       "default"   => {|| 0 } }                        )
+
+   hset( ::hColumns, "combinaciones_uuid",         {  "create"    => "VARCHAR( 40 )"                  ,;
+                                                      "default"   => {|| space( 40 ) } } )
 
    hset( ::hColumns, "incremento_precio",          {  "create"    => "FLOAT( 19, 6)"                  ,;
                                                       "default"   => {|| 0 } }                        )
 
-   hset( ::hColumns, "iva",                        {  "create"    => "FLOAT( 7, 4 )"                    ,;
+   hset( ::hColumns, "iva",                        {  "create"    => "FLOAT( 7, 4 )"                  ,;
                                                       "default"   => {|| 0 }  }                       )
 
-   hset( ::hColumns, "recargo_equivalencia",       {  "create"    => "FLOAT( 7, 4 )"                    ,;
+   hset( ::hColumns, "recargo_equivalencia",       {  "create"    => "FLOAT( 7, 4 )"                  ,;
                                                       "default"   => {|| 0 }  }                       )
 
    hset( ::hColumns, "almacen_codigo",             {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
@@ -124,10 +129,46 @@ METHOD getColumns() CLASS SQLFacturasClientesLineasModel
    hset( ::hColumns, "agente_codigo",              {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
                                                       "default"   => {|| space( 20 ) } }              )
 
-   hset( ::hColumns, "agente_comision",            {  "create"    => "FLOAT( 7, 4 )"                   ,;
-                                                      "default"   => {|| 0 } }                         )
+   hset( ::hColumns, "agente_comision",            {  "create"    => "FLOAT( 7, 4 )"                  ,;
+                                                      "default"   => {|| 0 } }                        )
 
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getColumnsSelect()
+
+   local cColumns
+
+   TEXT INTO cColumns
+      facturas_clientes_lineas.id AS id,
+      facturas_clientes_lineas.uuid AS uuid,
+      facturas_clientes_lineas.parent_uuid AS parent_uuid,
+      facturas_clientes_lineas.articulo_codigo AS articulo_codigo,
+      facturas_clientes_lineas.articulo_nombre AS articulo_nombre,
+      facturas_clientes_lineas.fecha_caducidad AS fecha_caducidad,
+      facturas_clientes_lineas.lote AS lote,
+      facturas_clientes_lineas.articulo_unidades AS articulo_unidades,
+      facturas_clientes_lineas.unidad_medicion_factor AS unidad_medicion_factor,
+      ( @total_unidades := articulo_unidades * unidad_medicion_factor ) AS total_unidades,
+      facturas_clientes_lineas.articulo_precio AS articulo_precio,
+      ( @total_bruto := ROUND( @total_unidades * articulo_precio, 2 ) ) AS total_bruto,
+      facturas_clientes_lineas.unidad_medicion_codigo AS unidad_medicion_codigo,
+      facturas_clientes_lineas.descuento AS descuento,
+      ( @importe_descuento := IF( descuento IS NULL OR descuento = 0, 0, @total_bruto * descuento / 100 ) ) AS importe_descuento,
+      ( @total_bruto - @importe_descuento ) AS total_precio,
+      facturas_clientes_lineas.incremento_precio AS incremento_precio,
+      facturas_clientes_lineas.iva AS iva,
+      facturas_clientes_lineas.recargo_equivalencia AS recargo_equivalencia,
+      facturas_clientes_lineas.almacen_codigo AS almacen_codigo,
+      almacenes.nombre AS almacen_nombre,
+      facturas_clientes_lineas.agente_codigo AS agente_codigo,
+      agentes.nombre AS agente_nombre,
+      facturas_clientes_lineas.agente_comision AS agente_comision,
+      GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre 
+   ENDTEXT
+
+RETURN ( cColumns )
 
 //---------------------------------------------------------------------------//
 
@@ -138,30 +179,7 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
    TEXT INTO cSql
 
       SELECT 
-         facturas_clientes_lineas.id,
-         facturas_clientes_lineas.uuid,                                                        
-         facturas_clientes_lineas.parent_uuid,                                                 
-         articulo_codigo,                                             
-         articulo_nombre,                                             
-         fecha_caducidad,                                             
-         lote,                                                        
-         articulo_unidades,                                           
-         unidad_medicion_factor,                                      
-         ( @total_unidades := articulo_unidades * unidad_medicion_factor ) as total_unidades, 
-         articulo_precio,                                             
-         ( @total_bruto := ROUND( @total_unidades * articulo_precio, 2 ) ) as total_bruto,
-         unidad_medicion_codigo,                                      
-         descuento,       
-         ( @importe_descuento := IF( descuento IS NULL OR descuento = 0, 0, @total_bruto * descuento / 100 ) ),
-         ( @total_bruto - @importe_descuento ) AS total_precio,
-         incremento_precio,
-         iva,
-         recargo_equivalencia,
-         almacen_codigo,
-         almacenes.nombre AS almacen_nombre,
-         agente_codigo,
-         agentes.nombre AS agente_nombre,
-         agente_comision
+         %6$s
          
       FROM %1$s AS facturas_clientes_lineas
 
@@ -169,24 +187,25 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
          ON almacenes.codigo = facturas_clientes_lineas.almacen_codigo
 
       LEFT JOIN %3$s AS agentes
-         ON agentes.codigo = facturas_clientes_lineas.agente_codigo   
+         ON agentes.codigo = facturas_clientes_lineas.agente_codigo
+  
+      LEFT JOIN %4$s AS combinaciones_propiedades
+         ON combinaciones_propiedades.parent_uuid = facturas_clientes_lineas.combinaciones_uuid
 
-<<<<<<< HEAD
-=======
       LEFT JOIN %5$s AS articulos_propiedades_lineas
          ON articulos_propiedades_lineas.uuid = combinaciones_propiedades.propiedad_uuid
        
->>>>>>> 9f3a5595d6e03739a39a6a73164745d86c8f6423
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLAlmacenesModel():getTableName(), SQLAgentesModel():getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), ::getColumnsSelect() )
 
-<<<<<<< HEAD
-   logwrite( cSql )
-
-=======
->>>>>>> 9f3a5595d6e03739a39a6a73164745d86c8f6423
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getInitialWhereParentUuid( uuidParent )
+
+RETURN ( "WHERE facturas_clientes_lineas.parent_uuid = " + quoted( uuidParent ) )
 
 //---------------------------------------------------------------------------//
 

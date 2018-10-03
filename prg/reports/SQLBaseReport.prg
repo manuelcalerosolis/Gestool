@@ -12,7 +12,7 @@ CLASS SQLBaseReport
 
    DATA cDirectory
 
-   DATA cFileName
+   DATA cFileName                         INIT Space( 200 )
 
    DATA oEvents
 
@@ -30,18 +30,20 @@ CLASS SQLBaseReport
 
    METHOD End()
 
+   METHOD getController()                 INLINE ( ::oController )
+
    METHOD createFastReport()
    METHOD destroyFastReport()             INLINE ( ::oFastReport:destroyFr(), ::oFastReport := nil )
    METHOD setFastReport( oFastReport )    INLINE ( ::oFastReport := oFastReport )
    METHOD getFastReport()                 INLINE ( ::oFastReport )
 
    METHOD setDirectory( cDirectory )      INLINE ( ::cDirectory := cDirectory )
-   METHOD getDirectory( )                 INLINE ( ::cDirectory )
+   METHOD getDirectory()                  INLINE ( alltrim( ::cDirectory ) )
 
    METHOD setFileName( cFileName )        INLINE ( ::cFileName := cFileName )
-   METHOD getFileName()                   INLINE ( ::cFileName )
+   METHOD getFileName()                   INLINE ( alltrim( ::cFileName ) )
 
-   METHOD getFullPathFileName()           INLINE ( ::cDirectory + ::cFileName + if( !( ".fr3" $ lower( ::cFileName ) ), ".fr3", "" ) )
+   METHOD getFullPathFileName()           INLINE ( ::getDirectory() + ::getFileName() + if( !( ".fr3" $ lower( ::getFileName() ) ), ".fr3", "" ) )
 
    METHOD setReport( cReport )            INLINE ( ::cReport := cReport )
    METHOD getReport()                     INLINE ( ::cReport )
@@ -111,7 +113,7 @@ METHOD createFastReport()
    
    ::oFastReport:SetTitle( "Diseñador de documentos" ) 
 
-   // ::oFastReport:SetEventHandler( "Designer", "OnSaveReport", {|| ::Save() } )
+   ::oFastReport:SetEventHandler( "Designer", "OnSaveReport", {|| ::Save() } )
 
    ::oEvents:fire( "createdFastReport" )
 
@@ -176,7 +178,19 @@ RETURN ( .t. )
 
 METHOD Save()
 
-   ::oFastReport:SaveToFile( ::getFullPathFileName() )
+   msgalert( ::getFullPathFileName(), "save" )
+
+   if !isDirectory( ::getDirectory() )
+      makeDir( ::getDirectory() )
+   end if 
+
+   if empty( ::getFileName() )
+      msgGet( "Seleccione un fichero", "Fichero : ", @::cFileName )     
+   end if 
+
+   if !empty( ::getFileName() )
+      ::oFastReport:SaveToFile( ::getFullPathFileName() )
+   end if 
 
 RETURN ( .t. )
 

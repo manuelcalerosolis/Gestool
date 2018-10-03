@@ -89,7 +89,7 @@ RETURN ( nil )
 
 METHOD loadedBlankBuffer() CLASS DocumentosController
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       hset( ::oModel:hBuffer, "parent_uuid", uuid )
@@ -101,7 +101,7 @@ RETURN ( nil )
 
 METHOD gettingSelectSentence() CLASS DocumentosController
 
-   local uuid        := ::getSenderController():getUuid()  
+   local uuid        := ::getController():getUuid()  
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 

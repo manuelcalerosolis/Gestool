@@ -368,7 +368,7 @@ RETURN ( cSQL )
 
 METHOD addParentUuidWhere( cSQLSelect ) CLASS SQLArticulosPreciosModel    
 
-   local uuid     := ::oController:getSenderController():getUuid() 
+   local uuid     := ::oController:getController():getUuid() 
 
    if !empty( uuid )
       cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".articulo_uuid = " + quoted( uuid )
@@ -481,7 +481,7 @@ RETURN ( cSql )
 
 METHOD addParentUuidWhere( cSQLSelect ) CLASS SQLArticulosPreciosTarifasModel    
 
-   local uuid     := ::oController:getSenderController():getUuid() 
+   local uuid     := ::oController:getController():getUuid() 
 
    if !empty( uuid )
       cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".tarifa_uuid = " + quoted( uuid )

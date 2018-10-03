@@ -27,6 +27,8 @@ CLASS SQLBaseModel
 
    DATA cGeneralHaving
 
+   DATA nLimit
+
    DATA cFilterWhere                                  INIT ""
 
    DATA cOthersWhere
@@ -74,6 +76,9 @@ CLASS SQLBaseModel
    // Columns-------------------------------------------------------------------
 
    METHOD getColumns()                                INLINE ( ::hColumns )
+
+   METHOD getColumnsSelect()                          VIRTUAL
+
    METHOD getTableColumns() 
 
    METHOD getClosedColumns()
@@ -82,6 +87,7 @@ CLASS SQLBaseModel
    METHOD getTimeStampSentColumns()
 
    METHOD getSerializeColumns()
+   METHOD getSerializeColumnsSelect()
 
    METHOD getColumnsForBrowse()
    METHOD getHeadersForBrowse()
@@ -133,6 +139,9 @@ CLASS SQLBaseModel
 
    METHOD setGeneralSelect( cSelect )                 INLINE ( ::cGeneralSelect  := cSelect )
 
+   METHOD setLimit( nLimit )                          INLINE ( ::nLimit := nLimit )
+   METHOD addLimit( cSQLSelect )
+
    METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
    METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
    METHOD addGeneralWhere( cSQLSelect )
@@ -164,7 +173,6 @@ CLASS SQLBaseModel
    METHOD setGroupBy( cGroupBy )                      INLINE ( ::cGroupBy        := cGroupBy )
    METHOD getGroupBy()                                INLINE ( ::cGroupBy )
    METHOD addGroupBy( cSQLSelect )
-
 
    METHOD findAll( nOffset, nLimit )
    METHOD getByUuid( uuid )
@@ -376,6 +384,8 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addGeneralHaving( cSQLSelect )
 
+   cSQLSelect              := ::addLimit( cSQLSelect )
+
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
@@ -442,13 +452,29 @@ RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
 
-METHOD addGeneralWhere( cSQLSelect )
+METHOD addGeneralWhere( cSQLSelect, cGeneralWhere )
 
-   if empty( ::cGeneralWhere )
+   DEFAULT cGeneralWhere   := ::cGeneralWhere
+
+   if empty( cGeneralWhere )
       RETURN ( cSQLSelect )
    end if 
    
-   cSQLSelect     += ::getWhereOrAnd( cSQLSelect ) + ::cGeneralWhere 
+   cSQLSelect              += ::getWhereOrAnd( cSQLSelect ) + cGeneralWhere 
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD addLimit( cSQLSelect, nLimit )
+
+   DEFAULT nLimit   := ::nLimit
+
+   if empty( nLimit )
+      RETURN ( cSQLSelect )
+   end if 
+   
+   cSQLSelect              += " LIMIT " + hb_ntos( nLimit )
 
 RETURN ( cSQLSelect )
 
@@ -493,11 +519,11 @@ METHOD addParentUuidWhere( cSQLSelect )
       RETURN ( cSQLSelect )
    end if
 
-   if empty( ::oController:getSenderController() )
+   if empty( ::oController:getController() )
       RETURN ( cSQLSelect )
    end if
 
-   uuid           := ::oController:getSenderController():getUuid()
+   uuid           := ::oController:getController():getUuid()
 
    if !empty( uuid )
       cSQLSelect  += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".parent_uuid = " + quoted( uuid )
@@ -543,8 +569,7 @@ METHOD addGroupBy( cSQLSelect )
       RETURN ( cSQLSelect )
    end if 
 
-   cSQLSelect     += space( 1 ) 
-   cSQLSelect     += ::getGroupBy()
+   cSQLSelect     += " GROUP BY " + ::getGroupBy()
 
 RETURN ( cSQLSelect )
 
@@ -1122,6 +1147,33 @@ RETURN ( cColumns )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSerializeColumnsSelect()
+
+   local nPos
+   local cColumn        
+   local cColumns       := ""
+   local aColumns       := hb_atokens( ::getColumnsSelect(), chr( 10 ) )
+
+   if !hb_isarray( aColumns )
+      RETURN ( cColumns )
+   end if 
+
+   for each cColumn in aColumns
+
+      nPos              := rat( "AS ", cColumn )
+
+      if nPos != 0
+         cColumns       += substr( cColumn, nPos + 3 )
+      end if 
+
+   next 
+
+   cColumns             := strtran( cColumns, ",", ";" )
+   
+RETURN ( cColumns )
+
+//---------------------------------------------------------------------------//
+
 STATIC FUNCTION validColumnForNavigator( hash )
 
 RETURN ( hhaskey( hash, "visible" ) .and. hget( hash, "visible" ) .and. hhaskey( hash, "header" ) .and. hhaskey( hash, "width" ) )
@@ -1632,11 +1684,11 @@ METHOD getSenderControllerParentUuid()
       RETURN ( space( 40 ) )
    end if
 
-   if empty( ::oController:getSenderController() )
+   if empty( ::oController:getController() )
       RETURN ( space( 40 ) )
    end if
 
-RETURN ( ::oController:getSenderController():getUuid() )
+RETURN ( ::oController:getController():getUuid() )
 
 //---------------------------------------------------------------------------//
 

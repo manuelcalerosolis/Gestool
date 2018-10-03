@@ -129,7 +129,7 @@ METHOD creaRegistro( cArea, sStockArticulo )
 
    hBuffer                                := ::oSenderController:oLineasController:oModel:loadBlankBuffer()
 
-   hBuffer[ "parent_uuid" ]               := ::getSenderController():getUuid()
+   hBuffer[ "parent_uuid" ]               := ::getController():getUuid()
    hBuffer[ "codigo_articulo" ]           := ( cArea )->Codigo
    hBuffer[ "nombre_articulo" ]           := ( cArea )->Nombre
    hBuffer[ "precio_articulo" ]           := ( cArea )->pCosto

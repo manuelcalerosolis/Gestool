@@ -359,10 +359,10 @@ METHOD getUniqueSenctence( uValue ) CLASS AlmacenesValidator
 
    local cSQLSentence   := ::Super:getUniqueSenctence( uValue )
 
-   if empty( ::oController ) .or. empty( ::oController:getSenderController() )
+   if empty( ::oController ) .or. empty( ::oController:getController() )
       cSQLSentence      +=    " AND almacen_uuid = ''"
    else 
-      cSQLSentence      +=    " AND almacen_uuid = " + quoted( ::oController:getSenderController():getUuid() )
+      cSQLSentence      +=    " AND almacen_uuid = " + quoted( ::oController:getController():getUuid() )
    end if
 
 RETURN ( cSQLSentence )
@@ -421,11 +421,11 @@ METHOD getAlmacenUuidAttribute( value ) CLASS SQLAlmacenesModel
       RETURN ( value )
    end if
 
-   if empty( ::oController:getSenderController() )
+   if empty( ::oController:getController() )
       RETURN ( value )
    end if
 
-RETURN ( ::oController:getSenderController():getUuid() )
+RETURN ( ::oController:getController():getUuid() )
 
 //---------------------------------------------------------------------------//
 

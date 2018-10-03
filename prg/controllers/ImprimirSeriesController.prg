@@ -120,6 +120,8 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter )
 
    oReport:DestroyFastReport()
 
+   oReport:End()
+
    oWaitMeter:End()
 
 RETURN ( Self )
@@ -137,7 +139,7 @@ METHOD editDocument()
       RETURN ( self )  
    end if 
 
-   oReport     := MovimientosAlmacenReport():New( self )
+   oReport           := ::oController:getReport()
 
    oReport:createFastReport()
 
@@ -167,7 +169,7 @@ METHOD newDocument()
 
    local oReport  
 
-   oReport  := MovimientosAlmacenReport():New( self )
+   oReport           := ::oController:getReport()
 
    oReport:createFastReport()
 
