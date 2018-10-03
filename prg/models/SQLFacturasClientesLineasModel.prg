@@ -182,7 +182,6 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesLineasModel
 
       LEFT JOIN %5$s AS articulos_propiedades_lineas
          ON articulos_propiedades_lineas.uuid = combinaciones_propiedades.propiedad_uuid
-         
        
    ENDTEXT
 
@@ -204,7 +203,7 @@ METHOD getInsertSentence() CLASS SQLFacturasClientesLineasModel
 
    ::setSQLInsert( ::getUpdateUnitsSentece( nId ) )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

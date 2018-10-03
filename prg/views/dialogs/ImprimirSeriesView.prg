@@ -27,9 +27,7 @@ CLASS ImprimirSeriesView FROM SQLBaseView
 
    METHOD showDocument()
 
-   METHOD getRegistrosSeleccionados()  INLINE  ( iif( !empty( ::oController ),;
-                                                      "( " + alltrim( str( len( ::oController:getIds() ) ) ) + ") registro(s) seleccionado(s)",;
-                                                      "( 0 ) registro(s) seleccionado(s)" ) )
+   METHOD getRegistrosSeleccionados()
 
 END CLASS
 
@@ -129,3 +127,15 @@ METHOD showDocument()
 RETURN ( self )
 
 //--------------------------------------------------------------------------//
+
+METHOD getRegistrosSeleccionados()
+
+   local nLen  := len( ::oController:getIds() )
+
+   if nLen > 1 
+      RETURN ( hb_ntos( nLen ) + " Registros seleccionados" )
+   end if 
+
+RETURN ( hb_ntos( nLen ) + "Registro seleccionado" )
+
+//---------------------------------------------------------------------------//
