@@ -9,6 +9,10 @@ FUNCTION FacturasClientesController1000()
    local oController    
 
    for n := 1 to 10
+      
+      FacturasClientesController()
+
+      msgmemory()
 
       oController          := FacturasClientesController():New()
 
@@ -19,8 +23,6 @@ FUNCTION FacturasClientesController1000()
       // oController:closeAllWindows()
 
       // MsgWait( "Please, " + str( n ), "This is a test", 1 )
-
-      msgmemory()
 
       oController:End()
 
@@ -93,34 +95,34 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::Super:New( oController )
 
-   ::cTitle                                              := "Facturas de clientes"
+   ::cTitle                            := "Facturas de clientes"
 
-   ::cName                                               := "facturas_clientes"
+   ::cName                             := "facturas_clientes"
    
-   ::lTransactional                                      := .t.
+   ::lTransactional                    := .t.
 
-   ::lInsertable                                         := .t.
+   ::lInsertable                       := .t.
 
-   ::lDocuments                                          := .t.
+   ::lDocuments                        := .t.
 
-   ::lConfig                                             := .t.
+   ::lConfig                           := .t.
 
-   ::lOthers                                             := .t.
+   ::lOthers                           := .t.
 
-   ::hImage                                              := {  "16" => "gc_document_text_user_16",;
-                                                               "32" => "gc_document_text_user_32",;
-                                                               "48" => "gc_document_text_user_48" }
+   ::hImage                            := {  "16" => "gc_document_text_user_16",;
+                                             "32" => "gc_document_text_user_32",;
+                                             "48" => "gc_document_text_user_48" }
 
-   ::oModel                                              := SQLFacturasClientesModel():New( self )
+   ::oModel                            := SQLFacturasClientesModel():New( self )
 
-   ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
+   ::oNumeroDocumentoComponent         := NumeroDocumentoComponent():New( self )
 
-   ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
+   ::oSerieDocumentoComponent          := SerieDocumentoComponent():New( self )
 
-   ::oContadoresModel                                    := SQLContadoresModel():New( self )
+   ::oContadoresModel                  := SQLContadoresModel():New( self )
 
-   ::oModel:setEvent( 'loadedBuffer',                    {|| ::loadedBuffer() } )
-   ::oModel:setEvent( 'loadedBlankBuffer',               {|| ::loadedBlankBuffer() } )
+   ::oModel:setEvent( 'loadedBuffer',        {|| ::loadedBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
 
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',         {|| ::isClientFilled() } ) 
    ::getDireccionTipoDocumentoController():oModel:setEvent( 'gettingSelectSentence', {|| ::getClientUuid() } )
