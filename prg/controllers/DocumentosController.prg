@@ -35,9 +35,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS DocumentosController
+METHOD New( oController ) CLASS DocumentosController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Documentos"
 
@@ -389,11 +389,11 @@ METHOD getParentUuidAttribute( value ) CLASS SQLDocumentosModel
       RETURN ( value )
    end if
 
-   if empty( ::oController:oSenderController )
+   if empty( ::oController:oController )
       RETURN ( value )
    end if
 
-RETURN ( ::oController:oSenderController:getUuid() )
+RETURN ( ::oController:oController:getUuid() )
 
 //---------------------------------------------------------------------------//
 
@@ -404,11 +404,11 @@ METHOD SetDocumentoAttribute( uValue )
    if empty( uValue ) .or. isDocumentInApplicationStorage( uValue )
       RETURN ( uValue )
    end if      
-   if empty( ::oController ) .or. empty( ::oController:oSenderController )
+   if empty( ::oController ) .or. empty( ::oController:oController )
       RETURN ( uValue )
    end if       
 
-   cNombreDocumento           := alltrim( ::oController:oSenderController:oModel:hBuffer[ "nombre" ] ) 
+   cNombreDocumento           := alltrim( ::oController:oController:oModel:hBuffer[ "nombre" ] ) 
    cNombreDocumento           += '(' + alltrim( ::hBuffer[ "uuid" ] ) + ')' + '.' 
    cNombreDocumento           += lower( getFileExt( uValue ) ) 
 

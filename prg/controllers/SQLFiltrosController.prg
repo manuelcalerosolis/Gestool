@@ -12,12 +12,12 @@ CLASS SQLFiltrosController FROM SQLBaseController
 
    DATA oCustomView
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()
 
-   METHOD Dialog()                           INLINE ( ::oDialogView:Dialog() )
+   METHOD Dialog()                           INLINE ( ::getDialogView():Dialog() )
 
-   METHOD setColumns()
+   METHOD setColumns( hColumns )             INLINE ( ::hColumns := hColumns )
    METHOD getColumns()                       INLINE ( ::hColumns )
 
    METHOD getFilters()
@@ -30,28 +30,28 @@ CLASS SQLFiltrosController FROM SQLBaseController
 
    METHOD loadedBlankBuffer()
 
-   METHOD setComboFilter( cText )            INLINE ( ::oSenderController:oWindowsBar:setComboFilter( cText ) )
-   METHOD setComboFilterItem( cText )        INLINE ( ::oSenderController:oWindowsBar:setComboFilterItem( cText ) )
-   METHOD showCleanButtonFilter()            INLINE ( ::oSenderController:oWindowsBar:showCleanButtonFilter() )
+   METHOD setComboFilter( cText )            INLINE ( ::oController:oWindowsBar:setComboFilter( cText ) )
+   METHOD setComboFilterItem( cText )        INLINE ( ::oController:oWindowsBar:setComboFilterItem( cText ) )
+   METHOD showCleanButtonFilter()            INLINE ( ::oController:oWindowsBar:showCleanButtonFilter() )
 
    METHOD setTableToFilter( cTableToFilter ) INLINE ( ::oModel:setTableToFilter( cTableToFilter ) )
    METHOD getTableToFilter()                 INLINE ( ::oModel:getTableToFilter() )
+
+   METHOD getDialogView()                    INLINE ( iif( empty( ::oDialogView ), ::oDialogView := SQLFilterView():New( self ), ), ::oDialogView )
+
+   METHOD getCustomView()                    INLINE ( iif( empty( ::oCustomView ), ::oCustomView := SQLCustomFilterView():New( self ), ), ::oCustomView )
+   
+   METHOD getValidator()                     INLINE ( iif( empty( ::oValidator ),  ::oValidator  := SQLFiltrosValidator():New( self ), ), ::oValidator )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController )
+METHOD New( oController )
 
-   ::oSenderController                 := oSenderController
+   ::oController                             := oController
 
-   ::oDialogView                       := SQLFilterView():New( self )
-
-   ::oCustomView                       := SQLCustomFilterView():New( self )
-
-   ::oModel                            := SQLFiltrosModel():New( self )
-   
-   ::oValidator                        := SQLFiltrosValidator():New( self )
+   ::oModel                                  := SQLFiltrosModel():New( self )
 
    ::oModel:setEvent( 'loadedBlankBuffer', {|| ::loadedBlankBuffer() } )
 
@@ -77,29 +77,7 @@ METHOD End()
       ::oValidator:End()
    end if 
 
-   ::oSenderController                 := nil
-
-   ::oDialogView                       := nil
-
-   ::oCustomView                       := nil
-   
-   ::oModel                            := nil
-   
-   ::oValidator                        := nil
-   
-   Self                                := nil
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD setColumns( hColumns )
-
-   DEFAULT hColumns                    := SQLMovimientosAlmacenModel():getColumns()
-
-   ::hColumns                          := hColumns
-
-RETURN ( Self )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -123,27 +101,28 @@ RETURN ( ::oModel:getId( cNameFilter, cTableToFilter ) )
 
 METHOD loadedBlankBuffer()
 
-   local cTextFilter    := ::oSenderController:oWindowsBar:getComboFilter()
+   local cTextFilter    := ::oController:oWindowsBar:getComboFilter()
 
    if empty( cTextFilter )
-      RETURN ( Self )   
+      RETURN ( nil )   
    end if 
 
    hset( ::oModel:hBuffer, "nombre", cTextFilter ) 
+
    hset( ::oModel:hBuffer, "filtro", cTextFilter ) 
 
-RETURN ( Self )   
+RETURN ( nil )   
 
 //---------------------------------------------------------------------------//
 
 METHOD Append()
 
    if ::Super:Append()
-      ::oSenderController:oWindowsBar:addComboFilter( hget( ::oModel:hBuffer, "nombre" ) )
-      ::oSenderController:oWindowsBar:setComboFilter( hget( ::oModel:hBuffer, "nombre" ) )
+      ::oController:oWindowsBar:addComboFilter( hget( ::oModel:hBuffer, "nombre" ) )
+      ::oController:oWindowsBar:setComboFilter( hget( ::oModel:hBuffer, "nombre" ) )
    end if 
 
-RETURN ( Self )   
+RETURN ( nil )   
 
 //---------------------------------------------------------------------------//
 
@@ -151,6 +130,6 @@ METHOD DeleteByText( cNameFilter, cTableToFilter )
 
    ::oModel:deleteById( { ::getId( cNameFilter, cTableToFilter ) } )
 
-RETURN ( Self )   
+RETURN ( nil )   
 
 //---------------------------------------------------------------------------//

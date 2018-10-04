@@ -23,9 +23,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS UnidadesMedicionController
+METHOD New( oController ) CLASS UnidadesMedicionController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Unidades de medición"
 

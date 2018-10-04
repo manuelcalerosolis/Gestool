@@ -44,7 +44,7 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
-   METHOD getUuidParent()                 INLINE ( ::oSenderController:getUuid() )
+   METHOD getUuidParent()                 INLINE ( ::oController:getUuid() )
 
    METHOD includePrincipal()              INLINE ( ::lPrincipal := .t. )
    METHOD excludePrincipal()              INLINE ( ::lPrincipal := .f. )
@@ -410,7 +410,7 @@ METHOD ExternalCoreRedefine( oDialog )
    REDEFINE GET   ::oGetDireccion ;
       VAR         ::oController:oModel:hBuffer[ "direccion" ] ;
       ID          1010 ;
-      WHEN        ( ::oController:oSenderController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "direccion" ) ) ;
       BITMAP      "gc_earth_lupa_16" ;
       OF          oDialog
@@ -419,20 +419,20 @@ METHOD ExternalCoreRedefine( oDialog )
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_postal" ] ;
       ID          1020 ;
-      WHEN        ( ::oController:oSenderController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo_postal" ) ) ;
       OF          oDialog 
 
    REDEFINE GET   ::oGetPoblacion ;
       VAR         ::oController:oModel:hBuffer[ "poblacion" ] ;
       ID          1030 ;
-      WHEN        ( ::oController:oSenderController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oController:isNotZoomMode() ) ;
       OF          oDialog
 
    REDEFINE GET   ::oGetCodigoProvincia ;
       VAR         ::oController:oModel:hBuffer[ "codigo_provincia" ] ;
       ID          1040 ;
-      WHEN        ( ::oController:oSenderController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oController:isNotZoomMode() ) ;
       BITMAP      "Lupa" ;
       VALID       ( ::oController:validate( "codigo_provincia" ) ) ;
       OF          oDialog
@@ -442,7 +442,7 @@ METHOD ExternalCoreRedefine( oDialog )
    REDEFINE GET   ::oGetProvincia ;
       VAR         ::oController:oModel:hBuffer[ "provincia" ] ;
       ID          1050 ;
-      WHEN        ( ::oController:oSenderController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "provincia" ) ) ;
       OF          oDialog
 
@@ -450,7 +450,7 @@ METHOD ExternalCoreRedefine( oDialog )
       VAR         ::oController:oModel:hBuffer[ "codigo_pais" ] ;
       ID          1060 ;
       IDTEXT      1061 ;
-      WHEN        ( ::oController:oSenderController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo_pais" ) ) ;
       BITMAP      "LUPA" ;
       OF          oDialog
@@ -465,17 +465,17 @@ METHOD ExternalContactRedefine( oDialog )
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "telefono" ] ;
       ID          1070 ;
-      WHEN        ( ::oController:oSenderController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oController:isNotZoomMode() ) ;
       OF          oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "movil" ] ;
       ID          1080 ;
-      WHEN        ( ::oController:oSenderController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oController:isNotZoomMode() ) ;
       OF          oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "email" ] ;
       ID          1090 ;
-      WHEN        ( ::oController:oSenderController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "email" ) ) ;
       OF          oDialog
 
@@ -709,11 +709,11 @@ METHOD getParentUuidAttribute( value ) CLASS SQLDireccionesModel
       RETURN ( value )
    end if
 
-   if empty( ::oController:oSenderController )
+   if empty( ::oController:oController )
       RETURN ( value )
    end if
 
-RETURN ( ::oController:oSenderController:getUuid() )
+RETURN ( ::oController:oController:getUuid() )
 
 //---------------------------------------------------------------------------//
 

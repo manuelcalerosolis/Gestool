@@ -23,9 +23,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS UnidadesMedicionOperacionesController
+METHOD New( oController ) CLASS UnidadesMedicionOperacionesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Unidades operacion"
 
@@ -148,7 +148,7 @@ CLASS UnidadesMedicionOperacionesView FROM SQLBaseView
 
    METHOD Activate()
 
-   METHOD Activating()     INLINE ( ::hUnidades := ::oController:oModel:getUnidadesWhereGrupo( ::oController:oSenderController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) ) ) 
+   METHOD Activating()     INLINE ( ::hUnidades := ::oController:oModel:getUnidadesWhereGrupo( ::oController:oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) ) ) 
 
 END CLASS
 
@@ -277,7 +277,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionOperacionesModel
                                           "default"   => {|| win_uuidcreatestring() } }               )
 
    hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                     ,;
-                                          "default"   => {|| ::getSenderControllerParentUuid() } }    )
+                                          "default"   => {|| ::getControllerParentUuid() } }    )
 
    hset( ::hColumns, "uuid_unidad",    {  "create"    => "VARCHAR( 40 )"                              ,;
                                           "default"   => {|| space( 40 ) } }                          )

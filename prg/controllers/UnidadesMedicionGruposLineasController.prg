@@ -23,9 +23,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS UnidadesMedicionGruposLineasController
+METHOD New( oController ) CLASS UnidadesMedicionGruposLineasController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Equivalencia de unidades de medición"
 
@@ -186,7 +186,7 @@ END CLASS
 METHOD Activate() CLASS UnidadesMedicionGruposLineasView
 
    local oDialog
-   local cUnidadBaseCodigo := ::oController:oSenderController:getModelBuffer( 'unidad_base_codigo' )
+   local cUnidadBaseCodigo := ::oController:oController:getModelBuffer( 'unidad_base_codigo' )
    local cUnidadBaseNombre := SQLUnidadesMedicionModel():getField( 'nombre', 'codigo', cUnidadBaseCodigo )
 
    DEFINE DIALOG  ::oDialog ;
@@ -329,7 +329,7 @@ METHOD getColumns() CLASS SQLUnidadesMedicionGruposLineasModel
                                                          "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                         "default"   => {|| ::getSenderControllerParentUuid() } }  )
+                                                         "default"   => {|| ::getControllerParentUuid() } }  )
 
    hset( ::hColumns, "unidad_alternativa_codigo",     {  "create"    => "VARCHAR( 20 )"                           ,;
                                                          "default"   => {|| space( 20 ) } }                        )
@@ -366,7 +366,7 @@ METHOD getGeneralSelect() CLASS SQLUnidadesMedicionGruposLineasModel
                            "ON lineas.unidad_alternativa_codigo = alternativa.codigo"                             + " " + ;
                         "LEFT JOIN " + ::getUnidadesMedicionTableName() + " AS base"                              + " " + ;         
                            "ON grupos.unidad_base_codigo = base.codigo"                                           + " " + ;         
-                     "WHERE parent_uuid = " + quoted( ::getSenderControllerParentUuid() )
+                     "WHERE parent_uuid = " + quoted( ::getControllerParentUuid() )
 
 RETURN ( cSelect )
 

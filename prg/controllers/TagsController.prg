@@ -40,8 +40,6 @@ METHOD New( oController ) CLASS TagsController
 
    ::oModel                := SQLTagsModel():New( self )
 
-   ::oFilterController:setTableToFilter( ::getName() )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -65,8 +63,6 @@ METHOD End() CLASS TagsController
    endif
 
    ::Super:End()
-
-   self                    := nil                                
 
 RETURN ( nil )
 

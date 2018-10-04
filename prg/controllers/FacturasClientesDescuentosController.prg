@@ -16,6 +16,7 @@ CLASS FacturasClientesDescuentosController FROM SQLBrowseController
    METHOD validateDescuento( uValue )
 
    //Construcciones tardias----------------------------------------------------
+   
    METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesDescuentosBrowseView():New( self ), ), ::oBrowseView ) 
 
    METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := FacturasClientesDescuentosView():New( self ), ), ::oDialogView )
@@ -28,9 +29,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS FacturasClientesDescuentosController
+METHOD New( oController ) CLASS FacturasClientesDescuentosController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                      := "Facturas clientes descuentos"
 
@@ -84,7 +85,7 @@ METHOD updateField( cField, uValue ) CLASS FacturasClientesDescuentosController
    
    ::getBrowseView():Refresh()
    
-   ::oSenderController:calculateTotals() 
+   ::oController:calculateTotals() 
 
 RETURN ( nil )
 
@@ -310,7 +311,7 @@ METHOD getColumns() CLASS SQLFacturasClientesDescuentosModel
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                          "default"   => {|| ::getSenderControllerParentUuid() } } )
+                                          "default"   => {|| ::getControllerParentUuid() } } )
 
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
                                           "default"   => {|| space( 200 ) } }                      )
@@ -349,7 +350,7 @@ METHOD insertWhereClienteCodigo( cCodigoCliente ) CLASS SQLFacturasClientesDescu
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), SQLClientesModel():getTableName(), quoted( ::getSenderControllerParentUuid() ), quoted( cCodigoCliente ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDescuentosModel():getTableName(), SQLClientesModel():getTableName(), quoted( ::getControllerParentUuid() ), quoted( cCodigoCliente ) )
 
 RETURN ( getSQLDatabase():Exec ( cSql ) )
 
@@ -370,7 +371,7 @@ METHOD CountNombreWhereFacturaUuid( cNombre ) CLASS SQLFacturasClientesDescuento
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( ::getSenderControllerParentUuid() ), quoted( cNombre ) )
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( ::getControllerParentUuid() ), quoted( cNombre ) )
 
 RETURN( getSQLDatabase():getValue ( cSql ) )
 

@@ -57,9 +57,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ArticulosController
+METHOD New( oController ) CLASS ArticulosController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                                  := "Artículos"
 
@@ -76,8 +76,6 @@ METHOD New( oSenderController ) CLASS ArticulosController
    ::nLevel                                  := Auth():Level( ::cName )
 
    ::oModel                                  := SQLArticulosModel():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvents( { 'loadedBlankBuffer', 'loadedCurrentBuffer' }, {|| ::insertPreciosWhereArticulo() } )
 

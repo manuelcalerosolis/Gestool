@@ -277,7 +277,7 @@ CLASS SQLBaseModel
    METHOD getNombres()                                INLINE ( ::getColumn( 'nombre' ) )
    METHOD getNombresWithBlank()                       INLINE ( ::getColumnsWithBlank( 'nombre' ) )
 
-   METHOD getSenderControllerParentUuid()
+   METHOD getControllerParentUuid()
 
    METHOD Count( oController )
 
@@ -1678,7 +1678,7 @@ RETURN ( aColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSenderControllerParentUuid() 
+METHOD getControllerParentUuid() 
 
    if empty( ::oController )
       RETURN ( space( 40 ) )

@@ -5,7 +5,7 @@
 
 CLASS SQLBaseController
 
-   DATA oSenderController
+   DATA oController
 
    DATA oExportableController                            
 
@@ -52,8 +52,8 @@ CLASS SQLBaseController
    METHOD setName( cName )                            INLINE ( ::cName := cName )
    METHOD getName()                                   INLINE ( ::cName )
 
-   METHOD getController()                       INLINE ( ::oSenderController ) 
-   METHOD getSenderControllerParentUuid()             INLINE ( iif( !empty( ::oSenderController ), ::oSenderController:getUuid(), space( 40 ) ) ) 
+   METHOD getController()                             INLINE ( ::oController ) 
+   METHOD getControllerParentUuid()                   INLINE ( iif( !empty( ::oController ), ::oController:getUuid(), space( 40 ) ) ) 
 
    // Modelo -----------------------------------------------------------------
 
@@ -256,9 +256,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController )
+METHOD New( oController )
 
-   ::oSenderController                                := oSenderController
+   ::oController                                      := oController
 
    ::oEvents                                          := Events():New()
 
@@ -282,9 +282,7 @@ METHOD End()
    
    ::oRowSet                  := nil
 
-   hb_gcall( .t. )
-
-RETURN ( nil )
+RETURN ( hb_gcall( .t. ) )
 
 //---------------------------------------------------------------------------//
 

@@ -46,7 +46,7 @@ METHOD buildRowSet( cOrderBy )
       nFixLabels        := ::oDialogView:nUnidadesLabels
    end if 
 
-   cSentence            := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oSenderController:getIds(), nFixLabels, cOrderBy )
+   cSentence            := MovimientosAlmacenLineasRepository():getSQLSentenceToLabels( ::oController:getIds(), nFixLabels, cOrderBy )
 
    ::oHashList          := getSQLDatabase():selectHashList( cSentence ) 
 

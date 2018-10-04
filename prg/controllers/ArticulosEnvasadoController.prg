@@ -17,9 +17,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ArticulosEnvasadoController
+METHOD New( oController ) CLASS ArticulosEnvasadoController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                      := "Envasado"
 
@@ -44,9 +44,6 @@ METHOD New( oSenderController ) CLASS ArticulosEnvasadoController
    ::oRepository                    := ArticulosEnvasadoRepository():New( self )
 
    ::oGetSelector                   := GetSelector():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
 
 RETURN ( Self )
 

@@ -210,7 +210,7 @@ METHOD getItemsMovimientosAlmacen()
    aadd( ::aItems, { 'clave'  => 'documento',;
                      'valor'  => ::getValue( 'movimientos_almacen', 'documento', '' ),;
                      'tipo'   => "B",;
-                     'lista'  => ::oController:oSenderController:aDocuments } )
+                     'lista'  => ::oController:oController:aDocuments } )
 
    aadd( ::aItems, { 'clave'  => 'copias',;
                      'valor'  => ::getValue( 'movimientos_almacen', 'copias', 1 ),;

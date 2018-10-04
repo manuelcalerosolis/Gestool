@@ -60,9 +60,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS UsuariosController
+METHOD New( oController ) CLASS UsuariosController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                            := "Usuarios"
 

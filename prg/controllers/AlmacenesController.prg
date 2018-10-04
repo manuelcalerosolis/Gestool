@@ -25,9 +25,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS AlmacenesController
+METHOD New( oController ) CLASS AlmacenesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Almacenes"
 
@@ -60,8 +60,6 @@ METHOD New( oSenderController ) CLASS AlmacenesController
    ::oPaisesController              := PaisesController():New( self )
 
    ::oProvinciasController          := ProvinciasController():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )

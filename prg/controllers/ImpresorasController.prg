@@ -15,9 +15,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ImpresorasController
+METHOD New( oController ) CLASS ImpresorasController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Impresoras"
 
@@ -40,8 +40,6 @@ METHOD New( oSenderController ) CLASS ImpresorasController
    ::oTiposImpresorasController     := TiposImpresorasController():New( self )
 
    ::oRepository                    := ImpresorasRepository():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
 
@@ -288,7 +286,7 @@ METHOD getColumns() CLASS SQLImpresorasModel
                                                 "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                                "default"   => {|| ::getSenderControllerParentUuid() } } )
+                                                "default"   => {|| ::getControllerParentUuid() } } )
 
    hset( ::hColumns, "nombre_impresora",     {  "create"    => "VARCHAR( 200 )"                          ,;
                                                 "default"   => {|| space( 200 ) } }                      )

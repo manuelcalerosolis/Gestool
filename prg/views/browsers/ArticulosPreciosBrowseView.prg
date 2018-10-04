@@ -69,7 +69,7 @@ METHOD addColumns() CLASS ArticulosPreciosBrowseView
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Costo'
       :nWidth              := 80
-      :bEditValue          := {|| ::oController:oSenderController:getPrecioCosto() }
+      :bEditValue          := {|| ::oController:oController:getPrecioCosto() }
       :cEditPicture        := "@E 9999.9999"
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1

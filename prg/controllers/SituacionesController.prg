@@ -31,8 +31,6 @@ METHOD New() CLASS SituacionesController
 
    ::oValidator            := SituacionesValidator():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

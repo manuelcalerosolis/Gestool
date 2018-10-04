@@ -31,9 +31,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS TraduccionesController
+METHOD New( oController ) CLASS TraduccionesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::lTransactional        := .t.
 

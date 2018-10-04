@@ -24,7 +24,7 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
 
    DATA oCamposExtraValoresController
 
-   METHOD New( oSenderController, cEntidad ) CONSTRUCTOR
+   METHOD New( oController, cEntidad ) CONSTRUCTOR
 
    METHOD End()
 
@@ -56,11 +56,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS CamposExtraValoresController
+METHOD New( oController ) CLASS CamposExtraValoresController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
-   ::setEntidad( oSenderController:getModel():getTableName() ) 
+   ::setEntidad( oController:getModel():getTableName() ) 
 
    ::cTitle                            := "Campos extra valores"
 

@@ -27,9 +27,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS LenguajesController
+METHOD New( oController ) CLASS LenguajesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                   := "Lenguajes"
 
@@ -42,8 +42,6 @@ METHOD New( oSenderController ) CLASS LenguajesController
    ::nLevel                   := Auth():Level( ::cName )
 
    ::oModel                   := SQLLenguajesModel():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
 

@@ -53,9 +53,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS EmpresasController
+METHOD New( oController ) CLASS EmpresasController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Empresas"
 

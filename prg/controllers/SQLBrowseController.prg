@@ -91,9 +91,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController, oView )
+METHOD New( oController, oView )
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::setView( oView )
 

@@ -8,17 +8,21 @@ FUNCTION FacturasClientesController1000()
    local n
    local oController    
 
-   for n := 1 to 1000
+   for n := 1 to 10
 
       oController          := FacturasClientesController():New()
 
-      oController:ActivateNavigatorView()
+      // oController:ActivateNavigatorView()
 
-      MsgWait( "Please, " + str( n ), "This is a test", 5 )
+      // MsgWait( "Please, " + str( n ), "This is a test", 5 )
 
-      oController:closeAllWindows()
+      // oController:closeAllWindows()
 
-      MsgWait( "Please, " + str( n ), "This is a test", 5 )
+      // MsgWait( "Please, " + str( n ), "This is a test", 1 )
+
+      msgmemory()
+
+      oController:End()
 
    next 
 
@@ -114,8 +118,6 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
 
    ::oContadoresModel                                    := SQLContadoresModel():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBuffer',                    {|| ::loadedBuffer() } )
    ::oModel:setEvent( 'loadedBlankBuffer',               {|| ::loadedBlankBuffer() } )

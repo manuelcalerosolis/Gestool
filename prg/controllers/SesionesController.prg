@@ -21,9 +21,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS SesionesController
+METHOD New( oController ) CLASS SesionesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                      := "Sesiones"
 
@@ -49,12 +49,10 @@ METHOD New( oSenderController ) CLASS SesionesController
 
    ::oCajasController            := CajasController():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
+   ::setEvent( 'appending',      {|| ::isNotOpenSessions() } )
 
-   ::setEvent( 'appending', {|| ::isNotOpenSessions() } )
-
-   ::oNavigatorView:oMenuTreeView:setEvent( 'addedAppendButton',;
-      {|| ::oNavigatorView:oMenuTreeView:AddButton( "Cerrar", "gc_clock_stop_16", {|| ::CloseSession() }, , ACC_EDIT, ::oNavigatorView:oMenuTreeView:oButtonMain ) } )
+   ::getNavigatorView():oMenuTreeView:setEvent( 'addedAppendButton',;
+      {|| ::getNavigatorView():oMenuTreeView:AddButton( "Cerrar", "gc_clock_stop_16", {|| ::CloseSession() }, , ACC_EDIT, ::oNavigatorView:oMenuTreeView:oButtonMain ) } )
 
 RETURN ( Self )
 

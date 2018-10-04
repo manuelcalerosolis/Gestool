@@ -25,9 +25,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ArticulosPreciosDescuentosController
+METHOD New( oController ) CLASS ArticulosPreciosDescuentosController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Descuentos artículos" 
 
@@ -83,15 +83,15 @@ METHOD activatingDialogModalView()
 
    local cTitle 
 
-   cTitle   := "Descuentos artículo : " + alltrim( ::oSenderController:oSenderController:getModelBuffer( "codigo" ) )
+   cTitle   := "Descuentos artículo : " + alltrim( ::oController:oController:getModelBuffer( "codigo" ) )
    
    cTitle   += " - "
 
-   cTitle   += alltrim( ::oSenderController:oSenderController:getModelBuffer( "nombre" ) )
+   cTitle   += alltrim( ::oController:oController:getModelBuffer( "nombre" ) )
 
    cTitle   += ", "
 
-   cTitle   += "sobre tarifa : " + ::oSenderController:getRowSet():fieldGet( 'articulos_tarifas_nombre' )
+   cTitle   += "sobre tarifa : " + ::oController:getRowSet():fieldGet( 'articulos_tarifas_nombre' )
 
    ::oDialogModalView:setTitle( cTitle )
 
@@ -345,11 +345,11 @@ METHOD getParentUuidAttribute( value ) CLASS SQLArticulosPreciosDescuentosModel
       RETURN ( value )
    end if
 
-   if empty( ::oController:oSenderController )
+   if empty( ::oController:oController )
       RETURN ( value )
    end if
 
-RETURN ( ::oController:oSenderController:getUuid() )
+RETURN ( ::oController:oController:getUuid() )
 
 //---------------------------------------------------------------------------//
 

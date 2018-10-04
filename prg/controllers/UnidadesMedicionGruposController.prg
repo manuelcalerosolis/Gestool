@@ -25,9 +25,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS UnidadesMedicionGruposController
+METHOD New( oController ) CLASS UnidadesMedicionGruposController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                                  := "Grupos de unidades de medición"
 

@@ -31,9 +31,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS CodigosPostalesController
+METHOD New( oController ) CLASS CodigosPostalesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                   := "Código postal"
 
@@ -43,7 +43,7 @@ METHOD New( oSenderController ) CLASS CodigosPostalesController
                                     "32" => "gc_postage_stamp_32",;
                                     "48" => "gc_postage_stamp_48" }
 
-   if empty( oSenderController )
+   if empty( oController )
       ::nLevel                := Auth():Level( ::cName )
    end if 
 

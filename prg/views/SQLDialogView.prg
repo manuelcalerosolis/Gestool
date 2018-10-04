@@ -205,20 +205,20 @@ METHOD defaultTitle()
 
    cTitle         := ::oController:getTitle() + " : "  
 
-   if empty( ::oController:oSenderController:oModel )
+   if empty( ::oController:oController:oModel )
       RETURN ( cTitle )
    end if 
 
-   if empty( ::oController:oSenderController:oModel:hBuffer )
+   if empty( ::oController:oController:oModel:hBuffer )
       RETURN ( cTitle )
    end if 
 
-   if hhaskey( ::oController:oSenderController:oModel:hBuffer, "codigo" ) 
-      cTitle      += alltrim( ::oController:oSenderController:oModel:hBuffer[ "codigo" ] ) + " - "
+   if hhaskey( ::oController:oController:oModel:hBuffer, "codigo" ) 
+      cTitle      += alltrim( ::oController:oController:oModel:hBuffer[ "codigo" ] ) + " - "
    end if 
 
-   if hhaskey( ::oController:oSenderController:oModel:hBuffer, "nombre" ) 
-      cTitle      += alltrim( ::oController:oSenderController:oModel:hBuffer[ "nombre" ] ) 
+   if hhaskey( ::oController:oController:oModel:hBuffer, "nombre" ) 
+      cTitle      += alltrim( ::oController:oController:oModel:hBuffer[ "nombre" ] ) 
    end if 
 
 RETURN ( cTitle )

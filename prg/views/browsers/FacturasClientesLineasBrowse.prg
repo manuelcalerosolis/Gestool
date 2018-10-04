@@ -83,7 +83,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nEditType           := EDIT_GET_BUTTON
       :bEditValid          := {|oGet, oCol| ::oController:validArticuloCodigo( oGet, oCol ) }
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateArticuloCodigo( oCol, uNewValue, nKey ) }
-      :bEditBlock          := {|| ::oController:oSenderController:getArticulosController():ActivateSelectorView() }
+      :bEditBlock          := {|| ::oController:oController:getArticulosController():ActivateSelectorView() }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
    end with
@@ -186,7 +186,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nFootStyle          := :nDataStrAlign               
       :cDataType           := "N"
       :nEditType           := EDIT_GET
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateField( 'articulo_precio', uNewValue ), ::oController:oSenderController:calculateTotals() }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateField( 'articulo_precio', uNewValue ), ::oController:oController:calculateTotals() }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -289,7 +289,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nEditType           := EDIT_GET_BUTTON
       :bEditValid          := {|oGet, oCol| ::oController:validAlmacenCodigo( oGet, oCol ) }
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateAlmacenCodigo( oCol, uNewValue, nKey ) }
-      :bEditBlock          := {|| ::oController:oSenderController:getAlmacenesController():ActivateSelectorView() }
+      :bEditBlock          := {|| ::oController:oController:getAlmacenesController():ActivateSelectorView() }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
    end with
@@ -312,7 +312,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nEditType           := EDIT_GET_BUTTON
       :bEditValid          := {|oGet, oCol| ::oController:validAgenteCodigo( oGet, oCol ) }
       :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateAgenteCodigo( oCol, uNewValue, nKey ) }
-      :bEditBlock          := {|| ::oController:oSenderController:getAgentesController():ActivateSelectorView() }
+      :bEditBlock          := {|| ::oController:oController:getAgentesController():ActivateSelectorView() }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
    end with

@@ -84,7 +84,7 @@ METHOD getColumns() CLASS SQLFacturasClientesLineasModel
                                                       "default"   => {|| win_uuidcreatestring() } }   )
 
    hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR(40) NOT NULL"           ,;
-                                                      "default"   => {|| ::getSenderControllerParentUuid() } } )
+                                                      "default"   => {|| ::getControllerParentUuid() } } )
 
    hset( ::hColumns, "articulo_codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"         ,;
                                                       "default"   => {|| space( 20 ) } }              )

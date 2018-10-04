@@ -21,9 +21,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ArticulosTemporadasController
+METHOD New( oController ) CLASS ArticulosTemporadasController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Articulos temporadas"
 

@@ -35,9 +35,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS DescuentosController
+METHOD New( oController ) CLASS DescuentosController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                      := "Descuentos"
 
@@ -406,11 +406,11 @@ METHOD getParentUuidAttribute( value ) CLASS SQLDescuentosModel
       RETURN ( value )
    end if
 
-   if empty( ::oController:oSenderController )
+   if empty( ::oController:oController )
       RETURN ( value )
    end if
 
-RETURN ( ::oController:oSenderController:getUuid() )
+RETURN ( ::oController:oController:getUuid() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

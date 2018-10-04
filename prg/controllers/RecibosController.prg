@@ -25,9 +25,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS RecibosController
+METHOD New( oController ) CLASS RecibosController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                      := "Recibos"
 
@@ -518,7 +518,7 @@ METHOD getColumns() CLASS SQLRecibosModel
                                                       "default"   => {|| win_uuidcreatestring() } }               )
 
    hset( ::hColumns, "parent_uuid",                {  "create"    => "VARCHAR( 40 )"                              ,;
-                                                      "default"   => {||::getSenderControllerParentUuid() } }     )
+                                                      "default"   => {||::getControllerParentUuid() } }     )
 
    hset( ::hColumns, "expedicion",                 {  "create"    => "DATE"                                       ,;
                                                       "default"   => {|| hb_date() } }                            )

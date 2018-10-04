@@ -35,8 +35,6 @@ METHOD New() CLASS CajonesPortamonedasController
 
    ::oValidator            := CajonPortamonedaValidator():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

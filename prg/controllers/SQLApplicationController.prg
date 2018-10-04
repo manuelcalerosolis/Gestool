@@ -292,9 +292,6 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getAlmacenesController();
                                     INLINE ( if( empty( ::oAlmacenesController ), ::oAlmacenesController := AlmacenesController():New( self ), ), ::oAlmacenesController )
 
-   METHOD getDireccionTipoDocumentoController();
-                                    INLINE ( if( empty( ::oDireccionTipoDocumentoController ), ::oDireccionTipoDocumentoController := DireccionTipoDocumentoController():New( self ), ), ::oDireccionTipoDocumentoController )
-
    METHOD getConfiguracionesController();
                                     INLINE ( if( empty( ::oConfiguracionesController ), ::oConfiguracionesController := ConfiguracionesController():New( self ), ), ::oConfiguracionesController )
 
@@ -537,10 +534,6 @@ METHOD End() CLASS SQLApplicationController
       ::oAlmacenesController:End()
    end if    
 
-   if !empty( ::oDireccionTipoDocumentoController )   
-      ::oDireccionTipoDocumentoController:End()
-   end if 
-  
    if !empty( ::oConfiguracionesController )
       ::oConfiguracionesController:End()
    end if 

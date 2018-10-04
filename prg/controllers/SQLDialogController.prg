@@ -26,8 +26,6 @@ CLASS SQLDialogController FROM SQLNavigatorController
    METHOD New()
    METHOD End()
 
-   METHOD setName( cName )                            INLINE ( ::Super:setName( cName ), if( !empty( ::oFilterController ), ::oFilterController:setTableToFilter( cName ), ) ) 
-
    METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) )
 
    METHOD buildRowSetSentence() 
@@ -108,9 +106,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController )
+METHOD New( oController )
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::oSelectorView                                    := SQLSelectorView():New( self )
 

@@ -23,9 +23,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ArticulosFabricantesController
+METHOD New( oController ) CLASS ArticulosFabricantesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Fabricantes"
 
@@ -38,8 +38,6 @@ METHOD New( oSenderController ) CLASS ArticulosFabricantesController
    ::nLevel                         := Auth():Level( ::cName )
 
    ::oModel                         := SQLArticulosFabricantesModel():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getImagenesController():loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::getImagenesController():insertBuffer() } )

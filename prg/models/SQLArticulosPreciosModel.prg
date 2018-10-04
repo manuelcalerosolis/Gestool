@@ -94,7 +94,7 @@ METHOD getColumns() CLASS SQLArticulosPreciosModel
                                                       "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "articulo_uuid",              {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                      "default"   => {|| ::getSenderControllerParentUuid() } } )
+                                                      "default"   => {|| ::getControllerParentUuid() } } )
 
    hset( ::hColumns, "tarifa_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;
                                                       "default"   => {|| space( 40 ) } }                       )

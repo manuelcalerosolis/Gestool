@@ -37,9 +37,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS CuentasBancariasController
+METHOD New( oController ) CLASS CuentasBancariasController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Cuentas bancarias"
 
@@ -52,8 +52,6 @@ METHOD New( oSenderController ) CLASS CuentasBancariasController
    ::nLevel                         := Auth():Level( ::cName )
 
    ::oModel                         := SQLCuentasBancariasModel():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:getTableName() )
 
    // ::setEvent( 'appended',          {|| ::oBrowseView:Refresh() } )
    // ::setEvent( 'edited',            {|| ::oBrowseView:Refresh() } )
@@ -508,11 +506,11 @@ METHOD getParentUuidAttribute( value ) CLASS SQLCuentasBancariasModel
       RETURN ( value )
    end if
 
-   if empty( ::oController:oSenderController )
+   if empty( ::oController:oController )
       RETURN ( value )
    end if
 
-RETURN ( ::oController:oSenderController:getUuid() )
+RETURN ( ::oController:oController:getUuid() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
