@@ -316,7 +316,7 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "email",                   {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                                    "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "email_contraseña",        {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
+   hset( ::hColumns, "email_password",          {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                                    "default"   => {|| space( 100 ) } }                      )
 
    hset( ::hColumns, "email_servidor",          {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
@@ -499,6 +499,56 @@ METHOD addColumns() CLASS UsuariosBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'email_servidor'
+      :cHeader             := 'Servidor de correo'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'email_servidor' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'email_puerto'
+      :cHeader             := 'Puerto'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'email_puerto' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'autenticacion_smtp'
+      :cHeader             := 'Autencitación SMTP'
+      :nWidth              := 120
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'autenticacion_smtp' ) == 1 }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :SetCheck( { "Sel16", "Nil16" } )
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'requiere_ssl'
+      :cHeader             := 'Requiere SSL'
+      :nWidth              := 80
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'requiere_ssl' ) == 1 }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :SetCheck( { "Sel16", "Nil16" } )
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'email_enviar_copia'
+      :cHeader             := 'Enviar copia a'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'email_enviar_copia' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'email_copia_oculta'
+      :cHeader             := 'Enviar copia oculta a'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'email_copia_oculta' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'creado'
       :cHeader             := 'Creado'
       :cEditPicture        := '@DT'
@@ -638,7 +688,7 @@ METHOD Activate() CLASS UsuariosView
       VALID       ( ::oController:validate( "email" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::getModel():hBuffer[ "email_contraseña" ] ;
+   REDEFINE GET   ::getModel():hBuffer[ "email_password" ] ;
       ID          150 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
