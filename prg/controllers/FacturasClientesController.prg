@@ -81,8 +81,6 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    
    METHOD getReport()                  INLINE ( if( empty( ::oReport ), ::oReport := FacturasClientesReport():New( self ), ), ::oReport )
 
-   METHOD getConfiguracionesModel()    INLINE ( if( empty( ::oConfiguracionesModel ), ::oConfiguracionesModel := SQLFacturasClientesConfiguracionesModel():New( self ), ), ::oConfiguracionesModel )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
