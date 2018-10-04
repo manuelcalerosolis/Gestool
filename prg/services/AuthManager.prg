@@ -11,9 +11,16 @@ CLASS AuthManager
    DATA uuid                     INIT ""
    DATA nombre                   INIT ""
    DATA codigo                   INIT ""
-   DATA email                    INIT ""
    DATA password                 INIT ""
    DATA rolUuid                  INIT ""
+   DATA email                    INIT ""
+   DATA emailPassword            INIT ""
+   DATA emailServidor            INIT ""
+   DATA emailPuerto              INIT ""
+   DATA autenticacionSmtp        INIT ""
+   DATA requiereSsl              INIT ""
+   DATA enviarEmailCopia         INIT ""
+   DATA enviarCopiaOculta        INIT ""
 
    METHOD New()
 
@@ -61,16 +68,44 @@ METHOD guard( hUser )
       ::codigo    := hget( hUser, "codigo" ) 
    end if 
 
-   if hhaskey( hUser, "email" )
-      ::email     := hget( hUser, "email" ) 
-   end if 
-
    if hhaskey( hUser, "password" )
       ::password  := hget( hUser, "password" ) 
    end if 
 
    if hhaskey( hUser, "rol_uuid" )
       ::rolUuid   := hget( hUser, "rol_uuid" ) 
+   end if
+
+   if hhaskey( hUser, "email" )
+      ::email     := hget( hUser, "email" ) 
+   end if 
+
+   if hhaskey( hUser, "email_password" )
+      ::emailPassword   := hget( hUser, "email_password" ) 
+   end if 
+
+   if hhaskey( hUser, "email_servidor" )
+      ::emailServidor   := hget( hUser, "email_servidor" ) 
+   end if    
+
+   if hhaskey( hUser, "email_puerto" )
+      ::emailPuerto   := hget( hUser, "email_puerto" ) 
+   end if 
+
+   if hhaskey( hUser, "autenticacion_smtp" )
+      ::autenticacionSmtp   := hget( hUser, "autenticacion_smtp" ) 
+   end if 
+
+   if hhaskey( hUser, "requiere_ssl" )
+      ::requiereSsl   := hget( hUser, "requiere_ssl" ) 
+   end if 
+
+   if hhaskey( hUser, "email_enviar_copia" )
+      ::enviarEmailCopia   := hget( hUser, "email_enviar_copia" ) 
+   end if 
+
+   if hhaskey( hUser, "email_copia_oculta" )
+      ::enviarCopiaOculta   := hget( hUser, "email_copia_oculta" ) 
    end if 
 
 RETURN ( self )
@@ -129,13 +164,13 @@ RETURN ( self )
 FUNCTION Auth( hUser )
 
    if empty( oAuth )
-      oAuth       := AuthManager():New() 
+      oAuth       := AuthManager():New()
    end if
 
    if !empty( hUser )
       oAuth:Guard( hUser )
    end if 
-
+   
 RETURN ( oAuth )
 
 //---------------------------------------------------------------------------//
