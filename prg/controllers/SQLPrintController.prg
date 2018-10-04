@@ -19,6 +19,8 @@ CLASS SQLPrintController
 
    METHOD End()                        VIRTUAL
 
+   METHOD getController()              INLINE ( ::oController )
+
    METHOD setDirectory( cDirectory )   INLINE ( ::cDirectory := cDirectory )
    METHOD getDirectory()               INLINE ( ::cDirectory )
 

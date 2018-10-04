@@ -9,7 +9,9 @@ CLASS ConfiguracionesController FROM SQLBaseController
 
    DATA cTabla                   INIT space( 1 )
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
+
+   METHOD End()
 
    METHOD setTabla( cTabla )     INLINE ( ::cTabla := cTabla )
 
@@ -19,6 +21,10 @@ CLASS ConfiguracionesController FROM SQLBaseController
 
    METHOD loadedBlankBuffer()
 
+   METHOD getDialogView()        INLINE ( if( empty( ::oDialogView ), ::oDialogView := ConfiguracionesView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE ( if( empty( ::oRepository ), ::oRepository := ConfiguracionesRepository():New( self ), ), ::oRepository )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -27,21 +33,33 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::oModel                := SQLConfiguracionesModel():New( self )
-
-   ::oDialogView           := ConfiguracionesView():New( self )
-
-   ::oRepository           := ConfiguracionesRepository():New( self )
+   ::oModel                      := SQLConfiguracionesModel():New( self )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD End()
+
+   ::oModel:End()
+
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
+
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
+
+RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
+
 METHOD Edit() 
 
-   ::oDialogView:setItems( ::oModel:getItemsMovimientosAlmacen() )
+   ::getDialogView():setItems( ::oModel:getItemsMovimientosAlmacen() )
 
-   if ::oDialogView:Activate()
+   if ::getDialogView():Activate()
       ::oModel:setItemsMovimientosAlmacen()
    end if 
 

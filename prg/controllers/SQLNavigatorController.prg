@@ -17,6 +17,8 @@ END CLASS
 
 CLASS SQLNavigatorController FROM SQLBrowseController
 
+   DATA oReport
+   
    DATA oSelectorView
 
    DATA oNavigatorView
@@ -25,7 +27,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    DATA oFilterController 
 
-   DATA oReport
+   DATA oConfiguracionesModel
 
    DATA lDocuments                                    INIT .f.
 
@@ -90,6 +92,8 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD showEditAndDeleteButtonFilter()
 
    METHOD getIds()                                    INLINE ( ::getRowSet():idFromRecno( ::getBrowseView():oBrowse:aSelected ) )
+   METHOD getUuids()                                  INLINE ( ::getRowSet():uuidFromRecno( ::getBrowseView():oBrowse:aSelected ) )
+   METHOD getIdentifiers()                            INLINE ( ::getRowSet():identifiersFromRecno( ::getBrowseView():oBrowse:aSelected ) )
 
    // Filters manege-----------------------------------------------------------
 

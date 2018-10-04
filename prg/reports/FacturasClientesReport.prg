@@ -16,6 +16,8 @@ CLASS FacturasClientesReport FROM SQLBaseReport
    
    DATA oFacturasClientesLineasModel
 
+   DATA hTotal
+
    METHOD New( oController ) CONSTRUCTOR
 
    METHOD End()
@@ -30,8 +32,6 @@ CLASS FacturasClientesReport FROM SQLBaseReport
 
    METHOD setUserDataSet()
 
-   METHOD Synchronize() 
-
    METHOD getFacturasClientesModel()         INLINE ( if( empty( ::oFacturasClientesModel ), ::oFacturasClientesModel := SQLFacturasClientesModel():New( self ), ), ::oFacturasClientesModel )
 
    METHOD getFacturasClientesLineasModel()   INLINE ( if( empty( ::oFacturasClientesLineasModel ), ::oFacturasClientesLineasModel := SQLFacturasClientesLineasModel():New( self ), ), ::oFacturasClientesLineasModel )
@@ -39,6 +39,8 @@ CLASS FacturasClientesReport FROM SQLBaseReport
    METHOD getFacturasClientesRowSet()        INLINE ( if( empty( ::oFacturasClientesRowSet ), ::oFacturasClientesRowSet := SQLRowSet():New(), ), ::oFacturasClientesRowSet )
 
    METHOD getFacturasClientesLineasRowSet()  INLINE ( if( empty( ::oFacturasClientesLineasRowSet ), ::oFacturasClientesLineasRowSet := SQLRowSet():New(), ), ::oFacturasClientesLineasRowSet )
+
+   METHOD getTotal( uuid )                  INLINE ( ::hTotal  := ::getController():getRepository():getTotal( uuid ) )
 
 END CLASS
 
@@ -66,21 +68,17 @@ METHOD End()
       ::oFacturasClientesLineasModel:End()
    end if
 
-   msgalert( "destruido")
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD buidSentenceAndRowsetFacturasClientes( uIds )
+METHOD buidSentenceAndRowsetFacturasClientes( uuid )
 
-   if empty( uIds )
+   if empty( uuid )
       ::oFacturasClientesModel:setLimit( 1 )
    else
-      ::oFacturasClientesModel:setGeneralWhere( "facturas_clientes.id = " + hb_ntos( uIds ) )
+      ::oFacturasClientesModel:setGeneralWhere( "facturas_clientes.uuid = " + quoted( uuid ) )
    end if 
-
-   msgalert( ::oFacturasClientesModel:getGeneralSelect(), "facturas" )
 
    ::oFacturasClientesRowSet:Build( ::oFacturasClientesModel:getGeneralSelect() )
 
@@ -88,29 +86,27 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD buidSentenceAndRowsetFacturasClientesLineas()
+METHOD buidSentenceAndRowsetFacturasClientesLineas( uuid )
 
-   ::oFacturasClientesLineasModel:setGeneralWhere( "facturas_clientes_lineas.parent_uuid = " + quoted( ::oFacturasClientesRowSet:fieldget( "uuid" ) ) )
+   ::oFacturasClientesLineasModel:setGeneralWhere( "facturas_clientes_lineas.parent_uuid = " + quoted( uuid ) )
    
-   ::oFacturasClientesLineasModel:setGroupBy( "facturas_clientes_lineas.id" ) 
-
-   msgalert( ::oFacturasClientesLineasModel:getGeneralSelect(), "lineas" )
-
    ::oFacturasClientesLineasRowSet:Build( ::oFacturasClientesLineasModel:getGeneralSelect() )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildRowSet( uIds )
+METHOD buildRowSet( uuid )
 
    ::getFacturasClientesRowSet()
 
    ::getFacturasClientesLineasRowSet()
 
-   ::buidSentenceAndRowsetFacturasClientes( uIds )
+   ::buidSentenceAndRowsetFacturasClientes( uuid )
 
-   ::buidSentenceAndRowsetFacturasClientesLineas()
+   ::buidSentenceAndRowsetFacturasClientesLineas( uuid )
+
+   ::getTotal( uuid )
 
 RETURN ( nil )
 
@@ -150,22 +146,15 @@ METHOD setUserDataSet()
                                     {|| ::oFacturasClientesLineasRowSet:eof() },;
                                     {|cField| ::oFacturasClientesLineasRowSet:fieldGet( cField ) } )
 
-   ::oFastReport:SetMasterDetail(   "Facturas de clientes",;
-                                    "Líneas de facturas de clientes",;
-                                    {|| ::synchronize() } )
-
-   ::oFastReport:SetResyncPair(    "Facturas de clientes", "Líneas de facturas de clientes" )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD Synchronize() 
-
-   msgalert( ::oFacturasClientesRowSet:fieldget( "uuid" ), "uuid" )
+   ::oFastReport:setUserDataSet(   "Totales de facturas de clientes",;
+                                    serializeArray( hgetKeys( ::hTotal ), ";" ),;
+                                    {|| nil },;
+                                    {|| nil },;
+                                    {|| nil },;
+                                    {|| nil },;
+                                    {|cField| hget( ::hTotal, cField ) } )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
 

@@ -1,6 +1,8 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
+//---------------------------------------------------------------------------//
+
 CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "facturas_clientes"
@@ -129,5 +131,51 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLFacturasClientesConfiguracionesModel FROM SQLConfiguracionesModel
+
+   METHOD getItems()  
+
+   METHOD setItems()         
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD getItems()           
+
+   ::aItems    := {}
+
+   aadd( ::aItems, { 'clave'  => 'documento',;
+                     'valor'  => ::getValue( 'facturas_clientes', 'documento', '' ),;
+                     'tipo'   => "B",;
+                     'lista'  => ::oController:oSenderController:aDocuments } )
+
+   aadd( ::aItems, { 'clave'  => 'copias',;
+                     'valor'  => ::getValue( 'facturas_clientes', 'copias', 1 ),;
+                     'tipo'   => "N" } )
+
+RETURN ( ::aItems )
+   
+//---------------------------------------------------------------------------//
+
+METHOD setItems()           
+
+   local hItem
+
+   for each hItem in ::aItems
+      ::setValue( 'facturas_clientes', hget( hItem, 'clave' ), hget( hItem, 'valor' ) )
+   next
+
+RETURN ( nil )
+   
+//---------------------------------------------------------------------------//
+
+
+
 
 

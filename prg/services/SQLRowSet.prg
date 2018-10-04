@@ -36,8 +36,8 @@ CLASS SQLRowSet
    METHOD goDown()                                    INLINE ( if( !empty( ::oRowSet ), ::oRowSet:skip(1), ) ) 
    METHOD goUp()                                      INLINE ( if( !empty( ::oRowSet ), ::oRowSet:skip(-1), ) ) 
 
-   METHOD FindString( nId )
-   METHOD FindId( nId )
+   METHOD findString( nId )
+   METHOD findId( nId )
 
    METHOD getValuesAsHash()                           INLINE ( if( !empty( ::oRowSet ), ::oRowSet:getValuesAsHash(), ) ) 
 
@@ -57,8 +57,9 @@ CLASS SQLRowSet
    METHOD Refresh()                                   INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Refresh(), ) )
    METHOD RefreshAndGoTop()                           INLINE ( if( !empty( ::oRowSet ), ( ::oRowSet:Refresh(), ::oRowSet:GoTop() ), ) )
 
-   METHOD IdFromRecno( aRecno, cColumnKey )
-   METHOD UuidFromRecno( aRecno )                     INLINE ( ::IdFromRecno( aRecno, "uuid" ) )
+   METHOD idFromRecno( aRecno, cColumnKey )
+   METHOD uuidFromRecno( aRecno )                     INLINE ( ::idFromRecno( aRecno, "uuid" ) )
+   METHOD identifiersFromRecno( aRecno )              
 
    METHOD getFindValue()
 
@@ -201,6 +202,18 @@ METHOD IdFromRecno( aRecno, cColumnKey )
    aeval( aRecno, {|nRecno| ::oRowSet:goTo( nRecno ), aadd( aId, ::oRowSet:fieldget( cColumnKey ) ) } )
 
 RETURN ( aId )
+
+//---------------------------------------------------------------------------//
+
+METHOD identifiersFromRecno( aRecno )
+
+   local hId            := {=>}
+
+   aeval( aRecno,;
+            {|nRecno| ::oRowSet:goTo( nRecno ),;
+               hset( hId, ::oRowSet:fieldget( 'id' ), ::oRowSet:fieldget( 'uuid' ) ) } )
+
+RETURN ( hId )
 
 //---------------------------------------------------------------------------//
 

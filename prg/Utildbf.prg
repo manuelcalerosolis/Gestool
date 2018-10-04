@@ -4247,15 +4247,17 @@ RETURN ( alltrim( strtran( str( seconds() ), ".", "" ) ) )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION serializeArray( aArray )
+FUNCTION serializeArray( aArray, cDelimiter )
 
    local cSerialized    := ""
+
+   DEFAULT cDelimiter   := ","
 
    if empty( aArray )
       RETURN ( cSerialized )
    end if 
 
-   aeval( aArray, {|elem| cSerialized += alltrim( elem ) + "," } )
+   aeval( aArray, {|elem| cSerialized += alltrim( elem ) + cDelimiter } )
 
    cSerialized          := left( cSerialized, len( cSerialized ) - 1 )
 

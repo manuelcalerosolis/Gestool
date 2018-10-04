@@ -17,8 +17,6 @@ CLASS ImprimirSeriesView FROM SQLBaseView
    DATA lCopies                        INIT .t.
    DATA nCopies                        INIT 1
 
-   DATA lInvertirOrden                 INIT .f.
-
    DATA cPrinter                       INIT prnGetName()
 
    METHOD Activate()
@@ -77,10 +75,6 @@ METHOD Activate()
          WHEN        ( !::lCopies ) ;
          OF          ::oDialog
 
-      REDEFINE CHECKBOX ::lInvertirOrden ;
-         ID          180 ;
-         OF          ::oDialog
-
       REDEFINE COMBOBOX ::cPrinter ;
          ID          190 ;
          ITEMS       aGetPrinters() ;
@@ -133,9 +127,9 @@ METHOD getRegistrosSeleccionados()
    local nLen  := len( ::oController:getIds() )
 
    if nLen > 1 
-      RETURN ( hb_ntos( nLen ) + " Registros seleccionados" )
+      RETURN ( hb_ntos( nLen ) + " registros seleccionados" )
    end if 
 
-RETURN ( hb_ntos( nLen ) + "Registro seleccionado" )
+RETURN ( hb_ntos( nLen ) + " registro seleccionado" )
 
 //---------------------------------------------------------------------------//
