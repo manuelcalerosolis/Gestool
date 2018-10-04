@@ -289,32 +289,55 @@ END CLASS
 
 METHOD getColumns() CLASS SQLUsuariosModel
 
-   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
-                                          "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
-                                          "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+                                                   "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",         {  "create"    => "VARCHAR( 20 )"                            ,;
-                                          "default"   => {|| space( 20 ) } }                        )
+   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 )"                            ,;
+                                                   "default"   => {|| space( 20 ) } }                        )
 
-   hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
-                                          "default"   => {|| space( 100 ) } }                      )
+   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
+                                                   "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "email",          {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
-                                          "default"   => {|| space( 100 ) } }                      )
+   hset( ::hColumns, "password",                {  "create"    => "VARCHAR ( 100 )"                         ,;
+                                                   "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "password",       {  "create"    => "VARCHAR ( 100 )"                         ,;
-                                          "default"   => {|| space( 100 ) } }                      )
+   hset( ::hColumns, "remember_token",          {  "create"    => "VARCHAR ( 100 )"                         ,;
+                                                   "default"   => {|| "" } }                                )
 
-   hset( ::hColumns, "remember_token", {  "create"    => "VARCHAR ( 100 )"                         ,;
-                                          "default"   => {|| "" } }                                )
+   hset( ::hColumns, "super_user",              {  "create"    => "TINYINT ( 1 )"                          ,;
+                                                   "default"   => {|| "0" } }                               )
 
-   hset( ::hColumns, "super_user",     {  "create"    => "TINYINT ( 1 )"                          ,;
-                                          "default"   => {|| "0" } }                               )
+   hset( ::hColumns, "rol_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;
+                                                   "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "rol_uuid",       {  "create"    => "VARCHAR( 40 )"                           ,;
-                                          "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "email",                   {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
+                                                   "default"   => {|| space( 100 ) } }                      )
+
+   hset( ::hColumns, "email_contraseña",        {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
+                                                   "default"   => {|| space( 100 ) } }                      )
+
+   hset( ::hColumns, "email_servidor",          {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
+                                                   "default"   => {|| space( 100 ) } }                      )
+
+   hset( ::hColumns, "email_puerto",            {  "create"    => "INT ( 5 ) NOT NULL"                      ,;
+                                                   "default"   => {|| 0 } }                               )
+
+   hset( ::hColumns, "autenticacion_smtp",      {  "create"    => "TINYINT ( 1 )"                          ,;
+                                                   "default"   => {|| "0" } }                               )
+
+   hset( ::hColumns, "requiere_ssl",            {  "create"    => "TINYINT ( 1 )"                          ,;
+                                                   "default"   => {|| "0" } }                               )
+
+   hset( ::hColumns, "email_enviar_copia",      {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
+                                                   "default"   => {|| space( 100 ) } }                      )
+
+   hset( ::hColumns, "email_copia_oculta",      {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
+                                                   "default"   => {|| space( 100 ) } }                      )
+
+
 
    ::getTimeStampColumns()   
 
@@ -584,15 +607,9 @@ METHOD Activate() CLASS UsuariosView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::getModel():hBuffer[ "email" ] ;
-      ID          120 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "email" ) ) ;
-      OF          ::oDialog
-
    REDEFINE GET   ::oGetPassword ;
       VAR         ::cGetPassword ;
-      ID          130 ;
+      ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
    
@@ -600,7 +617,7 @@ METHOD Activate() CLASS UsuariosView
 
    REDEFINE GET   ::oGetRepeatPassword ;
       VAR         ::cGetRepeatPassword ;
-      ID          131 ;
+      ID          121 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
@@ -608,9 +625,57 @@ METHOD Activate() CLASS UsuariosView
 
    REDEFINE COMBOBOX ::oComboRol ;
       VAR         ::cComboRol ;
-      ID          140 ;
+      ID          130 ;
       ITEMS       ::aComboRoles ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   //Email---------------------------------------------------------------------
+
+   REDEFINE GET   ::getModel():hBuffer[ "email" ] ;
+      ID          140 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "email" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::getModel():hBuffer[ "email_contraseña" ] ;
+      ID          150 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::getModel():hBuffer[ "email_servidor" ] ;
+      ID          160 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "email_puerto" ] ;
+      ID          170;
+      SPINNER ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "autenticacion_smtp" ] ;
+      ID          180 ;
+      IDSAY       182 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "requiere_ssl" ] ;
+      ID          190 ;
+      IDSAY       192 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::getModel():hBuffer[ "email_enviar_copia" ] ;
+      ID          200 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "email_enviar_copia" ) ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::getModel():hBuffer[ "email_copia_oculta" ] ;
+      ID          210 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      VALID       ( ::oController:validate( "email_copia_oculta" ) ) ;
       OF          ::oDialog
 
    // Campos extra-------------------------------------------------------------
@@ -619,7 +684,7 @@ METHOD Activate() CLASS UsuariosView
       PROMPT      "Campos extra..." ;
       FONT        oFontBold() ; 
       COLOR       rgb( 10, 152, 234 ) ;
-      ID          150 ;
+      ID          220 ;
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
@@ -681,15 +746,16 @@ END CLASS
 
 METHOD getValidators() CLASS UsuariosValidator
 
-   ::hValidators  := {  "codigo" =>          {  "required"        => "El código es un dato requerido",;
-                                                "unique"          => "El código ya existe" },; 
-                        "nombre" =>          {  "required"        => "El nombre es un dato requerido",;
-                                                "unique"          => "El nombre ya existe" },; 
-                        "email" =>           {  "required"        => "El email es un dato requerido",;
-                                                "mail"            => "El email no es valido" },;
-                        "password" =>        {  "password"        => "- Contraseña debe de tener al menos ocho caracteres y un máximo de dieciseis" + CRLF + ;
-                                                                     "- No puede contener espacios"  },;
-                        "repeatPassword" =>  {  "repeatPassword"  => "Las contraseñas no coinciden" } }
+   ::hValidators  := {  "codigo" =>             {  "required"        => "El código es un dato requerido",;
+                                                   "unique"          => "El código ya existe" },; 
+                        "nombre" =>             {  "required"        => "El nombre es un dato requerido",;
+                                                   "unique"          => "El nombre ya existe" },; 
+                        "email" =>              {  "mail"            => "El email no es valido" },;
+                        "email_enviar_copia" => {  "mail"            => "El email para enviar la copia no es valido" },;
+                        "email_copia_oculta" => {  "mail"            => "El email para enviar la copia oculta no es valido" },;
+                        "password" =>           {  "password"        => "- Contraseña debe de tener al menos ocho caracteres y un máximo de dieciseis" + CRLF + ;
+                                                                        "- No puede contener espacios"  },;
+                        "repeatPassword" =>     {  "repeatPassword"  => "Las contraseñas no coinciden" } }
 
 RETURN ( ::hValidators )
 
