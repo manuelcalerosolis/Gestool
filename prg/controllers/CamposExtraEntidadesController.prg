@@ -147,7 +147,7 @@ RETURN ( nil )
 
 METHOD gettingSelectSentence()
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
@@ -189,11 +189,11 @@ RETURN ( cEntidad )
 
 METHOD assertAppend() CLASS CamposExtraEntidadesController
 
-   if empty( ::oSenderController )
+   if empty( ::oController )
       RETURN ( .t. )
    end if 
 
-RETURN ( ::oModel:isNotBlankEntityWhereUuid( ::getSenderController():getUuid() ) )
+RETURN ( ::oModel:isNotBlankEntityWhereUuid( ::getController():getUuid() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -205,7 +205,7 @@ METHOD UpdateLine( uValue ) CLASS CamposExtraEntidadesController
       RETURN ( nil )
    end if 
 
-   if ::oModel:isEntityWhereUuid( ::oSenderController:getUuid(), cEntidad ) 
+   if ::oModel:isEntityWhereUuid( ::oController:getUuid(), cEntidad ) 
       msgStop( "El nombre de la entidad ya existe" )
       RETURN ( nil )
    end if 
@@ -372,11 +372,11 @@ METHOD getParentUuidAttribute( value )
       RETURN ( value )
    end if
 
-   if empty( ::oController:oSenderController )
+   if empty( ::oController:oController )
       RETURN ( value )
    end if
 
-RETURN ( ::oController:oSenderController:getUuid() )
+RETURN ( ::oController:oController:getUuid() )
 
 //---------------------------------------------------------------------------//
 

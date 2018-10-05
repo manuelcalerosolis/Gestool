@@ -31,9 +31,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS TraduccionesController
+METHOD New( oController ) CLASS TraduccionesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::lTransactional        := .t.
 
@@ -81,7 +81,7 @@ RETURN ( nil )
 
 METHOD loadedBlankBuffer() CLASS TraduccionesController
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       hset( ::oModel:hBuffer, "parent_uuid", uuid )
@@ -93,7 +93,7 @@ RETURN ( Self )
 
 METHOD gettingSelectSentence() CLASS TraduccionesController
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )

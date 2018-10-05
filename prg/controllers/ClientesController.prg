@@ -5,17 +5,18 @@
 
 CLASS ClientesController FROM TercerosController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD validColumnAgentesBrowse( uValue, nKey )             INLINE ( ::validColumnBrowse( uValue, nKey, ::getAgentesController():oModel, "agente_uuid" ) )
+   METHOD validColumnAgentesBrowse( uValue, nKey ) ;
+                                    INLINE ( ::validColumnBrowse( uValue, nKey, ::getAgentesController():oModel, "agente_uuid" ) )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ClientesController
+METHOD New( oController ) CLASS ClientesController
 
    ::cTitle                         := "Clientes"
 
@@ -31,7 +32,7 @@ METHOD New( oSenderController ) CLASS ClientesController
 
    ::oModel                         := SQLClientesModel():New( self )
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
 RETURN ( Self )
 
@@ -39,6 +40,9 @@ RETURN ( Self )
 
 METHOD End() CLASS ClientesController
 
-RETURN ( nil )
+   ::oModel:End()
 
+RETURN ( ::Super:End() )
+
+//---------------------------------------------------------------------------//
 

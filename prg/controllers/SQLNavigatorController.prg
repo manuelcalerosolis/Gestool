@@ -5,7 +5,7 @@
 
 CLASS SQLNavigatorGestoolController FROM SQLNavigatorController
 
-   METHOD getConfiguracionVistasController()    INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
+   METHOD getConfiguracionVistasController()          INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS
 
@@ -17,6 +17,8 @@ END CLASS
 
 CLASS SQLNavigatorController FROM SQLBrowseController
 
+   DATA oReport
+
    DATA oSelectorView
 
    DATA oNavigatorView
@@ -25,7 +27,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    DATA oFilterController 
 
-   DATA oReport
+   DATA oConfiguracionesModel
 
    DATA lDocuments                                    INIT .f.
 
@@ -45,8 +47,6 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD setName( cName )                            INLINE ( ::Super:setName( cName ), if( !empty( ::oFilterController ), ::oFilterController:setTableToFilter( cName ), ) ) 
-
    METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) )
 
    METHOD buildRowSetSentence() 
@@ -65,8 +65,6 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD saveState()
 
-   METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
-
    METHOD addFastKey( uKey, bAction )
 
    METHOD onKeyChar( nKey )
@@ -75,21 +73,21 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD onChangeCombo( oColumn )
 
-   METHOD getNavigatorView()                          INLINE ( ::oNavigatorView )
-
    // Aplication windows bar---------------------------------------------------
 
    METHOD EnableWindowsBar()
 
    METHOD DisableWindowsBar()
 
-   METHOD onChangeSearch()                            INLINE ( if( !empty( ::oNavigatorView ), ::oNavigatorView:onChangeSearch(), ) )
+   METHOD onChangeSearch()                            INLINE ( ::getNavigatorView():onChangeSearch() )
 
    METHOD hideEditAndDeleteButtonFilter()
 
    METHOD showEditAndDeleteButtonFilter()
 
    METHOD getIds()                                    INLINE ( ::getRowSet():idFromRecno( ::getBrowseView():oBrowse:aSelected ) )
+   METHOD getUuids()                                  INLINE ( ::getRowSet():uuidFromRecno( ::getBrowseView():oBrowse:aSelected ) )
+   METHOD getIdentifiers()                            INLINE ( ::getRowSet():identifiersFromRecno( ::getBrowseView():oBrowse:aSelected ) )
 
    // Filters manege-----------------------------------------------------------
 
@@ -97,7 +95,7 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD editFilter()
    METHOD deleteFilter()                                
 
-   METHOD getFilters()                                INLINE ( iif( !empty( ::oFilterController ), ::oFilterController:getFilters(), ) ) 
+   METHOD getFilters()                                INLINE ( ::getFilterController():getFilters() ) 
    METHOD setFilter()                                                                                                       
    METHOD clearFilter() 
 
@@ -120,21 +118,21 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD buildCustomLikeFilter( cField, cValue )     INLINE ( iif(  ::buildCustomFilter( cField, @cValue, "LIKE (...)" ),;
                                                                      ::buildLikeFilter( cField, cValue ), ) )
 
+   METHOD getNavigatorView()                          INLINE ( iif( empty( ::oNavigatorView ), ::oNavigatorView := SQLNavigatorView():New( self ), ), ::oNavigatorView )
+
+   METHOD getSelectorView()                           INLINE ( iif( empty( ::oSelectorView ), ::oSelectorView := SQLSelectorView():New( self ), ), ::oSelectorView )
+
+   METHOD getDialogModalView()                        INLINE ( iif( empty( ::oDialogModalView ), ::oDialogModalView := SQLDialogView():New( self ), ), ::oDialogModalView )
+
+   METHOD getFilterController()                       INLINE ( iif( empty( ::oFilterController ), ::oFilterController := SQLFiltrosController():New( self ), ), ::oFilterController ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController )
+METHOD New( oController )
 
-   ::Super:New( oSenderController )
-
-   ::oNavigatorView                                   := SQLNavigatorView():New( self )
-
-   ::oSelectorView                                    := SQLSelectorView():New( self )
-
-   ::oDialogModalView                                 := SQLDialogView():New( self )
-
-   ::oFilterController                                := SQLFiltrosController():New( self ) 
+   ::Super:New( oController )
 
    ::oWindowsBar                                      := oWndBar()
 
@@ -160,9 +158,7 @@ METHOD End()
       ::oFilterController:End() 
    end if 
 
-   ::Super():End()
-
-RETURN ( nil )
+RETURN ( ::Super():End() )
 
 //---------------------------------------------------------------------------//
  
@@ -179,17 +175,13 @@ METHOD buildRowSetSentence( cType )
 
    end if 
 
-   ::oRowSet:Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
+   ::getRowSet():Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD activateNavigatorView()
-
-   if empty( ::oNavigatorView )
-      RETURN ( nil )
-   end if 
 
    if ::notUserAccess()
       msgStop( "Acceso no permitido." )
@@ -202,9 +194,9 @@ METHOD activateNavigatorView()
 
    ::buildRowSetSentenceNavigator()   
 
-   if !empty( ::oRowSet:get() )
+   if !empty( ::getRowSet():get() )
 
-      ::oNavigatorView:Activate()
+      ::getNavigatorView():Activate()
 
       ::EnableWindowsBar()
 
@@ -232,10 +224,6 @@ METHOD activateSelectorView( lCenter )
 
    DEFAULT lCenter   := .t.
 
-   if empty( ::oSelectorView )
-      RETURN ( nil )
-   end if 
-
    if ::notUserAccess()
       msgStop( "Acceso no permitido." )
       RETURN ( nil )
@@ -243,11 +231,11 @@ METHOD activateSelectorView( lCenter )
 
    ::buildRowSetSentence()   
 
-   if empty( ::oRowSet:get() )
+   if empty( ::getRowSet():get() )
       RETURN ( nil )
    end if
 
-RETURN ( ::oSelectorView:Activate( lCenter ) )
+RETURN ( ::getSelectorView():Activate( lCenter ) )
 
 //---------------------------------------------------------------------------//
 
@@ -286,7 +274,7 @@ METHOD activateDialogView()
 
    ::buildRowSetSentence()   
 
-   if empty( ::oRowSet:get() )
+   if empty( ::getRowSet():get() )
       RETURN ( .f. )
    end if
 
@@ -315,41 +303,9 @@ RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) )
    
 //----------------------------------------------------------------------------//
 
-METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
-     
-   local oRowSet      
-     
-   if empty( oFastReport )     
-      RETURN ( Self )    
-   end if    
-    
-   DEFAULT cColumns  := ::getModel():getSerializeColumns()       
-    
-   oRowSet           := ::getModel():newRowSet( cSentence )      
-    
-   if empty( oRowSet )      
-      RETURN ( Self )    
-   end if       
-    
-   oFastReport:setUserDataSet(   cTitle,;     
-                                 cColumns,;      
-                                 {|| oRowSet:gotop()  },;    
-                                 {|| oRowSet:skip(1)  },;    
-                                 {|| oRowSet:skip(-1) },;    
-                                 {|| oRowSet:eof()    },;
-                                 {|nField| msgalert( nField ), oRowSet:fieldGet( nField ) } )
-    
-RETURN ( nil )    
-    
-//---------------------------------------------------------------------------//
-
 METHOD appendFilter()                                
 
-   if empty( ::oFilterController )
-      RETURN ( Self )  
-   end if 
-
-RETURN ( ::oFilterController:Append() )    
+RETURN ( ::getFilterController():Append() )    
     
 //---------------------------------------------------------------------------//
 
@@ -358,14 +314,10 @@ METHOD editFilter()
    local cFilter  := ::oWindowsBar:GetComboFilter()
 
    if empty( cFilter )
-      RETURN ( Self )  
+      RETURN ( nil )  
    end if 
 
-   if empty( ::oFilterController )
-      RETURN ( Self )  
-   end if 
-
-RETURN ( ::oFilterController:EditByText( cFilter ) )    
+RETURN ( ::getFilterController():EditByText( cFilter ) )    
     
 //---------------------------------------------------------------------------//
     
@@ -378,11 +330,7 @@ METHOD deleteFilter()
       RETURN ( nil )  
    end if 
 
-   if empty( ::oFilterController )
-      RETURN ( nil )  
-   end if 
-
-   nId            := ::oFilterController:oModel:getId( cFilter )
+   nId            := ::getFilterController():oModel:getId( cFilter )
 
    if empty( nId )
       RETURN ( nil )    
@@ -391,7 +339,7 @@ METHOD deleteFilter()
    if SQLAjustableModel():getRolNoConfirmacionEliminacion( Auth():rolUuid() ) .or. msgNoYes( "¿Desea eliminar el registro en curso?", "Confirme eliminación" )
       ::oWindowsBar:setComboFilterItem( "" )
       ::oWindowsBar:evalComboFilterChange()
-      ::oFilterController:oModel:deleteById( { nId } )
+      ::getFilterController():oModel:deleteById( { nId } )
    end if 
 
 RETURN ( nil )    
@@ -412,16 +360,12 @@ METHOD setFilter( cFilterName )
    
    else 
 
-      if !empty( ::oFilterController )
+      cFilterSentence      := ::getFilterController():getFilterSentence( cFilterName )
 
-         cFilterSentence      := ::oFilterController:getFilterSentence( cFilterName )
-
-         ::getModel():setFilterWhere( cFilterSentence )
-      
-         ::showEditAndDeleteButtonFilter()
-
-      end if 
+      ::getModel():setFilterWhere( cFilterSentence )
    
+      ::showEditAndDeleteButtonFilter()
+
    end if  
 
    ::reBuildRowSet()
@@ -434,13 +378,9 @@ METHOD buildFilter( cFilter )
 
    ::getModel():insertFilterWhere( cFilter )
 
-   if !empty( ::oFilterController )
+   ::getFilterController():setComboFilterItem( ::getModel():getFilterWhere() )   
 
-      ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
-
-      ::oFilterController:showCleanButtonFilter()   
-
-   end if 
+   ::getFilterController():showCleanButtonFilter()   
 
    ::reBuildRowSet()
    
@@ -450,19 +390,15 @@ RETURN ( nil )
 
 METHOD buildCustomFilter( cField, cValue, cOperator )
 
-   if empty( ::oFilterController )
+   ::getFilterController():oCustomView:setText( "'" + cField + "' " + cOperator )
+
+   ::getFilterController():oCustomView:setValue( cValue )
+
+   if !( ::getFilterController():oCustomView:Activate() )
       RETURN ( .f. )
    end if 
 
-   ::oFilterController:oCustomView:setText( "'" + cField + "' " + cOperator )
-
-   ::oFilterController:oCustomView:setValue( cValue )
-
-   if !( ::oFilterController:oCustomView:Activate() )
-      RETURN ( .f. )
-   end if 
-
-   cValue            := alltrim( ::oFilterController:oCustomView:getValue() )
+   cValue            := alltrim( ::getFilterController():oCustomView:getValue() )
 
 RETURN ( .t. )
 
@@ -472,9 +408,7 @@ METHOD clearFilter()
 
    ::getModel():clearFilterWhere()
 
-   if !empty( ::oFilterController )
-      ::oFilterController:setComboFilterItem( ::getModel():getFilterWhere() )   
-   end if 
+   ::getFilterController():setComboFilterItem( ::getModel():getFilterWhere() )   
 
    ::reBuildRowSet()
    
@@ -512,7 +446,7 @@ METHOD EnableWindowsBar()
 
    ::oWindowsBar:setActionDeleteButtonFilter( {|| ::deleteFilter() } )
 
-   ::oNavigatorView:Refresh()
+   ::getNavigatorView():Refresh()
 
    ::lEnableWindowsBar  := .t.
 
@@ -582,12 +516,12 @@ RETURN ( nil )
 
 METHOD getComboBoxOrder()
 
-   if !empty( ::oSelectorView ) .and. ::oSelectorView:isActive()
-      RETURN ( ::oSelectorView:getComboBoxOrder() )
+   if ::getSelectorView():isActive()
+      RETURN ( ::getSelectorView():getComboBoxOrder() )
    end if 
 
-   if !empty( ::oDialogModalView ) .and. ::oDialogModalView:isActive()
-      RETURN ( ::oDialogModalView:getComboBoxOrder() )
+   if ::getDialogModalView():isActive()
+      RETURN ( ::getDialogModalView():getComboBoxOrder() )
    end if 
 
    if !empty( ::oWindowsBar )

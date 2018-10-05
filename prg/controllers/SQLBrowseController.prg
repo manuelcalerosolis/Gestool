@@ -91,9 +91,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController, oView )
+METHOD New( oController, oView )
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::setView( oView )
 
@@ -136,7 +136,7 @@ RETURN ( Self )
 METHOD buildRowSetSentence() 
 
    if !empty( ::oModel )
-      ::oRowSet:buildPad( ::oModel:getSelectSentence() )
+      ::getRowSet():buildPad( ::oModel:getSelectSentence() )
    end if 
 
 RETURN ( nil )

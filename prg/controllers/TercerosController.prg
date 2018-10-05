@@ -39,7 +39,7 @@ CLASS TercerosController FROM SQLNavigatorController
 
    DATA oClientesTarifasController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -75,9 +75,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController) CLASS TercerosController
+METHOD New( oController) CLASS TercerosController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::lTransactional     := .t.
 
@@ -92,13 +92,11 @@ METHOD New( oSenderController) CLASS TercerosController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
-RETURN ( Self )
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS TercerosController
-
-   ::oModel:End()
 
    if !empty(::oDialogView)
       ::oDialogView:End()
@@ -116,16 +114,14 @@ METHOD End() CLASS TercerosController
       ::oGetSelector:End()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
 METHOD DireccionesControllerLoadCurrentBuffer()
 
    local idDireccion     
-   local uuid        := hget( ::oModel:hBuffer, "uuid" )
+   local uuid           := hget( ::oModel:hBuffer, "uuid" )
 
    if empty( uuid )
       ::getDireccionesController():oModel:insertBuffer()
@@ -140,7 +136,7 @@ METHOD DireccionesControllerLoadCurrentBuffer()
 
    ::getDireccionesController():oModel:loadCurrentBuffer( idDireccion )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -152,26 +148,27 @@ METHOD DireccionesControllerUpdateBuffer()
    idDireccion          := ::getDireccionesController():oModel:getIdWhereParentUuid( uuid )
    if empty( idDireccion )
       ::getDireccionesController():oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::getDireccionesController():oModel:updateBuffer()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD DireccionesControllerDeleteBuffer()
 
-   local aUuid    := ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected )
+   local aUuid          := ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected )
 
    if empty( aUuid )
-      RETURN ( self )
+      RETURN ( nil )
    end if
 
    ::getDireccionesController():oModel:deleteWhereParentUuid( aUuid )
 
-   RETURN ( self )
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 
 METHOD DireccionesControllerLoadedDuplicateCurrentBuffer()
@@ -179,27 +176,27 @@ METHOD DireccionesControllerLoadedDuplicateCurrentBuffer()
    local uuid
    local idDireccion     
 
-   uuid           := hget( ::oModel:hBuffer, "uuid" )
+   uuid                 := hget( ::oModel:hBuffer, "uuid" )
 
    idDireccion          := ::getDireccionesController():oModel:getIdWhereParentUuid( uuid )
    if empty( idDireccion )
       ::getDireccionesController():oModel:insertBuffer()
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    ::getDireccionesController():oModel:loadDuplicateBuffer( idDireccion )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD DireccionesControllerLoadedDuplicateBuffer()
 
-   local uuid     := hget( ::oModel:hBuffer, "uuid" )
+   local uuid           := hget( ::oModel:hBuffer, "uuid" )
 
    hset( ::getDireccionesController():oModel:hBuffer, "parent_uuid", uuid )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -207,10 +204,3 @@ RETURN ( self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS TercerosRepository FROM SQLBaseRepository
-
-   METHOD getTableName()                  INLINE ( SQLTercerosModel():getTableName() ) 
-
-END CLASS
-
-//---------------------------------------------------------------------------//

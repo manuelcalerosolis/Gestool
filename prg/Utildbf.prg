@@ -7,6 +7,7 @@
 #include "Factu.ch" 
 #include "RichEdit.ch" 
 #include "hbwin.ch"
+#include "hbMemory.ch"
 
 //----------------------------------------------------------------------------//
 
@@ -4247,15 +4248,17 @@ RETURN ( alltrim( strtran( str( seconds() ), ".", "" ) ) )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION serializeArray( aArray )
+FUNCTION serializeArray( aArray, cDelimiter )
 
    local cSerialized    := ""
+
+   DEFAULT cDelimiter   := ","
 
    if empty( aArray )
       RETURN ( cSerialized )
    end if 
 
-   aeval( aArray, {|elem| cSerialized += alltrim( elem ) + "," } )
+   aeval( aArray, {|elem| cSerialized += alltrim( elem ) + cDelimiter } )
 
    cSerialized          := left( cSerialized, len( cSerialized ) - 1 )
 
@@ -4636,6 +4639,31 @@ FUNCTION ShowImageFile( cImageFile )
 RETURN nil
 
 //---------------------------------------------------------------------------//
+
+FUNCTION msgMemory()
+
+   local cText    := ""
+
+   cText          += "Free Variable Space (kb) : " + hb_ntos( memory( HB_MEM_CHAR ) ) + hb_eol() 
+   cText          += "Largest String (kb) : " + hb_ntos( memory( HB_MEM_BLOCK ) ) + hb_eol() 
+   cText          += "RUN Memory (kb) : " + hb_ntos( memory( HB_MEM_RUN ) ) + hb_eol() 
+   
+   cText          += "Virtual Memory (kb) : " + hb_ntos( memory( HB_MEM_VM ) ) + hb_eol() 
+   cText          += "Fixed Memory/Heap (kb) : " + hb_ntos( memory( HB_MEM_FM ) ) + hb_eol() 
+   cText          += "Segments in Fixed Memory/Heap  : " + hb_ntos( memory( HB_MEM_FMSEGS ) ) + hb_eol() 
+   cText          += "Free Swap Memory (KB) : " + hb_ntos( memory( HB_MEM_SWAP ) ) + hb_eol() 
+   cText          += "Free Conventional (KB) : " + hb_ntos( memory( HB_MEM_CONV ) ) + hb_eol() 
+   cText          += "Used Expanded Memory (KB) : " + hb_ntos( memory( HB_MEM_EMSUSED ) ) + hb_eol() 
+
+   cText          += "Memory used (bytes) : " + hb_ntos( memory( HB_MEM_USED ) ) + hb_eol() 
+   cText          += "Maximum memory used (bytes) : " + hb_ntos( memory( HB_MEM_USEDMAX ) ) + hb_eol() 
+   cText          += "Total items on the stack : " + hb_ntos( memory( HB_MEM_STACKITEMS ) ) + hb_eol() 
+   cText          += "Total memory size used by the stack (bytes) : " + hb_ntos( memory( HB_MEM_STACK ) ) + hb_eol() 
+   cText          += "Total items currently on the stack : " + hb_ntos( memory( HB_MEM_STACK_TOP ) ) + hb_eol() 
+   cText          += "List all allocated blocks : " + hb_ntos( memory( HB_MEM_BLOCKS ) ) + hb_eol() 
+
+RETURN ( msgInfo( cText, "Estado de la memmoria" ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

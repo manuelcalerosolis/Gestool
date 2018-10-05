@@ -14,9 +14,9 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-/*METHOD New( oSenderController ) CLASS SQLConfiguracionVistasGestoolController
+/*METHOD New( oController ) CLASS SQLConfiguracionVistasGestoolController
 
-   ::oSenderController                 := oSenderController
+   ::oController                 := oController
    
 RETURN ( Self )*/
 
@@ -62,9 +62,9 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS SQLConfiguracionVistasController
+METHOD New( oController ) CLASS SQLConfiguracionVistasController
 
-   ::oSenderController                 := oSenderController
+   ::oController                 := oController
 
    ::oModel                            := ::getConfiguracionVistaModel() 
    

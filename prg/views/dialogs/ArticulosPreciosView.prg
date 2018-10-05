@@ -105,15 +105,15 @@ RETURN ( nil )
 
 METHOD getTarifaName()
 
-   if empty( ::oController:oSenderController )
+   if empty( ::oController:oController )
       RETURN ( "" )
    end if 
 
-   if empty( ::oController:oSenderController:oModel )
+   if empty( ::oController:oController:oModel )
       RETURN ( "" )
    end if 
 
-RETURN ( ::oController:oSenderController:oModel:getBuffer( 'nombre' ) )
+RETURN ( ::oController:oController:oModel:getBuffer( 'nombre' ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

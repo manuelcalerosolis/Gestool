@@ -25,9 +25,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS PropiedadesController
+METHOD New( oController ) CLASS PropiedadesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Propiedades"
 
@@ -40,8 +40,6 @@ METHOD New( oSenderController ) CLASS PropiedadesController
    ::nLevel                         := Auth():Level( ::cName )
 
    ::oModel                         := SQLPropiedadesModel():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
 RETURN ( Self )
 

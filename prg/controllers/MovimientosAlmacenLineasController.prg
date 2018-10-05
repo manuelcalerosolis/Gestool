@@ -147,7 +147,7 @@ RETURN ( Self )
 
 METHOD loadedBlankBuffer()
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       hset( ::oModel:hBuffer, "parent_uuid", uuid )
@@ -161,7 +161,7 @@ RETURN ( Self )
 
 METHOD gettingSelectSentence()
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
@@ -519,7 +519,7 @@ METHOD loadValuesBrowseProperty( cCodigoArticulo )
       RETURN ( Self )
    end if 
 
-   uuid           := ::getSenderController():getUuid() 
+   uuid           := ::getController():getUuid() 
    if empty( uuid )
       RETURN ( Self )
    end if 

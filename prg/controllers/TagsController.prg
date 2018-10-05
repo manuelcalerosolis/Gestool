@@ -40,8 +40,6 @@ METHOD New( oController ) CLASS TagsController
 
    ::oModel                := SQLTagsModel():New( self )
 
-   ::oFilterController:setTableToFilter( ::getName() )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -65,8 +63,6 @@ METHOD End() CLASS TagsController
    endif
 
    ::Super:End()
-
-   self                    := nil                                
 
 RETURN ( nil )
 
@@ -268,7 +264,7 @@ METHOD externalRedefine( hControl, oDialog ) CLASS TagsView
    REDEFINE GET            ::oGetMarcador ;
       VAR                  ::cGetMarcador ;
       ID                   ( hget( hControl, "idGet" ) ) ;
-      WHEN                 ( ::oController:getSenderController():isNotZoomMode() ) ;
+      WHEN                 ( ::oController:getController():isNotZoomMode() ) ;
       PICTURE              "@!" ;
       BITMAP               "gc_navigate_plus_16" ;
       OF                   oDialog
@@ -278,13 +274,13 @@ METHOD externalRedefine( hControl, oDialog ) CLASS TagsView
    REDEFINE BTNBMP         ::oBtnTags ;
       ID                   ( hget( hControl, "idButton" ) ) ;
       RESOURCE             "lupa" ;
-      WHEN                 ( ::oController:getSenderController():isNotZoomMode() ) ;
+      WHEN                 ( ::oController:getController():isNotZoomMode() ) ;
       OF                   oDialog 
 
    ::oBtnTags:bAction      := {|| ::selectorAndAddTag() }
 
    ::oTagsEver             := TTagEver():Redefine( hget( hControl, "idTags" ), oDialog )
-   ::oTagsEver:bWhen       := {|| ::oController:getSenderController():isNotZoomMode() }
+   ::oTagsEver:bWhen       := {|| ::oController:getController():isNotZoomMode() }
    ::oTagsEver:bOnDelete   := {| oTag, oTagItem | SQLTageableModel():deleteByUuid( oTagItem:uCargo ) }
 
 RETURN ( Self )
@@ -312,7 +308,7 @@ METHOD validateAndAddTag( cMarcador ) CLASS TagsView
       RETURN ( .f. )
    end if 
 
-   ::oController:insertTag( ::oController:getSenderController():getUuid(), uuidTag )
+   ::oController:insertTag( ::oController:getController():getUuid(), uuidTag )
 
    ::oTagsEver:addItem( cMarcador )
    ::oTagsEver:Refresh()
@@ -348,7 +344,7 @@ RETURN ( Self )
 
 METHOD Start()
    
-   local aTags       := TageableRepository():getHashTageableTags( ::oController:getSenderController():getUuid() ) 
+   local aTags       := TageableRepository():getHashTageableTags( ::oController:getController():getUuid() ) 
 
    if empty( aTags )
       RETURN ( .t. )

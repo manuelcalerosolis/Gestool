@@ -24,12 +24,11 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
 
    DATA oCamposExtraValoresController
 
-   METHOD New( oSenderController, cEntidad ) CONSTRUCTOR
+   METHOD New( oController, cEntidad ) CONSTRUCTOR
 
    METHOD End()
 
-   METHOD setEntidad( cEntidad ) ;
-                                       INLINE ( ::cEntidad := cEntidad )
+   METHOD setEntidad( cEntidad )       INLINE ( ::cEntidad := cEntidad )
 
    METHOD setUuidEntidad( uuidEntidad ) ;
                                        INLINE ( ::uuidEntidad := uuidEntidad )
@@ -56,15 +55,15 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS CamposExtraValoresController
+METHOD New( oController ) CLASS CamposExtraValoresController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
-   ::setEntidad( oSenderController:getModel():getTableName() ) 
+   ::setEntidad( oController:getModel():getTableName() ) 
 
    ::cTitle                            := "Campos extra valores"
 
-   ::setName( "campos_extra_valores" )
+   ::cName                             := "campos_extra_valores" 
 
    ::lTransactional                    := .t.
 

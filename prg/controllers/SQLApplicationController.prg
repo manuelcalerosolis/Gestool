@@ -121,7 +121,21 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oDireccionTipoDocumentoController
 
+<<<<<<< HEAD
    DATA oMailController
+=======
+   DATA oConfiguracionesController
+
+   DATA oImprimirSeriesController
+
+   DATA oUsuariosController
+
+   DATA oEmpresasController
+
+   DATA oAjustableController
+
+   DATA oDelegacionesController 
+>>>>>>> a92d6b786e9df73c617a9eb725e7b754687fd765
 
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
@@ -290,8 +304,20 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getAlmacenesController();
                                     INLINE ( if( empty( ::oAlmacenesController ), ::oAlmacenesController := AlmacenesController():New( self ), ), ::oAlmacenesController )
 
-   METHOD getDireccionTipoDocumentoController();
-                                    INLINE ( if( empty( ::oDireccionTipoDocumentoController ), ::oDireccionTipoDocumentoController := DireccionTipoDocumentoController():New( self ), ), ::oDireccionTipoDocumentoController )
+   METHOD getConfiguracionesController();
+                                    INLINE ( if( empty( ::oConfiguracionesController ), ::oConfiguracionesController := ConfiguracionesController():New( self ), ), ::oConfiguracionesController )
+
+   METHOD getImprimirSeriesController();
+                                    INLINE ( if( empty( ::oImprimirSeriesController ), ::oImprimirSeriesController := ImprimirSeriesController():New( self ), ), ::oImprimirSeriesController )
+
+   METHOD getUsuariosController()   INLINE ( if( empty( ::oUsuariosController ), ::oUsuariosController := UsuariosController():New( self ), ), ::oUsuariosController )
+
+   METHOD getEmpresasController()   INLINE ( if( empty( ::oEmpresasController ), ::oEmpresasController := EmpresasController():New( self ), ), ::oEmpresasController )
+
+   METHOD getAjustableController()  INLINE ( if( empty( ::oAjustableController ), ::oAjustableController := AjustableController():New( self ), ), ::oAjustableController )
+
+   METHOD getDelegacionesController();
+                                    INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
 
    METHOD getMailController();
                                     INLINE ( if( empty( ::oMailController ), ::oMailController := MailController():New( self ), ), ::oMailController )
@@ -304,8 +330,6 @@ END CLASS
 
 METHOD End() CLASS SQLApplicationController
 
-   logwriteSeconds( "sqlApplicationController oValidator" )
-   
    if !empty( ::oGetSelector )
       ::oGetSelector:End()
    end if 
@@ -314,32 +338,22 @@ METHOD End() CLASS SQLApplicationController
       ::oCodigosPostalesController:End()
    end if 
 
-   logwriteSeconds( "sqlApplicationController oGetSelector" )
-
    if !empty( ::oDireccionesController )
       ::oDireccionesController:End()
    end if 
    
-   logwriteSeconds( "sqlApplicationController oDireccionesController" )
-
    if !empty( ::oPaisesController )
       ::oPaisesController:End()
    end if 
    
-   logwriteSeconds( "sqlApplicationController oPaisesController" )
-
    if !empty( ::oProvinciasController )
       ::oProvinciasController:End()
    end if 
    
-   logwriteSeconds( "sqlApplicationController oProvinciasController" )
-
    if !empty( ::oCamposExtraValoresController )
       ::oCamposExtraValoresController:End()
    end if 
 
-   logwriteSeconds( "sqlApplicationController oCamposExtraValoresController" )
-  
    if !empty( ::oConfiguracionVistasController )
       ::oConfiguracionVistasController:End()
    end if 
@@ -544,17 +558,35 @@ METHOD End() CLASS SQLApplicationController
       ::oAlmacenesController:End()
    end if    
 
-   if !empty( ::oDireccionTipoDocumentoController )   
-      ::oDireccionTipoDocumentoController:End()
+   if !empty( ::oConfiguracionesController )
+      ::oConfiguracionesController:End()
    end if 
 
+<<<<<<< HEAD
    if !empty( ::oMailController )   
       ::oMailController:End()
    end if 
 
    ::Super:End()
+=======
+   if !empty( ::oImprimirSeriesController )
+      ::oImprimirSeriesController:End()
+   end if 
+>>>>>>> a92d6b786e9df73c617a9eb725e7b754687fd765
 
-   logwriteSeconds( "sqlApplicationController ::Super:End()" )
+   if !empty( ::oUsuariosController )
+      ::oUsuariosController:End()
+   end if 
+
+   if !empty( ::oEmpresasController )
+      ::oEmpresasController:End()
+   end if 
+
+   if !empty( ::oAjustableController )
+      ::oAjustableController:End()
+   end if 
+
+   ::Super:End()
 
 RETURN ( nil )
 

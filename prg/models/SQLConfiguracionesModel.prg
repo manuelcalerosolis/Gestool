@@ -64,9 +64,6 @@ METHOD getColumns()
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                           "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "empresa_uuid",   {  "create"    => "VARCHAR ( 40 ) NOT NULL"                 ,;
-                                          "default"   => {|| Company():Uuid() } }                  )
-
    hset( ::hColumns, "documento",      {  "create"    => "VARCHAR ( 250 )"                         ,;
                                           "default"   => {|| space( 250 ) } }                      )
 
@@ -83,8 +80,6 @@ RETURN ( ::hColumns )
 METHOD getSQLSentenceValue( cDocumento, cClave, uValor )
 
    local cSentence   := "SELECT valor FROM " + ::getTableName()                  + space( 1 ) 
-
-   cSentence         +=    "WHERE empresa_uuid = " + quoted( Company():Uuid() )  + space( 1 ) 
 
    if !empty( cDocumento )
       cSentence      +=       "AND documento = " + toSQLString( cDocumento )     + space( 1 ) 
@@ -107,8 +102,6 @@ RETURN ( cSentence )
 METHOD getSQLSentenceId( cDocumento, cClave, uValor )
 
    local cSentence   := "SELECT id FROM " + ::getTableName()                     + space( 1 ) 
-
-   cSentence         +=    "WHERE empresa_uuid = " + quoted( Company():Uuid() )  + space( 1 ) 
 
    if !empty( cDocumento )
       cSentence      +=       "AND documento = " + toSQLString( cDocumento )     + space( 1 ) 
@@ -160,13 +153,11 @@ RETURN ( uValue )
 METHOD getSQLSentenceInsertValue( cDocumento, cClave, uValor )
 
    local cSentence   := "INSERT INTO " + ::getTableName()                  + space( 1 )   + ;
-                        "( empresa_uuid,"                                  + space( 1 )   + ;
-                           "documento,"                                    + space( 1 )   + ;
+                        "( documento,"                                     + space( 1 )   + ;
                            "clave,"                                        + space( 1 )   + ;
                            "valor )"                                       + space( 1 )   + ;
                         "VALUES"                                           + space( 1 )   + ;
-                        "( " + toSQLString( Company():Uuid() ) + ","       + space( 1 )   + ;
-                           toSQLString( cDocumento ) + ","                 + space( 1 )   + ;
+                        "( " + toSQLString( cDocumento ) + ","             + space( 1 )   + ;
                            toSQLString( cClave ) + ","                     + space( 1 )   + ;
                            toSQLString( uValor ) + " )" 
 
@@ -219,7 +210,7 @@ METHOD getItemsMovimientosAlmacen()
    aadd( ::aItems, { 'clave'  => 'documento',;
                      'valor'  => ::getValue( 'movimientos_almacen', 'documento', '' ),;
                      'tipo'   => "B",;
-                     'lista'  => ::oController:oSenderController:aDocuments } )
+                     'lista'  => ::oController:oController:aDocuments } )
 
    aadd( ::aItems, { 'clave'  => 'copias',;
                      'valor'  => ::getValue( 'movimientos_almacen', 'copias', 1 ),;

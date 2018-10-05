@@ -26,8 +26,6 @@ CLASS SQLDialogController FROM SQLNavigatorController
    METHOD New()
    METHOD End()
 
-   METHOD setName( cName )                            INLINE ( ::Super:setName( cName ), if( !empty( ::oFilterController ), ::oFilterController:setTableToFilter( cName ), ) ) 
-
    METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) )
 
    METHOD buildRowSetSentence() 
@@ -108,9 +106,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController )
+METHOD New( oController )
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::oSelectorView                                    := SQLSelectorView():New( self )
 
@@ -160,7 +158,7 @@ METHOD buildRowSetSentence()
 
    cColumnOrientation         := ::oVistaModel:getColumnOrientationNavigator( ::getName() )   
 
-   ::oRowSet:build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
+   ::getRowSet():build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
 
 RETURN ( nil )
 
@@ -183,7 +181,7 @@ METHOD activateNavigatorView()
 
    ::buildRowSetSentence()   
 
-   if !empty( ::oRowSet:get() )
+   if !empty( ::getRowSet():get() )
 
       ::oNavigatorView:Activate()
       
@@ -212,7 +210,7 @@ METHOD activateSelectorView( lCenter )
 
    ::buildRowSetSentence()   
 
-   if empty( ::oRowSet:get() )
+   if empty( ::getRowSet():get() )
       RETURN ( nil )
    end if
 
@@ -233,7 +231,7 @@ METHOD activateDialogView()
 
    ::buildRowSetSentence()   
 
-   if empty( ::oRowSet:get() )
+   if empty( ::getRowSet():get() )
       RETURN ( nil )
    end if
 
@@ -416,11 +414,11 @@ METHOD reBuildRowSet()
 
    local nId
 
-   nId               := ::oRowSet:fieldGet( ::getModelColumnKey() )
+   nId               := ::getRowSet():fieldGet( ::getModelColumnKey() )
    
-   ::oRowSet:build( ::getModel():getSelectSentence() )
+   ::getRowSet():build( ::getModel():getSelectSentence() )
 
-   ::oRowSet:findString( nId )
+   ::getRowSet():findString( nId )
       
    ::getBrowse():Refresh()
 

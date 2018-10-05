@@ -23,9 +23,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS EntidadesController
+METHOD New( oController ) CLASS EntidadesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                               := "Entidades"
 
@@ -39,8 +39,6 @@ METHOD New( oSenderController ) CLASS EntidadesController
 
    ::oModel                               := SQLEntidadesModel():New( self )
    
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    

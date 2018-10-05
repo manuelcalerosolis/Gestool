@@ -25,9 +25,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS AlmacenesController
+METHOD New( oController ) CLASS AlmacenesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Almacenes"
 
@@ -60,8 +60,6 @@ METHOD New( oSenderController ) CLASS AlmacenesController
    ::oPaisesController              := PaisesController():New( self )
 
    ::oProvinciasController          := ProvinciasController():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
@@ -359,10 +357,10 @@ METHOD getUniqueSenctence( uValue ) CLASS AlmacenesValidator
 
    local cSQLSentence   := ::Super:getUniqueSenctence( uValue )
 
-   if empty( ::oController ) .or. empty( ::oController:getSenderController() )
+   if empty( ::oController ) .or. empty( ::oController:getController() )
       cSQLSentence      +=    " AND almacen_uuid = ''"
    else 
-      cSQLSentence      +=    " AND almacen_uuid = " + quoted( ::oController:getSenderController():getUuid() )
+      cSQLSentence      +=    " AND almacen_uuid = " + quoted( ::oController:getController():getUuid() )
    end if
 
 RETURN ( cSQLSentence )
@@ -421,11 +419,11 @@ METHOD getAlmacenUuidAttribute( value ) CLASS SQLAlmacenesModel
       RETURN ( value )
    end if
 
-   if empty( ::oController:getSenderController() )
+   if empty( ::oController:getController() )
       RETURN ( value )
    end if
 
-RETURN ( ::oController:getSenderController():getUuid() )
+RETURN ( ::oController:getController():getUuid() )
 
 //---------------------------------------------------------------------------//
 

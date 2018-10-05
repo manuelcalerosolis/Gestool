@@ -15,7 +15,9 @@ CLASS ImprimirSeriesController FROM SQLPrintController
 
    METHOD editDocument()
 
-   METHOD getSortedIds()
+   METHOD getUuidIdentifiers()         INLINE ( hGetValues( ::getController():getIdentifiers() ) )
+
+   METHOD getFirstUuidIdentifier()     INLINE ( hGetValueAt( ::getController():getIdentifiers(), 1 ) )
 
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ImprimirSeriesView():New( self ), ), ::oDialogView )
 
@@ -47,22 +49,11 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSortedIds()
-
-   if ::getDialogView():lInvertirOrden
-      RETURN ( asort( ::getIds(), , , {|x,y| x > y } ) )
-   end if 
-   
-RETURN ( asort( ::getIds(), , , {|x,y| x < y } ) )
-
-//---------------------------------------------------------------------------//
-
 METHOD showDocument( nDevice, cFileName, nCopies, cPrinter ) 
 
-   local nId
-   local aIds
    local oReport  
    local oWaitMeter
+   local uuidIdentifier
 
    if empty( nDevice ) 
       msgStop( "No hay dispositivo de salida definido" )
@@ -76,13 +67,11 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter )
 
    ::setFileName( cFileName )
 
-   aIds              := ::getSortedIds()
-
    oWaitMeter        := TWaitMeter():New( "Imprimiendo documento(s)", "Espere por favor..." )
-   oWaitMeter:setTotal( len( aIds ) )
+   oWaitMeter:setTotal( len( ::getUuidIdentifiers() ) )
    oWaitMeter:Run()
 
-   oReport           := ::oController:getReport()
+   oReport           := ::getController():getReport()
 
    oReport:createFastReport()
 
@@ -98,11 +87,11 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter )
    
    oReport:setFileName( ::getFileName() )
 
-   for each nId in aIds 
+   for each uuidIdentifier in ::getUuidIdentifiers() 
 
-      oWaitMeter:setMessage( "Imprimiendo documento " + alltrim( str( hb_enumindex() ) ) + " de " + alltrim( str( len( aIds ) ) ) )
+      oWaitMeter:setMessage( "Imprimiendo documento " + hb_ntos( hb_enumindex() ) + " de " + hb_ntos( oWaitMeter:nTotal ) )
 
-      oReport:buildRowSet( nId )
+      oReport:buildRowSet( uuidIdentifier )
 
       oReport:setUserDataSet()
 
@@ -120,9 +109,11 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter )
 
    oReport:DestroyFastReport()
 
+   oReport:End()
+
    oWaitMeter:End()
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -134,10 +125,10 @@ METHOD editDocument()
 
    if empty( ::getFileName() )
       msgStop( "No hay formato definido" )
-      RETURN ( self )  
+      RETURN ( nil )  
    end if 
 
-   oReport     := MovimientosAlmacenReport():New( self )
+   oReport           := ::oController:getReport()
 
    oReport:createFastReport()
 
@@ -147,7 +138,7 @@ METHOD editDocument()
    
    oReport:setFileName( ::getFileName() )
 
-   oReport:buildRowSet()
+   oReport:buildRowSet( ::getFirstUuidIdentifier() )
 
    oReport:setUserDataSet()
 
@@ -159,7 +150,9 @@ METHOD editDocument()
    
    end if 
 
-RETURN ( self )
+   oReport:End()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -167,7 +160,7 @@ METHOD newDocument()
 
    local oReport  
 
-   oReport  := MovimientosAlmacenReport():New( self )
+   oReport           := ::oController:getReport()
 
    oReport:createFastReport()
 
@@ -175,15 +168,17 @@ METHOD newDocument()
 
    oReport:setDirectory( ::getDirectory() )
    
-   oReport:buildRowSet()
+   oReport:buildRowSet( ::getFirstUuidIdentifier() )
 
    oReport:setUserDataSet()
 
    oReport:Design()
 
    oReport:DestroyFastReport()
+
+   oReport:End()
    
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

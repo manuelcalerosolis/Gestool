@@ -100,7 +100,7 @@ METHOD New( oController ) CLASS GetSelector
 
    ::oEvents      := Events():New()
 
-   ::bWhen        := {|| ::oController:getSenderController():isNotZoomMode() } 
+   ::bWhen        := {|| ::oController:getController():isNotZoomMode() } 
 
 RETURN ( Self )
 

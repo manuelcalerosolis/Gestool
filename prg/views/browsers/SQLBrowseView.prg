@@ -64,7 +64,7 @@ CLASS SQLBrowseView
 
    METHOD getController()                    INLINE ( ::oController:oController )
 
-   METHOD getSenderController()              INLINE ( ::oController:getSenderController() )
+   METHOD getController()              INLINE ( ::oController:getController() )
 
    METHOD getBrowse()                        INLINE ( ::oBrowse )
 

@@ -9,7 +9,7 @@ CLASS PropiedadesLineasController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD isNotColorProperty()   INLINE ( !::oSenderController:isColorProperty() )
+   METHOD isNotColorProperty()   INLINE ( !::oController:isColorProperty() )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -288,7 +288,7 @@ METHOD getColumns() CLASS SQLPropiedadesLineasModel
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 )"                           ,;
-                                          "default"   => {|| ::getSenderControllerParentUuid() } } )
+                                          "default"   => {|| ::getControllerParentUuid() } } )
 
    hset( ::hColumns, "nombre",         {  "create"    => "VARCHAR( 200 )"                          ,;
                                           "default"   => {|| space( 200 ) } }                      )

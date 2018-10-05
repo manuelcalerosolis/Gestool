@@ -9,20 +9,20 @@
 
 CLASS UsuariosController FROM SQLNavigatorGestoolController
    
+   DATA cUuidUsuario
+
    DATA oAjustableController 
 
    DATA oEmpresasController
 
    DATA oRolesController
 
-   DATA cUuidUsuario
+   DATA oCamposExtraValoresController
 
    DATA aCajas
    DATA oComboCaja
    DATA cUuidCajaExclusiva
    DATA cNombreCajaExclusiva
-
-   DATA oCamposExtraValoresController
 
    DATA aEmpresas
    DATA oComboEmpresa
@@ -39,9 +39,9 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
    DATA cUuidDelegacionExclusiva
    DATA cNombreDelegacionExclusiva
 
-   DATA cValidError        INIT ""  
+   DATA cValidError                          INIT ""  
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()
 
    METHOD setConfig()
@@ -56,13 +56,27 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
 
    METHOD checkSuperUser()
 
+   METHOD getRepository()                    INLINE ( iif( empty( ::oRepository ), ::oRepository := UsuariosRepository():New( self ), ), ::oRepository )
+
+   METHOD getBrowseView()                    INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := UsuariosBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()                    INLINE ( iif( empty( ::oDialogView ), ::oDialogView := UsuariosView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                     INLINE ( iif( empty( ::oValidator ), ::oValidator := UsuariosValidator():New( self, ::getDialogView() ), ), ::oValidator )
+
+   METHOD getAjustableController()           INLINE ( iif( empty( ::oAjustableController ), ::oAjustableController := AjustableController():New( self ), ), ::oAjustableController ) 
+
+   METHOD getRolesController()               INLINE ( iif( empty( ::oRolesController), ::oRolesController := RolesController():New( self ), ), ::oRolesController )
+
+   METHOD getCamposExtraValoresController()  INLINE ( iif( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS UsuariosController
+METHOD New( oController ) CLASS UsuariosController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                            := "Usuarios"
 
@@ -77,22 +91,8 @@ METHOD New( oSenderController ) CLASS UsuariosController
 
    ::oModel                            := SQLUsuariosModel():New( self )
 
-   ::oRepository                       := UsuariosRepository():New( self )
-
-   ::oBrowseView                       := UsuariosBrowseView():New( self )
-
-   ::oDialogView                       := UsuariosView():New( self )
-
-   ::oValidator                        := UsuariosValidator():New( self, ::oDialogView )
-
-   ::oAjustableController              := AjustableController():New( self )
-
-   ::oRolesController                  := RolesController():New( self )
-
-   ::oCamposExtraValoresController     := CamposExtraValoresGestoolController():New( self, ::oModel:cTableName )
-
-   ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } )  
-   ::setEvent( 'closedDialog',   {|| ::oDialogView:closedDialog() } )  
+   ::setEvent( 'openingDialog',  {|| ::getDialogView():openingDialog() } )  
+   ::setEvent( 'closedDialog',   {|| ::getDialogView():closedDialog() } )  
 
 RETURN ( Self )
 
@@ -102,39 +102,37 @@ METHOD End() CLASS UsuariosController
 
    if !empty( ::oModel )
       ::oModel:End()
-      ::oModel                := nil
+   endif
+
+   if !empty( ::oRepository )
+      ::oRepository:End()
    endif
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
-      ::oBrowseView           := nil
    endif
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
-      ::oDialogView           := nil
    endif
 
    if !empty( ::oValidator )
       ::oValidator:End()
-      ::oValidator            := nil
    endif
 
    if !empty( ::oAjustableController )
       ::oAjustableController:End()
-      ::oAjustableController  := nil
    end if 
 
    if !empty( ::oRolesController )
       ::oRolesController:End()
-      ::oRolesController      := nil
    end if 
 
-   ::oCamposExtraValoresController:End()
+   if !empty( ::oCamposExtraValoresController )
+      ::oCamposExtraValoresController:End()
+   end if 
 
    ::Super:End()
-
-   Self                       := nil
 
 RETURN ( nil )
 
@@ -142,14 +140,11 @@ RETURN ( nil )
 
 METHOD setConfig() CLASS UsuariosController
 
-   if ::loadConfig() .and. ;
-      ::oAjustableController:DialogViewActivate()
-
+   if ::loadConfig() .and. ::getAjustableController():DialogViewActivate()
       ::saveConfig()
-
    end if 
    
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -162,19 +157,19 @@ METHOD loadConfig() CLASS UsuariosController
    end if 
 
    ::aEmpresas                   := EmpresasModel():aNombresSeleccionables()
-   ::cCodigoEmpresaExclusiva     := ::oAjustableController:oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
+   ::cCodigoEmpresaExclusiva     := ::getAjustableController():oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
    ::cNombreEmpresaExclusiva     := EmpresasModel():getNombreFromCodigo( ::cCodigoEmpresaExclusiva )
 
    ::aCajas                      := CajasModel():aNombresSeleccionables()
-   ::cUuidCajaExclusiva          := ::oAjustableController:oModel:getUsuarioCajaExclusiva( ::cUuidUsuario )
+   ::cUuidCajaExclusiva          := ::getAjustableController():oModel:getUsuarioCajaExclusiva( ::cUuidUsuario )
    ::cNombreCajaExclusiva        := CajasModel():getNombreFromUuid( ::cUuidCajaExclusiva )
 
    ::aAlmacenes                  := AlmacenesModel():aNombresSeleccionables()
-   ::cUuidAlmacenExclusivo       := ::oAjustableController:oModel:getUsuarioAlmacenExclusivo( ::cUuidUsuario )
+   ::cUuidAlmacenExclusivo       := ::getAjustableController():oModel:getUsuarioAlmacenExclusivo( ::cUuidUsuario )
    ::cNombreAlmacenExclusivo     := AlmacenesModel():getNombreFromUuid( ::cUuidAlmacenExclusivo )
 
    ::aDelegaciones               := SQLDelegacionesModel():aNombres()
-   ::cUuidDelegacionExclusiva    := ::oAjustableController:oModel:getUsuarioDelegacionExclusiva( ::cUuidUsuario )
+   ::cUuidDelegacionExclusiva    := ::getAjustableController():oModel:getUsuarioDelegacionExclusiva( ::cUuidUsuario )
    ::cNombreDelegacionExclusiva  := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionExclusiva )
 
 RETURN ( .t. )
@@ -188,10 +183,10 @@ METHOD saveConfig() CLASS UsuariosController
    ::cUuidAlmacenExclusivo       := AlmacenesModel():getUuidFromNombre( ::cNombreAlmacenExclusivo )
    ::cUuidDelegacionExclusiva    := SQLDelegacionesModel():getUuidFromNombre( ::cNombreDelegacionExclusiva )
 
-   ::oAjustableController:oModel:setUsuarioEmpresaExclusiva( ::cCodigoEmpresaExclusiva, ::cUuidUsuario )
-   ::oAjustableController:oModel:setUsuarioCajaExclusiva( ::cUuidCajaExclusiva, ::cUuidUsuario )
-   ::oAjustableController:oModel:setUsuarioAlmacenExclusivo( ::cUuidAlmacenExclusivo, ::cUuidUsuario )
-   ::oAjustableController:oModel:setUsuarioDelegacionExclusiva( ::cUuidDelegacionExclusiva, ::cUuidUsuario )
+   ::getAjustableController():oModel:setUsuarioEmpresaExclusiva( ::cCodigoEmpresaExclusiva, ::cUuidUsuario )
+   ::getAjustableController():oModel:setUsuarioCajaExclusiva( ::cUuidCajaExclusiva, ::cUuidUsuario )
+   ::getAjustableController():oModel:setUsuarioAlmacenExclusivo( ::cUuidAlmacenExclusivo, ::cUuidUsuario )
+   ::getAjustableController():oModel:setUsuarioDelegacionExclusiva( ::cUuidDelegacionExclusiva, ::cUuidUsuario )
 
 RETURN ( self )
 
@@ -199,7 +194,7 @@ RETURN ( self )
 
 METHOD startingActivate() CLASS UsuariosController
 
-   local oPanel               := ::oAjustableController:oDialogView:oExplorerBar:AddPanel( "Propiedades usuario", nil, 1 ) 
+   local oPanel               := ::getAjustableController():getDialogView():oExplorerBar:AddPanel( "Propiedades usuario", nil, 1 ) 
 
    ::oComboEmpresa            := oPanel:addComboBox( "Empresa exclusiva", @::cNombreEmpresaExclusiva, ::aEmpresas )
    ::oComboEmpresa:bChange    := {|| ::changeComboEmpresa() }
@@ -336,8 +331,6 @@ METHOD getColumns() CLASS SQLUsuariosModel
 
    hset( ::hColumns, "email_copia_oculta",      {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                                    "default"   => {|| space( 100 ) } }                      )
-
-
 
    ::getTimeStampColumns()   
 
@@ -613,8 +606,8 @@ METHOD openingDialog() CLASS UsuariosView
 
    ::cGetRepeatPassword    := space( 100 )
 
-   ::cComboRol             := ::oController:oRolesController:oRepository:getNombre( ::getModel():getBuffer( "rol_uuid" ) )
-   ::aComboRoles           := ::oController:oRolesController:oRepository:getNombres()
+   ::cComboRol             := ::oController:getRolesController():oRepository:getNombre( ::getModel():getBuffer( "rol_uuid" ) )
+   ::aComboRoles           := ::oController:getRolesController():oRepository:getNombres()
 
 RETURN ( self )
 
@@ -622,7 +615,7 @@ RETURN ( self )
 
 METHOD closedDialog() CLASS UsuariosView
 
-   ::getModel():setBuffer( "rol_uuid", ::oController:oRolesController:oRepository:getUuid( ::cComboRol ) )
+   ::getModel():setBuffer( "rol_uuid", ::oController:getRolesController():oRepository:getUuid( ::cComboRol ) )
 
 RETURN ( self )
 
@@ -738,7 +731,7 @@ METHOD Activate() CLASS UsuariosView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }      
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }      
 
    REDEFINE BUTTON ;
       ID          IDOK ;

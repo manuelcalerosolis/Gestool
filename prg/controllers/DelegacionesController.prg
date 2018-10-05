@@ -19,9 +19,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS DelegacionesController
+METHOD New( oController ) CLASS DelegacionesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Delegaciones"
 
@@ -331,7 +331,7 @@ METHOD getColumns() CLASS SQLDelegacionesModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                             "default"   => {|| ::getSenderControllerParentUuid() } } )
+                                             "default"   => {|| ::getControllerParentUuid() } } )
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                            ,;
                                              "default"   => {|| space( 20 ) } }                        )

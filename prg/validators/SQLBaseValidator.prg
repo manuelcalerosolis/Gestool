@@ -320,11 +320,11 @@ METHOD getSenderControllerUuid()
       RETURN ( '' )
    end if
 
-   if empty( ::oController:getSenderController() )
+   if empty( ::oController:getController() )
       RETURN ( '' )
    end if
 
-RETURN ( ::oController:getSenderController():getUuid() )
+RETURN ( ::oController:getController():getUuid() )
 
 //---------------------------------------------------------------------------//
 

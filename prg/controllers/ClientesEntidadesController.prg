@@ -35,9 +35,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ClientesEntidadesController
+METHOD New( oController ) CLASS ClientesEntidadesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Entidades_clientes"
 
@@ -85,7 +85,7 @@ RETURN ( nil )
 
 METHOD loadedBlankBuffer() CLASS ClientesEntidadesController
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       hset( ::oModel:hBuffer, "parent_uuid", uuid )
@@ -97,7 +97,7 @@ RETURN ( nil )
 
 METHOD gettingSelectSentence() CLASS ClientesEntidadesController
 
-   local uuid        := ::getSenderController():getUuid()  
+   local uuid        := ::getController():getUuid()  
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
@@ -417,11 +417,11 @@ METHOD getParentUuidAttribute( value ) CLASS SQLClientesEntidadesModel
       RETURN ( value )
    end if
 
-   if empty( ::oController:oSenderController )
+   if empty( ::oController:oController )
       RETURN ( value )
    end if
 
-RETURN ( ::oController:oSenderController:getUuid() )
+RETURN ( ::oController:oController:getUuid() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

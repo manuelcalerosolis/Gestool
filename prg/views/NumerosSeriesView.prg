@@ -19,7 +19,7 @@ CLASS NumerosSeriesView FROM SQLBaseView
 
    DATA oDialog
 
-   METHOD getParentControler()                     INLINE ( ::oController:oSenderController )
+   METHOD getParentControler()                     INLINE ( ::oController:oController )
    METHOD getParentDialogView()                    INLINE ( ::getParentControler():oDialogView )
    METHOD getBuffer()                              INLINE ( ::oController:oModel:aBuffer )
 

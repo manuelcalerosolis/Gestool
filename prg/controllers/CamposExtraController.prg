@@ -54,9 +54,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS CamposExtraController
+METHOD New( oController ) CLASS CamposExtraController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                            := "Campos extra"
 

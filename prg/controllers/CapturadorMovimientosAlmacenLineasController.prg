@@ -11,11 +11,11 @@ CLASS CapturadorMovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD Activate()          INLINE ( ::oDialogView:Activate() )
 
-   METHOD getModel()          INLINE ( ::oSenderController:oLineasController:getModel() )
+   METHOD getModel()          INLINE ( ::oController:oLineasController:getModel() )
 
-   METHOD getRowSet()         INLINE ( ::oSenderController:oLineasController:getRowSet() )
+   METHOD getRowSet()         INLINE ( ::oController:oLineasController:getRowSet() )
 
-   METHOD refreshBrowse()     INLINE ( ::oSenderController:oLineasController:refreshBrowse() )
+   METHOD refreshBrowse()     INLINE ( ::oController:oLineasController:refreshBrowse() )
 
    METHOD processLines( cLines )
       METHOD processLine( hLine ) 
@@ -111,8 +111,8 @@ METHOD processLine( cLine )
    nId   := ::getModel():insertBuffer( hBuffer )
 
    if !empty( nId )
-      ::oSenderController:oLineasController:refreshRowSetAndFindId( nId )
-      ::oSenderController:oLineasController:refreshBrowse()
+      ::oController:oLineasController:refreshRowSetAndFindId( nId )
+      ::oController:oLineasController:refreshBrowse()
    end if 
 
 RETURN ( Self ) 

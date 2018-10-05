@@ -21,9 +21,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS FormasPagosController
+METHOD New( oController ) CLASS FormasPagosController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Formas de pago"
 

@@ -72,15 +72,15 @@ METHOD Activate()
    local oBmp
    local oBtnAceptar
 
-   DEFINE DIALOG     ::oDialog ;
-      TITLE          "Configuraciones" ;
-      RESOURCE       "CONFIGURACIONES"
+   DEFINE DIALOG        ::oDialog ;
+      TITLE             "Configuraciones" ;
+      RESOURCE          "CONFIGURACIONES"
 
-      REDEFINE BITMAP oBmp ;
-         ID          500 ;
-         RESOURCE    "gc_wrench_48" ;
+      REDEFINE BITMAP   oBmp ;
+         ID             500 ;
+         RESOURCE       "gc_wrench_48" ;
          TRANSPARENT ;
-         OF          ::oDialog
+         OF             ::oDialog
 
       ::oBrw                  := IXBrowse():New( ::oDialog )
 
@@ -135,7 +135,7 @@ RETURN ( ::oDialog:nResult == IDOK )
 
 METHOD StartActivate()
 
-RETURN ( self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -145,6 +145,6 @@ METHOD ChangeBrowse()
 
    ::oCol:bOnPostEdit            := {|o,x,n| hset( ::oBrw:aArrayData[ ::oBrw:nArrayAt ], "valor", x ) }
 
-RETURN ( self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//

@@ -34,9 +34,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS IncidenciasController
+METHOD New( oController ) CLASS IncidenciasController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Incidencias"
 
@@ -85,7 +85,7 @@ RETURN ( nil )
 
 METHOD gettingSelectSentence() CLASS IncidenciasController
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
@@ -418,7 +418,7 @@ METHOD getColumns() CLASS SQLIncidenciasModel
                                                    "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                                   "default"   => {|| ::getSenderControllerParentUuid() } } )
+                                                   "default"   => {|| ::getControllerParentUuid() } } )
 
    hset( ::hColumns, "descripcion",             {  "create"    => "TEXT"                                    ,;
                                                    "default"   => {|| "" } }                                )

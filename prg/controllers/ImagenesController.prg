@@ -35,9 +35,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ImagenesController
+METHOD New( oController ) CLASS ImagenesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::lTransactional        := .t.
 
@@ -86,7 +86,7 @@ RETURN ( Self )
 
 METHOD loadedBlankBuffer() CLASS ImagenesController
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       hset( ::oModel:hBuffer, "parent_uuid", uuid )
@@ -370,7 +370,7 @@ METHOD getColumns() CLASS SQLImagenesModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL "                 ,;
-                                             "default"   => {|| ::getSenderControllerParentUuid() } } )
+                                             "default"   => {|| ::getControllerParentUuid() } } )
 
    hset( ::hColumns, "imagen",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
@@ -390,11 +390,11 @@ METHOD SetImagenAttribute( uValue )
       RETURN ( uValue )
    end if       
 
-   if empty( ::oController ) .or. empty( ::oController:oSenderController )
+   if empty( ::oController ) .or. empty( ::oController:oController )
       RETURN ( uValue )
    end if       
 
-   cNombreImagen           := alltrim( ::oController:oSenderController:getModel():hBuffer[ "nombre" ] ) 
+   cNombreImagen           := alltrim( ::oController:oController:getModel():hBuffer[ "nombre" ] ) 
    cNombreImagen           += '(' + alltrim( ::hBuffer[ "uuid" ] ) + ')' + '.' 
    cNombreImagen           += lower( getFileExt( uValue ) ) 
 

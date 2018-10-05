@@ -55,9 +55,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS CombinacionesController
+METHOD New( oController ) CLASS CombinacionesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                               := "Combinaciones"
 
@@ -754,7 +754,7 @@ METHOD getColumns() CLASS SQLCombinacionesModel
                                              "default"   => {|| win_uuidcreatestring() } }               )
 
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 )"                              ,;
-                                             "default"   => {|| ::getSenderControllerParentUuid() } }    )
+                                             "default"   => {|| ::getControllerParentUuid() } }    )
 
    hset( ::hColumns, "incremento_precio", {  "create"    => "FLOAT( 16, 6 )"                             ,;
                                              "default"   => { 0 } }                                      ) 

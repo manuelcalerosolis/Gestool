@@ -12,7 +12,7 @@
 
 CLASS MenuTreeView
 
-   DATA oSender
+   DATA oController
 
    DATA oTreeView
 
@@ -36,7 +36,7 @@ CLASS MenuTreeView
 
    DATA oEvents
 
-   METHOD New( oSender )
+   METHOD New( oController )
    METHOD End()
 
    METHOD Exit()
@@ -47,14 +47,14 @@ CLASS MenuTreeView
    METHOD Default()
    METHOD setImageList()                  INLINE ( ::oTreeView:SetImagelist( ::oImageList ) )
  
-   METHOD getController()                 INLINE ( ::oSender:getController() )
-   METHOD getBrowse()                     INLINE ( ::oSender:getBrowse() )
+   METHOD getSuperController()            INLINE ( ::oController:getController() )
+   METHOD getBrowse()                     INLINE ( ::oController:getBrowse() )
 
-   METHOD isControllerDocuments()         INLINE ( ::getController():lDocuments )
-   METHOD isControllerLabels()            INLINE ( ::getController():lLabels )
-   METHOD isControllerConfig()            INLINE ( ::getController():lConfig )
-   METHOD isControllerOthers()            INLINE ( ::getController():lOthers )
-   METHOD getControllerDocuments()        INLINE ( ::getController():aDocuments )
+   METHOD isControllerDocuments()         INLINE ( ::getSuperController():lDocuments )
+   METHOD isControllerLabels()            INLINE ( ::getSuperController():lLabels )
+   METHOD isControllerConfig()            INLINE ( ::getSuperController():lConfig )
+   METHOD isControllerOthers()            INLINE ( ::getSuperController():lOthers )
+   METHOD getControllerDocuments()        INLINE ( ::getSuperController():aDocuments )
 
    METHOD addImage()
 
@@ -82,7 +82,7 @@ CLASS MenuTreeView
 
    METHOD addCloseButton()
 
-   METHOD addAppendOrInsertButton()       INLINE ( if( ::getController():lInsertable, ::addInsertButton(), ::addAppendButton() ) )
+   METHOD addAppendOrInsertButton()       INLINE ( if( ::getSuperController():lInsertable, ::addInsertButton(), ::addAppendButton() ) )
 
    METHOD addGeneralButton()              INLINE ( ::fireEvent( 'addingGeneralButton' ),;
                                                    ::addSearchButton(),;
@@ -148,9 +148,9 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( oSender )
+METHOD New( oController )
 
-   ::oSender      := oSender
+   ::oController  := oController
 
    ::oImageList   := TImageList():New( 16, 16 )
 
@@ -171,12 +171,6 @@ METHOD End()
    end if
 
    ::oEvents:End()
- 
-   ::oSender      := nil
-
-   ::oEvents      := nil
-
-   ::oImageList   := nil
 
 RETURN ( nil )
 
@@ -188,7 +182,7 @@ METHOD ActivateMDI( nWidth, nHeight )
       RETURN ( nil )
    end if 
 
-   ::oTreeView    := TTreeView():New( 0, 0, ::oSender:getWindow(), , , .t., .f., nWidth, nHeight ) 
+   ::oTreeView    := TTreeView():New( 0, 0, ::oController:getWindow(), , , .t., .f., nWidth, nHeight ) 
    
    ::Default()
 
@@ -220,8 +214,8 @@ METHOD Default()
 
    ::oTreeView:bChanged := {|| ::onChange() }
 
-   if !empty( ::getController():getImage( "16" ) )
-      ::oButtonMain     := ::oTreeView:Add( ::getController():cTitle, ::addImage( ::getController():getImage( "16" ) ) )
+   if !empty( ::getSuperController():getImage( "16" ) )
+      ::oButtonMain     := ::oTreeView:Add( ::getSuperController():cTitle, ::addImage( ::getSuperController():getImage( "16" ) ) )
    end if 
 
 RETURN ( nil )
@@ -230,11 +224,11 @@ RETURN ( nil )
 
 METHOD Exit()
 
-   if empty( ::oSender ) 
+   if empty( ::oController ) 
       RETURN ( nil )
    end if 
 
-   ::oSender:getWindow():End()
+   ::oController:getWindow():End()
    
 RETURN ( nil )
 
@@ -255,14 +249,14 @@ METHOD AddButton( cText, cResource, bAction, uKey, nLevel, oGroup, lAllowExit )
 
    // Chequeamos los niveles de acceso si es mayor no montamos el boton--------
 
-   if nLevel != nil .and. nAnd( ::getController():nLevel, nLevel ) == 0
+   if nLevel != nil .and. nAnd( ::getSuperController():nLevel, nLevel ) == 0
       RETURN ( nil )
    end if
 
    oTreeButton          := oGroup:Add( cText, ::addImage( cResource ), bAction )
    oTreeButton:Cargo    := lAllowExit
 
-   ::getController():addFastKey( uKey, bAction )
+   ::getSuperController():addFastKey( uKey, bAction )
 
 RETURN ( oTreeButton )
 
@@ -298,7 +292,7 @@ METHOD AddSearchButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Buscar", "Bus16", {|| ::oSender:getGetSearch():setFocus() }, "B" ) 
+   ::AddButton( "Buscar", "Bus16", {|| ::oController:getGetSearch():setFocus() }, "B" ) 
 
    ::fireEvent( 'addedSearchButton' )
 
@@ -312,7 +306,7 @@ METHOD AddRefreshButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Refrescar", "Refresh16", {|| ::oSender:RefreshRowSet() }, "R" ) 
+   ::AddButton( "Refrescar", "Refresh16", {|| ::oController:RefreshRowSet() }, "R" ) 
 
    ::fireEvent( 'addedRefreshButton' )
 
@@ -326,7 +320,7 @@ METHOD AddAppendButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Añadir", "New16", {|| ::getController():Append(), ::oSender:Refresh() }, "A", ACC_APPD ) 
+   ::AddButton( "Añadir", "New16", {|| ::getSuperController():Append(), ::oController:Refresh() }, "A", ACC_APPD ) 
    
    ::fireEvent( 'addedAppendButton' )
 
@@ -340,7 +334,7 @@ METHOD AddInsertButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Añadir", "New16", {|| ::getController():Insert(), ::oSender:Refresh() }, "A", ACC_APPD ) 
+   ::AddButton( "Añadir", "New16", {|| ::getSuperController():Insert(), ::oController:Refresh() }, "A", ACC_APPD ) 
    
    ::fireEvent( 'addedAppendButton' )
 
@@ -354,7 +348,7 @@ METHOD AddDuplicateButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Duplicar", "Dup16", {|| ::getController():Duplicate(), ::oSender:Refresh() }, "D", ACC_APPD ) 
+   ::AddButton( "Duplicar", "Dup16", {|| ::getSuperController():Duplicate(), ::oController:Refresh() }, "D", ACC_APPD ) 
 
    ::fireEvent( 'addedDuplicateButton' )
 
@@ -368,7 +362,7 @@ METHOD AddEditButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Modificar", "Edit16", {|| ::getController():Edit(), ::oSender:Refresh() }, "M", ACC_EDIT ) 
+   ::AddButton( "Modificar", "Edit16", {|| ::getSuperController():Edit(), ::oController:Refresh() }, "M", ACC_EDIT ) 
 
    ::fireEvent( 'addedEditButton' )
 
@@ -382,7 +376,7 @@ METHOD AddZoomButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Zoom", "Zoom16", {|| ::getController():Zoom(), ::oSender:Refresh() }, "Z", ACC_ZOOM ) 
+   ::AddButton( "Zoom", "Zoom16", {|| ::getSuperController():Zoom(), ::oController:Refresh() }, "Z", ACC_ZOOM ) 
 
    ::fireEvent( 'addedZoomButton' )
 
@@ -396,7 +390,7 @@ METHOD AddDeleteButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Eliminar", "Del16", {|| ::getController():Delete( ::getBrowse():aSelected ), ::oSender:Refresh() }, "E", ACC_DELE ) 
+   ::AddButton( "Eliminar", "Del16", {|| ::getSuperController():Delete( ::getBrowse():aSelected ), ::oController:Refresh() }, "E", ACC_DELE ) 
 
    ::fireEvent( 'addedDeleteButton' )
 
@@ -410,7 +404,7 @@ METHOD AddSelectButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Seleccionar [Enter]", "Select16", {|| ::oSender:Select() }, K_ENTER ) 
+   ::AddButton( "Seleccionar [Enter]", "Select16", {|| ::oController:Select() }, K_ENTER ) 
 
    ::fireEvent( 'addedSelectButton' )
 
@@ -438,7 +432,7 @@ METHOD AddCloseButton()
       RETURN ( nil )
    end if 
 
-   ::AddButton( "Salir [ESC]", "End16", {|| ::oSender:End() }, "S" ) 
+   ::AddButton( "Salir [ESC]", "End16", {|| ::oController:End() }, "S" ) 
 
    ::fireEvent( 'addedCloseButton' )
 
@@ -452,7 +446,7 @@ METHOD addPrintSerialButton( cWorkArea )
       RETURN ( nil )
    end if 
 
-   ::oButtonPrint    := ::AddButton( "Imprimir series", "Imp16", {|| ::getController():printSerialDocument() }, nil, ACC_IMPR )
+   ::oButtonPrint    := ::AddButton( "Imprimir series", "Imp16", {|| ::getSuperController():getImprimirSeriesController():Activate() }, nil, ACC_IMPR )
 
    ::fireEvent( 'addedPrintSerialButton') 
 
@@ -466,7 +460,7 @@ METHOD addPrintButtons( cWorkArea )
       RETURN ( nil )
    end if 
 
-   ::oButtonPrint    := ::AddButton( "Imprimir", "Imp16", {|| ::getController():printDocument( IS_PRINTER ) }, "I", ACC_IMPR )
+   ::oButtonPrint    := ::AddButton( "Imprimir", "Imp16", {|| ::getSuperController():printDocument( IS_PRINTER ) }, "I", ACC_IMPR )
 
    aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Imp16", ::blockPrintDocument( IS_PRINTER, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPrint ) } )
 
@@ -482,7 +476,7 @@ METHOD addPreviewButtons( cWorkArea )
       RETURN ( nil )
    end if 
 
-   ::oButtonPreview  := ::AddButton( "Previsualizar", "Prev116", {|| ::getController():printDocument( IS_SCREEN ) }, "P", ACC_IMPR ) 
+   ::oButtonPreview  := ::AddButton( "Previsualizar", "Prev116", {|| ::getSuperController():printDocument( IS_SCREEN ) }, "P", ACC_IMPR ) 
 
       aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Prev116", ::blockPrintDocument( IS_SCREEN, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPreview ) } )
 
@@ -498,7 +492,7 @@ METHOD addPdfButtons( cWorkArea )
       RETURN ( nil )
    end if 
 
-   ::oButtonPdf  := ::AddButton( "Pdf", "Doclock16", {|| ::getController():printDocument( IS_PDF ) }, "F", ACC_IMPR ) 
+   ::oButtonPdf  := ::AddButton( "Pdf", "Doclock16", {|| ::getSuperController():printDocument( IS_PDF ) }, "F", ACC_IMPR ) 
 
    aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Doclock16", ::blockPrintDocument( IS_PDF, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPdf ) } ) 
 
@@ -518,7 +512,7 @@ METHOD addLabelButton()
       RETURN ( nil )
    end if 
 
-   ::oButtonLabel  := ::AddButton( "Etiquetas", "gc_portable_barcode_scanner_16", {|| ::getController():labelDocument() }, "Q", ACC_IMPR ) 
+   ::oButtonLabel  := ::AddButton( "Etiquetas", "gc_portable_barcode_scanner_16", {|| ::getSuperController():labelDocument() }, "Q", ACC_IMPR ) 
 
    ::fireEvent( 'addedLabelButton') 
 
@@ -536,7 +530,7 @@ METHOD addConfigButton()
       RETURN ( nil )
    end if 
 
-   ::oButtonConfig   := ::AddButton( "Configuraciones", "gc_wrench_16", {|| ::getController():getConfiguracionesController():Edit() }, "N", ACC_IMPR ) 
+   ::oButtonConfig   := ::AddButton( "Configuraciones", "gc_wrench_16", {|| ::getSuperController():getConfiguracionesController():Edit() }, "N", ACC_IMPR ) 
 
    ::fireEvent( 'addedConfigButton') 
 
@@ -564,7 +558,7 @@ RETURN ( nil )
 
 METHOD blockPrintDocument( nDevice, cFormato )
 
-RETURN ( {|| ::getController():printDocument( nDevice, cFormato ) } ) 
+RETURN ( {|| ::getSuperController():printDocument( nDevice, cFormato ) } ) 
 
 //---------------------------------------------------------------------------//
 

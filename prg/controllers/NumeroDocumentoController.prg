@@ -5,7 +5,7 @@
 
 CLASS SerieDocumentoComponent
 
-   DATA oSenderController
+   DATA oController
 
    DATA bValue
 
@@ -29,9 +29,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS SerieDocumentoComponent
+METHOD New( oController ) CLASS SerieDocumentoComponent
 
-   ::oSenderController              := oSenderController 
+   ::oController              := oController 
 
 RETURN ( Self )
 
@@ -53,7 +53,7 @@ METHOD Activate( idGet, oDlg ) CLASS SerieDocumentoComponent
       VAR         ::cGet ;
       ID          idGet ;
       PICTURE     "@! XXXXXXXXXXXXXXXXXXXX" ;
-      WHEN        ( ::oSenderController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          oDlg
 
    ::oGet:bValid  := {|| ::Validate() }
@@ -66,7 +66,7 @@ METHOD Validate() CLASS SerieDocumentoComponent
 
    local cSerie   := alltrim( ::oGet:varGet() )
 
-   if ::oSenderController:oContadoresModel:isSerie( ::oSenderController:cName, cSerie )
+   if ::oController:oContadoresModel:isSerie( ::oController:cName, cSerie )
       RETURN ( .t. )
    end if
 
@@ -74,7 +74,7 @@ METHOD Validate() CLASS SerieDocumentoComponent
       RETURN ( .f. )
    end if 
 
-   ::oSenderController:oContadoresModel:insertSerie( ::oSenderController:cName, cSerie ) 
+   ::oController:oContadoresModel:insertSerie( ::oController:cName, cSerie ) 
 
 RETURN ( .t. )
 
@@ -86,7 +86,7 @@ RETURN ( .t. )
 
 CLASS NumeroDocumentoComponent
 
-   DATA oSenderController
+   DATA oController
 
    DATA bValue
 
@@ -110,9 +110,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS NumeroDocumentoComponent
+METHOD New( oController ) CLASS NumeroDocumentoComponent
 
-   ::oSenderController              := oSenderController 
+   ::oController              := oController 
 
 RETURN ( Self )
 
@@ -134,7 +134,7 @@ METHOD Activate( idGet, oDlg ) CLASS NumeroDocumentoComponent
       VAR         ::cGet ;
       ID          idGet ;
       PICTURE     "999999" ;
-      WHEN        ( ::oSenderController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          oDlg
 
    ::oGet:bValid  := {|| ::Validate() }

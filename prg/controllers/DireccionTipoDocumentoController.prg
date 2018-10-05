@@ -15,21 +15,21 @@ CLASS DireccionTipoDocumentoController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := DireccionTipoDocumentoBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()           INLINE( if( empty( ::oBrowseView ), ::oBrowseView := DireccionTipoDocumentoBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := DireccionTipoDocumentoView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()           INLINE( if( empty( ::oDialogView ), ::oDialogView := DireccionTipoDocumentoView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := DireccionTipoDocumentoValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()            INLINE( if( empty( ::oValidator ), ::oValidator := DireccionTipoDocumentoValidator():New( self ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := DireccionTipoDocumentoRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := DireccionTipoDocumentoRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS DireccionTipoDocumentoController
+METHOD New( oController ) CLASS DireccionTipoDocumentoController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Tipos de direcciones por factura"
 
@@ -71,15 +71,13 @@ METHOD End() CLASS DireccionTipoDocumentoController
       ::oRepository:End()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
 METHOD getUuid() CLASS DireccionTipoDocumentoController
 
-RETURN ( ::oSenderController:getClientUuid() )
+RETURN ( ::oController:getClientUuid() )
 
 //---------------------------------------------------------------------------//
 
@@ -87,7 +85,7 @@ METHOD setDireccionesUuid() CLASS DireccionTipoDocumentoController
 
    local uuidDireccion
 
-   uuidDireccion  := ::getDireccionesController():oModel:getFieldWhere( 'uuid', { 'codigo' => ::oModel:getBuffer( 'direccion_uuid' ), 'parent_uuid' => ::oSenderController:getClientUuid() } )
+   uuidDireccion  := ::getDireccionesController():oModel:getFieldWhere( 'uuid', { 'codigo' => ::oModel:getBuffer( 'direccion_uuid' ), 'parent_uuid' => ::oController:getClientUuid() } )
 
    if !empty( uuidDireccion )
       ::oModel:setBuffer( 'direccion_uuid', uuidDireccion )
@@ -336,7 +334,7 @@ METHOD getColumns() CLASS SQLDireccionTipoDocumentoModel
                                                          "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",                   {  "create"    => "VARCHAR( 40 )"                           ,;
-                                                         "default"   => {|| ::getSenderControllerParentUuid() } }  )
+                                                         "default"   => {|| ::getControllerParentUuid() } }  )
 
    hset( ::hColumns, "tipo_uuid",                     {  "create"    => "VARCHAR( 40 ) NOT NULL"                           ,;
                                                          "default"   => {|| space( 40 ) } }                        )

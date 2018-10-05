@@ -26,9 +26,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ComentariosLineasController
+METHOD New( oController ) CLASS ComentariosLineasController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::lTransactional              := .t.
 
@@ -72,7 +72,7 @@ RETURN ( nil )
 
 METHOD loadedBlankBuffer() CLASS ComentariosLineasController
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       hset( ::oModel:hBuffer, "parent_uuid", uuid )
@@ -84,7 +84,7 @@ RETURN ( nil )
 
 METHOD gettingSelectSentence() CLASS ComentariosLineasController
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
@@ -252,7 +252,7 @@ METHOD getColumns() CLASS SQLComentariosLineasModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR(40) NOT NULL"                    ,;
-                                             "default"   => {|| ::getSenderControllerParentUuid() } } )
+                                             "default"   => {|| ::getControllerParentUuid() } } )
 
    hset( ::hColumns, "descripcion",       {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )

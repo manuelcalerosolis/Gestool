@@ -41,10 +41,6 @@ METHOD Activating() CLASS FacturasClientesView
       ::oController:oModel:hBuffer()
    end if 
 
-   //::oController:getFacturasClientesLineasController():buildRowSet()
-
-   //::oController:getFacturasClientesDescuentosController():buildRowSet()   
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -234,6 +230,8 @@ METHOD Activate() CLASS FacturasClientesView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
+   aeval( ::oExplorerBar:aPanels, {|oPanel| oPanel:End() } )
+
    ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
@@ -297,7 +295,6 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
 
 RETURN ( nil )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -21,9 +21,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS AgentesController
+METHOD New( oController ) CLASS AgentesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Agentes"
 
@@ -36,10 +36,6 @@ METHOD New( oSenderController ) CLASS AgentesController
    ::nLevel                         := Auth():Level( ::cName )
 
    ::oModel                         := SQLAgentesModel():New( self )
-
-
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )

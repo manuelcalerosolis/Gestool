@@ -5,17 +5,21 @@
 
 CLASS SQLPrintController
 
-   DATA oSenderController
+   DATA oController
+
+   DATA oDialogView
 
    DATA cDirectory
 
    DATA cFileName
 
-   DATA oDialogView
-
    DATA oHashList
 
-   METHOD New( oController )
+   METHOD New( oController ) CONSTRUCTOR
+
+   METHOD End()                        VIRTUAL
+
+   METHOD getController()              INLINE ( ::oController )
 
    METHOD setDirectory( cDirectory )   INLINE ( ::cDirectory := cDirectory )
    METHOD getDirectory()               INLINE ( ::cDirectory )
@@ -25,15 +29,15 @@ CLASS SQLPrintController
 
    METHOD getFullPathFileName()        INLINE ( ::cDirectory + ::cFileName + if( !( ".fr3" $ lower( ::cFileName ) ), ".fr3", "" ) )
 
-   METHOD Activate()                   INLINE ( ::buildRowSet(), ::oDialogView:Activate() )
+   METHOD Activate()                   INLINE ( ::buildRowSet(), ::getDialogView():Activate() )
    
    METHOD clickingHeader( oColumn )    INLINE ( ::buildRowSet( oColumn:cSortOrder ) )
 
-   METHOD getIds()                     INLINE ( iif( !empty( ::oSenderController ), ::oSenderController:getIds(), {} ) )
+   METHOD getIds()                     INLINE ( iif( !empty( ::oController ), ::oController:getIds(), {} ) )
 
-   METHOD getFilaInicio()              INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:nFilaInicio, 0 ) )
+   METHOD getFilaInicio()              INLINE ( iif( !empty( ::getDialogView() ), ::getDialogView():nFilaInicio, 0 ) )
    
-   METHOD getColumnaInicio()           INLINE ( iif( !empty( ::oDialogView ), ::oDialogView:nColumnaInicio, 0 ) )
+   METHOD getColumnaInicio()           INLINE ( iif( !empty( ::getDialogView() ), ::getDialogView():nColumnaInicio, 0 ) )
 
    METHOD buildRowSet()                VIRTUAL
 
@@ -47,7 +51,7 @@ CLASS SQLPrintController
 
    METHOD editDocument()               VIRTUAL
 
-   METHOD end()                        VIRTUAL
+   METHOD getDialogView()              VIRTUAL
 
 END CLASS
 
@@ -55,7 +59,7 @@ END CLASS
 
 METHOD New( oController )
 
-   ::oSenderController  := oController 
+   ::oController                       := oController 
 
 RETURN ( self )
 
@@ -63,17 +67,17 @@ RETURN ( self )
 
 METHOD loadDocuments()
 
-   local aFiles         := directory( ::getDirectory() + "*.fr3" )
+   local aFiles                        := directory( ::getDirectory() + "*.fr3" )
 
    if empty( aFiles )
       RETURN ( self )
    end if 
 
-   ::oDialogView:oListboxFile:setItems( {} )
+   ::getDialogView():oListboxFile:setItems( {} )
 
-   aeval( aFiles, {|aFile| ::oDialogView:oListboxFile:add( getFileNoExt( aFile[ 1 ] ) ) } )
+   aeval( aFiles, {|aFile| ::getDialogView():oListboxFile:add( getFileNoExt( aFile[ 1 ] ) ) } )
 
-   ::oDialogView:oListboxFile:goTop()
+   ::getDialogView():oListboxFile:goTop()
 
 RETURN ( self )
 
@@ -83,7 +87,7 @@ METHOD deleteDocument()
 
    local oReport  
 
-   ::setFileName( ::oDialogView:cListboxFile )
+   ::setFileName( ::getDialogView():cListboxFile )
 
    if empty( ::getFileName() )
       msgStop( "No hay formato definido" )

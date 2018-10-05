@@ -53,7 +53,7 @@ RETURN ( ::hColumns )
 METHOD loadCurrentBuffer()  
 
    local cSentence   := "SELECT * FROM " + ::cTableName + " " + ;
-                          "WHERE parent_uuid = " + quoted( ::oController:getSenderController():getUuid() ) 
+                          "WHERE parent_uuid = " + quoted( ::oController:getController():getUuid() ) 
 
    ::aBuffer         := ::oDatabase:selectFetchHash( cSentence )
 
@@ -106,7 +106,7 @@ METHOD RollBack()
 
    cSentence         := chgAtEnd( cSentence, " ) ", 1 )
 
-   cSentence         +=       "AND parent_uuid = " + quoted( ::oController:getSenderController():getUuid() )
+   cSentence         +=       "AND parent_uuid = " + quoted( ::oController:getController():getUuid() )
 
    ::oDatabase:Exec( cSentence )
 

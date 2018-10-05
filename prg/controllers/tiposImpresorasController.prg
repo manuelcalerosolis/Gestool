@@ -32,8 +32,6 @@ METHOD New() CLASS TiposImpresorasController
 
    ::oValidator            := TiposImpresorasValidator():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

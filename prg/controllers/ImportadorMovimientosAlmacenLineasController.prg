@@ -28,7 +28,7 @@ CLASS ImportadorMovimientosAlmacenLineasController FROM SQLBaseController
 
    METHOD stampArticuloNombre( oArticulo )   INLINE ( oArticulo:oHelpText:cText( ArticulosModel():getNombre( oArticulo:varGet() ) ), .t. )
 
-   METHOD isConsolidacion()                  INLINE ( ::oSenderController:oDialogView:oRadioTipoMovimento:nOption() == __tipo_movimiento_consolidacion__ )
+   METHOD isConsolidacion()                  INLINE ( ::oController:oDialogView:oRadioTipoMovimento:nOption() == __tipo_movimiento_consolidacion__ )
 
    METHOD getUnidadesStock( sStockArticulo ) INLINE ( iif( ::isConsolidacion(), 0, sStockArticulo:nUnidades ) )
 
@@ -64,7 +64,7 @@ RETURN ( Self )
 
 METHOD Activate()
 
-   if empty( ::oSenderController:oDialogView:oGetAlmacenDestino:varGet() )
+   if empty( ::oController:oDialogView:oGetAlmacenDestino:varGet() )
       msgStop( "Es necesario cumplimentar el almacén destino" )
       RETURN ( Self )      
    end if 
@@ -93,8 +93,8 @@ METHOD importarAlmacen()
 
    CLOSE ( cArea )
 
-   ::oSenderController:oLineasController:oBrowseView:goTop()
-   ::oSenderController:oLineasController:oBrowseView:Refresh()
+   ::oController:oLineasController:oBrowseView:goTop()
+   ::oController:oLineasController:oBrowseView:Refresh()
 
 RETURN ( Self )
 
@@ -104,7 +104,7 @@ METHOD calculaStock( cArea )
 
    local aStockArticulo 
 
-   aStockArticulo       := ::oStock:aStockArticulo( ( cArea )->Codigo, ::oSenderController:oDialogView:oGetAlmacenDestino:varGet() )
+   aStockArticulo       := ::oStock:aStockArticulo( ( cArea )->Codigo, ::oController:oDialogView:oGetAlmacenDestino:varGet() )
 
    aeval( aStockArticulo, {|sStockArticulo| ::procesaStock( sStockArticulo, cArea ) } )
 
@@ -127,9 +127,9 @@ METHOD creaRegistro( cArea, sStockArticulo )
    local nId
    local hBuffer
 
-   hBuffer                                := ::oSenderController:oLineasController:oModel:loadBlankBuffer()
+   hBuffer                                := ::oController:oLineasController:oModel:loadBlankBuffer()
 
-   hBuffer[ "parent_uuid" ]               := ::getSenderController():getUuid()
+   hBuffer[ "parent_uuid" ]               := ::getController():getUuid()
    hBuffer[ "codigo_articulo" ]           := ( cArea )->Codigo
    hBuffer[ "nombre_articulo" ]           := ( cArea )->Nombre
    hBuffer[ "precio_articulo" ]           := ( cArea )->pCosto
@@ -141,11 +141,11 @@ METHOD creaRegistro( cArea, sStockArticulo )
 
    hBuffer[ "unidades_articulo" ]         := ::getUnidadesStock( sStockArticulo )
 
-   nId                                    := ::oSenderController:oLineasController:oModel:insertBuffer( hBuffer )
+   nId                                    := ::oController:oLineasController:oModel:insertBuffer( hBuffer )
 
    if !empty( nId )
-      ::oSenderController:oLineasController:refreshRowSetAndFindId( nId )
-      ::oSenderController:oLineasController:oBrowseView:Refresh()
+      ::oController:oLineasController:refreshRowSetAndFindId( nId )
+      ::oController:oLineasController:oBrowseView:Refresh()
    end if 
 
 RETURN ( Self )

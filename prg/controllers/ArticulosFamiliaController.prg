@@ -23,9 +23,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ArticulosFamiliasController
+METHOD New( oController ) CLASS ArticulosFamiliasController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Familia de artículos"
 
@@ -38,8 +38,6 @@ METHOD New( oSenderController ) CLASS ArticulosFamiliasController
    ::nLevel                         := Auth():Level( ::cName )
 
    ::oModel                         := SQLArticulosFamiliaModel():New( self )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getImagenesController():loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::getImagenesController():insertBuffer() } )

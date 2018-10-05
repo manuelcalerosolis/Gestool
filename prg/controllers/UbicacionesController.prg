@@ -61,7 +61,7 @@ RETURN ( Self )
 
 METHOD gettingSelectSentence() CLASS UbicacionesController
 
-   local uuid        := ::getSenderController():getUuid() 
+   local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
       ::oModel:setGeneralWhere( "almacen_uuid = " + quoted( uuid ) )

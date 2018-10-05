@@ -27,9 +27,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS ProvinciasController
+METHOD New( oController ) CLASS ProvinciasController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                   := "Provincias"
 
@@ -49,12 +49,10 @@ METHOD New( oSenderController ) CLASS ProvinciasController
 
    ::oValidator               := ProvinciasValidator():New( self )
 
-   if empty( oSenderController )
+   if empty( oController )
 
       ::nLevel                := Auth():Level( ::cName )
    
-      ::oFilterController:setTableToFilter( ::cName )
-
    end if 
 
 RETURN ( Self )

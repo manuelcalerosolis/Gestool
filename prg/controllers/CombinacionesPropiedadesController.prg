@@ -25,9 +25,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS CombinacionesPropiedadesController
+METHOD New( oController ) CLASS CombinacionesPropiedadesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Combinaciones de Propiedades"
 

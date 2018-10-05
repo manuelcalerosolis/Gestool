@@ -17,9 +17,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController) CLASS CajasController
+METHOD New( oController) CLASS CajasController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                         := "Cajas"
 
@@ -46,8 +46,6 @@ METHOD New( oSenderController) CLASS CajasController
    ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
 
    ::oImpresorasController          := ImpresorasController():New( self, ::oModel:cTableName )
-
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
 
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 

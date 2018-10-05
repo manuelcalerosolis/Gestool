@@ -103,24 +103,27 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD deleteLines( uuid )
 
-   METHOD getUuid()                    INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
+   METHOD getUuid()                       INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
                                                       hget( ::oModel:hBuffer, "uuid" ),;
                                                       nil ) )
 
-   METHOD refreshBrowse()              INLINE ( iif(  !empty( ::getBrowseView() ), ::getBrowseView():Refresh(), ) )
-
+   METHOD refreshBrowse()                 INLINE ( iif(  !empty( ::getBrowseView() ), ::getBrowseView():Refresh(), ) )
 
    METHOD loadUnidadesMedicion()
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesLineasBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()                 INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := FacturasClientesLineasBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := FacturasClientesLineasView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()                 INLINE ( iif( empty( ::oDialogView ), ::oDialogView := FacturasClientesLineasView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := FacturasClientesLineasValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()                  INLINE ( iif( empty( ::oValidator ), ::oValidator := FacturasClientesLineasValidator():New( self ), ), ::oValidator )
 
-   METHOD getHistoryManager()             INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
+   METHOD getHistoryManager()             INLINE ( iif( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
+
+   METHOD getSearchView()                 INLINE ( iif( empty( ::oSearchView ), ::oSearchView := SQLSearchView():New( self ), ), ::oSearchView )  
+
+   METHOD getSeriesControler()            INLINE ( iif( empty( ::oSeriesControler ), ::oSeriesControler := NumerosSeriesController():New( self ), ), ::oSeriesControler )  
 
 END CLASS
 
@@ -134,13 +137,9 @@ METHOD New( oController )
 
    ::cTitle                                  := "Facturas clientes líneas"
 
-   ::setName( "lineas_facturas_clientes" )
+   ::cName                                   := "lineas_facturas_clientes" 
 
    ::oModel                                  := SQLFacturasClientesLineasModel():New( self )
-
-   ::oSearchView                             := SQLSearchView():New( self )
-
-   ::oSeriesControler                        := NumerosSeriesController():New( self )
 
    ::setEvent( 'activating',                 {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
 
@@ -164,9 +163,13 @@ METHOD End()
 
    ::oModel:End()
 
-   ::oSearchView:End()
+   if !empty( ::oSearchView )
+      ::oSearchView:End()
+   end if 
 
-   ::oSeriesControler:End()
+   if !empty( ::oSeriesControler )
+      ::oSeriesControler:End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -376,7 +379,7 @@ METHOD stampArticulo( hArticulo )
 
    ::stampArticuloIva()
 
-   ::oSenderController:calculateTotals()
+   ::oController:calculateTotals()
 
    cursorWE()
    
@@ -464,7 +467,7 @@ METHOD stampArticuloUnidades( oCol, uValue )
 
    ::getBrowseView():makeTotals( oCol )
 
-   ::oSenderController:calculateTotals()
+   ::oController:calculateTotals()
 
 RETURN ( .t. )
 
@@ -472,11 +475,11 @@ RETURN ( .t. )
 
 METHOD stampArticuloDescuento()
 
-   local nDescuento     := SQLArticulosPreciosDescuentosModel():getDescuentoWhereArticuloCodigo( ::getRowSet():fieldGet( 'articulo_codigo' ), ::oSenderController:getModelBuffer( 'tarifa_codigo' ), ::getRowSet():fieldGet( 'total_unidades' ), ::oSenderController:getModelBuffer( 'fecha' ) )
+   local nDescuento     := SQLArticulosPreciosDescuentosModel():getDescuentoWhereArticuloCodigo( ::getRowSet():fieldGet( 'articulo_codigo' ), ::oController:getModelBuffer( 'tarifa_codigo' ), ::getRowSet():fieldGet( 'total_unidades' ), ::oController:getModelBuffer( 'fecha' ) )
 
    ::updateField( 'descuento', nDescuento )
 
-   ::oSenderController:calculateTotals()
+   ::oController:calculateTotals()
 
 RETURN ( .t. )
 
@@ -484,7 +487,7 @@ RETURN ( .t. )
 
 METHOD stampArticuloPrecio()
 
-   local nPrecioBase    := SQLArticulosPreciosModel():getPrecioBaseWhereArticuloCodigoAndTarifaCodigo( ::getRowSet():fieldget( "articulo_codigo" ), ::oSenderController:getModelBuffer( "tarifa_codigo" ) )
+   local nPrecioBase    := SQLArticulosPreciosModel():getPrecioBaseWhereArticuloCodigoAndTarifaCodigo( ::getRowSet():fieldget( "articulo_codigo" ), ::oController:getModelBuffer( "tarifa_codigo" ) )
 
    ::updateField( 'articulo_precio', nPrecioBase )
 
@@ -498,7 +501,7 @@ METHOD stampArticuloUnidadMedicion( uValue )
 
    ::stampArticuloUnidadMedicionFactor()
 
-   ::oSenderController:calculateTotals() 
+   ::oController:calculateTotals() 
 
 RETURN ( nil )
 
@@ -556,7 +559,7 @@ METHOD updateImpuestos( nPorcentajeIva )
       ::updateField( "recargo_equivalencia", nPorcentajeRecargo )
    end if 
 
-   ::oSenderController:calculateTotals() 
+   ::oController:calculateTotals() 
 
 RETURN ( nil )
 
@@ -600,9 +603,9 @@ METHOD runDialogSeries()
       RETURN ( .f. )
    end if
 
-   ::oSeriesControler:SetTotalUnidades( ::getDialogView():nTotalUnidadesArticulo() )
+   ::getSeriesControler():SetTotalUnidades( ::getDialogView():nTotalUnidadesArticulo() )
 
-   ::oSeriesControler:Edit( hget( ::oModel:hBuffer, "id" ) )
+   ::getSeriesControler():Edit( hget( ::oModel:hBuffer, "id" ) )
 
 RETURN ( .t. )
 
@@ -610,7 +613,7 @@ RETURN ( .t. )
 
 METHOD Search()
 
-   ::oSearchView:Activate()
+   ::getSearchView():Activate()
 
 RETURN ( nil )
 
@@ -639,12 +642,12 @@ METHOD Edit()
       RETURN ( nil )
    end if 
 
-   nId                     := ::oSenderController:oArticulosController:oModel:getIdWhereCodigo( cCodigoArticulo )
+   nId                     := ::oController:oArticulosController:oModel:getIdWhereCodigo( cCodigoArticulo )
    if empty( nId )
       RETURN ( nil )
    end if 
 
-RETURN ( ::oSenderController:oArticulosController:Edit( nId ) )
+RETURN ( ::oController:oArticulosController:Edit( nId ) )
 
 //----------------------------------------------------------------------------//
 

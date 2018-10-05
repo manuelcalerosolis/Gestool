@@ -31,8 +31,6 @@ METHOD New() CLASS GrupoPropiedadesController
 
    ::oValidator            := GrupoPropiedadesValidator():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

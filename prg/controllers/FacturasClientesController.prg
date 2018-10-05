@@ -8,17 +8,22 @@ FUNCTION FacturasClientesController1000()
    local n
    local oController    
 
-   for n := 1 to 1000
+   for n := 1 to 10
+      
+      FacturasClientesController()
+
 
       oController          := FacturasClientesController():New()
 
       oController:ActivateNavigatorView()
 
-      MsgWait( "Please, " + str( n ), "This is a test", 5 )
+      // MsgWait( "Please, " + str( n ), "This is a test", 5 )
 
-      oController:closeAllWindows()
+      // oController:closeAllWindows()
 
-      MsgWait( "Please, " + str( n ), "This is a test", 5 )
+      // MsgWait( "Please, " + str( n ), "This is a test", 1 )
+
+      oController:End()
 
    next 
 
@@ -79,6 +84,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    
    METHOD getHistoryManager()          INLINE ( if( empty( ::oHistoryManager ), ::oHistoryManager := HistoryManager():New(), ), ::oHistoryManager )
    
+   METHOD getReport()                  INLINE ( if( empty( ::oReport ), ::oReport := FacturasClientesReport():New( self ), ), ::oReport )
 
 END CLASS
 
@@ -88,36 +94,34 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::Super:New( oController )
 
-   ::cTitle                                              := "Facturas de clientes"
+   ::cTitle                            := "Facturas de clientes"
 
-   ::cName                                               := "facturas_clientes"
+   ::cName                             := "facturas_clientes"
    
-   ::lTransactional                                      := .t.
+   ::lTransactional                    := .t.
 
-   ::lInsertable                                         := .t.
+   ::lInsertable                       := .t.
 
-   ::lDocuments                                          := .t.
+   ::lDocuments                        := .t.
 
-   ::lConfig                                             := .t.
+   ::lConfig                           := .t.
 
-   ::lOthers                                             := .t.
+   ::lOthers                           := .t.
 
-   ::hImage                                              := {  "16" => "gc_document_text_user_16",;
-                                                               "32" => "gc_document_text_user_32",;
-                                                               "48" => "gc_document_text_user_48" }
+   ::hImage                            := {  "16" => "gc_document_text_user_16",;
+                                             "32" => "gc_document_text_user_32",;
+                                             "48" => "gc_document_text_user_48" }
 
-   ::oModel                                              := SQLFacturasClientesModel():New( self )
+   ::oModel                            := SQLFacturasClientesModel():New( self )
 
-   ::oNumeroDocumentoComponent                           := NumeroDocumentoComponent():New( self )
+   ::oNumeroDocumentoComponent         := NumeroDocumentoComponent():New( self )
 
-   ::oSerieDocumentoComponent                            := SerieDocumentoComponent():New( self )
+   ::oSerieDocumentoComponent          := SerieDocumentoComponent():New( self )
 
-   ::oContadoresModel                                    := SQLContadoresModel():New( self )
+   ::oContadoresModel                  := SQLContadoresModel():New( self )
 
-   ::oFilterController:setTableToFilter( ::oModel:cTableName )
-
-   ::oModel:setEvent( 'loadedBuffer',                    {|| ::loadedBuffer() } )
-   ::oModel:setEvent( 'loadedBlankBuffer',               {|| ::loadedBlankBuffer() } )
+   ::oModel:setEvent( 'loadedBuffer',        {|| ::loadedBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
 
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',         {|| ::isClientFilled() } ) 
    ::getDireccionTipoDocumentoController():oModel:setEvent( 'gettingSelectSentence', {|| ::getClientUuid() } )
@@ -160,6 +164,14 @@ METHOD End() CLASS FacturasClientesController
       ::oHistoryManager:End()
    end if 
 
+   if !empty( ::oReport )
+      ::oReport:End()
+   end if 
+
+   if !empty( ::oConfiguracionesModel )
+      ::oConfiguracionesModel:End()
+   end if 
+
    if !empty( ::oNumeroDocumentoComponent )
       ::oNumeroDocumentoComponent:End()
    end if 
@@ -169,6 +181,8 @@ METHOD End() CLASS FacturasClientesController
    end if 
 
    ::Super:End()
+
+   msgmemory()
 
 RETURN ( nil )
 
@@ -316,7 +330,7 @@ RETURN ( nLineas > 0 )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesValidator FROM SQLBaseValidator
+CLASS FacturasClientesValidator FROM SQLBaseValidator 
 
    METHOD getValidators()
  

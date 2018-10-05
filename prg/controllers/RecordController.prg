@@ -7,7 +7,7 @@ CLASS RecordController FROM SQLBaseController
 
    METHOD New()
 
-   METHOD getModel()             INLINE ( ::oSenderController:oModel() )
+   METHOD getModel()             INLINE ( ::oController:oModel() )
 
    METHOD getBuffer( cColumn )   INLINE ( ::getModel():getBuffer( cColumn ) )
 

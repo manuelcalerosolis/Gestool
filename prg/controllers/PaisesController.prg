@@ -25,15 +25,15 @@ CLASS PaisesController FROM SQLNavigatorController
 
    METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLPaisesModel():New( self ), ), ::oModel )
 
-   METHOD getLevel()                            INLINE ( iif( empty( ::oSenderController ), ::nLevel := Auth():Level( ::cName ), ) ) 
+   METHOD getLevel()                            INLINE ( iif( empty( ::oController ), ::nLevel := Auth():Level( ::cName ), ) ) 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS PaisesController
+METHOD New( oController ) CLASS PaisesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                   := "Paises"
 

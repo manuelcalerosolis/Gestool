@@ -31,9 +31,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSenderController ) CLASS RelacionesEntidadesController
+METHOD New( oController ) CLASS RelacionesEntidadesController
 
-   ::Super:New( oSenderController )
+   ::Super:New( oController )
 
    ::cTitle                := "Relaciones entidades"
 
@@ -88,7 +88,7 @@ METHOD Edit() CLASS RelacionesEntidadesController
 
    ::beginTransactionalMode()
 
-   ::oRowSet      := ::getRepository():getRowRelacionesEntidades( hget( ::oSenderController:oModel:hBuffer, "uuid" ) )
+   ::oRowSet      := ::getRepository():getRowRelacionesEntidades( hget( ::oController:oModel:hBuffer, "uuid" ) )
 
    ::fireEvent( 'openingDialog' )
 
@@ -122,7 +122,7 @@ RETURN ( lEdit )
 
 METHOD AppendLine() CLASS RelacionesEntidadesController
 
-   local id    := ::oModel:insertBlankRelacionEntidad( hget( ::oSenderController:oModel:hBuffer, "uuid" ) )
+   local id    := ::oModel:insertBlankRelacionEntidad( hget( ::oController:oModel:hBuffer, "uuid" ) )
 
    ::oRowSet:refreshAndFindId( id )
 
@@ -241,7 +241,7 @@ CLASS RelacionesEntidadesView FROM SQLBaseView
 
    METHOD getBrowse()      INLINE ( ::oController:getBrowseView():oBrowse )
    METHOD getModel()       INLINE ( ::oController:oModel )
-   METHOD getSenderModel() INLINE ( ::oController:oSenderController:oModel )
+   METHOD getSenderModel() INLINE ( ::oController:oController:oModel )
 
 END CLASS
 
