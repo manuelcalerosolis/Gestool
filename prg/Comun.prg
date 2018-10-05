@@ -349,6 +349,12 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
+   local mailController := MailController():New()
+
+   mailController:getDialogView():Activate()
+
+   mailController:End()
+
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//

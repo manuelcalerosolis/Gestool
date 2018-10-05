@@ -121,6 +121,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oDireccionTipoDocumentoController
 
+   DATA oMailController
+
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -290,6 +292,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getDireccionTipoDocumentoController();
                                     INLINE ( if( empty( ::oDireccionTipoDocumentoController ), ::oDireccionTipoDocumentoController := DireccionTipoDocumentoController():New( self ), ), ::oDireccionTipoDocumentoController )
+
+   METHOD getMailController();
+                                    INLINE ( if( empty( ::oMailController ), ::oMailController := MailController():New( self ), ), ::oMailController )
 
    METHOD End()
 
@@ -541,6 +546,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oDireccionTipoDocumentoController )   
       ::oDireccionTipoDocumentoController:End()
+   end if 
+
+   if !empty( ::oMailController )   
+      ::oMailController:End()
    end if 
 
    ::Super:End()
