@@ -13,7 +13,7 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    DATA cUuidEmpresa
 
-   DATA oAjustableController
+   DATA getAjustableController
 
    DATA lSolicitarUsuario 
 
@@ -31,7 +31,7 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
    DATA cTarifaDefecto   
    DATA cCodigoTarifaDefecto
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -48,6 +48,18 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
    METHOD updateEmpresa()
 
    METHOD seedEmpresa()
+
+   METHOD getRepository()                    INLINE ( iif( empty( ::oRepository ), ::oRepository := EmpresasRepository():New( self ), ), ::oRepository ) 
+
+   METHOD getBrowseView()                    INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := EmpresasBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()                    INLINE ( iif( empty( ::oDialogView ), ::oDialogView := EmpresasView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                     INLINE ( iif( empty( ::oValidator ), ::oValidator := EmpresasValidator():New( self, ::getDialogView() ), ), ::oValidator )
+
+   METHOD getDireccionesController()         INLINE ( if( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesGestoolController():New( self ), ), ::oDireccionesController )
+
+   METHOD getCamposExtraValoresController()  INLINE ( if( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
 
 END CLASS
 
@@ -69,35 +81,16 @@ METHOD New( oController ) CLASS EmpresasController
    
    ::oModel                         := SQLEmpresasModel():New( self )
 
-   ::oRepository                    := EmpresasRepository():New( self )
-
-   ::oBrowseView                    := EmpresasBrowseView():New( self )
-
-   ::oDialogView                    := EmpresasView():New( self )
-
-   ::oValidator                     := EmpresasValidator():New( self, ::oDialogView )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresGestoolController():New( self, ::oModel:cTableName )
-
-   ::oGetSelector                   := ComboSelector():New( self )
-
-   ::oAjustableController           := AjustableController():New( self )
-
-   ::oDireccionesController         := DireccionesGestoolController():New( self )
-   ::oDireccionesController:setView( ::oDialogView )
-
-   ::oDelegacionesController        := DelegacionesController():New( self )
-
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
+   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::oModel:setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:updateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
    if !empty( ::oNavigatorView )
       ::oNavigatorView:oMenuTreeView:setEvent( 'addedRefreshButton',     {|| ::addExtraButtons() } )
@@ -109,20 +102,26 @@ RETURN ( Self )
 
 METHOD End()
 
-   ::oBrowseView:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
 
-   ::oCamposExtraValoresController:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
 
-   ::oGetSelector:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if 
+
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
    
-   ::oAjustableController:End()
-
-   ::oDireccionesController:End()
-
-   ::oDelegacionesController:End()
-
    ::Super:End()
 
 RETURN ( nil )
@@ -135,7 +134,7 @@ METHOD setConfig()
       RETURN ( self )
    end if 
 
-   if ::oAjustableController:DialogViewActivate()
+   if ::getAjustableController():DialogViewActivate()
       ::saveConfig()
    end if
    
@@ -153,23 +152,23 @@ METHOD loadConfig()
 
    Company():guardWhereUuid( ::cUuidEmpresa )
 
-   ::lSolicitarUsuario           := ::oAjustableController:oModel:getEmpresaSeleccionarUsuarios( ::cUuidEmpresa )
+   ::lSolicitarUsuario           := ::getAjustableController():oModel:getEmpresaSeleccionarUsuarios( ::cUuidEmpresa )
 
    ::aDelegaciones               := SQLDelegacionesModel():getNombres()
 
-   ::cUuidDelegacionDefecto      := ::oAjustableController:oModel:getEmpresaDelegacionDefecto( ::cUuidEmpresa )
+   ::cUuidDelegacionDefecto      := ::getAjustableController():oModel:getEmpresaDelegacionDefecto( ::cUuidEmpresa )
 
    ::cDelegacionDefecto          := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionDefecto )
 
    ::aUnidades                   := SQLUnidadesMedicionGruposModel():getNombresWithBlank()
 
-   ::cCodigoUnidaesDefecto       := ::oAjustableController:oModel:getEmpresaUnidadesGrupoDefecto( ::cUuidEmpresa )
+   ::cCodigoUnidaesDefecto       := ::getAjustableController():oModel:getEmpresaUnidadesGrupoDefecto( ::cUuidEmpresa )
 
    ::cUnidadesDefecto            := SQLUnidadesMedicionGruposModel():getNombreWhereCodigo( ::cCodigoUnidaesDefecto )
 
    ::aTarifas                    := SQLArticulosTarifasModel():getNombres()
 
-   ::cCodigoTarifaDefecto        := ::oAjustableController:oModel:getEmpresaTarifaDefecto( ::cUuidEmpresa )
+   ::cCodigoTarifaDefecto        := ::getAjustableController():oModel:getEmpresaTarifaDefecto( ::cUuidEmpresa )
 
    ::cTarifaDefecto              := SQLArticulosTarifasModel():getNombreWhereCodigo( ::cCodigoTarifaDefecto )
 
@@ -179,19 +178,19 @@ RETURN ( .t. )
 
 METHOD saveConfig()
 
-   ::oAjustableController:oModel:setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, ::cUuidEmpresa )
+   ::getAjustableController():oModel:setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, ::cUuidEmpresa )
    
    ::cUuidDelegacionDefecto      := SQLDelegacionesModel():getUuidFromNombre( ::cDelegacionDefecto )
 
-   ::oAjustableController:oModel:setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, ::cUuidEmpresa )
+   ::getAjustableController():oModel:setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, ::cUuidEmpresa )
 
    ::cCodigoUnidaesDefecto       := SQLUnidadesMedicionGruposModel():getCodigoWhereNombre( ::cUnidadesDefecto )
 
-   ::oAjustableController:oModel:setEmpresaUnidadesGrupoDefecto( ::cCodigoUnidaesDefecto, ::cUuidEmpresa )
+   ::getAjustableController():oModel:setEmpresaUnidadesGrupoDefecto( ::cCodigoUnidaesDefecto, ::cUuidEmpresa )
 
    ::cCodigoTarifaDefecto        := SQLArticulosTarifasModel():getCodigoWhereNombre( ::cTarifaDefecto )
 
-   ::oAjustableController:oModel:setEmpresaTarifaDefecto( ::cCodigoTarifaDefecto, ::cUuidEmpresa )
+   ::getAjustableController():oModel:setEmpresaTarifaDefecto( ::cCodigoTarifaDefecto, ::cUuidEmpresa )
 
 RETURN ( self )
 
@@ -199,7 +198,7 @@ RETURN ( self )
 
 METHOD startingActivate()
 
-   local oPanel                  := ::oAjustableController:oDialogView:oExplorerBar:AddPanel( "Propiedades empresa", nil, 1 ) 
+   local oPanel                  := ::getAjustableController():oDialogView:oExplorerBar:AddPanel( "Propiedades empresa", nil, 1 ) 
 
    oPanel:AddCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
    
@@ -413,7 +412,7 @@ METHOD Activate() CLASS EmpresasView
       SPINNER ;
       OF          ::oDialog
 
-   ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
+   ::oController:getDireccionesController():getDialogView():ExternalRedefine( ::oDialog )
 
    REDEFINE EXPLORERBAR ::oExplorerBar ;
       ID          700 ;
@@ -454,7 +453,7 @@ METHOD StartDialog() CLASS EmpresasView
 
    ::addLinksToExplorerBar()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -465,16 +464,16 @@ METHOD addLinksToExplorerBar() CLASS EmpresasView
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Delegaciones...",        {|| ::oController:oDelegacionesController:activateDialogView() }, ::oController:oDelegacionesController:getImage( "16" ) )
+      oPanel:AddLink( "Delegaciones...", {|| ::oController:getDelegacionesController():activateDialogView() }, ::oController:getDelegacionesController():getImage( "16" ) )
    end if
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+      oPanel:AddLink( "Campos extra...", {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }, ::oController:getCamposExtraValoresController():getImage( "16" ) )
    end if
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -9,7 +9,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS AccessController FROM SQLBaseController
+CLASS AccessController FROM SQLApplicationController
 
    DATA hUsuario
    DATA hEmpresa
@@ -20,10 +20,6 @@ CLASS AccessController FROM SQLBaseController
    DATA oAccessTactilView
    
    DATA cValidError                    INIT "" 
-
-   DATA oUsuariosController
-   DATA oEmpresasController
-   DATA oAjustableController
 
    DATA aComboUsuarios
    DATA cComboUsuario  
@@ -54,6 +50,10 @@ CLASS AccessController FROM SQLBaseController
 
    METHOD getMacAddress()              
 
+   METHOD getAccessView()              INLINE ( iif( empty( ::oAccessView ), ::oAccessView := AccessView():New( self ), ), ::oAccessView )
+
+   METHOD getAccessTactilView()        INLINE ( iif( empty( ::oAccessTactilView ), ::oAccessTactilView := AccessTactilView():New( self ), ), ::oAccessTactilView )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -69,31 +69,19 @@ METHOD New() CLASS AccessController
    ::hImage                            := {  "16" => "gc_businesspeople_16",;
                                              "48" => "gc_businesspeople_48" }
 
-   ::oAccessView                       := AccessView():New( self )
-
-   ::oAccessTactilView                 := AccessTactilView():New( self )
-
-   ::oUsuariosController               := UsuariosController():New( self )
-
-   ::oEmpresasController               := EmpresasController():New( self )
-
-   ::oAjustableController              := AjustableController():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS AccessController
 
-   ::oAccessView:End()
+   if !empty( ::oAccessView )
+      ::oAccessView:End()
+   end if 
 
-   ::oAccessTactilView:End()
-
-   ::oUsuariosController:End()
-   
-   ::oEmpresasController:End()
-
-   ::oAjustableController:End()
+   if !empty( ::oAccessTactilView )
+      ::oAccessTactilView:End()
+   end if 
 
    ::Super:End()
 
@@ -109,7 +97,7 @@ METHOD isLogin() CLASS AccessController
 
    ::loadUsersAndCompanies()
 
-   isLogin        := ::oAccessView:Activate() == IDOK
+   isLogin        := ::getAccessView():Activate() == IDOK
 
    if ( isLogin )
 
@@ -140,26 +128,26 @@ METHOD loadUsersAndCompanies() CLASS AccessController
 
    // Usuario------------------------------------------------------------------
 
-   ::aComboUsuarios        := ::oUsuariosController:oModel:getNombres()
+   ::aComboUsuarios        := ::getUsuariosController():oModel:getNombres()
 
-   cUltimoUsuario          := ::oAjustableController:oModel:getUltimoUsuarioInMac( ::getMacAddress() )
+   cUltimoUsuario          := ::getAjustableController():oModel:getUltimoUsuarioInMac( ::getMacAddress() )
    if empty( cUltimoUsuario )
       ::cComboUsuario      := atail( ::aComboUsuarios )
    else 
-      ::cComboUsuario      := ::oUsuariosController:oModel:getNombreWhereUuid( cUltimoUsuario )
+      ::cComboUsuario      := ::getUsuariosController():oModel:getNombreWhereUuid( cUltimoUsuario )
    end if 
 
    // Empresa------------------------------------------------------------------
 
    if ::isSelectCompany()
 
-      ::aComboEmpresas     := ::oEmpresasController:oModel:getNombres()
+      ::aComboEmpresas     := ::getEmpresasController():oModel:getNombres()
 
-      cUltimaEmpresa       := ::oAjustableController:oModel:getUltimaEmpresaInMac( ::getMacAddress() )
+      cUltimaEmpresa       := ::getAjustableController():oModel:getUltimaEmpresaInMac( ::getMacAddress() )
       if empty( cUltimaEmpresa )
          ::cComboEmpresa   := atail( ::cComboEmpresa )
       else
-         ::cComboEmpresa   := ::oEmpresasController:oModel:getNombreWhereUuid( cUltimaEmpresa )
+         ::cComboEmpresa   := ::getEmpresasController():oModel:getNombreWhereUuid( cUltimaEmpresa )
       end if 
 
    end if 
@@ -181,9 +169,9 @@ RETURN ( nil )
 
 METHOD saveUsersAndCompanies() CLASS AccessController
 
-   ::oAjustableController:oModel:setUltimaEmpresaInMac( Company():uuid(), ::getMacAddress() )
+   ::getAjustableController():oModel:setUltimaEmpresaInMac( Company():uuid(), ::getMacAddress() )
 
-   ::oAjustableController:oModel:setUltimoUsuarioInMac( Auth():uuid(), ::getMacAddress() )
+   ::getAjustableController():oModel:setUltimoUsuarioInMac( Auth():uuid(), ::getMacAddress() )
 
 RETURN ( nil )
 
@@ -195,7 +183,7 @@ METHOD isLoginSuperAdmin() CLASS AccessController
 
    ::loadSuperAdmin()
 
-   if ( ::oAccessView:Activate() != IDOK )
+   if ( ::getAccessView():Activate() != IDOK )
       RETURN ( .f. )
    end if 
 
@@ -209,7 +197,7 @@ RETURN ( .t. )
 
 METHOD isLoginTactil() CLASS AccessController
 
-   if ( ::oLoginTactilView:Activate() != IDOK )
+   if ( ::getLoginTactilView():Activate() != IDOK )
       RETURN ( .f. )
    end if 
 
@@ -219,7 +207,7 @@ RETURN ( .t. )
 
 METHOD validUserPassword() CLASS AccessController
 
-   ::hUsuario                 := ::oUsuariosController:oModel:validUserPassword( ::cComboUsuario, ::cGetPassword )
+   ::hUsuario                 := ::getUsuariosController():oModel:validUserPassword( ::cComboUsuario, ::cGetPassword )
 
    if empty( ::hUsuario )
       ::cValidError           := "Usuario y contraseña no coinciden" 
@@ -241,7 +229,7 @@ METHOD validCompany() CLASS AccessController
       RETURN ( .t. )
    end if 
 
-   ::hEmpresa                 := ::oEmpresasController:oModel:validEmpresa( ::cComboEmpresa )
+   ::hEmpresa                 := ::getEmpresasController():oModel:validEmpresa( ::cComboEmpresa )
 
    if empty( ::hEmpresa )
       ::cValidError           := "Empresa no existe" 

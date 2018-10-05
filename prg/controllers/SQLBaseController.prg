@@ -85,29 +85,26 @@ CLASS SQLBaseController
 
    // Rowset-------------------------------------------------------------------
 
-   METHOD getRowSet()                                 INLINE ( ::oRowSet )
-   METHOD saveRowSetRecno()                           INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:saveRecno(), ) )
-   METHOD restoreRowSetRecno()                        INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:restoreRecno(), ) )
-   METHOD gotoRowSetRecno( nRecno )                   INLINE ( iif(  !empty( ::oRowSet ) .and. hb_isnumeric( nRecno ),;
-                                                                     ::oRowSet:gotoRecno( nRecno ), ) )
-   METHOD findRowSet( nId )                           INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:find( nId ), ) )
-   METHOD refreshRowSet()                             INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refresh(), ) )
-   METHOD refreshRowSetAndGoTop()                     INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refreshAndGoTop(), ) )
-   METHOD refreshRowSetAndFindId( nId )               INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:refreshAndFindId( nId ), ) )
-   METHOD goDownRowSet()                              INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:goDown(), ) )
-   METHOD goUpRowSet()                                INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:goUp(), ) )
+   METHOD saveRowSetRecno()                           INLINE ( ::getRowSet():saveRecno() )
+   METHOD restoreRowSetRecno()                        INLINE ( ::getRowSet():restoreRecno() )
+   METHOD gotoRowSetRecno( nRecno )                   INLINE ( iif( hb_isnumeric( nRecno ), ::getRowSet():gotoRecno( nRecno ), ) )
+   METHOD findRowSet( nId )                           INLINE ( ::getRowSet():find( nId ) )
+   METHOD refreshRowSet()                             INLINE ( ::getRowSet():refresh() )
+   METHOD refreshRowSetAndGoTop()                     INLINE ( ::getRowSet():refreshAndGoTop() )
+   METHOD refreshRowSetAndFindId( nId )               INLINE ( ::getRowSet():refreshAndFindId( nId ) )
+   METHOD goDownRowSet()                              INLINE ( ::getRowSet():goDown() )
+   METHOD goUpRowSet()                                INLINE ( ::getRowSet():goUp() )
 
-   METHOD getIdFromRecno( aSelected )                 INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:IdFromRecno( aSelected ), {} ) )
-   METHOD getUuidFromRecno( aSelected )               INLINE ( iif(  !empty( ::oRowSet ), ::oRowSet:UuidFromRecno( aSelected ), {} ) )
+   METHOD getIdFromRecno( aSelected )                 INLINE ( ::getRowSet():IdFromRecno( aSelected ) )
+   METHOD getUuidFromRecno( aSelected )               INLINE ( ::getRowSet():UuidFromRecno( aSelected ) )
 
-   METHOD getIdFromRowSet()                           INLINE ( iif(  !empty( ::getRowSet() ),;
-                                                                     ::getRowSet():fieldGet( ::oModel:cColumnKey ), nil ) )
+   METHOD getIdFromRowSet()                           INLINE ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) )
 
    METHOD isRowSetSystemRegister()                          
    METHOD isNotRowSetSystemRegister()                 INLINE ( !( ::isRowSetSystemRegister() ) )
 
    METHOD findInRowSet( uValue, cColumn )             
-   METHOD findByIdInRowSet( uValue )                  INLINE ( iif(  !empty( ::getRowSet() ), ::getRowSet():find( uValue, "id", .t. ), ) )
+   METHOD findByIdInRowSet( uValue )                  INLINE ( ::getRowSet():find( uValue, "id", .t. ) )
 
    // Dialogo------------------------------------------------------------------
 
@@ -206,10 +203,6 @@ CLASS SQLBaseController
 
    METHOD onKeyChar()                                 VIRTUAL
 
-   // Deprecated---------------------------------------------------------------
-
-   METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )
-
    // Directorio para documentos y etiquetas-----------------------------------
 
    METHOD setDirectory( cDirectory )                  INLINE ( ::cDirectory := cDirectory )
@@ -252,6 +245,8 @@ CLASS SQLBaseController
 
    METHOD reBuildRowSet()   
 
+   METHOD getRowSet()                                 INLINE ( iif( empty( ::oRowSet ), ::oRowSet := SQLRowSet():New( self ), ), ::oRowSet )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -261,8 +256,6 @@ METHOD New( oController )
    ::oController                                      := oController
 
    ::oEvents                                          := Events():New()
-
-   ::oRowSet                                          := SQLRowSet():New( self )
 
 RETURN ( self )
 
@@ -648,6 +641,8 @@ METHOD DialogViewActivate( oDialogView )
    
    oDialogView:Activated()
 
+   oDialogView:End()
+
    if hb_islogical( ::uDialogResult )
       RETURN ( ::uDialogResult )
    end if 
@@ -756,17 +751,17 @@ METHOD changeModelOrderAndOrientation( cOrderBy, cOrientation )
 
    local nId           
 
-   if empty( ::oRowSet )
+   if empty( ::getRowSet() )
       RETURN ( nil )
    end if 
 
-   nId                  := ::oRowSet:fieldGet( ::getModelColumnKey() )
+   nId                  := ::getRowSet():fieldGet( ::getModelColumnKey() )
 
    ::oModel:setFind( "" )
 
-   ::oRowSet:buildPad( ::oModel:getSelectSentence( cOrderBy, cOrientation ) )
+   ::getRowSet():buildPad( ::oModel:getSelectSentence( cOrderBy, cOrientation ) )
 
-   ::oRowSet:findId( nId )
+   ::getRowSet():findId( nId )
 
 RETURN ( nil )
 
@@ -776,29 +771,29 @@ METHOD findInModel( uValue, aColumns )
 
    ::oModel:setFind( uValue, aColumns )
 
-   ::oRowSet:buildPad( ::oModel:getSelectSentence() )
+   ::getRowSet():buildPad( ::oModel:getSelectSentence() )
 
-RETURN ( ::oRowSet:RecCount() )
+RETURN ( ::getRowSet():RecCount() )
 
 //---------------------------------------------------------------------------//
 
 METHOD findInRowSet( uValue, cColumn )
 
-   if empty( ::oRowSet )
+   if empty( ::getRowSet() )
       RETURN ( .f. )
    end if 
 
-RETURN ( ::oRowSet:findString( uValue, cColumn ) )
+RETURN ( ::getRowSet():findString( uValue, cColumn ) )
 
 //----------------------------------------------------------------------------//
 
 METHOD isRowSetSystemRegister()
 
-   if empty( ::oRowSet )
+   if empty( ::getRowSet() )
       RETURN ( .t. )
    end if 
 
-RETURN ( ::oRowSet:fieldGet( 'sistema' ) == 1 )
+RETURN ( ::getRowSet():fieldGet( 'sistema' ) == 1 )
 
 //----------------------------------------------------------------------------//
 
@@ -807,35 +802,6 @@ METHOD setEvents( aEvents, bEvent )
 RETURN ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
 
 //----------------------------------------------------------------------------//
-
-METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
-     
-   local oRowSet      
-     
-   if empty( oFastReport )     
-      RETURN ( Self )    
-   end if    
-    
-   DEFAULT cColumns  := ::oModel:getSerializeColumns()       
-    
-   oRowSet           := ::oModel:newRowSet( cSentence )      
-    
-   if empty( oRowSet )      
-      RETURN ( Self )    
-   end if       
-    
-   oFastReport:setUserDataSet(   cTitle,;     
-                                 cColumns,;      
-                                 {|| oRowSet:gotop()  },;    
-                                 {|| oRowSet:skip(1)  },;    
-                                 {|| oRowSet:skip(-1) },;    
-                                 {|| oRowSet:eof()    },;
-                                 {|nField| msginfo( nField ), oRowSet:fieldGet( nField ) } )
-                                 //  )      
-    
-RETURN ( Self )    
-    
-//---------------------------------------------------------------------------//
 
 METHOD loadDocuments()
 
@@ -906,11 +872,11 @@ METHOD reBuildRowSet()
 
    local nId
 
-   nId               := ::oRowSet:fieldGet( ::getModelColumnKey() )
+   nId               := ::getRowSet():fieldGet( ::getModelColumnKey() )
    
-   ::oRowSet:build( ::getModel():getSelectSentence() )
+   ::getRowSet():build( ::getModel():getSelectSentence() )
 
-   ::oRowSet:findString( nId )
+   ::getRowSet():findString( nId )
       
    ::getBrowseView():Refresh()
 

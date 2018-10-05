@@ -86,7 +86,7 @@ METHOD New( oController )
 
    ::oEvents                                          := Events():New()
 
-   ::oFontBold                                        := TFont():New( getSysFont(), 0, -8, .f., .t. )
+   // ::oFontBold                                        := TFont():New( getSysFont(), 0, -8, .f., .t. )
 
    ::oTimer                                           := TTimer():New( 4000, {|| ::RestoreMessage() } )
 
@@ -113,6 +113,8 @@ METHOD End()
    ::oTimer                                           := nil
 
    ::oFontBold                                        := nil
+
+   msgalert( "end SQLBaseView", ::className() )
 
 RETURN ( hb_gcall( .t. ) )
 

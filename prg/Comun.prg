@@ -349,9 +349,7 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-   FacturasClientesController1000()
-
-   // SQLFacturasClientesLineasModel():getSerializeColumnsSelect()
+// FacturasClientesController1000()
 
 RETURN ( nil )
 

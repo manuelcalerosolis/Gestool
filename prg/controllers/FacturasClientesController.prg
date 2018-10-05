@@ -12,11 +12,10 @@ FUNCTION FacturasClientesController1000()
       
       FacturasClientesController()
 
-      msgmemory()
 
       oController          := FacturasClientesController():New()
 
-      // oController:ActivateNavigatorView()
+      oController:ActivateNavigatorView()
 
       // MsgWait( "Please, " + str( n ), "This is a test", 5 )
 
@@ -183,6 +182,8 @@ METHOD End() CLASS FacturasClientesController
 
    ::Super:End()
 
+   msgmemory()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -329,7 +330,7 @@ RETURN ( nLineas > 0 )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS FacturasClientesValidator FROM SQLBaseValidator
+CLASS FacturasClientesValidator FROM SQLBaseValidator 
 
    METHOD getValidators()
  

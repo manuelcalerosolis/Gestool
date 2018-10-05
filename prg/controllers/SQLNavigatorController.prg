@@ -5,7 +5,7 @@
 
 CLASS SQLNavigatorGestoolController FROM SQLNavigatorController
 
-   METHOD getConfiguracionVistasController()    INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
+   METHOD getConfiguracionVistasController()          INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS
 
@@ -64,8 +64,6 @@ CLASS SQLNavigatorController FROM SQLBrowseController
    METHOD closeAllWindows()                           INLINE ( if( !empty( oWnd() ), ( SysRefresh(), oWnd():CloseAll(), SysRefresh() ), ) )
 
    METHOD saveState()
-
-   METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
 
    METHOD addFastKey( uKey, bAction )
 
@@ -177,7 +175,7 @@ METHOD buildRowSetSentence( cType )
 
    end if 
 
-   ::oRowSet:Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
+   ::getRowSet():Build( ::getModel():getSelectSentence( cColumnOrder, cColumnOrientation ) )
 
 RETURN ( nil )
 
@@ -196,7 +194,7 @@ METHOD activateNavigatorView()
 
    ::buildRowSetSentenceNavigator()   
 
-   if !empty( ::oRowSet:get() )
+   if !empty( ::getRowSet():get() )
 
       ::getNavigatorView():Activate()
 
@@ -233,7 +231,7 @@ METHOD activateSelectorView( lCenter )
 
    ::buildRowSetSentence()   
 
-   if empty( ::oRowSet:get() )
+   if empty( ::getRowSet():get() )
       RETURN ( nil )
    end if
 
@@ -276,7 +274,7 @@ METHOD activateDialogView()
 
    ::buildRowSetSentence()   
 
-   if empty( ::oRowSet:get() )
+   if empty( ::getRowSet():get() )
       RETURN ( .f. )
    end if
 
@@ -304,34 +302,6 @@ METHOD onKeyChar( nKey )
 RETURN ( heval( ::hFastKey, {|k,v| if( k == nKey, eval( v ), ) } ) ) 
    
 //----------------------------------------------------------------------------//
-
-METHOD setFastReport( oFastReport, cTitle, cSentence, cColumns )    
-     
-   local oRowSet      
-     
-   if empty( oFastReport )     
-      RETURN ( Self )    
-   end if    
-    
-   DEFAULT cColumns  := ::getModel():getSerializeColumns()       
-    
-   oRowSet           := ::getModel():newRowSet( cSentence )      
-    
-   if empty( oRowSet )      
-      RETURN ( Self )    
-   end if       
-    
-   oFastReport:setUserDataSet(   cTitle,;     
-                                 cColumns,;      
-                                 {|| oRowSet:gotop()  },;    
-                                 {|| oRowSet:skip(1)  },;    
-                                 {|| oRowSet:skip(-1) },;    
-                                 {|| oRowSet:eof()    },;
-                                 {|nField| msgalert( nField ), oRowSet:fieldGet( nField ) } )
-    
-RETURN ( nil )    
-    
-//---------------------------------------------------------------------------//
 
 METHOD appendFilter()                                
 

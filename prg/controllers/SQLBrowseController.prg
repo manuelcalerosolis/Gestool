@@ -136,7 +136,7 @@ RETURN ( Self )
 METHOD buildRowSetSentence() 
 
    if !empty( ::oModel )
-      ::oRowSet:buildPad( ::oModel:getSelectSentence() )
+      ::getRowSet():buildPad( ::oModel:getSelectSentence() )
    end if 
 
 RETURN ( nil )

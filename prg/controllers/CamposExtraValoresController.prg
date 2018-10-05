@@ -28,8 +28,7 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
 
    METHOD End()
 
-   METHOD setEntidad( cEntidad ) ;
-                                       INLINE ( ::cEntidad := cEntidad )
+   METHOD setEntidad( cEntidad )       INLINE ( ::cEntidad := cEntidad )
 
    METHOD setUuidEntidad( uuidEntidad ) ;
                                        INLINE ( ::uuidEntidad := uuidEntidad )
@@ -64,7 +63,7 @@ METHOD New( oController ) CLASS CamposExtraValoresController
 
    ::cTitle                            := "Campos extra valores"
 
-   ::setName( "campos_extra_valores" )
+   ::cName                             := "campos_extra_valores" 
 
    ::lTransactional                    := .t.
 
