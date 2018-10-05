@@ -121,9 +121,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oDireccionTipoDocumentoController
 
-<<<<<<< HEAD
+
    DATA oMailController
-=======
+
    DATA oConfiguracionesController
 
    DATA oImprimirSeriesController
@@ -135,7 +135,7 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oAjustableController
 
    DATA oDelegacionesController 
->>>>>>> a92d6b786e9df73c617a9eb725e7b754687fd765
+
 
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
@@ -562,17 +562,16 @@ METHOD End() CLASS SQLApplicationController
       ::oConfiguracionesController:End()
    end if 
 
-<<<<<<< HEAD
    if !empty( ::oMailController )   
       ::oMailController:End()
    end if 
 
    ::Super:End()
-=======
+
    if !empty( ::oImprimirSeriesController )
       ::oImprimirSeriesController:End()
    end if 
->>>>>>> a92d6b786e9df73c617a9eb725e7b754687fd765
+
 
    if !empty( ::oUsuariosController )
       ::oUsuariosController:End()
