@@ -65,7 +65,7 @@ METHOD End() CLASS ArticulosPreciosController
       ::oDialogView:End()
    end if 
 
-   if !empty(::oBrowseView)
+   if !empty( ::oBrowseView )
       ::oBrowseView:End()
    end if 
 

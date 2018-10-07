@@ -237,9 +237,9 @@ METHOD End() CLASS TagsView
 
    ::Super:end()
 
-   if !empty( ::oBtnTags )
-      ::oBtnTags:End()
-   end if 
+   // if !empty( ::oBtnTags )
+   //    ::oBtnTags:End()
+   // end if 
 
    if !empty( ::oTagsEver )
       ::oTagsEver:End()

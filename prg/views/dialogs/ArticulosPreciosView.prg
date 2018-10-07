@@ -79,7 +79,7 @@ METHOD Activate() CLASS ArticulosPreciosView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   ::oBitmap:end()
+   ::oDialog:Destroy()
 
 RETURN ( ::oDialog:nResult )
 

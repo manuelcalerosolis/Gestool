@@ -219,7 +219,7 @@ METHOD New( nTop, nLeft, nWidth, nHeight, cResName1, cResName2,;
 
    ::LoadBmp( cResName1, cResName2, cBmpFile1, cBmpFile2, cResName3, cBmpFile3 )
 
-return Self
+RETURN Self
 
 //----------------------------------------------------------------------------//
 
@@ -245,59 +245,59 @@ METHOD NewBar( cResName1, cResName2, cBmpFile1, cBmpFile2,;
             oGroup         := nil,;
             lSelect        := .f.
 
-   ::nStyle       = nOR( WS_CHILD, WS_VISIBLE )
-   ::nId          = ::GetNewId()
-   ::oWnd         = oWnd
-   ::bAction      = bAction
-   ::bMenu        = bMenu
-   ::cMsg         = cMsg
-   ::nTop         = 0
-   ::nLeft        = oWnd:nLeftMargin
-   ::nBottom      = oWnd:nCtlHeight
-   ::nRight       = oWnd:nWidth - oWnd:nLeftMargin - oWnd:nRightMargin - 2
-   ::lCaptured    = .f.
-   ::lWorking     = .f.
-   ::lDrag        = .f.
-   ::lBeginGrp    = lBeginGrp
-   ::bWhen        = bWhen
-   ::cToolTip     = cToolTip
-   ::bDropOver    = bDrop
-   ::cResName1    = cResName1
-   ::cResName2    = cResName2
-   ::cBmpFile1    = cBmpFile1
-   ::cBmpFile2    = cBmpFile2
-   ::bAction      = bAction
-   ::oFont        = oFont
-   ::oFontOver    = oFontOver
-   ::lBorder      = lBorder
-   ::lActive      = lOpened
+   ::nStyle                := nOR( WS_CHILD, WS_VISIBLE )
+   ::nId                   := ::GetNewId()
+   ::oWnd                  := oWnd
+   ::bAction               := bAction
+   ::bMenu                 := bMenu
+   ::cMsg                  := cMsg
+   ::nTop                  := 0
+   ::nLeft                 := oWnd:nLeftMargin
+   ::nBottom               := oWnd:nCtlHeight
+   ::nRight                := oWnd:nWidth - oWnd:nLeftMargin - oWnd:nRightMargin - 2
+   ::lCaptured             := .f.
+   ::lWorking              := .f.
+   ::lDrag                 := .f.
+   ::lBeginGrp             := lBeginGrp
+   ::bWhen                 := bWhen
+   ::cToolTip              := cToolTip
+   ::bDropOver             := bDrop
+   ::cResName1             := cResName1
+   ::cResName2             := cResName2
+   ::cBmpFile1             := cBmpFile1
+   ::cBmpFile2             := cBmpFile2
+   ::bAction               := bAction
+   ::oFont                 := oFont
+   ::oFontOver             := oFontOver
+   ::lBorder               := lBorder
+   ::lActive               := lOpened
 
-   if ValType( bSetGet ) == "C"
-      ::cCaption  = bSetGet
-   elseif ValType( bSetGet ) == "B" .and. ::lWhen()
-      ::cCaption  = cValToChar( Eval( bSetGet ) )
+   if hb_ischar( bSetGet ) 
+      ::cCaption           := bSetGet
+   elseif hb_isblock( bSetGet ) .and. ::lWhen()
+      ::cCaption           := cValToChar( Eval( bSetGet ) )
 	else
-      ::cCaption  = ""
+      ::cCaption           := ""
 	endif
 
-   ::bSetGet      = bSetGet
-   ::hBmpPal1     = 0
-   ::hBmpPal2     = 0
-   ::nPad         = Max( aScan( {"LEFT", "CENTER", "RIGHT" }, Upper( cPad ) ), 1 )
+   ::bSetGet               := bSetGet
+   ::hBmpPal1              := 0
+   ::hBmpPal2              := 0
+   ::nPad                  := Max( aScan( {"LEFT", "CENTER", "RIGHT" }, Upper( cPad ) ), 1 )
 
-   ::nClrText     = nClrText
-   ::nClrTextOver = nClrTextOver
-   ::nClrPane     = nClrPane
-   ::nClrPaneOver = nClrPaneOver
-   ::nClrBTop     = nClrText
-   ::nClrBBot     = nClrText
-   ::nClrBTopOver = nClrText
-   ::nClrBBotOver = nClrText
+   ::nClrText              := nClrText
+   ::nClrTextOver          := nClrTextOver
+   ::nClrPane              := nClrPane
+   ::nClrPaneOver          := nClrPaneOver
+   ::nClrBTop              := nClrText
+   ::nClrBBot              := nClrText
+   ::nClrBTopOver          := nClrText
+   ::nClrBBotOver          := nClrText
 
-   ::oCursor      = TCursor():New( , "HAND" )
-   ::oBrush       = TBrush():New( "NULL" )
+   ::oCursor               := TCursor():New( , "HAND" )
+   ::oBrush                := TBrush():New( "NULL" )
 
-   ::lSelect      = lSelect
+   ::lSelect               := lSelect
 
    ::Register( nOR( CS_VREDRAW, CS_HREDRAW ) )
 
@@ -305,16 +305,14 @@ METHOD NewBar( cResName1, cResName2, cBmpFile1, cBmpFile2,;
 
    oWnd:Add( Self )
 
-   if oGroup != nil
+   if !empty( oGroup )
       oGroup:AddControl( Self )
-      ::lInGroup  := .t.
+      ::lInGroup           := .t.
    end if
-
-   //::SetColor( ::nClrText, ::nClrPane )
 
    ::LoadBmp( cResName1, cResName2, cBmpFile1, cBmpFile2, cResName3, cBmpFile3 )
 
-return Self
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -337,46 +335,46 @@ METHOD ReDefine(  nId, cResName1, cResName2, cBmpFile1, cBmpFile2,;
             nClrPaneOver   := if( oWnd != nil, oWnd:nClrPane, GetSysColor( COLOR_BTNFACE ) ),;
             oBrush         := TBrush():New( "NULL" )
 
-   ::nId          = nId
-   ::oWnd         = oWnd
-   ::hWnd         = 0
-   ::bAction      = bAction
-   ::bMenu        = bMenu
-   ::cMsg         = cMsg
-   ::lPressed     = .f.
-   ::lCaptured    = .f.
-   ::lWorking     = .f.
-   ::lDrag        = .f.
-   ::lTransparent = .f.
-   ::oFont        = oFont
-   ::oFontOver    = oFontOver
-   ::nPad         = Max( aScan( {"LEFT", "CENTER", "RIGHT" }, Upper( cPad ) ), 1 )
-   ::nClrText     = nClrText
-   ::nClrTextOver = nClrTextOver
-   ::nClrPane     = nClrPane
-   ::nClrPaneOver = nClrPaneOver
-   ::bWhen        = bWhen
-   ::lUpdate      = lUpdate
-   ::cToolTip     = cToolTip
-   ::lBorder      = lBorder
-   ::lBtnDown     = .f.
-   ::oCursor      = TCursor():New( , "HAND" )
-   ::nClrBTop     = nClrText
-   ::nClrBBot     = nClrText
-   ::nClrBTopOver = nClrText
-   ::nClrBBotOver = nClrText
+   ::nId          := nId
+   ::oWnd         := oWnd
+   ::hWnd         := 0
+   ::bAction      := bAction
+   ::bMenu        := bMenu
+   ::cMsg         := cMsg
+   ::lPressed     := .f.
+   ::lCaptured    := .f.
+   ::lWorking     := .f.
+   ::lDrag        := .f.
+   ::lTransparent := .f.
+   ::oFont        := oFont
+   ::oFontOver    := oFontOver
+   ::nPad         := Max( aScan( {"LEFT", "CENTER", "RIGHT" }, Upper( cPad ) ), 1 )
+   ::nClrText     := nClrText
+   ::nClrTextOver := nClrTextOver
+   ::nClrPane     := nClrPane
+   ::nClrPaneOver := nClrPaneOver
+   ::bWhen        := bWhen
+   ::lUpdate      := lUpdate
+   ::cToolTip     := cToolTip
+   ::lBorder      := lBorder
+   ::lBtnDown     := .f.
+   ::oCursor      := TCursor():New( , "HAND" )
+   ::nClrBTop     := nClrText
+   ::nClrBBot     := nClrText
+   ::nClrBTopOver := nClrText
+   ::nClrBBotOver := nClrText
 
    if ValType( bSetGet ) == "C"
-      ::cCaption  = bSetGet
+      ::cCaption  := bSetGet
    elseif ValType( bSetGet ) == "B" .and. ::lWhen()
-      ::cCaption  = cValToChar( Eval( bSetGet ) )
+      ::cCaption  := cValToChar( Eval( bSetGet ) )
 	else
-      ::cCaption  = ""
+      ::cCaption  := ""
 	endif
 
-   ::bSetGet      = bSetGet
-   ::hBmpPal1     = 0
-   ::hBmpPal2     = 0
+   ::bSetGet      := bSetGet
+   ::hBmpPal1     := 0
+   ::hBmpPal2     := 0
 
    if ::oFont != nil
       ::SetFont( ::oFont )
@@ -390,13 +388,13 @@ METHOD ReDefine(  nId, cResName1, cResName2, cBmpFile1, cBmpFile2,;
 
    oWnd:DefControl( Self )
 
-   if ::oBrush != nil
+   if !empty( ::oBrush )
       ::oBrush:End()
    endif
 
-   ::oBrush       = oBrush
+   ::oBrush       := oBrush
 
-return Self
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -427,13 +425,13 @@ METHOD Click( lMenu ) CLASS TWebBtn
       ::lProcessing     := .f.
    endif
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
 METHOD GotFocus( hCtlLost ) CLASS TWebBtn
 
-return ::Super:GotFocus()
+RETURN ::Super:GotFocus()
 
 //----------------------------------------------------------------------------//
 
@@ -456,7 +454,7 @@ METHOD Initiate( hDlg ) CLASS TWebBtn
    ::nBottom      := aRect[3]
    ::nRight       := aRect[4]
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -465,10 +463,10 @@ METHOD KeyChar( nKey, nFlags ) CLASS TWebBtn
    if nKey == VK_RETURN .or. nKey == VK_SPACE
       ::Click()
    else
-      return ::Super:KeyChar( nKey, nFlags )
+      RETURN ::Super:KeyChar( nKey, nFlags )
    endif
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -481,14 +479,14 @@ METHOD LostFocus() CLASS TWebBtn
 
    ::Refresh()
 
-Return ::Super:LostFocus()
+RETURN ::Super:LostFocus()
 
 //----------------------------------------------------------------------------//
 
 METHOD LButtonDown( nRow, nCol ) CLASS TWebBtn
 
    if ::oDragCursor != nil
-      return ::Super:LButtonDown( nRow, nCol )
+      RETURN ::Super:LButtonDown( nRow, nCol )
    endif
 
    ::lWorking = .t.
@@ -511,7 +509,7 @@ METHOD LButtonDown( nRow, nCol ) CLASS TWebBtn
       ::lBtnUp = .f.
    endif
 
-return 0
+RETURN 0
 
 //----------------------------------------------------------------------------//
 
@@ -520,7 +518,7 @@ METHOD LButtonUp( nRow, nCol )  CLASS TWebBtn
    local lClick := IsOverWnd( ::hWnd, nRow, nCol )
 
    if ::oDragCursor != nil
-      return ::Super:LButtonUp( nRow, nCol )
+      RETURN ::Super:LButtonUp( nRow, nCol )
    endif
 
    ::lBtnUp  = .t.
@@ -535,19 +533,19 @@ METHOD LButtonUp( nRow, nCol )  CLASS TWebBtn
       endif
    endif
 
-return 0
+RETURN 0
 
 //----------------------------------------------------------------------------//
 
 METHOD Destroy() CLASS TWebBtn
 
-   if !Empty( ::oFont )
-      ::oFont:end()
-   end if 
+   // if !Empty( ::oFont )
+   //    ::oFont:end()
+   // end if 
 
-   if !Empty( ::oFontOver )
-      ::oFontOver:end()
-   end if 
+   // if !Empty( ::oFontOver )
+   //    ::oFontOver:end()
+   // end if 
 
    if ::oCursor != nil
       ::oCursor:end()
@@ -563,7 +561,7 @@ METHOD Destroy() CLASS TWebBtn
 
    ::Super:Destroy()
 
-return 0
+RETURN ( 0 )
 
 //----------------------------------------------------------------------------//
 
@@ -585,7 +583,7 @@ METHOD FreeBitmaps() CLASS TWebBtn
    ::hBmpPal2 = 0
    ::hBmpPal3 = 0
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -595,7 +593,7 @@ METHOD HideBitmaps() CLASS TWebBtn
    ::hBmpPal2 = 0
    ::hBmpPal3 = 0
 
-return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -724,7 +722,7 @@ METHOD LoadBmp( cResName1, cResName2, cBmpFile1, cBmpFile2, cResName3, cBmpFile3
 
    end if
 
-return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -762,7 +760,7 @@ METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TWebBtn
 
    ::oWnd:SetMsg( ::cMsg )
 
-return 0
+RETURN 0
 
 //----------------------------------------------------------------------------//
 
@@ -777,7 +775,7 @@ METHOD Toggle()
    ::oWnd:Resize()
    ::oWnd:Refresh()
 
-return ( Self )
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -842,7 +840,7 @@ METHOD Paint()
             ::lTransparent,;                                // 31
             ::lSingleLine )                                 // 32
 
-return nil
+RETURN nil
 
 //----------------------------------------------------------------------------//
 
@@ -853,7 +851,7 @@ METHOD cText( uVal )
       ::SetText( uVal )
    endif
 
-return ( GetWindowText( ::hWnd ) )
+RETURN ( GetWindowText( ::hWnd ) )
 
 //----------------------------------------------------------------------------//
 

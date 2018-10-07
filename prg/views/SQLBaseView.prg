@@ -114,8 +114,6 @@ METHOD End()
 
    ::oFontBold                                        := nil
 
-   msgalert( "end SQLBaseView", ::className() )
-
 RETURN ( hb_gcall( .t. ) )
 
 //---------------------------------------------------------------------------//

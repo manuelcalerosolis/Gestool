@@ -14,7 +14,7 @@ CLASS SQLBrowseableView FROM SQLBaseView
 
    DATA oMenuTreeView
 
-   METHOD New( oController )
+   METHOD New( oController ) CONSTRUCTOR
    METHOD End()
 
    // Facades -----------------------------------------------------------------
@@ -24,7 +24,7 @@ CLASS SQLBrowseableView FROM SQLBaseView
 
    // Models-------------------------------------------------------------------
 
-   METHOD setModel( oModel )                 INLINE ( ::oModel := oModel  )
+   METHOD setModel( oModel )                 INLINE ( ::oModel := oModel )
    METHOD getModel()                         INLINE ( iif( empty( ::oModel ), ::oController:getModel(), ::oModel ) )
 
    METHOD getModelColumns()                  INLINE ( ::getModel():hColumns )
@@ -77,8 +77,6 @@ METHOD End()
    if !empty( ::oMenuTreeView )
       ::oMenuTreeView:end()
    end if 
-
-   ::oMenuTreeView            := nil
 
    ::Super:End()
 

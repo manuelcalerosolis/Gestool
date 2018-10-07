@@ -230,10 +230,6 @@ METHOD Activate() CLASS FacturasClientesView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-   aeval( ::oExplorerBar:aPanels, {|oPanel| oPanel:End() } )
-
-   ::oBitmap:end()
-
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//

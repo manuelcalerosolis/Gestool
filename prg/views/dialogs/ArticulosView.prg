@@ -220,7 +220,7 @@ METHOD Activate() CLASS ArticulosView
 
    ::oController:getArticulosPreciosController():saveState()
 
-   ::oBitmap:end()
+   // ::oDialog:Destroy()
 
 RETURN ( ::oDialog:nResult )
 

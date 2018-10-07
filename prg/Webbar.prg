@@ -76,25 +76,25 @@ METHOD New( nTop, nLeft, nWidth, nHeight, nCtlHeight, cBitmap,;
             oBrush      := TBrush():New( , Rgb( 255,255,255 ) ),;
             oFont       := TFont():New( "Ms Sans Serif", 6, 12, .f. )
 
-   ::nStyle       = nStyle
-   ::nId          = ::GetNewId()
-   ::oWnd         = oWnd
-   ::nTop         = If( lPixel, nTop, nTop * WIN_CHARPIX_H )
-   ::nLeft        = If( lPixel, nLeft, nLeft * WIN_CHARPIX_W )
-   ::nBottom      = ::nTop + nHeight - 1
-   ::nRight       = ::nLeft + nWidth - 1
-   ::nCtlHeight   = nCtlHeight
-   ::lCaptured    = .f.
-   ::cBitmap      = cBitmap
-   ::cResBmp      = cResBmp
-   ::hBitmap      = 0
-   ::nClrPane     = nClrBack
-   ::nClrText     = nClrFore
-   ::bRClicked    = bRClick
-   ::nHelpID      = nHelpID
-   ::nClrLine     = Rgb( 51, 51, 255 )
-   ::oBrush       = oBrush
-   ::nOption      = 1
+   ::nStyle             := nStyle
+   ::nId                := ::GetNewId()
+   ::oWnd               := oWnd
+   ::nTop               := If( lPixel, nTop, nTop * WIN_CHARPIX_H )
+   ::nLeft              := If( lPixel, nLeft, nLeft * WIN_CHARPIX_W )
+   ::nBottom            := ::nTop + nHeight - 1
+   ::nRight             := ::nLeft + nWidth - 1
+   ::nCtlHeight         := nCtlHeight
+   ::lCaptured          := .f.
+   ::cBitmap            := cBitmap
+   ::cResBmp            := cResBmp
+   ::hBitmap            := 0
+   ::nClrPane           := nClrBack
+   ::nClrText           := nClrFore
+   ::bRClicked          := bRClick
+   ::nHelpID            := nHelpID
+   ::nClrLine           := Rgb( 51, 51, 255 )
+   ::oBrush             := oBrush
+   ::nOption            := 1
    
    ::setFont( oFont )
 
@@ -131,20 +131,20 @@ METHOD Redefine(  nId, nCtlHeight, cBitmap, cResBmp, nClrFore, nClrBack, nStyle,
             oBrush      := TBrush():New( , nClrBack ),;
             oFont       := TFont():New( "Ms Sans Serif", 6, 12, .f. )
 
-   ::nStyle       = nStyle
-   ::nId          = nId
-   ::oWnd         = oWnd
-   ::nCtlHeight   = nCtlHeight
-   ::lCaptured    = .f.
-   ::cBitmap      = cBitmap
-   ::cResBmp      = cResBmp
-   ::hBitmap      = 0
-   ::nClrPane     = nClrBack
-   ::nClrText     = nClrFore
-   ::bRClicked    = bRClick
-   ::nHelpID      = nHelpID
-   ::nClrLine     = Rgb( 255, 154, 49 )
-   ::oBrush       = oBrush
+   ::nStyle             := nStyle
+   ::nId                := nId
+   ::oWnd               := oWnd
+   ::nCtlHeight         := nCtlHeight
+   ::lCaptured          := .f.
+   ::cBitmap            := cBitmap
+   ::cResBmp            := cResBmp
+   ::hBitmap            := 0
+   ::nClrPane           := nClrBack
+   ::nClrText           := nClrFore
+   ::bRClicked          := bRClick
+   ::nHelpID            := nHelpID
+   ::nClrLine           := Rgb( 255, 154, 49 )
+   ::oBrush             := oBrush
 
    ::setFont( oFont )
 
@@ -207,13 +207,13 @@ return nil
 
 METHOD Destroy() CLASS TWebBar
 
-   if ::oBrush != nil
-      ::oBrush:End()
-   end if
+   // if ::oBrush != nil
+   //    ::oBrush:End()
+   // end if
 
-   if ::oFont != nil
-      ::oFont:End()
-   end if
+   // if ::oFont != nil
+   //    ::oFont:End()
+   // end if
 
    PalBmpFree( ::hBitmap, ::hPalette )
 

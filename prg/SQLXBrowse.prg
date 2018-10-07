@@ -105,17 +105,17 @@ METHOD setRowSet( oRowSet ) CLASS SQLXBrowse
    ::nRowHeight      := 20
 
    ::nDataType       := DATATYPE_USER
-   ::bGoTop          := {|| oRowSet:Get():GoTop() }
-   ::bGoBottom       := {|| oRowSet:Get():GoBottom() }
-   ::bSkip           := {| n | oRowSet:Get():Skipper( n ) }
-   ::bBof            := {|| oRowSet:Get():Bof() }
-   ::bEof            := {|| oRowSet:Get():Eof() }
-   ::bKeyCount       := {|| oRowSet:Get():RecCount() }
-   ::bBookMark       := {| n | if( n == nil, oRowSet:Get():RecNo(), oRowSet:Get():GoTo( n ) ) }
-   ::bKeyNo          := {| n | if( n == nil, oRowSet:Get():RecNo(), oRowSet:Get():GoTo( n ) ) }
+   ::bGoTop          := {|| if( !empty( oRowSet ), oRowSet:Get():GoTop(), ) }
+   ::bGoBottom       := {|| if( !empty( oRowSet ), oRowSet:Get():GoBottom(), ) }
+   ::bSkip           := {| n | if( !empty( oRowSet ), oRowSet:Get():Skipper( n ), ) }
+   ::bBof            := {|| if( !empty( oRowSet ), oRowSet:Get():Bof(), ) }
+   ::bEof            := {|| if( !empty( oRowSet ), oRowSet:Get():Eof(), ) }
+   ::bKeyCount       := {|| if( !empty( oRowSet ), oRowSet:Get():RecCount(), ) }
+   ::bBookMark       := {| n | if( !empty( oRowSet ), if( n == nil, oRowSet:Get():RecNo(), oRowSet:Get():GoTo( n ) ), ) }
+   ::bKeyNo          := {| n | if( !empty( oRowSet ), if( n == nil, oRowSet:Get():RecNo(), oRowSet:Get():GoTo( n ) ), ) }
 
    if ::oVScroll() != nil
-      ::oVscroll():SetRange( 1, oRowSet:Get():RecCount() )
+      ::oVscroll():SetRange( 1, if( !empty( oRowSet ), oRowSet:Get():RecCount(), 0 ) )
    endif
 
    ::lFastEdit       := .t.

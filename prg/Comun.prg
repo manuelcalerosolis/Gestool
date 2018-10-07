@@ -136,14 +136,14 @@ FUNCTION CreateMainWindow( oIconApp )
 
    DEFINE WINDOW oWnd ;
       FROM                    0, 0 TO 26, 82;
-      TITLE                   __GSTROTOR__ + Space( 1 ) + __GSTVERSION__; 
+      TITLE                   __GSTROTOR__ + space( 1 ) + __GSTVERSION__; 
       MDI ;
       COLORS                  Rgb( 0, 0, 0 ), Rgb( 231, 234, 238 ) ;
       ICON                    oIconApp ;
       MENU                    ( BuildMenu() )
 
-   oWndBar                    := CreateAcceso( oWnd )
-   oWndBar:CreateButtonBar( oWnd )
+   // oWndBar                    := CreateAcceso( oWnd )
+   // oWndBar:CreateButtonBar( oWnd )
 
    // Set the bar messages-----------------------------------------------------
 
@@ -251,6 +251,18 @@ FUNCTION BuildMenu()
    local oMenu
 
    MENU oMenu
+
+      MENUITEM    "&1. Principal"
+
+         MENU
+
+            MENUITEM    "&1. Facturas de clientes" ;
+               MESSAGE  "Facturas de clientes" ;
+               RESOURCE "GC_FORM_PLUS2_16" ;
+               ACTION   ( FacturasClientesController():New():ActivateNavigatorView() )
+
+         ENDMENU
+
    ENDMENU
 
 RETURN oMenu
@@ -7460,11 +7472,19 @@ RETURN ( hScafolding )
 
 FUNCTION writeResources()
 
+   freeResources()
+
+   hb_gcall( .t. )
+
+   __mvClear()
+
    if file( "checkres.txt" )
       ferase( "checkres.txt" )
    endif
 
    checkRes()
+
+   winExec( "notepad checkres.txt" )
 
 RETURN ( nil )
 

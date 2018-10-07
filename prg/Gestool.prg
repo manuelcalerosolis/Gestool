@@ -67,15 +67,7 @@ RETURN
 
 EXIT PROCEDURE ExitAplication()
 
-   freeResources()
-
-   hb_gcall( .t. )
-
-   __mvClear()
-
    writeResources()
-
-   winExec( "notepad checkres.txt" )
 
 RETURN
 

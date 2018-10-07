@@ -24,18 +24,6 @@ RETURN ( TFont():New( GetSysFont(), 6, 12, .f. ) )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION oFontLittleTitleEnd()
-
-   if !empty( oFontLittleTitle )
-      oFontLittleTitle:end()
-   end if
-
-   oFontLittleTitle     := nil
-
-RETURN ( nil )
-
-//----------------------------------------------------------------------------//
-
 FUNCTION oFontBigTitle()
 
    // if empty( oFontBigTitle )
@@ -65,3 +53,16 @@ FUNCTION oFontBold()
 RETURN ( TFont():New( GetSysFont(), 0, -8, .f., .t. ) )
 
 //---------------------------------------------------------------------------//
+
+
+FUNCTION oFontLittleTitleEnd()
+
+   if !empty( oFontLittleTitle )
+      oFontLittleTitle:end()
+   end if
+
+   oFontLittleTitle     := nil
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//

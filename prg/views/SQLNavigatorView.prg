@@ -86,12 +86,6 @@ METHOD End() CLASS SQLNavigatorView
       ::oVerticalSplitter:End()
    end if 
 
-   ::oTopWebBar            := nil
-   
-   ::oHorizontalSplitter   := nil
-   
-   ::oVerticalSplitter     := nil
-
    ::Super():End()
 
 RETURN ( nil )

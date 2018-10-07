@@ -62,9 +62,7 @@ CLASS SQLBrowseView
 
    // Facades------------------------------------------------------------------
 
-   METHOD getController()                    INLINE ( ::oController:oController )
-
-   METHOD getController()              INLINE ( ::oController:getController() )
+   METHOD getController()                    INLINE ( ::oController:getController() )
 
    METHOD getBrowse()                        INLINE ( ::oBrowse )
 
@@ -228,12 +226,9 @@ METHOD End()
    end if 
 
    if !empty( ::oBrowse )
+      msgalert( ::oBrowse:oFont:nCount, "nCount en SQLBrowseView" )
       ::oBrowse:End()
    end if 
-
-   ::oEvents                                 := nil
-
-   ::oBrowse                                 := nil
 
 RETURN ( nil )
 
