@@ -376,6 +376,7 @@ EntidadesController.prg 													\
 DocumentosController.prg 													\
 IncidenciasController.prg 													\
 ArticulosTarifasController.prg 											\
+MailController.prg 															\
 ContactosController.prg 													\
 FormaPagoController.prg 													\
 ArticulosFamiliaController.prg 											\
@@ -1094,6 +1095,7 @@ EntidadesController.obj       											\
 DocumentosController.obj       											\
 IncidenciasController.obj      	 										\
 ArticulosTarifasController.obj       									\
+MailController.obj       													\
 ContactosController.obj       											\
 FormaPagoController.obj       											\
 ArticulosFamiliaController.obj       									\
@@ -1801,6 +1803,7 @@ $(OBJ)\EntidadesController.obj    										+
 $(OBJ)\DocumentosController.obj    										+
 $(OBJ)\IncidenciasController.obj    									+
 $(OBJ)\ArticulosTarifasController.obj    								+
+$(OBJ)\MailController.obj    												+
 $(OBJ)\ContactosController.obj    										+
 $(OBJ)\FormaPagoController.obj 	   									+
 $(OBJ)\ArticulosFamiliaController.obj    								+

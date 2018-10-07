@@ -361,8 +361,6 @@ RETURN ( .t. )
 
 FUNCTION Test()
 
-// FacturasClientesController1000()
-
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
