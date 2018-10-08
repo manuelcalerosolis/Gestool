@@ -18,6 +18,8 @@ CLASS TipoIvaController FROM SQLNavigatorController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := TipoIvaValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := TipoIvaRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLTiposIvaModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -37,15 +39,15 @@ METHOD New( oController ) CLASS TipoIvaController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLTiposIvaModel():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS TipoIvaController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -185,40 +187,40 @@ METHOD Activate() CLASS TipoIvaView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "porcentaje" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "porcentaje" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       PICTURE     "@E 999.99" ;
       SPINNER ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "recargo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "recargo" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       PICTURE     "@E 999.99" ;
       SPINNER ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_compra" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "cuenta_compra" ] ;
       ID          140 ;
       VALID       ( ::oController:validate( "cuenta_compra" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_venta" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "cuenta_venta" ] ;
       ID          150 ;
       VALID       ( ::oController:validate( "cuenta_venta" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
