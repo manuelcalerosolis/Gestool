@@ -142,6 +142,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    
    DATA oCajasController 
 
+   DATA oImpresorasController 
+
 
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
@@ -336,6 +338,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getCajasController();
                                     INLINE ( if( empty( ::oCajasController ), ::oCajasController := CajasController():New( self ), ), ::oCajasController )
+
+   METHOD getImpresorasController();
+                                    INLINE ( if( empty( ::oImpresorasController ), ::oImpresorasController := ImpresorasController():New( self ), ), ::oImpresorasController )
 
    METHOD End()
 
@@ -610,6 +615,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oCajasController )
       ::oCajasController:End()
+   end if
+
+   if !empty( ::oImpresorasController )
+      ::oImpresorasController:End()
    end if 
 
    ::Super:End()
