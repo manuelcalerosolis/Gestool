@@ -26,6 +26,8 @@ CLASS ArticulosTarifasController FROM SQLNavigatorController
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ArticulosTarifasView():New( self ), ), ::oDialogView )
 
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := ArticulosTarifasValidator():New( self ), ), ::oValidator )
+   
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosTarifasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -45,8 +47,6 @@ METHOD New( oController ) CLASS ArticulosTarifasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLArticulosTarifasModel():New( self )
-
    ::setEvents( { 'appended', 'duplicated' }, {|| ::endAppendedTarifa() } )
 
    ::setEvent( 'edited',            {|| ::endEditedTarifa() } )
@@ -59,7 +59,9 @@ RETURN ( Self )
 
 METHOD End() CLASS ArticulosTarifasController
 
-   ::oModel:End()
+   if !empty(::oModel)
+      ::oModel:End()
+   end if   
 
    if !empty(::oBrowseView)
       ::oBrowseView:End()
@@ -107,9 +109,9 @@ METHOD endAppendedTarifa() CLASS ArticulosTarifasController
    oWaitMessage         := TWaitMeter():New( "Actualizando tarifa", "Espere por favor..." )
    oWaitMessage:Run()
 
-   uuidTarifaActualizar := hget( ::oModel:hBuffer, "uuid" )
+   uuidTarifaActualizar := hget( ::getModel():hBuffer, "uuid" )
 
-   ::getArticulosPreciosController():oModel:insertPrecioWhereTarifa( uuidTarifaActualizar )
+   ::getArticulosPreciosController():getModel():insertPrecioWhereTarifa( uuidTarifaActualizar )
 
    oWaitMessage:End()
 
@@ -125,9 +127,9 @@ METHOD endEditedTarifa() CLASS ArticulosTarifasController
    oWaitMessage         := TWaitMeter():New( "Actualizando tarifa", "Espere por favor..." )
    oWaitMessage:Run()
 
-   uuidTarifaActualizar := hget( ::oModel:hBuffer, "uuid" )
+   uuidTarifaActualizar := hget( ::getModel():hBuffer, "uuid" )
 
-   ::getArticulosPreciosController():oModel:updatePrecioWhereTarifa( uuidTarifaActualizar )
+   ::getArticulosPreciosController():getModel():updatePrecioWhereTarifa( uuidTarifaActualizar )
 
    oWaitMessage:End()
 
@@ -143,9 +145,9 @@ METHOD updatedTarifa( uuidTarifaActualizar, lCosto ) CLASS ArticulosTarifasContr
 
    DEFAULT lCosto       := .f.
 
-   ::getArticulosPreciosController():oModel:insertUpdatePrecioWhereTarifa( uuidTarifaActualizar, lCosto )
+   ::getArticulosPreciosController():getModel():insertUpdatePrecioWhereTarifa( uuidTarifaActualizar, lCosto )
 
-   cTarifaParent        := ::oModel:getTarifaWhereTarifaParent( uuidTarifaActualizar )
+   cTarifaParent        := ::getModel():getTarifaWhereTarifaParent( uuidTarifaActualizar )
 
    if !empty( cTarifaParent ) .and. ( uuidTarifaActualizar != cTarifaParent )
 
@@ -307,21 +309,21 @@ METHOD Activate() CLASS ArticulosTarifasView
       PROMPT      "&General" ;
       DIALOGS     "TARIFA_GENERAL"    
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
-      WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getModel():isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) .and. ::setItemsComboTarifaPadre() ) ;
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE COMBOBOX ::oComboTarifaPadre ;
-      VAR         ::oController:oModel:hBuffer[ "parent_uuid" ] ;
+      VAR         ::oController:getModel():hBuffer[ "parent_uuid" ] ;
       ITEMS       ( ::aComboTarifaPadre ) ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -331,7 +333,7 @@ METHOD Activate() CLASS ArticulosTarifasView
    ::oComboTarifaPadre:bChange   := {|| ::changeComboTarifaPadre() }
 
    REDEFINE GET   ::oGetMargen ;
-      VAR         ::oController:oModel:hBuffer[ "margen" ] ;
+      VAR         ::oController:getModel():hBuffer[ "margen" ] ;
       ID          130 ;
       SPINNER ;
       PICTURE     "@E 9999.9999" ;
@@ -339,22 +341,22 @@ METHOD Activate() CLASS ArticulosTarifasView
       VALID       ( ::oController:validate( "margen" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "activa" ] ;
+   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "activa" ] ;
       ID          140 ;
       IDSAY       141 ;
-      WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getModel():isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET ::oController:oModel:hBuffer[ "valido_desde" ] ;
+   REDEFINE GET ::oController:getModel():hBuffer[ "valido_desde" ] ;
       ID          150 ;
       SPINNER ;
-      WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getModel():isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET ::oController:oModel:hBuffer[ "valido_hasta" ] ;
+   REDEFINE GET ::oController:getModel():hBuffer[ "valido_hasta" ] ;
       ID          160 ;
       SPINNER ;
-      WHEN        ( ::oController:oModel:isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
+      WHEN        ( ::oController:getModel():isNotBufferSystemRegister() .and. ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE BUTTON ;
@@ -429,7 +431,7 @@ METHOD getItemsComboTarifaPadre() CLASS ArticulosTarifasView
    if ::oController:isRowSetSystemRegister()
       aItems      := { __tarifa_base__ }
    else 
-      aItems      := ::oController:oModel:getNombres()
+      aItems      := ::oController:getModel():getNombres()
    end if 
 
    ains( aItems, 1, __tarifa_costo__, .t. )
@@ -441,7 +443,7 @@ RETURN ( aItems )
 METHOD setItemsComboTarifaPadre() CLASS ArticulosTarifasView
 
    local aItems
-   local cNombreTarifa  := ::oController:oModel:hBuffer[ "nombre" ]
+   local cNombreTarifa  := ::oController:getModel():hBuffer[ "nombre" ]
 
    if ::oController:isAppendOrDuplicateMode()
 
@@ -461,7 +463,7 @@ RETURN ( .t. )
 
 METHOD whenTarifaBase() CLASS ArticulosTarifasView
 
-RETURN ( alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) != alltrim( ::oController:oModel:hBuffer[ "parent_uuid" ] ) .and. ::oController:isNotZoomMode() )
+RETURN ( alltrim( ::oController:getModel():hBuffer[ "nombre" ] ) != alltrim( ::oController:getModel():hBuffer[ "parent_uuid" ] ) .and. ::oController:isNotZoomMode() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

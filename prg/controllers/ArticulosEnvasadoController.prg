@@ -9,9 +9,21 @@ CLASS ArticulosEnvasadoController FROM SQLNavigatorController
 
    DATA oGetSelector
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Contrucciones tardias-----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosEnvasadoBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosEnvasadoView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosEnvasadoValidator():New( self, ::oDialogView ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosEnvasadoRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosEnvasadoModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -31,39 +43,32 @@ METHOD New( oController ) CLASS ArticulosEnvasadoController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLArticulosEnvasadoModel():New( self )
-
-   ::oBrowseView                    := ArticulosEnvasadoBrowseView():New( self )
-
-   ::oDialogView                    := ArticulosEnvasadoView():New( self )
-
-   ::oValidator                     := ArticulosEnvasadoValidator():New( self, ::oDialogView )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, 'envases_articulos' )
-
-   ::oRepository                    := ArticulosEnvasadoRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS ArticulosEnvasadoController
+   
+   if !empty(::oModel)
+      ::oModel:End()
+   end if
 
-   ::oModel:End()
+   if !empty(::oBrowseView)
+      ::oBrowseView:End()
+   end if
+   
+   if !empty(::oDialogView)
+      ::oDialogView:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty(::oValidator)
+      ::oValidator:End()
+   end if
 
-   ::oDialogView:End()
-
-   ::oValidator:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::oRepository:End()
-
-   ::oGetSelector:End()
+   if !empty(::oRepository)
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -143,7 +148,7 @@ END CLASS
 METHOD Activating() CLASS ArticulosEnvasadoView
 
    if ::oController:isAppendOrDuplicateMode()
-      ::oController:oModel:hBuffer()
+      ::oController:getModel():hBuffer()
    end if 
 
 RETURN ( self )
@@ -168,14 +173,14 @@ METHOD Activate() CLASS ArticulosEnvasadoView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isAppendOrDuplicateMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;

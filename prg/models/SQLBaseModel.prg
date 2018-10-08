@@ -787,11 +787,15 @@ METHOD isBufferSystemRegister( hBuffer )
       RETURN ( nil )
    end if 
 
-   if ( hhaskey( hBuffer, "sistema" ) )
-      RETURN ( hget( hBuffer, "sistema" ) )
+   if !( hhaskey( hBuffer, "sistema" ) )
+      RETURN ( .f. )
    end if 
 
-RETURN ( .f. )
+   if hb_isnumeric( hget( hBuffer, "sistema" ) ) 
+      RETURN ( hget( hBuffer, "sistema" ) == 1 ) 
+   end if 
+
+RETURN ( hget( hBuffer, "sistema" ) )
 
 //----------------------------------------------------------------------------//
 
