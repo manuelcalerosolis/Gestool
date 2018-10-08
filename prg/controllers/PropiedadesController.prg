@@ -9,7 +9,7 @@ CLASS PropiedadesController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD isColorProperty()         INLINE ( iif( !empty(::oModel) .and. !empty(::oModel:hBuffer), ::oModel:hBuffer[ "color" ], .f. ) )
+   METHOD isColorProperty()         INLINE ( iif( !empty(::getModel()) .and. !empty(::getModel():hBuffer), ::getModel():hBuffer[ "color" ], .f. ) )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -20,6 +20,8 @@ CLASS PropiedadesController FROM SQLNavigatorController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := PropiedadesValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := PropiedadesRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLPropiedadesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -39,25 +41,28 @@ METHOD New( oController ) CLASS PropiedadesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLPropiedadesModel():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS PropiedadesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
    end if 
+
    if !empty( ::oDialogView )
       ::oDialogView:End()
    end if 
+
    if !empty( ::oValidator )
       ::oValidator:End()
-   end if 
+   end if
+
    if !empty( ::oRepository )
       ::oRepository:End()
    end if 
@@ -166,20 +171,20 @@ METHOD Activate() CLASS PropiedadesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "color" ] ;
+   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "color" ] ;
       ID          120 ;
       IDSAY       122 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;

@@ -18,6 +18,8 @@ CLASS ComentariosController FROM SQLNavigatorController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ComentariosValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ComentariosRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLComentariosModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -37,15 +39,16 @@ METHOD New( oController ) CLASS ComentariosController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLComentariosModel():New( self )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS ComentariosController
-
-   ::oModel:End()
+   
+    if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -140,7 +143,7 @@ END CLASS
 
 METHOD Activating()
 
-RETURN ( ::oController:getComentariosLineasController():BuildRowSet() )
+RETURN ( ::oController:getComentariosLineasController():BuildRowSetSentence() )
 
 //---------------------------------------------------------------------------//
 
@@ -165,14 +168,14 @@ METHOD Activate() CLASS ComentariosView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
