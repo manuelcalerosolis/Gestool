@@ -49,6 +49,8 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    METHOD seedEmpresa()
 
+   //Construcciones tardias----------------------------------------------------
+
    METHOD getRepository()                    INLINE ( iif( empty( ::oRepository ), ::oRepository := EmpresasRepository():New( self ), ), ::oRepository ) 
 
    METHOD getBrowseView()                    INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := EmpresasBrowseView():New( self ), ), ::oBrowseView )
@@ -449,7 +451,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartDialog() CLASS EmpresasView
 
-   ::oController:oDireccionesController:oDialogView:StartDialog()
+   ::oController:getDireccionesController():getDialogView():StartDialog()
 
    ::addLinksToExplorerBar()
 

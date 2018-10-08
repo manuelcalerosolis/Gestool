@@ -154,8 +154,6 @@ CLASS ArticulosFabricantesView FROM SQLBaseView
 
     DATA oSayCamposExtra
 
-   //METHOD getImagenesController()   INLINE ( ::oController:oImagenesController )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -209,7 +207,7 @@ METHOD Activate() CLASS ArticulosFabricantesView
       OF          ::oDialog
 
    REDEFINE GET   oGetImagen ;
-      VAR         ::getImagenesController():oModel:hBuffer[ "imagen" ] ;
+      VAR         ::getImagenesController():getModel():hBuffer[ "imagen" ] ;
       ID          130 ;
       BITMAP      "Folder" ;
       ON HELP     ( GetBmp( oGetImagen, oBmpImagen ) ) ;
@@ -219,7 +217,7 @@ METHOD Activate() CLASS ArticulosFabricantesView
 
    REDEFINE IMAGE oBmpImagen ;
       ID          140 ;
-      FILE        cFileBmpName( ::getImagenesController():oModel:hBuffer[ "imagen" ] ) ;
+      FILE        cFileBmpName( ::getImagenesController():getModel():hBuffer[ "imagen" ] ) ;
       OF          ::oDialog
 
       oBmpImagen:SetColor( , getsyscolor( 15 ) )

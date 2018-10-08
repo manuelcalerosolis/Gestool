@@ -5,14 +5,14 @@
 
 CLASS ImagenesController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD loadedBlankBuffer()
 
-   METHOD loadPrincipalBlankBuffer()   INLINE ( ::oModel:loadPrincipalBlankBuffer() )
-   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
+   METHOD loadPrincipalBlankBuffer()   INLINE ( ::getModel():loadPrincipalBlankBuffer() )
+   METHOD insertBuffer()               INLINE ( ::getModel():insertBuffer() )
 
    METHOD LoadedCurrentBuffer( uuidEntidad )
    METHOD UpdateBuffer( uuidEntidad )
@@ -29,6 +29,8 @@ CLASS ImagenesController FROM SQLNavigatorController
    METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ImagenesView():New( self ), ), ::oDialogView )
 
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ImagenesValidator():New( self ), ), ::oValidator )
+
+   METHOD getModel()                      INLINE( if( empty( ::oModel ), ::oModel := SQLImagenesModel():New( self ), ), ::oModel )
 
 
 END CLASS
@@ -49,22 +51,22 @@ METHOD New( oController ) CLASS ImagenesController
                                  "32" => "gc_photo_landscape_32",;
                                  "48" => "gc_photo_landscape_48" }
 
-   ::oModel                := SQLImagenesModel():New( self )
-
    // ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
    // ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
    // ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
 
-   // ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
-   // ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+   // ::getModel():setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
+   // ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS ImagenesController
-
-   ::oModel:End()
+   
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -86,10 +88,10 @@ RETURN ( Self )
 
 METHOD loadedBlankBuffer() CLASS ImagenesController
 
-   local uuid        := ::getController():getUuid() 
+   local uuid        := ::oController:getUuid() 
 
    if !empty( uuid )
-      hset( ::oModel:hBuffer, "parent_uuid", uuid )
+      hset( ::getModel():hBuffer, "parent_uuid", uuid )
    end if 
 
 RETURN ( Self )
@@ -101,15 +103,15 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS ImagenesController
    local idImagen     
 
    if empty( uuidEntidad )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
    end if 
 
-   idImagen          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idImagen          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idImagen )
-      idImagen       := ::oModel:insertPrincipalBlankBuffer()
+      idImagen       := ::getModel():insertPrincipalBlankBuffer()
    end if 
 
-   ::oModel:loadCurrentBuffer( idImagen )
+   ::getModel():loadCurrentBuffer( idImagen )
 
 RETURN ( self )
 
@@ -119,13 +121,13 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS ImagenesController
 
    local idImagen     
 
-   idImagen          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idImagen          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idImagen )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
       RETURN ( self )
    end if 
 
-   ::oModel:updateBuffer()
+   ::getModel():updateBuffer()
 
 RETURN ( self )
 
@@ -135,13 +137,13 @@ METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS ImagenesController
 
    local idImagen     
 
-   idImagen          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idImagen          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idImagen )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
       RETURN ( self )
    end if 
 
-   ::oModel:loadDuplicateBuffer( idImagen )
+   ::getModel():loadDuplicateBuffer( idImagen )
 
 RETURN ( self )
 
@@ -149,7 +151,7 @@ RETURN ( self )
 
 METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS ImagenesController
 
-   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+   hset( ::getModel():hBuffer, "parent_uuid", uuidEntidad )
 
 RETURN ( self )
 
@@ -161,7 +163,7 @@ METHOD deleteBuffer( aUuidEntidades ) CLASS ImagenesController
       RETURN ( self )
    end if
 
-   ::oModel:deleteWhereParentUuid( aUuidEntidades )
+   ::getModel():deleteWhereParentUuid( aUuidEntidades )
 
 RETURN ( self )
 
@@ -275,7 +277,7 @@ METHOD Activate() CLASS ImagenesView
       OF          ::oDialog
 
    REDEFINE GET   oGetImagen ;
-      VAR         ::oController:oModel:hBuffer[ "imagen" ] ;
+      VAR         ::oController:getModel():hBuffer[ "imagen" ] ;
       ID          100 ;
       BITMAP      "Folder" ;
       ON HELP     ( GetBmp( oGetImagen, oBmpImagen ) ) ;
@@ -286,7 +288,7 @@ METHOD Activate() CLASS ImagenesView
 
    REDEFINE IMAGE oBmpImagen ;
       ID          110 ;
-      FILE        cFileBmpName( ::oController:oModel:hBuffer[ "imagen" ] ) ;
+      FILE        cFileBmpName( ::oController:getModel():hBuffer[ "imagen" ] ) ;
       OF          ::oDialog
 
    oBmpImagen:setColor( , getsyscolor( 15 ) )

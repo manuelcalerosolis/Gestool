@@ -19,6 +19,8 @@ CLASS ArticulosFamiliasController FROM SQLNavigatorController
 
    METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosFamiliaRepository():New( self ), ), ::oRepository )
 
+   METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosFamiliaModel():New( self ), ), ::oModel )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -37,18 +39,16 @@ METHOD New( oController ) CLASS ArticulosFamiliasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLArticulosFamiliaModel():New( self )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getImagenesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',               {|| ::getImagenesController():insertBuffer() } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getImagenesController():loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::getImagenesController():insertBuffer() } )
+   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getImagenesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',                {|| ::getImagenesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getImagenesController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::getImagenesController():updateBuffer( ::getUuid() ) } )
-
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getImagenesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getImagenesController():loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getImagenesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getImagenesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::getImagenesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
+   ::getModel():setEvent( 'deletedSelection',             {|| ::getImagenesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -225,14 +225,14 @@ METHOD Activate() CLASS ArticulosFamiliaView
    ::oFolder:aDialogs[2]:bGotFocus  := {|| ::setTreeRelaciones() }
 
    REDEFINE GET   ::oGetCodigo ;
-      VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
+      VAR         ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
@@ -240,7 +240,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    // Tactil-------------------------------------------------------------------
 
-   REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "incluir_tpv_tactil" ] ;
+   REDEFINE CHECKBOX ::oController:getModel():hBuffer[ "incluir_tpv_tactil" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ON CHANGE   ( ::changeIncluirTPVTactil() ) ;
@@ -249,20 +249,20 @@ METHOD Activate() CLASS ArticulosFamiliaView
    // Color-------------------------------------------------------------------
 
    REDEFINE GET   ::oGetColorRGB ;
-      VAR         ::oController:oModel:hBuffer[ "color_rgb" ] ;
+      VAR         ::oController:getModel():hBuffer[ "color_rgb" ] ;
       ID          150 ;
       IDSAY       151 ;
       BITMAP      "gc_photographic_filters_16" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   ::oGetColorRGB:setColor( ::oController:oModel:hBuffer[ "color_rgb" ], ::oController:oModel:hBuffer[ "color_rgb" ] )
+   ::oGetColorRGB:setColor( ::oController:getModel():hBuffer[ "color_rgb" ], ::oController:getModel():hBuffer[ "color_rgb" ] )
    ::oGetColorRGB:bHelp := {|| ::changeColorRGB() }
 
    // Imagen-------------------------------------------------------------------
 
    REDEFINE GET   ::oGetImagen ;
-      VAR         ::oController:getImagenesController():oModel:hBuffer[ "imagen" ] ;
+      VAR         ::oController:getImagenesController():getModel():hBuffer[ "imagen" ] ;
       ID          160 ;
       IDSAY       161 ;
       BITMAP      "Folder" ;
@@ -274,7 +274,7 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    REDEFINE IMAGE ::oBmpImagen ;
       ID          1010 ;
-      FILE        cFileBmpName( ::oController:getImagenesController():oModel:hBuffer[ "imagen" ] ) ;
+      FILE        cFileBmpName( ::oController:getImagenesController():getModel():hBuffer[ "imagen" ] ) ;
       OF          ::oFolder:aDialogs[1]
 
    ::oBmpImagen:SetColor( , getsyscolor( 15 ) )
@@ -282,28 +282,28 @@ METHOD Activate() CLASS ArticulosFamiliaView
    ::oBmpImagen:bRClicked   := {|| ShowImage( ::oBmpImagen ) }
 
    REDEFINE GET   ::oGetPosicion ;
-      VAR         ::oController:oModel:hBuffer[ "posicion" ] ;
+      VAR         ::oController:getModel():hBuffer[ "posicion" ] ;
       ID          170 ;
       IDSAY       171 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
       MIN         1 ;
-      VALID       ( ::oController:oModel:hBuffer[ "posicion" ] >= 0 ) ;
+      VALID       ( ::oController:getModel():hBuffer[ "posicion" ] >= 0 ) ;
       OF          ::oFolder:aDialogs[1]
 
    // Comentarios -----------------------------------------------------------------
 
-   ::oController:getComentariosController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "comentario_uuid" ] ) )
+   ::oController:getComentariosController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "comentario_uuid" ] ) )
    ::oController:getComentariosController():getSelector():Build( { "idGet" => 180, "idText" => 181, "idLink" => 182, "oDialog" => ::oFolder:aDialogs[1] } )
 
    REDEFINE CHECKBOX ::oCheckBoxMostrarComentario ;
-      VAR         ::oController:oModel:hBuffer[ "mostrar_ventana_comentarios" ] ;
+      VAR         ::oController:getModel():hBuffer[ "mostrar_ventana_comentarios" ] ;
       ID          190 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE CHECKBOX ::oCheckBoxArticuloNoAcumulable ;
-      VAR         ::oController:oModel:hBuffer[ "articulo_no_acumulable" ] ;
+      VAR         ::oController:getModel():hBuffer[ "articulo_no_acumulable" ] ;
       ID          200 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
@@ -384,7 +384,7 @@ RETURN ( nil )
 
 METHOD changeIncluirTPVTactil()
 
-   if ::oController:oModel:hBuffer[ "incluir_tpv_tactil" ]
+   if ::oController:getModel():hBuffer[ "incluir_tpv_tactil" ]
       ::oGetColorRGB:Show()
       ::oGetImagen:Show()
       ::oBmpImagen:Show()
@@ -442,7 +442,7 @@ METHOD loadTreeRelaciones( oTree, familiaUuid )
    DEFAULT oTree        := ::oTreeRelaciones
    DEFAULT familiaUuid   := ''
 
-   oHashList            := ::oController:oModel:getRowSetWhereFamiliaUuid( familiaUuid )
+   oHashList            := ::oController:getModel():getRowSetWhereFamiliaUuid( familiaUuid )
 
    if hb_isnil( oHashList )
       RETURN ( self )
@@ -469,7 +469,7 @@ METHOD setTreeRelaciones( uuidParent, aItems )
 
    local oItem
 
-   DEFAULT uuidParent   := ::oController:oModel:hBuffer[ "familia_uuid" ]
+   DEFAULT uuidParent   := ::oController:getModel():hBuffer[ "familia_uuid" ]
    DEFAULT aItems       := ::oTreeRelaciones:aItems
    
    if empty( uuidParent )
@@ -578,7 +578,7 @@ METHOD sameFamily()
       RETURN ( .t. )
    end if 
 
-   if alltrim( ::oController:oModel:hBuffer[ "uuid" ] ) == alltrim( uuidSelected ) 
+   if alltrim( ::oController:getModel():hBuffer[ "uuid" ] ) == alltrim( uuidSelected ) 
       RETURN ( .f. )
    end if 
 
