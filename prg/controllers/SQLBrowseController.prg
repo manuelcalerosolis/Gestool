@@ -27,8 +27,6 @@ CLASS SQLBrowseController FROM SQLApplicationController
 
    METHOD End()
 
-   METHOD getConfiguracionVistasController()          INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasController():New( self ), ), ::oConfiguracionVistasController )
-
    METHOD Activate()
 
    METHOD onChangeCombo( oColumn )
@@ -85,7 +83,6 @@ CLASS SQLBrowseController FROM SQLApplicationController
 
    METHOD setView( oView )                            INLINE ( ::oView := oView )
    METHOD getView()                                   INLINE ( if( empty( ::oView ), ::oDialogView, ::oView ) )
-
 
 END CLASS
 

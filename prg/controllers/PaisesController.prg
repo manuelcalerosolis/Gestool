@@ -5,11 +5,12 @@
 
 CLASS PaisesGestoolController FROM PaisesController
 
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLPaisesGestoolModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLPaisesGestoolModel():New( self ), ), ::oModel )
 
-   METHOD getLevel()                            INLINE ( nil )
+   METHOD getLevel()                   INLINE ( nil )
 
-   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+   METHOD getConfiguracionVistasController();
+                                       INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS
 
@@ -23,9 +24,15 @@ CLASS PaisesController FROM SQLNavigatorController
 
    METHOD getSelectorPais( oGet )
 
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLPaisesModel():New( self ), ), ::oModel )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLPaisesModel():New( self ), ), ::oModel )
 
-   METHOD getLevel()                            INLINE ( iif( empty( ::oController ), ::nLevel := Auth():Level( ::cName ), ) ) 
+   METHOD getLevel()                   INLINE ( iif( empty( ::oController ), ::nLevel := Auth():Level( ::cName ), ) ) 
+
+   METHOD getBrowseView()              INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := PaisesBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()              INLINE ( iif( empty( ::oDialogView ), ::oDialogView := PaisesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()               INLINE ( iif( empty( ::oValidator ), ::oValidator  := PaisesValidator():New( self ), ), ::oValidator )
 
 END CLASS
 
@@ -45,14 +52,6 @@ METHOD New( oController ) CLASS PaisesController
 
    ::getLevel()
 
-   ::getModel()
-
-   ::oBrowseView              := PaisesBrowseView():New( self )
-
-   ::oDialogView              := PaisesView():New( self )
-
-   ::oValidator               := PaisesValidator():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -63,11 +62,17 @@ METHOD End() CLASS PaisesController
       ::oModel:End()
    end if 
 
-   ::oBrowseView:End()
+   if !empty(::oBrowseView)
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if !empty(::oDialogView)
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if !empty(::oValidator)
+      ::oValidator:End()
+   end if 
 
    ::Super:End()
 

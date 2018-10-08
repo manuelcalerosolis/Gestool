@@ -5,9 +5,10 @@
 
 CLASS ProvinciasGestoolController FROM ProvinciasController
 
-   METHOD getProvinciasModel()                  INLINE ( ::oModel := SQLProvinciasGestoolModel():New( self ) )
+   METHOD getModel()      INLINE ( ::oModel := SQLProvinciasGestoolModel():New( self ) )
    
-   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+   METHOD getConfiguracionVistasController() ;
+                                    INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS
 
@@ -19,7 +20,7 @@ CLASS ProvinciasController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD getProvinciasModel()                  INLINE ( ::oModel := SQLProvinciasModel():New( self ) )
+   METHOD getModel()                  INLINE ( ::oModel := SQLProvinciasModel():New( self ) )
 
    METHOD getSelectorProvincia( oGet )
 
@@ -41,7 +42,7 @@ METHOD New( oController ) CLASS ProvinciasController
                                     "32" => "gc_flag_spain_32",;
                                     "48" => "gc_flag_spain_48" }
 
-   ::getProvinciasModel()
+   ::getModel()
 
    ::oBrowseView              := ProvinciasBrowseView():New( self )
 

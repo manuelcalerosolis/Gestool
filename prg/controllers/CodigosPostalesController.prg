@@ -5,11 +5,12 @@
 
 CLASS CodigosPostalesGestoolController FROM CodigosPostalesController
 
-   METHOD getCodigosPostalesGestoolModel()                            INLINE ( ::oModel := SQLCodigosPostalesGestoolModel():New( self ) )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLCodigosPostalesGestoolModel():New( self ), ), ::oModel )
 
-   METHOD getProvinciasController()             INLINE ( ::oProvinciasController := ProvinciasGestoolController():New( self ) )
+   METHOD getProvinciasController()    INLINE ( if( empty( ::oProvinciasController ), ::oProvinciasController := ProvinciasGestoolController():New( self ), ), ::oProvinciasController )
    
-   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+   METHOD getConfiguracionVistasController();
+                                       INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS
 
@@ -23,9 +24,15 @@ CLASS CodigosPostalesController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD getCodigosPostalesGestoolModel()                   INLINE ( ::oModel := SQLCodigosPostalesModel():New( self ) )
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLCodigosPostalesModel():New( self ), ), ::oModel )
 
-   METHOD getProvinciasController()    INLINE ( ::oProvinciasController := ProvinciasController():New( self ) )
+   METHOD getProvinciasController()    INLINE ( if( empty( ::oProvinciasController ), ::oProvinciasController := ProvinciasController():New( self ), ), ::oProvinciasController )
+
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := CodigosPostalesBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := CodigosPostalesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := CodigosPostalesValidator():New( self ), ), ::oValidator )
 
 END CLASS
 
@@ -47,31 +54,31 @@ METHOD New( oController ) CLASS CodigosPostalesController
       ::nLevel                := Auth():Level( ::cName )
    end if 
 
-   ::getCodigosPostalesGestoolModel()                                    
-
-   ::oBrowseView              := CodigosPostalesBrowseView():New( self )
-
-   ::oDialogView              := CodigosPostalesView():New( self )
-
-   ::oValidator               := CodigosPostalesValidator():New( self )
-
-   ::getProvinciasController()
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS CodigosPostalesController
 
-   ::oModel:End()
+   if empty(::oModel)
+      ::oModel:End()
+   end if 
 
-   ::oBrowseView:End()
+   if empty(::oBrowseView)
+      ::oBrowseView:End()
+   end if 
 
-   ::oDialogView:End()
+   if empty(::oDialogView)
+      ::oDialogView:End()
+   end if 
 
-   ::oValidator:End()
+   if empty(::oValidator)
+      ::oValidator:End()
+   end if 
 
-   ::oProvinciasController:End()
+   if empty(::oProvinciasController)
+      ::oProvinciasController:End()
+   end if 
 
    ::Super:End()
 
