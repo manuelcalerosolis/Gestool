@@ -19,6 +19,8 @@ CLASS ArticulosFabricantesController FROM SQLNavigatorController
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosFabricantesRepository():New( self ), ), ::oRepository )
 
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosFabricantesModel():New( self ), ), ::oModel )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -37,26 +39,26 @@ METHOD New( oController ) CLASS ArticulosFabricantesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLArticulosFabricantesModel():New( self )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getImagenesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',               {|| ::getImagenesController():insertBuffer() } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getImagenesController():loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::getImagenesController():insertBuffer() } )
+   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getImagenesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',                {|| ::getImagenesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getImagenesController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::getImagenesController():updateBuffer( ::getUuid() ) } )
-
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getImagenesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getImagenesController():loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getImagenesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getImagenesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::getImagenesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
+   ::getModel():setEvent( 'deletedSelection',             {|| ::getImagenesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS ArticulosFabricantesController
-
-   ::oModel:End()
+   
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -161,7 +163,7 @@ END CLASS
 METHOD Activating() CLASS ArticulosFabricantesView
 
    if ::oController:isAppendOrDuplicateMode()
-      ::oController:oModel:hBuffer()
+      ::oController:getModel():hBuffer()
    end if 
 
 RETURN ( self )
@@ -188,36 +190,36 @@ METHOD Activate() CLASS ArticulosFabricantesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isAppendOrDuplicateMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pagina_web" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "pagina_web" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
    REDEFINE GET   oGetImagen ;
-      VAR         ::getImagenesController():getModel():hBuffer[ "imagen" ] ;
+      VAR         ::oController:getImagenesController():getModel():hBuffer[ "imagen" ] ;
       ID          130 ;
       BITMAP      "Folder" ;
       ON HELP     ( GetBmp( oGetImagen, oBmpImagen ) ) ;
       ON CHANGE   ( ChgBmp( oGetImagen, oBmpImagen ) ) ;
-      WHEN        ( ::getImagenesController():isNotZoomMode() ) ;
+      WHEN        ( ::oController:getImagenesController():isNotZoomMode() ) ;
       OF          ::oDialog
 
    REDEFINE IMAGE oBmpImagen ;
       ID          140 ;
-      FILE        cFileBmpName( ::getImagenesController():getModel():hBuffer[ "imagen" ] ) ;
+      FILE        cFileBmpName( ::oController:getImagenesController():getModel():hBuffer[ "imagen" ] ) ;
       OF          ::oDialog
 
       oBmpImagen:SetColor( , getsyscolor( 15 ) )

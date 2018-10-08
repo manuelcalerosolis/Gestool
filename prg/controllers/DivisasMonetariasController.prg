@@ -5,11 +5,21 @@
 
 CLASS DivisasMonetariasController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := DivisasMonetariasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := DivisasMonetariasView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := DivisasMonetariasValidator():New( self ), ), ::oValidator )
+
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := DivisasMonetariasRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel  := SQLDivisasMonetariasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -29,35 +39,31 @@ METHOD New() CLASS DivisasMonetariasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLDivisasMonetariasModel():New( self )
-
-   ::oBrowseView                    := DivisasMonetariasBrowseView():New( self )
-
-   ::oDialogView                    := DivisasMonetariasView():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oValidator                     := DivisasMonetariasValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := DivisasMonetariasRepository():New( self )
-
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 METHOD End() CLASS DivisasMonetariasController
-
+   
+   if !empty(::oModel)
    ::oModel:End()
+   end if
 
+   if !empty(::oBrowseView)
    ::oBrowseView:End()
+   end if
 
+   if !empty(::oDialogView)
    ::oDialogView:End()
+   end if
 
+   if !empty(::oValidator)
    ::oValidator:End()
+   end if
 
+   if !empty(::oRepository)
    ::oRepository:End()
-
-   ::oCamposExtraValoresController:End()
+   end if
 
    ::Super:End()
 
@@ -183,43 +189,43 @@ METHOD Activate() CLASS DivisasMonetariasView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "valor_pesetas" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "valor_pesetas" ] ;
       ID          120 ;
       PICTURE     "@E 999,999.999999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "valor_euros" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "valor_euros" ] ;
       ID          130 ;
       PICTURE     "@E 999,999.999999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "simbolo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "simbolo" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "texto_masculino" ] ;
+   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "texto_masculino" ] ;
       ID          150 ;
       IDSAY       152 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "precio_compra_entero" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "precio_compra_entero" ] ;
       ID          160 ;
       SPINNER ;
       MIN         0 ;
@@ -227,7 +233,7 @@ METHOD Activate() CLASS DivisasMonetariasView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "precio_compra_decimal" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "precio_compra_decimal" ] ;
       ID          170 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
@@ -235,7 +241,7 @@ METHOD Activate() CLASS DivisasMonetariasView
       MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "precio_compra_redondeo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "precio_compra_redondeo" ] ;
       ID          180 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
@@ -243,7 +249,7 @@ METHOD Activate() CLASS DivisasMonetariasView
       MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "precio_venta_entero" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "precio_venta_entero" ] ;
       ID          190 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
@@ -251,7 +257,7 @@ METHOD Activate() CLASS DivisasMonetariasView
       MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "precio_venta_decimal" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "precio_venta_decimal" ] ;
       ID          200 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
@@ -259,7 +265,7 @@ METHOD Activate() CLASS DivisasMonetariasView
       MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "precio_venta_redondeo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "precio_venta_redondeo" ] ;
       ID          210 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
@@ -267,7 +273,7 @@ METHOD Activate() CLASS DivisasMonetariasView
       MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "punto_verde_entero" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "punto_verde_entero" ] ;
       ID          220 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
@@ -275,7 +281,7 @@ METHOD Activate() CLASS DivisasMonetariasView
       MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "punto_verde_decimal" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "punto_verde_decimal" ] ;
       ID          230 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
@@ -283,7 +289,7 @@ METHOD Activate() CLASS DivisasMonetariasView
       MAX         8 ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "punto_verde_redondeo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "punto_verde_redondeo" ] ;
       ID          240 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
@@ -299,7 +305,7 @@ METHOD Activate() CLASS DivisasMonetariasView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

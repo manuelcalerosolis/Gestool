@@ -20,6 +20,8 @@ CLASS PropiedadesLineasController FROM SQLBrowseController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := PropiedadesLineasValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := PropiedadesLineasRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLPropiedadesLineasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -33,17 +35,19 @@ METHOD New( oController ) CLASS PropiedadesLineasController
 
    ::cName                       := "articulos_propiedades_lineas"
 
-   ::oModel                      := SQLPropiedadesLineasModel():New( self )
+   ::getModel()
 
-   //::oModel:setEvent( 'gettingSelectSentence',  {|| ::oModel:gettingSelectSentence() } ) 
+   //::getModel():setEvent( 'gettingSelectSentence',  {|| ::getModel():gettingSelectSentence() } ) 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS PropiedadesLineasController
-
-   ::oModel:End()
+   
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -165,33 +169,33 @@ METHOD Activate() CLASS PropiedadesLineasView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "orden" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "orden" ] ;
       ID          120 ;
       SPINNER     ;
       MIN         0 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_barras" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo_barras" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oColorRGB ;
-      VAR         ::oController:oModel:hBuffer[ "color_rgb" ] ;
+      VAR         ::oController:getModel():hBuffer[ "color_rgb" ] ;
       ID          140 ;
       IDSAY       141 ;
       BITMAP      "gc_photographic_filters_16" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog 
 
-   ::oColorRGB:setColor( ::oController:oModel:hBuffer[ "color_rgb" ], ::oController:oModel:hBuffer[ "color_rgb" ] )
+   ::oColorRGB:setColor( ::oController:getModel():hBuffer[ "color_rgb" ], ::oController:getModel():hBuffer[ "color_rgb" ] )
    ::oColorRGB:bHelp := {|| ::changeColorRGB() }
 
    // Botones PropiedadesLineas -------------------------------------------------------

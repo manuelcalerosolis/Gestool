@@ -18,6 +18,8 @@ CLASS ImpuestosEspecialesController FROM SQLNavigatorController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ImpuestosEspecialesValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ImpuestosEspecialesRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel  := SQLImpuestosEspecialesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -37,24 +39,27 @@ METHOD New( oSenederController ) CLASS ImpuestosEspecialesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLImpuestosEspecialesModel():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 METHOD End() CLASS ImpuestosEspecialesController
-
-   ::oModel:End()
+   
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
    end if
+
    if !empty( ::oDialogView )
       ::oDialogView:End()
    end if
+
    if !empty( ::oValidator )
       ::oValidator:End()
    end if
+
    if !empty( ::oRepository )
       ::oRepository:End()
    end if
@@ -172,37 +177,37 @@ METHOD Activate() CLASS ImpuestosEspecialesView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "importe" ] ;
       ID          120 ;
       PICTURE     "@! 9999999.999999" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "subcuenta" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "subcuenta" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "subcuenta" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "subcuenta" ] ;
       ID          131 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "aplicar" ] ;
+   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "aplicar" ] ;
       ID          140 ;
       IDSAY       142 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -320,7 +325,7 @@ RETURN ( ::hColumns )
 
 CLASS ImpuestosEspecialesRepository FROM SQLBaseRepository
 
-   METHOD getTableName()                  INLINE ( SQLRutasModel():getTableName() ) 
+   METHOD getTableName()                  INLINE ( SQLImpuestosEspecialesModel():getTableName() ) 
 
 END CLASS
 

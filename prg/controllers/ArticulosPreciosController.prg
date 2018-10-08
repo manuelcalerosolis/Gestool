@@ -49,8 +49,6 @@ METHOD New( oController ) CLASS ArticulosPreciosController
 
    ::cName                                   := "articulos_precios"
 
-   ::getModel()
-
    ::getBrowseView():setEvent( 'created',    {|| ::getBrowseView():setLDblClick( {|| nil } ) } )
 
 RETURN ( Self )
@@ -58,8 +56,10 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS ArticulosPreciosController
-
-   ::oModel:End()
+   
+   if !empty(::oModel)
+      ::oModel:End()
+   end if 
 
    if !empty(::oDialogView)
       ::oDialogView:End()
@@ -113,7 +113,7 @@ RETURN ( ::UpdatePreciosAndRefresh() )
 
 METHOD setManual( oCol, lManual ) CLASS ArticulosPreciosController
 
-   ::oModel:updateFieldWhereUuid( ::getRowSet():fieldGet( 'uuid' ), "manual", lManual )
+   ::getModel():updateFieldWhereUuid( ::getRowSet():fieldGet( 'uuid' ), "manual", lManual )
 
 RETURN ( ::UpdatePreciosAndRefresh() )
 

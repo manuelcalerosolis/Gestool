@@ -20,6 +20,8 @@ CLASS ComentariosLineasController FROM SQLBrowseController
    METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ComentariosLineasView():New( self ), ), ::oDialogView )
 
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ComentariosLineasValidator():New( self ), ), ::oValidator )
+   
+   METHOD getModel()                      INLINE( if( empty( ::oModel ), ::oModel := SQLComentariosLineasModel():New( self ), ), ::oModel )
 
    
 END CLASS
@@ -36,32 +38,32 @@ METHOD New( oController ) CLASS ComentariosLineasController
 
    ::cName                       := "lineas de comentarios"
 
-   ::oModel                      := SQLComentariosLineasModel():New( self )
-
    ::setEvent( 'appended',                      {|| ::getBrowseView():Refresh() } )
    ::setEvent( 'edited',                        {|| ::getBrowseView():Refresh() } )
    ::setEvent( 'deletedSelection',              {|| ::getBrowseView():Refresh() } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+   ::getModel():setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 METHOD End() CLASS ComentariosLineasController
-
-   ::oModel:End()
+   
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
-   ::oBrowseView:End()
+      ::oBrowseView:End()
    end if
 
    if !empty( ::oDialogView )
-   ::oDialogView:End()
+      ::oDialogView:End()
    end if
 
    if !empty( ::oValidator )
-   ::oValidator:End()
+      ::oValidator:End()
    end if
 
    ::Super:End()
@@ -72,10 +74,10 @@ RETURN ( nil )
 
 METHOD loadedBlankBuffer() CLASS ComentariosLineasController
 
-   local uuid        := ::getController():getUuid() 
+   local uuid        := ::oController():getUuid() 
 
    if !empty( uuid )
-      hset( ::oModel:hBuffer, "parent_uuid", uuid )
+      hset( ::getModel():hBuffer, "parent_uuid", uuid )
    end if 
 
 RETURN ( nil )
@@ -84,10 +86,10 @@ RETURN ( nil )
 
 METHOD gettingSelectSentence() CLASS ComentariosLineasController
 
-   local uuid        := ::getController():getUuid() 
+   local uuid        := ::oController():getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      ::getModel():setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( nil )
@@ -171,7 +173,7 @@ METHOD Activate() CLASS ComentariosLineasView
       RESOURCE    "COMENTARIO_LINEA" ;
       TITLE       ::LblTitle() + "lineas de comentarios"
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "descripcion" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog

@@ -135,6 +135,14 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oAjustableController
 
    DATA oDelegacionesController 
+   
+   DATA oArticulosEnvasadoController 
+   
+   DATA oDivisasMonetariasController 
+   
+   DATA oCajasController 
+
+   DATA oImpresorasController 
 
 
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
@@ -320,7 +328,19 @@ CLASS SQLApplicationController FROM SQLBaseController
                                     INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
 
    METHOD getMailController();
-                                    INLINE ( if( empty( ::oMailController ), ::oMailController := MailController():New( self ), ), ::oMailController )
+                                    INLINE ( if( empty( ::oMailController ), ::oMailController := MailController():New( self ), ), ::oMailController ) 
+
+   METHOD getArticulosEnvasadoController();
+                                    INLINE ( if( empty( ::oArticulosEnvasadoController ), ::oArticulosEnvasadoController := ArticulosEnvasadoController():New( self ), ), ::oArticulosEnvasadoController )
+
+   METHOD getDivisasMonetariasController();
+                                    INLINE ( if( empty( ::oDivisasMonetariasController ), ::oDivisasMonetariasController := DivisasMonetariasController():New( self ), ), ::oDivisasMonetariasController )
+
+   METHOD getCajasController();
+                                    INLINE ( if( empty( ::oCajasController ), ::oCajasController := CajasController():New( self ), ), ::oCajasController )
+
+   METHOD getImpresorasController();
+                                    INLINE ( if( empty( ::oImpresorasController ), ::oImpresorasController := ImpresorasController():New( self ), ), ::oImpresorasController )
 
    METHOD End()
 
@@ -583,6 +603,22 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oAjustableController )
       ::oAjustableController:End()
+   end if 
+
+   if !empty( ::oArticulosEnvasadoController )
+      ::oArticulosEnvasadoController:End()
+   end if 
+
+   if !empty( ::oDivisasMonetariasController )
+      ::oDivisasMonetariasController:End()
+   end if 
+
+   if !empty( ::oCajasController )
+      ::oCajasController:End()
+   end if
+
+   if !empty( ::oImpresorasController )
+      ::oImpresorasController:End()
    end if 
 
    ::Super:End()

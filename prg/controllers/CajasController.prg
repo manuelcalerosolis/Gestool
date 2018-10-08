@@ -5,10 +5,6 @@
 
 CLASS CajasController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   DATA oImpresorasController
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -40,12 +36,6 @@ METHOD New( oController) CLASS CajasController
    ::oValidator                     := CajasValidator():New( self, ::oDialogView )
 
    ::oRepository                    := CajasRepository():New( self )
-   
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oImpresorasController          := ImpresorasController():New( self, ::oModel:cTableName )
 
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -63,13 +53,8 @@ METHOD End() CLASS CajasController
 
    ::oValidator:End()
 
-   ::oCamposExtraValoresController:End()
-
-   ::oImpresorasController:End()
-
    ::oRepository:End()
 
-   ::oGetSelector:End()
 
    ::oModel                         := nil
 
@@ -79,13 +64,7 @@ METHOD End() CLASS CajasController
 
    ::oValidator                     := nil
 
-   ::oCamposExtraValoresController  := nil
-
-   ::oImpresorasController          := nil
-
    ::oRepository                    := nil
-
-   ::oGetSelector                   := nil
 
    ::Super:End()
 
@@ -244,14 +223,14 @@ METHOD StartActivate() CLASS CajasView
    local oPanel      := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
     oPanel:AddLink(  "Impresoras...",;
-                     {|| ::oController:oImpresorasController:activateDialogView() },;
-                     ::oController:oImpresorasController:getImage( "16" ) )
+                     {|| ::oController:getImpresorasController():activateDialogView() },;
+                         ::oController:getImpresorasController():getImage( "16" ) )
 
     oPanel           := ::oExplorerBar:AddPanel( "Otros", nil, 1 )
 
     oPanel:AddLink(  "Campos extra...",;
-                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
+                     {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
+                         ::oController:getCamposExtraValoresController():getImage( "16" ) )
 
 RETURN ( self )
 

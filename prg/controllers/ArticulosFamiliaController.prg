@@ -58,32 +58,26 @@ METHOD End() CLASS ArticulosFamiliasController
 
    if !empty( ::oModel )
       ::oModel:End()
-      ::oModel                         := nil
    end if       
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
-      ::oBrowseView                    := nil
    end if       
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
-      ::oDialogView                    := nil
    end if       
 
    if !empty( ::oValidator )
       ::oValidator:End()
-      ::oValidator                     := nil
    end if       
 
    if !empty( ::oRepository )
       ::oRepository:End()
-      ::oRepository                    := nil
    end if       
 
    if !empty( ::oGetSelector )
       ::oGetSelector:End()
-      ::oGetSelector                   := nil
    end if                 
 
    ::Super:End()

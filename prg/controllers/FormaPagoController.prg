@@ -16,6 +16,8 @@ CLASS FormasPagosController FROM SQLNavigatorController
    METHOD getValidator()      INLINE ( if( empty( ::oValidator ), ::oValidator := FormaPagoValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()     INLINE ( if( empty( ::oRepository ), ::oRepository := FormaPagoRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()          INLINE ( if( empty( ::oModel ), ::oModel := SQLFormaPagoModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -35,15 +37,15 @@ METHOD New( oController ) CLASS FormasPagosController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLFormaPagoModel():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS FormasPagosController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -238,61 +240,61 @@ METHOD Activate() CLASS FormaPagoView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE RADIO ::oTipoPago ;
-      VAR         ::oController:oModel:hBuffer[ "tipo_pago" ] ;
+      VAR         ::oController:getModel():hBuffer[ "tipo_pago" ] ;
       ID          120, 121, 122 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "comision" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "comision" ] ;
       ID          130 ;
       SPINNER  ;
       MIN         0;
       PICTURE     "@E 999.99" ;
-      WHEN        ( ::oController:isNotZoomMode() ) .AND. ::oController:oModel:hBuffer[ "tipo_pago" ] == 3;
+      WHEN        ( ::oController:isNotZoomMode() ) .AND. ::oController:getModel():hBuffer[ "tipo_pago" ] == 3;
       OF          ::oDialog ;
 
    REDEFINE RADIO ::oEmitir ;
-      VAR         ::oController:oModel:hBuffer[ "emitir" ] ;
+      VAR         ::oController:getModel():hBuffer[ "emitir" ] ;
       ID          140, 141;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "numero_plazos" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "numero_plazos" ] ;
       ID          150 ;
       SPINNER  ;
       MIN         0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "primer_plazo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "primer_plazo" ] ;
       ID          160 ;
       SPINNER  ;
       MIN         0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "entre_plazo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "entre_plazo" ] ;
       ID          170 ;
       SPINNER  ;
       MIN         0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "ultimo_plazo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "ultimo_plazo" ] ;
       ID          180 ;
       SPINNER  ;
       MIN         0;
@@ -301,7 +303,7 @@ METHOD Activate() CLASS FormaPagoView
       
    // Banco--------------------------------------------------------------------
 
-   ::oController:getCuentasBancariasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "banco_uuid" ] ) )
+   ::oController:getCuentasBancariasController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "banco_uuid" ] ) )
    ::oController:getCuentasBancariasController():getSelector():setEvent( 'validated', {|| ::bancosControllerValidated() } )
    ::oController:getCuentasBancariasController():getSelector():Build( { "idGet" => 190, "idText" => 191, "idLink" => 192, "oDialog" => ::oDialog } )
 
@@ -344,56 +346,56 @@ METHOD Activate() CLASS FormaPagoView
 
    // Contabilidad-------------------------------------------------------------
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "subcuenta_cobro" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "subcuenta_cobro" ] ;
       ID          210 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "subcuenta_gastos" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "subcuenta_gastos" ] ;
       ID          220 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oCodigoPago ;
-      VAR         ::oController:oModel:hBuffer[ "codigo_pago" ] ;
+      VAR         ::oController:getModel():hBuffer[ "codigo_pago" ] ;
       ITEMS       FORMASDEPAGO_ITEMS ;
       ID           230 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_edi" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo_edi" ] ;
       ID          240 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE SAYCHECKBOX   ::oController:oModel:hBuffer[ "tactil" ] ;
+   REDEFINE SAYCHECKBOX   ::oController:getModel():hBuffer[ "tactil" ] ;
       ID          250 ;
       IDSAY       252 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oIcono ;
-      VAR         ::oController:oModel:hBuffer[ "icono" ] ;
+      VAR         ::oController:getModel():hBuffer[ "icono" ] ;
       ID          260 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ITEMS       ( hgetkeys( ::hIcono ) ) ;
       BITMAPS     ( hgetvalues( ::hIcono ) ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "posicion" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "posicion" ] ;
       ID          270 ;
       SPINNER  ;
       MIN         0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "forma_pago" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "forma_pago" ] ;
       ID          280 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE RADIO ::oGenerar ;
-      VAR         ::oController:oModel:hBuffer[ "generar_documento" ] ;
+      VAR         ::oController:getModel():hBuffer[ "generar_documento" ] ;
       ID          290, 291;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
@@ -431,13 +433,13 @@ RETURN ( ::oDialog:nResult )
 METHOD bancosControllerValidated() CLASS FormaPagoView
 
    local hColumns    
-   local CodigoBanco    := ::oController:oModel:hBuffer[ "banco_uuid" ]
+   local CodigoBanco    := ::oController:getModel():hBuffer[ "banco_uuid" ]
    
    if empty( CodigoBanco )
       RETURN ( nil )
    end if 
 
-   hColumns          := ::oController:getCuentasBancariasController():oModel:getWhereCodigo( CodigoBanco ) 
+   hColumns          := ::oController:getCuentasBancariasController():getModel():getWhereCodigo( CodigoBanco ) 
 
    if !( hb_ishash( hColumns ) )
       RETURN ( nil )
@@ -517,10 +519,10 @@ CLASS SQLFormaPagoModel FROM SQLCompanyModel
    METHOD getColumns()
 
    METHOD getBancoUuidAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:getCuentasBancariasController():oModel:getCodigoWhereUuid( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:getCuentasBancariasController():getModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setBancoUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:getCuentasBancariasController():oModel:getUuidWhereCodigo( uValue ) ) )
+                                 INLINE ( if( empty( uValue ), "", ::oController:getCuentasBancariasController():getModel():getUuidWhereCodigo( uValue ) ) )
 
 END CLASS
 

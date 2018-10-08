@@ -14,8 +14,8 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
-   METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
-   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
+   METHOD loadBlankBuffer()            INLINE ( ::getModel():loadBlankBuffer() )
+   METHOD insertBuffer()               INLINE ( ::getModel():insertBuffer() )
 
    METHOD loadedCurrentBuffer( uuidEntidad ) 
    METHOD updateBuffer( uuidEntidad )
@@ -32,6 +32,8 @@ CLASS CuentasBancariasController FROM SQLNavigatorController
    METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := CuentasBancariasView():New( self ), ), ::oDialogView )
 
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := CuentasBancariasValidator():New( self ), ), ::oValidator )
+   
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLCuentasBancariasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -51,8 +53,6 @@ METHOD New( oController ) CLASS CuentasBancariasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLCuentasBancariasModel():New( self )
-
    // ::setEvent( 'appended',          {|| ::oBrowseView:Refresh() } )
    // ::setEvent( 'edited',            {|| ::oBrowseView:Refresh() } )
    // ::setEvent( 'deletedSelection',  {|| ::oBrowseView:Refresh() } ) 
@@ -63,7 +63,9 @@ RETURN ( self )
 
 METHOD End() CLASS CuentasBancariasController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -85,11 +87,11 @@ RETURN ( nil )
 
 METHOD CalculaIBAN()
 
-   lIbanDigit( ::oModel:hBuffer[ "iban_codigo_pais" ],;
-               ::oModel:hBuffer[ "cuenta_codigo_entidad" ] ,;
-               ::oModel:hBuffer[ "cuenta_codigo_oficina" ],;
-               ::oModel:hBuffer[ "cuenta_digito_control" ],;
-               ::oModel:hBuffer[ "cuenta_numero" ],;
+   lIbanDigit( ::getModel():hBuffer[ "iban_codigo_pais" ],;
+               ::getModel():hBuffer[ "cuenta_codigo_entidad" ] ,;
+               ::getModel():hBuffer[ "cuenta_codigo_oficina" ],;
+               ::getModel():hBuffer[ "cuenta_digito_control" ],;
+               ::getModel():hBuffer[ "cuenta_numero" ],;
                ::getDialogView():oIBAN ) 
 
 RETURN ( .t. )
@@ -98,10 +100,10 @@ RETURN ( .t. )
 
 METHOD CalculaDigitoControl() CLASS CuentasBancariasController
 
-   lCalcDC( ::oModel:hBuffer[ "cuenta_codigo_entidad" ],;
-            ::oModel:hBuffer[ "cuenta_codigo_oficina" ],;
-            ::oModel:hBuffer[ "cuenta_digito_control" ],;
-            ::oModel:hBuffer[ "cuenta_numero" ],;
+   lCalcDC( ::getModel():hBuffer[ "cuenta_codigo_entidad" ],;
+            ::getModel():hBuffer[ "cuenta_codigo_oficina" ],;
+            ::getModel():hBuffer[ "cuenta_digito_control" ],;
+            ::getModel():hBuffer[ "cuenta_numero" ],;
             ::getDialogView():oDigitoControl )
 
    ::getDialogView():oIBAN:lValid() 
@@ -115,7 +117,7 @@ METHOD gettingSelectSentence() CLASS CuentasBancariasController
    local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      ::getModel():setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( nil )
@@ -127,15 +129,15 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS CuentasBancariasController
    local idCuentaBanco     
 
    if empty( uuidEntidad )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
    end if 
 
-   idCuentaBanco          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idCuentaBanco          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idCuentaBanco )
-      idCuentaBanco       := ::oModel:insertBlankBuffer()
+      idCuentaBanco       := ::getModel():insertBlankBuffer()
    end if 
 
-   ::oModel:loadCurrentBuffer( idCuentaBanco )
+   ::getModel():loadCurrentBuffer( idCuentaBanco )
 
 RETURN ( nil )
 
@@ -145,13 +147,13 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS CuentasBancariasController
 
    local idCuentaBanco    
 
-   idCuentaBanco          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idCuentaBanco          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idCuentaBanco )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
       RETURN ( nil )
    end if 
 
-   ::oModel:updateBuffer()
+   ::getModel():updateBuffer()
 
 RETURN ( nil )
 
@@ -161,13 +163,13 @@ METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS CuentasBancariasControl
 
    local idCuentaBanco    
 
-   idCuentaBanco          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idCuentaBanco          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idCuentaBanco )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
       RETURN ( nil )
    end if 
 
-   ::oModel:loadDuplicateBuffer( idCuentaBanco )
+   ::getModel():loadDuplicateBuffer( idCuentaBanco )
 
 RETURN ( nil )
 
@@ -175,7 +177,7 @@ RETURN ( nil )
 
 METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS CuentasBancariasController
 
-   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+   hset( ::getModel():hBuffer, "parent_uuid", uuidEntidad )
 
 RETURN ( nil )
 
@@ -187,7 +189,7 @@ METHOD deleteBuffer( aUuidEntidades ) CLASS CuentasBancariasController
       RETURN ( nil )
    end if
 
-   ::oModel:deleteWhereParentUuid( aUuidEntidades )
+   ::getModel():deleteWhereParentUuid( aUuidEntidades )
 
 RETURN ( nil )
 
@@ -360,20 +362,20 @@ RETURN ( ::oDialog:nResult )
 
 METHOD ExternalRedefine( oDialog ) CLASS CuentasBancariasView
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          1000 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          1010 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "iban_codigo_pais" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "iban_codigo_pais" ] ;
       ID          1020 ;
       PICTURE     "@!" ;
       VALID       ::oController:CalculaIBAN() ;
@@ -381,32 +383,32 @@ METHOD ExternalRedefine( oDialog ) CLASS CuentasBancariasView
       OF          ::oDialog ;
 
    REDEFINE GET   ::oIBAN  ;
-      VAR         ::oController:oModel:hBuffer[ "iban_digito_control" ] ;
+      VAR         ::oController:getModel():hBuffer[ "iban_digito_control" ] ;
       ID          1021 ;
       VALID       ::oController:CalculaIBAN() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_codigo_entidad" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "cuenta_codigo_entidad" ] ;
       ID          1022 ;
       VALID       ::oController:CalculaDigitoControl() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_codigo_oficina" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "cuenta_codigo_oficina" ] ;
       ID          1023 ;
       VALID       ::oController:CalculaDigitoControl() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oDigitoControl ;
-      VAR         ::oController:oModel:hBuffer[ "cuenta_digito_control" ];
+      VAR         ::oController:getModel():hBuffer[ "cuenta_digito_control" ];
       ID          1024 ;
       VALID       ::oController:CalculaDigitoControl() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_numero" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "cuenta_numero" ] ;
       ID          1025 ;
       VALID       ::oController:CalculaDigitoControl() ;
       WHEN        ( ::oController:isNotZoomMode() ) ;

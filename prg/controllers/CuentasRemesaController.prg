@@ -15,9 +15,11 @@ CLASS CuentasRemesaController FROM SQLNavigatorController
 
    METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := CuentasRemesaView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()        INLINE(if(empty( ::Repository ), ::oRepository := CuentasRemesaRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := CuentasRemesaRepository():New( self ), ), ::oRepository )
 
    METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := CuentasRemesaValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLCuentasRemesaModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -37,18 +39,16 @@ METHOD New( oController ) CLASS CuentasRemesaController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLCuentasRemesaModel():New( self )
-
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getCuentasBancariasController():loadBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::getCuentasBancariasController():insertBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getCuentasBancariasController():loadBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',               {|| ::getCuentasBancariasController():insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getCuentasBancariasController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::getCuentasBancariasController():updateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getCuentasBancariasController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',                {|| ::getCuentasBancariasController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getCuentasBancariasController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getCuentasBancariasController():loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getCuentasBancariasController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getCuentasBancariasController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::getCuentasBancariasController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::getModel():setEvent( 'deletedSelection',             {|| ::getCuentasBancariasController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
 RETURN ( self )
 
@@ -56,7 +56,9 @@ RETURN ( self )
 
 METHOD End() CLASS CuentasRemesaController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -187,14 +189,14 @@ METHOD Activate() CLASS CuentasRemesaView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -216,65 +218,65 @@ METHOD Activate() CLASS CuentasRemesaView
 
    //-----------------------------------------------------------------------------
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "sufijo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "sufijo" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_ine" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo_ine" ] ;
       ID          150 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_banco" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "cuenta_banco" ] ;
       ID          160 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       BITMAP      "LUPA" ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cuenta_descuento" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "cuenta_descuento" ] ;
       ID          170 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       BITMAP      "LUPA" ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "presentador_codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "presentador_codigo" ] ;
       ID          180 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "presentador_iso_pais" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "presentador_iso_pais" ] ;
       ID          190 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "presentador_nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "presentador_nombre" ] ;
       ID          200 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "presentador_nif" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "presentador_nif" ] ;
       ID          210 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "acreedor_codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "acreedor_codigo" ] ;
       ID          220 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "acreedor_iso_pais" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "acreedor_iso_pais" ] ;
       ID          230 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "acreedor_nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "acreedor_nombre" ] ;
       ID          240 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "acreedor_nif" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "acreedor_nif" ] ;
       ID          250 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;

@@ -18,6 +18,8 @@ CLASS ArticulosTipoController FROM SQLNavigatorController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosTipoValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosTipoRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosTipoModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -37,14 +39,14 @@ METHOD New( oController ) CLASS ArticulosTipoController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLArticulosTipoModel():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 METHOD End() CLASS ArticulosTipoController
-
-   ::oModel:End()
+   
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -160,14 +162,14 @@ METHOD Activate() CLASS ArticulosTipoView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
