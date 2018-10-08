@@ -7,15 +7,15 @@ CLASS CamposExtraGestoolController FROM CamposExtraController
 
    METHOD getLevel()                            INLINE ( nil )
 
-   METHOD getConfiguracionVistasController()    INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
+   METHOD getConfiguracionVistasController()    INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                       INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CamposExtraBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()                       INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := CamposExtraBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                       INLINE( if( empty( ::oDialogView ), ::oDialogView := CamposExtraView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()                       INLINE ( if( empty( ::oDialogView ), ::oDialogView := CamposExtraView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                        INLINE( if( empty( ::oValidator ), ::oValidator := CamposExtraValidator():New( self  ), ), ::oValidator )
+   METHOD getValidator()                        INLINE ( if( empty( ::oValidator ), ::oValidator := CamposExtraValidator():New( self  ), ), ::oValidator )
 
    METHOD getModel()                            INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraGestoolModel():New( self ), ), ::oModel )
 

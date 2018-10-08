@@ -6,11 +6,10 @@ CLASS CamposExtraEntidadesGestoolController FROM CamposExtraEntidadesController
    CLASSDATA aEntidades          INIT  {  "empresas" =>  { "nombre" => "Empresas", "icono" => "gc_factory_16"  },;
                                           "usuarios" =>  { "nombre" => "Usuarios", "icono" => "gc_businesspeople_16"  } }
 
-   METHOD getConfiguracionVistasController() INLINE ( ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ) )
-
-   //Construcciones tardias----------------------------------------------------
-
    METHOD getModel()             INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraEntidadesGestoolModel():New( self ), ), ::oModel )
+
+   METHOD getConfiguracionVistasController() ;
+                                 INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
 
 END CLASS
 
@@ -111,9 +110,7 @@ METHOD New( oController ) CLASS CamposExtraEntidadesController
                                     "32" => "gc_user_message_32",;
                                     "48" => "gc_user_message_48" }
 
-   ::getModel()
-
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
    
    ::setEvent( 'appending',            {|| ::assertAppend() } )
    ::setEvent( 'appended',             {|| ::oBrowseView:Refresh() } )
@@ -125,7 +122,9 @@ RETURN ( Self )
 
 METHOD End() CLASS CamposExtraEntidadesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -150,7 +149,7 @@ METHOD gettingSelectSentence()
    local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      ::getModel():setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( nil )
@@ -193,7 +192,7 @@ METHOD assertAppend() CLASS CamposExtraEntidadesController
       RETURN ( .t. )
    end if 
 
-RETURN ( ::oModel:isNotBlankEntityWhereUuid( ::getController():getUuid() ) )
+RETURN ( ::getModel():isNotBlankEntityWhereUuid( ::getController():getUuid() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -205,16 +204,16 @@ METHOD UpdateLine( uValue ) CLASS CamposExtraEntidadesController
       RETURN ( nil )
    end if 
 
-   if ::oModel:isEntityWhereUuid( ::oController:getUuid(), cEntidad ) 
+   if ::getModel():isEntityWhereUuid( ::oController:getUuid(), cEntidad ) 
       msgStop( "El nombre de la entidad ya existe" )
       RETURN ( nil )
    end if 
 
-   ::oModel:updateFieldWhereId( ::oRowSet:fieldGet( 'id' ), 'entidad', cEntidad )
+   ::getModel():updateFieldWhereId( ::oRowSet:fieldGet( 'id' ), 'entidad', cEntidad )
    
-   ::oRowSet:Refresh()
+   ::getRowSet():Refresh()
 
-   ::oBrowseView:Refresh()
+   ::getBrowseView():Refresh()
 
 RETURN ( nil )
 
@@ -330,7 +329,7 @@ END CLASS
 
 CLASS SQLCamposExtraEntidadesModel FROM SQLCompanyModel
 
-   DATA cTableName                                 INIT "campos_extra_entidad"
+   DATA cTableName                        INIT "campos_extra_entidad"
 
    METHOD getColumns()
 
@@ -340,9 +339,11 @@ CLASS SQLCamposExtraEntidadesModel FROM SQLCompanyModel
 
    METHOD isEntityWhereUuid( parentUuid, cEntidad )
 
-   METHOD isBlankEntityWhereUuid( parentUuid )    INLINE ( ::isEntityWhereUuid( parentUuid, '' ) )
+   METHOD isBlankEntityWhereUuid( parentUuid );
+                                          INLINE ( ::isEntityWhereUuid( parentUuid, '' ) )
    
-   METHOD isNotBlankEntityWhereUuid( parentUuid ) INLINE ( !::isBlankEntityWhereUuid(  parentUuid ) )
+   METHOD isNotBlankEntityWhereUuid( parentUuid );
+                                          INLINE ( !::isBlankEntityWhereUuid(  parentUuid ) )
 
 END CLASS
 

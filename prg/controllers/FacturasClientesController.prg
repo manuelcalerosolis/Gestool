@@ -182,8 +182,6 @@ METHOD End() CLASS FacturasClientesController
 
    ::Super:End()
 
-   msgmemory()
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
