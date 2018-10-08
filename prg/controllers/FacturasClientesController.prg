@@ -70,6 +70,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
    METHOD isLines()
    METHOD isNotLines()                 INLINE ( !::isLines() )
 
+   METHOD getConfigItems()
+
    METHOD calculateTotals( uuidFactura )  
 
    // Contrucciones tardias----------------------------------------------------
@@ -323,6 +325,24 @@ METHOD isLines() CLASS FacturasClientesController
 RETURN ( nLineas > 0 )
 
 //---------------------------------------------------------------------------//
+
+METHOD getConfigItems() CLASS FacturasClientesController
+
+   local aItems   := {}
+
+   aadd( aItems,  {  'texto'  => 'Documento impresión',;
+                     'clave'  => 'documento_impresion',;
+                     'valor'  => ::getConfiguracionesController():getModelValue( ::cName, 'documento_impresion', '' ),;
+                     'tipo'   => "B",;
+                     'lista'  =>  {"uno", "dos", "tre" } } ) //  ::oController:oController:aDocuments } )
+
+   aadd( aItems,  {  'texto'  => 'Copias',;
+                     'clave'  => 'copias_impresion',;
+                     'valor'  => ::getConfiguracionesController():getModelNumeric( ::cName, 'copias_impresion', 1 ),;
+                     'tipo'   => "N" } )
+
+RETURN ( aItems )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

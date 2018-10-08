@@ -5,7 +5,7 @@
 
 CLASS ProvinciasGestoolController FROM ProvinciasController
 
-   METHOD getModel()      INLINE ( ::oModel := SQLProvinciasGestoolModel():New( self ) )
+   METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLProvinciasGestoolModel():New( self ), ), ::oModel )
    
    METHOD getConfiguracionVistasController() ;
                                     INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
@@ -20,7 +20,13 @@ CLASS ProvinciasController FROM SQLNavigatorController
 
    METHOD End()
 
-   METHOD getModel()                  INLINE ( ::oModel := SQLProvinciasModel():New( self ) )
+   METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLProvinciasModel():New( self ), ), ::oModel )
+
+   METHOD getBrowseView()           INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ProvinciasBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()           INLINE ( if( empty( ::oDialogView ), ::oDialogView := ProvinciasView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()            INLINE ( if( empty( ::oValidator ), ::oValidator := ProvinciasValidator():New( self ), ), ::oValidator )
 
    METHOD getSelectorProvincia( oGet )
 
@@ -44,16 +50,8 @@ METHOD New( oController ) CLASS ProvinciasController
 
    ::getModel()
 
-   ::oBrowseView              := ProvinciasBrowseView():New( self )
-
-   ::oDialogView              := ProvinciasView():New( self )
-
-   ::oValidator               := ProvinciasValidator():New( self )
-
    if empty( oController )
-
       ::nLevel                := Auth():Level( ::cName )
-   
    end if 
 
 RETURN ( Self )

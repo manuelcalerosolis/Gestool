@@ -60,23 +60,23 @@ RETURN ( Self )
 
 METHOD End() CLASS CodigosPostalesController
 
-   if empty(::oModel)
+   if !empty(::oModel)
       ::oModel:End()
    end if 
 
-   if empty(::oBrowseView)
+   if !empty(::oBrowseView)
       ::oBrowseView:End()
    end if 
 
-   if empty(::oDialogView)
+   if !empty(::oDialogView)
       ::oDialogView:End()
    end if 
 
-   if empty(::oValidator)
+   if !empty(::oValidator)
       ::oValidator:End()
    end if 
 
-   if empty(::oProvinciasController)
+   if !empty(::oProvinciasController)
       ::oProvinciasController:End()
    end if 
 
@@ -229,7 +229,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD validProvincia() CLASS CodigosPostalesView
 
-   ::cSayProvincia  := ::oController:oProvinciasController:getModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "provincia" ] )
+   ::cSayProvincia   := ::oController:getProvinciasController():getModel():getField( "provincia", "codigo", ::oController:oModel:hBuffer[ "provincia" ] )
 
    if !empty( ::oSayProvincia )
       ::oSayProvincia:Refresh()

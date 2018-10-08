@@ -17,13 +17,13 @@ END CLASS
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS SQLConfiguracionesModel FROM SQLBaseModel
+CLASS SQLConfiguracionesModel FROM SQLCompanyModel
 
    DATA aItems                                     INIT {}
 
    DATA cTableName                                 INIT "configuraciones"
 
-   DATA cConstraints                               INIT "PRIMARY KEY (id)"
+   DATA cConstraints                               INIT "PRIMARY KEY ( id ), UNIQUE KEY ( documento, clave )"
 
    DATA cColumnOrder                               INIT "id"
 
@@ -44,11 +44,6 @@ CLASS SQLConfiguracionesModel FROM SQLBaseModel
    METHOD setValue( cDocumento, cClave, uValue )
 
    METHOD getAndIncValue( cDocumento, cClave, uDefault )
-
-   METHOD getItemsMovimientosAlmacen()           
-   METHOD setItemsMovimientosAlmacen()
-   METHOD getDocumentoMovimientosAlmacen()         INLINE ( alltrim( ::getValue( 'movimientos_almacen', 'documento', '' ) ) )
-   METHOD getCopiasMovimientosAlmacen()            INLINE ( ::getNumeric( 'movimientos_almacen', 'copias', 1 ) )
 
    METHOD getAndIncContadorMovimientoAlmacen()     INLINE ( ::getAndIncValue( 'movimientos_almacen', 'contador', 1 ) )
 
@@ -77,21 +72,13 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD getSQLSentenceValue( cDocumento, cClave, uValor )
+METHOD getSQLSentenceValue( cDocumento, cClave )
 
    local cSentence   := "SELECT valor FROM " + ::getTableName()                  + space( 1 ) 
 
-   if !empty( cDocumento )
-      cSentence      +=       "AND documento = " + toSQLString( cDocumento )     + space( 1 ) 
-   end if 
+   cSentence         +=    "WHERE documento = " + toSQLString( cDocumento )      + space( 1 ) 
 
-   if !empty( cClave )
-      cSentence      +=       "AND clave = " + toSQLString( cClave )             + space( 1 ) 
-   end if 
-
-   if !empty( uValor )
-      cSentence      +=       "AND valor = " + toSQLString( uValor )             + space( 1 ) 
-   end if 
+   cSentence         +=       "AND clave = " + toSQLString( cClave )             + space( 1 ) 
 
    cSentence         +=    "LIMIT 1"                                         
 
@@ -121,14 +108,11 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValue( cDocumento, cClave, uValor, uDefault )
+METHOD getValue( cDocumento, cClave, uDefault )
 
    local valor
-   local cSentence   
 
-   cSentence         := ::getSQLSentenceValue( cDocumento, cClave, uValor )
-
-   valor             := getSQLDataBase():getValue( cSentence )
+   valor             := getSQLDataBase():getValue( ::getSQLSentenceValue( cDocumento, cClave ) )
 
    if !empty( valor )
       RETURN ( valor )
@@ -138,9 +122,9 @@ RETURN ( uDefault )
 
 //---------------------------------------------------------------------------//
 
-METHOD getNumeric( cDocumento, cClave, uValor, uDefault )
+METHOD getNumeric( cDocumento, cClave, uDefault )
 
-   local uValue      := ::getValue( cDocumento, cClave, uValor, uDefault ) 
+   local uValue      := ::getValue( cDocumento, cClave, uDefault ) 
 
    if hb_isstring( uValue )
       RETURN ( val( uValue ) )
@@ -199,37 +183,8 @@ METHOD setValue( cDocumento, cClave, uValor )
 
    getSQLDataBase():TransactionalExec( cSentence )
 
-RETURN ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getItemsMovimientosAlmacen()           
-
-   ::aItems    := {}
-
-   aadd( ::aItems, { 'clave'  => 'documento',;
-                     'valor'  => ::getValue( 'movimientos_almacen', 'documento', '' ),;
-                     'tipo'   => "B",;
-                     'lista'  => ::oController:oController:aDocuments } )
-
-   aadd( ::aItems, { 'clave'  => 'copias',;
-                     'valor'  => ::getValue( 'movimientos_almacen', 'copias', 1 ),;
-                     'tipo'   => "N" } )
-
-RETURN ( ::aItems )
-   
-//---------------------------------------------------------------------------//
-
-METHOD setItemsMovimientosAlmacen()           
-
-   local hItem
-
-   for each hItem in ::aItems
-      ::setValue( 'movimientos_almacen', hget( hItem, 'clave' ), hget( hItem, 'valor' ) )
-   next
-
 RETURN ( nil )
-   
+
 //---------------------------------------------------------------------------//
 
 METHOD getAndIncValue( cDocumento, cClave, uDefault )

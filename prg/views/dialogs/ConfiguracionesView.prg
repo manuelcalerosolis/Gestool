@@ -13,15 +13,11 @@ CLASS ConfiguracionesView FROM SQLBaseView
    
    DATA oDialog
 
-   DATA aItemSelected
-
    DATA comboDocumentCounter
 
    DATA getDocumentCounter
 
    DATA hFormatoColumnas
-
-   DATA aItems                                  INIT {}
 
    METHOD New( oController )
 
@@ -29,12 +25,7 @@ CLASS ConfiguracionesView FROM SQLBaseView
 
    METHOD Activate()
 
-   METHOD StartActivate()
-
-   METHOD ChangeBrowse()
-
-   METHOD setItems( aItems )                    INLINE ( ::aItems := aItems )
-   METHOD getItems()                            INLINE ( ::aItems )
+   METHOD changeBrowse()
 
    METHOD setColType( uValue )                  INLINE ( ::oCol:nEditType := uValue )
 
@@ -69,14 +60,11 @@ RETURN ( Self )
 
 METHOD Activate()
 
-   local oBmp
-   local oBtnAceptar
-
    DEFINE DIALOG        ::oDialog ;
       TITLE             "Configuraciones" ;
       RESOURCE          "CONFIGURACIONES"
 
-      REDEFINE BITMAP   oBmp ;
+      REDEFINE BITMAP   ;
          ID             500 ;
          RESOURCE       "gc_wrench_48" ;
          TRANSPARENT ;
@@ -87,20 +75,20 @@ METHOD Activate()
       ::oBrw:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrw:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oBrw:SetArray( ::getItems(), , , .f. )
+      ::oBrw:SetArray( ::oController:getItems(), , , .f. )
 
       ::oBrw:nMarqueeStyle    := MARQSTYLE_HIGHLCELL
       ::oBrw:lRecordSelector  := .f.
       ::oBrw:lHScroll         := .f.
       ::oBrw:lFastEdit        := .t.
 
-      ::oBrw:bChange          := {|| ::ChangeBrowse() }
+      ::oBrw:bChange          := {|| ::changeBrowse() }
 
       ::oBrw:CreateFromResource( 100 )
 
       with object ( ::oBrw:AddCol() )
          :cHeader             := "Propiedad"
-         :bStrData            := {|| capitalize( hget( ::oBrw:aArrayData[ ::oBrw:nArrayAt ], "clave" ) ) }
+         :bStrData            := {|| capitalize( hget( ::oBrw:aArrayData[ ::oBrw:nArrayAt ], "texto" ) ) }
          :nWidth              := 250
       end with
 
@@ -110,40 +98,32 @@ METHOD Activate()
       ::oCol:bStrData         := {|| hGet( ::oBrw:aArrayData[ ::oBrw:nArrayAt ], "valor" ) }
       ::oCol:nWidth           := 300
 
-   REDEFINE BUTTON   oBtnAceptar ;
+   REDEFINE BUTTON   ;
       ID             IDOK ;
       OF             ::oDialog ;
       ACTION         ( ::oDialog:End( IDOK ) )
 
-   REDEFINE BUTTON  ;
+   REDEFINE BUTTON   ;
       ID             IDCANCEL ;
       OF             ::oDialog ;
       CANCEL ;
       ACTION         ( ::oDialog:End( IDCANCEL ) )
 
-      ::oDialog:AddFastKey( VK_F5, {|| oBtnAceptar:Click() } )
+      ::oDialog:AddFastKey( VK_F5, {|| ::oDialog:End( IDOK ) } )
 
-      ::oDialog:bStart        := {|| ::ChangeBrowse() }
+      ::oDialog:bStart        := {|| ::changeBrowse() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   oBmp:End()
 
 RETURN ( ::oDialog:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-METHOD StartActivate()
-
-RETURN ( nil )
-
-//--------------------------------------------------------------------------//
-
-METHOD ChangeBrowse()
+METHOD changeBrowse()
 
    eval( hget( ::hFormatoColumnas, hget( ::oBrw:aArrayData[ ::oBrw:nArrayAt ], "tipo" ) ) )
 
-   ::oCol:bOnPostEdit            := {|o,x,n| hset( ::oBrw:aArrayData[ ::oBrw:nArrayAt ], "valor", x ) }
+   ::oCol:bOnPostEdit         := {|o,x,n| hset( ::oBrw:aArrayData[ ::oBrw:nArrayAt ], "valor", x ) }
 
 RETURN ( nil )
 

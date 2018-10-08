@@ -9,6 +9,8 @@ CLASS ConfiguracionesController FROM SQLBaseController
 
    DATA cTabla                   INIT space( 1 )
 
+   DATA aItems                   INIT {}
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -21,27 +23,41 @@ CLASS ConfiguracionesController FROM SQLBaseController
 
    METHOD loadedBlankBuffer()
 
+   METHOD getModel()             INLINE ( if( empty( ::oModel ), ::oModel := SQLConfiguracionesModel():New( self ), ), ::oModel )
+
    METHOD getDialogView()        INLINE ( if( empty( ::oDialogView ), ::oDialogView := ConfiguracionesView():New( self ), ), ::oDialogView )
 
    METHOD getRepository()        INLINE ( if( empty( ::oRepository ), ::oRepository := ConfiguracionesRepository():New( self ), ), ::oRepository )
+
+   METHOD setItems( aItems )     INLINE ( ::aItems := aItems )
+
+   METHOD getItems()             INLINE ( ::aItems )
+
+   METHOD getModelValue( cDocumento, cClave, uDefault ) ;
+                                 INLINE ( ::getModel():getValue( cDocumento, cClave, uDefault ) )
+
+   METHOD getModelNumeric( cDocumento, cClave, uDefault ) ;
+                                 INLINE ( ::getModel():getNumeric( cDocumento, cClave, uDefault ) )
+   
+   METHOD setModelItems()      
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
+METHOD New( oController ) CLASS ConfiguracionesController
 
    ::Super:New( oController )
-
-   ::oModel                      := SQLConfiguracionesModel():New( self )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End()
+METHOD End() CLASS ConfiguracionesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
@@ -55,24 +71,40 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD Edit() 
+METHOD Edit() CLASS ConfiguracionesController 
 
-   ::getDialogView():setItems( ::oModel:getItemsMovimientosAlmacen() )
+   ::setItems( ::oController:getConfigItems() )
 
    if ::getDialogView():Activate()
-      ::oModel:setItemsMovimientosAlmacen()
+      ::setModelItems() // ::getModel():setItemsMovimientosAlmacen()
    end if 
 
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD loadedBlankBuffer()
+METHOD loadedBlankBuffer() CLASS ConfiguracionesController
 
-   hset( ::oModel:hBuffer, "tabla", ::cTabla )
+   hset( ::getModel():hBuffer, "tabla", ::cTabla )
 
-   hset( ::oModel:hBuffer, "serie", ::cSerie )
+   hset( ::getModel():hBuffer, "serie", ::cSerie )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD setModelItems() CLASS ConfiguracionesController
+
+   local hItem
+
+   for each hItem in ::aItems
+
+      ::getModel():insertOnDuplicateTransactional(  { "documento" => ::oController:cName,;
+                                                      "clave" => hget( hItem, "clave" ),;
+                                                      "valor" => hget( hItem, "valor" ) } )
+
+   next
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//

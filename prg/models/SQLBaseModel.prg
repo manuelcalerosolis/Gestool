@@ -1298,14 +1298,18 @@ RETURN ( Self )
 
 METHOD insertOnDuplicate( hBuffer, lTransactional )
 
+   local cSentence 
+
    DEFAULT lTransactional  := .f.
 
    ::fireEvent( 'insertingOnDuplicatingBuffer' )
 
+   cSentence               := ::getInsertOnDuplicateSentence( hBuffer )
+
    if lTransactional 
-      ::getDatabase():TransactionalExec( ::getInsertOnDuplicateSentence( hBuffer ) )
+      ::getDatabase():TransactionalExec( cSentence )
    else
-      ::getDatabase():Execs( ::getInsertOnDuplicateSentence( hBuffer ) )
+      ::getDatabase():Execs( cSentence )
    end  if 
 
    ::fireEvent( 'insertedOnDuplicatedBuffer' )
