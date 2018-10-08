@@ -22,6 +22,8 @@ CLASS LenguajesController FROM SQLNavigatorController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := LenguajesValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := LenguajesRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLLenguajesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -41,15 +43,15 @@ METHOD New( oController ) CLASS LenguajesController
 
    ::nLevel                   := Auth():Level( ::cName )
 
-   ::oModel                   := SQLLenguajesModel():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS LenguajesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -108,7 +110,7 @@ METHOD validLenguajeFromGet( oGet, oSay ) CLASS LenguajesController
       Return .t.
    end if
 
-   cNombre           := ::oModel:getNombre( uValue )
+   cNombre           := ::getModel():getNombre( uValue )
 
    if Empty( cNombre )
       oSay:cText( "" )
@@ -196,14 +198,14 @@ METHOD Activate() CLASS LenguajesView
       TRANSPARENT ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isAppendOrDuplicateMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;

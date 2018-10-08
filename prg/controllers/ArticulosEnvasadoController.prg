@@ -5,10 +5,6 @@
 
 CLASS ArticulosEnvasadoController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   DATA oGetSelector
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()

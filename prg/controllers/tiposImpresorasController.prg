@@ -6,7 +6,19 @@
 
 CLASS TiposImpresorasController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
+
+   METHOD End()
+
+   //Contrucciones tardias-----------------------------------------------------
+
+   METHOD getBrowseView()              INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := TiposImpresorasBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getDialogView()              INLINE( if( empty( ::oDialogView ), ::oDialogView := TiposImpresorasView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := TiposImpresorasValidator():New( self ), ), ::oValidator )
+   
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLTiposImpresorasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -24,16 +36,32 @@ METHOD New() CLASS TiposImpresorasController
 
    ::nLevel                := Auth():Level( ::cName )
 
-   ::oModel                := SQLTiposImpresorasModel():New( self )
-
-   ::oBrowseView           := TiposImpresorasBrowseView():New( self )
-
-   ::oDialogView           := TiposImpresorasView():New( self )
-
-   ::oValidator            := TiposImpresorasValidator():New( self )
 
 RETURN ( Self )
 
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS TiposImpresorasController
+
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
+
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
+
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
+
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
+
+   ::Super:End()
+
+RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -126,7 +154,7 @@ METHOD Activate() CLASS TiposImpresorasView
       TITLE       ::lblTitle() + "tipo de impresora"
 
    REDEFINE GET   oGetNombre ;
-      VAR         ::oController:oModel:hBuffer[ "nombre" ] ; 
+      VAR         ::oController:getModel():hBuffer[ "nombre" ] ; 
       ID          100 ;
       MEMO ;
       WHEN        ( ::oController:isNotZoomMode() ) ;

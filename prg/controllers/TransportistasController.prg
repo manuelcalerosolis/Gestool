@@ -5,17 +5,21 @@
 
 CLASS TransportistasController FROM SQLNavigatorController
 
-   DATA oIncidenciasController
-
-   DATA oDocumentosController
-
-   DATA oCamposExtraValoresController
-
-   DATA oDireccionesController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := TransportistasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := TransportistasView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := TransportistasRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := TransportistasValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLTransportistasModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -35,37 +39,16 @@ METHOD New( oController ) CLASS TransportistasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLTransportistasModel():New( self )
-
-   ::oBrowseView                    := TransportistasBrowseView():New( self )
-
-   ::oDialogView                    := TransportistasView():New( self )
-
-   ::oValidator                     := TransportistasValidator():New( self, ::oDialogView )
-
-   ::oDireccionesController         := DireccionesController():New( self )
-   ::oDireccionesController:setView( ::oDialogView )
-
-   ::oRepository                    := TransportistasRepository():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:updateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
-
-   ::oIncidenciasController         := IncidenciasController():New( self )
-
-   ::oDocumentosController          := DocumentosController():New( self )
+   ::getModel():setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -73,21 +56,25 @@ RETURN ( Self )
 
 METHOD End() CLASS TransportistasController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oDireccionesController:End()
-
-   ::oRepository:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::oGetSelector:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -200,27 +187,27 @@ METHOD Activate() CLASS TransportistasView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
    REDEFINE GET   oGetDni ;
-      VAR         ::oController:oModel:hBuffer[ "dni" ] ;
+      VAR         ::oController:getModel():hBuffer[ "dni" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( checkCif( oGetDni ) ) ;
       OF          ::oDialog
 
-   ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
+   ::oController:getDireccionesController():getDialogView():ExternalRedefine( ::oDialog )
 
    ::redefineExplorerBar( 700 )
 
@@ -237,9 +224,9 @@ METHOD Activate() CLASS TransportistasView
       ACTION      ( ::oDialog:end() )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F2, {|| ::oController:oDireccionesController:Append() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oController:oDireccionesController:Edit() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oController:oDireccionesController:Delete() } )
+      ::oDialog:AddFastKey( VK_F2, {|| ::oController:getDireccionesController():Append() } )
+      ::oDialog:AddFastKey( VK_F3, {|| ::oController:getDireccionesController():Edit() } )
+      ::oDialog:AddFastKey( VK_F4, {|| ::oController:getDireccionesController():Delete() } )
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
@@ -255,7 +242,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartDialog() CLASS TransportistasView
 
-   ::oController:oDireccionesController:externalStartDialog()
+   ::oController:getDireccionesController():externalStartDialog()
 
    ::addLinksToExplorerBar()
 
@@ -270,14 +257,17 @@ METHOD addLinksToExplorerBar() CLASS TransportistasView
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Incidencias...",         {|| ::oController:oIncidenciasController:activateDialogView() }, ::oController:oIncidenciasController:getImage( "16" ) )
-      oPanel:AddLink( "Documentos...",          {|| ::oController:oDocumentosController:activateDialogView() }, ::oController:oDocumentosController:getImage( "16" ) )
+      oPanel:AddLink( "Incidencias...",         {|| ::oController:getIncidenciasController():activateDialogView() },;
+                                                    ::oController:getIncidenciasController():getImage( "16" ) )
+      oPanel:AddLink( "Documentos...",          {|| ::oController:getDocumentosController():activateDialogView() },;
+                                                    ::oController:getDocumentosController():getImage( "16" ) )
    end if
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Campos extra...",        {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+      oPanel:AddLink( "Campos extra...",        {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
+                                                    ::oController:getCamposExtraValoresController():getImage( "16" ) )
    end if
 
 RETURN ( self )
