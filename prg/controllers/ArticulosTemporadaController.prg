@@ -16,6 +16,8 @@ CLASS ArticulosTemporadasController FROM SQLNavigatorController
    METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ArticulosTemporadaView():New( self ), ), ::oDialogView )
 
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosTemporadaValidator():New( self ), ), ::oValidator )
+   
+   METHOD getModel()                      INLINE( if( empty( ::oModel ), ::oModel := SQLArticulosTemporadasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -35,15 +37,15 @@ METHOD New( oController ) CLASS ArticulosTemporadasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLArticulosTemporadasModel():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS ArticulosTemporadasController
-
-   ::oModel:End()
+   
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -181,21 +183,21 @@ METHOD Activate() CLASS ArticulosTemporadaView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:oModel:hBuffer[ "icono" ] ;
+      VAR         ::oController:getModel():hBuffer[ "icono" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ITEMS       ( hgetkeys( ::hTipos ) ) ;

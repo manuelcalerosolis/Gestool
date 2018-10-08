@@ -20,6 +20,8 @@ CLASS UnidadesMedicionGruposController FROM SQLNavigatorController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionGruposValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionGruposRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel :=SQLUnidadesMedicionGruposModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -39,7 +41,7 @@ METHOD New( oController ) CLASS UnidadesMedicionGruposController
 
    ::nLevel                                  := Auth():Level( ::cName )
 
-   ::oModel                                  := SQLUnidadesMedicionGruposModel():New( self )
+   ::getModel()                                  
 
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -48,8 +50,10 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS UnidadesMedicionGruposController
-
-   ::oModel:End()
+   
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -75,9 +79,9 @@ RETURN ( nil )
 
 METHOD insertLineaUnidadBase() CLASS UnidadesMedicionGruposController
 
-   if empty( ::getUnidadesMedicionGruposLineasController():oModel:getField( 'uuid', 'parent_uuid', ::getUuid() ) )
+   if empty( ::getUnidadesMedicionGruposLineasController():getModel():getField( 'uuid', 'parent_uuid', ::getUuid() ) )
 
-      ::getUnidadesMedicionGruposLineasController():oModel:insertLineaUnidadBase( ::oModel:hBuffer[ "uuid" ], ::oModel:hBuffer[ "unidad_base_codigo" ] )
+      ::getUnidadesMedicionGruposLineasController():getModel():insertLineaUnidadBase( ::getModel():hBuffer[ "uuid" ], ::getModel():hBuffer[ "unidad_base_codigo" ] )
 
    end if
 
@@ -193,26 +197,26 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() );
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   ::oController:getUnidadesMedicioncontroller():oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) )
+   ::oController:getUnidadesMedicioncontroller():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) )
    
-   ::oController:getUnidadesMedicioncontroller():oGetSelector:setEvent( 'validated', {|| ::validatedUnidadesMedicioncontroller() } )
+   ::oController:getUnidadesMedicioncontroller():getSelector():setEvent( 'validated', {|| ::validatedUnidadesMedicioncontroller() } )
 
-   ::oController:getUnidadesMedicioncontroller():oGetSelector:setWhen( {|| Empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .AND. ::oController:isNotZoomMode() } )
+   ::oController:getUnidadesMedicioncontroller():getSelector():setWhen( {|| Empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .AND. ::oController:isNotZoomMode() } )
 
-   ::oController:getUnidadesMedicioncontroller():oGetSelector:Build( { "idGet" => 120, "idText" => 121,"idLink" => 122, "oDialog" => ::oDialog } )
+   ::oController:getUnidadesMedicioncontroller():getSelector():Build( { "idGet" => 120, "idText" => 121,"idLink" => 122, "oDialog" => ::oDialog } )
 
    // Unidades equivalencia--------------------------------------------------------------------
 
@@ -220,13 +224,13 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       ID          130 ;
       OF          ::oDialog ;
       ACTION      ( ::oController:getUnidadesMedicionGruposLineasController():Append() ) ;
-      WHEN        ( !empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
+      WHEN        ( !empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
 
    REDEFINE BUTTON oBtnEdit ;
       ID          140 ;
       OF          ::oDialog ;
       ACTION      ( ::oController:getUnidadesMedicionGruposLineasController():Edit() ) ;
-      WHEN        ( !empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
+      WHEN        ( !empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
 
    // oBtnEdit:bAction   := {||  }
 
@@ -234,7 +238,7 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       ID          150 ;
       OF          ::oDialog ;
       ACTION      ( ::oController:getUnidadesMedicionGruposLineasController():Delete() ) ;
-      WHEN        ( !empty( ::oController:oModel:hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
+      WHEN        ( !empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
 
    ::oController:getUnidadesMedicionGruposLineasController():Activate( 160, ::oDialog ) 
 
