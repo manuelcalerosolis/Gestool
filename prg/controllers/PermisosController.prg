@@ -49,9 +49,9 @@ METHOD New() CLASS PermisosController
 
    ::oOpcionesModel        := SQLPermisosOpcionesModel():New( self )
 
-   ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } ) 
+   ::setEvent( 'openingDialog',  {|| ::getDialogView():openingDialog() } ) 
     
-   ::setEvent( 'closedDialog',   {|| ::oDialogView:closedDialog() } )  
+   ::setEvent( 'closedDialog',   {|| ::getDialogView():closedDialog() } )  
 
 RETURN ( Self )
 
