@@ -77,11 +77,11 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter )
 
    ::setFileName( cFileName )
 
-   oWaitMeter        := TWaitMeter():New( "Imprimiendo documento(s)", "Espere por favor..." )
+   oWaitMeter           := TWaitMeter():New( "Imprimiendo documento(s)", "Espere por favor..." )
    oWaitMeter:setTotal( len( ::getUuidIdentifiers() ) )
    oWaitMeter:Run()
 
-   oReport           := ::getController():getReport()
+   oReport              := ::getController():getReport()
 
    oReport:createFastReport()
 

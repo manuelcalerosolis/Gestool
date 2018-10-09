@@ -26,6 +26,8 @@ CLASS MenuTreeView
 
    DATA oButtonPdf
 
+   DATA oButtonMail
+
    DATA oButtonLabel
 
    DATA oButtonConfig
@@ -53,6 +55,7 @@ CLASS MenuTreeView
    METHOD isControllerDocuments()         INLINE ( !empty( ::getSuperController():aDocuments ) )
    METHOD isControllerLabels()            INLINE ( ::getSuperController():lLabels )
    METHOD isControllerConfig()            INLINE ( ::getSuperController():lConfig )
+   METHOD isMailConfig()                  INLINE ( ::getSuperController():lMail )
    METHOD isControllerOthers()            INLINE ( ::getSuperController():lOthers )
    METHOD getControllerDocuments()        INLINE ( ::getSuperController():aDocuments )
 
@@ -124,6 +127,8 @@ CLASS MenuTreeView
    METHOD addPreviewButtons()
 
    METHOD addPdfButtons()
+
+   METHOD addMailButtons()
 
    METHOD addLabelButton()
 
@@ -440,7 +445,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD addPrintSerialButton( cWorkArea )
+METHOD addPrintSerialButton()
 
    if isFalse( ::fireEvent( 'addingPrintSerialButton' ) )
       RETURN ( nil )
@@ -454,7 +459,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD addPrintButtons( cWorkArea )
+METHOD addPrintButtons()
 
    if isFalse( ::fireEvent( 'addingPrintButton' ) )
       RETURN ( nil )
@@ -470,7 +475,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD addPreviewButtons( cWorkArea )
+METHOD addPreviewButtons()
 
    if isFalse( ::fireEvent( 'addingPreviewButton' ) )
       RETURN ( nil )
@@ -486,7 +491,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD addPdfButtons( cWorkArea )
+METHOD addPdfButtons()
 
    if isFalse( ::fireEvent( 'addingPdfButton' ) )
       RETURN ( nil )
@@ -497,6 +502,20 @@ METHOD addPdfButtons( cWorkArea )
    aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Doclock16", ::blockPrintDocument( IS_PDF, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPdf ) } ) 
 
    ::fireEvent( 'addedPdfButton') 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD addMailButtons()
+
+   if isFalse( ::fireEvent( 'addingMailButton' ) )
+      RETURN ( nil )
+   end if 
+
+   ::oButtonMail  := ::AddButton( "Mail", "Doclock16", {|| ::getSuperController():getMailController():dialogViewActivate() }, "L", ACC_IMPR ) 
+
+   ::fireEvent( 'addedMailButton') 
 
 RETURN ( nil )
 
@@ -579,6 +598,8 @@ METHOD addDocumentsButton()
    ::addPreviewButtons()
    
    ::addPdfButtons()
+
+   ::addMailButtons()
    
    ::fireEvent( 'addedDocumentButton' ) 
 

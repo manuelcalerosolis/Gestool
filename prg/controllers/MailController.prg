@@ -75,7 +75,7 @@ METHOD selectHtmlFile() CLASS MailController
       ::loadHtmlFile( ::cHtmlFile )
    end if 
 
-Return ( Self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -85,7 +85,7 @@ METHOD loadDefaultHtmlFile() CLASS MailController
 
    if empty( ::cTypeDocument )
       msgInfo( "No se ha especificado el tipo de documento." )
-      Return ( Self )
+      RETURN ( nil )
    end if 
 
    cFile             := cGetHtmlDocumento( ::cTypeDocument )
@@ -93,7 +93,7 @@ METHOD loadDefaultHtmlFile() CLASS MailController
       ::loadHtmlFile( cFile )
    end if 
 
-Return ( Self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -126,7 +126,7 @@ METHOD loadHtmlFile( cFile ) CLASS MailController
 
    ErrorBlock( oBlock )
 
-Return ( lLoadHtmlFile )
+RETURN ( lLoadHtmlFile )
 
 //--------------------------------------------------------------------------//
 
@@ -134,7 +134,7 @@ METHOD setFileDefaultHtml( cFile ) CLASS MailController
 
    if empty( ::cTypeDocument )
       msgInfo( "No se ha especificado el tipo de documento." )
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    if !Empty( ::cHtmlFile )
@@ -145,7 +145,7 @@ METHOD setFileDefaultHtml( cFile ) CLASS MailController
       MsgInfo( "No ha documentos para establecer por defecto" )
    end if
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -154,7 +154,7 @@ METHOD saveAsHtml() CLASS MailController
    local cHtmlFile   := cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML', , cPatHtml() )
 
    if empty( cHtmlFile )
-      Return ( Self )
+      RETURN ( Self )
    end if 
 
    if !( lower( cFileExt( cHtmlFile ) ) $ "html" )
@@ -165,21 +165,21 @@ METHOD saveAsHtml() CLASS MailController
       ferase( cHtmlFile )
    end if
 
-   ::getDialogView():SaveToFile( cHtmlFile )
+   ::getDialogView():saveToFile( cHtmlFile )
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
 METHOD saveHTML() CLASS MailController
 
    if empty( ::cHtmlFile )
-      Return ( ::saveAsHtml() )
+      RETURN ( ::saveAsHtml() )
    end if 
 
-   ::getDialogView():SaveToFile( ::cHtmlFile )
+   ::getDialogView():saveToFile( ::cHtmlFile )
 
-Return ( Self )
+RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -301,7 +301,7 @@ METHOD Activate() CLASS mailView
 
       ::oBtnCargarHTML:bAction  := {|| ::oController:selectHtmlFile() }
 
-   //Guardar HTML---------------------------------------------------------------
+   // Guardar HTML--------------------------------------------------------------
    
    REDEFINE BTNBMP ::oBtnSalvarHTML ;
       ID             180 ;
@@ -312,7 +312,8 @@ METHOD Activate() CLASS mailView
 
       ::oBtnSalvarHTML:bAction  := {|| ::oController:saveHtml() }
 
-   //Cargar HTML como----------------------------------------------------------
+   // Cargar HTML como---------------------------------------------------------
+
    REDEFINE BTNBMP ::oBtnSalvarAsHTML ;
       ID             190 ;
       OF             ::oFld:aDialogs[ 1 ] ;
@@ -322,15 +323,13 @@ METHOD Activate() CLASS mailView
 
       ::oBtnSalvarAsHTML:bAction  := {|| ::oController:saveAsHtml() }
 
-   //Texto enriquecido------------------------------------------------------------
+   // Texto enriquecido-----------------------------------------------------------
 
-   ::oRichEdit       := GetRichEdit():ReDefine( 600, ::oFld:aDialogs[ 1 ] )
+      ::oRichEdit    := GetRichEdit():ReDefine( 600, ::oFld:aDialogs[ 1 ] )
 
-   ::setMensaje( ::cMensaje )
+      ::setMensaje( ::cMensaje )
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 

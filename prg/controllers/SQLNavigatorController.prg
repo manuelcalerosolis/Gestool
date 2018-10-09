@@ -35,6 +35,8 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    DATA lConfig                                       INIT .f.
 
+   DATA lMail                                         INIT .f.
+
    DATA lEnableWindowsBar                             INIT .f.
 
    DATA hFastKey                                      INIT {=>}

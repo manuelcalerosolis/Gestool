@@ -31,15 +31,13 @@ END CLASS
 
 METHOD New( oController ) CLASS SerieDocumentoComponent
 
-   ::oController              := oController 
+   ::oController                    := oController 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS SerieDocumentoComponent
-
-   self                             := nil
 
 RETURN ( nil )
 
@@ -66,7 +64,7 @@ METHOD Validate() CLASS SerieDocumentoComponent
 
    local cSerie   := alltrim( ::oGet:varGet() )
 
-   if ::oController:oContadoresModel:isSerie( ::oController:cName, cSerie )
+   if ::oController:getContadoresModel():isSerie( ::oController:cName, cSerie )
       RETURN ( .t. )
    end if
 
@@ -74,7 +72,7 @@ METHOD Validate() CLASS SerieDocumentoComponent
       RETURN ( .f. )
    end if 
 
-   ::oController:oContadoresModel:insertSerie( ::oController:cName, cSerie ) 
+   ::oController:getContadoresModel():insertSerie( ::oController:cName, cSerie ) 
 
 RETURN ( .t. )
 
@@ -112,15 +110,13 @@ END CLASS
 
 METHOD New( oController ) CLASS NumeroDocumentoComponent
 
-   ::oController              := oController 
+   ::oController                    := oController 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS NumeroDocumentoComponent
-
-   self                             := nil
 
 RETURN ( nil )
 
@@ -139,7 +135,7 @@ METHOD Activate( idGet, oDlg ) CLASS NumeroDocumentoComponent
 
    ::oGet:bValid  := {|| ::Validate() }
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

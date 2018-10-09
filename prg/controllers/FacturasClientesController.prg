@@ -82,6 +82,10 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    // Contrucciones tardias----------------------------------------------------
 
+   METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesModel():New( self ), ), ::oModel )
+
+   METHOD getContadoresModel()         INLINE ( if( empty( ::oContadoresModel ), ::oContadoresModel := SQLContadoresModel():New( self ), ), ::oContadoresModel )
+
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := FacturasClientesView():New( self ), ), ::oDialogView )
 
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := FacturasClientesValidator():New( self ), ), ::oValidator ) 
@@ -112,24 +116,22 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::lConfig                           := .t.
 
+   ::lMail                             := .t.
+
    ::lOthers                           := .t.
 
    ::hImage                            := {  "16" => "gc_document_text_user_16",;
                                              "32" => "gc_document_text_user_32",;
                                              "48" => "gc_document_text_user_48" }
 
-   ::oModel                            := SQLFacturasClientesModel():New( self )
-
    ::oNumeroDocumentoComponent         := NumeroDocumentoComponent():New( self )
 
    ::oSerieDocumentoComponent          := SerieDocumentoComponent():New( self )
 
-   ::oContadoresModel                  := SQLContadoresModel():New( self )
-
    ::loadDocuments()
 
-   ::oModel:setEvent( 'loadedBuffer',        {|| ::loadedBuffer() } )
-   ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
+   ::getModel():setEvent( 'loadedBuffer',        {|| ::loadedBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
 
    ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
    ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
@@ -150,6 +152,10 @@ METHOD End() CLASS FacturasClientesController
 
    if !empty( ::oModel )
       ::oModel:End()
+   end if 
+
+   if !empty( ::oContadoresModel )
+      ::oContadoresModel:End()
    end if 
 
    if !empty( ::oDialogView )
