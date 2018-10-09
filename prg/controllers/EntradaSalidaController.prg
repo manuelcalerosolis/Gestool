@@ -5,15 +5,21 @@
 
 CLASS EntradaSalidaController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   DATA oDocumentosController
-
-   DATA oCajasController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := EntradaSalidaBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := EntradaSalidaView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := EntradaSalidaRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := EntradaSalidaValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLEntradaSalidaModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -33,45 +39,31 @@ METHOD New() CLASS EntradaSalidaController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLEntradaSalidaModel():New( self )
-
-   ::oBrowseView                    := EntradaSalidaBrowseView():New( self )
-
-   ::oDialogView                    := EntradaSalidaView():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oDocumentosController          := DocumentosController():New( self, ::oModel:cTableName )
-
-   ::oValidator                     := EntradaSalidaValidator():New( self, ::oDialogView )
-
-   ::oCajasController               := CajasController():New( self )
-
-   ::oRepository                    := EntradaSalidaRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )   
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS EntradaSalidaController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oCamposExtraValoresController:End()
-
-   ::oDocumentosController:End()
-
-   ::oCajasController:End()
-
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -199,13 +191,13 @@ METHOD Activate() CLASS EntradaSalidaView
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:oModel:hBuffer[ "tipo" ] ;
+      VAR         ::oController:getModel():hBuffer[ "tipo" ] ;
       ID          100 ;
       ITEMS       ::aTipo;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "importe" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "importe" ) ) ;
       SPINNER ;
@@ -213,27 +205,27 @@ METHOD Activate() CLASS EntradaSalidaView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          120 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "sesion" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "sesion" ] ;
       ID          130 ;
       WHEN        ( .f. ) ;
       OF          ::oDialog ;
    // codigo caja-------------------------------------------------------------------------------------------------------//
 
-   ::oController:oCajasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "caja_codigo" ] ) )
+   ::oController:getCajasController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "caja_codigo" ] ) )
    
-   /*::oController:oCajasController:oGetSelector:setEvent( 'validated', {|| ::CajasControllerValidated() } )*/
+   /*::oController:getCajasController():oGetSelector:setEvent( 'validated', {|| ::CajasControllerValidated() } )*/
 
-   ::oController:oCajasController:oGetSelector:Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oDialog } )
+   ::oController:getCajasController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oDialog } )
 
    // cliente------------------------------------------------------------------------------------------------------------//
   
-  REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
+  REDEFINE GET   ::oController:getModel():hBuffer[ "fecha_hora" ] ;
       ID          150 ;
       SPINNER ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -267,14 +259,14 @@ METHOD StartActivate() CLASS EntradaSalidaView
    local oPanel                  := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
    oPanel:AddLink(   "Campos extra...",;
-                     {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) },;
-                     ::oController:oCamposExtraValoresController:getImage( "16" ) )
+                     {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
+                         ::oController:getCamposExtraValoresController():getImage( "16" ) )
 
    oPanel:AddLink(   "Documentos...",;
-                     {|| ::oController:oDocumentosController:activateDialogView() },;
-                     ::oController:oDocumentosController:getImage( "16" ) )
+                     {|| ::oController:getDocumentosController():activateDialogView() },;
+                         ::oController:getDocumentosController():getImage( "16" ) )
 
-   ::oController:oCajasController:oGetSelector:Start()
+   ::oController:getCajasController():getSelector():Start()
 
 RETURN ( self )
 
@@ -315,12 +307,6 @@ CLASS SQLEntradaSalidaModel FROM SQLCompanyModel
    DATA cTableName               INIT "cajas_entradas_salidas"
 
    METHOD getColumns()
-
-   /*METHOD getCajaUuidAttribute( uValue ) ; 
-                                 INLINE ( if( empty( uValue ), space( 40 ), ::oController:oCajasController:oModel():getCodigoWhereUuid( uValue ) ) )
-
-   METHOD setCajaUuidAttribute( uValue ) ;
-                                 INLINE ( if( empty( uValue ), "", ::oController:oCajasController:oModel():getUuidWhereCodigo( uValue ) ) )*/
 
 METHOD getGeneralSelect()
 

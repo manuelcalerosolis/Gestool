@@ -157,6 +157,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oDelegacionesController 
 
    DATA oSituacionesController 
+   
+   DATA oRecibosController 
 
 
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
@@ -376,6 +378,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getSituacionesController();
                                     INLINE ( if( empty( ::oSituacionesController ), ::oSituacionesController := SituacionesController():New( self ), ), ::oSituacionesController )
+
+   METHOD getRecibosController();
+                                    INLINE ( if( empty( ::oRecibosController ), ::oRecibosController := RecibosController():New( self ), ), ::oRecibosController )
 
    METHOD End()
 
@@ -676,6 +681,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oDelegacionesController )
       ::oDelegacionesController:End()
+   end if 
+
+   if !empty( ::oRecibosController )
+      ::oRecibosController:End()
    end if
 
    ::Super:End()

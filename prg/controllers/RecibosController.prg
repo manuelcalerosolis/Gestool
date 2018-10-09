@@ -5,21 +5,21 @@
 
 CLASS RecibosController FROM SQLNavigatorController
 
-   DATA oCajasController
-
-   DATA oClientesController
-
-   DATA oFormasPagosController
-
-   DATA oAgentesController
-
-   DATA oIncidenciasController
-
-   DATA oDocumentosController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := RecibosBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := RecibosBrowseView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := RecibosRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := RecibosValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLRecibosModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -39,57 +39,31 @@ METHOD New( oController ) CLASS RecibosController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLRecibosModel():New( self )
-
-   ::oBrowseView                    := RecibosBrowseView():New( self )
-
-   ::oDialogView                    := RecibosView():New( self )
-
-   ::oValidator                     := RecibosValidator():New( self, ::oDialogView )
-
-   ::oCajasController               := CajasController():new( self )
-
-   ::oClientesController            := ClientesController():new( self )
-
-   ::oFormasPagosController           := FormasPagosController():new( self )
-
-   ::oAgentesController             := AgentesController():new( self )
-
-   ::oIncidenciasController         := IncidenciasController():new( self )
-
-   ::oDocumentosController          := DocumentosController():new( self )
-
-   ::oRepository                    := RecibosRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )   
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS RecibosController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oCajasController:End()
-
-   ::oClientesController:End()
-
-   ::oFormasPagosController:End()
-
-   ::oAgentesController:End()
-
-   ::oIncidenciasController:End()
-
-   ::oDocumentosController:End()
-
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -242,10 +216,10 @@ END CLASS
 //---------------------------------------------------------------------------//
 METHOD getFechaCobro() CLASS RecibosView
 
-   if ::oController:oModel:hBuffer[ "cobrado" ] 
-      ::oController:oModel:hBuffer[ "fecha_cobro" ] := hb_date()
+   if ::oController:getModel():hBuffer[ "cobrado" ] 
+      ::oController:getModel():hBuffer[ "fecha_cobro" ] := hb_date()
    else
-      ::oController:oModel:hBuffer[ "fecha_cobro" ] := ctod( "" )
+      ::oController:getModel():hBuffer[ "fecha_cobro" ] := ctod( "" )
    end if
 
    ::oFechaCobro:Refresh()
@@ -280,48 +254,48 @@ METHOD Activate() CLASS RecibosView
 
       ::redefineExplorerBar()
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "expedicion" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "expedicion" ] ;
       ID          100 ;
       SPINNER ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "vencimiento" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "vencimiento" ] ;
       ID          110 ;
       SPINNER ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "no_incluir_en_arqueo" ] ;
+   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "no_incluir_en_arqueo" ] ;
       ID          120 ;
       IDSAY       122 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "sesion" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "sesion" ] ;
       ID          130 ;
       WHEN         ( .f. );
       OF          ::oFolder:aDialogs[1]
 
-  REDEFINE GET   ::oController:oModel:hBuffer[ "importe" ] ;
+  REDEFINE GET   ::oController:getModel():hBuffer[ "importe" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       PICTURE     "@E 999999999999.999";
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cobro" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "cobro" ] ;
       ID          150 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       PICTURE     "@E 999999999999.999";
       OF          ::oFolder:aDialogs[1]
 
-  REDEFINE GET   ::oController:oModel:hBuffer[ "gastos" ] ;
+  REDEFINE GET   ::oController:getModel():hBuffer[ "gastos" ] ;
       ID          160 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       PICTURE     "@E 999999999999.999";
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "cobrado" ] ;
+   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "cobrado" ] ;
       ID          170 ;
       IDSAY       172 ;
       ON CHANGE      (::getFechaCobro() );
@@ -329,49 +303,49 @@ METHOD Activate() CLASS RecibosView
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::oFechacobro ; 
-      VAR         ::oController:oModel:hBuffer[ "fecha_cobro" ];
+      VAR         ::oController:getModel():hBuffer[ "fecha_cobro" ];
       ID          180 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
    // codigo caja-------------------------------------------------------------------------------------------------------//
 
-   ::oController:oCajasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "codigo_caja" ] ) )
+   ::oController:getCajasController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "codigo_caja" ] ) )
    
-   /*::oController:oCajasController:oGetSelector:setEvent( 'validated', {|| ::CajasControllerValidated() } )*/
+   /*::oController:getCajasController():getSelector():setEvent( 'validated', {|| ::CajasControllerValidated() } )*/
 
-   ::oController:oCajasController:oGetSelector:Build( { "idGet" => 190, "idText" => 191, "idLink" => 192, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getCajasController():getSelector():Build( { "idGet" => 190, "idText" => 191, "idLink" => 192, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // cliente------------------------------------------------------------------------------------------------------------//
 
-   ::oController:oClientesController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente" ] ) )
+   ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "cliente" ] ) )
 
-   ::oController:oClientesController:oGetSelector:Build( { "idGet" => 200, "idText" => 201, "idLink" => 202, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getClientesController():getSelector():Build( { "idGet" => 200, "idText" => 201, "idLink" => 202, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Forma de pago-----------------------------------------------------------------------------------------------------//
 
-   ::oController:oFormasPagosController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago" ] ) )
+   ::oController:getFormasPagosController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "forma_pago" ] ) )
    
-   /*::oController:oFormasPagosController:oGetSelector:setEvent( 'validated', {|| ::FormasPagosControllerValidated() } )*/
+   /*::oController:getFormasPagosController():getSelector():setEvent( 'validated', {|| ::FormasPagosControllerValidated() } )*/
 
-   ::oController:oFormasPagosController:oGetSelector:Build( { "idGet" => 210, "idText" => 211, "idLink" => 212, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getFormasPagosController():getSelector():Build( { "idGet" => 210, "idText" => 211, "idLink" => 212, "oDialog" => ::oFolder:aDialogs[1] } )
 
 //Agentes---------------------------------------------------------------------------------------------------------//
 
-   ::oController:oAgentesController:getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "agente" ] ) )
+   ::oController:getAgentesController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "agente" ] ) )
    
-   /*::oController:oAgentesController:getSelector():setEvent( 'validated', {|| ::AgentesControllerValidated() } )*/
+   /*::oController:getAgentesController():getSelector():setEvent( 'validated', {|| ::AgentesControllerValidated() } )*/
 
-   ::oController:oAgentesController:getSelector():Build( { "idGet" => 220, "idText" => 221, "idLink" => 222, "oDialog" => ::oFolder:aDialogs[1] } )
+   ::oController:getAgentesController():getSelector():Build( { "idGet" => 220, "idText" => 221, "idLink" => 222, "oDialog" => ::oFolder:aDialogs[1] } )
 
 //-----------------------------------------------------------------------------------------------------------------//
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "concepto" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "concepto" ] ;
       ID          230 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pagado_por" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "pagado_por" ] ;
       ID          240 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oFolder:aDialogs[1]
@@ -406,13 +380,13 @@ METHOD StartActivate() CLASS RecibosView
 
 ::addLinksToExplorerBar()
 
-::oController:oCajasController:oGetSelector:Start()
+::oController:getCajasController():getSelector():Start()
 
-::oController:oClientesController:oGetSelector:Start()
+::oController:getClientesController():getSelector():Start()
 
-::oController:oFormasPagosController:oGetSelector:Start()
+::oController:getFormasPagosController():getSelector():Start()
 
-::oController:oAgentesController:getSelector():Start()
+::oController:getAgentesController():getSelector():Start()
 
 RETURN ( self )
 
@@ -429,12 +403,12 @@ METHOD addLinksToExplorerBar() CLASS RecibosView
    end if
 
    oPanel:AddLink(   "Incidencias...",;
-                     {|| ::oController:oIncidenciasController:activateDialogView( ::oController:getUuid() ) },;
-                     ::oController:oIncidenciasController:getImage( "16" ) )
+                     {|| ::oController:getIncidenciasController():activateDialogView( ::oController:getUuid() ) },;
+                         ::oController:getIncidenciasController():getImage( "16" ) )
    
    oPanel:AddLink(   "Documentos...",;
-                     {|| ::oController:oDocumentosController:activateDialogView() },;
-                     ::oController:oDocumentosController:getImage( "16" ) )
+                     {|| ::oController:getDocumentosController():activateDialogView() },;
+                     ::oController:getDocumentosController():getImage( "16" ) )
 
 RETURN ( self )
 

@@ -17,7 +17,9 @@ CLASS EntidadesController FROM SQLNavigatorController
 
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := EntidadesValidator():New( self  ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := EntidadesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := EntidadesRepository():New( self ), ), ::oRepository ) 
+
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLEntidadesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -36,38 +38,38 @@ METHOD New( oController ) CLASS EntidadesController
                                                 "48" => "gc_office_building2_48" }
 
    ::nLevel                               := Auth():Level( ::cName )
+   
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
+   
+   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel                               := SQLEntidadesModel():New( self )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
-   
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getContactosController():loadBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',               {|| ::getContactosController():insertBuffer() } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getContactosController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',                {|| ::getContactosController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getContactosController():loadBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::getContactosController():insertBuffer() } )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getContactosController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getContactosController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getContactosController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::getContactosController():updateBuffer( ::getUuid() ) } )
-
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getContactosController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getContactosController():loadedDuplicateBuffer( ::getUuid() ) } )
-   
-   ::oModel:setEvent( 'deletedSelection',             {|| ::getContactosController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::getModel():setEvent( 'deletedSelection',             {|| ::getContactosController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS EntidadesController
-
-   ::oModel:End()
+   
+   if !empty( ::oModel)
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -224,32 +226,32 @@ METHOD Activate() CLASS EntidadesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "descripcion" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "descripcion" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "gnl_fisico" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "gnl_fisico" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "gnl_fisico" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "punto_logico_op" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "punto_logico_op" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "punto_logico_op" ) ) ;
@@ -263,22 +265,22 @@ METHOD Activate() CLASS EntidadesView
 
    ::oController:getContactosController():getDialogView():ExternalRedefine( ::oDialog )
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "web" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "web" ] ;
       ID          150 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_ine" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo_ine" ] ;
       ID          160 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cno_cnae" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "cno_cnae" ] ;
       ID          170 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "otros" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "otros" ] ;
       ID          180 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
