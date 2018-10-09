@@ -30,6 +30,8 @@ CLASS PermisosController FROM SQLNavigatorGestoolController
    
    METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLPermisosModel():New( self ), ), ::oModel ) 
 
+   METHOD getOpcionesModel()     INLINE( if( empty( ::oOpcionesModel ), ::oOpcionesModel := SQLPermisosOpcionesModel():New( self ), ), ::oOpcionesModel ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -47,7 +49,7 @@ METHOD New() CLASS PermisosController
    ::hImage                := {  "16" => "gc_id_badge_16",;
                                  "48" => "gc_id_badge_48" }
 
-   ::oOpcionesModel        := SQLPermisosOpcionesModel():New( self )
+   //::oOpcionesModel        := SQLPermisosOpcionesModel():New( self )
 
    ::setEvent( 'openingDialog',  {|| ::getDialogView():openingDialog() } ) 
     
@@ -106,7 +108,7 @@ METHOD saveOption( cUuid, oTree ) CLASS PermisosController
    hset( hBuffer, "nombre",         hget( oTree:Cargo, "Id" ) )
    hset( hBuffer, "nivel",          nPermiso( oTree:Cargo ) )
 
-   ::oOpcionesModel:insertOnDuplicate( hBuffer )
+   ::getOpcionesModel():insertOnDuplicate( hBuffer )
 
 RETURN ( nil )
 
