@@ -9,7 +9,7 @@ CLASS PermisosController FROM SQLNavigatorGestoolController
 
    DATA oOpcionesModel
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -17,6 +17,18 @@ CLASS PermisosController FROM SQLNavigatorGestoolController
       METHOD saveOption()
 
    METHOD loadOption()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := PermisosBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := PermisosView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := PermisosRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := PermisosValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLPermisosModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -35,17 +47,7 @@ METHOD New() CLASS PermisosController
    ::hImage                := {  "16" => "gc_id_badge_16",;
                                  "48" => "gc_id_badge_48" }
 
-   ::oModel                := SQLPermisosModel():New( self )
-   
    ::oOpcionesModel        := SQLPermisosOpcionesModel():New( self )
-
-   ::oRepository           := PermisosRepository():New( self )
-
-   ::oBrowseView           := PermisosBrowseView():New( self )
-
-   ::oDialogView           := PermisosView():New( self )
-
-   ::oValidator            := PermisosValidator():New( self )
 
    ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } ) 
     
@@ -68,6 +70,18 @@ METHOD End() CLASS PermisosController
    if !empty( ::oDialogView )
       ::oDialogView:End()
    endif
+
+   if !empty(::oBrowseView )
+      ::oBrowseView:End()
+   end if 
+
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if 
+
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
    ::Super:End()
 

@@ -128,26 +128,26 @@ METHOD loadUsersAndCompanies() CLASS AccessController
 
    // Usuario------------------------------------------------------------------
 
-   ::aComboUsuarios        := ::getUsuariosController():oModel:getNombres()
+   ::aComboUsuarios        := ::getUsuariosController():getModel():getNombres()
 
-   cUltimoUsuario          := ::getAjustableController():oModel:getUltimoUsuarioInMac( ::getMacAddress() )
+   cUltimoUsuario          := ::getAjustableController():getModel():getUltimoUsuarioInMac( ::getMacAddress() )
    if empty( cUltimoUsuario )
       ::cComboUsuario      := atail( ::aComboUsuarios )
    else 
-      ::cComboUsuario      := ::getUsuariosController():oModel:getNombreWhereUuid( cUltimoUsuario )
+      ::cComboUsuario      := ::getUsuariosController():getModel():getNombreWhereUuid( cUltimoUsuario )
    end if 
 
    // Empresa------------------------------------------------------------------
 
    if ::isSelectCompany()
 
-      ::aComboEmpresas     := ::getEmpresasController():oModel:getNombres()
+      ::aComboEmpresas     := ::getEmpresasController():getModel():getNombres()
 
-      cUltimaEmpresa       := ::getAjustableController():oModel:getUltimaEmpresaInMac( ::getMacAddress() )
+      cUltimaEmpresa       := ::getAjustableController():getModel():getUltimaEmpresaInMac( ::getMacAddress() )
       if empty( cUltimaEmpresa )
          ::cComboEmpresa   := atail( ::cComboEmpresa )
       else
-         ::cComboEmpresa   := ::getEmpresasController():oModel:getNombreWhereUuid( cUltimaEmpresa )
+         ::cComboEmpresa   := ::getEmpresasController():getModel():getNombreWhereUuid( cUltimaEmpresa )
       end if 
 
    end if 
@@ -169,9 +169,9 @@ RETURN ( nil )
 
 METHOD saveUsersAndCompanies() CLASS AccessController
 
-   ::getAjustableController():oModel:setUltimaEmpresaInMac( Company():uuid(), ::getMacAddress() )
+   ::getAjustableController():getModel():setUltimaEmpresaInMac( Company():uuid(), ::getMacAddress() )
 
-   ::getAjustableController():oModel:setUltimoUsuarioInMac( Auth():uuid(), ::getMacAddress() )
+   ::getAjustableController():getModel():setUltimoUsuarioInMac( Auth():uuid(), ::getMacAddress() )
 
 RETURN ( nil )
 
@@ -207,7 +207,7 @@ RETURN ( .t. )
 
 METHOD validUserPassword() CLASS AccessController
 
-   ::hUsuario                 := ::getUsuariosController():oModel:validUserPassword( ::cComboUsuario, ::cGetPassword )
+   ::hUsuario                 := ::getUsuariosController():getModel():validUserPassword( ::cComboUsuario, ::cGetPassword )
 
    if empty( ::hUsuario )
       ::cValidError           := "Usuario y contraseña no coinciden" 
@@ -229,7 +229,7 @@ METHOD validCompany() CLASS AccessController
       RETURN ( .t. )
    end if 
 
-   ::hEmpresa                 := ::getEmpresasController():oModel:validEmpresa( ::cComboEmpresa )
+   ::hEmpresa                 := ::getEmpresasController():getModel():validEmpresa( ::cComboEmpresa )
 
    if empty( ::hEmpresa )
       ::cValidError           := "Empresa no existe" 

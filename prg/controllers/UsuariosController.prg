@@ -56,19 +56,23 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
 
    METHOD checkSuperUser()
 
-   METHOD getRepository()                    INLINE ( iif( empty( ::oRepository ), ::oRepository := UsuariosRepository():New( self ), ), ::oRepository )
-
-   METHOD getBrowseView()                    INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := UsuariosBrowseView():New( self ), ), ::oBrowseView )
-
-   METHOD getDialogView()                    INLINE ( iif( empty( ::oDialogView ), ::oDialogView := UsuariosView():New( self ), ), ::oDialogView )
-
-   METHOD getValidator()                     INLINE ( iif( empty( ::oValidator ), ::oValidator := UsuariosValidator():New( self, ::getDialogView() ), ), ::oValidator )
-
    METHOD getAjustableController()           INLINE ( iif( empty( ::oAjustableController ), ::oAjustableController := AjustableController():New( self ), ), ::oAjustableController ) 
 
    METHOD getRolesController()               INLINE ( iif( empty( ::oRolesController), ::oRolesController := RolesController():New( self ), ), ::oRolesController )
 
    METHOD getCamposExtraValoresController()  INLINE ( iif( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
+
+   //Construcciones tardias----------------------------------------------------
+   
+   METHOD getDialogView()                    INLINE ( iif( empty( ::oDialogView ), ::oDialogView := UsuariosView():New( self ), ), ::oDialogView )
+   
+   METHOD getBrowseView()                    INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := UsuariosBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getValidator()                     INLINE ( iif( empty( ::oValidator ), ::oValidator := UsuariosValidator():New( self, ::getDialogView() ), ), ::oValidator )
+
+   METHOD getRepository()                    INLINE ( iif( empty( ::oRepository ), ::oRepository := UsuariosRepository():New( self ), ), ::oRepository )
+
+   METHOD getModel()                         INLINE ( iif( empty( ::oModel ), ::oModel := SQLUsuariosModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -88,8 +92,6 @@ METHOD New( oController ) CLASS UsuariosController
 
    ::hImage                            := {  "16" => "gc_businesspeople_16",;
                                              "48" => "gc_businesspeople_48" }
-
-   ::oModel                            := SQLUsuariosModel():New( self )
 
    ::setEvent( 'openingDialog',  {|| ::getDialogView():openingDialog() } )  
    ::setEvent( 'closedDialog',   {|| ::getDialogView():closedDialog() } )  
@@ -157,19 +159,19 @@ METHOD loadConfig() CLASS UsuariosController
    end if 
 
    ::aEmpresas                   := EmpresasModel():aNombresSeleccionables()
-   ::cCodigoEmpresaExclusiva     := ::getAjustableController():oModel:getUsuarioEmpresaExclusiva( ::cUuidUsuario )
+   ::cCodigoEmpresaExclusiva     := ::getAjustableController():getModel():getUsuarioEmpresaExclusiva( ::cUuidUsuario )
    ::cNombreEmpresaExclusiva     := EmpresasModel():getNombreFromCodigo( ::cCodigoEmpresaExclusiva )
 
    ::aCajas                      := CajasModel():aNombresSeleccionables()
-   ::cUuidCajaExclusiva          := ::getAjustableController():oModel:getUsuarioCajaExclusiva( ::cUuidUsuario )
+   ::cUuidCajaExclusiva          := ::getAjustableController():getModel():getUsuarioCajaExclusiva( ::cUuidUsuario )
    ::cNombreCajaExclusiva        := CajasModel():getNombreFromUuid( ::cUuidCajaExclusiva )
 
    ::aAlmacenes                  := AlmacenesModel():aNombresSeleccionables()
-   ::cUuidAlmacenExclusivo       := ::getAjustableController():oModel:getUsuarioAlmacenExclusivo( ::cUuidUsuario )
+   ::cUuidAlmacenExclusivo       := ::getAjustableController():getModel():getUsuarioAlmacenExclusivo( ::cUuidUsuario )
    ::cNombreAlmacenExclusivo     := AlmacenesModel():getNombreFromUuid( ::cUuidAlmacenExclusivo )
 
    ::aDelegaciones               := SQLDelegacionesModel():aNombres()
-   ::cUuidDelegacionExclusiva    := ::getAjustableController():oModel:getUsuarioDelegacionExclusiva( ::cUuidUsuario )
+   ::cUuidDelegacionExclusiva    := ::getAjustableController():getModel():getUsuarioDelegacionExclusiva( ::cUuidUsuario )
    ::cNombreDelegacionExclusiva  := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionExclusiva )
 
 RETURN ( .t. )
@@ -183,10 +185,10 @@ METHOD saveConfig() CLASS UsuariosController
    ::cUuidAlmacenExclusivo       := AlmacenesModel():getUuidFromNombre( ::cNombreAlmacenExclusivo )
    ::cUuidDelegacionExclusiva    := SQLDelegacionesModel():getUuidFromNombre( ::cNombreDelegacionExclusiva )
 
-   ::getAjustableController():oModel:setUsuarioEmpresaExclusiva( ::cCodigoEmpresaExclusiva, ::cUuidUsuario )
-   ::getAjustableController():oModel:setUsuarioCajaExclusiva( ::cUuidCajaExclusiva, ::cUuidUsuario )
-   ::getAjustableController():oModel:setUsuarioAlmacenExclusivo( ::cUuidAlmacenExclusivo, ::cUuidUsuario )
-   ::getAjustableController():oModel:setUsuarioDelegacionExclusiva( ::cUuidDelegacionExclusiva, ::cUuidUsuario )
+   ::getAjustableController():getModel():setUsuarioEmpresaExclusiva( ::cCodigoEmpresaExclusiva, ::cUuidUsuario )
+   ::getAjustableController():getModel():setUsuarioCajaExclusiva( ::cUuidCajaExclusiva, ::cUuidUsuario )
+   ::getAjustableController():getModel():setUsuarioAlmacenExclusivo( ::cUuidAlmacenExclusivo, ::cUuidUsuario )
+   ::getAjustableController():getModel():setUsuarioDelegacionExclusiva( ::cUuidDelegacionExclusiva, ::cUuidUsuario )
 
 RETURN ( self )
 
@@ -233,7 +235,7 @@ METHOD checkSuperUser() CLASS UsuariosController
 
    local hUsuario
 
-   hUsuario       := ::oModel:getWhere( "super_user", "=", 1 )
+   hUsuario       := ::getModel():getWhere( "super_user", "=", 1 )
    if !hb_ishash( hUsuario )
       msgStop( "No se ha definido super usuario" )
       RETURN ( .f. )
@@ -691,19 +693,19 @@ METHOD Activate() CLASS UsuariosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "email_puerto" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "email_puerto" ] ;
       ID          170;
       SPINNER ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "autenticacion_smtp" ] ;
+   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "autenticacion_smtp" ] ;
       ID          180 ;
       IDSAY       182 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "requiere_ssl" ] ;
+   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "requiere_ssl" ] ;
       ID          190 ;
       IDSAY       192 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
