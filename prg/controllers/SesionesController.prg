@@ -7,8 +7,6 @@ CLASS SesionesController FROM SQLNavigatorController
 
    DATA oDialogCloseView
 
-   DATA oCajasController
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -16,6 +14,18 @@ CLASS SesionesController FROM SQLNavigatorController
    METHOD isNotOpenSessions()
 
    METHOD CloseSession()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := SesionesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := SesionesView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := SesionesRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := SesionesValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLSesionesModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -35,19 +45,7 @@ METHOD New( oController ) CLASS SesionesController
 
    ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                      := SQLSesionesModel():New( self )
-
-   ::oBrowseView                 := SesionesBrowseView():New( self )
-
-   ::oDialogView                 := SesionesView():New( self )
-
    ::oDialogCloseView            := SesionesCloseView():New( self )
-
-   ::oValidator                  := SesionesValidator():New( self, ::oDialogView )
-
-   ::oRepository                 := SesionesRepository():New( self )
-
-   ::oCajasController            := CajasController():New( self )
 
    ::setEvent( 'appending',      {|| ::isNotOpenSessions() } )
 
@@ -60,33 +58,29 @@ RETURN ( Self )
 
 METHOD End() CLASS SesionesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oDialogCloseView:End()
+   if !empty( ::oDialogCloseView )
+      ::oDialogCloseView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oCajasController:End()
-
-   ::oModel             := nil
-
-   ::oBrowseView        := nil
-
-   ::oDialogView        := nil
-
-   ::oDialogCloseView   := nil
-
-   ::oValidator         := nil
-
-   ::oRepository        := nil
-
-   ::oCajasController   := nil
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -96,7 +90,7 @@ RETURN ( nil )
 
 METHOD isNotOpenSessions() CLASS SesionesController
 
-   if ::oModel:isOpenSessions()
+   if ::getModel():isOpenSessions()
       msgStop( "Ya existe una sesión abierta en esta caja" )
       RETURN ( .f. )
    end if 
@@ -115,11 +109,11 @@ METHOD CloseSession() CLASS SesionesController
 
    ::beginTransactionalMode()
 
-   ::oModel:loadCurrentBuffer( nId )
+   ::getModel():loadCurrentBuffer( nId )
 
    if ::DialogViewActivate( ::oDialogCloseView )
       
-      ::oModel:updateBuffer()
+      ::getModel():updateBuffer()
 
       // Proceder al cierre
 
@@ -239,29 +233,29 @@ METHOD Activate() CLASS SesionesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "numero" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "numero" ] ;
       ID          100 ;
       PICTURE     "999999999" ;
       WHEN        ( .f. ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora_inicio" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "fecha_hora_inicio" ] ;
       ID          110 ;
       PICTURE     "@DT" ;
       WHEN        ( .f. ) ;
       OF          ::oDialog
 
-   ::oController:oCajasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "caja_codigo" ] ) )
-   ::oController:oCajasController:oGetSelector:Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oDialog } )
-   ::oController:oCajasController:oGetSelector:setWhen( {|| .f. } )
+   ::oController:getCajasController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "caja_codigo" ] ) )
+   ::oController:getCajasController():getSelector():Build( { "idGet" => 120, "idText" => 121, "idLink" => 122, "oDialog" => ::oDialog } )
+   ::oController:getCajasController():getSelector():setWhen( {|| .f. } )
 
-   /*REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   /*REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          120 ;
       SPINNER  ;
       MIN 0;
@@ -300,7 +294,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate() CLASS SesionesView
 
-   ::oController:oCajasController:oGetSelector:Start()
+   ::oController:getCajasController():getSelector():Start()
 
 RETURN ( nil )
 
@@ -347,29 +341,29 @@ METHOD Activate() CLASS SesionesCloseView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "numero" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "numero" ] ;
       ID          100 ;
       PICTURE     "999999999" ;
       WHEN        ( .f. ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora_inicio" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "fecha_hora_inicio" ] ;
       ID          110 ;
       PICTURE     "@DT" ;
       WHEN        ( .f. ) ;
       OF          ::oDialog
 
-   ::oController:oCajasController:oGetSelector:Bind( bSETGET( ::oController:oModel:hBuffer[ "caja_codigo" ] ) )
-   ::oController:oCajasController:oGetSelector:Activate( 120, 121, ::oDialog )
-   ::oController:oCajasController:oGetSelector:setWhen( {|| .f. } )
+   ::oController:getCajasController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "caja_codigo" ] ) )
+   ::oController:getCajasController():getSelector():Activate( 120, 121, ::oDialog )
+   ::oController:getCajasController():getSelector():setWhen( {|| .f. } )
 
-   /*REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   /*REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          120 ;
       SPINNER  ;
       MIN 0;
@@ -408,7 +402,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate() CLASS SesionesCloseView
 
-   ::oController:oCajasController:oGetSelector:Start()
+   ::oController:getCajasController():oGetSelector:Start()
 
 RETURN ( nil )
 

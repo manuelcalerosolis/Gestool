@@ -118,6 +118,10 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oFacturasClientesController
 
    DATA oAlmacenesController
+   
+   DATA oZonasController
+   
+   DATA oUbicacionesController
 
    DATA oDireccionTipoDocumentoController
 
@@ -143,6 +147,10 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oCajasController 
 
    DATA oImpresorasController 
+   
+   DATA oSesionesController 
+   
+   DATA oTiposImpresorasController 
 
 
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
@@ -312,6 +320,12 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getAlmacenesController();
                                     INLINE ( if( empty( ::oAlmacenesController ), ::oAlmacenesController := AlmacenesController():New( self ), ), ::oAlmacenesController )
 
+   METHOD getZonasController();
+                                    INLINE ( if( empty( ::oZonasController ), ::oZonasController := ZonasController():New( self ), ), ::oZonasController )
+
+   METHOD getUbicacionesController();
+                                    INLINE ( if( empty( ::oUbicacionesController ), ::oUbicacionesController := UbicacionesController():New( self ), ), ::oUbicacionesController )
+
    METHOD getConfiguracionesController();
                                     INLINE ( if( empty( ::oConfiguracionesController ), ::oConfiguracionesController := ConfiguracionesController():New( self ), ), ::oConfiguracionesController )
 
@@ -341,6 +355,12 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getImpresorasController();
                                     INLINE ( if( empty( ::oImpresorasController ), ::oImpresorasController := ImpresorasController():New( self ), ), ::oImpresorasController )
+
+   METHOD getSesionesController();
+                                    INLINE ( if( empty( ::oSesionesController ), ::oSesionesController := SesionesController():New( self ), ), ::oSesionesController )
+
+   METHOD getTiposImpresorasController();
+                                    INLINE ( if( empty( ::oTiposImpresorasController ), ::oTiposImpresorasController := TiposImpresorasController():New( self ), ), ::oTiposImpresorasController )
 
    METHOD End()
 
@@ -578,6 +598,14 @@ METHOD End() CLASS SQLApplicationController
       ::oAlmacenesController:End()
    end if    
 
+   if !empty( ::oZonasController )   
+      ::oZonasController:End()
+   end if   
+
+   if !empty( ::oUbicacionesController )   
+      ::oUbicacionesController:End()
+   end if    
+
    if !empty( ::oConfiguracionesController )
       ::oConfiguracionesController:End()
    end if 
@@ -585,8 +613,6 @@ METHOD End() CLASS SQLApplicationController
    if !empty( ::oMailController )   
       ::oMailController:End()
    end if 
-
-   ::Super:End()
 
    if !empty( ::oImprimirSeriesController )
       ::oImprimirSeriesController:End()
@@ -620,6 +646,14 @@ METHOD End() CLASS SQLApplicationController
    if !empty( ::oImpresorasController )
       ::oImpresorasController:End()
    end if 
+
+   if !empty( ::oSesionesController )
+      ::oSesionesController:End()
+   end if    
+
+   if !empty( ::oTiposImpresorasController )
+      ::oTiposImpresorasController:End()
+   end if
 
    ::Super:End()
 

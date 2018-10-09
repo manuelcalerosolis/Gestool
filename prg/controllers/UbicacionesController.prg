@@ -5,11 +5,23 @@
 
 CLASS UbicacionesController FROM SQLBrowseController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD gettingSelectSentence()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := UbicacionesView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLAlmacenesModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -27,17 +39,8 @@ METHOD New( oController ) CLASS UbicacionesController
                                        "32" => "gc_package_32",;
                                        "48" => "gc_package_48" }
 
-   ::oModel                      := SQLAlmacenesModel():New( self )
 
-   ::oRepository                 := AlmacenesRepository():New( self )
-
-   ::oBrowseView                 := AlmacenesBrowseView():New( self )
-
-   ::oDialogView                 := UbicacionesView():New( self )
-
-   ::oValidator                  := AlmacenesValidator():New( self, ::oDialogView )
-
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
 RETURN ( Self )
 
@@ -45,13 +48,25 @@ RETURN ( Self )
 
 METHOD End()
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
+
+   if !empty( ::oValidator)
+      ::oValidator:End()
+   end if
 
    ::Super:End()
 
@@ -61,10 +76,10 @@ RETURN ( Self )
 
 METHOD gettingSelectSentence() CLASS UbicacionesController
 
-   local uuid        := ::getController():getUuid() 
+   local uuid        := ::oController:getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "almacen_uuid = " + quoted( uuid ) )
+      ::getModel():setGeneralWhere( "almacen_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( Self )
@@ -89,7 +104,7 @@ END CLASS
 METHOD Activating() CLASS UbicacionesView
 
    if ::oController:isAppendOrDuplicateMode()
-      ::oController:oModel:hBuffer()
+      ::oController:getModel():hBuffer()
    end if 
 
 RETURN ( self )
@@ -117,14 +132,14 @@ METHOD Activate() CLASS UbicacionesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;

@@ -3,19 +3,13 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS EnviromentController FROM SQLBaseController
+CLASS EnviromentController FROM SQLApplicationController
 
    DATA hCaja
 
    DATA hSesion
 
    DATA hAlmacen
-
-   DATA oCajasController
-
-   DATA oSesionesController
-
-   DATA oAlmacenesController
 
    DATA oDelegacionesController
 
@@ -59,6 +53,11 @@ CLASS EnviromentController FROM SQLBaseController
 
    METHOD checkSessions()
 
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := EnviromentView():New( self ), ), ::oDialogView )
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -74,14 +73,6 @@ METHOD New() CLASS EnviromentController
    ::hImage                            := {  "16" => "gc_businesspeople_16",;
                                              "48" => "gc_businesspeople_48" }
 
-   ::oDialogView                       := EnviromentView():New( self )
-
-   ::oCajasController                  := CajasController():New( self )
-
-   ::oSesionesController               := SesionesController():New( self )
-
-   ::oAlmacenesController              := AlmacenesController():New( self )
-
    ::oDelegacionesController           := DelegacionesController():New( self )
 
 RETURN ( Self )
@@ -92,27 +83,10 @@ METHOD End() CLASS EnviromentController
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
-      ::oDialogView              := nil
-   end if 
-
-   if !empty( ::oCajasController )
-      ::oCajasController:End()
-      ::oCajasController         := nil
-   end if 
-
-   if !empty( ::oSesionesController )
-      ::oSesionesController:End()
-      ::oSesionesController      := nil
-   end if 
-
-   if !empty( ::oAlmacenesController )
-      ::oAlmacenesController:End()
-      ::oAlmacenesController     := nil
    end if 
 
    if !empty( ::oDelegacionesController )
       ::oDelegacionesController:End()
-      ::oDelegacionesController  := nil
    end if 
    
    ::Super:End()
@@ -135,11 +109,11 @@ RETURN ( nil )
 
 METHOD loadData() CLASS EnviromentController
 
-   ::aComboCajas                       := ::oCajasController:oModel:getNombres()
+   ::aComboCajas                       := ::getCajasController():getModel():getNombres()
 
    ::cComboCaja                        := atail( ::aComboCajas )
 
-   ::aComboAlmacenes                   := ::oAlmacenesController:oModel:getNombres()
+   ::aComboAlmacenes                   := ::getAlmacenesController():getModel():getNombres()
 
    ::cComboAlmacen                     := atail( ::aComboAlmacenes )
 
@@ -170,7 +144,7 @@ METHOD isShow() CLASS EnviromentController
    ::loadData()
 
    if ::isMultiplesCajas() .or. ::isMultiplesAlmacenes() .or. ::isMultiplesDelegaciones()
-      ::oDialogView:Activate()
+      ::getDialogView():Activate()
    end if 
 
    ::setData()
@@ -183,7 +157,7 @@ METHOD Show() CLASS EnviromentController
 
    ::loadData()
 
-   ::oDialogView:Activate()
+   ::getDialogView():Activate()
 
    ::setData()
 
@@ -203,7 +177,7 @@ RETURN ( .t. )
 
 METHOD setSesion() CLASS EnviromentController
 
-   ::hSesion   := ::oSesionesController:oModel:getLastOpenWhereCajaNombre( ::cComboCaja ) 
+   ::hSesion   := ::getSesionesController():getModel():getLastOpenWhereCajaNombre( ::cComboCaja ) 
    
    if !empty( ::hSesion )
       Session( ::hSesion )
@@ -231,10 +205,10 @@ RETURN ( .t. )
 
 METHOD checkSessions() CLASS EnviromentController
 
-   if ::oSesionesController:oModel:isOpenSessions()
-      ::oDialogView:hideSaySessiones()
+   if ::getSesionesController():getModel():isOpenSessions()
+      ::getDialogView():hideSaySessiones()
    else
-      ::oDialogView:showSaySessiones()
+      ::getDialogView():showSaySessiones()
    end if 
 
 RETURN ( .t. )
@@ -327,7 +301,7 @@ METHOD Activate() CLASS EnviromentView
       OF          ::oDialog ;
 
    ::oSaySessiones:lWantClick    := .t.
-   ::oSaySessiones:OnClick       := {|| ::oController:oSesionesController:Append(), ::oController:checkSessions() }
+   ::oSaySessiones:OnClick       := {|| ::oController:getSesionesController():Append(), ::oController:checkSessions() }
 
    REDEFINE BUTTON ;
       ID          IDOK ;

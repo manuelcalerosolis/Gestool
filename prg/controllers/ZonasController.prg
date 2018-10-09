@@ -5,13 +5,23 @@
 
 CLASS ZonasController FROM SQLBrowseController
 
-   DATA oUbicacionesController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD gettingSelectSentence()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := ZonasView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLAlmacenesModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -29,19 +39,8 @@ METHOD New( oController ) CLASS ZonasController
                                        "32" => "gc_shelf_full_32",;
                                        "48" => "gc_shelf_full_48" }
 
-   ::oModel                      := SQLAlmacenesModel():New( self )
 
-   ::oRepository                 := AlmacenesRepository():New( self )
-
-   ::oBrowseView                 := AlmacenesBrowseView():New( self )
-
-   ::oDialogView                 := ZonasView():New( self )
-
-   ::oValidator                  := AlmacenesValidator():New( self, ::oDialogView )
-
-   ::oUbicacionesController      := UbicacionesController():New( self )
-
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
 RETURN ( Self )
 
@@ -49,13 +48,25 @@ RETURN ( Self )
 
 METHOD End()
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if   
 
-   ::oBrowseView:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
+
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
    ::Super:End()
 
@@ -68,7 +79,7 @@ METHOD gettingSelectSentence() CLASS ZonasController
    local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "almacen_uuid = " + quoted( uuid ) )
+      ::getModel():setGeneralWhere( "almacen_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( Self )
@@ -93,10 +104,9 @@ END CLASS
 METHOD Activating() CLASS ZonasView
 
    if ::oController:isAppendOrDuplicateMode()
-      ::oController:oModel:hBuffer()
+      ::oController:getModel():hBuffer()
    end if 
-
-   ::oController:oUbicacionesController:buildRowSet()
+   ::oController:getUbicacionesController():buildRowSet()
 
 RETURN ( self )
 
@@ -127,14 +137,14 @@ METHOD Activate() CLASS ZonasView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNN" ;
       ID          100 ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
@@ -147,23 +157,23 @@ METHOD Activate() CLASS ZonasView
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnAppend:bAction   := {|| ::oController:oUbicacionesController:Append() }
+   oBtnAppend:bAction   := {|| ::oController:getUbicacionesController():Append() }
 
    REDEFINE BUTTON oBtnEdit ;
       ID          130 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnEdit:bAction   := {|| ::oController:oUbicacionesController:Edit() }
+   oBtnEdit:bAction   := {|| ::oController:getUbicacionesController():Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
       ID          140 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnDelete:bAction   := {|| ::oController:oUbicacionesController:Delete() }
+   oBtnDelete:bAction   := {|| ::oController:getUbicacionesController():Delete() }
 
-   ::oController:oUbicacionesController:Activate( 150, ::oDialog )
+   ::oController:getUbicacionesController():Activate( 150, ::oDialog )
 
    // Botones zonas -------------------------------------------------------
 

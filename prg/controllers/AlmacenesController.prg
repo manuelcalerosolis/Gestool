@@ -5,21 +5,27 @@
 
 CLASS AlmacenesController FROM SQLNavigatorController
 
-   DATA oDireccionesController
-
    DATA oPaisesController
 
    DATA oProvinciasController
-
-   DATA oZonasController
-
-   DATA oCamposExtraValoresController
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD gettingSelectSentence()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := AlmacenesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := AlmacenesView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := AlmacenesRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := AlmacenesValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLAlmacenesModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -39,40 +45,22 @@ METHOD New( oController ) CLASS AlmacenesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLAlmacenesModel():New( self )
-
-   ::oBrowseView                    := AlmacenesBrowseView():New( self )
-
-   ::oDialogView                    := AlmacenesView():New( self )
-
-   ::oValidator                     := AlmacenesValidator():New( self, ::oDialogView )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
-   ::oRepository                    := AlmacenesRepository():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-   
-   ::oDireccionesController         := DireccionesController():New( self )
-
-   ::oZonasController               := ZonasController():New( self )
-
    ::oPaisesController              := PaisesController():New( self )
 
    ::oProvinciasController          := ProvinciasController():New( self )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:updateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::getModel():setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
-   ::oModel:setEvent( 'gettingSelectSentence',        {|| ::gettingSelectSentence() } ) 
+   ::getModel():setEvent( 'gettingSelectSentence',        {|| ::gettingSelectSentence() } ) 
 
    ::setEvents( { 'editing', 'deleting' },            {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
@@ -82,49 +70,29 @@ RETURN ( Self )
 
 METHOD End() CLASS AlmacenesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator)
+      ::oValidator:End()
+   end if
 
-   ::oGetSelector:End()
-
-   ::oRepository:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::oDireccionesController:End()
-
-   ::oZonasController:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::oPaisesController:End()
 
    ::oProvinciasController:End()
-
-   ::oModel                         := nil
-
-   ::oBrowseView                    := nil
-
-   ::oDialogView                    := nil
-
-   ::oValidator                     := nil
-
-   ::oGetSelector                   := nil
-
-   ::oRepository                    := nil
-
-   ::oCamposExtraValoresController  := nil
-
-   ::oDireccionesController         := nil
-
-   ::oZonasController               := nil
-
-   ::oPaisesController              := nil
-
-   ::oProvinciasController          := nil
 
    ::Super:End()
 
@@ -134,7 +102,7 @@ RETURN ( nil )
 
 METHOD gettingSelectSentence() CLASS AlmacenesController
 
-   ::oModel:setGeneralWhere( "almacen_uuid = ''" )
+   ::getModel():setGeneralWhere( "almacen_uuid = ''" )
 
 RETURN ( nil )
 
@@ -208,8 +176,6 @@ CLASS AlmacenesView FROM SQLBaseView
 
    METHOD Activating()
 
-   METHOD getDireccionesController()   INLINE ( ::oController:oDireccionesController )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -217,7 +183,7 @@ END CLASS
 METHOD Activating() CLASS AlmacenesView
 
    if ::oController:isAppendOrDuplicateMode()
-      ::oController:oModel:hBuffer()
+      ::oController:getModel():hBuffer()
    end if 
 
 RETURN ( self )
@@ -250,14 +216,14 @@ METHOD Activate() CLASS AlmacenesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
@@ -271,9 +237,9 @@ METHOD Activate() CLASS AlmacenesView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
-   ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
+   ::oController:getDireccionesController():getDialogView():ExternalRedefine( ::oDialog() )
 
    // Zonas--------------------------------------------------------------------
 
@@ -282,23 +248,23 @@ METHOD Activate() CLASS AlmacenesView
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnAppend:bAction   := {|| ::oController:oZonasController:Append() }
+   oBtnAppend:bAction   := {|| ::oController:getZonasController():Append() }
 
    REDEFINE BUTTON oBtnEdit ;
       ID          130 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnEdit:bAction   := {|| ::oController:oZonasController:Edit() }
+   oBtnEdit:bAction   := {|| ::oController:getZonasController():Edit() }
 
    REDEFINE BUTTON oBtnDelete ;
       ID          140 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
 
-   oBtnDelete:bAction   := {|| ::oController:oZonasController:Delete() }
+   oBtnDelete:bAction   := {|| ::oController:getZonasController():Delete() }
 
-   ::oController:oZonasController:Activate( 150, ::oDialog ) 
+   ::oController:getZonasController():Activate( 150, ::oDialog ) 
 
    // Botones almacenes -------------------------------------------------------
 
@@ -318,7 +284,7 @@ METHOD Activate() CLASS AlmacenesView
       ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
    end if
 
-   ::oDialog:bStart  := {|| ::oController:oDireccionesController:oDialogView:StartDialog() }
+   ::oDialog:bStart  := {|| ::oController:getDireccionesController():getDialogView():StartDialog() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
