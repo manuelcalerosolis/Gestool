@@ -104,8 +104,6 @@ METHOD New()
 
    ::lTransactional              := .t.
 
-   ::lDocuments                  := .t.
-
    ::lLabels                     := .t.
 
    ::lConfig                     := .t.

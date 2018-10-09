@@ -178,8 +178,6 @@ RETURN ( .t. )
 
 METHOD Save()
 
-   msgalert( ::getFullPathFileName(), "save" )
-
    if !isDirectory( ::getDirectory() )
       makeDir( ::getDirectory() )
    end if 

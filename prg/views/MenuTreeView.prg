@@ -50,7 +50,7 @@ CLASS MenuTreeView
    METHOD getSuperController()            INLINE ( ::oController:getController() )
    METHOD getBrowse()                     INLINE ( ::oController:getBrowse() )
 
-   METHOD isControllerDocuments()         INLINE ( ::getSuperController():lDocuments )
+   METHOD isControllerDocuments()         INLINE ( !empty( ::getSuperController():aDocuments ) )
    METHOD isControllerLabels()            INLINE ( ::getSuperController():lLabels )
    METHOD isControllerConfig()            INLINE ( ::getSuperController():lConfig )
    METHOD isControllerOthers()            INLINE ( ::getSuperController():lOthers )
@@ -446,7 +446,7 @@ METHOD addPrintSerialButton( cWorkArea )
       RETURN ( nil )
    end if 
 
-   ::oButtonPrint    := ::AddButton( "Imprimir series", "Imp16", {|| ::getSuperController():getImprimirSeriesController():Activate() }, nil, ACC_IMPR )
+   ::oButtonPrint    := ::AddButton( "Imprimir series", "Imp16", {|| ::getSuperController():getImprimirSeriesController():dialogViewActivate() }, nil, ACC_IMPR )
 
    ::fireEvent( 'addedPrintSerialButton') 
 
@@ -460,7 +460,7 @@ METHOD addPrintButtons( cWorkArea )
       RETURN ( nil )
    end if 
 
-   ::oButtonPrint    := ::AddButton( "Imprimir", "Imp16", {|| ::getSuperController():printDocument( IS_PRINTER ) }, "I", ACC_IMPR )
+   ::oButtonPrint    := ::AddButton( "Imprimir", "Imp16", {|| ::getSuperController():getImprimirSeriesController():printDocument() }, "I", ACC_IMPR )
 
    aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Imp16", ::blockPrintDocument( IS_PRINTER, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPrint ) } )
 
@@ -476,9 +476,9 @@ METHOD addPreviewButtons( cWorkArea )
       RETURN ( nil )
    end if 
 
-   ::oButtonPreview  := ::AddButton( "Previsualizar", "Prev116", {|| ::getSuperController():printDocument( IS_SCREEN ) }, "P", ACC_IMPR ) 
+   ::oButtonPreview  := ::AddButton( "Previsualizar", "Prev116", {|| ::getSuperController():getImprimirSeriesController():screenDocument() }, "P", ACC_IMPR ) 
 
-      aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Prev116", ::blockPrintDocument( IS_SCREEN, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPreview ) } )
+   aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Prev116", ::blockPrintDocument( IS_SCREEN, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPreview ) } )
 
    ::fireEvent( 'addedPreviewButton') 
 
@@ -492,7 +492,7 @@ METHOD addPdfButtons( cWorkArea )
       RETURN ( nil )
    end if 
 
-   ::oButtonPdf  := ::AddButton( "Pdf", "Doclock16", {|| ::getSuperController():printDocument( IS_PDF ) }, "F", ACC_IMPR ) 
+   ::oButtonPdf  := ::AddButton( "Pdf", "Doclock16", {|| ::getSuperController():getImprimirSeriesController():pdfDocument() }, "F", ACC_IMPR ) 
 
    aeval( ::getControllerDocuments(), {|cFile| ::AddButton( getFileNoExt( cFile ), "Doclock16", ::blockPrintDocument( IS_PDF, getFileNoExt( cFile ) ), , ACC_IMPR, ::oButtonPdf ) } ) 
 
@@ -558,7 +558,7 @@ RETURN ( nil )
 
 METHOD blockPrintDocument( nDevice, cFormato )
 
-RETURN ( {|| ::getSuperController():printDocument( nDevice, cFormato ) } ) 
+RETURN ( {|| ::getSuperController():getImprimirSeriesController():showDocument( nDevice, cFormato ) } ) 
 
 //---------------------------------------------------------------------------//
 

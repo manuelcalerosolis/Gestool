@@ -11,8 +11,6 @@ CLASS SQLDialogController FROM SQLNavigatorController
 
    DATA oVistaModel
 
-   DATA lDocuments                                    INIT .f.
-
    DATA lOthers                                       INIT .f.
 
    DATA lLabels                                       INIT .f.
@@ -23,7 +21,7 @@ CLASS SQLDialogController FROM SQLNavigatorController
 
    DATA oWindowsBar
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()
 
    METHOD Delete( aSelected )                         INLINE ( ::Super:Delete( aSelected ) )
@@ -130,17 +128,14 @@ METHOD End()
 
    if !empty( ::oSelectorView )
       ::oSelectorView:End()
-      ::oSelectorView         := nil
    end if 
 
    if !empty( ::oFilterController )
       ::oFilterController:End() 
-      ::oFilterController     := nil
    end if 
 
    if !empty( ::oVistaModel )
       ::oVistaModel:End()
-      ::oVistaModel           := nil
    end if 
 
    ::Super():End()

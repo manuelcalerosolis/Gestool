@@ -40,7 +40,7 @@ CLASS FacturasClientesReport FROM SQLBaseReport
 
    METHOD getFacturasClientesLineasRowSet()  INLINE ( if( empty( ::oFacturasClientesLineasRowSet ), ::oFacturasClientesLineasRowSet := SQLRowSet():New(), ), ::oFacturasClientesLineasRowSet )
 
-   METHOD getTotal( uuid )                  INLINE ( ::hTotal  := ::getController():getRepository():getTotal( uuid ) )
+   METHOD getTotal( uuid )                   INLINE ( ::hTotal  := ::getController():getRepository():getTotal( uuid ) )
 
 END CLASS
 

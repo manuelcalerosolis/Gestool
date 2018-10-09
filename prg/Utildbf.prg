@@ -482,7 +482,7 @@ RETURN ( cPath )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION RecursiveMakeDir( cPath )
+FUNCTION recursiveMakeDir( cPath )
 
    local cRute       := ""
    local aPath       := hb_atokens( cPath, "\" )

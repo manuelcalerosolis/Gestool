@@ -29,8 +29,6 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    DATA oConfiguracionesModel
 
-   DATA lDocuments                                    INIT .f.
-
    DATA lOthers                                       INIT .f.
 
    DATA lLabels                                       INIT .f.

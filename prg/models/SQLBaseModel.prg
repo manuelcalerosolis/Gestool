@@ -446,8 +446,6 @@ METHOD getSelectSentence( cOrderBy, cOrientation )
 
    ::fireEvent( 'gotSelectSentence')
 
-   logwrite( cSQL )
-
 RETURN ( cSQL )
 
 //---------------------------------------------------------------------------//
@@ -487,9 +485,6 @@ METHOD addGeneralHaving( cSQLSelect )
    end if 
    
    cSQLSelect     += ::getHavingOrAnd( cSQLSelect ) + ::cGeneralHaving 
-
-   msgalert( cSQLSelect, "addGeneralHaving" )
-   logwrite( cSQLSelect )
 
 RETURN ( cSQLSelect )
 
@@ -1296,7 +1291,7 @@ METHOD updateBuffer( hBuffer )
 
    ::fireEvent( 'updatedBuffer' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1318,7 +1313,7 @@ METHOD insertOnDuplicate( hBuffer, lTransactional )
 
    ::fireEvent( 'insertedOnDuplicatedBuffer' )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1332,7 +1327,7 @@ METHOD deleteSelection( aIds, aUuids )
 
    ::fireEvent( 'deletedSelection' )
    
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1344,7 +1339,7 @@ METHOD deleteById( nId )
 
    ::fireEvent( 'deletedById' )
    
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -1356,7 +1351,7 @@ METHOD deleteByUuid( uUuid )
 
    ::fireEvent( 'deletedByUuid' )
    
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

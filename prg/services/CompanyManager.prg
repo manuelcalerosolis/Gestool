@@ -13,9 +13,9 @@ CLASS CompanyManager
    DATA codigo
    DATA delegacionUuid
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
-   METHOD Set( hCompany )              INLINE ( ::guard( hCompany ) )
+   METHOD Set( hCompany )                 INLINE ( ::guard( hCompany ) )
    METHOD Guard( hCompany )
 
    METHOD guardWhereUuid( uuid )
@@ -23,10 +23,14 @@ CLASS CompanyManager
 
    METHOD getDefaultDelegacion()
 
-   METHOD getDatabase()                INLINE ( 'gestool' + '_' + ::codigo )
-   METHOD getTableName( cTableName )   INLINE ( ::getDatabase() + '.' + cTableName )
+   METHOD getDatabase()                   INLINE ( 'gestool' + '_' + ::codigo )
+   METHOD getTableName( cTableName )      INLINE ( ::getDatabase() + '.' + cTableName )
 
-   METHOD getDefaultTarifa()           INLINE ( SQLAjustableModel():getEmpresaTarifaDefecto( ::uuid ) )
+   METHOD getDefaultTarifa()              INLINE ( SQLAjustableModel():getEmpresaTarifaDefecto( ::uuid ) )
+
+   METHOD getPathDocuments( cDirectory )  INLINE ( cCompanyPathDocuments( ::codigo, cDirectory ) )
+
+   METHOD getDocuments( cDirectory )      
 
 END CLASS
 
@@ -63,8 +67,6 @@ METHOD guard( hCompany )
    if hhaskey( hCompany, "codigo" )
       ::codigo          := hget( hCompany, "codigo" ) 
    end if 
-
-   // ::delegacionUuid     := ::getDefaultDelegacion()
 
 RETURN ( self )
 
@@ -105,6 +107,27 @@ METHOD getDefaultDelegacion()
    end if
 
 RETURN ( delegacionUuid )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDocuments( cDirectory )      
+
+   local aFiles      := {}
+   local aDocuments  := {}
+
+   if !( isDirectory( ::getPathDocuments( cDirectory ) ) )
+      recursiveMakeDir( ::getPathDocuments( cDirectory ) )
+   end if 
+
+   aFiles            := directory( ::getPathDocuments( cDirectory ) + "*.fr3" )
+
+   if empty( aFiles )
+      aDocuments     := { "No hay documentos definidos..." }
+   else
+      aeval( aFiles, {|aFile| aadd( aDocuments, aFile[ 1 ] ) } )
+   end if 
+
+RETURN ( aDocuments )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

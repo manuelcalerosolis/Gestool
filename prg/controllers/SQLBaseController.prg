@@ -39,15 +39,8 @@ CLASS SQLBaseController
 
    DATA aSelected
 
-   DATA aDocuments                                    INIT {}
-
-   DATA cDirectory 
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
    METHOD End()
-
-   METHOD setDirectory( cDirectory )                  INLINE ( ::cDirectory := cDirectory )
-   METHOD getDirectory()                              INLINE ( if( empty( ::cDirectory ), ::getName(), ::cDirectory ) )
 
    METHOD setName( cName )                            INLINE ( ::cName := cName )
    METHOD getName()                                   INLINE ( ::cName )
@@ -208,8 +201,6 @@ CLASS SQLBaseController
    METHOD setDirectory( cDirectory )                  INLINE ( ::cDirectory := cDirectory )
    METHOD getDirectory()                              INLINE ( ::cDirectory )
 
-   METHOD loadDocuments()
-
    // Fachadas para q responda ExportableController----------------------------
 
    METHOD load()                                      INLINE ( ::oExportableController:load() )
@@ -270,10 +261,6 @@ METHOD End()
    if !empty( ::oRowSet )
       ::oRowSet:End()
    end if
-
-   ::oEvents                  := nil
-   
-   ::oRowSet                  := nil
 
 RETURN ( hb_gcall( .t. ) )
 
@@ -802,22 +789,6 @@ METHOD setEvents( aEvents, bEvent )
 RETURN ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
 
 //----------------------------------------------------------------------------//
-
-METHOD loadDocuments()
-
-   local aFiles   := directory( ::getDirectory() + "*.fr3" )
-   
-   ::aDocuments   := {}
-
-   if empty( aFiles )
-      RETURN ( ::aDocuments )
-   end if 
-
-   aeval( aFiles, {|aFile| aadd( ::aDocuments, aFile[ 1 ] ) } )
-
-RETURN ( ::aDocuments )
-
-//---------------------------------------------------------------------------//
 
 METHOD validColumnBrowse( oCol, uValue, nKey, oModel, cFieldName )
    

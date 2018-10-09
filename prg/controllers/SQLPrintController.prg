@@ -9,8 +9,6 @@ CLASS SQLPrintController
 
    DATA oDialogView
 
-   DATA cDirectory
-
    DATA cFileName
 
    DATA oHashList
@@ -21,13 +19,12 @@ CLASS SQLPrintController
 
    METHOD getController()              INLINE ( ::oController )
 
-   METHOD setDirectory( cDirectory )   INLINE ( ::cDirectory := cDirectory )
-   METHOD getDirectory()               INLINE ( ::cDirectory )
+   METHOD getDirectory()               INLINE ( Company():getPathDocuments( ::getController():cName ) )
 
    METHOD setFileName( cFileName )     INLINE ( ::cFileName := cFileName )
    METHOD getFileName()                INLINE ( ::cFileName )
 
-   METHOD getFullPathFileName()        INLINE ( ::cDirectory + ::cFileName + if( !( ".fr3" $ lower( ::cFileName ) ), ".fr3", "" ) )
+   METHOD getFullPathFileName()        INLINE ( ::getDirectory() + ::cFileName + if( !( ".fr3" $ lower( ::cFileName ) ), ".fr3", "" ) )
 
    METHOD Activate()                   INLINE ( ::buildRowSet(), ::getDialogView():Activate() )
    
@@ -79,7 +76,7 @@ METHOD loadDocuments()
 
    ::getDialogView():oListboxFile:goTop()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -109,6 +106,6 @@ METHOD deleteDocument()
 
    ::loadDocuments()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//

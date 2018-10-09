@@ -6232,6 +6232,12 @@ RETURN ( fullCurDir() + "Reporting\" )
 
 //----------------------------------------------------------------------------//
 
+FUNCTION cCompanyPathDocuments( cCompany, cDirectory )
+
+RETURN ( fullCurDir() + "Documents\" + cCompany + "\" + cDirectory + "\" )
+
+//----------------------------------------------------------------------------//
+
 FUNCTION cPatDocuments( cSubDirectory )
 
    if !empty( cSubDirectory )

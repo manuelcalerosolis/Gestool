@@ -121,7 +121,6 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oDireccionTipoDocumentoController
 
-
    DATA oMailController
 
    DATA oConfiguracionesController
@@ -144,6 +143,7 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oImpresorasController 
 
+   DATA aDocuments                  INIT {}
 
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
@@ -341,6 +341,10 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getImpresorasController();
                                     INLINE ( if( empty( ::oImpresorasController ), ::oImpresorasController := ImpresorasController():New( self ), ), ::oImpresorasController )
+
+   METHOD loadDocuments()
+
+   METHOD getDirectory()            INLINE ( Company():getPathDocuments( ::cName ) )
 
    METHOD End()
 
@@ -592,7 +596,6 @@ METHOD End() CLASS SQLApplicationController
       ::oImprimirSeriesController:End()
    end if 
 
-
    if !empty( ::oUsuariosController )
       ::oUsuariosController:End()
    end if 
@@ -626,3 +629,12 @@ METHOD End() CLASS SQLApplicationController
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD loadDocuments() CLASS SQLApplicationController
+
+   ::aDocuments      := Company():getDocuments( ::cName )
+
+RETURN ( ::aDocuments )
+
+//---------------------------------------------------------------------------//
+

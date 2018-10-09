@@ -241,11 +241,15 @@ CLASS TWaitMeter
    METHOD setMessage( cMessage )       INLINE   ( ::oMessage:SetText( cMessage ), sysRefresh() )
    METHOD setBitmap( cBitmap )         INLINE   ( ::cBitmap := cBitmap )
 
-   METHOD setTotalMeter( nTotal )      INLINE   ( ::oProgress:SetTotal( nTotal ) )
-   METHOD setTotal( nTotal )           INLINE   ( ::oProgress:SetTotal( nTotal ) )
+   METHOD setTotalMeter( nTotal )      INLINE   ( ::oProgress:setTotal( nTotal ) )
+   METHOD setTotal( nTotal )           INLINE   ( ::oProgress:setTotal( nTotal ) )
+   METHOD getTotal( nTotal )           INLINE   ( ::oProgress:getTotal( nTotal ) )
+
    METHOD incMeter()                   INLINE   ( ::refreshMeter( ++::nCurrent ) )
    METHOD autoInc()                    INLINE   ( ::incMeter() )
+   
    METHOD setMeter( nPosition )        INLINE   ( ::oProgress:set( nPosition ) )
+
    METHOD refreshMeter( nPosition )    INLINE   ( ::oProgress:set( nPosition ) )
 
    METHOD setStart( bStart )           INLINE   ( ::oDlgWait:bStart := bStart )

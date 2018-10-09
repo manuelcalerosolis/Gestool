@@ -74,6 +74,12 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD calculateTotals( uuidFactura )  
 
+   // Impresiones--------------------------------------------------------------
+
+   METHOD getDocumentoImpresion()      INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_impresion', '' ) )
+
+   METHOD getCopiasImpresion()         INLINE ( ::getConfiguracionesController():getModelNumeric( ::cName, 'copias_impresion', 1 ) )
+
    // Contrucciones tardias----------------------------------------------------
 
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := FacturasClientesView():New( self ), ), ::oDialogView )
@@ -104,8 +110,6 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::lInsertable                       := .t.
 
-   ::lDocuments                        := .t.
-
    ::lConfig                           := .t.
 
    ::lOthers                           := .t.
@@ -122,19 +126,21 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::oContadoresModel                  := SQLContadoresModel():New( self )
 
+   ::loadDocuments()
+
    ::oModel:setEvent( 'loadedBuffer',        {|| ::loadedBuffer() } )
    ::oModel:setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
 
-   ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',         {|| ::isClientFilled() } ) 
-   ::getDireccionTipoDocumentoController():oModel:setEvent( 'gettingSelectSentence', {|| ::getClientUuid() } )
+   ::getDireccionTipoDocumentoController():setEvent( 'activatingDialogView',              {|| ::isClientFilled() } ) 
+   ::getDireccionTipoDocumentoController():getModel():setEvent( 'gettingSelectSentence',  {|| ::getClientUuid() } )
 
    ::getFacturasClientesLineasController():setEvent( 'appending',        {|| ::isClientFilled() }  )
    ::getFacturasClientesLineasController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
-   ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
-
    ::getClientesController():getSelector():setEvent( 'settedHelpText',    {|| ::clientesSettedHelpText() } )
    ::getClientesController():getSelector():setEvent( 'cleanedHelpText',   {|| ::clientesCleanedHelpText() } )
+
+   ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
 RETURN ( Self )
 
@@ -332,13 +338,13 @@ METHOD getConfigItems() CLASS FacturasClientesController
 
    aadd( aItems,  {  'texto'  => 'Documento impresión',;
                      'clave'  => 'documento_impresion',;
-                     'valor'  => ::getConfiguracionesController():getModelValue( ::cName, 'documento_impresion', '' ),;
+                     'valor'  => ::getDocumentoImpresion(),;
                      'tipo'   => "B",;
-                     'lista'  =>  {"uno", "dos", "tre" } } ) //  ::oController:oController:aDocuments } )
+                     'lista'  =>  ::aDocuments } )
 
    aadd( aItems,  {  'texto'  => 'Copias',;
                      'clave'  => 'copias_impresion',;
-                     'valor'  => ::getConfiguracionesController():getModelNumeric( ::cName, 'copias_impresion', 1 ),;
+                     'valor'  => ::getCopiasImpresion(),;
                      'tipo'   => "N" } )
 
 RETURN ( aItems )

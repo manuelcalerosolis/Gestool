@@ -9,7 +9,16 @@ CLASS ImprimirSeriesController FROM SQLPrintController
 
    METHOD End()
 
-   METHOD showDocument()
+   METHOD showDocument( nDevice, cFileName, nCopies, cPrinter ) 
+
+   METHOD printDocument( cFileName, nCopies ) ;
+                                       INLINE ( ::showDocument( IS_PRINTER, cFileName, nCopies ) )
+
+   METHOD screenDocument( cFileName, nCopies ) ;
+                                       INLINE ( ::showDocument( IS_SCREEN, cFileName, nCopies ) )
+
+   METHOD pdfDocument( cFileName, nCopies ) ;
+                                       INLINE ( ::showDocument( IS_PDF, cFileName, nCopies ) )
 
    METHOD newDocument()
 
@@ -21,7 +30,7 @@ CLASS ImprimirSeriesController FROM SQLPrintController
 
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := ImprimirSeriesView():New( self ), ), ::oDialogView )
 
-   METHOD Activate()                   INLINE ( ::getDialogView():Activate() )
+   METHOD dialogViewActivate()         INLINE ( ::getDialogView():Activate() )
 
 END CLASS
 
@@ -30,8 +39,6 @@ END CLASS
 METHOD New( oController )
 
    ::Super:New( oController )
-
-   ::cDirectory                        := cPatDocuments( oController:cName )    
 
 RETURN ( Self )
 
@@ -55,14 +62,17 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter )
    local oWaitMeter
    local uuidIdentifier
 
+   DEFAULT cFileName    := ::getController():getDocumentoImpresion()
+   DEFAULT nCopies      := ::getController():getCopiasImpresion()
+
    if empty( nDevice ) 
       msgStop( "No hay dispositivo de salida definido" )
-      RETURN ( self )  
+      RETURN ( nil )  
    end if 
 
    if empty( cFileName ) 
       msgStop( "No hay formato definido" )
-      RETURN ( self )  
+      RETURN ( nil )  
    end if 
 
    ::setFileName( cFileName )
@@ -89,7 +99,7 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter )
 
    for each uuidIdentifier in ::getUuidIdentifiers() 
 
-      oWaitMeter:setMessage( "Imprimiendo documento " + hb_ntos( hb_enumindex() ) + " de " + hb_ntos( oWaitMeter:nTotal ) )
+      oWaitMeter:setMessage( "Imprimiendo documento " + hb_ntos( hb_enumindex() ) + " de " + hb_ntos( oWaitMeter:getTotal() ) )
 
       oReport:buildRowSet( uuidIdentifier )
 

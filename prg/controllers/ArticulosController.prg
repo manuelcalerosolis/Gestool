@@ -143,21 +143,21 @@ METHOD insertPreciosWhereArticulo() CLASS ArticulosController
 
    local uuidArticulo   
 
-   if empty( ::oModel )
+   if empty( ::getModel() )
       RETURN ( nil )
    end if 
 
-   if empty( ::oModel:hBuffer )
+   if empty( ::getModel():hBuffer )
       RETURN ( nil )
    end if 
 
-   uuidArticulo      := hget( ::oModel:hBuffer, "uuid" )
+   uuidArticulo      := hget( ::getModel():hBuffer, "uuid" )
 
    if empty( uuidArticulo )
       RETURN ( nil )
    end if 
    
-   ::getArticulosPreciosController():oModel:insertPreciosWhereArticulo( uuidArticulo )   
+   ::getArticulosPreciosController():getModel():insertPreciosWhereArticulo( uuidArticulo )   
 
 RETURN ( nil )
 
