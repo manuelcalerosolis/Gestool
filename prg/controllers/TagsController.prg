@@ -19,6 +19,7 @@ CLASS TagsController FROM SQLNavigatorController
 
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := TagsValidator():New( self  ), ), ::oValidator )
 
+   METHOD getModel()                      INLINE( if( empty( ::oModel ), ::oModel := SQLTagsModel():New( self  ), ), ::oModel )
 
 END CLASS
 
@@ -37,8 +38,6 @@ METHOD New( oController ) CLASS TagsController
    ::hImage                := { "16" => "gc_bookmarks_16" }
 
    ::nLevel                := Auth():Level( "marcadores" )
-
-   ::oModel                := SQLTagsModel():New( self )
 
 RETURN ( Self )
 
@@ -302,7 +301,7 @@ METHOD validateAndAddTag( cMarcador ) CLASS TagsView
       RETURN ( .f. )
    end if 
 
-   uuidTag        := ::oController:oModel:getUuidWhereNombre( cMarcador ) 
+   uuidTag        := ::oController:getModel():getUuidWhereNombre( cMarcador ) 
    if empty( uuidTag )
       msgStop( "Este marcador : " + cMarcador + " , no existe" )
       RETURN ( .f. )

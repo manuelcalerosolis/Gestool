@@ -10,8 +10,6 @@ CLASS MovimientosAlmacenController FROM SQLNavigatorController
 
    DATA oLineasController
 
-   DATA oTagsController
-
    DATA oImportadorController
 
    DATA oCapturadorController
@@ -122,8 +120,6 @@ METHOD New()
 
    ::oLineasController           := MovimientosAlmacenLineasController():New( self )
 
-   ::oTagsController             := TagsController():New( self )
-
    ::oImportadorController       := ImportadorMovimientosAlmacenLineasController():New( self )
 
    ::oCapturadorController       := CapturadorMovimientosAlmacenLineasController():New( self )
@@ -161,8 +157,6 @@ METHOD End()
    ::oValidator:End()
 
    ::oLineasController:End()
-
-   ::oTagsController:End()
 
    ::oCapturadorController:End()
 

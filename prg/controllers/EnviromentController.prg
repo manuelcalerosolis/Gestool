@@ -11,8 +11,6 @@ CLASS EnviromentController FROM SQLApplicationController
 
    DATA hAlmacen
 
-   DATA oDelegacionesController
-
    DATA aComboCajas
    DATA cComboCaja
 
@@ -73,8 +71,6 @@ METHOD New() CLASS EnviromentController
    ::hImage                            := {  "16" => "gc_businesspeople_16",;
                                              "48" => "gc_businesspeople_48" }
 
-   ::oDelegacionesController           := DelegacionesController():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -83,10 +79,6 @@ METHOD End() CLASS EnviromentController
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
-   end if 
-
-   if !empty( ::oDelegacionesController )
-      ::oDelegacionesController:End()
    end if 
    
    ::Super:End()
@@ -117,7 +109,7 @@ METHOD loadData() CLASS EnviromentController
 
    ::cComboAlmacen                     := atail( ::aComboAlmacenes )
 
-   ::aComboDelegaciones                := ::oDelegacionesController:oModel:getNombresWhereParentUuid( Company():Uuid() )
+   ::aComboDelegaciones                := ::getDelegacionesController():getModel():getNombresWhereParentUuid( Company():Uuid() )
 
    ::cComboDelegacion                  := atail( ::aComboDelegaciones )
 

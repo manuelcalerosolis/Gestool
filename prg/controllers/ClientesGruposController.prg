@@ -19,6 +19,8 @@ CLASS ClientesGruposController FROM SQLNavigatorController
 
    METHOD getRepository()           INLINE( if( empty( ::oRepository ), ::oRepository := ClientesGruposRepository():New( self ), ), ::oRepository ) 
 
+   METHOD getModel()                INLINE( if( empty( ::oModel ), ::oModel := SQLClientesGruposModel():New( self ), ), ::oModel ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -37,16 +39,15 @@ METHOD New( oController ) CLASS ClientesGruposController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLClientesGruposModel():New( self )
-
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS ClientesGruposController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -152,14 +153,14 @@ METHOD Activate() CLASS ClientesGruposView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;

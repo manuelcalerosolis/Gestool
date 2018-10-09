@@ -10,6 +10,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oCodigosPostalesController
 
    DATA oDireccionesController
+   
+   DATA oDireccionesTiposController
 
    DATA oPaisesController
 
@@ -151,6 +153,10 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oSesionesController 
    
    DATA oTiposImpresorasController 
+   
+   DATA oDelegacionesController 
+
+   DATA oSituacionesController 
 
 
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
@@ -160,6 +166,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getDireccionesController();
                                     INLINE ( if( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesController():New( self ), ), ::oDireccionesController )
+
+   METHOD getDireccionesTiposController();
+                                    INLINE ( if( empty( ::oDireccionesTiposController ), ::oDireccionesTiposController := DireccionesTiposController():New( self ), ), ::oDireccionesTiposController )
 
    METHOD getPaisesController()     INLINE ( if( empty( ::oPaisesController ), ::oPaisesController := PaisesController():New( self ), ), ::oPaisesController )
 
@@ -362,6 +371,12 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getTiposImpresorasController();
                                     INLINE ( if( empty( ::oTiposImpresorasController ), ::oTiposImpresorasController := TiposImpresorasController():New( self ), ), ::oTiposImpresorasController )
 
+   METHOD getDelegacionesController();
+                                    INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
+
+   METHOD getSituacionesController();
+                                    INLINE ( if( empty( ::oSituacionesController ), ::oSituacionesController := SituacionesController():New( self ), ), ::oSituacionesController )
+
    METHOD End()
 
 END CLASS
@@ -380,6 +395,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oDireccionesController )
       ::oDireccionesController:End()
+   end if    
+
+   if !empty( ::oDireccionesTiposController )
+      ::oDireccionesTiposController:End()
    end if 
    
    if !empty( ::oPaisesController )
@@ -653,6 +672,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oTiposImpresorasController )
       ::oTiposImpresorasController:End()
+   end if   
+
+   if !empty( ::oDelegacionesController )
+      ::oDelegacionesController:End()
    end if
 
    ::Super:End()

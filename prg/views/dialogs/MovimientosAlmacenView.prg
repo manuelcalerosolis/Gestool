@@ -98,7 +98,7 @@ METHOD Activate()
 
       // Marcadores---------------------------------------------------------------
 
-      ::oController:oTagsController:oDialogView:ExternalRedefine( { "idGet" => 140, "idButton" => 141, "idTags" => 142 }, ::oDialog )
+      ::oController:getTagsController():getDialogView():ExternalRedefine( { "idGet" => 140, "idButton" => 141, "idTags" => 142 }, ::oDialog )
 
       // Divisas---------------------------------------------------------------
 
@@ -138,7 +138,7 @@ METHOD startActivate()
 
    ::oController:stampAlmacenNombre( ::oGetAlmacenDestino )
 
-   ::oController:oTagsController:oDialogView:Start()
+   ::oController:getTagsController():getDialogView():Start()
 
    ::oController:oLineasController:oBrowseView:getBrowse():makeTotals()
    ::oController:oLineasController:oBrowseView:getBrowse():goTop()
