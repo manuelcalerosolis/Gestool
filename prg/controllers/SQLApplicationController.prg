@@ -369,11 +369,6 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getImpresorasController();
                                     INLINE ( if( empty( ::oImpresorasController ), ::oImpresorasController := ImpresorasController():New( self ), ), ::oImpresorasController )
 
-<<<<<<< HEAD
-   METHOD loadDocuments()
-
-   METHOD getDirectory()            INLINE ( Company():getPathDocuments( ::cName ) )
-=======
    METHOD getSesionesController();
                                     INLINE ( if( empty( ::oSesionesController ), ::oSesionesController := SesionesController():New( self ), ), ::oSesionesController )
 
@@ -391,7 +386,10 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getPermisosController();
                                     INLINE ( if( empty( ::oPermisosController ), ::oPermisosController := PermisosController():New( self ), ), ::oPermisosController )
->>>>>>> b6ac8ae581ddc783660fcb6648f06f6e1a0bb493
+
+   METHOD loadDocuments()
+
+   METHOD getDirectory()            INLINE ( Company():getPathDocuments( ::cName ) )
 
    METHOD End()
 
