@@ -5,9 +5,21 @@
 
 CLASS DireccionesTiposController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := DireccionesTiposBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := DireccionesTiposView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := DireccionesTiposRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := DireccionesTiposValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLDireccionesTiposModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -27,34 +39,30 @@ METHOD New( oController ) CLASS DireccionesTiposController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLDireccionesTiposModel():New( self )
-
-   ::oBrowseView                    := DireccionesTiposBrowseView():New( self )
-
-   ::oDialogView                    := DireccionesTiposView():New( self )
-
-   ::oValidator                     := DireccionesTiposValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := DireccionesTiposRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 METHOD End() CLASS DireccionesTiposController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
 
-   ::oRepository:End()
-
-   ::oGetSelector:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -151,14 +159,14 @@ METHOD Activate() CLASS DireccionesTiposView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;

@@ -19,6 +19,8 @@ CLASS RutasController FROM SQLNavigatorController
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := RutasRepository():New( self ), ), ::oRepository )
 
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLRutasModel():New( self ), ), ::oModel )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -37,15 +39,15 @@ METHOD New( oController ) CLASS RutasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLRutasModel():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS RutasController
-
-   ::oModel:End()
+   
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()

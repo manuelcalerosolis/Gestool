@@ -5,11 +5,21 @@
 
 CLASS ImpresorasController FROM SQLNavigatorController
 
-   DATA oTiposImpresorasController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ImpresorasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := ImpresorasView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := ImpresorasRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := ImpresorasValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLImpresorasModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -29,33 +39,31 @@ METHOD New( oController ) CLASS ImpresorasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLImpresorasModel():New( self )
-
-   ::oBrowseView                    := ImpresorasBrowseView():New( self )
-
-   ::oDialogView                    := ImpresorasView():New( self )
-
-   ::oValidator                     := ImpresorasValidator():New( self, ::oDialogView )
-
-   ::oTiposImpresorasController     := TiposImpresorasController():New( self )
-
-   ::oRepository                    := ImpresorasRepository():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS ImpresorasController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -151,30 +159,30 @@ METHOD Activate() CLASS ImpresorasView
       OF          ::oDialog
 
 REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:oModel:hBuffer[ "tipo_impresora_uuid" ] ;
+      VAR         ::oController:getModel():hBuffer[ "tipo_impresora_uuid" ] ;
       ID          100 ;
       ITEMS       ::aTipo;
       VALID       ( ::oController:validate( "tipo_impresora_uuid" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre_impresora" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre_impresora" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre_impresora" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo_corte" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo_corte" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "ruta_comandas" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "ruta_comandas" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "ruta_anulacion" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "ruta_anulacion" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
@@ -207,7 +215,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD onActivate() CLASS ImpresorasView
 
-   ::aTipo        := ::oController:oTiposImpresorasController:oModel:getNombres()
+   ::aTipo        := ::oController:getTiposImpresorasController():getModel():getNombres()
    
 RETURN ( self )
 

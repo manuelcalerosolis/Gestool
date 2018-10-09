@@ -9,13 +9,17 @@ CLASS AgentesController FROM SQLNavigatorController
 
    METHOD End()
 
+   //Construcciones tardias----------------------------------------------------
+
    METHOD getBrowseView()           INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := AgentesBrowseView():New( self ), ), ::oBrowseView )
 
    METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := AgentesRepository():New( self ), ), ::oRepository ) 
 
    METHOD getDialogView()           INLINE ( if( empty( ::oDialogView ), ::oDialogView := AgentesView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()            INLINE ( if( empty( ::oValidator ), ::oValidator := AgentesValidator():New( self, ::getDialogView() ), ), ::oValidator )
+   METHOD getValidator()            INLINE ( if( empty( ::oValidator ), ::oValidator := AgentesValidator():New( self  ), ), ::oValidator )
+
+   METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLAgentesModel():New( self  ), ), ::oModel )
 
 END CLASS
 
@@ -35,18 +39,16 @@ METHOD New( oController ) CLASS AgentesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLAgentesModel():New( self )
-
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
+   ::getModel():setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -201,7 +203,7 @@ END CLASS
 METHOD Activating() CLASS AgentesView
 
    if ::oController:isAppendOrDuplicateMode()
-      ::oController:oModel:hBuffer()
+      ::oController:getModel():hBuffer()
    end if 
 
 RETURN ( nil )
@@ -231,26 +233,26 @@ METHOD Activate() CLASS AgentesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNN" ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oGetDni VAR ::oController:oModel:hBuffer[ "dni" ] ;
+   REDEFINE GET   ::oGetDni VAR ::oController:getModel():hBuffer[ "dni" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( CheckCif( ::oGetDni ) );
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "comision" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "comision" ] ;
       ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;

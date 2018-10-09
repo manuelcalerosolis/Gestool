@@ -5,9 +5,21 @@
 
 CLASS BalanzasController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := BalanzasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := BalanzasView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := BalanzasRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := BalanzasValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLBalanzasModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -25,19 +37,7 @@ METHOD New() CLASS BalanzasController
                                        "32" => "gc_balance_32",;
                                        "48" => "gc_balance_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
-
-   ::oModel                         := SQLBalanzasModel():New( self )
-
-   ::oBrowseView                    := BalanzasBrowseView():New( self )
-
-   ::oDialogView                    := BalanzasView():New( self )
-
-   ::oValidator                     := BalanzasValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := BalanzasRepository():New( self )
-
-   ::oGetSelector                   := GetSelector():New( self )   
+   ::nLevel                         := Auth():Level( ::cName ) 
 
 RETURN ( Self )
 
@@ -45,15 +45,25 @@ RETURN ( Self )
 
 METHOD End() CLASS BalanzasController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -172,73 +182,73 @@ METHOD Activate() CLASS BalanzasView
       FONT        oFontBold() ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNN" ;
       ID          100 ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
     REDEFINE COMBOBOX ::oPuerto ;
-      VAR         ::oController:oModel:hBuffer[ "puerto" ] ;
+      VAR         ::oController:getModel():hBuffer[ "puerto" ] ;
       ID          120 ;
       ITEMS       ::aPuerto;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oBPS ;
-      VAR         ::oController:oModel:hBuffer[ "bits_segundo" ] ;
+      VAR         ::oController:getModel():hBuffer[ "bits_segundo" ] ;
       ID          130 ;
       ITEMS       ::aBPS;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oParada ;
-      VAR         ::oController:oModel:hBuffer[ "bits_parada" ] ;
+      VAR         ::oController:getModel():hBuffer[ "bits_parada" ] ;
       ID          140 ;
       ITEMS       ::aParada;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oDatos ;
-      VAR         ::oController:oModel:hBuffer[ "bits_datos" ] ;
+      VAR         ::oController:getModel():hBuffer[ "bits_datos" ] ;
       ID          150 ;
       ITEMS       ::aDatos;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oParidad ;
-      VAR         ::oController:oModel:hBuffer[ "paridad" ] ;
+      VAR         ::oController:getModel():hBuffer[ "paridad" ] ;
       ID          160 ;
       ITEMS       ::aParidad;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE GET   ::oInicializacion ; 
-      VAR         ::oController:oModel:hBuffer[ "inicializacion" ] ;
+      VAR         ::oController:getModel():hBuffer[ "inicializacion" ] ;
       ID          170 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "retardo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "retardo" ] ;
       ID          180 ;
       SPINNER ;
       MIN  0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "entubamiento" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "entubamiento" ] ;
       ID          190 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "abrir_puerto" ] ;
+   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "abrir_puerto" ] ;
       ID          200 ;
       IDSAY       202 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -281,7 +291,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD SetDefault() CLASS BalanzasView
 
-   ::oController:oModel:hBuffer[ "inicializacion" ] := 98000001
+   ::oController:getModel():hBuffer[ "inicializacion" ] := 98000001
    ::oInicializacion:refresh()
 
 RETURN( self )

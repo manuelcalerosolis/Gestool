@@ -358,6 +358,7 @@ ProvinciasController.prg													\
 PaisesController.prg															\
 LenguajesController.prg														\
 DireccionesController.prg 													\
+DireccionesTiposController.prg 											\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
@@ -1077,6 +1078,7 @@ ProvinciasController.obj       											\
 PaisesController.obj       												\
 LenguajesController.obj  		     										\
 DireccionesController.obj       											\
+DireccionesTiposController.obj       									\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
@@ -1785,6 +1787,7 @@ $(OBJ)\ProvinciasController.obj    										+
 $(OBJ)\PaisesController.obj    											+
 $(OBJ)\LenguajesController.obj    										+
 $(OBJ)\DireccionesController.obj    									+
+$(OBJ)\DireccionesTiposController.obj    								+
 $(OBJ)\ComentariosController.obj    									+
 $(OBJ)\ComentariosLineasController.obj    							+
 $(OBJ)\ArticulosTipoController.obj    									+

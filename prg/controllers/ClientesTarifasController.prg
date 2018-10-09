@@ -13,9 +13,14 @@ CLASS ClientesTarifasController FROM SQLNavigatorController
 
    METHOD ApenndLinea()
 
-   METHOD getBrowseView()                    INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ClientesTarifasBrowseView():New( self ), ), ::oBrowseView )
    
    METHOD getArticulosTarifasController()    INLINE ( if( empty( ::oArticulosTarifasController ), ::oArticulosTarifasController := ArticulosTarifasController():New( self ), ), ::oArticulosTarifasController )
+
+   //Construcciones tardias----------------------------------------------------
+   
+   METHOD getBrowseView()                    INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ClientesTarifasBrowseView():New( self ), ), ::oBrowseView )
+
+   METHOD getModel()                         INLINE ( if( empty( ::oModel ), ::oModel := SQLClientesTarifasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -35,20 +40,20 @@ METHOD New( oController ) CLASS ClientesTarifasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLClientesTarifasModel():New( self )
-
-   ::oDialogModalView:setEvent( 'addingduplicatebutton', {|| .f. } )
+   /*::oDialogModalView:setEvent( 'addingduplicatebutton', {|| .f. } )
    ::oDialogModalView:setEvent( 'addingeditbutton',      {|| .f. } )
    ::oDialogModalView:setEvent( 'addingzoombutton',      {|| .f. } )
-   ::oDialogModalView:setEvent( 'appending',             {|| ::ApenndLinea() } )
+   ::oDialogModalView:setEvent( 'appending',             {|| ::ApenndLinea() } )*/
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS ClientesTarifasController
-
-   ::oModel:End()
+   
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -80,12 +85,12 @@ METHOD ApenndLinea()
 
    for each hLine in aLines
 
-      hBuffer        := ::oModel:loadBlankBuffer()
+      hBuffer        := ::getModel():loadBlankBuffer()
 
       hSet( hBuffer, "parent_uuid", ::oController:getUuid() )
       hSet( hBuffer, "tarifa_uuid", hGet( hLine, "uuid" ) )
 
-      ::oModel:insertIgnoreBuffer( hBuffer )
+      ::getModel():insertIgnoreBuffer( hBuffer )
 
    next
 

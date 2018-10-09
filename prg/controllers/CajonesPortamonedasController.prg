@@ -7,7 +7,19 @@
 
 CLASS CajonesPortamonedasController FROM SQLNavigatorController
 
-   METHOD   New()
+   METHOD New() CONSTRUCTOR
+
+   METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CajonesPortamonedasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := CajonPortamonedaView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := CajonPortamonedaValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLCajonesPortamonedasModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -27,17 +39,32 @@ METHOD New() CLASS CajonesPortamonedasController
 
    ::nLevel                := Auth():Level( ::cName )
 
-   ::oModel                := SQLCajonesPortamonedasModel():New( self )
-
-   ::oBrowseView           := CajonesPortamonedasBrowseView():New( self )
-
-   ::oDialogView           := CajonPortamonedaView():New( self )
-
-   ::oValidator            := CajonPortamonedaValidator():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD End() CLASS CajonesPortamonedasController
+
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
+
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
+
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
+
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
+
+   ::Super:End()
+
+RETURN( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -111,7 +138,7 @@ CLASS CajonPortamonedaView FROM SQLBaseView
   
    METHOD Activate()
 
-   METHOD testCajonPortamoneda()       INLINE ( TCajon():New( ::oController:oModel:hBuffer[ "codigo_apertura" ], ::oController:oModel:hBuffer[ "impresora" ] ):openTest() )
+   METHOD testCajonPortamoneda()       INLINE ( TCajon():New( ::oController:getModel():hBuffer[ "codigo_apertura" ], ::oController:getModel():hBuffer[ "impresora" ] ):openTest() )
 
 END CLASS
 
@@ -127,14 +154,14 @@ METHOD Activate() CLASS CajonPortamonedaView
       RESOURCE    "CAJON_PORTAMONEDA" ;
       TITLE       ::LblTitle() + "cajón portamoneda"
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
    REDEFINE GET   oGetImpresora ;
-      VAR         ::oController:oModel:hBuffer[ "impresora" ] ;
+      VAR         ::oController:getModel():hBuffer[ "impresora" ] ;
       ID          110 ;
       BITMAP      "gc_printer2_check_16" ;
       ON HELP     ( PrinterPreferences( oGetImpresora ) ) ;
@@ -143,7 +170,7 @@ METHOD Activate() CLASS CajonPortamonedaView
       OF          oDlg
 
    REDEFINE GET   oGetCodigoApertura ;
-      VAR         ::oController:oModel:hBuffer[ "codigo_apertura" ] ;
+      VAR         ::oController:getModel():hBuffer[ "codigo_apertura" ] ;
       ID          120 ;
       BITMAP      "gc_modem_16" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;

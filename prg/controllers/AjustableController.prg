@@ -9,7 +9,9 @@ CLASS AjustableController FROM SQLBaseController
 
    METHOD End()
 
-   METHOD getAjustableModel()    INLINE ( ::oModel := SQLAjustableModel():New( self ) )
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getModel()             INLINE ( ::oModel := SQLAjustableModel():New( self ) )
 
    METHOD getDialogView()        INLINE ( iif( empty( ::oDialogView ), ::oDialogView := AjustableView():New( self ), ), ::oDialogView )
 
@@ -20,8 +22,6 @@ END CLASS
 METHOD New( oController )
 
    ::Super:New( oController )
-   
-   ::getAjustableModel()
 
    ::getDialogView():setEvent( 'startingActivate', {|| ::oController:startingActivate() } )
 

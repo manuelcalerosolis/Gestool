@@ -5,16 +5,24 @@
 
 CLASS DelegacionesController FROM SQLNavigatorGestoolController
 
-   DATA oDireccionesController
-
-   DATA oCamposExtraValoresController
-
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD getConfiguracionVistasController() ;
                                     INLINE ( if( empty( ::oConfiguracionVistasController ), ::oConfiguracionVistasController := SQLConfiguracionVistasGestoolController():New( self ), ), ::oConfiguracionVistasController )
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := DelegacionesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := DelegacionesView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := DelegacionesRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := DelegacionesValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLDelegacionesModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -32,30 +40,16 @@ METHOD New( oController ) CLASS DelegacionesController
                                           "32" => "gc_factory_group_32",;
                                           "48" => "gc_factory_group_48" }
 
-   ::oModel                         := SQLDelegacionesModel():New( self )
-
-   ::oBrowseView                    := DelegacionesBrowseView():New( self )
-
-   ::oDialogView                    := DelegacionesView():New( self )
-
-   ::oValidator                     := DelegacionesValidator():New( self, ::oDialogView )
-
-   ::oRepository                    := DelegacionesRepository():New( self )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresGestoolController():New( self, ::oModel:cTableName )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
-   ::oDireccionesController         := DireccionesGestoolController():New( self )
+   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::oDireccionesController:loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::oDireccionesController:insertBuffer() } )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::oDireccionesController:loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::oDireccionesController:updateBuffer( ::getUuid() ) } )
-
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::oDireccionesController:loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::oDireccionesController:loadedDuplicateBuffer( ::getUuid() ) } )
-   
-   ::oModel:setEvent( 'deletedSelection',             {|| ::oDireccionesController:deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::getModel():setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
 RETURN ( Self )
 
@@ -63,33 +57,25 @@ RETURN ( Self )
 
 METHOD End() CLASS DelegacionesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView )
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oCamposExtraValoresController:End()
-
-   ::oDireccionesController:End()
-
-   ::oModel                         := nil
-
-   ::oBrowseView                    := nil
-
-   ::oDialogView                    := nil
-
-   ::oValidator                     := nil
-
-   ::oRepository                    := nil
-
-   ::oCamposExtraValoresController  := nil
-
-   ::oDireccionesController         := nil
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -176,7 +162,7 @@ END CLASS
 METHOD Activating() CLASS DelegacionesView
 
    if ::oController:isAppendOrDuplicateMode()
-      ::oController:oModel:hBuffer()
+      ::oController:getModel():hBuffer()
    end if 
 
 RETURN ( self )
@@ -204,20 +190,20 @@ METHOD Activate() CLASS DelegacionesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
-   ::oController:oDireccionesController:oDialogView:ExternalRedefine( ::oDialog )
+   ::oController:getDireccionesController():getDialogView():ExternalRedefine( ::oDialog )
 
    REDEFINE EXPLORERBAR ::oExplorerBar ;
       ID          700 ;
@@ -256,7 +242,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD StartDialog() CLASS DelegacionesView
 
-   ::oController:oDireccionesController:oDialogView:StartDialog()
+   ::oController:getDireccionesController():getDialogView():StartDialog()
 
    ::addLinksToExplorerBar()
 
@@ -271,7 +257,7 @@ METHOD addLinksToExplorerBar() CLASS DelegacionesView
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
    if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Campos extra...", {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }, ::oController:oCamposExtraValoresController:getImage( "16" ) )
+      oPanel:AddLink( "Campos extra...", {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }, ::oController:getCamposExtraValoresController():getImage( "16" ) )
    end if
 
 RETURN ( self )

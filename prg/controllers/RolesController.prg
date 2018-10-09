@@ -7,10 +7,6 @@
 
 CLASS RolesController FROM SQLNavigatorGestoolController
 
-   DATA oAjustableController 
-
-   DATA oPermisosController
-
    DATA cUuidRol
 
    DATA lMostrarRentabilidad        AS LOGIC INIT .t.
@@ -24,7 +20,7 @@ CLASS RolesController FROM SQLNavigatorGestoolController
    DATA lCambiarEstado              AS LOGIC INIT .t.
    DATA lCambiarCampos              AS LOGIC INIT .t.
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
@@ -35,6 +31,16 @@ CLASS RolesController FROM SQLNavigatorGestoolController
    METHOD saveConfig()
 
    METHOD startingActivate()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := RolesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := RolesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := CajasValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLRolesModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -55,22 +61,8 @@ METHOD New() CLASS RolesController
    ::hImage                := {  "16" => "gc_id_cards_16",;
                                  "48" => "gc_id_cards_48" }
 
-   ::oModel                := SQLRolesModel():New( self )
-
-   ::oRepository           := RolesRepository():New( self )
-
-   ::oBrowseView           := RolesBrowseView():New( self )
-
-   ::oDialogView           := RolesView():New( self )
-
-   ::oValidator            := RolesValidator():New( self )
-
-   ::oPermisosController   := PermisosController():New( self )
-
-   ::oAjustableController  := AjustableController():New( self )
-
-   ::setEvent( 'openingDialog',  {|| ::oDialogView:openingDialog() } )  
-   ::setEvent( 'closedDialog',   {|| ::oDialogView:closedDialog() } )  
+   ::setEvent( 'openingDialog',  {|| ::getDialogView():openingDialog() } )  
+   ::setEvent( 'closedDialog',   {|| ::getDialogView():closedDialog() } )  
 
 RETURN ( Self )
 
@@ -103,7 +95,7 @@ RETURN ( nil )
 METHOD setConfig()
 
    if ::loadConfig() .and. ;
-      ::oAjustableController:DialogViewActivate()
+      ::getAjustableController():DialogViewActivate()
 
       ::saveConfig()
 
@@ -121,25 +113,25 @@ METHOD loadConfig()
       RETURN ( .f. )
    end if 
 
-   ::lMostrarRentabilidad        := ::oAjustableController:oModel:getRolMostrarRentabilidad( ::cUuidRol )
+   ::lMostrarRentabilidad        := ::getAjustableController():getModel():getRolMostrarRentabilidad( ::cUuidRol )
 
-   ::lCambiarPrecios             := ::oAjustableController:oModel:getRolCambiarPrecios( ::cUuidRol )
+   ::lCambiarPrecios             := ::getAjustableController():getModel():getRolCambiarPrecios( ::cUuidRol )
 
-   ::lVerPreciosCosto            := ::oAjustableController:oModel:getRolVerPreciosCosto( ::cUuidRol )
+   ::lVerPreciosCosto            := ::getAjustableController():getModel():getRolVerPreciosCosto( ::cUuidRol )
 
-   ::lConfirmacionEliminacion    := ::oAjustableController:oModel:getRolConfirmacionEliminacion( ::cUuidRol )
+   ::lConfirmacionEliminacion    := ::getAjustableController():getModel():getRolConfirmacionEliminacion( ::cUuidRol )
 
-   ::lFiltrarVentas              := ::oAjustableController:oModel:getRolFiltrarVentas( ::cUuidRol )
+   ::lFiltrarVentas              := ::getAjustableController():getModel():getRolFiltrarVentas( ::cUuidRol )
 
-   ::lAbrirCajonPortamonedas     := ::oAjustableController:oModel:getRolAbrirCajonPortamonedas( ::cUuidRol )
+   ::lAbrirCajonPortamonedas     := ::getAjustableController():getModel():getRolAbrirCajonPortamonedas( ::cUuidRol )
 
-   ::lAlbaranEntregado           := ::oAjustableController:oModel:getRolAlbaranEntregado( ::cUuidRol )
+   ::lAlbaranEntregado           := ::getAjustableController():getModel():getRolAlbaranEntregado( ::cUuidRol )
 
-   ::lAsistenteGenerarFacturas   := ::oAjustableController:oModel:GetRolAsistenteGenerarFacturas( ::cUuidRol )
+   ::lAsistenteGenerarFacturas   := ::getAjustableController():getModel():GetRolAsistenteGenerarFacturas( ::cUuidRol )
 
-   ::lCambiarEstado              := ::oAjustableController:oModel:GetRolCambiarEstado( ::cUuidRol )
+   ::lCambiarEstado              := ::getAjustableController():getModel():GetRolCambiarEstado( ::cUuidRol )
 
-   ::lCambiarCampos              := ::oAjustableController:oModel:GetRolCambiarCampos( ::cUuidRol )
+   ::lCambiarCampos              := ::getAjustableController():getModel():GetRolCambiarCampos( ::cUuidRol )
 
 RETURN ( .t. )
 
@@ -147,25 +139,25 @@ RETURN ( .t. )
 
 METHOD saveConfig()
 
-   ::oAjustableController:oModel:setRolMostrarRentabilidad( ::lMostrarRentabilidad, ::cUuidRol )
+   ::getAjustableController():getModel():setRolMostrarRentabilidad( ::lMostrarRentabilidad, ::cUuidRol )
 
-   ::oAjustableController:oModel:setRolCambiarPrecios( ::lCambiarPrecios, ::cUuidRol )
+   ::getAjustableController():getModel():setRolCambiarPrecios( ::lCambiarPrecios, ::cUuidRol )
 
-   ::oAjustableController:oModel:setRolVerPreciosCosto( ::lVerPreciosCosto, ::cUuidRol )
+   ::getAjustableController():getModel():setRolVerPreciosCosto( ::lVerPreciosCosto, ::cUuidRol )
 
-   ::oAjustableController:oModel:setRolConfirmacionEliminacion( ::lConfirmacionEliminacion, ::cUuidRol )
+   ::getAjustableController():getModel():setRolConfirmacionEliminacion( ::lConfirmacionEliminacion, ::cUuidRol )
 
-   ::oAjustableController:oModel:setRolFiltrarVentas( ::lFiltrarVentas, ::cUuidRol )
+   ::getAjustableController():getModel():setRolFiltrarVentas( ::lFiltrarVentas, ::cUuidRol )
 
-   ::oAjustableController:oModel:setRolAbrirCajonPortamonedas( ::lAbrirCajonPortamonedas, ::cUuidRol )
+   ::getAjustableController():getModel():setRolAbrirCajonPortamonedas( ::lAbrirCajonPortamonedas, ::cUuidRol )
 
-   ::oAjustableController:oModel:setRolAlbaranEntregado( ::lAlbaranEntregado, ::cUuidRol )
+   ::getAjustableController():getModel():setRolAlbaranEntregado( ::lAlbaranEntregado, ::cUuidRol )
 
-   ::oAjustableController:oModel:SetRolAsistenteGenerarFacturas( ::lAsistenteGenerarFacturas, ::cUuidRol )
+   ::getAjustableController():getModel():SetRolAsistenteGenerarFacturas( ::lAsistenteGenerarFacturas, ::cUuidRol )
 
-   ::oAjustableController:oModel:SetRolCambiarEstado( ::lCambiarEstado, ::cUuidRol )
+   ::getAjustableController():getModel():SetRolCambiarEstado( ::lCambiarEstado, ::cUuidRol )
 
-   ::oAjustableController:oModel:SetRolCambiarCampos( ::lCambiarCampos, ::cUuidRol )
+   ::getAjustableController():getModel():SetRolCambiarCampos( ::lCambiarCampos, ::cUuidRol )
 
 RETURN ( self )
 
@@ -173,7 +165,7 @@ RETURN ( self )
 
 METHOD startingActivate()
 
-   local oPanel            := ::oAjustableController:oDialogView:oExplorerBar:AddPanel( "Propiedades roles", nil, 1 ) 
+   local oPanel            := ::getAjustableController():getDialogView():oExplorerBar:AddPanel( "Propiedades roles", nil, 1 ) 
    
    oPanel:addCheckBox( "Mostrar rentabilidad", @::lMostrarRentabilidad )
 
@@ -342,8 +334,8 @@ END CLASS
 
 METHOD openingDialog() CLASS RolesView
 
-   ::cComboPermiso      := ::oController:oPermisosController:oRepository:getNombre( ::getModel():getBuffer( "permiso_uuid" ) )
-   ::aComboPermisos     := ::oController:oPermisosController:oRepository:getNombres()
+   ::cComboPermiso      := ::oController:getPermisosController():getRepository():getNombre( ::getModel():getBuffer( "permiso_uuid" ) )
+   ::aComboPermisos     := ::oController:getPermisosController():getRepository():getNombres()
 
 RETURN ( self )
 
@@ -351,7 +343,7 @@ RETURN ( self )
 
 METHOD closedDialog() CLASS RolesView
 
-   ::getModel():setBuffer( "permiso_uuid", ::oController:oPermisosController:oRepository:getUuid( ::cComboPermiso ) )
+   ::getModel():setBuffer( "permiso_uuid", ::oController:getPermisosController():getRepository():getUuid( ::cComboPermiso ) )
 
 RETURN ( self )
 

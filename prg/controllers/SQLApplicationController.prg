@@ -10,6 +10,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oCodigosPostalesController
 
    DATA oDireccionesController
+   
+   DATA oDireccionesTiposController
 
    DATA oPaisesController
 
@@ -118,6 +120,10 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oFacturasClientesController
 
    DATA oAlmacenesController
+   
+   DATA oZonasController
+   
+   DATA oUbicacionesController
 
    DATA oDireccionTipoDocumentoController
 
@@ -142,6 +148,18 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oCajasController 
 
    DATA oImpresorasController 
+   
+   DATA oSesionesController 
+   
+   DATA oTiposImpresorasController 
+   
+   DATA oDelegacionesController 
+
+   DATA oSituacionesController 
+   
+   DATA oRecibosController 
+   
+   DATA oPermisosController 
 
    DATA aDocuments                  INIT {}
 
@@ -152,6 +170,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getDireccionesController();
                                     INLINE ( if( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesController():New( self ), ), ::oDireccionesController )
+
+   METHOD getDireccionesTiposController();
+                                    INLINE ( if( empty( ::oDireccionesTiposController ), ::oDireccionesTiposController := DireccionesTiposController():New( self ), ), ::oDireccionesTiposController )
 
    METHOD getPaisesController()     INLINE ( if( empty( ::oPaisesController ), ::oPaisesController := PaisesController():New( self ), ), ::oPaisesController )
 
@@ -312,6 +333,12 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getAlmacenesController();
                                     INLINE ( if( empty( ::oAlmacenesController ), ::oAlmacenesController := AlmacenesController():New( self ), ), ::oAlmacenesController )
 
+   METHOD getZonasController();
+                                    INLINE ( if( empty( ::oZonasController ), ::oZonasController := ZonasController():New( self ), ), ::oZonasController )
+
+   METHOD getUbicacionesController();
+                                    INLINE ( if( empty( ::oUbicacionesController ), ::oUbicacionesController := UbicacionesController():New( self ), ), ::oUbicacionesController )
+
    METHOD getConfiguracionesController();
                                     INLINE ( if( empty( ::oConfiguracionesController ), ::oConfiguracionesController := ConfiguracionesController():New( self ), ), ::oConfiguracionesController )
 
@@ -342,9 +369,29 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getImpresorasController();
                                     INLINE ( if( empty( ::oImpresorasController ), ::oImpresorasController := ImpresorasController():New( self ), ), ::oImpresorasController )
 
+<<<<<<< HEAD
    METHOD loadDocuments()
 
    METHOD getDirectory()            INLINE ( Company():getPathDocuments( ::cName ) )
+=======
+   METHOD getSesionesController();
+                                    INLINE ( if( empty( ::oSesionesController ), ::oSesionesController := SesionesController():New( self ), ), ::oSesionesController )
+
+   METHOD getTiposImpresorasController();
+                                    INLINE ( if( empty( ::oTiposImpresorasController ), ::oTiposImpresorasController := TiposImpresorasController():New( self ), ), ::oTiposImpresorasController )
+
+   METHOD getDelegacionesController();
+                                    INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
+
+   METHOD getSituacionesController();
+                                    INLINE ( if( empty( ::oSituacionesController ), ::oSituacionesController := SituacionesController():New( self ), ), ::oSituacionesController )
+
+   METHOD getRecibosController();
+                                    INLINE ( if( empty( ::oRecibosController ), ::oRecibosController := RecibosController():New( self ), ), ::oRecibosController )
+
+   METHOD getPermisosController();
+                                    INLINE ( if( empty( ::oPermisosController ), ::oPermisosController := PermisosController():New( self ), ), ::oPermisosController )
+>>>>>>> b6ac8ae581ddc783660fcb6648f06f6e1a0bb493
 
    METHOD End()
 
@@ -364,6 +411,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oDireccionesController )
       ::oDireccionesController:End()
+   end if    
+
+   if !empty( ::oDireccionesTiposController )
+      ::oDireccionesTiposController:End()
    end if 
    
    if !empty( ::oPaisesController )
@@ -582,6 +633,14 @@ METHOD End() CLASS SQLApplicationController
       ::oAlmacenesController:End()
    end if    
 
+   if !empty( ::oZonasController )   
+      ::oZonasController:End()
+   end if   
+
+   if !empty( ::oUbicacionesController )   
+      ::oUbicacionesController:End()
+   end if    
+
    if !empty( ::oConfiguracionesController )
       ::oConfiguracionesController:End()
    end if 
@@ -589,8 +648,6 @@ METHOD End() CLASS SQLApplicationController
    if !empty( ::oMailController )   
       ::oMailController:End()
    end if 
-
-   ::Super:End()
 
    if !empty( ::oImprimirSeriesController )
       ::oImprimirSeriesController:End()
@@ -623,6 +680,26 @@ METHOD End() CLASS SQLApplicationController
    if !empty( ::oImpresorasController )
       ::oImpresorasController:End()
    end if 
+
+   if !empty( ::oSesionesController )
+      ::oSesionesController:End()
+   end if    
+
+   if !empty( ::oTiposImpresorasController )
+      ::oTiposImpresorasController:End()
+   end if   
+
+   if !empty( ::oDelegacionesController )
+      ::oDelegacionesController:End()
+   end if 
+
+   if !empty( ::oRecibosController )
+      ::oRecibosController:End()
+   end if   
+
+   if !empty( ::oPermisosController )
+      ::oPermisosController:End()
+   end if
 
    ::Super:End()
 

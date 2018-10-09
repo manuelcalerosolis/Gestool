@@ -5,7 +5,19 @@
 
 CLASS SituacionesController FROM SQLNavigatorController
 
-   METHOD   New()
+   METHOD New() CONSTRUCTOR
+
+   METHOD End()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := SituacionesBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := SituacionesView():New( self ), ), ::oDialogView )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := SituacionesValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLSituacionesModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -23,19 +35,32 @@ METHOD New() CLASS SituacionesController
 
    ::nLevel                := Auth():Level( ::cName )
 
-   ::oModel                := SQLSituacionesModel():New( self )
-
-   ::oBrowseView           := SituacionesBrowseView():New( self )
-
-   ::oDialogView           := SituacionesView():New( self )
-
-   ::oValidator            := SituacionesValidator():New( self )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+METHOD End() CLASS SituacionesController
+
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
+
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if 
+
+   if !empty( ::oDialogView)
+      ::oDialogView:End()
+   end if 
+
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if 
+
+   ::Super:End()
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -102,7 +127,7 @@ METHOD Activate() CLASS SituacionesView
    DEFINE DIALOG oDlg RESOURCE "SITUACION" TITLE ::LblTitle() + "situación"
 
    REDEFINE GET   oGetNombre ;
-      VAR         ::oController:oModel:hBuffer[ "nombre" ] ;
+      VAR         ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          100 ;
       MEMO ;
       WHEN        ( ::oController:isNotZoomMode() ) ;

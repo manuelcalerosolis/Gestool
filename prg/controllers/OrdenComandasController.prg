@@ -5,13 +5,23 @@
 
 CLASS OrdenComandasController FROM SQLNavigatorController
 
-   DATA oCamposExtraValoresController
-
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    METHOD VerifyOrden()
+
+   //Construcciones tardias----------------------------------------------------
+
+   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := OrdenComandasBrowseView():New( self ), ), ::oBrowseView ) 
+
+   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := OrdenComandasView():New( self ), ), ::oDialogView )
+
+   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := OrdenComandasRepository():New( self ), ), ::oRepository )
+
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := OrdenComandasValidator():New( self  ), ), ::oValidator ) 
+   
+   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLOrdenComandasModel():New( self ), ), ::oModel ) 
 
 END CLASS
 
@@ -31,18 +41,6 @@ METHOD New() CLASS OrdenComandasController
 
    ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                      := SQLOrdenComandasModel():New( self )
-
-   ::oBrowseView                 := OrdenComandasBrowseView():New( self )
-
-   ::oDialogView                 := OrdenComandasView():New( self )
-
-   ::oValidator                  := OrdenComandasValidator():New( self, ::oDialogView )
-
-   ::oCamposExtraValoresController  := CamposExtraValoresController():New( self, ::oModel:cTableName )
-
-   ::oRepository                 := OrdenComandasRepository():New( self )
-
    ::setEvent( 'closedDialog', {|| ::VerifyOrden() } ) 
 
 RETURN ( Self )
@@ -51,17 +49,25 @@ RETURN ( Self )
 
 METHOD End() CLASS OrdenComandasController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
-   ::oBrowseView:End()
+   if !empty( ::oBrowseView )
+      ::oBrowseView:End()
+   end if
 
-   ::oDialogView:End()
+   if !empty( ::oDialogView)
+      ::oDialogView:End()
+   end if
 
-   ::oValidator:End()
+   if !empty( ::oValidator )
+      ::oValidator:End()
+   end if
 
-   ::oRepository:End()
-
-   ::oCamposExtraValoresController:End()
+   if !empty( ::oRepository )
+      ::oRepository:End()
+   end if
 
    ::Super:End()
 
@@ -71,7 +77,7 @@ RETURN ( Self )
 
 METHOD VerifyOrden()
 
-   local cSQL           := "UPDATE " + ::oModel:getTableName() + " SET orden = orden + 1 WHERE orden >= " + toSQLString( ::oModel:hBuffer[ "orden" ] )
+   local cSQL           := "UPDATE " + ::getModel():getTableName() + " SET orden = orden + 1 WHERE orden >= " + toSQLString( ::getModel():hBuffer[ "orden" ] )
 
 RETURN ( getSQLDatabase():Exec( cSQL ) )
 
@@ -175,20 +181,20 @@ METHOD Activate() CLASS OrdenComandasView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "descripcion" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "descripcion" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "orden" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "orden" ] ;
       ID          120 ;
       SPINNER ;
       MIN         1;
@@ -204,7 +210,7 @@ METHOD Activate() CLASS OrdenComandasView
       OF          ::oDialog ;
 
    ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:oCamposExtraValoresController:Edit( ::oController:getUuid() ) }
+   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
    REDEFINE BUTTON ;
       ID          IDOK ;
