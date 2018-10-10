@@ -608,8 +608,8 @@ METHOD openingDialog() CLASS UsuariosView
 
    ::cGetRepeatPassword    := space( 100 )
 
-   ::cComboRol             := ::oController:getRolesController():oRepository:getNombre( ::getModel():getBuffer( "rol_uuid" ) )
-   ::aComboRoles           := ::oController:getRolesController():oRepository:getNombres()
+   ::cComboRol             := ::oController:getRolesController():getRepository():getNombre( ::getModel():hBuffer( "rol_uuid" ) )
+   //::aComboRoles           := ::oController:getRolesController():getRepository():getNombres()
 
 RETURN ( self )
 

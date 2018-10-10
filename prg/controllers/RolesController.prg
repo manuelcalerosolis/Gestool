@@ -38,7 +38,9 @@ CLASS RolesController FROM SQLNavigatorGestoolController
 
    METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := RolesView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := CajasValidator():New( self  ), ), ::oValidator ) 
+   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := RolesValidator():New( self  ), ), ::oValidator ) 
+
+   METHOD getRepository()        INLINE( if( empty( ::oRepository ), ::oRepository := RolesRepository():New( self  ), ), ::oRepository ) 
    
    METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLRolesModel():New( self ), ), ::oModel ) 
 
@@ -84,6 +86,10 @@ METHOD End()
 
    if !empty( ::oValidator )
       ::oValidator:End()
+   endif   
+
+   if !empty( ::oRepository )
+      ::oRepository:End()
    endif
 
    ::Super:End()

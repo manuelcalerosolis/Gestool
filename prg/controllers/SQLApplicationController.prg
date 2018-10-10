@@ -160,6 +160,8 @@ CLASS SQLApplicationController FROM SQLBaseController
    DATA oRecibosController 
    
    DATA oPermisosController 
+   
+   DATA oRolesController 
 
    DATA aDocuments                  INIT {}
 
@@ -386,6 +388,9 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getPermisosController();
                                     INLINE ( if( empty( ::oPermisosController ), ::oPermisosController := PermisosController():New( self ), ), ::oPermisosController )
+
+   METHOD getRolesController();
+                                    INLINE ( if( empty( ::oRolesController ), ::oRolesController := RolesController():New( self ), ), ::oRolesController )
 
    METHOD loadDocuments()
 
@@ -697,6 +702,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oPermisosController )
       ::oPermisosController:End()
+   end if   
+
+   if !empty( ::oRolesController )
+      ::oRolesController:End()
    end if
 
    ::Super:End()
