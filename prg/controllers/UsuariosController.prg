@@ -39,7 +39,9 @@ CLASS UsuariosController FROM SQLNavigatorGestoolController
    DATA cUuidDelegacionExclusiva
    DATA cNombreDelegacionExclusiva
 
-   DATA cValidError                          INIT ""  
+   DATA cValidError                          INIT "" 
+
+   DATA oAuth  
 
    METHOD New() CONSTRUCTOR
    METHOD End()
@@ -92,6 +94,8 @@ METHOD New( oController ) CLASS UsuariosController
 
    ::hImage                            := {  "16" => "gc_businesspeople_16",;
                                              "48" => "gc_businesspeople_48" }
+
+   ::oAuth                             := AuthManager():New( self )
 
    ::setEvent( 'openingDialog',  {|| ::getDialogView():openingDialog() } )  
    ::setEvent( 'closedDialog',   {|| ::getDialogView():closedDialog() } )  
@@ -581,6 +585,8 @@ CLASS UsuariosView FROM SQLBaseView
    DATA cGetPassword          INIT space( 100 )
    DATA oGetRepeatPassword
    DATA cGetRepeatPassword    INIT space( 100 ) 
+   DATA oGetEmailPassword
+   DATA cGetEmailPassword     INIT space( 100 )
 
    DATA oSayCamposExtra  
 
@@ -588,7 +594,7 @@ CLASS UsuariosView FROM SQLBaseView
    DATA cComboRol   
    DATA aComboRoles           
 
-   DATA lSuperUser            
+   DATA lSuperUser           
 
    METHOD openingDialog()
 
@@ -609,7 +615,7 @@ METHOD openingDialog() CLASS UsuariosView
    ::cGetRepeatPassword    := space( 100 )
 
    ::cComboRol             := ::oController:getRolesController():getRepository():getNombre( ::getModel():hBuffer( "rol_uuid" ) )
-   //::aComboRoles           := ::oController:getRolesController():getRepository():getNombres()
+   ::aComboRoles           := ::oController:getRolesController():getRepository():getNombres()
 
 RETURN ( self )
 
@@ -683,7 +689,8 @@ METHOD Activate() CLASS UsuariosView
       VALID       ( ::oController:validate( "email" ) ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::getModel():hBuffer[ "email_password" ] ;
+   REDEFINE GET   ::oGetEmailPassword ;
+      VAR         ::cGetEmailPassword ; 
       ID          150 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
@@ -766,6 +773,11 @@ METHOD saveView()
    if !empty( ::cGetPassword )
       ::getModel():setBuffer( "password", ::getModel():Crypt( ::cGetPassword ) )
    end if 
+   if !empty( ::cGetEmailPassword )
+      ::getModel():setBuffer( "email_password", ::getModel():Crypt( ::cGetEmailPassword ) )
+   end if
+
+   ::oController:oAuth():Guard( ::getModel():hBuffer )
 
    ::oDialog:end( IDOK )
 
