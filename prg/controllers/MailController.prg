@@ -3,7 +3,15 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MailController FROM SQLNavigatorController
+CLASS MailController 
+
+   DATA oController
+
+   DATA oDialogView
+
+   DATA oValidator
+
+   DATA oMailSender
 
    DATA cTypeDocument
 
@@ -25,13 +33,23 @@ CLASS MailController FROM SQLNavigatorController
    
    METHOD saveHTML()
 
+   METHOD getIds()                     INLINE ( iif( !empty( ::oController ), ::oController:getIds(), {} ) )
+
+   METHOD getUuidIdentifiers()         INLINE ( hGetValues( ::oController:getIdentifiers() ) )
+
+   // Envio de mails----------------------------------------------------------
+
+   METHOD Send()
+
    // Construcciones tardias---------------------------------------------------
 
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := MailView():New( self ), ), ::oDialogView )
 
-   METHOD dialogViewActivate()         INLINE ( ::getDialogView():Activate() )
-
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := MailValidator():New( self ), ), ::oValidator )
+
+   METHOD getMailSender()              INLINE ( if( empty( ::oMailSender ), ::oMailSender := MailSender():New( self ), ), ::oMailSender )
+
+   METHOD dialogViewActivate()         INLINE ( ::getDialogView():Activate() )
 
 END CLASS
 
@@ -39,15 +57,7 @@ END CLASS
 
 METHOD New( oController ) CLASS MailController
 
-   ::Super:New( oController )
-
-   ::cTitle                         := "Mail"
-
-   ::cName                          := "mail"
-
-   ::hImage                         := {  "16" => "gc_mail_earth_16",;
-                                          "32" => "gc_mail_earth_32",;
-                                          "48" => "gc_mail_earth_48" }
+   ::oController                    := oController
 
 RETURN ( Self )
 
@@ -55,15 +65,31 @@ RETURN ( Self )
 
 METHOD End() CLASS MailController
 
-   if !empty(::oDialogView)
+   if !empty( ::oDialogView )
       ::oDialogView:End()
    end if
 
-   if !empty(::oValidator)
+   if !empty( ::oValidator )
       ::oValidator:End()
    end if
 
-   ::Super:End()
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD Send()
+
+   local uuidIdentifier
+
+   if empty( ::getMailSender() )
+      RETURN ( nil )
+   end if 
+
+   ::getMailSender():Send( { "mail" => "manuelcalerosolis@gmail.com", "subject" => "Mail de prueba" } )
+
+   // for each uuidIdentifier in ::getUuidIdentifiers() 
+   //    msgalert( uuidIdentifier, "uuidIdentifier" )
+   // next
 
 RETURN ( nil )
 
@@ -257,44 +283,43 @@ METHOD Activate() CLASS MailView
 
    REDEFINE BITMAP   ;
       ID             900 ;
-      RESOURCE       ::oController:getimage( "48" ) ;
-      TRANSPARENT ;
+      RESOURCE       "gc_mail_earth_48" ;
+      TRANSPARENT    ;
+      OF             ::oFld:aDialogs[ 1 ]
+
+   REDEFINE SAY      ;
+      PROMPT         ::getSelectedRecords() ;
+      ID             200 ;
       OF             ::oFld:aDialogs[ 1 ]
 
    REDEFINE GET      ::oRemitente ;
       VAR            ::cRemitente ;
       ID             100 ;
-      WHEN           ( ::oController:isAppendOrDuplicateMode() ) ;
       OF             ::oFld:aDialogs[ 1 ]
 
    REDEFINE GET      ::oReceptor ;
       VAR            ::cReceptor ;
       ID             110 ;
-      WHEN           ( ::oController:isAppendOrDuplicateMode() ) ;
       OF             ::oFld:aDialogs[ 1 ]
 
    REDEFINE GET      ::oCopia ;
       VAR            ::cCopia ;
       ID             120 ;
-      WHEN           ( ::oController:isAppendOrDuplicateMode() ) ;
       OF             ::oFld:aDialogs[ 1 ]   
 
    REDEFINE GET      ::oCopiaOculta ;
       VAR            ::cCopiaOculta ;
       ID             130 ;
-      WHEN           ( ::oController:isAppendOrDuplicateMode() ) ;
       OF             ::oFld:aDialogs[ 1 ]   
 
    REDEFINE GET      ::oAsunto ;
       VAR            ::cAsunto ;
       ID             140 ;
-      WHEN           ( ::oController:isAppendOrDuplicateMode() ) ;
       OF             ::oFld:aDialogs[ 1 ]   
 
    REDEFINE GET      ::oAdjunto ;
       VAR            ::cAdjunto ;
       ID             150 ;
-      WHEN           ( ::oController:isAppendOrDuplicateMode() ) ;
       OF             ::oFld:aDialogs[ 1 ]
 
    REDEFINE COMBOBOX ::oComboFormato ;
@@ -345,7 +370,7 @@ METHOD Activate() CLASS MailView
 
    REDEFINE BITMAP ;
       ID             900 ;
-      RESOURCE       ::oController:getimage( "48" ) ;
+      RESOURCE       "gc_mail_earth_48" ;
       TRANSPARENT ;
       OF             ::oFld:aDialogs[ 2 ]
 
@@ -378,7 +403,9 @@ METHOD runActivate() CLASS MailView
 
    ::oFld:GoNext()
 
-   msgalert( "llamo al controlador" )
+   ::oController:Send()
+
+
 
 RETURN ( nil )
 

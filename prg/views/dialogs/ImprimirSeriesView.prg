@@ -8,8 +8,6 @@ CLASS ImprimirSeriesView FROM SQLBaseView
 
    DATA oDialog
 
-   DATA oSayRegistrosSeleccionados
-
    DATA oListboxFile
    DATA aListboxFile                   INIT {}
    DATA cListboxFile                   INIT ""
@@ -24,8 +22,6 @@ CLASS ImprimirSeriesView FROM SQLBaseView
    METHOD startActivate()
 
    METHOD runActivate()
-
-   METHOD getRegistrosSeleccionados()
 
 END CLASS
 
@@ -43,8 +39,8 @@ METHOD Activate()
          TRANSPARENT ;
          OF          ::oDialog
 
-      REDEFINE SAY   ::oSayRegistrosSeleccionados ;
-         VAR         ::getRegistrosSeleccionados() ;
+      REDEFINE SAY   ;
+         PROMPT      ::getSelectedRecords() ;
          ID          100 ;
          OF          ::oDialog
 
@@ -122,14 +118,3 @@ RETURN ( self )
 
 //--------------------------------------------------------------------------//
 
-METHOD getRegistrosSeleccionados()
-
-   local nLen  := len( ::oController:getIds() )
-
-   if nLen > 1 
-      RETURN ( hb_ntos( nLen ) + " registros seleccionados" )
-   end if 
-
-RETURN ( hb_ntos( nLen ) + " registro seleccionado" )
-
-//---------------------------------------------------------------------------//

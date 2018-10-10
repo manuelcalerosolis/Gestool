@@ -7,17 +7,13 @@
 
 CLASS TSendMailCDO
 
-   DATA oSender
+   DATA oController
 
    DATA mailServer
 
-   METHOD New( oSender )
+   METHOD New( oController )
 
-   // Construir objetos para envio de mails
-
-   METHOD build()
-
-   // Envios de los mails
+   // Envios de los mails------------------------------------------------------
 
    METHOD sendMail( hMail )
 
@@ -32,11 +28,34 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSender ) 
+METHOD New( oController ) 
 
-   ::oSender         := oSender
+   local oError
+   local oBlock
 
-   ::build()
+   ::oController           := oController
+
+   oBlock                  := errorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      ::mailServer         := win_oleCreateObject( "CDO.Configuration" )
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpserver" ):Value             := ::oController:mailServerHost
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpserverport" ):Value         := ::oController:mailServerPort
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendusing" ):Value              := 2
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpauthenticate" ):Value       := ::oController:mailServerAuthenticate
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpusessl" ):Value             := ::oController:mailServerSSL
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendusername" ):Value           := ::oController:mailServerUserName
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendpassword" ):Value           := ::oController:mailServerPassword
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpconnectiontimeout"):Value   := 30
+      ::mailServer:Fields:Update()
+
+   RECOVER USING oError
+
+      msgStop( "Error al crear el objeto de correo electrónico." + CRLF + ErrorMessage( oError ) )   
+
+   END SEQUENCE
+
+   errorBlock( oBlock )
 
 Return ( Self )
 
@@ -58,7 +77,7 @@ METHOD sendMail( hMail )
 
       oMail                := win_oleCreateObject( "CDO.Message" )
       oMail:Configuration  := ::mailServer
-      oMail:From           := ::oSender:mailServerUserName
+      oMail:From           := ::oController:mailServerUserName
 
       ::setRecipients( oMail, hMail )
 
@@ -91,7 +110,7 @@ Return ( lSend )
 METHOD setRecipients( oMail, hMail )
 
    local cItem
-   local cMails            := ::oSender:getMailsFromHash( hMail )
+   local cMails            := ::oController:getMailsFromHash( hMail )
 
    if !empty( cMails )
       oMail:To             := cMails
@@ -104,7 +123,7 @@ Return ( nil )
 METHOD setAttachment( oMail, hMail )
 
    local cItem
-   local cAttachments      := ::oSender:getFromHash( hMail, "attachments" )      
+   local cAttachments      := ::oController:getFromHash( hMail, "attachments" )      
 
    if empty( cAttachments )
       return nil
@@ -125,7 +144,7 @@ Return ( nil )
 
 METHOD setRecipientsCC( oMail, hMail )
 
-   local cMailsCC          := ::oSender:getFromHash( hMail, "mailcc" )      
+   local cMailsCC          := ::oController:getFromHash( hMail, "mailcc" )      
 
    if !empty( cMailsCC )
       oMail:Cc             := cMailsCC
@@ -137,7 +156,7 @@ Return ( nil )
 
 METHOD setRecipientsCCO( oMail, hMail )
 
-   local cMailsCCO         := ::oSender:getFromHash( hMail, "mailcco" )      
+   local cMailsCCO         := ::oController:getFromHash( hMail, "mailcco" )      
 
    if !empty( cMailsCCO )
       oMail:Bcc            := cMailsCCO
@@ -149,7 +168,7 @@ Return ( nil )
 
 METHOD setMessage( oMail, hMail )
 
-   local cMessage          := ::oSender:getFromHash( hMail, "message" )      
+   local cMessage          := ::oController:getFromHash( hMail, "message" )      
 
    if !empty( cMessage )
       oMail:HTMLBody       := cMessage // CreateMHTMLBody( cMessage )
@@ -161,7 +180,7 @@ Return ( nil )
 
 METHOD setSubject( oMail, hMail )
 
-   local cSubject          := ::oSender:getSubjectFromHash( hMail )      
+   local cSubject          := ::oController:getSubjectFromHash( hMail )      
 
    if !empty( cSubject )
       oMail:Subject        := cSubject
@@ -171,33 +190,3 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD build() 
-
-   local oError
-   local oBlock
-
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      ::mailServer         := win_oleCreateObject( "CDO.Configuration" )
-      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpserver" ):Value             := ::oSender:mailServerHost
-      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpserverport" ):Value         := ::oSender:mailServerPort
-      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendusing" ):Value              := 2
-      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpauthenticate" ):Value       := ::oSender:mailServerAuthenticate
-      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpusessl" ):Value             := ::oSender:mailServerSSL
-      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendusername" ):Value           := ::oSender:mailServerUserName
-      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendpassword" ):Value           := ::oSender:mailServerPassword
-      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpconnectiontimeout"):Value   := 30
-      ::mailServer:Fields:Update()
-
-   RECOVER USING oError
-
-      msgStop( "Error al crear el objeto de correo electrónico." + CRLF + ErrorMessage( oError ) )   
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( !empty( ::mailServer ) )   
-
-//--------------------------------------------------------------------------//

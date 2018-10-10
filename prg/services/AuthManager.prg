@@ -17,8 +17,8 @@ CLASS AuthManager
    DATA emailPassword            INIT ""
    DATA emailServidor            INIT ""
    DATA emailPuerto              INIT ""
-   DATA autenticacionSmtp        INIT ""
-   DATA requiereSsl              INIT ""
+   DATA autenticacionSMTP        INIT ""
+   DATA requiereSSL              INIT ""
    DATA enviarEmailCopia         INIT ""
    DATA enviarCopiaOculta        INIT ""
 
@@ -95,11 +95,11 @@ METHOD guard( hUser )
    end if 
 
    if hhaskey( hUser, "autenticacion_smtp" )
-      ::autenticacionSmtp   := hget( hUser, "autenticacion_smtp" ) 
+      ::autenticacionSMTP   := hget( hUser, "autenticacion_smtp" ) 
    end if 
 
    if hhaskey( hUser, "requiere_ssl" )
-      ::requiereSsl        := hget( hUser, "requiere_ssl" ) 
+      ::requiereSSL        := hget( hUser, "requiere_ssl" ) 
    end if 
 
    if hhaskey( hUser, "email_enviar_copia" )

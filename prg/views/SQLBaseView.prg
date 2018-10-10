@@ -56,11 +56,13 @@ CLASS SQLBaseView
                                                                      hSet( ::oController:oModel:hBuffer, cName, uValue ) ) )
 
    METHOD getController()                             INLINE ( ::oController )    
-   METHOD getController()                       INLINE ( ::oController:oController )    
+   METHOD getSuperController()                        INLINE ( ::oController:oController )    
 
    METHOD getComboBoxOrder()                          VIRTUAL
 
    METHOD redefineExplorerBar( idExplorerBar ) 
+
+   METHOD getSelectedRecords()
 
    // Events-------------------------------------------------------------------
 
@@ -214,5 +216,21 @@ METHOD redefineExplorerBar( idExplorerBar )
    ::oExplorerBar:nTopColor     := rgb( 255, 255, 255 )
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSelectedRecords()
+
+   local nLen  
+
+   msgalert( ::getController():Classname(), "Classname" )
+
+   nLen                    := len( ::getController():getIds() )
+
+   if nLen > 1 
+      RETURN ( hb_ntos( nLen ) + " registros seleccionados" )
+   end if 
+
+RETURN ( hb_ntos( nLen ) + " registro seleccionado" )
 
 //---------------------------------------------------------------------------//

@@ -23730,7 +23730,7 @@ STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "Ms Sans Serif"
 {
   CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 4, 34, 30
-  CONTROL "Envio de documento por correo electónico", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 379, 8
+  CONTROL "Envio de documento por correo electónico", 200, "Static", SS_LEFTNOWORDWRAP, 44, 3, 379, 8
   CONTROL "", 100, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 106, 29, 506, 12
   CONTROL "De", -1, "Static", WS_GROUP, 44, 33, 15, 8
   CONTROL "", 110, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 106, 42, 506, 12

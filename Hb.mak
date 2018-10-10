@@ -94,6 +94,7 @@ TGenmailDatabaseRecibosClientes.prg                	\
 TSendMail.prg                                      	\
 TSendMailOutlook.prg                               	\
 TSendMailCDO.prg                                   	\
+MailSender.prg 													\
 TTemplatesHTML.prg                                 	\
 Tiva.prg                                           	\
 Fpago.prg                                          	\
@@ -799,6 +800,7 @@ TGenmailDatabaseRecibosClientes.obj   									\
 TSendMail.obj                                      				\
 TSendMailOutlook.obj                               				\
 TSendMailCDO.obj                                   				\
+MailSender.obj                                   					\
 TTemplatesHTML.obj                                 				\
 Tiva.obj                                           				\
 Fpago.obj                                          				\
@@ -1523,6 +1525,7 @@ $(OBJ)\TGenmailDatabaseRecibosClientes.obj 					   	+
 $(OBJ)\TSendMail.obj                                        	+
 $(OBJ)\TSendMailOutlook.obj                                 	+
 $(OBJ)\TSendMailCDO.obj                                     	+
+$(OBJ)\MailSender.obj                                     		+
 $(OBJ)\TTemplatesHTML.obj                                   	+
 $(OBJ)\Tiva.obj                                             	+
 $(OBJ)\Fpago.obj                                            	+
