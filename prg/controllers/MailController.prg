@@ -79,17 +79,36 @@ RETURN ( nil )
 
 METHOD Send()
 
+   local hMail
+   local cMail
    local uuidIdentifier
 
    if empty( ::getMailSender() )
       RETURN ( nil )
    end if 
 
-   ::getMailSender():Send( { "mail" => "manuelcalerosolis@gmail.com", "subject" => "Mail de prueba" } )
+   hMail          := {=>}
 
-   // for each uuidIdentifier in ::getUuidIdentifiers() 
-   //    msgalert( uuidIdentifier, "uuidIdentifier" )
-   // next
+   for each uuidIdentifier in ::getUuidIdentifiers() 
+
+      cMail       := ::getRepository():getClientMailWhereFacturaUuid( uuidIdentifier )
+      
+      if empty( cMail )
+
+         msgalert( cMail, "mail vacio" )
+      
+      else 
+   
+         hset( hMail, "mail", cMail )
+         hset( hMail, "subject", "Mail de prueba" )
+
+         ::getMailSender():Send( hMail )
+   
+      end if 
+
+      
+
+   next
 
 RETURN ( nil )
 

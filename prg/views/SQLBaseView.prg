@@ -206,14 +206,14 @@ RETURN ( .t. )
 
 METHOD redefineExplorerBar( idExplorerBar ) 
 
-   DEFAULT idExplorerBar   := 100
+   DEFAULT idExplorerBar         := 100
 
-   REDEFINE EXPLORERBAR    ::oExplorerBar ;
-      ID                   idExplorerBar ;
-      OF                   ::oDialog
+   REDEFINE EXPLORERBAR          ::oExplorerBar ;
+      ID                         idExplorerBar ;
+      OF                         ::oDialog
 
-   ::oExplorerBar:nBottomColor  := rgb( 255, 255, 255 )
-   ::oExplorerBar:nTopColor     := rgb( 255, 255, 255 )
+   ::oExplorerBar:nBottomColor   := rgb( 255, 255, 255 )
+   ::oExplorerBar:nTopColor      := rgb( 255, 255, 255 )
 
 RETURN ( nil )
 
@@ -222,8 +222,6 @@ RETURN ( nil )
 METHOD getSelectedRecords()
 
    local nLen  
-
-   msgalert( ::getController():Classname(), "Classname" )
 
    nLen                    := len( ::getController():getIds() )
 

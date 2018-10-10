@@ -669,6 +669,7 @@ METHOD getColumns() CLASS SQLDireccionesModel
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 20 ) } }                       )
+   
    hset( ::hColumns, "principal",         {  "create"    => "TINYINT ( 1 )"                          ,;
                                              "default"   => {|| "0" } }                               )
 

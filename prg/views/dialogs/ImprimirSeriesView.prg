@@ -34,16 +34,16 @@ METHOD Activate()
 
    DEFINE DIALOG ::oDialog RESOURCE "IMPRIMIR_SERIES" 
 
-      REDEFINE BITMAP oBmp ;
-         ID          500 ;
-         RESOURCE    "gc_printer2_48" ;
-         TRANSPARENT ;
-         OF          ::oDialog
+      REDEFINE BITMAP   oBmp ;
+         ID             500 ;
+         RESOURCE       "gc_printer2_48" ;
+         TRANSPARENT    ;
+         OF             ::oDialog
 
-      REDEFINE SAY   ;
-         PROMPT      ::getSelectedRecords() ;
-         ID          100 ;
-         OF          ::oDialog
+      REDEFINE SAY      ;
+         PROMPT         ::getSelectedRecords() ;
+         ID             100 ;
+         OF             ::oDialog
 
       TBtnBmp():ReDefine( 110, "new16",,,,, {|| ::oController:newDocument() }, ::oDialog, .f., , .f., "Añadir formato" )
 
@@ -53,51 +53,39 @@ METHOD Activate()
 
       TBtnBmp():ReDefine( 140, "refresh16",,,,, {|| ::oController:loadDocuments() }, ::oDialog, .f., , .f., "Recargar formato" )
 
-      REDEFINE LISTBOX ::oListboxFile ;
-         VAR         ::cListboxFile ;
-         ITEMS       ::aListboxFile ;
-         ID          150 ;
-         OF          ::oDialog 
+      REDEFINE LISTBOX  ::oListboxFile ;
+         VAR            ::cListboxFile ;
+         ITEMS          ::aListboxFile ;
+         ID             150 ;
+         OF             ::oDialog 
 
       REDEFINE CHECKBOX ::lCopies ;
-         ID          160 ;
-         OF          ::oDialog
+         ID             160 ;
+         OF             ::oDialog
 
-      REDEFINE GET   ::nCopies ;
-         ID          170 ;
-         PICTURE     "99999" ;
+      REDEFINE GET      ::nCopies ;
+         ID             170 ;
+         PICTURE        "99999" ;
          SPINNER ;
-         MIN         1 ;
-         MAX         99999 ;
-         WHEN        ( !::lCopies ) ;
-         OF          ::oDialog
+         MIN            1 ;
+         MAX            99999 ;
+         WHEN           ( !::lCopies ) ;
+         OF             ::oDialog
 
       REDEFINE COMBOBOX ::cPrinter ;
-         ID          190 ;
-         ITEMS       aGetPrinters() ;
-         OF          ::oDialog
+         ID             190 ;
+         ITEMS          aGetPrinters() ;
+         OF             ::oDialog
 
-      REDEFINE FLATBTN oButton ;
-         ID          IDOK ;
-         OF          ::oDialog ;
-         COLOR       CLR_BLACK, RGB( 79, 192, 141 ) ;
-         NOBORDER    ;
-         ACTION      ( ::runActivate() )
+      ApoloBtnFlat():Redefine( IDOK, {|| ::runActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, RGB( 79, 192, 141 ), .f., .f. )
 
-      REDEFINE FLATBTN ;
-         ID          IDCANCEL ;
-         OF          ::oDialog ;
-         COLOR       CLR_BLACK, CLR_HGRAY ;
-         NOBORDER    ;
-         ACTION      ( ::oDialog:end() )
+      ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
       ::oDialog:AddFastKey( VK_F5, {|| ::runActivate() } )
 
       ::oDialog:bStart  := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   oBmp:end()   
 
 RETURN ( ::oDialog:nResult )
 

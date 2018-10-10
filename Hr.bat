@@ -12,4 +12,4 @@ del *.tds
 
 echo done!
 
-call hb.bat
+call hb.bat /SQL
