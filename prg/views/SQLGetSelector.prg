@@ -56,7 +56,7 @@ CLASS GetSelector
       METHOD cleanHelpText()                    
       METHOD setHelpText( value )               
 
-   METHOD getFields()                           INLINE ( ::uFields   := ::oController:oModel:getField( "nombre", ::getKey(), ::oGet:varGet() ) )
+   METHOD getFields()                           INLINE ( ::uFields   := ::oController:getModel():getField( "nombre", ::getKey(), ::oGet:varGet() ) )
    
    METHOD start()                               INLINE ( ::loadHelpText( .t. ) )
 

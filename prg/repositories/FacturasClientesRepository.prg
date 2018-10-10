@@ -24,6 +24,10 @@ CLASS FacturasClientesRepository FROM SQLBaseRepository
 
    METHOD callTotals( uuidFactura )
 
+    //Envio de emails-----------------------------------------------------------
+
+   METHOD getClientMailWhereFacturaUuid( uuidFactura ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -275,6 +279,29 @@ METHOD createProcedureTotales( uuidFactura ) CLASS FacturasClientesRepository
                            SQLFacturasClientesModel():getTableName() )
 
 RETURN ( cSQL )
+
+//---------------------------------------------------------------------------//
+
+METHOD getClientMailWhereFacturaUuid( uuidFactura ) CLASS FacturasClientesRepository
+
+local cSQL
+
+   TEXT INTO cSql
+
+      SELECT direcciones.email
+      FROM %1$s AS facturas_clientes
+         INNER JOIN %2$s AS clientes
+            ON clientes.codigo = facturas_clientes.cliente_codigo
+         INNER JOIN %3$s AS direcciones
+            ON clientes.uuid = direcciones.parent_uuid
+            AND direcciones.principal = 1
+      WHERE facturas_clientes.uuid = %4$s
+
+      ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), quoted(uuidFactura) ) 
+
+RETURN ( getSQLDatabase():getValue ( cSql ) ) 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -109,7 +109,7 @@ METHOD guard( hUser )
    if hhaskey( hUser, "email_copia_oculta" )
       ::enviarCopiaOculta   := hget( hUser, "email_copia_oculta" ) 
    end if 
-
+   
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
