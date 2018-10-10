@@ -29,6 +29,8 @@ CLASS MailController FROM SQLNavigatorController
 
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := MailView():New( self ), ), ::oDialogView )
 
+   METHOD dialogViewActivate()         INLINE ( ::getDialogView():Activate() )
+
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := MailValidator():New( self ), ), ::oValidator )
 
 END CLASS
@@ -145,7 +147,7 @@ METHOD setFileDefaultHtml( cFile ) CLASS MailController
       MsgInfo( "No ha documentos para establecer por defecto" )
    end if
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -154,7 +156,7 @@ METHOD saveAsHtml() CLASS MailController
    local cHtmlFile   := cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML', , cPatHtml() )
 
    if empty( cHtmlFile )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    if !( lower( cFileExt( cHtmlFile ) ) $ "html" )
@@ -167,7 +169,7 @@ METHOD saveAsHtml() CLASS MailController
 
    ::getDialogView():saveToFile( cHtmlFile )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -179,7 +181,7 @@ METHOD saveHTML() CLASS MailController
 
    ::getDialogView():saveToFile( ::cHtmlFile )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -218,12 +220,22 @@ CLASS MailView FROM SQLBaseView
    DATA oBtnCargarHTML
    DATA oBtnSalvarHTML
    DATA oBtnSalvarAsHTML
+   
+   DATA oBtnAceptar
+   DATA oBtnCancel
+
+   DATA oTreeProceso
+
+   DATA oMeterProceso
+   DATA nMeterProceso      INIT 0
 
    DATA oFld 
 
-   DATA aPages             INIT { "Select_Mail_Redactar_sql" }
+   DATA aPages             INIT { "SELECT_MAIL_REDACTAR_SQL", "SELECT_MAIL_PROCESO_SQL" }
 
    METHOD Activate()
+
+   METHOD runActivate()
 
    METHOD setMensaje( cMensaje ) ;
                            INLINE ( ::cMensaje := cMensaje, if( !empty( ::oRichEdit ), ::oRichEdit:oRTF:SetText( cMensaje ), ) )
@@ -235,15 +247,15 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS mailView
+METHOD Activate() CLASS MailView
 
    DEFINE DIALOG     ::oDialog ;
       RESOURCE       "SELECT_MAIL_CONTAINER" ;
-      TITLE          ::LblTitle() + "enviar mail"
+      TITLE          "Enviar correo electrónico"
 
-   ::oFld            := TPages():Redefine( 10, ::oDialog, ::aPages )
+   ::oFld            := TPages():Redefine( 100, ::oDialog, ::aPages )
 
-   REDEFINE BITMAP   ::oBitmap ;
+   REDEFINE BITMAP   ;
       ID             900 ;
       RESOURCE       ::oController:getimage( "48" ) ;
       TRANSPARENT ;
@@ -323,17 +335,53 @@ METHOD Activate() CLASS mailView
 
       ::oBtnSalvarAsHTML:bAction  := {|| ::oController:saveAsHtml() }
 
-   // Texto enriquecido-----------------------------------------------------------
+   // Texto enriquecido--------------------------------------------------------
 
-      ::oRichEdit    := GetRichEdit():ReDefine( 600, ::oFld:aDialogs[ 1 ] )
+   ::oRichEdit       := GetRichEdit():ReDefine( 600, ::oFld:aDialogs[ 1 ] )
 
-      ::setMensaje( ::cMensaje )
+   ::setMensaje( ::cMensaje )
+
+   // Página de proceso--------------------------------------------------------
+
+   REDEFINE BITMAP ;
+      ID             900 ;
+      RESOURCE       ::oController:getimage( "48" ) ;
+      TRANSPARENT ;
+      OF             ::oFld:aDialogs[ 2 ]
+
+   ::oTreeProceso    := TTreeView():Redefine( 100, ::oFld:aDialogs[ 2 ] )
+
+   REDEFINE APOLOMETER ::oMeterProceso ;
+      VAR            ::nMeterProceso ;
+      ID             120 ;
+      OF             ::oFld:aDialogs[ 2 ]
+
+   // Botones de accion--------------------------------------------------------
+
+   REDEFINE BUTTON ;         
+      ID             IDOK ;
+      OF             ::oDialog ;
+      ACTION         ( ::runActivate() )
+
+   REDEFINE BUTTON ;            
+      ID             IDCANCEL ;
+      OF             ::oDialog ;
+      ACTION         ( ::oDialog:end() )
 
    ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
+
+METHOD runActivate() CLASS MailView
+
+   ::oFld:GoNext()
+
+   msgalert( "llamo al controlador" )
+
+RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -344,7 +392,6 @@ CLASS MailValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
- 
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -352,13 +399,13 @@ END CLASS
 METHOD getValidators() CLASS MailValidator
 
    ::hValidators  := {  "nombre" =>       {  "required"     => "El nombre es un dato requerido",;
-                                             "unique"       => "El nombre introducido ya existe",;
-                                             "notNameCosto" => "El nombre de la tarifa no puede ser '" + __tarifa_costo__ + "'" },;
+                                             "unique"       => "El nombre introducido ya existe" },;
                         "codigo" =>       {  "required"     => "El código es un dato requerido" ,;
                                              "unique"       => "EL código introducido ya existe" },;
                         "parent_uuid" =>  {  "required"     => "La tarifa base es un dato requerido" } }
 
 RETURN ( ::hValidators )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

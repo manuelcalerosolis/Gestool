@@ -509,11 +509,15 @@ RETURN ( nil )
 
 METHOD addMailButtons()
 
+   if !( Auth():canSendMail() )
+      RETURN ( nil )
+   end if 
+
    if isFalse( ::fireEvent( 'addingMailButton' ) )
       RETURN ( nil )
    end if 
 
-   ::oButtonMail  := ::AddButton( "Mail", "Doclock16", {|| ::getSuperController():getMailController():dialogViewActivate() }, "L", ACC_IMPR ) 
+   ::oButtonMail  := ::AddButton( "Correo electrónico", "Mail16", {|| ::getSuperController():getMailController():dialogViewActivate() }, "L", ACC_IMPR ) 
 
    ::fireEvent( 'addedMailButton') 
 

@@ -119,8 +119,8 @@ METHOD New( oSender ) CLASS TSendMail
    ::mailServerUserName       := Rtrim( uFieldEmpresa( "cCtaMai" ) )
    ::mailServerPassword       := Rtrim( uFieldEmpresa( "cPssMai" ) )
    ::mailServerConCopia       := Rtrim( uFieldEmpresa( "cCcpMai" ) )
-   ::mailServerAuthenticate   := uFieldEmpresa( "lAutMai")
-   ::mailServerSSL            := uFieldEmpresa( "lSSLMai")
+   ::mailServerAuthenticate   := uFieldEmpresa( "lAutMai" )
+   ::mailServerSSL            := uFieldEmpresa( "lSSLMai" )
 
 RETURN ( Self )
 

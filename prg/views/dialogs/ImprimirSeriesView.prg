@@ -23,7 +23,7 @@ CLASS ImprimirSeriesView FROM SQLBaseView
 
    METHOD startActivate()
 
-   METHOD showDocument()
+   METHOD runActivate()
 
    METHOD getRegistrosSeleccionados()
 
@@ -83,14 +83,14 @@ METHOD Activate()
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          ::oDialog ;
-         ACTION      ( ::showDocument() )
+         ACTION      ( ::runActivate() )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
          OF          ::oDialog ;
          ACTION      ( ::oDialog:end() )
 
-      ::oDialog:AddFastKey( VK_F5, {|| ::showDocument() } )
+      ::oDialog:AddFastKey( VK_F5, {|| ::runActivate() } )
 
       ::oDialog:bStart  := {|| ::startActivate() }
 
@@ -110,11 +110,11 @@ RETURN ( self )
 
 //--------------------------------------------------------------------------//
 
-METHOD showDocument()
+METHOD runActivate()
 
    ::oDialog:disable()
 
-   ::oController:showDocument( IS_PRINTER, ::cListboxFile, ::nCopies, ::cPrinter )
+   ::oController:runActivate( IS_PRINTER, ::cListboxFile, ::nCopies, ::cPrinter )
 
    ::oDialog:enable()
 

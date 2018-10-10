@@ -2088,7 +2088,7 @@ STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Copia de seguridad"
 FONT 8, "Ms Sans Serif"
 {
-  CONTROL "Este proceso archivará una copia de sus datos, para restaurarlos en caso de perdida de información. ", 10, "TPages", WS_TABSTOP, 44, 29, 312, 168
+  CONTROL "Este proceso archivará una copia de sus datos, para restaurarlos en caso de perdida de información. ", IDBACK, "TPages", WS_TABSTOP, 44, 29, 312, 168
   CONTROL "< &Anterior", 20, "Button", WS_TABSTOP, 194, 216, 50, 14
   CONTROL "Siguien&te >", 30, "Button", WS_TABSTOP, 249, 216, 50, 14
   CONTROL "&Cancelar", 40, "Button", WS_TABSTOP, 305, 216, 50, 14
@@ -11527,7 +11527,7 @@ STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Asistente para envio y recepción de información"
 FONT 8, "Ms Sans Serif"
 {
-  CONTROL "", 10, "TPages", WS_TABSTOP, 1, 2, 571, 293
+  CONTROL "", IDBACK, "TPages", WS_TABSTOP, 1, 2, 571, 293
   CONTROL "< &Anterior", 20, "Button", WS_TABSTOP, 363, 300, 50, 14
   CONTROL "Siguien&te >", 30, "Button", WS_TABSTOP, 413, 300, 50, 14
   CONTROL "&Finalizar", IDOK, "Button", WS_TABSTOP, 468, 300, 50, 14
@@ -16843,7 +16843,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Aceptar e &imprimir [ F6 ]", IDOKANDNEW, "Button", WS_TABSTOP, 535, 396, 80, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 620, 396, 50, 14
   CONTROL "TBitMap", 500, "TBitMap", 0x00000000, 2, 396, 223, 14
-  CONTROL "&Recalcular", 10, "Button", 0x00000000, 426, 396, 50, 14
+  CONTROL "&Recalcular", IDBACK, "Button", 0x00000000, 426, 396, 50, 14
 }
 
 RECTPRV_OLD DIALOG DISCARDABLE -29, 15, 504, 338
@@ -16856,7 +16856,7 @@ FONT 8, "Ms Sans Serif"
   CONTROL "Aceptar e &imprimir [ F6 ]", IDOKANDNEW, "Button", WS_TABSTOP, 365, 307, 80, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 450, 307, 50, 14
   CONTROL "TBitMap", 500, "TBitmap", 0x00000000, 2, 307, 223, 14
-  CONTROL "&Recalcular", 10, "Button", 0x00000000, 256, 307, 50, 14
+  CONTROL "&Recalcular", IDBACK, "Button", 0x00000000, 256, 307, 50, 14
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
@@ -17715,7 +17715,7 @@ STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Asistente para generación de etiquetas"
 FONT 8, "Ms Sans Serif"
 {
-  CONTROL "", 10, "TPages", WS_TABSTOP, 44, 35, 390, 252
+  CONTROL "", IDBACK, "TPages", WS_TABSTOP, 44, 35, 390, 252
   CONTROL "< &Anterior", 20, "Button", NOT WS_VISIBLE|WS_TABSTOP, 279, 292, 50, 14
   CONTROL "Siguien&te >", 30, "Button", WS_TABSTOP, 329, 292, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 384, 292, 50, 14
@@ -17841,9 +17841,8 @@ STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Asistente para envio de correo electrónico"
 FONT 8, "Ms Sans Serif"
 {
-  CONTROL "", 10, "TPages", WS_TABSTOP, 1, 2, 616, 347
-  CONTROL "< &Anterior", 20, "Button", WS_TABSTOP, 463, 353, 50, 14
-  CONTROL "Siguien&te >", 30, "Button", WS_TABSTOP, 513, 353, 50, 14
+  CONTROL "", 100, "TPages", WS_TABSTOP, 1, 2, 616, 347
+  CONTROL "&Aceptar", IDOK, "Button", WS_TABSTOP, 513, 353, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 568, 353, 50, 14
 }
 
@@ -21330,7 +21329,7 @@ STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Asistente para generación de etiquetas"
 FONT 8, "Ms Sans Serif"
 {
-  CONTROL "", 10, "TPages", WS_TABSTOP, 44, 35, 473, 252
+  CONTROL "", IDBACK, "TPages", WS_TABSTOP, 44, 35, 473, 252
   CONTROL "< &Anterior", 20, "Button", NOT WS_VISIBLE|WS_TABSTOP, 362, 292, 50, 14
   CONTROL "Siguien&te >", 30, "Button", WS_TABSTOP, 412, 292, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 467, 292, 50, 14
@@ -23771,5 +23770,15 @@ FONT 8, "Ms Sans Serif"
   CONTROL "", 190, "TBtnBmp", 0x00000000, 593, 137, 12, 12
   CONTROL "", 170, "TBtnBmp", 0x00000000, 565, 137, 12, 12
   CONTROL "", 180, "TBtnBmp", 0x00000000, 579, 137, 12, 12
+}
+
+SELECT_MAIL_PROCESO_SQL DIALOG DISCARDABLE 113, 78, 620, 350
+STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
+FONT 8, "Ms Sans Serif"
+{
+  CONTROL "", 100, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|WS_BORDER|WS_TABSTOP|0x00200000, 44, 29, 570, 309
+  CONTROL "", 120, "msctls_progress32", 0x00000000, 44, 341, 570, 6
+  CONTROL "", 900, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 4, 3, 34, 30
+  CONTROL "Proceso de envio de correos electrónicos", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
 }
 

@@ -221,7 +221,6 @@ Taccesos.prg            										\
 TItemacceso.prg         										\
 Tdbfserv.prg            										\
 Tpanelex.prg              										\
-TPages.prg 															\
 Pais.prg                										\
 Provincias.prg             									\
 CodigosPostales.prg        									\
@@ -949,7 +948,6 @@ Taccesos.obj                                       				\
 TItemacceso.obj                                    				\
 Tdbfserv.obj                                       				\
 Tpanelex.obj                                       				\
-TPages.obj 																		\
 Pais.obj                                           				\
 Provincias.obj                                     				\
 CodigosPostales.obj                                				\
@@ -1665,7 +1663,6 @@ $(OBJ)\Taccesos.obj             											+
 $(OBJ)\Titemacceso.obj          											+
 $(OBJ)\Tdbfserv.obj             											+
 $(OBJ)\Tpanelex.obj             											+
-$(OBJ)\Tpages.obj             											+
 $(OBJ)\Pais.obj                 											+
 $(OBJ)\Provincias.obj            										+
 $(OBJ)\CodigosPostales.obj       										+

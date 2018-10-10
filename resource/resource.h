@@ -10,8 +10,8 @@
 #define IDBITMAP        8
 #define IDMESSAGE       9
 
-#define MANIFEST       24
+#define MANIFEST        24
 
+#define IDBACK          10
 
-
-#define Tarifa  65535
+#define TARIFA          65535

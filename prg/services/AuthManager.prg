@@ -32,6 +32,8 @@ CLASS AuthManager
    
    METHOD guardWhereCodigo( cCodigo )
 
+   METHOD canSendMail()
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -53,43 +55,43 @@ METHOD guard( hUser )
    end if 
 
    if hhaskey( hUser, "id" )
-      ::id        := hget( hUser, "id" ) 
+      ::id                 := hget( hUser, "id" ) 
    end if 
 
    if hhaskey( hUser, "uuid" )
-      ::uuid      := hget( hUser, "uuid" ) 
+      ::uuid               := hget( hUser, "uuid" ) 
    end if 
    
    if hhaskey( hUser, "nombre" )
-      ::nombre    := hget( hUser, "nombre" ) 
+      ::nombre             := hget( hUser, "nombre" ) 
    end if 
 
    if hhaskey( hUser, "codigo" )
-      ::codigo    := hget( hUser, "codigo" ) 
+      ::codigo             := hget( hUser, "codigo" ) 
    end if 
 
    if hhaskey( hUser, "password" )
-      ::password  := hget( hUser, "password" ) 
+      ::password           := hget( hUser, "password" ) 
    end if 
 
    if hhaskey( hUser, "rol_uuid" )
-      ::rolUuid   := hget( hUser, "rol_uuid" ) 
+      ::rolUuid            := hget( hUser, "rol_uuid" ) 
    end if
 
    if hhaskey( hUser, "email" )
-      ::email     := hget( hUser, "email" ) 
+      ::email              := hget( hUser, "email" ) 
    end if 
 
    if hhaskey( hUser, "email_password" )
-      ::emailPassword   := hget( hUser, "email_password" ) 
+      ::emailPassword      := hget( hUser, "email_password" ) 
    end if 
 
    if hhaskey( hUser, "email_servidor" )
-      ::emailServidor   := hget( hUser, "email_servidor" ) 
+      ::emailServidor      := hget( hUser, "email_servidor" ) 
    end if    
 
    if hhaskey( hUser, "email_puerto" )
-      ::emailPuerto   := hget( hUser, "email_puerto" ) 
+      ::emailPuerto        := hget( hUser, "email_puerto" ) 
    end if 
 
    if hhaskey( hUser, "autenticacion_smtp" )
@@ -97,7 +99,7 @@ METHOD guard( hUser )
    end if 
 
    if hhaskey( hUser, "requiere_ssl" )
-      ::requiereSsl   := hget( hUser, "requiere_ssl" ) 
+      ::requiereSsl        := hget( hUser, "requiere_ssl" ) 
    end if 
 
    if hhaskey( hUser, "email_enviar_copia" )
@@ -154,6 +156,28 @@ METHOD guardWhereCodigo( cNombre )
    endif 
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD canSendMail()
+
+   if empty( ::email )
+      RETURN ( .f. )
+   end if 
+
+   if empty( ::emailPassword )
+      RETURN ( .f. )
+   end if 
+
+   if empty( ::emailServidor )
+      RETURN ( .f. )
+   end if 
+
+   if empty( ::emailPuerto )
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
