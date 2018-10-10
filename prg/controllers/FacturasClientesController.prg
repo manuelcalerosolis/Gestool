@@ -78,6 +78,8 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD getDocumentoImpresion()      INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_impresion', '' ) )
 
+   METHOD getDocumentoPdf()            INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_pdf', '' ) )
+
    METHOD getCopiasImpresion()         INLINE ( ::getConfiguracionesController():getModelNumeric( ::cName, 'copias_impresion', 1 ) )
 
    // Contrucciones tardias----------------------------------------------------
@@ -345,6 +347,12 @@ METHOD getConfigItems() CLASS FacturasClientesController
    aadd( aItems,  {  'texto'  => 'Documento impresión',;
                      'clave'  => 'documento_impresion',;
                      'valor'  => ::getDocumentoImpresion(),;
+                     'tipo'   => "B",;
+                     'lista'  =>  ::aDocuments } )
+
+   aadd( aItems,  {  'texto'  => 'Documento pdf',;
+                     'clave'  => 'documento_pdf',;
+                     'valor'  => ::getDocumentoPdf(),;
                      'tipo'   => "B",;
                      'lista'  =>  ::aDocuments } )
 

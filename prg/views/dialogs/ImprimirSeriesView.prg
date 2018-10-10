@@ -30,6 +30,7 @@ END CLASS
 METHOD Activate()
 
    local oBmp
+   local oButton
 
    DEFINE DIALOG ::oDialog RESOURCE "IMPRIMIR_SERIES" 
 
@@ -76,14 +77,18 @@ METHOD Activate()
          ITEMS       aGetPrinters() ;
          OF          ::oDialog
 
-      REDEFINE BUTTON ;
+      REDEFINE FLATBTN oButton ;
          ID          IDOK ;
          OF          ::oDialog ;
+         COLOR       CLR_BLACK, RGB( 79, 192, 141 ) ;
+         NOBORDER    ;
          ACTION      ( ::runActivate() )
 
-      REDEFINE BUTTON ;
+      REDEFINE FLATBTN ;
          ID          IDCANCEL ;
          OF          ::oDialog ;
+         COLOR       CLR_BLACK, CLR_HGRAY ;
+         NOBORDER    ;
          ACTION      ( ::oDialog:end() )
 
       ::oDialog:AddFastKey( VK_F5, {|| ::runActivate() } )
@@ -110,7 +115,7 @@ METHOD runActivate()
 
    ::oDialog:disable()
 
-   ::oController:runActivate( IS_PRINTER, ::cListboxFile, ::nCopies, ::cPrinter )
+   ::oController:showDocument( IS_PRINTER, ::cListboxFile, ::nCopies, ::cPrinter )
 
    ::oDialog:enable()
 
