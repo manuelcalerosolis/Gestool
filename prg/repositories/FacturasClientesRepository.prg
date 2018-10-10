@@ -294,6 +294,7 @@ local cSQL
             ON clientes.codigo = facturas_clientes.cliente_codigo
          INNER JOIN %3$s AS direcciones
             ON clientes.uuid = direcciones.parent_uuid
+            AND direcciones.principal = 1
       WHERE facturas_clientes.uuid = %4$s
 
       ENDTEXT
