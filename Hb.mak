@@ -765,7 +765,6 @@ TFTPLinux.obj 																	\
 Comun.obj                                          				\
 AccessCode.obj                                     				\
 DialogExtend.obj                                   				\
-Dialog.obj 																		\
 C5Lib.obj                                          				\
 Tgraph.obj                                         				\
 TViewImg.obj                                       				\

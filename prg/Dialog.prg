@@ -39,8 +39,6 @@
 #define SC_CLOSE       61536   // 0xF060
 #define SW_HIDE            0
 
-#define WM_NCHITTEST                         0x0084
-
 extern Set
 
 static aGradColors // Colors to use to GRADIENT dialogs
@@ -147,24 +145,6 @@ CLASS TDialog FROM TWindow
 
    METHOD Help95()
 
-   //-------------------------------------------------------------------------//
-
-   DATA aFastKeys                            INIT {}
-
-   DATA aControlKeys                         INIT {}
-
-   METHOD addFastKey( nKey, bAction )        INLINE ( aadd( ::aFastKeys, { nKey, bAction } ) )
-
-   METHOD addControlKeys( nKey, bAction )    INLINE ( aadd( ::aControlKeys, { nKey, bAction } ) )
-
-   METHOD initKeys()                         INLINE ( ::aFastKeys := {}, ::aControlKeys := {} )
-
-   METHOD keysControl() 
-
-   METHOD setControlFastKey()
-
-   //-------------------------------------------------------------------------//
-
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -246,8 +226,6 @@ METHOD New( nTop, nLeft, nBottom, nRight, cCaption, cResName, hResources,;
    ::Register( nOr( CS_VREDRAW, CS_HREDRAW ) )
 
    SetWndDefault( Self )          //  Set Default DEFINEd Window
-
-   ::initKeys()
 
 return Self
 
@@ -404,15 +382,25 @@ METHOD Command( nWParam, nLParam ) CLASS TDialog
            If( nNotifyCode == BN_CLICKED, nID != IDCANCEL, .f. )
            ::oMenu:Command( nID )
 
-      case GetClassName( hWndCtl ) == "ToolbarWindow32"
-           oWndFromHwnd( hWndCtl ):Command( nWParam, nLParam )
-           return .T. // otherwise a child dialog gets closed
+      case GetClassName( hWndCtl ) == "ToolbarWindow32" .or. GetClassName( hWndCtl ) == "Edit"
+           if ( oCtrl := oWndFromHwnd( hWndCtl ) ) != nil
+              oCtrl:Command( nWParam, nLParam )
+              return .T. // otherwise a child dialog gets closed
+           endif   
 
       case ::oMenu != nil .and. nId != 2 .and. nNotifyCode != BN_CLICKED .and. ;
            nNotifyCode != CBN_SELCHANGE
            if nNotifyCode == 1
               ::oMenu:Command( nID )
            endif
+
+      case nID == IDCANCEL .and. ! ::lModal
+           if ::lValid()
+              ::bValid = nil 
+              ::End()
+              return .T.
+           endif   
+           return .F.
 
       case nID != 0
            do case
@@ -565,7 +553,7 @@ METHOD End( nResult ) CLASS TDialog
    endif
 
    SysRefresh()
-   // hb_gcAll()         // Garbage collector
+   hb_gcAll()         // Garbage collector
 
 return .T.
 
@@ -819,7 +807,6 @@ METHOD KeyDown( nKey, nFlags ) CLASS TDialog
          endif
       endif
    else
-      ::keysControl( nKey )
       return ::Super:KeyDown( nKey, nFlags )
    endif
 
@@ -930,15 +917,11 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TDialog
            if ::lHelpIcon != nil .and. ::lHelpIcon
               ::Help()
            else
-              logwrite( nMsg) 
-              logwrite( nWParam )
-              logwrite( nLParam )           
               return ::Super:HandleEvent( nMsg, nWParam, nLParam )
            endif
 
       otherwise
-
-         return ::Super:HandleEvent( nMsg, nWParam, nLParam )
+           return ::Super:HandleEvent( nMsg, nWParam, nLParam )
    endcase
 
 return nil
@@ -1029,51 +1012,4 @@ function FW_SetTruePixel( lOnOff )
 return oDlg:lClsTruePixel
 
 //----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-//----------------------------------------------------------------------------//
-
-METHOD keysControl( nKey ) CLASS TDialog
-
-   if GetKeyState( VK_CONTROL )
-
-      if isArray( ::aControlKeys ) .and. len( ::aControlKeys ) > 0
-         aEval( ::aControlKeys, {|aKey| if( nKey == aKey[1] , Eval( aKey[2] ), ) } )
-      end if
-
-   else
-
-      if isArray( ::aFastKeys ) .and. len( ::aFastKeys ) > 0
-         aEval( ::aFastKeys, {|aKey| if( nKey == aKey[1] , Eval( aKey[2] ), ) } )
-      end if
-
-   end if
-
-RETURN nil
-
-//----------------------------------------------------------------------------//
-
-METHOD setControlFastKey( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) CLASS TDialog
-
-   if Empty( cDirectory ) 
-      RETURN ( nil )
-   end if
-  
-   ::AddControlKeys( VK_F2,   {|| runEventScript( cDirectory + "\F2", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   ::AddControlKeys( VK_F3,   {|| runEventScript( cDirectory + "\F3", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   ::AddControlKeys( VK_F4,   {|| runEventScript( cDirectory + "\F4", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   ::AddControlKeys( VK_F5,   {|| runEventScript( cDirectory + "\F5", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   ::AddControlKeys( VK_F6,   {|| runEventScript( cDirectory + "\F6", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   ::AddControlKeys( VK_F7,   {|| runEventScript( cDirectory + "\F7", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   ::AddControlKeys( VK_F8,   {|| runEventScript( cDirectory + "\F8", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-   ::AddControlKeys( VK_F9,   {|| runEventScript( cDirectory + "\F9", uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) } )
-  
-RETURN ( nil )
-
-//----------------------------------------------------------------------------//
-
+ 

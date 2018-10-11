@@ -299,8 +299,6 @@ CLASS MailView FROM SQLBaseView
 
    DATA oFld 
 
-   DATA aPages                INIT { "SELECT_MAIL_REDACTAR_SQL", "SELECT_MAIL_PROCESO_SQL" }
-
    METHOD Activate()
 
    METHOD startActivate()
@@ -327,7 +325,7 @@ METHOD Activate() CLASS MailView
       RESOURCE       "SELECT_MAIL_CONTAINER" ;
       TITLE          "Enviar correo electrónico"
 
-   ::oFld            := TPages():Redefine( 100, ::oDialog, ::aPages )
+   ::oFld            := TPages():Redefine( 100, ::oDialog, { "SELECT_MAIL_REDACTAR_SQL", "SELECT_MAIL_PROCESO_SQL" } )
 
    REDEFINE BITMAP   ;
       ID             900 ;
@@ -432,15 +430,9 @@ METHOD Activate() CLASS MailView
 
    // Botones de accion--------------------------------------------------------
 
-   REDEFINE BUTTON ;         
-      ID             IDOK ;
-      OF             ::oDialog ;
-      ACTION         ( ::runActivate() )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::runActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   REDEFINE BUTTON ;            
-      ID             IDCANCEL ;
-      OF             ::oDialog ;
-      ACTION         ( ::oDialog:end() )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    ::oDialog:bStart  := {|| ::startActivate() }
 

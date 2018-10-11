@@ -326,14 +326,11 @@ METHOD Activate() CLASS AccessView
       FONT        ::oFontBold ;
       OF          ::oDialog
 
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      ACTION      ( ::Validate() )
+   ApoloBtnFlat():Redefine( IDOK, {|| ::Validate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ::oDialog:bStart  := {|| ::startActivate() }
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::Validate(), ) }    
 
-   ::oDialog:AddFastKey( VK_F5, {|| ::Validate() } )
+   ::oDialog:bStart     := {|| ::startActivate() }
 
    ::oDialog:Activate( , , , .t. )
 
@@ -352,6 +349,10 @@ METHOD startActivate() CLASS AccessView
    ::oSayEmpresa:Hide()
    
    ::oComboEmpresa:Hide()
+
+   // ::oDialog:bKeyDown     := {| nKey | msgalert( nKey ) } //  if( nKey == VK_F5, ::Validate(), ) }    
+
+//   setKey( VK_F5, {|| ::Validate() } )
 
 RETURN ( nil )
 
