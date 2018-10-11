@@ -30,7 +30,6 @@ END CLASS
 METHOD Activate()
 
    local oBmp
-   local oButton
 
    DEFINE DIALOG ::oDialog RESOURCE "IMPRIMIR_SERIES" 
 

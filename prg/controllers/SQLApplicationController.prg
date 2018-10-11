@@ -163,8 +163,6 @@ CLASS SQLApplicationController FROM SQLBaseController
    
    DATA oRolesController 
 
-   DATA aDocuments                  INIT {}
-
    METHOD getSelector()             INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := GetSelector():New( self ), ), ::oGetSelector )
 
    METHOD getCodigosPostalesController();
@@ -716,9 +714,7 @@ RETURN ( nil )
 
 METHOD loadDocuments() CLASS SQLApplicationController
 
-   ::aDocuments      := Company():getDocuments( ::cName )
-
-RETURN ( ::aDocuments )
+RETURN ( Company():getDocuments( ::cName ) )
 
 //---------------------------------------------------------------------------//
 

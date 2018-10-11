@@ -11,6 +11,8 @@ CLASS ImprimirSeriesController FROM SQLPrintController
 
    METHOD showDocument( nDevice, cFileName, nCopies, cPrinter ) 
 
+   METHOD generateDocument( uuidIdentifier, nDevice, cFileName, nCopies, cPrinter ) 
+
    METHOD printDocument( cFileName, nCopies ) ;
                                        INLINE ( ::showDocument( IS_PRINTER, cFileName, nCopies ) )
 
@@ -122,6 +124,66 @@ METHOD showDocument( nDevice, cFileName, nCopies, cPrinter )
    oReport:End()
 
    oWaitMeter:End()
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD generateDocument( hGenerate ) 
+
+   local oReport  
+
+   local uuid
+
+   if !( hhaskey( hGenerate, "uuid" ) )
+      RETURN ( nil )
+   end if 
+
+   if !( hhaskey( hGenerate, "device" ) )
+      RETURN ( nil )
+   end if 
+
+   if !( hhaskey( hGenerate, "fileName" ) )
+      RETURN ( nil )
+   end if 
+
+   oReport              := ::getController():getReport()
+
+   oReport:createFastReport()
+
+   oReport:setDirectory( ::getDirectory() )
+
+   oReport:setDevice( hget( hGenerate, "device" ) )
+
+   oReport:setFileName( hget( hGenerate, "fileName" ) )
+
+   if hhaskey( hGenerate, "copies" )
+      oReport:setCopies( hget( hGenerate, "copies" ) )
+   end if 
+
+   if hhaskey( hGenerate, "printer" )
+      oReport:setPrinter( hget( hGenerate, "printer" ) )
+   end if 
+   
+   if hhaskey( hGenerate, "pdfFileName" )
+      oReport:setPdfFileName( hget( hGenerate, "pdfFileName" ) )
+   end if 
+
+   oReport:buildRowSet( hget( hGenerate, "uuid" ) )
+
+   oReport:setUserDataSet()
+
+   if oReport:isLoad()
+
+      oReport:Show()
+     
+   end if 
+
+   oReport:freeRowSet()
+
+   oReport:DestroyFastReport()
+
+   oReport:End()
 
 RETURN ( nil )
 

@@ -26,6 +26,10 @@ CLASS SQLBaseReport
 
    DATA cDevice                           INIT IS_SCREEN
 
+   DATA cDefaultPath                      INIT ( cPatTmp() )
+
+   DATA cPdfFileName                      INIT ( 'Doc' + trimedSeconds() + '.pdf' )
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
@@ -56,6 +60,10 @@ CLASS SQLBaseReport
 
    METHOD setDevice( cDevice )            INLINE ( ::cDevice := cDevice )
    METHOD getDevice()                     INLINE ( ::cDevice )
+
+   METHOD setDefaultPath( cDefaultPath )  INLINE ( ::cDefaultPath := cDefaultPath )
+
+   METHOD setPdfFileName( cPdfFileName )  INLINE ( ::cPdfFileName := cPdfFileName + if( ( ".pdf" $ lower( cPdfFileName ) ), "", ".pdf" ) )
 
    METHOD getIds()                        INLINE ( iif( !empty( ::oController ), ::oController:getIds(), {} ) )
 
@@ -223,8 +231,8 @@ METHOD Show()
          ::oEvents:fire( "generatingPdf" )
 
          ::oFastReport:SetProperty(  "PDFExport", "ShowDialog",       .f. )
-         ::oFastReport:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
-         ::oFastReport:SetProperty(  "PDFExport", "FileName",         'Doc' + trimedSeconds() + '.pdf' )
+         ::oFastReport:SetProperty(  "PDFExport", "DefaultPath",      ::cDefaultPath )
+         ::oFastReport:SetProperty(  "PDFExport", "FileName",         ::cPdfFileName )
          ::oFastReport:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
          ::oFastReport:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
          ::oFastReport:SetProperty(  "PDFExport", "Outline",          .t. )

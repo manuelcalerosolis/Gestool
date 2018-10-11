@@ -11,6 +11,8 @@ CLASS MailController
 
    DATA oValidator
 
+   DATA cMail
+
    DATA oMailSender
 
    DATA cTypeDocument
@@ -33,13 +35,24 @@ CLASS MailController
    
    METHOD saveHTML()
 
+   METHOD getController()              INLINE ( ::oController )
+
+   METHOD loadDocuments()              INLINE ( ::getController():loadDocuments() )
+
+   METHOD getDocumentPdf()             INLINE ( ::getController():getDocumentPdf() )
+
    METHOD getIds()                     INLINE ( iif( !empty( ::oController ), ::oController:getIds(), {} ) )
 
    METHOD getUuidIdentifiers()         INLINE ( hGetValues( ::oController:getIdentifiers() ) )
 
    // Envio de mails----------------------------------------------------------
 
+   METHOD hasMail()
+
    METHOD Send()
+
+   METHOD generatePdf( uuidIdentifier, cDocumentPdf ) INLINE ;
+                                       ( ::oController:generatePdf( uuidIdentifier, cDocumentPdf ) )
 
    // Construcciones tardias---------------------------------------------------
 
@@ -77,6 +90,18 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD hasMail( uuidIdentifier )
+
+   ::cMail  := ::getController():getRepository():getClientMailWhereFacturaUuid( uuidIdentifier )
+      
+   if empty( ::cMail )
+      RETURN ( .f. )
+   end if 
+   
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD Send()
 
    local hMail
@@ -91,22 +116,20 @@ METHOD Send()
 
    for each uuidIdentifier in ::getUuidIdentifiers() 
 
-      cMail       := ::getRepository():getClientMailWhereFacturaUuid( uuidIdentifier )
-      
-      if empty( cMail )
+      if ::hasMail( uuidIdentifier )
 
-         msgalert( cMail, "mail vacio" )
-      
-      else 
-   
-         hset( hMail, "mail", cMail )
+         ::generatePdf( uuidIdentifier, ::getDialogView():getComboDocument() )
+
+         hset( hMail, "mail", ::cMail )
          hset( hMail, "subject", "Mail de prueba" )
 
          ::getMailSender():Send( hMail )
+      
+      else 
+   
+         msgalert( cMail, "mail vacio" )
    
       end if 
-
-      
 
    next
 
@@ -238,29 +261,29 @@ RETURN ( nil )
 CLASS MailView FROM SQLBaseView
 
    DATA oRemitente
-   DATA cRemitente         INIT space( 250 )
+   DATA cRemitente            INIT space( 250 )
 
    DATA oReceptor
-   DATA cReceptor          INIT space( 250 )
+   DATA cReceptor             INIT space( 250 )
 
    DATA oCopia
-   DATA cCopia             INIT space( 250 )
+   DATA cCopia                INIT space( 250 )
 
    DATA oCopiaOculta
-   DATA cCopiaOculta       INIT space( 250 )
+   DATA cCopiaOculta          INIT space( 250 )
 
    DATA oAsunto
-   DATA cAsunto            INIT space( 250 )
+   DATA cAsunto               INIT space( 250 )
 
    DATA oAdjunto
-   DATA cAdjunto           INIT space( 250 )
+   DATA cAdjunto              INIT space( 250 )
 
-   DATA oComboFormato      
-   DATA cComboFormato      INIT space( 250 )   
+   DATA oComboDocument      
+   DATA cComboDocument     
 
    DATA oRichEdit      
    DATA oMensaje      
-   DATA cMensaje           INIT space( 250 )
+   DATA cMensaje              INIT space( 250 )
 
    DATA oBtnCargarHTML
    DATA oBtnSalvarHTML
@@ -272,21 +295,27 @@ CLASS MailView FROM SQLBaseView
    DATA oTreeProceso
 
    DATA oMeterProceso
-   DATA nMeterProceso      INIT 0
+   DATA nMeterProceso         INIT 0
 
    DATA oFld 
 
-   DATA aPages             INIT { "SELECT_MAIL_REDACTAR_SQL", "SELECT_MAIL_PROCESO_SQL" }
+   DATA aPages                INIT { "SELECT_MAIL_REDACTAR_SQL", "SELECT_MAIL_PROCESO_SQL" }
 
    METHOD Activate()
 
+   METHOD startActivate()
+
    METHOD runActivate()
 
+   METHOD getComboDocument()  INLINE ( ::cComboDocument )
+
    METHOD setMensaje( cMensaje ) ;
-                           INLINE ( ::cMensaje := cMensaje, if( !empty( ::oRichEdit ), ::oRichEdit:oRTF:SetText( cMensaje ), ) )
+                              INLINE ( ::cMensaje := cMensaje, if( !empty( ::oRichEdit ), ::oRichEdit:oRTF:SetText( cMensaje ), ) )
 
    METHOD saveToFile( cFile ) ;
-                           INLINE ( if( !empty( ::oRichEdit ), ::oRichEdit:saveToFile( cFile ), ) )
+                              INLINE ( if( !empty( ::oRichEdit ), ::oRichEdit:saveToFile( cFile ), ) )
+
+   METHOD loadDocuments()     INLINE ( ::getController():loadDocuments() )
 
 END CLASS
 
@@ -341,8 +370,9 @@ METHOD Activate() CLASS MailView
       ID             150 ;
       OF             ::oFld:aDialogs[ 1 ]
 
-   REDEFINE COMBOBOX ::oComboFormato ;
-      VAR            ::cComboFormato ;
+   REDEFINE COMBOBOX ::oComboDocument ;
+      VAR            ::cComboDocument ;
+      ITEMS          ::loadDocuments() ;
       ID             160 ;
       OF             ::oFld:aDialogs[ 1 ]
 
@@ -412,9 +442,19 @@ METHOD Activate() CLASS MailView
       OF             ::oDialog ;
       ACTION         ( ::oDialog:end() )
 
+   ::oDialog:bStart  := {|| ::startActivate() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS MailView
+
+   ::oComboDocument:Set( ::getController():getDocumentPdf() )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -423,8 +463,6 @@ METHOD runActivate() CLASS MailView
    ::oFld:GoNext()
 
    ::oController:Send()
-
-
 
 RETURN ( nil )
 

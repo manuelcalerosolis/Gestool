@@ -52,12 +52,12 @@ CLASS MenuTreeView
    METHOD getSuperController()            INLINE ( ::oController:getController() )
    METHOD getBrowse()                     INLINE ( ::oController:getBrowse() )
 
-   METHOD isControllerDocuments()         INLINE ( !empty( ::getSuperController():aDocuments ) )
+   METHOD isControllerDocuments()         INLINE ( !empty( ::getSuperController():loadDocuments() ) )
    METHOD isControllerLabels()            INLINE ( ::getSuperController():lLabels )
    METHOD isControllerConfig()            INLINE ( ::getSuperController():lConfig )
    METHOD isMailConfig()                  INLINE ( ::getSuperController():lMail )
    METHOD isControllerOthers()            INLINE ( ::getSuperController():lOthers )
-   METHOD getControllerDocuments()        INLINE ( ::getSuperController():aDocuments )
+   METHOD getControllerDocuments()        INLINE ( ::getSuperController():loadDocuments() )
 
    METHOD addImage()
 

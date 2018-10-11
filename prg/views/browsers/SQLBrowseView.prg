@@ -211,9 +211,9 @@ ENDCLASS
 
 METHOD New( oController )
 
-   ::oController                             := oController
+   ::oController           := oController
 
-   ::oEvents                                 := Events():New()
+   ::oEvents               := Events():New()
 
 RETURN ( Self )
 
@@ -226,7 +226,6 @@ METHOD End()
    end if 
 
    if !empty( ::oBrowse )
-      msgalert( ::oBrowse:oFont:nCount, "nCount en SQLBrowseView" )
       ::oBrowse:End()
    end if 
 

@@ -3,34 +3,6 @@
 
 //---------------------------------------------------------------------------//
 
-FUNCTION FacturasClientesController1000()
-
-   local n
-   local oController    
-
-   for n := 1 to 10
-      
-      FacturasClientesController()
-
-
-      oController          := FacturasClientesController():New()
-
-      oController:ActivateNavigatorView()
-
-      // MsgWait( "Please, " + str( n ), "This is a test", 5 )
-
-      // oController:closeAllWindows()
-
-      // MsgWait( "Please, " + str( n ), "This is a test", 1 )
-
-      oController:End()
-
-   next 
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 CLASS FacturasClientesController FROM SQLNavigatorController
 
    DATA oSerieDocumentoComponent
@@ -76,11 +48,13 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    // Impresiones--------------------------------------------------------------
 
-   METHOD getDocumentoImpresion()      INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_impresion', '' ) )
+   METHOD getDocumentPrint()           INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_impresion', '' ) )
 
-   METHOD getDocumentoPdf()            INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_pdf', '' ) )
+   METHOD getDocumentPdf()             INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_pdf', '' ) )
 
-   METHOD getCopiasImpresion()         INLINE ( ::getConfiguracionesController():getModelNumeric( ::cName, 'copias_impresion', 1 ) )
+   METHOD getPrintCopy()               INLINE ( ::getConfiguracionesController():getModelNumeric( ::cName, 'copias_impresion', 1 ) )
+
+   METHOD generatePdf( uuidFactura, cDocumentPdf )
 
    // Contrucciones tardias----------------------------------------------------
 
@@ -129,8 +103,6 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::oNumeroDocumentoComponent         := NumeroDocumentoComponent():New( self )
 
    ::oSerieDocumentoComponent          := SerieDocumentoComponent():New( self )
-
-   ::loadDocuments()
 
    ::getModel():setEvent( 'loadedBuffer',        {|| ::loadedBuffer() } )
    ::getModel():setEvent( 'loadedBlankBuffer',   {|| ::loadedBlankBuffer() } )
@@ -346,23 +318,35 @@ METHOD getConfigItems() CLASS FacturasClientesController
 
    aadd( aItems,  {  'texto'  => 'Documento impresión',;
                      'clave'  => 'documento_impresion',;
-                     'valor'  => ::getDocumentoImpresion(),;
+                     'valor'  => ::getDocumentPrint(),;
                      'tipo'   => "B",;
-                     'lista'  =>  ::aDocuments } )
+                     'lista'  =>  ::loadDocuments() } )
 
    aadd( aItems,  {  'texto'  => 'Documento pdf',;
                      'clave'  => 'documento_pdf',;
-                     'valor'  => ::getDocumentoPdf(),;
+                     'valor'  => ::getDocumentPdf(),;
                      'tipo'   => "B",;
-                     'lista'  =>  ::aDocuments } )
+                     'lista'  =>  ::loadDocuments() } )
 
    aadd( aItems,  {  'texto'  => 'Copias',;
                      'clave'  => 'copias_impresion',;
-                     'valor'  => ::getCopiasImpresion(),;
+                     'valor'  => ::getPrintCopy(),;
                      'tipo'   => "N" } )
 
 RETURN ( aItems )
 
+//---------------------------------------------------------------------------//
+
+METHOD generatePdf( uuid, cDocumentPdf )
+
+   ::getImprimirSeriesController():generateDocument(  {  "uuid" => uuid,;
+                                                         "device" => IS_PDF,;
+                                                         "fileName" => cDocumentPdf,;
+                                                         "pdfFileName" => ::getModel():getNumeroWhereUuid( uuid ) } )
+
+RETURN ( nil )   
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

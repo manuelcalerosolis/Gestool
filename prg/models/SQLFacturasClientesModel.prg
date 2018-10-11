@@ -13,6 +13,8 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    METHOD getInitialSelect() 
 
+   METHOD getNumeroWhereUuid( uuid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -131,6 +133,27 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
+
+METHOD getNumeroWhereUuid( uuid )
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT 
+      CONCAT( serie, numero ) AS numero
+
+      FROM %1$s  
+
+      WHERE uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuid ) )
+
+RETURN ( alltrim( ::getDatabase():getValue( cSql ) ) )
+
+//----------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
