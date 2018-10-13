@@ -248,24 +248,7 @@ RETURN nil
 
 FUNCTION BuildMenu()
 
-   local oMenu
-
-   MENU oMenu
-
-      MENUITEM    "&1. Principal"
-
-         MENU
-
-            MENUITEM    "&1. Facturas de clientes" ;
-               MESSAGE  "Facturas de clientes" ;
-               RESOURCE "GC_FORM_PLUS2_16" ;
-               ACTION   ( FacturasClientesController():New():ActivateNavigatorView() )
-
-         ENDMENU
-
-   ENDMENU
-
-RETURN oMenu
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -475,8 +458,8 @@ STATIC FUNCTION EndApp()
    local oBtnCancel
    local oBmpVersion
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
       SysRefresh()
 
@@ -499,17 +482,17 @@ STATIC FUNCTION EndApp()
          TWebBtn():Redefine( 110,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
          TWebBtn():Redefine( 120,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
 
-         oAni                       := TAnimat():Redefine( oDlg, 200, { "BAR_01" }, 1 )
+         oAni           := TAnimat():Redefine( oDlg, 200, { "BAR_01" }, 1 )
 
-         REDEFINE BUTTON oBtnZip    ID 3          OF oDlg ACTION ( CompressEmpresa( cCodEmp(), nil, { oBtnZip, oBtnOk, oBtnCancel }, nil, oAni, nil, oDlg ) )
+         oBtnZip        := ApoloBtnFlat():Redefine( 3, {|| CompressEmpresa( cCodEmp(), nil, { oBtnZip, oBtnOk, oBtnCancel }, nil, oAni, nil, oDlg ) }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+         
+         oBtnOk         := ApoloBtnFlat():Redefine( IDOK, {|| CompressEmpresa( cCodEmp(), nil, { oBtnZip, oBtnOk, oBtnCancel }, nil, oAni, nil, oDlg, .f. ) }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-         REDEFINE BUTTON oBtnOk     ID IDOK       OF oDlg ACTION ( CompressEmpresa( cCodEmp(), nil, { oBtnZip, oBtnOk, oBtnCancel }, nil, oAni, nil, oDlg, .f. ) )
+         oBtnCancel     := ApoloBtnFlat():Redefine( IDCANCEL, {|| oDlg:end()  }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-         REDEFINE BUTTON oBtnCancel ID IDCANCEL   OF oDlg ACTION ( oDlg:end() )
+         oDlg:bKeyDown  := {| nKey | if( nKey == VK_F5, oDlg:end( IDOK ), ) }    
 
-         oDlg:AddFastKey( VK_F5,    {|| oDlg:end( IDOK ) } )
-
-         oDlg:bStart                := {|| oAni:Hide() }
+         oDlg:bStart    := {|| oAni:Hide() }
 
       ACTIVATE DIALOG oDlg CENTER
 
@@ -521,11 +504,11 @@ STATIC FUNCTION EndApp()
          oBmpVersion:End()
       end if 
 
-   RECOVER
+   // RECOVER
 
-   END SEQUENCE
+   // END SEQUENCE
 
-   ErrorBlock( oBlock )
+   // ErrorBlock( oBlock )
 
    lFinish     := !empty( oDlg ) .and. ( oDlg:nResult == IDOK )
 
@@ -536,7 +519,7 @@ STATIC FUNCTION EndApp()
 RETURN ( lFinish )
 
 //-----------------------------------------------------------------------------//
-
+//
 //Procesos de comprobaciones iniciales y lectura de archivos .INI, cuando existan
 //
 

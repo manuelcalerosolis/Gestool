@@ -5,6 +5,7 @@ CLASS TercerosView FROM SQLBaseView
   
    DATA oExplorerBar
 
+   DATA oGetCodigo
    DATA oGetDni
    DATA oGetProvincia
    DATA oGetPoblacion
@@ -111,23 +112,17 @@ METHOD Activate() CLASS TercerosView
 
    ::redefineExplorerBar()
 
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) )
+   // Botones generales--------------------------------------------------------
 
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      CANCEL ;
-      ACTION      ( ::oDialog:end() )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) } )
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }
    end if
 
-   ::oDialog:bStart := {|| ::startDialog() }
+   ::oDialog:bStart        := {|| ::startDialog() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -141,7 +136,8 @@ METHOD redefineGeneral() CLASS TercerosView
 
    local oSay
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oGetCodigo ;
+      VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     ( "@! NNNNNNNNNNNN" ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
@@ -443,6 +439,8 @@ METHOD startDialog() CLASS TercerosView
       ::oRiesgo:Hide()
       ::oRiesgoAlcanzado:Hide()
    end if
+
+   ::oGetCodigo:setFocus()
 
 RETURN ( nil )
 

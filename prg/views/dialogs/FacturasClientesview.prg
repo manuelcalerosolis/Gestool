@@ -231,7 +231,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-RETURN ( ::oDialog:nResult )
+RETURN ( ::oDialog:nResult ) 
 
 //---------------------------------------------------------------------------//
 

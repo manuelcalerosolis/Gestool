@@ -204,20 +204,9 @@ FUNCTION Main( paramsMain, paramsSecond, paramsThird )
       RETURN .f.
    end if
 
-   do case
-      case ( "SQL" $ appParamsMain() ) 
-
-         if AccessController():isLogin()
-            CreateMainSQLWindow( oIconApp )
-         end if
-
-      otherwise
-
-         if AccessController():isLogin()
-            CreateMainWindow( oIconApp )
-         end if
-
-   end case
+   if AccessController():isLogin()
+      CreateMainSQLWindow( oIconApp )
+   end if
 
    // Destruimos el icono -----------------------------------------------------
 

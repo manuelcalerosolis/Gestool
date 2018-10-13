@@ -1454,7 +1454,7 @@ BaseHttpService.obj 															\
 BaseHttpController.obj														\
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /gc0 /i$(HBINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /d /w /es2 /gc0 /i$(FWINCLUDE) /i$(HBINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
@@ -2169,7 +2169,7 @@ $(HBLIB)\hbwin.lib               										+
 $(HBLIB)\gtgui.lib               										+ 
 $(HBLIB)\gtwin.lib               										+ 
 $(HBLIB)\hbrtl.lib               										+ 
-$(HBLIB)\hbvmmt.lib                										+ 
+$(HBLIB)\hbvmmt_dbg.lib                								+ 
 $(HBLIB)\hblang.lib              										+
 $(HBLIB)\hbmacro.lib             										+
 $(HBLIB)\hbrdd.lib               										+ 

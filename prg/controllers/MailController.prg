@@ -434,7 +434,7 @@ METHOD Activate() CLASS MailView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bStart  := {|| ::startActivate() }
+   ::oDialog:bStart  := {|| ::startActivate() } 
 
    ACTIVATE DIALOG ::oDialog CENTER
 
