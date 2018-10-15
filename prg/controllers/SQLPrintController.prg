@@ -7,7 +7,11 @@ CLASS SQLPrintController
 
    DATA oController
 
+   DATA oEvents
+
    DATA oDialogView
+
+   DATA aFiles                         INIT {}
 
    DATA cFileName
 
@@ -15,7 +19,7 @@ CLASS SQLPrintController
 
    METHOD New( oController ) CONSTRUCTOR
 
-   METHOD End()                        VIRTUAL
+   METHOD End()                        
 
    METHOD getController()              INLINE ( ::oController )
 
@@ -58,38 +62,48 @@ METHOD New( oController )
 
    ::oController                       := oController 
 
+   ::oEvents                           := Events():New()   
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD End()
+
+   ::oEvents:End()
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
 METHOD loadDocuments()
 
-   local aFiles                        := directory( ::getDirectory() + "*.fr3" )
+   local aFiles                        
+
+   ::aFiles                            := {}
+
+   aFiles                              := directory( ::getDirectory() + "*.fr3" )
 
    if empty( aFiles )
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
-   ::getDialogView():oListboxFile:setItems( {} )
+   aeval( aFiles, {|aFile| aadd( ::aFiles, getFileNoExt( aFile[ 1 ] ) ) } )
 
-   aeval( aFiles, {|aFile| ::getDialogView():oListboxFile:add( getFileNoExt( aFile[ 1 ] ) ) } )
-
-   ::getDialogView():oListboxFile:goTop()
+   ::oEvents:fire( 'loadDocuments' )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteDocument()
+METHOD deleteDocument( cFileDocument )
 
-   local oReport  
-
-   ::setFileName( ::getDialogView():cListboxFile )
-
-   if empty( ::getFileName() )
+   if empty( cFileDocument )
       msgStop( "No hay formato definido" )
       RETURN ( self )  
    end if 
+
+   ::setFileName( cFileDocument )
 
    if !file( ::getFullPathFileName() )
       msgStop( "No existe el formato " + ::getFullPathFileName() )
@@ -103,6 +117,8 @@ METHOD deleteDocument()
    if ferase( ::getFullPathFileName() ) != 0      
       msgStop( "Error al eliminar el formato " + ::getFullPathFileName() )      
    end if 
+
+   ::oEvents:fire( 'deleteDocument' )
 
    ::loadDocuments()
 
