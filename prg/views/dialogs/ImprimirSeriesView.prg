@@ -46,7 +46,7 @@ METHOD Activate()
 
       TBtnBmp():ReDefine( 110, "new16",,,,, {|| ::oController:newDocument() }, ::oDialog, .f., , .f., "Añadir formato" )
 
-      TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editDocument() }, ::oDialog, .f., , .f., "Modificar formato" )
+      TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editDocument( ::cListboxFile ) }, ::oDialog, .f., , .f., "Modificar formato" )
 
       TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteDocument() }, ::oDialog, .f., , .f., "Eliminar formato" )
 
@@ -76,13 +76,15 @@ METHOD Activate()
          ITEMS          aGetPrinters() ;
          OF             ::oDialog
 
+      // Botones generales--------------------------------------------------------
+
       ApoloBtnFlat():Redefine( IDOK, {|| ::runActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
       ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-      ::oDialog:AddFastKey( VK_F5, {|| ::runActivate() } )
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::runActivate(), ) }
 
-      ::oDialog:bStart  := {|| ::startActivate() }
+      ::oDialog:bStart     := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
