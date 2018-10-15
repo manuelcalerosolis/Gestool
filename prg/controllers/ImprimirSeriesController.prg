@@ -50,7 +50,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController )
+METHOD New( oController ) CLASS ImprimirSeriesController
 
    ::Super:New( oController )
 
@@ -58,7 +58,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End()
+METHOD End() CLASS ImprimirSeriesController
 
    if !empty( ::oDialogView )
       ::oDialogView:End()
@@ -106,21 +106,7 @@ RETURN ( ::oReport )
 
 //---------------------------------------------------------------------------//
 
-METHOD useReport()
-
-   if ::oReport:isLoad()
-
-      ::oReport:Show()
-     
-   end if 
-
-RETURN ( nil )
-
-METHOD createReportRowset( hGenerate )
-
-   ::oReport:buildRowSet( hget( hGenerate, "uuid" ) )
-
-   ::oReport:setUserDataSet()
+METHOD useReport() CLASS ImprimirSeriesController
 
    if ::oReport:isLoad()
 
@@ -131,7 +117,18 @@ METHOD createReportRowset( hGenerate )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-METHOD destroyReport( oReport ) CLASS ImprimirSeriesController
+
+
+METHOD createReportRowset( hGenerate ) CLASS ImprimirSeriesController
+
+   ::oReport:buildRowSet( hget( hGenerate, "uuid" ) )
+
+   ::oReport:setUserDataSet()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+METHOD destroyReport() CLASS ImprimirSeriesController
 
    ::oReport:DestroyFastReport()
 
@@ -141,29 +138,35 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD showDocument( nDevice, cFileName, nCopies, cPrinter ) 
-
+METHOD showDocument( nDevice, cFileName, nCopies, cPrinter ) CLASS ImprimirSeriesController
+ 
    local oWaitMeter
    local uuidIdentifier
 
    DEFAULT cFileName    := ::getController():getDocumentoImpresion()
    DEFAULT nCopies      := ::getController():getCopiasImpresion()
 
+   ::createReport(  { "uuid" => ::getUuidIdentifiers(),;
+                      "device" => nDevice,;
+                      "fileName" => cFileName,;
+                      "Printer" => cPrinter } )
+
    oWaitMeter           := TWaitMeter():New( "Imprimiendo documento(s)", "Espere por favor..." )
    oWaitMeter:setTotal( len( ::getUuidIdentifiers() ) )
    oWaitMeter:Run()
-
-   ::oReport := ::createReport( {  "device" => nDevice,;
-                                   "fileName" => cFileName } )
 
    for each uuidIdentifier in ::getUuidIdentifiers() 
 
       oWaitMeter:setMessage( "Imprimiendo documento " + hb_ntos( hb_enumindex() ) + " de " + hb_ntos( oWaitMeter:getTotal() ) )
 
+      ::createReportRowset( { "uuid" => uuidIdentifier,;
+                              "device" => nDevice,;
+                              "fileName" => cFileName,;
+                              "Printer" => cPrinter } )
 
-      ::createReportRowset( {  "uuid" => uuidIdentifier,;
-                               "device" => nDevice,;
-                               "fileName" => cFileName } )
+      ::useReport()
+
+      ::freeRowset()
 
       oWaitMeter:autoInc()
 
@@ -177,7 +180,7 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD generateDocument( hGenerate )  
+METHOD generateDocument( hGenerate ) CLASS ImprimirSeriesController
 
    if !( hhaskey( hGenerate, "uuid" ) )
       msgStop("no existe un uuid de factura")
@@ -186,14 +189,15 @@ METHOD generateDocument( hGenerate )
 
    ::oReport :=::createReport( hGenerate )
    ::createReportRowset( hGenerate )
-
+   ::useReport()
+   ::freeRowset()
    ::destroyReport()
 
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD editDocument()
+METHOD editDocument() CLASS ImprimirSeriesController
 
    local oReport  
 
@@ -204,19 +208,13 @@ METHOD editDocument()
       RETURN ( nil )  
    end if 
 
-   oReport           := ::oController:getReport()
+   ::createReport( { "uuid" => ::getUuidIdentifiers(),;
+                      "fileName" => ::getDialogView():cListboxFile } )
 
-   oReport:createFastReport()
+   ::createReportRowset( { "uuid" => ::getFirstUuidIdentifier(),;
+                           "fileName" => ::getDialogView():cListboxFile } )
 
-   oReport:setDevice( IS_SCREEN )
-
-   oReport:setDirectory( ::getDirectory() )
-   
-   oReport:setFileName( ::getFileName() )
-
-   oReport:buildRowSet( ::getFirstUuidIdentifier() )
-
-   oReport:setUserDataSet()
+   ::useReport()
 
    if oReport:isLoad()
 
@@ -232,27 +230,18 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD newDocument()
+METHOD newDocument() CLASS ImprimirSeriesController
 
    local oReport  
+   ::createReport(  { "uuid" => ::getFirstUuidIdentifier(),;
+                      "device" => IS_SCREEN } )
 
-   oReport           := ::oController:getReport()
+   ::createReportRowset( { "uuid" => ::getFirstUuidIdentifier(),;
+                           "device" => IS_SCREEN } )
 
-   oReport:createFastReport()
+   ::useReport()
 
-   oReport:setDevice( IS_SCREEN )
-
-   oReport:setDirectory( ::getDirectory() )
-   
-   oReport:buildRowSet( ::getFirstUuidIdentifier() )
-
-   oReport:setUserDataSet()
-
-   oReport:Design()
-
-   oReport:DestroyFastReport()
-
-   oReport:End()
+   ::destroyReport()
    
 RETURN ( nil )
 
