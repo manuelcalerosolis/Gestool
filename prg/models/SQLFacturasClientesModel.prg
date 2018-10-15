@@ -87,7 +87,7 @@ METHOD getColumnsSelect() CLASS SQLFacturasClientesModel
    TEXT INTO cColumns
       facturas_clientes.id AS id,
       facturas_clientes.uuid AS uuid,
-      CONCAT( facturas_clientes.serie, '/', facturas_clientes.numero ) AS numero,
+      CONCAT( facturas_clientes.serie, '-', facturas_clientes.numero ) AS numero,
       facturas_clientes.delegacion_uuid AS delegacion_uuid,
       facturas_clientes.sesion_uuid AS sesion_uuid,
       facturas_clientes.recargo_equivalencia AS recargo_equivalencia,
@@ -141,7 +141,7 @@ METHOD getNumeroWhereUuid( uuid )
    TEXT INTO cSql
 
    SELECT 
-      CONCAT( serie, numero ) AS numero
+      CONCAT( serie, '-', numero ) AS numero
 
       FROM %1$s  
 

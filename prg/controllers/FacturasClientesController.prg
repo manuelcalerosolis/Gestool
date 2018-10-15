@@ -54,7 +54,14 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD getPrintCopy()               INLINE ( ::getConfiguracionesController():getModelNumeric( ::cName, 'copias_impresion', 1 ) )
 
-   METHOD generatePdf( uuidFactura, cDocumentPdf )
+   METHOD generatePdf( uuidFactura, cDocumentPdf ) ;
+                                       INLINE ::getImprimirSeriesController();
+                                                   :generateDocument(   {  "uuid"         => uuid,;
+                                                                           "device"       => IS_PDF,;
+                                                                           "fileName"     => cDocumentPdf,;
+                                                                           "pdfFileName"  => ::getModel():getNumeroWhereUuid( uuid ) } ) )   
+
+   METHOD getSubject()                 INLINE ( "Factura de cliente número" )
 
    // Contrucciones tardias----------------------------------------------------
 
@@ -334,16 +341,6 @@ METHOD getConfigItems() CLASS FacturasClientesController
 RETURN ( aItems )
 
 //---------------------------------------------------------------------------//
-
-METHOD generatePdf( uuid, cDocumentPdf )
-
-   ::getImprimirSeriesController():generateDocument(  {  "uuid" => uuid,;
-                                                         "device" => IS_PDF,;
-                                                         "fileName" => cDocumentPdf,;
-                                                         "pdfFileName" => ::getModel():getNumeroWhereUuid( uuid ) } )
-
-RETURN ( nil )   
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -62,8 +62,12 @@ CLASS SQLBaseReport
    METHOD getDevice()                     INLINE ( ::cDevice )
 
    METHOD setDefaultPath( cDefaultPath )  INLINE ( ::cDefaultPath := cDefaultPath )
+   METHOD getDefaultPath()                INLINE ( alltrim( ::cDefaultPath ) )
 
    METHOD setPdfFileName( cPdfFileName )  INLINE ( ::cPdfFileName := cPdfFileName + if( ( ".pdf" $ lower( cPdfFileName ) ), "", ".pdf" ) )
+   METHOD getPdfFileName()                INLINE ( alltrim( ::cPdfFileName ) )
+
+   METHOD getFullPathPdfFileName()        INLINE ( ::getDefaultPath() + ::getPdfFileName() )
 
    METHOD getIds()                        INLINE ( iif( !empty( ::oController ), ::oController:getIds(), {} ) )
 

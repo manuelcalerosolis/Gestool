@@ -401,7 +401,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getValue( cSentence )
+METHOD getValue( cSentence, uDefault )
 
    local oError
    local uValue
@@ -435,7 +435,7 @@ METHOD getValue( cSentence )
 
    end
 
-RETURN ( uValue )
+RETURN ( if( empty( uValue ), uDefault, uValue ) )
 
 //---------------------------------------------------------------------------//
 

@@ -13,7 +13,7 @@ CLASS ImprimirSeriesController FROM SQLPrintController
 
    METHOD showDocument( nDevice, cFileName, nCopies, cPrinter ) 
 
-   METHOD generateDocument( uuidIdentifier, nDevice, cFileName, nCopies, cPrinter ) 
+   METHOD getFullPathPdfFileName()     INLINE ( ::getImprimirSeriesController():getFullPathPdfFileName() )
 
    METHOD printDocument( cFileName, nCopies ) ;
                                        INLINE ( ::showDocument( IS_PRINTER, cFileName, nCopies ) )

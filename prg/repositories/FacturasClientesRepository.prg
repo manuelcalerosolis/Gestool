@@ -284,7 +284,7 @@ RETURN ( cSQL )
 
 METHOD getClientMailWhereFacturaUuid( uuidFactura ) CLASS FacturasClientesRepository
 
-local cSQL
+   local cSQL
 
    TEXT INTO cSql
 
@@ -304,7 +304,7 @@ local cSQL
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLClientesModel():getTableName(), SQLDireccionesModel():getTableName(), quoted(uuidFactura) ) 
 
-RETURN ( getSQLDatabase():getValue( cSql ) ) 
+RETURN ( getSQLDatabase():getValue( cSql, "" ) ) 
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
