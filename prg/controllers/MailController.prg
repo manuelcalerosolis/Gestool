@@ -340,6 +340,7 @@ METHOD Activate() CLASS MailView
 
    REDEFINE GET      ::oRemitente ;
       VAR            ::cRemitente ;
+      WHEN           .f. ;
       ID             100 ;
       OF             ::oFld:aDialogs[ 1 ]
 
@@ -444,7 +445,11 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate() CLASS MailView
 
+   ::oRemitente:cText( Company():nombre() + space( 1 ) + "<" + alltrim( Auth():email() ) + ">" )
+
    ::oComboDocument:Set( ::getController():getDocumentPdf() )
+
+
 
 RETURN ( nil )
 

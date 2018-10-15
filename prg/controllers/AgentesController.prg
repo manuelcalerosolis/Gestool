@@ -263,20 +263,14 @@ METHOD Activate() CLASS AgentesView
 
    ::redefineExplorerBar( 200 )
 
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+   // Botones generales--------------------------------------------------------
 
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      CANCEL ;
-      ACTION      ( ::oDialog:end() )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }
    end if
 
    ::oDialog:bStart  := {|| ::StartActivate() }
@@ -393,9 +387,9 @@ METHOD CountAgenteWhereCodigo( cCodigoAgente ) CLASS SQLAgentesModel
 
    SELECT COUNT(*)
 
-   FROM %1$s AS agentes
+      FROM %1$s AS agentes
     
-   WHERE agentes.codigo = %2$s
+      WHERE agentes.codigo = %2$s
 
    ENDTEXT
 
@@ -411,20 +405,18 @@ local cSQL
 
    TEXT INTO cSql
 
-      SELECT agentes.comision
+   SELECT agentes.comision
 
       FROM %1$s AS agentes
 
       WHERE agentes.codigo = %2$s
 
-      ENDTEXT
+   ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted(cCodigoAgente) ) 
 
 RETURN ( getSQLDatabase():getValue ( cSql ) ) 
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

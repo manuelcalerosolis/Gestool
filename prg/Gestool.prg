@@ -67,7 +67,7 @@ RETURN
 
 EXIT PROCEDURE ExitAplication()
 
-   writeResources()
+   // writeResources()
 
 RETURN
 

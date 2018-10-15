@@ -248,7 +248,13 @@ RETURN nil
 
 FUNCTION BuildMenu()
 
-RETURN ( nil )
+   local oMenu
+
+   MENU oMenu
+   
+   ENDMENU
+
+RETURN ( oMenu )
 
 //---------------------------------------------------------------------------//
 
