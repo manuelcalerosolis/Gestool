@@ -310,20 +310,12 @@ METHOD Activate() CLASS ArticulosFamiliaView
 
    // Botones -----------------------------------------------------------------
 
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( ::endActivate() )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      CANCEL ;
-      ACTION      ( ::oDialog:end() )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| ::endActivate() } )
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
 
    ::oDialog:bStart  := {|| ::startActivate() }

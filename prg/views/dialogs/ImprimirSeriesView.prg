@@ -1,6 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 #include "MesDbf.ch"
+#include "xbrowse.ch"
 
 //---------------------------------------------------------------------------//
 
@@ -8,7 +9,7 @@ CLASS ImprimirSeriesView FROM SQLBaseView
 
    DATA oDialog
 
-   DATA oListboxFile
+   DATA oXbrowseFile
    DATA aListboxFile                   INIT {}
    DATA cListboxFile                   INIT ""
 
@@ -17,13 +18,27 @@ CLASS ImprimirSeriesView FROM SQLBaseView
 
    DATA cPrinter                       INIT prnGetName()
 
+   METHOD New( oController )
+
    METHOD Activate()
 
    METHOD startActivate()
 
    METHOD runActivate()
 
+   METHOD loadDocuments()              INLINE ( ::oXbrowseFile:SetArray( ::oController:aFiles, , , .f. ) )
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oController )
+
+   ::Super():New( oController )
+
+   ::oController:oEvents:Set( 'loadDocuments', {|| ::loadDocuments() } )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -46,17 +61,36 @@ METHOD Activate()
 
       TBtnBmp():ReDefine( 110, "new16",,,,, {|| ::oController:newDocument() }, ::oDialog, .f., , .f., "Añadir formato" )
 
-      TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editDocument( ::cListboxFile ) }, ::oDialog, .f., , .f., "Modificar formato" )
+      TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editDocument( ::oXbrowseFile:aRow ) }, ::oDialog, .f., , .f., "Modificar formato" )
 
-      TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteDocument() }, ::oDialog, .f., , .f., "Eliminar formato" )
+      TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteDocument( ::oXbrowseFile:aRow ) }, ::oDialog, .f., , .f., "Eliminar formato" )
 
       TBtnBmp():ReDefine( 140, "refresh16",,,,, {|| ::oController:loadDocuments() }, ::oDialog, .f., , .f., "Recargar formato" )
 
-      REDEFINE LISTBOX  ::oListboxFile ;
-         VAR            ::cListboxFile ;
-         ITEMS          ::aListboxFile ;
-         ID             150 ;
-         OF             ::oDialog 
+      // Xbrowse files --------------------------------------------------------
+
+      ::oXbrowseFile                         := TXBrowse():New( ::oDialog )
+
+      ::oXbrowseFile:bClrSel                 := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      ::oXbrowseFile:bClrSelFocus            := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      ::oXbrowseFile:SetArray( ::oController:aFiles, , , .f. )
+
+      ::oXbrowseFile:lHScroll                := .f.
+      ::oXbrowseFile:lVScroll                := .t.
+      ::oXbrowseFile:lRecordSelector         := .f.
+      ::oXbrowseFile:lHeader                 := .f.
+      ::oXbrowseFile:nMarqueeStyle           := 5
+
+      ::oXbrowseFile:CreateFromResource( 150 )
+
+      with object ( ::oXbrowseFile:AddCol() )
+         :cHeader       := ""
+         :bStrData      := {|| if( !empty( ::oController:aFiles ), ::oController:aFiles[ ::oXbrowseFile:nArrayAt ], "" ) }
+         :nWidth        := 400
+      end with
+
+      //-----------------------------------------------------------------------
 
       REDEFINE CHECKBOX ::lCopies ;
          ID             160 ;
@@ -96,7 +130,7 @@ METHOD startActivate()
 
    ::oController:loadDocuments()
 
-RETURN ( self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -104,11 +138,11 @@ METHOD runActivate()
 
    ::oDialog:disable()
 
-   ::oController:showDocument( IS_PRINTER, ::cListboxFile, ::nCopies, ::cPrinter )
+   ::oController:showDocument( IS_PRINTER, ::oXbrowseFile:aRow, ::nCopies, ::cPrinter )
 
    ::oDialog:enable()
 
-RETURN ( self )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 

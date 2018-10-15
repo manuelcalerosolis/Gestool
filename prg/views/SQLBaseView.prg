@@ -88,8 +88,6 @@ METHOD New( oController )
 
    ::oEvents                                          := Events():New()
 
-   // ::oFontBold                                        := TFont():New( getSysFont(), 0, -8, .f., .t. )
-
    ::oTimer                                           := TTimer():New( 4000, {|| ::RestoreMessage() } )
 
 RETURN ( self )
@@ -106,15 +104,9 @@ METHOD End()
       ::oTimer:End()
    end if 
 
-   if !empty( ::oFontBold )
-      ::oFontBold:End()
-   end if 
-
    ::oEvents                                          := nil
 
    ::oTimer                                           := nil
-
-   ::oFontBold                                        := nil
 
 RETURN ( hb_gcall( .t. ) )
 
