@@ -232,10 +232,21 @@ METHOD Activate() CLASS PropiedadesView
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F2, {|| ::oController:getPropiedadesLineasController():Append() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oController:getPropiedadesLineasController():Edit() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oController:getPropiedadesLineasController():Delete() } )
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+   
+      ::oDialog:bKeyDown   := <| nKey |  
+         do case         
+            case nKey == VK_F5
+               if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), )
+            case nKey == VK_F2
+               ::oController:getPropiedadesLineasController():Append()
+            case nKey == VK_F3
+               ::oController:getPropiedadesLineasController():Edit()
+            case nKey == VK_F4
+               ::oController:getPropiedadesLineasController():Delete()
+         end 
+         RETURN ( 0 )
+         >
+
    end if
 
    ::oDialog:bStart  := {|| ::startActivate() }

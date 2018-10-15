@@ -53,7 +53,7 @@ CLASS MailController
 
    METHOD getMail( uuid )              INLINE ( ::getController():getRepository():getClientMailWhereFacturaUuid( uuid ) )
 
-   METHOD getSelectedMail()            INLINE ( ::getMail( afirst( ::oController:getUuidIdentifiers() ) )
+   METHOD getSelectedMail()            INLINE ( ::getMail( afirst( ::oController:getUuidIdentifiers() ) ) )
 
       
    METHOD Send()

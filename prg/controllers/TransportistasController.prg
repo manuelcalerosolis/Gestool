@@ -215,11 +215,22 @@ METHOD Activate() CLASS TransportistasView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F2, {|| ::oController:getDireccionesController():Append() } )
-      ::oDialog:AddFastKey( VK_F3, {|| ::oController:getDireccionesController():Edit() } )
-      ::oDialog:AddFastKey( VK_F4, {|| ::oController:getDireccionesController():Delete() } )
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+if ::oController:isNotZoomMode() 
+   
+      ::oDialog:bKeyDown   := <| nKey |  
+         do case         
+            case nKey == VK_F5
+               if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), )
+            case nKey == VK_F2
+               ::oController:getDireccionesController():Append()
+            case nKey == VK_F3
+               ::oController:getDireccionesController():Edit()
+            case nKey == VK_F4
+               ::oController:getDireccionesController():Delete()
+         end 
+         RETURN ( 0 )
+         >
+
    end if
 
    ::oDialog:bStart  := {|| ::StartDialog() }
