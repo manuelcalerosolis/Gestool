@@ -47,12 +47,19 @@ CLASS MailController
 
    // Envio de mails----------------------------------------------------------
 
-   METHOD hasMail()
+   METHOD isMultiMails()               INLINE ( len( ::getUuidIdentifiers() ) > 1 ) 
 
+   METHOD hasMail()                    INLINE ( !empty( ::getMail() ) )
+
+   METHOD getMail( uuid )              INLINE ( ::getController():getRepository():getClientMailWhereFacturaUuid( uuid ) )
+
+   METHOD getSelectedMail()            INLINE ( ::getMail( afirst( ::oController:getUuidIdentifiers() ) )
+
+      
    METHOD Send()
 
-   METHOD generatePdf( uuidIdentifier, cDocumentPdf ) INLINE ;
-                                       ( ::oController:generatePdf( uuidIdentifier, cDocumentPdf ) )
+   METHOD generatePdf( uuid, cDocumentPdf ) INLINE ;
+                                       ( ::oController:generatePdf( uuid, cDocumentPdf ) )
 
    // Construcciones tardias---------------------------------------------------
 
@@ -70,7 +77,7 @@ END CLASS
 
 METHOD New( oController ) CLASS MailController
 
-   ::oController                    := oController
+   ::oController                       := oController
 
 RETURN ( Self )
 
@@ -90,18 +97,6 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD hasMail( uuidIdentifier )
-
-   ::cMail  := ::getController():getRepository():getClientMailWhereFacturaUuid( uuidIdentifier )
-      
-   if empty( ::cMail )
-      RETURN ( .f. )
-   end if 
-   
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
 METHOD Send()
 
    local hMail
@@ -116,11 +111,13 @@ METHOD Send()
 
    for each uuidIdentifier in ::getUuidIdentifiers() 
 
-      if ::hasMail( uuidIdentifier )
+      cMail       := ::getMail( uuidIdentifier )
+
+      if !empty( cMail )
 
          ::generatePdf( uuidIdentifier, ::getDialogView():getComboDocument() )
 
-         hset( hMail, "mail", ::cMail )
+         hset( hMail, "mail", cMail )
          hset( hMail, "subject", "Mail de prueba" )
 
          ::getMailSender():Send( hMail )
@@ -178,7 +175,7 @@ METHOD loadHtmlFile( cFile ) CLASS MailController
 
    ::cHtmlFile          := alltrim( cFile )
 
-   if file( ::cHtmlFile )  // !Empty( ::oActiveX )
+   if file( ::cHtmlFile )  
 
       cMensaje          := memoread( ::cHtmlFile )
 
@@ -212,7 +209,7 @@ METHOD setFileDefaultHtml( cFile ) CLASS MailController
          setHtmlDocumento( ::cTypeDocument, ::cHtmlFile )
       end if
    else
-      MsgInfo( "No ha documentos para establecer por defecto" )
+      msgInfo( "No ha documentos para establecer por defecto" )
    end if
 
 RETURN ( nil )
@@ -447,9 +444,14 @@ METHOD startActivate() CLASS MailView
 
    ::oRemitente:cText( Company():nombre() + space( 1 ) + "<" + alltrim( Auth():email() ) + ">" )
 
+   if ::getController():isMultiMails()
+      ::oReceptor:Disable()
+   else 
+      ::oReceptor:Enable()
+      msgalert( hb_valtoexp( ::oController:getUuidIdentifiers() ) )
+   end if 
+
    ::oComboDocument:Set( ::getController():getDocumentPdf() )
-
-
 
 RETURN ( nil )
 

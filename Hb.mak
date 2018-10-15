@@ -33,7 +33,6 @@ PRG            		=    										\
 $(TARGETPRG)             										\
 SQLDatabase.prg 													\
 DialogExtend.prg           									\
-Dialog.prg 															\
 C5Lib.prg               										\
 RpreviewC3.prg 													\
 ReportC3.prg            										\
@@ -1490,7 +1489,6 @@ $(OBJ)\TFTPLinux.obj 														+
 $(OBJ)\Comun.obj                                            	+
 $(OBJ)\AccessCode.obj                                       	+
 $(OBJ)\DialogExtend.obj                                     	+
-$(OBJ)\Dialog.obj                                     			+
 $(OBJ)\Tgraph.obj                                           	+
 $(OBJ)\TViewImg.obj                                         	+
 $(OBJ)\Toleexcel.obj                                        	+
