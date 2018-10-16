@@ -31,8 +31,6 @@ METHOD End()
 
    ::hEvents                        := nil
 
-   self                             := nil
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -51,7 +49,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Fire( cEvent )
+METHOD Fire( cEvent, uOther )
 
    local bEvent
    local lEvent   := .t.
@@ -72,7 +70,7 @@ METHOD Fire( cEvent )
 
    for each bEvent in hget( ::hEvents, cEvent )
       
-      lEvent      := eval( bEvent )
+      lEvent      := eval( bEvent, uOther )
 
       if hb_islogical( lEvent ) .and. !lEvent
          RETURN ( .f. )

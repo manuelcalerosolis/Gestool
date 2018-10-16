@@ -9,7 +9,7 @@ CLASS MailSender
 
    DATA oEvents
 
-   DATA lCancel               INIT .f.
+   DATA lCancel                        INIT .f.
 
    DATA bPostSendMail         
 
@@ -27,9 +27,10 @@ CLASS MailSender
    // Log de información-------------------------------------------------------
 
    DATA cLogFile              
-   DATA hLogFile              INIT  -1 
+   DATA hLogFile                       INIT  -1 
 
-   METHOD New( oController )
+   METHOD New( oController ) CONSTRUCTOR
+   METHOD End()
 
    METHOD isMailServer()      
 
@@ -47,7 +48,7 @@ CLASS MailSender
 
    // Metodos para mostrar la informacion--------------------------------------
 
-   METHOD messenger( cText )           INLINE ( ::writeLogFile( cText ), ::oEvents:Fire( 'message', cText ) )
+   METHOD messenger( cText )           INLINE ( ::writeLogFile( cText ), ::getEvents():Fire( 'message', cText ) )
 
    METHOD initMessage()                INLINE ( ::messenger( "Se ha iniciado el proceso de envio" ) )
    METHOD readyMessage( hMail )        INLINE ( ::messenger( "Se ha elaborado el correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' para enviar a " + ::getMailsFromHash( hMail ) ) )
@@ -65,6 +66,10 @@ CLASS MailSender
    METHOD getSubjectFromHash( hMail )  INLINE ( ::getFromHash( hMail, "subject" ) )
    METHOD getPostSendFromHash( hMail ) INLINE ( ::getFromHash( hMail, "postSend" ) )
 
+   // Contrucciones tardias----------------------------------------------------
+
+   METHOD getEvents()                  INLINE ( if( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -72,8 +77,6 @@ END CLASS
 METHOD New( oController ) CLASS MailSender
 
    ::oController              := oController
-
-   ::oEvents                  := Events():New()
 
    ::mailServerHost           := Auth():emailServidor()
    ::mailServerPort           := Auth():emailPuerto()
@@ -84,15 +87,21 @@ METHOD New( oController ) CLASS MailSender
    ::mailServerAuthenticate   := Auth():autenticacionSMTP()
    ::mailServerSSL            := Auth():requiereSSL()
 
-   ::getMailServer()
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD isMailServer() CLASS MailSender
+METHOD End() CLASS MailSender
 
-RETURN ( !empty( ::mailServerHost ) .and. !empty( ::mailServerUserName ) .and. !empty( ::mailServerPassword ) )
+   if !empty( ::oEvents )
+      ::oEvents:End()
+   end if 
+
+   if !empty( ::oMailServer )
+      ::oMailServer:End()
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -112,20 +121,29 @@ RETURN ( ::oMailServer )
 
 //--------------------------------------------------------------------------//
 
+METHOD isMailServer() CLASS MailSender
+
+RETURN ( !empty( ::mailServerHost ) .and. !empty( ::mailServerUserName ) .and. !empty( ::mailServerPassword ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD send( hMail ) CLASS MailSender
    
    local cMail          := ::getMailsFromHash( hMail )
+
+   msgalert( "Send( hMail )" )
 
    if empty( cMail )
       ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' esta vacio." )
       RETURN .f.
    end if
 
-   if isTrue( ::oMailServer:sendMail( hMail ) )
+   if isTrue( ::getMailServer():sendMail( hMail ) )
       ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' se ha enviado con exito." )
-      ::oEvents:Fire( 'sendSuccessful' )
+      ::getEvents():Fire( 'sendSuccessful' )
    else
-      ::oEvents:Fire( 'sendError' )
+      ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' no se ha enviado." )
+      ::getEvents():Fire( 'sendError' )
    end if 
 
 RETURN ( nil )

@@ -94,7 +94,7 @@ CLASS SQLBaseReport
 
    METHOD CreateFile()
 
-   METHOD SaveFile()
+   METHOD SaveReport()
 
    METHOD buildRowSet()                   VIRTUAL
 
@@ -179,7 +179,7 @@ METHOD createFastReport()
    
    ::oFastReport:SetTitle( "Diseñador de documentos" ) 
 
-   ::oFastReport:SetEventHandler( "Designer", "OnSaveReport", {|| ::Save() } )
+   ::oFastReport:SetEventHandler( "Designer", "OnSaveReport", {|| ::SaveReport() } )
 
    ::oEvents:fire( "createdFastReport" )
 
@@ -242,7 +242,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD SaveFile()
+METHOD SaveReport()
 
    if !isDirectory( ::getDirectory() )
       makeDir( ::getDirectory() )

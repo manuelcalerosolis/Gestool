@@ -29,6 +29,7 @@ CLASS SQLRowSet
    METHOD restoreRecno()                              INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( ::nRecno ), ) ) 
    METHOD gotoRecno( nRecno )                         INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( nRecno ), ) ) 
 
+   // XBrowse move-------------------------------------------------------------
 
    METHOD goTop()                                     INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goTop(), ) )
    METHOD goBottom()                                  INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goBottom(), ) )
@@ -37,8 +38,6 @@ CLASS SQLRowSet
    METHOD Bof()                                       INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Bof(), ) ) 
    METHOD keyCount()                                  INLINE ( if( !empty( ::oRowSet ) .and. !hb_isnil( ::oRowSet:RecCount() ), ::oRowSet:RecCount(), 0 ) ) 
    METHOD bookMark( n )                               INLINE ( if( !empty( ::oRowSet ) .and. !hb_isnil( ::oRowSet:RecNo() ), if( n == nil, ::oRowSet:RecNo(), ::oRowSet:goTo( n ) ), 0 ) ) 
-
-
 
    METHOD Skip()                                      INLINE ( if( !empty( ::oRowSet ), ::oRowSet:Skip(), ) )
    METHOD Recno( nRecno )                             INLINE ( if( !empty( ::oRowSet ) .and. empty( nRecno ), ::oRowSet:Recno(), ::oRowSet:goto( nRecno ) ) )

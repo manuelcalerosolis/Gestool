@@ -129,7 +129,7 @@ METHOD setAttachment( oMail, hMail )
       return nil
    end if 
 
-   for each cItem in hb_aTokens( cAttachments, ";" )
+   for each cItem in hb_atokens( cAttachments, ";" )
 
       if file( rtrim( cItem ) )
          oMail:AddAttachment( rtrim( cItem ) )

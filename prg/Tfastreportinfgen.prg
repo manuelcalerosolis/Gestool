@@ -1496,7 +1496,7 @@ Method FastReport( nDevice ) CLASS TFastReportInfGen
 
    CursorWait()
 
-   ::oFastReport                    := frReportManager():new()
+   ::oFastReport                       := frReportManager():new()
 
    if !Empty( ::oFastReport )
 

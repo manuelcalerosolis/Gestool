@@ -71,6 +71,8 @@ CLASS MailController
 
    METHOD generatePdf( uuid, cDocumentPdf ) 
 
+   METHOD Message( cText )
+
    // Construcciones tardias---------------------------------------------------
 
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := MailView():New( self ), ), ::oDialogView )
@@ -89,6 +91,8 @@ METHOD New( oController ) CLASS MailController
 
    ::oController                       := oController
 
+   ::getMailSender():getEvents():Set( 'message', {| cText | ::Message( cText ) } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -101,6 +105,10 @@ METHOD End() CLASS MailController
 
    if !empty( ::oValidator )
       ::oValidator:End()
+   end if
+
+   if !empty( ::oMailSender )
+      ::oMailSender:End()
    end if
 
 RETURN ( nil )
@@ -136,9 +144,9 @@ METHOD Send()
       hSet( hashDatabaseList, "cargo", ::getCargo() )
       */
 
-      sysRefresh()
-
       ::getMailSender():Send( hMail )
+
+      sysRefresh()
       
    next
 
@@ -168,11 +176,21 @@ METHOD generatePdf( uuid, cDocumentPdf ) CLASS MailController
    hset( hReport, "fileName",             cDocumentPdf )
    hset( hReport, "pdfFileName",          ::getController():getModel():getNumeroWhereUuid( uuid ) )
    hset( hReport, "pdfDefaultPath",       cPatTmp() )
-   hset( hReport, "pdfOpenAfterExport",   .t. )
+   hset( hReport, "pdfOpenAfterExport",   .f. )
 
 RETURN ( ::getController():getReport():Generate( hReport ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD Message( cText )
+
+   with object ( ::getDialogView():oTreeProceso )
+      :Select( :Add( cText ) )
+   end with
+
+RETURN ( nil )
+
+//--------------------------------------------------------------------------//
 
 METHOD selectHtmlFile() CLASS MailController
 
@@ -509,9 +527,9 @@ METHOD startActivate() CLASS MailView
       ::setMail( ::getController():getSelectedMail() )
    end if 
 
-   ::oCopia:cText( Auth():enviarEmailCopia() )
+   ::setCopia( Auth():enviarEmailCopia() )
 
-   ::oCopiaOculta:cText( Auth():enviarCopiaOculta() )
+   ::setCopiaOculta( Auth():enviarCopiaOculta() )
 
    if ::getController():isMultiMails()
       ::oAsunto:Disable()
@@ -520,6 +538,8 @@ METHOD startActivate() CLASS MailView
       ::oAsunto:Enable()
       ::setAsunto( ::getController():getSelectedSubject() )
    end if 
+
+   ::setAdjunto( "" )
 
    ::oComboDocument:Set( ::getController():getDocumentPdf() )
 
