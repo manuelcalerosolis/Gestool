@@ -107,7 +107,7 @@ RETURN ( nil )
 
 METHOD runViewGenerate() CLASS CombinacionesController
 
-   ::hPropertyList  := getSQLDatabase():selectTrimedFetchHash( ::getPropiedadesController():oModel:getPropertyList() ) 
+   ::hPropertyList  := getSQLDatabase():selectTrimedFetchHash( ::getPropiedadesController():getModel():getPropertyList() ) 
 
    if empty( ::hPropertyList )
       msgStop( "No se definieron propiedades" )
@@ -134,14 +134,14 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
    
    ::cCodigoArticulo := cCodigoArticulo
 
-   ::hPropertyList   := getSQLDatabase():selectTrimedFetchHash( ::getPropiedadesController():oModel:getPropertyList() ) 
+   ::hPropertyList   := getSQLDatabase():selectTrimedFetchHash( ::getPropiedadesController():getModel():getPropertyList() ) 
 
    if empty( ::hPropertyList )
       msgStop( "No se definieron propiedades" )
       RETURN ( nil )
    end if 
 
-   ::oRowSet:buildPad( ::oModel:getSelectWhereCodigoArticulo( cCodigoArticulo ) )
+   ::oController:oRowSet:buildPad( ::oModel:getSelectWhereCodigoArticulo( cCodigoArticulo ) )
 
 RETURN ( ::dialogViewActivate( ::getSelectorView() ) )
 
@@ -418,8 +418,6 @@ METHOD startActivate() CLASS CombinacionesView
 
    ::oController:aHaving   := {}
 
-   msgalert( hb_valtoexp( ::oController:hPropertyList ), "hPropertyList" )
-
    for each hProperty in ::oController:hPropertyList
       
       ::addPanel( hProperty )
@@ -612,7 +610,7 @@ CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "combinaciones"
 
-   DATA cGroupBy                 INIT "GROUP BY uuid"
+   DATA cGroupBy                 INIT " uuid"
 
    METHOD getColumns()
 

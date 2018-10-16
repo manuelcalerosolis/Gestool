@@ -69,7 +69,7 @@ CLASS SQLFacturasClientesLineasModel FROM SQLCompanyModel
 
    METHOD getSentenceCountLineas( uuidParent )
 
-   METHOD countLinesWhereUuidParent( uuidParent )  INLINE ( getSQLDatabase():getValue( ::getSentenceCountLineas( uuidParent ) ) )
+   METHOD countLinesWhereUuidParent( uuidParent )  INLINE ( getSQLDatabase():getValue( ::getSentenceCountLineas( uuidParent ), 0 ) )
 
 END CLASS
 

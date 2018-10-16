@@ -110,9 +110,9 @@ METHOD setRowSet( oRowSet ) CLASS SQLXBrowse
    ::bSkip           := {| n | if( !empty( oRowSet:Get() ), oRowSet:Get():Skipper( n ), ) }
    ::bBof            := {|| if( !empty( oRowSet:Get() ), oRowSet:Get():Bof(), ) }
    ::bEof            := {|| if( !empty( oRowSet:Get() ), oRowSet:Get():Eof(), ) }
-   ::bKeyCount       := {|| if( !empty( oRowSet:Get() ), oRowSet:Get():RecCount(), ) }
-   ::bBookMark       := {| n | if( !empty( oRowSet:Get() ), if( n == nil, oRowSet:Get():RecNo(), oRowSet:Get():GoTo( n ) ), ) }
-   ::bKeyNo          := {| n | if( !empty( oRowSet:Get() ), if( n == nil, oRowSet:Get():RecNo(), oRowSet:Get():GoTo( n ) ), ) }
+   ::bKeyCount       := {|| if( !empty( oRowSet:Get() ) .and. !hb_isnil( oRowSet:Get():RecCount() ), oRowSet:Get():RecCount(), 0 ) }
+   ::bBookMark       := {| n | if( !empty( oRowSet:Get() ), if( n == nil, if( hb_isnil( oRowSet:Get():RecNo() ), 0, oRowSet:Get():RecNo() ), oRowSet:Get():GoTo( n ) ), ) }
+   ::bKeyNo          := {| n | if( !empty( oRowSet:Get() ), if( n == nil, if( hb_isnil( oRowSet:Get():RecNo() ), 0, oRowSet:Get():RecNo() ), oRowSet:Get():GoTo( n ) ), ) }
 
    if ::oVScroll() != nil
       ::oVscroll():SetRange( 1, if( !empty( oRowSet:Get() ), oRowSet:Get():RecCount(), 0 ) )

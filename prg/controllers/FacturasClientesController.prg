@@ -306,7 +306,7 @@ RETURN ( nil )
 
 METHOD isLines() CLASS FacturasClientesController
 
-   local nLineas  := ::getFacturasClientesLineasController():oModel:countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) )
+   local nLineas  := ::getFacturasClientesLineasController():getModel():countLinesWhereUuidParent( ::getModelBuffer( 'uuid' ) )
 
 RETURN ( nLineas > 0 )
 
