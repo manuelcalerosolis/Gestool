@@ -421,22 +421,12 @@ METHOD Activate() CLASS EmpresasView
    ::oExplorerBar:nBottomColor  := RGB( 255, 255, 255 )
    ::oExplorerBar:nTopColor     := RGB( 255, 255, 255 )
 
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      CANCEL ;
-      ACTION      ( ::oDialog:end() )
-
-   ::oDialog:bStart  := {|| ::StartDialog() }
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
 
    ACTIVATE DIALOG ::oDialog CENTER

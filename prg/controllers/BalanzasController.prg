@@ -269,17 +269,13 @@ METHOD Activate() CLASS BalanzasView
       ACTION      ( ::SetDefault() )
 
 
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      CANCEL ;
-      ACTION     ( ::oDialog:end() )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+
+   if ::oController:isNotZoomMode() 
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+   end if
 
 
    ACTIVATE DIALOG ::oDialog CENTER

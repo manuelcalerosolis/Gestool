@@ -95,18 +95,13 @@ METHOD Activate() CLASS SuperUsuarioView
    
    ::oGetPassword:bValid   := {|| ::oController:validate( "password", ::cGetPassword ) }
 
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      ACTION      ( ::endActivate() )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      CANCEL ;
-      ACTION      ( ::oDialog:end() )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:AddFastKey( VK_F5, {|| ::endActivate() } )
+   if ::oController:isNotZoomMode() 
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::endActivate(), ) }
+   end if
 
    ::oDialog:Activate( , , , .t. )
 
