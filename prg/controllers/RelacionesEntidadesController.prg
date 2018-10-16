@@ -270,24 +270,27 @@ METHOD Activate() CLASS RelacionesEntidadesView
 
       // Buttons lineas--------------------------------------------------------
 
-      ::oController:getBrowseView():ActivateDialog( ::oDialog, 100 )
+   ::oController:getBrowseView():ActivateDialog( ::oDialog, 100 )
 
-      REDEFINE BUTTON ;
-         ID          IDOK ;
-         OF          ::oDialog ;
-         ACTION      ( ::oDialog:end( IDOK ) )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-      REDEFINE BUTTON ;
-         ID          IDCANCEL ;
-         OF          ::oDialog ;
-         CANCEL ;
-         ACTION      ( ::oDialog:end() )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   // Teclas rápidas-----------------------------------------------------------
+   if ::oController:isNotZoomMode() 
+   
+      ::oDialog:bKeyDown   := <| nKey |  
+         do case         
+            case nKey == VK_F5
+               if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), )
+            case nKey == VK_F2
+               ::oController:AppendLine()
+            case nKey == VK_F4
+               ::oController:DeleteLine()
+         end 
+         RETURN ( 0 )
+         >
 
-   ::oDialog:AddFastKey( VK_F2, {|| ::oController:AppendLine() } )
-   ::oDialog:AddFastKey( VK_F4, {|| ::oController:DeleteLine() } )
-   ::oDialog:AddFastKey( VK_F5, {|| ::oDialog:end( IDOK ) } )
+   end if
 
    // evento bstart-----------------------------------------------------------
 

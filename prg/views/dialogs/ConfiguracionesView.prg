@@ -98,18 +98,13 @@ METHOD Activate()
       ::oCol:bStrData         := {|| hGet( ::oBrw:aArrayData[ ::oBrw:nArrayAt ], "valor" ) }
       ::oCol:nWidth           := 300
 
-   REDEFINE BUTTON   ;
-      ID             IDOK ;
-      OF             ::oDialog ;
-      ACTION         ( ::oDialog:End( IDOK ) )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   REDEFINE BUTTON   ;
-      ID             IDCANCEL ;
-      OF             ::oDialog ;
-      CANCEL ;
-      ACTION         ( ::oDialog:End( IDCANCEL ) )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-      ::oDialog:AddFastKey( VK_F5, {|| ::oDialog:End( IDOK ) } )
+   if ::oController:isNotZoomMode() 
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+   end if
 
       ::oDialog:bStart        := {|| ::changeBrowse() }
 
