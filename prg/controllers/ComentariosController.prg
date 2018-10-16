@@ -218,12 +218,14 @@ METHOD Activate() CLASS ComentariosView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+
    if ::oController:isNotZoomMode() 
    
       ::oDialog:bKeyDown   := <| nKey |  
          do case         
             case nKey == VK_F5
-               if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), )
+               if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), )
             case nKey == VK_F2
                ::oController:getComentariosLineasController():Append()
             case nKey == VK_F3

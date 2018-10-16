@@ -746,6 +746,8 @@ METHOD Activate() CLASS UsuariosView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::saveView(), ) }
+
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::saveView(), ) }
    end if

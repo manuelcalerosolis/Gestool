@@ -312,11 +312,11 @@ RETURN ( ::oDialog:nResult )
 
 METHOD initActivate()
 
-   ::oDialog:AddFastKey( VK_F5, {|| eval( ::oBtnOk:bAction ) } )
+   /*::oDialog:AddFastKey( VK_F5, {|| eval( ::oBtnOk:bAction ) } )
 
    ::oDialog:AddFastKey( VK_F6, {|| eval( ::oBtnOkAndNew:bAction ) } )
 
-   ::oDialog:AddFastKey( VK_F7, {|| eval( ::oBtnSerie:bAction ) } )
+   ::oDialog:AddFastKey( VK_F7, {|| eval( ::oBtnSerie:bAction ) } )*/
 
    ::EdtRecMenu()
 

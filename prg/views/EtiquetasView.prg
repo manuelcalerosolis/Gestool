@@ -74,6 +74,8 @@ METHOD Activate()
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, oBtnOk:Click(), ) }
+
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), oBtnOk:Click(), ) }
    end if
@@ -119,16 +121,10 @@ METHOD buildSQLBrowse( title, aSelectedItems )
 
       ::oController:setAllSelectedNode( aSelectedItems ) 
 
-      REDEFINE BUTTON ;
-         ID          IDOK ;
-         OF          oDlg ;
-         ACTION      ( ::oController:validBrowse( oDlg, oTree ) )
+      ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-      REDEFINE BUTTON ;
-         ID          IDCANCEL ;
-         OF          oDlg ;
-         CANCEL ;
-         ACTION      ( oDlg:end() )
+      ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+      
 
       REDEFINE BUTTON ;
          ID          500 ;

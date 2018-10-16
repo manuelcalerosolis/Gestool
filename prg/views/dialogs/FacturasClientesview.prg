@@ -185,11 +185,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:getFacturasClientesLineasController():AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
 
-   TBtnBmp():ReDefine( 502, "edit16",,,,, {|| ::oController:getFacturasClientesLineasController():Edit() }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
+   TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::oController:getFacturasClientesLineasController():Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
 
-   TBtnBmp():ReDefine( 503, "del16",,,,, {|| ::oController:getFacturasClientesLineasController():Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
-
-   TBtnBmp():ReDefine( 504, "refresh16",,,,, {|| ::oController:getFacturasClientesLineasController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 503, "refresh16",,,,, {|| ::oController:getFacturasClientesLineasController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
 
    ::oController:getFacturasClientesLineasController():Activate( 500, ::oFolder:aDialogs[1] )
 
@@ -197,11 +195,9 @@ METHOD Activate() CLASS FacturasClientesView
 
    TBtnBmp():ReDefine( 601, "new16",,,,, {|| ::oController:getFacturasClientesDescuentosController():AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
 
-   TBtnBmp():ReDefine( 602, "edit16",,,,, {|| MsgInfo( "Editar Descuentos" ) }, ::oFolder:aDialogs[1], .f., , .f., "Modificar línea" )
+   TBtnBmp():ReDefine( 602, "del16",,,,, {|| ::oController:getFacturasClientesDescuentosController():Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
 
-   TBtnBmp():ReDefine( 603, "del16",,,,, {|| ::oController:getFacturasClientesDescuentosController():Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
-
-   TBtnBmp():ReDefine( 604, "refresh16",,,,, {|| ::oController:getFacturasClientesDescuentosController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
+   TBtnBmp():ReDefine( 603, "refresh16",,,,, {|| ::oController:getFacturasClientesDescuentosController():refreshRowSet() }, ::oFolder:aDialogs[1], .f., , .f., "Recargar líneas" )
 
    ::oController:getFacturasClientesDescuentosController():Activate( 600, ::oFolder:aDialogs[1] )   
 
@@ -210,6 +206,8 @@ METHOD Activate() CLASS FacturasClientesView
    ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oFolder:aDialogs ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
 
    if ::oController:isNotZoomMode() 
    
