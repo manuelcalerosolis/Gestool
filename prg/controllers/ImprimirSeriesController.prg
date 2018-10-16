@@ -105,6 +105,10 @@ METHOD createReport( hGenerate ) CLASS ImprimirSeriesController
       ::oReport:setPdfFileName( hget( hGenerate, "pdfFileName" ) )
    end if 
 
+   if hhaskey( hGenerate, "pdfFileName" )
+      ::oReport:setPdfFileName( hget( hGenerate, "pdfFileName" ) )
+   end if 
+
 RETURN ( ::oReport )
 
 //---------------------------------------------------------------------------//

@@ -26,13 +26,17 @@ CLASS SQLBaseReport
 
    DATA cDevice                           INIT IS_SCREEN
 
-   DATA cDefaultPath                      INIT ( cPatTmp() )
+   DATA cPdfDefaultPath                   INIT ( cPatTmp() )
 
    DATA cPdfFileName                      INIT ( 'Doc' + trimedSeconds() + '.pdf' )
+
+   DATA lPdfOpenAfterExport               INIT .t.
 
    METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   METHOD createReport( hReport ) 
 
    METHOD getController()                 INLINE ( ::oController )
 
@@ -61,13 +65,20 @@ CLASS SQLBaseReport
    METHOD setDevice( cDevice )            INLINE ( ::cDevice := cDevice )
    METHOD getDevice()                     INLINE ( ::cDevice )
 
-   METHOD setDefaultPath( cDefaultPath )  INLINE ( ::cDefaultPath := cDefaultPath )
-   METHOD getDefaultPath()                INLINE ( alltrim( ::cDefaultPath ) )
+   // PDF methods--------------------------------------------------------------
+
+   METHOD setPdfDefaultPath( cPath )      INLINE ( ::cPdfDefaultPath := cPath )
+   METHOD getPdfDefaultPath()             INLINE ( alltrim( ::cPdfDefaultPath ) )
 
    METHOD setPdfFileName( cPdfFileName )  INLINE ( ::cPdfFileName := cPdfFileName + if( ( ".pdf" $ lower( cPdfFileName ) ), "", ".pdf" ) )
    METHOD getPdfFileName()                INLINE ( alltrim( ::cPdfFileName ) )
 
    METHOD getFullPathPdfFileName()        INLINE ( ::getDefaultPath() + ::getPdfFileName() )
+
+   METHOD setPdfOpenAfterExport( lPdf )   INLINE ( ::lPdfOpenAfterExport := lPdf )
+   METHOD getPdfOpenAfterExport()         INLINE ( ::lPdfOpenAfterExport )
+
+   // Others-------------------------------------------------------------------
 
    METHOD getIds()                        INLINE ( iif( !empty( ::oController ), ::oController:getIds(), {} ) )
 
@@ -79,9 +90,9 @@ CLASS SQLBaseReport
 
    METHOD isLoad()
 
-   METHOD Create()
+   METHOD CreateFile()
 
-   METHOD Save()
+   METHOD SaveFile()
 
    METHOD buildRowSet()                   VIRTUAL
    
@@ -103,6 +114,47 @@ METHOD End()
 
    ::oEvents:End()
    
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD createReport( hReport ) 
+
+   if !( hhaskey( hReport, "device" ) )
+      msgAlert( "Falta del device" )
+      RETURN ( nil )
+   end if 
+
+   ::createFastReport()
+
+   ::setDirectory( ::getDirectory() )
+
+   ::setDevice( hget( hReport, "device" ) )
+
+   if ( hhaskey( hReport, "fileName" ) )
+      ::setFileName( hget( hReport, "fileName" ) )
+   end if 
+
+   if hhaskey( hReport, "copies" )
+      ::setCopies( hget( hReport, "copies" ) )
+   end if 
+
+   if hhaskey( hReport, "printer" )
+      ::setPrinter( hget( hReport, "printer" ) )
+   end if 
+
+   if hhaskey( hReport, "pdfOpenAfterExport" )
+      ::setPdfOpenAfterExport( hget( hReport, "pdfOpenAfterExport" ) )
+   end if 
+   
+   if hhaskey( hReport, "pdfDefaultPath" )
+      ::setPdfDefaultPath( hget( hReport, "pdfDefaultPath" ) )
+   end if 
+
+   if hhaskey( hReport, "pdfFileName" )
+      ::setPdfFileName( hget( hReport, "pdfFileName" ) )
+   end if 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -160,7 +212,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD Create()
+METHOD CreateFile()
 
    ::oFastReport:SetProperty(     "Report",            "ScriptLanguage",   "PascalScript" )
 
@@ -188,7 +240,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD Save()
+METHOD SaveFile()
 
    if !isDirectory( ::getDirectory() )
       makeDir( ::getDirectory() )
@@ -235,19 +287,19 @@ METHOD Show()
          ::oEvents:fire( "generatingPdf" )
 
          ::oFastReport:SetProperty(  "PDFExport", "ShowDialog",       .f. )
-         ::oFastReport:SetProperty(  "PDFExport", "DefaultPath",      ::cDefaultPath )
-         ::oFastReport:SetProperty(  "PDFExport", "FileName",         ::cPdfFileName )
+         ::oFastReport:SetProperty(  "PDFExport", "DefaultPath",      ::getPdfDefaultPat() )
+         ::oFastReport:SetProperty(  "PDFExport", "FileName",         ::getPdfFileName() )
          ::oFastReport:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
          ::oFastReport:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
          ::oFastReport:SetProperty(  "PDFExport", "Outline",          .t. )
-         ::oFastReport:SetProperty(  "PDFExport", "OpenAfterExport",  .t. )
+         ::oFastReport:SetProperty(  "PDFExport", "OpenAfterExport",  ::getPdfOpenAfterExport() )
          ::oFastReport:DoExport(     "PDFExport" )
 
          ::oEvents:fire( "generatedPdf" )
 
    end case
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -259,7 +311,7 @@ METHOD Design()
 
    ::oEvents:fire( "designed" )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -277,6 +329,6 @@ METHOD loadDocuments()
 
    ::getDialogView():oListboxFile:goTop()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
