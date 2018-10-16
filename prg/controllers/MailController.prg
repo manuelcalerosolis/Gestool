@@ -65,6 +65,8 @@ CLASS MailController
 
    METHOD getSubjectToSend( uuid )     INLINE ( if( ::isMultiMails(), ::getSubject( uuid ), ::getDialogView():getAsunto() ) )
 
+   METHOD getAttachmentsToSend()       
+
    METHOD Send()
 
    METHOD generatePdf( uuid, cDocumentPdf ) 
@@ -121,14 +123,39 @@ METHOD Send()
 
       ::generatePdf( uuidIdentifier, ::getDialogView():getComboDocument() )
 
-      hset( hMail, "mail",    ::getMailToSend( uuidIdentifier ) )
-      hset( hMail, "subject", ::getSubjectToSend( uuidIdentifier ) )
+      hset( hMail, "mail",          ::getMailToSend( uuidIdentifier ) )
+      hset( hMail, "subject",       ::getSubjectToSend( uuidIdentifier ) )
+      hset( hMail, "attachments",   ::getAttachmentsToSend() )
+      hSet( hMail, "mailcc",        ::getDialogView():getCopia() )
+      hSet( hMail, "mailcco",       ::getDialogView():getCopiaOculta() )
+      
+      /*
+      hSet( hashDatabaseList, "message", ::getMessageHTML() )
+      hSet( hashDatabaseList, "postSend", ::getPostSend() )
+      hSet( hashDatabaseList, "postError", ::getPostError() )
+      hSet( hashDatabaseList, "cargo", ::getCargo() )
+      */
+
+      sysRefresh()
 
       ::getMailSender():Send( hMail )
       
    next
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getAttachmentsToSend()
+
+   local cAttachments   := ::getController():getReport():getFullPathPdfFileName()
+
+   if !empty( ::getDialogView():getAdjunto() )
+      cAttachments      += "; "
+      cAttachments      += ::getDialogView():getAdjunto()
+   end if 
+
+RETURN ( cAttachments )
 
 //---------------------------------------------------------------------------//
 
@@ -141,9 +168,9 @@ METHOD generatePdf( uuid, cDocumentPdf ) CLASS MailController
    hset( hReport, "fileName",             cDocumentPdf )
    hset( hReport, "pdfFileName",          ::getController():getModel():getNumeroWhereUuid( uuid ) )
    hset( hReport, "pdfDefaultPath",       cPatTmp() )
-   hset( hReport, "pdfOpenAfterExport",   .f. )
+   hset( hReport, "pdfOpenAfterExport",   .t. )
 
-RETURN ( ::getController():createReport( hReport ) )
+RETURN ( ::getController():getReport():Generate( hReport ) )
 
 //---------------------------------------------------------------------------//
 
@@ -318,8 +345,18 @@ CLASS MailView FROM SQLBaseView
    METHOD setMail( cMail )       INLINE ( ::oMail:cText( padr( cMail, 250 ) ) )
    METHOD getMail()              INLINE ( alltrim( ::cMail ) )
 
+   METHOD setCopia( cCopia )     INLINE ( ::oCopia:cText( padr( cCopia, 250 ) ) )
+   METHOD getCopia()             INLINE ( alltrim( ::cCopia ) )
+
+   METHOD setCopiaOculta( cCopiaOculta ) INLINE ( ::oCopiaOculta:cText( padr( cCopiaOculta, 250 ) ) )
+   METHOD getCopiaOculta()       INLINE ( alltrim( ::cCopiaOculta ) )
+
    METHOD setAsunto( cAsunto )   INLINE ( ::oAsunto:cText( padr( cAsunto, 250 ) ) )
    METHOD getAsunto()            INLINE ( alltrim( ::cAsunto ) )
+
+   METHOD setAdjunto( cAdjunto ) INLINE ( ::oAdjunto:cText( padr( cAdjunto, 250 ) ) )
+   METHOD getAdjunto()           INLINE ( alltrim( ::cAdjunto ) )
+   METHOD addAjunto() 
 
    METHOD getComboDocument()     INLINE ( ::cComboDocument )
 
@@ -382,6 +419,9 @@ METHOD Activate() CLASS MailView
       VAR            ::cAdjunto ;
       ID             150 ;
       OF             ::oFld:aDialogs[ 1 ]
+
+   ::oAdjunto:cBmp   := "Folder"
+   ::oAdjunto:bHelp  := {|| ::addAjunto() }
 
    REDEFINE COMBOBOX ::oComboDocument ;
       VAR            ::cComboDocument ;
@@ -492,6 +532,18 @@ METHOD runActivate() CLASS MailView
    ::oFld:GoNext()
 
    ::getController():Send()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD addAjunto() CLASS MailView
+
+   local cFile    := cGetFile( 'Fichero ( *.* ) | *.*', 'Seleccione el fichero a adjuntar' )
+
+   if !empty( cFile )
+      ::oAdjunto:cText( alltrim( ::cAdjunto ) + cFile + "; " )
+   end if 
 
 RETURN ( nil )
 

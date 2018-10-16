@@ -38,6 +38,8 @@ CLASS SQLBaseReport
 
    METHOD createReport( hReport ) 
 
+   METHOD Generate( hReport ) 
+
    METHOD getController()                 INLINE ( ::oController )
 
    METHOD createFastReport()
@@ -46,7 +48,7 @@ CLASS SQLBaseReport
    METHOD getFastReport()                 INLINE ( ::oFastReport )
 
    METHOD setDirectory( cDirectory )      INLINE ( ::cDirectory := cDirectory )
-   METHOD getDirectory()                  INLINE ( alltrim( ::cDirectory ) )
+   METHOD getDirectory()                  INLINE ( if( empty( ::cDirectory ), Company():getPathDocuments( ::getController():cName ), ::cDirectory ) )
 
    METHOD setFileName( cFileName )        INLINE ( ::cFileName := cFileName )
    METHOD getFileName()                   INLINE ( alltrim( ::cFileName ) )
@@ -73,7 +75,7 @@ CLASS SQLBaseReport
    METHOD setPdfFileName( cPdfFileName )  INLINE ( ::cPdfFileName := cPdfFileName + if( ( ".pdf" $ lower( cPdfFileName ) ), "", ".pdf" ) )
    METHOD getPdfFileName()                INLINE ( alltrim( ::cPdfFileName ) )
 
-   METHOD getFullPathPdfFileName()        INLINE ( ::getDefaultPath() + ::getPdfFileName() )
+   METHOD getFullPathPdfFileName()        INLINE ( ::getPdfDefaultPath() + ::getPdfFileName() )
 
    METHOD setPdfOpenAfterExport( lPdf )   INLINE ( ::lPdfOpenAfterExport := lPdf )
    METHOD getPdfOpenAfterExport()         INLINE ( ::lPdfOpenAfterExport )
@@ -95,6 +97,8 @@ CLASS SQLBaseReport
    METHOD SaveFile()
 
    METHOD buildRowSet()                   VIRTUAL
+
+   METHOD freeRowSet()                    VIRTUAL
    
 END CLASS
 
@@ -126,8 +130,6 @@ METHOD createReport( hReport )
    end if 
 
    ::createFastReport()
-
-   ::setDirectory( ::getDirectory() )
 
    ::setDevice( hget( hReport, "device" ) )
 
@@ -187,13 +189,13 @@ RETURN ( Self )
 
 METHOD isLoad()
 
-   if empty( ::cDirectory )
-      msgStop( "El directorio " + ::cDirectory + " está vacío." )
+   if empty( ::getDirectory() )
+      msgStop( "El directorio " + ::getDirectory() + " está vacío." )
       RETURN ( .f. )
    end if 
 
-   if empty( ::cFileName )
-      msgStop( "El fichero " + ::cFileName + " está vacío." )
+   if empty( ::getFileName() )
+      msgStop( "El fichero " + ::getFileName() + " está vacío." )
       RETURN ( .f. )
    end if 
 
@@ -287,7 +289,7 @@ METHOD Show()
          ::oEvents:fire( "generatingPdf" )
 
          ::oFastReport:SetProperty(  "PDFExport", "ShowDialog",       .f. )
-         ::oFastReport:SetProperty(  "PDFExport", "DefaultPath",      ::getPdfDefaultPat() )
+         ::oFastReport:SetProperty(  "PDFExport", "DefaultPath",      ::getPdfDefaultPath() )
          ::oFastReport:SetProperty(  "PDFExport", "FileName",         ::getPdfFileName() )
          ::oFastReport:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
          ::oFastReport:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
@@ -332,3 +334,35 @@ METHOD loadDocuments()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD Generate( hReport ) 
+
+   local uuid
+
+   if !( hhaskey( hReport, "uuid" ) )
+      msgStop( "No existe un uuid" )
+      RETURN ( nil )
+   end if 
+
+   uuid     := hget( hReport, "uuid" ) 
+
+   ::createReport( hReport )
+
+   ::buildRowSet( uuid )
+
+   ::setUserDataSet()
+
+   if ::isLoad()
+
+      ::Show()
+
+   end if 
+   
+   ::freeRowSet()
+   
+   ::DestroyFastReport()
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+

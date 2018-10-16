@@ -54,7 +54,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD getPrintCopy()               INLINE ( ::getConfiguracionesController():getModelNumeric( ::cName, 'copias_impresion', 1 ) )
 
-   METHOD createReport( hReport )      INLINE ( ::getReport():createReport( hReport ) )
+   METHOD generateReport( hReport )    INLINE ( ::getReport():Generate( hReport ) )
 
    METHOD getSubject()                 INLINE ( "Factura de cliente número" )
 
