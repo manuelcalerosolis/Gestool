@@ -24,6 +24,8 @@ CLASS ImprimirSeriesController FROM SQLPrintController
    METHOD pdfDocument( cFileName, nCopies ) ;
                                        INLINE ( ::showDocument( IS_PDF, cFileName, nCopies ) )
 
+   METHOD generateDocument( hGenerate )
+
    METHOD newDocument()
 
    METHOD editDocument()
@@ -44,7 +46,7 @@ CLASS ImprimirSeriesController FROM SQLPrintController
 
    METHOD loadReportAndDesign()
 
-   METHOD freeRowSet()                 INLINE( ::oReport:freeRowSet() )
+   METHOD freeRowSet()                 INLINE ( ::oReport:freeRowSet() )
 
    METHOD destroyReport()
 

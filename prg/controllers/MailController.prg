@@ -53,11 +53,7 @@ CLASS MailController
 
    METHOD getMail( uuid )              INLINE ( ::getController():getRepository():getClientMailWhereFacturaUuid( uuid ) )
 
-<<<<<<< HEAD
    METHOD getSelectedMail()            INLINE ( ::getMail( afirst( ::getUuidIdentifiers() ) ) )
-=======
-   METHOD getSelectedMail()            INLINE ( ::getMail( afirst( ::oController:getUuidIdentifiers() ) ) )
->>>>>>> b00877e4b68deb3abd7083973545eee0ef732e50
 
    METHOD getMailToSend( uuid )        INLINE ( if( ::isMultiMails(), ::getMail( uuid ), ::getDialogView():getMail() ) )
 
@@ -71,10 +67,7 @@ CLASS MailController
 
    METHOD Send()
 
-   METHOD generatePdf( uuid, cDocumentPdf ) INLINE ;
-                                       ( ::oController:generatePdf( uuid, cDocumentPdf ) )
-
-   getFullPathPdfFileName                                       
+   METHOD generatePdf( uuid, cDocumentPdf ) 
 
    // Construcciones tardias---------------------------------------------------
 
@@ -128,7 +121,7 @@ METHOD Send()
 
       ::generatePdf( uuidIdentifier, ::getDialogView():getComboDocument() )
 
-      hset( hMail, "mail",    ::getMailToSend() )
+      hset( hMail, "mail",    ::getMailToSend( uuidIdentifier ) )
       hset( hMail, "subject", ::getSubjectToSend( uuidIdentifier ) )
 
       ::getMailSender():Send( hMail )
@@ -136,6 +129,20 @@ METHOD Send()
    next
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD generatePdf( uuid, cDocumentPdf ) CLASS MailController
+
+   local hGenerate   := {=>}
+
+   hset( hGenerate,  "uuid",              uuid )
+   hset( hGenerate,  "device",            IS_PDF )
+   hset( hGenerate,  "fileName",          cDocumentPdf )
+   hset( hGenerate,  "pdfDefaultPath",    cPatTmp() )
+   hset( hGenerate,  "pdfFileName",       ::getController():getModel():getNumeroWhereUuid( uuid ) )
+
+RETURN ( ::oController:generatePdf( hGenerate ) )
 
 //---------------------------------------------------------------------------//
 
@@ -266,7 +273,7 @@ CLASS MailView FROM SQLBaseView
    DATA cRemitente            INIT space( 250 )
 
    DATA oMail
-   DATA cMail             INIT space( 250 )
+   DATA cMail                 INIT space( 250 )
 
    DATA oCopia
    DATA cCopia                INIT space( 250 )
