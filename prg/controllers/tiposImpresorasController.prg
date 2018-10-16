@@ -161,12 +161,14 @@ METHOD Activate() CLASS TiposImpresorasView
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          oDlg
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| oDlg:end() }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+
+   oDlg:bKeyDown   := {| nKey | if( nKey == VK_F5, oDlg:end( IDOK ), ) }
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+      oDlg:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( oDlg ), oDlg:end( IDOK ), ) }
    end if
 
    // evento bstart-----------------------------------------------------------

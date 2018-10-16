@@ -211,6 +211,8 @@ METHOD Activate() CLASS FacturasClientesView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+
    if ::oController:isNotZoomMode() 
    
       ::oDialog:bKeyDown   := <| nKey |  

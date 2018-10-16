@@ -41,7 +41,7 @@ CLASS SQLBaseValidator
    METHOD Required()
    METHOD RequiredOrEmpty( uValue )
 
-   METHOD getUniqueSenctence( uValue )
+   METHOD getUniqueSentence( uValue )
    METHOD Unique()
 
    METHOD Exist()
@@ -182,7 +182,7 @@ RETURN ( ::Required( uValue ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getUniqueSenctence( uValue )
+METHOD getUniqueSentence( uValue )
 
    local id
    local cSQLSentence
@@ -202,9 +202,9 @@ RETURN ( cSQLSentence )
 METHOD Unique( uValue )
 
    local nCount
-   local cSQLSentence   := ::getUniqueSenctence( uValue )
+   local cSQLSentence   := ::getUniqueSentence( uValue )
 
-   nCount               := getSQLDatabase():getValue( cSQLSentence )
+   nCount               := getSQLDatabase():getValue( cSQLSentence, 0 )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount == 0 )
 
@@ -218,7 +218,7 @@ METHOD Exist( uValue )
    cSQLSentence         := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + " "
    cSQLSentence         +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
-   nCount               := getSQLDatabase():getValue( cSQLSentence )
+   nCount               := getSQLDatabase():getValue( cSQLSentence, 0 )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 
@@ -236,7 +236,7 @@ METHOD EmptyOrExist( uValue )
    cSQLSentence         := "SELECT COUNT(*) FROM " + ::oController:getModelTableName() + space( 1 )
    cSQLSentence         +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )
 
-   nCount               := getSQLDatabase():getValue( cSQLSentence )
+   nCount               := getSQLDatabase():getValue( cSQLSentence, 0 )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 
@@ -358,7 +358,7 @@ RETURN ( .t. )
 
 CLASS SQLCompanyValidator FROM SQLBaseValidator
 
-   METHOD getUniqueSenctence( uValue )
+   METHOD getUniqueSentence( uValue )
 
    METHOD Exist( uValue )
 
@@ -366,14 +366,13 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getUniqueSenctence( uValue ) CLASS SQLCompanyValidator
+METHOD getUniqueSentence( uValue ) CLASS SQLCompanyValidator
 
    local id
    local cSQLSentence
 
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
-   cSQLSentence      +=    "AND empresa_codigo = " + quoted( Company():Codigo() )         + space( 1 ) 
 
    id                := ::oController:getModelBufferColumnKey()
    if !empty( id )
@@ -391,9 +390,8 @@ METHOD Exist( uValue ) CLASS SQLCompanyValidator
 
    cSQLSentence      := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
-   cSQLSentence      +=    "AND empresa_codigo = " + quoted( Company():Codigo() )              
 
-   nCount            := getSQLDatabase():getValue( cSQLSentence )
+   nCount            := getSQLDatabase():getValue( cSQLSentence, 0 )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 
@@ -406,7 +404,7 @@ RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 
 CLASS SQLParentValidator FROM SQLBaseValidator
 
-   METHOD getUniqueSenctence( uValue )
+   METHOD getUniqueSentence( uValue )
 
    METHOD Exist( uValue )
 
@@ -416,7 +414,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getUniqueSenctence( uValue ) CLASS SQLParentValidator
+METHOD getUniqueSentence( uValue ) CLASS SQLParentValidator
 
    local id
    local cSQLSentence
@@ -443,7 +441,7 @@ METHOD Exist( uValue ) CLASS SQLParentValidator
    cSQLSentence      +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
    cSQLSentence      +=    "AND parent_uuid = " + quoted( ::getSenderControllerUuid() )   + space( 1 ) 
 
-   nCount            := getSQLDatabase():getValue( cSQLSentence )
+   nCount            := getSQLDatabase():getValue( cSQLSentence, 0 )
 
 RETURN ( hb_isnumeric( nCount ) .and. nCount != 0 )
 

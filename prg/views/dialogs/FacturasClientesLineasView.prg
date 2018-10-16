@@ -302,6 +302,22 @@ METHOD Activate()
          OF          ::oDialog ;
          ACTION      ( ::oDialog:end() ) 
 
+   if ::oController:isNotZoomMode() 
+   
+      ::oDialog:bKeyDown   := <| nKey |  
+         do case         
+            case nKey == VK_F5
+               eval( ::oBtnOk:bAction )
+            case nKey == VK_F6
+               eval( ::oBtnOkAndNew:bAction )
+            case nKey == VK_F7
+               eval( ::oBtnSerie:bAction )
+         end 
+         RETURN ( 0 )
+         >
+
+   end if
+
    ::oDialog:bStart  := {|| ::oController:onActivateDialog() }
 
    ::oDialog:Activate( , , , .t., , , {|| ::initActivate() } ) 
@@ -312,11 +328,11 @@ RETURN ( ::oDialog:nResult )
 
 METHOD initActivate()
 
-   ::oDialog:AddFastKey( VK_F5, {|| eval( ::oBtnOk:bAction ) } )
+   /*::oDialog:AddFastKey( VK_F5, {|| eval( ::oBtnOk:bAction ) } )
 
    ::oDialog:AddFastKey( VK_F6, {|| eval( ::oBtnOkAndNew:bAction ) } )
 
-   ::oDialog:AddFastKey( VK_F7, {|| eval( ::oBtnSerie:bAction ) } )
+   ::oDialog:AddFastKey( VK_F7, {|| eval( ::oBtnSerie:bAction ) } )*/
 
    ::EdtRecMenu()
 

@@ -90,9 +90,21 @@ METHOD createButtonsLine( oLineasController, oSQLBrowseView )
       ::oBtnDelete         := TDotNetButton():New( 60, oGrupo, "del32",             "Eliminar [F4]",  4, {|| oLineasController:Delete() }, , , .f., .f., .f. )
                               TDotNetButton():New( 60, oGrupo, "gc_binocular_32",   "Buscar",         5, {|| oLineasController:Search() }, , , .f., .f., .f. )
 
-      ::getDialog():addFastKey( VK_F2, {|| ::oBtnAppend:Action() } )
+   
+      ::getDialog():bKeyDown   := <| nKey |  
+         do case         
+            case nKey == VK_F2
+               ::oBtnAppend:Action()
+            case nKey == VK_F3
+               ::oBtnEdit:Action()
+            case nKey == VK_F4
+               ::oBtnDelete:Action()
+         end 
+         RETURN ( 0 )
+         >
+      /*::getDialog(): addFastKey( VK_F2, {|| ::oBtnAppend:Action() } )
       ::getDialog():addFastKey( VK_F3, {|| ::oBtnEdit:Action() } )
-      ::getDialog():addFastKey( VK_F4, {|| ::oBtnDelete:Action() } )
+      ::getDialog():addFastKey( VK_F4, {|| ::oBtnDelete:Action() } )*/
 
    else 
 

@@ -389,9 +389,11 @@ METHOD Activate() CLASS RolesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-      ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::save(), ) }
 
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::save(), ) }

@@ -189,7 +189,7 @@ METHOD addColumns() CLASS RecibosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -380,7 +380,7 @@ METHOD StartActivate() CLASS RecibosView
 
 ::oController:getAgentesController():getSelector():Start()
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
