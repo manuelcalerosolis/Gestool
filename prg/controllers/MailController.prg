@@ -134,15 +134,16 @@ RETURN ( nil )
 
 METHOD generatePdf( uuid, cDocumentPdf ) CLASS MailController
 
-   local hGenerate   := {=>}
+   local hReport  := {=>}
 
-   hset( hGenerate,  "uuid",              uuid )
-   hset( hGenerate,  "device",            IS_PDF )
-   hset( hGenerate,  "fileName",          cDocumentPdf )
-   hset( hGenerate,  "pdfDefaultPath",    cPatTmp() )
-   hset( hGenerate,  "pdfFileName",       ::getController():getModel():getNumeroWhereUuid( uuid ) )
+   hset( hReport, "uuid",                 uuid )
+   hset( hReport, "device",               IS_PDF )
+   hset( hReport, "fileName",             cDocumentPdf )
+   hset( hReport, "pdfFileName",          ::getController():getModel():getNumeroWhereUuid( uuid ) )
+   hset( hReport, "pdfDefaultPath",       cPatTmp() )
+   hset( hReport, "pdfOpenAfterExport",   .f. )
 
-RETURN ( ::oController:generatePdf( hGenerate ) )
+RETURN ( ::getController():createReport( hReport ) )
 
 //---------------------------------------------------------------------------//
 

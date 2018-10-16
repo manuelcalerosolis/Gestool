@@ -50,10 +50,6 @@ METHOD New( oController )
 
    ::Super:New( oController )
 
-   ::getFacturasClientesModel()
-
-   ::getFacturasClientesLineasModel()
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -68,6 +64,8 @@ METHOD End()
       ::oFacturasClientesLineasModel:End()
    end if
 
+   ::freeRowSet()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -75,12 +73,12 @@ RETURN ( nil )
 METHOD buidSentenceAndRowsetFacturasClientes( uuid )
 
    if empty( uuid )
-      ::oFacturasClientesModel:setLimit( 1 )
+      ::getFacturasClientesModel():setLimit( 1 )
    else
-      ::oFacturasClientesModel:setGeneralWhere( "facturas_clientes.uuid = " + quoted( uuid ) )
+      ::getFacturasClientesModel():setGeneralWhere( "facturas_clientes.uuid = " + quoted( uuid ) )
    end if 
 
-   ::oFacturasClientesRowSet:Build( ::oFacturasClientesModel:getGeneralSelect() )
+   ::getFacturasClientesRowSet():Build( ::getFacturasClientesModel():getGeneralSelect() )
 
 RETURN ( nil )
 
@@ -88,9 +86,9 @@ RETURN ( nil )
 
 METHOD buidSentenceAndRowsetFacturasClientesLineas( uuid )
 
-   ::oFacturasClientesLineasModel:setGeneralWhere( "facturas_clientes_lineas.parent_uuid = " + quoted( uuid ) )
+   ::getFacturasClientesLineasModel():setGeneralWhere( "facturas_clientes_lineas.parent_uuid = " + quoted( uuid ) )
    
-   ::oFacturasClientesLineasRowSet:Build( ::oFacturasClientesLineasModel:getGeneralSelect() )
+   ::getFacturasClientesLineasRowSet():Build( ::getFacturasClientesLineasModel():getGeneralSelect() )
 
 RETURN ( nil )
 
@@ -131,7 +129,7 @@ METHOD setUserDataSet()
    ::oFastReport:ClearDataSets()
 
    ::oFastReport:setUserDataSet(    "Facturas de clientes",;
-                                    SQLFacturasClientesModel():getSerializeColumnsSelect(),;
+                                    ::getFacturasClientesModel():getSerializeColumnsSelect(),;
                                     {|| ::oFacturasClientesRowSet:gotop() },;
                                     {|| ::oFacturasClientesRowSet:skip( 1 ) },;
                                     {|| ::oFacturasClientesRowSet:skip( -1 ) },;
@@ -139,7 +137,7 @@ METHOD setUserDataSet()
                                     {|cField| ::oFacturasClientesRowSet:fieldGet( cField ) } )
 
    ::oFastReport:setUserDataSet(   "Líneas de facturas de clientes",;
-                                    SQLFacturasClientesLineasModel():getSerializeColumnsSelect(),;
+                                    ::getFacturasClientesLineasModel():getSerializeColumnsSelect(),;
                                     {|| ::oFacturasClientesLineasRowSet:gotop() },;
                                     {|| ::oFacturasClientesLineasRowSet:skip( 1 ) },;
                                     {|| ::oFacturasClientesLineasRowSet:skip( -1 ) },;
