@@ -25,7 +25,7 @@ METHOD New( nView ) CLASS TGenMailingClientes
 
    ::oSendMail       := TSendMail():New( Self )
 
-   ::oTemplateHtml   := TTemplatesHtml():New( Self )
+   ::oTemplateHtml   := TemplateHtml():New( Self )
 
    ::oFilter         := TFilterCreator():Init( Self )   
    ::oFilter:SetFields( aItmCli() )
@@ -54,7 +54,7 @@ METHOD New( dbfProveedores ) CLASS TGenMailingProveedores
 
    ::oSendMail       := TSendMail():New( Self )
 
-   ::oTemplateHtml   := TTemplatesHtml():New( Self )
+   ::oTemplateHtml   := TemplateHtml():New( Self )
 
    ::oFilter         := TFilterCreator():Init( Self )   
    ::oFilter:SetFields( aItmPrv() )

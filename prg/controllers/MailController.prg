@@ -15,6 +15,8 @@ CLASS MailController
 
    DATA oMailSender
 
+   DATA oTemplateHtml
+
    DATA cTypeDocument
 
    DATA cHtmlFile
@@ -22,18 +24,6 @@ CLASS MailController
    METHOD New() CONSTRUCTOR
 
    METHOD End()
-
-   METHOD selectHtmlFile()
-
-   METHOD loadDefaultHtmlFile()
-
-   METHOD loadHtmlFile( cFile )
-
-   METHOD setFileDefaultHtml( cFile )
-   
-   METHOD saveAsHtml()
-   
-   METHOD saveHTML()
 
    METHOD getController()              INLINE ( ::oController )
 
@@ -65,9 +55,13 @@ CLASS MailController
 
    METHOD getSubjectToSend( uuid )     INLINE ( if( ::isMultiMails(), ::getSubject( uuid ), ::getDialogView():getAsunto() ) )
 
+   METHOD getMessageHTMLToSend()       INLINE ( "<HTML>" + strtran( alltrim( ::getDialogView():getMensaje() ), CRLF, "<p>" ) + "</HTML>" )
+
    METHOD getAttachmentsToSend()       
 
    METHOD Send()
+
+   METHOD getMailHash() 
 
    METHOD generatePdf( uuid, cDocumentPdf ) 
 
@@ -75,6 +69,8 @@ CLASS MailController
 
    // Construcciones tardias---------------------------------------------------
 
+   METHOD getTemplateHtml()            INLINE ( if( empty( ::oTemplateHtml ), ::oTemplateHtml := TemplateHtml():New( self ), ), ::oTemplateHtml )
+   
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := MailView():New( self ), ), ::oDialogView )
 
    METHOD getValidator()               INLINE ( if( empty( ::oValidator ), ::oValidator := MailValidator():New( self ), ), ::oValidator )
@@ -115,9 +111,8 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Send()
+METHOD Send() CLASS MailController
 
-   local hMail
    local cMail
    local uuidIdentifier
 
@@ -125,32 +120,32 @@ METHOD Send()
       RETURN ( nil )
    end if 
 
-   hMail          := {=>}
-
    for each uuidIdentifier in ::getUuidIdentifiers() 
 
-      ::generatePdf( uuidIdentifier, ::getDialogView():getComboDocument() )
+      ::generatePdf( uuidIdentifier )
 
-      hset( hMail, "mail",          ::getMailToSend( uuidIdentifier ) )
-      hset( hMail, "subject",       ::getSubjectToSend( uuidIdentifier ) )
-      hset( hMail, "attachments",   ::getAttachmentsToSend() )
-      hSet( hMail, "mailcc",        ::getDialogView():getCopia() )
-      hSet( hMail, "mailcco",       ::getDialogView():getCopiaOculta() )
-      
-      /*
-      hSet( hashDatabaseList, "message", ::getMessageHTML() )
-      hSet( hashDatabaseList, "postSend", ::getPostSend() )
-      hSet( hashDatabaseList, "postError", ::getPostError() )
-      hSet( hashDatabaseList, "cargo", ::getCargo() )
-      */
-
-      ::getMailSender():Send( hMail )
+      ::getMailSender():Send( ::getMailHash( uuidIdentifier ) ) 
 
       sysRefresh()
       
    next
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getMailHash( uuidIdentifier ) CLASS MailController
+   
+   local hMail    := {=>}
+   
+   hset( hMail,   "mail",        ::getMailToSend( uuidIdentifier ) )
+   hset( hMail,   "subject",     ::getSubjectToSend( uuidIdentifier ) )
+   hset( hMail,   "attachments", ::getAttachmentsToSend() )
+   hSet( hMail,   "mailcc",      ::getDialogView():getCopia() )
+   hSet( hMail,   "mailcco",     ::getDialogView():getCopiaOculta() )
+   hSet( hMail,   "message",     ::getMessageHTMLToSend() )
+ 
+RETURN ( hMail )
 
 //---------------------------------------------------------------------------//
 
@@ -167,13 +162,13 @@ RETURN ( cAttachments )
 
 //---------------------------------------------------------------------------//
 
-METHOD generatePdf( uuid, cDocumentPdf ) CLASS MailController
+METHOD generatePdf( uuid ) CLASS MailController
 
    local hReport  := {=>}
 
    hset( hReport, "uuid",                 uuid )
    hset( hReport, "device",               IS_PDF )
-   hset( hReport, "fileName",             cDocumentPdf )
+   hset( hReport, "fileName",             ::getDialogView():getComboDocument() )
    hset( hReport, "pdfFileName",          ::getController():getModel():getNumeroWhereUuid( uuid ) )
    hset( hReport, "pdfDefaultPath",       cPatTmp() )
    hset( hReport, "pdfOpenAfterExport",   .f. )
@@ -191,123 +186,6 @@ METHOD Message( cText )
 RETURN ( nil )
 
 //--------------------------------------------------------------------------//
-
-METHOD selectHtmlFile() CLASS MailController
-
-   ::cHtmlFile    := cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML', , cPatHtml() )
-
-   if !empty( ::cHtmlFile )
-      ::loadHtmlFile( ::cHtmlFile )
-   end if 
-
-RETURN ( nil )
-
-//--------------------------------------------------------------------------//
-
-METHOD loadDefaultHtmlFile() CLASS MailController
-
-   local cFile    
-
-   if empty( ::cTypeDocument )
-      msgInfo( "No se ha especificado el tipo de documento." )
-      RETURN ( nil )
-   end if 
-
-   cFile             := cGetHtmlDocumento( ::cTypeDocument )
-   if !empty( cFile )
-      ::loadHtmlFile( cFile )
-   end if 
-
-RETURN ( nil )
-
-//--------------------------------------------------------------------------//
-
-METHOD loadHtmlFile( cFile ) CLASS MailController
-
-   local oBlock
-   local cMensaje
-   local lLoadHtmlFile  := .f.
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   ::cHtmlFile          := alltrim( cFile )
-
-   if file( ::cHtmlFile )  
-
-      cMensaje          := memoread( ::cHtmlFile )
-
-      if !empty( cMensaje )
-         ::getDialogView():setMensaje( cMensaje )
-      end if
-
-      lLoadHtmlFile     := .t.
-
-   end if
-
-   RECOVER
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lLoadHtmlFile )
-
-//--------------------------------------------------------------------------//
-
-METHOD setFileDefaultHtml( cFile ) CLASS MailController
-
-   if empty( ::cTypeDocument )
-      msgInfo( "No se ha especificado el tipo de documento." )
-      RETURN ( Self )
-   end if 
-
-   if !Empty( ::cHtmlFile )
-      if ApoloMsgNoYes( "¿Desea establecer el documento " + Rtrim( ::cHtmlFile ) + " como documento por defecto?", "Confirme" )
-         setHtmlDocumento( ::cTypeDocument, ::cHtmlFile )
-      end if
-   else
-      msgInfo( "No ha documentos para establecer por defecto" )
-   end if
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD saveAsHtml() CLASS MailController
-
-   local cHtmlFile   := cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML', , cPatHtml() )
-
-   if empty( cHtmlFile )
-      RETURN ( nil )
-   end if 
-
-   if !( lower( cFileExt( cHtmlFile ) ) $ "html" )
-      cHtmlFile      := cFilePath( cHtmlFile ) + cFileNoExt( cHtmlFile ) + ".Html"
-   endif
-
-   if file( cHtmlFile ) .and. apoloMsgNoYes( "El fichero " + cHtmlFile + " ya existe. ¿Desea sobreescribir el fichero?", "Guardar fichero" )
-      ferase( cHtmlFile )
-   end if
-
-   ::getDialogView():saveToFile( cHtmlFile )
-
-RETURN ( nil )
-
-//--------------------------------------------------------------------------//
-
-METHOD saveHTML() CLASS MailController
-
-   if empty( ::cHtmlFile )
-      RETURN ( ::saveAsHtml() )
-   end if 
-
-   ::getDialogView():saveToFile( ::cHtmlFile )
-
-RETURN ( nil )
-
-//--------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -316,29 +194,29 @@ RETURN ( nil )
 CLASS MailView FROM SQLBaseView
 
    DATA oRemitente
-   DATA cRemitente            INIT space( 250 )
+   DATA cRemitente               INIT space( 250 )
 
    DATA oMail
-   DATA cMail                 INIT space( 250 )
+   DATA cMail                    INIT space( 250 )
 
    DATA oCopia
-   DATA cCopia                INIT space( 250 )
+   DATA cCopia                   INIT space( 250 )
 
    DATA oCopiaOculta
-   DATA cCopiaOculta          INIT space( 250 )
+   DATA cCopiaOculta             INIT space( 250 )
 
    DATA oAsunto
-   DATA cAsunto               INIT space( 250 )
+   DATA cAsunto                  INIT space( 250 )
 
    DATA oAdjunto
-   DATA cAdjunto              INIT space( 250 )
+   DATA cAdjunto                 INIT space( 250 )
 
    DATA oComboDocument      
    DATA cComboDocument     
 
    DATA oRichEdit      
    DATA oMensaje      
-   DATA cMensaje              INIT space( 250 )
+   DATA cMensaje                 INIT ""
 
    DATA oBtnCargarHTML
    DATA oBtnSalvarHTML
@@ -366,7 +244,8 @@ CLASS MailView FROM SQLBaseView
    METHOD setCopia( cCopia )     INLINE ( ::oCopia:cText( padr( cCopia, 250 ) ) )
    METHOD getCopia()             INLINE ( alltrim( ::cCopia ) )
 
-   METHOD setCopiaOculta( cCopiaOculta ) INLINE ( ::oCopiaOculta:cText( padr( cCopiaOculta, 250 ) ) )
+   METHOD setCopiaOculta( cCopiaOculta ) ;
+                                 INLINE ( ::oCopiaOculta:cText( padr( cCopiaOculta, 250 ) ) )
    METHOD getCopiaOculta()       INLINE ( alltrim( ::cCopiaOculta ) )
 
    METHOD setAsunto( cAsunto )   INLINE ( ::oAsunto:cText( padr( cAsunto, 250 ) ) )
@@ -379,6 +258,7 @@ CLASS MailView FROM SQLBaseView
    METHOD getComboDocument()     INLINE ( ::cComboDocument )
 
    METHOD setMensaje( cMensaje ) INLINE ( ::cMensaje := cMensaje, if( !empty( ::oRichEdit ), ::oRichEdit:oRTF:SetText( cMensaje ), ) )
+   METHOD getMensaje()           INLINE ( ::oRichEdit:getText() )
 
    METHOD saveToFile( cFile )    INLINE ( if( !empty( ::oRichEdit ), ::oRichEdit:saveToFile( cFile ), ) )
 
@@ -456,7 +336,7 @@ METHOD Activate() CLASS MailView
       NOBORDER ;
       TOOLTIP        "Cargar HTML" ;
 
-      ::oBtnCargarHTML:bAction  := {|| ::oController:selectHtmlFile() }
+      ::oBtnCargarHTML:bAction  := {|| ::getController():getTemplateHtml():selectHtmlFile() }
 
    // Guardar HTML--------------------------------------------------------------
    
@@ -467,7 +347,7 @@ METHOD Activate() CLASS MailView
       NOBORDER ;
       TOOLTIP        "Guardar HTML" ;
 
-      ::oBtnSalvarHTML:bAction  := {|| ::oController:saveHtml() }
+      ::oBtnSalvarHTML:bAction  := {|| ::getController():getTemplateHtml():saveHtml() }
 
    // Cargar HTML como---------------------------------------------------------
 
@@ -478,7 +358,7 @@ METHOD Activate() CLASS MailView
       NOBORDER ;
       TOOLTIP        "Guardar HTML como" ;
 
-      ::oBtnSalvarAsHTML:bAction  := {|| ::oController:saveAsHtml() }
+      ::oBtnSalvarAsHTML:bAction  := {|| ::getController():getTemplateHtml():saveAsHtml() }
 
    // Texto enriquecido--------------------------------------------------------
 

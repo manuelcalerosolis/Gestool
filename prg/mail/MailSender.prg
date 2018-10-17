@@ -131,22 +131,22 @@ METHOD send( hMail ) CLASS MailSender
    
    local cMail          := ::getMailsFromHash( hMail )
 
-   msgalert( "Send( hMail )" )
-
    if empty( cMail )
       ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' esta vacio." )
-      RETURN .f.
+      RETURN ( .f. )
    end if
 
    if isTrue( ::getMailServer():sendMail( hMail ) )
       ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' se ha enviado con exito." )
       ::getEvents():Fire( 'sendSuccessful' )
-   else
-      ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' no se ha enviado." )
-      ::getEvents():Fire( 'sendError' )
+      RETURN ( .t. )
    end if 
 
-RETURN ( nil )
+   ::messenger( ::getMailServer():getError() )
+   ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' no se ha enviado." )
+   ::getEvents():Fire( 'sendError' )
+
+RETURN ( .f. )
 
 //--------------------------------------------------------------------------//
 

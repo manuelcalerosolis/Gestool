@@ -3,15 +3,15 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS TTemplatesHtml
+CLASS TemplateHtml
    
-   DATA oSender 
+   DATA oController 
 
    DATA cTypeDocument
 
    DATA cHtmlFile
 
-   METHOD New( oSender )
+   METHOD New( oController )
 
    METHOD selectHtmlFile()
    METHOD loadDefaultHtmlFile()
@@ -28,33 +28,33 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSender ) CLASS TTemplatesHtml
+METHOD New( oController ) CLASS TemplateHtml
 
-   ::oSender      := oSender
+   ::oController     := oController
 
-RETURN (  Self )   
+RETURN ( self )   
 
 //---------------------------------------------------------------------------//
 
-METHOD selectHtmlFile() CLASS TTemplatesHtml
+METHOD selectHtmlFile() CLASS TemplateHtml
 
-   ::cHtmlFile    := cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML', , cPatHtml() )
+   ::cHtmlFile       := cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML', , cPatHtml() )
 
    if !empty( ::cHtmlFile )
       ::loadHtmlFile( ::cHtmlFile )
    end if 
 
-Return ( Self )
+Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD loadDefaultHtmlFile() CLASS TTemplatesHtml
+METHOD loadDefaultHtmlFile() CLASS TemplateHtml
 
    local cFile    
 
    if empty( ::cTypeDocument )
       msgInfo( "No se ha especificado el tipo de documento." )
-      Return ( Self )
+      Return ( nil )
    end if 
 
    cFile             := cGetHtmlDocumento( ::cTypeDocument )
@@ -62,11 +62,11 @@ METHOD loadDefaultHtmlFile() CLASS TTemplatesHtml
       ::loadHtmlFile( cFile )
    end if 
 
-Return ( Self )
+Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD loadHtmlFile( cFile ) CLASS TTemplatesHtml
+METHOD loadHtmlFile( cFile ) CLASS TemplateHtml
 
    local oBlock
    local cMensaje
@@ -82,7 +82,7 @@ METHOD loadHtmlFile( cFile ) CLASS TTemplatesHtml
       cMensaje          := memoread( ::cHtmlFile )
 
       if !empty( cMensaje )
-         ::oSender:setMensaje( cMensaje )
+         ::oController:setMensaje( cMensaje )
       end if
 
       lLoadHtmlFile     := .t.
@@ -99,11 +99,11 @@ Return ( lLoadHtmlFile )
 
 //--------------------------------------------------------------------------//
 
-METHOD setFileDefaultHtml( cFile ) CLASS TTemplatesHtml
+METHOD setFileDefaultHtml( cFile ) CLASS TemplateHtml
 
    if empty( ::cTypeDocument )
       msgInfo( "No se ha especificado el tipo de documento." )
-      Return ( Self )
+      Return ( nil )
    end if 
 
    if !Empty( ::cHtmlFile )
@@ -114,16 +114,16 @@ METHOD setFileDefaultHtml( cFile ) CLASS TTemplatesHtml
       MsgInfo( "No ha documentos para establecer por defecto" )
    end if
 
-Return ( Self )
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveAsHtml() CLASS TTemplatesHtml
+METHOD saveAsHtml() CLASS TemplateHtml
 
    local cHtmlFile   := cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML', , cPatHtml() )
 
    if empty( cHtmlFile )
-      Return ( Self )
+      Return ( nil )
    end if 
 
    if !( lower( cFileExt( cHtmlFile ) ) $ "html" )
@@ -134,21 +134,21 @@ METHOD saveAsHtml() CLASS TTemplatesHtml
       ferase( cHtmlFile )
    end if
 
-   ::oSender:SaveToFile( cHtmlFile )
+   ::oController:SaveToFile( cHtmlFile )
 
-Return ( Self )
+Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD saveHTML() CLASS TTemplatesHtml
+METHOD saveHTML() CLASS TemplateHtml
 
    if empty( ::cHtmlFile )
       Return ( ::saveAsHtml() )
    end if 
 
-   ::oSender:SaveToFile( ::cHtmlFile )
+   ::oController:SaveToFile( ::cHtmlFile )
 
-Return ( Self )
+Return ( nil )
 
 //--------------------------------------------------------------------------//
 

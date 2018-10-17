@@ -257,7 +257,7 @@ METHOD New( nView ) CLASS TGenMailing
 
    ::oSendMail       := TSendMail():New( Self )
 
-   ::oTemplateHtml   := TTemplatesHtml():New( Self )
+   ::oTemplateHtml   := TemplateHtml():New( Self )
 
 Return ( Self )
 

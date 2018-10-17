@@ -8,11 +8,23 @@
 #include "hbthread.ch"
 #include "gif.ch"
 
-#define CS_DBLCLKS      8
+#define CS_DBLCLKS         8
 
-#define NUMERO_TARIFAS  6
+#define NUMERO_TARIFAS     6
 
 #command CTEXT TO VAR <v> => #pragma __cstream|<v>:=%s
+
+#define DT_TOP              0
+#define DT_LEFT             0
+#define DT_CENTER           1
+#define DT_RIGHT            2
+#define DT_VCENTER          4
+#define DT_BOTTOM           8
+#define DT_WORDBREAK       16
+#define DT_SINGLELINE      32
+#define DT_CALCRECT      1024
+
+#define GWL_STYLE       (-16)
 
 memvar nId
 
@@ -6503,7 +6515,48 @@ CLASS ApoloBtnFlat FROM TBtnFlat
 
    DATA  nMargin     INIT 0
 
+   METHOD Paint() 
+
 ENDCLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Paint() CLASS ApoloBtnFlat
+
+   local aInfo, aRect, nClrText, hBrush
+
+   if ValType( ::bSetGet ) == 'B'
+      ::SetText( Eval( ::bSetGet ) )
+   endif
+
+   aInfo    := ::DispBegin()
+
+   nClrText := if( ::IsEnabled(), ::nClrText, ::nClrTextDis )
+
+   aRect    := GetClientRect( ::hWnd )
+   if ::IsEnabled()
+      FillRect( ::hDC, aRect, ::oBrush:hBrush )
+   else
+      hBrush   := CreateSolidBrush( ::nClrPaneDis )
+      FillRect( ::hDC, aRect, hBrush )
+      DeleteObject( hBrush )
+   endif
+
+   ::DrawMultiLine( ::cCaption, ::oFont, nClrText, DT_CENTER + DT_VCENTER + DT_WORDBREAK )
+
+   if ::lBorder
+      WndBox2007( ::hDC, aRect[ 1 ] + 0, aRect[ 2 ] + 0, aRect[ 3 ] - 1, aRect[ 4 ] - 1, ::nClrText )
+   endif
+
+   /*
+   if ::lFocused
+      WndBox2007( ::hDC, aRect[ 3 ] - 4, 4, aRect[ 3 ] - 4, aRect[ 4 ] - 4, nClrText )
+   endif
+   */
+   
+   ::DispEnd( aInfo )
+
+RETURN nil
 
 //----------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

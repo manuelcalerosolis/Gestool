@@ -1976,7 +1976,7 @@ Return nil
 Function TSendMailOutlook()
 Return nil
 
-Function TTemplatesHtml()
+Function TemplateHtml()
 Return nil
 
 Function PedidoCliente()

@@ -11,6 +11,8 @@ CLASS TSendMailCDO
 
    DATA mailServer
 
+   DATA cError
+
    METHOD New( oController )
 
    // Envios de los mails------------------------------------------------------
@@ -23,6 +25,8 @@ CLASS TSendMailCDO
       METHOD setAttachment( oMail, hMail )
       METHOD setMessage( oMail, hMail )
       METHOD setSubject( oMail, hMail )
+
+   METHOD getError()       INLINE   ( ::cError )
 
 END CLASS
 
@@ -57,7 +61,7 @@ METHOD New( oController )
 
    errorBlock( oBlock )
 
-Return ( Self )
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -68,8 +72,10 @@ METHOD sendMail( hMail )
    local oMail
    local lSend             := .t.
 
+   ::cError                := ""
+
    if empty( ::mailServer )
-      return .f.
+      RETURN .f.
    end if
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -97,13 +103,13 @@ METHOD sendMail( hMail )
 
       lSend                := .f.
 
-      msgStop( "Error al enviar el objeto de correo electrónico." + CRLF + ErrorMessage( oError ) )   
+      ::cError             := oError:Description
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
 
-Return ( lSend )
+RETURN ( lSend )
 
 //--------------------------------------------------------------------------//
 
@@ -116,7 +122,7 @@ METHOD setRecipients( oMail, hMail )
       oMail:To             := cMails
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -126,7 +132,7 @@ METHOD setAttachment( oMail, hMail )
    local cAttachments      := ::oController:getFromHash( hMail, "attachments" )      
 
    if empty( cAttachments )
-      return nil
+      RETURN nil
    end if 
 
    for each cItem in hb_atokens( cAttachments, ";" )
@@ -138,7 +144,7 @@ METHOD setAttachment( oMail, hMail )
      end if 
    next
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -150,7 +156,7 @@ METHOD setRecipientsCC( oMail, hMail )
       oMail:Cc             := cMailsCC
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -162,7 +168,7 @@ METHOD setRecipientsCCO( oMail, hMail )
       oMail:Bcc            := cMailsCCO
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -174,7 +180,7 @@ METHOD setMessage( oMail, hMail )
       oMail:HTMLBody       := cMessage // CreateMHTMLBody( cMessage )
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -186,7 +192,7 @@ METHOD setSubject( oMail, hMail )
       oMail:Subject        := cSubject
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 

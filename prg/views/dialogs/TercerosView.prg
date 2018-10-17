@@ -144,6 +144,7 @@ METHOD redefineGeneral() CLASS TercerosView
       PICTURE     ( "@! NNNNNNNNNNNN" ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
+      CUEBANNER   "código" ;
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
