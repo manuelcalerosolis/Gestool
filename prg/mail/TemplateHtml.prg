@@ -11,7 +11,12 @@ CLASS TemplateHtml
 
    DATA cHtmlFile
 
+   DATA oEvents
+
    METHOD New( oController )
+   METHOD End()
+
+   METHOD getController()              INLINE ( ::oController )
 
    METHOD selectHtmlFile()
    METHOD loadDefaultHtmlFile()
@@ -19,10 +24,14 @@ CLASS TemplateHtml
    METHOD setFileDefaultHtml( cFile )   
 
    METHOD saveHTML()
-   METHOD saveAsHtml()
+   METHOD saveAsHTML()
 
    METHOD setTypeDocument( cTypeDocument );
                                        INLINE ( ::cTypeDocument := cTypeDocument, ::loadDefaultHtmlFile() )
+
+   // Contrucciones tardias----------------------------------------------------
+
+   METHOD getEvents()                  INLINE ( if( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
 
 END CLASS
 
@@ -36,6 +45,16 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD End( oController ) CLASS TemplateHtml
+
+   if !empty(::oEvents)
+      ::oEvents:End()
+   end if 
+
+RETURN ( nil )   
+
+//---------------------------------------------------------------------------//
+
 METHOD selectHtmlFile() CLASS TemplateHtml
 
    ::cHtmlFile       := cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML', , cPatHtml() )
@@ -44,7 +63,7 @@ METHOD selectHtmlFile() CLASS TemplateHtml
       ::loadHtmlFile( ::cHtmlFile )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
@@ -54,7 +73,7 @@ METHOD loadDefaultHtmlFile() CLASS TemplateHtml
 
    if empty( ::cTypeDocument )
       msgInfo( "No se ha especificado el tipo de documento." )
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
    cFile             := cGetHtmlDocumento( ::cTypeDocument )
@@ -62,13 +81,14 @@ METHOD loadDefaultHtmlFile() CLASS TemplateHtml
       ::loadHtmlFile( cFile )
    end if 
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
 METHOD loadHtmlFile( cFile ) CLASS TemplateHtml
 
    local oBlock
+   local oError
    local cMensaje
    local lLoadHtmlFile  := .f.
 
@@ -77,25 +97,25 @@ METHOD loadHtmlFile( cFile ) CLASS TemplateHtml
 
    ::cHtmlFile          := alltrim( cFile )
 
-   if file( ::cHtmlFile )  // !Empty( ::oActiveX )
+   if file( ::cHtmlFile )  
 
       cMensaje          := memoread( ::cHtmlFile )
 
-      if !empty( cMensaje )
-         ::oController:setMensaje( cMensaje )
-      end if
+      ::oEvents:fire( 'loadHtmlFile', cMensaje )
 
       lLoadHtmlFile     := .t.
 
    end if
 
-   RECOVER
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
 
-Return ( lLoadHtmlFile )
+RETURN ( lLoadHtmlFile )
 
 //--------------------------------------------------------------------------//
 
@@ -103,7 +123,7 @@ METHOD setFileDefaultHtml( cFile ) CLASS TemplateHtml
 
    if empty( ::cTypeDocument )
       msgInfo( "No se ha especificado el tipo de documento." )
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
    if !Empty( ::cHtmlFile )
@@ -114,7 +134,7 @@ METHOD setFileDefaultHtml( cFile ) CLASS TemplateHtml
       MsgInfo( "No ha documentos para establecer por defecto" )
    end if
 
-Return ( nil )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -123,7 +143,7 @@ METHOD saveAsHtml() CLASS TemplateHtml
    local cHtmlFile   := cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML', , cPatHtml() )
 
    if empty( cHtmlFile )
-      Return ( nil )
+      RETURN ( nil )
    end if 
 
    if !( lower( cFileExt( cHtmlFile ) ) $ "html" )
@@ -134,21 +154,21 @@ METHOD saveAsHtml() CLASS TemplateHtml
       ferase( cHtmlFile )
    end if
 
-   ::oController:SaveToFile( cHtmlFile )
+   ::oEvents:fire( 'saveHTML', ::cHtmlFile )
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
 METHOD saveHTML() CLASS TemplateHtml
 
    if empty( ::cHtmlFile )
-      Return ( ::saveAsHtml() )
+      RETURN ( ::saveAsHtml() )
    end if 
 
-   ::oController:SaveToFile( ::cHtmlFile )
+   ::oEvents:fire( 'saveHTML', ::cHtmlFile )
 
-Return ( nil )
+RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 

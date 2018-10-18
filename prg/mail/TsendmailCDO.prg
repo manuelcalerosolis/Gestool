@@ -13,7 +13,8 @@ CLASS TSendMailCDO
 
    DATA cError
 
-   METHOD New( oController )
+   METHOD New( oController ) CONSTRUCTOR
+   METHOD End()
 
    // Envios de los mails------------------------------------------------------
 
@@ -45,11 +46,11 @@ METHOD New( oController )
       ::mailServer         := win_oleCreateObject( "CDO.Configuration" )
       ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpserver" ):Value             := ::oController:mailServerHost
       ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpserverport" ):Value         := ::oController:mailServerPort
-      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendusing" ):Value              := 2
       ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpauthenticate" ):Value       := ::oController:mailServerAuthenticate
       ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpusessl" ):Value             := ::oController:mailServerSSL
       ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendusername" ):Value           := ::oController:mailServerUserName
       ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendpassword" ):Value           := ::oController:mailServerPassword
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendusing" ):Value              := 2
       ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpconnectiontimeout"):Value   := 30
       ::mailServer:Fields:Update()
 
@@ -62,6 +63,16 @@ METHOD New( oController )
    errorBlock( oBlock )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End()
+
+   if !empty( ::mailServer )
+      ::mailServer:End()
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

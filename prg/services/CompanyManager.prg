@@ -30,7 +30,9 @@ CLASS CompanyManager
 
    METHOD getPathDocuments( cDirectory )  INLINE ( cCompanyPathDocuments( ::codigo, cDirectory ) )
 
-   METHOD getDocuments( cDirectory )      
+   METHOD getDocuments( cDirectory )  
+
+   METHOD getTemplatesHTML()    
 
 END CLASS
 
@@ -120,6 +122,23 @@ METHOD getDocuments( cDirectory )
    end if 
 
    aFiles            := directory( ::getPathDocuments( cDirectory ) + "*.fr3" )
+
+   if empty( aFiles )
+      aDocuments     := { "No hay documentos definidos..." }
+   else
+      aeval( aFiles, {|aFile| aadd( aDocuments, aFile[ 1 ] ) } )
+   end if 
+
+RETURN ( aDocuments )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTemplatesHTML()      
+
+   local aFiles      := {}
+   local aDocuments  := {}
+
+   aFiles            := directory( cPatHtml() + "*.htm?" )
 
    if empty( aFiles )
       aDocuments     := { "No hay documentos definidos..." }

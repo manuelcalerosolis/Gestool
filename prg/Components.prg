@@ -2100,7 +2100,7 @@ CLASS GetRichEdit
             								::oBtnItalics:Hide() ,;
             								::oBtnUnderLine:Hide() ,;
             								::oBtnTextAlignLeft:Hide() ,;
-            								::oBtnTextAlignCenter :Hide() ,;
+            								::oBtnTextAlignCenter:Hide() ,;
             								::oBtnTextAlignRight:Hide() ,;
             								::oBtnTextJustify:Hide() ,;
             								::oBtnBullet:Hide() ,;

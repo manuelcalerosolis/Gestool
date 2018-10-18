@@ -392,6 +392,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD loadDocuments()
 
+   METHOD loadTemplatesHTML()
+
    METHOD getDirectory()            INLINE ( Company():getPathDocuments( ::cName ) )
 
    METHOD End()
@@ -715,6 +717,12 @@ RETURN ( nil )
 METHOD loadDocuments() CLASS SQLApplicationController
 
 RETURN ( Company():getDocuments( ::cName ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadTemplatesHTML() CLASS SQLApplicationController
+
+RETURN ( Company():getTemplatesHTML() )
 
 //---------------------------------------------------------------------------//
 

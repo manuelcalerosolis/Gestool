@@ -15,11 +15,11 @@ CLASS MailController
 
    DATA oMailSender
 
-   DATA oTemplateHtml
+   DATA oTemplateHTML
 
    DATA cTypeDocument
 
-   DATA cHtmlFile
+   DATA cHTMLFile
 
    METHOD New() CONSTRUCTOR
 
@@ -55,8 +55,6 @@ CLASS MailController
 
    METHOD getSubjectToSend( uuid )     INLINE ( if( ::isMultiMails(), ::getSubject( uuid ), ::getDialogView():getAsunto() ) )
 
-   METHOD getMessageHTMLToSend()       INLINE ( "<HTML>" + strtran( alltrim( ::getDialogView():getMensaje() ), CRLF, "<p>" ) + "</HTML>" )
-
    METHOD getAttachmentsToSend()       
 
    METHOD Send()
@@ -67,9 +65,14 @@ CLASS MailController
 
    METHOD Message( cText )
 
+   METHOD setMessage( cMessage )       INLINE ( ::getDialogView():setMessage( cMessage ) )
+   METHOD getMessageHTMLToSend()       INLINE ( "<HTML>" + strtran( alltrim( ::getDialogView():getMessage() ), CRLF, "<p>" ) + "</HTML>" )
+
+   METHOD saveToFile( cFile )          INLINE ( ::getDialogView():getRichEdit():saveToFile( cFile ) )
+
    // Construcciones tardias---------------------------------------------------
 
-   METHOD getTemplateHtml()            INLINE ( if( empty( ::oTemplateHtml ), ::oTemplateHtml := TemplateHtml():New( self ), ), ::oTemplateHtml )
+   METHOD getTemplateHTML()            INLINE ( if( empty( ::oTemplateHTML ), ::oTemplateHTML := TemplateHTML():New( self ), ), ::oTemplateHTML )
    
    METHOD getDialogView()              INLINE ( if( empty( ::oDialogView ), ::oDialogView := MailView():New( self ), ), ::oDialogView )
 
@@ -88,6 +91,10 @@ METHOD New( oController ) CLASS MailController
    ::oController                       := oController
 
    ::getMailSender():getEvents():Set( 'message', {| cText | ::Message( cText ) } )
+
+   ::getTemplateHTML():getEvents():Set( 'loadHTMLFile', {| cMessage | ::setMessage( cMessage ) } )
+
+   ::getTemplateHTML():getEvents():Set( 'saveHTML', {| cFile | ::saveToFile( cFile ) } )
 
 RETURN ( Self )
 
@@ -215,8 +222,8 @@ CLASS MailView FROM SQLBaseView
    DATA cComboDocument     
 
    DATA oRichEdit      
-   DATA oMensaje      
-   DATA cMensaje                 INIT ""
+   DATA oMessage      
+   DATA cMessage                 INIT ""
 
    DATA oBtnCargarHTML
    DATA oBtnSalvarHTML
@@ -257,12 +264,12 @@ CLASS MailView FROM SQLBaseView
 
    METHOD getComboDocument()     INLINE ( ::cComboDocument )
 
-   METHOD setMensaje( cMensaje ) INLINE ( ::cMensaje := cMensaje, if( !empty( ::oRichEdit ), ::oRichEdit:oRTF:SetText( cMensaje ), ) )
-   METHOD getMensaje()           INLINE ( ::oRichEdit:getText() )
-
-   METHOD saveToFile( cFile )    INLINE ( if( !empty( ::oRichEdit ), ::oRichEdit:saveToFile( cFile ), ) )
+   METHOD setMessage( cMessage ) INLINE ( ::cMessage := cMessage, if( !empty( ::oRichEdit ), ::oRichEdit:oRTF:SetText( cMessage ), ) )
+   METHOD getMessage()           INLINE ( ::oRichEdit:getText() )
 
    METHOD loadDocuments()        INLINE ( ::getController():loadDocuments() )
+
+   METHOD getRichEdit()          INLINE ( ::oRichEdit )
 
 END CLASS
 
@@ -327,7 +334,7 @@ METHOD Activate() CLASS MailView
       ID             160 ;
       OF             ::oFld:aDialogs[ 1 ]
 
-   //Cargar html---------------------------------------------------------------
+   //Cargar HTML---------------------------------------------------------------
 
    REDEFINE BTNBMP ::oBtnCargarHTML ;
       ID             170 ;
@@ -336,7 +343,7 @@ METHOD Activate() CLASS MailView
       NOBORDER ;
       TOOLTIP        "Cargar HTML" ;
 
-      ::oBtnCargarHTML:bAction  := {|| ::getController():getTemplateHtml():selectHtmlFile() }
+      ::oBtnCargarHTML:bAction  := {|| ::getController():getTemplateHTML():selectHTMLFile() }
 
    // Guardar HTML--------------------------------------------------------------
    
@@ -347,7 +354,7 @@ METHOD Activate() CLASS MailView
       NOBORDER ;
       TOOLTIP        "Guardar HTML" ;
 
-      ::oBtnSalvarHTML:bAction  := {|| ::getController():getTemplateHtml():saveHtml() }
+      ::oBtnSalvarHTML:bAction  := {|| ::getController():getTemplateHTML():saveHTML() }
 
    // Cargar HTML como---------------------------------------------------------
 
@@ -358,13 +365,13 @@ METHOD Activate() CLASS MailView
       NOBORDER ;
       TOOLTIP        "Guardar HTML como" ;
 
-      ::oBtnSalvarAsHTML:bAction  := {|| ::getController():getTemplateHtml():saveAsHtml() }
+      ::oBtnSalvarAsHTML:bAction  := {|| ::getController():getTemplateHTML():saveAsHTML() }
 
    // Texto enriquecido--------------------------------------------------------
 
    ::oRichEdit       := GetRichEdit():ReDefine( 600, ::oFld:aDialogs[ 1 ] )
 
-   ::setMensaje( ::cMensaje )
+   ::setMessage( ::cMessage )
 
    // Página de proceso--------------------------------------------------------
 

@@ -52,8 +52,12 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD getDocumentPdf()             INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_pdf', '' ) )
 
+   METHOD getDocumentPreview()         INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_previsulizacion', '' ) )
+
    METHOD getPrintCopy()               INLINE ( ::getConfiguracionesController():getModelNumeric( ::cName, 'copias_impresion', 1 ) )
 
+   METHOD getTemplateMails()           INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'plantilla_para_mails', '' ) )
+   
    METHOD generateReport( hReport )    INLINE ( ::getReport():Generate( hReport ) )
 
    METHOD getSubject()                 INLINE ( "Factura de cliente número" )
@@ -322,16 +326,28 @@ METHOD getConfigItems() CLASS FacturasClientesController
                      'tipo'   => "B",;
                      'lista'  =>  ::loadDocuments() } )
 
+   aadd( aItems,  {  'texto'  => 'Copias impresión',;
+                     'clave'  => 'copias_impresion',;
+                     'valor'  => ::getPrintCopy(),;
+                     'tipo'   => "N" } )
+
    aadd( aItems,  {  'texto'  => 'Documento pdf',;
                      'clave'  => 'documento_pdf',;
                      'valor'  => ::getDocumentPdf(),;
                      'tipo'   => "B",;
                      'lista'  =>  ::loadDocuments() } )
 
-   aadd( aItems,  {  'texto'  => 'Copias',;
-                     'clave'  => 'copias_impresion',;
-                     'valor'  => ::getPrintCopy(),;
-                     'tipo'   => "N" } )
+   aadd( aItems,  {  'texto'  => 'Documento previsulización',;
+                     'clave'  => 'documento_previsulizacion',;
+                     'valor'  => ::getDocumentPreview(),;
+                     'tipo'   => "B",;
+                     'lista'  =>  ::loadDocuments() } )
+
+   aadd( aItems,  {  'texto'  => 'Plantilla para mails',;
+                     'clave'  => 'plantilla_para_mails',;
+                     'valor'  => ::getTemplateMails(),;
+                     'tipo'   => "B",;
+                     'lista'  =>  ::loadTemplatesHTML() } )
 
 RETURN ( aItems )
 
