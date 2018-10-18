@@ -165,7 +165,6 @@ METHOD getColumnsSelect()
       facturas_clientes_lineas.almacen_codigo AS almacen_codigo,
       almacenes.nombre AS almacen_nombre,
       facturas_clientes_lineas.agente_codigo AS agente_codigo,
-      agentes.nombre AS agente_nombre,
       facturas_clientes_lineas.agente_comision AS agente_comision, 
       RTRIM( GROUP_CONCAT( articulos_propiedades_lineas.nombre ORDER BY combinaciones_propiedades.id ) ) AS articulos_propiedades_nombre
    ENDTEXT
