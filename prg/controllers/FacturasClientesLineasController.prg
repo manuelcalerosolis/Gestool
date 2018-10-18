@@ -33,6 +33,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD postValidateAgenteCodigo( oCol, uValue, nKey )
 
+   METHOD postValidateCombinacionesUuid( oCol, uValue, nKey )
+
    METHOD validateLote()               
 
    METHOD validateUnidadMedicion( uValue )
@@ -68,6 +70,9 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD stampAgenteCodigo( cCodigoAgente ) ;
                                           INLINE ( ::updateField( "agente_codigo", cCodigoAgente ) )
+
+   METHOD stampCombinacionesUuid( UuidCombinacion ) ;
+                                          INLINE ( ::updateField( "combinaciones_uuid", UuidCombinacion ) )
 
    METHOD stampArticuloUnidaMedicionVentas()
 
@@ -326,6 +331,15 @@ METHOD postValidateAgenteCodigo( oCol, uValue, nKey )
    if empty( hAgente )
       RETURN ( .f. )
    end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD postValidateCombinacionesUuid( oCol, uValue, nKey )
+
+msgalert( hb_valtoexp(SQLcombinacionesModel():getHashWhere( "id", nkey ) ) )
+
 
 RETURN ( nil )
 

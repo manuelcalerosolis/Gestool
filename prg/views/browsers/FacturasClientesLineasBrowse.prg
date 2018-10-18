@@ -277,7 +277,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bEditBlock          := {|| ::oController:getCombinacionesController():runViewSelector( ::getRowSet():fieldGet( 'articulo_codigo' ) ) }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
-      //:bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateField( 'articulos_propiedades_nombre', uNewValue ) }
+      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateCombinacionesUuid( oCol, uNewValue, nKey )  }
    end with
 
 
