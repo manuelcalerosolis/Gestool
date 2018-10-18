@@ -265,8 +265,6 @@ METHOD updateHavingSentence() CLASS CombinacionesController
 
    local cGeneralHaving    := ""
 
-   msgalert( hb_valtoexp( ::aHaving ), "aHaving" )
-
    aeval( ::aHaving, {|hHaving| cGeneralHaving += 'articulos_propiedades_nombre LIKE ' + quoted( '%' + hget( hHaving, "propiedad_nombre" ) + '%' ) + ' AND ' } )
 
    if !empty( cGeneralHaving )
@@ -275,7 +273,6 @@ METHOD updateHavingSentence() CLASS CombinacionesController
 
    ::oModel:setGeneralHaving( cGeneralHaving )
    
-   msgalert( cGeneralHaving, "cGeneralHaving" )
 
 RETURN ( nil )
 
@@ -296,10 +293,10 @@ ENDCLASS
 METHOD addColumns() CLASS CombinacionesBrowseView
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
+      :cSortOrder          := 'combinaciones_id'
       :cHeader             := 'Id'
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'combinaciones_id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -307,7 +304,7 @@ METHOD addColumns() CLASS CombinacionesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Uuid'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'combinaciones_uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -407,7 +404,7 @@ METHOD Activate() CLASS CombinacionesView
       ID          IDOK ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), msgalert( ) ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
@@ -418,6 +415,8 @@ METHOD Activate() CLASS CombinacionesView
    ::oDialog:bStart  := {|| ::startActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
+
+   msgalert( ::oController:getRowSet:fieldget('combinaciones_uuid')  ) 
 
 RETURN ( ::oDialog:nResult )
 
@@ -489,9 +488,7 @@ METHOD changeCheckBox( uValue, oCheckBox ) CLASS CombinacionesView
       ::getController():deleteHaving( hCargo )
    end if 
 
-   msgalert( ::getController():updateHavingSentence(), "Having" )
-
-   ::getController():getRowSet():buildPad( SQLCombinacionesPropiedadesModel():getPropertyWhereArticuloHaving( ::getController():getCodigoArticulo(), ::getController():updateHavingSentence() ) )
+   ::getController():getRowSet():buildPad( ::oController:getModel():getSelectWhereCodigoArticuloHaving( ::getController():getCodigoArticulo(), ::getController:aHaving ) )
 
    ::getController():getBrowseView():Refresh()
 
@@ -743,7 +740,7 @@ METHOD getSelectWhereCodigoArticuloHaving( cCodigoArticulo, aHaving ) CLASS SQLC
 
    local cSql        
 
-   cSql              := ::getSelectWhereCodigoArticulo( cCodigoArticulo )
+   cSql              := SQLCombinacionesPropiedadesModel():getPropertyWhereArticuloCodigo( cCodigoArticulo )
 
    cSql              += ::getHaving( aHaving )
 
