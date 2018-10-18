@@ -69,7 +69,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :cSortOrder          := 'parent_uuid'
       :cHeader             := 'Parent Uuid'
       :nWidth              := 240
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'parent_uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -277,6 +277,7 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bEditBlock          := {|| ::oController:getCombinacionesController():runViewSelector( ::getRowSet():fieldGet( 'articulo_codigo' ) ) }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
+      //:bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:updateField( 'articulos_propiedades_nombre', uNewValue ) }
    end with
 
 

@@ -133,14 +133,16 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
    end if 
    
    ::cCodigoArticulo := cCodigoArticulo
+   msgalert( cCodigoArticulo, "cCodigoArticulo" )
+   //msgalert(hb_valtoexp( getSQLDatabase():selectTrimedFetchHash(::getPropiedadesController():getModel():getPropertyListWhereArticuloCodigo( cCodigoArticulo ) ) ), "hPropertyList" )
 
-   ::hPropertyList   := getSQLDatabase():selectTrimedFetchHash( ::getPropiedadesController():getModel():getPropertyList() ) 
-
+   ::hPropertyList   := getSQLDatabase():selectTrimedFetchHash( ::getPropiedadesController():getModel():getPropertyList() )
+ msgalert( hb_valtoexp(::hPropertyList), "hProperty" )
    if empty( ::hPropertyList )
       msgStop( "No se definieron propiedades" )
       RETURN ( nil )
    end if 
-
+   
    ::oController:oRowSet:buildPad( ::oModel:getSelectWhereCodigoArticulo( cCodigoArticulo ) )
 
 RETURN ( ::dialogViewActivate( ::getSelectorView() ) )
@@ -659,7 +661,9 @@ RETURN ( cSql )
 
 METHOD getSelectWhereCodigoArticulo( cCodigoArticulo ) CLASS SQLCombinacionesModel
 
-   local cSql 
+   local cSql
+
+   local UuidLinea := ::oController:oController:oRowSet:fieldget( 'uuid' )
 
    TEXT INTO cSql
 
@@ -670,18 +674,48 @@ METHOD getSelectWhereCodigoArticulo( cCodigoArticulo ) CLASS SQLCombinacionesMod
       combinaciones.incremento_precio AS incremento_precio,
       combinaciones_propiedades.id AS propiedades_id,
       combinaciones_propiedades.uuid AS propiedades_uuid,
-      GROUP_CONCAT( CONCAT( " ", articulos_propiedades_lineas.nombre, " " ) ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre
+      GROUP_CONCAT( CONCAT( " ", articulos_propiedades_lineas.nombre, " " ) ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre,
+      articulos.nombre AS articulo_nombre,
+      articulos.codigo AS articulo_codigo,
+      facturas_clientes_lineas.fecha_caducidad AS fecha_caducidad,
+      facturas_clientes_lineas.lote AS lote, 
+      facturas_clientes_lineas.articulo_unidades AS articulo_unidades,
+      ( @total_unidades := articulo_unidades * unidad_medicion_factor ) AS total_unidades,
+      facturas_clientes_lineas.unidad_medicion_codigo AS unidad_medicion_codigo,
+      facturas_clientes_lineas.unidad_medicion_factor AS unidad_medicion_factor,
+      facturas_clientes_lineas.articulo_unidades AS articulo_unidades,
+      facturas_clientes_lineas.articulo_precio AS articulo_precio,
+      ( @total_bruto := ROUND( @total_unidades * articulo_precio, 2 ) ) AS total_bruto,
+      facturas_clientes_lineas.descuento AS descuento,
+      facturas_clientes_lineas.iva AS iva,
+      facturas_clientes_lineas.recargo_equivalencia AS recargo_equivalencia,
+      ( @importe_descuento := IF( descuento IS NULL OR descuento = 0, 0, @total_bruto * descuento / 100 ) ) AS importe_descuento,
+      ( @total_bruto - @importe_descuento ) AS total_precio,
+      facturas_clientes_lineas.almacen_codigo AS almacen_codigo,
+      almacenes.nombre AS almacen_nombre,
+      facturas_clientes_lineas.agente_codigo AS agente_codigo,
+      agentes.nombre AS agente_nombre,
+      agentes.comision AS agente_comision
    
    FROM %1$s AS combinaciones 
 
       INNER JOIN %4$s AS articulos
-         ON articulos.codigo = %5$s
+         ON articulos.codigo = %8$s
       
       INNER JOIN %2$s AS combinaciones_propiedades
          ON combinaciones_propiedades.parent_uuid = combinaciones.uuid
 
       INNER JOIN %3$s AS articulos_propiedades_lineas
-         ON combinaciones_propiedades.propiedad_uuid = articulos_propiedades_lineas.uuid
+         ON combinaciones_propiedades.propiedad_uuid = articulos_propiedades_lineas.uuid  
+      
+      INNER JOIN gestool_00VG.facturas_clientes_lineas AS facturas_clientes_lineas
+         ON facturas_clientes_lineas.uuid= %9$s
+      
+      LEFT JOIN gestool_00VG.almacenes AS almacenes
+         ON almacenes.codigo = facturas_clientes_lineas.almacen_codigo
+         
+      LEFT JOIN gestool_00VG.agentes AS agentes
+         ON agentes.codigo = facturas_clientes_lineas.agente_codigo
 
    WHERE combinaciones.parent_uuid = articulos.uuid 
 
@@ -689,8 +723,8 @@ METHOD getSelectWhereCodigoArticulo( cCodigoArticulo ) CLASS SQLCombinacionesMod
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
-
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), SQLFacturasClientesLineasModel():getTableName(),SQLAlmacenesModel():getTableName() ,SQLAgentesModel():getTableName() , quoted( cCodigoArticulo ), quoted( UuidLinea ) )
+logwrite(cSql)
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

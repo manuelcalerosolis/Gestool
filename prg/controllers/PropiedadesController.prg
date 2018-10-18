@@ -301,6 +301,8 @@ CLASS SQLPropiedadesModel FROM SQLCompanyModel
 
    METHOD getPropertyList()
 
+   METHOD getPropertyListWhereArticuloCodigo( cCodigoArticulo )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -346,6 +348,36 @@ METHOD getPropertyList() CLASS SQLPropiedadesModel
 RETURN ( cSelect )
 
 //---------------------------------------------------------------------------//
+
+METHOD getPropertyListWhereArticuloCodigo( cCodigoArticulo ) CLASS SQLPropiedadesModel
+
+
+local cSql
+
+   TEXT INTO cSql
+
+   SELECT  
+         combinaciones.*,
+         GROUP_CONCAT( CONCAT( " ", articulos_propiedades_lineas.nombre, " " ) ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre
+
+   FROM %1$s as combinaciones_propiedades
+   INNER JOIN articulos as articulos
+      ON articulos.codigo= %4$s
+   
+   INNER JOIN %2$s as combinaciones
+      ON combinaciones.parent_uuid = articulos.uuid
+   
+   INNER JOIN %3$s AS articulos_propiedades_lineas
+      ON articulos_propiedades_lineas.uuid = combinaciones_propiedades.propiedad_uuid
+
+   WHERE combinaciones_propiedades.parent_uuid = combinaciones.uuid
+   GROUP BY combinaciones.uuid
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, SQLCombinacionesPropiedadesModel():getTableName(), SQLCombinacionesModel():getTableName(),SQLPropiedadesLineasModel():getTableName(), quoted( cCodigoArticulo ) )
+
+RETURN ( cSql )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
