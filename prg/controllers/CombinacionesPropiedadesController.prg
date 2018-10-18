@@ -202,6 +202,10 @@ CLASS SQLCombinacionesPropiedadesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
+   METHOD getPropertyWhereArticuloCodigo( cCodigoArticulo, cHaving )   
+
+   METHOD getPropertyWhereArticuloHaving( cCodigoArticulo, cHaving )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -223,6 +227,57 @@ METHOD getColumns() CLASS SQLCombinacionesPropiedadesModel
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+
+METHOD getPropertyWhereArticuloCodigo( cCodigoArticulo ) CLASS SQLCombinacionesPropiedadesModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT  
+      combinaciones.id AS combinaciones_id,
+      combinaciones.uuid AS combinaciones_uuid,
+      combinaciones.parent_uuid AS combinaciones_parent_uuid,
+      combinaciones.incremento_precio AS combinaciones_incremento_precio,
+      GROUP_CONCAT( CONCAT( " ", articulos_propiedades_lineas.nombre, " " ) ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre
+
+   FROM %1$s as combinaciones_propiedades
+
+      INNER JOIN %4$s as articulos
+         ON articulos.codigo = %5$s
+      
+      INNER JOIN %2$s as combinaciones
+         ON combinaciones.parent_uuid = articulos.uuid
+      
+      INNER JOIN %3$s AS articulos_propiedades_lineas
+         ON articulos_propiedades_lineas.uuid = combinaciones_propiedades.propiedad_uuid
+
+      WHERE combinaciones_propiedades.parent_uuid = combinaciones.uuid
+   
+      GROUP BY combinaciones.uuid
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
+
+
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getPropertyWhereArticuloHaving( cCodigoArticulo, cHaving ) CLASS SQLCombinacionesPropiedadesModel
+
+   local cSql
+
+   cSql     := ::getPropertyWhereArticuloCodigo( cCodigoArticulo )
+
+   if !empty( cHaving )
+      cSql  += "HAVING " + cHaving
+   end if 
+
+RETURN ( cSql )   
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

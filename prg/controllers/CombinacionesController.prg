@@ -29,7 +29,8 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    METHOD getCombinationName( aCombination )
 
-   METHOD isCombinationInRowSet( cCombinationName )   INLINE ( ::getRowSet():findString( cCombinationName, 'articulos_propiedades_nombre' ) )
+   METHOD isCombinationInRowSet( cCombinationName ) ;
+                                          INLINE ( ::getRowSet():findString( cCombinationName, 'articulos_propiedades_nombre' ) )
 
    METHOD updateIncrementoPrecio( nIncrementoPrecio )
 
@@ -38,6 +39,11 @@ CLASS CombinacionesController FROM SQLBrowseController
    METHOD deleteHaving( hProperty )
 
    METHOD updateHavingSentence()
+
+   METHOD setCodigoArticulo( cCodigoArticulo ) ;
+                                          INLINE ( ::cCodigoArticulo := cCodigoArticulo )
+
+   METHOD getCodigoArticulo()             INLINE ( ::cCodigoArticulo )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -131,19 +137,22 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
    if empty( cCodigoArticulo )
       RETURN ( nil )
    end if 
-   
-   ::cCodigoArticulo := cCodigoArticulo
-   msgalert( cCodigoArticulo, "cCodigoArticulo" )
-   //msgalert(hb_valtoexp( getSQLDatabase():selectTrimedFetchHash(::getPropiedadesController():getModel():getPropertyListWhereArticuloCodigo( cCodigoArticulo ) ) ), "hPropertyList" )
+
+   ::setCodigoArticulo( cCodigoArticulo )
+
+   ::getRowSet():buildPad( ::getCombinacionesPropiedadesController():getModel():getPropertyWhereArticuloCodigo( cCodigoArticulo ) )
+
+   if empty( ::getRowSet():recCount() )
+      msgStop( "No se definieron propiedades" )
+      RETURN ( nil )
+   end if 
 
    ::hPropertyList   := getSQLDatabase():selectTrimedFetchHash( ::getPropiedadesController():getModel():getPropertyList() )
- msgalert( hb_valtoexp(::hPropertyList), "hProperty" )
+
    if empty( ::hPropertyList )
       msgStop( "No se definieron propiedades" )
       RETURN ( nil )
    end if 
-   
-   ::oController:oRowSet:buildPad( ::oModel:getSelectWhereCodigoArticulo( cCodigoArticulo ) )
 
 RETURN ( ::dialogViewActivate( ::getSelectorView() ) )
 
@@ -222,7 +231,7 @@ RETURN ( cCombination )
 
 METHOD updateIncrementoPrecio( nIncrementoPrecio ) CLASS CombinacionesController
 
-   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'incremento_precio', nIncrementoPrecio )
+   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'combinaciones_incremento_precio', nIncrementoPrecio )
 
    ::refreshRowSet()
 
@@ -258,7 +267,7 @@ METHOD updateHavingSentence() CLASS CombinacionesController
 
    msgalert( hb_valtoexp( ::aHaving ), "aHaving" )
 
-   aeval( ::aHaving, {|cHaving| cGeneralHaving += 'articulos_propiedades_nombre LIKE ' + quoted( '%' + cHaving + '%' ) + ' AND ' } )
+   aeval( ::aHaving, {|hHaving| cGeneralHaving += 'articulos_propiedades_nombre LIKE ' + quoted( '%' + hget( hHaving, "propiedad_nombre" ) + '%' ) + ' AND ' } )
 
    if !empty( cGeneralHaving )
       cGeneralHaving       := chgAtEnd( cGeneralHaving, '', 5 )
@@ -312,15 +321,15 @@ METHOD addColumns() CLASS CombinacionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'incremento_precio'
+      :cSortOrder          := 'combinaciones_incremento_precio'
       :cHeader             := 'Incremento de precio'
       :nWidth              := 150
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'combinaciones_incremento_precio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
 
       :nEditType           := 1
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
-      :bEditBlock          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'combinaciones_incremento_precio' ) }
+      :bEditBlock          := {|| ::getRowSet():fieldGet( 'combinaciones_incremento_precio' ) }
       :cEditPicture        := "@E 999999999999.999999"
       :bOnPostEdit         := {|oCol, nIncrementoPrecio| ::oController:updateIncrementoPrecio( nIncrementoPrecio ) }
    end with
@@ -475,15 +484,16 @@ METHOD changeCheckBox( uValue, oCheckBox ) CLASS CombinacionesView
    local hCargo      := oCheckBox:Cargo
 
    if uValue
-      msgalert( hb_valtoexp( oCheckBox:Cargo ), "changeCheckBox" )
-      ::oController:insertHaving( hCargo )
+      ::getController():insertHaving( hCargo )
    else 
-      ::oController:deleteHaving( hCargo )
+      ::getController():deleteHaving( hCargo )
    end if 
 
-   ::oController:oRowSet:buildPad( ::oController:oModel:getSelectWhereCodigoArticuloHaving( ::oController:cCodigoArticulo, ::oController:aHaving ) )
+   msgalert( ::getController():updateHavingSentence(), "Having" )
 
-   ::oController:getBrowseView():Refresh()
+   ::getController():getRowSet():buildPad( SQLCombinacionesPropiedadesModel():getPropertyWhereArticuloHaving( ::getController():getCodigoArticulo(), ::getController():updateHavingSentence() ) )
+
+   ::getController():getBrowseView():Refresh()
 
 RETURN ( nil )
 
@@ -724,7 +734,7 @@ METHOD getSelectWhereCodigoArticulo( cCodigoArticulo ) CLASS SQLCombinacionesMod
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), SQLFacturasClientesLineasModel():getTableName(),SQLAlmacenesModel():getTableName() ,SQLAgentesModel():getTableName() , quoted( cCodigoArticulo ), quoted( UuidLinea ) )
-logwrite(cSql)
+
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

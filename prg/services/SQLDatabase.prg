@@ -320,6 +320,8 @@ METHOD selectFetch( cSentence, fetchType, attributePad )
 
    end
 
+   // msgalert( hb_valtoexp( aFetch ), "selectFetch" )
+
    if !empty( aFetch ) .and. hb_isarray( aFetch )
       RETURN ( aFetch )
    end if
