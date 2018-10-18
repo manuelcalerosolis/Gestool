@@ -136,15 +136,12 @@ RETURN ( ::oDialog:nResult )
 
 METHOD redefineGeneral() CLASS TercerosView
 
-   local oSay
-
    REDEFINE GET   ::oGetCodigo ;
       VAR         ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     ( "@! NNNNNNNNNNNN" ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
-      CUEBANNER   "código" ;
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
@@ -311,21 +308,21 @@ METHOD redefineComercial() CLASS TercerosView
       OF       ::oFolder:aDialogs[2]
 
    REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "excluir_fidelizacion" ] ;
-      ID          320 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[2]
+      ID       320 ;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      OF       ::oFolder:aDialogs[2]
 
    REDEFINE CHECKBOX ::oController:oModel:hBuffer[ "no_editar_datos" ] ;
-      ID          330 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[2]
+      ID       330 ;
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      OF       ::oFolder:aDialogs[2]
 
    REDEFINE GET ::oGetFechaUltimaLlamada ;
-      VAR         ::oController:oModel:hBuffer[ "fecha_ultima_llamada" ] ;
-      ID          340 ;
+      VAR      ::oController:oModel:hBuffer[ "fecha_ultima_llamada" ] ;
+      ID       340 ;
       SPINNER ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oFolder:aDialogs[2]
+      WHEN     ( ::oController:isNotZoomMode() ) ;
+      OF       ::oFolder:aDialogs[2]
 
    TBtnBmp():ReDefine( 350, "gc_recycle_16",,,,,{|| ::loadFechaLlamada() }, ::oFolder:aDialogs[2], .f., {|| ::oController:isNotZoomMode() }, .f. )
 
@@ -424,7 +421,7 @@ METHOD startDialog() CLASS TercerosView
 
    ::oController:getDireccionesController():externalStartDialog()
 
-   if ::oController:isClient
+   if ::oController:isClient()
       ::oController:getArticulosTarifasController():getSelector():Start()
    else
       ::oController:getArticulosTarifasController():getSelector():Hide()
