@@ -265,7 +265,7 @@ METHOD updateHavingSentence() CLASS CombinacionesController
 
    local cGeneralHaving    := ""
 
-   msgalert( hb_valtoexp( ::aHaving ), "aHaving" )
+   //msgalert( hb_valtoexp( ::aHaving ), "aHaving" )
 
    aeval( ::aHaving, {|hHaving| cGeneralHaving += 'articulos_propiedades_nombre LIKE ' + quoted( '%' + hget( hHaving, "propiedad_nombre" ) + '%' ) + ' AND ' } )
 
@@ -275,7 +275,7 @@ METHOD updateHavingSentence() CLASS CombinacionesController
 
    ::oModel:setGeneralHaving( cGeneralHaving )
    
-   msgalert( cGeneralHaving, "cGeneralHaving" )
+   //msgalert( cGeneralHaving, "cGeneralHaving" )
 
 RETURN ( nil )
 
@@ -489,9 +489,7 @@ METHOD changeCheckBox( uValue, oCheckBox ) CLASS CombinacionesView
       ::getController():deleteHaving( hCargo )
    end if 
 
-   msgalert( ::getController():updateHavingSentence(), "Having" )
-
-   ::getController():getRowSet():buildPad( SQLCombinacionesPropiedadesModel():getPropertyWhereArticuloHaving( ::getController():getCodigoArticulo(), ::getController():updateHavingSentence() ) )
+   ::getController():getRowSet():buildPad( ::oController:getModel():getSelectWhereCodigoArticuloHaving( ::getController():getCodigoArticulo(), ::getController:aHaving ) )
 
    ::getController():getBrowseView():Refresh()
 
@@ -743,7 +741,7 @@ METHOD getSelectWhereCodigoArticuloHaving( cCodigoArticulo, aHaving ) CLASS SQLC
 
    local cSql        
 
-   cSql              := ::getSelectWhereCodigoArticulo( cCodigoArticulo )
+   cSql              := SQLCombinacionesPropiedadesModel():getPropertyWhereArticuloCodigo( cCodigoArticulo )
 
    cSql              += ::getHaving( aHaving )
 
