@@ -110,8 +110,8 @@ METHOD validateNombre( oGet ) CLASS FacturasClientesDescuentosController
       msgstop( "Debes introducir un nombre valido para el descuento" )
       RETURN ( .f. )
    end if
-
-   if ::oModel:CountNombreWhereFacturaUuid( cNombre ) > 0
+ 
+   if !empty( ::oModel:CountNombreWhereFacturaUuid( cNombre ) )
       msgstop( "El nombre del descuento introducido ya existe" )
       RETURN ( .f. )
    end if
@@ -365,7 +365,7 @@ METHOD CountNombreWhereFacturaUuid( cNombre ) CLASS SQLFacturasClientesDescuento
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( ::getControllerParentUuid() ), quoted( cNombre ) )
 
-RETURN( getSQLDatabase():getValue ( cSql ) )
+RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

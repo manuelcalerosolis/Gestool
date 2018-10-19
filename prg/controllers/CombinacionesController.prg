@@ -154,7 +154,11 @@ METHOD runViewSelector( cCodigoArticulo ) CLASS CombinacionesController
       RETURN ( nil )
    end if 
 
-RETURN ( ::dialogViewActivate( ::getSelectorView() ) )
+   ::uDialogResult   := ::getSelectorView():Activate()
+
+   ::getSelectorView():End()
+
+RETURN ( ::uDialogResult )
 
 //---------------------------------------------------------------------------//
 
@@ -404,19 +408,17 @@ METHOD Activate() CLASS CombinacionesView
       ID          IDOK ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), msgalert( ) ) )
+      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ),  ) )
 
    REDEFINE BUTTON ;
       ID          IDCANCEL ;
       OF          ::oDialog ;
       CANCEL ;
-      ACTION     ( ::oDialog:end() )
+      ACTION      ( ::oDialog:end() )
 
    ::oDialog:bStart  := {|| ::startActivate() }
 
-   ACTIVATE DIALOG ::oDialog CENTER
-
-   msgalert( ::oController:getRowSet:fieldget('combinaciones_uuid')  ) 
+   ACTIVATE DIALOG ::oDialog CENTER 
 
 RETURN ( ::oDialog:nResult )
 
@@ -561,6 +563,8 @@ CLASS CombinacionesSelectorView FROM CombinacionesView
 
    METHOD showCombinations( oPanel ) 
 
+   METHOD Activate()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -591,6 +595,15 @@ METHOD showCombinations() CLASS CombinacionesSelectorView
 RETURN ( aPanelCombination )
 
 //---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS CombinacionesSelectorView
+
+   if ( ::Super:Activate() != IDOK )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::getController():getRowSet():fieldGet( 'combinaciones_uuid' ) )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -625,11 +638,11 @@ CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
-   METHOD getSelectWhereCodigoArticulo( cCodigoArticulo )
-
    METHOD getSelectWhereCodigoArticuloHaving( cCodigoArticulo, aHaving ) 
 
    METHOD getHaving( aHaving )
+
+   METHOD CountCombinacionesWhereArticulo( cCodigoArticulo )
   
 END CLASS
 
@@ -661,76 +674,6 @@ METHOD getInitialSelect() CLASS SQLCombinacionesModel
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName() )
-
-RETURN ( cSql )
-
-//---------------------------------------------------------------------------//
-
-METHOD getSelectWhereCodigoArticulo( cCodigoArticulo ) CLASS SQLCombinacionesModel
-
-   local cSql
-
-   local UuidLinea := ::oController:oController:oRowSet:fieldget( 'uuid' )
-
-   TEXT INTO cSql
-
-   SELECT 
-      combinaciones.id AS id,
-      combinaciones.uuid AS uuid,
-      combinaciones.parent_uuid AS parent_uuid,
-      combinaciones.incremento_precio AS incremento_precio,
-      combinaciones_propiedades.id AS propiedades_id,
-      combinaciones_propiedades.uuid AS propiedades_uuid,
-      GROUP_CONCAT( CONCAT( " ", articulos_propiedades_lineas.nombre, " " ) ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre,
-      articulos.nombre AS articulo_nombre,
-      articulos.codigo AS articulo_codigo,
-      facturas_clientes_lineas.fecha_caducidad AS fecha_caducidad,
-      facturas_clientes_lineas.lote AS lote, 
-      facturas_clientes_lineas.articulo_unidades AS articulo_unidades,
-      ( @total_unidades := articulo_unidades * unidad_medicion_factor ) AS total_unidades,
-      facturas_clientes_lineas.unidad_medicion_codigo AS unidad_medicion_codigo,
-      facturas_clientes_lineas.unidad_medicion_factor AS unidad_medicion_factor,
-      facturas_clientes_lineas.articulo_unidades AS articulo_unidades,
-      facturas_clientes_lineas.articulo_precio AS articulo_precio,
-      ( @total_bruto := ROUND( @total_unidades * articulo_precio, 2 ) ) AS total_bruto,
-      facturas_clientes_lineas.descuento AS descuento,
-      facturas_clientes_lineas.iva AS iva,
-      facturas_clientes_lineas.recargo_equivalencia AS recargo_equivalencia,
-      ( @importe_descuento := IF( descuento IS NULL OR descuento = 0, 0, @total_bruto * descuento / 100 ) ) AS importe_descuento,
-      ( @total_bruto - @importe_descuento ) AS total_precio,
-      facturas_clientes_lineas.almacen_codigo AS almacen_codigo,
-      almacenes.nombre AS almacen_nombre,
-      facturas_clientes_lineas.agente_codigo AS agente_codigo,
-      agentes.nombre AS agente_nombre,
-      agentes.comision AS agente_comision
-   
-   FROM %1$s AS combinaciones 
-
-      INNER JOIN %4$s AS articulos
-         ON articulos.codigo = %8$s
-      
-      INNER JOIN %2$s AS combinaciones_propiedades
-         ON combinaciones_propiedades.parent_uuid = combinaciones.uuid
-
-      INNER JOIN %3$s AS articulos_propiedades_lineas
-         ON combinaciones_propiedades.propiedad_uuid = articulos_propiedades_lineas.uuid  
-      
-      INNER JOIN gestool_00VG.facturas_clientes_lineas AS facturas_clientes_lineas
-         ON facturas_clientes_lineas.uuid= %9$s
-      
-      LEFT JOIN gestool_00VG.almacenes AS almacenes
-         ON almacenes.codigo = facturas_clientes_lineas.almacen_codigo
-         
-      LEFT JOIN gestool_00VG.agentes AS agentes
-         ON agentes.codigo = facturas_clientes_lineas.agente_codigo
-
-   WHERE combinaciones.parent_uuid = articulos.uuid 
-
-   GROUP BY combinaciones.uuid
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesPropiedadesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), SQLFacturasClientesLineasModel():getTableName(),SQLAlmacenesModel():getTableName() ,SQLAgentesModel():getTableName() , quoted( cCodigoArticulo ), quoted( UuidLinea ) )
 
 RETURN ( cSql )
 
@@ -782,6 +725,26 @@ METHOD getHaving( aHaving ) CLASS SQLCombinacionesModel
 
 RETURN ( cHaving )
 
+//---------------------------------------------------------------------------//
+METHOD CountCombinacionesWhereArticulo( cCodigoArticulo ) CLASS SQLCombinacionesModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+      SELECT COUNT( combinaciones.uuid )
+         FROM %1$s as combinaciones
+        
+         INNER JOIN %2$s as articulos
+            ON articulos.id= %3$s
+   
+      WHERE combinaciones.parent_uuid = articulos.uuid
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
+
+RETURN ( getSQLDatabase():getValue( cSql ) )
 //---------------------------------------------------------------------------//
 
 METHOD getColumns() CLASS SQLCombinacionesModel

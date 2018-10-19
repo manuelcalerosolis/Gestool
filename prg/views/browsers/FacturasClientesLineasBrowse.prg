@@ -28,6 +28,8 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()
 
+   METHOD setChange()
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -38,9 +40,20 @@ METHOD Create( oWindow ) CLASS FacturasClientesLineasBrowseView
 
    ::oBrowse:setChange( {|| ::oController:getHistoryManager():Set( ::getRowSet():getValuesAsHash() ) } )
 
+   ::oBrowse:bCancelEdit   := {|| ::setChange() }
+
    ::oBrowse:setGotFocus( {|| ::oController:getHistoryManager():Set( ::getRowSet():getValuesAsHash() ) } )
 
 RETURN ( ::oBrowse )
+
+//---------------------------------------------------------------------------//
+
+METHOD setChange()
+
+   ::oController:getHistoryManager():Set( ::getRowSet():getValuesAsHash() )
+   ::oController:validLinea()
+
+RETURN ( nil )   
 
 //---------------------------------------------------------------------------//
 
@@ -277,9 +290,8 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :bEditBlock          := {|| ::oController:getCombinacionesController():runViewSelector( ::getRowSet():fieldGet( 'articulo_codigo' ) ) }
       :nBtnBmp             := 1
       :AddResource( "Lupa" )
-      :bOnPostEdit         := {|oCol, uNewValue, nKey| ::oController:postValidateCombinacionesUuid( oCol, uNewValue, nKey )  }
+      :bOnPostEdit         := {|oCol, uNewValue | ::oController:postValidateCombinacionesUuid( oCol, uNewValue ) }
    end with
-
 
    with object ( ::oColumnCodigoAlmacen := ::oBrowse:AddCol() )
       :cSortOrder          := 'almacen_codigo'
