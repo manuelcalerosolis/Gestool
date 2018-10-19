@@ -9,11 +9,10 @@ CLASS ImprimirSeriesView FROM SQLBaseView
 
    DATA oDialog
 
-   DATA oXbrowseFile
-   DATA aListboxFile                   INIT {}
-   DATA cListboxFile                   INIT ""
+   DATA oDocument
+   DATA cDocument                      INIT ""
 
-   DATA lCopies                        INIT .t.
+   DATA oCopies
    DATA nCopies                        INIT 1
 
    DATA cPrinter                       INIT prnGetName()
@@ -26,7 +25,13 @@ CLASS ImprimirSeriesView FROM SQLBaseView
 
    METHOD runActivate()
 
-   METHOD loadDocuments()              INLINE ( ::oXbrowseFile:SetArray( ::oController:aFiles, , , .f. ) )
+   METHOD loadDocuments()              INLINE ( ::getController():loadDocuments() )
+   
+   METHOD getDocumentPrint()           INLINE ( ::getController():getDocumentPrint() )
+
+   METHOD getCopyPrint()               INLINE ( ::getController():getCopyPrint() )
+
+   METHOD reLoadDocuments()            INLINE ( ::oDocument:SetItems( ::oController:loadDocuments(), .t. ) )
 
 END CLASS
 
@@ -36,19 +41,15 @@ METHOD New( oController )
 
    ::Super():New( oController )
 
-   ::oController:oEvents:Set( 'loadDocuments', {|| ::loadDocuments() } )
-
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD Activate()
 
-   local oBmp
-
    DEFINE DIALOG ::oDialog RESOURCE "IMPRIMIR_SERIES" 
 
-      REDEFINE BITMAP   oBmp ;
+      REDEFINE BITMAP   ;
          ID             500 ;
          RESOURCE       "gc_printer2_48" ;
          TRANSPARENT    ;
@@ -61,48 +62,27 @@ METHOD Activate()
 
       TBtnBmp():ReDefine( 110, "new16",,,,, {|| ::oController:newDocument() }, ::oDialog, .f., , .f., "Añadir formato" )
 
-      TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editDocument( ::oXbrowseFile:aRow ) }, ::oDialog, .f., , .f., "Modificar formato" )
+      TBtnBmp():ReDefine( 120, "edit16",,,,, {|| ::oController:editDocument( ::cDocument ) }, ::oDialog, .f., , .f., "Modificar formato" )
 
-      TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteDocument( ::oXbrowseFile:aRow ) }, ::oDialog, .f., , .f., "Eliminar formato" )
+      TBtnBmp():ReDefine( 130, "del16",,,,, {|| ::oController:deleteDocument( ::cDocument ) }, ::oDialog, .f., , .f., "Eliminar formato" )
 
-      TBtnBmp():ReDefine( 140, "refresh16",,,,, {|| ::oController:loadDocuments() }, ::oDialog, .f., , .f., "Recargar formato" )
+      TBtnBmp():ReDefine( 140, "refresh16",,,,, {|| ::reLoadDocuments() }, ::oDialog, .f., , .f., "Recargar formatos" )
 
       // Xbrowse files --------------------------------------------------------
 
-      ::oXbrowseFile                         := TXBrowse():New( ::oDialog )
-
-      ::oXbrowseFile:bClrSel                 := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      ::oXbrowseFile:bClrSelFocus            := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      ::oXbrowseFile:SetArray( ::oController:aFiles, , , .f. )
-
-      ::oXbrowseFile:lHScroll                := .f.
-      ::oXbrowseFile:lVScroll                := .t.
-      ::oXbrowseFile:lRecordSelector         := .f.
-      ::oXbrowseFile:lHeader                 := .f.
-      ::oXbrowseFile:nMarqueeStyle           := 5
-
-      ::oXbrowseFile:CreateFromResource( 150 )
-
-      with object ( ::oXbrowseFile:AddCol() )
-         :cHeader       := ""
-         :bStrData      := {|| if( !empty( ::oController:aFiles ), ::oController:aFiles[ ::oXbrowseFile:nArrayAt ], "" ) }
-         :nWidth        := 400
-      end with
-
-      //-----------------------------------------------------------------------
-
-      REDEFINE CHECKBOX ::lCopies ;
-         ID             160 ;
+      REDEFINE COMBOBOX ::oDocument ;
+         VAR            ::cDocument ;
+         ID             150 ;
+         ITEMS          ::oController:loadDocuments() ;
          OF             ::oDialog
 
-      REDEFINE GET      ::nCopies ;
+      REDEFINE GET      ::oCopies ;
+         VAR            ::nCopies ;
          ID             170 ;
          PICTURE        "99999" ;
          SPINNER ;
          MIN            1 ;
          MAX            99999 ;
-         WHEN           ( !::lCopies ) ;
          OF             ::oDialog
 
       REDEFINE COMBOBOX ::cPrinter ;
@@ -128,7 +108,9 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startActivate()
 
-   ::oController:loadDocuments()
+   ::oDocument:Set( ::getDocumentPrint() )
+
+   ::oCopies:cText( ::getCopyPrint() )
 
 RETURN ( nil )
 
@@ -138,7 +120,7 @@ METHOD runActivate()
 
    ::oDialog:disable()
 
-   ::oController:showDocument( IS_PRINTER, ::oXbrowseFile:aRow, ::nCopies, ::cPrinter )
+   ::oController:showDocument( IS_PRINTER, ::cDocument, ::nCopies, ::cPrinter )
 
    ::oDialog:enable()
 

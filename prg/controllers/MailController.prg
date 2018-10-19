@@ -31,6 +31,8 @@ CLASS MailController
 
    METHOD getDocumentPdf()             INLINE ( ::getController():getDocumentPdf() )
 
+   METHOD getTemplateMails()           INLINE ( ::getController():getTemplateMails() )
+
    METHOD getIds()                     INLINE ( iif( !empty( ::oController ), ::oController:getIds(), {} ) )
 
    METHOD getUuidIdentifiers()         INLINE ( hGetValues( ::oController:getIdentifiers() ) )
@@ -175,7 +177,7 @@ METHOD generatePdf( uuid ) CLASS MailController
 
    hset( hReport, "uuid",                 uuid )
    hset( hReport, "device",               IS_PDF )
-   hset( hReport, "fileName",             ::getDialogView():getComboDocument() )
+   hset( hReport, "fileName",             ::getDialogView():getDocument() )
    hset( hReport, "pdfFileName",          ::getController():getModel():getNumeroWhereUuid( uuid ) )
    hset( hReport, "pdfDefaultPath",       cPatTmp() )
    hset( hReport, "pdfOpenAfterExport",   .f. )
@@ -218,8 +220,8 @@ CLASS MailView FROM SQLBaseView
    DATA oAdjunto
    DATA cAdjunto                 INIT space( 250 )
 
-   DATA oComboDocument      
-   DATA cComboDocument     
+   DATA oDocument      
+   DATA cDocument     
 
    DATA oRichEdit      
    DATA oMessage      
@@ -262,7 +264,7 @@ CLASS MailView FROM SQLBaseView
    METHOD getAdjunto()           INLINE ( alltrim( ::cAdjunto ) )
    METHOD addAjunto() 
 
-   METHOD getComboDocument()     INLINE ( ::cComboDocument )
+   METHOD getDocument()     INLINE ( ::cDocument )
 
    METHOD setMessage( cMessage ) INLINE ( ::cMessage := cMessage, if( !empty( ::oRichEdit ), ::oRichEdit:oRTF:SetText( cMessage ), ) )
    METHOD getMessage()           INLINE ( ::oRichEdit:getText() )
@@ -328,8 +330,8 @@ METHOD Activate() CLASS MailView
    ::oAdjunto:cBmp   := "Folder"
    ::oAdjunto:bHelp  := {|| ::addAjunto() }
 
-   REDEFINE COMBOBOX ::oComboDocument ;
-      VAR            ::cComboDocument ;
+   REDEFINE COMBOBOX ::oDocument ;
+      VAR            ::cDocument ;
       ITEMS          ::loadDocuments() ;
       ID             160 ;
       OF             ::oFld:aDialogs[ 1 ]
@@ -428,7 +430,9 @@ METHOD startActivate() CLASS MailView
 
    ::setAdjunto( "" )
 
-   ::oComboDocument:Set( ::getController():getDocumentPdf() )
+   ::oDocument:Set( ::getController():getDocumentPdf() )
+
+   ::getController():getTemplateHTML():loadHtmlFile( ::getController():getTemplateMails() )
 
 RETURN ( nil )
 

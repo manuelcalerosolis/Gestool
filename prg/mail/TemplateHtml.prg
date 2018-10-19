@@ -87,35 +87,31 @@ RETURN ( nil )
 
 METHOD loadHtmlFile( cFile ) CLASS TemplateHtml
 
-   local oBlock
-   local oError
-   local cMensaje
-   local lLoadHtmlFile  := .f.
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   local lLoad          := .f.
 
    ::cHtmlFile          := alltrim( cFile )
 
-   if file( ::cHtmlFile )  
+   if !file( cFile )
+      ::cHtmlFile       := cPatHtml() + ::cHtmlFile
+   end if 
 
-      cMensaje          := memoread( ::cHtmlFile )
+   if !file( ::cHtmlFile )  
+      RETURN ( lLoad )
+   end if 
 
-      ::oEvents:fire( 'loadHtmlFile', cMensaje )
+   try
 
-      lLoadHtmlFile     := .t.
+      ::oEvents:fire( 'loadHtmlFile', memoread( ::cHtmlFile ) )
 
-   end if
+      lLoad             := .t.
 
-   RECOVER USING oError
+   catch 
 
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
+      msgStop( "Error al cargar el documento " + ::cHtmlFile )
 
-   END SEQUENCE
+   end 
 
-   ErrorBlock( oBlock )
-
-RETURN ( lLoadHtmlFile )
+RETURN ( lLoad )
 
 //--------------------------------------------------------------------------//
 

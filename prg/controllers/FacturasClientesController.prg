@@ -54,7 +54,7 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD getDocumentPreview()         INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'documento_previsulizacion', '' ) )
 
-   METHOD getPrintCopy()               INLINE ( ::getConfiguracionesController():getModelNumeric( ::cName, 'copias_impresion', 1 ) )
+   METHOD getCopyPrint()               INLINE ( ::getConfiguracionesController():getModelNumeric( ::cName, 'copias_impresion', 1 ) )
 
    METHOD getTemplateMails()           INLINE ( ::getConfiguracionesController():getModelValue( ::cName, 'plantilla_para_mails', '' ) )
    
@@ -328,7 +328,7 @@ METHOD getConfigItems() CLASS FacturasClientesController
 
    aadd( aItems,  {  'texto'  => 'Copias impresión',;
                      'clave'  => 'copias_impresion',;
-                     'valor'  => ::getPrintCopy(),;
+                     'valor'  => ::getCopyPrint(),;
                      'tipo'   => "N" } )
 
    aadd( aItems,  {  'texto'  => 'Documento pdf',;

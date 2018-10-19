@@ -30,6 +30,12 @@ CLASS ImprimirSeriesController FROM SQLPrintController
 
    METHOD editDocument()
 
+   METHOD loadDocuments()              INLINE ( ::getController():loadDocuments() )
+
+   METHOD getDocumentPrint()           INLINE ( ::getController():getDocumentPrint() )
+
+   METHOD getCopyPrint()               INLINE ( ::getController():getCopyPrint() )
+
    METHOD getUuidIdentifiers()         INLINE ( hGetValues( ::getController():getIdentifiers() ) )
 
    METHOD getFirstUuidIdentifier()     INLINE ( hGetValueAt( ::getController():getIdentifiers(), 1 ) )
