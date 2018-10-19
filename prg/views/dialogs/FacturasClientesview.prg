@@ -31,6 +31,8 @@ CLASS FacturasClientesView FROM SQLBaseView
 
    METHOD addLinksToExplorerBar()
 
+   METHOD lineaAppend()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -183,7 +185,7 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Lineas ------------------------------------------------------------------
 
-   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::oController:getFacturasClientesLineasController():AppendLineal() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
+   TBtnBmp():ReDefine( 501, "new16",,,,, {|| ::lineaAppend() }, ::oFolder:aDialogs[1], .f., , .f., "Añadir línea" )
 
    TBtnBmp():ReDefine( 502, "del16",,,,, {|| ::oController:getFacturasClientesLineasController():Delete() }, ::oFolder:aDialogs[1], .f., , .f., "Eliminar líneas" )
 
@@ -291,6 +293,12 @@ METHOD addLinksToExplorerBar() CLASS FacturasClientesView
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+METHOD lineaAppend()
+
+   if !::oController:getFacturasClientesLineasController():validLinea()
+      RETURN( nil )
+      end if
+RETURN( ::oController:getFacturasClientesLineasController():AppendLineal() ) 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

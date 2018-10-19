@@ -25,6 +25,8 @@ CLASS SQLXBrowse FROM TXBrowse
 
    DATA cViewType                               AS CHARACTER   INIT "navigator"
 
+   DATA bCancelEdit
+
    METHOD New( oController, oWnd ) CONSTRUCTOR
 
    METHOD setRowSet( oRowSet )
@@ -80,6 +82,8 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD setFilterInRowSet( cFilterExpresion )
 
    METHOD getSelectedCol()                      INLINE ( ::SelectedCol() )
+
+   METHOD CancelEdit()                    
 
 END CLASS
 
@@ -372,3 +376,14 @@ METHOD setFirstColumnOrder() CLASS SQLXBrowse
 RETURN ( nil )
 
 //------------------------------------------------------------------------//
+
+METHOD CancelEdit() CLASS SQLXBrowse
+
+   if !empty( ::bCancelEdit )
+      eval( ::bCancelEdit, Self )
+   end if 
+
+RETURN ( ::Super():CancelEdit() )
+
+//------------------------------------------------------------------------//
+

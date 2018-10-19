@@ -45,6 +45,10 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD validAgenteCodigo( oGet, oCol )
 
+   METHOD validLinea()
+
+   METHOD validLineaCombinacion( cCodigoArticulo )
+
    // Escritura de campos------------------------------------------------------
 
    METHOD updateField( cField, uValue )   
@@ -74,6 +78,9 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD stampCombinacionesUuid( UuidCombinacion ) ;
                                           INLINE ( ::updateField( "combinaciones_uuid", UuidCombinacion ) )
 
+   METHOD stampIncrement( nIncrementoPrecio ) ;
+                                          INLINE ( ::updateField( "incremento_precio", nIncrementoPrecio ) )
+
    METHOD stampArticuloUnidaMedicionVentas()
 
    METHOD stampArticuloPrecio()
@@ -95,6 +102,9 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD stampArticuloIva()
 
    METHOD stampAgenteComision()
+
+   METHOD stampCombinationAndIncrement( hCombination )
+
    
    // Dialogos-----------------------------------------------------------------
 
@@ -239,6 +249,43 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD validLinea()
+
+   local cCodigoArticulo
+
+   cCodigoArticulo         := ::oRowSet:fieldget('articulo_codigo')
+   
+
+   if !empty( cCodigoArticulo )
+
+      if !::validLineaCombinacion( cCodigoArticulo )
+         RETURN ( .f. )
+      end if
+
+   end if
+
+RETURN ( .t. )
+//---------------------------------------------------------------------------//
+
+METHOD validLineaCombinacion( cCodigoArticulo )
+      
+      local UuidCombinacion
+
+       UuidCombinacion         := ::oRowSet:fieldget('articulos_propiedades_nombre')
+
+      if empty( UuidCombinacion )
+
+         if !empty( ::getCombinacionesController():getModel():CountCombinacionesWhereArticulo( cCodigoArticulo ) )
+            msgstop( "Debes seleccionar propiedades" )
+            RETURN ( .f. )
+         end if
+
+      end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD postValidateArticuloCodigo( oCol, uValue, nKey )
 
    local hArticulo 
@@ -336,10 +383,20 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD postValidateCombinacionesUuid( oCol, uValue, nKey )
+METHOD postValidateCombinacionesUuid( oCol, uValue )
 
-msgalert( hb_valtoexp(SQLcombinacionesModel():getHashWhere( "id", nkey ) ) )
+   local hCombination         :=  {}
 
+   if hb_isnil( uValue )
+      RETURN ( nil )
+   end if
+
+
+   hCombination := SQLcombinacionesModel():getHashWhere( "uuid", uValue )
+
+   ::stampCombinationAndIncrement( hCombination )
+
+   ::oController:calculateTotals()
 
 RETURN ( nil )
 
@@ -556,6 +613,16 @@ METHOD stampAgenteComision()
    if hb_isnumeric( nComision )
       ::updateField( 'agente_comision', nComision )
    end if 
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+ METHOD stampCombinationAndIncrement( hCombination )
+
+   ::stampCombinacionesUuid( hget( hCombination, "uuid" ) )
+
+   ::stampIncrement(  hget( hCombination, "incremento_precio" ) )
 
 RETURN ( nil )
 

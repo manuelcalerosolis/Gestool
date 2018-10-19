@@ -104,10 +104,6 @@ METHOD End()
       ::oTimer:End()
    end if 
 
-   ::oEvents                                          := nil
-
-   ::oTimer                                           := nil
-
 RETURN ( hb_gcall( .t. ) )
 
 //---------------------------------------------------------------------------//
