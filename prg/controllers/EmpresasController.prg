@@ -94,7 +94,7 @@ METHOD New( oController ) CLASS EmpresasController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
-   ::getNavigatorView():oMenuTreeView:setEvent( 'addedRefreshButton',     {|| ::addExtraButtons() } )
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addedRefreshButton',     {|| ::addExtraButtons() } )
 
 RETURN ( Self )
 

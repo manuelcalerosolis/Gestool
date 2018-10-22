@@ -98,6 +98,8 @@ METHOD New( oController ) CLASS FacturasClientesController
 
    ::lConfig                           := .t.
 
+   ::lDocuments                        := .t.
+
    ::lMail                             := .t.
 
    ::lOthers                           := .t.

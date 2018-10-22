@@ -35,6 +35,8 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    DATA lConfig                                       INIT .f.
 
+   DATA lDocuments                                    INIT .f.
+
    DATA lMail                                         INIT .f.
 
    DATA lEnableWindowsBar                             INIT .f.
@@ -536,15 +538,11 @@ RETURN ( nil )
 
 METHOD setShowDeleted()
 
-   local lShowDeleted   
-   local cButtonPrompt
+   ::getModel():setShowDeleted( ::getModel():isShowDeleted() )
 
-   lShowDeleted         := ::getModel():isShowDeleted()
-   cButtonPrompt        := if( lShowDeleted, "Mostrar eliminados", "Ocultar eliminados" )
-
-   ::getModel():setShowDeleted( lShowDeleted )
-
-   ::getNavigatorView():getMenuTreeView():oButtonShowDelete:SetText( cButtonPrompt )
+   ::getNavigatorView();
+      :getMenuTreeView();
+         :setButtonShowDeleteText( if( ::getModel():isShowDeleted(), "Mostrar eliminados", "Ocultar eliminados" ) )
    
 RETURN ( ::reBuildRowSet() )
 

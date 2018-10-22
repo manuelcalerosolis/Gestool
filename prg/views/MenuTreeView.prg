@@ -55,7 +55,7 @@ CLASS MenuTreeView
    METHOD getSuperController()            INLINE ( ::oController:getController() )
    METHOD getBrowse()                     INLINE ( ::oController:getBrowse() )
 
-   METHOD isControllerDocuments()         INLINE ( !empty( ::getSuperController():loadDocuments() ) )
+   METHOD isControllerDocuments()         INLINE ( ::getSuperController():lDocuments )
    METHOD isControllerLabels()            INLINE ( ::getSuperController():lLabels )
    METHOD isControllerConfig()            INLINE ( ::getSuperController():lConfig )
    METHOD isMailConfig()                  INLINE ( ::getSuperController():lMail )
@@ -146,16 +146,20 @@ CLASS MenuTreeView
 
    METHOD blockPrintDocument( nDevice, cFormato )  
 
-   METHOD SelectButtonMain()              INLINE ( ::oTreeView:Select( ::oButtonMain ) )
+   METHOD SelectButtonMain()                 INLINE ( ::oTreeView:Select( ::oButtonMain ) )
 
    METHOD onChange()
 
-   METHOD Refresh()                       INLINE( ::oTreeView:Refresh() ) 
+   METHOD Refresh()                          INLINE( ::oTreeView:Refresh() ) 
+
+   METHOD setButtonShowDeleteText( cText )   INLINE ( ::oButtonShowDelete:setText( cText ) )
 
    // Events-------------------------------------------------------------------
+   
+   METHOD getEvents()                        INLINE ( if( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
 
-   METHOD setEvent( cEvent, bEvent )      INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
-   METHOD fireEvent( cEvent )             INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
+   METHOD setEvent( cEvent, bEvent )         INLINE ( ::getEvents():set( cEvent, bEvent ) )
+   METHOD fireEvent( cEvent )                INLINE ( ::getEvents():fire( cEvent ) )
 
 ENDCLASS
 
@@ -167,8 +171,6 @@ METHOD New( oController )
 
    ::oImageList   := TImageList():New( 16, 16 )
 
-   ::oEvents      := Events():New()   
-
 RETURN ( self )
 
 //----------------------------------------------------------------------------//
@@ -176,14 +178,13 @@ RETURN ( self )
 METHOD End()
 
    if !empty( ::oImageList )
-   
       aeval( ::oImageList:aBitmaps, {|oBitmap| oBitmap:End() } )
-
       ::oImageList:End()
-
    end if
 
-   ::oEvents:End()
+   if !empty( ::oEvents )
+      ::oEvents:End()
+   end if
 
 RETURN ( nil )
 
@@ -610,7 +611,7 @@ RETURN ( {|| ::getSuperController():getImprimirSeriesController():showDocument( 
 
 METHOD addDocumentsButton()
 
-   if !( ::isControllerDocuments() )
+   if !( ::lDocumentButtons )
       RETURN ( nil )
    end if 
 

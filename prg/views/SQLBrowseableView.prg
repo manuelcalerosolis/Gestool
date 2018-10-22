@@ -52,11 +52,11 @@ CLASS SQLBrowseableView FROM SQLBaseView
                                                             ::oController:oRowSet:Refresh(),;
                                                             ::Refresh() ) )
 
-   METHOD getMenuTreeView()                  INLINE ( ::oMenuTreeView )
-
    METHOD onChangeCombo()
    
    METHOD onChangeSearch()
+
+   METHOD getMenuTreeView()                  INLINE ( if( empty( ::oMenuTreeView ), ::oMenuTreeView := MenuTreeView():New( Self ), ), ::oMenuTreeView )
 
 ENDCLASS
 
@@ -65,8 +65,6 @@ ENDCLASS
 METHOD New( oController )
 
    ::Super:New( oController )
-
-   ::oMenuTreeView         := MenuTreeView():New( Self )
 
 RETURN ( Self )
 

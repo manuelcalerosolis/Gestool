@@ -49,8 +49,9 @@ METHOD New( oController ) CLASS SesionesController
 
    ::setEvent( 'appending',      {|| ::isNotOpenSessions() } )
 
-   ::getNavigatorView():oMenuTreeView:setEvent( 'addedAppendButton',;
-      {|| ::getNavigatorView():oMenuTreeView:AddButton( "Cerrar", "gc_clock_stop_16", {|| ::CloseSession() }, , ACC_EDIT, ::oNavigatorView:oMenuTreeView:oButtonMain ) } )
+   ::getNavigatorView();
+      :getMenuTreeView();
+         :setEvent( 'addedAppendButton', {|| ::getNavigatorView():getMenuTreeView():AddButton( "Cerrar", "gc_clock_stop_16", {|| ::CloseSession() }, , ACC_EDIT, ::getNavigatorView():getMenuTreeView():oButtonMain ) } )
 
 RETURN ( Self )
 

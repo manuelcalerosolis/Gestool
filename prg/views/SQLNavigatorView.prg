@@ -100,9 +100,9 @@ METHOD Activate() CLASS SQLNavigatorView
 
    // Tree menu ---------------------------------------------------------------
 
-   ::oMenuTreeView:ActivateMDI( dfnTreeViewWidth, ::aRect[ 3 ] - dfnSplitterHeight )
+   ::getMenuTreeView():ActivateMDI( dfnTreeViewWidth, ::aRect[ 3 ] - dfnSplitterHeight )
 
-   ::oMenuTreeView:AddAutoButtons()
+   ::getMenuTreeView():AddAutoButtons()
 
    // Browse view -------------------------------------------------------------
    
@@ -178,7 +178,7 @@ METHOD CreateSplitters() CLASS SQLNavigatorView
    ::oHorizontalSplitter:lStatic := .t.
 
    ::oVerticalSplitter     := TSplitter():New(  /*nRow*/ 0, /*nCol*/ dfnTreeViewWidth, /*lVertical*/ .t.,;
-                                                /*aPrevCtrols*/ { ::oMenuTreeView:oTreeView }, /*lAdjPrev*/ .t., /*aHindCtrols*/ { ::oTopWebBar, ::oHorizontalSplitter, ::getBrowse() },;
+                                                /*aPrevCtrols*/ { ::getMenuTreeView():oTreeView }, /*lAdjPrev*/ .t., /*aHindCtrols*/ { ::oTopWebBar, ::oHorizontalSplitter, ::getBrowse() },;
                                                 /*lAdjHind*/ .t., /*bMargin1*/ {|| 0 }, /*bMargin2*/ {|| 0 }, /*oWnd*/ ::oMdiChild,;
                                                 /*bChange*/, /*nWidth*/ dfnSplitterWidth, /*nHeight*/ ::aRect[ 3 ] - dfnSplitterHeight, /*lPixel*/ .t., /*l3D*/.t.,;
                                                 /*nClrBack*/ , /*lDesign*/ .f., /*lUpdate*/ .t., /*lStyle*/ .t. )  
