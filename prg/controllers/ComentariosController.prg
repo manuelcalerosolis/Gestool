@@ -121,6 +121,18 @@ METHOD addColumns() CLASS ComentariosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'nombre'
+      :cHeader             := 'Nombre'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   ::getColumnsCreatedUpdatedAt()
+
+   ::getColumnDeletedAt()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -296,6 +308,8 @@ METHOD getColumns() CLASS SQLComentariosModel
 
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
                                     "default"   => {|| space( 200 ) } }                       )
+
+   ::getTimeStampColumns()
 
    ::getDeletedStampColumn()
 

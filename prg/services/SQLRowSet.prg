@@ -22,8 +22,11 @@ CLASS SQLRowSet
    METHOD Get()                                       INLINE ( ::oRowSet )
 
    METHOD fieldGet( uField )                          INLINE ( if( !empty( ::oRowSet ), ::oRowSet:fieldget( uField ), ) )
-   METHOD recCount()                                  INLINE ( if( !empty( ::oRowSet ), ::oRowSet:reccount(), ) )
+   METHOD fieldGetDeteletedAt()                       INLINE ( if( !empty( ::oRowSet ), ::oRowSet:fieldget( 'deleted_at' ), ) )
+   
    METHOD fieldValueByName( cColumn )                 INLINE ( if( !empty( ::oRowSet ), ::oRowSet:getValueByName( cColumn ), ) )
+   
+   METHOD recCount()                                  INLINE ( if( !empty( ::oRowSet ), ::oRowSet:reccount(), ) )
 
    METHOD saveRecno()                                 INLINE ( if( !empty( ::oRowSet ), ::nRecno := ::oRowSet:recno(), ) ) 
    METHOD restoreRecno()                              INLINE ( if( !empty( ::oRowSet ), ::oRowSet:goto( ::nRecno ), ) ) 

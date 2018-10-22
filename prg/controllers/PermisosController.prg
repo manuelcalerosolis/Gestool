@@ -167,31 +167,9 @@ METHOD addColumns() CLASS PermisosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'creado'
-      :cHeader             := 'Creado'
-      :cEditPicture        := '@DT'
-      :nWidth              := 140
-      :nHeadStrAlign       := AL_LEFT
-      :nDataStrAlign       := AL_LEFT
-      :lHide               := .t.
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'created_at' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
+   ::getColumnsCreatedUpdatedAt()
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'modificado'
-      :cHeader             := 'Modificado'
-      :cEditPicture        := '@DT'
-      :nWidth              := 140
-      :nHeadStrAlign       := AL_LEFT
-      :nDataStrAlign       := AL_LEFT
-      :lHide               := .t.
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'updated_at' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

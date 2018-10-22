@@ -196,6 +196,16 @@ CLASS SQLBrowseView
 
    METHOD getStateView( cType, cName )        
 
+   METHOD getColumnsCreatedUpdatedAt()
+
+   METHOD getColumnDeletedAt()
+
+   METHOD getStdColors()
+
+   METHOD getSelColors()
+
+   METHOD getSelFocusColors()
+
    // Menus--------------------------------------------------------------------
 
    METHOD BuildMenu( nRow, nCol, nFlags )
@@ -259,13 +269,13 @@ METHOD Create( oWindow )
 
    ::oBrowse:nMarqueeStyle    := ::nMarqueeStyle
 
-   ::oBrowse:bClrStd          := {|| { CLR_BLACK, CLR_WHITE } }
-   ::oBrowse:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrowse:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 221, 221, 221 ) } }
+   ::oBrowse:setRowSet( ::getRowSet() )
+   
+   ::oBrowse:bClrStd          := {|| ::getStdColors() }
+   ::oBrowse:bClrSel          := {|| ::getSelColors() }
+   ::oBrowse:bClrSelFocus     := {|| ::getSelFocusColors() }
 
    ::oBrowse:bRClicked        := {| nRow, nCol, nFlags | ::BuildMenu( nRow, nCol, nFlags ) }
-
-   ::oBrowse:setRowSet( ::getRowSet() )
 
    ::oBrowse:setName( ::getName() )
 
@@ -703,6 +713,72 @@ METHOD getStateView( cType, cName )
    end if 
 
 RETURN ( ::getController():getState( cType, cName ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD getColumnsCreatedUpdatedAt()
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'created_at'
+      :cHeader             := 'Creado'
+      :cEditPicture        := '@DT'
+      :nWidth              := 140
+      :nHeadStrAlign       := AL_LEFT
+      :nDataStrAlign       := AL_LEFT
+      :lHide               := .t.
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'created_at' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'updated_at'
+      :cHeader             := 'Modificado'
+      :cEditPicture        := '@DT'
+      :nWidth              := 140
+      :nHeadStrAlign       := AL_LEFT
+      :nDataStrAlign       := AL_LEFT
+      :lHide               := .t.
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'updated_at' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD getColumnDeletedAt()
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'deleted_at'
+      :cHeader             := 'Borrado'
+      :cEditPicture        := '@DT'
+      :nWidth              := 140
+      :nHeadStrAlign       := AL_LEFT
+      :nDataStrAlign       := AL_LEFT
+      :lHide               := .t.
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'deleted_at' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
+METHOD getStdColors()
+
+RETURN ( { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), CLR_WHITE, rgb( 255, 235, 238 ) ) } )
+
+//----------------------------------------------------------------------------//
+
+METHOD getSelColors()
+
+RETURN ( { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), Rgb( 229, 229, 229 ), rgb( 255, 235, 238 ) ) } )
+
+//----------------------------------------------------------------------------//
+
+METHOD getSelFocusColors()
+
+RETURN ( { CLR_BLACK, if( empty( ::getRowSet():fieldget( 'deleted_at' ) ), Rgb( 229, 229, 229 ), rgb( 239, 154, 154 ) ) } )
 
 //----------------------------------------------------------------------------//
 
