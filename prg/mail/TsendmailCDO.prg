@@ -13,8 +13,8 @@ CLASS TSendMailCDO
 
    DATA cError
 
-   METHOD New( oController ) CONSTRUCTOR
-   METHOD End()
+   METHOD New( oController )  CONSTRUCTOR
+   METHOD End()               VIRTUAL
 
    // Envios de los mails------------------------------------------------------
 
@@ -27,7 +27,7 @@ CLASS TSendMailCDO
       METHOD setMessage( oMail, hMail )
       METHOD setSubject( oMail, hMail )
 
-   METHOD getError()       INLINE   ( ::cError )
+   METHOD getError()          INLINE   ( ::cError )
 
 END CLASS
 
@@ -63,16 +63,6 @@ METHOD New( oController )
    errorBlock( oBlock )
 
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD End()
-
-   if !empty( ::mailServer )
-      ::mailServer:End()
-   end if 
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

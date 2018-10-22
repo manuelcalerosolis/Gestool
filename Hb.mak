@@ -95,6 +95,7 @@ TSendMailOutlook.prg                               	\
 TSendMailCDO.prg                                   	\
 MailSender.prg 													\
 TemplateHTML.prg                                 		\
+LogFile.prg                                 				\
 Tiva.prg                                           	\
 Fpago.prg                                          	\
 Pedprov.prg                                        	\
@@ -800,6 +801,7 @@ TSendMailOutlook.obj                               				\
 TSendMailCDO.obj                                   				\
 MailSender.obj                                   					\
 TemplateHTML.obj                                 					\
+LogFile.obj                                 							\
 Tiva.obj                                           				\
 Fpago.obj                                          				\
 Pedprov.obj                                        				\
@@ -1524,6 +1526,7 @@ $(OBJ)\TSendMailOutlook.obj                                 	+
 $(OBJ)\TSendMailCDO.obj                                     	+
 $(OBJ)\MailSender.obj                                     		+
 $(OBJ)\TemplateHTML.obj                                   		+
+$(OBJ)\LogFile.obj                                   				+
 $(OBJ)\Tiva.obj                                             	+
 $(OBJ)\Fpago.obj                                            	+
 $(OBJ)\Pedprov.obj                                          	+

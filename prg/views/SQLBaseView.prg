@@ -66,9 +66,6 @@ CLASS SQLBaseView
 
    // Events-------------------------------------------------------------------
 
-   METHOD setEvent( cEvent, bEvent )                  INLINE ( iif( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
-   METHOD fireEvent( cEvent )                         INLINE ( iif( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
-
    METHOD showMessage( cMessage )        
    METHOD restoreMessage()
 
@@ -78,6 +75,13 @@ CLASS SQLBaseView
    METHOD verticalHide( oControl )
    METHOD verticalShow( oControl )
 
+   METHOD getEvents()                                 INLINE ( if( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
+
+   METHOD setEvent( cEvent, bEvent )                  INLINE ( ::getEvents():set( cEvent, bEvent ) )
+   METHOD fireEvent( cEvent )                         INLINE ( ::getEvents():fire( cEvent ) )
+
+   METHOD getTimer()            
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -85,10 +89,6 @@ END CLASS
 METHOD New( oController )
 
    ::oController                                      := oController
-
-   ::oEvents                                          := Events():New()
-
-   ::oTimer                                           := TTimer():New( 4000, {|| ::RestoreMessage() } )
 
 RETURN ( self )
 
@@ -121,11 +121,19 @@ METHOD ShowMessage( cMessage )
       ::oMessage:setText( cMessage )
    end if 
 
-   if !empty( ::oTimer )
-      ::oTimer:Activate()
-   end if 
+   ::getTimer():Activate()
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTimer()                                  
+
+   if empty( ::oTimer )
+      ::oTimer := TTimer():New( 4000, {|| ::RestoreMessage() } )
+   end if 
+
+RETURN ( ::oTimer )
 
 //---------------------------------------------------------------------------//
 
@@ -140,9 +148,7 @@ METHOD RestoreMessage()
       ::oMessage:setText( ::cMessage )
    end if 
 
-   if !empty( ::oTimer )
-      ::oTimer:DeActivate()
-   end if 
+   ::getTimer():DeActivate()
 
 RETURN ( nil )
 

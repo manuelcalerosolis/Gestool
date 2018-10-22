@@ -24,11 +24,6 @@ CLASS MailSender
    DATA mailServerAuthenticate
    DATA mailServerSSL
 
-   // Log de información-------------------------------------------------------
-
-   DATA cLogFile              
-   DATA hLogFile                       INIT  -1 
-
    METHOD New( oController ) CONSTRUCTOR
    METHOD End()
 
@@ -38,21 +33,11 @@ CLASS MailSender
 
    METHOD getMailServer()
 
-   // Log----------------------------------------------------------------------
-
-   METHOD initLogFile()                INLINE ( ::cLogFile := cPatLog() + "Mail" + Dtos( Date() ) + StrTran( Time(), ":", "" ) + ".log", ::hLogFile := fCreate( ::cLogFile ) )
-
-   METHOD writeLogFile( cText )        INLINE ( if( ::hLogFile != -1, fWrite( ::hLogFile, cText + CRLF ), ) )
-
-   METHOD endLogFile()                 INLINE ( fClose( ::hLogFile ) )
-
    // Metodos para mostrar la informacion--------------------------------------
 
-   METHOD messenger( cText )           INLINE ( ::writeLogFile( cText ), ::getEvents():Fire( 'message', cText ) )
+   METHOD messenger( cText )           INLINE ( ::getEvents():Fire( 'message', cText ) )
 
-   METHOD initMessage()                INLINE ( ::messenger( "Se ha iniciado el proceso de envio" ) )
    METHOD readyMessage( hMail )        INLINE ( ::messenger( "Se ha elaborado el correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' para enviar a " + ::getMailsFromHash( hMail ) ) )
-
    METHOD sendMessage( hMail )         INLINE ( ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' se ha enviado con exito, al correo " + ::getMailsFromHash( hMail ) ) )
    METHOD errorMessage( hMail )        INLINE ( ::messenger( "Error al enviar el correo electrónico " + ::getMailsFromHash( hMail ) ) )
 

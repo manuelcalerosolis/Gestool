@@ -6532,6 +6532,8 @@ CLASS ApoloBtnFlat FROM TBtnFlat
 
    METHOD Paint() 
 
+   METHOD setCaption( cCaption )    
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -6570,6 +6572,14 @@ METHOD Paint() CLASS ApoloBtnFlat
    ::DispEnd( aInfo )
 
 RETURN nil
+
+//----------------------------------------------------------------------------//
+
+METHOD setCaption( cCaption ) CLASS ApoloBtnFlat   
+
+   ::cCaption  := cCaption
+
+RETURN ( ::Refresh() )
 
 //----------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

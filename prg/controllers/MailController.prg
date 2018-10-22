@@ -15,7 +15,11 @@ CLASS MailController
 
    DATA oMailSender
 
+   DATA oEvents
+
    DATA oTemplateHTML
+
+   DATA oLogFile
 
    DATA cTypeDocument
 
@@ -39,7 +43,9 @@ CLASS MailController
 
    // Envio de mails----------------------------------------------------------
 
-   METHOD isMultiMails()               INLINE ( len( ::getUuidIdentifiers() ) > 1 ) 
+   METHOD isMultiMails()               INLINE ( ::getTotalMails() > 1 ) 
+
+   METHOD getTotalMails()              INLINE ( len( ::getUuidIdentifiers() ) ) 
 
    METHOD hasMail()                    INLINE ( !empty( ::getMail() ) )
 
@@ -65,7 +71,7 @@ CLASS MailController
 
    METHOD generatePdf( uuid, cDocumentPdf ) 
 
-   METHOD Message( cText )
+   METHOD writeMessage( cText )
 
    METHOD setMessage( cMessage )       INLINE ( ::getDialogView():setMessage( cMessage ) )
    METHOD getMessageHTMLToSend()       INLINE ( "<HTML>" + strtran( alltrim( ::getDialogView():getMessage() ), CRLF, "<p>" ) + "</HTML>" )
@@ -73,6 +79,8 @@ CLASS MailController
    METHOD saveToFile( cFile )          INLINE ( ::getDialogView():getRichEdit():saveToFile( cFile ) )
 
    // Construcciones tardias---------------------------------------------------
+
+   METHOD getLogFile()                 INLINE ( if( empty( ::oLogFile ), ::oLogFile := LogFile():New( "Mail" ), ), ::oLogFile )
 
    METHOD getTemplateHTML()            INLINE ( if( empty( ::oTemplateHTML ), ::oTemplateHTML := TemplateHTML():New( self ), ), ::oTemplateHTML )
    
@@ -83,6 +91,8 @@ CLASS MailController
    METHOD getMailSender()              INLINE ( if( empty( ::oMailSender ), ::oMailSender := MailSender():New( self ), ), ::oMailSender )
 
    METHOD dialogViewActivate()         INLINE ( ::getDialogView():Activate() )
+   
+   METHOD getEvents()                  INLINE ( if( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
 
 END CLASS
 
@@ -92,7 +102,7 @@ METHOD New( oController ) CLASS MailController
 
    ::oController                       := oController
 
-   ::getMailSender():getEvents():Set( 'message', {| cText | ::Message( cText ) } )
+   ::getMailSender():getEvents():Set( 'message', {| cText | ::writeMessage( cText ) } )
 
    ::getTemplateHTML():getEvents():Set( 'loadHTMLFile', {| cMessage | ::setMessage( cMessage ) } )
 
@@ -116,6 +126,14 @@ METHOD End() CLASS MailController
       ::oMailSender:End()
    end if
 
+   if !empty( ::oLogFile )
+      ::oLogFile:End()
+   end if
+
+   if !empty( ::oEvents )
+      ::oEvents:End()
+   end if
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -129,6 +147,12 @@ METHOD Send() CLASS MailController
       RETURN ( nil )
    end if 
 
+   ::getLogFile():Create()
+
+   ::writeMessage( "Se ha iniciado el proceso de envio" ) 
+
+   ::getEvents():fire( 'sending' )
+
    for each uuidIdentifier in ::getUuidIdentifiers() 
 
       ::generatePdf( uuidIdentifier )
@@ -136,8 +160,16 @@ METHOD Send() CLASS MailController
       ::getMailSender():Send( ::getMailHash( uuidIdentifier ) ) 
 
       sysRefresh()
+
+      ::getEvents():fire( 'send' )
       
    next
+
+   ::writeMessage( "Ha finalizado el proceso de envio" ) 
+
+   ::getLogFile():Close()
+
+   ::getEvents():fire( 'sended' )
 
 RETURN ( nil )
 
@@ -186,7 +218,9 @@ RETURN ( ::getController():getReport():Generate( hReport ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD Message( cText )
+METHOD writeMessage( cText )
+
+   ::getLogFile():Write( cText )
 
    with object ( ::getDialogView():oTreeProceso )
       :Select( :Add( cText ) )
@@ -241,6 +275,8 @@ CLASS MailView FROM SQLBaseView
 
    DATA oFld 
 
+   METHOD New( oController ) CONSTRUCTOR
+
    METHOD Activate()
 
    METHOD startActivate()
@@ -264,7 +300,9 @@ CLASS MailView FROM SQLBaseView
    METHOD getAdjunto()           INLINE ( alltrim( ::cAdjunto ) )
    METHOD addAjunto() 
 
-   METHOD getDocument()     INLINE ( ::cDocument )
+   METHOD getDocument()          INLINE ( ::cDocument )
+
+   METHOD getMeterProceso()      INLINE ( ::oMeterProceso )
 
    METHOD setMessage( cMessage ) INLINE ( ::cMessage := cMessage, if( !empty( ::oRichEdit ), ::oRichEdit:oRTF:SetText( cMessage ), ) )
    METHOD getMessage()           INLINE ( ::oRichEdit:getText() )
@@ -274,6 +312,18 @@ CLASS MailView FROM SQLBaseView
    METHOD getRichEdit()          INLINE ( ::oRichEdit )
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oController )
+
+   ::Super:New( oController )
+
+   ::getController():getEvents():set( 'sending', {|| ::getMeterProceso():setTotal( ::getController():getTotalMails() ) } )
+
+   ::getController():getEvents():set( 'send', {|| ::getMeterProceso():autoInc() } )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -392,9 +442,9 @@ METHOD Activate() CLASS MailView
 
    // Botones de accion--------------------------------------------------------
 
-   ApoloBtnFlat():Redefine( IDOK, {|| ::runActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ::oBtnAceptar     := ApoloBtnFlat():Redefine( IDOK, {|| ::runActivate() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+   ::oBtnCancel      := ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    ::oDialog:bStart  := {|| ::startActivate() } 
 
@@ -440,9 +490,19 @@ RETURN ( nil )
 
 METHOD runActivate() CLASS MailView
 
+   ::oBtnAceptar:Hide()
+
    ::oFld:GoNext()
 
    ::getController():Send()
+
+   ::oBtnAceptar:bAction   := {|| ::getController():getLogFile():Show() }
+
+   ::oBtnAceptar:setCaption( "Ver log" )
+
+   ::oBtnAceptar:setColor( CLR_BLACK, CLR_WHITE )
+
+   ::oBtnAceptar:Show()
 
 RETURN ( nil )
 
