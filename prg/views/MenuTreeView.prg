@@ -15,6 +15,7 @@ CLASS MenuTreeView
    DATA oController
 
    DATA oTreeView
+   DATA oTreeView
 
    DATA oImageList
 
@@ -33,6 +34,8 @@ CLASS MenuTreeView
    DATA oButtonConfig
 
    DATA oButtonOthers
+
+   DATA oButtonShowDelete
 
    DATA lDocumentButtons                  INIT .f.
 
@@ -75,7 +78,9 @@ CLASS MenuTreeView
    
    METHOD addZoomButton()      
    
-   METHOD addDeleteButton()    
+   METHOD addDeleteButton() 
+
+   METHOD addShowDeleteButton() 
    
    METHOD addRefreshButton()
    
@@ -95,6 +100,7 @@ CLASS MenuTreeView
                                                    ::addEditButton(),;
                                                    ::addZoomButton(),;
                                                    ::addDeleteButton(),;
+                                                   ::addShowDeleteButton(),;
                                                    ::fireEvent( 'addedGeneralButton' ) )
 
    METHOD addAutoButtons()                INLINE ( ::fireEvent( 'addingAutoButton' ),;
@@ -143,6 +149,8 @@ CLASS MenuTreeView
    METHOD SelectButtonMain()              INLINE ( ::oTreeView:Select( ::oButtonMain ) )
 
    METHOD onChange()
+
+   METHOD Refresh()                       INLINE( ::oTreeView:Refresh() ) 
 
    // Events-------------------------------------------------------------------
 
@@ -239,12 +247,11 @@ RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddButton( cText, cResource, bAction, uKey, nLevel, oGroup, lAllowExit ) 
+METHOD AddButton( cText, cResource, bAction, uKey, nLevel, oGroup ) 
 
    local oTreeButton
 
    DEFAULT oGroup       := ::oButtonMain
-   DEFAULT lAllowExit   := .f.
 
    // El nombre del boton es necesario-----------------------------------------
 
@@ -259,7 +266,6 @@ METHOD AddButton( cText, cResource, bAction, uKey, nLevel, oGroup, lAllowExit )
    end if
 
    oTreeButton          := oGroup:Add( cText, ::addImage( cResource ), bAction )
-   oTreeButton:Cargo    := lAllowExit
 
    ::getSuperController():addFastKey( uKey, bAction )
 
@@ -402,6 +408,23 @@ METHOD AddDeleteButton()
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
+
+METHOD addShowDeleteButton()    
+
+   if isFalse( ::fireEvent( 'addingShowDeleteButton' ) )
+      RETURN ( nil )
+   end if 
+
+   // Solo si es administrador
+
+   ::oButtonShowDelete  := ::AddButton( "Mostrar eliminados", "gc_deleted_16", {|| ::getSuperController():setShowDeleted() }, "E", ACC_DELE ) 
+
+   ::fireEvent( 'addedShowDeleteButton' )
+
+RETURN ( nil )
+
+//----------------------------------------------------------------------------//
+
 
 METHOD AddSelectButton()    
 
@@ -623,11 +646,11 @@ METHOD onChange()
       RETURN ( nil )
    end if 
 
-   if ( !hb_isblock( oItem:bAction ) )
+   if ( !hb_isblock( oItem:Cargo ) )
       RETURN ( nil )
    end if 
 
-   eval( oItem:bAction )
+   eval( oItem:Cargo )
 
    ::selectButtonMain()
 

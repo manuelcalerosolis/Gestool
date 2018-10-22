@@ -126,6 +126,8 @@ CLASS SQLNavigatorController FROM SQLBrowseController
 
    METHOD getFilterController()                       INLINE ( iif( empty( ::oFilterController ), ::oFilterController := SQLFiltrosController():New( self ), ), ::oFilterController ) 
 
+   METHOD setShowDeleted()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -531,4 +533,21 @@ METHOD getComboBoxOrder()
 RETURN ( nil ) 
 
 //---------------------------------------------------------------------------//
+
+METHOD setShowDeleted()
+
+   local lShowDeleted   
+   local cButtonPrompt
+
+   lShowDeleted         := ::getModel():isShowDeleted()
+   cButtonPrompt        := if( lShowDeleted, "Mostrar eliminados", "Ocultar eliminados" )
+
+   ::getModel():setShowDeleted( lShowDeleted )
+
+   ::getNavigatorView():getMenuTreeView():oButtonShowDelete:SetText( cButtonPrompt )
+   
+RETURN ( ::reBuildRowSet() )
+
+//----------------------------------------------------------------------------//
+
    

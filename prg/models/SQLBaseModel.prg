@@ -53,6 +53,8 @@ CLASS SQLBaseModel
 
    DATA aColumns                                      INIT {}
 
+   DATA lShowDeleted                                  INIT .f.
+
    DATA aRecordsToDelete
 
    METHOD New() CONSTRUCTOR
@@ -133,6 +135,9 @@ CLASS SQLBaseModel
 
    METHOD isDeletedAtColumn()                         INLINE ( hhaskey( ::hColumns, "deleted_at" ) )
 
+   METHOD setShowDeleted( lShow )                     /*INLINE ( ::lShowDeleted := lShow )*/
+   METHOD isShowDeleted()                             INLINE ( ::lShowDeleted )
+
    METHOD getDeleteOrUpdateSentenceByUuid( aUuid )
       METHOD SQLUpdateDeletedAtSentenceWhereUuid( uUuid )
       METHOD SQLDeletedSentenceWhereUuid( uUuid )
@@ -157,6 +162,7 @@ CLASS SQLBaseModel
    METHOD getWhereOrAnd( cSQLSelect )                 INLINE ( if( hb_at( "WHERE", cSQLSelect ) != 0, " AND ", " WHERE " ) )
    METHOD setGeneralWhere( cWhere )                   INLINE ( ::cGeneralWhere   := cWhere )
    METHOD addGeneralWhere( cSQLSelect )
+   METHOD addDeletedAtWhere( cSQLSelect )
    
    METHOD getHavingOrAnd( cSQLSelect )                INLINE ( if( hb_at( "HAVING", cSQLSelect ) != 0, " AND ", " HAVING " ) )
    METHOD setGeneralHaving( cHaving )                 INLINE ( ::cGeneralHaving := cHaving )
@@ -395,6 +401,8 @@ METHOD getGeneralSelect()
 
    cSQLSelect              := ::addGeneralWhere( cSQLSelect )
 
+   cSQLSelect              := ::addDeletedAtWhere( cSQLSelect )
+
    cSQLSelect              := ::addOthersWhere( cSQLSelect )
 
    cSQLSelect              := ::addParentUuidWhere( cSQLSelect )
@@ -406,6 +414,7 @@ METHOD getGeneralSelect()
    cSQLSelect              := ::addGeneralHaving( cSQLSelect )
 
    cSQLSelect              := ::addLimit( cSQLSelect )
+   logwrite(cSQLSelect)
 
 RETURN ( cSQLSelect )
 
@@ -480,6 +489,20 @@ METHOD addGeneralWhere( cSQLSelect, cGeneralWhere )
    end if 
    
    cSQLSelect              += ::getWhereOrAnd( cSQLSelect ) + cGeneralWhere 
+
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
+
+METHOD addDeletedAtWhere( cSQLSelect )
+
+   if ::isShowDeleted()
+      RETURN ( cSQLSelect )
+   end if
+
+   if ::isDeletedAtColumn()
+      cSQLSelect           += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".deleted_at IS NULL" 
+   end if 
 
 RETURN ( cSQLSelect )
 
@@ -892,7 +915,7 @@ RETURN ( ::cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
-METHOD getInsertOnDuplicateSentence( hBuffer )
+METHOD getInsertOnDuplicateSentence( hBuffer ) 
 
    local uValue
    local cSQLUpdate  
@@ -922,6 +945,18 @@ METHOD getInsertOnDuplicateSentence( hBuffer )
 RETURN ( cSQLUpdate )
 
 //---------------------------------------------------------------------------//
+METHOD setShowDeleted( lShow )
+
+   if !::isShowDeleted
+   ::lShowDeleted := .t.
+   RETURN ( nil )
+   end if
+   
+   ::lShowDeleted := .f.
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 
 METHOD getDeleteOrUpdateSentenceByUuid( uUuid )
 
@@ -941,9 +976,9 @@ METHOD SQLUpdateDeletedAtSentenceWhereUuid( uUuid )
 
    local cSentence
 
-   cSentence   := "UPDATE FROM " + ::getTableName() + " " + ;
-                        "deleted_at = NOW() " + ; 
-                        "WHERE uuid IN ( "
+   cSentence   := "UPDATE " + ::getTableName() + " " + ;
+                     "deleted_at = NOW() " + ; 
+                     "WHERE uuid IN ( "
    
       aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
@@ -999,7 +1034,7 @@ METHOD SQLUpdateDeletedAtSentenceWhereParentUuid( uUuid )
 
    local cSentence
 
-      cSentence   := "UPDATE FROM " + ::getTableName() + " " + ;
+      cSentence   := "UPDATE " + ::getTableName() + " " + ;
                         "deleted_at = NOW() " + ; 
                         "WHERE parent_uuid IN ( "
    
@@ -1029,8 +1064,8 @@ METHOD SQLUpdateDeletedAtSentenceById( aIds)
 
    local cSentence
 
-      cSentence   := "UPDATE FROM " + ::getTableName() + " " + ;
-                        "deleted_at = NOW() "  + ;
+      cSentence   := "UPDATE " + ::getTableName() + " " + ;
+                        "SET deleted_at = NOW() "  + ;
                         "WHERE " + ::cColumnKey + " IN ( "
    
       aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
