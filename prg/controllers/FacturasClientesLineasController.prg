@@ -252,9 +252,9 @@ RETURN ( .t. )
 METHOD validLinea()
 
    local cCodigoArticulo
+   local nRecno
 
    cCodigoArticulo         := ::oRowSet:fieldget('articulo_codigo')
-   
 
    if !empty( cCodigoArticulo )
 
@@ -276,7 +276,9 @@ METHOD validLineaCombinacion( cCodigoArticulo )
       if empty( UuidCombinacion )
 
          if !empty( ::getCombinacionesController():getModel():CountCombinacionesWhereArticulo( cCodigoArticulo ) )
+            msgalert( ::oRowSet:Recno(), "recno" )
             msgstop( "Debes seleccionar propiedades" )
+            ::oRowSet:gotoRecno( ::oRowSet:Recno() ) 
             RETURN ( .f. )
          end if
 

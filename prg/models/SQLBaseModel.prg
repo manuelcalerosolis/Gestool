@@ -85,6 +85,7 @@ CLASS SQLBaseModel
    METHOD getDateTimeColumns()
    METHOD getTimeStampColumns()
    METHOD getTimeStampSentColumns()
+   METHOD getDeletedStampColumn()
 
    METHOD getSerializeColumns()
    METHOD getSerializeColumnsSelect()
@@ -120,6 +121,7 @@ CLASS SQLBaseModel
    
    METHOD setCreatedTimeStamp( hBuffer )
    METHOD setUpdatedTimeStamp( hBuffer )
+   Method setDeletedTimeStamp( hBuffer )
 
    METHOD isBufferSystemRegister( hBuffer )   
    METHOD isNotBufferSystemRegister( hBuffer )        INLINE ( !( ::isBufferSystemRegister( hBuffer ) ) )
@@ -129,9 +131,19 @@ CLASS SQLBaseModel
    METHOD getUpdateSentence()
    METHOD getInsertOnDuplicateSentence( hBuffer )   
 
-   METHOD getdeleteSentenceByUuid( aUuid )
-   METHOD getDeleteSentenceById( aId )
-   METHOD getDeleteSentenceWhereParentUuid( uUuid )
+   METHOD isDeletedAtColumn()                         INLINE ( hhaskey( ::hColumns, "deleted_at" ) )
+
+   METHOD getDeleteOrUpdateSentenceByUuid( aUuid )
+      METHOD SQLUpdateDeletedAtSentenceWhereUuid( uUuid )
+      METHOD SQLDeletedSentenceWhereUuid( uUuid )
+   METHOD getDeleteOrUpdateSentenceById( aId )
+      METHOD SQLUpdateDeletedAtSentenceById( aIds )
+      METHOD SQLDeletedSentenceById( aIds )
+   METHOD getDeleteOrUpdateSentenceWhereParentUuid( uUuid )
+      METHOD SQLUpdateDeletedAtSentenceWhereParentUuid( uUuid )
+      METHOD SQLDeletedSentenceWhereParentUuid( uUuid )
+
+   METHOD SQLDeletedSentenceById( aIds )
 
    METHOD aUuidToDelete()
    
@@ -348,6 +360,15 @@ METHOD getTimeStampColumns()
 
    hset( ::hColumns, "updated_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
                                        "default"   => {|| hb_datetime() } }         )
+
+RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDeletedStampColumn()
+
+   hset( ::hColumns, "deleted_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
+                                       "default"   => {|| nil } }         )
 
 RETURN ( ::hColumns )
 
@@ -760,6 +781,16 @@ RETURN ( hBuffer )
 
 //---------------------------------------------------------------------------//
 
+METHOD setDeletedTimeStamp( hBuffer )
+
+   if ( hhaskey( hBuffer, "deleted_at" ) )
+      hset( hBuffer, "deleted_at", hb_datetime() )
+   end if 
+
+RETURN ( hBuffer )
+
+//---------------------------------------------------------------------------//
+
 METHOD setUpdatedTimeStamp( hBuffer )
    
    if ( hhaskey( hBuffer, "modificado" ) )
@@ -892,13 +923,39 @@ RETURN ( cSQLUpdate )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentenceByUuid( uUuid )
-
-   local cSentence   
+METHOD getDeleteOrUpdateSentenceByUuid( uUuid )
 
    if hb_ischar( uUuid )
       uUuid          := { uUuid }
    end if 
+
+   if ::isDeletedAtColumn()
+      RETURN( ::SQLUpdateDeletedAtSentenceWhereUuid( uUuid ) )
+   end if
+
+RETURN ( ::SQLDeletedSentenceWhereUuid( uUuid ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD SQLUpdateDeletedAtSentenceWhereUuid( uUuid )
+
+   local cSentence
+
+   cSentence   := "UPDATE FROM " + ::getTableName() + " " + ;
+                        "deleted_at = NOW() " + ; 
+                        "WHERE uuid IN ( "
+   
+      aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+
+      cSentence         := chgAtEnd( cSentence, ' )', 2 )
+
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//
+
+METHOD SQLDeletedSentenceWhereUuid( uUuid )
+   
+   local cSentence
 
    cSentence         := "DELETE FROM " + ::getTableName() + " " + ;
                            "WHERE uuid IN ( " 
@@ -911,13 +968,22 @@ RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentenceWhereParentUuid( uUuid )
-
-   local cSentence   
+METHOD getDeleteOrUpdateSentenceWhereParentUuid( uUuid )   
 
    if hb_ischar( uUuid )
       uUuid          := { uUuid }
    end if 
+
+   if ::isDeletedAtColumn()
+      RETURN( ::SQLUpdateDeletedAtSentenceWhereParentUuid( uUuid ) )
+   end if
+
+RETURN ( ::SQLDeletedSentenceWhereParentUuid( uUuid ) )
+
+//---------------------------------------------------------------------------//
+METHOD SQLDeletedSentenceWhereParentUuid( uUuid)
+
+   local cSentence
 
    cSentence         := "DELETE FROM " + ::getTableName() + " " + ;
                            "WHERE parent_uuid IN ( " 
@@ -926,28 +992,70 @@ METHOD getDeleteSentenceWhereParentUuid( uUuid )
 
    cSentence         := chgAtEnd( cSentence, ' )', 2 )
 
+RETURN( cSentence )
+//---------------------------------------------------------------------------//
+
+METHOD SQLUpdateDeletedAtSentenceWhereParentUuid( uUuid )
+
+   local cSentence
+
+      cSentence   := "UPDATE FROM " + ::getTableName() + " " + ;
+                        "deleted_at = NOW() " + ; 
+                        "WHERE parent_uuid IN ( "
+   
+      aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+
+      cSentence         := chgAtEnd( cSentence, ' )', 2 )
+
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDeleteSentenceById( aIds )
-
-   local cSentence   
+METHOD getDeleteOrUpdateSentenceById( aIds )
 
    if hb_isnumeric( aIds )
       aIds     := { aIds }
    end if 
 
-   cSentence   := "DELETE FROM " + ::getTableName() + " " + ;
-                     "WHERE " + ::cColumnKey + " IN ( "
-   
-   aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+   if ::isDeletedAtColumn() 
+      RETURN ( ::SQLUpdateDeletedAtSentenceById( aIds ) )
+   end if 
 
-   cSentence   := chgAtEnd( cSentence, ' )', 2 )
+RETURN ( ::SQLDeletedSentenceById( aIds ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD SQLUpdateDeletedAtSentenceById( aIds)
+
+   local cSentence
+
+      cSentence   := "UPDATE FROM " + ::getTableName() + " " + ;
+                        "deleted_at = NOW() "  + ;
+                        "WHERE " + ::cColumnKey + " IN ( "
+   
+      aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+
+      cSentence   := chgAtEnd( cSentence, ' )', 2 )
 
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
+
+METHOD SQLDeletedSentenceById( aIds ) 
+
+   local cSentence
+
+   cSentence      := "DELETE FROM " + ::getTableName() + " " + ;
+                     "WHERE " + ::cColumnKey + " IN ( "
+   
+   aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+
+   cSentence      := chgAtEnd( cSentence, ' )', 2 )
+
+
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------// 
 
 METHOD aUuidToDelete( aParentsUuid )
 
@@ -1323,7 +1431,7 @@ METHOD deleteSelection( aIds, aUuids )
 
    ::fireEvent( 'deletingSelection' )
 
-   ::getDatabase():Execs( ::getDeleteSentenceById( aIds, aUuids ) )
+   ::getDatabase():Execs( ::getDeleteOrUpdateSentenceById( aIds, aUuids ) )
 
    ::fireEvent( 'deletedSelection' )
    
@@ -1335,7 +1443,7 @@ METHOD deleteById( nId )
 
    ::fireEvent( 'deletingById' )
 
-   ::getDatabase():Execs( ::getDeleteSentenceById( nId ) )
+   ::getDatabase():Execs( ::getDeleteOrUpdateSentenceById( nId ) )
 
    ::fireEvent( 'deletedById' )
    
@@ -1347,7 +1455,7 @@ METHOD deleteByUuid( uUuid )
 
    ::fireEvent( 'deletingByUuid' )
 
-   ::getDatabase():Execs( ::getDeleteSentenceByUuid( uUuid ) )
+   ::getDatabase():Execs( ::getDeleteOrUpdateSentenceByUuid( uUuid ) )
 
    ::fireEvent( 'deletedByUuid' )
    
@@ -1359,7 +1467,7 @@ METHOD deleteWhereParentUuid( uUuid )
 
    ::fireEvent( 'deletingWhereParentUuid' )
 
-   ::getDatabase():Execs( ::getDeleteSentenceWhereParentUuid( uUuid ) )
+   ::getDatabase():Execs( ::getDeleteOrUpdateSentenceWhereParentUuid( uUuid ) )
 
    ::fireEvent( 'deletedWhereParentUuid' )
    
