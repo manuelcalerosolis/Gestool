@@ -49,6 +49,10 @@ CLASS SQLDialogView FROM SQLBrowseableView
    METHOD setEvent( cEvent, bEvent )            INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
    METHOD fireEvent( cEvent )                   INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )                            
 
+//Construcciones tardias--------------------------------------------------------
+
+   METHOD getMenutreeView()                     INLINE ( if( empty( ::oMenuTreeView ), ::oMenuTreeView := MenuTreeView():New( Self ), ), ::oMenuTreeView )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -57,7 +61,7 @@ METHOD New( oController )
 
    ::oController           := oController
 
-   ::oMenuTreeView         := MenuTreeView():New( Self )
+   //::oMenuTreeView         := MenuTreeView():New( Self )
 
    ::oEvents               := Events():New()
 
@@ -78,16 +82,6 @@ METHOD End()
    if !empty( ::oEvents )
       ::oEvents:End()
    end if 
-
-   ::oMenuTreeView         := nil
-
-   ::oEvents               := nil
-
-   ::oDialog               := nil
-
-   ::oController           := nil
-
-   self                    := nil
 
 RETURN ( nil )
 
@@ -194,6 +188,7 @@ METHOD Start()
    ::oController:restoreState() 
 
    ::oGetSearch:setFocus()
+   msgalert(::getMenutreeView:oButtonShowDelete)
 
 RETURN ( Self )
 

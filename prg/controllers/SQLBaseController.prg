@@ -75,7 +75,7 @@ CLASS SQLBaseController
    METHOD getUuid()                                   INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
                                                                      hget( ::oModel:hBuffer, "uuid" ),;
                                                                      nil ) )
-
+   
    // Rowset-------------------------------------------------------------------
 
    METHOD saveRowSetRecno()                           INLINE ( ::getRowSet():saveRecno() )

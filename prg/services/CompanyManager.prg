@@ -30,7 +30,7 @@ CLASS CompanyManager
 
    METHOD getPathDocuments( cDirectory )  INLINE ( cCompanyPathDocuments( ::codigo, cDirectory ) )
 
-   METHOD getDocuments( cDirectory )  
+   METHOD getDocuments( cDirectory ) 
 
    METHOD getTemplatesHTML()    
 

@@ -297,6 +297,8 @@ METHOD getColumns() CLASS SQLComentariosModel
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR( 200 )"                          ,;
                                     "default"   => {|| space( 200 ) } }                       )
 
+   ::getDeletedStampColumn()
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//

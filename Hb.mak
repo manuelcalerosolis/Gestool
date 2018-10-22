@@ -238,7 +238,6 @@ Impfactu.prg            										\
 Impfaccom.prg           										\
 InfoArticulo.prg        										\
 TAuditor.prg            										\
-Ttvitem.prg             										\
 Tur2ses.prg             										\
 Ttrans.prg              										\
 TCaptura.prg            										\
@@ -969,7 +968,6 @@ Impfaccom.obj           													\
 InfoArticulo.obj        													\
 TAuditor.obj            													\
 Treeitem.obj            													\
-Ttvitem.obj             													\
 Tur2ses.obj             													\
 Allfamar.obj            													\
 Ttrans.obj              													\
@@ -1684,7 +1682,6 @@ $(OBJ)\ImpfacCom.obj            											+
 $(OBJ)\InfoArticulo.obj         											+
 $(OBJ)\TAuditor.obj             											+
 $(OBJ)\Treeitem.obj             											+
-$(OBJ)\Ttvitem.obj              											+
 $(OBJ)\Tur2ses.obj              											+
 $(OBJ)\Ttrans.obj               											+
 $(OBJ)\TCaptura.obj             											+
