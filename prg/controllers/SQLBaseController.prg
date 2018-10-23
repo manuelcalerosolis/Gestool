@@ -180,7 +180,10 @@ CLASS SQLBaseController
    METHOD dialgOkAndDown()                            INLINE ( ::uDialogResult == IDOKANDDOWN )
    METHOD dialgOkAndUp()                              INLINE ( ::uDialogResult == IDOKANDUP )
 
-   METHOD postEdit( nId ) 
+   METHOD postEdit( nId )
+
+   METHOD isDeleted( nId )                            INLINE ( ::getModel():isDeletedAtColumn() .and. ::getModel:isDeleted( nId ) ) 
+   METHOD isNotDeleted()                              INLINE ( !::isDeleted() )
 
    // Transactional system-----------------------------------------------------
 
@@ -499,6 +502,11 @@ METHOD Edit( nId )
       RETURN ( .f. )
    end if 
 
+   if ::isDeleted( nId ) 
+      msgStop( "No se puede editar un registro eliminado" )
+      RETURN ( .f. )
+   end if
+
    if ::notUserEdit()
       msgStop( "Acceso no permitido." )
       RETURN ( .f. )
@@ -659,30 +667,24 @@ METHOD Delete( aSelectedRecno )
    local lDelete        := .f.
    local cNumbersOfDeletes
 
-   msgalert( "Delete" )
-
    if ::notUserDelete()
       msgStop( "Acceso no permitido" )
       RETURN ( .f. )
    end if 
 
    if !hb_isarray( aSelectedRecno )
-      msgalert( "!hb_isarray( aSelectedRecno )")
       RETURN ( .f. )
    end if 
 
    if len( aSelectedRecno ) == 0
-      msgalert( "len( aSelectedRecno ) == 0" )
       RETURN ( .f. )
    end if 
 
    if len( aSelectedRecno ) == 1 .and. atail( aSelectedRecno ) == 0
-      msgalert( "len( aSelectedRecno ) == 1 .and. atail( aSelectedRecno ) == 0" )
       RETURN ( .f. )
    end if 
 
    if isFalse( ::fireEvent( 'deleting' ) )
-   msgalert( 'deleting' )
       RETURN ( .f. )
    end if
 

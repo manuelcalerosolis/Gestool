@@ -7,6 +7,8 @@ CLASS SQLArticulosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getInitialSelect()
@@ -74,6 +76,8 @@ METHOD getColumns() CLASS SQLArticulosModel
 
    ::getTimeStampColumns()
 
+   ::getDeletedStampColumn()
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -90,35 +94,38 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
                         "articulos.lote AS lote, "                                                                         + ;
                         "articulos.lote_actual AS lote_actual, "                                                           + ;
                         "articulos.precio_costo AS precio_costo, "                                                         + ;
-                        "articulos.familia_codigo AS familia_codigo, "                                                              + ;
+                        "articulos.familia_codigo AS familia_codigo, "                                                     + ;
                         "articulos_familias.nombre AS articulo_familia_nombre, "                                           + ;
-                        "articulos.tipo_codigo AS tipo_codigo, "                                                                 + ;
+                        "articulos.tipo_codigo AS tipo_codigo, "                                                           + ;
                         "articulos_tipos.nombre AS articulo_tipo_nombre, "                                                 + ;
-                        "articulos.categoria_codigo AS categoria_codigo, "                                                            + ;
+                        "articulos.categoria_codigo AS categoria_codigo, "                                                 + ;
                         "articulos_categorias.nombre AS articulo_categoria_nombre, "                                       + ;
-                        "articulos.fabricante_codigo AS fabricante_codigo, "                                                           + ;
+                        "articulos.fabricante_codigo AS fabricante_codigo, "                                               + ;
                         "articulos_fabricantes.nombre AS articulo_fabricante_nombre, "                                     + ;
-                        "articulos.tipo_iva_codigo AS tipo_iva_codigo, "                                                                      + ;
+                        "articulos.tipo_iva_codigo AS tipo_iva_codigo, "                                                   + ;
                         "tipos_iva.nombre AS tipo_iva_nombre, "                                                            + ;
-                        "articulos.impuesto_especial_codigo AS impuesto_especial_codigo, "                                                             + ;
+                        "articulos.impuesto_especial_codigo AS impuesto_especial_codigo, "                                 + ;
                         "impuestos_especiales.nombre AS impuesto_especial_nombre, "                                        + ;
-                        "articulos.unidades_medicion_grupos_codigo AS unidades_medicion_grupos_codigo, "                                                      + ;
+                        "articulos.unidades_medicion_grupos_codigo AS unidades_medicion_grupos_codigo, "                   + ;
                         "unidades_medicion_grupos.nombre AS unidades_medicion_grupos_nombre, "                             + ;
-                        "articulos.temporada_codigo AS temporada_codigo, "                                                            + ;
-                        "articulos_temporadas.nombre AS articulo_temporada_nombre "                                        + ;
+                        "articulos.temporada_codigo AS temporada_codigo, "                                                 + ;
+                        "articulos_temporadas.nombre AS articulo_temporada_nombre, "                                       + ;
+                        "articulos.created_at AS created_at,"                                                              + ;
+                        "articulos.updated_at AS updated_at,"                                                              + ;
+                        "articulos.deleted_at AS deleted_at "                                                              + ;
                      "FROM " + ::getTableName() + " AS articulos "                                                         + ;
                         "LEFT JOIN " + SQLArticulosFamiliaModel():getTableName() + " AS articulos_familias "               + ;
-                           "ON articulos.familia_codigo = articulos_familias.codigo "                             + ;
+                           "ON articulos.familia_codigo = articulos_familias.codigo "                                      + ;
                         "LEFT JOIN " + SQLArticulosTipoModel():getTableName() + " AS articulos_tipos "                     + ; 
-                           "ON articulos.tipo_codigo = articulos_tipos.codigo "                                   + ;
+                           "ON articulos.tipo_codigo = articulos_tipos.codigo "                                            + ;
                         "LEFT JOIN " + SQLArticulosTipoModel():getTableName() + " AS articulos_categorias "                + ;
-                           "ON articulos.categoria_codigo = articulos_categorias.codigo "                         + ; 
+                           "ON articulos.categoria_codigo = articulos_categorias.codigo "                                  + ; 
                         "LEFT JOIN " + SQLArticulosCategoriasModel():getTableName() + " AS articulos_fabricantes "         + ;
-                           "ON articulos.fabricante_codigo = articulos_fabricantes.codigo "                       + ;
+                           "ON articulos.fabricante_codigo = articulos_fabricantes.codigo "                                + ;
                         "LEFT JOIN " + SQLArticulosCategoriasModel():getTableName() + " AS tipos_iva "                     + ;
                            "ON articulos.tipo_iva_codigo = tipos_iva.codigo "                                              + ;
                         "LEFT JOIN " + SQLArticulosTemporadasModel():getTableName() + " AS articulos_temporadas "          + ;
-                           "ON articulos.temporada_codigo = articulos_temporadas.codigo "                         + ;
+                           "ON articulos.temporada_codigo = articulos_temporadas.codigo "                                  + ;
                         "LEFT JOIN " + SQLImpuestosEspecialesModel():getTableName() + " AS impuestos_especiales "          + ;
                            "ON articulos.impuesto_especial_codigo = impuestos_especiales.codigo "                          + ;
                         "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS unidades_medicion_grupos "   + ;

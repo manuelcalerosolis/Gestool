@@ -7,6 +7,8 @@ CLASS SQLFacturasClientesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "facturas_clientes"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( numero, serie, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getColumnsSelect()
@@ -104,7 +106,10 @@ METHOD getColumnsSelect() CLASS SQLFacturasClientesModel
       direcciones.movil AS direccion_movil,
       direcciones.email AS direccion_email,
       tarifas.codigo AS tarifa_codigo,
-      tarifas.nombre AS tarifa_nombre
+      tarifas.nombre AS tarifa_nombre,
+      facturas_clientes.created_at AS created_at,
+      facturas_clientes.updated_at AS updated_at,
+      facturas_clientes.deleted_at AS deleted_at
    ENDTEXT
 
 RETURN ( cColumns )

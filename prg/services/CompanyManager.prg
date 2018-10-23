@@ -117,7 +117,7 @@ METHOD getDocuments( cDirectory )
    local aFiles      := {}
    local aDocuments  := {}
 
-   if !( isDirectory( ::getPathDocuments( cDirectory ) ) )
+   /*if !( isDirectory( ::getPathDocuments( cDirectory ) ) )
       recursiveMakeDir( ::getPathDocuments( cDirectory ) )
    end if 
 
@@ -127,7 +127,7 @@ METHOD getDocuments( cDirectory )
       aDocuments     := { "No hay documentos definidos..." }
    else
       aeval( aFiles, {|aFile| aadd( aDocuments, aFile[ 1 ] ) } )
-   end if 
+   end if */
 
 RETURN ( aDocuments )
 

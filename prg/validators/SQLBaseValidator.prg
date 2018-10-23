@@ -190,6 +190,11 @@ METHOD getUniqueSentence( uValue )
    cSQLSentence         := "SELECT COUNT(*) FROM " + ::oController:getModelTableName()       + space( 1 )
    cSQLSentence         +=    "WHERE " + ::cColumnToProced + " = " + toSQLString( uValue )   + space( 1 )
 
+   if ::oController:getModel():isDeletedAtColumn()
+   
+      cSQLSentence         +=    "AND deleted_at = 0 " 
+   end if 
+   
    id                   := ::oController:getModelBufferColumnKey()
    if !empty( id )
       cSQLSentence      +=    "AND " + ::oController:getModelColumnKey() + " <> " + toSQLString( id )

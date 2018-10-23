@@ -542,10 +542,12 @@ METHOD setShowDeleted()
 
    ::getNavigatorView();
       :getMenuTreeView();
-         :setButtonShowDeleteText( if( ::getModel():isShowDeleted(), "Mostrar eliminados", "Ocultar eliminados" ) )
+         :setButtonShowDeleteText( if( ::getModel():isShowDeleted(), "Ocultar eliminados", "Mostrar eliminados" ) )
    
 RETURN ( ::reBuildRowSet() )
 
 //----------------------------------------------------------------------------//
+
+
 
    

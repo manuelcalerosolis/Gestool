@@ -87,7 +87,7 @@ METHOD Activate( lCenter )
 
       // Menu------------------------------------------------------------------
 
-      ::oMenuTreeView:ActivateDialog( ::oDialog, 120 )
+      ::getMenuTreeView():ActivateDialog( ::oDialog, 120 )
 
       // Browse-----------------------------------------------------------------
 

@@ -415,7 +415,10 @@ METHOD addShowDeleteButton()
    if isFalse( ::fireEvent( 'addingShowDeleteButton' ) )
       RETURN ( nil )
    end if 
-
+   
+   if !::getSuperController():getModel():isDeletedAtColumn()
+      RETURN ( nil )
+   end if
    // Solo si es administrador
 
    ::oButtonShowDelete  := ::AddButton( "Mostrar eliminados", "gc_deleted_16", {|| ::getSuperController():setShowDeleted() }, "E", ACC_DELE ) 
