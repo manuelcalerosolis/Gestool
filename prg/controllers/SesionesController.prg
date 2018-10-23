@@ -480,7 +480,7 @@ METHOD isOpenSessions() CLASS SQLSesionesModel
                      "WHERE estado = 'Abierta' "                           + ;
                         "AND caja_codigo = " + quoted( Box():Codigo() )    
 
-RETURN ( getSQLDataBase():getValue( cSelect ) > 0 )
+RETURN ( !empty( getSQLDataBase():getValue( cSelect ) ) ) 
 
 //---------------------------------------------------------------------------//
  

@@ -25,7 +25,7 @@
 [Bb]in/[Ii]magen/
 [Bb]in/[Bb]mp/
 [Bb]in/[Dd]atabase/
-[Bb]in/[Dd]ocuments/
+[Bb]in/[Dd]ocuments/*
 [Bb]in/[Cc]onfig/
 
 *.tmp

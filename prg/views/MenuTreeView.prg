@@ -37,8 +37,6 @@ CLASS MenuTreeView
 
    DATA oButtonShowDelete
 
-   DATA lDocumentButtons                  INIT .f.
-
    DATA oEvents
 
    METHOD New( oController )
@@ -614,7 +612,7 @@ RETURN ( {|| ::getSuperController():getImprimirSeriesController():showDocument( 
 
 METHOD addDocumentsButton()
 
-   if !( ::lDocumentButtons )
+   if !( ::isControllerDocuments() )
       RETURN ( nil )
    end if 
 

@@ -39,7 +39,6 @@ METHOD New( oController ) CLASS ComentariosController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -67,8 +66,6 @@ METHOD End() CLASS ComentariosController
    end if
 
    ::Super:End()
-
-   self                             := nil                   
 
 RETURN ( nil )
 

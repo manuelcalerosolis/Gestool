@@ -465,16 +465,13 @@ RETURN ( ::Super:GoBottom() )
 
 METHOD LButtonDown( nRow, nCol, nFlags, lTouch ) CLASS SQLXBrowse
 
-   local nTmp
    local nRowPos
-   local nRowPrev  := ::nRowSel
 
    if !empty( ::bOnSkip )
    
-      nTmp    := nRow - ::FirstRow()
-      nRowPos := Int( nTmp / ::nRowHeight ) + 1
+      nRowPos     := int( ( nRow - ::FirstRow() )/ ::nRowHeight ) + 1
 
-      if ( nRowPos != nRowPrev ) .and. !eval( ::bOnSkip, Self )
+      if ( nRowPos != ::nRowSel ) .and. !eval( ::bOnSkip, Self )
          RETURN ( nil )
       end if 
       
