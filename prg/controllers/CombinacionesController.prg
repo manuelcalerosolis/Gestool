@@ -726,6 +726,7 @@ METHOD getHaving( aHaving ) CLASS SQLCombinacionesModel
 RETURN ( cHaving )
 
 //---------------------------------------------------------------------------//
+
 METHOD CountCombinacionesWhereArticulo( cCodigoArticulo ) CLASS SQLCombinacionesModel
 
    local cSql
@@ -736,7 +737,7 @@ METHOD CountCombinacionesWhereArticulo( cCodigoArticulo ) CLASS SQLCombinaciones
          FROM %1$s as combinaciones
         
          INNER JOIN %2$s as articulos
-            ON articulos.id= %3$s
+            ON articulos.codigo = %3$s
    
       WHERE combinaciones.parent_uuid = articulos.uuid
 
@@ -745,6 +746,7 @@ METHOD CountCombinacionesWhereArticulo( cCodigoArticulo ) CLASS SQLCombinaciones
    cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
 
 RETURN ( getSQLDatabase():getValue( cSql ) )
+
 //---------------------------------------------------------------------------//
 
 METHOD getColumns() CLASS SQLCombinacionesModel
@@ -756,7 +758,7 @@ METHOD getColumns() CLASS SQLCombinacionesModel
                                              "default"   => {|| win_uuidcreatestring() } }               )
 
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 )"                              ,;
-                                             "default"   => {|| ::getControllerParentUuid() } }    )
+                                             "default"   => {|| ::getControllerParentUuid() } }          )
 
    hset( ::hColumns, "incremento_precio", {  "create"    => "FLOAT( 16, 6 )"                             ,;
                                              "default"   => { 0 } }                                      ) 

@@ -28,7 +28,7 @@ CLASS FacturasClientesLineasBrowseView FROM SQLBrowseView
 
    METHOD addColumns()
 
-   METHOD setChange()
+   METHOD setOnCancelEdit()
 
 ENDCLASS
 
@@ -40,7 +40,7 @@ METHOD Create( oWindow ) CLASS FacturasClientesLineasBrowseView
 
    ::oBrowse:setChange( {|| ::oController:getHistoryManager():Set( ::getRowSet():getValuesAsHash() ) } )
 
-   ::oBrowse:bCancelEdit   := {|| ::setChange() }
+   ::oBrowse:bOnSkip       := {|| ::oController:validLinea() }
 
    ::oBrowse:setGotFocus( {|| ::oController:getHistoryManager():Set( ::getRowSet():getValuesAsHash() ) } )
 
@@ -48,12 +48,9 @@ RETURN ( ::oBrowse )
 
 //---------------------------------------------------------------------------//
 
-METHOD setChange()
+METHOD setOnCancelEdit()
 
-   ::oController:getHistoryManager():Set( ::getRowSet():getValuesAsHash() )
-   ::oController:validLinea()
-
-RETURN ( nil )   
+RETURN ( ::oController:validLinea() )   
 
 //---------------------------------------------------------------------------//
 

@@ -27,6 +27,8 @@ CLASS SQLXBrowse FROM TXBrowse
 
    DATA bCancelEdit
 
+   DATA bOnSkip
+
    METHOD New( oController, oWnd ) CONSTRUCTOR
 
    METHOD setRowSet( oRowSet )
@@ -84,6 +86,20 @@ CLASS SQLXBrowse FROM TXBrowse
    METHOD getSelectedCol()                      INLINE ( ::SelectedCol() )
 
    METHOD CancelEdit()                    
+
+   METHOD GoUp( n )       
+
+   METHOD GoDown( n, nKey )
+
+   METHOD PageUp( n )
+
+   METHOD PageDown( n )
+
+   METHOD GoTop()
+
+   METHOD GoBottom()
+
+   METHOD LButtonDown( nRow, nCol, nFlags, lTouch )
 
 END CLASS
 
@@ -387,3 +403,83 @@ RETURN ( ::Super():CancelEdit() )
 
 //------------------------------------------------------------------------//
 
+METHOD GoUp( n ) CLASS SQLXBrowse
+
+   if !empty( ::bOnSkip ) .and. !eval( ::bOnSkip, Self )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::Super:GoUp( n ) )
+
+//------------------------------------------------------------------------//
+
+METHOD GoDown( n, nKey ) CLASS SQLXBrowse
+
+   if !empty( ::bOnSkip ) .and. !eval( ::bOnSkip, Self )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::Super:GoDown( n, nKey ) )
+
+//------------------------------------------------------------------------//
+
+METHOD PageUp( n ) CLASS SQLXBrowse
+
+   if !empty( ::bOnSkip ) .and. !eval( ::bOnSkip, Self )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::Super:PageUp( n ) )
+
+//------------------------------------------------------------------------//
+
+METHOD PageDown( n ) CLASS SQLXBrowse
+
+   if !empty( ::bOnSkip ) .and. !eval( ::bOnSkip, Self )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::Super:PageDown( n ) )
+
+//------------------------------------------------------------------------//
+
+METHOD GoTop() CLASS SQLXBrowse
+
+   if !empty( ::bOnSkip ) .and. !eval( ::bOnSkip, Self )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::Super:GoTop() )
+
+//------------------------------------------------------------------------//
+
+METHOD GoBottom() CLASS SQLXBrowse
+
+   if !empty( ::bOnSkip ) .and. !eval( ::bOnSkip, Self )
+      RETURN ( nil )
+   end if 
+
+RETURN ( ::Super:GoBottom() )
+
+//------------------------------------------------------------------------//
+
+METHOD LButtonDown( nRow, nCol, nFlags, lTouch ) CLASS SQLXBrowse
+
+   local nTmp
+   local nRowPos
+   local nRowPrev  := ::nRowSel
+
+   if !empty( ::bOnSkip )
+   
+      nTmp    := nRow - ::FirstRow()
+      nRowPos := Int( nTmp / ::nRowHeight ) + 1
+
+      if ( nRowPos != nRowPrev ) .and. !eval( ::bOnSkip, Self )
+         RETURN ( nil )
+      end if 
+      
+   end if 
+
+RETURN ( ::Super:LButtonDown( nRow, nCol, nFlags, lTouch ) )
+
+//------------------------------------------------------------------------//

@@ -242,7 +242,9 @@ METHOD validAgenteCodigo( oGet, oCol )
       msgStop( "El agente introducido no existe" )
       RETURN( .f. )
    end if
+
    ::updateField ( 'agente_codigo', uValue)
+   
    ::stampAgenteComision()
 
 RETURN ( .t. ) 
@@ -251,38 +253,28 @@ RETURN ( .t. )
 
 METHOD validLinea()
 
-   local cCodigoArticulo
-   local nRecno
+   if empty( ::oRowSet:fieldget( 'articulo_codigo' ) )
+      RETURN ( .t. )
+   end if 
 
-   cCodigoArticulo         := ::oRowSet:fieldget('articulo_codigo')
-
-   if !empty( cCodigoArticulo )
-
-      if !::validLineaCombinacion( cCodigoArticulo )
-         RETURN ( .f. )
-      end if
-
+   if !( ::validLineaCombinacion() )
+      RETURN ( .f. )
    end if
 
 RETURN ( .t. )
+
 //---------------------------------------------------------------------------//
 
-METHOD validLineaCombinacion( cCodigoArticulo )
-      
-      local UuidCombinacion
+METHOD validLineaCombinacion()
 
-       UuidCombinacion         := ::oRowSet:fieldget('articulos_propiedades_nombre')
+   if !empty( ::oRowSet:fieldget( 'articulos_propiedades_nombre' ) )
+      RETURN ( .t. )
+   end if
 
-      if empty( UuidCombinacion )
-
-         if !empty( ::getCombinacionesController():getModel():CountCombinacionesWhereArticulo( cCodigoArticulo ) )
-            msgalert( ::oRowSet:Recno(), "recno" )
-            msgstop( "Debes seleccionar propiedades" )
-            ::oRowSet:gotoRecno( ::oRowSet:Recno() ) 
-            RETURN ( .f. )
-         end if
-
-      end if
+   if !empty( ::getCombinacionesController():getModel():CountCombinacionesWhereArticulo( ::oRowSet:fieldget( 'articulo_codigo' ) ) )
+      msgstop( "Debes seleccionar propiedades" )
+      RETURN ( .f. )
+   end if
 
 RETURN ( .t. )
 
