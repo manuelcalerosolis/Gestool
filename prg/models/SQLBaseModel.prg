@@ -134,6 +134,7 @@ CLASS SQLBaseModel
    METHOD getInsertOnDuplicateSentence( hBuffer )   
 
    METHOD isDeletedAtColumn()                         INLINE ( hhaskey( ::hColumns, "deleted_at" ) )
+   METHOD isDeleted( nId )                            
 
    METHOD setShowDeleted( lShow )                     /*INLINE ( ::lShowDeleted := lShow )*/
    METHOD isShowDeleted()                             INLINE ( ::lShowDeleted )
@@ -374,7 +375,7 @@ RETURN ( ::hColumns )
 METHOD getDeletedStampColumn()
 
    hset( ::hColumns, "deleted_at",  {  "create"    => "TIMESTAMP NULL DEFAULT NULL" ,;
-                                       "default"   => {|| nil } }         )
+                                       "default"   => {|| hb_datetime( nil, nil, nil, nil, nil, nil, nil ) } } )
 
 RETURN ( ::hColumns )
 
@@ -414,7 +415,6 @@ METHOD getGeneralSelect()
    cSQLSelect              := ::addGeneralHaving( cSQLSelect )
 
    cSQLSelect              := ::addLimit( cSQLSelect )
-   logwrite(cSQLSelect)
 
 RETURN ( cSQLSelect )
 
@@ -501,7 +501,7 @@ METHOD addDeletedAtWhere( cSQLSelect )
    end if
 
    if ::isDeletedAtColumn()
-      cSQLSelect           += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".deleted_at IS NULL" 
+      cSQLSelect           += ::getWhereOrAnd( cSQLSelect ) + ::getTableName() + ".deleted_at = 0" 
    end if 
 
 RETURN ( cSQLSelect )
@@ -1016,6 +1016,7 @@ METHOD getDeleteOrUpdateSentenceWhereParentUuid( uUuid )
 RETURN ( ::SQLDeletedSentenceWhereParentUuid( uUuid ) )
 
 //---------------------------------------------------------------------------//
+
 METHOD SQLDeletedSentenceWhereParentUuid( uUuid)
 
    local cSentence
@@ -1060,17 +1061,19 @@ RETURN ( ::SQLDeletedSentenceById( aIds ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD SQLUpdateDeletedAtSentenceById( aIds)
+METHOD SQLUpdateDeletedAtSentenceById( aIds )
 
    local cSentence
 
-      cSentence   := "UPDATE " + ::getTableName() + " " + ;
-                        "SET deleted_at = NOW() "  + ;
-                        "WHERE " + ::cColumnKey + " IN ( "
-   
-      aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+   cSentence   := "UPDATE " + ::getTableName() + " " + ;
+                     "SET deleted_at = NOW() "  + ;
+                     "WHERE " + ::cColumnKey + " IN ( "
 
-      cSentence   := chgAtEnd( cSentence, ' )', 2 )
+   aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+
+   cSentence   := chgAtEnd( cSentence, ' )', 2 ) + " "
+
+   cSentence   +=    "AND deleted_at = 0" 
 
 RETURN ( cSentence )
 
@@ -1081,12 +1084,11 @@ METHOD SQLDeletedSentenceById( aIds )
    local cSentence
 
    cSentence      := "DELETE FROM " + ::getTableName() + " " + ;
-                     "WHERE " + ::cColumnKey + " IN ( "
+                        "WHERE " + ::cColumnKey + " IN ( "
    
    aeval( aIds, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
    cSentence      := chgAtEnd( cSentence, ' )', 2 )
-
 
 RETURN ( cSentence )
 
@@ -1104,6 +1106,19 @@ METHOD aUuidToDelete( aParentsUuid )
 RETURN ( ::getDatabase():selectFetchArray( cSentence ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD isDeleted( nId ) 
+
+   local cSentence
+
+   cSentence      := "SELECT " + ::cColumnKey                              + " " + ; 
+                        "FROM " + ::getTableName()                         + " " + ;
+                        "WHERE " + ::cColumnKey + " = " + hb_ntos( nId )   + " " + ;
+                           "AND deleted_at > 0" 
+
+RETURN ( ::getDatabase():getValue( cSentence ) != nil )
+
+//---------------------------------------------------------------------------// 
 
 METHOD getValueField( cColumn, uValue )
 
@@ -1251,6 +1266,10 @@ METHOD loadDuplicateBuffer( id )
 
    if hhaskey( ::hBuffer, "uuid" )   
       hset( ::hBuffer, "uuid", win_uuidcreatestring() )
+   end if 
+
+   if hhaskey( ::hBuffer, "deleted_at" )   
+      hset( ::hBuffer, "deleted_at", hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
    end if 
 
    ::fireEvent( 'loadedDuplicateBuffer' )

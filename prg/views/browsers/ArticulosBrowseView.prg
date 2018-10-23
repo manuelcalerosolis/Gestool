@@ -16,22 +16,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS ArticulosBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := "articulos.id"
-      :cHeader             := "Id"
-      :nWidth              := 60
-      :bEditValue          := {|| ::getRowSet():fieldGet( "id" ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := "articulos.uuid"
-      :cHeader             := "Uuid"
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( "uuid" ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+  ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "articulos.codigo"
@@ -260,6 +245,10 @@ METHOD addColumns() CLASS ArticulosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
+
+   ::getColumnsCreatedUpdatedAt()
+   
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 

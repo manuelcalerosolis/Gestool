@@ -56,24 +56,7 @@ RETURN ( ::oController:validLinea() )
 
 METHOD addColumns() CLASS FacturasClientesLineasBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :cOrder              := 'D'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid'
-      :cHeader             := 'Uuid'
-      :nWidth              := 240
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'parent_uuid'
@@ -346,6 +329,8 @@ METHOD addColumns() CLASS FacturasClientesLineasBrowseView
       :nEditType           := EDIT_GET
       :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'agente_comision', uNewValue ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 

@@ -16,23 +16,8 @@ ENDCLASS
 
 METHOD addColumns() CLASS FacturasClientesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := "id"
-      :cHeader             := "Id"
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( "id" ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := "uuid"
-      :cHeader             := "Uuid"
-      :nWidth              := 100
-      :bEditValue          := {|| ::getRowSet():fieldGet( "uuid" ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
+   ::getColumnIdAndUuid()
+   
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := "numero"
       :cHeader             := "Número"
@@ -164,6 +149,10 @@ METHOD addColumns() CLASS FacturasClientesBrowseView
       //:bValid             :={||::click( ::getRowSet():fieldGet( "recargo" ) )  }
       :SetCheck( { "Sel16", "Nil16" } )
    end with
+
+   ::getColumnsCreatedUpdatedAt()
+   
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 

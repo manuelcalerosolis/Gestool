@@ -284,6 +284,8 @@ CLASS SQLFacturasClientesDescuentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "facturas_clientes_descuentos"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( nombre, deleted_at )"
+
    METHOD getColumns() 
 
    METHOD insertWhereClienteCodigo( cCodigoCliente )
@@ -310,6 +312,8 @@ METHOD getColumns() CLASS SQLFacturasClientesDescuentosModel
 
    hset( ::hColumns, "descuento",      {  "create"    => "FLOAT(7,4)"                              ,;
                                           "default"   => {|| 0 } }                                 )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 
