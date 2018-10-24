@@ -20,6 +20,10 @@ CLASS ProvinciasController FROM SQLNavigatorController
 
    METHOD End()
 
+   METHOD getSelectorProvincia( oGet )
+
+   //Construcciones tardias----------------------------------------------------
+
    METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLProvinciasModel():New( self ), ), ::oModel )
 
    METHOD getBrowseView()           INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := ProvinciasBrowseView():New( self ), ), ::oBrowseView )
@@ -27,8 +31,6 @@ CLASS ProvinciasController FROM SQLNavigatorController
    METHOD getDialogView()           INLINE ( if( empty( ::oDialogView ), ::oDialogView := ProvinciasView():New( self ), ), ::oDialogView )
 
    METHOD getValidator()            INLINE ( if( empty( ::oValidator ), ::oValidator := ProvinciasValidator():New( self ), ), ::oValidator )
-
-   METHOD getSelectorProvincia( oGet )
 
 END CLASS
 
@@ -139,6 +141,8 @@ METHOD addColumns() CLASS ProvinciasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
 
+   ::getColumnDeletedAt()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -240,6 +244,8 @@ CLASS SQLProvinciasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "provincias"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
 END CLASS
@@ -251,11 +257,13 @@ METHOD getColumns() CLASS SQLProvinciasModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 50 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 50 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 50 ) } }                       )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

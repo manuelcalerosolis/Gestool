@@ -18,6 +18,8 @@ CLASS ArticulosCategoriasController FROM SQLNavigatorController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ArticulosCategoriasValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosCategoriasRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosCategoriasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -37,14 +39,14 @@ METHOD New( oController ) CLASS ArticulosCategoriasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLArticulosCategoriasModel():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 METHOD End() CLASS ArticulosCategoriasController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
    ::oBrowseView:End()
@@ -82,21 +84,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS ArticulosCategoriasBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -121,6 +109,10 @@ METHOD addColumns() CLASS ArticulosCategoriasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'icono' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnsCreatedUpdatedAt()
+   
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 
@@ -184,21 +176,21 @@ METHOD Activate() CLASS ArticulosCategoriasView
       FONT        oFontBold() ;
       OF          ::oDialog ;
    
-   REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNN" ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
       OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          110 ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:oModel:hBuffer[ "icono" ] ;
+      VAR         ::oController:getModel():hBuffer[ "icono" ] ;
       ID          120 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ITEMS       ( hgetkeys( ::hTipos ) ) ;
@@ -265,6 +257,8 @@ CLASS SQLArticulosCategoriasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_categorias"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
 END CLASS
@@ -289,6 +283,8 @@ METHOD getColumns() CLASS SQLArticulosCategoriasModel
                                     "default"   => {|| space( 40 ) } }                       )
    
    ::getTimeStampColumns()
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

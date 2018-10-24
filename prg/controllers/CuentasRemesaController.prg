@@ -100,21 +100,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS CuentasRemesaBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -139,6 +125,10 @@ METHOD addColumns() CLASS CuentasRemesaBrowseView
       :bEditValue          := {|| transform( ::getRowSet():fieldGet( "cuenta" ), "@R NNNN-NNNN-NNNN-NN-NNNNNNNNNNN" ) } 
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnsCreatedUpdatedAt()
+   
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 
@@ -335,6 +325,8 @@ CLASS SQLCuentasRemesaModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cuentas_remesa"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
   METHOD getInitialSelect()
 
    METHOD getColumns()
@@ -347,20 +339,34 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLCuentasRemesaModel
 
-   local cSelect  := "SELECT remesa.id,"                                                               + " " + ;
-                        "remesa.uuid,"                                                                         + " " + ;
-                        "remesa.codigo,"                                                                       + " " + ;
-                        "remesa.nombre,"                                                                       + " " + ;
-                        "CONCAT( bancaria.iban_codigo_pais, "                                         + " " + ;  
-                        "bancaria.iban_digito_control, "                                              + " " + ; 
-                        "bancaria.cuenta_codigo_entidad, "                                            + " " + ;
-                        "bancaria.cuenta_codigo_oficina, "                                            + " " + ;
-                        "bancaria.cuenta_digito_control, "                                            + " " + ;
-                        "bancaria.cuenta_numero ) AS cuenta"                                          + " " + ;
-                     "FROM " + ::getTableName() + " AS remesa"                                                   + " " + ;
-                        "INNER JOIN " + ::getCuentasBancariasTablename() +" AS bancaria ON remesa.uuid = bancaria.parent_uuid"  + " "
+   local cSql
 
-RETURN ( cSelect )
+   TEXT INTO cSql
+
+      SELECT cuentas_remesa.id AS id,
+         cuentas_remesa.uuid AS uuid,
+         cuentas_remesa.codigo AS codigo,
+         cuentas_remesa.nombre AS nombre,
+         cuentas_remesa.created_at AS created_at,
+         cuentas_remesa.updated_at AS updated_at,
+         cuentas_remesa.deleted_at AS deleted_at,
+         CONCAT( cuentas_bancarias.iban_codigo_pais,   
+         cuentas_bancarias.iban_digito_control,  
+         cuentas_bancarias.cuenta_codigo_entidad, 
+         cuentas_bancarias.cuenta_codigo_oficina, 
+         cuentas_bancarias.cuenta_digito_control, 
+         cuentas_bancarias.cuenta_numero ) AS cuenta
+
+      FROM %1$s AS cuentas_remesa
+
+      LEFT JOIN %2$s AS cuentas_bancarias 
+         ON cuentas_remesa.uuid = cuentas_bancarias.parent_uuid
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLCuentasBancariasModel():getTableName() )
+  logwrite(cSql)
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
@@ -416,6 +422,8 @@ METHOD getColumns() CLASS SQLCuentasRemesaModel
                                                    "default"   => {|| space( 9 ) } }                        )
    
    ::getTimeStampColumns()
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

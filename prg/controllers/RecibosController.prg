@@ -15,7 +15,7 @@ CLASS RecibosController FROM SQLNavigatorController
 
    METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := RecibosBrowseView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := RecibosRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()        INLINE( if(empty( ::oRepository ), ::oRepository := RecibosRepository():New( self ), ), ::oRepository )
 
    METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := RecibosValidator():New( self  ), ), ::oValidator ) 
    

@@ -364,17 +364,28 @@ RETURN ( ::hColumns )
 
 METHOD getInitialSelect() CLASS SQLUnidadesMedicionGruposModel
 
-   local cSelect  := "SELECT grupos.id,"                                                                                         + " " + ;
-                        "grupos.uuid,"                                                                                           + " " + ;
-                        "grupos.codigo,"                                                                                         + " " + ;
-                        "grupos.nombre,"                                                                                         + " " + ;
-                        "grupos.unidad_base_codigo,"                                                                             + " " + ;
-                        "grupos.sistema,"                                                                                        + " " + ;
-                        "unidad.nombre AS unidad_base_nombre"                                                                    + " " + ;   
-                     "FROM " + ::getTableName() +" AS grupos"                                                                    + " " + ;
-                        "INNER JOIN " + ::getUnidadesMedicionModel() + " AS unidad ON grupos.unidad_base_codigo = unidad.codigo"       
+   local cSql
 
-RETURN ( cSelect )
+   TEXT INTO cSql
+
+      SELECT grupos.id,
+             grupos.uuid,
+             grupos.codigo,
+             grupos.nombre,
+             grupos.unidad_base_codigo,
+             grupos.sistema,
+             unidad.nombre AS unidad_base_nombre
+
+      FROM %1$s AS grupos
+
+      INNER JOIN %2$s AS unidad 
+            ON grupos.unidad_base_codigo = unidad.codigo 
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLUnidadesMedicionModel():getTableName() )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 

@@ -144,22 +144,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oColumnNombre := ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
@@ -188,6 +173,8 @@ METHOD addColumns() CLASS FacturasClientesDescuentosBrowseView
       :bEditValid          := {|| ::oController:validateDescuento() }
       :bOnPostEdit         := {| oCol, uNewValue | ::oController:updateField( 'descuento', uNewValue ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -364,6 +351,7 @@ METHOD CountNombreWhereFacturaUuid( cNombre ) CLASS SQLFacturasClientesDescuento
       
       WHERE parent_uuid = %2$s
          AND facturas_clientes_descuentos.nombre = %3$s
+         AND facturas_clientes_descuentos.deleted_at = 0
 
    ENDTEXT
 

@@ -85,22 +85,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS TipoIvaBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -148,6 +133,8 @@ METHOD addColumns() CLASS TipoIvaBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'cuenta_venta' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -284,6 +271,8 @@ CLASS SQLTiposIvaModel FROM SQLCompanyModel
 
    DATA cTableName                              INIT "tipos_iva"
 
+   DATA cConstraints                            INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getPorcentajeWhereCodigo( cCodigo )   INLINE ( ::getField( "porcentaje", "codigo", cCodigo ) )
@@ -321,6 +310,8 @@ METHOD getColumns() CLASS SQLTiposIvaModel
 
    hset( ::hColumns, "cuenta_venta",      {  "create"    => "VARCHAR ( 20 )"                          ,;
                                              "default"   => {|| space( 20 ) } }                       )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

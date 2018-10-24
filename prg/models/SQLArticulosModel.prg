@@ -84,54 +84,73 @@ RETURN ( ::hColumns )
 
 METHOD getInitialSelect() CLASS SQLArticulosModel
 
-   local cSelect  := "SELECT articulos.id AS id, "                                                                         + ;
-                        "articulos.uuid AS uuid, "                                                                         + ;
-                        "articulos.codigo AS codigo, "                                                                     + ;
-                        "articulos.nombre AS nombre, "                                                                     + ;
-                        "articulos.obsoleto AS obsoleto, "                                                                 + ;
-                        "articulos.caducidad AS caducidad, "                                                               + ;
-                        "articulos.periodo_caducidad AS periodo_caducidad, "                                               + ;
-                        "articulos.lote AS lote, "                                                                         + ;
-                        "articulos.lote_actual AS lote_actual, "                                                           + ;
-                        "articulos.precio_costo AS precio_costo, "                                                         + ;
-                        "articulos.familia_codigo AS familia_codigo, "                                                     + ;
-                        "articulos_familias.nombre AS articulo_familia_nombre, "                                           + ;
-                        "articulos.tipo_codigo AS tipo_codigo, "                                                           + ;
-                        "articulos_tipos.nombre AS articulo_tipo_nombre, "                                                 + ;
-                        "articulos.categoria_codigo AS categoria_codigo, "                                                 + ;
-                        "articulos_categorias.nombre AS articulo_categoria_nombre, "                                       + ;
-                        "articulos.fabricante_codigo AS fabricante_codigo, "                                               + ;
-                        "articulos_fabricantes.nombre AS articulo_fabricante_nombre, "                                     + ;
-                        "articulos.tipo_iva_codigo AS tipo_iva_codigo, "                                                   + ;
-                        "tipos_iva.nombre AS tipo_iva_nombre, "                                                            + ;
-                        "articulos.impuesto_especial_codigo AS impuesto_especial_codigo, "                                 + ;
-                        "impuestos_especiales.nombre AS impuesto_especial_nombre, "                                        + ;
-                        "articulos.unidades_medicion_grupos_codigo AS unidades_medicion_grupos_codigo, "                   + ;
-                        "unidades_medicion_grupos.nombre AS unidades_medicion_grupos_nombre, "                             + ;
-                        "articulos.temporada_codigo AS temporada_codigo, "                                                 + ;
-                        "articulos_temporadas.nombre AS articulo_temporada_nombre, "                                       + ;
-                        "articulos.created_at AS created_at,"                                                              + ;
-                        "articulos.updated_at AS updated_at,"                                                              + ;
-                        "articulos.deleted_at AS deleted_at "                                                              + ;
-                     "FROM " + ::getTableName() + " AS articulos "                                                         + ;
-                        "LEFT JOIN " + SQLArticulosFamiliaModel():getTableName() + " AS articulos_familias "               + ;
-                           "ON articulos.familia_codigo = articulos_familias.codigo "                                      + ;
-                        "LEFT JOIN " + SQLArticulosTipoModel():getTableName() + " AS articulos_tipos "                     + ; 
-                           "ON articulos.tipo_codigo = articulos_tipos.codigo "                                            + ;
-                        "LEFT JOIN " + SQLArticulosTipoModel():getTableName() + " AS articulos_categorias "                + ;
-                           "ON articulos.categoria_codigo = articulos_categorias.codigo "                                  + ; 
-                        "LEFT JOIN " + SQLArticulosCategoriasModel():getTableName() + " AS articulos_fabricantes "         + ;
-                           "ON articulos.fabricante_codigo = articulos_fabricantes.codigo "                                + ;
-                        "LEFT JOIN " + SQLArticulosCategoriasModel():getTableName() + " AS tipos_iva "                     + ;
-                           "ON articulos.tipo_iva_codigo = tipos_iva.codigo "                                              + ;
-                        "LEFT JOIN " + SQLArticulosTemporadasModel():getTableName() + " AS articulos_temporadas "          + ;
-                           "ON articulos.temporada_codigo = articulos_temporadas.codigo "                                  + ;
-                        "LEFT JOIN " + SQLImpuestosEspecialesModel():getTableName() + " AS impuestos_especiales "          + ;
-                           "ON articulos.impuesto_especial_codigo = impuestos_especiales.codigo "                          + ;
-                        "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS unidades_medicion_grupos "   + ;
-                           "ON articulos.unidades_medicion_grupos_codigo = unidades_medicion_grupos.codigo "                                       
+  local cSql
 
-RETURN ( cSelect )
+   TEXT INTO cSql
+
+   SELECT articulos.id AS id,
+          articulos.uuid AS uuid, 
+          articulos.codigo AS codigo, 
+          articulos.nombre AS nombre, 
+          articulos.obsoleto AS obsoleto, 
+          articulos.caducidad AS caducidad, 
+          articulos.periodo_caducidad AS periodo_caducidad,
+          articulos.lote AS lote, 
+          articulos.lote_actual AS lote_actual, 
+          articulos.precio_costo AS precio_costo, 
+          articulos.familia_codigo AS familia_codigo, 
+          articulos_familias.nombre AS articulo_familia_nombre, 
+          articulos.tipo_codigo AS tipo_codigo, 
+          articulos_tipos.nombre AS articulo_tipo_nombre, 
+          articulos.categoria_codigo AS categoria_codigo, 
+          articulos_categorias.nombre AS articulo_categoria_nombre, 
+          articulos.fabricante_codigo AS fabricante_codigo,
+          articulos_fabricantes.nombre AS articulo_fabricante_nombre, 
+          articulos.tipo_iva_codigo AS tipo_iva_codigo, 
+          tipos_iva.nombre AS tipo_iva_nombre,
+          articulos.impuesto_especial_codigo AS impuesto_especial_codigo, 
+          impuestos_especiales.nombre AS impuesto_especial_nombre, 
+          articulos.unidades_medicion_grupos_codigo AS unidades_medicion_grupos_codigo, 
+          unidades_medicion_grupos.nombre AS unidades_medicion_grupos_nombre, 
+          articulos.temporada_codigo AS temporada_codigo,
+          articulos_temporadas.nombre AS articulo_temporada_nombre, 
+          articulos.created_at AS created_at,
+          articulos.updated_at AS updated_at,
+          articulos.deleted_at AS deleted_at 
+
+   FROM %1$s AS articulos 
+
+   LEFT JOIN %2$s AS articulos_familias 
+      ON articulos.familia_codigo = articulos_familias.codigo 
+
+   LEFT JOIN %3$s AS articulos_tipos 
+      ON articulos.tipo_codigo = articulos_tipos.codigo 
+
+   LEFT JOIN %4$s AS articulos_categorias 
+      ON articulos.categoria_codigo = articulos_categorias.codigo
+
+   LEFT JOIN %5$s AS articulos_fabricantes 
+      ON articulos.fabricante_codigo = articulos_fabricantes.codigo 
+
+   LEFT JOIN %5$s AS tipos_iva 
+      ON articulos.tipo_iva_codigo = tipos_iva.codigo
+
+   LEFT JOIN %6$s AS articulos_temporadas 
+      ON articulos.temporada_codigo = articulos_temporadas.codigo
+
+   LEFT JOIN %7$s AS impuestos_especiales 
+      ON articulos.impuesto_especial_codigo = impuestos_especiales.codigo
+
+   LEFT JOIN %8$s AS unidades_medicion_grupos 
+      ON articulos.unidades_medicion_grupos_codigo = unidades_medicion_grupos.codigo
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosFamiliaModel():getTableName(), SQLArticulosTipoModel():getTableName(),;
+                          SQLArticulosTipoModel():getTableName(), SQLArticulosCategoriasModel():getTableName(), SQLArticulosCategoriasModel():getTableName(),;
+                          SQLArticulosTemporadasModel():getTableName(), SQLImpuestosEspecialesModel():getTableName(), SQLUnidadesMedicionGruposModel():getTableName() )                                      
+
+RETURN ( cSql )                                      
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

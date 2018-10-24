@@ -59,23 +59,23 @@ RETURN ( Self )
 
 METHOD End() CLASS ArticulosTarifasController
 
-   if !empty(::oModel)
+   if !empty( ::oModel )
       ::oModel:End()
    end if   
 
-   if !empty(::oBrowseView)
+   if !empty( ::oBrowseView )
       ::oBrowseView:End()
    end if   
 
-   if !empty(::oDialogView)
+   if !empty( ::oDialogView )
       ::oDialogView:End()
    end if
 
-   if !empty(::oValidator)
+   if !empty( ::oValidator )
       ::oValidator:End()
    end if
 
-   if !empty(::oRepository)
+   if !empty( ::oRepository )
       ::oRepository:End()
    end if
 
@@ -173,22 +173,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS ArticulosTarifasBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -248,6 +233,10 @@ METHOD addColumns() CLASS ArticulosTarifasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'valido_hasta' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnsCreatedUpdatedAt()
+   
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -497,7 +486,7 @@ CLASS SQLArticulosTarifasModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "articulos_tarifas"
 
-   DATA cConstraints                         INIT "PRIMARY KEY ( id ), UNIQUE KEY ( codigo )"
+   DATA cConstraints                         INIT "PRIMARY KEY ( codigo, deleted_at )"
 
    METHOD getColumns()
 
@@ -532,6 +521,9 @@ METHOD getInitialSelect() CLASS SQLArticulosTarifasModel
    cSelect        +=    "articulos_tarifas.valido_desde, "                                                         
    cSelect        +=    "articulos_tarifas.valido_hasta, "                                                         
    cSelect        +=    "articulos_tarifas.sistema, "                            
+   cSelect        +=    "articulos_tarifas.created_at, "                            
+   cSelect        +=    "articulos_tarifas.updated_at, "                            
+   cSelect        +=    "articulos_tarifas.deleted_at, "                            
 
    cSelect        +=    "IFNULL( articulos_tarifas_base.nombre, " + quoted( __tarifa_costo__ ) + " ) AS nombre_tarifa_base " 
 
@@ -577,6 +569,8 @@ METHOD getColumns() CLASS SQLArticulosTarifasModel
                                                 "default"   => {|| 0 } }                                 )
 
    ::getTimeStampColumns()
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

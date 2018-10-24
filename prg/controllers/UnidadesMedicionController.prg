@@ -285,14 +285,20 @@ RETURN ( ::hColumns )
 
 METHOD getInsertUnidadesMedicionSentence() CLASS SQLUnidadesMedicionModel
 
-   local cSentence 
+   local cSql
 
-   cSentence  := "INSERT IGNORE INTO " + ::getTableName() + " "
-   cSentence  +=    "( uuid, codigo, nombre, codigo_iso, sistema ) "
-   cSentence  += "VALUES "
-   cSentence  +=    "( UUID(), 'UDS', 'Unidades', 'UDS', 1 )"
+   TEXT INTO cSql
 
-RETURN ( cSentence )
+      INSERT IGNORE INTO %1$s 
+      ( uuid, codigo, nombre, codigo_iso, sistema ) 
+      VALUES 
+      ( UUID(), 'UDS', 'Unidades', 'UDS', 1 )
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName() )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 

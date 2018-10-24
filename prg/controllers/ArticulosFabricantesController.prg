@@ -98,21 +98,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS ArticulosFabricantesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -136,7 +122,11 @@ METHOD addColumns() CLASS ArticulosFabricantesBrowseView
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'pagina_web' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   end with
+
+   ::getColumnsCreatedUpdatedAt()
+
+   ::getColumnDeletedAt() 
 
 RETURN ( self )
 
@@ -291,6 +281,8 @@ CLASS SQLArticulosFabricantesModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "articulos_fabricantes"
 
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getNombreWhereUuid( uuid )   INLINE ( ::getField( "nombre", "uuid", uuid ) )
@@ -319,18 +311,16 @@ METHOD getColumns() CLASS SQLArticulosFabricantesModel
    
    ::getTimeStampColumns()
 
+   ::getDeletedStampColumn()
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS ArticulosFabricantesRepository FROM SQLBaseRepository
 

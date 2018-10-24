@@ -24,6 +24,8 @@ CLASS CodigosPostalesController FROM SQLNavigatorController
 
    METHOD End()
 
+   //Construcciones tardias----------------------------------------------------
+
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLCodigosPostalesModel():New( self ), ), ::oModel )
 
    METHOD getProvinciasController()    INLINE ( if( empty( ::oProvinciasController ), ::oProvinciasController := ProvinciasController():New( self ), ), ::oProvinciasController )
@@ -100,21 +102,22 @@ ENDCLASS
 
 METHOD addColumns() CLASS CodigosPostalesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
+      with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'id'
       :cHeader             := 'Id'
-      :nWidth              := 80
+      :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
+   end with 
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 80
+      :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
+   end with 
+
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'poblacion'
@@ -130,7 +133,9 @@ METHOD addColumns() CLASS CodigosPostalesBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'provincia' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   end with
+
+   ::getColumnDeletedAt() 
 
 RETURN ( self )
 
@@ -276,7 +281,7 @@ CLASS SQLCodigosPostalesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( codigo, poblacion )"
+   DATA cConstraints             INIT "PRIMARY KEY ( id ), UNIQUE KEY ( codigo, poblacion, deleted_at )"
 
 END CLASS
 
@@ -296,6 +301,8 @@ METHOD getColumns() CLASS SQLCodigosPostalesModel
 
    hset( ::hColumns, "provincia",         {  "create"    => "VARCHAR( 5 )"                         ,;
                                              "default"   => {|| space( 5 ) } }                      )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

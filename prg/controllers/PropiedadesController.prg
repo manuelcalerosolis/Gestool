@@ -88,21 +88,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS PropiedadesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 60
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -119,6 +105,8 @@ METHOD addColumns() CLASS PropiedadesBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 
@@ -297,6 +285,8 @@ CLASS SQLPropiedadesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_propiedades"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getPropertyList()
@@ -320,7 +310,9 @@ METHOD getColumns() CLASS SQLPropiedadesModel
                                     "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "color",    {  "create"    => "TINYINT( 1 )"                            ,;
-                                    "default"   => {|| 0 } }                               )
+                                    "default"   => {|| 0 } }                                 )
+
+   ::getDeletedStampColumn()
 
 
 RETURN ( ::hColumns )
@@ -329,21 +321,32 @@ RETURN ( ::hColumns )
 
 METHOD getPropertyList() CLASS SQLPropiedadesModel
 
-   local cSelect  := "SELECT grupos.id AS grupo_id,"                                            + " " + ; 
-                           "grupos.uuid AS grupo_uuid,"                                         + " " + ;
-                           "grupos.nombre AS grupo_nombre,"                                     + " " + ;                     
-                           "grupos.color AS grupo_color,"                                       + " " + ;                     
-                           "lineas.uuid AS propiedad_uuid,"                                     + " " + ;
-                           "lineas.parent_uuid AS parent_uuid,"                                 + " " + ;
-                           "lineas.nombre AS propiedad_nombre,"                                 + " " + ;
-                           "lineas.color_rgb AS propiedad_color_rgb,"                           + " " + ;
-                           "lineas.orden AS orden"                                              + " " + ;
-                     "FROM " + ::getTableName() + " AS grupos "                                 + " " + ; 
-                     "INNER JOIN " + SQLPropiedadesLineasModel():getTableName() + " AS lineas"  + " " + ;
-                        "ON grupos.uuid = lineas.parent_uuid"                                   + " " + ;
-                     "ORDER by grupo_id, orden"                                               
+  local cSql
 
-RETURN ( cSelect )
+   TEXT INTO cSql
+
+   SELECT grupos.id AS grupo_id,
+          grupos.uuid AS grupo_uuid,
+          grupos.nombre AS grupo_nombre,                  
+          grupos.color AS grupo_color,                   
+          lineas.uuid AS propiedad_uuid,
+          lineas.parent_uuid AS parent_uuid,
+          lineas.nombre AS propiedad_nombre,
+          lineas.color_rgb AS propiedad_color_rgb,
+          lineas.orden AS orden
+      
+   FROM %1$s AS grupos  
+
+     INNER JOIN %2$s AS lineas
+           ON grupos.uuid = lineas.parent_uuid
+
+   ORDER by grupo_id, orden      
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLPropiedadesLineasModel():getTableName() )                                      
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

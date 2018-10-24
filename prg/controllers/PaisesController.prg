@@ -24,6 +24,8 @@ CLASS PaisesController FROM SQLNavigatorController
 
    METHOD getSelectorPais( oGet )
 
+   //Construcciones tardias----------------------------------------------------
+
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLPaisesModel():New( self ), ), ::oModel )
 
    METHOD getLevel()                   INLINE ( iif( empty( ::oController ), ::nLevel := Auth():Level( ::cName ), ) ) 
@@ -134,7 +136,9 @@ METHOD addColumns() CLASS PaisesBrowseView
       :nWidth              := 150
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   end with
+
+   ::getColumnDeletedAt() 
 
 RETURN ( self )
 
@@ -243,6 +247,8 @@ CLASS SQLPaisesModel FROM SQLCompanyModel
 
    DATA cTableName                        INIT "paises"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getNombreWhereCodigo( codigo )  INLINE ( ::getField( 'nombre', 'codigo', codigo ) )
@@ -256,11 +262,13 @@ METHOD getColumns() CLASS SQLPaisesModel
    hset( ::hColumns, "id",                {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                              "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) UNIQUE"                    ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                           ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) UNIQUE"                   ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

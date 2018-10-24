@@ -100,21 +100,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS ArticulosFamiliaBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 60
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -131,6 +117,8 @@ METHOD addColumns() CLASS ArticulosFamiliaBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 
@@ -581,6 +569,8 @@ CLASS SQLArticulosFamiliaModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "articulos_familias"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    /*METHOD getPrimeraPropiedadUuidAttribute( uuid ) ; 
@@ -644,6 +634,8 @@ METHOD getColumns() CLASS SQLArticulosFamiliaModel
    hset( ::hColumns, "mostrar_ventana_comentarios",   {  "create"    => "BIT"                                     ,;
                                                          "default"   => {|| .f. } }                               )
 
+   ::getDeletedStampColumn()
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -667,9 +659,17 @@ METHOD getRowSetWhereFamiliaUuid( familiaUuid )
    local cSQL      
    local oHashList
 
-   cSQL                 := "SELECT uuid, nombre FROM " + ::getTableName()            + " "
-   cSQL                 +=    "WHERE familia_uuid = " + quoted( familiaUuid )    + " "
-   /*cSQL                 +=    "AND empresa_codigo = " + quoted( Company():Codigo() ) + " " */
+   TEXT INTO cSql
+
+      SELECT uuid, nombre 
+
+      FROM %1$s 
+
+      WHERE familia_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( familiaUuid ) )
 
    oHashList            := getSQLDatabase():selectHashList( cSQL ) 
 
