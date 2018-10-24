@@ -9,6 +9,8 @@ CLASS FormasPagosController FROM SQLNavigatorController
 
    METHOD End()
 
+   //Construcciones tardias----------------------------------------------------
+
    METHOD getBrowseView()     INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := FormaPagoBrowseView():New( self ), ), ::oBrowseView )
 
    METHOD getDialogView()     INLINE ( if( empty( ::oDialogView ), ::oDialogView := FormaPagoView():New( self ), ), ::oDialogView )
@@ -83,22 +85,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS FormaPagoBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tactil'
@@ -136,6 +123,10 @@ METHOD addColumns() CLASS FormaPagoBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
+
+   ::getColumnsCreatedUpdatedAt()
+   
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 
@@ -510,6 +501,8 @@ CLASS SQLFormaPagoModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "forma_pago"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getBancoUuidAttribute( uValue ) ; 
@@ -588,6 +581,8 @@ METHOD getColumns() CLASS SQLFormaPagoModel
                                                 "default"   => {|| ( 0 ) } }                                )
 
    ::getTimeStampColumns()
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

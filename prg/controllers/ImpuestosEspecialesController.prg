@@ -88,22 +88,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS ImpuestosEspecialesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -136,6 +121,8 @@ METHOD addColumns() CLASS ImpuestosEspecialesBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'subcuenta' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -276,6 +263,8 @@ CLASS SQLImpuestosEspecialesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "impuestos_especiales"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
 END CLASS
@@ -304,6 +293,8 @@ METHOD getColumns() CLASS SQLImpuestosEspecialesModel
 
    hset( ::hColumns, "aplicar",           {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| .f. } }                               )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

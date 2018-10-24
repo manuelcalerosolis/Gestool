@@ -87,21 +87,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS CajasBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 60
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -126,6 +112,8 @@ METHOD addColumns() CLASS CajasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'numero_sesion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 
@@ -261,6 +249,8 @@ CLASS SQLCajasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cajas"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getInsertCajasSentence() 
@@ -277,10 +267,10 @@ METHOD getColumns() CLASS SQLCajasModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) NOT NULL UNIQUE"          ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "numero_sesion",     {  "create"    => "INTEGER UNSIGNED"                        ,;
@@ -289,18 +279,28 @@ METHOD getColumns() CLASS SQLCajasModel
    hset( ::hColumns, "sistema",           {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| 0 } }                                 )
 
+   ::getDeletedStampColumn()
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
 METHOD getInsertCajasSentence() CLASS SQLCajasModel
 
-   local cSentence   := "INSERT IGNORE INTO " + ::getTableName()                                      + " " + ;
-                           "( uuid, codigo, nombre, numero_sesion, sistema )"                         + " " + ;
-                        "VALUES"                                                                      + " " + ;
-                           "( " + quoted( win_uuidcreatestring() ) + ", '1', 'Principal', 1, 1 )"
+   local cSql
 
-RETURN ( cSentence )
+   TEXT INTO cSql
+
+      INSERT IGNORE INTO %1$s
+         ( uuid, codigo, nombre, numero_sesion, sistema )
+      VALUES
+         ( %2$s, '1', 'Principal', 1, 1 )
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( win_uuidcreatestring() ) )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

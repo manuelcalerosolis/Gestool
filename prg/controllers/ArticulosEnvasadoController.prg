@@ -86,21 +86,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS ArticulosEnvasadoBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -117,6 +103,8 @@ METHOD addColumns() CLASS ArticulosEnvasadoBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with 
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -245,6 +233,8 @@ CLASS SQLArticulosEnvasadoModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "articulos_envasado"
 
+   DATA cConstraints                   INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
 END CLASS
@@ -265,6 +255,8 @@ METHOD getColumns() CLASS SQLArticulosEnvasadoModel
 
    hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 100 )"                          ,;
                                        "default"   => {|| space( 100 ) } }                       )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

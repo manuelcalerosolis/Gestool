@@ -46,23 +46,23 @@ RETURN ( Self )
 METHOD End() CLASS DivisasMonetariasController
    
    if !empty(::oModel)
-   ::oModel:End()
+      ::oModel:End()
    end if
 
    if !empty(::oBrowseView)
-   ::oBrowseView:End()
+      ::oBrowseView:End()
    end if
 
    if !empty(::oDialogView)
-   ::oDialogView:End()
+      ::oDialogView:End()
    end if
 
    if !empty(::oValidator)
-   ::oValidator:End()
+      ::oValidator:End()
    end if
 
    if !empty(::oRepository)
-   ::oRepository:End()
+      ::oRepository:End()
    end if
 
    ::Super:End()
@@ -89,22 +89,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS DivisasMonetariasBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -149,6 +134,8 @@ METHOD addColumns() CLASS DivisasMonetariasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'simbolo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -360,6 +347,8 @@ CLASS SQLDivisasMonetariasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "divisas_monetarias"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
 END CLASS
@@ -418,6 +407,8 @@ METHOD getColumns() CLASS SQLDivisasMonetariasModel
 
    hset( ::hColumns, "punto_verde_redondeo",    {  "create"    => "INTEGER"                                 ,;
                                                    "default"   => {|| 0 } }                                 )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 
