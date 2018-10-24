@@ -163,7 +163,6 @@ METHOD Start()
    oGrupo                  := TDotNetGroup():New( oCarpeta, 68, "", .f. )
       oBoton               := TDotNetButton():New( 60, oGrupo, ::oController:getImage( "48" ), "", 1, {|| ::RefreshRowSet() }, , , .f., .f., .f. )
 
-   
    nCount                  := 0
 
    oGrupo                  := TDotNetGroup():New( oCarpeta, 428, "Opciones", .f. ) 
@@ -188,8 +187,7 @@ METHOD Start()
    ::oController:restoreState() 
 
    ::oGetSearch:setFocus()
-   msgalert(::getMenutreeView:oButtonShowDelete)
-
+   
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//

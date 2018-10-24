@@ -1,12 +1,5 @@
 /*
- Simple esqueleto de un Servidor RestFul
- Para Harbour 3.4
- (c)2017 Rafa Carmona
- En este ejemplo vamos a mostrar como mantener una DBF a traves de los verbos HTTP.
- GET  : Consulta lista de la dbf o un ID en concreto
- POST : Crear un registro
- PUT  : Modificar un registro
- DELETE : Borra un registro
+Simple esqueleto de un Servidor RestFul
 */
 
 #include "FiveWin.Ch"

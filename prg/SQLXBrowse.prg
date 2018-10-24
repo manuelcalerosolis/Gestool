@@ -469,7 +469,7 @@ METHOD LButtonDown( nRow, nCol, nFlags, lTouch ) CLASS SQLXBrowse
 
    if !empty( ::bOnSkip )
    
-      nRowPos     := int( ( nRow - ::FirstRow() )/ ::nRowHeight ) + 1
+      nRowPos     := int( ( nRow - ::FirstRow() ) / ::nRowHeight ) + 1
 
       if ( nRowPos != ::nRowSel ) .and. !eval( ::bOnSkip, Self )
          RETURN ( nil )

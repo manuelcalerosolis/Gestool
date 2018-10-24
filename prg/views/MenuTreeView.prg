@@ -15,7 +15,6 @@ CLASS MenuTreeView
    DATA oController
 
    DATA oTreeView
-   DATA oTreeView
 
    DATA oImageList
 

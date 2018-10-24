@@ -93,6 +93,7 @@ CLASS SQLBrowseView
                                              INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:selectColumnOrder( oColumn, cOrientation ), ) )
    
    METHOD refreshCurrent()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:refreshCurrent(), ) )
+   METHOD selectCurrent()                    INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:selectCurrent(), ) )
 
    METHOD createFromCode()                   INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:CreateFromCode(), ) )
    METHOD createFromResource( id )           INLINE ( iif( !empty( ::oBrowse ), ::oBrowse:CreateFromResource( id ), ) )
@@ -443,6 +444,7 @@ METHOD insertSelectedColumn()
    with object ( ::oBrowse:InsCol( 1 ) )
       :Cargo         := .t.
       :nWidth        := 24
+      :cHeader       := "Sel."
       :bLDClickData  := ::getSelectedColumnDblClick()
       :bEditValue    := {|| ascan( ::oBrowse:aSelected, ::oBrowse:BookMark ) > 0 }
       :nHeadBmpNo    := {|| if( len( ::oBrowse:aSelected ) == ::oBrowse:nLen, 1, 2 ) }

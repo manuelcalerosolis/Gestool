@@ -55,7 +55,7 @@ CLASS SQLBrowseController FROM SQLApplicationController
 
    METHOD getBrowseViewState()                        INLINE ( ::getBrowseView():getState() )
    
-   METHOD refreshBrowseView()                         INLINE ( ::getBrowseView():Refresh() )
+   METHOD refreshBrowseView()                         INLINE ( ::getBrowseView():selectCurrent(), ::getBrowseView():Refresh() )
 
    METHOD setFocusBrowseView()                        INLINE ( ::getBrowseView():setFocus() )
 

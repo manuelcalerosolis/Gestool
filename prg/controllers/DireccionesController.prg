@@ -148,12 +148,12 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS DireccionesController
       ::oModel:insertBuffer()
    end if 
 
-   idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idDireccion          := ::oModel:getIdPrincipalWhereParentUuid( uuidEntidad )
    if empty( idDireccion )
-      idDireccion       := ::oModel:insertPrincipalBlankBuffer()
+      ::oModel:insertPrincipalBlankBuffer()
+   else
+      ::oModel:loadCurrentBuffer( idDireccion )
    end if 
-
-   ::oModel:loadCurrentBuffer( idDireccion )
 
 RETURN ( nil )
 
@@ -164,12 +164,12 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS DireccionesController
    local idDireccion     
 
    idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   
    if empty( idDireccion )
       ::oModel:insertBuffer()
-      RETURN ( nil )
+   else
+      ::oModel:updateBuffer()
    end if 
-
-   ::oModel:updateBuffer()
 
 RETURN ( nil )
 
@@ -177,15 +177,35 @@ RETURN ( nil )
 
 METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DireccionesController
 
-   local idDireccion     
+   local idDireccion 
+   local aDirecciones    
 
-   idDireccion          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   msgalert( uuidEntidad, "loadedDuplicateCurrentBuffer" )
+
+   idDireccion          := ::oModel:getIdPrincipalWhereParentUuid( uuidEntidad )
+
    if empty( idDireccion )
-      ::oModel:insertBuffer()
-      RETURN ( nil )
+      ::oModel:insertPrincipalBlankBuffer()
+   else 
+      ::oModel:loadDuplicateBuffer( idDireccion )
    end if 
 
-   ::oModel:loadDuplicateBuffer( idDireccion )
+   // Cargamos las direcciones no principales
+
+   aDirecciones         := ::oModel:getHashOthersWhereParentUuid( uuidEntidad )
+
+   msgalert( hb_valtoexp( aDirecciones ), "getSentenceOthersWhereParentUuid" ) 
+
+   // Las recorremos
+
+      // cargamos el buffer
+
+      // remplazamos el uuid
+
+      // insertamos la nueva direccion
+
+   // fin del recorrido
+
 
 RETURN ( nil )
 
@@ -535,8 +555,6 @@ METHOD codigoPostal( value )
 
       cProvincia  := ::oController:getCodigosPostalesController():getModel():getField( "provincia", "codigo", value )
 
-      MsgInfo( cProvincia, "cProvincia" )
-
       if !empty( cProvincia )
          ::oController:getDialogView():oGetCodigoProvincia:cText( cProvincia )
          ::oController:getDialogView():oGetCodigoProvincia:lValid()
@@ -625,13 +643,19 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
 
    DATA cConstraints                      INIT "PRIMARY KEY ( parent_uuid, codigo )"
 
-
-   METHOD loadPrincipalBlankBuffer()      INLINE ( ::loadBlankBuffer(),;
-                                                   hset( ::hBuffer, "codigo", "0" ) )
+   METHOD loadPrincipalBlankBuffer()      INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "codigo", "0" ) )
 
    METHOD insertPrincipalBlankBuffer()    INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
 
    METHOD getColumns()
+
+   METHOD getIdPrincipalWhereParentUuid( uuidParent ) ;
+                                          INLINE ( ::getFieldWhere( 'id', { 'parent_uuid' => uuidParent, 'codigo' => '0' } ) )
+
+   METHOD getSentenceOthersWhereParentUuid( uuidParent )
+
+   METHOD getHashOthersWhereParentUuid( uuidParent ) ;
+                                          INLINE ( ::getDatabase():selectFetchHash( ::getSentenceOthersWhereParentUuid( uuidParent ) ) )
 
    METHOD getIdWhereParentUuid( uuid )    INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
@@ -736,6 +760,27 @@ METHOD getSentenceClienteDireccion( cBy, cId, uuidParent ) CLASS SQLDireccionesM
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLPaisesModel():getTableName(), cBy , quoted( cId ), quoted( uuidParent ) )
 
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLDireccionesModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT *
+
+      FROM %1$s
+
+      WHERE parent_uuid = %2$s AND codigo <> '0'
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
+
+   msgget( "", "", cSql )
 
 RETURN ( cSql )
 

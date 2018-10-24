@@ -99,6 +99,8 @@ CLASS SQLBaseController
    METHOD findInRowSet( uValue, cColumn )             
    METHOD findByIdInRowSet( uValue )                  INLINE ( ::getRowSet():find( uValue, "id", .t. ) )
 
+   METHOD refreshBrowseView()                         VIRTUAL
+
    // Dialogo------------------------------------------------------------------
 
    METHOD getDialogView()                             INLINE ( ::oDialogView )
@@ -240,6 +242,8 @@ CLASS SQLBaseController
    METHOD reBuildRowSet()   
 
    METHOD getRowSet()                                 INLINE ( iif( empty( ::oRowSet ), ::oRowSet := SQLRowSet():New( self ), ), ::oRowSet )
+
+
 
 END CLASS
 

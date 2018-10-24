@@ -263,7 +263,7 @@ RETURN ( nil )
 
 METHOD activateDialogView()
 
-   if empty( ::oDialogModalView )
+   if empty( ::getDialogModalView() )
       RETURN ( .f. )
    end if 
 
@@ -282,7 +282,7 @@ METHOD activateDialogView()
       RETURN ( .f. )
    end if
 
-RETURN ( ::oDialogModalView:Activate() )
+RETURN ( ::getDialogModalView():Activate() )
 
 //---------------------------------------------------------------------------//
 
