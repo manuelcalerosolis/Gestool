@@ -20,6 +20,9 @@ CLASS TAcceso
    DATA  oToolBar
    DATA  oSearchBar
    DATA  oOfficeBar
+
+   DATA  oEmpresaBar
+
    DATA  oFavoritosBar
    DATA  oFavoritosGroup
 
@@ -702,7 +705,7 @@ METHOD CreateOfficeBar()
 
    local oAcceso
 
-   ::oOfficeBar                        := TDotNetBar():New( 0, 0, 1000, 120, ::oReBar, 1 )
+   ::oOfficeBar                        := TDotNetBar():New( 0, 0, 1000, 120, ::oReBar, 2 )
    ::oOfficeBar:lPaintAll              := .f.
    ::oOfficeBar:lDisenio               := .f.
    ::oOfficeBar:bRClicked              := {|| ::EditButtonBar() }
@@ -710,6 +713,8 @@ METHOD CreateOfficeBar()
    ::oOfficeBar:SetStyle( 1 )
 
    ::oRebar:oTop                       := ::oOfficeBar
+
+   ::oOfficeBar:SetFirstTab( "Empresa", {|| msgalert( "SetFirstTab") } )
 
    /*
    Creamos la carpeta de favoritos---------------------------------------------
@@ -752,6 +757,7 @@ METHOD ReCreateOfficeBar()
    next
 
    ::oOfficeBar:GetCoords()
+
    ::oOfficeBar:Refresh()
 
 RETURN ( nil )

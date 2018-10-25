@@ -1695,7 +1695,7 @@ RETURN nil
 ***********************************************************************************************
       METHOD SetFirstTab( cText, bAction, aColors ) CLASS TDotNetBar
 ***********************************************************************************************
-
+/*
 if empty( aColors )
    // 1 primer degradado
    // 2 segundo
@@ -1705,7 +1705,7 @@ if empty( aColors )
    aColors := { ::oColor:GRADBTN10, ::oColor:GRADBTN20, ,RGB(181,127,27) , CLR_WHITE }
 
 endif
-
+*/
 ::oFirstTab := TCarpeta():New( self, cText, .t., bAction, aColors )
 
 RETURN nil

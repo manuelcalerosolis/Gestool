@@ -59,6 +59,8 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    METHOD getDialogView()                    INLINE ( iif( empty( ::oDialogView ), ::oDialogView := EmpresasView():New( self ), ), ::oDialogView )
 
+   METHOD getPanelView()                     INLINE ( iif( empty( ::oPanelView ), ::oPanelView := EmpresasPanelView():New( self ), ), ::oPanelView )
+
    METHOD getValidator()                     INLINE ( iif( empty( ::oValidator ), ::oValidator := EmpresasValidator():New( self, ::getDialogView() ), ), ::oValidator )
 
    METHOD getDireccionesController()         INLINE ( if( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesGestoolController():New( self ), ), ::oDireccionesController )
@@ -474,6 +476,127 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+CLASS EmpresasPanelView FROM SQLBaseView
+
+   DATA aButtons                 INIT  {  {  "Text" => "Datos" + CRLF + "Datos de empresas" , "Image" => 0xE770, "Action" => { || msgalert( "Datos" ) } },;
+                                          {  "Text" => "Datos" + CRLF + "Datos de empresas" , "Image" => 0xE770, "Action" => { || msgalert( "Datos" ) } },;   
+                                          {  "Text" => "Datos" + CRLF + "Datos de empresas" , "Image" => 0xE770, "Action" => { || msgalert( "Datos" ) } } }
+
+   DATA oExplorerBar
+
+   DATA oSayCamposExtra
+  
+   METHOD Activate()
+
+   METHOD Activating()
+
+   METHOD getImagenesController()   INLINE ( ::oController:oImagenesController )
+
+   METHOD addLinksToExplorerBar()
+
+   METHOD StartDialog()
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD Activating() CLASS EmpresasPanelView
+
+   if ::oController:isAppendOrDuplicateMode()
+      ::oController:oModel:hBuffer()
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activate() CLASS EmpresasView
+
+   local oWnd, oBtn
+   local oFont, oBold, oFont1, oFontG
+   local oSay
+   local oGet
+   local cFind      := ""
+   local cPrompt    := "Setup of Windows ( FWH BtnBmp Demo )"
+   local nRow       := 170
+   local nCol       := 180
+   local nClrBack   := CLR_WHITE
+   local nW         := 200
+   local nH         := 140
+   local nCBorder   := 0xC38B2B
+   local nClrText   := CLR_BLACK
+   local nClrBorder := 0xE6E6E6
+   local x
+
+   DEFINE WINDOW oWnd TITLE "Setup"
+   oWnd:SetFont( oFontBigTitle() )
+
+   @ 20, 490 SAY oSay PROMPT cPrompt OF oWnd PIXEL FONT oFontBigTitle() SIZE 420, 40
+
+   For x = 1 to Len( aBtns )
+      if x > 1
+         if Mod( x, 5 ) = 1
+            nRow += 200
+            nCol := 180
+         else
+            nCol += 200
+         endif
+      endif
+      @ nRow, nCol BTNBMP oBtn PROMPT aBtns[ x ][ 1 ]  ;
+         RESOURCE aBtns[ x ][ 2 ] SIZE nW, nH PIXEL OF oWnd FLAT NOBORDER ;
+         COLOR nClrText, nClrBack
+         WITH OBJECT oBtn
+            :bAction     := aBtns[ x ][ 3 ]
+            :nClrBorder  := 0xC38B2B
+            :bColorMap   := { | o | o:lBorder := o:lMOver, nCBorder }
+            :oFontBold   := oBold
+            :lRound      := .F.
+         END
+   Next x
+
+   oWnd:nWidth    := 850
+   oWnd:nHeight   := 800
+
+   ACTIVATE WINDOW oWnd MAXIMIZED ON RESIZE WndResize( oWnd )
+   RELEASE FONT oFont, oBold, oFont1, oFontG
+
+return nil
+
+RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartDialog() CLASS EmpresasView
+
+   ::oController:getDireccionesController():getDialogView():StartDialog()
+
+   ::addLinksToExplorerBar()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD addLinksToExplorerBar() CLASS EmpresasView
+
+   local oPanel
+
+   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
+
+   if ::oController:isNotZoomMode()
+      oPanel:AddLink( "Delegaciones...", {|| ::oController:getDelegacionesController():activateDialogView() }, ::oController:getDelegacionesController():getImage( "16" ) )
+   end if
+
+   oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
+
+   if ::oController:isNotZoomMode()
+      oPanel:AddLink( "Campos extra...", {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }, ::oController:getCamposExtraValoresController():getImage( "16" ) )
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 CLASS EmpresasValidator FROM SQLBaseValidator
 
