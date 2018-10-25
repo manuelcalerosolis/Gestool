@@ -1,11 +1,15 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
+#define LAYOUT_LEFT    2
+
 //---------------------------------------------------------------------------//
 
 CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    DATA oGetSelector
+
+   DATA oPanelView
 
    DATA oDireccionesController
 
@@ -479,124 +483,104 @@ RETURN ( nil )
 
 CLASS EmpresasPanelView FROM SQLBaseView
 
-   DATA aButtons                 INIT  {  {  "Text" => "Datos" + CRLF + "Datos de empresas" , "Image" => 0xE770, "Action" => { || msgalert( "Datos" ) } },;
-                                          {  "Text" => "Datos" + CRLF + "Datos de empresas" , "Image" => 0xE770, "Action" => { || msgalert( "Datos" ) } },;   
-                                          {  "Text" => "Datos" + CRLF + "Datos de empresas" , "Image" => 0xE770, "Action" => { || msgalert( "Datos" ) } } }
+   DATA oWnd
 
-   DATA oExplorerBar
-
-   DATA oSayCamposExtra
-  
    METHOD Activate()
 
-   METHOD Activating()
-
-   METHOD getImagenesController()   INLINE ( ::oController:oImagenesController )
-
-   METHOD addLinksToExplorerBar()
-
-   METHOD StartDialog()
+   METHOD Resize()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Activating() CLASS EmpresasPanelView
+METHOD Resize() CLASS EmpresasPanelView
 
-   if ::oController:isAppendOrDuplicateMode()
-      ::oController:oModel:hBuffer()
-   end if 
+   // local nWidth            := ::oWnd:GetCliRect():nWidth() - 60
 
-RETURN ( self )
+   // ::oBtnModificar:nWidth  := nWidth
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate() CLASS EmpresasView
+METHOD Activate() CLASS EmpresasPanelView
 
-   local oWnd, oBtn
-   local oFont, oBold, oFont1, oFontG
-   local oSay
-   local oGet
-   local cFind      := ""
-   local cPrompt    := "Setup of Windows ( FWH BtnBmp Demo )"
-   local nRow       := 170
-   local nCol       := 180
+   local oFont
+   local oBold
    local nClrBack   := CLR_WHITE
-   local nW         := 200
-   local nH         := 140
-   local nCBorder   := 0xC38B2B
    local nClrText   := CLR_BLACK
-   local nClrBorder := 0xE6E6E6
-   local x
+   local nClrBorder := CLR_OKBUTTON
 
-   DEFINE WINDOW oWnd TITLE "Setup"
-   oWnd:SetFont( oFontBigTitle() )
+   oFont             := TFont():New( "Segoe UI", 0, -12,, .f. )
+   oBold             := TFont():New( "Segoe UI", 0, -16,, .t. )
 
-   @ 20, 490 SAY oSay PROMPT cPrompt OF oWnd PIXEL FONT oFontBigTitle() SIZE 420, 40
+   ::oWnd            := TWindow():New( , , , , "", , , , , , , , , , , , .t., .t., .t., .t., .f., , "oWnd" )
+   ::oWnd:SetFont( oFont )
 
-   For x = 1 to Len( aBtns )
-      if x > 1
-         if Mod( x, 5 ) = 1
-            nRow += 200
-            nCol := 180
-         else
-            nCol += 200
-         endif
-      endif
-      @ nRow, nCol BTNBMP oBtn PROMPT aBtns[ x ][ 1 ]  ;
-         RESOURCE aBtns[ x ][ 2 ] SIZE nW, nH PIXEL OF oWnd FLAT NOBORDER ;
-         COLOR nClrText, nClrBack
-         WITH OBJECT oBtn
-            :bAction     := aBtns[ x ][ 3 ]
-            :nClrBorder  := 0xC38B2B
-            :bColorMap   := { | o | o:lBorder := o:lMOver, nCBorder }
-            :oFontBold   := oBold
-            :lRound      := .F.
-         END
-   Next x
+   TBitmap():New( 20, 180, 140, 140, "LogoGestool_48", , .t., ::oWnd, , , , , , , , , , , .f. ) 
 
-   oWnd:nWidth    := 850
-   oWnd:nHeight   := 800
+   TSay():New( 20, 220, {|| "Gestool panel de control" }, ::oWnd, , oBold, .f., .f., .f., .t., , , 420, 80, .f., .f., .f., .f., .f., .f., .f., "oSay",, .f. )
 
-   ACTIVATE WINDOW oWnd MAXIMIZED ON RESIZE WndResize( oWnd )
-   RELEASE FONT oFont, oBold, oFont1, oFontG
+   with object ( TBtnBmp():New( 100, 180, 140, 140, "gc_factory_32",,,,, ::oWnd,,, .f., .f., "Modificar datos de la empresa",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., nClrText, nClrBack, .f. ) )
+      :bAction       := {|| msgalert( "Modificar" ) }
+      :nClrBorder    := nClrBorder
+      :bColorMap     := {| o | o:lBorder := o:lMOver, nClrBorder }
+      :oFontBold     := oBold
+      :lRound        := .f.
+      :nLeft         := 30
+      :nHeight       := 80
+   end 
 
-return nil
+   TSay():New( 100, 220, {|| "Modificar datos de la empresa" }, ::oWnd,, oBold, .f., .f., .f., .t.,,, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
+   
+   TSay():New( 130, 220, {|| "Cambie la información de la empresa actual." }, ::oWnd,, oFont, .f., .f., .f., .t.,,, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
 
-RETURN ( ::oDialog:nResult )
+   with object ( TBtnBmp():New( 200, 180, 140, 140, "gc_wrench_32",,,,, ::oWnd,,, .f., .f., "Configurar datos de la empresa",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., nClrText, nClrBack, .f. ) )
+      :bAction       := {|| msgalert( "Configurar" ) }
+      :nClrBorder    := nClrBorder
+      :bColorMap     := {| o | o:lBorder := o:lMOver, nClrBorder }
+      :oFontBold     := oBold
+      :lRound        := .f.
+      :nLeft         := 30
+      :nHeight       := 80
+   end 
 
-//---------------------------------------------------------------------------//
+   TSay():New( 200, 220, {|| "Configurar opciones de la empresa" }, ::oWnd,, oBold, .f., .f., .f., .t.,,, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
+   
+   TSay():New( 230, 220, {|| "Adapte la empresa a sus necesidades mediante las opciones de configuración." }, ::oWnd,, oFont, .f., .f., .f., .t.,,, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
 
-METHOD StartDialog() CLASS EmpresasView
+   with object ( TBtnBmp():New( 300, 180, 140, 140, "gc_wrench_32",,,,, ::oWnd,,, .f., .f., "Realizar copias de seguridad",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., nClrText, nClrBack, .f. ) )
+      :bAction       := {|| msgalert( "Backup" ) }
+      :nClrBorder    := nClrBorder
+      :bColorMap     := {| o | o:lBorder := o:lMOver, nClrBorder }
+      :oFontBold     := oBold
+      :lRound        := .f.
+      :nLeft         := 30
+      :nHeight       := 80
+   end 
 
-   ::oController:getDireccionesController():getDialogView():StartDialog()
+   TSay():New( 300, 220, {|| "Realizar copias de seguridad" }, ::oWnd,, oBold, .f., .f., .f., .t.,,, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
+   
+   TSay():New( 330, 220, {|| "Mantega a salvo sus datos realizando copias de seguridad periodicas." }, ::oWnd,, oFont, .f., .f., .f., .t.,,, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
 
-   ::addLinksToExplorerBar()
+   ::oWnd:nWidth     := 850
+   ::oWnd:nHeight    := 800
 
-RETURN ( nil )
+   ::oWnd:Activate( "MAXIMIZED", , , , ::oWnd:bResized := {|| ::Resize() }, , , , , , , , , , , , , , , .f. )
 
-//---------------------------------------------------------------------------//
+   oFont:End()
+   oBold:End()
 
-METHOD addLinksToExplorerBar() CLASS EmpresasView
-
-   local oPanel
-
-   oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
-
-   if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Delegaciones...", {|| ::oController:getDelegacionesController():activateDialogView() }, ::oController:getDelegacionesController():getImage( "16" ) )
-   end if
-
-   oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
-
-   if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Campos extra...", {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }, ::oController:getCamposExtraValoresController():getImage( "16" ) )
-   end if
+   oFont             := nil
+   oBold             := nil
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS EmpresasValidator FROM SQLBaseValidator
 

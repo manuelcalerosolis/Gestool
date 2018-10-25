@@ -705,7 +705,7 @@ METHOD CreateOfficeBar()
 
    local oAcceso
 
-   ::oOfficeBar                        := TDotNetBar():New( 0, 0, 1000, 120, ::oReBar, 2 )
+   ::oOfficeBar                        := TDotNetBar():New( 0, 0, 1000, 120, ::oReBar, 1 )
    ::oOfficeBar:lPaintAll              := .f.
    ::oOfficeBar:lDisenio               := .f.
    ::oOfficeBar:bRClicked              := {|| ::EditButtonBar() }
@@ -714,7 +714,7 @@ METHOD CreateOfficeBar()
 
    ::oRebar:oTop                       := ::oOfficeBar
 
-   ::oOfficeBar:SetFirstTab( "Empresa", {|| msgalert( "SetFirstTab") } )
+   ::oOfficeBar:SetFirstTab( "Empresa", {|| EmpresasController():getPanelView():Activate() } )
 
    /*
    Creamos la carpeta de favoritos---------------------------------------------
