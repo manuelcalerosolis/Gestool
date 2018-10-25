@@ -30,6 +30,8 @@ CLASS SQLBaseValidator
    METHOD getValidators()                 VIRTUAL
    METHOD getAsserts()                    VIRTUAL
 
+   METHOD getController()                 INLINE   ( ::oController )
+
    METHOD Validate( cColumn, uValue )     INLINE   ( ::assignValue( cColumn, uValue ), ::ProcessAll( cColumn, ::getValidators() ) )
    METHOD Assert( cColumn, uValue )       INLINE   ( ::assignValue( cColumn, uValue ), ::ProcessAll( cColumn, ::getAsserts() ) )
 
@@ -88,13 +90,9 @@ RETURN ( Self )
 
 METHOD End()     
 
-   ::oController                 := nil                      
-   
    ::hAsserts                    := nil
    
    ::hValidators                 := nil
-
-   self                          := nil
 
 RETURN ( nil )
 

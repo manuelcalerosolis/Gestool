@@ -416,6 +416,7 @@ METHOD addShowDeleteButton()
    if !::getSuperController():getModel():isDeletedAtColumn()
       RETURN ( nil )
    end if
+   
    // Solo si es administrador
 
    ::oButtonShowDelete  := ::AddButton( "Mostrar eliminados", "gc_deleted_16", {|| ::getSuperController():setShowDeleted() }, "E", ACC_DELE ) 
@@ -425,7 +426,6 @@ METHOD addShowDeleteButton()
 RETURN ( nil )
 
 //----------------------------------------------------------------------------//
-
 
 METHOD AddSelectButton()    
 

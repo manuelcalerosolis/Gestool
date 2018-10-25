@@ -345,7 +345,7 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    METHOD getEmpresasController()   INLINE ( if( empty( ::oEmpresasController ), ::oEmpresasController := EmpresasController():New( self ), ), ::oEmpresasController )
 
-   METHOD getAjustableController()  INLINE ( if( empty( ::oAjustableController ), ::oAjustableController := AjustableController():New( self ), ), ::oAjustableController )
+   METHOD getAjustableController()  INLINE ( msgalert( "getAjustableController" ), if( empty( ::oAjustableController ), ::oAjustableController := AjustableController():New( self ), ), ::oAjustableController )
 
    METHOD getDelegacionesController();
                                     INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )

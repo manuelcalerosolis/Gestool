@@ -104,7 +104,6 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD stampAgenteComision()
 
    METHOD stampCombinationAndIncrement( hCombination )
-
    
    // Dialogos-----------------------------------------------------------------
 
@@ -384,7 +383,6 @@ METHOD postValidateCombinacionesUuid( oCol, uValue )
    if hb_isnil( uValue )
       RETURN ( nil )
    end if
-
 
    hCombination := SQLcombinacionesModel():getHashWhere( "uuid", uValue )
 
