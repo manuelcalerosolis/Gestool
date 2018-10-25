@@ -49,7 +49,7 @@ METHOD New( oController ) CLASS AlmacenesController
 
    ::oProvinciasController          := ProvinciasController():New( self )
 
-   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
    ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
@@ -123,21 +123,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS AlmacenesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 60
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -154,6 +140,8 @@ METHOD addColumns() CLASS AlmacenesBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -337,6 +325,8 @@ CLASS SQLAlmacenesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "almacenes"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getAlmacenUuidAttribute( value )
@@ -360,7 +350,7 @@ METHOD getColumns() CLASS SQLAlmacenesModel
    hset( ::hColumns, "almacen_uuid",      {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) NOT NULL"                 ,;
@@ -368,6 +358,8 @@ METHOD getColumns() CLASS SQLAlmacenesModel
 
    hset( ::hColumns, "sistema",           {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| 0 } }                                 )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

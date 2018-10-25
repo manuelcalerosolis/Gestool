@@ -439,7 +439,7 @@ METHOD Duplicate( nId )
    if isFalse( ::fireEvent( 'duplicating' ) )
       RETURN ( .f. )
    end if
-
+   
    ::setDuplicateMode()
 
    ::beginTransactionalMode()
@@ -786,7 +786,7 @@ METHOD isRowSetSystemRegister()
       RETURN ( .t. )
    end if 
 
-RETURN ( ::getRowSet():fieldGet( 'sistema' ) == 1 )
+RETURN ( ::getRowSet():fieldGet( 'sistema' ) == .t. )
 
 //----------------------------------------------------------------------------//
 

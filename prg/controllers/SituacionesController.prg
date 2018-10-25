@@ -80,12 +80,14 @@ METHOD addColumns() CLASS SituacionesBrowseView
    ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'nombre'
-      :cHeader             := 'Nombre'
+      :cSortOrder          := 'descripcion'
+      :cHeader             := 'Descripción'
       :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'descripcion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -107,36 +109,29 @@ END CLASS
 
 METHOD Activate() CLASS SituacionesView
 
-   local oDlg
-   local oGetNombre
+   DEFINE DIALOG  ::oDialog ;
+      RESOURCE    "SITUACION" ;
+      TITLE       ::LblTitle() + "sutiaciones"
 
-   DEFINE DIALOG oDlg RESOURCE "SITUACION" TITLE ::LblTitle() + "situación"
-
-   REDEFINE GET   oGetNombre ;
-      VAR         ::oController:getModel():hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "descripcion" ] ;
       ID          100 ;
-      MEMO ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
-      OF          oDlg
+      VALID       ( ::oController:validate( "descripcion" ) ) ;
+      OF          ::oDialog
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( oDlg ), oDlg:end( IDOK ), ) }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| oDlg:end() }, oDlg, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   oDlg:bKeyDown   := {| nKey | if( nKey == VK_F5, oDlg:end( IDOK ), ) }
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
 
    if ::oController:isNotZoomMode() 
-      oDlg:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( oDlg ), oDlg:end( IDOK ), ) }
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
 
-   // evento bstart-----------------------------------------------------------
+   ACTIVATE DIALOG ::oDialog CENTER
 
-   oDlg:bStart    := {|| oGetNombre:setFocus() }
-
-   ACTIVATE DIALOG oDlg CENTER
-
-RETURN ( oDlg:nResult )
+RETURN ( ::oDialog:nResult )
 
 //--------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -178,6 +173,8 @@ CLASS SQLSituacionesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "situaciones"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( descripcion, deleted_at )"
+
    METHOD getColumns()
 
 END CLASS
@@ -194,8 +191,10 @@ METHOD getColumns() CLASS SQLSituacionesModel
                                        "text"      => "Uuid"                                    ,;
                                        "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 140 )"                          ,;
+   hset( ::hColumns, "descripcion", {  "create"    => "VARCHAR( 140 )"                          ,;
                                        "default"   => {|| space( 140 ) } }                       )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 
@@ -213,17 +212,17 @@ CLASS SituacionesRepository FROM SQLBaseRepository
 
    METHOD getTableName()         INLINE ( if( !empty( ::getController() ), ::getModelTableName(), SQLSituacionesModel():getTableName() ) )
 
-   METHOD getNombres() 
+   //METHOD getNombres() 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getNombres() CLASS SituacionesRepository
+/*METHOD getNombres() CLASS SituacionesRepository
 
    local cSentence               := "SELECT nombre FROM " + ::getTableName()
    local aNombres                := ::getDatabase():selectFetchArrayOneColumn( cSentence )
 
-RETURN ( aNombres )
+RETURN ( aNombres )*/
 
 //---------------------------------------------------------------------------//

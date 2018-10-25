@@ -230,9 +230,9 @@ METHOD Activate() CLASS DireccionTipoDocumentoView
 
    // Tipo-------------------------------------------------------------------
 
-   ::oController:getDireccionTiposController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_uuid" ] ) )
-   ::oController:getDireccionTiposController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
-   ::oController:getDireccionTiposController():getSelector():setValid( {|| ::oController:validate( "tipo_uuid" ) } )
+   ::oController:getDireccionesTiposController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "tipo_uuid" ] ) )
+   ::oController:getDireccionesTiposController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
+   ::oController:getDireccionesTiposController():getSelector():setValid( {|| ::oController:validate( "tipo_uuid" ) } )
    
 
    // Direccion--------------------------------------------------------------
@@ -267,7 +267,7 @@ METHOD StartActivate() CLASS DireccionTipoDocumentoView
 
    ::oController:getDireccionesController():getSelector():Start()
 
-   ::oController:getDireccionTiposController():getSelector():Start()
+   ::oController:getDireccionesTiposController():getSelector():Start()
 
 RETURN ( self )
 
@@ -303,10 +303,10 @@ CLASS SQLDireccionTipoDocumentoModel FROM SQLCompanyModel
    METHOD getColumns()
 
    METHOD getTipoUuidAttribute( uValue ) ; 
-                                          INLINE ( if( empty( uValue ), space( 3 ), SQLDireccionTiposModel():getCodigoWhereUuid( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), space( 3 ), SQLDireccionesTiposModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD setTipoUuidAttribute( uValue ) ;
-                                          INLINE ( if( empty( uValue ), "", SQLDireccionTiposModel():getUuidWhereCodigo( uValue ) ) )
+                                          INLINE ( if( empty( uValue ), "", SQLDireccionesTiposModel():getUuidWhereCodigo( uValue ) ) )
                        
    METHOD getDireccionUuidAttribute( uValue ) ; 
                                           INLINE ( if( empty( uValue ), space( 20 ), SQLDireccionesModel():getCodigoWhereUuid( uValue ) ) )
@@ -370,7 +370,7 @@ METHOD getInitialSelect() CLASS SQLDireccionTipoDocumentoModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLDireccionTiposModel():getTableName(), SQLDireccionesModel():getTableName(), SQLPaisesModel():getTableName() )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDireccionesTiposModel():getTableName(), SQLDireccionesModel():getTableName(), SQLPaisesModel():getTableName() )
 
 RETURN ( cSql )
 

@@ -88,22 +88,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS DireccionesTiposBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -120,6 +105,8 @@ METHOD addColumns() CLASS DireccionesTiposBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -225,6 +212,8 @@ CLASS SQLDireccionesTiposModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "direccion_tipo"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
 END CLASS
@@ -244,6 +233,8 @@ METHOD getColumns() CLASS SQLDireccionesTiposModel
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                           ,;
                                              "default"  => {|| space( 200 ) } }                       )
+
+   ::getDeletedStampColumn()
    
 
 RETURN ( ::hColumns )
@@ -264,5 +255,4 @@ CLASS DireccionesTiposRepository FROM SQLBaseRepository
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

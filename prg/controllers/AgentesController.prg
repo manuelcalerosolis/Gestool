@@ -39,7 +39,7 @@ METHOD New( oController ) CLASS AgentesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
    ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
@@ -96,22 +96,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS AgentesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -169,7 +154,9 @@ METHOD addColumns() CLASS AgentesBrowseView
       :nWidth              := 100
       :bEditValue          := {|| ::getRowSet():fieldGet( 'email' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   end with
+
+   ::getColumnDeletedAt() 
 
 RETURN ( nil )
 
@@ -327,6 +314,8 @@ CLASS SQLAgentesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "agentes"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getGeneralSelect()
@@ -340,20 +329,31 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD getGeneralSelect() CLASS SQLAgentesModel
+   
+   local cSql
 
-   local cSelect  := "SELECT agentes.id,"                                                                                           + " " + ;
-                        "agentes.uuid,"                                                                                             + " " + ;
-                        "agentes.codigo,"                                                                                           + " " + ;
-                        "agentes.nombre,"                                                                                           + " " + ;
-                        "agentes.dni,"                                                                                              + " " + ;
-                        "agentes.comision,"                                                                                         + " " + ;
-                        "direcciones.telefono as telefono,"                                                                         + " " + ;
-                        "direcciones.movil as movil,"                                                                               + " " + ;
-                        "direcciones.email as email"                                                                                + " " + ;
-                     "FROM "+ ::getTableName() + " AS agentes"                                                                      + " " + ;
-                        "INNER JOIN " + SQLDireccionesModel():getTableName() + " AS direcciones ON agentes.uuid = direcciones.parent_uuid"   
+   TEXT INTO cSql
 
-RETURN ( cSelect )
+   SELECT agentes.id AS id,
+      agentes.uuid AS uuid,
+      agentes.codigo AS codigo,
+      agentes.nombre AS nombre,
+      agentes.dni AS dni,
+      agentes.comision AS comision,
+      agentes.deleted_at AS deleted_at,
+      direcciones.telefono AS telefono,
+      direcciones.movil AS movil,
+      direcciones.email AS email
+   FROM %1$s AS agentes
+      INNER JOIN %2$s AS direcciones 
+         ON agentes.uuid = direcciones.parent_uuid
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDireccionesModel():getTableName() )
+  
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
@@ -365,17 +365,19 @@ METHOD getColumns() CLASS SQLAgentesModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(20) NOT NULL UNIQUE"             ,;
-                                             "default"   => {|| space( 20 ) } } )
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR(20) NOT NULL"                    ,;
+                                             "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                         ,;
+   hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 140 )"                          ,;
                                              "default"   => {|| space( 140 ) } }                      )
 
-   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                          ,;
+   hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                           ,;
                                              "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "comision",          {  "create"    => "FLOAT( 5,2 )"                            ,;
                                              "default"   => {|| 0 } }                                 )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

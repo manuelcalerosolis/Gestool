@@ -109,8 +109,6 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oFacturasClientesDescuentosController
 
-   DATA oDireccionTiposController
-
    DATA oDireccionTipoDocumentoController
 
    DATA oRelacionesEntidadesController
@@ -315,8 +313,6 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getFacturasClientesDescuentosController();
                                     INLINE ( if( empty( ::oFacturasClientesDescuentosController ), ::oFacturasClientesDescuentosController := FacturasClientesDescuentosController():New( self ), ), ::oFacturasClientesDescuentosController )
 
-   METHOD getDireccionTiposController();
-                                    INLINE ( if( empty( ::oDireccionTiposController ), ::oDireccionTiposController := DireccionTiposController():New( self ), ), ::oDireccionTiposController )
 
    METHOD getDireccionTipoDocumentoController();
                                     INLINE ( if( empty( ::oDireccionTipoDocumentoController ), ::oDireccionTipoDocumentoController := DireccionTipoDocumentoController():New( self ), ), ::oDireccionTipoDocumentoController )
@@ -610,10 +606,6 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oFacturasClientesDescuentosController )   
       ::oFacturasClientesDescuentosController:End()
-   end if    
-
-   if !empty( ::oDireccionTiposController )   
-      ::oDireccionTiposController:End()
    end if    
 
    if !empty( ::oDireccionTipoDocumentoController )   

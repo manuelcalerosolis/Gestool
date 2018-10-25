@@ -3,6 +3,8 @@
 
 CLASS SQLTercerosModel FROM SQLCompanyModel
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getInitialSelect()
@@ -26,7 +28,7 @@ METHOD getColumns() CLASS SQLTercerosModel
    hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"        ,;
                                                       "default"   => {|| win_uuidcreatestring() } }         )
 
-   hset( ::hColumns, "codigo",                     {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"        ,;
+   hset( ::hColumns, "codigo",                     {  "create"    => "VARCHAR( 20 ) NOT NULL"               ,;
                                                       "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "nombre",                     {  "create"    => "VARCHAR( 140 )"                       ,;
@@ -121,6 +123,8 @@ METHOD getColumns() CLASS SQLTercerosModel
 
    hset( ::hColumns, "subcuenta_descuento",        {  "create"    => "VARCHAR( 12 )"                        ,;
                                                       "default"   => {|| space( 12 ) } }                    )
+
+   ::getDeletedStampColumn()
    
 RETURN ( ::hColumns )
 
@@ -157,7 +161,8 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
       direcciones.telefono AS telefono,
       direcciones.movil AS movil,
       tarifas.codigo AS tarifa_codigo,
-      tarifas.nombre AS tarifa_nombre 
+      tarifas.nombre AS tarifa_nombre,
+      %2$s.deleted_at 
    FROM %1$s AS %2$s
       LEFT JOIN %3$s AS direcciones 
          ON %2$s.uuid = direcciones.parent_uuid AND direcciones.codigo = 0  

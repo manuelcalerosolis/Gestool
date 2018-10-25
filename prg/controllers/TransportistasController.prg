@@ -39,7 +39,7 @@ METHOD New( oController ) CLASS TransportistasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
    ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
@@ -100,21 +100,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS TransportistasBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -138,7 +124,11 @@ METHOD addColumns() CLASS TransportistasBrowseView
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'dni' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   end with
+
+   ::getColumnsCreatedUpdatedAt()
+   
+   ::getColumnDeletedAt() 
 
 RETURN ( self )
 
@@ -316,6 +306,8 @@ CLASS SQLTransportistasModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "transportistas"
 
+   DATA cConstraints                         INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    MESSAGE getNombre( uuid )                 INLINE ( ::getField( "nombre", "uuid", uuid ) )
 
    MESSAGE getNombreWhereCodigo( codigo )    INLINE ( ::getField( "nombre", "codigo", codigo ) )
@@ -342,6 +334,10 @@ METHOD getColumns() CLASS SQLTransportistasModel
 
    hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                           ,;
                                              "default"   => {|| space( 20 ) } }                       )
+
+   ::getTimeStampColumns()
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 
