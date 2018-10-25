@@ -121,8 +121,8 @@ METHOD New( cDatabaseMySQL )
 
    ::oConexion:setAttribute( MYSQL_OPT_RECONNECT, .t. )
 
-   ::oConexion:setAttribute( STMT_ATTR_TINY_AS_BOOL, .t. )
-
+   ::oConexion:setAttribute( HDO_ATTR_DEFAULT_TINY_AS_BOOL, .t. )
+   
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -302,8 +302,6 @@ METHOD selectFetch( cSentence, fetchType, attributePad )
 
       oStatement:setAttribute( STMT_ATTR_STR_PAD, attributePad )
 
-      oStatement:setAttribute( STMT_ATTR_TINY_AS_BOOL, .t. )
-
       oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY )         
    
       aFetch            := oStatement:fetchAll( fetchType )
@@ -317,6 +315,8 @@ METHOD selectFetch( cSentence, fetchType, attributePad )
       if !empty( oStatement )
          oStatement:Free()
       end if
+
+      oStatement        := nil
 
    end
 
@@ -393,6 +393,8 @@ METHOD selectHashList( cSentence )
          oStatement:Free()
       end if
 
+      oStatement  := nil
+
    end
 
    if !empty( oHashList )
@@ -415,8 +417,6 @@ METHOD getValue( cSentence, uDefault )
 
       oStatement:setAttribute( STMT_ATTR_STR_PAD, .t. )
 
-      oStatement:setAttribute( STMT_ATTR_TINY_AS_BOOL, .t. )
-   
       oStatement:setAttribute( STMT_ATTR_CURSOR_TYPE, CURSOR_TYPE_READ_ONLY )   
       
       if oStatement:fetchDirect()
@@ -510,6 +510,8 @@ METHOD getSchemaColumns( oModel )
       if !empty( oStatement )
         oStatement:free()
       end if    
+
+      oStatement  := nil
    
    end
 
@@ -542,6 +544,8 @@ METHOD getListTables()
       if !empty( oStatement )
          oStatement:Free()
       end if
+
+      oStatement  := nil
 
    end
 

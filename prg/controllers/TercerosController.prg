@@ -69,7 +69,7 @@ METHOD New( oController) CLASS TercerosController
 
    ::Super:New( oController )
 
-   ::lTransactional     := .t.
+   ::lTransactional     := .f.
 
    ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
    ::oModel:setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )

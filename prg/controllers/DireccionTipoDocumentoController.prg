@@ -154,7 +154,7 @@ METHOD addColumns() CLASS DireccionTipoDocumentoBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'direccion'
       :cHeader             := 'Dirección'
-      :nWidth              := 200
+      :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'direccion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -162,7 +162,7 @@ METHOD addColumns() CLASS DireccionTipoDocumentoBrowseView
       with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'poblacion'
       :cHeader             := 'Población'
-      :nWidth              := 150
+      :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'poblacion' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with

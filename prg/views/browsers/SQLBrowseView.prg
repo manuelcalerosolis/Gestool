@@ -444,7 +444,7 @@ METHOD insertSelectedColumn()
    with object ( ::oBrowse:InsCol( 1 ) )
       :Cargo         := .t.
       :nWidth        := 24
-      :cHeader       := "Sel."
+      :cHeader       := ""
       :bLDClickData  := ::getSelectedColumnDblClick()
       :bEditValue    := {|| ascan( ::oBrowse:aSelected, ::oBrowse:BookMark ) > 0 }
       :nHeadBmpNo    := {|| if( len( ::oBrowse:aSelected ) == ::oBrowse:nLen, 1, 2 ) }

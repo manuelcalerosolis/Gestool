@@ -1659,9 +1659,6 @@ METHOD getField( cField, cBy, cId )
    cSql        +=    "WHERE " + cBy + " = " + quoted( cId )             + " "
    cSQL        +=    "LIMIT 1"
 
-   logwrite( cSql )   
-   msgalert( cSql, "cSql" )   
-
 RETURN ( ::getDatabase():getValue( cSql ) )
 
 //----------------------------------------------------------------------------//

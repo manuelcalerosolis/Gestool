@@ -27,6 +27,8 @@ CLASS DireccionesController FROM SQLNavigatorController
 
    DATA lPrincipal                        INIT .f.
 
+   DATA uuidOlderParent                        
+
    METHOD New() CONSTRUCTOR
    METHOD End()
 
@@ -49,6 +51,9 @@ CLASS DireccionesController FROM SQLNavigatorController
    METHOD includePrincipal()              INLINE ( ::lPrincipal := .t. )
    METHOD excludePrincipal()              INLINE ( ::lPrincipal := .f. )
    METHOD getPrincipal()                  INLINE ( ::lPrincipal )
+
+   METHOD setUuidOlderParent( uuidParent )   INLINE ( ::uuidOlderParent := uuidParent )
+   METHOD getUuidOlderParent()               INLINE ( ::uuidOlderParent )
 
    // Creaciones tardias-------------------------------------------------------
    
@@ -178,9 +183,10 @@ RETURN ( nil )
 METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DireccionesController
 
    local idDireccion 
-   local aDirecciones    
 
    msgalert( uuidEntidad, "loadedDuplicateCurrentBuffer" )
+
+   ::setUuidOlderParent( uuidEntidad ) 
 
    idDireccion          := ::oModel:getIdPrincipalWhereParentUuid( uuidEntidad )
 
@@ -190,22 +196,6 @@ METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DireccionesController
       ::oModel:loadDuplicateBuffer( idDireccion )
    end if 
 
-   // Cargamos las direcciones no principales
-
-   aDirecciones         := ::oModel:getHashOthersWhereParentUuid( uuidEntidad )
-
-   msgalert( hb_valtoexp( aDirecciones ), "getSentenceOthersWhereParentUuid" ) 
-
-   // Las recorremos
-
-      // cargamos el buffer
-
-      // remplazamos el uuid
-
-      // insertamos la nueva direccion
-
-   // fin del recorrido
-
 
 RETURN ( nil )
 
@@ -213,7 +203,28 @@ RETURN ( nil )
 
 METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS DireccionesController
 
-   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+   local hDireccion
+   local aDirecciones    
+
+   aDirecciones         := ::oModel:getHashOthersWhereParentUuid( ::getUuidOlderParent() )
+   
+   if empty( aDirecciones )
+      RETURN ( nil )
+   end if 
+
+   for each hDireccion in aDirecciones
+
+      hset( hDireccion, "id",          0 )
+
+      hset( hDireccion, "uuid",        win_uuidcreatestring() )
+      
+      hset( hDireccion, "parent_uuid", uuidEntidad )
+      
+      // hset( hDireccion, "deleted_at",  hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
+
+      ::oModel:insertBuffer( hDireccion )
+
+   next 
 
 RETURN ( nil )
 
@@ -265,7 +276,7 @@ METHOD addColumns() CLASS DireccionesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
       :cHeader             := 'Código'
-      :nWidth              := 300
+      :nWidth              := 150
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
@@ -287,8 +298,8 @@ METHOD addColumns() CLASS DireccionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'Código provincia'
-      :cHeader             := 'codigo_provincia'
+      :cSortOrder          := 'codigo_provincia'
+      :cHeader             := 'Código provincia'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_provincia' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
@@ -780,7 +791,7 @@ METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLDireccionesModel
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
 
-   msgget( "", "", cSql )
+   msgalert( cSql, "cSql" )
 
 RETURN ( cSql )
 
