@@ -51,6 +51,8 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    //Construcciones tardias----------------------------------------------------
 
+   METHOD getAjustableController()           INLINE ( iif( empty( ::oAjustableController ), ::oAjustableController := AjustableController():New( self ), ), ::oAjustableController ) 
+
    METHOD getRepository()                    INLINE ( iif( empty( ::oRepository ), ::oRepository := EmpresasRepository():New( self ), ), ::oRepository ) 
 
    METHOD getBrowseView()                    INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := EmpresasBrowseView():New( self ), ), ::oBrowseView )
@@ -75,8 +77,6 @@ METHOD New( oController ) CLASS EmpresasController
 
    ::cName                          := "empresas"
 
-   ::lConfig                        := .t.
-
    ::hImage                         := {  "16" => "gc_factory_16",;
                                           "32" => "gc_factory_32",;
                                           "48" => "gc_factory_48" }
@@ -94,7 +94,7 @@ METHOD New( oController ) CLASS EmpresasController
    
    ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
-   ::getNavigatorView():getMenuTreeView():setEvent( 'addedRefreshButton',     {|| ::addExtraButtons() } )
+   ::getNavigatorView():getMenuTreeView():setEvent( 'addingExitButton', {|| ::addExtraButtons() } )
 
 RETURN ( Self )
 
@@ -152,23 +152,25 @@ METHOD loadConfig()
 
    Company():guardWhereUuid( ::cUuidEmpresa )
 
-   ::lSolicitarUsuario           := ::getAjustableController():oModel:getEmpresaSeleccionarUsuarios( ::cUuidEmpresa )
+   msgalert( ::getAjustableController():className(), "className" )
+
+   ::lSolicitarUsuario           := ::getAjustableController():getModel():getEmpresaSeleccionarUsuarios( ::cUuidEmpresa )
 
    ::aDelegaciones               := SQLDelegacionesModel():getNombres()
 
-   ::cUuidDelegacionDefecto      := ::getAjustableController():oModel:getEmpresaDelegacionDefecto( ::cUuidEmpresa )
+   ::cUuidDelegacionDefecto      := ::getAjustableController():getModel():getEmpresaDelegacionDefecto( ::cUuidEmpresa )
 
    ::cDelegacionDefecto          := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionDefecto )
 
    ::aUnidades                   := SQLUnidadesMedicionGruposModel():getNombresWithBlank()
 
-   ::cCodigoUnidaesDefecto       := ::getAjustableController():oModel:getEmpresaUnidadesGrupoDefecto( ::cUuidEmpresa )
+   ::cCodigoUnidaesDefecto       := ::getAjustableController():getModel():getEmpresaUnidadesGrupoDefecto( ::cUuidEmpresa )
 
    ::cUnidadesDefecto            := SQLUnidadesMedicionGruposModel():getNombreWhereCodigo( ::cCodigoUnidaesDefecto )
 
    ::aTarifas                    := SQLArticulosTarifasModel():getNombres()
 
-   ::cCodigoTarifaDefecto        := ::getAjustableController():oModel:getEmpresaTarifaDefecto( ::cUuidEmpresa )
+   ::cCodigoTarifaDefecto        := ::getAjustableController():getModel():getEmpresaTarifaDefecto( ::cUuidEmpresa )
 
    ::cTarifaDefecto              := SQLArticulosTarifasModel():getNombreWhereCodigo( ::cCodigoTarifaDefecto )
 
@@ -178,21 +180,21 @@ RETURN ( .t. )
 
 METHOD saveConfig()
 
-   ::getAjustableController():oModel:setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, ::cUuidEmpresa )
+   ::getAjustableController():getModel():setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, ::cUuidEmpresa )
    
    ::cUuidDelegacionDefecto      := SQLDelegacionesModel():getUuidFromNombre( ::cDelegacionDefecto )
 
-   ::getAjustableController():oModel:setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, ::cUuidEmpresa )
+   ::getAjustableController():getModel():setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, ::cUuidEmpresa )
 
    ::cCodigoUnidaesDefecto       := SQLUnidadesMedicionGruposModel():getCodigoWhereNombre( ::cUnidadesDefecto )
 
-   ::getAjustableController():oModel:setEmpresaUnidadesGrupoDefecto( ::cCodigoUnidaesDefecto, ::cUuidEmpresa )
+   ::getAjustableController():getModel():setEmpresaUnidadesGrupoDefecto( ::cCodigoUnidaesDefecto, ::cUuidEmpresa )
 
    ::cCodigoTarifaDefecto        := SQLArticulosTarifasModel():getCodigoWhereNombre( ::cTarifaDefecto )
 
-   ::getAjustableController():oModel:setEmpresaTarifaDefecto( ::cCodigoTarifaDefecto, ::cUuidEmpresa )
+   ::getAjustableController():getModel():setEmpresaTarifaDefecto( ::cCodigoTarifaDefecto, ::cUuidEmpresa )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -208,38 +210,40 @@ METHOD startingActivate()
 
    oPanel:addComboBox( "Tarifa", @::cTarifaDefecto, ::aTarifas )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD addExtraButtons()
 
-   ::oNavigatorView:oMenuTreeView:AddButton( "Actualizar", "gc_server_client_exchange_16", {|| ::updateEmpresa() }, "T", ACC_APPD ) 
+   ::oNavigatorView:getMenuTreeView():AddButton( "Actualizar", "gc_server_client_exchange_16", {|| ::updateEmpresa() }, "T", ACC_APPD ) 
    
-   ::oNavigatorView:oMenuTreeView:AddButton( "Importar datos", "gc_server_client_exchange_16", {|| ::seedEmpresa() }, "D", ACC_APPD ) 
+   ::oNavigatorView:getMenuTreeView():AddButton( "Importar datos", "gc_server_client_exchange_16", {|| ::seedEmpresa() }, "D", ACC_APPD ) 
 
-RETURN ( self )
+   ::oNavigatorView:getMenuTreeView():AddButton( "Configuraciones", "gc_wrench_16", {|| ::setConfig() }, "N", ACC_IMPR ) 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD updateEmpresa()
 
    aeval( ::getBrowseView():getBrowseSelected(),;
-            {|nSelect|  ::getRowSet():goToRecNo( nSelect ),;
-                        msgRun( "Actualizando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanyMigrations():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
+            {|nSelect| ::getRowSet():goToRecNo( nSelect ),;
+               msgRun( "Actualizando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanyMigrations():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD seedEmpresa()
 
    aeval( ::getBrowseView():getBrowseSelected(),;
-            {|nSelect|  ::getRowSet():goToRecNo( nSelect ),;
-                        Company():guardWhereCodigo( ::getRowSet():fieldGet( 'codigo' ) ),;
-                        msgRun( "Importando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanySeeders():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
+            {|nSelect| ::getRowSet():goToRecNo( nSelect ),;
+               Company():guardWhereCodigo( ::getRowSet():fieldGet( 'codigo' ) ),;
+               msgRun( "Importando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanySeeders():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

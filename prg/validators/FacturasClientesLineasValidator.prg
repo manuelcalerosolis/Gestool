@@ -15,6 +15,8 @@ CLASS FacturasClientesLineasValidator FROM SQLBaseValidator
    METHOD existOrEmptySegundaPropiedad( value )    INLINE ( ::existPropiedad( value, "codigo_segunda_propiedad" ) )
 
    METHOD existUnidadMedicion( value )
+
+   METHOD getDialogView()                          INLINE ( ::getController():getController():getDialogView() )
  
 END CLASS
 

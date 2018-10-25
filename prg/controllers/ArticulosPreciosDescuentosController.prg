@@ -20,6 +20,8 @@ CLASS ArticulosPreciosDescuentosController FROM SQLNavigatorController
    METHOD getValidator ()           INLINE ( if( empty( ::oValidator ), ::oValidator := ArticulosPreciosDescuentosValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := ArticulosPreciosDescuentosRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosPreciosDescuentosModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -39,15 +41,9 @@ METHOD New( oController ) CLASS ArticulosPreciosDescuentosController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLArticulosPreciosDescuentosModel():New( self )
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
-   ::oDialogModalView:setEvent( 'activating', {|| ::activatingDialogModalView() } )
-
-   ::setEvent( 'appending',                     {|| ::getBrowseView():Refresh() } )
-   ::setEvent( 'edited',                        {|| ::getBrowseView():Refresh() } )
-   ::setEvent( 'deletedSelection',              {|| ::getBrowseView():Refresh() } )
-
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
+   ::getDialogModalView():setEvent( 'activating', {|| ::activatingDialogModalView() } )
 
 RETURN ( Self )
 
@@ -55,7 +51,9 @@ RETURN ( Self )
 
 METHOD End() CLASS ArticulosPreciosDescuentosController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -104,7 +102,7 @@ METHOD gettingSelectSentence() CLASS ArticulosPreciosDescuentosController
    local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      ::getModel():setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( nil )

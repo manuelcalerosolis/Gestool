@@ -1780,10 +1780,15 @@ RETURN ( ::getDatabase():firstTrimedFetchHash( cSQL ) )
 
 METHOD isWhereCodigo( cCodigo )
 
-   local cSQL  := "SELECT COUNT(*) FROM " + ::getTableName()                  + " "    
+   local cSQL
+   local nCount 
+
+   cSQL        := "SELECT COUNT(*) FROM " + ::getTableName()                  + " "    
    cSQL        +=    "WHERE codigo = " + quoted( cCodigo )                    
 
-RETURN ( ::getDatabase():getValue( cSQL ) > 0 )
+   nCount      := ::getDatabase():getValue( cSQL )
+
+RETURN ( hb_isnumeric( nCount ) .and. nCount > 0 )
 
 //---------------------------------------------------------------------------//
 

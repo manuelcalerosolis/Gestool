@@ -11,7 +11,7 @@ CLASS AjustableController FROM SQLBaseController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getModel()             INLINE ( ::oModel := SQLAjustableModel():New( self ) )
+   METHOD getModel()             INLINE ( iif( empty( ::oModel ), ::oModel := SQLAjustableModel():New( self ), ), ::oModel )
 
    METHOD getDialogView()        INLINE ( iif( empty( ::oDialogView ), ::oDialogView := AjustableView():New( self ), ), ::oDialogView )
 
