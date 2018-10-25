@@ -95,6 +95,8 @@ METHOD addColumns() CLASS TiposImpresorasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
+  ::getColumnDeletedAt() 
+
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
@@ -110,6 +112,8 @@ CLASS SQLTiposImpresorasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "tipos_impresoras"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( nombre, deleted_at )"
+
    METHOD getColumns()
 
 END CLASS
@@ -124,8 +128,10 @@ METHOD getColumns() CLASS SQLTiposImpresorasModel
    hset( ::hColumns, "uuid",        {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                        "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 50 ) UNIQUE"                    ,;
+   hset( ::hColumns, "nombre",      {  "create"    => "VARCHAR( 50 ) NOT NULL"                  ,;
                                        "default"   => {|| space( 50 ) } }                       )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

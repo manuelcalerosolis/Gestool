@@ -357,7 +357,7 @@ ProvinciasController.prg													\
 PaisesController.prg															\
 LenguajesController.prg														\
 DireccionesController.prg 													\
-DireccionesTiposController.prg 											\
+DireccionesTiposController.obj       									\
 ComentariosController.prg 													\
 ComentariosLineasController.prg 											\
 ArticulosTipoController.prg 												\
@@ -670,7 +670,7 @@ PedidosProveedoresModel.prg												\
 UsuariosModel.prg 															\
 DelegacionesModel.prg 														\
 TiposImpresorasController.prg 											\
-DireccionTiposController.prg 												\
+DireccionesTiposController.prg 											\
 DireccionTipoDocumentoController.prg 									\
 SQLEtiquetasModel.prg 														\
 ConfiguracionEmpresasModel.prg 											\
@@ -1076,7 +1076,6 @@ ProvinciasController.obj       											\
 PaisesController.obj       												\
 LenguajesController.obj  		     										\
 DireccionesController.obj       											\
-DireccionesTiposController.obj       									\
 ComentariosController.obj       											\
 ComentariosLineasController.obj       									\
 ArticulosTipoController.obj       										\
@@ -1366,7 +1365,6 @@ MaterialesConsumidosLineasModel.obj 									\
 UsuariosModel.obj																\
 DelegacionesModel.obj														\
 TiposImpresorasController.obj 											\
-DireccionTiposController.obj 												\
 DireccionTipoDocumentoController.obj 									\
 TagsController.obj 															\
 UsuariosController.obj														\
@@ -2078,7 +2076,6 @@ $(OBJ)\MaterialesConsumidosLineasModel.obj 							+
 $(OBJ)\UsuariosModel.obj 													+
 $(OBJ)\DelegacionesModel.obj 												+
 $(OBJ)\TiposImpresorasController.obj               				+
-$(OBJ)\DireccionTiposController.obj               					+
 $(OBJ)\DireccionTipoDocumentoController.obj               		+
 $(OBJ)\TagsController.obj                 							+
 $(OBJ)\UsuariosController.obj               							+

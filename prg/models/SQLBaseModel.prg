@@ -977,7 +977,7 @@ METHOD SQLUpdateDeletedAtSentenceWhereUuid( uUuid )
    local cSentence
 
    cSentence   := "UPDATE " + ::getTableName() + " " + ;
-                     "deleted_at = NOW() " + ; 
+                     "SET deleted_at = NOW() " + ; 
                      "WHERE uuid IN ( "
    
       aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
@@ -1036,12 +1036,14 @@ METHOD SQLUpdateDeletedAtSentenceWhereParentUuid( uUuid )
    local cSentence
 
       cSentence   := "UPDATE " + ::getTableName() + " " + ;
-                        "deleted_at = NOW() " + ; 
+                        "SET deleted_at = NOW() " + ; 
                         "WHERE parent_uuid IN ( "
    
       aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
 
       cSentence         := chgAtEnd( cSentence, ' )', 2 )
+
+      logwrite( cSentence )
 
 RETURN ( cSentence )
 

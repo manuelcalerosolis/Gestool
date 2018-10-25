@@ -229,7 +229,7 @@ METHOD duplicateOthers( uuidEntidad ) CLASS DireccionesController
       
       hset( hDireccion, "parent_uuid", uuidEntidad )
       
-      // hset( hDireccion, "deleted_at", hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
+      hset( hDireccion, "deleted_at", hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
 
       ::oModel:insertBuffer( hDireccion )
 
@@ -661,7 +661,7 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
 
    DATA cTableName                        INIT "direcciones"
 
-   DATA cConstraints                      INIT "PRIMARY KEY ( parent_uuid, codigo )"
+   DATA cConstraints                      INIT "PRIMARY KEY ( parent_uuid, codigo, deleted_at )"
 
    METHOD loadMainBlankBuffer()      INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "codigo", "0" ) )
 
@@ -706,7 +706,7 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 20 ) } }                       )
    
-   hset( ::hColumns, "Main",         {  "create"    => "TINYINT ( 1 )"                          ,;
+   hset( ::hColumns, "Main",              {  "create"    => "TINYINT ( 1 )"                          ,;
                                              "default"   => {|| "0" } }                               )
 
    hset( ::hColumns, "direccion",         {  "create"    => "VARCHAR( 150 )"                          ,;
@@ -734,7 +734,9 @@ METHOD getColumns() CLASS SQLDireccionesModel
                                              "default"   => {|| space( 15 ) } }                       )
 
    hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                      )   
+                                             "default"   => {|| space( 200 ) } }                      )
+
+   ::getDeletedStampColumn()   
 
 RETURN ( ::hColumns )
 
