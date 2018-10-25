@@ -1244,7 +1244,7 @@ RETURN ( ::hBuffer )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadDuplicateBuffer( id ) 
+METHOD loadDuplicateBuffer( id, hFields ) 
 
    ::hBuffer            := {=>}
 
@@ -1270,6 +1270,10 @@ METHOD loadDuplicateBuffer( id )
 
    if hhaskey( ::hBuffer, "deleted_at" )   
       hset( ::hBuffer, "deleted_at", hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
+   end if 
+
+   if !empty( hFields )
+      heval( hFields, {|k,v| if( hhaskey( ::hBuffer, k ), hset( ::hBuffer, k, v ), ) } )
    end if 
 
    ::fireEvent( 'loadedDuplicateBuffer' )

@@ -25,7 +25,7 @@ END CLASS
 
 CLASS DireccionesController FROM SQLNavigatorController
 
-   DATA lPrincipal                        INIT .f.
+   DATA lMain                             INIT .f.
 
    DATA uuidOlderParent                        
 
@@ -35,22 +35,26 @@ CLASS DireccionesController FROM SQLNavigatorController
    METHOD gettingSelectSentence()
 
    METHOD loadBlankBuffer()               INLINE ( ::oModel:loadBlankBuffer() )
-   METHOD loadPrincipalBlankBuffer()      INLINE ( ::oModel:loadPrincipalBlankBuffer() )
+   METHOD loadMainBlankBuffer()           INLINE ( ::oModel:loadMainBlankBuffer() )
    METHOD insertBuffer()                  INLINE ( ::oModel:insertBuffer() )
 
    METHOD loadedCurrentBuffer( uuidEntidad ) 
    METHOD updateBuffer( uuidEntidad )
 
-   METHOD loadedDuplicateCurrentBuffer( uuidEntidad )
+   METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) ;
+                                          INLINE ( ::setUuidOlderParent( uuidEntidad ) )
+
    METHOD loadedDuplicateBuffer( uuidEntidad )
+      METHOD duplicateMain( uuidEntidad ) 
+      METHOD duplicateOthers( uuidEntidad ) 
 
    METHOD deleteBuffer( aUuidEntidades )
 
    METHOD getUuidParent()                 INLINE ( ::oController:getUuid() )
 
-   METHOD includePrincipal()              INLINE ( ::lPrincipal := .t. )
-   METHOD excludePrincipal()              INLINE ( ::lPrincipal := .f. )
-   METHOD getPrincipal()                  INLINE ( ::lPrincipal )
+   METHOD includeMain()                   INLINE ( ::lMain := .t. )
+   METHOD excludeMain()                   INLINE ( ::lMain := .f. )
+   METHOD getMain()                       INLINE ( ::lMain )
 
    METHOD setUuidOlderParent( uuidParent )   INLINE ( ::uuidOlderParent := uuidParent )
    METHOD getUuidOlderParent()               INLINE ( ::uuidOlderParent )
@@ -137,7 +141,7 @@ METHOD gettingSelectSentence() CLASS DireccionesController
       ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
-   if !( ::getPrincipal() )
+   if !( ::getMain() )
       ::oModel:setOthersWhere( "codigo != 0" )
    end if
 
@@ -153,9 +157,9 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS DireccionesController
       ::oModel:insertBuffer()
    end if 
 
-   idDireccion          := ::oModel:getIdPrincipalWhereParentUuid( uuidEntidad )
+   idDireccion          := ::oModel:getIdMainWhereParentUuid( uuidEntidad )
    if empty( idDireccion )
-      ::oModel:insertPrincipalBlankBuffer()
+      ::oModel:insertMainBlankBuffer()
    else
       ::oModel:loadCurrentBuffer( idDireccion )
    end if 
@@ -180,28 +184,33 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DireccionesController
+METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS DireccionesController
 
-   local idDireccion 
+   ::duplicateMain( uuidEntidad )
 
-   msgalert( uuidEntidad, "loadedDuplicateCurrentBuffer" )
-
-   ::setUuidOlderParent( uuidEntidad ) 
-
-   idDireccion          := ::oModel:getIdPrincipalWhereParentUuid( uuidEntidad )
-
-   if empty( idDireccion )
-      ::oModel:insertPrincipalBlankBuffer()
-   else 
-      ::oModel:loadDuplicateBuffer( idDireccion )
-   end if 
-
+   ::duplicateOthers( uuidEntidad )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS DireccionesController
+METHOD duplicateMain( uuidEntidad ) CLASS DireccionesController
+
+   local idDireccion
+
+   idDireccion          := ::oModel:getIdMainWhereParentUuid( ::getUuidOlderParent() )
+
+   if empty( idDireccion )
+      ::oModel:insertMainBlankBuffer()
+   else 
+      ::oModel:loadDuplicateBuffer( idDireccion, { "parent_uuid" => uuidEntidad } )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD duplicateOthers( uuidEntidad ) CLASS DireccionesController
 
    local hDireccion
    local aDirecciones    
@@ -220,7 +229,7 @@ METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS DireccionesController
       
       hset( hDireccion, "parent_uuid", uuidEntidad )
       
-      // hset( hDireccion, "deleted_at",  hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
+      // hset( hDireccion, "deleted_at", hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
 
       ::oModel:insertBuffer( hDireccion )
 
@@ -654,13 +663,13 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
 
    DATA cConstraints                      INIT "PRIMARY KEY ( parent_uuid, codigo )"
 
-   METHOD loadPrincipalBlankBuffer()      INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "codigo", "0" ) )
+   METHOD loadMainBlankBuffer()      INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "codigo", "0" ) )
 
-   METHOD insertPrincipalBlankBuffer()    INLINE ( ::loadPrincipalBlankBuffer(), ::insertBuffer() ) 
+   METHOD insertMainBlankBuffer()    INLINE ( ::loadMainBlankBuffer(), ::insertBuffer() ) 
 
    METHOD getColumns()
 
-   METHOD getIdPrincipalWhereParentUuid( uuidParent ) ;
+   METHOD getIdMainWhereParentUuid( uuidParent ) ;
                                           INLINE ( ::getFieldWhere( 'id', { 'parent_uuid' => uuidParent, 'codigo' => '0' } ) )
 
    METHOD getSentenceOthersWhereParentUuid( uuidParent )
@@ -697,7 +706,7 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 20 ) } }                       )
    
-   hset( ::hColumns, "principal",         {  "create"    => "TINYINT ( 1 )"                          ,;
+   hset( ::hColumns, "Main",         {  "create"    => "TINYINT ( 1 )"                          ,;
                                              "default"   => {|| "0" } }                               )
 
    hset( ::hColumns, "direccion",         {  "create"    => "VARCHAR( 150 )"                          ,;
@@ -790,8 +799,6 @@ METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLDireccionesModel
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
-
-   msgalert( cSql, "cSql" )
 
 RETURN ( cSql )
 

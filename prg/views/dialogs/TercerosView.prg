@@ -455,7 +455,6 @@ METHOD addLinksToExplorerBar() CLASS TercerosView
    if ::getController():isNotZoomMode()
 
       if ::getController():isClient
-         oPanel:AddLink( "Tarifas...",          {|| ::getController():getClientesTarifasController():activateDialogView() }, ::getController():getClientesTarifasController():getImage( "16" ) )
          oPanel:AddLink( "Descuentos...",       {|| ::getController():getDescuentosController():activateDialogView( ::getController():getUuid() ) }, ::getController():getDescuentosController():getImage( "16" ) )
       end if 
       

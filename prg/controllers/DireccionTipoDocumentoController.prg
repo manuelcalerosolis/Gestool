@@ -43,7 +43,7 @@ METHOD New( oController ) CLASS DireccionTipoDocumentoController
 
    ::oModel                         := SQLDireccionTipoDocumentoModel():New( self )
 
-   ::getDireccionesController():includePrincipal()
+   ::getDireccionesController():includeMain()
 
    ::getDireccionesController():setEvent( 'gettingSelectSentence', {|| ::getParentUuid() } ) 
 
