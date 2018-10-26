@@ -196,8 +196,8 @@ CLASS SQLBaseController
    // Events-------------------------------------------------------------------
 
    METHOD setEvents( aEvents, bEvent )                
-   METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
-   METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
+   METHOD setEvent( cEvent, bEvent )                  INLINE ( ::getEvents():set( cEvent, bEvent ) )
+   METHOD fireEvent( cEvent )                         INLINE ( ::getEvents():fire( cEvent ) )
 
    METHOD onKeyChar()                                 VIRTUAL
 
@@ -242,8 +242,8 @@ CLASS SQLBaseController
    METHOD reBuildRowSet()   
 
    METHOD getRowSet()                                 INLINE ( iif( empty( ::oRowSet ), ::oRowSet := SQLRowSet():New( self ), ), ::oRowSet )
-
-
+   
+   METHOD getEvents()                                 INLINE ( iif( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
 
 END CLASS
 
@@ -252,8 +252,6 @@ END CLASS
 METHOD New( oController )
 
    ::oController                                      := oController
-
-   ::oEvents                                          := Events():New()
 
 RETURN ( self )
 
@@ -523,6 +521,8 @@ METHOD Edit( nId )
    ::setEditMode()
 
    ::beginTransactionalMode()
+
+   msgalert( 'loadCurrentBuffer' )
 
    ::oModel:loadCurrentBuffer( nId )
 

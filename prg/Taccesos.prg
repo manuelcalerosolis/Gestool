@@ -26,6 +26,7 @@ CLASS TAcceso
    DATA  oFavoritosBar
    DATA  oFavoritosGroup
 
+   DATA lCreateEmpresaOfficeBar     INIT .t.
    DATA lCreateFavoritosOfficeBar   INIT .t.
 
    DATA  oGet
@@ -714,7 +715,13 @@ METHOD CreateOfficeBar()
 
    ::oRebar:oTop                       := ::oOfficeBar
 
-   ::oOfficeBar:SetFirstTab( "Empresa", {|| EmpresasController():getPanelView():Activate() } )
+   /*
+   Creamos la carpeta de empresa-----------------------------------------------
+   */
+
+   if ::lCreateEmpresaOfficeBar
+      ::oOfficeBar:SetFirstTab( "Empresa", {|| EmpresasController():New():getPanelView():Activate() } )
+   end if 
 
    /*
    Creamos la carpeta de favoritos---------------------------------------------

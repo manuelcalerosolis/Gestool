@@ -153,11 +153,14 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS DireccionesController
 
    local idDireccion     
 
+   msgalert( uuidEntidad, "uuidEntidad" )
+
    if empty( uuidEntidad )
       ::oModel:insertBuffer()
    end if 
 
    idDireccion          := ::oModel:getIdMainWhereParentUuid( uuidEntidad )
+   
    if empty( idDireccion )
       ::oModel:insertMainBlankBuffer()
    else
@@ -663,28 +666,28 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
 
    DATA cConstraints                      INIT "PRIMARY KEY ( parent_uuid, codigo, deleted_at )"
 
-   METHOD loadMainBlankBuffer()      INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "codigo", "0" ) )
+   METHOD loadMainBlankBuffer()           INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "codigo", "0" ) )
 
-   METHOD insertMainBlankBuffer()    INLINE ( ::loadMainBlankBuffer(), ::insertBuffer() ) 
+   METHOD insertMainBlankBuffer()         INLINE ( ::loadMainBlankBuffer(), ::insertBuffer() ) 
 
    METHOD getColumns()
 
    METHOD getIdMainWhereParentUuid( uuidParent ) ;
-                                          INLINE ( ::getFieldWhere( 'id', { 'parent_uuid' => uuidParent, 'codigo' => '0' } ) )
+                                             INLINE ( ::getFieldWhere( 'id', { 'parent_uuid' => uuidParent, 'codigo' => '0' } ) )
 
    METHOD getSentenceOthersWhereParentUuid( uuidParent )
 
    METHOD getHashOthersWhereParentUuid( uuidParent ) ;
-                                          INLINE ( ::getDatabase():selectFetchHash( ::getSentenceOthersWhereParentUuid( uuidParent ) ) )
+                                             INLINE ( ::getDatabase():selectFetchHash( ::getSentenceOthersWhereParentUuid( uuidParent ) ) )
 
-   METHOD getIdWhereParentUuid( uuid )    INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+   METHOD getIdWhereParentUuid( uuid )       INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
 
-   METHOD addParentUuidWhere( cSQLSelect ) INLINE ( cSQLSelect )
+   METHOD addParentUuidWhere( cSQLSelect )   INLINE ( cSQLSelect )
 
    METHOD getClienteDireccion( cBy, cCodigo, uuidParent ) ;
-                                          INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccion( cBy, cCodigo, uuidParent ) ) ) )
+                                             INLINE ( atail( ::getDatabase():selectTrimedFetchHash( ::getSentenceClienteDireccion( cBy, cCodigo, uuidParent ) ) ) )
 
    METHOD getSentenceClienteDireccion( cBy, cCodigo, uuidParent )
 
@@ -706,9 +709,6 @@ METHOD getColumns() CLASS SQLDireccionesModel
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 20 ) } }                       )
    
-   hset( ::hColumns, "Main",              {  "create"    => "TINYINT ( 1 )"                          ,;
-                                             "default"   => {|| "0" } }                               )
-
    hset( ::hColumns, "direccion",         {  "create"    => "VARCHAR( 150 )"                          ,;
                                              "default"   => {|| space( 150 ) } }                      )
 

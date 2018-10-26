@@ -365,7 +365,7 @@ METHOD getInitialSelect() CLASS SQLCuentasRemesaModel
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLCuentasBancariasModel():getTableName() )
-  logwrite(cSql)
+
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
