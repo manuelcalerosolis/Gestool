@@ -89,22 +89,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS EntradaSalidaBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'tipo'
@@ -146,6 +131,10 @@ METHOD addColumns() CLASS EntradaSalidaBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnsCreatedUpdatedAt()
+   
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -304,32 +293,46 @@ CLASS SQLEntradaSalidaModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cajas_entradas_salidas"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( nombre, deleted_at )"
+
    METHOD getColumns()
 
-METHOD getGeneralSelect()
+   METHOD getInitialSelect()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getGeneralSelect() CLASS SQLEntradaSalidaModel
+METHOD getInitialSelect() CLASS SQLEntradaSalidaModel
 
-   local cSelect  := "SELECT cajas_entradas_salidas.id,"                                                               + " " + ;
-                        "cajas_entradas_salidas.uuid,"                                                                 + " " + ;
-                        "cajas_entradas_salidas.sesion,"                                                               + " " + ;
-                        "cajas_entradas_salidas.nombre,"                                                               + " " + ;
-                        "cajas_entradas_salidas.fecha_hora,"                                                           + " " + ; 
-                        "cajas_entradas_salidas.caja_codigo,"                                                          + " " + ; 
-                        "cajas_entradas_salidas.nombre,"                                                               + " " + ;
-                        "cajas_entradas_salidas.tipo,"                                                                 + " " + ;
-                        "cajas_entradas_salidas.importe,"                                                              + " " + ;   
-                        "cajas_entradas_salidas.delegacion_uuid,"                                                      + " " + ;
-                        "cajas.codigo AS codigo_caja,"                                                               + " " + ;
-                        "cajas.nombre AS nombre_caja"                                                                + " " + ;  
-                     "FROM " + ::getTableName() +" AS cajas_entradas_salidas"                                          + " " + ;
-                        "INNER JOIN " + SQLCajasModel():getTableName() + " AS cajas ON cajas_entradas_salidas.caja_codigo = cajas.codigo"  + " "
+   local cSql
 
-RETURN ( cSelect )
+   TEXT INTO cSql
+
+   SELECT cajas_entradas_salidas.id AS id,
+      cajas_entradas_salidas.uuid AS uuid,
+      cajas_entradas_salidas.sesion AS sesion,
+      cajas_entradas_salidas.nombre AS nombre,
+      cajas_entradas_salidas.fecha_hora AS fecha_hora,
+      cajas_entradas_salidas.caja_codigo AS codigo,
+      cajas_entradas_salidas.tipo AS tipo,
+      cajas_entradas_salidas.importe AS importe,
+      cajas_entradas_salidas.delegacion_uuid AS delegacion_uuid,
+      cajas_entradas_salidas.deleted_at AS deleted_at,
+      cajas.codigo AS codigo_caja,
+      cajas.nombre AS nombre_caja
+
+
+   FROM %1$s AS cajas_entradas_salidas
+      
+      INNER JOIN %2$s AS cajas 
+         ON cajas_entradas_salidas.caja_codigo = cajas.codigo
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLCajasModel():getTableName() )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
@@ -363,6 +366,8 @@ METHOD getColumns() CLASS SQLEntradaSalidaModel
                                              "default"   => {|| space( 40 ) } }                        )
 
    ::getTimeStampColumns()
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

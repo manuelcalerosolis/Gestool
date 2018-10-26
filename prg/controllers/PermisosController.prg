@@ -142,22 +142,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS PermisosBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid'
-      :cHeader             := 'Uuid'
-      :nWidth              := 180
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
@@ -168,6 +153,8 @@ METHOD addColumns() CLASS PermisosBrowseView
    end with
 
    ::getColumnsCreatedUpdatedAt()
+
+   ::getColumnDeletedAt()  
 
 RETURN ( nil )
 
@@ -462,7 +449,7 @@ CLASS SQLPermisosModel FROM SQLBaseModel
 
    DATA cTableName               INIT "Permisos"
 
-   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
+   DATA cConstraints             INIT "PRIMARY KEY (codigo, deleted_at), KEY (uuid)"
 
    METHOD getColumns()
 
@@ -481,7 +468,9 @@ METHOD getColumns() CLASS SQLPermisosModel
    hset( ::hColumns, "nombre",   {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
                                     "default"   => {|| space( 100 ) } }                      )
 
-   ::getTimeStampColumns()   
+   ::getTimeStampColumns()
+
+   ::getDeletedStampColumn()   
 
 RETURN ( ::hColumns )
 

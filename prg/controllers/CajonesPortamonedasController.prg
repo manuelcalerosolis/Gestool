@@ -83,21 +83,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS CajonesPortamonedasBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
@@ -123,6 +109,10 @@ METHOD addColumns() CLASS CajonesPortamonedasBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
+
+   ::getColumnsCreatedUpdatedAt()
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -233,6 +223,8 @@ CLASS SQLCajonesPortamonedasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cajones_portamonedas"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( nombre, deleted_at )"
+
    METHOD getColumns()
 
 END CLASS
@@ -257,6 +249,10 @@ METHOD getColumns() CLASS SQLCajonesPortamonedasModel
 
    hset( ::hColumns, "codigo_apertura",   {  "create"    => "VARCHAR( 100 )"                          ,;
                                              "default"   => {|| __codigo_escape__ } }                  )
+
+   ::getTimeStampColumns()
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

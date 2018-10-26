@@ -40,7 +40,7 @@ METHOD New() CLASS ListinController
    //::oDireccionesController   := DireccionesController():New( self )
    //::oDireccionesController:setView( ::oDialogView )
 
-   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
    ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
@@ -95,21 +95,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS ListinBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
@@ -125,7 +111,9 @@ METHOD addColumns() CLASS ListinBrowseView
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'dni' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   end with
+
+   ::getColumnDeletedAt() 
 
 RETURN ( self )
 
@@ -276,6 +264,8 @@ CLASS SQLListinModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "listin"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( nombre, deleted_at )"
+
    METHOD getColumns()
 
 END CLASS
@@ -297,6 +287,8 @@ METHOD getColumns() CLASS SQLListinModel
 
    hset( ::hColumns, "dni",               {  "create"    => "VARCHAR( 20 )"                          ,;
                                              "default"   => {|| space( 20 ) } }                       )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 
