@@ -188,22 +188,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS DescuentosBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
@@ -238,6 +223,8 @@ METHOD addColumns() CLASS DescuentosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 
@@ -353,6 +340,8 @@ CLASS SQLDescuentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "clientes_descuentos"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( nombre, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
@@ -386,6 +375,8 @@ METHOD getColumns() CLASS SQLDescuentosModel
 
    hset( ::hColumns, "descuento",               {  "create"    => "FLOAT(7,4)"                              ,;
                                                    "default"   => {|| 0 } }                                 )
+
+   ::getDeletedStampColumn()
 
 
 RETURN ( ::hColumns )

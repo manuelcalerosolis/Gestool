@@ -11,6 +11,8 @@ CLASS SQLDialogController FROM SQLNavigatorController
 
    DATA oVistaModel
 
+   DATA oButtonShowDelete
+
    DATA lOthers                                       INIT .f.
 
    DATA lLabels                                       INIT .f.

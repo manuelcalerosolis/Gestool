@@ -11,7 +11,7 @@ CLASS SQLDialogView FROM SQLBrowseableView
 
    DATA cTitle
 
-   DATA oMessage
+   DATA oMessage                               
 
    DATA oOfficeBar
 
@@ -61,8 +61,6 @@ METHOD New( oController )
 
    ::oController           := oController
 
-   //::oMenuTreeView         := MenuTreeView():New( Self )
-
    ::oEvents               := Events():New()
 
 RETURN ( Self )
@@ -93,26 +91,41 @@ METHOD Activate()
       RETURN ( .f. )
    end if
 
-   DEFINE DIALOG           ::oDialog ;
-      RESOURCE             "SELECTOR_DIALOG" ;
-      TITLE                ::getTitle()
+   DEFINE DIALOG     ::oDialog ;
+      RESOURCE       "SELECTOR_DIALOG_SQL"  
 
-      REDEFINE GET         ::oGetSearch ;
-         VAR               ::cGetSearch ; 
-         ID                100 ;
-         PICTURE           "@!" ;
-         BITMAP            "Find" ;
-         OF                ::oDialog
+   REDEFINE BITMAP   ::oBitmap ;
+      ID             900 ;
+      RESOURCE       ::oController:getImage( "48" ) ;
+      TRANSPARENT ;
+      OF             ::oDialog
 
-      // Browse-----------------------------------------------------------------
+   REDEFINE SAY      ::oMessage ;
+      PROMPT         ::getTitle() ;
+      ID             800 ;
+      FONT           oFontBold() ;
+      OF             ::oDialog
 
-      ::getBrowseView():ActivateDialog( ::oDialog, 130 )
+   REDEFINE GET      ::oGetSearch ;
+      VAR            ::cGetSearch ; 
+      ID             100 ;
+      PICTURE        "@!" ;
+      BITMAP         "Find" ;
+      OF             ::oDialog
 
-      // Eventos---------------------------------------------------------------
+   // Menu-------------------------------------------------------------------
 
-      ::oDialog:bStart              := {|| ::Start() }
+   ::getMenuTreeView():ActivateDialog( ::oDialog, 120 )
 
-      ::getGetSearch():bChange      := {|| ::onChangeSearch() }
+   // Browse-----------------------------------------------------------------
+
+   ::getBrowseView():ActivateDialog( ::oDialog, 130 )
+
+   // Eventos---------------------------------------------------------------
+
+   ::oDialog:bStart              := {|| ::Start() }
+
+   ::getGetSearch():bChange      := {|| ::onChangeSearch() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
@@ -146,47 +159,9 @@ RETURN ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
 
 METHOD Start()
 
-   local oBoton
-   local oGrupo
-   local oCarpeta
-   local nCount            := 0
+   ::oMenuTreeView:Default()
 
-   ::oOfficeBar            := TDotNetBar():New( 0, 0, 2020, 118, ::oDialog, 1 )
-   ::oOfficeBar:lPaintAll  := .f.
-   ::oOfficeBar:lDisenio   := .f.
-   ::oOfficeBar:SetStyle( 1 )
-
-   ::oDialog:oTop          := ::oOfficeBar
-
-   oCarpeta                := TCarpeta():New( ::oOfficeBar, ::oController:cTitle )
-
-   oGrupo                  := TDotNetGroup():New( oCarpeta, 68, "", .f. )
-      oBoton               := TDotNetButton():New( 60, oGrupo, ::oController:getImage( "48" ), "", 1, {|| ::RefreshRowSet() }, , , .f., .f., .f. )
-
-   nCount                  := 0
-
-   oGrupo                  := TDotNetGroup():New( oCarpeta, 428, "Opciones", .f. ) 
-      oBoton               := TDotNetButton():New( 60, oGrupo, "lupa_32",                    "Buscar",         ++nCount, {|| ::getGetSearch():setFocus() }, , , .f., .f., .f. )
-      oBoton               := TDotNetButton():New( 60, oGrupo, "new32",                      "Añadir",         ++nCount, {|| ::Append() }, , , .f., .f., .f. )
-      
-      if isTrue( ::fireEvent( 'addingduplicatebutton' ) )
-         oBoton            := TDotNetButton():New( 60, oGrupo, "gc_document_text_plus2_32",  "Duplicar",       ++nCount, {|| ::oController:Duplicate(), ::Refresh() }, , , .f., .f., .f. )
-      end if
-      
-      if isTrue( ::fireEvent( 'addingeditbutton' ) )
-         oBoton            := TDotNetButton():New( 60, oGrupo, "gc_pencil__32",              "Modificar",      ++nCount, {|| ::oController:Edit(), ::Refresh() }, , , .f., .f., .f. )
-      end if
-      
-      if isTrue( ::fireEvent( 'addingzoombutton' ) )
-         oBoton            := TDotNetButton():New( 60, oGrupo, "gc_lock2_32",                "Zoom",           ++nCount, {|| ::oController:Zoom(), ::Refresh() }, , , .f., .f., .f. )
-      end if
-
-      oBoton               := TDotNetButton():New( 60, oGrupo, "del32",                      "Eliminar",       ++nCount, {|| ::oController:Delete( ::getBrowse():aSelected ), ::Refresh() }, , , .f., .f., .f. )
-      oBoton               := TDotNetButton():New( 60, oGrupo, "gc_door_open2_32",           "Salir",          ++nCount, {|| ::oDialog:end() }, , , .f., .f., .f. )
-
-   ::oController:restoreState() 
-
-   ::oGetSearch:setFocus()
+   ::oMenuTreeView:AddSelectorButtons()
    
 RETURN ( Self )
 
