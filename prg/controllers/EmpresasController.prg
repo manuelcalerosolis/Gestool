@@ -15,8 +15,6 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    DATA oCamposExtraValoresController
 
-   DATA cUuidEmpresa
-
    DATA getAjustableController
 
    DATA lSolicitarUsuario 
@@ -55,6 +53,8 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    //Construcciones tardias----------------------------------------------------
 
+   METHOD getModel()                         INLINE ( iif( empty( ::oModel ), ::oModel := SQLEmpresasModel():New( self ), ), ::oModel )
+
    METHOD getAjustableController()           INLINE ( iif( empty( ::oAjustableController ), ::oAjustableController := AjustableController():New( self ), ), ::oAjustableController ) 
 
    METHOD getRepository()                    INLINE ( iif( empty( ::oRepository ), ::oRepository := EmpresasRepository():New( self ), ), ::oRepository ) 
@@ -87,18 +87,16 @@ METHOD New( oController ) CLASS EmpresasController
                                           "32" => "gc_factory_32",;
                                           "48" => "gc_factory_48" }
    
-   ::oModel                         := SQLEmpresasModel():New( self )
-
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadPrincipalBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::getModel():setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
 
    ::getNavigatorView():getMenuTreeView():setEvent( 'addingExitButton', {|| ::addExtraButtons() } )
 
@@ -134,49 +132,47 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setConfig()
+METHOD setConfig( uuidEmpresa )
 
-   if !( ::loadConfig() )
+   DEFAULT uuidEmpresa           := ::getRowSet():fieldGet( 'uuid' )
+
+   if empty( uuidEmpresa )
+      RETURN ( .f. )
+   end if 
+
+   if !( ::loadConfig( uuidEmpresa ) )
       RETURN ( self )
    end if 
 
    if ::getAjustableController():DialogViewActivate()
-      ::saveConfig()
+      ::saveConfig( uuidEmpresa )
    end if
    
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD loadConfig()
+METHOD loadConfig( uuidEmpresa )
 
-   ::cUuidEmpresa                := ::getRowSet():fieldGet( 'uuid' )
+   // Company():guardWhereUuid( uuidEmpresa )
 
-   if empty( ::cUuidEmpresa )
-      RETURN ( .f. )
-   end if 
-
-   Company():guardWhereUuid( ::cUuidEmpresa )
-
-   msgalert( ::getAjustableController():className(), "className" )
-
-   ::lSolicitarUsuario           := ::getAjustableController():getModel():getEmpresaSeleccionarUsuarios( ::cUuidEmpresa )
+   ::lSolicitarUsuario           := ::getAjustableController():getModel():getEmpresaSeleccionarUsuarios( uuidEmpresa )
 
    ::aDelegaciones               := SQLDelegacionesModel():getNombres()
 
-   ::cUuidDelegacionDefecto      := ::getAjustableController():getModel():getEmpresaDelegacionDefecto( ::cUuidEmpresa )
+   ::cUuidDelegacionDefecto      := ::getAjustableController():getModel():getEmpresaDelegacionDefecto( uuidEmpresa )
 
    ::cDelegacionDefecto          := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionDefecto )
 
    ::aUnidades                   := SQLUnidadesMedicionGruposModel():getNombresWithBlank()
 
-   ::cCodigoUnidaesDefecto       := ::getAjustableController():getModel():getEmpresaUnidadesGrupoDefecto( ::cUuidEmpresa )
+   ::cCodigoUnidaesDefecto       := ::getAjustableController():getModel():getEmpresaUnidadesGrupoDefecto( uuidEmpresa )
 
    ::cUnidadesDefecto            := SQLUnidadesMedicionGruposModel():getNombreWhereCodigo( ::cCodigoUnidaesDefecto )
 
    ::aTarifas                    := SQLArticulosTarifasModel():getNombres()
 
-   ::cCodigoTarifaDefecto        := ::getAjustableController():getModel():getEmpresaTarifaDefecto( ::cUuidEmpresa )
+   ::cCodigoTarifaDefecto        := ::getAjustableController():getModel():getEmpresaTarifaDefecto( uuidEmpresa )
 
    ::cTarifaDefecto              := SQLArticulosTarifasModel():getNombreWhereCodigo( ::cCodigoTarifaDefecto )
 
@@ -184,21 +180,21 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD saveConfig()
+METHOD saveConfig( uuidEmpresa )
 
-   ::getAjustableController():getModel():setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, ::cUuidEmpresa )
+   ::getAjustableController():getModel():setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, uuidEmpresa )
    
    ::cUuidDelegacionDefecto      := SQLDelegacionesModel():getUuidFromNombre( ::cDelegacionDefecto )
 
-   ::getAjustableController():getModel():setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, ::cUuidEmpresa )
+   ::getAjustableController():getModel():setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, uuidEmpresa )
 
    ::cCodigoUnidaesDefecto       := SQLUnidadesMedicionGruposModel():getCodigoWhereNombre( ::cUnidadesDefecto )
 
-   ::getAjustableController():getModel():setEmpresaUnidadesGrupoDefecto( ::cCodigoUnidaesDefecto, ::cUuidEmpresa )
+   ::getAjustableController():getModel():setEmpresaUnidadesGrupoDefecto( ::cCodigoUnidaesDefecto, uuidEmpresa )
 
    ::cCodigoTarifaDefecto        := SQLArticulosTarifasModel():getCodigoWhereNombre( ::cTarifaDefecto )
 
-   ::getAjustableController():getModel():setEmpresaTarifaDefecto( ::cCodigoTarifaDefecto, ::cUuidEmpresa )
+   ::getAjustableController():getModel():setEmpresaTarifaDefecto( ::cCodigoTarifaDefecto, uuidEmpresa )
 
 RETURN ( nil )
 
@@ -233,6 +229,8 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD updateEmpresa()
+
+   msgRun( "Actualizando estructura de aplicación", "Espere por favor...", {|| SQLGestoolMigrations():Run() } )
 
    aeval( ::getBrowseView():getBrowseSelected(),;
             {|nSelect| ::getRowSet():goToRecNo( nSelect ),;
@@ -379,7 +377,7 @@ METHOD Activate() CLASS EmpresasView
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
       ID          100 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
-      WHEN        ( ::oController:isNotZoomMode()  ) ;
+      WHEN        ( ::oController:isAppendOrDuplicateMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
@@ -485,11 +483,69 @@ CLASS EmpresasPanelView FROM SQLBaseView
 
    DATA oWnd
 
+   DATA oFont
+   DATA oBold
+
+   DATA nClrBack              INIT CLR_WHITE
+   DATA nClrText              INIT CLR_BLACK
+   DATA nClrBorder            INIT CLR_OKBUTTON
+
+   METHOD New( oController )  CONSTRUCTOR
+   METHOD End()
+
    METHOD Activate()
 
    METHOD Resize()
 
+   METHOD createBitmap()      INLINE ( TBitmap():New( 20, 30, 280, 140, "gestool_logo", , .t., ::oWnd, , , , , , , , , .t., , .f. ) )
+
+   METHOD createButtonModificar()
+
+   METHOD createButtonConfigurar()
+
+   METHOD createButtonCopiasSeguridad()
+
+   METHOD createDatosGenerales()
+
+   METHOD getTextDatosGenerales()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oController ) CLASS EmpresasPanelView
+   
+   ::Super:New( oController )
+
+   ::oFont                    := TFont():New( "Segoe UI", 0, -12,, .f. )
+   
+   ::oBold                    := TFont():New( "Segoe UI", 0, -16,, .t. )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD End() CLASS EmpresasPanelView
+
+   if !empty( ::oWnd )
+      ::oWnd:End()
+   end if 
+   
+   if !empty( ::oFont )
+      ::oFont:End()
+   end if 
+
+   if !empty( ::oBold )
+      ::oBold:End()
+   end if 
+
+   ::oFont                    := nil
+   
+   ::oBold                    := nil
+
+   ::Super:End()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -503,76 +559,96 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD createButtonModificar() CLASS EmpresasPanelView
+
+   with object ( TBtnBmp():New( 130, 30, 140, 80, "gc_factory_32", , , , , ::oWnd, , , .f., .f., "Modificar datos de la empresa", , , , .f., , .f., , , .f., , .t., , .t., .f., .t., ::nClrText, ::nClrBack, .f. ) )
+      :bAction       := {|| ::oController:Edit( Company():id ) }
+      :nClrBorder    := ::nClrBorder
+      :bColorMap     := {| o | o:lBorder := o:lMOver, ::nClrBorder }
+      :oFontBold     := ::oBold
+      :lRound        := .f.
+   end 
+
+   TSay():New( 130, 220, {|| "Modificar datos de la empresa" }, ::oWnd, , ::oBold, .f., .f., .f., .t., ::nClrText, ::nClrBack, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
+   
+   TSay():New( 160, 220, {|| "Cambie la información de la empresa actual." }, ::oWnd, , ::oFont, .f., .f., .f., .t., ::nClrText, ::nClrBack, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD createButtonConfigurar() CLASS EmpresasPanelView
+
+   with object ( TBtnBmp():New( 230, 30, 140, 80, "gc_wrench_32",,,,, ::oWnd,,, .f., .f., "Configurar opciones de la empresa",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., ::nClrText, ::nClrBack, .f. ) )
+      :bAction       := {|| ::oController:setConfig( Company():uuid  ) }
+      :nClrBorder    := ::nClrBorder
+      :bColorMap     := {| o | o:lBorder := o:lMOver, ::nClrBorder }
+      :oFontBold     := ::oBold
+      :lRound        := .f.
+   end 
+
+   TSay():New( 230, 220, {|| "Configurar opciones de la empresa" }, ::oWnd,, ::oBold, .f., .f., .f., .t., ::nClrText, ::nClrBack, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
+
+   TSay():New( 260, 220, {|| "Adapte la empresa a sus necesidades mediante las opciones de configuración." }, ::oWnd,, ::oFont, .f., .f., .f., .t., ::nClrText, ::nClrBack, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD createButtonCopiasSeguridad() CLASS EmpresasPanelView
+
+   with object ( TBtnBmp():New( 330, 30, 140, 80, "gc_wrench_32",,,,, ::oWnd,,, .f., .f., "Realizar copias de seguridad",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., ::nClrText, ::nClrBack, .f. ) )
+      :bAction       := {|| ::oController:Edit( Company():id ) }
+      :nClrBorder    := ::nClrBorder
+      :bColorMap     := {|o| o:lBorder := o:lMOver, ::nClrBorder }
+      :oFontBold     := ::oBold
+      :lRound        := .f.
+   end 
+
+   TSay():New( 330, 220, {|| "Realizar copias de seguridad" }, ::oWnd,, ::oBold, .f., .f., .f., .t., ::nClrText, ::nClrBack, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
+   
+   TSay():New( 360, 220, {|| "Mantega a salvo sus datos realizando copias de seguridad periodicas." }, ::oWnd, , ::oFont, .f., .f., .f., .t., ::nClrText, ::nClrBack, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD createDatosGenerales() CLASS EmpresasPanelView
+
+   TSay():New( 30, 820, {|| ::getTextDatosGenerales() }, ::oWnd, , ::oFont, .f., .f., .f., .t., ::nClrText, ::nClrBack, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTextDatosGenerales() CLASS EmpresasPanelView
+
+   local cText 
+
+   cText    := "Datos generales : "    + CRLF
+   cText    += CRLF
+   cText    += Company():nombre        + CRLF
+   cText    += Company():codigo        + CRLF
+
+RETURN ( cText )
+
+//---------------------------------------------------------------------------//
+
 METHOD Activate() CLASS EmpresasPanelView
 
-   local oFont
-   local oBold
-   local nClrBack   := CLR_WHITE
-   local nClrText   := CLR_BLACK
-   local nClrBorder := CLR_OKBUTTON
+   ::oWnd            := TDialog():New( 0, 0, 850, 800, "Gestool panel del control", , , , , ::nClrText, ::nClrBack, nil, oWnd(), .t., , ::oFont, , , , .f., , "oWnd", .f., .t. ) 
 
-   oFont             := TFont():New( "Segoe UI", 0, -12,, .f. )
-   oBold             := TFont():New( "Segoe UI", 0, -16,, .t. )
+   ::createBitmap()
 
-   ::oWnd            := TWindow():New( , , , , "", , , , , , , , , , , , .t., .t., .t., .t., .f., , "oWnd" )
-   ::oWnd:SetFont( oFont )
+   ::createButtonModificar()
 
-   TBitmap():New( 20, 180, 140, 140, "LogoGestool_48", , .t., ::oWnd, , , , , , , , , , , .f. ) 
+   ::createButtonConfigurar()
 
-   TSay():New( 20, 220, {|| "Gestool panel de control" }, ::oWnd, , oBold, .f., .f., .f., .t., , , 420, 80, .f., .f., .f., .f., .f., .f., .f., "oSay",, .f. )
+   ::createButtonCopiasSeguridad()
 
-   with object ( TBtnBmp():New( 100, 180, 140, 140, "gc_factory_32",,,,, ::oWnd,,, .f., .f., "Modificar datos de la empresa",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., nClrText, nClrBack, .f. ) )
-      :bAction       := {|| msgalert( "Modificar" ) }
-      :nClrBorder    := nClrBorder
-      :bColorMap     := {| o | o:lBorder := o:lMOver, nClrBorder }
-      :oFontBold     := oBold
-      :lRound        := .f.
-      :nLeft         := 30
-      :nHeight       := 80
-   end 
+   ::createDatosGenerales()
 
-   TSay():New( 100, 220, {|| "Modificar datos de la empresa" }, ::oWnd,, oBold, .f., .f., .f., .t.,,, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
-   
-   TSay():New( 130, 220, {|| "Cambie la información de la empresa actual." }, ::oWnd,, oFont, .f., .f., .f., .t.,,, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
-
-   with object ( TBtnBmp():New( 200, 180, 140, 140, "gc_wrench_32",,,,, ::oWnd,,, .f., .f., "Configurar datos de la empresa",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., nClrText, nClrBack, .f. ) )
-      :bAction       := {|| msgalert( "Configurar" ) }
-      :nClrBorder    := nClrBorder
-      :bColorMap     := {| o | o:lBorder := o:lMOver, nClrBorder }
-      :oFontBold     := oBold
-      :lRound        := .f.
-      :nLeft         := 30
-      :nHeight       := 80
-   end 
-
-   TSay():New( 200, 220, {|| "Configurar opciones de la empresa" }, ::oWnd,, oBold, .f., .f., .f., .t.,,, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
-   
-   TSay():New( 230, 220, {|| "Adapte la empresa a sus necesidades mediante las opciones de configuración." }, ::oWnd,, oFont, .f., .f., .f., .t.,,, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
-
-   with object ( TBtnBmp():New( 300, 180, 140, 140, "gc_wrench_32",,,,, ::oWnd,,, .f., .f., "Realizar copias de seguridad",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., nClrText, nClrBack, .f. ) )
-      :bAction       := {|| msgalert( "Backup" ) }
-      :nClrBorder    := nClrBorder
-      :bColorMap     := {| o | o:lBorder := o:lMOver, nClrBorder }
-      :oFontBold     := oBold
-      :lRound        := .f.
-      :nLeft         := 30
-      :nHeight       := 80
-   end 
-
-   TSay():New( 300, 220, {|| "Realizar copias de seguridad" }, ::oWnd,, oBold, .f., .f., .f., .t.,,, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
-   
-   TSay():New( 330, 220, {|| "Mantega a salvo sus datos realizando copias de seguridad periodicas." }, ::oWnd,, oFont, .f., .f., .f., .t.,,, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
-
-   ::oWnd:nWidth     := 850
-   ::oWnd:nHeight    := 800
-
-   ::oWnd:Activate( "MAXIMIZED", , , , ::oWnd:bResized := {|| ::Resize() }, , , , , , , , , , , , , , , .f. )
-
-   oFont:End()
-   oBold:End()
-
-   oFont             := nil
-   oBold             := nil
+   ::oWnd:Activate( , , , .t., , .t., {|| ::oWnd:Maximize() }, , , , )
 
 RETURN ( nil )
 

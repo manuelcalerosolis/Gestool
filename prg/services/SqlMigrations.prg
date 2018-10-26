@@ -198,8 +198,6 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLConfiguracionEmpresasModel():New() )
 
-   // aadd( ::aModels, SQLConfiguracionesModel():New() )
-
 RETURN ( ::aModels )
  
 //----------------------------------------------------------------------------//

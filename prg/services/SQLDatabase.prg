@@ -223,6 +223,8 @@ METHOD Exec( cSentence, lParse )
    try
    
       ::oConexion:Exec( cSentence )
+
+      logwrite( cSentence )
        
    catch e
 

@@ -1043,8 +1043,6 @@ METHOD SQLUpdateDeletedAtSentenceWhereParentUuid( uUuid )
 
       cSentence         := chgAtEnd( cSentence, ' )', 2 )
 
-      logwrite( cSentence )
-
 RETURN ( cSentence )
 
 //---------------------------------------------------------------------------//
@@ -1236,9 +1234,14 @@ METHOD loadCurrentBuffer( id )
 
    ::fireEvent( 'loadingCurrentBuffer' )
 
+
    ::hBuffer            := ::getBufferById( id )
 
+   msgalert( 'antes de lanzar', 'loadedCurrentBuffer' )
+
    ::fireEvent( 'loadedCurrentBuffer' )
+   
+   msgalert( 'despues de lanzar', 'loadedCurrentBuffer' )
 
    ::fireEvent( 'loadedBuffer' )
    
