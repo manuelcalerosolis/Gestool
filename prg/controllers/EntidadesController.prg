@@ -39,7 +39,7 @@ METHOD New( oController ) CLASS EntidadesController
 
    ::nLevel                               := Auth():Level( ::cName )
    
-   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadBlankBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadMainBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
    
    ::getModel():setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
@@ -48,7 +48,7 @@ METHOD New( oController ) CLASS EntidadesController
    ::getModel():setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
    ::getModel():setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
    
-   ::getModel():setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::oBrowseView:getBrowse():aSelected ) ) } )
+   ::getModel():setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
 
    ::getModel():setEvent( 'loadedBlankBuffer',            {|| ::getContactosController():loadBlankBuffer() } )
    ::getModel():setEvent( 'insertedBuffer',               {|| ::getContactosController():insertBuffer() } )
@@ -107,21 +107,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS EntidadesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -185,7 +171,41 @@ METHOD addColumns() CLASS EntidadesBrowseView
       :nWidth              := 100
       :bEditValue          := {|| SQLPaisesModel():getNombreWhereCodigo( ::getRowSet():fieldGet( 'codigo_pais' )  ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'contacto_nombre'
+      :cHeader             := 'Nombre contacto'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'contacto_nombre' )  }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'telefono1'
+      :cHeader             := 'telefono 1'
+      :nWidth              := 100
+      :bEditValue          := {||::getRowSet():fieldGet( 'telefono1' )  }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with   
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'telefono2'
+      :cHeader             := 'telefono 2'
+      :nWidth              := 100
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'telefono2' )  }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'email'
+      :cHeader             := 'email'
+      :nWidth              := 150
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'email' )  }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   ::getColumnDeletedAt() 
 
 RETURN ( nil )
 
@@ -358,6 +378,8 @@ CLASS SQLEntidadesModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "entidades"
 
+   DATA cConstraints                         INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getInitialSelect()
@@ -368,26 +390,45 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLEntidadesModel
 
-   local cSelect  := "SELECT entidades.id,"                                                                                                     + " " + ;
-                        "entidades.uuid,"                                                                                                       + " " + ;
-                        "entidades.codigo,"                                                                                                     + " " + ;
-                        "entidades.descripcion,"                                                                                                + " " + ;
-                        "entidades.nombre,"                                                                                                     + " " + ;
-                        "entidades.gnl_fisico,"                                                                                                 + " " + ;
-                        "entidades.punto_logico_op,"                                                                                            + " " + ;
-                        "entidades.web,"                                                                                                        + " " + ;
-                        "entidades.codigo_ine,"                                                                                                 + " " + ;
-                        "entidades.cno_cnae,"                                                                                                   + " " + ;
-                        "entidades.otros,"                                                                                                      + " " + ;
-                        "direcciones.direccion as direccion,"                                                                                   + " " + ;
-                        "direcciones.codigo_postal as codigo_postal,"                                                                           + " " + ;
-                        "direcciones.poblacion as poblacion,"                                                                                   + " " + ;
-                        "direcciones.provincia as provincia,"                                                                                   + " " + ;
-                        "direcciones.codigo_pais as codigo_pais"                                                                                + " " + ;
-                     "FROM " + ::getTableName() + " AS entidades"                                                                                + " " + ;
-                        "INNER JOIN " + SQLDireccionesModel():getTableName() + " AS direcciones ON entidades.uuid = direcciones.parent_uuid"   + " "
+   local cSql
 
-RETURN ( cSelect )
+   TEXT INTO cSql
+
+   SELECT entidades.id AS id,
+      entidades.uuid AS uuid,
+      entidades.codigo AS codigo,
+      entidades.descripcion AS descripcion,
+      entidades.nombre AS nombre,
+      entidades.gnl_fisico AS gnl_fisico,
+      entidades.punto_logico_op AS punto_logico_op,
+      entidades.web AS web,
+      entidades.codigo_ine AS codigo_ine,
+      entidades.cno_cnae AS cno_cnae,
+      entidades.otros AS otros,
+      entidades.deleted_at AS deleted_at,
+      direcciones.direccion ,
+      direcciones.codigo_postal AS codigo_postal,
+      direcciones.poblacion AS poblacion,
+      direcciones.provincia AS provincia,
+      direcciones.codigo_pais AS codigo_pais,
+      contactos.nombre AS contacto_nombre,
+      contactos.telefono1 AS telefono1,
+      contactos.telefono2 AS telefono2,
+      contactos.email AS email
+
+   FROM %1$s AS entidades
+
+      INNER JOIN %2$s AS direcciones 
+         ON entidades.uuid = direcciones.parent_uuid
+
+      INNER JOIN %3$s AS contactos 
+         ON entidades.uuid = contactos.parent_uuid
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLDireccionesModel():getTableName(), SQLContactosModel():getTableName() )
+  
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
@@ -425,6 +466,8 @@ METHOD getColumns() CLASS SQLEntidadesModel
 
    hset( ::hColumns, "otros",             {  "create"    => "VARCHAR( 200 )"                           ,;
                                              "default"   => {|| space( 200 ) } }                       )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

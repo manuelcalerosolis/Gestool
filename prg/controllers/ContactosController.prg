@@ -52,9 +52,9 @@ METHOD New( oController ) CLASS ContactosController
 
    ::oModel                         := SQLContactosModel():New( self )
    
-   ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'appended',                      {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'edited',                        {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'deletedSelection',              {|| ::getBrowseView():Refresh() } )
 
    ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
@@ -184,22 +184,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS ContactosBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -240,6 +225,8 @@ METHOD addColumns() CLASS ContactosBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'email' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 
@@ -354,6 +341,8 @@ CLASS SQLContactosModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "contactos"
 
+   DATA cConstraints                   INIT "PRIMARY KEY ( nombre, deleted_at )"
+
    METHOD getColumns()
 
    METHOD loadPrincipalBlankBuffer()   INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
@@ -390,6 +379,8 @@ METHOD getColumns() CLASS SQLContactosModel
 
    hset( ::hColumns, "email",             {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                       )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

@@ -263,7 +263,7 @@ CLASS SQLUsuariosModel FROM SQLBaseModel
 
    DATA cTableName                        INIT "usuarios"
 
-   DATA cConstraints                      INIT "PRIMARY KEY (id), KEY (uuid)"
+   DATA cConstraints                      INIT "PRIMARY KEY (codigo, deleted_at), KEY (uuid)"
 
    METHOD getColumns()
 
@@ -338,7 +338,9 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "email_copia_oculta",      {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;
                                                    "default"   => {|| space( 100 ) } }                      )
 
-   ::getTimeStampColumns()   
+   ::getTimeStampColumns() 
+
+   ::getDeletedStampColumn()  
 
 RETURN ( ::hColumns )
 
@@ -448,22 +450,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS UsuariosBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid'
-      :cHeader             := 'Uuid'
-      :nWidth              := 180
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Estado'
@@ -487,6 +474,14 @@ METHOD addColumns() CLASS UsuariosBrowseView
       :nWidth              := 300
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := 'Rol Uuid'
+      :nWidth              := 300
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'rol_uuid' ) }
+      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -547,29 +542,11 @@ METHOD addColumns() CLASS UsuariosBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'creado'
-      :cHeader             := 'Creado'
-      :cEditPicture        := '@DT'
-      :nWidth              := 140
-      :nHeadStrAlign       := AL_LEFT
-      :nDataStrAlign       := AL_LEFT
-      :lHide               := .t.
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'created_at' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'modificado'
-      :cHeader             := 'Modificado'
-      :cEditPicture        := '@DT'
-      :nWidth              := 140
-      :nHeadStrAlign       := AL_LEFT
-      :nDataStrAlign       := AL_LEFT
-      :lHide               := .t.
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'updated_at' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
+
+   ::getColumnsCreatedUpdatedAt()
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 

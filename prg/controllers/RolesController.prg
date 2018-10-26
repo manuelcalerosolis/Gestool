@@ -205,7 +205,7 @@ CLASS SQLRolesModel FROM SQLBaseModel
 
    DATA cTableName               INIT "Roles"
 
-   DATA cConstraints             INIT "PRIMARY KEY (id), KEY (uuid)"
+   DATA cConstraints             INIT "PRIMARY KEY (nombre, deleted_at), KEY (uuid)"
 
    METHOD getColumns()
 
@@ -229,7 +229,9 @@ METHOD getColumns() CLASS SQLRolesModel
    hset( ::hColumns, "permiso_uuid",   {  "create"    => "VARCHAR( 40 )"                           ,;
                                           "default"   => {|| space( 40 ) } }                       )
 
-   ::getTimeStampColumns()   
+   ::getTimeStampColumns() 
+
+   ::getDeletedStampColumn()  
 
 RETURN ( ::hColumns )
 
@@ -264,22 +266,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS RolesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid'
-      :cHeader             := 'Uuid'
-      :nWidth              := 180
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
@@ -312,6 +299,10 @@ METHOD addColumns() CLASS RolesBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'updated_at' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnsCreatedUpdatedAt()
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 

@@ -318,7 +318,7 @@ CLASS SQLAgentesModel FROM SQLCompanyModel
 
    METHOD getColumns()
 
-   METHOD getGeneralSelect()
+   METHOD getInitialSelect()
 
    METHOD CountAgenteWhereCodigo( cCodigoAgente )
 
@@ -328,7 +328,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD getGeneralSelect() CLASS SQLAgentesModel
+METHOD getInitialSelect() CLASS SQLAgentesModel
    
    local cSql
 
@@ -352,7 +352,6 @@ METHOD getGeneralSelect() CLASS SQLAgentesModel
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLDireccionesModel():getTableName() )
   
-
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

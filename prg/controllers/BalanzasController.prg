@@ -89,22 +89,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS BalanzasBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -121,6 +106,10 @@ METHOD addColumns() CLASS BalanzasBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnsCreatedUpdatedAt()
+   
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -330,6 +319,8 @@ CLASS SQLBalanzasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "balanzas"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
 END CLASS
@@ -345,39 +336,41 @@ METHOD getColumns() CLASS SQLBalanzasModel
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 )"                           ,;
-                                             "default"   => {|| space( 20 ) } }                        )
+                                             "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+                                             "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "puerto",            {  "create"   => "VARCHAR( 200 )"                           ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+                                             "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "bits_segundo",      {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {||  space( 200 ) } }                      )
+                                             "default"   => {||  space( 200 ) } }                     )
 
-   hset( ::hColumns, "bits_parada",       {  "create"    => "VARCHAR( 200 )"                           ,;
-                                             "default"   => {||  space( 200 )  } }                     )
+   hset( ::hColumns, "bits_parada",       {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {||  space( 200 )  } }                    )
 
-   hset( ::hColumns, "bits_datos",        {  "create"    => "VARCHAR( 200 )"                           ,;
-                                             "default"   => {|| space( 200 )  } }                      )
+   hset( ::hColumns, "bits_datos",        {  "create"    => "VARCHAR( 200 )"                          ,;
+                                             "default"   => {|| space( 200 )  } }                     )
 
    hset( ::hColumns, "paridad",           {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+                                             "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "inicializacion",    {  "create"    => "VARCHAR( 200 )"                          ,;
-                                             "default"   => {|| space( 200 ) } }                       )
+                                             "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "retardo",           {  "create"    => "INTEGER"                                 ,;
-                                             "default"   => {||  0  } }                                )
+                                             "default"   => {||  0  } }                               )
 
-   hset( ::hColumns, "entubamiento",      {  "create"    => "VARCHAR( 1 )"                          ,;
-                                             "default"   => {|| space( 1 ) } }                       )
+   hset( ::hColumns, "entubamiento",      {  "create"    => "VARCHAR( 1 )"                            ,;
+                                             "default"   => {|| space( 1 ) } }                        )
 
    hset( ::hColumns, "abrir_puerto",      {  "create"    => "TINYINT( 1 )"                            ,;
-                                             "default"   => {|| 0 } }                               )
+                                             "default"   => {|| 0 } }                                 )
 
+   ::getTimeStampColumns()
 
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

@@ -127,21 +127,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS CamposExtraBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
       with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -185,7 +171,11 @@ METHOD addColumns() CLASS CamposExtraBrowseView
       :nDataStrAlign       := AL_RIGHT
       :bEditValue          := {|| ::getRowSet():fieldGet( 'decimales' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with 
+   end with
+
+   ::getColumnsCreatedUpdatedAt()
+   
+   ::getColumnDeletedAt() 
 
 RETURN ( nil )
 
@@ -490,6 +480,8 @@ CLASS SQLCamposExtraModel FROM SQLCompanyModel
 
    DATA cTableName                           INIT "campos_extra"
 
+   DATA cConstraints                         INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getListaAttribute( value )         INLINE ( if( empty( value ), {}, hb_deserialize( value ) ) )
@@ -530,6 +522,8 @@ METHOD getColumns() CLASS SQLCamposExtraModel
                                              "default"   => {|| space( 200 ) } }                      )
    
    ::getTimeStampColumns()
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 
