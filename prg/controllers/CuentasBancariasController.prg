@@ -336,20 +336,14 @@ METHOD Activate() CLASS CuentasBancariasView
    ::oSayCamposExtra:lWantClick  := .t.
    ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      CANCEL ;
-      ACTION      ( ::oDialog:end() )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+
+   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:AddFastKey( VK_F5, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) } )
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
 
    ACTIVATE DIALOG ::oDialog CENTER
@@ -451,11 +445,15 @@ CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "cuentas_bancarias"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, codigo, deleted_at )"
+
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
 
    METHOD getSelectByOrder( cSQLSelect )  INLINE (cSQLSelect)
+
+   METHOD getSentenceOthersWhereParentUuid ( uuidParent )
 
    METHOD getColumns()
 
@@ -474,7 +472,7 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                    "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 ) NOT NULL UNIQUE"           ,;
+   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
                                                    "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 140 )"                          ,;
@@ -497,6 +495,7 @@ METHOD getColumns() CLASS SQLCuentasBancariasModel
 
    hset( ::hColumns, "cuenta_numero",           {  "create"    => "VARCHAR( 10 )"                           ,;
                                                    "default"   => {|| space( 10 ) } }                       )
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 
@@ -515,6 +514,25 @@ METHOD getParentUuidAttribute( value ) CLASS SQLCuentasBancariasModel
 RETURN ( ::oController:oController:getUuid() )
 
 //---------------------------------------------------------------------------//
+
+METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLCuentasBancariasModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT *
+
+      FROM %1$s
+
+      WHERE parent_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
+
+
+RETURN ( cSql )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

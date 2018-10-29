@@ -478,8 +478,6 @@ METHOD StartDialog()
 
    ::oGetPais:oHelpText:cText( ::oController:getPaisesController():getModel():getField( "nombre", "codigo", ::oController:getModel():hBuffer[ "codigo_pais" ] ) )
 
-   //::oController:getPaisesController():getSelector():Start()
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//

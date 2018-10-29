@@ -10,8 +10,8 @@ CLASS DocumentosController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
-   METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
-   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
+   METHOD loadBlankBuffer()            INLINE ( ::getModel():loadBlankBuffer() )
+   METHOD insertBuffer()               INLINE ( ::getModel():insertBuffer() )
 
    METHOD loadedBlankBuffer()
 
@@ -30,6 +30,8 @@ CLASS DocumentosController FROM SQLNavigatorController
    METHOD getValidator()            INLINE ( if( empty( ::oValidator ), ::oValidator  := DocumentosValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := DocumentosRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLDocumentosModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -49,13 +51,7 @@ METHOD New( oController ) CLASS DocumentosController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLDocumentosModel():New( self )
-
-   // ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
-   // ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
-   // ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
-
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 RETURN ( self )
 
@@ -63,7 +59,9 @@ RETURN ( self )
 
 METHOD End() CLASS DocumentosController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -92,7 +90,7 @@ METHOD loadedBlankBuffer() CLASS DocumentosController
    local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
-      hset( ::oModel:hBuffer, "parent_uuid", uuid )
+      hset( ::getModel():hBuffer, "parent_uuid", uuid )
    end if 
 
 RETURN ( nil )
@@ -103,7 +101,7 @@ METHOD gettingSelectSentence() CLASS DocumentosController
 
    local uuid        := ::getController():getUuid()  
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      ::getModel():setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( nil )
@@ -115,15 +113,15 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS DocumentosController
    local idDocumento     
 
    if empty( uuidEntidad )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
    end if 
 
-   idDocumento          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idDocumento          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idDocumento )
-      idDocumento      := ::oModel:insertBlankBuffer()
+      idDocumento      := ::getModel():insertBlankBuffer()
    end if 
 
-   ::oModel:loadCurrentBuffer( idDocumento )
+   ::getModel():loadCurrentBuffer( idDocumento )
 
 RETURN ( nil )
 
@@ -133,13 +131,13 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS DocumentosController
 
    local idDocumento     
 
-   idDocumento          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idDocumento          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idDocumento )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
       RETURN ( nil )
    end if 
 
-   ::oModel:updateBuffer()
+   ::getModel():updateBuffer()
 
 RETURN ( nil )
 
@@ -149,13 +147,13 @@ METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS DocumentosController
 
    local idDocumento     
 
-   idDocumento          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idDocumento          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idDocumento )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
       RETURN ( nil )
    end if 
 
-   ::oModel:loadDuplicateBuffer( idDocumento )
+   ::getModel():loadDuplicateBuffer( idDocumento )
 
 RETURN ( nil )
 
@@ -163,7 +161,7 @@ RETURN ( nil )
 
 METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS DocumentosController
 
-   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+   hset( ::getModel():hBuffer, "parent_uuid", uuidEntidad )
 
 RETURN ( nil )
 
@@ -175,7 +173,7 @@ METHOD deleteBuffer( aUuidEntidades ) CLASS DocumentosController
       RETURN ( nil )
    end if
 
-   ::oModel:deleteWhereParentUuid( aUuidEntidades )
+   ::getModel():deleteWhereParentUuid( aUuidEntidades )
 
 RETURN ( nil )
 
@@ -272,13 +270,13 @@ METHOD Activate() CLASS DocumentosView
       FONT        oFontBold() ;
       OF          ::oDialog 
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog 
 
    REDEFINE GET   oGetDocumento ;
-      VAR         ::oController:oModel:hBuffer[ "documento" ] ;
+      VAR         ::oController:getModel():hBuffer[ "documento" ] ;
       ID          110 ;
       BITMAP      "Folder" ;
       ON HELP     ( GetDocumento( oGetDocumento, oDocumento ) ) ;
@@ -286,7 +284,7 @@ METHOD Activate() CLASS DocumentosView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "observacion" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "observacion" ] ;
       ID          120 ;
       MEMO ;
       WHEN        (::oController:isNotZoomMode() ) ;
@@ -336,6 +334,8 @@ CLASS SQLDocumentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "documentos"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, nombre, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getIdWhereParentUuid( uuid ) ;           
@@ -347,6 +347,8 @@ CLASS SQLDocumentosModel FROM SQLCompanyModel
    METHOD setDocumentoAttribute( uValue )             
 
    METHOD getParentUuidAttribute( value )
+
+   METHOD getSentenceOthersWhereParentUuid ( uuidParent )
 
 END CLASS
 
@@ -363,7 +365,7 @@ METHOD getColumns() CLASS SQLDocumentosModel
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                    ,;
                                                    "default"   => {|| space( 40 ) } }                         )
 
-   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 )"                            ,;
+   hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR( 200 ) NOT NULL"                            ,;
                                                    "default"   => {|| space( 200 ) } }                        )
 
    hset( ::hColumns, "documento",               {  "create"    => "VARCHAR ( 200 )"                           ,;
@@ -371,6 +373,9 @@ METHOD getColumns() CLASS SQLDocumentosModel
 
    hset( ::hColumns, "observacion",             {  "create"    => "TEXT"                                      ,;
                                                    "default"   => {|| "" } }                                  )
+
+   ::getDeletedStampColumn()
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -400,7 +405,7 @@ METHOD SetDocumentoAttribute( uValue )
       RETURN ( uValue )
    end if       
 
-   cNombreDocumento           := alltrim( ::oController:oController:oModel:hBuffer[ "nombre" ] ) 
+   cNombreDocumento           := alltrim( ::oController:oController:getModel():hBuffer[ "nombre" ] ) 
    cNombreDocumento           += '(' + alltrim( ::hBuffer[ "uuid" ] ) + ')' + '.' 
    cNombreDocumento           += lower( getFileExt( uValue ) ) 
 
@@ -410,6 +415,27 @@ METHOD SetDocumentoAttribute( uValue )
    end if      
 
 RETURN ( cRelativeDocumentApplicationStorage() + cNombreDocumento )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLDocumentosModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT *
+
+      FROM %1$s
+
+      WHERE parent_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
+
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

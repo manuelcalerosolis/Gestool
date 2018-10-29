@@ -10,8 +10,8 @@ CLASS IncidenciasController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
-   METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
-   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
+   METHOD loadBlankBuffer()            INLINE ( ::getModel():loadBlankBuffer() )
+   METHOD insertBuffer()               INLINE ( ::getModel():insertBuffer() )
 
    METHOD loadedCurrentBuffer( uuidEntidad ) 
    METHOD updateBuffer( uuidEntidad )
@@ -29,6 +29,8 @@ CLASS IncidenciasController FROM SQLNavigatorController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := IncidenciasValidator():New( self  ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := IncidenciasRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLIncidenciasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -48,13 +50,11 @@ METHOD New( oController ) CLASS IncidenciasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLIncidenciasModel():New( self )
+   ::setEvent( 'appended',                      {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'edited',                        {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'deletedSelection',              {|| ::getBrowseView():Refresh() } )
 
-   ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
-
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 RETURN ( Self )
 
@@ -62,7 +62,9 @@ RETURN ( Self )
 
 METHOD End() CLASS IncidenciasController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -88,7 +90,7 @@ METHOD gettingSelectSentence() CLASS IncidenciasController
    local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      ::getModel():setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( nil )
@@ -100,15 +102,15 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS IncidenciasController
    local idIncidencia     
 
    if empty( uuidEntidad )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
    end if 
 
-   idIncidencia          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idIncidencia          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idIncidencia )
-      idIncidencia       := ::oModel:insertBlankBuffer()
+      idIncidencia       := ::getModel():insertBlankBuffer()
    end if 
 
-   ::oModel:loadCurrentBuffer( idIncidencia )
+   ::getModel():loadCurrentBuffer( idIncidencia )
 
 RETURN ( nil )
 
@@ -118,13 +120,13 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS IncidenciasController
 
    local idIncidencia     
 
-   idIncidencia          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idIncidencia          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idIncidencia )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
       RETURN ( nil )
    end if 
 
-   ::oModel:updateBuffer()
+   ::getModel():updateBuffer()
 
 RETURN ( nil )
 
@@ -134,13 +136,13 @@ METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS IncidenciasController
 
    local idIncidencia     
 
-   idIncidencia          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idIncidencia          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idIncidencia )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
       RETURN ( nil )
    end if 
 
-   ::oModel:loadDuplicateBuffer( idIncidencia )
+   ::getModel():loadDuplicateBuffer( idIncidencia )
 
 RETURN ( nil )
 
@@ -148,7 +150,7 @@ RETURN ( nil )
 
 METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS IncidenciasController
 
-   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+   hset( ::getModel():hBuffer, "parent_uuid", uuidEntidad )
 
 RETURN ( nil )
 
@@ -160,7 +162,7 @@ METHOD deleteBuffer( aUuidEntidades ) CLASS IncidenciasController
       RETURN ( nil )
    end if
 
-   ::oModel:deleteWhereParentUuid( aUuidEntidades )
+   ::getModel():deleteWhereParentUuid( aUuidEntidades )
 
 RETURN ( nil )
 
@@ -284,25 +286,25 @@ METHOD Activate() CLASS IncidenciasView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha_hora" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "fecha_hora" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "mostrar" ] ;
+   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "mostrar" ] ;
       ID          110 ;
       IDSAY       112 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "descripcion" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "descripcion" ] ;
       ID          120 ;
       MEMO ;
       VALID       ( ::oController:validate( "descripcion" ) ) ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
-   REDEFINE SAYCHECKBOX ::oController:oModel:hBuffer[ "resuelta" ] ;
+   REDEFINE SAYCHECKBOX ::oController:getModel():hBuffer[ "resuelta" ] ;
       ID          130 ;
       IDSAY       132 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -310,7 +312,7 @@ METHOD Activate() CLASS IncidenciasView
       OF          ::oDialog
 
    REDEFINE GET   ::oGetFechaResolucion ;
-      VAR         ::oController:oModel:hBuffer[ "fecha_hora_resolucion" ] ;
+      VAR         ::oController:getModel():hBuffer[ "fecha_hora_resolucion" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
@@ -335,7 +337,7 @@ RETURN ( ::oDialog:nResult )
 
 METHOD startDialog() CLASS IncidenciasView
 
-   if !::oController:oModel:hBuffer[ "resuelta" ]
+   if !::oController:getModel():hBuffer[ "resuelta" ]
       ::oGetFechaResolucion:Hide()
       ::oGetFechaResolucion:Refresh()
    end if
@@ -346,14 +348,14 @@ RETURN ( nil )
 
 METHOD changeFechaResolucion() CLASS IncidenciasView
 
-   if ::oController:oModel:hBuffer[ "resuelta" ]
+   if ::oController:getModel():hBuffer[ "resuelta" ]
 
-      hSet( ::oController:oModel:hBuffer, "fecha_hora_resolucion", hb_datetime() )
+      hSet( ::oController:getModel():hBuffer, "fecha_hora_resolucion", hb_datetime() )
       ::oGetFechaResolucion:Show()
 
    else
 
-      hSet( ::oController:oModel:hBuffer, "fecha_hora_resolucion", hb_StrToTS( "" ) )
+      hSet( ::oController:getModel():hBuffer, "fecha_hora_resolucion", hb_StrToTS( "" ) )
       ::oGetFechaResolucion:Hide()
 
    end if
@@ -393,9 +395,13 @@ CLASS SQLIncidenciasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "incidencias"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, descripcion, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
+
+   METHOD getSentenceOthersWhereParentUuid ( uuidParent )
 
 END CLASS
 
@@ -412,8 +418,8 @@ METHOD getColumns() CLASS SQLIncidenciasModel
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                    "default"   => {|| ::getControllerParentUuid() } } )
 
-   hset( ::hColumns, "descripcion",             {  "create"    => "TEXT"                                    ,;
-                                                   "default"   => {|| "" } }                                )
+   hset( ::hColumns, "descripcion",             {  "create"    => "VARCHAR( 200 ) NOT NULL"                                    ,;
+                                                   "default"   => {|| space( 200 ) } }                                )
 
    hset( ::hColumns, "fecha_hora",              {  "create"    => "TIMESTAMP"                               ,;
                                                    "default"   => {|| hb_datetime() } }                     )
@@ -427,7 +433,30 @@ METHOD getColumns() CLASS SQLIncidenciasModel
    hset( ::hColumns, "fecha_hora_resolucion",   {  "create"    => "TIMESTAMP"                               ,;
                                                    "default"   => {|| hb_StrToTS( "" ) } }                  )
 
+   ::getDeletedStampColumn()
+
 RETURN ( ::hColumns )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLIncidenciasModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT *
+
+      FROM %1$s
+
+      WHERE parent_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
+
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
