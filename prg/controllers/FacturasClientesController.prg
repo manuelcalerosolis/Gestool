@@ -29,7 +29,9 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD clientesSettedHelpText()
 
-   METHOD clientesCleanedHelpText()    
+   METHOD clientesCleanedHelpText() 
+
+   METHOD clientSetFormaPago()   
 
    METHOD clientSetTarifa()
 
@@ -204,6 +206,8 @@ METHOD clientesSettedHelpText() CLASS FacturasClientesController
       RETURN ( nil )
    end if         
 
+   ::clientSetFormaPago()
+
    ::clientSetTarifa()
 
    ::clientSetDescuentos()
@@ -219,6 +223,30 @@ RETURN ( nil )
 METHOD clientesCleanedHelpText()  
 
    ::getArticulosTarifasController():getSelector():cText( space( 20 ) )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD clientSetFormaPago() CLASS FacturasClientesController
+
+   local cCodigoFormaPago
+
+   if empty( ::getClientesController():getSelector():uFields )
+      RETURN ( nil )
+   end if 
+
+   msgalert( hb_valtoexp( ::getClientesController():getSelector():uFields ), "uFields" ) 
+
+   cCodigoFormaPago     := hget( ::getClientesController():getSelector():uFields, "forma_pago_codigo" )
+
+   if empty( cCodigoFormaPago )
+      cCodigoFormaPago  := Company():getDefaultFormaPago()
+   end if
+
+   ::getFormasPagosController():getSelector():cText( cCodigoFormaPago )
+   
+   ::getFormasPagosController():getSelector():lValid()
 
 RETURN ( nil )
 
@@ -248,9 +276,9 @@ RETURN ( nil )
 
 METHOD clientSetDescuentos() CLASS FacturasClientesController
 
-   ::getFacturasClientesDescuentosController():oModel:deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
+   ::getFacturasClientesDescuentosController():getModel():deleteWhereParentUuid( ::getModelBuffer( "uuid" ) )
 
-   ::getFacturasClientesDescuentosController():oModel:insertWhereClienteCodigo( ::getModelBuffer( "cliente_codigo" ) )
+   ::getFacturasClientesDescuentosController():getModel():insertWhereClienteCodigo( ::getModelBuffer( "cliente_codigo" ) )
 
    ::getFacturasClientesDescuentosController():refreshRowSetAndGoTop()
 
@@ -274,7 +302,7 @@ RETURN ( nil )
 
 METHOD clientChangeRecargo() CLASS FacturasClientesController
 
-   ::oModel:updateFieldWhereId( ::oModel:getBufferColumnKey(), "recargo_equivalencia", ::oModel:hBuffer[ "recargo_equivalencia" ] )
+   ::getModel():updateFieldWhereId( ::getModel():getBufferColumnKey(), "recargo_equivalencia", ::getModel():hBuffer[ "recargo_equivalencia" ] )
 
    ::calculateTotals()
 

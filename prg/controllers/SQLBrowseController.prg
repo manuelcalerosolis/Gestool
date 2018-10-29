@@ -134,8 +134,8 @@ RETURN ( Self )
 
 METHOD buildRowSetSentence() 
 
-   if !empty( ::oModel )
-      ::getRowSet():buildPad( ::oModel:getSelectSentence() )
+   if !empty( ::getModel() )
+      ::getRowSet():buildPad( ::getModel():getSelectSentence() )
    end if 
 
 RETURN ( nil )
@@ -228,7 +228,7 @@ METHOD startBrowse( oCombobox )
 
    ::restoreBrowseState()
 
-   oColumn        := ::getDialogView():getoBrowse():getColumnOrder( ::oModel:cColumnOrder )
+   oColumn        := ::getDialogView():getoBrowse():getColumnOrder( ::getModel():cColumnOrder )
    if empty( oColumn )
       RETURN ( nil )
    end if 
@@ -237,7 +237,7 @@ METHOD startBrowse( oCombobox )
       oCombobox:set( oColumn:cHeader )
    endif
 
-   ::getDialogView():getoBrowse():selectColumnOrder( oColumn, ::oModel:cOrientation )
+   ::getDialogView():getoBrowse():selectColumnOrder( oColumn, ::getModel():cOrientation )
 
 RETURN ( nil )
 
@@ -277,7 +277,7 @@ METHOD AppendLineal() CLASS SQLBrowseController
 
    ::saveRowSetRecno()
 
-   nId               := ::oModel:insertBlankBuffer()
+   nId               := ::getModel():insertBlankBuffer()
 
    if !empty( nId )
 

@@ -43,7 +43,7 @@ CLASS ClientGetSelector FROM GetSelector
 
    METHOD Activate()
 
-   METHOD getFields()               INLINE ( ::uFields   := ::oController:oModel:getClienteDireccionPrincipal( ::getKey(), ::oGet:varGet() ) )
+   METHOD getFields()               INLINE ( ::uFields   := ::oController:getModel():getClienteDireccionPrincipal( ::getKey(), ::oGet:varGet() ) )
 
    METHOD cleanHelpText()    
 

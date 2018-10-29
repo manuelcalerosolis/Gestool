@@ -25,6 +25,8 @@ CLASS FacturasClientesDescuentosController FROM SQLBrowseController
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := FacturasClientesDescuentosRepository():New( self ), ), ::oRepository )
 
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLFacturasClientesDescuentosModel():New( self ), ), ::oModel )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -43,8 +45,6 @@ METHOD New( oController ) CLASS FacturasClientesDescuentosController
 
    ::lTransactional              := .t.
 
-   ::oModel                      := SQLFacturasClientesDescuentosModel():New( self )
-
    ::setEvent( 'exitAppended',   {|| ::getBrowseView():selectCol( ::getBrowseView():oColumnNombre:nPos ) } )
 
 RETURN ( Self )
@@ -53,7 +53,9 @@ RETURN ( Self )
 
 METHOD End() CLASS FacturasClientesDescuentosController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -71,15 +73,13 @@ METHOD End() CLASS FacturasClientesDescuentosController
       ::oRepository:End()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
 METHOD updateField( cField, uValue ) CLASS FacturasClientesDescuentosController
 
-   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cField, uValue )
+   ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cField, uValue )
    
    ::getRowSet():Refresh()
    
@@ -111,7 +111,7 @@ METHOD validateNombre( oGet ) CLASS FacturasClientesDescuentosController
       RETURN ( .f. )
    end if
  
-   if !empty( ::oModel:CountNombreWhereFacturaUuid( cNombre ) )
+   if !empty( ::getModel():CountNombreWhereFacturaUuid( cNombre ) )
       msgstop( "El nombre del descuento introducido ya existe" )
       RETURN ( .f. )
    end if
@@ -232,8 +232,6 @@ METHOD Activate() CLASS FacturasClientesDescuentosView
    end if
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-  ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 

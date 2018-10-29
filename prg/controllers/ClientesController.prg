@@ -32,7 +32,6 @@ METHOD New( oController ) CLASS ClientesController
                                           "32" => "gc_user_32",;
                                           "48" => "gc_user2_48" }
 
-
    ::Super:New( oController )
 
 RETURN ( Self )

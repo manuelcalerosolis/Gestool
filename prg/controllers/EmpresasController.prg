@@ -610,7 +610,7 @@ RETURN ( nil )
 
 METHOD createButtonCopiasSeguridad() CLASS EmpresasPanelView
 
-   with object ( TBtnBmp():New( 330, 30, 140, 80, "gc_wrench_32",,,,, ::oWnd,,, .f., .f., "Realizar copias de seguridad",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., ::nClrText, ::nClrBack, .f. ) )
+   with object ( TBtnBmp():New( 330, 30, 140, 80, "gc_backup_32",,,,, ::oWnd,,, .f., .f., "Realizar copias de seguridad",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., ::nClrText, ::nClrBack, .f. ) )
       :bAction       := {|| ::oController:Edit( Company():id ) }
       :nClrBorder    := ::nClrBorder
       :bColorMap     := {|o| o:lBorder := o:lMOver, ::nClrBorder }

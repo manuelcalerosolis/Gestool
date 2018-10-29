@@ -116,11 +116,11 @@ RETURN ( ::Super:End() )
 
 METHOD setUuidOldersParents()
 
-::getDireccionesController():setUuidOlderParent( ::getUuid() )
+   ::getDireccionesController():setUuidOlderParent( ::getUuid() )
 
-::getDescuentosController():setUuidOlderParent( ::getUuid() )
-                                                          
-::getContactosController():setUuidOlderParent( ::getUuid() )
+   ::getDescuentosController():setUuidOlderParent( ::getUuid() )
+                                                             
+   ::getContactosController():setUuidOlderParent( ::getUuid() )
 
 RETURN ( nil )
 
