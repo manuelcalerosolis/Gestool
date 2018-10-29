@@ -117,8 +117,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
 
    METHOD deleteLines( uuid )
 
-   METHOD getUuid()                       INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
-                                                      hget( ::oModel:hBuffer, "uuid" ),;
+   METHOD getUuid()                       INLINE ( iif(  !empty( ::getModel() ) .and. !empty( ::getModel():hBuffer ),;
+                                                      hget( ::getModel():hBuffer, "uuid" ),;
                                                       nil ) )
 
    METHOD refreshBrowse()                 INLINE ( iif(  !empty( ::getBrowseView() ), ::getBrowseView():Refresh(), ) )
@@ -138,6 +138,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD getSearchView()                 INLINE ( iif( empty( ::oSearchView ), ::oSearchView := SQLSearchView():New( self ), ), ::oSearchView )  
 
    METHOD getSeriesControler()            INLINE ( iif( empty( ::oSeriesControler ), ::oSeriesControler := NumerosSeriesController():New( self ), ), ::oSeriesControler )  
+   
+   METHOD getModel()                      INLINE ( iif( empty( ::oModel ), ::oModel := SQLFacturasClientesLineasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -153,9 +155,7 @@ METHOD New( oController )
 
    ::cName                                   := "lineas_facturas_clientes" 
 
-   ::oModel                                  := SQLFacturasClientesLineasModel():New( self )
-
-   ::setEvent( 'activating',                 {|| ::oModel:setOrderBy( "id" ), ::oModel:setOrientation( "D" ) } )
+   ::setEvent( 'activating',                 {|| ::getModel():setOrderBy( "id" ), ::getModel():setOrientation( "D" ) } )
 
    ::setEvent( 'closedDialog',               {|| ::closedDialog() } )
 
@@ -167,7 +167,7 @@ METHOD New( oController )
 
    ::setEvent( 'exitAppended',               {|| ::getBrowseView():selectCol( ::getBrowseView():oColumnCodigo:nPos ) } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',   {|| hSet( ::oModel:hBuffer, "unidad_medicion_codigo", UnidadesMedicionGruposLineasRepository():getCodigoDefault() ) } )
+   ::getModel():setEvent( 'loadedBlankBuffer',  {|| hSet( ::getModel():hBuffer, "unidad_medicion_codigo", UnidadesMedicionGruposLineasRepository():getCodigoDefault() ) } )
 
 RETURN ( Self )
 
@@ -175,7 +175,9 @@ RETURN ( Self )
 
 METHOD End()
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel():End()
+   end if 
 
    if !empty( ::oSearchView )
       ::oSearchView:End()
@@ -201,9 +203,7 @@ METHOD End()
       ::oHistoryManager:End()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -414,7 +414,7 @@ RETURN ( SQLAgentesModel():getHashWhere( "codigo", cCodigo ) )
 
 METHOD updateField( cField, uValue )
 
-   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cField, uValue )
+   ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cField, uValue )
    
    ::getRowSet():Refresh()
    
@@ -678,7 +678,7 @@ METHOD runDialogSeries()
 
    ::getSeriesControler():SetTotalUnidades( ::getDialogView():nTotalUnidadesArticulo() )
 
-   ::getSeriesControler():Edit( hget( ::oModel:hBuffer, "id" ) )
+   ::getSeriesControler():Edit( hget( ::getModel():hBuffer, "id" ) )
 
 RETURN ( .t. )
 
@@ -694,11 +694,11 @@ RETURN ( nil )
 
 METHOD deleteLines( uuid )
 
-   ::aSelectDelete  := ::oModel:aRowsDeleted( uuid )
+   ::aSelectDelete  := ::getModel():aRowsDeleted( uuid )
 
    ::fireEvent( 'deletingLines' )
 
-   ::oModel:deleteWhereUuid( uuid )
+   ::getModel():deleteWhereUuid( uuid )
 
    ::fireEvent( 'deletedLines' )
  

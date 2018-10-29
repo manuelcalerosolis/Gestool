@@ -219,6 +219,8 @@ METHOD addGetSelector( cLink, oTaskPanel ) CLASS GetSelector
       OF                oTaskPanel ;
       PIXEL
 
+   ::loadHelpText( .t. )
+
    oTaskPanel:setHeight( ::oGet:nTop, ::oGet:nHeight )
 
    ::fireEvent( 'activated' ) 

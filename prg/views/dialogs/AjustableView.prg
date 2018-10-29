@@ -7,10 +7,6 @@
 
 CLASS AjustableView FROM SQLBaseView
 
-   DATA oExplorerBar
-
-   DATA oDialog
-
    METHOD Activate()
 
    METHOD startActivate()
@@ -33,12 +29,7 @@ METHOD Activate()
          TRANSPARENT    ;
          OF             ::oDialog
 
-      REDEFINE EXPLORERBAR ::oExplorerBar ;
-         ID             100 ;
-         OF             ::oDialog
-
-      ::oExplorerBar:nBottomColor  := RGB( 255, 255, 255 )
-      ::oExplorerBar:nTopColor     := RGB( 255, 255, 255 )
+      ::redefineExplorerBar()
 
       ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
@@ -75,8 +66,6 @@ METHOD EndActivate()
    if !empty( ::oDialog )
       ::oDialog:End()
    end if 
-
-   ::oDialog   := nil
 
 RETURN ( nil )
 
