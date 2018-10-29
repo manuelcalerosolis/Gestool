@@ -164,9 +164,7 @@ METHOD loadConfig( uuidEmpresa )
 
    // Company():guardWhereUuid( uuidEmpresa )
 
-   ::cFormaPagoDefecto           := ::getAjustableController():getModel():getEmpresaSeleccionarUsuarios( uuidEmpresa )
-
-   space( 20 )
+   ::cFormaPagoDefecto           := ::getAjustableController():getModel():getEmpresaFormaPago( uuidEmpresa )
 
    ::lSolicitarUsuario           := ::getAjustableController():getModel():getEmpresaSeleccionarUsuarios( uuidEmpresa )
 
@@ -193,6 +191,8 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD saveConfig( uuidEmpresa )
+
+   ::getAjustableController():getModel():setEmpresaFormaPago( ::cFormaPagoDefecto, uuidEmpresa )
 
    ::getAjustableController():getModel():setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, uuidEmpresa )
    

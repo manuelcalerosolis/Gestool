@@ -113,9 +113,9 @@ CLASS SQLAjustableModel FROM SQLBaseModel
                                  INLINE ( ::getLogic( cUuid, 'empresas', 'seleccionar_usuarios', .f. ) )   
 
    METHOD setEmpresaFormaPago( uAjusteValue, cAjustableUuid ) ;
-                                 INLINE ( ::setLogic( 'forma_pago', uAjusteValue, 'empresas', cAjustableUuid ) )
-   METHOD getEmpresaFormaPago( cUuid );
-                                 INLINE ( ::getLogic( cUuid, 'empresas', 'forma_pago', .f. ) )   
+                                 INLINE ( ::setValue( 'forma_pago', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getEmpresaFormaPago( uuidEmpresa );
+                                 INLINE ( ::getValue( uuidEmpresa, 'empresas', 'forma_pago', .f. ) )   
 
    METHOD getRolAlbaranEntregado( cUuid );
                                  INLINE ( ::getLogic( cUuid, 'roles', 'albaran_entregado', .t. ) )   
