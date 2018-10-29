@@ -411,6 +411,8 @@ METHOD startDialog() CLASS TercerosView
    
    ::getController():getAgentesController():getSelector():Start()
 
+   ::getController():getDescuentosController():getSelector():Start()
+
    ::getController():getFormasPagosController():getSelector():Start()
 
    ::getController():getCuentasRemesaController():getSelector():Start()

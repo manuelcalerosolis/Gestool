@@ -149,7 +149,7 @@ CLASS MenuTreeView
 
    METHOD Refresh()                          INLINE( ::oTreeView:Refresh() ) 
 
-   METHOD setButtonShowDeleteText( cText )   INLINE ( msgalert(::oButtonShowDelete ),::oButtonShowDelete:setText( cText ) )
+   METHOD setButtonShowDeleteText( cText )   INLINE ( ::oButtonShowDelete:setText( cText ) )
 
    // Events-------------------------------------------------------------------
    

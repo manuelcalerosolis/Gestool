@@ -51,6 +51,10 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD validColumnCuentasRemesasBrowse( uValue, nKey )      INLINE ( ::validColumnBrowse( uValue, nKey, ::getCuentasRemesasController():oModel, "cuenta_remesa_uuid" ) )
 
+   METHOD setUuidOldersParents()
+
+   METHOD getDuplicateOthers()
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getDialogView()                                      INLINE ( if( empty( ::oDialogView ), ::oDialogView := TercerosView():New( self ), ), ::oDialogView )
@@ -77,10 +81,10 @@ METHOD New( oController) CLASS TercerosController
    ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
    ::oModel:setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::getDireccionesController():loadedDuplicateCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getDireccionesController():loadedDuplicateBuffer( ::getUuid() ) } )
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::setUuidOldersParents() } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getDuplicateOthers() } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) } )
+   ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ), ::getDescuentosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )  } )
 
 RETURN ( self )
 
@@ -107,6 +111,28 @@ METHOD End() CLASS TercerosController
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
+
+METHOD setUuidOldersParents()
+
+::getDireccionesController():setUuidOlderParent( ::getUuid() )
+
+::getDescuentosController():setUuidOlderParent( ::getUuid() )
+                                                          
+::getContactosController():setUuidOlderParent( ::getUuid() )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDuplicateOthers()
+
+   ::getDireccionesController():duplicateOthers( ::getUuid() )
+                                                          
+   ::getDescuentosController():duplicateOthers( ::getUuid() )
+
+   ::getContactosController():duplicateOthers( ::getUuid() )
+
+RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

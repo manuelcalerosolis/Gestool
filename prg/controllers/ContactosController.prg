@@ -341,7 +341,7 @@ CLASS SQLContactosModel FROM SQLCompanyModel
 
    DATA cTableName                     INIT "contactos"
 
-   DATA cConstraints                   INIT "PRIMARY KEY ( nombre, deleted_at )"
+   DATA cConstraints                   INIT "PRIMARY KEY ( parent_uuid, nombre, deleted_at )"
 
    METHOD getColumns()
 
@@ -352,6 +352,8 @@ CLASS SQLContactosModel FROM SQLCompanyModel
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
+
+   METHOD getSentenceOthersWhereParentUuid ( uuidParent )
 
 END CLASS
 
@@ -397,6 +399,27 @@ METHOD getParentUuidAttribute( value ) CLASS SQLContactosModel
    end if
 
 RETURN ( ::oController:oController:getUuid() )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLContactosModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT *
+
+      FROM %1$s
+
+      WHERE parent_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
+
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

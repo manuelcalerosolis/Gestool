@@ -5,19 +5,21 @@
 
 CLASS DescuentosController FROM SQLNavigatorController
 
+   DATA uuidOlderParent 
+
    METHOD New() CONSTRUCTOR
    METHOD End()
 
    METHOD gettingSelectSentence()
 
-   METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
-   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
+   METHOD loadBlankBuffer()                     INLINE ( ::oModel:loadBlankBuffer() )
+   METHOD insertBuffer()                        INLINE ( ::oModel:insertBuffer() )
 
    METHOD loadedCurrentBuffer( uuidEntidad ) 
    METHOD updateBuffer( uuidEntidad )
 
-   METHOD loadedDuplicateCurrentBuffer( uuidEntidad )
-   METHOD loadedDuplicateBuffer( uuidEntidad )
+   METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) ;
+                                                INLINE ( ::setUuidOlderParent( uuidEntidad ) )
 
    METHOD deleteBuffer( aUuidEntidades )
 
@@ -31,6 +33,8 @@ CLASS DescuentosController FROM SQLNavigatorController
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := DescuentosRepository():New( self ), ), ::oRepository )
    
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLDescuentosModel():New( self ), ), ::oModel )
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -43,19 +47,18 @@ METHOD New( oController ) CLASS DescuentosController
 
    ::cName                       := "descuentos"
 
-   ::hImage                      := {  "16" => "gc_symbol_percent_16",;
-                                       "32" => "gc_symbol_percent_32",;
-                                       "48" => "gc_symbol_percent_48" }
+   ::hImage                      := {  "16" => "gc_backup_16",;
+                                       "32" => "gc_backup_32",;
+                                       "48" => "gc_backup_48" }
 
    ::nLevel                      := Auth():Level( ::cName )
 
-   ::oModel                      := SQLDescuentosModel():New( self )
 
-   ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
+   ::setEvent( 'appended',                      {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'edited',                        {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'deletedSelection',              {|| ::getBrowseView():Refresh() } )
 
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 RETURN ( self )
 
@@ -63,7 +66,9 @@ RETURN ( self )
 
 METHOD End() CLASS DescuentosController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -92,7 +97,7 @@ METHOD gettingSelectSentence() CLASS DescuentosController
    local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      ::getModel():setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( nil )
@@ -104,15 +109,15 @@ METHOD LoadedCurrentBuffer( uuiddescuento ) CLASS DescuentosController
    local idDescuento     
 
    if empty( uuiddescuento )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
    end if 
 
-   idDescuento          := ::oModel:getIdWhereParentUuid( uuiddescuento )
+   idDescuento          := ::getModel():getIdWhereParentUuid( uuiddescuento )
    if empty( idDescuento )
-      idDescuento       := ::oModel:insertBlankBuffer()
+      idDescuento       := ::getModel():insertBlankBuffer()
    end if 
 
-   ::oModel:loadCurrentBuffer( idDescuento )
+   ::getModel():loadCurrentBuffer( idDescuento )
 
 RETURN ( nil )
 
@@ -122,37 +127,13 @@ METHOD UpdateBuffer( uuidDescuento ) CLASS DescuentosController
 
    local idDescuento     
 
-   idDescuento          := ::oModel:getIdWhereParentUuid( uuidDescuento )
+   idDescuento          := ::getModel():getIdWhereParentUuid( uuidDescuento )
    if empty( idDescuento )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
       RETURN ( nil )
    end if 
 
-   ::oModel:updateBuffer()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedDuplicateCurrentBuffer( uuidDescuento ) CLASS DescuentosController
-
-   local idDescuento     
-
-   idDescuento          := ::oModel:getIdWhereParentUuid( uuidDescuento )
-   if empty( idDescuento )
-      ::oModel:insertBuffer()
-      RETURN ( nil )
-   end if 
-
-   ::oModel:loadDuplicateBuffer( idDescuento )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD loadedDuplicateBuffer( uuidDescuento ) CLASS DescuentosController
-
-   hset( ::oModel:hBuffer, "parent_uuid", uuidDescuento )
+   ::getModel():updateBuffer()
 
 RETURN ( nil )
 
@@ -164,11 +145,10 @@ METHOD deleteBuffer( aUuidEntidades ) CLASS DescuentosController
       RETURN ( nil )
    end if
 
-   ::oModel:deleteWhereParentUuid( aUuidEntidades )
+   ::getModel():deleteWhereParentUuid( aUuidEntidades )
 
 RETURN ( nil )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -340,13 +320,15 @@ CLASS SQLDescuentosModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "clientes_descuentos"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( nombre, deleted_at )"
+   DATA cConstraints             INIT "PRIMARY KEY ( nombre,parent_uuid, deleted_at )"
 
    METHOD getColumns()
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
    METHOD getParentUuidAttribute( value )
+
+   METHOD getSentenceOthersWhereParentUuid( uuidParent )
 
 END CLASS
 
@@ -394,6 +376,27 @@ METHOD getParentUuidAttribute( value ) CLASS SQLDescuentosModel
    end if
 
 RETURN ( ::oController:oController:getUuid() )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLDescuentosModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT *
+
+      FROM %1$s
+
+      WHERE parent_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
+
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
