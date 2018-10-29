@@ -47,9 +47,9 @@ METHOD New( oController ) CLASS DescuentosController
 
    ::cName                       := "descuentos"
 
-   ::hImage                      := {  "16" => "gc_backup_16",;
-                                       "32" => "gc_backup_32",;
-                                       "48" => "gc_backup_48" }
+   ::hImage                      := {  "16" => "gc_symbol_percent_16",;
+                                       "32" => "gc_symbol_percent_32",;
+                                       "48" => "gc_symbol_percent_48" }
 
    ::nLevel                      := Auth():Level( ::cName )
 

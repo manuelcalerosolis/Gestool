@@ -120,6 +120,8 @@ METHOD setUuidOldersParents()
                                                           
 ::getContactosController():setUuidOlderParent( ::getUuid() )
 
+::getCuentasBancariasController():setUuidOlderParent( ::getUuid() )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -131,6 +133,8 @@ METHOD getDuplicateOthers()
    ::getDescuentosController():duplicateOthers( ::getUuid() )
 
    ::getContactosController():duplicateOthers( ::getUuid() )
+   
+   ::getCuentasBancariasController():duplicateOthers( ::getUuid() )
 
 RETURN ( nil )
 //---------------------------------------------------------------------------//
