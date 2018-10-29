@@ -124,6 +124,12 @@ METHOD setUuidOldersParents()
 
 ::getCuentasBancariasController():setUuidOlderParent( ::getUuid() )
 
+::getIncidenciasController():setUuidOlderParent( ::getUuid() )
+
+::getDocumentosController():setUuidOlderParent( ::getUuid() )
+
+::getClientesEntidadesController():setUuidOlderParent( ::getUuid() )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -137,6 +143,12 @@ METHOD getDuplicateOthers()
    ::getContactosController():duplicateOthers( ::getUuid() )
    
    ::getCuentasBancariasController():duplicateOthers( ::getUuid() )
+
+   ::getIncidenciasController():duplicateOthers( ::getUuid() )
+
+   ::getDocumentosController():duplicateOthers( ::getUuid() )
+
+   ::getClientesEntidadesController():duplicateOthers( ::getUuid() )
 
 RETURN ( nil )
 

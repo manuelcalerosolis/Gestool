@@ -10,8 +10,8 @@ CLASS ClientesEntidadesController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
-   METHOD loadBlankBuffer()            INLINE ( ::oModel:loadBlankBuffer() )
-   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
+   METHOD loadBlankBuffer()            INLINE ( ::getModel():loadBlankBuffer() )
+   METHOD insertBuffer()               INLINE ( ::getModel():insertBuffer() )
 
    METHOD loadedBlankBuffer()
 
@@ -30,6 +30,8 @@ CLASS ClientesEntidadesController FROM SQLNavigatorController
    METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := ClientesEntidadesView():New( self ), ), ::oDialogView )
 
    METHOD getRepository()                 INLINE( if( empty( ::oRepository ), ::oRepository := ClientesEntidadesRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE( if( empty( ::oModel ), ::oModel := SQLClientesEntidadesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -49,13 +51,11 @@ METHOD New( oController ) CLASS ClientesEntidadesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLClientesEntidadesModel():New( self )
+   ::setEvent( 'appended',                      {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'edited',                        {|| ::getBrowseView():Refresh() } )
+   ::setEvent( 'deletedSelection',              {|| ::getBrowseView():Refresh() } )
 
-   ::setEvent( 'appended',                      {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'edited',                        {|| ::oBrowseView:Refresh() } )
-   ::setEvent( 'deletedSelection',              {|| ::oBrowseView:Refresh() } )
-
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 RETURN ( self )
 
@@ -63,7 +63,9 @@ RETURN ( self )
 
 METHOD End() CLASS ClientesEntidadesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -88,7 +90,7 @@ METHOD loadedBlankBuffer() CLASS ClientesEntidadesController
    local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
-      hset( ::oModel:hBuffer, "parent_uuid", uuid )
+      hset( ::getModel():hBuffer, "parent_uuid", uuid )
    end if 
 
 RETURN ( nil )
@@ -99,7 +101,7 @@ METHOD gettingSelectSentence() CLASS ClientesEntidadesController
 
    local uuid        := ::getController():getUuid()  
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      ::getModel():setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( nil )
@@ -111,15 +113,15 @@ METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS ClientesEntidadesController
    local idDocumento     
 
    if empty( uuidEntidad )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
    end if 
 
-   idDocumento          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idDocumento          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idDocumento )
-      idDocumento      := ::oModel:insertBlankBuffer()
+      idDocumento      := ::getModel():insertBlankBuffer()
    end if 
 
-   ::oModel:loadCurrentBuffer( idDocumento )
+   ::getModel():loadCurrentBuffer( idDocumento )
 
 RETURN ( nil )
 
@@ -129,13 +131,13 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS ClientesEntidadesController
 
    local idDocumento     
 
-   idDocumento          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idDocumento          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idDocumento )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
       RETURN ( nil )
    end if 
 
-   ::oModel:updateBuffer()
+   ::getModel():updateBuffer()
 
 RETURN ( nil )
 
@@ -145,13 +147,13 @@ METHOD loadedDuplicateCurrentBuffer( uuidEntidad ) CLASS ClientesEntidadesContro
 
    local idDocumento     
 
-   idDocumento          := ::oModel:getIdWhereParentUuid( uuidEntidad )
+   idDocumento          := ::getModel():getIdWhereParentUuid( uuidEntidad )
    if empty( idDocumento )
-      ::oModel:insertBuffer()
+      ::getModel():insertBuffer()
       RETURN ( nil )
    end if 
 
-   ::oModel:loadDuplicateBuffer( idDocumento )
+   ::getModel():loadDuplicateBuffer( idDocumento )
 
 RETURN ( nil )
 
@@ -159,7 +161,7 @@ RETURN ( nil )
 
 METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS ClientesEntidadesController
 
-   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+   hset( ::getModel():hBuffer, "parent_uuid", uuidEntidad )
 
 RETURN ( nil )
 
@@ -171,7 +173,7 @@ METHOD deleteBuffer( aUuidEntidades ) CLASS ClientesEntidadesController
       RETURN ( nil )
    end if
 
-   ::oModel:deleteWhereParentUuid( aUuidEntidades )
+   ::getModel():deleteWhereParentUuid( aUuidEntidades )
 
 RETURN ( nil )
 
@@ -277,11 +279,11 @@ METHOD Activate() CLASS ClientesEntidadesView
       FONT        oFontBold() ;
       OF          ::oDialog 
 
-   ::oController:getEntidadesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "entidad_uuid" ] ) )
+   ::oController:getEntidadesController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "entidad_uuid" ] ) )
    ::oController:getEntidadesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
 
    REDEFINE COMBOBOX ::oRol ;
-      VAR         ::oController:oModel:hBuffer[ "rol" ] ;
+      VAR         ::oController:getModel():hBuffer[ "rol" ] ;
       ID          110 ;
       ITEMS       ::aRol;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -321,6 +323,8 @@ CLASS SQLClientesEntidadesModel FROM SQLCompanyModel
 
    DATA cTableName                        INIT "clientes_entidades"
 
+   DATA cConstraints                      INIT "PRIMARY KEY ( entidad_uuid, parent_uuid, rol, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getNombreWhereCodigo( codigo )  INLINE ( ::getField( 'nombre', 'codigo', codigo ) )
@@ -338,6 +342,8 @@ CLASS SQLClientesEntidadesModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
+   METHOD getSentenceOthersWhereParentUuid ( uuidParent )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -348,12 +354,13 @@ METHOD getInitialSelect() CLASS SQLClientesEntidadesModel
 
    TEXT INTO cSql
 
-      SELECT clientes_entidades.id,
-             clientes_entidades.uuid,
-             clientes_entidades.rol,
-             clientes_entidades.parent_uuid,
-             entidades.uuid,
-             entidades.nombre as nombre_entidad
+      SELECT clientes_entidades.id AS id,
+             clientes_entidades.uuid AS uuid,
+             clientes_entidades.rol AS rol,
+             clientes_entidades.parent_uuid AS parent_uuid,
+             clientes_entidades.deleted_at AS deleted_at,
+             entidades.uuid AS entidad_uuid,
+             entidades.nombre AS nombre_entidad
 
       FROM %1$s AS clientes_entidades
 
@@ -399,6 +406,8 @@ METHOD getColumns() CLASS SQLClientesEntidadesModel
 
    hset( ::hColumns, "rol",                     {  "create"    => "VARCHAR ( 200 )"                           ,;
                                                    "default"   => {|| space( 200 ) } }                        )
+   ::getDeletedStampColumn()
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -415,6 +424,26 @@ METHOD getParentUuidAttribute( value ) CLASS SQLClientesEntidadesModel
 
 RETURN ( ::oController:oController:getUuid() )
 
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLClientesEntidadesModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT *
+
+      FROM %1$s
+
+      WHERE parent_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
+
+
+RETURN ( cSql )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

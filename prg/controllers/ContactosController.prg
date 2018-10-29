@@ -31,7 +31,9 @@ CLASS ContactosController FROM SQLNavigatorController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := ContactosValidator():New( self  ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := ContactosRepository():New( self ), ), ::oRepository )
-      
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLContactosModel():New( self ), ), ::oModel )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -49,14 +51,12 @@ METHOD New( oController ) CLASS ContactosController
                                        "48" => "gc_user_telephone_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
-
-   ::oModel                         := SQLContactosModel():New( self )
    
    ::setEvent( 'appended',                      {|| ::getBrowseView():Refresh() } )
    ::setEvent( 'edited',                        {|| ::getBrowseView():Refresh() } )
    ::setEvent( 'deletedSelection',              {|| ::getBrowseView():Refresh() } )
 
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
 RETURN ( self )
 
@@ -185,14 +185,6 @@ ENDCLASS
 METHOD addColumns() CLASS ContactosBrowseView
 
    ::getColumnIdAndUuid()
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'codigo'
-      :cHeader             := 'Código'
-      :nWidth              := 50
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'nombre'
