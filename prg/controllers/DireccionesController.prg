@@ -95,9 +95,7 @@ METHOD New( oController ) CLASS DireccionesController
                                           "32" => "gc_signpost3_32",;
                                           "48" => "gc_signpost3_48" }
 
-   ::getModel()                        
-   
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } )
 
 RETURN ( Self )
 
@@ -152,8 +150,6 @@ RETURN ( nil )
 METHOD LoadedCurrentBuffer( uuidEntidad ) CLASS DireccionesController
 
    local idDireccion     
-
-   msgalert( uuidEntidad, "uuidEntidad" )
 
    if empty( uuidEntidad )
       ::oModel:insertBuffer()

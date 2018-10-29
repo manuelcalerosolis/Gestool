@@ -23,17 +23,14 @@ END CLASS
 
 METHOD Activate()
 
-   local oBmp
-   local oBtnAceptar
-
    DEFINE DIALOG        ::oDialog ;
       TITLE             "Configuraciones" ;
       RESOURCE          "AJUSTES"
 
-      REDEFINE BITMAP   oBmp ;
+      REDEFINE BITMAP   ;
          ID             500 ;
          RESOURCE       "gc_wrench_48" ;
-         TRANSPARENT ;
+         TRANSPARENT    ;
          OF             ::oDialog
 
       REDEFINE EXPLORERBAR ::oExplorerBar ;
@@ -43,19 +40,17 @@ METHOD Activate()
       ::oExplorerBar:nBottomColor  := RGB( 255, 255, 255 )
       ::oExplorerBar:nTopColor     := RGB( 255, 255, 255 )
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+      ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+      ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), oBtnAceptar:Click(), ) }
-   end if
+      if ::oController:isNotZoomMode() 
+         ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+      end if
 
-   ::oDialog:bStart  := {|| ::StartActivate() }
+      ::oDialog:bStart        := {|| ::StartActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-   oBmp:End()
 
 RETURN ( ::oDialog:nResult == IDOK )
 

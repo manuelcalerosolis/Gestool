@@ -1234,15 +1234,10 @@ METHOD loadCurrentBuffer( id )
 
    ::fireEvent( 'loadingCurrentBuffer' )
 
-
    ::hBuffer            := ::getBufferById( id )
-
-   msgalert( 'antes de lanzar', 'loadedCurrentBuffer' )
 
    ::fireEvent( 'loadedCurrentBuffer' )
    
-   msgalert( 'despues de lanzar', 'loadedCurrentBuffer' )
-
    ::fireEvent( 'loadedBuffer' )
    
 RETURN ( ::hBuffer )

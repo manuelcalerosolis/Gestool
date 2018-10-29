@@ -365,8 +365,12 @@ CLASS TTaskPanel FROM TControl
    CLASSDATA lRegistered AS LOGICAL
 
    METHOD New( cTitle, oWnd, nIndex, cBmpPanel )
+
    METHOD addLink( cPrompt, bAction, cBitmap )
+
    METHOD addGet( cPrompt, bAction, cBitmap )
+   METHOD addGetSelector( cPrompt, cGet ) 
+
    METHOD addComboBox( cPrompt, cItem, aItems )
 
    METHOD addCheckBox( cPrompt, lCheckBox )
@@ -496,6 +500,29 @@ METHOD AddGet( cPrompt, cGet ) CLASS TTaskPanel
    @ nTop + 3, 10 SAY oSay PROMPT cPrompt OF Self PIXEL COLOR RGB( 0, 0, 0 ), RGB( 255, 255, 255 )
 
    @ nTop, 120 GET oGet VAR cGet SIZE 400, 20 OF Self PIXEL
+
+   ::setHeight( oGet:nTop, oGet:nHeight )
+
+RETURN ( oGet )
+
+//----------------------------------------------------------------------------//
+
+METHOD AddGetSelector( cPrompt, cGet ) CLASS TTaskPanel
+
+   local oGet
+   local cHelp
+   local oHelp
+   local oPrompt
+   local nTop        := ::getTopControl()
+
+   @ nTop + 3, 10 SAY oPrompt PROMPT cPrompt OF Self PIXEL COLOR Rgb( 10, 152, 234 ), Rgb( 255, 255, 255 )
+
+   oPrompt:lWantClick   := .t.
+   //oPrompt:OnClick      := {|| ::oController:Edit( ::oController:oModel:getIdWhereCodigo( ::cGet ) ) }
+
+   @ nTop, 120 GET oGet VAR cGet SIZE 100, 20 ACTION msgalert( "helpAction()" ) BITMAP "Lupa" OF Self PIXEL
+
+   @ nTop, 222 GET oHelp VAR cHelp SIZE 360, 20 OF Self PIXEL
 
    ::setHeight( oGet:nTop, oGet:nHeight )
 

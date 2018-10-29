@@ -14,16 +14,16 @@ CLASS DelegacionesController FROM SQLNavigatorGestoolController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()        INLINE( if( empty( ::oBrowseView ), ::oBrowseView := DelegacionesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()        INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := DelegacionesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()        INLINE( if( empty( ::oDialogView ), ::oDialogView := DelegacionesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()        INLINE ( if( empty( ::oDialogView ), ::oDialogView := DelegacionesView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()        INLINE(if(empty( ::oRepository ), ::oRepository := DelegacionesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()        INLINE ( if( empty( ::oRepository ), ::oRepository := DelegacionesRepository():New( self ), ), ::oRepository )
 
-   METHOD getValidator()         INLINE( if( empty( ::oValidator ), ::oValidator := DelegacionesValidator():New( self  ), ), ::oValidator ) 
+   METHOD getValidator()         INLINE ( if( empty( ::oValidator ), ::oValidator := DelegacionesValidator():New( self  ), ), ::oValidator ) 
    
-   METHOD getModel()             INLINE( if( empty( ::oModel ), ::oModel := SQLDelegacionesModel():New( self ), ), ::oModel ) 
-
+   METHOD getModel()             INLINE ( if( empty( ::oModel ), ::oModel := SQLDelegacionesModel():New( self ), ), ::oModel ) 
+   
 END CLASS
 
 //---------------------------------------------------------------------------//

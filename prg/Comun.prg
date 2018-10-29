@@ -3591,6 +3591,7 @@ FUNCTION CreateAdminSQLAcceso()
    local oItemGeneral
 
    oAcceso                             := TAcceso():New()
+   oAcceso:lCreateEmpresaOfficeBar     := .f.
    oAcceso:lCreateFavoritosOfficeBar   := .f.
 
    oItemGeneral         := oAcceso:Add()

@@ -522,8 +522,6 @@ METHOD Edit( nId )
 
    ::beginTransactionalMode()
 
-   msgalert( 'loadCurrentBuffer' )
-
    ::oModel:loadCurrentBuffer( nId )
 
    ::fireEvent( 'openingDialog' )

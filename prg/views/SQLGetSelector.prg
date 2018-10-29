@@ -16,6 +16,9 @@ CLASS GetSelector
    DATA oGet
    DATA cGet
 
+   DATA oHelp
+   DATA cHelp
+
    DATA cOriginal
 
    DATA cKey                                    INIT  "codigo"
@@ -27,7 +30,7 @@ CLASS GetSelector
    DATA bWhen
    DATA bValid
 
-   METHOD New( oController )
+   METHOD New( oController ) CONSTRUCTOR
    METHOD End()                                 
 
    METHOD setKey( cKey )                        INLINE ( ::cKey := cKey )
@@ -43,6 +46,9 @@ CLASS GetSelector
    METHOD Build( hBuilder )
 
    METHOD Activate( idGet, idText, oDlg )
+
+   METHOD addGetSelector( cLink, oTaskPanel ) 
+
    METHOD Bind( bValue )                        INLINE ( ::bValue := bValue )
    
    METHOD setValid( bValid )                    INLINE ( ::bValid := bValid )
@@ -75,6 +81,8 @@ CLASS GetSelector
   
    METHOD lValid()                              INLINE ( if( !empty( ::oGet ), ::oGet:lValid(), ) )
    METHOD evalWhen()                            INLINE ( if( !empty( ::oGet ) .and. !empty( ::bWhen ), ( if( eval( ::bWhen ), ::oGet:Enable(), ::oGet:Disable() ) ), ) )
+
+   METHOD getHelp()                         INLINE ( if( empty( ::oHelp ), ::oGet:oHelpText, ::oHelp ) )
 
    // Events-------------------------------------------------------------------
 
@@ -164,6 +172,54 @@ METHOD Activate( idGet, idText, oDlg, idSay, idLink ) CLASS GetSelector
    ::oLink:OnClick      := {|| ::oController:Edit( ::oController:oModel:getIdWhereCodigo( ::cGet ) ) }
 
    end if 
+
+   ::fireEvent( 'activated' ) 
+
+RETURN ( ::oGet )
+
+//---------------------------------------------------------------------------//
+
+METHOD addGetSelector( cLink, oTaskPanel ) CLASS GetSelector
+
+   local nTop           := oTaskPanel:getTopControl()
+
+   if isFalse( ::fireEvent( 'activating' ) )
+      RETURN ( nil )
+   end if
+
+   ::cGet               := eval( ::bValue )
+
+   ::setOriginal( ::cGet )
+
+   @ nTop + 3, 10 SAY   ::oLink ; 
+      PROMPT            cLink ;
+      OF                oTaskPanel ;
+      PIXEL             ;
+      COLOR             Rgb( 10, 152, 234 ), Rgb( 255, 255, 255 )
+   
+   ::oLink:lWantClick   := .t.
+   ::oLink:OnClick      := {|| ::oController:Edit( ::oController:getModel():getIdWhereCodigo( ::cGet ) ) }
+
+   @ nTop, 120 GET      ::oGet ;
+      VAR               ::cGet ;
+      SIZE              100, 22 ;
+      ACTION            ( msgInfo( "Action not redefined" ) ) ;
+      BITMAP            "Lupa" ;
+      OF                oTaskPanel ;
+      PIXEL
+
+   ::oGet:bAction       := {|| ::helpAction() }
+   ::oGet:bValid        := {|| ::validAction() }
+   ::oGet:bWhen         := ::bWhen
+
+   @ nTop, 222 GET      ::oHelp ;
+      VAR               ::cHelp ;
+      SIZE              360, 22 ;
+      WHEN              .f. ;
+      OF                oTaskPanel ;
+      PIXEL
+
+   oTaskPanel:setHeight( ::oGet:nTop, ::oGet:nHeight )
 
    ::fireEvent( 'activated' ) 
 
@@ -303,7 +359,7 @@ METHOD cleanHelpText() CLASS GetSelector
       RETURN ( .f. )
    end if
 
-   ::oGet:oHelptext:cText( "" ) 
+   ::getHelp():cText( "" ) 
 
    ::fireEvent( 'cleanedHelpText' ) 
 
@@ -317,7 +373,7 @@ METHOD setHelpText( value ) CLASS GetSelector
       RETURN ( .f. )
    end if
 
-   ::oGet:oHelptext:cText( value ) 
+   ::getHelp():cText( value ) 
 
    ::fireEvent( 'settedHelpText' ) 
 

@@ -1,8 +1,6 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-#define LAYOUT_LEFT    2
-
 //---------------------------------------------------------------------------//
 
 CLASS EmpresasController FROM SQLNavigatorGestoolController
@@ -20,6 +18,10 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
    DATA lSolicitarUsuario 
 
    DATA oDelegacionesController
+
+   DATA oFormasPagosController
+
+   DATA cFormaPagoDefecto
 
    DATA aDelegaciones
    DATA cDelegacionDefecto
@@ -70,6 +72,8 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
    METHOD getDireccionesController()         INLINE ( if( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesGestoolController():New( self ), ), ::oDireccionesController )
 
    METHOD getCamposExtraValoresController()  INLINE ( if( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
+
+   METHOD getFormasPagosController()         INLINE ( if( empty( ::oFormasPagosController ), ::oFormasPagosController := FormasPagosController():New( self ), ), ::oFormasPagosController )
 
 END CLASS
 
@@ -125,6 +129,10 @@ METHOD End()
    if !empty( ::oValidator )
       ::oValidator:End()
    end if 
+
+   if !empty( ::oFormasPagosController )
+      ::oFormasPagosController:End()
+   end if 
    
    ::Super:End()
 
@@ -155,6 +163,10 @@ RETURN ( self )
 METHOD loadConfig( uuidEmpresa )
 
    // Company():guardWhereUuid( uuidEmpresa )
+
+   ::cFormaPagoDefecto           := ::getAjustableController():getModel():getEmpresaSeleccionarUsuarios( uuidEmpresa )
+
+   space( 20 )
 
    ::lSolicitarUsuario           := ::getAjustableController():getModel():getEmpresaSeleccionarUsuarios( uuidEmpresa )
 
@@ -204,13 +216,22 @@ METHOD startingActivate()
 
    local oPanel                  := ::getAjustableController():oDialogView:oExplorerBar:AddPanel( "Propiedades empresa", nil, 1 ) 
 
-   oPanel:AddCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
+   oPanel:addCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
    
-   oPanel:addComboBox( "Delegación", @::cDelegacionDefecto, ::aDelegaciones )
+   // oPanel:addComboBox( "Delegación", @::cDelegacionDefecto, ::aDelegaciones )
 
    oPanel:addComboBox( "Grupos unidades", @::cUnidadesDefecto, ::aUnidades )
 
    oPanel:addComboBox( "Tarifa", @::cTarifaDefecto, ::aTarifas )
+
+   oPanel:addGetSelector( "Delegación", @::cDelegacionDefecto ) 
+
+   oPanel:addGetSelector( "Grupos unidades", @::cUnidadesDefecto ) 
+
+   oPanel:addGetSelector( "Tarifa", @::cTarifaDefecto ) 
+
+   ::getFormasPagosController():getSelector():Bind( bSETGET( ::cFormaPagoDefecto ) )
+   ::getFormasPagosController():getSelector():addGetSelector( "Forma de pago", oPanel ) 
 
 RETURN ( nil )
 
@@ -230,7 +251,7 @@ RETURN ( nil )
 
 METHOD updateEmpresa()
 
-   msgRun( "Actualizando estructura de aplicación", "Espere por favor...", {|| SQLGestoolMigrations():Run() } )
+   // msgRun( "Actualizando estructura de aplicación", "Espere por favor...", {|| SQLGestoolMigrations():Run() } )
 
    aeval( ::getBrowseView():getBrowseSelected(),;
             {|nSelect| ::getRowSet():goToRecNo( nSelect ),;
@@ -316,7 +337,7 @@ METHOD addColumns() CLASS EmpresasBrowseView
       :lHide               := .t.
    end with
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -338,7 +359,7 @@ CLASS EmpresasView FROM SQLBaseView
 
    METHOD addLinksToExplorerBar()
 
-   METHOD StartDialog()
+   METHOD startDialog()
 
 END CLASS
 
@@ -356,9 +377,6 @@ RETURN ( self )
 
 METHOD Activate() CLASS EmpresasView
 
-   local getImagen
-   local bmpImagen
-
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "Empresas" ;
       TITLE       ::LblTitle() + "empresa"
@@ -374,60 +392,55 @@ METHOD Activate() CLASS EmpresasView
       FONT        oFontBold() ;
       OF          ::oDialog
 
+   ::redefineExplorerBar()
+
    REDEFINE GET   ::oController:oModel:hBuffer[ "codigo" ] ;
-      ID          100 ;
+      ID          110 ;
       PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
       WHEN        ( ::oController:isAppendOrDuplicateMode()  ) ;
       VALID       ( ::oController:validate( "codigo" ) ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nombre" ] ;
-      ID          110 ;
+      ID          120 ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       VALID       ( ::oController:validate( "nombre" ) ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "nif" ] ;
-      ID          120 ;
+      ID          130 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "nif" ) ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "administrador" ] ;
-      ID          130 ;
-      WHEN        ( ::oController:isNotZoomMode()  ) ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "registro_mercantil" ] ;
       ID          140 ;
       WHEN        ( ::oController:isNotZoomMode()  ) ;
       OF          ::oDialog
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "pagina_web" ] ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "registro_mercantil" ] ;
       ID          150 ;
+      WHEN        ( ::oController:isNotZoomMode()  ) ;
+      OF          ::oDialog
+
+   REDEFINE GET   ::oController:oModel:hBuffer[ "pagina_web" ] ;
+      ID          160 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog
 
    REDEFINE GET   ::oController:oModel:hBuffer[ "inicio_operaciones" ] ;
-      ID          160 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      SPINNER ;
-      OF          ::oDialog
-
-   REDEFINE GET   ::oController:oModel:hBuffer[ "fin_operaciones" ] ;
       ID          170 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       SPINNER ;
       OF          ::oDialog
 
-   ::oController:getDireccionesController():getDialogView():ExternalRedefine( ::oDialog )
-
-   REDEFINE EXPLORERBAR ::oExplorerBar ;
-      ID          700 ;
+   REDEFINE GET   ::oController:oModel:hBuffer[ "fin_operaciones" ] ;
+      ID          180 ;
+      WHEN        ( ::oController:isNotZoomMode() ) ;
+      SPINNER ;
       OF          ::oDialog
 
-   ::oExplorerBar:nBottomColor  := RGB( 255, 255, 255 )
-   ::oExplorerBar:nTopColor     := RGB( 255, 255, 255 )
+   ::oController:getDireccionesController():getDialogView():ExternalRedefine( ::oDialog )
 
    ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
@@ -437,17 +450,17 @@ METHOD Activate() CLASS EmpresasView
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
 
-   ACTIVATE DIALOG ::oDialog CENTER
+   ::oDialog:bStart  := {|| ::startDialog() }
 
-  ::oBitmap:end()
+   ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD StartDialog() CLASS EmpresasView
+METHOD startDialog() CLASS EmpresasView
 
-   ::oController:getDireccionesController():getDialogView():StartDialog()
+   ::oController:getDireccionesController():getDialogView():startDialog()
 
    ::addLinksToExplorerBar()
 
@@ -461,15 +474,15 @@ METHOD addLinksToExplorerBar() CLASS EmpresasView
 
    oPanel            := ::oExplorerBar:AddPanel( "Datos relacionados", nil, 1 ) 
 
-   if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Delegaciones...", {|| ::oController:getDelegacionesController():activateDialogView() }, ::oController:getDelegacionesController():getImage( "16" ) )
+   if ::oController:isZoomMode()
+      RETURN ( nil )
    end if
+      
+   oPanel:AddLink( "Delegaciones...", {|| ::oController:getDelegacionesController():activateDialogView() }, ::oController:getDelegacionesController():getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros datos", nil, 1 ) 
 
-   if ::oController:isNotZoomMode()
-      oPanel:AddLink( "Campos extra...", {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }, ::oController:getCamposExtraValoresController():getImage( "16" ) )
-   end if
+   oPanel:AddLink( "Campos extra...", {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }, ::oController:getCamposExtraValoresController():getImage( "16" ) )
 
 RETURN ( nil )
 
@@ -504,6 +517,8 @@ CLASS EmpresasPanelView FROM SQLBaseView
    METHOD createButtonConfigurar()
 
    METHOD createButtonCopiasSeguridad()
+
+   METHOD createButtonSalir()
 
    METHOD createDatosGenerales()
 
@@ -613,6 +628,24 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD createButtonSalir() CLASS EmpresasPanelView
+
+   with object ( TBtnBmp():New( 430, 30, 140, 80, "gc_door_open2_32",,,,, ::oWnd,,, .f., .f., "Salir del panel de control",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., ::nClrText, ::nClrBack, .f. ) )
+      :bAction       := {|| ::oWnd:End() }
+      :nClrBorder    := ::nClrBorder
+      :bColorMap     := {|o| o:lBorder := o:lMOver, ::nClrBorder }
+      :oFontBold     := ::oBold
+      :lRound        := .f.
+   end 
+
+   TSay():New( 430, 220, {|| "Salir del panel de control" }, ::oWnd,, ::oBold, .f., .f., .f., .t., ::nClrText, ::nClrBack, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
+   
+   TSay():New( 460, 220, {|| "Abandonar el panel del control, y volver al programa." }, ::oWnd, , ::oFont, .f., .f., .f., .t., ::nClrText, ::nClrBack, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 METHOD createDatosGenerales() CLASS EmpresasPanelView
 
    TSay():New( 30, 820, {|| ::getTextDatosGenerales() }, ::oWnd, , ::oFont, .f., .f., .f., .t., ::nClrText, ::nClrBack, 420, 80, .f., .f., .f., .f., .f., .f., .f., "osay", , .f. )
@@ -645,6 +678,8 @@ METHOD Activate() CLASS EmpresasPanelView
    ::createButtonConfigurar()
 
    ::createButtonCopiasSeguridad()
+
+   ::createButtonSalir()
 
    ::createDatosGenerales()
 
