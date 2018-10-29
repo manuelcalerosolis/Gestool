@@ -300,6 +300,13 @@ CLASS SQLBaseModel
 
    METHOD Count( oController )
 
+   //duplicate-----------------------------------------------------------------
+
+   METHOD getSentenceOthersWhereParentUuid( uuidParent ) VIRTUAL
+
+   METHOD getHashOthersWhereParentUuid( uuidParent ) ;
+                                             INLINE ( ::getDatabase():selectFetchHash( ::getSentenceOthersWhereParentUuid( uuidParent ) ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -878,6 +885,7 @@ METHOD getInsertSentence( hBuffer, lIgnore )
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' )', 2 )
 
    ::fireEvent( 'gotInsertSentence' ) 
+   logwrite( ::cSQLInsert )
 
 RETURN ( ::cSQLInsert )
 
@@ -1400,6 +1408,7 @@ METHOD insertBuffer( hBuffer )
 
    local nId
    local cSQLInsert
+
 
    DEFAULT hBuffer   := ::hBuffer
 
