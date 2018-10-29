@@ -5,11 +5,11 @@
 
 CLASS AjustesController FROM SQLNavigatorController
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD End()
 
-   METHOD getAjustesModel()   INLINE ( ::oModel := SQLAjustesModel():New( self ) )
+   METHOD getModel()          INLINE ( if( !empty( ::oModel ), ::oModel := SQLAjustesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -27,7 +27,7 @@ METHOD New() CLASS AjustesController
 
    ::hImage                   := { "16" => "gc_businesspeople_16" }
 
-   ::getAjustesModel()
+   ::getModel()
 
 RETURN ( Self )
 
@@ -39,11 +39,7 @@ METHOD End()
       ::oModel:End()
    endif
 
-   ::Super:End()
-
-   self                       := nil
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -74,14 +70,14 @@ METHOD getColumns() CLASS SQLAjustesModel
    hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
                                           "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
+   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                           "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "ajuste",         {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
                                           "default"   => {|| space( 100 ) } }                      )
 
-   hset( ::hColumns, "sistema",        {  "create"    => "TINYINT ( 1 )"                          ,;
-                                          "default"   => {|| "1" } }                    )
+   hset( ::hColumns, "sistema",        {  "create"    => "TINYINT ( 1 )"                           ,;
+                                          "default"   => {|| "1" } }                               )
 
    hset( ::hColumns, "tipo_dato",      {  "create"    => "VARCHAR ( 12 )"                          ,;
                                           "default"   => {|| "alphanumeric" } }                    )
@@ -125,7 +121,8 @@ METHOD getInsertAjustesSentence()
          ( UUID(), 'cambiar_campos',            '1',  'boolean',      NULL, NULL ), 
          ( UUID(), 'delegacion_defecto',        '1',  'alphanumeric', NULL, NULL ), 
          ( UUID(), 'unidades_grupo_defecto',    '1',  'alphanumeric', NULL, NULL ), 
-         ( UUID(), 'tarifas_defecto',           '1',  'alphanumeric', NULL, NULL )
+         ( UUID(), 'tarifas_defecto',           '1',  'alphanumeric', NULL, NULL ),
+         ( UUID(), 'forma_pago_defecto',        '1',  'alphanumeric', NULL, NULL )
 
    ENDTEXT
 

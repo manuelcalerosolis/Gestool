@@ -15,6 +15,7 @@ CLASS SQLBaseView
    DATA oController
 
    DATA oDialog
+
    DATA oFolder
 
    DATA oMessage

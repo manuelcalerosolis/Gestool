@@ -12,6 +12,8 @@ CLASS ClientesController FROM TercerosController
    METHOD validColumnAgentesBrowse( uValue, nKey ) ;
                                     INLINE ( ::validColumnBrowse( uValue, nKey, ::getAgentesController():oModel, "agente_uuid" ) )
 
+   METHOD getModel()                INLINE ( iif( empty( ::oModel ), ::oModel := SQLClientesModel():New( self ), ), ::oModel )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -30,7 +32,6 @@ METHOD New( oController ) CLASS ClientesController
                                           "32" => "gc_user_32",;
                                           "48" => "gc_user2_48" }
 
-   ::oModel                         := SQLClientesModel():New( self )
 
    ::Super:New( oController )
 
@@ -40,7 +41,9 @@ RETURN ( Self )
 
 METHOD End() CLASS ClientesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
 RETURN ( ::Super:End() )
 

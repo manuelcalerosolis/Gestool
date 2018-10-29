@@ -53,6 +53,8 @@ CLASS ArticulosController FROM SQLNavigatorController
 
    METHOD getRepository()                 INLINE ( if( empty( ::Repository ), ::oRepository := ArticulosRepository():New( self ), ), ::oRepository )
 
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLArticulosModel():New( self ), ), ::oModel )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -75,9 +77,7 @@ METHOD New( oController ) CLASS ArticulosController
 
    ::nLevel                                  := Auth():Level( ::cName )
 
-   ::oModel                                  := SQLArticulosModel():New( self )
-
-   ::oModel:setEvents( { 'loadedBlankBuffer', 'loadedCurrentBuffer' }, {|| ::insertPreciosWhereArticulo() } )
+   ::getModel():setEvents( { 'loadedBlankBuffer', 'loadedCurrentBuffer' }, {|| ::insertPreciosWhereArticulo() } )
 
 RETURN ( Self )
 

@@ -50,30 +50,31 @@ CLASS SQLBaseController
 
    // Modelo -----------------------------------------------------------------
 
-   METHOD getModel()                                  INLINE ( ::oModel )
-   METHOD getModelColumnKey()                         INLINE ( iif( !empty( ::oModel ), ::oModel:cColumnKey, ) )
-   METHOD getModelTableName()                         INLINE ( iif( !empty( ::oModel ), ::oModel:getTableName(), ) )
-   METHOD getModelColumns()                           INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hColumns ), ( ::oModel:hColumns ), ) )
-   METHOD getModelExtraColumns()                      INLINE ( iif( !empty( ::oModel ) .and. !empty( ::oModel:hExtraColumns ), ( ::oModel:hExtraColumns ), ) )
+   METHOD getModel()                                  VIRTUAL
    
-   METHOD getModelBuffer( cColumn )                   INLINE ( iif( !empty( ::oModel ), ::oModel:getBuffer( cColumn ), ) )
-   METHOD setModelBuffer( cColumn, uValue )           INLINE ( iif( !empty( ::oModel ), ::oModel:setBuffer( cColumn, uValue ), ) )
-   METHOD setModelBufferPadr( cColumn, uValue )       INLINE ( iif( !empty( ::oModel ), ::oModel:setBufferPadr( cColumn, uValue ), ) )
+   METHOD getModelColumnKey()                         INLINE ( iif( !empty( ::getModel() ), ::getModel():cColumnKey, ) )
+   METHOD getModelTableName()                         INLINE ( iif( !empty( ::getModel() ), ::getModel():getTableName(), ) )
+   METHOD getModelColumns()                           INLINE ( iif( !empty( ::getModel() ) .and. !empty( ::getModel():hColumns ), ( ::getModel():hColumns ), ) )
+   METHOD getModelExtraColumns()                      INLINE ( iif( !empty( ::getModel() ) .and. !empty( ::getModel():hExtraColumns ), ( ::getModel():hExtraColumns ), ) )
+   
+   METHOD getModelBuffer( cColumn )                   INLINE ( iif( !empty( ::getModel() ), ::getModel():getBuffer( cColumn ), ) )
+   METHOD setModelBuffer( cColumn, uValue )           INLINE ( iif( !empty( ::getModel() ), ::getModel():setBuffer( cColumn, uValue ), ) )
+   METHOD setModelBufferPadr( cColumn, uValue )       INLINE ( iif( !empty( ::getModel() ), ::getModel():setBufferPadr( cColumn, uValue ), ) )
 
-   METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::oModel:cColumnKey ) ) )
-   METHOD getModelgetValue( cSentence )               INLINE ( iif( !empty( ::oModel ), ::oModel:getValue( cSentence ), ) )
+   METHOD getModelBufferColumnKey()                   INLINE ( ::getModelBuffer( ( ::getModel():cColumnKey ) ) )
+   METHOD getModelgetValue( cSentence )               INLINE ( iif( !empty( ::getModel() ), ::getModel():getValue( cSentence ), ) )
 
    METHOD findInModel()
 
    METHOD changeModelOrderAndOrientation()            
-   METHOD getModelHeaderFromColumnOrder()             INLINE ( ::oModel:getHeaderFromColumnOrder() )
+   METHOD getModelHeaderFromColumnOrder()             INLINE ( ::getModel():getHeaderFromColumnOrder() )
 
-   METHOD getId()                                     INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
-                                                                     hget( ::oModel:hBuffer, "id" ),;
+   METHOD getId()                                     INLINE ( iif(  !empty( ::getModel() ) .and. !empty( ::getModel():hBuffer ),;
+                                                                     hget( ::getModel():hBuffer, "id" ),;
                                                                      nil ) )
                   
-   METHOD getUuid()                                   INLINE ( iif(  !empty( ::oModel ) .and. !empty( ::oModel:hBuffer ),;
-                                                                     hget( ::oModel:hBuffer, "uuid" ),;
+   METHOD getUuid()                                   INLINE ( iif(  !empty( ::getModel() ) .and. !empty( ::getModel():hBuffer ),;
+                                                                     hget( ::getModel():hBuffer, "uuid" ),;
                                                                      nil ) )
    
    // Rowset-------------------------------------------------------------------
@@ -91,7 +92,7 @@ CLASS SQLBaseController
    METHOD getIdFromRecno( aSelected )                 INLINE ( ::getRowSet():IdFromRecno( aSelected ) )
    METHOD getUuidFromRecno( aSelected )               INLINE ( ::getRowSet():UuidFromRecno( aSelected ) )
 
-   METHOD getIdFromRowSet()                           INLINE ( ::getRowSet():fieldGet( ::oModel:cColumnKey ) )
+   METHOD getIdFromRowSet()                           INLINE ( ::getRowSet():fieldGet( ::getModel():cColumnKey ) )
 
    METHOD isRowSetSystemRegister()                          
    METHOD isNotRowSetSystemRegister()                 INLINE ( !( ::isRowSetSystemRegister() ) )
@@ -104,8 +105,9 @@ CLASS SQLBaseController
    // Dialogo------------------------------------------------------------------
 
    METHOD getDialogView()                             INLINE ( ::oDialogView )
-   METHOD DialogViewActivate()  
-   METHOD DialogViewEnd()                   
+      METHOD dialogViewActivate()  
+      METHOD dialogViewEnd()                   
+      METHOD dialogViewDestroy()
 
    METHOD isContinuousAppend()                        INLINE ( hb_isnumeric( ::uDialogResult ) .and. ::uDialogResult == IDOKANDNEW )
 
@@ -294,7 +296,7 @@ METHOD Append()
 
       ::saveRowSetRecno()
 
-      ::oModel:loadBlankBuffer()
+      ::getModel():loadBlankBuffer()
 
       ::fireEvent( 'openingDialog' )     
 
@@ -302,7 +304,7 @@ METHOD Append()
 
          ::fireEvent( 'closedDialog' )    
 
-         nId         := ::oModel:insertBuffer()    
+         nId         := ::getModel():insertBuffer()    
          
          ::commitTransactionalMode()
 
@@ -367,7 +369,7 @@ METHOD Insert()
 
       ::saveRowSetRecno()
 
-      nId            := ::oModel:insertBlankBuffer()
+      nId            := ::getModel():insertBlankBuffer()
 
       ::fireEvent( 'openingDialog' )     
 
@@ -375,7 +377,7 @@ METHOD Insert()
 
          ::fireEvent( 'closedDialog' )    
 
-         ::oModel:updateBuffer()    
+         ::getModel():updateBuffer()    
          
          ::commitTransactionalMode()
 
@@ -444,7 +446,7 @@ METHOD Duplicate( nId )
 
    ::saveRowSetRecno()
 
-   ::oModel:loadDuplicateBuffer( nId )
+   ::getModel():loadDuplicateBuffer( nId )
 
    ::fireEvent( 'openingDialog' )
 
@@ -452,7 +454,7 @@ METHOD Duplicate( nId )
 
       ::fireEvent( 'closedDialog' )    
 
-      nId            := ::oModel:insertBuffer()
+      nId            := ::getModel():insertBuffer()
 
       ::commitTransactionalMode()
       
@@ -522,7 +524,7 @@ METHOD Edit( nId )
 
    ::beginTransactionalMode()
 
-   ::oModel:loadCurrentBuffer( nId )
+   ::getModel():loadCurrentBuffer( nId )
 
    ::fireEvent( 'openingDialog' )
 
@@ -530,7 +532,7 @@ METHOD Edit( nId )
       
       ::fireEvent( 'closedDialog' )  
 
-      ::oModel:updateBuffer()
+      ::getModel():updateBuffer()
 
       ::commitTransactionalMode()
 
@@ -608,7 +610,7 @@ METHOD Zoom( nId )
 
    ::setZoomMode()
 
-   ::oModel:loadCurrentBuffer( nId )
+   ::getModel():loadCurrentBuffer( nId )
 
    ::fireEvent( 'openingDialog' )
 
@@ -638,7 +640,7 @@ METHOD DialogViewActivate( oDialogView )
    
    oDialogView:Activated()
 
-   oDialogView:End()
+   // oDialogView:End()
 
    if hb_islogical( ::uDialogResult )
       RETURN ( ::uDialogResult )
@@ -661,6 +663,14 @@ METHOD DialogViewEnd( oDialogView )
    end if 
 
 RETURN ( .f. )
+
+//----------------------------------------------------------------------------//
+
+METHOD DialogViewDestroy( oDialogView )
+
+   ::oDialogView        := nil
+
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -702,7 +712,7 @@ METHOD Delete( aSelectedRecno )
       
       ::fireEvent( 'deletingSelection' ) 
 
-      ::oModel:deleteSelection( ::getIdFromRecno( aSelectedRecno ), ::getUuidFromRecno( aSelectedRecno ) )
+      ::getModel():deleteSelection( ::getIdFromRecno( aSelectedRecno ), ::getUuidFromRecno( aSelectedRecno ) )
 
       ::fireEvent( 'deletedSelection' ) 
 
@@ -748,9 +758,9 @@ METHOD changeModelOrderAndOrientation( cOrderBy, cOrientation )
 
    nId                  := ::getRowSet():fieldGet( ::getModelColumnKey() )
 
-   ::oModel:setFind( "" )
+   ::getModel():setFind( "" )
 
-   ::getRowSet():buildPad( ::oModel:getSelectSentence( cOrderBy, cOrientation ) )
+   ::getRowSet():buildPad( ::getModel():getSelectSentence( cOrderBy, cOrientation ) )
 
    ::getRowSet():findId( nId )
 
@@ -760,9 +770,9 @@ RETURN ( nil )
 
 METHOD findInModel( uValue, aColumns )
 
-   ::oModel:setFind( uValue, aColumns )
+   ::getModel():setFind( uValue, aColumns )
 
-   ::getRowSet():buildPad( ::oModel:getSelectSentence() )
+   ::getRowSet():buildPad( ::getModel():getSelectSentence() )
 
 RETURN ( ::getRowSet():RecCount() )
 
@@ -815,7 +825,7 @@ METHOD validColumnBrowse( oCol, uValue, nKey, oModel, cFieldName )
       RETURN .t.
    end if
 
-   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cFieldName, cCodigo )
+   ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), cFieldName, cCodigo )
 
    ::RefreshRowSet()
 

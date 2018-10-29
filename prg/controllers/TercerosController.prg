@@ -65,6 +65,8 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD getSelector()                                        INLINE ( if( empty( ::oGetSelector ), ::oGetSelector := ClientGetSelector():New( self ), ), ::oGetSelector )
 
+   METHOD getModel()                                           VIRTUAL
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -75,16 +77,16 @@ METHOD New( oController) CLASS TercerosController
 
    ::lTransactional     := .f.
 
-   ::oModel:setEvent( 'loadedBlankBuffer',            {|| ::getDireccionesController():loadMainBlankBuffer() } )
-   ::oModel:setEvent( 'insertedBuffer',               {|| ::getDireccionesController():insertBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',           {|| ::getDireccionesController():loadMainBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',              {|| ::getDireccionesController():insertBuffer() } )
    
-   ::oModel:setEvent( 'loadedCurrentBuffer',          {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::oModel:setEvent( 'updatedBuffer',                {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedCurrentBuffer',         {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',               {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer', {|| ::setUuidOldersParents() } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',        {|| ::getDuplicateOthers() } )
+   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer',    {|| ::setUuidOldersParents() } )
+   ::oModel:setEvent( 'loadedDuplicateBuffer',           {|| ::getDuplicateOthers() } )
    
-   ::oModel:setEvent( 'deletedSelection',             {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ), ::getDescuentosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )  } )
+   ::oModel:setEvent( 'deletedSelection',                {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ), ::getDescuentosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )  } )
 
 RETURN ( self )
 
@@ -137,6 +139,7 @@ METHOD getDuplicateOthers()
    ::getCuentasBancariasController():duplicateOthers( ::getUuid() )
 
 RETURN ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

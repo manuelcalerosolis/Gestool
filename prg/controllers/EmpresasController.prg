@@ -134,9 +134,7 @@ METHOD End()
       ::oFormasPagosController:End()
    end if 
    
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -149,14 +147,14 @@ METHOD setConfig( uuidEmpresa )
    end if 
 
    if !( ::loadConfig( uuidEmpresa ) )
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    if ::getAjustableController():DialogViewActivate()
       ::saveConfig( uuidEmpresa )
    end if
    
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -214,7 +212,7 @@ RETURN ( nil )
 
 METHOD startingActivate()
 
-   local oPanel                  := ::getAjustableController():oDialogView:oExplorerBar:AddPanel( "Propiedades empresa", nil, 1 ) 
+   local oPanel                  := ::getAjustableController():getDialogView():oExplorerBar:addPanel( "Propiedades empresa", nil, 1 ) 
 
    oPanel:addCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
    

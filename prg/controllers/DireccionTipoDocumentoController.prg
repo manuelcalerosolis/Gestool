@@ -23,6 +23,8 @@ CLASS DireccionTipoDocumentoController FROM SQLNavigatorController
 
    METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := DireccionTipoDocumentoRepository():New( self ), ), ::oRepository )
 
+   METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLDireccionTipoDocumentoModel():New( self ), ), ::oModel )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -40,8 +42,6 @@ METHOD New( oController ) CLASS DireccionTipoDocumentoController
                                           "48" => "gc_map_route_48" }
 
    ::nLevel                         := Auth():Level( ::cName )
-
-   ::oModel                         := SQLDireccionTipoDocumentoModel():New( self )
 
    ::getDireccionesController():includeMain()
 
