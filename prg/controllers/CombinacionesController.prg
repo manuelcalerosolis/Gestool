@@ -235,7 +235,7 @@ RETURN ( cCombination )
 
 METHOD updateIncrementoPrecio( nIncrementoPrecio ) CLASS CombinacionesController
 
-   ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'combinaciones_incremento_precio', nIncrementoPrecio )
+   ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'incremento_precio', nIncrementoPrecio )
 
    ::refreshRowSet()
 
@@ -322,15 +322,15 @@ METHOD addColumns() CLASS CombinacionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'combinaciones_incremento_precio'
+      :cSortOrder          := 'combinaciones.incremento_precio'
       :cHeader             := 'Incremento de precio'
       :nWidth              := 150
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'combinaciones_incremento_precio' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
 
       :nEditType           := 1
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'combinaciones_incremento_precio' ) }
-      :bEditBlock          := {|| ::getRowSet():fieldGet( 'combinaciones_incremento_precio' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
+      :bEditBlock          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
       :cEditPicture        := "@E 999999999999.999999"
       :bOnPostEdit         := {|oCol, nIncrementoPrecio| ::oController:updateIncrementoPrecio( nIncrementoPrecio ) }
    end with
