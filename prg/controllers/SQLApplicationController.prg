@@ -59,8 +59,6 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oCamposExtraEntidadesController
 
-   DATA oCamposExtraValoresController
-
    DATA oUnidadesMedicionOperacionesController
 
    DATA oTagsController
@@ -238,8 +236,6 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getCamposExtraEntidadesController();
                                     INLINE ( if( empty( ::oCamposExtraEntidadesController ), ::oCamposExtraEntidadesController := CamposExtraEntidadesController():New( self ), ), ::oCamposExtraEntidadesController )
 
-   METHOD getCamposExtraValoresController();
-                                    INLINE ( if( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresController():New( self ), ), ::oCamposExtraValoresController )
 
    METHOD getUnidadesMedicionOperacionesController();
                                     INLINE ( if( empty( ::oUnidadesMedicionOperacionesController ), ::oUnidadesMedicionOperacionesController := UnidadesMedicionOperacionesController():New( self ), ), ::oUnidadesMedicionOperacionesController )
@@ -506,10 +502,6 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oCamposExtraEntidadesController )   
       ::oCamposExtraEntidadesController:End()
-   end if 
-
-   if !empty( ::oCamposExtraValoresController )   
-      ::oCamposExtraValoresController:End()
    end if 
 
    if !empty( ::oUnidadesMedicionOperacionesController )   

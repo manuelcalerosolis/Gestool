@@ -59,7 +59,7 @@ METHOD New( oController ) CLASS CamposExtraValoresController
 
    ::Super:New( oController )
 
-   ::setEntidad( oController:getModel():getTableName() ) 
+   ::setEntidad( oController:getModel():cTableName ) 
 
    ::cTitle                            := "Campos extra valores"
 
@@ -103,6 +103,8 @@ RETURN ( nil )
 
 METHOD Edit( uuidEntidad ) CLASS CamposExtraValoresController
 
+   
+
    if empty( uuidEntidad )
       RETURN .f.
    end if 
@@ -115,7 +117,7 @@ METHOD Edit( uuidEntidad ) CLASS CamposExtraValoresController
       RETURN .f.
    end if 
 
-   ::oRowSet:buildPad( ::oModel:getSelectSentence() )
+   ::getRowSet():buildPad( ::getModel():getSelectSentence() )
 
    ::beginTransactionalMode()
 
@@ -482,23 +484,34 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLCamposExtraValoresModel
 
-   local cSQL  
+local cSql
 
-   cSQL        := "SELECT "
-   cSQL        +=       "campos.nombre as nombre, "
-   cSQL        +=       "campos.tipo as tipo, "
-   cSQL        +=       "campos.longitud as longitud, "
-   cSQL        +=       "campos.decimales as decimales, "
-   cSQL        +=       "campos.lista as lista, "
-   cSQL        +=       "valores.valor as valor, "
-   cSQL        +=       "valores.uuid as valor_uuid, "
-   cSQL        +=       "entidad.parent_uuid "
-   cSQL        +=    "FROM " + ::getTableName() + " valores "
-   cSQL        +=    "INNER JOIN " + ::getSQLCamposExtraEntidadesModelTableName() + " entidad ON entidad.uuid = valores.campo_extra_entidad_uuid "
-   cSQL        +=    "INNER JOIN " + ::getSQLCamposExtraModelTableName() + " campos ON campos.uuid = entidad.parent_uuid "
+   TEXT INTO cSql
+
+   SELECT 
+      campos.nombre as nombre,
+      campos.tipo as tipo, 
+      campos.longitud as longitud,
+      campos.decimales as decimales,
+      campos.lista as lista, 
+      valores.valor as valor, 
+      valores.uuid as valor_uuid, 
+      entidad.parent_uuid 
+
+   FROM %1$s AS valores 
+
+   INNER JOIN %2$s AS entidad 
+      ON entidad.uuid = valores.campo_extra_entidad_uuid 
+
+   INNER JOIN %3$s AS campos 
+      ON campos.uuid = entidad.parent_uuid
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLCamposExtraEntidadesModel():getTableName(), SQLCamposExtraModel():getTableName(), quoted( ::oController:cEntidad ) )
 
    if !empty( ::oController )
-      cSQL     += "WHERE entidad.entidad = " + quoted( ::oController:cEntidad )
+      cSQL     += " WHERE entidad.entidad = " + quoted( ::oController:cEntidad )
    end if 
 
 RETURN ( cSQL)
@@ -522,22 +535,38 @@ METHOD getColumns() CLASS SQLCamposExtraValoresModel
    hset( ::hColumns, "valor",                      {  "create"    => "VARCHAR( 200 )"                          ,;
                                                       "default"   => {|| space( 200 ) } }                      )
 
+   
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
 METHOD getSentenceCampoExtraValoresWhereEntidad( cEntidad ) CLASS SQLCamposExtraValoresModel
 
-   local cSQL        := "SELECT entidad.id, "
-   cSQL              +=    "entidad.uuid, "
-   cSQL              +=    "entidad.parent_uuid, "
-   cSQL              +=    "entidad.entidad, "
-   cSQL              +=    "campos.nombre, "
-   cSQL              +=    "valores.valor " 
-   cSQL              +=    "FROM " + ::getSQLCamposExtraEntidadesModelTableName() + " entidad "
-   cSQL              +=    "INNER JOIN " + ::getSQLCamposExtraModelTableName() + " campos ON entidad.parent_uuid = campos.uuid "
-   cSQL              +=    "LEFT JOIN "+ ::getTableName() + " valores ON valores.campo_extra_entidad_uuid = entidad.uuid "
-   cSQL              +=    "WHERE entidad = " + quoted( cEntidad )
+local cSql
+
+   TEXT INTO cSql
+
+   SELECT entidad.id, 
+      entidad.uuid,
+      entidad.parent_uuid, 
+      entidad.entidad,
+      campos.nombre,
+      valores.valor 
+
+   FROM %1$s AS entidad 
+
+   INNER JOIN %2$s AS campos 
+      ON entidad.parent_uuid = campos.uuid 
+
+   LEFT JOIN %3$s AS valores 
+      ON valores.campo_extra_entidad_uuid = entidad.uuid 
+
+   WHERE entidad =  %4$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, SQLCamposExtraEntidadesModel():getTableName(), SQLCamposExtraModel():getTableName(), ::getTableName(), quoted( cEntidad ) )
 
 RETURN ( cSQL )
 

@@ -132,6 +132,8 @@ METHOD setUuidOldersParents() CLASS TercerosController
 
    ::getClientesEntidadesController():setUuidOlderParent( ::getUuid() )
 
+   ::getCamposExtraValoresController():setUuidOlderParent( ::getUuid() )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -151,6 +153,8 @@ METHOD getDuplicateOthers() CLASS TercerosController
    ::getDocumentosController():duplicateOthers( ::getUuid() )
 
    ::getClientesEntidadesController():duplicateOthers( ::getUuid() )
+   
+   ::getCamposExtraValoresController():duplicateOthers( ::getUuid() )
 
 RETURN ( nil )
 
