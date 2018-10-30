@@ -99,7 +99,8 @@ RETURN ( nil )
 
 METHOD gettingSelectSentence() CLASS ClientesEntidadesController
 
-   local uuid        := ::getController():getUuid()  
+   local uuid        := ::getController():getUuid()
+ 
    if !empty( uuid )
       ::getModel():setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
@@ -279,7 +280,7 @@ METHOD Activate() CLASS ClientesEntidadesView
       FONT        oFontBold() ;
       OF          ::oDialog 
 
-   ::oController:getEntidadesController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "entidad_uuid" ] ) )
+   ::oController:getEntidadesController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "codigo_entidad" ] ) )
    ::oController:getEntidadesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
 
    REDEFINE COMBOBOX ::oRol ;
@@ -323,26 +324,17 @@ CLASS SQLClientesEntidadesModel FROM SQLCompanyModel
 
    DATA cTableName                        INIT "clientes_entidades"
 
-   DATA cConstraints                      INIT "PRIMARY KEY ( entidad_uuid, parent_uuid, rol, deleted_at )"
+   DATA cConstraints                      INIT "PRIMARY KEY ( codigo_entidad, parent_uuid, rol, deleted_at )"
 
    METHOD getColumns()
 
    METHOD getNombreWhereCodigo( codigo )  INLINE ( ::getField( 'nombre', 'codigo', codigo ) )
-
-   METHOD setEntidadUuidAttribute( uValue ) ;
-                                          INLINE ( if( empty( uValue ), "", SQLEntidadesModel():getUuidWhereCodigo( uValue ) ) )
-             
-
-   METHOD getEntidadUuidAttribute( uValue ) ; 
-                                          INLINE ( if( empty( uValue ), space( 3 ), SQLEntidadesModel():getCodigoWhereUuid( uValue ) ) )
 
    METHOD getParentUuidAttribute( value )
 
    METHOD addEmpresaWhere( cSQLSelect )
 
    METHOD getInitialSelect()
-
-   METHOD getSentenceOthersWhereParentUuid ( uuidParent )
 
 END CLASS
 
@@ -359,15 +351,15 @@ METHOD getInitialSelect() CLASS SQLClientesEntidadesModel
              clientes_entidades.rol AS rol,
              clientes_entidades.parent_uuid AS parent_uuid,
              clientes_entidades.deleted_at AS deleted_at,
-             entidades.uuid AS entidad_uuid,
+             entidades.codigo AS codigo_entidad,
              entidades.nombre AS nombre_entidad
 
       FROM %1$s AS clientes_entidades
 
       INNER JOIN %2$s AS entidades
-         ON clientes_entidades.entidad_uuid = entidades.uuid
+         ON clientes_entidades.codigo_entidad = entidades.codigo
 
-      INNER JOIN %3$s AS clientes
+      LEFT JOIN %3$s AS clientes
          ON clientes_entidades.parent_uuid = clientes.uuid
 
    ENDTEXT
@@ -398,8 +390,8 @@ METHOD getColumns() CLASS SQLClientesEntidadesModel
    hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"               ,;
                                                    "default"   => {|| win_uuidcreatestring() } }              )
 
-   hset( ::hColumns, "entidad_uuid",            {  "create"    => "VARCHAR(40) NOT NULL"                       ,;                                  
-                                                   "default"   => {|| space( 40 ) } }                          )
+   hset( ::hColumns, "codigo_entidad",          {  "create"    => "VARCHAR(20) NOT NULL"                       ,;                                  
+                                                   "default"   => {|| space( 20 ) } }                          )
 
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                    ,;
                                                    "default"   => {|| space( 40 ) } }                         )
@@ -424,26 +416,7 @@ METHOD getParentUuidAttribute( value ) CLASS SQLClientesEntidadesModel
 
 RETURN ( ::oController:oController:getUuid() )
 
-//---------------------------------------------------------------------------//
 
-METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLClientesEntidadesModel
-
-   local cSql
-
-   TEXT INTO cSql
-
-   SELECT *
-
-      FROM %1$s
-
-      WHERE parent_uuid = %2$s
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
-
-
-RETURN ( cSql )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

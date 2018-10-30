@@ -302,7 +302,8 @@ CLASS SQLBaseModel
 
    //duplicate-----------------------------------------------------------------
 
-   METHOD getSentenceOthersWhereParentUuid( uuidParent ) VIRTUAL
+   METHOD getSentenceOthersWhereParentUuid( uuidParent ) 
+                                             
 
    METHOD getHashOthersWhereParentUuid( uuidParent ) ;
                                              INLINE ( ::getDatabase():selectFetchHash( ::getSentenceOthersWhereParentUuid( uuidParent ) ) )
@@ -885,7 +886,6 @@ METHOD getInsertSentence( hBuffer, lIgnore )
    ::cSQLInsert      := chgAtEnd( ::cSQLInsert, ' )', 2 )
 
    ::fireEvent( 'gotInsertSentence' ) 
-   logwrite( ::cSQLInsert )
 
 RETURN ( ::cSQLInsert )
 
@@ -1878,5 +1878,25 @@ RETURN ( ::oController:getController():getUuid() )
 METHOD setEvents( aEvents, bEvent )
 
 RETURN ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD getSentenceOthersWhereParentUuid ( uuidParent ) 
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT *
+
+      FROM %1$s
+
+      WHERE parent_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
+
+RETURN ( cSql )
 
 //----------------------------------------------------------------------------//

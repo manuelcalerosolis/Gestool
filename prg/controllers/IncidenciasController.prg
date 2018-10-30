@@ -401,8 +401,6 @@ CLASS SQLIncidenciasModel FROM SQLCompanyModel
 
    METHOD getIdWhereParentUuid( uuid ) INLINE ( ::getField( 'id', 'parent_uuid', uuid ) )
 
-   METHOD getSentenceOthersWhereParentUuid ( uuidParent )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -436,27 +434,6 @@ METHOD getColumns() CLASS SQLIncidenciasModel
    ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
-
-//---------------------------------------------------------------------------//
-
-METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLIncidenciasModel
-
-   local cSql
-
-   TEXT INTO cSql
-
-   SELECT *
-
-      FROM %1$s
-
-      WHERE parent_uuid = %2$s
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
-
-
-RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

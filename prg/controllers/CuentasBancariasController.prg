@@ -453,8 +453,6 @@ CLASS SQLCuentasBancariasModel FROM SQLCompanyModel
 
    METHOD getSelectByOrder( cSQLSelect )  INLINE (cSQLSelect)
 
-   METHOD getSentenceOthersWhereParentUuid ( uuidParent )
-
    METHOD getColumns()
 
 END CLASS
@@ -513,26 +511,6 @@ METHOD getParentUuidAttribute( value ) CLASS SQLCuentasBancariasModel
 
 RETURN ( ::oController:oController:getUuid() )
 
-//---------------------------------------------------------------------------//
-
-METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLCuentasBancariasModel
-
-   local cSql
-
-   TEXT INTO cSql
-
-   SELECT *
-
-      FROM %1$s
-
-      WHERE parent_uuid = %2$s
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
-
-
-RETURN ( cSql )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

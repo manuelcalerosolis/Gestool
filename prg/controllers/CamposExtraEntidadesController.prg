@@ -199,7 +199,7 @@ RETURN ( ::getModel():isNotBlankEntityWhereUuid( ::getController():getUuid() ) )
 METHOD UpdateLine( uValue ) CLASS CamposExtraEntidadesController
 
    local cEntidad    := ::getEntidadWhereNombre( uValue )
-
+msgalert(cEntidad)
    if empty( cEntidad ) 
       RETURN ( nil )
    end if 
@@ -397,7 +397,7 @@ METHOD isEntityWhereUuid( parentUuid, cEntidad )
    cSQL        +=    "WHERE parent_uuid = " + quoted( parentUuid ) + " "
    cSQL        +=    "AND entidad = " + quoted( cEntidad )
 
-RETURN ( getSQLDataBase():getValue( cSQL ) > 0 )
+RETURN ( getSQLDataBase():getValue( cSQL, 0 ) > 0 )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
