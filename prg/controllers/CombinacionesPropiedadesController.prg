@@ -83,12 +83,13 @@ RETURN ( nil )
 
 METHOD insertProperty( uuidCombination, uuidParent ) CLASS CombinacionesPropiedadesController
 
-   local hBuffer     := ::oModel:loadBlankBuffer()
+   local hBuffer     := ::getModel():loadBlankBuffer()
    
    hset( hBuffer, "propiedad_uuid", uuidCombination )  
-   hset( hBuffer, "parent_uuid", uuidParent )  
 
-RETURN ( ::oModel:insertBuffer( hBuffer ) )
+   hset( hBuffer, "parent_uuid", uuidParent ) 
+
+RETURN ( ::getModel():insertBuffer( hBuffer ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

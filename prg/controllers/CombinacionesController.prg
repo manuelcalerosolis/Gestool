@@ -84,7 +84,7 @@ RETURN ( Self )
 METHOD End() CLASS CombinacionesController
 
    if !empty( ::oModel )
-      ::oModel():End()
+      ::oModel:End()
    end if 
 
    if !empty( ::oBrowseView )
@@ -170,16 +170,16 @@ RETURN ( aeval( aCombinations, {|aCombination| ::insertCombination( aCombination
 
 METHOD insertCombination( aCombination ) CLASS CombinacionesController
 
-   local cCombinationName  := ::getCombinationName( aCombination )
+   msgalert("insertCombination")
 
-   if !( ::isCombinationInRowSet( cCombinationName ) )
+   if ::isCombinationInRowSet( ::getCombinationName( aCombination ) )
+      RETURN ( nil )
+   end if 
 
-      if ::oModel:insertBlankBuffer() != 0
+   msgalert("insertBlankBuffer")
 
-         ::getCombinacionesPropiedadesController():insertProperties( aCombination, ::oModel:getBuffer( "uuid" ) )
-
-      end if 
-
+   if ::getModel():insertBlankBuffer() != 0
+      ::getCombinacionesPropiedadesController():insertProperties( aCombination, ::getModel():getBuffer( "uuid" ) )
    end if 
 
 RETURN ( nil )
@@ -197,9 +197,9 @@ METHOD insertOneCombination( aCombinations ) CLASS CombinacionesController
 
       if !( ::isCombinationInRowSet( cCombinationName ) )
 
-         if ::oModel:insertBlankBuffer() != 0
+         if ::getModel():insertBlankBuffer() != 0
 
-            ::getCombinacionesPropiedadesController():insertProperty( hget( hCombination, "propiedad_uuid" ), ::oModel:getBuffer( "uuid" ) )
+            ::getCombinacionesPropiedadesController():insertProperty( hget( hCombination, "propiedad_uuid" ), ::getModel():getBuffer( "uuid" ) )
 
          end if 
 
@@ -235,7 +235,7 @@ RETURN ( cCombination )
 
 METHOD updateIncrementoPrecio( nIncrementoPrecio ) CLASS CombinacionesController
 
-   ::oModel:updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'combinaciones_incremento_precio', nIncrementoPrecio )
+   ::getModel():updateFieldWhereId( ::getRowSet():fieldGet( 'id' ), 'combinaciones_incremento_precio', nIncrementoPrecio )
 
    ::refreshRowSet()
 
@@ -275,7 +275,7 @@ METHOD updateHavingSentence() CLASS CombinacionesController
       cGeneralHaving       := chgAtEnd( cGeneralHaving, '', 5 )
    end if 
 
-   ::oModel:setGeneralHaving( cGeneralHaving )
+   ::getModel():setGeneralHaving( cGeneralHaving )
    
 
 RETURN ( nil )
@@ -297,10 +297,10 @@ ENDCLASS
 METHOD addColumns() CLASS CombinacionesBrowseView
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'combinaciones_id'
+      :cSortOrder          := 'id'
       :cHeader             := 'Id'
       :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'combinaciones_id' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -308,7 +308,7 @@ METHOD addColumns() CLASS CombinacionesBrowseView
    with object ( ::oBrowse:AddCol() )
       :cHeader             := 'Uuid'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'combinaciones_uuid' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
       :lHide               := .t.
    end with
@@ -351,9 +351,12 @@ CLASS CombinacionesView FROM SQLBaseView
 
    DATA oPanel
 
+   DATA oButtonDelete
+   DATA oButtonGenerate
+
    METHOD Activate()
 
-   METHOD redefineBrowse()          INLINE ( ::oController:Activate( 100, ::oDialog ) )
+   METHOD redefineBrowse()                      INLINE ( ::oController:Activate( 100, ::oDialog ) )
 
    METHOD startActivate()
 
@@ -365,7 +368,7 @@ CLASS CombinacionesView FROM SQLBaseView
 
    METHOD generatePanelCombinations( oPanel )
 
-   METHOD changeCheckBox( uValue, oCheckBox )
+   METHOD changeCheckBox( uValue, oCheckBox )   VIRTUAL
 
 END CLASS
 
@@ -375,7 +378,7 @@ METHOD Activate() CLASS CombinacionesView
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "CONTAINER_COMBINACIONES" ;
-      TITLE       ::LblTitle() + "combinaciones de propiedades"
+      TITLE       "Combinaciones de propiedades"
 
    REDEFINE BITMAP ::oBitmap ;
       ID          900 ;
@@ -384,6 +387,7 @@ METHOD Activate() CLASS CombinacionesView
       OF          ::oDialog ;
 
    REDEFINE SAY   ::oMessage ;
+      PROMPT      "Combinación de propiedades" ;
       ID          800 ;
       FONT        oFontBold() ;
       OF          ::oDialog ;
@@ -392,13 +396,13 @@ METHOD Activate() CLASS CombinacionesView
 
    ::redefineExplorerBar( 110 )
 
-   REDEFINE BUTTON ;
+   REDEFINE BUTTON ::oButtonDelete ;
       ID          130 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( ::oController:Delete( ::oController:getBrowse():aSelected ) )
+      ACTION      ( msgalert( ::oController:className(), "className" ), ::oController:Delete( ::oController:getBrowse():aSelected ) )
 
-   REDEFINE BUTTON ;
+   REDEFINE BUTTON ::oButtonGenerate ;
       ID          120 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -480,24 +484,6 @@ RETURN ( oCheckBox )
 
 //---------------------------------------------------------------------------//
 
-METHOD changeCheckBox( uValue, oCheckBox ) CLASS CombinacionesView
-
-   local hCargo      := oCheckBox:Cargo
-
-   if uValue
-      ::getController():insertHaving( hCargo )
-   else 
-      ::getController():deleteHaving( hCargo )
-   end if 
-
-   ::getController():getRowSet():buildPad( ::oController:getModel():getSelectWhereCodigoArticuloHaving( ::getController():getCodigoArticulo(), ::getController:aHaving ) )
-
-   ::getController():getBrowseView():Refresh()
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 METHOD generateCombinations() CLASS CombinacionesView
 
    local oPanel
@@ -565,6 +551,10 @@ CLASS CombinacionesSelectorView FROM CombinacionesView
 
    METHOD Activate()
 
+   METHOD startActivate()
+
+   METHOD changeCheckBox( uValue, oCheckBox )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -603,6 +593,36 @@ METHOD Activate() CLASS CombinacionesSelectorView
    end if 
 
 RETURN ( ::getController():getRowSet():fieldGet( 'combinaciones_uuid' ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS CombinacionesSelectorView
+
+   ::oButtonDelete:Hide()
+   
+   ::oButtonGenerate:Hide()
+
+   ::Super:startActivate()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD changeCheckBox( uValue, oCheckBox ) CLASS CombinacionesSelectorView
+
+   local hCargo      := oCheckBox:Cargo
+
+   if uValue
+      ::getController():insertHaving( hCargo )
+   else 
+      ::getController():deleteHaving( hCargo )
+   end if 
+
+   ::getController():getRowSet():buildPad( ::oController:getModel():getSelectWhereCodigoArticuloHaving( ::getController():getCodigoArticulo(), ::getController:aHaving ) )
+
+   ::getController():getBrowseView():Refresh()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -761,7 +781,7 @@ METHOD getColumns() CLASS SQLCombinacionesModel
                                              "default"   => {|| ::getControllerParentUuid() } }          )
 
    hset( ::hColumns, "incremento_precio", {  "create"    => "FLOAT( 16, 6 )"                             ,;
-                                             "default"   => { 0 } }                                      ) 
+                                             "default"   => {|| 0 } }                                    ) 
 
 RETURN ( ::hColumns )
 

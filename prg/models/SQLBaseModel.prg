@@ -243,7 +243,7 @@ CLASS SQLBaseModel
    METHOD loadCurrentBuffer()
    METHOD defaultCurrentBuffer()
 
-   METHOD insertBlankBuffer()                         INLINE ( ::loadBlankBuffer(), ::insertBuffer( ::hBuffer ) ) 
+   METHOD insertBlankBuffer()                         INLINE ( ::loadBlankBuffer(), ::insertBuffer() ) 
 
    // Events-------------------------------------------------------------------
 
@@ -1409,10 +1409,11 @@ METHOD insertBuffer( hBuffer )
    local nId
    local cSQLInsert
 
-
    DEFAULT hBuffer   := ::hBuffer
 
    cSQLInsert        := ::getInsertSentence( hBuffer )
+
+   msgalert( cSQLInsert, "cSQLInsert" )
 
    if empty( cSQLInsert )
       RETURN ( nil )
