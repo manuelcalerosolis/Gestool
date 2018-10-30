@@ -65,9 +65,7 @@ METHOD End() CLASS FormasPagosController
       ::oRepository:End()
    end if
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -334,7 +332,6 @@ METHOD Activate() CLASS FormaPagoView
       WHEN        ( .f. ) ;
       OF          ::oDialog ;
       
-
    // Contabilidad-------------------------------------------------------------
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "subcuenta_cobro" ] ;

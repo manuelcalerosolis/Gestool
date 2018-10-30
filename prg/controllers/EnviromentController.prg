@@ -295,20 +295,13 @@ METHOD Activate() CLASS EnviromentView
    ::oSaySessiones:lWantClick    := .t.
    ::oSaySessiones:OnClick       := {|| ::oController:getSesionesController():Append(), ::oController:checkSessions() }
 
-
    ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
    if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+      ::oDialog:bKeyDown         := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
-   /*REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      ACTION      ( ::Validate() )*/
 
    ::oDialog:bStart              := {|| ::startActivate() }
-
-   /*::oDialog:AddFastKey( VK_F5, {|| ::Validate() } )*/
 
    ::oDialog:Activate( , , , .t. )
 

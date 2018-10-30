@@ -754,7 +754,7 @@ METHOD getColumnDeletedAt()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'deleted_at'
-      :cHeader             := 'Borrado'
+      :cHeader             := 'Eliminado'
       :cEditPicture        := '@DT'
       :nWidth              := 140
       :nHeadStrAlign       := AL_LEFT

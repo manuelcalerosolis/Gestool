@@ -79,9 +79,7 @@ METHOD End() CLASS ArticulosTarifasController
       ::oRepository:End()
    end if
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 

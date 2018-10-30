@@ -13,7 +13,6 @@ CLASS ClientGetSelector FROM GetSelector
    DATA idProvincia    
    DATA idPais    
    DATA idTelefono     
-   DATA idTarifa       
    DATA idLink         
 
    DATA oDlg
@@ -151,7 +150,7 @@ RETURN ( ::oGet )
 //---------------------------------------------------------------------------//
 
 METHOD cleanHelpText()
-   
+
    ::Super():cleanHelpText()
 
    if( !empty( ::oGetNif ),            ::oGetNif:cText( "" ), ) 

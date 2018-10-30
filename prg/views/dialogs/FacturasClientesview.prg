@@ -38,16 +38,16 @@ END CLASS
 
 METHOD Activating() CLASS FacturasClientesView
 
-   if ::oController:isAppendOrDuplicateMode()
-      ::oController:oModel:hBuffer()
-   end if 
+   // if ::oController:isAppendOrDuplicateMode()
+   //    ::getController():getModel():hBuffer()
+   // end if 
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS FacturasClientesView
-
+   
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "TRANSACION_COMERCIAL" ;
       TITLE       ::LblTitle() + "factura cliente"
@@ -76,24 +76,24 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Cliente------------------------------------------------------------------
 
-   ::oController:getClientesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) )
+   ::oController:getClientesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "cliente_codigo" ] ) )
    ::oController:getClientesController():getSelector():Build( { "idGet" => 170, "idLink" => 171, "idText" => 180, "idNif" => 181, "idDireccion" => 183, "idCodigoPostal" => 184, "idPoblacion" => 185, "idProvincia" => 186, "idTelefono" => 187, "oDialog" => ::oFolder:aDialogs[1] } )
-   ::oController:getClientesController():getSelector():setWhen( {|| ::oController:isNotLines() .or. empty( ::oController:oModel:hBuffer[ "cliente_codigo" ] ) } )
+   ::oController:getClientesController():getSelector():setWhen( {|| ::oController:isNotLines() .or. empty( ::getController():getModel():hBuffer[ "cliente_codigo" ] ) } )
    ::oController:getClientesController():getSelector():setValid( {|| ::oController:validate( "cliente_codigo" ) } )
 
    // Serie-------------------------------------------------------------------
 
-   ::oController:oSerieDocumentoComponent:BindValue( bSETGET( ::oController:oModel:hBuffer[ "serie" ] ) )
+   ::oController:oSerieDocumentoComponent:BindValue( bSETGET( ::getController():getModel():hBuffer[ "serie" ] ) )
    ::oController:oSerieDocumentoComponent:Activate( 4005, ::oFolder:aDialogs[1] )
 
    // Numero-------------------------------------------------------------------
 
-   ::oController:oNumeroDocumentoComponent:BindValue( bSETGET( ::oController:oModel:hBuffer[ "numero" ] ) )
+   ::oController:oNumeroDocumentoComponent:BindValue( bSETGET( ::getController():getModel():hBuffer[ "numero" ] ) )
    ::oController:oNumeroDocumentoComponent:Activate( 110, ::oFolder:aDialogs[1] )
 
    // Fecha--------------------------------------------------------------------
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "fecha" ] ;
+   REDEFINE GET   ::getController():getModel():hBuffer[ "fecha" ] ;
       ID          130 ;
       PICTURE     "@D" ;
       SPINNER ;
@@ -102,31 +102,31 @@ METHOD Activate() CLASS FacturasClientesView
 
    // Formas de pago------------------------------------------------------------
 
-   ::oController:getFormasPagosController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "forma_pago_codigo" ] ) )
+   ::oController:getFormasPagosController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "forma_pago_codigo" ] ) )
    ::oController:getFormasPagosController():getSelector():Build( { "idGet" => 230, "idText" => 231, "idLink" => 232, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:getFormasPagosController():getSelector():setValid( {|| ::oController:validate( "forma_pago_codigo" ) } )
 
    // Almacenes----------------------------------------------------------------
 
-   ::oController:getAlmacenesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "almacen_codigo" ] ) )
+   ::oController:getAlmacenesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "almacen_codigo" ] ) )
    ::oController:getAlmacenesController():getSelector():Build( { "idGet" => 240, "idText" => 241, "idLink" => 242, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:getAlmacenesController():getSelector():setValid( {|| ::oController:validate( "almacen_codigo" ) } )
 
    // Tarifas------------------------------------------------------------------
 
-   ::oController:getArticulosTarifasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "tarifa_codigo" ] ) )
+   ::oController:getArticulosTarifasController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "tarifa_codigo" ] ) )
    ::oController:getArticulosTarifasController():getSelector():Build( { "idGet" => 250, "idText" => 251, "idLink" => 252, "oDialog" => ::oFolder:aDialogs[1] } )
    ::oController:getArticulosTarifasController():getSelector():setWhen( {|| ::oController:isNotLines() } )
    ::oController:getArticulosTarifasController():getSelector():setValid( {|| ::oController:validate( "tarifa_codigo" ) } )
 
     // Rutas--------------------------------------------------------------------
 
-   ::oController:getRutasController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "ruta_codigo" ] ) )
+   ::oController:getRutasController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "ruta_codigo" ] ) )
    ::oController:getRutasController():getSelector():Build( { "idGet" => 260, "idText" => 261, "idLink" => 262, "oDialog" => ::oFolder:aDialogs[1] } )
 
    // Agentes------------------------------------------------------------------
 
-   ::oController:getAgentesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "agente_codigo" ] ) )
+   ::oController:getAgentesController():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "agente_codigo" ] ) )
    ::oController:getAgentesController():getSelector():Build( { "idGet" => 270, "idText" => 271, "idLink" => 272, "oDialog" => ::oFolder:aDialogs[1] } )
 
    //Totales------------------------------------------------------------------
@@ -160,7 +160,7 @@ METHOD Activate() CLASS FacturasClientesView
       OF          ::oFolder:aDialogs[1]
 
    REDEFINE SAYCHECKBOX ::oRecargoEquivalencia ;
-      VAR         ::oController:oModel:hBuffer[ "recargo_equivalencia" ] ;
+      VAR         ::getController():getModel():hBuffer[ "recargo_equivalencia" ] ;
       ID          320 ;
       IDSAY       322 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;

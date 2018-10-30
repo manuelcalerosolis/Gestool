@@ -147,13 +147,13 @@ CLASS MenuTreeView
 
    METHOD onChange()
 
-   METHOD Refresh()                          INLINE( ::oTreeView:Refresh() ) 
+   METHOD Refresh()                          INLINE ( ::oTreeView:Refresh() ) 
 
-   METHOD setButtonShowDeleteText( cText )   INLINE ( ::oButtonShowDelete:setText( cText ) )
+   METHOD setButtonShowDeleteText( cText )   INLINE ( iif( !empty( ::oButtonShowDelete ), ::oButtonShowDelete:setText( cText ), ) )
 
    // Events-------------------------------------------------------------------
    
-   METHOD getEvents()                        INLINE ( if( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
+   METHOD getEvents()                        INLINE ( iif( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
 
    METHOD setEvent( cEvent, bEvent )         INLINE ( ::getEvents():set( cEvent, bEvent ) )
    METHOD fireEvent( cEvent )                INLINE ( ::getEvents():fire( cEvent ) )

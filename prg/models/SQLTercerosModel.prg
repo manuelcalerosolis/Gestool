@@ -211,6 +211,8 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLTercerosModel
          %2$s.nombre AS nombre,
          %2$s.dni AS dni,
          %2$s.tarifa_codigo AS tarifa_codigo,
+         %2$s.ruta_codigo AS ruta_codigo,
+         %2$s.agente_codigo AS agente_codigo,
          %2$s.recargo_equivalencia AS recargo_equivalencia,
          %2$s.forma_pago_codigo AS forma_pago_codigo,
          direcciones.direccion AS direccion,

@@ -47,15 +47,17 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CombinacionesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()                 INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := CombinacionesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := CombinacionesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()                 INLINE ( iif( empty( ::oDialogView ), ::oDialogView := CombinacionesView():New( self ), ), ::oDialogView )
 
-   METHOD getSelectorView()               INLINE( if( empty( ::oSelectorView ), ::oSelectorView := CombinacionesSelectorView():New( self ), ), ::oSelectorView )
+   METHOD getSelectorView()               INLINE ( iif( empty( ::oSelectorView ), ::oSelectorView := CombinacionesSelectorView():New( self ), ), ::oSelectorView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := CombinacionesValidator():New( self ), ), ::oValidator )
+   METHOD getValidator()                  INLINE ( iif( empty( ::oValidator ), ::oValidator := CombinacionesValidator():New( self ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := CombinacionesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()                 INLINE ( iif( empty( ::oRepository ), ::oRepository := CombinacionesRepository():New( self ), ), ::oRepository )
+
+   METHOD getModel()                      INLINE ( iif( empty( ::oModel ), ::oModel := SQLCombinacionesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -75,15 +77,15 @@ METHOD New( oController ) CLASS CombinacionesController
 
    ::nLevel                               := Auth():Level( ::cName )
 
-   ::oModel                               := SQLCombinacionesModel():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS CombinacionesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel():End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -105,9 +107,7 @@ METHOD End() CLASS CombinacionesController
       ::oRepository:End()
    end if
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 

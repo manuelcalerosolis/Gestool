@@ -82,7 +82,7 @@ CLASS GetSelector
    METHOD lValid()                              INLINE ( if( !empty( ::oGet ), ::oGet:lValid(), ) )
    METHOD evalWhen()                            INLINE ( if( !empty( ::oGet ) .and. !empty( ::bWhen ), ( if( eval( ::bWhen ), ::oGet:Enable(), ::oGet:Disable() ) ), ) )
 
-   METHOD getHelp()                         INLINE ( if( empty( ::oHelp ), ::oGet:oHelpText, ::oHelp ) )
+   METHOD getHelp()                             INLINE ( if( empty( ::oHelp ), ::oGet:oHelpText, ::oHelp ) )
 
    // Events-------------------------------------------------------------------
 

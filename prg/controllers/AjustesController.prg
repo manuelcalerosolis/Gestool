@@ -122,6 +122,7 @@ METHOD getInsertAjustesSentence()
          ( UUID(), 'delegacion_defecto',        '1',  'alphanumeric', NULL, NULL ), 
          ( UUID(), 'unidades_grupo_defecto',    '1',  'alphanumeric', NULL, NULL ), 
          ( UUID(), 'tarifas_defecto',           '1',  'alphanumeric', NULL, NULL ),
+         ( UUID(), 'almacen_defecto',           '1',  'alphanumeric', NULL, NULL ),
          ( UUID(), 'forma_pago_defecto',        '1',  'alphanumeric', NULL, NULL )
 
    ENDTEXT

@@ -39,7 +39,7 @@ METHOD Activate()
          ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
       end if
 
-      ::oDialog:bStart        := {|| ::StartActivate() }
+      ::oDialog:bStart  := {|| ::StartActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 

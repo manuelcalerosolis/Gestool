@@ -14,12 +14,14 @@ CLASS CombinacionesPropiedadesController FROM SQLNavigatorController
    METHOD insertProperty( uuidCombination, uuidParent )
 
    //Construcciones tardias----------------------------------------------------
+   
+   METHOD getModel()                INLINE ( iif( empty( ::oModel ), ::oModel := SQLCombinacionesPropiedadesModel():New( self ), ), ::oModel )  
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := CombinacionesPropiedadesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()           INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := CombinacionesPropiedadesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := CombinacionesPropiedadesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()           INLINE ( iif( empty( ::oDialogView ), ::oDialogView := CombinacionesPropiedadesView():New( self ), ), ::oDialogView )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := CombinacionesPropiedadesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()           INLINE ( iif( empty( ::oRepository ), ::oRepository := CombinacionesPropiedadesRepository():New( self ), ), ::oRepository )
 
 END CLASS
 
@@ -39,15 +41,15 @@ METHOD New( oController ) CLASS CombinacionesPropiedadesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLCombinacionesPropiedadesModel():New( self )  
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS CombinacionesPropiedadesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -61,9 +63,7 @@ METHOD End() CLASS CombinacionesPropiedadesController
       ::oRepository:End()
    end if
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -90,9 +90,6 @@ METHOD insertProperty( uuidCombination, uuidParent ) CLASS CombinacionesPropieda
 
 RETURN ( ::oModel:insertBuffer( hBuffer ) )
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -143,8 +140,7 @@ METHOD addColumns() CLASS CombinacionesPropiedadesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -259,8 +255,6 @@ METHOD getPropertyWhereArticuloCodigo( cCodigoArticulo ) CLASS SQLCombinacionesP
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLCombinacionesModel():getTableName(), SQLPropiedadesLineasModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
-
-
 
 RETURN ( cSql )
 

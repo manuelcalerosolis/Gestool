@@ -22,6 +22,7 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
    DATA oFormasPagosController
 
    DATA cFormaPagoDefecto
+   DATA cAlmacenDefecto
 
    DATA aDelegaciones
    DATA cDelegacionDefecto
@@ -69,12 +70,12 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    METHOD getValidator()                     INLINE ( iif( empty( ::oValidator ), ::oValidator := EmpresasValidator():New( self, ::getDialogView() ), ), ::oValidator )
 
-   METHOD getDireccionesController()         INLINE ( if( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesGestoolController():New( self ), ), ::oDireccionesController )
+   METHOD getDireccionesController()         INLINE ( iif( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesGestoolController():New( self ), ), ::oDireccionesController )
 
-   METHOD getCamposExtraValoresController()  INLINE ( if( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
+   METHOD getCamposExtraValoresController()  INLINE ( iif( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
 
-   METHOD getFormasPagosController()         INLINE ( if( empty( ::oFormasPagosController ), ::oFormasPagosController := FormasPagosController():New( self ), ), ::oFormasPagosController )
-
+   METHOD getFormasPagosController()         INLINE ( iif( empty( ::oFormasPagosController ), ::oFormasPagosController := FormasPagosController():New( self ), ), ::oFormasPagosController )
+   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -164,25 +165,27 @@ METHOD loadConfig( uuidEmpresa )
 
    ::cFormaPagoDefecto           := ::getAjustableController():getModel():getEmpresaFormaPago( uuidEmpresa )
 
-   ::lSolicitarUsuario           := ::getAjustableController():getModel():getEmpresaSeleccionarUsuarios( uuidEmpresa )
+   ::cAlmacenDefecto             := ::getAjustableController():getModel():getEmpresaAlmacen( uuidEmpresa )
 
-   ::aDelegaciones               := SQLDelegacionesModel():getNombres()
+   // ::lSolicitarUsuario           := ::getAjustableController():getModel():getEmpresaSeleccionarUsuarios( uuidEmpresa )
 
-   ::cUuidDelegacionDefecto      := ::getAjustableController():getModel():getEmpresaDelegacionDefecto( uuidEmpresa )
+   // ::aDelegaciones               := SQLDelegacionesModel():getNombres()
 
-   ::cDelegacionDefecto          := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionDefecto )
+   // ::cUuidDelegacionDefecto      := ::getAjustableController():getModel():getEmpresaDelegacionDefecto( uuidEmpresa )
 
-   ::aUnidades                   := SQLUnidadesMedicionGruposModel():getNombresWithBlank()
+   // ::cDelegacionDefecto          := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionDefecto )
 
-   ::cCodigoUnidaesDefecto       := ::getAjustableController():getModel():getEmpresaUnidadesGrupoDefecto( uuidEmpresa )
+   // ::aUnidades                   := SQLUnidadesMedicionGruposModel():getNombresWithBlank()
 
-   ::cUnidadesDefecto            := SQLUnidadesMedicionGruposModel():getNombreWhereCodigo( ::cCodigoUnidaesDefecto )
+   // ::cCodigoUnidaesDefecto       := ::getAjustableController():getModel():getEmpresaUnidadesGrupoDefecto( uuidEmpresa )
 
-   ::aTarifas                    := SQLArticulosTarifasModel():getNombres()
+   // ::cUnidadesDefecto            := SQLUnidadesMedicionGruposModel():getNombreWhereCodigo( ::cCodigoUnidaesDefecto )
 
-   ::cCodigoTarifaDefecto        := ::getAjustableController():getModel():getEmpresaTarifaDefecto( uuidEmpresa )
+   // ::aTarifas                    := SQLArticulosTarifasModel():getNombres()
 
-   ::cTarifaDefecto              := SQLArticulosTarifasModel():getNombreWhereCodigo( ::cCodigoTarifaDefecto )
+   // ::cCodigoTarifaDefecto        := ::getAjustableController():getModel():getEmpresaTarifaDefecto( uuidEmpresa )
+
+   // ::cTarifaDefecto              := SQLArticulosTarifasModel():getNombreWhereCodigo( ::cCodigoTarifaDefecto )
 
 RETURN ( .t. )
 
@@ -192,19 +195,21 @@ METHOD saveConfig( uuidEmpresa )
 
    ::getAjustableController():getModel():setEmpresaFormaPago( ::cFormaPagoDefecto, uuidEmpresa )
 
-   ::getAjustableController():getModel():setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, uuidEmpresa )
+   ::getAjustableController():getModel():setEmpresaAlmacen( ::cAlmacenDefecto, uuidEmpresa )
+
+   // ::getAjustableController():getModel():setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, uuidEmpresa )
    
-   ::cUuidDelegacionDefecto      := SQLDelegacionesModel():getUuidFromNombre( ::cDelegacionDefecto )
+   // ::cUuidDelegacionDefecto      := SQLDelegacionesModel():getUuidFromNombre( ::cDelegacionDefecto )
 
-   ::getAjustableController():getModel():setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, uuidEmpresa )
+   // ::getAjustableController():getModel():setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, uuidEmpresa )
 
-   ::cCodigoUnidaesDefecto       := SQLUnidadesMedicionGruposModel():getCodigoWhereNombre( ::cUnidadesDefecto )
+   // ::cCodigoUnidaesDefecto       := SQLUnidadesMedicionGruposModel():getCodigoWhereNombre( ::cUnidadesDefecto )
 
-   ::getAjustableController():getModel():setEmpresaUnidadesGrupoDefecto( ::cCodigoUnidaesDefecto, uuidEmpresa )
+   // ::getAjustableController():getModel():setEmpresaUnidadesGrupoDefecto( ::cCodigoUnidaesDefecto, uuidEmpresa )
 
-   ::cCodigoTarifaDefecto        := SQLArticulosTarifasModel():getCodigoWhereNombre( ::cTarifaDefecto )
+   // ::cCodigoTarifaDefecto        := SQLArticulosTarifasModel():getCodigoWhereNombre( ::cTarifaDefecto )
 
-   ::getAjustableController():getModel():setEmpresaTarifaDefecto( ::cCodigoTarifaDefecto, uuidEmpresa )
+   // ::getAjustableController():getModel():setEmpresaTarifaDefecto( ::cCodigoTarifaDefecto, uuidEmpresa )
 
 RETURN ( nil )
 
@@ -212,24 +217,29 @@ RETURN ( nil )
 
 METHOD startingActivate()
 
-   local oPanel                  := ::getAjustableController():getDialogView():oExplorerBar:addPanel( "Propiedades empresa", nil, 1 ) 
+   local oPanel                  
 
-   oPanel:addCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
+   oPanel   := ::getAjustableController():getDialogView():oExplorerBar:addPanel( "Propiedades empresa", nil, 1 ) 
+
+   // oPanel:addCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
    
    // oPanel:addComboBox( "Delegación", @::cDelegacionDefecto, ::aDelegaciones )
 
-   oPanel:addComboBox( "Grupos unidades", @::cUnidadesDefecto, ::aUnidades )
+   // oPanel:addComboBox( "Grupos unidades", @::cUnidadesDefecto, ::aUnidades )
 
-   oPanel:addComboBox( "Tarifa", @::cTarifaDefecto, ::aTarifas )
+   // oPanel:addComboBox( "Tarifa", @::cTarifaDefecto, ::aTarifas )
 
-   oPanel:addGetSelector( "Delegación", @::cDelegacionDefecto ) 
+   // oPanel:addGetSelector( "Delegación", @::cDelegacionDefecto ) 
 
-   oPanel:addGetSelector( "Grupos unidades", @::cUnidadesDefecto ) 
+   // oPanel:addGetSelector( "Grupos unidades", @::cUnidadesDefecto ) 
 
-   oPanel:addGetSelector( "Tarifa", @::cTarifaDefecto ) 
+   // oPanel:addGetSelector( "Tarifa", @::cTarifaDefecto ) 
 
    ::getFormasPagosController():getSelector():Bind( bSETGET( ::cFormaPagoDefecto ) )
    ::getFormasPagosController():getSelector():addGetSelector( "Forma de pago", oPanel ) 
+
+   ::getAlmacenesController():getSelector():Bind( bSETGET( ::cAlmacenDefecto ) )
+   ::getAlmacenesController():getSelector():addGetSelector( "Almacen", oPanel ) 
 
 RETURN ( nil )
 
@@ -253,7 +263,8 @@ METHOD updateEmpresa()
 
    aeval( ::getBrowseView():getBrowseSelected(),;
             {|nSelect| ::getRowSet():goToRecNo( nSelect ),;
-               msgRun( "Actualizando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanyMigrations():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
+               msgRun( "Actualizando empresa : " + alltrim( cvaltostr( ::getRowSet():fieldGet( 'nombre' ) ) ),;
+                  "Espere por favor...", {|| SQLCompanyMigrations():Run( cvaltostr( ::getRowSet():fieldGet( 'codigo' ) ) ) } ) } )
 
 RETURN ( nil )
 
@@ -264,7 +275,8 @@ METHOD seedEmpresa()
    aeval( ::getBrowseView():getBrowseSelected(),;
             {|nSelect| ::getRowSet():goToRecNo( nSelect ),;
                Company():guardWhereCodigo( ::getRowSet():fieldGet( 'codigo' ) ),;
-               msgRun( "Importando empresa : " + alltrim( ::getRowSet():fieldGet( 'nombre' ) ), "Espere por favor...", {|| SQLCompanySeeders():Run( ::getRowSet():fieldGet( 'codigo' ) ) } ) } )
+               msgRun( "Importando empresa : " + alltrim( cvaltostr( ::getRowSet():fieldGet( 'nombre' ) ) ),;
+                  "Espere por favor...", {|| SQLCompanySeeders():Run( cvaltostr( ::getRowSet():fieldGet( 'codigo' ) ) ) } ) } )
 
 RETURN ( nil )
 

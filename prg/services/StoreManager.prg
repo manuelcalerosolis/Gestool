@@ -16,12 +16,14 @@ CLASS StoreManager
 
    METHOD New()
 
-   METHOD Set( hStore )           INLINE ( ::guard( hStore ) )
+   METHOD Set( hStore )          INLINE ( ::guard( hStore ) )
    METHOD Guard( hStore )
 
    METHOD guardWhereUuid( uuid )
    
    METHOD guardWhereNombre( cNombre )
+
+   METHOD getCodigo()            INLINE ( padr( ::codigo, 20 ) )
 
 END CLASS
 

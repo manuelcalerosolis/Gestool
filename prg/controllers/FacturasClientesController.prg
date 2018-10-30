@@ -29,11 +29,13 @@ CLASS FacturasClientesController FROM SQLNavigatorController
 
    METHOD clientesSettedHelpText()
 
-   METHOD clientesCleanedHelpText() 
-
    METHOD clientSetFormaPago()   
 
    METHOD clientSetTarifa()
+
+   METHOD clientSetRuta()
+
+   METHOD clientSetAgente()
 
    METHOD clientSetRecargo()
 
@@ -124,7 +126,6 @@ METHOD New( oController ) CLASS FacturasClientesController
    ::getFacturasClientesLineasController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
    ::getClientesController():getSelector():setEvent( 'settedHelpText',    {|| ::clientesSettedHelpText() } )
-   ::getClientesController():getSelector():setEvent( 'cleanedHelpText',   {|| ::clientesCleanedHelpText() } )
 
    ::getFacturasClientesDescuentosController():setEvent( 'deletedSelection', {|| ::calculateTotals() } ) 
 
@@ -190,6 +191,8 @@ METHOD loadedBlankBuffer() CLASS FacturasClientesController
    
    hset( ::oModel:hBuffer, "numero",   SQLContadoresModel():getDocumentCounter( ::cName ) )
 
+   hset( ::oModel:hBuffer, "almacen_codigo", Store():getCodigo() )
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -209,6 +212,10 @@ METHOD clientesSettedHelpText() CLASS FacturasClientesController
    ::clientSetFormaPago()
 
    ::clientSetTarifa()
+   
+   ::clientSetRuta()
+
+   ::clientSetAgente()
 
    ::clientSetDescuentos()
 
@@ -220,23 +227,15 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD clientesCleanedHelpText()  
-
-   ::getArticulosTarifasController():getSelector():cText( space( 20 ) )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
 METHOD clientSetFormaPago() CLASS FacturasClientesController
 
    local cCodigoFormaPago
 
+   cCodigoFormaPago     := space( 20 )
+
    if empty( ::getClientesController():getSelector():uFields )
       RETURN ( nil )
    end if 
-
-   msgalert( hb_valtoexp( ::getClientesController():getSelector():uFields ), "uFields" ) 
 
    cCodigoFormaPago     := hget( ::getClientesController():getSelector():uFields, "forma_pago_codigo" )
 
@@ -256,6 +255,8 @@ METHOD clientSetTarifa() CLASS FacturasClientesController
 
    local cCodigoTarifa
 
+   cCodigoTarifa     := space( 20 )
+
    if empty( ::getClientesController():getSelector():uFields )
       RETURN ( nil )
    end if 
@@ -269,6 +270,46 @@ METHOD clientSetTarifa() CLASS FacturasClientesController
    ::getArticulosTarifasController():getSelector():cText( cCodigoTarifa )
    
    ::getArticulosTarifasController():getSelector():lValid()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD clientSetRuta() CLASS FacturasClientesController
+
+   local cCodigoRuta
+
+   cCodigoRuta       := space( 20 )
+
+   if empty( ::getClientesController():getSelector():uFields )
+      RETURN ( nil )
+   end if 
+
+   cCodigoRuta       := hget( ::getClientesController():getSelector():uFields, "ruta_codigo" )
+
+   ::getRutasController():getSelector():cText( cCodigoRuta )
+   
+   ::getRutasController():getSelector():lValid()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD clientSetAgente() CLASS FacturasClientesController
+
+   local cCodigoAgente
+
+   cCodigoAgente     := space( 20 )
+
+   if empty( ::getClientesController():getSelector():uFields )
+      RETURN ( nil )
+   end if 
+
+   cCodigoAgente     := hget( ::getClientesController():getSelector():uFields, "agente_codigo" )
+
+   ::getAgentesController():getSelector():cText( cCodigoAgente )
+   
+   ::getAgentesController():getSelector():lValid()
 
 RETURN ( nil )
 
