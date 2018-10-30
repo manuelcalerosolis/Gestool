@@ -55,6 +55,8 @@ CLASS TercerosController FROM SQLNavigatorController
 
    METHOD getDuplicateOthers()
 
+   METHOD deletedOthersSelection()
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getDialogView()                                      INLINE ( if( empty( ::oDialogView ), ::oDialogView := TercerosView():New( self ), ), ::oDialogView )
@@ -86,7 +88,7 @@ METHOD New( oController) CLASS TercerosController
    ::oModel:setEvent( 'loadedDuplicateCurrentBuffer',    {|| ::setUuidOldersParents() } )
    ::oModel:setEvent( 'loadedDuplicateBuffer',           {|| ::getDuplicateOthers() } )
    
-   ::oModel:setEvent( 'deletedSelection',                {|| ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ), ::getDescuentosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )  } )
+   ::oModel:setEvent( 'deletedSelection',                {|| ::deletedOthersSelection()  } )
 
 RETURN ( self )
 
@@ -114,7 +116,7 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD setUuidOldersParents()
+METHOD setUuidOldersParents() CLASS TercerosController
 
    ::getDireccionesController():setUuidOlderParent( ::getUuid() )
 
@@ -122,19 +124,19 @@ METHOD setUuidOldersParents()
                                                              
    ::getContactosController():setUuidOlderParent( ::getUuid() )
 
-::getCuentasBancariasController():setUuidOlderParent( ::getUuid() )
+   ::getCuentasBancariasController():setUuidOlderParent( ::getUuid() )
 
-::getIncidenciasController():setUuidOlderParent( ::getUuid() )
+   ::getIncidenciasController():setUuidOlderParent( ::getUuid() )
 
-::getDocumentosController():setUuidOlderParent( ::getUuid() )
+   ::getDocumentosController():setUuidOlderParent( ::getUuid() )
 
-::getClientesEntidadesController():setUuidOlderParent( ::getUuid() )
+   ::getClientesEntidadesController():setUuidOlderParent( ::getUuid() )
 
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDuplicateOthers()
+METHOD getDuplicateOthers() CLASS TercerosController
 
    ::getDireccionesController():duplicateOthers( ::getUuid() )
                                                           
@@ -149,6 +151,26 @@ METHOD getDuplicateOthers()
    ::getDocumentosController():duplicateOthers( ::getUuid() )
 
    ::getClientesEntidadesController():duplicateOthers( ::getUuid() )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD deletedOthersSelection() CLASS TercerosController
+
+::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) 
+
+::getDescuentosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+
+::getContactosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+
+::getCuentasBancariasController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+
+::getIncidenciasController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+
+::getDocumentosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+
+::getClientesEntidadesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 
 RETURN ( nil )
 

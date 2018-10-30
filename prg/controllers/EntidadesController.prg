@@ -418,16 +418,16 @@ METHOD getInitialSelect() CLASS SQLEntidadesModel
 
    FROM %1$s AS entidades
 
-      INNER JOIN %2$s AS direcciones 
+      LEFT JOIN %2$s AS direcciones 
          ON entidades.uuid = direcciones.parent_uuid
 
-      INNER JOIN %3$s AS contactos 
+      LEFT JOIN %3$s AS contactos 
          ON entidades.uuid = contactos.parent_uuid
 
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLDireccionesModel():getTableName(), SQLContactosModel():getTableName() )
-  
+
 RETURN ( cSql )
 
 //---------------------------------------------------------------------------//

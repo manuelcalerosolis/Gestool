@@ -348,7 +348,6 @@ CLASS SQLDocumentosModel FROM SQLCompanyModel
 
    METHOD getParentUuidAttribute( value )
 
-   METHOD getSentenceOthersWhereParentUuid ( uuidParent )
 
 END CLASS
 
@@ -415,27 +414,6 @@ METHOD SetDocumentoAttribute( uValue )
    end if      
 
 RETURN ( cRelativeDocumentApplicationStorage() + cNombreDocumento )
-
-//---------------------------------------------------------------------------//
-
-METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLDocumentosModel
-
-   local cSql
-
-   TEXT INTO cSql
-
-   SELECT *
-
-      FROM %1$s
-
-      WHERE parent_uuid = %2$s
-
-   ENDTEXT
-
-   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
-
-
-RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
