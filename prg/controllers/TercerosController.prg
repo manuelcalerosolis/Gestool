@@ -79,16 +79,16 @@ METHOD New( oController) CLASS TercerosController
 
    ::lTransactional     := .f.
 
-   ::getModel():setEvent( 'loadedBlankBuffer',           {|| ::getDireccionesController():loadMainBlankBuffer() } )
-   ::getModel():setEvent( 'insertedBuffer',              {|| ::getDireccionesController():insertBuffer() } )
+   ::getModel():setEvent( 'loadedBlankBuffer',              {|| ::getDireccionesController():loadMainBlankBuffer() } )
+   ::getModel():setEvent( 'insertedBuffer',                 {|| ::getDireccionesController():insertBuffer() } )
    
-   ::getModel():setEvent( 'loadedCurrentBuffer',         {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
-   ::getModel():setEvent( 'updatedBuffer',               {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'loadedCurrentBuffer',            {|| ::getDireccionesController():loadedCurrentBuffer( ::getUuid() ) } )
+   ::getModel():setEvent( 'updatedBuffer',                  {|| ::getDireccionesController():updateBuffer( ::getUuid() ) } )
 
-   ::oModel:setEvent( 'loadedDuplicateCurrentBuffer',    {|| ::setUuidOldersParents() } )
-   ::oModel:setEvent( 'loadedDuplicateBuffer',           {|| ::getDuplicateOthers() } )
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer',   {|| ::setUuidOldersParents() } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',          {|| ::getDuplicateOthers() } )
    
-   ::oModel:setEvent( 'deletedSelection',                {|| ::deletedOthersSelection()  } )
+   ::getModel():setEvent( 'deletedSelection',               {|| ::deletedOthersSelection()  } )
 
 RETURN ( self )
 
@@ -118,21 +118,21 @@ RETURN ( ::Super:End() )
 
 METHOD setUuidOldersParents() CLASS TercerosController
 
-   ::getDireccionesController():setUuidOlderParent( ::getUuid() )
+   ::getDireccionesController():getModel():setUuidOlderParent( ::getUuid() )
 
-   ::getDescuentosController():setUuidOlderParent( ::getUuid() )
+   ::getDescuentosController():getModel():setUuidOlderParent( ::getUuid() )
                                                              
-   ::getContactosController():setUuidOlderParent( ::getUuid() )
+   ::getContactosController():getModel():setUuidOlderParent( ::getUuid() )
 
-   ::getCuentasBancariasController():setUuidOlderParent( ::getUuid() )
+   ::getCuentasBancariasController():getModel():setUuidOlderParent( ::getUuid() )
 
-   ::getIncidenciasController():setUuidOlderParent( ::getUuid() )
+   ::getIncidenciasController():getModel():setUuidOlderParent( ::getUuid() )
 
-   ::getDocumentosController():setUuidOlderParent( ::getUuid() )
+   ::getDocumentosController():getModel():setUuidOlderParent( ::getUuid() )
 
-   ::getClientesEntidadesController():setUuidOlderParent( ::getUuid() )
+   ::getClientesEntidadesController():getModel():setUuidOlderParent( ::getUuid() )
 
-   ::getCamposExtraValoresController():setUuidOlderParent( ::getUuid() )
+   ::getCamposExtraValoresController():getModel():setUuidOlderParent( ::getUuid() )
 
 RETURN ( nil )
 
@@ -140,21 +140,21 @@ RETURN ( nil )
 
 METHOD getDuplicateOthers() CLASS TercerosController
 
-   ::getDireccionesController():duplicateOthers( ::getUuid() )
+   ::getDireccionesController():getModel():duplicateOthers( ::getUuid() )
                                                           
-   ::getDescuentosController():duplicateOthers( ::getUuid() )
+   ::getDescuentosController():getModel():duplicateOthers( ::getUuid() )
 
-   ::getContactosController():duplicateOthers( ::getUuid() )
+   ::getContactosController():getModel():duplicateOthers( ::getUuid() )
    
-   ::getCuentasBancariasController():duplicateOthers( ::getUuid() )
+   ::getCuentasBancariasController():getModel():duplicateOthers( ::getUuid() )
 
-   ::getIncidenciasController():duplicateOthers( ::getUuid() )
+   ::getIncidenciasController():getModel():duplicateOthers( ::getUuid() )
 
-   ::getDocumentosController():duplicateOthers( ::getUuid() )
+   ::getDocumentosController():getModel():duplicateOthers( ::getUuid() )
 
-   ::getClientesEntidadesController():duplicateOthers( ::getUuid() )
+   ::getClientesEntidadesController():getModel():duplicateOthers( ::getUuid() )
    
-   ::getCamposExtraValoresController():duplicateOthers( ::getUuid() )
+   ::getCamposExtraValoresController():getModel():duplicateOthers( ::getUuid() )
 
 RETURN ( nil )
 
@@ -162,19 +162,19 @@ RETURN ( nil )
 
 METHOD deletedOthersSelection() CLASS TercerosController
 
-::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) 
+   ::getDireccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) ) 
 
-::getDescuentosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+   ::getDescuentosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 
-::getContactosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+   ::getContactosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 
-::getCuentasBancariasController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+   ::getCuentasBancariasController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 
-::getIncidenciasController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+   ::getIncidenciasController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 
-::getDocumentosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+   ::getDocumentosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 
-::getClientesEntidadesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+   ::getClientesEntidadesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 
 RETURN ( nil )
 

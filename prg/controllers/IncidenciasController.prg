@@ -395,7 +395,7 @@ CLASS SQLIncidenciasModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "incidencias"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, descripcion, deleted_at )"
+   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, fecha_hora, deleted_at )"
 
    METHOD getColumns()
 
@@ -416,8 +416,8 @@ METHOD getColumns() CLASS SQLIncidenciasModel
    hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                                    "default"   => {|| ::getControllerParentUuid() } } )
 
-   hset( ::hColumns, "descripcion",             {  "create"    => "VARCHAR( 200 ) NOT NULL"                                    ,;
-                                                   "default"   => {|| space( 200 ) } }                                )
+   hset( ::hColumns, "descripcion",             {  "create"    => "TEXT"                                    ,;
+                                                   "default"   => {||"" } }                                 )
 
    hset( ::hColumns, "fecha_hora",              {  "create"    => "TIMESTAMP"                               ,;
                                                    "default"   => {|| hb_datetime() } }                     )

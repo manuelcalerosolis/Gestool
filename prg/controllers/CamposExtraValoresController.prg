@@ -456,7 +456,7 @@ CLASS SQLCamposExtraValoresModel FROM SQLCompanyModel
 
    DATA cTableName                                    INIT "campos_extra_valores"
 
-   DATA cConstraints                                  INIT "PRIMARY KEY ( id ), UNIQUE KEY ( campo_extra_entidad_uuid, entidad_uuid )"
+   DATA cConstraints                                  INIT "PRIMARY KEY ( campo_extra_entidad_uuid, entidad_uuid, deleted_at )"
 
    DATA cColumnOrder                                  INIT "nombre"                  
 
@@ -478,6 +478,10 @@ CLASS SQLCamposExtraValoresModel FROM SQLCompanyModel
 
    METHOD getHashCampoExtraValoresWhereEntidad( cEntidad )
 
+   METHOD duplicateOthers( uuidEntidad )
+
+   METHOD getSentenceOthersWhereParentUuid ( uuidParent ) 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -494,14 +498,14 @@ local cSql
       campos.longitud as longitud,
       campos.decimales as decimales,
       campos.lista as lista, 
-      valores.valor as valor, 
-      valores.uuid as valor_uuid, 
+      %1$s.valor as valor, 
+      %1$s.uuid as valor_uuid, 
       entidad.parent_uuid 
 
-   FROM %1$s AS valores 
+   FROM %1$s 
 
    INNER JOIN %2$s AS entidad 
-      ON entidad.uuid = valores.campo_extra_entidad_uuid 
+      ON entidad.uuid = %1$s.campo_extra_entidad_uuid 
 
    INNER JOIN %3$s AS campos 
       ON campos.uuid = entidad.parent_uuid
@@ -520,10 +524,10 @@ RETURN ( cSQL)
 
 METHOD getColumns() CLASS SQLCamposExtraValoresModel
 
-   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT"                  ,;
+   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
                                                       "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
+   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
                                                       "default"   => {|| win_uuidcreatestring() } }            )
 
    hset( ::hColumns, "campo_extra_entidad_uuid",   {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
@@ -535,7 +539,7 @@ METHOD getColumns() CLASS SQLCamposExtraValoresModel
    hset( ::hColumns, "valor",                      {  "create"    => "VARCHAR( 200 )"                          ,;
                                                       "default"   => {|| space( 200 ) } }                      )
 
-   
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 
@@ -579,4 +583,54 @@ METHOD getHashCampoExtraValoresWhereEntidad( cEntidad ) CLASS SQLCamposExtraValo
 RETURN ( getSQLDataBase():selectFetchHash( cSQL ) )
 
 //---------------------------------------------------------------------------//
+
+METHOD duplicateOthers( uuidEntidad )
+
+   local hOthers
+   local aOthers 
+
+   aOthers         := ::getHashOthersWhereParentUuid( ::getUuidOlderParent() )
+
+   if empty( aOthers )
+      RETURN ( nil )
+   end if 
+
+   for each hOthers in aOthers
+
+      hset( hOthers, "id",          0 )
+
+      hset( hOthers, "uuid",        win_uuidcreatestring() )
+      
+      hset( hOthers, "entidad_uuid", uuidEntidad )
+      
+      hset( hOthers, "deleted_at",  hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
+
+      ::insertBuffer( hOthers )
+
+   next 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLCamposExtraValoresModel
+
+   local cSql
+
+   TEXT INTO cSql
+
+   SELECT *
+
+      FROM %1$s
+
+      WHERE entidad_uuid = %2$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
+
+RETURN ( cSql )
+
+//----------------------------------------------------------------------------//
 

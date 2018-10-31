@@ -37,10 +37,7 @@ CLASS DireccionesController FROM SQLNavigatorController
    METHOD insertBuffer()                  INLINE ( ::getModel():insertBuffer() )
 
    METHOD loadedCurrentBuffer( uuidEntidad ) 
-   METHOD updateBuffer( uuidEntidad )
-
-   METHOD duplicateOthers( uuidEntidad )
-      METHOD duplicateMain( uuidEntidad )  
+   METHOD updateBuffer( uuidEntidad ) 
 
    METHOD deleteBuffer( aUuidEntidades )
 
@@ -168,30 +165,6 @@ METHOD UpdateBuffer( uuidEntidad ) CLASS DireccionesController
       ::getModel():insertBuffer()
    else
       ::getModel():updateBuffer()
-   end if 
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD duplicateOthers( uuidEntidad ) CLASS DireccionesController
-
-   ::duplicateMain( uuidEntidad )
-
-RETURN ( ::Super:duplicateOthers( uuidEntidad ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD duplicateMain( uuidEntidad ) CLASS DireccionesController
-
-   local idDireccion
-
-   idDireccion          := ::getModel():getIdMainWhereParentUuid( ::getUuidOlderParent() )
-
-   if empty( idDireccion )
-      ::getModel():insertMainBlankBuffer()
-   else 
-      ::getModel():loadDuplicateBuffer( idDireccion, { "parent_uuid" => uuidEntidad } )
    end if 
 
 RETURN ( nil )
@@ -502,7 +475,8 @@ END CLASS
 
 METHOD getValidators() CLASS DireccionesValidator
 
-   ::hValidators  := {  "codigo" =>             {  "required"        => "El nombre es un dato requerido" },; 
+   ::hValidators  := {  "codigo" =>             {  "required"        => "El código es un dato requerido" ,;
+                                                   "notPrincipal"    => "El código debe ser distinto de 0" } ,;
                         "codigo_postal" =>      {  "codigoPostal"    => "" },;
                         "codigo_provincia" =>   {  "codigoProvincia" => "" },;
                         "codigo_pais" =>        {  "codigoPais"      => "" },;
@@ -645,6 +619,10 @@ CLASS SQLDireccionesModel FROM SQLCompanyModel
 
    METHOD getSentenceClienteDireccion( cBy, cCodigo, uuidParent )
 
+   METHOD duplicateOthers( uuidEntidad )
+   
+   METHOD duplicateMain( uuidEntidad )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -755,8 +733,32 @@ METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLDireccionesModel
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), quoted( uuidParent ) )
-
+logwrite( cSql )
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD duplicateOthers( uuidEntidad ) CLASS SQLDireccionesModel
+
+   ::duplicateMain( uuidEntidad )
+
+RETURN ( ::Super:duplicateOthers( uuidEntidad ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD duplicateMain( uuidEntidad ) CLASS SQLDireccionesModel
+
+   local idDireccion
+
+   idDireccion          := ::getIdMainWhereParentUuid( ::getUuidOlderParent() )
+
+   if empty( idDireccion )
+      ::insertMainBlankBuffer()
+   else 
+      ::loadDuplicateBuffer( idDireccion, { "parent_uuid" => uuidEntidad } )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

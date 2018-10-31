@@ -66,6 +66,8 @@ CLASS SQLBaseValidator
 
    METHOD getDialogView()                 INLINE ( ::oController:getDialogView() )
 
+   METHOD notPrincipal( value )
+
    // Busquedas comnues en la aplicacion---------------------------------------
 
    METHOD clienteExist( cCodigo )         INLINE ( SQLClientesModel():isWhereCodigo( cCodigo ) )
@@ -354,6 +356,19 @@ METHOD numeroDocumento( value )
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+METHOD notPrincipal( value ) 
+
+   value             := alltrim( value )
+   value             := val( value )
+
+   if value  = 0
+      RETURN ( .f. )
+   end if 
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -473,4 +488,3 @@ METHOD numeroDocumento( value ) CLASS SQLParentValidator
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-

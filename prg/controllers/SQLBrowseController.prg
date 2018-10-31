@@ -23,7 +23,7 @@ CLASS SQLBrowseController FROM SQLApplicationController
 
    DATA oConfiguracionVistasController
 
-   DATA uuidOlderParent
+   //DATA uuidOlderParent
 
    METHOD New() CONSTRUCTOR
 
@@ -88,13 +88,9 @@ CLASS SQLBrowseController FROM SQLApplicationController
 
    METHOD setShowDeleted()
 
-    // Duplicates----------------------------------------------------------------
+   /*METHOD setUuidOlderParent( uuidParent )            INLINE ( msgalert(uuidParent,"uuidparent" ),::uuidOlderParent := uuidParent )
 
-   METHOD setUuidOlderParent( uuidParent )            INLINE ( ::uuidOlderParent := uuidParent )
-
-   METHOD getUuidOlderParent()                        INLINE ( ::uuidOlderParent )
-
-   METHOD duplicateOthers( uuidEntidad )
+   METHOD getUuidOlderParent()                        INLINE ( msgalert( ::uuidOlderParent," olderparent" ), ::uuidOlderParent )*/
 
 END CLASS
 
@@ -321,32 +317,3 @@ METHOD setShowDeleted()
 RETURN ( ::reBuildRowSet() )
 
 //----------------------------------------------------------------------------//
-
-METHOD duplicateOthers( uuidEntidad )
-
-   local hOthers
-   local aOthers 
-
-   aOthers         := ::getModel():getHashOthersWhereParentUuid( ::getUuidOlderParent() )
-   
-   if empty( aOthers )
-      RETURN ( nil )
-   end if 
-
-   for each hOthers in aOthers
-
-      hset( hOthers, "id",          0 )
-
-      hset( hOthers, "uuid",        win_uuidcreatestring() )
-      
-      hset( hOthers, "parent_uuid", uuidEntidad )
-      
-      hset( hOthers, "deleted_at",  hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
-
-      ::getModel():insertBuffer( hOthers )
-
-   next 
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//

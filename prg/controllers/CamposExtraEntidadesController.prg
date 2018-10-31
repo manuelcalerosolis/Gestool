@@ -331,6 +331,8 @@ CLASS SQLCamposExtraEntidadesModel FROM SQLCompanyModel
 
    DATA cTableName                        INIT "campos_extra_entidad"
 
+   DATA cConstraints                      INIT "PRIMARY KEY ( parent_uuid, entidad, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getParentUuidAttribute( value )
@@ -362,6 +364,7 @@ METHOD getColumns() CLASS SQLCamposExtraEntidadesModel
 
    hset( ::hColumns, "entidad",           {  "create"    => "VARCHAR ( 40 )"                          ,;
                                              "default"   => {|| space( 40 ) } }                       )
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 
