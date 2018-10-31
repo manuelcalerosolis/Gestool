@@ -283,7 +283,7 @@ CLASS CombinacionesBrowseView FROM SQLBrowseView
 
    METHOD addColumns()   
 
-   METHOD onDblClick()                          VIRTUAL
+   METHOD onDblClick()                          INLINE ( ::getController():getSelectorView():oDialog:end( IDOK ) )
 
    METHOD disableEditColumnIncrementoPrecio()   INLINE ( ::oColumnIncrementoPrecio:nEditType := 0 )
                     

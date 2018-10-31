@@ -494,7 +494,7 @@ RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereGrupoSiste
 
 METHOD getWhereEmpresa() CLASS UnidadesMedicionGruposLineasRepository
 
-RETURN ( ::getDatabase():getValue( ::getSentenceWhereEmpresa() ) )
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereEmpresa() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -513,15 +513,15 @@ METHOD getCodigos( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepositor
    local aResult  := {}
 
    if !empty( cCodigoArticulo )
-      aResult  := ::getWhereCodigoArticulo( cCodigoArticulo )
+      aResult     := ::getWhereCodigoArticulo( cCodigoArticulo )
    end if      
 
    if empty( aResult )
-      aResult  := ::getWhereEmpresa()
+      aResult     := ::getWhereEmpresa()
    end if
 
    if empty( aResult )
-      aResult  := ::getWhereGrupoSistema()
+      aResult     := ::getWhereGrupoSistema()
    end if
 
 RETURN ( aResult )
@@ -530,38 +530,23 @@ RETURN ( aResult )
 
 METHOD getWhereGrupoSistemaDefault() CLASS UnidadesMedicionGruposLineasRepository
 
-   local cSelect  
-
-   cSelect        := ::getSentenceWhereGrupoSistema()       + " " + ;
-                        "AND lineas.sistema = 1"   
-
-RETURN ( ::getDatabase():getValue( cSelect ) )
+RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereGrupoSistema() + " AND lineas.sistema = 1" ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getWhereEmpresaDefault() CLASS UnidadesMedicionGruposLineasRepository
 
-   local cSelect  
-
-   cSelect        := ::getSentenceWhereEmpresa()            + " " + ;
-                        "AND lineas.sistema = 1"
-
-RETURN ( ::getDatabase():getValue( cSelect ) )
+RETURN ( ::getDatabase():getValue( ::getSentenceWhereEmpresa() + " AND lineas.sistema = 1" ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD getWhereCodigoArticuloDefault( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository 
 
-   local cSelect                 := ""
-
-   if Empty( cCodigoArticulo )
+   if empty( cCodigoArticulo )
       RETURN ( {} )
    end if
 
-   cSelect     := ::getSentenceWhereCodigoArticulo( cCodigoArticulo ) + " " + ;
-                     "AND lineas.sistema = 1"
-
-RETURN ( ::getDatabase():getValue( cSelect ) )
+RETURN ( ::getDatabase():getValue( ::getSentenceWhereCodigoArticulo( cCodigoArticulo ) + " AND lineas.sistema = 1" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -607,13 +592,13 @@ RETURN ( nFactory )
 
 METHOD getFactorWhereUnidadArticulo( cCodigoArticulo, cCodigoUnidad ) CLASS UnidadesMedicionGruposLineasRepository
 
-   local cSentence := ""
+   local cSentence 
 
    if Empty( cCodigoArticulo )
       RETURN ( {} )
    end if
 
-   cSentence         := ::getSentenceWhereCodigoArticulo( cCodigoArticulo,  "cantidad_base"  ) + " " + ;
+   cSentence      := ::getSentenceWhereCodigoArticulo( cCodigoArticulo, "cantidad_base" ) + " " + ;
                      "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )
 
 RETURN ( ::getDatabase():getValue( cSentence ) )
@@ -622,9 +607,9 @@ RETURN ( ::getDatabase():getValue( cSentence ) )
 
 METHOD getFactorWhereUnidadEmpresa( cCodigoUnidad ) CLASS UnidadesMedicionGruposLineasRepository
 
-   local cSentence := ""
+   local cSentence   
 
-   cSentence         := ::getSentenceWhereEmpresa( "cantidad_base" )            + " " + ;
+   cSentence      := ::getSentenceWhereEmpresa( "cantidad_base" )            + " " + ;
                         "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )
 
 RETURN ( ::getDatabase():getValue( cSentence ) )
@@ -633,9 +618,9 @@ RETURN ( ::getDatabase():getValue( cSentence ) )
 
 METHOD getFactorWhereUnidadGrupoSistema( cCodigoUnidad ) CLASS UnidadesMedicionGruposLineasRepository
 
-   local cSentence := ""
+   local cSentence 
 
-   cSentence         := ::getSentenceWhereGrupoSistema( "cantidad_base" )       + " " + ;
+   cSentence      := ::getSentenceWhereGrupoSistema( "cantidad_base" )       + " " + ;
                         "AND lineas.unidad_alternativa_codigo = " + quoted( cCodigoUnidad )   
 
 RETURN ( ::getDatabase():getValue( cSentence ) )

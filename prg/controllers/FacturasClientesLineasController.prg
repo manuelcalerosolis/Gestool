@@ -378,14 +378,18 @@ RETURN ( nil )
 
 METHOD postValidateCombinacionesUuid( oCol, uValue )
 
-   local hCombination         :=  {}
+   local hCombination         
 
    if hb_isnil( uValue )
       RETURN ( nil )
    end if
 
-   hCombination := SQLcombinacionesModel():getHashWhere( "uuid", uValue )
+   hCombination               := SQLcombinacionesModel():getHashWhere( "uuid", uValue )
 
+   if empty( hCombination )
+      RETURN ( nil )
+   end if 
+   
    ::stampCombinationAndIncrement( hCombination )
 
    ::oController:calculateTotals()
@@ -726,7 +730,11 @@ RETURN ( ::oController:oArticulosController:Edit( nId ) )
 
 METHOD loadUnidadesMedicion()
 
-   ::getBrowseView():oColumnUnidadMedicion:aEditListTxt := UnidadesMedicionGruposLineasRepository():getCodigos( ::getRowSet():fieldGet( 'articulo_codigo' ) )
+   local aUnidadesMedicion := UnidadesMedicionGruposLineasRepository():getCodigos( ::getRowSet():fieldGet( 'articulo_codigo' ) )
+
+   if !empty( aUnidadesMedicion )
+      ::getBrowseView():oColumnUnidadMedicion:aEditListTxt := aUnidadesMedicion
+   end if       
 
 RETURN ( .t. )
 

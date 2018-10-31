@@ -18,6 +18,8 @@ CLASS UnidadesMedicionOperacionesController FROM SQLNavigatorController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionOperacionesValidator():New( self  ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionOperacionesRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLUnidadesMedicionOperacionesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -39,15 +41,15 @@ METHOD New( oController ) CLASS UnidadesMedicionOperacionesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLUnidadesMedicionOperacionesModel():New( self )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS UnidadesMedicionOperacionesController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -65,9 +67,7 @@ METHOD End() CLASS UnidadesMedicionOperacionesController
       ::oRepository:End()
    end if
 
-   ::Super:End()
-
-RETURN ( Self )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -148,7 +148,7 @@ CLASS UnidadesMedicionOperacionesView FROM SQLBaseView
 
    METHOD Activate()
 
-   METHOD Activating()     INLINE ( ::hUnidades := ::oController:oModel:getUnidadesWhereGrupo( ::oController:oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) ) ) 
+   METHOD Activating()     INLINE ( ::hUnidades := ::oController:getModel():getUnidadesWhereGrupo( ::oController:oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) ) ) 
 
 END CLASS
 
@@ -172,7 +172,7 @@ METHOD Activate() CLASS UnidadesMedicionOperacionesView
       OF          ::oDialog ;
    
    REDEFINE COMBOBOX ::oUnidades ;
-      VAR         ::oController:oModel:hBuffer[ "uuid_unidad" ] ;
+      VAR         ::oController:getModel():hBuffer[ "uuid_unidad" ] ;
       ID          100 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "uuid_unidad" ) ) ;
@@ -180,7 +180,7 @@ METHOD Activate() CLASS UnidadesMedicionOperacionesView
       OF          ::oDialog ;
 
    REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:oModel:hBuffer[ "operacion" ] ;
+      VAR         ::oController:getModel():hBuffer[ "operacion" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "operacion" ) ) ;
