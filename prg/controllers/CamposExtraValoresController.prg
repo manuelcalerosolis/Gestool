@@ -41,6 +41,8 @@ CLASS CamposExtraValoresController FROM SQLBrowseController
 
    METHOD gettingSelectSentence()
 
+   METHOD deleteBuffer( aUuidEntidades )
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getModel()                   INLINE ( if( empty( ::oModel ), ::oModel := SQLCamposExtraValoresModel():New( self ), ), ::oModel )
@@ -166,7 +168,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD gettingSelectSentence()
+METHOD gettingSelectSentence() CLASS CamposExtraValoresController
 
    if !empty( ::uuidEntidad  )
       ::oModel:setGeneralWhere( "entidad_uuid = " + quoted( ::uuidEntidad ) )
@@ -175,6 +177,16 @@ METHOD gettingSelectSentence()
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD deleteBuffer( aUuidEntidades ) CLASS CamposExtraValoresController
+
+   if empty( aUuidEntidades )
+      RETURN ( nil )
+   end if
+
+   ::getModel():deleteWhereParentUuid( aUuidEntidades )
+
+RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -482,6 +494,8 @@ CLASS SQLCamposExtraValoresModel FROM SQLCompanyModel
 
    METHOD getSentenceOthersWhereParentUuid ( uuidParent ) 
 
+   METHOD SQLUpdateDeletedAtSentenceWhereParentUuid( uUuid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -612,7 +626,6 @@ METHOD duplicateOthers( uuidEntidad )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 METHOD getSentenceOthersWhereParentUuid ( uuidParent ) CLASS SQLCamposExtraValoresModel
 
@@ -634,3 +647,18 @@ RETURN ( cSql )
 
 //----------------------------------------------------------------------------//
 
+METHOD SQLUpdateDeletedAtSentenceWhereParentUuid( uUuid ) CLASS SQLCamposExtraValoresModel
+
+   local cSentence
+
+      cSentence   := "UPDATE " + ::getTableName() + " " + ;
+                        "SET deleted_at = NOW() " + ; 
+                        "WHERE entidad_uuid IN ( "
+   
+      aeval( uUuid, {| v | cSentence += if( hb_isarray( v ), toSQLString( atail( v ) ), toSQLString( v ) ) + ", " } )
+
+      cSentence         := chgAtEnd( cSentence, ' )', 2 )
+
+RETURN ( cSentence )
+
+//---------------------------------------------------------------------------//

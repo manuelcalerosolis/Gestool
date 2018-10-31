@@ -175,6 +175,8 @@ METHOD deletedOthersSelection() CLASS TercerosController
    ::getDocumentosController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 
    ::getClientesEntidadesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+   
+   ::getCamposExtraValoresController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 
 RETURN ( nil )
 
