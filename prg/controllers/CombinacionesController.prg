@@ -587,6 +587,8 @@ RETURN ( ::getController():getRowSet():fieldGet( 'uuid' ) )
 
 METHOD startActivate() CLASS CombinacionesSelectorView
 
+   ::getController():getBrowseView():disableEditColumnIncrementoPrecio()
+
    ::oButtonDelete:Hide()
    
    ::oButtonGenerate:Hide()
