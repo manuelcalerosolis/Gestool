@@ -127,7 +127,7 @@ RETURN ( nil )
 METHOD Activate( nId, oDialog )
 
    if empty( ::getBrowseView() )
-      RETURN ( Self )
+      RETURN ( nil )
    end if 
 
    ::buildRowSetSentence()
@@ -138,7 +138,7 @@ METHOD Activate( nId, oDialog )
 
    ::fireEvent( 'activated' )     
 
-RETURN ( Self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 

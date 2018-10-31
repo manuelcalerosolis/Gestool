@@ -51,7 +51,7 @@ CLASS SQLBaseController
    // Modelo -----------------------------------------------------------------
 
    METHOD getModel()                                  VIRTUAL
-   
+
    METHOD getModelColumnKey()                         INLINE ( iif( !empty( ::getModel() ), ::getModel():cColumnKey, ) )
    METHOD getModelTableName()                         INLINE ( iif( !empty( ::getModel() ), ::getModel():getTableName(), ) )
    METHOD getModelColumns()                           INLINE ( iif( !empty( ::getModel() ) .and. !empty( ::getModel():hColumns ), ( ::getModel():hColumns ), ) )
@@ -666,7 +666,7 @@ RETURN ( .f. )
 
 //----------------------------------------------------------------------------//
 
-METHOD DialogViewDestroy( oDialogView )
+METHOD DialogViewDestroy()
 
    ::oDialogView        := nil
 

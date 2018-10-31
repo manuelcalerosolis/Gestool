@@ -1413,8 +1413,6 @@ METHOD insertBuffer( hBuffer )
 
    cSQLInsert        := ::getInsertSentence( hBuffer )
 
-   msgalert( cSQLInsert, "cSQLInsert" )
-
    if empty( cSQLInsert )
       RETURN ( nil )
    end if 

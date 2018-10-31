@@ -11,7 +11,7 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    DATA oSelectorView
 
-   DATA aHaving                  INIT {}
+   DATA aHaving                           INIT {}
 
    METHOD New() CONSTRUCTOR
 
@@ -40,10 +40,8 @@ CLASS CombinacionesController FROM SQLBrowseController
 
    METHOD updateHavingSentence()
 
-   METHOD setCodigoArticulo( cCodigoArticulo ) ;
-                                          INLINE ( ::cCodigoArticulo := cCodigoArticulo )
-
-   METHOD getCodigoArticulo()             INLINE ( ::cCodigoArticulo )
+   METHOD setCodigoArticulo( cCodigoArticulo )  INLINE ( ::cCodigoArticulo := cCodigoArticulo )
+   METHOD getCodigoArticulo()                   INLINE ( ::cCodigoArticulo )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -52,8 +50,6 @@ CLASS CombinacionesController FROM SQLBrowseController
    METHOD getDialogView()                 INLINE ( iif( empty( ::oDialogView ), ::oDialogView := CombinacionesView():New( self ), ), ::oDialogView )
 
    METHOD getSelectorView()               INLINE ( iif( empty( ::oSelectorView ), ::oSelectorView := CombinacionesSelectorView():New( self ), ), ::oSelectorView )
-
-   METHOD getValidator()                  INLINE ( iif( empty( ::oValidator ), ::oValidator := CombinacionesValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( iif( empty( ::oRepository ), ::oRepository := CombinacionesRepository():New( self ), ), ::oRepository )
 
@@ -170,13 +166,9 @@ RETURN ( aeval( aCombinations, {|aCombination| ::insertCombination( aCombination
 
 METHOD insertCombination( aCombination ) CLASS CombinacionesController
 
-   msgalert("insertCombination")
-
    if ::isCombinationInRowSet( ::getCombinationName( aCombination ) )
       RETURN ( nil )
    end if 
-
-   msgalert("insertBlankBuffer")
 
    if ::getModel():insertBlankBuffer() != 0
       ::getCombinacionesPropiedadesController():insertProperties( aCombination, ::getModel():getBuffer( "uuid" ) )
@@ -276,7 +268,6 @@ METHOD updateHavingSentence() CLASS CombinacionesController
    end if 
 
    ::getModel():setGeneralHaving( cGeneralHaving )
-   
 
 RETURN ( nil )
 
@@ -288,8 +279,14 @@ RETURN ( nil )
 
 CLASS CombinacionesBrowseView FROM SQLBrowseView
 
-   METHOD addColumns()                       
+   DATA oColumnIncrementoPrecio
 
+   METHOD addColumns()   
+
+   METHOD onDblClick()                          VIRTUAL
+
+   METHOD disableEditColumnIncrementoPrecio()   INLINE ( ::oColumnIncrementoPrecio:nEditType := 0 )
+                    
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -297,7 +294,7 @@ ENDCLASS
 METHOD addColumns() CLASS CombinacionesBrowseView
 
    with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
+      :cSortOrder          := 'combinaciones.id'
       :cHeader             := 'Id'
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
@@ -306,6 +303,7 @@ METHOD addColumns() CLASS CombinacionesBrowseView
    end with
 
    with object ( ::oBrowse:AddCol() )
+      :cSortOrder          := 'combinaciones.uuid'
       :cHeader             := 'Uuid'
       :nWidth              := 200
       :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
@@ -321,13 +319,12 @@ METHOD addColumns() CLASS CombinacionesBrowseView
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
-   with object ( ::oBrowse:AddCol() )
+   with object ( ::oColumnIncrementoPrecio := ::oBrowse:AddCol() )
       :cSortOrder          := 'combinaciones.incremento_precio'
       :cHeader             := 'Incremento de precio'
       :nWidth              := 150
       :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-
       :nEditType           := 1
       :bEditValue          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
       :bEditBlock          := {|| ::getRowSet():fieldGet( 'incremento_precio' ) }
@@ -377,7 +374,7 @@ END CLASS
 METHOD Activate() CLASS CombinacionesView
 
    DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "CONTAINER_COMBINACIONES" ;
+      RESOURCE    "CONTAINER_COMBINACIONES_GEN" ;
       TITLE       "Combinaciones de propiedades"
 
    REDEFINE BITMAP ::oBitmap ;
@@ -400,7 +397,7 @@ METHOD Activate() CLASS CombinacionesView
       ID          130 ;
       OF          ::oDialog ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( msgalert( ::oController:className(), "className" ), ::oController:Delete( ::oController:getBrowse():aSelected ) )
+      ACTION      ( ::oController:Delete( ::getController():getBrowseView():getBrowse():aSelected ) )
 
    REDEFINE BUTTON ::oButtonGenerate ;
       ID          120 ;
@@ -408,17 +405,9 @@ METHOD Activate() CLASS CombinacionesView
       WHEN        ( ::oController:isNotZoomMode() ) ;
       ACTION      ( ::generateCombinations() )
 
-   REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDialog ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      ACTION      ( if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ),  ) )
+   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDialog ;
-      CANCEL ;
-      ACTION      ( ::oDialog:end() )
+   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
    ::oDialog:bStart  := {|| ::startActivate() }
 
@@ -545,7 +534,7 @@ RETURN ( aPanelCombination )
 
 CLASS CombinacionesSelectorView FROM CombinacionesView 
 
-   METHOD redefineBrowse()          INLINE ( ::oController:getBrowseView():ActivateDialog( ::oDialog, 100 ) )         
+   METHOD redefineBrowse()          INLINE ( ::getController():getBrowseView():ActivateDialog( ::oDialog, 100 ) )         
 
    METHOD showCombinations( oPanel ) 
 
@@ -592,7 +581,7 @@ METHOD Activate() CLASS CombinacionesSelectorView
       RETURN ( nil )
    end if 
 
-RETURN ( ::getController():getRowSet():fieldGet( 'combinaciones_uuid' ) )
+RETURN ( ::getController():getRowSet():fieldGet( 'uuid' ) )
 
 //---------------------------------------------------------------------------//
 
@@ -608,17 +597,17 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD changeCheckBox( uValue, oCheckBox ) CLASS CombinacionesSelectorView
+METHOD changeCheckBox( lCheckBox, oCheckBox ) CLASS CombinacionesSelectorView
 
    local hCargo      := oCheckBox:Cargo
 
-   if uValue
+   if lCheckBox
       ::getController():insertHaving( hCargo )
    else 
       ::getController():deleteHaving( hCargo )
    end if 
 
-   ::getController():getRowSet():buildPad( ::oController:getModel():getSelectWhereCodigoArticuloHaving( ::getController():getCodigoArticulo(), ::getController:aHaving ) )
+   ::getController():getRowSet():buildPad( ::getController():getModel():getSelectWhereCodigoArticuloHaving( ::getController():getCodigoArticulo(), ::getController():aHaving ) )
 
    ::getController():getBrowseView():Refresh()
 
@@ -629,30 +618,11 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS CombinacionesValidator FROM SQLBaseValidator
-
-   METHOD getValidators()
- 
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD getValidators() CLASS CombinacionesValidator
-
-RETURN ( ::hValidators )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
 CLASS SQLCombinacionesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "combinaciones"
 
-   DATA cGroupBy                 INIT " uuid"
+   DATA cGroupBy                 INIT "uuid"
 
    METHOD getColumns()
 
@@ -703,9 +673,9 @@ METHOD getSelectWhereCodigoArticuloHaving( cCodigoArticulo, aHaving ) CLASS SQLC
 
    local cSql        
 
-   cSql              := SQLCombinacionesPropiedadesModel():getPropertyWhereArticuloCodigo( cCodigoArticulo )
+   cSql  := SQLCombinacionesPropiedadesModel():getPropertyWhereArticuloCodigo( cCodigoArticulo )
 
-   cSql              += ::getHaving( aHaving )
+   cSql  += ::getHaving( aHaving )
 
 RETURN ( cSql )
 
