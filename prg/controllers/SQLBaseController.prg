@@ -431,6 +431,10 @@ METHOD Duplicate( nId )
       RETURN ( .f. )
    end if 
 
+   if !empty( ::getRowSet():fieldGet( "deleted_at" ) )
+      RETURN ( .f. ) 
+   end if
+
    if ::notUserDuplicate()
       msgStop( "Acceso no permitido." )
       RETURN ( .f. )

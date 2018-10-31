@@ -196,22 +196,7 @@ RETURN ( ::oBrowse )
 
 METHOD addColumns() CLASS ImagenesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'uuid'
-      :cHeader             := 'Uuid'
-      :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'parent_uuid'
@@ -239,6 +224,8 @@ METHOD addColumns() CLASS ImagenesBrowseView
       :nDataBmpAlign       := AL_CENTER
       :nWidth              := 100
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -340,6 +327,8 @@ CLASS SQLImagenesModel FROM SQLCompanyModel
 
    DATA cTableName                                 INIT "imagenes"
 
+   DATA cConstraints                               INIT "PRIMARY KEY ( parent_uuid, imagen, deleted_at )"
+
    METHOD getColumns()
 
    METHOD loadPrincipalBlankBuffer()               INLINE ( ::loadBlankBuffer(), hset( ::hBuffer, "principal", .t. ) )
@@ -372,6 +361,8 @@ METHOD getColumns() CLASS SQLImagenesModel
 
    hset( ::hColumns, "principal",         {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| .f. } }                               )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

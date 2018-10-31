@@ -1420,7 +1420,7 @@ METHOD insertBuffer( hBuffer )
    DEFAULT hBuffer   := ::hBuffer
 
    cSQLInsert        := ::getInsertSentence( hBuffer )
-
+   
    if empty( cSQLInsert )
       RETURN ( nil )
    end if 
@@ -1914,10 +1914,12 @@ METHOD duplicateOthers( uuidEntidad )
    local aOthers 
 
    aOthers         := ::getHashOthersWhereParentUuid( ::getUuidOlderParent() )
-   
+
    if empty( aOthers )
       RETURN ( nil )
    end if 
+
+   msgalert( hb_valtoexp( aOthers ), "aOthers" )
 
    for each hOthers in aOthers
 

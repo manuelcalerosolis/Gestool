@@ -43,6 +43,11 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD validColumnUnidadesMedicionGruposBrowse( oCol, uValue, nKey ) ;
          INLINE ( ::validColumnBrowse( oCol, uValue, nKey, ::getUnidadesMedicionGruposController():oModel, "unidades_medicion_grupos_codigo" ) )
 
+   METHOD setUuidOldersParents()
+   
+   METHOD getDuplicateOthers()
+   
+   METHOD deletedOthersSelection()
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosBrowseView():New( self ), ), ::oBrowseView ) 
@@ -79,6 +84,11 @@ METHOD New( oController ) CLASS ArticulosController
 
    ::getModel():setEvents( { 'loadedBlankBuffer', 'loadedCurrentBuffer' }, {|| ::insertPreciosWhereArticulo() } )
 
+   ::getModel():setEvent( 'loadedDuplicateCurrentBuffer',   {|| ::setUuidOldersParents() } )
+   ::getModel():setEvent( 'loadedDuplicateBuffer',          {|| ::getDuplicateOthers() } )
+   
+   ::getModel():setEvent( 'deletedSelection',               {|| ::deletedOthersSelection()  } )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -108,6 +118,38 @@ METHOD End() CLASS ArticulosController
    ::Super:End()
 
 RETURN ( hb_gcall( .t. ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD setUuidOldersParents() CLASS ArticulosController
+
+   ::getCombinacionesController():getModel():setUuidOlderParent( ::getUuid() )
+
+   //Codificacion de proveedores
+
+   ::getImagenesController():getModel():setUuidOlderParent( ::getUuid() )
+
+   ::getTraduccionesController():getModel():setUuidOlderParent( ::getUuid() )
+   
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDuplicateOthers() CLASS ArticulosController
+   
+   ::getImagenesController():getModel():duplicateOthers( ::getUuid() )
+   
+   ::getTraduccionesController():getModel():duplicateOthers( ::getUuid() )
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD deletedOthersSelection() CLASS ArticulosController
+
+   ::getImagenesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
