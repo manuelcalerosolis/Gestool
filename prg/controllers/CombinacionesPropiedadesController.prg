@@ -212,7 +212,7 @@ METHOD getColumns() CLASS SQLCombinacionesPropiedadesModel
    hset( ::hColumns, "id",                   {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
                                                 "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"                ,;                                  
+   hset( ::hColumns, "uuid",                 {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
                                                 "default"   => {|| win_uuidcreatestring() } }               )
 
    hset( ::hColumns, "parent_uuid",          {  "create"    => "VARCHAR( 40 )"                              ,;
@@ -232,10 +232,10 @@ METHOD getPropertyWhereArticuloCodigo( cCodigoArticulo ) CLASS SQLCombinacionesP
    TEXT INTO cSql
 
    SELECT  
-      combinaciones.id AS combinaciones_id,
-      combinaciones.uuid AS combinaciones_uuid,
-      combinaciones.parent_uuid AS combinaciones_parent_uuid,
-      combinaciones.incremento_precio AS combinaciones_incremento_precio,
+      combinaciones.id AS id,
+      combinaciones.uuid AS uuid,
+      combinaciones.parent_uuid AS parent_uuid,
+      combinaciones.incremento_precio AS incremento_precio,
       GROUP_CONCAT( CONCAT( " ", articulos_propiedades_lineas.nombre, " " ) ORDER BY combinaciones_propiedades.id ) AS articulos_propiedades_nombre
 
    FROM %1$s as combinaciones_propiedades
