@@ -57,6 +57,8 @@ CLASS SQLBaseModel
 
    DATA aRecordsToDelete
 
+   DATA uuidOlderParent
+
    METHOD New() CONSTRUCTOR
    METHOD End()
 
@@ -300,13 +302,19 @@ CLASS SQLBaseModel
 
    METHOD Count( oController )
 
-   //duplicate-----------------------------------------------------------------
+   // Duplicates----------------------------------------------------------------
 
    METHOD getSentenceOthersWhereParentUuid( uuidParent ) 
                                              
 
    METHOD getHashOthersWhereParentUuid( uuidParent ) ;
                                              INLINE ( ::getDatabase():selectFetchHash( ::getSentenceOthersWhereParentUuid( uuidParent ) ) )
+
+   METHOD duplicateOthers( uuidEntidad )
+
+   METHOD setUuidOlderParent( uuidParent )            INLINE ( ::uuidOlderParent := uuidParent )
+
+   METHOD getUuidOlderParent()                        INLINE ( ::uuidOlderParent )
 
 END CLASS
 
@@ -1899,3 +1907,32 @@ METHOD getSentenceOthersWhereParentUuid ( uuidParent )
 RETURN ( cSql )
 
 //----------------------------------------------------------------------------//
+
+METHOD duplicateOthers( uuidEntidad )
+
+   local hOthers
+   local aOthers 
+
+   aOthers         := ::getHashOthersWhereParentUuid( ::getUuidOlderParent() )
+   
+   if empty( aOthers )
+      RETURN ( nil )
+   end if 
+
+   for each hOthers in aOthers
+
+      hset( hOthers, "id",          0 )
+
+      hset( hOthers, "uuid",        win_uuidcreatestring() )
+      
+      hset( hOthers, "parent_uuid", uuidEntidad )
+      
+      hset( hOthers, "deleted_at",  hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
+
+      ::insertBuffer( hOthers )
+
+   next 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
