@@ -41,6 +41,7 @@ METHOD New( oController ) CLASS CombinacionesPropiedadesController
 
    ::nLevel                         := Auth():Level( ::cName )
 
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -70,6 +71,8 @@ RETURN ( ::Super:End() )
 METHOD insertProperties( aCombination, uuidParent ) CLASS CombinacionesPropiedadesController
 
    local hCombination
+
+   msgalert( hb_valtoexp( aCombination), "aCombination")
 
    for each hCombination in aCombination
 
@@ -203,6 +206,8 @@ CLASS SQLCombinacionesPropiedadesModel FROM SQLCompanyModel
 
    METHOD getPropertyWhereArticuloHaving( cCodigoArticulo, cHaving )
 
+   METHOD getUuidOlderParent()                        INLINE ( ::olderUuid )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -219,7 +224,9 @@ METHOD getColumns() CLASS SQLCombinacionesPropiedadesModel
                                                 "default"   => {|| space( 40 ) } }                          )
 
    hset( ::hColumns, "propiedad_uuid",       {  "create"    => "VARCHAR( 40 )"                              ,;
-                                                "default"   => { || space ( 40 )  } }                       ) 
+                                                "default"   => { || space ( 40 )  } }                       )
+
+   ::getDeletedStampColumn() 
 
 RETURN ( ::hColumns )
 
@@ -278,6 +285,7 @@ RETURN ( cSql )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS CombinacionesPropiedadesRepository FROM SQLBaseRepository
 
@@ -285,6 +293,8 @@ CLASS CombinacionesPropiedadesRepository FROM SQLBaseRepository
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

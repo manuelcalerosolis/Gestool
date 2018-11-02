@@ -73,9 +73,7 @@ CLASS SQLBaseController
                                                                      hget( ::getModel():hBuffer, "id" ),;
                                                                      nil ) )
                   
-   METHOD getUuid()                                   INLINE ( iif(  !empty( ::getModel() ) .and. !empty( ::getModel():hBuffer ),;
-                                                                     hget( ::getModel():hBuffer, "uuid" ),;
-                                                                     nil ) )
+   METHOD getUuid()                                   INLINE ( iif(  !empty( ::getModel() ), ::getModel():getUuid() ), nil ) )
    
    // Rowset-------------------------------------------------------------------
 

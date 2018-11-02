@@ -136,10 +136,14 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD getDuplicateOthers() CLASS ArticulosController
+
+   ::getCombinacionesController():getModel():duplicateOthers( ::getUuid() )
+
+   //Codificacion de proveedores
    
-   ::getImagenesController():getModel():duplicateOthers( ::getUuid() )
+   //::getImagenesController():getModel():duplicateOthers( ::getUuid() )
    
-   ::getTraduccionesController():getModel():duplicateOthers( ::getUuid() )
+   //::getTraduccionesController():getModel():duplicateOthers( ::getUuid() )
 
 RETURN ( nil )
 

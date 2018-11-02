@@ -180,7 +180,7 @@ METHOD addColumns() CLASS TraduccionesBrowseView
       :cSortOrder          := 'codigo'
       :cHeader             := 'Lenguaje'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'lenguaje_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -191,6 +191,8 @@ METHOD addColumns() CLASS TraduccionesBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'texto' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -227,7 +229,7 @@ METHOD Activate() CLASS TraduccionesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   ::oController:getLenguajesController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "lenguaje_uuid" ] ) )
+   ::oController:getLenguajesController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "lenguaje_codigo" ] ) )
    ::oController:getLenguajesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
 
    REDEFINE GET   ::oController:getModel():hBuffer[ "texto" ] ;
@@ -307,10 +309,6 @@ CLASS SQLTraduccionesModel FROM SQLCompanyModel
 
    METHOD getInitialSelect()
 
-   METHOD getLenguajeUuidAttribute( uuid )         INLINE ( if( empty( uuid ), space( 3 ), SQLLenguajesModel():getCodigoWhereUuid( uuid ) ) )
-
-   METHOD setLenguajeUuidAttribute( codigo )       INLINE ( if( empty( codigo ), "", SQLLenguajesModel():getUuidWhereCodigo( codigo ) ) )
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -321,23 +319,23 @@ METHOD getInitialSelect() CLASS SQLTraduccionesModel
 
    TEXT INTO cSql
 
-   SELECT traducciones.id,
-      traducciones.uuid, 
-      traducciones.parent_uuid, 
-      lenguajes.codigo, 
-      lenguajes.nombre, 
-      traducciones.texto, 
-      LEFT( traducciones.texto_extendido, 256 ) 
+   SELECT traducciones.id as id,
+      traducciones.uuid AS uuid, 
+      traducciones.parent_uuid AS parent_uuid, 
+      traducciones.lenguaje_codigo AS lenguaje_codigo, 
+      lenguajes.nombre AS lenguaje_nombre, 
+      traducciones.texto AS texto, 
+      LEFT( traducciones.texto_extendido, 256 ) AS texto_extendido,
+      traducciones.deleted_at AS deleted_as 
    
    FROM %1$s AS traducciones 
    
-      INNER JOIN %2$s AS lenguajes 
-         ON lenguajes.uuid = traducciones.lenguaje_uuid
+      LEFT JOIN %2$s AS lenguajes 
+         ON lenguajes.codigo = traducciones.lenguaje_codigo AND lenguajes.deleted_at = 0
 
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLLenguajesModel():getTableName() )
-
 
 RETURN ( cSql )
 
@@ -354,8 +352,8 @@ METHOD getColumns() CLASS SQLTraduccionesModel
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "lenguaje_uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                             "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "lenguaje_codigo",   {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
+                                             "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "texto",             {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )

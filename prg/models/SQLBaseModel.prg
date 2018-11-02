@@ -59,6 +59,8 @@ CLASS SQLBaseModel
 
    DATA uuidOlderParent
 
+   DATA olderUuid
+
    METHOD New() CONSTRUCTOR
    METHOD End()
 
@@ -101,6 +103,8 @@ CLASS SQLBaseModel
    METHOD getHeaderFromColumn( cColumn )              INLINE ( ::getValueFromColumn( cColumn, "header" ) )
    METHOD getHeaderFromColumnOrder()                  INLINE ( ::getValueFromColumn( ::cColumnOrder, "header" ) )
    METHOD getLenFromColumn( cColumn )                 INLINE ( ::getValueFromColumn( cColumn, "len" ) )
+
+   METHOD getUuid()                                   INLINE ( iif( !empty( ::hBuffer ), hget( ::hBuffer, "uuid" ), nil ) )
 
    // Sentences----------------------------------------------------------------
 
@@ -1420,7 +1424,8 @@ METHOD insertBuffer( hBuffer )
    DEFAULT hBuffer   := ::hBuffer
 
    cSQLInsert        := ::getInsertSentence( hBuffer )
-   
+logwrite("-------------------------")
+logwrite(cSQLInsert)
    if empty( cSQLInsert )
       RETURN ( nil )
    end if 
@@ -1913,15 +1918,21 @@ METHOD duplicateOthers( uuidEntidad )
    local hOthers
    local aOthers 
 
+   msgalert( "inicio de duplicateOthers")
+
+   msgalert( ::getUuidOlderParent(), "getUuidOlderParent" )
+
    aOthers         := ::getHashOthersWhereParentUuid( ::getUuidOlderParent() )
 
    if empty( aOthers )
       RETURN ( nil )
    end if 
 
-   msgalert( hb_valtoexp( aOthers ), "aOthers" )
+   msgalert( hb_valtoexp( aOthers ), "aOthers")
 
    for each hOthers in aOthers
+
+      ::fireEvent( 'beforeDuplicated' )
 
       hset( hOthers, "id",          0 )
 
@@ -1931,9 +1942,13 @@ METHOD duplicateOthers( uuidEntidad )
       
       hset( hOthers, "deleted_at",  hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
 
+      msgalert( hb_valtoexp( hOthers ), "para insert")
+
       ::insertBuffer( hOthers )
 
-   next 
+      ::fireEvent( 'afterDuplicated', ::getModel():getUuid() ) 
+
+   next
 
 RETURN ( nil )
 

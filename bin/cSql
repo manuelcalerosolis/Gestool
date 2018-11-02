@@ -1,0 +1,32 @@
+09:50:02- 35402.3020>
+   SELECT traducciones.id as id,
+      traducciones.uuid AS uuid, 
+      traducciones.parent_uuid AS parent_uuid, 
+      traducciones.lenguaje_codigo AS lenguaje_codigo, 
+      lenguajes.nombre AS lenguaje_nombre, 
+      traducciones.texto AS texto, 
+      LEFT( traducciones.texto_extendido, 256 ) AS texto_extendido,
+      traducciones.deleted_at AS deleted_as 
+   
+   FROM gestool_00VG.traducciones AS traducciones 
+   
+      LEFT JOIN gestool_00VG.lenguajes AS lenguajes 
+         ON lenguajes.codigo = traducciones.lenguaje_codigo
+
+
+09:50:20- 35420.5010>
+   SELECT traducciones.id as id,
+      traducciones.uuid AS uuid, 
+      traducciones.parent_uuid AS parent_uuid, 
+      traducciones.lenguaje_codigo AS lenguaje_codigo, 
+      lenguajes.nombre AS lenguaje_nombre, 
+      traducciones.texto AS texto, 
+      LEFT( traducciones.texto_extendido, 256 ) AS texto_extendido,
+      traducciones.deleted_at AS deleted_as 
+   
+   FROM gestool_00VG.traducciones AS traducciones 
+   
+      LEFT JOIN gestool_00VG.lenguajes AS lenguajes 
+         ON lenguajes.codigo = traducciones.lenguaje_codigo
+
+
