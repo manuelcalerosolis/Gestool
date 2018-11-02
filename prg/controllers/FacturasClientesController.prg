@@ -299,8 +299,6 @@ METHOD clientSetAgente() CLASS FacturasClientesController
 
    local cCodigoAgente
 
-   cCodigoAgente     := space( 20 )
-
    if empty( ::getClientesController():getSelector():uFields )
       RETURN ( nil )
    end if 

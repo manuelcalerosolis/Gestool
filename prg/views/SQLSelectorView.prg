@@ -18,7 +18,7 @@ CLASS SQLSelectorView FROM SQLBrowseableView
 
    DATA lMultiselect                            INIT ( .f. )
 
-   METHOD New( oController )
+   METHOD New( oController ) CONSTRUCTOR
    METHOD End()
 
    METHOD Activate( bInitActivate )
@@ -59,14 +59,8 @@ METHOD End()
    if !empty( ::oDialog )
       ::oDialog:End()
    end if 
-   
-   ::Super:End()
 
-   ::oDialog               := nil
-
-   self                    := nil
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //----------------------------------------------------------------------------//
 
@@ -145,12 +139,12 @@ RETURN ( nil )
 
 METHOD MultiSelect()
 
-   local aIds
    local nId
+   local aIds
    
-   ::aSelectedBuffer       := {}
+   ::aSelectedBuffer    := {}
 
-   aIds        := ::getBrowseView():getRowSet():IdFromRecno( ::getBrowseView():oBrowse:aSelected )
+   aIds                 := ::getBrowseView():getRowSet():IdFromRecno( ::getBrowseView():oBrowse:aSelected )
 
    for each nId in aIds
       aAdd( ::aSelectedBuffer, ::getModel():loadCurrentBuffer( nId ) )
@@ -168,7 +162,7 @@ METHOD Start()
 
    ::oMenuTreeView:Default()
 
-   ::oMenuTreeView:AddSelectorButtons()
+   ::oMenuTreeView:addSelectorButtons()
 
    ::oController:restoreState()
 

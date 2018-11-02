@@ -92,7 +92,8 @@ METHOD Activate()
    end if
 
    DEFINE DIALOG     ::oDialog ;
-      RESOURCE       "SELECTOR_DIALOG_SQL"  
+      RESOURCE       "SELECTOR_DIALOG_SQL" ;
+      TITLE          ::oController:getTitle()
 
    REDEFINE BITMAP   ::oBitmap ;
       ID             900 ;

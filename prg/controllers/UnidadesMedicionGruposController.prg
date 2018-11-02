@@ -167,8 +167,6 @@ CLASS UnidadesMedicionGruposView FROM SQLBaseView
 
    METHOD Activate()
 
-   METHOD StartActivate() 
-
    METHOD validatedUnidadesMedicioncontroller()
 
 END CLASS
@@ -176,11 +174,6 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS UnidadesMedicionGruposView
-
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
-   local oSayCamposExtra
 
    DEFINE DIALOG  ::oDialog ;
       RESOURCE    "GRUPO_UNIDAD_MEDICION" ;
@@ -211,30 +204,25 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       OF          ::oDialog ;
 
    ::oController:getUnidadesMedicioncontroller():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) )
-   
    ::oController:getUnidadesMedicioncontroller():getSelector():setEvent( 'validated', {|| ::validatedUnidadesMedicioncontroller() } )
-
    ::oController:getUnidadesMedicioncontroller():getSelector():setWhen( {|| Empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .AND. ::oController:isNotZoomMode() } )
-
    ::oController:getUnidadesMedicioncontroller():getSelector():Build( { "idGet" => 120, "idText" => 121,"idLink" => 122, "oDialog" => ::oDialog } )
 
    // Unidades equivalencia--------------------------------------------------------------------
 
-   REDEFINE BUTTON oBtnAppend ;
+   REDEFINE BUTTON  ;
       ID          130 ;
       OF          ::oDialog ;
       ACTION      ( ::oController:getUnidadesMedicionGruposLineasController():Append() ) ;
       WHEN        ( !empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
 
-   REDEFINE BUTTON oBtnEdit ;
+   REDEFINE BUTTON ;
       ID          140 ;
       OF          ::oDialog ;
       ACTION      ( ::oController:getUnidadesMedicionGruposLineasController():Edit() ) ;
       WHEN        ( !empty( ::oController:getModel():hBuffer[ "unidad_base_codigo" ] ) .and. ::oController:isNotZoomMode() ) ;
 
-   // oBtnEdit:bAction   := {||  }
-
-   REDEFINE BUTTON oBtnDelete ;
+   REDEFINE BUTTON  ;
       ID          150 ;
       OF          ::oDialog ;
       ACTION      ( ::oController:getUnidadesMedicionGruposLineasController():Delete() ) ;
@@ -260,27 +248,13 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
 
    ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   
    if ::oController:isNotZoomMode() 
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
-
-   ::oDialog:bStart  := {|| ::StartActivate() }
    
    ACTIVATE DIALOG ::oDialog CENTER
 
-  ::oBitmap:end()
-
 RETURN ( ::oDialog:nResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD StartActivate() CLASS UnidadesMedicionGruposView
-
-   ::oController:getUnidadesMedicioncontroller():getSelector():Start()
-
-RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -332,6 +306,10 @@ CLASS SQLUnidadesMedicionGruposModel FROM SQLCompanyModel
 
    METHOD getUnidadesMedicionModel()      INLINE ( SQLUnidadesMedicionModel():getTableName() )
 
+   METHOD countUnidadesWhereUnidadAndGrupo( cCodigoUnidad, cCodigoGrupo )
+   
+   METHOD getSentenceUnidadesWhereUnidadAndGrupo( cCodigoUnidad, cCodigoGrupo )
+
    METHOD getInsertUnidadesMedicionGruposSentence()
 
 END CLASS
@@ -369,23 +347,58 @@ METHOD getInitialSelect() CLASS SQLUnidadesMedicionGruposModel
    TEXT INTO cSql
 
       SELECT grupos.id,
-             grupos.uuid,
-             grupos.codigo,
-             grupos.nombre,
-             grupos.unidad_base_codigo,
-             grupos.sistema,
-             unidad.nombre AS unidad_base_nombre
+         grupos.uuid,
+         grupos.codigo,
+         grupos.nombre,
+         grupos.unidad_base_codigo,
+         grupos.sistema,
+         unidad.nombre AS unidad_base_nombre
 
       FROM %1$s AS grupos
 
       INNER JOIN %2$s AS unidad 
-            ON grupos.unidad_base_codigo = unidad.codigo 
+         ON grupos.unidad_base_codigo = unidad.codigo 
 
    ENDTEXT
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLUnidadesMedicionModel():getTableName() )
 
 RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD getSentenceUnidadesWhereUnidadAndGrupo( cCodigoUnidad, cCodigoGrupo ) CLASS SQLUnidadesMedicionGruposModel
+
+   local cSQL
+
+   TEXT INTO cSql
+
+      SELECT 
+         COUNT(*)     
+      
+      FROM %1$s AS unidades_medicion_grupos                                               
+
+      INNER JOIN %2$s AS unidades_medicion_grupos_lineas         
+         ON unidades_medicion_grupos.uuid = unidades_medicion_grupos_lineas.parent_uuid                             
+
+      INNER JOIN %3$s AS unidades_medicion         
+         ON unidades_medicion.codigo = unidades_medicion_grupos_lineas.unidad_alternativa_codigo
+
+      WHERE 
+         unidades_medicion.codigo = %4$s AND
+         unidades_medicion_grupos.codigo = %5$s 
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLUnidadesMedicionGruposLineasModel():getTableName(), SQLUnidadesMedicionModel():getTableName(), quoted( cCodigoUnidad ), quoted( cCodigoGrupo ) ) 
+
+RETURN ( cSql )
+
+//---------------------------------------------------------------------------//
+
+METHOD countUnidadesWhereUnidadAndGrupo( cCodigoUnidad, cCodigoGrupo ) CLASS SQLUnidadesMedicionGruposModel
+
+RETURN ( getSQLDatabase():getValue( ::getSentenceUnidadesWhereUnidadAndGrupo( cCodigoUnidad, cCodigoGrupo ), 0 ) )
 
 //---------------------------------------------------------------------------//
 

@@ -222,7 +222,12 @@ METHOD getInsertSentence() CLASS SQLFacturasClientesLineasModel
 
    nId            := ::getIdProductAdded()
 
+   msgalert( nId, "nId" )
+
    if empty( nId )
+      
+      msgalert( ::Super:getInsertSentence(), "::Super:getInsertSentence()" )
+
       RETURN ( ::Super:getInsertSentence() )
    end if 
 

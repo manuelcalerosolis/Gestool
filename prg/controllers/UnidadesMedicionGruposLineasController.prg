@@ -18,6 +18,8 @@ CLASS UnidadesMedicionGruposLineasController FROM SQLBrowseController
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionGruposLineasValidator():New( self ), ), ::oValidator )
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionGruposLineasRepository():New( self ), ), ::oRepository )
+   
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLUnidadesMedicionGruposLineasModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -37,8 +39,6 @@ METHOD New( oController ) CLASS UnidadesMedicionGruposLineasController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-   ::oModel                         := SQLUnidadesMedicionGruposLineasModel():New( self )
-
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
@@ -47,7 +47,9 @@ RETURN ( Self )
 
 METHOD End() CLASS UnidadesMedicionGruposLineasController
 
-   ::oModel:End()
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
@@ -65,11 +67,7 @@ METHOD End() CLASS UnidadesMedicionGruposLineasController
       ::oRepository:End()
    end if 
 
-
-
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -185,7 +183,6 @@ END CLASS
 
 METHOD Activate() CLASS UnidadesMedicionGruposLineasView
 
-   local oDialog
    local cUnidadBaseCodigo := ::oController:oController:getModelBuffer( 'unidad_base_codigo' )
    local cUnidadBaseNombre := SQLUnidadesMedicionModel():getField( 'nombre', 'codigo', cUnidadBaseCodigo )
 
@@ -193,68 +190,64 @@ METHOD Activate() CLASS UnidadesMedicionGruposLineasView
       RESOURCE    "LINEA_GRUPO_UNIDAD_MEDICION" ;
       TITLE       ::LblTitle() + " grupo de unidades de medición"
 
-   REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
-      RESOURCE    ::oController:getImage( "48" ) ;
-      TRANSPARENT ;
-      OF          ::oDialog ;
+      REDEFINE BITMAP ::oBitmap ;
+         ID          900 ;
+         RESOURCE    ::oController:getImage( "48" ) ;
+         TRANSPARENT ;
+         OF          ::oDialog ;
 
-   REDEFINE SAY   ::oMessage ;
-      ID          800 ;
-      FONT        oFontBold() ;
-      OF          ::oDialog ;
+      REDEFINE SAY   ::oMessage ;
+         ID          800 ;
+         FONT        oFontBold() ;
+         OF          ::oDialog ;
 
-   // unidad alternativa-------------------------------------------------------------------------------------------------------//
+      // unidad alternativa-------------------------------------------------------------------------------------------------------//
 
-   ::oController:getUnidadesMedicioncontroller():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "unidad_alternativa_codigo" ] ) )
-   
-   //::oController:getUnidadesMedicioncontroller():oGetSelector:setEvent( 'validated', {|| ::UnidadesMedicionControllerValidated() } )
+      ::oController:getUnidadesMedicioncontroller():getSelector():Bind( bSETGET( ::getController():getModel():hBuffer[ "unidad_alternativa_codigo" ] ) )
+      
+      ::oController:getUnidadesMedicioncontroller():getSelector():Activate( 120, 122, ::oDialog )
 
-   ::oController:getUnidadesMedicioncontroller():getSelector():Activate( 120, 122, ::oDialog )
+      REDEFINE GET   ::getController():getModel():hBuffer[ "cantidad_alternativa" ] ;
+         ID          130 ;
+         SPINNER ;
+         MIN 1;
+         WHEN        ( .f. ) ;
+         OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cantidad_alternativa" ] ;
-      ID          130 ;
-      SPINNER ;
-      MIN 1;
-      WHEN        ( .f. ) ;
-      OF          ::oDialog ;
+      // unidad base--------------------------------------------------------------------------------------------------------------//
 
-   // unidad base--------------------------------------------------------------------------------------------------------------//
+      REDEFINE GET   cUnidadBaseCodigo ;
+         ID          140 ;
+         WHEN        ( .f. ) ;
+         OF          ::oDialog ;
 
-   REDEFINE GET   cUnidadBaseCodigo ;
-      ID          140 ;
-      WHEN        ( .f. ) ;
-      OF          ::oDialog ;
+      REDEFINE GET   cUnidadBaseNombre ;
+         ID          142 ;
+         WHEN        ( .f. ) ;
+         OF          ::oDialog ;
 
-   REDEFINE GET   cUnidadBaseNombre ;
-      ID          142 ;
-      WHEN        ( .f. ) ;
-      OF          ::oDialog ;
+      REDEFINE GET   ::getController():getModel():hBuffer[ "cantidad_base" ] ;
+         ID          150 ;
+         SPINNER ;
+         MIN 1.000;
+         PICTURE     "@E 999999999.999" ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "cantidad_base" ] ;
-      ID          150 ;
-      SPINNER ;
-      MIN 1.000;
-      PICTURE     "@E 999999999.999" ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+      ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+      
+      if ::oController:isNotZoomMode() 
+         ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+      end if
 
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if
-
-   ::oDialog:bStart  := {|| ::StartActivate() }
+      ::oDialog:bStart  := {|| ::StartActivate() }
    
    ACTIVATE DIALOG ::oDialog CENTER
 
-  ::oBitmap:end()
-  
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
@@ -280,10 +273,10 @@ END CLASS
 
 METHOD getValidators() CLASS UnidadesMedicionGruposLineasValidator
 
-   ::hValidators  := {  "nombre" =>       {  "required"           => "La descripción es un dato requerido",;
-                                             "unique"             => "La descripción introducida ya existe" },;
-                        "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
-                                             "unique"             => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "nombre" =>       {  "required"  => "La descripción es un dato requerido",;
+                                             "unique"    => "La descripción introducida ya existe" },;
+                        "codigo" =>       {  "required"  => "El código es un dato requerido" ,;
+                                             "unique"    => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -543,7 +536,7 @@ RETURN ( ::getDatabase():getValue( ::getSentenceWhereEmpresa() + " AND lineas.si
 METHOD getWhereCodigoArticuloDefault( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRepository 
 
    if empty( cCodigoArticulo )
-      RETURN ( {} )
+      RETURN ( "" )
    end if
 
 RETURN ( ::getDatabase():getValue( ::getSentenceWhereCodigoArticulo( cCodigoArticulo ) + " AND lineas.sistema = 1" ) )
@@ -594,7 +587,7 @@ METHOD getFactorWhereUnidadArticulo( cCodigoArticulo, cCodigoUnidad ) CLASS Unid
 
    local cSentence 
 
-   if Empty( cCodigoArticulo )
+   if empty( cCodigoArticulo )
       RETURN ( {} )
    end if
 

@@ -19,45 +19,45 @@ END CLASS
 
 METHOD getColumns() CLASS SQLArticulosModel
    
-   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"           ,;
-                                                      "default"   => {|| 0 } }                                 )
+   hset( ::hColumns, "id",                         {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"          ,;
+                                                      "default"   => {|| 0 } }                                )
 
-   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;
-                                                      "default"   => {|| win_uuidcreatestring() } }            )
+   hset( ::hColumns, "uuid",                       {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"          ,;
+                                                      "default"   => {|| win_uuidcreatestring() } }           )
 
-   hset( ::hColumns, "codigo",                     {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                      "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "codigo",                     {  "create"    => "VARCHAR( 20 )"                          ,;
+                                                      "default"   => {|| space( 20 ) } }                      )
 
-   hset( ::hColumns, "nombre",                     {  "create"    => "VARCHAR( 200 )"                          ,;
-                                                      "default"   => {|| space( 200 ) } }                      )
+   hset( ::hColumns, "nombre",                     {  "create"    => "VARCHAR( 200 )"                         ,;
+                                                      "default"   => {|| space( 200 ) } }                     )
 
-   hset( ::hColumns, "familia_codigo",             {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                      "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "familia_codigo",             {  "create"    => "VARCHAR( 20 )"                          ,;
+                                                      "default"   => {|| space( 20 ) } }                      )
 
-   hset( ::hColumns, "tipo_codigo",                {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                      "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "tipo_codigo",                {  "create"    => "VARCHAR( 20 )"                          ,;
+                                                      "default"   => {|| space( 20 ) } }                      )
 
-   hset( ::hColumns, "categoria_codigo",           {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                      "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "categoria_codigo",           {  "create"    => "VARCHAR( 20 )"                          ,;
+                                                      "default"   => {|| space( 20 ) } }                      )
 
-   hset( ::hColumns, "fabricante_codigo",          {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                      "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "fabricante_codigo",          {  "create"    => "VARCHAR( 20 )"                          ,;
+                                                      "default"   => {|| space( 20 ) } }                      )
 
-   hset( ::hColumns, "temporada_codigo",           {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                      "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "temporada_codigo",           {  "create"    => "VARCHAR( 20 )"                          ,;
+                                                      "default"   => {|| space( 20 ) } }                      )
 
-   hset( ::hColumns, "tipo_iva_codigo",            {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                      "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "tipo_iva_codigo",            {  "create"    => "VARCHAR( 20 )"                          ,;
+                                                      "default"   => {|| space( 20 ) } }                      )
 
-   hset( ::hColumns, "impuesto_especial_codigo",   {  "create"    => "VARCHAR( 20 )"                           ,;
-                                                      "default"   => {|| space( 20 ) } }                       )
+   hset( ::hColumns, "impuesto_especial_codigo",   {  "create"    => "VARCHAR( 20 )"                          ,;
+                                                      "default"   => {|| space( 20 ) } }                      )
 
    hset( ::hColumns, "unidades_medicion_grupos_codigo",;
                                                    {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "obsoleto",                   {  "create"    => "BIT"                                     ,;
-                                                      "default"   => {|| .f. } }                               )
+   hset( ::hColumns, "obsoleto",                   {  "create"    => "TINYINT"                                 ,;
+                                                      "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "caducidad",                  {  "create"    => "INTEGER"                                 ,;
                                                       "default"   => {|| 0 } }                                 )
@@ -65,8 +65,8 @@ METHOD getColumns() CLASS SQLArticulosModel
    hset( ::hColumns, "periodo_caducidad",          {  "create"    => "VARCHAR( 20 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
 
-   hset( ::hColumns, "lote",                       {  "create"    => "BIT"                                     ,;
-                                                      "default"   => {|| .f. } }                               )
+   hset( ::hColumns, "lote",                       {  "create"    => "TINYINT"                                 ,;
+                                                      "default"   => {|| 0 } }                                 )
 
    hset( ::hColumns, "lote_actual",                {  "create"    => "VARCHAR( 40 )"                           ,;
                                                       "default"   => {|| space( 20 ) } }                       )
@@ -146,9 +146,16 @@ METHOD getInitialSelect() CLASS SQLArticulosModel
 
    ENDTEXT
 
-   cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosFamiliaModel():getTableName(), SQLArticulosTipoModel():getTableName(),;
-                          SQLArticulosTipoModel():getTableName(), SQLArticulosCategoriasModel():getTableName(), SQLArticulosCategoriasModel():getTableName(),;
-                          SQLArticulosTemporadasModel():getTableName(), SQLImpuestosEspecialesModel():getTableName(), SQLUnidadesMedicionGruposModel():getTableName() )                                      
+   cSql  := hb_strformat(  cSql,;
+                           ::getTableName(),;
+                           SQLArticulosFamiliaModel():getTableName(),;
+                           SQLArticulosTipoModel():getTableName(),;
+                           SQLArticulosTipoModel():getTableName(),;
+                           SQLArticulosCategoriasModel():getTableName(),;
+                           SQLArticulosCategoriasModel():getTableName(),;
+                           SQLArticulosTemporadasModel():getTableName(),;
+                           SQLImpuestosEspecialesModel():getTableName(),;
+                           SQLUnidadesMedicionGruposModel():getTableName() )                                      
 
 RETURN ( cSql )                                      
 

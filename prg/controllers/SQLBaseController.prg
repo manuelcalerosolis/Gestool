@@ -668,7 +668,7 @@ RETURN ( .f. )
 
 METHOD DialogViewDestroy()
 
-   ::oDialogView        := nil
+   ::oDialogView           := nil
 
 RETURN ( nil )
 
@@ -791,10 +791,10 @@ RETURN ( ::getRowSet():findString( uValue, cColumn ) )
 METHOD isRowSetSystemRegister()
 
    if empty( ::getRowSet() )
-      RETURN ( .t. )
+      RETURN ( .f. )
    end if 
 
-RETURN ( ::getRowSet():fieldGet( 'sistema' ) == .t. )
+RETURN ( isTrue( ::getRowSet():fieldGet( 'sistema' ) ) )
 
 //----------------------------------------------------------------------------//
 
@@ -806,7 +806,7 @@ RETURN ( aeval( aEvents, {|cEvent| ::setEvent( cEvent, bEvent ) } ) )
 
 METHOD validColumnBrowse( oCol, uValue, nKey, oModel, cFieldName )
    
-   local cCodigo        := ""
+   local cCodigo        
 
    if !hb_isnumeric( nKey ) .or. ( nKey == VK_ESCAPE ) .or. hb_isnil( uValue )
       RETURN ( .t. )
@@ -821,7 +821,7 @@ METHOD validColumnBrowse( oCol, uValue, nKey, oModel, cFieldName )
    end if
 
    if empty( cCodigo )
-      msgStop( "valor no encontrado." )
+      msgStop( "Valor no encontrado." )
       RETURN .t.
    end if
 

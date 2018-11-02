@@ -39,7 +39,6 @@ METHOD New( oController ) CLASS UnidadesMedicionController
 
    ::nLevel                         := Auth():Level( ::cName )
 
-
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
@@ -68,9 +67,7 @@ METHOD End() CLASS UnidadesMedicionController
       ::oRepository:End()
    end if 
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -149,70 +146,61 @@ END CLASS
 
 METHOD Activate() CLASS UnidadesMedicionView
 
-   local oSayCamposExtra
-   local oDialog
-   local oBtnEdit
-   local oBtnAppend
-   local oBtnDelete
-   local oBmpGeneral
+   DEFINE DIALOG     ::oDialog ;
+      RESOURCE       "UNIDAD_MEDICION" ;
+      TITLE          ::LblTitle() + "unidad de medición"
 
-   DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "UNIDAD_MEDICION" ;
-      TITLE       ::LblTitle() + "unidad de medición"
+      REDEFINE BITMAP ::oBitmap ;
+         ID          900 ;
+         RESOURCE    ::oController:getImage( "48" ) ;
+         TRANSPARENT ;
+         OF          ::oDialog ;
 
-   REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
-      RESOURCE    ::oController:getImage( "48" ) ;
-      TRANSPARENT ;
-      OF          ::oDialog ;
+      REDEFINE SAY   ::oMessage ;
+         ID          800 ;
+         FONT        oFontBold() ;
+         OF          ::oDialog ;
+      
+      REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
+         ID          100 ;
+         PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
+         VALID       ( ::oController:validate( "codigo" ) ) ;
+         WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
+         OF          ::oDialog ;
 
-   REDEFINE SAY   ::oMessage ;
-      ID          800 ;
-      FONT        oFontBold() ;
-      OF          ::oDialog ;
-   
-   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo" ] ;
-      ID          100 ;
-      PICTURE     "@! NNNNNNNNNNNNNNNNNNNN" ;
-      VALID       ( ::oController:validate( "codigo" ) ) ;
-      WHEN        ( ::oController:isAppendOrDuplicateMode() ) ;
-      OF          ::oDialog ;
+      REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
+         ID          110 ;
+         VALID       ( ::oController:validate( "nombre" ) ) ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "nombre" ] ;
-      ID          110 ;
-      VALID       ( ::oController:validate( "nombre" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      REDEFINE GET   ::oController:getModel():hBuffer[ "codigo_iso" ] ;
+         ID          120 ;
+         VALID       ( ::oController:validate( "codigo_iso" ) ) ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         OF          ::oDialog ;
 
-   REDEFINE GET   ::oController:getModel():hBuffer[ "codigo_iso" ] ;
-      ID          120 ;
-      VALID       ( ::oController:validate( "codigo_iso" ) ) ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      OF          ::oDialog ;
+      REDEFINE SAY   ::oSayCamposExtra ;
+         PROMPT      "Campos extra..." ;
+         FONT        oFontBold() ; 
+         COLOR       rgb( 10, 152, 234 ) ;
+         ID          130 ;
+         OF          ::oDialog ;
 
-   REDEFINE SAY   ::oSayCamposExtra ;
-      PROMPT      "Campos extra..." ;
-      FONT        oFontBold() ; 
-      COLOR       rgb( 10, 152, 234 ) ;
-      ID          130 ;
-      OF          ::oDialog ;
+      ::oSayCamposExtra:lWantClick  := .t.
+      ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
 
-   ::oSayCamposExtra:lWantClick  := .t.
-   ::oSayCamposExtra:OnClick     := {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) }
+      ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+      ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
-
-   ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
-   
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if
+      ::oDialog:bKeyDown            := {| nKey | if( nKey == VK_F5, ::oDialog:end( IDOK ), ) }
+      
+      if ::oController:isNotZoomMode() 
+         ::oDialog:bKeyDown         := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+      end if
 
    ACTIVATE DIALOG ::oDialog CENTER
-
-  ::oBitmap:end()
 
 RETURN ( ::oDialog:nResult )
 
@@ -232,10 +220,10 @@ END CLASS
 
 METHOD getValidators() CLASS UnidadesMedicionValidator
 
-   ::hValidators  := {  "descripcion" =>  {  "required"           => "La descripción es un dato requerido",;
-                                             "unique"             => "La descripción introducida ya existe" },;
-                        "codigo" =>       {  "required"           => "El código es un dato requerido" ,;
-                                             "unique"             => "EL código introducido ya existe"  } }
+   ::hValidators  := {  "descripcion" =>  {  "required"  => "La descripción es un dato requerido",;
+                                             "unique"    => "La descripción introducida ya existe" },;
+                        "codigo" =>       {  "required"  => "El código es un dato requerido" ,;
+                                             "unique"    => "EL código introducido ya existe"  } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//
@@ -266,9 +254,8 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
    hset( ::hColumns, "uuid",              {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"           ,;                                  
                                              "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) UNIQUE"                     ,;
-                                             "default"   => {|| space( 20 ) } }                        )
-   
+   hset( ::hColumns, "codigo",            {  "create"    => "VARCHAR( 20 ) UNIQUE"                    ,;
+                                             "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",            {  "create"    => "VARCHAR( 200 ) UNIQUE"                   ,;
                                              "default"   => {|| space( 200 ) } }                      )
@@ -290,9 +277,9 @@ METHOD getInsertUnidadesMedicionSentence() CLASS SQLUnidadesMedicionModel
    TEXT INTO cSql
 
       INSERT IGNORE INTO %1$s 
-      ( uuid, codigo, nombre, codigo_iso, sistema ) 
+         ( uuid, codigo, nombre, codigo_iso, sistema ) 
       VALUES 
-      ( UUID(), 'UDS', 'Unidades', 'UDS', 1 )
+         ( UUID(), 'UDS', 'Unidades', 'UDS', 1 )
 
    ENDTEXT
 
@@ -313,7 +300,7 @@ METHOD getUnidadMedicionSistema() CLASS SQLUnidadesMedicionModel
 
       FROM %1$s AS unidades_medicion
 
-         WHERE unidades_medicion.sistema = 1
+      WHERE unidades_medicion.sistema = 1
 
    ENDTEXT
 

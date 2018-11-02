@@ -5,21 +5,23 @@
 
 CLASS UnidadesMedicionOperacionesController FROM SQLNavigatorController
 
+   DATA hUnidades
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionOperacionesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()           INLINE( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionOperacionesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionOperacionesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()           INLINE( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionOperacionesView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionOperacionesValidator():New( self  ), ), ::oValidator )
+   METHOD getValidator()            INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionOperacionesValidator():New( self  ), ), ::oValidator )
 
-   METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionOperacionesRepository():New( self ), ), ::oRepository )
+   METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionOperacionesRepository():New( self ), ), ::oRepository )
    
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLUnidadesMedicionOperacionesModel():New( self ), ), ::oModel )
+   METHOD getModel()                INLINE ( if( empty( ::oModel ), ::oModel := SQLUnidadesMedicionOperacionesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -29,7 +31,7 @@ METHOD New( oController ) CLASS UnidadesMedicionOperacionesController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Unidades operacion"
+   ::cTitle                         := "Unidades operación"
 
    ::cName                          := "unidades_medicion_operacion"
 
@@ -133,22 +135,18 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS UnidadesMedicionOperacionesView FROM SQLBaseView
 
-   DATA oUnidades
+   DATA oComboTipoOperaciones
 
-   DATA hUnidades
-
-   DATA oTipo
-
-   DATA aTiposOperaciones  INIT ( {  "Compras", "Venta", "Inventarios" } )
+   DATA aTiposOperaciones  INIT ( {  "Compras", "Ventas", "Inventarios" } )
 
    METHOD Activate()
 
-   METHOD Activating()     INLINE ( ::hUnidades := ::oController:getModel():getUnidadesWhereGrupo( ::oController:oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) ) ) 
+   METHOD Activating()
+
+   METHOD startActivate()
 
 END CLASS
 
@@ -156,50 +154,64 @@ END CLASS
 
 METHOD Activate() CLASS UnidadesMedicionOperacionesView
 
-   DEFINE DIALOG  ::oDialog ;
-      RESOURCE    "UNIDAD_MEDICION_OPERACION" ;
-      TITLE       ::LblTitle() + "unidad de operaciones"
+   DEFINE DIALOG     ::oDialog ;
+      RESOURCE       "UNIDAD_MEDICION_OPERACION" ;
+      TITLE          ::LblTitle() + "unidad de operaciones"
 
-   REDEFINE BITMAP ::oBitmap ;
-      ID          900 ;
-      RESOURCE    ::oController:getimage("48")  ;
-      TRANSPARENT ;
-      OF          ::oDialog ;
+      REDEFINE BITMAP ::oBitmap ;
+         ID          900 ;
+         RESOURCE    ::oController:getimage( "48" )  ;
+         TRANSPARENT ;
+         OF          ::oDialog ;
 
-   REDEFINE SAY   ::oMessage ;
-      ID          800 ;
-      FONT        oFontBold() ;
-      OF          ::oDialog ;
-   
-   REDEFINE COMBOBOX ::oUnidades ;
-      VAR         ::oController:getModel():hBuffer[ "uuid_unidad" ] ;
-      ID          100 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "uuid_unidad" ) ) ;
-      ITEMS       ( ::hUnidades ) ;
-      OF          ::oDialog ;
+      REDEFINE SAY   ::oMessage ;
+         ID          800 ;
+         FONT        oFontBold() ;
+         OF          ::oDialog ;
+      
+      REDEFINE COMBOBOX ::oComboTipoOperaciones ;
+         VAR         ::oController:getModel():hBuffer[ "operacion" ] ;
+         ID          100 ;
+         WHEN        ( ::oController:isNotZoomMode() ) ;
+         VALID       ( ::oController:validate( "operacion" ) ) ;
+         ITEMS       ( ::aTiposOperaciones ) ;
+         OF          ::oDialog ;
 
-   REDEFINE COMBOBOX ::oTipo ;
-      VAR         ::oController:getModel():hBuffer[ "operacion" ] ;
-      ID          110 ;
-      WHEN        ( ::oController:isNotZoomMode() ) ;
-      VALID       ( ::oController:validate( "operacion" ) ) ;
-      ITEMS       ( ::aTiposOperaciones ) ;
-      OF          ::oDialog ;
+      ::oController:getUnidadesMedicionController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "unidad_medicion_codigo" ] ) )
+      ::oController:getUnidadesMedicionController():getSelector():Build( { "idGet" => 110, "idText" => 111, "idLink" => 112, "oDialog" => ::oDialog } )
+      ::oController:getUnidadesMedicionController():getSelector():bValid  := {|| ::oController:validate( "unidad_medicion_codigo" ) }
 
-   ApoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
+      apoloBtnFlat():Redefine( IDOK, {|| if( validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_OKBUTTON, .f., .f. )
 
-   ApoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
+      apoloBtnFlat():Redefine( IDCANCEL, {|| ::oDialog:end() }, ::oDialog, , .f., , , , .f., CLR_BLACK, CLR_WHITE, .f., .f. )
 
-   if ::oController:isNotZoomMode() 
-      ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
-   end if
+      if ::oController:isNotZoomMode() 
+         ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
+      end if
+
+      ::oDialog:bStart        := {|| ::StartActivate() }
 
    ACTIVATE DIALOG ::oDialog CENTER
 
-  ::oBitmap:end()
-
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD Activating() CLASS UnidadesMedicionOperacionesView
+
+   ::oController:hUnidades    := ::oController:getModel():getUnidadesWhereGrupo( ::oController:oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) ) 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartActivate() CLASS UnidadesMedicionOperacionesView
+
+   SendMessage( ::oComboTipoOperaciones:hWnd, 0x0153, -1, 14 )
+
+   ::oController:getUnidadesMedicioncontroller():getSelector():Start()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -211,16 +223,31 @@ CLASS UnidadesMedicionOperacionesValidator FROM SQLBaseValidator
 
    METHOD getValidators()
 
+   METHOD inUnidades( cCodigoUnidad )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD getValidators() CLASS UnidadesMedicionOperacionesValidator
 
-   ::hValidators  := {  "uuid_unidad " => {  "required"  => "La unidad es un dato requerido" },;
-                        "operacion" =>    {  "required"  => "La operación es un dato requerido" } }
+   ::hValidators  := {  "unidad_medicion_codigo"   => {  "required"     => "La unidad es un dato requerido",;
+                                                         "inUnidades"   => "La unidad de medicón no esta dentro del grupo de unidades" },;
+                        "operacion"                => {  "required"     => "La operación es un dato requerido" } }
 
 RETURN ( ::hValidators )
+
+//---------------------------------------------------------------------------//
+
+METHOD inUnidades( cCodigoUnidad ) CLASS UnidadesMedicionOperacionesValidator
+
+   local cCodigoGrupo  := ::oController:oController:getModelBuffer( 'unidades_medicion_grupos_codigo' )
+
+   if empty( cCodigoGrupo )
+      RETURN ( .f. )
+   end if 
+
+RETURN ( SQLUnidadesMedicionGruposModel():countUnidadesWhereUnidadAndGrupo( cCodigoUnidad, cCodigoGrupo ) > 0 )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -232,11 +259,11 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "unidades_medicion_operacion"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, uuid_unidad, operacion )"
+   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, operacion, unidad_medicion_codigo )"
 
    DATA aConsulta                INIT {}
 
-   METHOD sqlUnidadesWhereGrupo( cCodigoGrupo )
+   METHOD getSentenceUnidadesWhereGrupo( cCodigoGrupo )
 
    METHOD getUnidadesWhereGrupo( cCodigoGrupo )
 
@@ -262,20 +289,20 @@ END CLASS
 
 METHOD getColumns() CLASS SQLUnidadesMedicionOperacionesModel
 
-   hset( ::hColumns, "id",             {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
-                                          "default"   => {|| 0 } }                                    )
+   hset( ::hColumns, "id",                      {  "create"    => "INTEGER AUTO_INCREMENT UNIQUE"              ,;                          
+                                                   "default"   => {|| 0 } }                                    )
 
-   hset( ::hColumns, "uuid",           {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
-                                          "default"   => {|| win_uuidcreatestring() } }               )
+   hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR( 40 ) NOT NULL UNIQUE"              ,;                                  
+                                                   "default"   => {|| win_uuidcreatestring() } }               )
 
-   hset( ::hColumns, "parent_uuid",    {  "create"    => "VARCHAR( 40 ) NOT NULL"                     ,;
-                                          "default"   => {|| ::getControllerParentUuid() } }    )
+   hset( ::hColumns, "parent_uuid",             {  "create"    => "VARCHAR( 40 ) NOT NULL"                     ,;
+                                                   "default"   => {|| ::getControllerParentUuid() } }          )
 
-   hset( ::hColumns, "uuid_unidad",    {  "create"    => "VARCHAR( 40 )"                              ,;
-                                          "default"   => {|| space( 40 ) } }                          )
+   hset( ::hColumns, "unidad_medicion_codigo",  {  "create"    => "VARCHAR( 20 )"                              ,;
+                                                   "default"   => {|| space( 20 ) } }                          )
 
-   hset( ::hColumns, "operacion",      {  "create"    => "VARCHAR( 200 )"                             ,;
-                                          "default"   => {|| space( 200 ) } }                         )
+   hset( ::hColumns, "operacion",               {  "create"    => "VARCHAR( 200 )"                             ,;
+                                                   "default"   => {|| space( 200 ) } }                         )
    
    ::getTimeStampColumns()
 
@@ -283,7 +310,7 @@ RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
 
-METHOD sqlUnidadesWhereGrupo( cCodigoGrupo ) CLASS SQLUnidadesMedicionOperacionesModel
+METHOD getSentenceUnidadesWhereGrupo( cCodigoGrupo ) CLASS SQLUnidadesMedicionOperacionesModel
 
    local cSQL
 
@@ -306,8 +333,7 @@ METHOD sqlUnidadesWhereGrupo( cCodigoGrupo ) CLASS SQLUnidadesMedicionOperacione
 
    ENDTEXT
 
-
-   cSql  := hb_strformat( cSql, SQLUnidadesMedicionGruposModel():getTableName(), SQLUnidadesMedicionGruposLineasModel():getTableName(),SQLUnidadesMedicionModel():getTableName() , quoted( cCodigoGrupo ) ) 
+   cSql  := hb_strformat( cSql, SQLUnidadesMedicionGruposModel():getTableName(), SQLUnidadesMedicionGruposLineasModel():getTableName(), SQLUnidadesMedicionModel():getTableName() , quoted( cCodigoGrupo ) ) 
 
 RETURN ( cSql )
 
@@ -321,7 +347,7 @@ METHOD getUnidadesWhereGrupo( cCodigoGrupo ) CLASS SQLUnidadesMedicionOperacione
       RETURN ( aUnidades )
    end if 
 
-   ::aConsulta       := getSQLDatabase():selectTrimedFetchHash( SQLUnidadesMedicionOperacionesModel():sqlUnidadesWhereGrupo( cCodigoGrupo ) )  
+   ::aConsulta       := getSQLDatabase():selectTrimedFetchHash( ::getSentenceUnidadesWhereGrupo( cCodigoGrupo ) )  
 
    aeval( ::aConsulta, {| h | aadd( aUnidades, h[ "nombre" ] ) } )
 
@@ -339,13 +365,13 @@ METHOD getInitialSelect() CLASS SQLUnidadesMedicionOperacionesModel
          unidades_medicion_operacion.id as id,
          unidades_medicion_operacion.uuid as uuid,     
          unidades_medicion_operacion.operacion as operacion,
-         unidades_medicion.codigo as unidad_medicion_codigo,
+         unidades_medicion_operacion.unidad_medicion_codigo as unidad_medicion_codigo,
          unidades_medicion.nombre as unidad_medicion_nombre
       
       FROM %1$s AS unidades_medicion_operacion
       
       INNER JOIN %2$s AS unidades_medicion
-         ON unidades_medicion_operacion.uuid_unidad = unidades_medicion.uuid
+         ON unidades_medicion_operacion.unidad_medicion_codigo = unidades_medicion.codigo
 
    ENDTEXT
 
@@ -424,7 +450,7 @@ METHOD getNumeroOperacionesWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMed
 
    cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) )
 
-RETURN ( getSQLDatabase():getValue( cSql ) )
+RETURN ( getSQLDatabase():getValue( cSql, 0 ) )
    
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
