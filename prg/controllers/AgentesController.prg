@@ -344,7 +344,9 @@ METHOD getInitialSelect() CLASS SQLAgentesModel
       direcciones.telefono AS telefono,
       direcciones.movil AS movil,
       direcciones.email AS email
+
    FROM %1$s AS agentes
+   
       INNER JOIN %2$s AS direcciones 
          ON agentes.uuid = direcciones.parent_uuid
 

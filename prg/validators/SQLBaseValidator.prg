@@ -66,7 +66,7 @@ CLASS SQLBaseValidator
 
    METHOD getDialogView()                 INLINE ( ::oController:getDialogView() )
 
-   METHOD notPrincipal( value )
+   METHOD notPrincipal( value )          
 
    // Busquedas comnues en la aplicacion---------------------------------------
 
@@ -359,14 +359,7 @@ RETURN ( .t. )
 
 METHOD notPrincipal( value ) 
 
-   value             := alltrim( value )
-   value             := val( value )
-
-   if value  = 0
-      RETURN ( .f. )
-   end if 
-
-RETURN ( .t. )
+RETURN ( alltrim( value ) != '0' )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

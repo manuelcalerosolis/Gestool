@@ -73,9 +73,7 @@ CLASS SQLBaseController
                                                                      hget( ::getModel():hBuffer, "id" ),;
                                                                      nil ) )
                   
-   METHOD getUuid()                                   INLINE ( iif(  !empty( ::getModel() ) .and. !empty( ::getModel():hBuffer ),;
-                                                                     hget( ::getModel():hBuffer, "uuid" ),;
-                                                                     nil ) )
+   METHOD getUuid()                                   INLINE ( iif(  !empty( ::getModel() ), ::getModel():getUuid() ), nil ) )
    
    // Rowset-------------------------------------------------------------------
 
@@ -430,6 +428,10 @@ METHOD Duplicate( nId )
    if empty( nId )
       RETURN ( .f. )
    end if 
+
+   if !empty( ::getRowSet():fieldGet( "deleted_at" ) )
+      RETURN ( .f. ) 
+   end if
 
    if ::notUserDuplicate()
       msgStop( "Acceso no permitido." )

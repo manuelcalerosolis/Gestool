@@ -13,7 +13,7 @@ CLASS TraduccionesController FROM SQLNavigatorController
 
    METHOD gettingSelectSentence()
 
-   METHOD insertBuffer()               INLINE ( ::oModel:insertBuffer() )
+   METHOD insertBuffer()               INLINE ( ::getModel():insertBuffer() )
 
    METHOD loadedDuplicateBuffer( uuidEntidad )
 
@@ -26,6 +26,8 @@ CLASS TraduccionesController FROM SQLNavigatorController
    METHOD getDialogView()                 INLINE( if( empty( ::oDialogView ), ::oDialogView := TraduccionesView():New( self ), ), ::oDialogView )
 
    METHOD getValidator()                  INLINE( if( empty( ::oValidator ), ::oValidator := TraduccionesValidator():New( self ), ), ::oValidator )
+   
+   METHOD getModel()                      INLINE( if( empty( ::oModel ), ::oModel := SQLTraduccionesModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -45,22 +47,25 @@ METHOD New( oController ) CLASS TraduccionesController
                                  "32" => "gc_user_message_32",;
                                  "48" => "gc_user_message_48" }
 
-   ::oModel                := SQLTraduccionesModel():New( self )
+   //::oModel                := SQLTraduccionesModel():New( self )
 
    ::setEvent( 'appended',                      {|| ::getBrowseView():Refresh() } )
    ::setEvent( 'edited',                        {|| ::getBrowseView():Refresh() } )
    ::setEvent( 'deletedSelection',              {|| ::getBrowseView():Refresh() } )
 
-   ::oModel:setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
-   ::oModel:setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
+   ::getModel():setEvent( 'loadedBlankBuffer',      {|| ::loadedBlankBuffer() } ) 
+   ::getModel():setEvent( 'gettingSelectSentence',  {|| ::gettingSelectSentence() } ) 
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD End() CLASS TraduccionesController
+   
+   if !empty( ::oModel )
+      ::oModel:End()
+   end if 
 
-   ::oModel:End()
    if !empty( ::oBrowseView )
       ::oBrowseView:End()
    end if
@@ -84,7 +89,7 @@ METHOD loadedBlankBuffer() CLASS TraduccionesController
    local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
-      hset( ::oModel:hBuffer, "parent_uuid", uuid )
+      hset( ::getModel():hBuffer, "parent_uuid", uuid )
    end if 
 
 RETURN ( Self )
@@ -96,7 +101,7 @@ METHOD gettingSelectSentence() CLASS TraduccionesController
    local uuid        := ::getController():getUuid() 
 
    if !empty( uuid )
-      ::oModel:setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
+      ::getModel():setGeneralWhere( "parent_uuid = " + quoted( uuid ) )
    end if 
 
 RETURN ( Self )
@@ -105,7 +110,7 @@ RETURN ( Self )
 
 METHOD loadedDuplicateBuffer( uuidEntidad ) CLASS TraduccionesController
 
-   hset( ::oModel:hBuffer, "parent_uuid", uuidEntidad )
+   hset( ::getModel():hBuffer, "parent_uuid", uuidEntidad )
 
 RETURN ( self )
 
@@ -117,7 +122,7 @@ METHOD deleteBuffer( aUuidEntidades ) CLASS TraduccionesController
       RETURN ( self )
    end if
 
-   ::oModel:deleteWhereParentUuid( aUuidEntidades )
+   ::getModel():deleteWhereParentUuid( aUuidEntidades )
 
 RETURN ( self )
 
@@ -175,7 +180,7 @@ METHOD addColumns() CLASS TraduccionesBrowseView
       :cSortOrder          := 'codigo'
       :cHeader             := 'Lenguaje'
       :nWidth              := 200
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'nombre' ) }
+      :bEditValue          := {|| ::getRowSet():fieldGet( 'lenguaje_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
 
@@ -186,6 +191,8 @@ METHOD addColumns() CLASS TraduccionesBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'texto' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( self )
 
@@ -222,16 +229,16 @@ METHOD Activate() CLASS TraduccionesView
       FONT        oFontBold() ;
       OF          ::oDialog
 
-   ::oController:getLenguajesController():getSelector():Bind( bSETGET( ::oController:oModel:hBuffer[ "lenguaje_uuid" ] ) )
+   ::oController:getLenguajesController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "lenguaje_codigo" ] ) )
    ::oController:getLenguajesController():getSelector():Build( { "idGet" => 100, "idText" => 101, "idLink" => 102, "oDialog" => ::oDialog } )
 
-   REDEFINE GET   ::oController:oModel:hBuffer[ "texto" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "texto" ] ;
       ID          110 ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       VALID       ( ::oController:validate( "texto" ) ) ;
       OF          ::oDialog
       
-   REDEFINE GET   ::oController:oModel:hBuffer[ "texto_extendido" ] ;
+   REDEFINE GET   ::oController:getModel():hBuffer[ "texto_extendido" ] ;
       ID          120 ;
       MEMO ;
       WHEN        ( ::oController:isNotZoomMode() ) ;
@@ -296,13 +303,11 @@ CLASS SQLTraduccionesModel FROM SQLCompanyModel
 
    DATA cTableName                                 INIT "traducciones"
 
+   DATA cConstraints                               INIT "PRIMARY KEY ( parent_uuid, texto, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getInitialSelect()
-
-   METHOD getLenguajeUuidAttribute( uuid )         INLINE ( if( empty( uuid ), space( 3 ), SQLLenguajesModel():getCodigoWhereUuid( uuid ) ) )
-
-   METHOD setLenguajeUuidAttribute( codigo )       INLINE ( if( empty( codigo ), "", SQLLenguajesModel():getUuidWhereCodigo( codigo ) ) )
 
 END CLASS
 
@@ -310,18 +315,29 @@ END CLASS
 
 METHOD getInitialSelect() CLASS SQLTraduccionesModel
 
-   local cSelect  := "SELECT traducciones.id, "                                                                + ;
-                        "traducciones.uuid, "                                                                  + ;
-                        "traducciones.parent_uuid, "                                                           + ;
-                        "lenguajes.codigo, "                                                                   + ;
-                        "lenguajes.nombre, "                                                                   + ;
-                        "traducciones.texto, "                                                                 + ;
-                        "LEFT( traducciones.texto_extendido, 256 ) "                                           + ;
-                        "FROM " + ::getTableName() + " AS traducciones "                                         + ;
-                        "INNER JOIN " +SQLLenguajesModel():getTableName() + " AS lenguajes "                   + ;
-                           "ON lenguajes.uuid = traducciones.lenguaje_uuid"
+   local cSql 
 
-RETURN ( cSelect )
+   TEXT INTO cSql
+
+   SELECT traducciones.id as id,
+      traducciones.uuid AS uuid, 
+      traducciones.parent_uuid AS parent_uuid, 
+      traducciones.lenguaje_codigo AS lenguaje_codigo, 
+      lenguajes.nombre AS lenguaje_nombre, 
+      traducciones.texto AS texto, 
+      LEFT( traducciones.texto_extendido, 256 ) AS texto_extendido,
+      traducciones.deleted_at AS deleted_as 
+   
+   FROM %1$s AS traducciones 
+   
+      LEFT JOIN %2$s AS lenguajes 
+         ON lenguajes.codigo = traducciones.lenguaje_codigo AND lenguajes.deleted_at = 0
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLLenguajesModel():getTableName() )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
@@ -336,14 +352,16 @@ METHOD getColumns() CLASS SQLTraduccionesModel
    hset( ::hColumns, "parent_uuid",       {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
                                              "default"   => {|| space( 40 ) } }                       )
 
-   hset( ::hColumns, "lenguaje_uuid",     {  "create"    => "VARCHAR( 40 ) NOT NULL"                  ,;
-                                             "default"   => {|| space( 40 ) } }                       )
+   hset( ::hColumns, "lenguaje_codigo",   {  "create"    => "VARCHAR( 20 ) NOT NULL"                  ,;
+                                             "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "texto",             {  "create"    => "VARCHAR( 200 )"                          ,;
                                              "default"   => {|| space( 200 ) } }                      )
 
    hset( ::hColumns, "texto_extendido",   {  "create"    => "TEXT"                                    ,;
                                              "default"   => {|| "" } }                                )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 

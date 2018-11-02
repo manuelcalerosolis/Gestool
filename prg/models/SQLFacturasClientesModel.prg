@@ -126,6 +126,7 @@ METHOD getInitialSelect() CLASS SQLFacturasClientesModel
       %5$s 
 
    FROM %1$s AS facturas_clientes
+   
       LEFT JOIN %2$s clientes  
          ON facturas_clientes.cliente_codigo = clientes.codigo
       LEFT JOIN %3$s direcciones  

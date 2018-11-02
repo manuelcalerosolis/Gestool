@@ -71,7 +71,12 @@ METHOD New( oController ) CLASS CombinacionesController
                                                 "32" => "gc_coathanger_32",;
                                                 "48" => "gc_coathanger_48" }
 
+
    ::nLevel                               := Auth():Level( ::cName )
+
+   ::getModel():setEvent( 'beforeDuplicated',{|| ::getCombinacionesPropiedadesController():getModel():olderUuid := ::getModel():getField( "uuid", "parent_uuid", ::getModel():getUuidOlderParent() ) } )
+
+   /*::getModel():setEvent( 'afterDuplicated', {|| ::getCombinacionesPropiedadesController():getModel():duplicateOthers( ::getUuid() ) } )*/
 
 RETURN ( Self )
 
@@ -753,10 +758,13 @@ METHOD getColumns() CLASS SQLCombinacionesModel
                                              "default"   => {|| ::getControllerParentUuid() } }          )
 
    hset( ::hColumns, "incremento_precio", {  "create"    => "FLOAT( 16, 6 )"                             ,;
-                                             "default"   => {|| 0 } }                                    ) 
+                                             "default"   => {|| 0 } }                                    )
+
+   ::getDeletedStampColumn() 
 
 RETURN ( ::hColumns )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
