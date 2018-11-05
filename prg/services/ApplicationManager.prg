@@ -16,7 +16,7 @@ CLASS ApplicationManager
    DATA uuidAlmacen        INIT ""
    DATA codigoAlmacen      INIT ""
 
-   METHOD New()
+   METHOD New() CONSTRUCTOR
 
    METHOD setDelegacion( uuidDelegacion, codigoDelegacion )
    METHOD getDelegacion()
@@ -46,9 +46,10 @@ RETURN ( self )
 METHOD setDelegacion( uuidDelegacion, codigoDelegacion )
 
    ::uuidDelegacion        := if( hb_isnil( uuidDelegacion ), "", uuidDelegacion )
+
    ::codigoDelegacion      := if( hb_isnil( codigoDelegacion ), "", codigoDelegacion )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -58,27 +59,28 @@ METHOD getDelegacion()
 
    ::setDelegacion()
 
-   delegacion              := SQLAjustableModel():getUsuarioDelegacionExclusiva( Auth():Uuid() )
+   delegacion              := SQLAjustableGestoolModel():getUsuarioDelegacionExclusiva( Auth():Uuid() )
 
    if !empty( delegacion )
       ::setDelegacion( delegacion, DelegacionesModel():getField( "cCodDlg", "Uuid", delegacion ) )
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    delegacion              := uFieldEmpresa( "cSufDoc" )
 
    if !empty( delegacion )
       ::setDelegacion( DelegacionesModel():getField( "Uuid", "cCodDlg", delegacion ), delegacion )
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD setCaja( uuidCaja, codigoCaja )
 
    ::uuidCaja              := if( hb_isnil( uuidCaja ), "", uuidCaja )
+
    ::codigoCaja            := if( hb_isnil( codigoCaja ), "", codigoCaja )
 
 RETURN ( self )
@@ -91,28 +93,29 @@ METHOD getCaja()
 
    ::setCaja()
    
-   caja                    := SQLAjustableModel():getUsuarioCajaExclusiva( Auth():Uuid() )
+   caja                    := SQLAjustableGestoolModel():getUsuarioCajaExclusiva( Auth():Uuid() )
    if !empty( caja )
       ::setCaja( caja, CajasModel():getField( "cCodCaj", "Uuid", caja ) )
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    caja                    := uFieldEmpresa( "cDefCaj" )
    if !empty( caja )
       ::setCaja( CajasModel():getField( "Uuid", "cCodCaj", caja ), caja )
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD setAlmacen( uuidAlmacen, codigoAlmacen )
 
    ::uuidAlmacen           := if( hb_isnil( uuidAlmacen ), "", uuidAlmacen )
+
    ::codigoAlmacen         := if( hb_isnil( codigoAlmacen ), "", codigoAlmacen )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -122,21 +125,21 @@ METHOD getAlmacen()
 
    ::setAlmacen()
    
-   almacen                 := SQLAjustableModel():getUsuarioAlmacenExclusivo( Auth():Uuid() )
+   almacen                 := SQLAjustableGestoolModel():getUsuarioAlmacenExclusivo( Auth():Uuid() )
 
    if !empty( almacen )
       ::setAlmacen( almacen, AlmacenesModel():getField( "cCodAlm", "Uuid", almacen ) )
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
    almacen                 := uFieldEmpresa( "cDefAlm" )
 
    if !empty( almacen )
       ::setAlmacen( AlmacenesModel():getField( "Uuid", "cCodAlm", almacen ), almacen )
-      RETURN ( self )
+      RETURN ( nil )
    end if 
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -148,11 +151,8 @@ RETURN ( self )
 FUNCTION Application()
 
    if empty( oApplication )
-      oApplication   := ApplicationManager():New() 
+      oApplication         := ApplicationManager():New() 
    end if
-
-   // msgalert( oApplication:uuidAlmacen, "uuidAlmacen" )
-   // msgalert( oApplication:codigoAlmacen, "codigoAlmacen" )
 
 RETURN ( oApplication )
 
@@ -161,7 +161,7 @@ RETURN ( oApplication )
 FUNCTION ApplicationLoad()
 
    if !empty( oApplication )
-      oApplication   := nil
+      oApplication         := nil
    end if
 
 RETURN ( Application() )

@@ -384,7 +384,7 @@ METHOD getInsertAlmacenSentence() CLASS SQLAlmacenesModel
    local cSentence   := "INSERT IGNORE INTO " + ::getTableName()                          + " " + ;
                            "( uuid, codigo, nombre, sistema )"                            + " " + ;
                         "VALUES"                                                          + " " + ;
-                           "( " + quoted( win_uuidcreatestring() ) + ", '1', 'Principal', 1 )"
+                           "( " + quoted( win_uuidcreatestring() ) + ", '0', 'Principal', 1 )"
 
 RETURN ( cSentence )
 

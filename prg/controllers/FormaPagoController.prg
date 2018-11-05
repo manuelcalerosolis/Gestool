@@ -29,15 +29,15 @@ METHOD New( oController ) CLASS FormasPagosController
 
    ::Super:New( oController )
 
-   ::cTitle                         := "Formas de pago"
+   ::cTitle                   := "Formas de pago"
 
-   ::cName                          := "forma_pago"
+   ::cName                    := "forma_pago"
 
-   ::hImage                         := {  "16" => "gc_credit_cards_16",;
-                                          "32" => "gc_credit_cards_32",;
-                                          "48" => "gc_credit_cards_48" }
+   ::hImage                   := {  "16" => "gc_credit_cards_16",;
+                                    "32" => "gc_credit_cards_32",;
+                                    "48" => "gc_credit_cards_48" }
 
-   ::nLevel                         := Auth():Level( ::cName )
+   ::nLevel                   := Auth():Level( ::cName )
 
 RETURN ( Self )
 
@@ -454,14 +454,14 @@ METHOD addLinksToExplorerBar() CLASS FormaPagoView
    end if
 
    oPanel:AddLink(   "Documentos...",;
-                    {|| ::oController:getDocumentosController():activateDialogView( ::oController:getUuid() ) },;
-                     ::oController:getDocumentosController():getImage( "16" ) )
+                     {||   ::oController:getDocumentosController():activateDialogView( ::oController:getUuid() ) },;
+                           ::oController:getDocumentosController():getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
 
    oPanel:AddLink(   "Campos extra...",;
-                     {|| ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
-                     ::oController:getCamposExtraValoresController():getImage( "16" ) )
+                     {||   ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
+                           ::oController:getCamposExtraValoresController():getImage( "16" ) )
 
 RETURN ( nil )
 
@@ -482,10 +482,10 @@ END CLASS
 
 METHOD getValidators() CLASS FormaPagoValidator
 
-   ::hValidators  := {  "nombre" =>                {  "required"           => "El nombre es un dato requerido",;
-                                                      "unique"             => "El nombre introducido ya existe" },;
-                        "codigo" =>                {  "required"           => "El código es un dato requerido" ,;
-                                                      "unique"             => "EL código introducido ya existe" } }
+   ::hValidators  := {  "nombre" =>    {  "required"  => "El nombre es un dato requerido",;
+                                          "unique"    => "El nombre introducido ya existe" },;
+                        "codigo" =>    {  "required"  => "El código es un dato requerido" ,;
+                                          "unique"    => "EL código introducido ya existe" } }
 RETURN ( ::hValidators )
 
 //---------------------------------------------------------------------------//

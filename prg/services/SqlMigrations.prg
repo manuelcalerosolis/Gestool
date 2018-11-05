@@ -164,7 +164,6 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLEmpresasModel():New() )
 
-
    aadd( ::aModels, SQLDelegacionesModel():New() )
 
    aadd( ::aModels, SQLUsuariosModel():New() )
@@ -174,8 +173,6 @@ METHOD addModels() CLASS SQLGestoolMigrations
    aadd( ::aModels, SQLPermisosModel():New() )
 
    aadd( ::aModels, SQLPermisosOpcionesModel():New() )
-
-   aadd( ::aModels, SQLAjustableModel():New() )
 
    aadd( ::aModels, SQLConfiguracionVistasGestoolModel():New() )
 
@@ -190,7 +187,7 @@ METHOD addModels() CLASS SQLGestoolMigrations
    aadd( ::aModels, SQLConfiguracionEmpresasModel():New() )
 
    // Modelos duplicados-------------------------------------------------------
-
+   
    aadd( ::aModels, SQLDireccionesGestoolModel():New() )
 
    aadd( ::aModels, SQLCodigosPostalesGestoolModel():New() )
@@ -200,6 +197,8 @@ METHOD addModels() CLASS SQLGestoolMigrations
    aadd( ::aModels, SQLPaisesGestoolModel():New() )
 
    aadd( ::aModels, SQLAjustesGestoolModel():New() )
+
+   aadd( ::aModels, SQLAjustableGestoolModel():New() )
 
 RETURN ( ::aModels )
  

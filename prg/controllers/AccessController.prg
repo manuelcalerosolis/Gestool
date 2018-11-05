@@ -169,9 +169,9 @@ RETURN ( nil )
 
 METHOD saveUsersAndCompanies() CLASS AccessController
 
-   ::getAjustableController():getModel():setUltimaEmpresaInMac( Company():uuid(), ::getMacAddress() )
+   ::getAjustableGestoolController():getModel():setUltimaEmpresaInMac( Company():uuid(), ::getMacAddress() )
 
-   ::getAjustableController():getModel():setUltimoUsuarioInMac( Auth():uuid(), ::getMacAddress() )
+   ::getAjustableGestoolController():getModel():setUltimoUsuarioInMac( Auth():uuid(), ::getMacAddress() )
 
 RETURN ( nil )
 

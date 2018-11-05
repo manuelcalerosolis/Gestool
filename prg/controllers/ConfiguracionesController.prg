@@ -80,7 +80,7 @@ METHOD setModelItems() CLASS ConfiguracionesController
    local hItem
 
    for each hItem in ::aItems
-      ::getModel():insertOnDuplicateTransactional(  { "documento" => ::oController:cName,;
+      ::getModel():insertOnDuplicateTransactional( {  "documento" => ::oController:cName,;
                                                       "clave" => hget( hItem, "clave" ),;
                                                       "valor" => hget( hItem, "valor" ) } )
    next

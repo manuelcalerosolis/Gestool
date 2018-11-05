@@ -24,7 +24,7 @@ CLASS RolesController FROM SQLNavigatorGestoolController
 
    METHOD End()
 
-   METHOD setConfig()
+   METHOD editConfig()
 
    METHOD loadConfig()
 
@@ -98,16 +98,17 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setConfig()
+METHOD editConfig()
 
-   if ::loadConfig() .and. ;
-      ::getAjustableController():DialogViewActivate()
+   if !( ::loadConfig() )
+      RETURN ( nil )
+   end if 
 
+   if ::getAjustableGestoolController():DialogViewActivate()
       ::saveConfig()
-
    end if 
    
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -119,25 +120,25 @@ METHOD loadConfig()
       RETURN ( .f. )
    end if 
 
-   ::lMostrarRentabilidad        := ::getAjustableController():getModel():getRolMostrarRentabilidad( ::cUuidRol )
+   ::lMostrarRentabilidad        := ::getAjustableGestoolController():getModel():getRolMostrarRentabilidad( ::cUuidRol )
 
-   ::lCambiarPrecios             := ::getAjustableController():getModel():getRolCambiarPrecios( ::cUuidRol )
+   ::lCambiarPrecios             := ::getAjustableGestoolController():getModel():getRolCambiarPrecios( ::cUuidRol )
 
-   ::lVerPreciosCosto            := ::getAjustableController():getModel():getRolVerPreciosCosto( ::cUuidRol )
+   ::lVerPreciosCosto            := ::getAjustableGestoolController():getModel():getRolVerPreciosCosto( ::cUuidRol )
 
-   ::lConfirmacionEliminacion    := ::getAjustableController():getModel():getRolConfirmacionEliminacion( ::cUuidRol )
+   ::lConfirmacionEliminacion    := ::getAjustableGestoolController():getModel():getRolConfirmacionEliminacion( ::cUuidRol )
 
-   ::lFiltrarVentas              := ::getAjustableController():getModel():getRolFiltrarVentas( ::cUuidRol )
+   ::lFiltrarVentas              := ::getAjustableGestoolController():getModel():getRolFiltrarVentas( ::cUuidRol )
 
-   ::lAbrirCajonPortamonedas     := ::getAjustableController():getModel():getRolAbrirCajonPortamonedas( ::cUuidRol )
+   ::lAbrirCajonPortamonedas     := ::getAjustableGestoolController():getModel():getRolAbrirCajonPortamonedas( ::cUuidRol )
 
-   ::lAlbaranEntregado           := ::getAjustableController():getModel():getRolAlbaranEntregado( ::cUuidRol )
+   ::lAlbaranEntregado           := ::getAjustableGestoolController():getModel():getRolAlbaranEntregado( ::cUuidRol )
 
-   ::lAsistenteGenerarFacturas   := ::getAjustableController():getModel():GetRolAsistenteGenerarFacturas( ::cUuidRol )
+   ::lAsistenteGenerarFacturas   := ::getAjustableGestoolController():getModel():GetRolAsistenteGenerarFacturas( ::cUuidRol )
 
-   ::lCambiarEstado              := ::getAjustableController():getModel():GetRolCambiarEstado( ::cUuidRol )
+   ::lCambiarEstado              := ::getAjustableGestoolController():getModel():GetRolCambiarEstado( ::cUuidRol )
 
-   ::lCambiarCampos              := ::getAjustableController():getModel():GetRolCambiarCampos( ::cUuidRol )
+   ::lCambiarCampos              := ::getAjustableGestoolController():getModel():GetRolCambiarCampos( ::cUuidRol )
 
 RETURN ( .t. )
 
@@ -145,33 +146,37 @@ RETURN ( .t. )
 
 METHOD saveConfig()
 
-   ::getAjustableController():getModel():setRolMostrarRentabilidad( ::lMostrarRentabilidad, ::cUuidRol )
+   with object ( ::getAjustableGestoolController():getModel() )
 
-   ::getAjustableController():getModel():setRolCambiarPrecios( ::lCambiarPrecios, ::cUuidRol )
+      :setRolMostrarRentabilidad( ::lMostrarRentabilidad, ::cUuidRol )
 
-   ::getAjustableController():getModel():setRolVerPreciosCosto( ::lVerPreciosCosto, ::cUuidRol )
+      :setRolCambiarPrecios( ::lCambiarPrecios, ::cUuidRol )
 
-   ::getAjustableController():getModel():setRolConfirmacionEliminacion( ::lConfirmacionEliminacion, ::cUuidRol )
+      :setRolVerPreciosCosto( ::lVerPreciosCosto, ::cUuidRol )
 
-   ::getAjustableController():getModel():setRolFiltrarVentas( ::lFiltrarVentas, ::cUuidRol )
+      :setRolConfirmacionEliminacion( ::lConfirmacionEliminacion, ::cUuidRol )
 
-   ::getAjustableController():getModel():setRolAbrirCajonPortamonedas( ::lAbrirCajonPortamonedas, ::cUuidRol )
+      :setRolFiltrarVentas( ::lFiltrarVentas, ::cUuidRol )
 
-   ::getAjustableController():getModel():setRolAlbaranEntregado( ::lAlbaranEntregado, ::cUuidRol )
+      :setRolAbrirCajonPortamonedas( ::lAbrirCajonPortamonedas, ::cUuidRol )
 
-   ::getAjustableController():getModel():SetRolAsistenteGenerarFacturas( ::lAsistenteGenerarFacturas, ::cUuidRol )
+      :setRolAlbaranEntregado( ::lAlbaranEntregado, ::cUuidRol )
 
-   ::getAjustableController():getModel():SetRolCambiarEstado( ::lCambiarEstado, ::cUuidRol )
+      :SetRolAsistenteGenerarFacturas( ::lAsistenteGenerarFacturas, ::cUuidRol )
 
-   ::getAjustableController():getModel():SetRolCambiarCampos( ::lCambiarCampos, ::cUuidRol )
+      :SetRolCambiarEstado( ::lCambiarEstado, ::cUuidRol )
 
-RETURN ( self )
+      :SetRolCambiarCampos( ::lCambiarCampos, ::cUuidRol )
+
+   end with
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
 METHOD startingActivate()
 
-   local oPanel            := ::getAjustableController():getDialogView():oExplorerBar:AddPanel( "Propiedades roles", nil, 1 ) 
+   local oPanel            := ::getAjustableGestoolController():getDialogView():oExplorerBar:AddPanel( "Propiedades roles", nil, 1 ) 
    
    oPanel:addCheckBox( "Mostrar rentabilidad", @::lMostrarRentabilidad )
 
@@ -193,7 +198,7 @@ METHOD startingActivate()
    
    oPanel:addCheckBox( "Cambiar campos", @::lCambiarCampos )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

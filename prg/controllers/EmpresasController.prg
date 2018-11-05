@@ -28,7 +28,6 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
    DATA cUuidDelegacionDefecto
 
    DATA aUnidades
-   DATA cUnidadesDefecto
    DATA cCodigoUnidaesDefecto
 
    DATA aTarifas
@@ -39,7 +38,7 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    METHOD End()
 
-   METHOD setConfig()
+   METHOD editConfig()
 
    METHOD loadConfig()
 
@@ -138,7 +137,7 @@ RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
-METHOD setConfig( uuidEmpresa )
+METHOD editConfig( uuidEmpresa )
 
    DEFAULT uuidEmpresa           := ::getRowSet():fieldGet( 'uuid' )
 
@@ -162,11 +161,11 @@ METHOD loadConfig( uuidEmpresa )
 
    // Company():guardWhereUuid( uuidEmpresa )
 
-   ::cFormaPagoDefecto           := ::getAjustableController():getModel():getEmpresaFormaPago( uuidEmpresa )
+   ::cFormaPagoDefecto           := ::getAjustableController():getModel():getFormaPago( uuidEmpresa )
 
-   ::cAlmacenDefecto             := ::getAjustableController():getModel():getEmpresaAlmacen( uuidEmpresa )
+   ::cAlmacenDefecto             := ::getAjustableController():getModel():getAlmacen( uuidEmpresa )
    
-   ::cUnidadesDefecto            := ::getAjustableController():getModel():getEmpresaUnidadesGrupoDefecto( uuidEmpresa )
+   ::cUnidadesDefecto            := ::getAjustableController():getModel():getUnidadesGrupo( uuidEmpresa )
 
    // ::lSolicitarUsuario           := ::getAjustableController():getModel():getEmpresaSeleccionarUsuarios( uuidEmpresa )
 
@@ -178,7 +177,7 @@ METHOD loadConfig( uuidEmpresa )
 
    // ::aUnidades                   := SQLUnidadesMedicionGruposModel():getNombresWithBlank()
 
-   // ::cCodigoUnidaesDefecto       := ::getAjustableController():getModel():getEmpresaUnidadesGrupoDefecto( uuidEmpresa )
+   // ::cCodigoUnidaesDefecto       := ::getAjustableController():getModel():getEmpresaUnidadesGrupo( uuidEmpresa )
 
    // ::cUnidadesDefecto            := SQLUnidadesMedicionGruposModel():getNombreWhereCodigo( ::cCodigoUnidaesDefecto )
 
@@ -194,11 +193,11 @@ RETURN ( .t. )
 
 METHOD saveConfig( uuidEmpresa )
 
-   ::getAjustableController():getModel():setEmpresaFormaPago( ::cFormaPagoDefecto, uuidEmpresa )
+   ::getAjustableController():getModel():setFormaPago( ::cFormaPagoDefecto, uuidEmpresa )
 
-   ::getAjustableController():getModel():setEmpresaAlmacen( ::cAlmacenDefecto, uuidEmpresa )
+   ::getAjustableController():getModel():setAlmacen( ::cAlmacenDefecto, uuidEmpresa )
 
-   ::getAjustableController():getModel():setEmpresaUnidadesGrupoDefecto( ::cUnidadesDefecto, uuidEmpresa )
+   ::getAjustableController():getModel():setUnidadesGrupo( ::cUnidadesDefecto, uuidEmpresa )
    
    // ::getAjustableController():getModel():setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, uuidEmpresa )
    
@@ -255,7 +254,7 @@ METHOD addExtraButtons()
    
    ::oNavigatorView:getMenuTreeView():AddButton( "Importar datos", "gc_server_client_exchange_16", {|| ::seedEmpresa() }, "D", ACC_APPD ) 
 
-   ::oNavigatorView:getMenuTreeView():AddButton( "Configuraciones", "gc_wrench_16", {|| ::setConfig() }, "N", ACC_IMPR ) 
+   // ::oNavigatorView:getMenuTreeView():AddButton( "Configuraciones", "gc_wrench_16", {|| ::editConfig() }, "N", ACC_IMPR ) 
 
 RETURN ( nil )
 
@@ -570,9 +569,7 @@ METHOD End() CLASS EmpresasPanelView
    
    ::oBold                    := nil
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -607,7 +604,7 @@ RETURN ( nil )
 METHOD createButtonConfigurar() CLASS EmpresasPanelView
 
    with object ( TBtnBmp():New( 230, 30, 140, 80, "gc_wrench_32",,,,, ::oWnd,,, .f., .f., "Configurar opciones de la empresa",,,, .f.,, .f.,,, .f.,, .t.,, .t., .f., .t., ::nClrText, ::nClrBack, .f. ) )
-      :bAction       := {|| ::oController:setConfig( Company():uuid  ) }
+      :bAction       := {|| ::oController:editConfig( Company():uuid  ) }
       :nClrBorder    := ::nClrBorder
       :bColorMap     := {| o | o:lBorder := o:lMOver, ::nClrBorder }
       :oFontBold     := ::oBold

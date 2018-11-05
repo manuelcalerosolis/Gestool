@@ -577,7 +577,7 @@ METHOD addConfigButton()
       RETURN ( nil )
    end if 
 
-   ::oButtonConfig   := ::AddButton( "Configuraciones", "gc_wrench_16", {|| ::getSuperController():getConfiguracionesController():Edit() }, "N", ACC_IMPR ) 
+   ::oButtonConfig   := ::AddButton( "Configuraciones", "gc_wrench_16", {|| ::getSuperController():editConfig() }, "N", ACC_IMPR ) 
 
    ::fireEvent( 'addedConfigButton') 
 

@@ -238,7 +238,6 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getCamposExtraEntidadesController();
                                     INLINE ( if( empty( ::oCamposExtraEntidadesController ), ::oCamposExtraEntidadesController := CamposExtraEntidadesController():New( self ), ), ::oCamposExtraEntidadesController )
 
-
    METHOD getUnidadesMedicionOperacionesController();
                                     INLINE ( if( empty( ::oUnidadesMedicionOperacionesController ), ::oUnidadesMedicionOperacionesController := UnidadesMedicionOperacionesController():New( self ), ), ::oUnidadesMedicionOperacionesController )
 
@@ -254,8 +253,7 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getComentariosLineasController();
                                     INLINE ( if( empty( ::oComentariosLineasController ), ::oComentariosLineasController := ComentariosLineasController():New( self ), ), ::oComentariosLineasController )
                                     
-   METHOD getLenguajesController();
-                                    INLINE ( if( empty( ::oLenguajesController ), ::oLenguajesController := LenguajesController():New( self ), ), ::oLenguajesController )
+   METHOD getLenguajesController()  INLINE ( if( empty( ::oLenguajesController ), ::oLenguajesController := LenguajesController():New( self ), ), ::oLenguajesController )
 
    METHOD getTraduccionesController();
                                     INLINE ( if( empty( ::oTraduccionesController ), ::oTraduccionesController := TraduccionesController():New( self ), ), ::oTraduccionesController )
@@ -275,8 +273,7 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getArticulosFabricantesController();
                                     INLINE ( if( empty( ::oArticulosFabricantesController ), ::oArticulosFabricantesController := ArticulosFabricantesController():New( self ), ), ::oArticulosFabricantesController )
 
-   METHOD getTipoIvaController();
-                                    INLINE ( if( empty( ::oTipoIvaController ), ::oTipoIvaController := TipoIvaController():New( self ), ), ::oTipoIvaController )
+   METHOD getTipoIvaController()    INLINE ( if( empty( ::oTipoIvaController ), ::oTipoIvaController := TipoIvaController():New( self ), ), ::oTipoIvaController )
 
    METHOD getImpuestosEspecialesController();
                                     INLINE ( if( empty( ::oImpuestosEspecialesController ), ::oImpuestosEspecialesController := ImpuestosEspecialesController():New( self ), ), ::oImpuestosEspecialesController )
@@ -311,7 +308,6 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getFacturasClientesDescuentosController();
                                     INLINE ( if( empty( ::oFacturasClientesDescuentosController ), ::oFacturasClientesDescuentosController := FacturasClientesDescuentosController():New( self ), ), ::oFacturasClientesDescuentosController )
 
-
    METHOD getDireccionTipoDocumentoController();
                                     INLINE ( if( empty( ::oDireccionTipoDocumentoController ), ::oDireccionTipoDocumentoController := DireccionTipoDocumentoController():New( self ), ), ::oDireccionTipoDocumentoController )
 
@@ -324,11 +320,9 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getFacturasClientesController();
                                     INLINE ( if( empty( ::oFacturasClientesController ), ::oFacturasClientesController := FacturasClientesController():New( self ), ), ::oFacturasClientesController )
 
-   METHOD getAlmacenesController();
-                                    INLINE ( if( empty( ::oAlmacenesController ), ::oAlmacenesController := AlmacenesController():New( self ), ), ::oAlmacenesController )
+   METHOD getAlmacenesController()  INLINE ( if( empty( ::oAlmacenesController ), ::oAlmacenesController := AlmacenesController():New( self ), ), ::oAlmacenesController )
 
-   METHOD getZonasController();
-                                    INLINE ( if( empty( ::oZonasController ), ::oZonasController := ZonasController():New( self ), ), ::oZonasController )
+   METHOD getZonasController()      INLINE ( if( empty( ::oZonasController ), ::oZonasController := ZonasController():New( self ), ), ::oZonasController )
 
    METHOD getUbicacionesController();
                                     INLINE ( if( empty( ::oUbicacionesController ), ::oUbicacionesController := UbicacionesController():New( self ), ), ::oUbicacionesController )
@@ -351,8 +345,7 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getDelegacionesController();
                                     INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
 
-   METHOD getMailController();
-                                    INLINE ( if( empty( ::oMailController ), ::oMailController := MailController():New( self ), ), ::oMailController ) 
+   METHOD getMailController()       INLINE ( if( empty( ::oMailController ), ::oMailController := MailController():New( self ), ), ::oMailController ) 
 
    METHOD getArticulosEnvasadoController();
                                     INLINE ( if( empty( ::oArticulosEnvasadoController ), ::oArticulosEnvasadoController := ArticulosEnvasadoController():New( self ), ), ::oArticulosEnvasadoController )
@@ -360,14 +353,11 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getDivisasMonetariasController();
                                     INLINE ( if( empty( ::oDivisasMonetariasController ), ::oDivisasMonetariasController := DivisasMonetariasController():New( self ), ), ::oDivisasMonetariasController )
 
-   METHOD getCajasController();
-                                    INLINE ( if( empty( ::oCajasController ), ::oCajasController := CajasController():New( self ), ), ::oCajasController )
+   METHOD getCajasController()      INLINE ( if( empty( ::oCajasController ), ::oCajasController := CajasController():New( self ), ), ::oCajasController )
 
-   METHOD getImpresorasController();
-                                    INLINE ( if( empty( ::oImpresorasController ), ::oImpresorasController := ImpresorasController():New( self ), ), ::oImpresorasController )
+   METHOD getImpresorasController() INLINE ( if( empty( ::oImpresorasController ), ::oImpresorasController := ImpresorasController():New( self ), ), ::oImpresorasController )
 
-   METHOD getSesionesController();
-                                    INLINE ( if( empty( ::oSesionesController ), ::oSesionesController := SesionesController():New( self ), ), ::oSesionesController )
+   METHOD getSesionesController()   INLINE ( if( empty( ::oSesionesController ), ::oSesionesController := SesionesController():New( self ), ), ::oSesionesController )
 
    METHOD getTiposImpresorasController();
                                     INLINE ( if( empty( ::oTiposImpresorasController ), ::oTiposImpresorasController := TiposImpresorasController():New( self ), ), ::oTiposImpresorasController )
@@ -378,14 +368,11 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getSituacionesController();
                                     INLINE ( if( empty( ::oSituacionesController ), ::oSituacionesController := SituacionesController():New( self ), ), ::oSituacionesController )
 
-   METHOD getRecibosController();
-                                    INLINE ( if( empty( ::oRecibosController ), ::oRecibosController := RecibosController():New( self ), ), ::oRecibosController )
+   METHOD getRecibosController()    INLINE ( if( empty( ::oRecibosController ), ::oRecibosController := RecibosController():New( self ), ), ::oRecibosController )
 
-   METHOD getPermisosController();
-                                    INLINE ( if( empty( ::oPermisosController ), ::oPermisosController := PermisosController():New( self ), ), ::oPermisosController )
+   METHOD getPermisosController()   INLINE ( if( empty( ::oPermisosController ), ::oPermisosController := PermisosController():New( self ), ), ::oPermisosController )
 
-   METHOD getRolesController();
-                                    INLINE ( if( empty( ::oRolesController ), ::oRolesController := RolesController():New( self ), ), ::oRolesController )
+   METHOD getRolesController()      INLINE ( if( empty( ::oRolesController ), ::oRolesController := RolesController():New( self ), ), ::oRolesController )
 
    METHOD loadDocuments()
 
@@ -701,9 +688,7 @@ METHOD End() CLASS SQLApplicationController
       ::oRolesController:End()
    end if
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
