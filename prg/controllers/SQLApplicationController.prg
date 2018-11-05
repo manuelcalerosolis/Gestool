@@ -135,6 +135,8 @@ CLASS SQLApplicationController FROM SQLBaseController
 
    DATA oAjustableController
 
+   DATA oAjustableGestoolController
+
    DATA oDelegacionesController 
    
    DATA oArticulosEnvasadoController 
@@ -342,6 +344,9 @@ CLASS SQLApplicationController FROM SQLBaseController
    METHOD getEmpresasController()   INLINE ( if( empty( ::oEmpresasController ), ::oEmpresasController := EmpresasController():New( self ), ), ::oEmpresasController )
 
    METHOD getAjustableController()  INLINE ( if( empty( ::oAjustableController ), ::oAjustableController := AjustableController():New( self ), ), ::oAjustableController )
+
+   METHOD getAjustableGestoolController();
+                                    INLINE ( if( empty( ::oAjustableGestoolController ), ::oAjustableGestoolController := AjustableGestoolController():New( self ), ), ::oAjustableGestoolController )
 
    METHOD getDelegacionesController();
                                     INLINE ( if( empty( ::oDelegacionesController ), ::oDelegacionesController := DelegacionesController():New( self ), ), ::oDelegacionesController )
@@ -650,6 +655,10 @@ METHOD End() CLASS SQLApplicationController
 
    if !empty( ::oAjustableController )
       ::oAjustableController:End()
+   end if 
+
+   if !empty( ::oAjustableGestoolController )
+      ::oAjustableGestoolController:End()
    end if 
 
    if !empty( ::oArticulosEnvasadoController )

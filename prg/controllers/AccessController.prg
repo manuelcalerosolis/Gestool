@@ -130,7 +130,7 @@ METHOD loadUsersAndCompanies() CLASS AccessController
 
    ::aComboUsuarios        := ::getUsuariosController():getModel():getNombres()
 
-   cUltimoUsuario          := ::getAjustableController():getModel():getUltimoUsuarioInMac( ::getMacAddress() )
+   cUltimoUsuario          := ::getAjustableGestoolController():getModel():getUltimoUsuarioInMac( ::getMacAddress() )
    if empty( cUltimoUsuario )
       ::cComboUsuario      := atail( ::aComboUsuarios )
    else 
@@ -143,7 +143,7 @@ METHOD loadUsersAndCompanies() CLASS AccessController
 
       ::aComboEmpresas     := ::getEmpresasController():getModel():getNombres()
 
-      cUltimaEmpresa       := ::getAjustableController():getModel():getUltimaEmpresaInMac( ::getMacAddress() )
+      cUltimaEmpresa       := ::getAjustableGestoolController():getModel():getUltimaEmpresaInMac( ::getMacAddress() )
       if empty( cUltimaEmpresa )
          ::cComboEmpresa   := atail( ::cComboEmpresa )
       else
