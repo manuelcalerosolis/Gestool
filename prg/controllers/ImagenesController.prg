@@ -381,7 +381,7 @@ METHOD SetImagenAttribute( uValue )
    end if       
 
    cNombreImagen           := alltrim( ::oController:oController:getModel():hBuffer[ "nombre" ] ) 
-   cNombreImagen           += '(' + alltrim( ::hBuffer[ "uuid" ] ) + ')' + '.' 
+   cNombreImagen           += '(' + alltrim( ::oController:oController:getModel():hBuffer[ "uuid" ] ) + ')' + '.' 
    cNombreImagen           += lower( getFileExt( uValue ) ) 
 
    if !( copyfile( uValue, cPathImageApplicationStorage() + cNombreImagen ) )

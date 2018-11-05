@@ -255,7 +255,7 @@ CLASS SQLBaseModel
 
    METHOD setEvents( aEvents, bEvent )
    METHOD setEvent( cEvent, bEvent )                  INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
-   METHOD fireEvent( cEvent )                         INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )
+   METHOD fireEvent( cEvent, uValue )                 INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent, uValue ), ) )
 
    METHOD updateFieldWhereId( id, cField, uValue )
    METHOD updateBufferWhereId( id, hBuffer )
@@ -1424,8 +1424,7 @@ METHOD insertBuffer( hBuffer )
    DEFAULT hBuffer   := ::hBuffer
 
    cSQLInsert        := ::getInsertSentence( hBuffer )
-logwrite("-------------------------")
-logwrite(cSQLInsert)
+
    if empty( cSQLInsert )
       RETURN ( nil )
    end if 
@@ -1918,17 +1917,12 @@ METHOD duplicateOthers( uuidEntidad )
    local hOthers
    local aOthers 
 
-   msgalert( "inicio de duplicateOthers")
-
-   msgalert( ::getUuidOlderParent(), "getUuidOlderParent" )
-
    aOthers         := ::getHashOthersWhereParentUuid( ::getUuidOlderParent() )
+
 
    if empty( aOthers )
       RETURN ( nil )
    end if 
-
-   msgalert( hb_valtoexp( aOthers ), "aOthers")
 
    for each hOthers in aOthers
 
@@ -1942,11 +1936,9 @@ METHOD duplicateOthers( uuidEntidad )
       
       hset( hOthers, "deleted_at",  hb_datetime( nil, nil, nil, nil, nil, nil, nil ) )
 
-      msgalert( hb_valtoexp( hOthers ), "para insert")
-
       ::insertBuffer( hOthers )
 
-      ::fireEvent( 'afterDuplicated', ::getModel():getUuid() ) 
+      ::fireEvent( 'afterDuplicated', hget( hOthers, "uuid" ) ) 
 
    next
 

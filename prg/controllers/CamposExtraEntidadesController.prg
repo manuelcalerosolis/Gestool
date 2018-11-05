@@ -199,7 +199,7 @@ RETURN ( ::getModel():isNotBlankEntityWhereUuid( ::getController():getUuid() ) )
 METHOD UpdateLine( uValue ) CLASS CamposExtraEntidadesController
 
    local cEntidad    := ::getEntidadWhereNombre( uValue )
-msgalert(cEntidad)
+
    if empty( cEntidad ) 
       RETURN ( nil )
    end if 
