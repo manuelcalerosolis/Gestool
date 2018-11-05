@@ -418,7 +418,7 @@ METHOD getInsertUnidadesMedicionGruposSentence() CLASS SQLUnidadesMedicionGrupos
                               "( UUID(), " + quoted( uuid ) + ", " + cCodigoDefecto + ", 1, 1, 1 )"
 
    aadd( aSentence, cSentence )
-
+   
 RETURN ( aSentence )
 
 //---------------------------------------------------------------------------//

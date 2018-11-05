@@ -8,6 +8,7 @@ CLASS UnidadesMedicionController FROM SQLNavigatorController
    METHOD New() CONSTRUCTOR
 
    METHOD End()
+   METHOD getUnidadesInGroup()
 
    //Construcciones tardias----------------------------------------------------
 
@@ -70,6 +71,20 @@ METHOD End() CLASS UnidadesMedicionController
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
+
+METHOD getUnidadesInGroup() 
+
+   local aUnidades 
+
+   aUnidades   :=  SQLUnidadesMedicionOperacionesModel():getUnidadesWhereGrupo( ::oController:oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) )
+
+   if empty( aUnidades )
+      RETURN ( "" )
+   end if 
+
+RETURN ( serializeQuotedArray( aUnidades, "," ) )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -85,22 +100,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS UnidadesMedicionBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'codigo'
@@ -125,6 +125,8 @@ METHOD addColumns() CLASS UnidadesMedicionBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'codigo_iso' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 
@@ -202,6 +204,7 @@ METHOD Activate() CLASS UnidadesMedicionView
 
    ACTIVATE DIALOG ::oDialog CENTER
 
+
 RETURN ( ::oDialog:nResult )
 
 //---------------------------------------------------------------------------//
@@ -236,11 +239,15 @@ CLASS SQLUnidadesMedicionModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "unidades_medicion"
 
+   DATA cConstraints             INIT "PRIMARY KEY ( codigo, deleted_at )"
+
    METHOD getColumns()
 
    METHOD getUnidadMedicionSistema()
 
    METHOD getInsertUnidadesMedicionSentence()
+
+   METHOD addGeneralWhere( cSQLSelect, cGeneralWhere )
 
 END CLASS
 
@@ -265,6 +272,8 @@ METHOD getColumns() CLASS SQLUnidadesMedicionModel
 
    hset( ::hColumns, "sistema",           {  "create"    => "TINYINT( 1 )"                            ,;
                                              "default"   => {|| 0 } }                                 )
+
+   ::getDeletedStampColumn()
 
 RETURN ( ::hColumns )
 
@@ -308,6 +317,24 @@ METHOD getUnidadMedicionSistema() CLASS SQLUnidadesMedicionModel
 
 RETURN ( getSQLDatabase():getValue( cSql ) )
 
+//---------------------------------------------------------------------------//
+
+METHOD addGeneralWhere( cSQLSelect, cGeneralWhere ) CLASS SQLUnidadesMedicionModel
+
+   DEFAULT cGeneralWhere   := ::oController:getUnidadesInGroup()
+
+   if empty( cGeneralWhere )
+      RETURN ( cSQLSelect )
+   end if 
+   
+   cSQLSelect              += ::getWhereOrAnd( cSQLSelect )
+   cSQLSelect              += ::getTableName()+ ".codigo IN ( " 
+   cSQLSelect              += cGeneralWhere  
+   cSQLSelect              += " ) " 
+ 4   
+RETURN ( cSQLSelect )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

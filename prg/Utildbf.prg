@@ -4248,23 +4248,31 @@ RETURN ( alltrim( strtran( str( seconds() ), ".", "" ) ) )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION serializeArray( aArray, cDelimiter )
+FUNCTION serializeArray( aArray, cDelimiter, lQuoted )
 
    local cSerialized    := ""
 
    DEFAULT cDelimiter   := ","
+   DEFAULT lQuoted      := .f.
 
    if empty( aArray )
       RETURN ( cSerialized )
    end if 
 
-   aeval( aArray, {|elem| cSerialized += alltrim( elem ) + cDelimiter } )
+   aeval( aArray, {|elem| cSerialized += if( lQuoted, quoted( elem ), alltrim( elem ) ) + cDelimiter } )
 
    cSerialized          := left( cSerialized, len( cSerialized ) - 1 )
 
 RETURN ( cSerialized )
 
 //----------------------------------------------------------------------------//
+
+FUNCTION serializeQuotedArray( aArray, cDelimiter )
+
+RETURN ( serializeArray( aArray, cDelimiter, .t. ) )
+
+//----------------------------------------------------------------------------//
+
 
 FUNCTION aFirst( aArray )
 
