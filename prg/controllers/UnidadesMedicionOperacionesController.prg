@@ -94,10 +94,8 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-
 METHOD Edit( cCodigoGrupo ) CLASS UnidadesMedicionOperacionesController
-
+   
    if empty( cCodigoGrupo )
       msgstop("Debes seleccionar un grupo de unidades de medición")
       RETURN .f.

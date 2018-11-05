@@ -331,7 +331,7 @@ METHOD addGeneralWhere( cSQLSelect, cGeneralWhere ) CLASS SQLUnidadesMedicionMod
    cSQLSelect              += ::getTableName()+ ".codigo IN ( " 
    cSQLSelect              += cGeneralWhere  
    cSQLSelect              += " ) " 
- 4   
+     
 RETURN ( cSQLSelect )
 
 //---------------------------------------------------------------------------//
