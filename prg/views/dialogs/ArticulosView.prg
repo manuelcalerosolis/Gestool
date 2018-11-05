@@ -281,7 +281,7 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
                      ::oController:getTraduccionesController():getImage( "16" ) )
 
    oPanel:AddLink(   "Unidad por operación...",;
-                     {||   ::oController:getUnidadesMedicionOperacionesController():activateDialogView(),;
+                     {||   ::oController:getUnidadesMedicionOperacionesController():Edit( ::getModel():hBuffer['unidades_medicion_grupos_codigo'] ),;
                            ::oController:oUnidadesMedicionGruposController:oGetSelector:evalWhen() },;
                      ::oController:getunidadesmedicionoperacionesController():getImage( "16" ) )
 

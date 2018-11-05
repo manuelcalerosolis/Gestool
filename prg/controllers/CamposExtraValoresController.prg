@@ -105,8 +105,6 @@ RETURN ( nil )
 
 METHOD Edit( uuidEntidad ) CLASS CamposExtraValoresController
 
-   
-
    if empty( uuidEntidad )
       RETURN .f.
    end if 

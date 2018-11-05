@@ -48,6 +48,7 @@ CLASS ArticulosController FROM SQLNavigatorController
    METHOD getDuplicateOthers()
    
    METHOD deletedOthersSelection()
+   
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()                 INLINE( if( empty( ::oBrowseView ), ::oBrowseView := ArticulosBrowseView():New( self ), ), ::oBrowseView ) 
@@ -131,6 +132,8 @@ METHOD setUuidOldersParents() CLASS ArticulosController
 
    ::getTraduccionesController():getModel():setUuidOlderParent( ::getUuid() )
 
+   ::getUnidadesMedicionOperacionesController():getModel():setUuidOlderParent( ::getUuid() )
+
    ::getCamposExtraValoresController():getModel():setUuidOlderParent( ::getUuid() )
    
 RETURN ( nil )
@@ -147,6 +150,8 @@ METHOD getDuplicateOthers() CLASS ArticulosController
    
    ::getTraduccionesController():getModel():duplicateOthers( ::getUuid() )
 
+   ::getUnidadesMedicionOperacionesController():getModel():duplicateOthers( ::getUuid() )
+
    ::getCamposExtraValoresController():getModel():duplicateOthers( ::getUuid() )
 
 RETURN ( nil )
@@ -162,6 +167,8 @@ METHOD deletedOthersSelection() CLASS ArticulosController
    ::getImagenesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
    
    ::getTraduccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+
+   ::getUnidadesMedicionOperacionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 
    ::getCamposExtraValoresController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 

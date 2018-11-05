@@ -7,9 +7,18 @@ CLASS UnidadesMedicionOperacionesController FROM SQLNavigatorController
 
    DATA hUnidades
 
+   DATA cCodigoGrupo
+
    METHOD New() CONSTRUCTOR
 
    METHOD End()
+
+   METHOD deleteBuffer( aUuidEntidades )
+
+   METHOD Edit( cCodigoGrupo )
+
+   METHOD setCodigoGrupo( cCodigoGrupo ) ;
+                                       INLINE ( ::cCodigoGrupo := cCodigoGrupo )
 
    //Construcciones tardias----------------------------------------------------
 
@@ -72,6 +81,39 @@ METHOD End() CLASS UnidadesMedicionOperacionesController
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
+
+METHOD deleteBuffer( aUuidEntidades ) CLASS UnidadesMedicionOperacionesController
+
+   if empty( aUuidEntidades )
+      RETURN ( self )
+   end if
+
+   ::getModel():deleteWhereParentUuid( aUuidEntidades )
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Edit( cCodigoGrupo ) CLASS UnidadesMedicionOperacionesController
+   
+   if empty( cCodigoGrupo )
+      msgstop("Debes seleccionar un grupo de unidades de medición")
+      RETURN .f.
+   end if 
+
+   ::setCodigoGrupo( cCodigoGrupo )
+
+   ::setEditMode()
+
+   ::getRowSet():buildPad( ::getModel():getInitialSelect() )
+
+   ::beginTransactionalMode()
+
+   ::activateDialogView()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -87,22 +129,7 @@ ENDCLASS
 
 METHOD addColumns() CLASS UnidadesMedicionOperacionesBrowseView
 
-   with object ( ::oBrowse:AddCol() )
-      :cSortOrder          := 'id'
-      :cHeader             := 'Id'
-      :nWidth              := 80
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'id' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
-
-   with object ( ::oBrowse:AddCol() )
-      :cHeader             := 'Uuid'
-      :nWidth              := 300
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'uuid' ) }
-      :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :lHide               := .t.
-   end with
+   ::getColumnIdAndUuid()
 
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'operacion'
@@ -127,6 +154,8 @@ METHOD addColumns() CLASS UnidadesMedicionOperacionesBrowseView
       :bEditValue          := {|| ::getRowSet():fieldGet( 'unidad_medicion_nombre' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
    end with
+
+   ::getColumnDeletedAt()
 
 RETURN ( nil )
 
@@ -259,7 +288,7 @@ CLASS SQLUnidadesMedicionOperacionesModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "unidades_medicion_operacion"
 
-   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, operacion, unidad_medicion_codigo )"
+   DATA cConstraints             INIT "PRIMARY KEY ( parent_uuid, operacion, unidad_medicion_codigo, deleted_at )"
 
    DATA aConsulta                INIT {}
 
@@ -306,6 +335,8 @@ METHOD getColumns() CLASS SQLUnidadesMedicionOperacionesModel
    
    ::getTimeStampColumns()
 
+   ::getDeletedStampColumn()
+
 RETURN ( ::hColumns )
 
 //---------------------------------------------------------------------------//
@@ -349,7 +380,7 @@ METHOD getUnidadesWhereGrupo( cCodigoGrupo ) CLASS SQLUnidadesMedicionOperacione
 
    ::aConsulta       := getSQLDatabase():selectTrimedFetchHash( ::getSentenceUnidadesWhereGrupo( cCodigoGrupo ) )  
 
-   aeval( ::aConsulta, {| h | aadd( aUnidades, h[ "nombre" ] ) } )
+   aeval( ::aConsulta, {| h | aadd( aUnidades, h[ "codigo" ] ) } )
 
 RETURN ( aUnidades )
 
@@ -365,6 +396,7 @@ METHOD getInitialSelect() CLASS SQLUnidadesMedicionOperacionesModel
          unidades_medicion_operacion.id as id,
          unidades_medicion_operacion.uuid as uuid,     
          unidades_medicion_operacion.operacion as operacion,
+         unidades_medicion_operacion.deleted_at as deleted_at,
          unidades_medicion_operacion.unidad_medicion_codigo as unidad_medicion_codigo,
          unidades_medicion.nombre as unidad_medicion_nombre
       
