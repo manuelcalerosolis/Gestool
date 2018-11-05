@@ -130,6 +130,8 @@ METHOD setUuidOldersParents() CLASS ArticulosController
    ::getImagenesController():getModel():setUuidOlderParent( ::getUuid() )
 
    ::getTraduccionesController():getModel():setUuidOlderParent( ::getUuid() )
+
+   ::getCamposExtraValoresController():getModel():setUuidOlderParent( ::getUuid() )
    
 RETURN ( nil )
 
@@ -141,9 +143,11 @@ METHOD getDuplicateOthers() CLASS ArticulosController
 
    //Codificacion de proveedores
    
-   //::getImagenesController():getModel():duplicateOthers( ::getUuid() )
+   ::getImagenesController():getModel():duplicateOthers( ::getUuid() )
    
-   //::getTraduccionesController():getModel():duplicateOthers( ::getUuid() )
+   ::getTraduccionesController():getModel():duplicateOthers( ::getUuid() )
+
+   ::getCamposExtraValoresController():getModel():duplicateOthers( ::getUuid() )
 
 RETURN ( nil )
 
@@ -151,7 +155,15 @@ RETURN ( nil )
 
 METHOD deletedOthersSelection() CLASS ArticulosController
 
+   ::getCombinacionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+   
+   //Codificacion de proveedores
+
    ::getImagenesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+   
+   ::getTraduccionesController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
+
+   ::getCamposExtraValoresController():deleteBuffer( ::getUuidFromRecno( ::getBrowseView():getBrowse():aSelected ) )
 
 RETURN ( nil )
 

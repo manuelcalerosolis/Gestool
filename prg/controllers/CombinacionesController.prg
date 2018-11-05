@@ -43,6 +43,8 @@ CLASS CombinacionesController FROM SQLBrowseController
    METHOD setCodigoArticulo( cCodigoArticulo )  INLINE ( ::cCodigoArticulo := cCodigoArticulo )
    METHOD getCodigoArticulo()                   INLINE ( ::cCodigoArticulo )
 
+   METHOD deleteBuffer( aUuidEntidades )
+
    //Construcciones tardias----------------------------------------------------
 
    METHOD getBrowseView()                 INLINE ( iif( empty( ::oBrowseView ), ::oBrowseView := CombinacionesBrowseView():New( self ), ), ::oBrowseView ) 
@@ -76,7 +78,7 @@ METHOD New( oController ) CLASS CombinacionesController
 
    ::getModel():setEvent( 'beforeDuplicated',{|| ::getCombinacionesPropiedadesController():getModel():olderUuid := ::getModel():getField( "uuid", "parent_uuid", ::getModel():getUuidOlderParent() ) } )
 
-   /*::getModel():setEvent( 'afterDuplicated', {|| ::getCombinacionesPropiedadesController():getModel():duplicateOthers( ::getUuid() ) } )*/
+   ::getModel():setEvent( 'afterDuplicated', {| newUuid | ::getCombinacionesPropiedadesController():getModel():duplicateOthers( newUuid ) } )
 
 RETURN ( Self )
 
@@ -275,6 +277,18 @@ METHOD updateHavingSentence() CLASS CombinacionesController
    ::getModel():setGeneralHaving( cGeneralHaving )
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteBuffer( aUuidEntidades ) CLASS CombinacionesController
+
+   if empty( aUuidEntidades )
+      RETURN ( self )
+   end if
+
+   ::getModel():deleteWhereParentUuid( aUuidEntidades )
+
+RETURN ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

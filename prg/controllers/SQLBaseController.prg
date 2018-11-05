@@ -73,7 +73,11 @@ CLASS SQLBaseController
                                                                      hget( ::getModel():hBuffer, "id" ),;
                                                                      nil ) )
                   
+<<<<<<< HEAD
    METHOD getUuid()                                   INLINE ( iif(  !empty( ::getModel() ), ::getModel():getUuid(), nil ) )
+=======
+   METHOD getUuid()                                   INLINE ( /*iif(  !empty( ::getModel() ),*/ ::getModel():getUuid() )/*, nil ) )*/
+>>>>>>> 283498201adc48ba7fa798703f65b725e9257089
    
    // Rowset-------------------------------------------------------------------
 
@@ -197,7 +201,7 @@ CLASS SQLBaseController
 
    METHOD setEvents( aEvents, bEvent )                
    METHOD setEvent( cEvent, bEvent )                  INLINE ( ::getEvents():set( cEvent, bEvent ) )
-   METHOD fireEvent( cEvent )                         INLINE ( ::getEvents():fire( cEvent ) )
+   METHOD fireEvent( cEvent, uValue )                 INLINE ( ::getEvents():fire( cEvent, uValue ) )
 
    METHOD onKeyChar()                                 VIRTUAL
 

@@ -47,7 +47,7 @@ CLASS SQLDialogView FROM SQLBrowseableView
 
    METHOD setEvents( aEvents, bEvent )                
    METHOD setEvent( cEvent, bEvent )            INLINE ( if( !empty( ::oEvents ), ::oEvents:set( cEvent, bEvent ), ) )
-   METHOD fireEvent( cEvent )                   INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent ), ) )                            
+   METHOD fireEvent( cEvent, uValue )           INLINE ( if( !empty( ::oEvents ), ::oEvents:fire( cEvent, uValue ), ) )                            
 
 //Construcciones tardias--------------------------------------------------------
 

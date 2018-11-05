@@ -72,8 +72,6 @@ METHOD insertProperties( aCombination, uuidParent ) CLASS CombinacionesPropiedad
 
    local hCombination
 
-   msgalert( hb_valtoexp( aCombination), "aCombination")
-
    for each hCombination in aCombination
 
       ::insertProperty( hget( hCombination, "propiedad_uuid" ), uuidParent )

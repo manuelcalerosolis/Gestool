@@ -79,7 +79,7 @@ CLASS SQLBaseView
    METHOD getEvents()                                 INLINE ( if( empty( ::oEvents ), ::oEvents := Events():New(), ), ::oEvents )
 
    METHOD setEvent( cEvent, bEvent )                  INLINE ( ::getEvents():set( cEvent, bEvent ) )
-   METHOD fireEvent( cEvent )                         INLINE ( ::getEvents():fire( cEvent ) )
+   METHOD fireEvent( cEvent, uValue )                 INLINE ( ::getEvents():fire( cEvent, uValue ) )
 
    METHOD getTimer()            
 
