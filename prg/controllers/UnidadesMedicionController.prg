@@ -300,7 +300,7 @@ METHOD getUnidadMedicionSistema() CLASS SQLUnidadesMedicionModel
 
       FROM %1$s AS unidades_medicion
 
-      WHERE unidades_medicion.sistema = 1
+         WHERE unidades_medicion.sistema = 1
 
    ENDTEXT
 

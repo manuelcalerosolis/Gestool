@@ -13,11 +13,11 @@ CLASS UnidadesMedicionOperacionesController FROM SQLNavigatorController
 
    //Construcciones tardias----------------------------------------------------
 
-   METHOD getBrowseView()           INLINE( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionOperacionesBrowseView():New( self ), ), ::oBrowseView ) 
+   METHOD getBrowseView()           INLINE ( if( empty( ::oBrowseView ), ::oBrowseView := UnidadesMedicionOperacionesBrowseView():New( self ), ), ::oBrowseView ) 
 
-   METHOD getDialogView()           INLINE( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionOperacionesView():New( self ), ), ::oDialogView )
+   METHOD getDialogView()           INLINE ( if( empty( ::oDialogView ), ::oDialogView := UnidadesMedicionOperacionesView():New( self ), ), ::oDialogView )
 
-   METHOD getValidator()            INLINE( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionOperacionesValidator():New( self  ), ), ::oValidator )
+   METHOD getValidator()            INLINE ( if( empty( ::oValidator ), ::oValidator := UnidadesMedicionOperacionesValidator():New( self  ), ), ::oValidator )
 
    METHOD getRepository()           INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionOperacionesRepository():New( self ), ), ::oRepository )
    
@@ -394,18 +394,18 @@ METHOD getUnidadVentaWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionO
       FROM  %1$s AS unidades_medicion_operacion
 
       INNER JOIN %2$s AS articulos
-         ON articulos.uuid = unidades_medicion_operacion.parent_uuid AND articulos.codigo= %4$s 
+         ON articulos.uuid = unidades_medicion_operacion.parent_uuid AND articulos.codigo = %4$s 
  
       INNER JOIN %3$s AS unidades_medicion
          ON unidades_medicion.uuid = unidades_medicion_operacion.uuid_unidad
 
-      WHERE unidades_medicion_operacion.operacion = "Venta"
+      WHERE unidades_medicion_operacion.operacion = "Ventas"
 
    ENDTEXT
 
    cSql        := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), SQLUnidadesMedicionModel():getTableName(), cCodigoArticulo )
 
-   cUnidad     := getSQLDatabase():getValue ( cSql )
+   cUnidad     := getSQLDatabase():getValue( cSql, "" )
 
 RETURN ( cUnidad )
 

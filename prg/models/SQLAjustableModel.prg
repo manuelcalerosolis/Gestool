@@ -3,7 +3,29 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS SQLAjustableModel FROM SQLBaseModel
+CLASS SQLAjustableGestoolModel FROM SQLAjustableModel
+
+   METHOD getTableName()         INLINE ( "gestool." + ::cTableName )
+
+   METHOD setEmpresaFormaPago( uAjusteValue, cAjustableUuid ) ;
+                                 INLINE ( ::setValue( 'forma_pago_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getEmpresaFormaPago( uuidEmpresa );
+                                 INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'forma_pago_defecto', space( 20 ) ), 20 ) )   
+
+   METHOD setEmpresaAlmacen( uAjusteValue, cAjustableUuid ) ;
+                                 INLINE ( ::setValue( 'almacen_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getEmpresaAlmacen( uuidEmpresa );
+                                 INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'almacen_defecto', space( 20 ) ), 20 ) )   
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SQLAjustableModel FROM SQLCompanyModel
 
    DATA cTableName               INIT "ajustables"
 
@@ -111,16 +133,6 @@ CLASS SQLAjustableModel FROM SQLBaseModel
                                  INLINE ( ::setLogic( 'seleccionar_usuarios', uAjusteValue, 'empresas', cAjustableUuid ) )
    METHOD getEmpresaSeleccionarUsuarios( cUuid );
                                  INLINE ( ::getLogic( cUuid, 'empresas', 'seleccionar_usuarios', .f. ) )   
-
-   METHOD setEmpresaFormaPago( uAjusteValue, cAjustableUuid ) ;
-                                 INLINE ( ::setValue( 'forma_pago_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
-   METHOD getEmpresaFormaPago( uuidEmpresa );
-                                 INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'forma_pago_defecto', space( 20 ) ), 20 ) )   
-
-   METHOD setEmpresaAlmacen( uAjusteValue, cAjustableUuid ) ;
-                                 INLINE ( ::setValue( 'almacen_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
-   METHOD getEmpresaAlmacen( uuidEmpresa );
-                                 INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'almacen_defecto', space( 20 ) ), 20 ) )   
 
    METHOD getRolAlbaranEntregado( cUuid );
                                  INLINE ( ::getLogic( cUuid, 'roles', 'albaran_entregado', .t. ) )   

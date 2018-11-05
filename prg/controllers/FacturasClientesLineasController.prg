@@ -494,6 +494,8 @@ METHOD stampArticuloUnidaMedicionVentas()
 
    cUnidadMedicion         := SQLUnidadesMedicionOperacionesModel():getUnidadVentaWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
+   msgalert( cUnidadMedicion, "getUnidadVentaWhereArticulo" )
+
    if !empty( cUnidadMedicion )
       RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
    end if 
@@ -502,13 +504,17 @@ METHOD stampArticuloUnidaMedicionVentas()
 
    cUnidadMedicion         := UnidadesMedicionGruposLineasRepository():getUnidadDefectoWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
+   msgalert( cUnidadMedicion, "getUnidadDefectoWhereArticulo" )
+   
    if !empty( cUnidadMedicion )
       RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
    end if 
 
    // Unidad de medición menor en el grupo de la empresa-----------------------
 
-   cUnidadMedicion         := UnidadesMedicionGruposLineasRepository():getWhereEmpresa()
+   cUnidadMedicion         := afirst( UnidadesMedicionGruposLineasRepository():getWhereEmpresa() )
+
+   msgalert( cUnidadMedicion, "UnidadesMedicionGruposLineasRepository getWhereEmpresa" )
 
    if !empty( cUnidadMedicion )
       RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
@@ -517,6 +523,8 @@ METHOD stampArticuloUnidaMedicionVentas()
    // Unidad de medición del sistema-------------------------------------------
 
    cUnidadMedicion         := SQLUnidadesMedicionModel():getUnidadMedicionSistema()
+   
+   msgalert( cUnidadMedicion, "SQLUnidadesMedicionModel getUnidadMedicionSistema" )
 
    if !empty( cUnidadMedicion )
       RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
@@ -563,6 +571,8 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD stampArticuloUnidadMedicion( uValue )
+
+   msgalert( hb_valtoexp( uValue ), "uValue" )
       
    ::updateField( 'unidad_medicion_codigo', uValue )
 

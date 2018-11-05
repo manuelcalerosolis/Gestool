@@ -41,8 +41,6 @@ METHOD New( oController ) CLASS UnidadesMedicionGruposController
 
    ::nLevel                                  := Auth():Level( ::cName )
 
-   ::getModel()                                  
-
    ::setEvents( { 'editing', 'deleting' }, {|| if( ::isRowSetSystemRegister(), ( msgStop( "Este registro pertenece al sistema, no se puede alterar." ), .f. ), .t. ) } )
 
 RETURN ( Self )
@@ -69,11 +67,9 @@ METHOD End() CLASS UnidadesMedicionGruposController
 
    if !empty( ::oRepository )
       ::oRepository:End()
-   end if 
+   end if  
 
-   ::Super:End()
-
-RETURN ( nil )
+RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
 
@@ -266,7 +262,7 @@ METHOD validatedUnidadesMedicioncontroller() CLASS UnidadesMedicionGruposView
    
    ::oController:getUnidadesMedicionGruposLineasController():RefreshBrowseView()
 
-Return ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

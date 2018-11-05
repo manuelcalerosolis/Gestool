@@ -428,10 +428,10 @@ METHOD getSentenceWhereGrupoSistema( cField ) CLASS UnidadesMedicionGruposLineas
 
    local cSelect
 
-   DEFAULT cField    := "unidad_alternativa_codigo"
+   DEFAULT cField := "unidad_alternativa_codigo"
 
-   cSelect           := "SELECT lineas." + cField                                                                 + " " + ;
-                        "FROM " + ::getTableName() + " AS lineas"                                                  + " " + ;
+   cSelect        := "SELECT lineas." + cField                                                                    + " " + ;
+                        "FROM " + ::getTableName() + " AS lineas"                                                 + " " + ;
                         "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"             + " " + ;         
                            "ON lineas.parent_uuid = grupos.uuid"                                                  + " " + ;         
                         "WHERE grupos.sistema = 1"
@@ -444,18 +444,18 @@ METHOD getSentenceWhereEmpresa( cField ) CLASS UnidadesMedicionGruposLineasRepos
 
    local cSelect
 
-   DEFAULT cField    := "unidad_alternativa_codigo"
+   DEFAULT cField := "unidad_alternativa_codigo"
 
-   cSelect           := "SELECT lineas." + cField                                                                 + " " + ;
-                           "FROM "+ ::getTableName() + " AS lineas"                                               + " " + ;
-                           "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"          + " " + ;         
-                              "ON lineas.parent_uuid = grupos.uuid"                                               + " " + ;         
-                           "LEFT JOIN " + SQLAjustableModel():getTableName() + " AS ajustables"                   + " " + ;
-                              "ON ajustables.ajuste_valor = grupos.codigo"                                        + " " + ;
-                           "LEFT JOIN " + SQLAjustesModel():getTableName() + " AS ajustes"                        + " " + ;
-                              "ON ajustes.uuid = ajustables.ajuste_uuid"                                          + " " + ;
-                           "WHERE ajustes.ajuste = 'unidades_grupo_defecto'"                                      + " " + ;
-                              "AND ajustables.ajustable_uuid = " + quoted( Company():uuid() )
+   cSelect        := "SELECT lineas." + cField                                                                 + " " + ;
+                        "FROM "+ ::getTableName() + " AS lineas"                                               + " " + ;
+                        "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"          + " " + ;         
+                           "ON lineas.parent_uuid = grupos.uuid"                                               + " " + ;         
+                        "LEFT JOIN " + SQLAjustableModel():getTableName() + " AS ajustables"                   + " " + ;
+                           "ON ajustables.ajuste_valor = grupos.codigo"                                        + " " + ;
+                        "LEFT JOIN " + SQLAjustesModel():getTableName() + " AS ajustes"                        + " " + ;
+                           "ON ajustes.uuid = ajustables.ajuste_uuid"                                          + " " + ;
+                        "WHERE ajustes.ajuste = 'unidades_grupo_defecto'"                                      + " " + ;
+                           "AND ajustables.ajustable_uuid = " + quoted( Company():uuid() )
 
 RETURN ( cSelect )
 
@@ -523,7 +523,7 @@ RETURN ( aResult )
 
 METHOD getWhereGrupoSistemaDefault() CLASS UnidadesMedicionGruposLineasRepository
 
-RETURN ( ::getDatabase():selectFetchArrayOneColumn( ::getSentenceWhereGrupoSistema() + " AND lineas.sistema = 1" ) )
+RETURN ( ::getDatabase():getValue( ::getSentenceWhereGrupoSistema() + " AND lineas.sistema = 1", "" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -549,14 +549,17 @@ METHOD getCodigoDefault( cCodigoArticulo ) CLASS UnidadesMedicionGruposLineasRep
 
    if !empty( cCodigoArticulo )
       cCodigo        := ::getWhereCodigoArticuloDefault( cCodigoArticulo )
+      msgalert( hb_valtoexp( cCodigo ), "getWhereCodigoArticuloDefault")
    end if      
 
    if empty( cCodigo )
       cCodigo        := ::getWhereEmpresaDefault()
+      msgalert( hb_valtoexp( cCodigo ), "getWhereEmpresaDefault")
    end if
 
    if empty( cCodigo )
       cCodigo        := ::getWhereGrupoSistemaDefault()
+      msgalert( hb_valtoexp( cCodigo ), "getWhereGrupoSistemaDefault")
    end if
 
 RETURN ( cCodigo )

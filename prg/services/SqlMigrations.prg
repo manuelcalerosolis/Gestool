@@ -164,13 +164,6 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLEmpresasModel():New() )
 
-   aadd( ::aModels, SQLDireccionesGestoolModel():New() )
-
-   aadd( ::aModels, SQLCodigosPostalesGestoolModel():New() )
-
-   aadd( ::aModels, SQLProvinciasGestoolModel():New() )
-
-   aadd( ::aModels, SQLPaisesGestoolModel():New() )
 
    aadd( ::aModels, SQLDelegacionesModel():New() )
 
@@ -181,8 +174,6 @@ METHOD addModels() CLASS SQLGestoolMigrations
    aadd( ::aModels, SQLPermisosModel():New() )
 
    aadd( ::aModels, SQLPermisosOpcionesModel():New() )
-
-   aadd( ::aModels, SQLAjustesModel():New() )
 
    aadd( ::aModels, SQLAjustableModel():New() )
 
@@ -198,19 +189,31 @@ METHOD addModels() CLASS SQLGestoolMigrations
 
    aadd( ::aModels, SQLConfiguracionEmpresasModel():New() )
 
+   // Modelos duplicados-------------------------------------------------------
+
+   aadd( ::aModels, SQLDireccionesGestoolModel():New() )
+
+   aadd( ::aModels, SQLCodigosPostalesGestoolModel():New() )
+
+   aadd( ::aModels, SQLProvinciasGestoolModel():New() )
+
+   aadd( ::aModels, SQLPaisesGestoolModel():New() )
+
+   aadd( ::aModels, SQLAjustesGestoolModel():New() )
+
 RETURN ( ::aModels )
  
 //----------------------------------------------------------------------------//
 
 METHOD checkValues() CLASS SQLGestoolMigrations
 
+   getSQLDatabase():Exec( SQLAjustesGestoolModel():getInsertAjustesSentence() )
+
    getSQLDatabase():Exec( SQLRolesModel():getInsertRolesSentence() )
 
    getSQLDatabase():Exec( SQLUsuariosModel():getInsertUsuariosSentence() ) 
 
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
@@ -422,15 +425,15 @@ METHOD checkValues() CLASS SQLCompanyMigrations
 
    getSQLDatabase():Exec( SQLCajasModel():getInsertCajasSentence() )
 
-   getSQLDatabase():Exec( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )
-
    getSQLDatabase():Exec( SQLAlmacenesModel():getInsertAlmacenSentence() )
+
+   getSQLDatabase():Exec( SQLUnidadesMedicionModel():getInsertUnidadesMedicionSentence() )
 
    getSQLDatabase():Execs( SQLUnidadesMedicionGruposModel():getInsertUnidadesMedicionGruposSentence() )
 
    getSQLDatabase():Exec( SQLArticulosTarifasModel():getInsertArticulosTarifasSentence() )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -440,7 +443,7 @@ METHOD addRepositories() CLASS SQLCompanyMigrations
 
    aadd( ::aRepositories, FacturasClientesRepository():New() )
 
-RETURN ( Self )
+RETURN ( nil )
 
 //----------------------------------------------------------------------------//
 

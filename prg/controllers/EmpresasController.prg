@@ -13,8 +13,6 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    DATA oCamposExtraValoresController
 
-   DATA getAjustableController
-
    DATA lSolicitarUsuario 
 
    DATA oDelegacionesController
@@ -23,6 +21,7 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    DATA cFormaPagoDefecto
    DATA cAlmacenDefecto
+   DATA cUnidadesDefecto
 
    DATA aDelegaciones
    DATA cDelegacionDefecto
@@ -166,6 +165,8 @@ METHOD loadConfig( uuidEmpresa )
    ::cFormaPagoDefecto           := ::getAjustableController():getModel():getEmpresaFormaPago( uuidEmpresa )
 
    ::cAlmacenDefecto             := ::getAjustableController():getModel():getEmpresaAlmacen( uuidEmpresa )
+   
+   ::cUnidadesDefecto            := ::getAjustableController():getModel():getEmpresaUnidadesGrupoDefecto( uuidEmpresa )
 
    // ::lSolicitarUsuario           := ::getAjustableController():getModel():getEmpresaSeleccionarUsuarios( uuidEmpresa )
 
@@ -197,6 +198,8 @@ METHOD saveConfig( uuidEmpresa )
 
    ::getAjustableController():getModel():setEmpresaAlmacen( ::cAlmacenDefecto, uuidEmpresa )
 
+   ::getAjustableController():getModel():setEmpresaUnidadesGrupoDefecto( ::cUnidadesDefecto, uuidEmpresa )
+   
    // ::getAjustableController():getModel():setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, uuidEmpresa )
    
    // ::cUuidDelegacionDefecto      := SQLDelegacionesModel():getUuidFromNombre( ::cDelegacionDefecto )
@@ -204,8 +207,6 @@ METHOD saveConfig( uuidEmpresa )
    // ::getAjustableController():getModel():setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, uuidEmpresa )
 
    // ::cCodigoUnidaesDefecto       := SQLUnidadesMedicionGruposModel():getCodigoWhereNombre( ::cUnidadesDefecto )
-
-   // ::getAjustableController():getModel():setEmpresaUnidadesGrupoDefecto( ::cCodigoUnidaesDefecto, uuidEmpresa )
 
    // ::cCodigoTarifaDefecto        := SQLArticulosTarifasModel():getCodigoWhereNombre( ::cTarifaDefecto )
 
@@ -241,6 +242,9 @@ METHOD startingActivate()
    ::getAlmacenesController():getSelector():Bind( bSETGET( ::cAlmacenDefecto ) )
    ::getAlmacenesController():getSelector():addGetSelector( "Almacen", oPanel ) 
 
+   ::getUnidadesMedicionController():getSelector():Bind( bSETGET( ::cUnidadesDefecto ) )
+   ::getUnidadesMedicionController():getSelector():addGetSelector( "Grupos unidades", oPanel ) 
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -258,8 +262,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 METHOD updateEmpresa()
-
-   // msgRun( "Actualizando estructura de aplicación", "Espere por favor...", {|| SQLGestoolMigrations():Run() } )
 
    aeval( ::getBrowseView():getBrowseSelected(),;
             {|nSelect| ::getRowSet():goToRecNo( nSelect ),;
