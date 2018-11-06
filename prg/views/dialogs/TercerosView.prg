@@ -189,8 +189,8 @@ METHOD redefineComercial() CLASS TercerosView
    ::getController():getClientesGruposController():getSelector():Bind( bSETGET( ::getController():oModel:hBuffer[ "cliente_grupo_codigo" ] ) )
    ::getController():getClientesGruposController():getSelector():Build( { "idGet" => 140, "idText" => 141, "idLink" => 142, "oDialog" => ::oFolder:aDialogs[2] } )
 
-   ::getController():getFormasPagosController():getSelector():Bind( bSETGET( ::getController():oModel:hBuffer[ "forma_pago_codigo" ] ) )
-   ::getController():getFormasPagosController():getSelector():Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[2] } )
+   ::getController():getMetodosPagosController():getSelector():Bind( bSETGET( ::getController():oModel:hBuffer[ "metodo_pago_codigo" ] ) )
+   ::getController():getMetodosPagosController():getSelector():Build( { "idGet" => 150, "idText" => 151, "idLink" => 152, "oDialog" => ::oFolder:aDialogs[2] } )
 
    REDEFINE GET ::getController():oModel:hBuffer[ "primer_dia_pago" ] ;
       ID       160;
@@ -413,7 +413,7 @@ METHOD startDialog() CLASS TercerosView
 
    ::getController():getDescuentosController():getSelector():Start()
 
-   ::getController():getFormasPagosController():getSelector():Start()
+   ::getController():getMetodosPagosController():getSelector():Start()
 
    ::getController():getCuentasRemesaController():getSelector():Start()
 

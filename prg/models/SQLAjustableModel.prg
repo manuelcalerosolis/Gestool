@@ -199,10 +199,10 @@ CLASS SQLAjustableModel FROM SQLCompanyModel
    METHOD getLogic( cUuid, cTipo, cAjuste, lDefault ) 
    METHOD setLogic( cAjusteUuid, lAjusteValue, cAjustableTipo, cAjustableUuid )
 
-   METHOD setFormaPago( uAjusteValue, cAjustableUuid ) ;
-                                 INLINE ( ::setValue( 'forma_pago_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
-   METHOD getFormaPago( uuidEmpresa );
-                                 INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'forma_pago_defecto', space( 20 ) ), 20 ) )   
+   METHOD setMetodoPago( uAjusteValue, cAjustableUuid ) ;
+                                 INLINE ( ::setValue( 'metodo_pago_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )
+   METHOD getMetodoPago( uuidEmpresa );
+                                 INLINE ( padr( ::getValue( uuidEmpresa, 'empresas', 'metodo_pago_defecto', space( 20 ) ), 20 ) )   
 
    METHOD setAlmacen( uAjusteValue, cAjustableUuid ) ;
                                  INLINE ( ::setValue( 'almacen_defecto', uAjusteValue, 'empresas', cAjustableUuid ) )

@@ -22767,8 +22767,8 @@ FONT 8, "Ms Sans Serif"
   CONTROL "I.R.P.F.", -1, "Static", WS_GROUP, 12, 151, 28, 8
   CONTROL "%", 4009, "Static", WS_GROUP, 169, 152, 9, 8
   CONTROL "Régimen", -1, "Static", WS_GROUP, 12, 125, 32, 10
-  CONTROL "Forma de pago", -1, "Button", BS_GROUPBOX, 5, 69, 444, 40
-  CONTROL "Código", 152, "Static", WS_GROUP, 12, 82, 45, 8
+  CONTROL "Método de pago", -1, "Button", BS_GROUPBOX, 5, 69, 444, 40
+  CONTROL "Método pago", 152, "Static", WS_GROUP, 12, 82, 55, 8
   CONTROL "Valores", -1, "Button", BS_GROUPBOX, 5, 2, 444, 64
   CONTROL "Grupo", 142, "Static", WS_GROUP, 11, 53, 25, 8, WS_EX_TRANSPARENT
   CONTROL "Agente", 132, "Static", WS_GROUP, 11, 40, 46, 8, WS_EX_TRANSPARENT

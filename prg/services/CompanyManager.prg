@@ -28,7 +28,7 @@ CLASS CompanyManager
 
    METHOD getDefaultTarifa()              INLINE ( SQLAjustableModel():getEmpresaTarifaDefecto( ::uuid ) )
    
-   METHOD getDefaultFormaPago()           INLINE ( SQLAjustableModel():getEmpresaFormaPago( ::uuid ) )
+   METHOD getDefaultMetodoPago()          INLINE ( SQLAjustableModel():getMetodoPago( ::uuid ) )
 
    METHOD getPathDocuments( cDirectory )  INLINE ( cCompanyPathDocuments( ::codigo, cDirectory ) )
 

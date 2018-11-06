@@ -37,7 +37,7 @@ METHOD getColumns() CLASS SQLTercerosModel
    hset( ::hColumns, "dni",                        {  "create"    => "VARCHAR( 20 )"                        ,;
                                                       "default"   => {|| space( 20 ) } }                    )
 
-   hset( ::hColumns, "forma_pago_codigo",          {  "create"    => "VARCHAR( 20 )"                        ,;
+   hset( ::hColumns, "metodo_pago_codigo",          {  "create"    => "VARCHAR( 20 )"                        ,;
                                                       "default"   => {|| space( 20 ) } }                    )
 
    hset( ::hColumns, "web",                        {  "create"    => "VARCHAR( 150 )"                       ,;
@@ -145,7 +145,7 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
       %2$s.dni AS dni,
       %2$s.establecimiento AS establecimiento,
       %2$s.fecha_ultima_llamada AS fecha_ultima_llamada,
-      %2$s.forma_pago_codigo AS forma_pago_codigo,
+      %2$s.metodo_pago_codigo AS metodo_pago_codigo,
       %2$s.recargo_equivalencia AS recargo_equivalencia,
       forma_pago.nombre AS nombre_forma_pago,                                                         
       %2$s.agente_codigo AS agente_codigo,                                                       
@@ -169,7 +169,7 @@ METHOD getInitialSelect() CLASS SQLTercerosModel
       LEFT JOIN %3$s AS direcciones 
          ON %2$s.uuid = direcciones.parent_uuid AND direcciones.codigo = 0  
       LEFT JOIN %4$s AS forma_pago  
-         ON %2$s.forma_pago_codigo = forma_pago.codigo
+         ON %2$s.metodo_pago_codigo = forma_pago.codigo
       LEFT JOIN %5$s AS agentes   
          ON %2$s.agente_codigo = agentes.codigo
       LEFT JOIN %6$s AS rutas
@@ -214,7 +214,7 @@ METHOD getSentenceClienteDireccionPrincipal( cBy, cId ) CLASS SQLTercerosModel
          %2$s.ruta_codigo AS ruta_codigo,
          %2$s.agente_codigo AS agente_codigo,
          %2$s.recargo_equivalencia AS recargo_equivalencia,
-         %2$s.forma_pago_codigo AS forma_pago_codigo,
+         %2$s.metodo_pago_codigo AS metodo_pago_codigo,
          direcciones.direccion AS direccion,
          direcciones.poblacion AS poblacion,
          direcciones.provincia AS provincia,

@@ -224,11 +224,7 @@ METHOD Exec( cSentence, lParse )
    
       ::oConexion:Exec( cSentence )
 
-      logwrite( cSentence )
-       
    catch e
-
-      logwrite( cSentence )   
 
       ::showError( e )
 

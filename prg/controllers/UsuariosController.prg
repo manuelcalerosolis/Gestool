@@ -194,7 +194,7 @@ METHOD saveConfig() CLASS UsuariosController
    ::getAjustableGestoolController():getModel():setUsuarioAlmacenExclusivo( ::cUuidAlmacenExclusivo, ::cUuidUsuario )
    ::getAjustableGestoolController():getModel():setUsuarioDelegacionExclusiva( ::cUuidDelegacionExclusiva, ::cUuidUsuario )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -213,7 +213,7 @@ METHOD startingActivate() CLASS UsuariosController
 
    ::changeComboEmpresa()
       
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -231,7 +231,7 @@ METHOD changeComboEmpresa() CLASS UsuariosController
          ( ::oComboAlmacen:Disable(), ::oComboAlmacen:Set( "" ) ),;
          ::oComboAlmacen:Enable() )
 
-RETURN ( self )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -296,8 +296,8 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "uuid",                    {  "create"    => "VARCHAR(40) NOT NULL UNIQUE"             ,;
                                                    "default"   => {|| win_uuidcreatestring() } }            )
 
-   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 )"                            ,;
-                                                   "default"   => {|| space( 20 ) } }                        )
+   hset( ::hColumns, "codigo",                  {  "create"    => "VARCHAR( 20 )"                           ,;
+                                                   "default"   => {|| space( 20 ) } }                       )
 
    hset( ::hColumns, "nombre",                  {  "create"    => "VARCHAR ( 100 ) NOT NULL UNIQUE"         ,;
                                                    "default"   => {|| space( 100 ) } }                      )
@@ -308,7 +308,7 @@ METHOD getColumns() CLASS SQLUsuariosModel
    hset( ::hColumns, "remember_token",          {  "create"    => "VARCHAR ( 100 )"                         ,;
                                                    "default"   => {|| "" } }                                )
 
-   hset( ::hColumns, "super_user",              {  "create"    => "TINYINT ( 1 )"                          ,;
+   hset( ::hColumns, "super_user",              {  "create"    => "TINYINT ( 1 )"                           ,;
                                                    "default"   => {|| "0" } }                               )
 
    hset( ::hColumns, "rol_uuid",                {  "create"    => "VARCHAR( 40 )"                           ,;
@@ -324,12 +324,12 @@ METHOD getColumns() CLASS SQLUsuariosModel
                                                    "default"   => {|| space( 100 ) } }                      )
 
    hset( ::hColumns, "email_puerto",            {  "create"    => "INT ( 5 ) NOT NULL"                      ,;
-                                                   "default"   => {|| 0 } }                               )
+                                                   "default"   => {|| 0 } }                                 )
 
-   hset( ::hColumns, "autenticacion_smtp",      {  "create"    => "TINYINT ( 1 )"                          ,;
+   hset( ::hColumns, "autenticacion_smtp",      {  "create"    => "TINYINT ( 1 )"                           ,;
                                                    "default"   => {|| "0" } }                               )
 
-   hset( ::hColumns, "requiere_ssl",            {  "create"    => "TINYINT ( 1 )"                          ,;
+   hset( ::hColumns, "requiere_ssl",            {  "create"    => "TINYINT ( 1 )"                           ,;
                                                    "default"   => {|| "0" } }                               )
 
    hset( ::hColumns, "email_enviar_copia",      {  "create"    => "VARCHAR ( 100 ) NOT NULL"                ,;

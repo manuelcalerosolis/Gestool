@@ -3,7 +3,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS MetodosPagoController FROM SQLNavigatorController
+CLASS MetodosPagosController FROM SQLNavigatorController
 
    METHOD New() CONSTRUCTOR
 
@@ -25,7 +25,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oController ) CLASS MetodosPagoController
+METHOD New( oController ) CLASS MetodosPagosController
 
    ::Super:New( oController )
 
@@ -43,7 +43,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD End() CLASS MetodosPagoController
+METHOD End() CLASS MetodosPagosController
 
    if !empty( ::oModel )
       ::oModel:End()
@@ -104,12 +104,10 @@ METHOD addColumns() CLASS MetodosPagoBrowseView
    with object ( ::oBrowse:AddCol() )
       :cSortOrder          := 'cobrado'
       :cHeader             := 'Cobrado'
-      :nWidth              := 20
+      :nWidth              := 80
       :nHeadBmpNo          := 3
-      :bEditValue          := {|| ::getRowSet():fieldGet( 'cobrado' ) }
+      :bEditValue          := {|| if( ::getRowSet():fieldGet( 'cobrado' ) == 1, 'Cobrado', 'No cobrado' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
-      :SetCheck( { "Sel16", "Nil16" } )
-      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -118,6 +116,7 @@ METHOD addColumns() CLASS MetodosPagoBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'numero_plazos' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -126,6 +125,7 @@ METHOD addColumns() CLASS MetodosPagoBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'primer_plazo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -134,6 +134,7 @@ METHOD addColumns() CLASS MetodosPagoBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'entre_plazo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -142,6 +143,7 @@ METHOD addColumns() CLASS MetodosPagoBrowseView
       :nWidth              := 80
       :bEditValue          := {|| ::getRowSet():fieldGet( 'ultimo_plazo' ) }
       :bLClickHeader       := {| row, col, flags, oColumn | ::onClickHeader( oColumn ) }
+      :lHide               := .t.
    end with
 
    ::getColumnsCreatedUpdatedAt()
@@ -194,11 +196,11 @@ METHOD New( oController ) CLASS MetodosPagoView
 
    ::Super:New( oController )
 
-   ::hIcono           := { "Dinero"                => "gc_money2_16",;
-                           "Tarjeta de credito"    => "gc_credit_cards_16",;
-                           "Bolsa de dinero"       => "gc_moneybag_euro_16",;
-                           "Porcentaje"            => "gc_symbol_percent_16",;
-                           "Cesta de compra"       => "gc_shopping_cart_16" }
+   ::hIcono := {  "Dinero"                => "gc_money2_16",;
+                  "Tarjeta de credito"    => "gc_credit_cards_16",;
+                  "Bolsa de dinero"       => "gc_moneybag_euro_16",;
+                  "Porcentaje"            => "gc_symbol_percent_16",;
+                  "Cesta de compra"       => "gc_shopping_cart_16" }
 
 RETURN ( self )
 
@@ -243,10 +245,8 @@ METHOD Activate() CLASS MetodosPagoView
       ON CHANGE   ( ::showMedioPago() ) ;
       OF          ::oDialog ;
 
-   /*::oController:getMediosPagoController():getSelector():*/
    ::oController:getMediosPagoController():getSelector():Bind( bSETGET( ::oController:getModel():hBuffer[ "codigo_medio_pago" ] ) )
    ::oController:getMediosPagoController():getSelector():Build( { "idGet" => 130, "idText" => 131, "idLink" => 132, "oDialog" => ::oDialog } )
-
   
    REDEFINE GET   ::oController:getModel():hBuffer[ "numero_plazos" ] ;
       ID          140 ;
@@ -275,7 +275,6 @@ METHOD Activate() CLASS MetodosPagoView
       MIN         0;
       WHEN        ( ::oController:isNotZoomMode() ) ;
       OF          ::oDialog ;
-      
 
    ::redefineExplorerBar( 500 )
 
@@ -303,11 +302,11 @@ METHOD showMedioPago() CLASS MetodosPagoView
 
    if ::oController:getModel():isCobrado()
       ::oController:getMediosPagoController():getSelector():hide()
-      
-      RETURN ( nil )
+   else
+      ::oController:getMediosPagoController():getSelector():show() 
    end if
  
-RETURN ( ::oController:getMediosPagoController():getSelector():show() )
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -316,6 +315,8 @@ METHOD startActivate() CLASS MetodosPagoView
    ::oController:getMediosPagoController():oGetSelector():Start()
    
    ::addLinksToExplorerBar()
+
+   ::showMedioPago()
 
 RETURN ( nil )
 

@@ -229,21 +229,21 @@ RETURN ( nil )
 
 METHOD clientSetFormaPago() CLASS FacturasClientesController
 
-   local cCodigoFormaPago
+   local cCodigoMetodoPago
 
-   cCodigoFormaPago     := space( 20 )
+   cCodigoMetodoPago    := space( 20 )
 
    if empty( ::getClientesController():getSelector():uFields )
       RETURN ( nil )
    end if 
 
-   cCodigoFormaPago     := hget( ::getClientesController():getSelector():uFields, "forma_pago_codigo" )
+   cCodigoMetodoPago    := hget( ::getClientesController():getSelector():uFields, "metodo_pago_codigo" )
 
-   if empty( cCodigoFormaPago )
-      cCodigoFormaPago  := Company():getDefaultFormaPago()
+   if empty( cCodigoMetodoPago )
+      cCodigoMetodoPago := Company():getDefaultMetodoPago()
    end if
 
-   ::getFormasPagosController():getSelector():cText( cCodigoFormaPago )
+   ::getFormasPagosController():getSelector():cText( cCodigoMetodoPago )
    
    ::getFormasPagosController():getSelector():lValid()
 
@@ -439,7 +439,7 @@ METHOD getValidators() CLASS FacturasClientesValidator
 
    ::hValidators  := {  "cliente_codigo"     => {  "required"        => "El código del cliente es un dato requerido",;
                                                    "clienteExist"    => "El código del cliente no existe" } ,;  
-                        "forma_pago_codigo"  => {  "required"        => "El código de la forma de pago es un dato requerido",;
+                        "metodo_pago_codigo" => {  "required"        => "El código de la forma de pago es un dato requerido",;
                                                    "formaPagoExist"  => "El código de la forma de pago no existe" } ,;  
                         "almacen_codigo"     => {  "required"        => "El código del almacén es un dato requerido",;
                                                    "almacenExist"    => "El código del almacén no existe" } ,;  

@@ -100,7 +100,7 @@ RETURN ( nil )
 
 METHOD editConfig()
 
-   if !( ::loadConfig() )
+   if !( ::loadConfig() ) 
       RETURN ( nil )
    end if 
 

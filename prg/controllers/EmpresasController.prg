@@ -9,17 +9,13 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    DATA oPanelView
 
-   DATA oDireccionesController
-
    DATA oCamposExtraValoresController
 
    DATA lSolicitarUsuario 
 
    DATA oDelegacionesController
 
-   DATA oFormasPagosController
-
-   DATA cFormaPagoDefecto
+   DATA cMetodoPagoDefecto
    DATA cAlmacenDefecto
    DATA cUnidadesDefecto
 
@@ -68,12 +64,8 @@ CLASS EmpresasController FROM SQLNavigatorGestoolController
 
    METHOD getValidator()                     INLINE ( iif( empty( ::oValidator ), ::oValidator := EmpresasValidator():New( self, ::getDialogView() ), ), ::oValidator )
 
-   METHOD getDireccionesController()         INLINE ( iif( empty( ::oDireccionesController ), ::oDireccionesController := DireccionesGestoolController():New( self ), ), ::oDireccionesController )
-
    METHOD getCamposExtraValoresController()  INLINE ( iif( empty( ::oCamposExtraValoresController ), ::oCamposExtraValoresController := CamposExtraValoresGestoolController():New( self ), ), ::oCamposExtraValoresController )
 
-   METHOD getFormasPagosController()         INLINE ( iif( empty( ::oFormasPagosController ), ::oFormasPagosController := FormasPagosController():New( self ), ), ::oFormasPagosController )
-   
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -129,10 +121,6 @@ METHOD End()
       ::oValidator:End()
    end if 
 
-   if !empty( ::oFormasPagosController )
-      ::oFormasPagosController:End()
-   end if 
-   
 RETURN ( ::Super:End() )
 
 //---------------------------------------------------------------------------//
@@ -159,33 +147,11 @@ RETURN ( nil )
 
 METHOD loadConfig( uuidEmpresa )
 
-   // Company():guardWhereUuid( uuidEmpresa )
-
-   ::cFormaPagoDefecto           := ::getAjustableController():getModel():getFormaPago( uuidEmpresa )
+   ::cMetodoPagoDefecto          := ::getAjustableController():getModel():getMetodoPago( uuidEmpresa )
 
    ::cAlmacenDefecto             := ::getAjustableController():getModel():getAlmacen( uuidEmpresa )
    
    ::cUnidadesDefecto            := ::getAjustableController():getModel():getUnidadesGrupo( uuidEmpresa )
-
-   // ::lSolicitarUsuario           := ::getAjustableController():getModel():getEmpresaSeleccionarUsuarios( uuidEmpresa )
-
-   // ::aDelegaciones               := SQLDelegacionesModel():getNombres()
-
-   // ::cUuidDelegacionDefecto      := ::getAjustableController():getModel():getEmpresaDelegacionDefecto( uuidEmpresa )
-
-   // ::cDelegacionDefecto          := SQLDelegacionesModel():getNombreFromUuid( ::cUuidDelegacionDefecto )
-
-   // ::aUnidades                   := SQLUnidadesMedicionGruposModel():getNombresWithBlank()
-
-   // ::cCodigoUnidaesDefecto       := ::getAjustableController():getModel():getEmpresaUnidadesGrupo( uuidEmpresa )
-
-   // ::cUnidadesDefecto            := SQLUnidadesMedicionGruposModel():getNombreWhereCodigo( ::cCodigoUnidaesDefecto )
-
-   // ::aTarifas                    := SQLArticulosTarifasModel():getNombres()
-
-   // ::cCodigoTarifaDefecto        := ::getAjustableController():getModel():getEmpresaTarifaDefecto( uuidEmpresa )
-
-   // ::cTarifaDefecto              := SQLArticulosTarifasModel():getNombreWhereCodigo( ::cCodigoTarifaDefecto )
 
 RETURN ( .t. )
 
@@ -193,24 +159,12 @@ RETURN ( .t. )
 
 METHOD saveConfig( uuidEmpresa )
 
-   ::getAjustableController():getModel():setFormaPago( ::cFormaPagoDefecto, uuidEmpresa )
+   ::getAjustableController():getModel():setMetodoPago( ::cMetodoPagoDefecto, uuidEmpresa )
 
    ::getAjustableController():getModel():setAlmacen( ::cAlmacenDefecto, uuidEmpresa )
 
    ::getAjustableController():getModel():setUnidadesGrupo( ::cUnidadesDefecto, uuidEmpresa )
    
-   // ::getAjustableController():getModel():setEmpresaSeleccionarUsuarios( ::lSolicitarUsuario, uuidEmpresa )
-   
-   // ::cUuidDelegacionDefecto      := SQLDelegacionesModel():getUuidFromNombre( ::cDelegacionDefecto )
-
-   // ::getAjustableController():getModel():setEmpresaDelegacionDefecto( ::cUuidDelegacionDefecto, uuidEmpresa )
-
-   // ::cCodigoUnidaesDefecto       := SQLUnidadesMedicionGruposModel():getCodigoWhereNombre( ::cUnidadesDefecto )
-
-   // ::cCodigoTarifaDefecto        := SQLArticulosTarifasModel():getCodigoWhereNombre( ::cTarifaDefecto )
-
-   // ::getAjustableController():getModel():setEmpresaTarifaDefecto( ::cCodigoTarifaDefecto, uuidEmpresa )
-
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -221,22 +175,8 @@ METHOD startingActivate()
 
    oPanel   := ::getAjustableController():getDialogView():oExplorerBar:addPanel( "Propiedades empresa", nil, 1 ) 
 
-   // oPanel:addCheckBox( "Solicitar usuario al realizar la venta", @::lSolicitarUsuario )
-   
-   // oPanel:addComboBox( "Delegación", @::cDelegacionDefecto, ::aDelegaciones )
-
-   // oPanel:addComboBox( "Grupos unidades", @::cUnidadesDefecto, ::aUnidades )
-
-   // oPanel:addComboBox( "Tarifa", @::cTarifaDefecto, ::aTarifas )
-
-   // oPanel:addGetSelector( "Delegación", @::cDelegacionDefecto ) 
-
-   // oPanel:addGetSelector( "Grupos unidades", @::cUnidadesDefecto ) 
-
-   // oPanel:addGetSelector( "Tarifa", @::cTarifaDefecto ) 
-
-   ::getFormasPagosController():getSelector():Bind( bSETGET( ::cFormaPagoDefecto ) )
-   ::getFormasPagosController():getSelector():addGetSelector( "Forma de pago", oPanel ) 
+   ::getMetodosPagosController():getSelector():Bind( bSETGET( ::cMetodoPagoDefecto ) )
+   ::getMetodosPagosController():getSelector():addGetSelector( "Metodo de pago", oPanel ) 
 
    ::getAlmacenesController():getSelector():Bind( bSETGET( ::cAlmacenDefecto ) )
    ::getAlmacenesController():getSelector():addGetSelector( "Almacen", oPanel ) 
@@ -253,8 +193,6 @@ METHOD addExtraButtons()
    ::oNavigatorView:getMenuTreeView():AddButton( "Actualizar", "gc_server_client_exchange_16", {|| ::updateEmpresa() }, "T", ACC_APPD ) 
    
    ::oNavigatorView:getMenuTreeView():AddButton( "Importar datos", "gc_server_client_exchange_16", {|| ::seedEmpresa() }, "D", ACC_APPD ) 
-
-   // ::oNavigatorView:getMenuTreeView():AddButton( "Configuraciones", "gc_wrench_16", {|| ::editConfig() }, "N", ACC_IMPR ) 
 
 RETURN ( nil )
 

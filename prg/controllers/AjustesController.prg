@@ -162,7 +162,7 @@ METHOD getInsertAjustesSentence() CLASS SQLAjustesModel
          ( UUID(), 'unidades_grupo_defecto',    '1',  'alphanumeric', NULL, NULL ), 
          ( UUID(), 'tarifas_defecto',           '1',  'alphanumeric', NULL, NULL ),
          ( UUID(), 'almacen_defecto',           '1',  'alphanumeric', NULL, NULL ),
-         ( UUID(), 'forma_pago_defecto',        '1',  'alphanumeric', NULL, NULL )
+         ( UUID(), 'metodo_pago_defecto',       '1',  'alphanumeric', NULL, NULL )
 
    ENDTEXT
 
