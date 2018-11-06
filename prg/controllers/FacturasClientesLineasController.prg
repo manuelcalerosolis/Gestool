@@ -118,8 +118,8 @@ CLASS FacturasClientesLineasController FROM SQLBrowseController
    METHOD deleteLines( uuid )
 
    METHOD getUuid()                       INLINE ( iif(  !empty( ::getModel() ) .and. !empty( ::getModel():hBuffer ),;
-                                                      hget( ::getModel():hBuffer, "uuid" ),;
-                                                      nil ) )
+                                                         hget( ::getModel():hBuffer, "uuid" ),;
+                                                         nil ) )
 
    METHOD refreshBrowse()                 INLINE ( iif(  !empty( ::getBrowseView() ), ::getBrowseView():Refresh(), ) )
 
@@ -494,8 +494,6 @@ METHOD stampArticuloUnidaMedicionVentas()
 
    cUnidadMedicion         := SQLUnidadesMedicionOperacionesModel():getUnidadVentaWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
-   msgalert( cUnidadMedicion, "getUnidadVentaWhereArticulo" )
-
    if !empty( cUnidadMedicion )
       RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
    end if 
@@ -504,8 +502,6 @@ METHOD stampArticuloUnidaMedicionVentas()
 
    cUnidadMedicion         := UnidadesMedicionGruposLineasRepository():getUnidadDefectoWhereArticulo( ::getRowSet():fieldGet( 'articulo_codigo' ) ) 
 
-   msgalert( cUnidadMedicion, "getUnidadDefectoWhereArticulo" )
-   
    if !empty( cUnidadMedicion )
       RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
    end if 
@@ -514,18 +510,14 @@ METHOD stampArticuloUnidaMedicionVentas()
 
    cUnidadMedicion         := afirst( UnidadesMedicionGruposLineasRepository():getWhereEmpresa() )
 
-   msgalert( cUnidadMedicion, "UnidadesMedicionGruposLineasRepository getWhereEmpresa" )
-
    if !empty( cUnidadMedicion )
-      RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
+      RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) ) 
    end if 
 
    // Unidad de medición del sistema-------------------------------------------
 
    cUnidadMedicion         := SQLUnidadesMedicionModel():getUnidadMedicionSistema()
    
-   msgalert( cUnidadMedicion, "SQLUnidadesMedicionModel getUnidadMedicionSistema" )
-
    if !empty( cUnidadMedicion )
       RETURN ( ::stampArticuloUnidadMedicion( cUnidadMedicion ) )
    end if 
@@ -729,12 +721,12 @@ METHOD Edit()
       RETURN ( nil )
    end if 
 
-   nId                     := ::oController:oArticulosController:oModel:getIdWhereCodigo( cCodigoArticulo )
+   nId                     := ::oController:getArticulosController():getModel():getIdWhereCodigo( cCodigoArticulo )
    if empty( nId )
       RETURN ( nil )
    end if 
 
-RETURN ( ::oController:oArticulosController:Edit( nId ) )
+RETURN ( ::oController:getArticulosController():Edit( nId ) )
 
 //----------------------------------------------------------------------------//
 

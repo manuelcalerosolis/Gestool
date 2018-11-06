@@ -410,8 +410,6 @@ CLASS UnidadesMedicionGruposLineasRepository FROM SQLBaseRepository
 
    METHOD getFactorWhereUnidadMedicion( cCodigoArticulo, cCodigoUnidad )
 
-   METHOD getFactorWhereUnidadMedicion( cCodigoArticulo, cCodigoUnidad )
-
    METHOD getFactorWhereUnidadArticulo( cCodigoArticulo, cCodigoUnidad )
 
    METHOD getFactorWhereUnidadEmpresa( cCodigoUnidad )
@@ -442,10 +440,7 @@ RETURN ( cSelect )
 
 METHOD getSentenceWhereEmpresa( cField ) CLASS UnidadesMedicionGruposLineasRepository
 
-   local cSelect
-
-   DEFAULT cField := "unidad_alternativa_codigo"
-
+/*
    cSelect        := "SELECT lineas." + cField                                                                 + " " + ;
                         "FROM "+ ::getTableName() + " AS lineas"                                               + " " + ;
                         "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"          + " " + ;         
@@ -456,26 +451,77 @@ METHOD getSentenceWhereEmpresa( cField ) CLASS UnidadesMedicionGruposLineasRepos
                            "ON ajustes.uuid = ajustables.ajuste_uuid"                                          + " " + ;
                         "WHERE ajustes.ajuste = 'unidades_grupo_defecto'"                                      + " " + ;
                            "AND ajustables.ajustable_uuid = " + quoted( Company():uuid() )
+*/
 
-RETURN ( cSelect )
+   local cSql
+
+   DEFAULT cField := "unidad_alternativa_codigo"
+
+   TEXT INTO cSql
+
+      SELECT lineas.%1$s 
+         
+      FROM %2$s AS lineas 
+         
+         LEFT JOIN %3$s AS grupos 
+            ON lineas.parent_uuid = grupos.uuid 
+
+         LEFT JOIN %4$s AS ajustables  // SQLAjustableModel():getTableName()
+            ON ajustables.ajuste_valor = grupos.codigo
+
+         LEFT JOIN %5$s AS ajustes
+            ON ajustes.uuid = ajustables.ajuste_uuid
+
+      WHERE ajustes.ajuste = 'unidades_grupo_defecto'
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, cField, ::getTableName(), SQLUnidadesMedicionGruposModel():getTableName(), SQLAjustableModel():getTableName(), SQLAjustesModel():getTableName()  ) 
+
+   logwrite( cSql )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
 METHOD getSentenceWhereCodigoArticulo( cCodigoArticulo, cField ) CLASS UnidadesMedicionGruposLineasRepository 
 
-   local cSelect
-
+   local cSQL
+   
    DEFAULT cField    := "unidad_alternativa_codigo"
 
-   cSelect           := "SELECT lineas." + cField                                                                 + " " + ;
-                           "FROM "+ ::getTableName() + " AS lineas"                                               + " " + ;
-                           "LEFT JOIN " + SQLUnidadesMedicionGruposModel():getTableName() + " AS grupos"          + " " + ;         
-                              "ON lineas.parent_uuid = grupos.uuid"                                               + " " + ;         
-                           "LEFT JOIN " + SQLArticulosModel():getTableName() + " AS articulos"                    + " " + ;         
-                              "ON articulos.unidades_medicion_grupos_codigo = grupos.codigo"                      + " " + ;
-                           "WHERE articulos.codigo = " + quoted( cCodigoArticulo )
+   TEXT INTO cSql
 
-RETURN ( cSelect )
+      SELECT lineas.%1$s 
+         
+      FROM %2$s AS lineas 
+         
+         LEFT JOIN %3$s AS grupos 
+            ON lineas.parent_uuid = grupos.uuid 
+            
+         LEFT JOIN %4$s AS articulos 
+            ON articulos.unidades_medicion_grupos_codigo = grupos.codigo 
+            
+      WHERE articulos.codigo = %5$s 
+
+      UNION 
+
+      SELECT grupos.unidad_base_codigo 
+         
+      FROM %3$s AS grupos
+
+         LEFT JOIN %4$s AS articulos 
+            ON articulos.unidades_medicion_grupos_codigo = grupos.codigo 
+            
+      WHERE articulos.codigo = %5$s
+
+   ENDTEXT
+
+   cSql  := hb_strformat( cSql, cField, ::getTableName(), SQLUnidadesMedicionGruposModel():getTableName(), SQLArticulosModel():getTableName(), quoted( cCodigoArticulo ) ) 
+
+   logwrite( cSql )
+
+RETURN ( cSql )
 
 //---------------------------------------------------------------------------//
 
@@ -582,6 +628,10 @@ METHOD getFactorWhereUnidadMedicion( cCodigoArticulo, cCodigoUnidad ) CLASS Unid
       nFactory    := ::getFactorWhereUnidadGrupoSistema( cCodigoUnidad )
    end if
 
+   if empty( nFactory )
+      RETURN ( 1 )
+   end if 
+
 RETURN ( nFactory )
 
 //---------------------------------------------------------------------------//
@@ -591,7 +641,7 @@ METHOD getFactorWhereUnidadArticulo( cCodigoArticulo, cCodigoUnidad ) CLASS Unid
    local cSentence 
 
    if empty( cCodigoArticulo )
-      RETURN ( {} )
+      RETURN ( nil )
    end if
 
    cSentence      := ::getSentenceWhereCodigoArticulo( cCodigoArticulo, "cantidad_base" ) + " " + ;

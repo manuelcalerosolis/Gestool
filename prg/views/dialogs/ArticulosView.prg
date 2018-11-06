@@ -35,6 +35,8 @@ CLASS ArticulosView FROM SQLBaseView
 
    METHOD changeNombre()         INLINE ( ::oMessage:setText( "Artículo : " + alltrim( ::oController:oModel:hBuffer[ "nombre" ] ) ) ) 
 
+   METHOD editUnidadesMedicionOperaciones()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -278,18 +280,17 @@ METHOD addLinksToExplorerBar() CLASS ArticulosView
 
    oPanel:AddLink(   "Traducciones...",;
                      {||   ::oController:getTraduccionesController():activateDialogView() },;
-                     ::oController:getTraduccionesController():getImage( "16" ) )
+                           ::oController:getTraduccionesController():getImage( "16" ) )
 
    oPanel:AddLink(   "Unidad por operación...",;
-                     {||   ::oController:getUnidadesMedicionOperacionesController():Edit( ::getModel():hBuffer['unidades_medicion_grupos_codigo'] ),;
-                           ::oController:oUnidadesMedicionGruposController:oGetSelector:evalWhen() },;
-                     ::oController:getunidadesmedicionoperacionesController():getImage( "16" ) )
+                     {||   ::editUnidadesMedicionOperaciones() },;
+                           ::oController:getunidadesmedicionoperacionesController():getImage( "16" ) )
 
    oPanel            := ::oExplorerBar:AddPanel( "Otros", nil, 1 ) 
 
    oPanel:AddLink(   "Campos extra...",;
                      {||   ::oController:getCamposExtraValoresController():Edit( ::oController:getUuid() ) },;
-                     ::oController:getCamposExtraValoresController():getImage( "16" ) )
+                           ::oController:getCamposExtraValoresController():getImage( "16" ) )
 
 RETURN ( nil )
 
@@ -297,4 +298,20 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+METHOD editUnidadesMedicionOperaciones() CLASS ArticulosView
+
+   msgalert( ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ), 'unidades_medicion_grupos_codigo' )
+
+   if empty( ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) )
+      
+      msgstop( "Debe seleccionar un grupo de unidades de medición" )
+
+      RETURN ( nil )
+
+   end if 
+
+RETURN ( ::oController:getUnidadesMedicionOperacionesController():activateDialogView() )
+
 //---------------------------------------------------------------------------//

@@ -8,6 +8,7 @@ CLASS UnidadesMedicionController FROM SQLNavigatorController
    METHOD New() CONSTRUCTOR
 
    METHOD End()
+
    METHOD getUnidadesInGroup()
 
    //Construcciones tardias----------------------------------------------------
@@ -76,7 +77,9 @@ METHOD getUnidadesInGroup()
 
    local aUnidades 
 
-   aUnidades   :=  SQLUnidadesMedicionOperacionesModel():getUnidadesWhereGrupo( ::oController:oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) )
+   msgalert( ::oController:ClassName(), "ClassName" )
+
+   aUnidades   :=  SQLUnidadesMedicionOperacionesModel():getUnidadesWhereGrupo( ::oController:getModelBuffer( 'unidades_medicion_grupos_codigo' ) )
 
    if empty( aUnidades )
       RETURN ( "" )

@@ -15,10 +15,10 @@ CLASS UnidadesMedicionOperacionesController FROM SQLNavigatorController
 
    METHOD deleteBuffer( aUuidEntidades )
 
-   METHOD Edit( cCodigoGrupo )
+   /*METHOD Edit( cCodigoGrupo )
 
    METHOD setCodigoGrupo( cCodigoGrupo ) ;
-                                       INLINE ( ::cCodigoGrupo := cCodigoGrupo )
+                                       INLINE ( ::cCodigoGrupo := cCodigoGrupo )*/
 
    //Construcciones tardias----------------------------------------------------
 
@@ -93,11 +93,11 @@ METHOD deleteBuffer( aUuidEntidades ) CLASS UnidadesMedicionOperacionesControlle
 RETURN ( self )
 
 //---------------------------------------------------------------------------//
-
+/*
 METHOD Edit( cCodigoGrupo ) CLASS UnidadesMedicionOperacionesController
    
    if empty( cCodigoGrupo )
-      msgstop("Debes seleccionar un grupo de unidades de medición")
+      msgstop( "Debe seleccionar un grupo de unidades de medición" )
       RETURN .f.
    end if 
 
@@ -112,7 +112,7 @@ METHOD Edit( cCodigoGrupo ) CLASS UnidadesMedicionOperacionesController
    ::activateDialogView()
 
 RETURN ( nil )
-
+*/
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -415,8 +415,7 @@ RETURN ( cSql )
 
 METHOD getUnidadVentaWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionOperacionesModel
    
-   local cSQL
-   local cUnidad
+   local cSql
 
    TEXT INTO cSql
 
@@ -429,17 +428,15 @@ METHOD getUnidadVentaWhereArticulo( cCodigoArticulo ) CLASS SQLUnidadesMedicionO
          ON articulos.uuid = unidades_medicion_operacion.parent_uuid AND articulos.codigo = %4$s 
  
       INNER JOIN %3$s AS unidades_medicion
-         ON unidades_medicion.uuid = unidades_medicion_operacion.uuid_unidad
+         ON unidades_medicion.codigo = unidades_medicion_operacion.unidad_medicion_codigo      
 
       WHERE unidades_medicion_operacion.operacion = "Ventas"
 
    ENDTEXT
 
-   cSql        := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), SQLUnidadesMedicionModel():getTableName(), cCodigoArticulo )
+   cSql  := hb_strformat( cSql, ::getTableName(), SQLArticulosModel():getTableName(), SQLUnidadesMedicionModel():getTableName(), quoted( cCodigoArticulo ) )
 
-   cUnidad     := getSQLDatabase():getValue( cSql, "" )
-
-RETURN ( cUnidad )
+RETURN ( getSQLDatabase():getValue( cSql, "" ) )
 
 //---------------------------------------------------------------------------//
 
@@ -460,7 +457,7 @@ METHOD getUnidad() CLASS SQLUnidadesMedicionOperacionesModel
 
    cSql  := hb_strformat( cSql, SQLUnidadesMedicionModel():getTableName() )
 
-RETURN( getSQLDatabase():getValue( cSql ) )
+RETURN ( getSQLDatabase():getValue( cSql ) )
 
 //---------------------------------------------------------------------------//
 

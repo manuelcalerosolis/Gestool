@@ -387,15 +387,15 @@ PROCEDURE Test()
 
    oConexion:beginTransaction()
 
-   cInsert  := "INSERT INTO gestool_00VG.direcciones ( uuid, parent_uuid, codigo, principal, direccion, poblacion, codigo_provincia, provincia, codigo_postal, codigo_pais, telefono, movil, email ) VALUES ( 'd09e1fe5-42de-46f2-9878-8117efba1b5b', '831c29cf-eade-47f8-9bdf-5a09f2a875f7', '1', 0, 'Lepanto', '', '', '', '', '', '', '', '' )"
+   cInsert     := "INSERT INTO gestool_00VG.direcciones ( uuid, parent_uuid, codigo, direccion, poblacion, codigo_provincia, provincia, codigo_postal, codigo_pais, telefono, movil, email ) VALUES ( 'd09e1fe5-42de-46f2-9878-8117efba1b5b', '831c29cf-eade-47f8-9bdf-5a09f2a875f7', '1', 'Lepanto', '', '', '', '', '', '', '', '' )"
 
    oConexion:Exec( cInsert )
 
-   cInsert  := "INSERT INTO gestool_00VG.direcciones ( uuid, parent_uuid, codigo, principal, direccion, poblacion, codigo_provincia, provincia, codigo_postal, codigo_pais, telefono, movil, email ) VALUES ( '945028ab-78c5-4303-b693-6215041d2a0f', '831c29cf-eade-47f8-9bdf-5a09f2a875f7', '2', 0, 'Vendimiadores', '', '', '', '', '', '', '', '' )"
+   cInsert     := "INSERT INTO gestool_00VG.direcciones ( uuid, parent_uuid, codigo, direccion, poblacion, codigo_provincia, provincia, codigo_postal, codigo_pais, telefono, movil, email ) VALUES ( '945028ab-78c5-4303-b693-6215041d2a0f', '831c29cf-eade-47f8-9bdf-5a09f2a875f7', '2', 'Vendimiadores', '', '', '', '', '', '', '', '' )"
 
    oConexion:Exec( cInsert )
  
-   oStatement     := oConexion:Query( "SELECT nombre FROM gestool_00VG.agentes WHERE codigo = '007' LIMIT 1" )
+   oStatement  := oConexion:Query( "SELECT nombre FROM gestool_00VG.agentes WHERE codigo = '007' LIMIT 1" )
 
    oStatement:setAttribute( STMT_ATTR_STR_PAD, .t. )
 
@@ -413,7 +413,6 @@ PROCEDURE Test()
 
    oConexion:Commit()
 */
-
 //   logwrite( SQLUnidadesMedicionGruposModel():getSentenceUnidadesWhereGrupo( 'CAJAS', 'PALETS' ) )   // ? hb_MD5( "12345678" )
 
 RETURN 

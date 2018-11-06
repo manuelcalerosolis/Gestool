@@ -21,7 +21,7 @@ CLASS UnidadesMedicionGruposController FROM SQLNavigatorController
 
    METHOD getRepository()                 INLINE ( if( empty( ::oRepository ), ::oRepository := UnidadesMedicionGruposRepository():New( self ), ), ::oRepository )
    
-   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel :=SQLUnidadesMedicionGruposModel():New( self ), ), ::oModel )
+   METHOD getModel()                      INLINE ( if( empty( ::oModel ), ::oModel := SQLUnidadesMedicionGruposModel():New( self ), ), ::oModel )
 
 END CLASS
 
@@ -162,6 +162,8 @@ CLASS UnidadesMedicionGruposView FROM SQLBaseView
    DATA oSayCamposExtra
 
    METHOD Activate()
+   
+   METHOD startActivate() 
 
    METHOD validatedUnidadesMedicioncontroller()
 
@@ -248,9 +250,19 @@ METHOD Activate() CLASS UnidadesMedicionGruposView
       ::oDialog:bKeyDown   := {| nKey | if( nKey == VK_F5 .and. validateDialog( ::oDialog ), ::oDialog:end( IDOK ), ) }
    end if
    
+   ::oDialog:bStart        := {|| ::startActivate() }
+
    ACTIVATE DIALOG ::oDialog CENTER
 
 RETURN ( ::oDialog:nResult )
+
+//---------------------------------------------------------------------------//
+
+METHOD startActivate() CLASS UnidadesMedicionGruposView
+
+   ::oController:getUnidadesMedicioncontroller():getSelector():Start()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
